@@ -1,0 +1,34 @@
+sudo: required
+
+language: Haskell
+
+cache:
+  directories:
+  - $HOME/.stack
+
+addons:
+  apt:
+    packages:
+      - libgmp-dev
+
+before_install:
+- mkdir -p ~/.local/bin
+- export PATH=$HOME/.local/bin:$PATH
+- travis_retry curl -L https://www.stackage.org/stack/linux-x86_64 | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+- curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+- sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+- sudo apt-get update
+- sudo apt-get -y install docker-ce
+
+install:
+- cd src
+- stack setup
+- stack build
+
+script:
+- stack test
+- stack install
+- docker login ccmi-elixir.cesnet.cz:5000 -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+- docker build -t ccmi-elixir.cesnet.cz:5000/elixir/dsp-server .
+- docker push ccmi-elixir.cesnet.cz:5000/elixir/dsp-server
+
