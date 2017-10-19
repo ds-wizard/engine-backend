@@ -1,5 +1,18 @@
-FROM alpine:3.5
+FROM ccmi-elixir.cesnet.cz:5000/elixir/stack-hpack
 
-ADD ./.stack-work/install/x86_64-linux/lts-6.9/7.10.3/ /app
+WORKDIR /sources
 
-ENTRYPOINT /app/bin/dsp-server
+ADD ./app /sources/app
+ADD ./src /sources/src
+ADD ./test /sources/test
+ADD ./dsp-server.cabal /sources/dsp-server.cabal
+ADD ./package.yaml /sources/package.yaml
+ADD ./Setup.hs /sources/Setup.hs
+ADD ./LICENSE.md /sources/LICENSE.md
+ADD ./stack.yaml /sources/stack.yaml
+
+RUN hpack
+RUN stack --system-ghc  build
+RUN stack --system-ghc install
+
+ENTRYPOINT stack --system-ghc exec dsp-server

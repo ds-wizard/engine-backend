@@ -21,8 +21,8 @@ runApplication dbPool = do
 main = do
   putStrLn "SERVER: started"
   withMongoDBConn
-    "dsp-user-management-2"
-    "localhost"
+    "dsp-user-management"
+    "mongo"
     (PortNumber 27017)
     Nothing
     10100 $ \dbPool -> do
