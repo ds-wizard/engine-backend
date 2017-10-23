@@ -6,6 +6,7 @@ import Data.Aeson
 import Data.Monoid ((<>))
 import Data.Text.Lazy
 import Data.UUID
+import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
@@ -34,19 +35,19 @@ getUserA context = do
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
 
--- putUserA :: Context -> Scotty.ActionM ()
--- putUserA context = do
---   userUuid <- Scotty.param "userUuid"
---   maybeDto <- liftIO $ modifyUser context userUuid
---   case maybeDto of
---     Just dto -> Scotty.json dto
---     Nothing -> notFoundA
+putUserA :: Context -> Scotty.ActionM ()
+putUserA context = do
+  userUuid <- Scotty.param "userUuid"
+  userDto <- Scotty.jsonData
+  maybeDto <- liftIO $ modifyUser context userUuid userDto
+  case maybeDto of
+    Just dto -> Scotty.json dto
+    Nothing -> notFoundA
 
--- deleteUserA :: Context -> Scotty.ActionM ()
--- deleteUserA context = do
---   userUuid <- Scotty.param "userUuid"
---   maybeDto <- liftIO $ deleteUser context userUuid
---   case maybeDto of
---     Just dto -> Scotty.json dto
---     Nothing -> notFoundA
-            
+deleteUserA :: Context -> Scotty.ActionM ()
+deleteUserA context = do
+  userUuid <- Scotty.param "userUuid"
+  isSuccess <- liftIO $ deleteUser context userUuid
+  if isSuccess
+    then Scotty.status noContent204
+    else notFoundA

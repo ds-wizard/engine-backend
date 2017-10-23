@@ -2,7 +2,7 @@ module Service.User.UserService where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader
-import Data.UUID
+import Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
@@ -25,7 +25,7 @@ createUser :: Context -> UserCreateDTO -> IO UserDTO
 createUser context userCreateDto = do
   uuid <- generateUuid
   let roles = getPermissionForRole (userCreateDto ^. ucdtoRole)
-  let user = fromDTO userCreateDto uuid roles
+  let user = fromUserCreateDTO userCreateDto uuid roles
   insertUser context user
   return $ toDTO user
 
@@ -35,20 +35,22 @@ getUserById context userUuid = do
   case maybeUser of
     Just user -> return . Just $ toDTO user
     Nothing -> return Nothing
-  
 
--- modifyUser :: Context -> String -> IO (Maybe UserDTO)
--- modifyUser context userUuid = do
---   maybeUser <- findUserById context userUuid
---   case maybeUser of
---     Just user -> return . Just $ toDTO user
---     Nothing -> return Nothing
-        
+modifyUser :: Context -> String -> UserDTO -> IO (Maybe UserDTO)
+modifyUser context userUuid userDto = do
+  maybeUser <- findUserById context userUuid
+  case maybeUser of
+    Just user -> do
+      let user = fromUserDTO userDto
+      updateUserById context user
+      return . Just $ userDto
+    Nothing -> return Nothing
 
--- deleteUser :: Context -> String -> IO (Maybe UserDTO)
--- deleteUser context userUuid = do
---   maybeUser <- findUserById context userUuid
---   case maybeUser of
---     Just user -> return . Just $ toDTO user
---     Nothing -> return Nothing
-    
+deleteUser :: Context -> String -> IO Bool
+deleteUser context userUuid = do
+  maybeUser <- findUserById context userUuid
+  case maybeUser of
+    Just user -> do
+      deleteUserById context userUuid
+      return True
+    Nothing -> return False

@@ -14,8 +14,8 @@ runApplication dbPool = do
     get "/users" (getUsersA context)
     post "/users/" (postUsersA context)
     get "/users/:userUuid" (getUserA context)
-    -- put "/users/:userUuid" (putUserA context)
-    -- delete "/users/:userUuid" (deleteUserA context)
+    put "/users/:userUuid" (putUserA context)
+    delete "/users/:userUuid" (deleteUserA context)
     notFound notFoundA
 
 main = do

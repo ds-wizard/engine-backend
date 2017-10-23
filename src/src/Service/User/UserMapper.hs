@@ -19,8 +19,8 @@ toDTO user =
   , _udtoPermissions = user ^. uPermissions
   }
 
-fromDTO :: UserCreateDTO -> UUID -> [Permission] -> User
-fromDTO dto uuid permissions =
+fromUserCreateDTO :: UserCreateDTO -> UUID -> [Permission] -> User
+fromUserCreateDTO dto uuid permissions =
   User
   { _uUuid = uuid
   , _uName = dto ^. ucdtoName
@@ -28,3 +28,14 @@ fromDTO dto uuid permissions =
   , _uRole = dto ^. ucdtoRole
   , _uPermissions = permissions
   }
+
+fromUserDTO :: UserDTO -> User
+fromUserDTO dto =
+  User
+  { _uUuid = dto ^. udtoUuid
+  , _uName = dto ^. udtoName
+  , _uSurname = dto ^. udtoSurname
+  , _uRole = dto ^. udtoRole
+  , _uPermissions = dto ^. udtoPermissions
+  }
+    

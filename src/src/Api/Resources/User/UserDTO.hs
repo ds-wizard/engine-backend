@@ -19,6 +19,16 @@ data UserDTO = UserDTO
 
 makeLenses ''UserDTO
 
+instance FromJSON UserDTO where
+  parseJSON (Object o) = do
+    _udtoUuid <- o .: "uuid"
+    _udtoName <- o .: "name"
+    _udtoSurname <- o .: "surname"
+    _udtoRole <- o .: "role"
+    _udtoPermissions <- o .: "permissions"
+    return UserDTO {..}
+  parseJSON _ = mzero
+
 instance ToJSON UserDTO where
   toJSON UserDTO {..} =
     object
