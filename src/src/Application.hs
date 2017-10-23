@@ -6,11 +6,13 @@ import Web.Scotty
 
 import Api.Handler.Common
 import Api.Handler.User.UserHandler
+import Api.Middleware.CORS
 import Context
 
 runApplication dbPool = do
   let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
   scotty 3000 $ do
+    middleware corsMiddleware
     get "/users" (getUsersA context)
     post "/users/" (postUsersA context)
     get "/users/:userUuid" (getUserA context)
