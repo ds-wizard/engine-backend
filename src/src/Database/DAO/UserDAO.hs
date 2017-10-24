@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
-import Database.MongoDB (find, findOne, select, insert, fetch, save, merge, deleteOne, (=:), rest)
+import Database.MongoDB (find, findOne, select, insert, fetch, save, merge, delete, deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Types
@@ -44,6 +44,11 @@ insertUser context user = do
 updateUserById :: Context -> User -> IO ()
 updateUserById context user = do
   let action = fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>= save userCollection . merge (toBSON user)
+  runMongoDBPoolDef action (context ^. ctxDbPool)
+
+deleteUsers :: Context -> IO ()
+deleteUsers context = do
+  let action = delete $ select [] userCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
   
 deleteUserById :: Context -> String -> IO ()

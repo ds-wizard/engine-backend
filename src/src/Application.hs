@@ -11,6 +11,7 @@ import Api.Handler.User.UserHandler
 import Api.Middleware.Auth
 import Api.Middleware.CORS
 import Context
+import Migration
 
 unauthorizedEndpoints = [mkRegex "^tokens$"]
 
@@ -28,11 +29,8 @@ runApplication context =
 
 main = do
   putStrLn "SERVER: started"
-  withMongoDBConn
-    "dsp-user-management"
-    "mongo"
-    (PortNumber 27017)
-    Nothing
-    10100 $ \dbPool -> do
+  withMongoDBConn "dsp-user-management" "mongo" (PortNumber 27017) Nothing 10100 $ \dbPool -> do
     putStrLn "DATABASE: connected"
-    runApplication dbPool
+    let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
+    runMigration context
+    runApplication context
