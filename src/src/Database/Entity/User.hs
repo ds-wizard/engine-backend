@@ -14,6 +14,8 @@ data User = User
   { _uUuid :: UUID
   , _uName :: String
   , _uSurname :: String
+  , _uEmail :: Email
+  , _uPasswordHash :: String
   , _uRole :: Role
   , _uPermissions :: [Permission]
   } deriving (Generic, Show, Eq)
@@ -25,6 +27,8 @@ instance ToBSON User where
     [ "uuid" BSON.=: toString (user ^. uUuid)
     , "name" BSON.=: (user ^. uName)
     , "surname" BSON.=: (user ^. uSurname)
+    , "email" BSON.=: (user ^. uEmail)
+    , "passwordHash" BSON.=: (user ^. uPasswordHash)
     , "role" BSON.=: (user ^. uRole)
     , "permissions" BSON.=: (user ^. uPermissions)
     ]
@@ -35,12 +39,16 @@ instance FromBSON User where
     uuid <- fromString uuidS
     name <- BSON.lookup "name" doc
     surname <- BSON.lookup "surname" doc
+    email <- BSON.lookup "email" doc
+    passwordHash <- BSON.lookup "passwordHash" doc
     role <- BSON.lookup "role" doc
     permissions <- BSON.lookup "permissions" doc
     return User
       { _uUuid = uuid
       , _uName = name
       , _uSurname = surname
+      , _uEmail = email
+      , _uPasswordHash = passwordHash
       , _uRole = role
       , _uPermissions = permissions
       }

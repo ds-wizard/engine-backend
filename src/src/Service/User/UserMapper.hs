@@ -15,26 +15,31 @@ toDTO user =
   { _udtoUuid = user ^. uUuid
   , _udtoName = user ^. uName
   , _udtoSurname = user ^. uSurname
+  , _udtoEmail = user ^. uEmail
   , _udtoRole = user ^. uRole
   , _udtoPermissions = user ^. uPermissions
   }
 
-fromUserCreateDTO :: UserCreateDTO -> UUID -> [Permission] -> User
-fromUserCreateDTO dto uuid permissions =
+fromUserCreateDTO :: UserCreateDTO -> UUID -> String -> [Permission] -> User
+fromUserCreateDTO dto userUuid passwordHash permissions =
   User
-  { _uUuid = uuid
+  { _uUuid = userUuid
   , _uName = dto ^. ucdtoName
   , _uSurname = dto ^. ucdtoSurname
+  , _uEmail = dto ^. ucdtoEmail
+  , _uPasswordHash = passwordHash
   , _uRole = dto ^. ucdtoRole
   , _uPermissions = permissions
   }
 
-fromUserDTO :: UserDTO -> User
-fromUserDTO dto =
+fromUserDTO :: UserDTO -> UUID -> String -> User
+fromUserDTO dto userUuid passwordHash =
   User
-  { _uUuid = dto ^. udtoUuid
+  { _uUuid = userUuid
   , _uName = dto ^. udtoName
   , _uSurname = dto ^. udtoSurname
+  , _uEmail = dto ^. udtoEmail
+  , _uPasswordHash = passwordHash
   , _uRole = dto ^. udtoRole
   , _uPermissions = dto ^. udtoPermissions
   }

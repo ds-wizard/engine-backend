@@ -4,3 +4,6 @@ type Permission = String
 
 type Role = String
 
+type Email = String
+
+type Token = String

@@ -2,6 +2,8 @@ module Service.User.UserService where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader
+import Crypto.PasswordStore
+import Data.ByteString.Char8 as BS
 import Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
@@ -24,8 +26,13 @@ getUsers context = do
 createUser :: Context -> UserCreateDTO -> IO UserDTO
 createUser context userCreateDto = do
   uuid <- generateUuid
+  createUserWithGivenUuid context uuid userCreateDto
+
+createUserWithGivenUuid :: Context -> U.UUID -> UserCreateDTO -> IO UserDTO
+createUserWithGivenUuid context userUuid userCreateDto = do
   let roles = getPermissionForRole (userCreateDto ^. ucdtoRole)
-  let user = fromUserCreateDTO userCreateDto uuid roles
+  passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
+  let user = fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles
   insertUser context user
   return $ toDTO user
 
@@ -41,7 +48,7 @@ modifyUser context userUuid userDto = do
   maybeUser <- findUserById context userUuid
   case maybeUser of
     Just user -> do
-      let user = fromUserDTO userDto
+      let user = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
       updateUserById context user
       return . Just $ userDto
     Nothing -> return Nothing

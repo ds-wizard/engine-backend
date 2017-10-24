@@ -13,6 +13,7 @@ data UserDTO = UserDTO
   { _udtoUuid :: UUID
   , _udtoName :: String
   , _udtoSurname :: String
+  , _udtoEmail :: Email
   , _udtoRole :: Role
   , _udtoPermissions :: [Permission]
   }
@@ -24,6 +25,7 @@ instance FromJSON UserDTO where
     _udtoUuid <- o .: "uuid"
     _udtoName <- o .: "name"
     _udtoSurname <- o .: "surname"
+    _udtoEmail <- o .: "email"
     _udtoRole <- o .: "role"
     _udtoPermissions <- o .: "permissions"
     return UserDTO {..}
@@ -35,10 +37,7 @@ instance ToJSON UserDTO where
       [ "uuid" .= _udtoUuid
       , "name" .= _udtoName
       , "surname" .= _udtoSurname
+      , "email" .= _udtoEmail
       , "role" .= _udtoRole
       , "permissions" .= _udtoPermissions
       ]
-
-
--- instance Functor f => ToJSON (f UserDTO) where
---   toJSON dtos = fmap toJSON dtos

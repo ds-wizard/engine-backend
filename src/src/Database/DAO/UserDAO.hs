@@ -7,6 +7,7 @@ import Data.Maybe
 import Database.MongoDB (find, findOne, select, insert, fetch, save, merge, deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
+import Common.Types
 import Context
 import Database.DAO.Common
 import Database.Entity.User
@@ -22,6 +23,14 @@ findUsers context = do
 findUserById :: Context -> String -> IO (Maybe User)
 findUserById context userUuid = do
   let action = findOne $ select ["uuid" =: userUuid] userCollection
+  maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  case maybeUser of
+    Just user -> return . fromBSON $ user
+    Nothing -> return Nothing  
+
+findUserByEmail :: Context -> Email -> IO (Maybe User)
+findUserByEmail context userEmail = do
+  let action = findOne $ select ["email" =: userEmail] userCollection
   maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
   case maybeUser of
     Just user -> return . fromBSON $ user
