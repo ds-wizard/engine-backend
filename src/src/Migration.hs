@@ -8,7 +8,7 @@ import Context
 import Database.DAO.UserDAO
 import Service.User.UserService
 
-runMigration context = do
+runMigration context dspConfig = do
   putStrLn "MIGRATION: started"
   deleteUsers context
   createUserWithGivenUuid

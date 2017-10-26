@@ -12,6 +12,9 @@ homepage: https://github.com/vknaisl/dsp-server
 git: git@github.com:vknaisl/dsp-server.git
 bug-reports: https://github.com/vknaisl/dsp-server/issues
 tested-with: GHC==7.6.* GHC==7.8.*
+data-files:
+  - config/app-config.cfg
+  - config/build-info.cfg
 library:
   source-dirs: src
   dependencies:
@@ -20,6 +23,7 @@ library:
   - bson ==0.3.2.3
   - bytestring ==0.10.8.1
   - case-insensitive ==1.2.0.10
+  - ConfigFile ==1.1.4
   - containers ==0.5.7.1
   - data-default ==0.7.1.1
   - http-types ==0.9.1 

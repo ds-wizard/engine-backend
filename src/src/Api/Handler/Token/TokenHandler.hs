@@ -13,12 +13,13 @@ import Api.Handler.Common
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
 import Context
+import DSPConfig
 import Service.Token.TokenService
 
-postTokenA :: Context -> Scotty.ActionM ()
-postTokenA context = do
+postTokenA :: Context -> DSPConfig -> Scotty.ActionM ()
+postTokenA context dspConfig = do
   tokenCreateDto <- Scotty.jsonData
-  maybeTokenDto <- liftIO $ getToken context tokenCreateDto
+  maybeTokenDto <- liftIO $ getToken context dspConfig tokenCreateDto
   case maybeTokenDto of
     Just tokenDto -> Scotty.json tokenDto
     Nothing -> unauthorizedA

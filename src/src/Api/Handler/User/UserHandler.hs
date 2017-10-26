@@ -13,30 +13,31 @@ import Api.Handler.Common
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Context
+import DSPConfig
 import Service.User.UserService
 
-getUsersA :: Context -> Scotty.ActionM ()
-getUsersA context = do
+getUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
+getUsersA context dspConfig = do
   dtos <- liftIO $ getUsers context
   let a = dtos :: [UserDTO]
   Scotty.json dtos
 
-postUsersA :: Context -> Scotty.ActionM ()
-postUsersA context = do
+postUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
+postUsersA context dspConfig = do
   userCreateDto <- Scotty.jsonData
   userDto <- liftIO $ createUser context userCreateDto
   Scotty.json userDto
 
-getUserA :: Context -> Scotty.ActionM ()
-getUserA context = do
+getUserA :: Context -> DSPConfig -> Scotty.ActionM ()
+getUserA context dspConfig = do
   userUuid <- Scotty.param "userUuid"
   maybeDto <- liftIO $ getUserById context userUuid
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
 
-putUserA :: Context -> Scotty.ActionM ()
-putUserA context = do
+putUserA :: Context -> DSPConfig -> Scotty.ActionM ()
+putUserA context dspConfig = do
   userUuid <- Scotty.param "userUuid"
   userDto <- Scotty.jsonData
   maybeDto <- liftIO $ modifyUser context userUuid userDto
@@ -44,8 +45,8 @@ putUserA context = do
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
 
-deleteUserA :: Context -> Scotty.ActionM ()
-deleteUserA context = do
+deleteUserA :: Context -> DSPConfig -> Scotty.ActionM ()
+deleteUserA context dspConfig = do
   userUuid <- Scotty.param "userUuid"
   isSuccess <- liftIO $ deleteUser context userUuid
   if isSuccess

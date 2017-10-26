@@ -9,28 +9,27 @@ import Web.JWT
 
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
-import Common.JWT
 import Common.Types
 import Context
+import DSPConfig
+import Data.Aeson
+import qualified Data.Text as T
+import qualified Data.Vector as V
 import Database.DAO.UserDAO
 import Database.Entity.User
-import qualified Data.Vector as V
-import qualified Data.Text as T
-import Data.Aeson
 
 import Service.Token.TokenMapper
 
-getToken :: Context -> TokenCreateDTO -> IO (Maybe TokenDTO)
-getToken context tokenCreateDto
-    -- secret <- getSecret
- = do
+getToken :: Context -> DSPConfig -> TokenCreateDTO -> IO (Maybe TokenDTO)
+getToken context dspConfig tokenCreateDto = do
+  let secret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
   maybeUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
   case maybeUser of
     Just user -> do
       let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
       let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
       if verifyPassword incomingPassword passwordHashFromDB
-        then return . Just . toDTO $ createToken user "secret-key"
+        then return . Just . toDTO $ createToken user secret
         else return Nothing
     Nothing -> return Nothing
 

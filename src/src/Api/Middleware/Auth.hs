@@ -3,6 +3,7 @@ module Api.Middleware.Auth where
 import Data.ByteString (ByteString)
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
+import Control.Lens ((^.))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Time.Clock.POSIX (getPOSIXTime)
@@ -15,7 +16,8 @@ import Text.Regex
 import Web.JWT
 
 import Api.Handler.Common
-import Common.JWT
+import DSPConfig
+import Common.Types
 
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "x-dsp-auth-token"
@@ -35,12 +37,14 @@ getTokenFromHeader :: Request -> Maybe ByteString
 getTokenFromHeader request =
   lookup (mk authorizationHeaderName) (requestHeaders request)
 
-authMiddleware :: JWTSecret -> [Regex] -> Middleware
-authMiddleware jwtSecret unauthorizedEndpoints app request sendResponse =
+authMiddleware :: DSPConfig -> [Regex] -> Middleware
+authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint (getRequestURL request) unauthorizedEndpoints
     then app request sendResponse
     else authorize
   where
+    jwtSecret :: JWTSecret
+    jwtSecret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of
