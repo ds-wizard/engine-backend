@@ -1,8 +1,14 @@
 sudo: required
 
-script:
+before_script:
 - cd src
 - docker login ccmi-elixir.cesnet.cz:5000 -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+
+script:
+- cd scripts
+- ./build-info.sh
+- cd ..
+
 - docker build -t ccmi-elixir.cesnet.cz:5000/elixir/dsp-server .
 - docker push ccmi-elixir.cesnet.cz:5000/elixir/dsp-server
 

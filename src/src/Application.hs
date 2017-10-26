@@ -9,6 +9,7 @@ import Text.Regex
 import Web.Scotty
 
 import Api.Handler.Common
+import Api.Handler.Info.InfoHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
 import Api.Middleware.Auth
@@ -17,13 +18,14 @@ import DSPConfig
 import Context
 import Migration
 
-unauthorizedEndpoints = [mkRegex "^tokens$"]
+unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$"]
 
 runApplication context dspConfig =
   let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
   in scotty serverPort $ do
     middleware corsMiddleware
     middleware (authMiddleware dspConfig unauthorizedEndpoints)
+    get "/" (getInfoA context dspConfig)
     post "/tokens" (postTokenA context dspConfig)
     get "/users" (getUsersA context dspConfig)
     post "/users/" (postUsersA context dspConfig)

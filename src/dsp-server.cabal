@@ -65,10 +65,12 @@ library
     , warp ==3.2.13
   exposed-modules:
       Api.Handler.Common
+      Api.Handler.Info.InfoHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
+      Api.Resources.Info.InfoDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO

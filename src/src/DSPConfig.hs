@@ -29,7 +29,7 @@ data AppConfigJwt = AppConfigJwt
 data BuildInfo = BuildInfo
   { _biAppName :: String
   , _biAppVersion :: String
-  , _biBuildTimestamp :: String
+  , _biBuiltAt :: String
   }
 
 data DSPConfig = DSPConfig
@@ -81,12 +81,12 @@ loadDSPConfig = do
       jwtSecret <- get configParser "JWT" "secret"
       return AppConfigJwt {_acjwtSecret = jwtSecret}
     loadBuildInfo configParser = do
-      appName <- get configParser "DEFAULT" "appname"
-      appVersion <- get configParser "DEFAULT" "appversion"
-      buildTimestamp <- get configParser "DEFAULT" "buildtimestamp"
+      appName <- get configParser "DEFAULT" "name"
+      appVersion <- get configParser "DEFAULT" "version"
+      buildTimestamp <- get configParser "DEFAULT" "builtat"
       return
         BuildInfo
         { _biAppName = appName
         , _biAppVersion = appVersion
-        , _biBuildTimestamp = buildTimestamp
+        , _biBuiltAt = buildTimestamp
         }

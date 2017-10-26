@@ -3,6 +3,8 @@ FROM ccmi-elixir.cesnet.cz:5000/elixir/stack-hpack
 WORKDIR /sources
 
 ADD ./app /sources/app
+ADD ./config /sources/config
+ADD ./scripts /sources/scripts
 ADD ./src /sources/src
 ADD ./test /sources/test
 ADD ./dsp-server.cabal /sources/dsp-server.cabal
