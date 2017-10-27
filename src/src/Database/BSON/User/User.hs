@@ -1,26 +1,13 @@
-module Database.Entity.User where
+module Database.BSON.User.User where
 
-import Control.Lens (makeLenses, (^.))
+import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.UUID
 import Data.Maybe
+import Data.UUID
 import GHC.Generics
 
-import Common.Types
-import Common.Uuid
-
-data User = User
-  { _uUuid :: UUID
-  , _uName :: String
-  , _uSurname :: String
-  , _uEmail :: Email
-  , _uPasswordHash :: String
-  , _uRole :: Role
-  , _uPermissions :: [Permission]
-  } deriving (Generic, Show, Eq)
-
-makeLenses ''User
+import Model.User
 
 instance ToBSON User where
   toBSON user =
@@ -43,7 +30,8 @@ instance FromBSON User where
     passwordHash <- BSON.lookup "passwordHash" doc
     role <- BSON.lookup "role" doc
     permissions <- BSON.lookup "permissions" doc
-    return User
+    return
+      User
       { _uUuid = uuid
       , _uName = name
       , _uSurname = surname
@@ -52,5 +40,3 @@ instance FromBSON User where
       , _uRole = role
       , _uPermissions = permissions
       }
-
-

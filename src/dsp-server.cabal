@@ -66,11 +66,13 @@ library
   exposed-modules:
       Api.Handler.Common
       Api.Handler.Info.InfoHandler
+      Api.Handler.KnowledgeModel.KnowledgeModelHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
       Api.Resources.Info.InfoDTO
+      Api.Resources.KnowledgeModel.KnowledgeModelDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO
@@ -80,9 +82,12 @@ library
       Common.Uuid
       Context
       Data.Bson.Generic
+      Database.BSON.KnowledgeModel.KnowledgeModel
+      Database.BSON.User.User
       Database.DAO.Common
-      Database.DAO.UserDAO
-      Database.Entity.User
+      Database.DAO.KnowledgeModel.KnowledgeModelDAO
+      Database.DAO.User.UserDAO
+      Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator
       KMMigration.Migration.Event.Answer.AddAnswerEvent
@@ -114,6 +119,10 @@ library
       KMMigration.Model.PackageManagement
       KMMigration.Model.UserManagement
       Migration
+      Model.KnowledgeModel
+      Model.User
+      Service.KnowledgeModel.KnowledgeModelMapper
+      Service.KnowledgeModel.KnowledgeModelService
       Service.Token.TokenMapper
       Service.Token.TokenService
       Service.User.UserMapper

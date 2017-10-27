@@ -7,7 +7,7 @@ import Data.UUID (UUID)
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Common.Types
-import Database.Entity.User
+import Model.User
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -43,4 +43,3 @@ fromUserDTO dto userUuid passwordHash =
   , _uRole = dto ^. udtoRole
   , _uPermissions = dto ^. udtoPermissions
   }
-    

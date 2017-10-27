@@ -1,16 +1,19 @@
-module Database.DAO.UserDAO where
+module Database.DAO.User.UserDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
-import Database.MongoDB (find, findOne, select, insert, fetch, save, merge, delete, deleteOne, (=:), rest)
+import Database.MongoDB
+       (find, findOne, select, insert, fetch, save, merge, delete,
+        deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Types
 import Context
+import Database.BSON.User.User
 import Database.DAO.Common
-import Database.Entity.User
+import Model.User
 
 userCollection = "users"
 
@@ -26,7 +29,7 @@ findUserById context userUuid = do
   maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
   case maybeUser of
     Just user -> return . fromBSON $ user
-    Nothing -> return Nothing  
+    Nothing -> return Nothing
 
 findUserByEmail :: Context -> Email -> IO (Maybe User)
 findUserByEmail context userEmail = do
@@ -34,7 +37,7 @@ findUserByEmail context userEmail = do
   maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
   case maybeUser of
     Just user -> return . fromBSON $ user
-    Nothing -> return Nothing  
+    Nothing -> return Nothing
 
 insertUser :: Context -> User -> IO Value
 insertUser context user = do
@@ -43,16 +46,17 @@ insertUser context user = do
 
 updateUserById :: Context -> User -> IO ()
 updateUserById context user = do
-  let action = fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>= save userCollection . merge (toBSON user)
+  let action =
+        fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>=
+        save userCollection . merge (toBSON user)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteUsers :: Context -> IO ()
 deleteUsers context = do
   let action = delete $ select [] userCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
-  
+
 deleteUserById :: Context -> String -> IO ()
 deleteUserById context userUuid = do
   let action = deleteOne $ select ["uuid" =: userUuid] userCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
-  

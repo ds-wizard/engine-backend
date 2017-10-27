@@ -15,8 +15,8 @@ import DSPConfig
 import Data.Aeson
 import qualified Data.Text as T
 import qualified Data.Vector as V
-import Database.DAO.UserDAO
-import Database.Entity.User
+import Database.DAO.User.UserDAO
+import Model.User
 
 import Service.Token.TokenMapper
 

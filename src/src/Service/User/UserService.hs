@@ -11,8 +11,8 @@ import Api.Resources.User.UserDTO
 import Common.Types
 import Common.Uuid
 import Context
-import Database.DAO.UserDAO
-import Database.Entity.User
+import Database.DAO.User.UserDAO
+import Model.User
 import Service.User.UserMapper
 
 getPermissionForRole :: Role -> [Permission]
@@ -32,7 +32,8 @@ createUserWithGivenUuid :: Context -> U.UUID -> UserCreateDTO -> IO UserDTO
 createUserWithGivenUuid context userUuid userCreateDto = do
   let roles = getPermissionForRole (userCreateDto ^. ucdtoRole)
   passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
-  let user = fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles
+  let user =
+        fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles
   insertUser context user
   return $ toDTO user
 
