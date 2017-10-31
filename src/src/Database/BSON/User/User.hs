@@ -7,7 +7,7 @@ import Data.Maybe
 import Data.UUID
 import GHC.Generics
 
-import Model.User
+import Model.User.User
 
 instance ToBSON User where
   toBSON user =

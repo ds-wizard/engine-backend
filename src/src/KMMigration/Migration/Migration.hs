@@ -4,17 +4,16 @@ import Control.Lens
 
 import KMMigration.Migration.Applicator.Applicator
 import KMMigration.Migration.Event.Common
-import KMMigration.Migration.Event.EventApplicable
-import KMMigration.Migration.Event.KnowledgeModel.EditKnowledgeModelEvent
+import Model.Event.Event
+import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import KMMigration.Model.Common
-import KMMigration.Model.Event
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
-ncmApplyEvent :: KnowledgeModel -> EventApplicable -> KnowledgeModel
-ncmApplyEvent km (MkEventApplicable e) = applyEventToKM e km
+ncmApplyEvent :: KnowledgeModel -> Event -> KnowledgeModel
+ncmApplyEvent km (MkEvent e) = applyEventToKM e km
 
-noConflictMethod :: KnowledgeModel -> EventApplicable -> KnowledgeModel
+noConflictMethod :: KnowledgeModel -> Event -> KnowledgeModel
 noConflictMethod = ncmApplyEvent
 
-migrate :: KnowledgeModel -> [EventApplicable] -> KnowledgeModel
+migrate :: KnowledgeModel -> [Event] -> KnowledgeModel
 migrate = foldl noConflictMethod

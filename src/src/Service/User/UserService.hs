@@ -12,7 +12,7 @@ import Common.Types
 import Common.Uuid
 import Context
 import Database.DAO.User.UserDAO
-import Model.User
+import Model.User.User
 import Service.User.UserMapper
 
 getPermissionForRole :: Role -> [Permission]

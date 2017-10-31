@@ -65,12 +65,14 @@ library
     , warp ==3.2.13
   exposed-modules:
       Api.Handler.Common
+      Api.Handler.Event.EventHandler
       Api.Handler.Info.InfoHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
+      Api.Resources.Event.EventDTO
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
       Api.Resources.Token.TokenCreateDTO
@@ -79,48 +81,59 @@ library
       Api.Resources.User.UserDTO
       Application
       Common.Types
+      Common.Utils
       Common.Uuid
       Context
       Data.Bson.Generic
+      Database.BSON.Common
+      Database.BSON.Event.Answer
+      Database.BSON.Event.Chapter
+      Database.BSON.Event.Expert
+      Database.BSON.Event.FollowUpQuestion
+      Database.BSON.Event.KnowledgeModel
+      Database.BSON.Event.Question
+      Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
       Database.BSON.User.User
       Database.DAO.Common
+      Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
       Database.DAO.User.UserDAO
       Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator
-      KMMigration.Migration.Event.Answer.AddAnswerEvent
-      KMMigration.Migration.Event.Answer.DeleteAnswerEvent
-      KMMigration.Migration.Event.Answer.EditAnswerEvent
-      KMMigration.Migration.Event.Chapter.AddChapterEvent
-      KMMigration.Migration.Event.Chapter.DeleteChapterEvent
-      KMMigration.Migration.Event.Chapter.EditChapterEvent
       KMMigration.Migration.Event.Common
-      KMMigration.Migration.Event.EventApplicable
-      KMMigration.Migration.Event.Expert.AddExpertEvent
-      KMMigration.Migration.Event.Expert.DeleteExpertEvent
-      KMMigration.Migration.Event.Expert.EditExpertEvent
-      KMMigration.Migration.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-      KMMigration.Migration.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
-      KMMigration.Migration.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-      KMMigration.Migration.Event.KnowledgeModel.AddKnowledgeModelEvent
-      KMMigration.Migration.Event.KnowledgeModel.EditKnowledgeModelEvent
-      KMMigration.Migration.Event.Question.AddQuestionEvent
-      KMMigration.Migration.Event.Question.DeleteQuestionEvent
-      KMMigration.Migration.Event.Question.EditQuestionEvent
-      KMMigration.Migration.Event.Reference.AddReferenceEvent
-      KMMigration.Migration.Event.Reference.DeleteReferenceEvent
-      KMMigration.Migration.Event.Reference.EditReferenceEvent
       KMMigration.Migration.Migration
       KMMigration.Model.Common
-      KMMigration.Model.Event
-      KMMigration.Model.KnowledgeModel
       KMMigration.Model.PackageManagement
-      KMMigration.Model.UserManagement
       Migration
-      Model.KnowledgeModel
-      Model.User
+      Model.Event.Answer.AddAnswerEvent
+      Model.Event.Answer.DeleteAnswerEvent
+      Model.Event.Answer.EditAnswerEvent
+      Model.Event.Chapter.AddChapterEvent
+      Model.Event.Chapter.DeleteChapterEvent
+      Model.Event.Chapter.EditChapterEvent
+      Model.Event.Event
+      Model.Event.Expert.AddExpertEvent
+      Model.Event.Expert.DeleteExpertEvent
+      Model.Event.Expert.EditExpertEvent
+      Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
+      Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
+      Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
+      Model.Event.KnowledgeModel.AddKnowledgeModelEvent
+      Model.Event.KnowledgeModel.EditKnowledgeModelEvent
+      Model.Event.Question.AddQuestionEvent
+      Model.Event.Question.DeleteQuestionEvent
+      Model.Event.Question.EditQuestionEvent
+      Model.Event.Reference.AddReferenceEvent
+      Model.Event.Reference.DeleteReferenceEvent
+      Model.Event.Reference.EditReferenceEvent
+      Model.KnowledgeModel.KnowledgeModel
+      Model.User.User
+      Service.Event.EventFromDTO
+      Service.Event.EventMapper
+      Service.Event.EventService
+      Service.Event.EventToDTO
       Service.KnowledgeModel.KnowledgeModelMapper
       Service.KnowledgeModel.KnowledgeModelService
       Service.Token.TokenMapper

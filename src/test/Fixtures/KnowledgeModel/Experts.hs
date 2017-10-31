@@ -1,6 +1,6 @@
 module Fixtures.KnowledgeModel.Experts where
 
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 expertDarth =
   Expert

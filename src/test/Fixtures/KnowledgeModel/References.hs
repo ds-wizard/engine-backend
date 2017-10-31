@@ -1,6 +1,6 @@
 module Fixtures.KnowledgeModel.References where
 
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 referenceCh1 = Reference {_refUuid = "referenceCh1", _refChapter = "chapter1"}
 

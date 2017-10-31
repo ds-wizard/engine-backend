@@ -10,7 +10,7 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 import Common.Types
 import Context
 import Database.DAO.Common
-import Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 import Database.BSON.KnowledgeModel.KnowledgeModel
 
 kmCollection = "knowledgeModels"

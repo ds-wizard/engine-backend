@@ -6,7 +6,7 @@ import Data.UUID (UUID)
 
 import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Common.Types
-import Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO
 toKnowledgeModelDTO km =

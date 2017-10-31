@@ -4,7 +4,7 @@ import Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions as FA
 import Fixtures.KnowledgeModel.Common as FC
 import Fixtures.KnowledgeModel.Experts as FE
 import Fixtures.KnowledgeModel.References as FR
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 qTypeOption = "option"
 

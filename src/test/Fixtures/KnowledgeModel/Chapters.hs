@@ -3,7 +3,7 @@ module Fixtures.KnowledgeModel.Chapters where
 import Control.Lens
 
 import Fixtures.KnowledgeModel.Questions as FQ
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 chapter1 =
   Chapter

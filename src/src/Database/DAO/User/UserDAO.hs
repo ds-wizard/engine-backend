@@ -13,7 +13,7 @@ import Common.Types
 import Context
 import Database.BSON.User.User
 import Database.DAO.Common
-import Model.User
+import Model.User.User
 
 userCollection = "users"
 

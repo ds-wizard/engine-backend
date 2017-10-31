@@ -2,7 +2,7 @@ module Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions where
 
 import Data.Maybe
 
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 -- -----------------------------------------------------------------
 -- ANSWERS

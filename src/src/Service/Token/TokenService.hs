@@ -16,7 +16,7 @@ import Data.Aeson
 import qualified Data.Text as T
 import qualified Data.Vector as V
 import Database.DAO.User.UserDAO
-import Model.User
+import Model.User.User
 
 import Service.Token.TokenMapper
 

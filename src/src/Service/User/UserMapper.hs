@@ -7,7 +7,7 @@ import Data.UUID (UUID)
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Common.Types
-import Model.User
+import Model.User.User
 
 toDTO :: User -> UserDTO
 toDTO user =

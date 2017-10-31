@@ -1,7 +1,8 @@
 module KMMigration.Model.PackageManagement where
 
 import KMMigration.Model.Common
-import KMMigration.Model.Event
+
+type UUID = String
 
 data Package = Package
   { _pkgUuid :: UUID

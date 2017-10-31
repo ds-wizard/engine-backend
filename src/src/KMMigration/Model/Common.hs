@@ -1,6 +1,5 @@
 module KMMigration.Model.Common where
 
-type UUID = String
 
 type DateTime = String
 

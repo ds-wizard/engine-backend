@@ -7,7 +7,7 @@ import Data.Maybe
 import Data.UUID
 import GHC.Generics
 
-import Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------

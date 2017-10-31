@@ -3,7 +3,7 @@ module Fixtures.KnowledgeModel.KnowledgeModels where
 import Control.Lens
 
 import Fixtures.KnowledgeModel.Chapters
-import KMMigration.Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 
 km1 =
   KnowledgeModel

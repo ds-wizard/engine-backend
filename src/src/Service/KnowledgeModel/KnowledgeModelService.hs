@@ -11,7 +11,7 @@ import Common.Types
 import Common.Uuid
 import Context
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import Model.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 getKnowledgeModels :: Context -> IO [KnowledgeModelDTO]
