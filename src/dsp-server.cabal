@@ -68,6 +68,7 @@ library
       Api.Handler.Event.EventHandler
       Api.Handler.Info.InfoHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
+      Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Middleware.Auth
@@ -75,6 +76,7 @@ library
       Api.Resources.Event.EventDTO
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
+      Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO
@@ -94,11 +96,21 @@ library
       Database.BSON.Event.Question
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
+      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
       Database.BSON.User.User
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
+      Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
       Database.DAO.User.UserDAO
+      Database.Migration.Event.AnswerEventMigration
+      Database.Migration.Event.ChapterEventMigration
+      Database.Migration.Event.EventMigration
+      Database.Migration.Event.ExpertEventMigration
+      Database.Migration.Event.FollowUpQuestionEventMigration
+      Database.Migration.Event.KnowledgeModelEventMigration
+      Database.Migration.Event.QuestionEventMigration
+      Database.Migration.Event.ReferenceEventMigration
       Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator
@@ -129,6 +141,7 @@ library
       Model.Event.Reference.DeleteReferenceEvent
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
+      Model.KnowledgeModelContainer.KnowledgeModelContainer
       Model.User.User
       Service.Event.EventFromDTO
       Service.Event.EventMapper
@@ -136,6 +149,8 @@ library
       Service.Event.EventToDTO
       Service.KnowledgeModel.KnowledgeModelMapper
       Service.KnowledgeModel.KnowledgeModelService
+      Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
+      Service.KnowledgeModelContainer.KnowledgeModelContainerService
       Service.Token.TokenMapper
       Service.Token.TokenService
       Service.User.UserMapper

@@ -16,8 +16,6 @@ import Model.Event.Event
 import Service.Event.EventMapper
 import Service.Event.EventToDTO
 
--- getPermissionForRole :: Role -> [Permission]
--- getPermissionForRole _ = ["ADD_CHAPTER", "EDIT_CHAPTER", "DELETE_CHAPTER"]
 getEvents :: Context -> IO [EventDTO]
 getEvents context = do
   events <- findEvents context
