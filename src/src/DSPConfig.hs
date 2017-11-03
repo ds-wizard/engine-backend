@@ -6,7 +6,7 @@ import Control.Monad.Trans.Except
 import Data.ConfigFile
 import Data.Text
 
-import Paths_dsp_server
+import Paths_src
 
 applicationConfigFile = "config/app-config.cfg"
 

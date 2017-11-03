@@ -1,5 +1,6 @@
-module Main
-  ( main
-  ) where
+module Main where
 
-import Application (main)
+import Application
+
+main :: IO ()
+main = runServer

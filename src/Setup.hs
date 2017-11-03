@@ -1,4 +1,2 @@
-import qualified Distribution.Simple
-
-main :: IO ()
-main = Distribution.Simple.defaultMain
+import Distribution.Simple
+main = defaultMain
