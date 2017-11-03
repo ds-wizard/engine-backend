@@ -1,7 +1,7 @@
 module Main where
 
 import Test.Hspec
-import Test.Hspec.Expectations.Pretty
+import Test.Hspec.Expectations.Pretty as TP
 
 import Specs.ApplicatorINTSpec
 import Specs.ApplicatorSpec
@@ -9,5 +9,6 @@ import Specs.ApplicatorSpec
 main :: IO ()
 main =
   hspec $ do
-    applicatorSpec
-    applicatorINTSpec
+    describe "Applicator" $ do
+     applicatorSpec
+     applicatorINTSpec
