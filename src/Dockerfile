@@ -7,7 +7,7 @@ ADD ./config /sources/config
 ADD ./scripts /sources/scripts
 ADD ./src /sources/src
 ADD ./test /sources/test
-ADD ./dsp-server.cabal /sources/dsp-server.cabal
+ADD ./src.cabal /sources/src.cabal
 ADD ./package.yaml /sources/package.yaml
 ADD ./Setup.hs /sources/Setup.hs
 ADD ./LICENSE.md /sources/LICENSE.md
