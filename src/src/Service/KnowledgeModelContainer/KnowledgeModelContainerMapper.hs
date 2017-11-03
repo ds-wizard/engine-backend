@@ -6,10 +6,10 @@ import Data.UUID (UUID)
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
 import Common.Types
-import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
-toKnowledgeModelContainerDTO :: KnowledgeModel -> KnowledgeModelContainerDTO
-toKnowledgeModelContainerDTO kmc =
+toDTO :: KnowledgeModelContainer -> KnowledgeModelContainerDTO
+toDTO kmc =
   KnowledgeModelContainerDTO
   { _kmcdtoKmContainerUuid = kmc ^. kmcKmContainerUuid
   , _kmcdtoName = kmc ^. kmcName
@@ -18,10 +18,9 @@ toKnowledgeModelContainerDTO kmc =
   , _kmcdtoParentPackageVersion = kmc ^. kmcParentPackageVersion
   }
 
-fromfromKnowledgeModelContainerDTO :: KnowledgeModelContainerDTO
-                                   -> KnowledgeModel
-fromfromKnowledgeModelContainerDTO dto =
-  KnowledgeModel
+fromDTO :: KnowledgeModelContainerDTO -> KnowledgeModelContainer
+fromDTO dto =
+  KnowledgeModelContainer
   { _kmcKmContainerUuid = dto ^. kmcdtoKmContainerUuid
   , _kmcName = dto ^. kmcdtoName
   , _kmcShortname = dto ^. kmcdtoShortname

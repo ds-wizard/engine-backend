@@ -12,6 +12,7 @@ import Api.Handler.Common
 import Api.Handler.Event.EventHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
+import Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
 import Api.Middleware.Auth
@@ -36,10 +37,11 @@ runApplication context dspConfig =
        put "/users/:userUuid" (putUserA context dspConfig)
        delete "/users/:userUuid" (deleteUserA context dspConfig)
        
-      --  get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
+       get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
        post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
-      --  get "/kmcs/:kmUuid" (getKnowledgeModelContainerA context dspConfig)
-      --  put "/kmcs/:kmUuid" (putKnowledgeModelContainerA context dspConfig)
+       get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
+       put "/kmcs/:kmcUuid" (putKnowledgeModelContainerA context dspConfig)
+       delete "/kmcs/:kmcUuid" (deleteKnowledgeModelContainerA context dspConfig)
        
       --  get "/kmcs/:kmUuid/km" (getKnowledgeModelA context dspConfig)
        
@@ -57,7 +59,7 @@ createDBConn dspConfig afterSuccess =
       dbName = pack (appConfigDatabase ^. acdbDatabaseName)
   in withMongoDBConn dbName dbHost dbPort Nothing 10100 afterSuccess
 
-main = do
+runServer = do
   putStrLn
     "/-------------------------------------------------------------\\\n\
   \|    _____   _____ _____     _____                            |\n\

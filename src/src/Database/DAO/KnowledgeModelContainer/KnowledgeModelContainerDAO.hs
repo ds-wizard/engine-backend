@@ -17,46 +17,38 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
 kmcCollection = "knowledgeModelContainers"
 
--- findKnowledgeModelContainers :: Context -> IO [KnowledgeModelContainer]
--- findKnowledgeModelContainers context = do
---   let action = rest =<< find (select [] userCollection)
---   users <- runMongoDBPoolDef action (context ^. ctxDbPool)
---   return $ fmap (fromJust . fromBSON) users
+findKnowledgeModelContainers :: Context -> IO [KnowledgeModelContainer]
+findKnowledgeModelContainers context = do
+ let action = rest =<< find (select [] kmcCollection)
+ kmcs <- runMongoDBPoolDef action (context ^. ctxDbPool)
+ return $ fmap (fromJust . fromBSON) kmcs
 
--- findKnowledgeModelContainerById :: Context -> String -> IO (Maybe KnowledgeModelContainer)
--- findKnowledgeModelContainerById context userUuid = do
---   let action = findOne $ select ["uuid" =: userUuid] userCollection
---   maybeKnowledgeModelContainer <- runMongoDBPoolDef action (context ^. ctxDbPool)
---   case maybeKnowledgeModelContainer of
---     Just user -> return . fromBSON $ user
---     Nothing -> return Nothing
-
--- findKnowledgeModelContainerByEmail :: Context -> Email -> IO (Maybe KnowledgeModelContainer)
--- findKnowledgeModelContainerByEmail context userEmail = do
---   let action = findOne $ select ["email" =: userEmail] userCollection
---   maybeKnowledgeModelContainer <- runMongoDBPoolDef action (context ^. ctxDbPool)
---   case maybeKnowledgeModelContainer of
---     Just user -> return . fromBSON $ user
---     Nothing -> return Nothing
+findKnowledgeModelContainerById :: Context -> String -> IO (Maybe KnowledgeModelContainer)
+findKnowledgeModelContainerById context kmcUuid = do
+ let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
+ maybeKnowledgeModelContainer <- runMongoDBPoolDef action (context ^. ctxDbPool)
+ case maybeKnowledgeModelContainer of
+   Just kmc -> return . fromBSON $ kmc
+   Nothing -> return Nothing
 
 insertKnowledgeModelContainer :: Context -> KnowledgeModelContainer -> IO Value
 insertKnowledgeModelContainer context kmc = do
   let action = insert kmcCollection (toBSON kmc)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
--- updateKnowledgeModelContainerById :: Context -> KnowledgeModelContainer -> IO ()
--- updateKnowledgeModelContainerById context user = do
---   let action =
---         fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>=
---         save userCollection . merge (toBSON user)
---   runMongoDBPoolDef action (context ^. ctxDbPool)
+updateKnowledgeModelContainerById :: Context -> KnowledgeModelContainer -> IO ()
+updateKnowledgeModelContainerById context kmc = do
+ let action =
+       fetch (select ["uuid" =: (kmc ^. kmcKmContainerUuid)] kmcCollection) >>=
+       save kmcCollection . merge (toBSON kmc)
+ runMongoDBPoolDef action (context ^. ctxDbPool)
 
--- deleteKnowledgeModelContainers :: Context -> IO ()
--- deleteKnowledgeModelContainers context = do
---   let action = delete $ select [] userCollection
---   runMongoDBPoolDef action (context ^. ctxDbPool)
+deleteKnowledgeModelContainers :: Context -> IO ()
+deleteKnowledgeModelContainers context = do
+ let action = delete $ select [] kmcCollection
+ runMongoDBPoolDef action (context ^. ctxDbPool)
 
--- deleteKnowledgeModelContainerById :: Context -> String -> IO ()
--- deleteKnowledgeModelContainerById context userUuid = do
---   let action = deleteOne $ select ["uuid" =: userUuid] userCollection
---   runMongoDBPoolDef action (context ^. ctxDbPool)
+deleteKnowledgeModelContainerById :: Context -> String -> IO ()
+deleteKnowledgeModelContainerById context kmcUuid = do
+ let action = deleteOne $ select ["uuid" =: kmcUuid] kmcCollection
+ runMongoDBPoolDef action (context ^. ctxDbPool)
