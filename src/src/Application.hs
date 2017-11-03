@@ -33,7 +33,9 @@ runApplication context dspConfig =
        
        get "/users" (getUsersA context dspConfig)
        post "/users/" (postUsersA context dspConfig)
+       get "/users/current" (getUserCurrentA context dspConfig)
        get "/users/:userUuid" (getUserA context dspConfig)
+       put "/users/current" (putUserCurrentA context dspConfig)
        put "/users/:userUuid" (putUserA context dspConfig)
        delete "/users/:userUuid" (deleteUserA context dspConfig)
        

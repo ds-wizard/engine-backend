@@ -16,7 +16,7 @@ data UserDTO = UserDTO
   , _udtoEmail :: Email
   , _udtoRole :: Role
   , _udtoPermissions :: [Permission]
-  }
+  } deriving (Show, Eq)
 
 makeLenses ''UserDTO
 

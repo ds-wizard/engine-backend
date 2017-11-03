@@ -5,19 +5,19 @@ import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
 import qualified Data.Map as M
 import qualified Data.Text as T
-import Web.JWT
+import qualified Data.Vector as V
+import qualified Data.UUID as U
+import qualified Web.JWT as JWT
 
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
 import Common.Types
+import Common.Utils
 import Context
 import DSPConfig
 import Data.Aeson
-import qualified Data.Text as T
-import qualified Data.Vector as V
 import Database.DAO.User.UserDAO
 import Model.User.User
-
 import Service.Token.TokenMapper
 
 getToken :: Context -> DSPConfig -> TokenCreateDTO -> IO (Maybe TokenDTO)
@@ -36,10 +36,12 @@ getToken context dspConfig tokenCreateDto = do
 createToken :: User -> JWTSecret -> Token
 createToken user jwtSecret =
   let permissionValues = fmap (String . T.pack) (user ^. uPermissions)
-      val = Array (V.fromList permissionValues) :: Value
-      payload = M.insert "roles" val M.empty
+      permissions = Array (V.fromList permissionValues) :: Value
+      userUuid = toJSON (user ^. uUuid) :: Value
+      payload = M.insert "userUuid" userUuid M.empty
+      payload2 = M.insert "roles" permissions payload
       cs =
-        JWTClaimsSet
+        JWT.JWTClaimsSet
         { iss = Nothing
         , sub = Nothing
         , aud = Nothing
@@ -47,7 +49,20 @@ createToken user jwtSecret =
         , nbf = Nothing
         , iat = Nothing
         , jti = Nothing
-        , unregisteredClaims = payload
+        , unregisteredClaims = payload2
         }
-      key = secret $ T.pack jwtSecret
-  in T.unpack $ encodeSigned HS256 key cs
+      key = JWT.secret $ T.pack jwtSecret
+  in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
+
+
+getUserUuidFromToken :: Context -> Maybe T.Text -> Maybe T.Text
+getUserUuidFromToken context maybeTokenHeaderValue =
+  case maybeTokenHeaderValue of
+    Just tokenHeaderValue -> do
+      decodedToken <- separateToken tokenHeaderValue >>= JWT.decode
+      let cs = JWT.claims decodedToken
+      let payload = JWT.unregisteredClaims cs
+      (String userUuid) <- M.lookup "userUuid" payload
+      Just userUuid
+    _ -> Nothing
+

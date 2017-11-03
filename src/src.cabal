@@ -30,6 +30,7 @@ library
   hs-source-dirs:
       src
   default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
+  ghc-options: -Wall
   exposed-modules:
       Api.Handler.Common
       Api.Handler.Event.EventHandler

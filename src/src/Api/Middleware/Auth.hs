@@ -1,6 +1,6 @@
 module Api.Middleware.Auth where
 
-import Data.ByteString (ByteString)
+import Data.ByteString (ByteString, pack)
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
 import Control.Lens ((^.))
@@ -18,9 +18,10 @@ import Web.JWT
 import Api.Handler.Common
 import DSPConfig
 import Common.Types
+import Common.Utils
 
 authorizationHeaderName :: ByteString
-authorizationHeaderName = "x-dsp-auth-token"
+authorizationHeaderName = "Authorization"
 
 getRequestURL :: Request -> String
 getRequestURL request = T.unpack . T.concat $ pathInfo request
@@ -33,9 +34,11 @@ isUnauthorizedEndpoint :: String -> [Regex] -> Bool
 isUnauthorizedEndpoint requestURL unauthorizedEndpoints =
   or $ fmap (matchURL requestURL) unauthorizedEndpoints
 
-getTokenFromHeader :: Request -> Maybe ByteString
+getTokenFromHeader :: Request -> Maybe T.Text
 getTokenFromHeader request =
-  lookup (mk authorizationHeaderName) (requestHeaders request)
+  case lookup (mk authorizationHeaderName) (requestHeaders request) of
+    Just headerValue -> separateToken . decodeUtf8 $ headerValue
+    Nothing -> Nothing
 
 authMiddleware :: DSPConfig -> [Regex] -> Middleware
 authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
@@ -48,7 +51,7 @@ authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of
-        Just token -> verifyToken . decodeUtf8 $ token
+        Just token -> verifyToken $ token
         Nothing -> sendResponse unauthorizedL
     verifyToken :: T.Text -> IO ResponseReceived
     verifyToken jwtToken =
