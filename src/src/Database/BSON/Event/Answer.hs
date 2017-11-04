@@ -22,7 +22,7 @@ instance ToBSON AddAnswerEvent where
     , "kmUuid" BSON.=: serializeUUID (event ^. aansKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. aansChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. aansQuestionUuid)
-    , "answerUuid" BSON.=: serializeUUID(event ^. aansAnswerUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. aansAnswerUuid)
     , "label" BSON.=: (event ^. aansLabel)
     , "advice" BSON.=: (event ^. aansAdvice)
     ]
@@ -46,8 +46,8 @@ instance FromBSON AddAnswerEvent where
       , _aansLabel = label
       , _aansAdvice = advice
       }
-
       -- -------------------------
+
 -- EDIT ANSWER EVENT -------
 -- -------------------------
 instance ToBSON EditAnswerEvent where
@@ -56,7 +56,7 @@ instance ToBSON EditAnswerEvent where
     , "kmUuid" BSON.=: serializeUUID (event ^. eansKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. eansChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. eansQuestionUuid)
-    , "answerUuid" BSON.=: serializeUUID(event ^. eansAnswerUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. eansAnswerUuid)
     , "label" BSON.=: (event ^. eansLabel)
     , "advice" BSON.=: (event ^. eansAdvice)
     , "followingIds" BSON.=: serializeMaybeUUIDList (event ^. eansFollowingIds)

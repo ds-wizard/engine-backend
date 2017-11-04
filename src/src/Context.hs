@@ -11,5 +11,6 @@ data Context = Context
   , _ctxConfig :: Config
   }
 
-makeLenses ''Config  
-makeLenses ''Context  
+makeLenses ''Config
+
+makeLenses ''Context

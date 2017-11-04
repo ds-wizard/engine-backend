@@ -29,10 +29,8 @@ instance FromBSON AddKnowledgeModelEvent where
     name <- BSON.lookup "name" doc
     return
       AddKnowledgeModelEvent
-      { _akmUuid = uuid
-      , _akmKmUuid = kmUuid
-      , _akmName = name
-      }
+      {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = name}
+
 -- -------------------------------
 -- EDIT KNOWLEDGE MODEL EVENT ----
 -- -------------------------------
@@ -58,4 +56,3 @@ instance FromBSON EditKnowledgeModelEvent where
       , _ekmName = name
       , _ekmChapterIds = chapterIds
       }
-

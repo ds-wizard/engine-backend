@@ -9,8 +9,8 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
 import Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
+import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
 
 -- ----------------------------------
 -- ADD FOLLOW-UP QUESTION EVENT -----
@@ -20,7 +20,7 @@ instance ToBSON AddFollowUpQuestionEvent where
     [ "uuid" BSON.=: serializeUUID (event ^. afuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. afuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. afuqChapterUuid)
-    , "answerUuid" BSON.=: serializeUUID(event ^. afuqAnswerUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. afuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. afuqQuestionUuid)
     , "qType" BSON.=: (event ^. afuqType)
     , "title" BSON.=: (event ^. afuqTitle)
@@ -48,6 +48,7 @@ instance FromBSON AddFollowUpQuestionEvent where
       , _afuqTitle = title
       , _afuqText = text
       }
+
 -- ----------------------------------
 -- EDIT FOLLOW-UP QUESTION EVENT ----
 -- ----------------------------------
@@ -56,14 +57,15 @@ instance ToBSON EditFollowUpQuestionEvent where
     [ "uuid" BSON.=: serializeUUID (event ^. efuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. efuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. efuqChapterUuid)
-    , "answerUuid" BSON.=: serializeUUID(event ^. efuqAnswerUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. efuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. efuqQuestionUuid)
     , "qType" BSON.=: (event ^. efuqType)
     , "title" BSON.=: (event ^. efuqTitle)
     , "text" BSON.=: (event ^. efuqText)
     , "answerUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqAnswerIds)
     , "expertUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqExpertIds)
-    , "referenceUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqReferenceIds)
+    , "referenceUuids" BSON.=:
+      serializeMaybeUUIDList (event ^. efuqReferenceIds)
     ]
 
 instance FromBSON EditFollowUpQuestionEvent where
@@ -78,7 +80,8 @@ instance FromBSON EditFollowUpQuestionEvent where
     text <- BSON.lookup "text" doc
     let answerUuids = deserializeMaybeUUIDList $ BSON.lookup "answerUuids" doc
     let expertUuids = deserializeMaybeUUIDList $ BSON.lookup "expertUuids" doc
-    let referenceUuids = deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
+    let referenceUuids =
+          deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
     return
       EditFollowUpQuestionEvent
       { _efuqUuid = uuid
@@ -93,6 +96,7 @@ instance FromBSON EditFollowUpQuestionEvent where
       , _efuqExpertIds = expertUuids
       , _efuqReferenceIds = referenceUuids
       }
+
 -- ----------------------------------
 -- DELETE FOLLOW-UP QUESTION EVENT --
 -- ----------------------------------
@@ -101,7 +105,7 @@ instance ToBSON DeleteFollowUpQuestionEvent where
     [ "uuid" BSON.=: serializeUUID (event ^. dfuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dfuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dfuqChapterUuid)
-    , "answerUuid" BSON.=: serializeUUID(event ^. dfuqAnswerUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. dfuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. dfuqQuestionUuid)
     ]
 

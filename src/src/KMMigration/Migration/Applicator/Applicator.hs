@@ -2,13 +2,14 @@ module KMMigration.Migration.Applicator.Applicator where
 
 import Control.Lens
 
+import KMMigration.Migration.Event.Common
+import KMMigration.Model.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
-import KMMigration.Migration.Event.Common
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
 import Model.Event.Expert.EditExpertEvent
@@ -23,7 +24,6 @@ import Model.Event.Question.EditQuestionEvent
 import Model.Event.Reference.AddReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
 import Model.Event.Reference.EditReferenceEvent
-import KMMigration.Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 -- ------------------------------------------------------------------------

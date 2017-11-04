@@ -1,12 +1,11 @@
 module Api.Resources.User.UserCreateDTO where
 
-import Data.Aeson
 import Control.Lens (makeLenses, (^.))
 import Control.Monad
+import Data.Aeson
 import Data.Text
 
 import Common.Types
-
 
 data UserCreateDTO = UserCreateDTO
   { _ucdtoName :: String

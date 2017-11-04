@@ -9,8 +9,8 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Model.Event.Reference.AddReferenceEvent
-import Model.Event.Reference.EditReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
+import Model.Event.Reference.EditReferenceEvent
 
 -- -------------------------
 -- ADD REFERNCE EVENT ------
@@ -32,7 +32,9 @@ instance FromBSON AddReferenceEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    referenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
+    referenceUuid <-
+      BSON.lookup "referenceUuid" doc >>= \referenceUuidS ->
+        fromString referenceUuidS
     chapter <- BSON.lookup "chapter" doc
     return
       AddReferenceEvent
@@ -43,6 +45,7 @@ instance FromBSON AddReferenceEvent where
       , _arefReferenceUuid = referenceUuid
       , _arefChapter = chapter
       }
+
 -- -------------------------
 -- EDIT REFERNCE EVENT -----
 -- -------------------------
@@ -63,7 +66,9 @@ instance FromBSON EditReferenceEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    referenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
+    referenceUuid <-
+      BSON.lookup "referenceUuid" doc >>= \referenceUuidS ->
+        fromString referenceUuidS
     chapter <- BSON.lookup "chapter" doc
     return
       EditReferenceEvent
@@ -74,6 +79,7 @@ instance FromBSON EditReferenceEvent where
       , _erefReferenceUuid = referenceUuid
       , _erefChapter = chapter
       }
+
 -- -------------------------
 -- DELETE REFERNCE EVENT ---
 -- -------------------------
@@ -93,7 +99,9 @@ instance FromBSON DeleteReferenceEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    referenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
+    referenceUuid <-
+      BSON.lookup "referenceUuid" doc >>= \referenceUuidS ->
+        fromString referenceUuidS
     return
       DeleteReferenceEvent
       { _drefUuid = uuid

@@ -39,11 +39,12 @@ getUserA context dspConfig = do
 getUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 getUserCurrentA context dspConfig = do
   tokenHeader <- Scotty.header "Authorization"
-  maybeDto <- liftIO $ getCurrentUser context (tokenHeader >>= \token -> Just . toStrict $ token)
+  maybeDto <-
+    liftIO $
+    getCurrentUser context (tokenHeader >>= \token -> Just . toStrict $ token)
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
-
 
 putUserA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserA context dspConfig = do
@@ -58,7 +59,12 @@ putUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserCurrentA context dspConfig = do
   tokenHeader <- Scotty.header "Authorization"
   userDto <- Scotty.jsonData :: Scotty.ActionM UserDTO
-  maybeDto <- liftIO $ modifyCurrentUser context (tokenHeader >>= \token -> Just . toStrict $ token) userDto
+  maybeDto <-
+    liftIO $
+    modifyCurrentUser
+      context
+      (tokenHeader >>= \token -> Just . toStrict $ token)
+      userDto
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA

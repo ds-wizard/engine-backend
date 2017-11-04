@@ -2,8 +2,8 @@ module Service.Event.EventMapper where
 
 import Api.Resources.Event.EventDTO
 import Model.Event.Event
-import Service.Event.EventToDTO
 import Service.Event.EventFromDTO
+import Service.Event.EventToDTO
 
 toDTOFn :: Event -> EventDTO
 toDTOFn (MkEvent event) = toDTO event
@@ -11,7 +11,7 @@ toDTOFn (MkEvent event) = toDTO event
 toDTOs :: [Event] -> [EventDTO]
 toDTOs = fmap toDTOFn
 
-fromDTOFn :: EventDTO  -> Event
+fromDTOFn :: EventDTO -> Event
 fromDTOFn (AddKnowledgeModelEventDTO' event) = fromDTO event
 fromDTOFn (EditKnowledgeModelEventDTO' event) = fromDTO event
 fromDTOFn (AddChapterEventDTO' event) = fromDTO event

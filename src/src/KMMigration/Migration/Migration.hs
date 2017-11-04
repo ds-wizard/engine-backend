@@ -4,9 +4,9 @@ import Control.Lens
 
 import KMMigration.Migration.Applicator.Applicator
 import KMMigration.Migration.Event.Common
+import KMMigration.Model.Common
 import Model.Event.Event
 import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
-import KMMigration.Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 ncmApplyEvent :: KnowledgeModel -> Event -> KnowledgeModel

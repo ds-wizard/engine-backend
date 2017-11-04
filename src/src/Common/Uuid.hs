@@ -6,7 +6,5 @@ import System.Random
 
 generateUuid :: IO U.UUID
 generateUuid = randomIO
-
 -- instance ToJSON U.UUID where
 --     toJSON = String . U.toText
-  

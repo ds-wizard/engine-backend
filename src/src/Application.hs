@@ -30,7 +30,6 @@ runApplication context dspConfig =
        middleware (authMiddleware dspConfig unauthorizedEndpoints)
        get "/" (getInfoA context dspConfig)
        post "/tokens" (postTokenA context dspConfig)
-       
        get "/users" (getUsersA context dspConfig)
        post "/users/" (postUsersA context dspConfig)
        get "/users/current" (getUserCurrentA context dspConfig)
@@ -38,19 +37,17 @@ runApplication context dspConfig =
        put "/users/current" (putUserCurrentA context dspConfig)
        put "/users/:userUuid" (putUserA context dspConfig)
        delete "/users/:userUuid" (deleteUserA context dspConfig)
-       
        get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
        post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
        get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
        put "/kmcs/:kmcUuid" (putKnowledgeModelContainerA context dspConfig)
-       delete "/kmcs/:kmcUuid" (deleteKnowledgeModelContainerA context dspConfig)
-       
+       delete
+         "/kmcs/:kmcUuid"
+         (deleteKnowledgeModelContainerA context dspConfig)
       --  get "/kmcs/:kmUuid/km" (getKnowledgeModelA context dspConfig)
-       
       --  get "/kmcs/:kmUuid/events" (getEventsA context dspConfig)
       --  post "/kmcs/:kmUuid/events/_bulk" (postEventsA context dspConfig)
       --  delete "/kmcs/:kmUuid/events/:eventUuid" (deleteEventA context dspConfig)
-
        notFound notFoundA
 
 createDBConn dspConfig afterSuccess =

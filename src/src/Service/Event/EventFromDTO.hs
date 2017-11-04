@@ -40,7 +40,9 @@ class EventFromDTO a where
 -- Knowledge Model ---------
 -- -------------------------
 instance EventFromDTO AddKnowledgeModelEventDTO where
-    fromDTO dto = MkEvent AddKnowledgeModelEvent
+  fromDTO dto =
+    MkEvent
+      AddKnowledgeModelEvent
       { _akmUuid = dto ^. akmdtoUuid
       , _akmKmUuid = dto ^. akmdtoKmUuid
       , _akmName = dto ^. akmdtoName

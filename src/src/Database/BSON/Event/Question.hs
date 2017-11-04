@@ -9,8 +9,8 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Model.Event.Question.AddQuestionEvent
-import Model.Event.Question.EditQuestionEvent
 import Model.Event.Question.DeleteQuestionEvent
+import Model.Event.Question.EditQuestionEvent
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -45,6 +45,7 @@ instance FromBSON AddQuestionEvent where
       , _aqTitle = title
       , _aqText = text
       }
+
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
@@ -73,7 +74,8 @@ instance FromBSON EditQuestionEvent where
     text <- BSON.lookup "text" doc
     let answerIds = deserializeMaybeUUIDList $ BSON.lookup "answerUuids" doc
     let expertIds = deserializeMaybeUUIDList $ BSON.lookup "expertUuids" doc
-    let referenceIds = deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
+    let referenceIds =
+          deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
     return
       EditQuestionEvent
       { _eqUuid = uuid
@@ -87,6 +89,7 @@ instance FromBSON EditQuestionEvent where
       , _eqExpertIds = expertIds
       , _eqReferenceIds = referenceIds
       }
+
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------

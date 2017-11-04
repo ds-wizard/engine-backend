@@ -9,8 +9,8 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Chapter.EditChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
+import Model.Event.Chapter.EditChapterEvent
 
 -- -------------------------
 -- ADD CHAPTER EVENT--------

@@ -41,4 +41,4 @@ runMigration context dspConfig = do
     , _ucdtoRole = "RESEARCHER"
     , _ucdtoPassword = "password"
     }
-  putStrLn "MIGRATION (User/User): ended"    
+  putStrLn "MIGRATION (User/User): ended"

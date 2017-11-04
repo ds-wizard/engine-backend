@@ -17,8 +17,8 @@ import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
 getKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelContainersA context dspConfig = do
-   dtos <- liftIO $ getKnowledgeModelContainers context
-   Scotty.json dtos
+  dtos <- liftIO $ getKnowledgeModelContainers context
+  Scotty.json dtos
 
 postKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
 postKnowledgeModelContainersA context dspConfig = do
@@ -28,25 +28,25 @@ postKnowledgeModelContainersA context dspConfig = do
 
 getKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelContainerA context dspConfig = do
- kmcUuid <- Scotty.param "kmcUuid"
- maybeDto <- liftIO $ getKnowledgeModelContainerById context kmcUuid
- case maybeDto of
-   Just dto -> Scotty.json dto
-   Nothing -> notFoundA
+  kmcUuid <- Scotty.param "kmcUuid"
+  maybeDto <- liftIO $ getKnowledgeModelContainerById context kmcUuid
+  case maybeDto of
+    Just dto -> Scotty.json dto
+    Nothing -> notFoundA
 
 putKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
 putKnowledgeModelContainerA context dspConfig = do
- kmcUuid <- Scotty.param "kmcUuid"
- kmcDto <- Scotty.jsonData
- maybeDto <- liftIO $ modifyKnowledgeModelContainer context kmcUuid kmcDto
- case maybeDto of
-   Just dto -> Scotty.json dto
-   Nothing -> notFoundA
+  kmcUuid <- Scotty.param "kmcUuid"
+  kmcDto <- Scotty.jsonData
+  maybeDto <- liftIO $ modifyKnowledgeModelContainer context kmcUuid kmcDto
+  case maybeDto of
+    Just dto -> Scotty.json dto
+    Nothing -> notFoundA
 
 deleteKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
 deleteKnowledgeModelContainerA context dspConfig = do
- kmcUuid <- Scotty.param "kmcUuid"
- isSuccess <- liftIO $ deleteKnowledgeModelContainer context kmcUuid
- if isSuccess
-   then Scotty.status noContent204
-   else notFoundA
+  kmcUuid <- Scotty.param "kmcUuid"
+  isSuccess <- liftIO $ deleteKnowledgeModelContainer context kmcUuid
+  if isSuccess
+    then Scotty.status noContent204
+    else notFoundA

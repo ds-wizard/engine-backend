@@ -1,4 +1,6 @@
-module Api.Middleware.CORS (corsMiddleware) where
+module Api.Middleware.CORS
+  ( corsMiddleware
+  ) where
 
 import Network.HTTP.Types (Header)
 import Network.Wai (Middleware)

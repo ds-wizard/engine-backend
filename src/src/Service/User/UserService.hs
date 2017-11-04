@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
-import qualified Data.UUID as U
 import qualified Data.Text as T
+import qualified Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
@@ -14,8 +14,8 @@ import Common.Uuid
 import Context
 import Database.DAO.User.UserDAO
 import Model.User.User
-import Service.User.UserMapper
 import Service.Token.TokenService
+import Service.User.UserMapper
 
 getPermissionForRole :: Role -> [Permission]
 getPermissionForRole _ = ["ADD_CHAPTER", "EDIT_CHAPTER", "DELETE_CHAPTER"]
@@ -65,7 +65,8 @@ modifyUser context userUuid userDto = do
   maybeUser <- findUserById context userUuid
   case maybeUser of
     Just user -> do
-      let updatedUser = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
+      let updatedUser =
+            fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
       updateUserById context updatedUser
       return . Just $ userDto
     Nothing -> return Nothing

@@ -5,8 +5,8 @@ import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
 import qualified Data.Map as M
 import qualified Data.Text as T
-import qualified Data.Vector as V
 import qualified Data.UUID as U
+import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
 import Api.Resources.Token.TokenCreateDTO
@@ -54,7 +54,6 @@ createToken user jwtSecret =
       key = JWT.secret $ T.pack jwtSecret
   in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
 
-
 getUserUuidFromToken :: Context -> Maybe T.Text -> Maybe T.Text
 getUserUuidFromToken context maybeTokenHeaderValue =
   case maybeTokenHeaderValue of
@@ -65,4 +64,3 @@ getUserUuidFromToken context maybeTokenHeaderValue =
       (String userUuid) <- M.lookup "userUuid" payload
       Just userUuid
     _ -> Nothing
-

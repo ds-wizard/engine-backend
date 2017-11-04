@@ -1,9 +1,9 @@
 module Api.Middleware.Auth where
 
+import Control.Lens ((^.))
 import Data.ByteString (ByteString, pack)
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
-import Control.Lens ((^.))
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Time.Clock.POSIX (getPOSIXTime)
@@ -16,9 +16,9 @@ import Text.Regex
 import Web.JWT
 
 import Api.Handler.Common
-import DSPConfig
 import Common.Types
 import Common.Utils
+import DSPConfig
 
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"
