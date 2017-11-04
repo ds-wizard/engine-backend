@@ -10,7 +10,8 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Network.HTTP.Types as H
 import Network.Wai
        (Middleware, Application, ResponseReceived, Request, Response,
-        requestHeaders, responseLBS, pathInfo)
+        requestHeaders, requestMethod , responseLBS, pathInfo)
+import Network.HTTP.Types.Method (methodOptions)
 import Prelude hiding (exp)
 import Text.Regex
 import Web.JWT
@@ -30,9 +31,11 @@ matchURL :: String -> Regex -> Bool
 matchURL requestURL unauthorizedEndpoint =
   isJust $ matchRegex unauthorizedEndpoint requestURL
 
-isUnauthorizedEndpoint :: String -> [Regex] -> Bool
-isUnauthorizedEndpoint requestURL unauthorizedEndpoints =
-  or $ fmap (matchURL requestURL) unauthorizedEndpoints
+isUnauthorizedEndpoint :: Request -> [Regex] -> Bool
+isUnauthorizedEndpoint request unauthorizedEndpoints =
+    if requestMethod request == methodOptions
+      then True
+      else or $ fmap (matchURL . getRequestURL $ request) unauthorizedEndpoints
 
 getTokenFromHeader :: Request -> Maybe T.Text
 getTokenFromHeader request =
@@ -42,7 +45,7 @@ getTokenFromHeader request =
 
 authMiddleware :: DSPConfig -> [Regex] -> Middleware
 authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
-  if isUnauthorizedEndpoint (getRequestURL request) unauthorizedEndpoints
+  if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse
     else authorize
   where
