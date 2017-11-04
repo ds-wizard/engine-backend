@@ -39,7 +39,7 @@ createToken user jwtSecret =
       permissions = Array (V.fromList permissionValues) :: Value
       userUuid = toJSON (user ^. uUuid) :: Value
       payload = M.insert "userUuid" userUuid M.empty
-      payload2 = M.insert "roles" permissions payload
+      payload2 = M.insert "permissions" permissions payload
       cs =
         JWT.JWTClaimsSet
         { iss = Nothing
