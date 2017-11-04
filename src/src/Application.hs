@@ -13,6 +13,7 @@ import Api.Handler.Event.EventHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
+import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
@@ -31,6 +32,8 @@ runApplication context dspConfig =
        middleware (authMiddleware dspConfig unauthorizedEndpoints)
        get "/" (getInfoA context dspConfig)
        post "/tokens" (postTokenA context dspConfig)
+       get "/organizations/current" (getOrganizationCurrentA context dspConfig)
+       put "/organizations/current" (putOrganizationCurrentA context dspConfig)
        get "/users" (getUsersA context dspConfig)
        post "/users/" (postUsersA context dspConfig)
        get "/users/current" (getUserCurrentA context dspConfig)

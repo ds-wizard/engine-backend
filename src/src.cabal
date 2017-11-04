@@ -36,6 +36,7 @@ library
       Api.Handler.Info.InfoHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
       Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
+      Api.Handler.Organization.OrganizationHandler
       Api.Handler.Package.PackageHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
@@ -45,6 +46,7 @@ library
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
       Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+      Api.Resources.Organization.OrganizationDTO
       Api.Resources.Package.PackageDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
@@ -67,15 +69,18 @@ library
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
       Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
+      Database.BSON.Organization.Organization
       Database.BSON.Package.Package
       Database.BSON.User.User
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
       Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+      Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
       Database.Migration.Migration
+      Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       DSPConfig
@@ -107,6 +112,7 @@ library
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
       Model.KnowledgeModelContainer.KnowledgeModelContainer
+      Model.Organization.Organization
       Model.Package.Package
       Model.User.User
       Paths_src_bck
@@ -118,6 +124,8 @@ library
       Service.KnowledgeModel.KnowledgeModelService
       Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
       Service.KnowledgeModelContainer.KnowledgeModelContainerService
+      Service.Organization.OrganizationMapper
+      Service.Organization.OrganizationService
       Service.Package.PackageMapper
       Service.Package.PackageService
       Service.Token.TokenMapper
