@@ -13,13 +13,14 @@ import Api.Handler.Event.EventHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
+import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
 import Api.Middleware.Auth
 import Api.Middleware.CORS
 import Context
 import DSPConfig
-import Migration
+import Database.Migration.Migration
 
 unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$"]
 
@@ -46,6 +47,13 @@ runApplication context dspConfig =
        delete
          "/kmcs/:kmcUuid"
          (deleteKnowledgeModelContainerA context dspConfig)
+       get "/packages" (getAllPackagesA context dspConfig)
+       get "/packages/:name" (getPackagesA context dspConfig)
+       delete "/packages/:name" (deletePackagesByNameA context dspConfig)
+       get "/packages/:name/versions/:version" (getPackageA context dspConfig)
+       delete
+         "/packages/:name/versions/:version"
+         (deletePackageA context dspConfig)
       --  get "/kmcs/:kmUuid/km" (getKnowledgeModelA context dspConfig)
       --  get "/kmcs/:kmUuid/events" (getEventsA context dspConfig)
       --  post "/kmcs/:kmUuid/events/_bulk" (postEventsA context dspConfig)

@@ -36,6 +36,7 @@ library
       Api.Handler.Info.InfoHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
       Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
+      Api.Handler.Package.PackageHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Middleware.Auth
@@ -44,6 +45,7 @@ library
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
       Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+      Api.Resources.Package.PackageDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO
@@ -65,12 +67,16 @@ library
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
       Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
+      Database.BSON.Package.Package
       Database.BSON.User.User
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
       Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+      Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
+      Database.Migration.Migration
+      Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator
@@ -78,7 +84,6 @@ library
       KMMigration.Migration.Migration
       KMMigration.Model.Common
       KMMigration.Model.PackageManagement
-      Migration
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -102,6 +107,7 @@ library
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
       Model.KnowledgeModelContainer.KnowledgeModelContainer
+      Model.Package.Package
       Model.User.User
       Paths_src_bck
       Service.Event.EventFromDTO
@@ -112,6 +118,8 @@ library
       Service.KnowledgeModel.KnowledgeModelService
       Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
       Service.KnowledgeModelContainer.KnowledgeModelContainerService
+      Service.Package.PackageMapper
+      Service.Package.PackageService
       Service.Token.TokenMapper
       Service.Token.TokenService
       Service.User.UserMapper

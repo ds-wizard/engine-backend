@@ -8,10 +8,10 @@ import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
 import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Network.HTTP.Types as H
+import Network.HTTP.Types.Method (methodOptions)
 import Network.Wai
        (Middleware, Application, ResponseReceived, Request, Response,
-        requestHeaders, requestMethod , responseLBS, pathInfo)
-import Network.HTTP.Types.Method (methodOptions)
+        requestHeaders, requestMethod, responseLBS, pathInfo)
 import Prelude hiding (exp)
 import Text.Regex
 import Web.JWT
@@ -33,9 +33,9 @@ matchURL requestURL unauthorizedEndpoint =
 
 isUnauthorizedEndpoint :: Request -> [Regex] -> Bool
 isUnauthorizedEndpoint request unauthorizedEndpoints =
-    if requestMethod request == methodOptions
-      then True
-      else or $ fmap (matchURL . getRequestURL $ request) unauthorizedEndpoints
+  if requestMethod request == methodOptions
+    then True
+    else or $ fmap (matchURL . getRequestURL $ request) unauthorizedEndpoints
 
 getTokenFromHeader :: Request -> Maybe T.Text
 getTokenFromHeader request =

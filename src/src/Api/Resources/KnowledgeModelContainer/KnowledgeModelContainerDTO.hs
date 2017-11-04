@@ -12,7 +12,7 @@ import Common.Uuid
 data KnowledgeModelContainerDTO = KnowledgeModelContainerDTO
   { _kmcdtoKmContainerUuid :: UUID
   , _kmcdtoName :: String
-  , _kmcdtoShortname :: String
+  , _kmcdtoShortName :: String
   , _kmcdtoParentPackageName :: String
   , _kmcdtoParentPackageVersion :: String
   }
@@ -23,7 +23,7 @@ instance FromJSON KnowledgeModelContainerDTO where
   parseJSON (Object o) = do
     _kmcdtoKmContainerUuid <- o .: "kmContainerUuid"
     _kmcdtoName <- o .: "name"
-    _kmcdtoShortname <- o .: "shortname"
+    _kmcdtoShortName <- o .: "shortName"
     _kmcdtoParentPackageName <- o .: "parentPackageName"
     _kmcdtoParentPackageVersion <- o .: "parentPackageVersion"
     return KnowledgeModelContainerDTO {..}
@@ -34,7 +34,7 @@ instance ToJSON KnowledgeModelContainerDTO where
     object
       [ "kmContainerUuid" .= _kmcdtoKmContainerUuid
       , "name" .= _kmcdtoName
-      , "shortname" .= _kmcdtoShortname
+      , "shortName" .= _kmcdtoShortName
       , "parentPackageName" .= _kmcdtoParentPackageName
       , "parentPackageVersion" .= _kmcdtoParentPackageVersion
       ]

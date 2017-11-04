@@ -9,7 +9,7 @@ import GHC.Generics
 data KnowledgeModelContainer = KnowledgeModelContainer
   { _kmcKmContainerUuid :: UUID
   , _kmcName :: String
-  , _kmcShortname :: String
+  , _kmcShortName :: String
   , _kmcParentPackageName :: String
   , _kmcParentPackageVersion :: String
   } deriving (Show, Eq, Generic)
