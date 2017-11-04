@@ -22,6 +22,7 @@ addCorsHeaders hs = hs ++ corsHeaders
 corsHeaders =
   [ ("Access-Control-Allow-Origin", "*")
   , ("Access-Control-Allow-Credential", "true")
-  , ("Access-Control-Allow-Headers", "*")
+  , ( "Access-Control-Allow-Headers"
+    , "Origin, X-Requested-With, Content-Type, Accept, Authorization")
   , ("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE")
   ]
