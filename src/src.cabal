@@ -48,6 +48,7 @@ library
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO
       Api.Resources.User.UserDTO
+      Api.Resources.User.UserPasswordDTO
       Application
       Common.Types
       Common.Utils

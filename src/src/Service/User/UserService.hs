@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
+import Api.Resources.User.UserPasswordDTO
 import Common.Types
 import Common.Uuid
 import Context
@@ -70,6 +71,27 @@ modifyUser context userUuid userDto = do
       updateUserById context updatedUser
       return . Just $ userDto
     Nothing -> return Nothing
+
+changeCurrentUserPassword :: Context
+                          -> Maybe T.Text
+                          -> UserPasswordDTO
+                          -> IO Bool
+changeCurrentUserPassword context tokenHeader userPasswordDto = do
+  let userUuidMaybe = getUserUuidFromToken context tokenHeader :: Maybe T.Text
+  case userUuidMaybe of
+    Just userUuid ->
+      changeUserPassword context (T.unpack userUuid) userPasswordDto
+    _ -> return False
+
+changeUserPassword :: Context -> String -> UserPasswordDTO -> IO Bool
+changeUserPassword context userUuid userPasswordDto = do
+  maybeUser <- findUserById context userUuid
+  passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
+  case maybeUser of
+    Just user -> do
+      updateUserPasswordById context userUuid (BS.unpack passwordHash)
+      return True
+    Nothing -> return False
 
 deleteUser :: Context -> String -> IO Bool
 deleteUser context userUuid = do

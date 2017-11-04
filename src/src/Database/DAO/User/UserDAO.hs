@@ -5,7 +5,7 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
 import Database.MongoDB
-       (find, findOne, select, insert, fetch, save, merge, delete,
+       (find, findOne, select, insert, fetch, save, merge, delete, modify,
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
@@ -49,6 +49,14 @@ updateUserById context user = do
   let action =
         fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>=
         save userCollection . merge (toBSON user)
+  runMongoDBPoolDef action (context ^. ctxDbPool)
+
+updateUserPasswordById :: Context -> String -> String -> IO ()
+updateUserPasswordById context userUuid password = do
+  let action =
+        modify
+          (select ["uuid" =: userUuid] userCollection)
+          ["$set" =: ["passwordHash" =: password]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteUsers :: Context -> IO ()

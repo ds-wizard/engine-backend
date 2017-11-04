@@ -12,6 +12,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
+import Api.Resources.User.UserPasswordDTO
 import Context
 import DSPConfig
 import Service.User.UserService
@@ -55,6 +56,15 @@ putUserA context dspConfig = do
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
 
+putUserPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
+putUserPasswordA context dspConfig = do
+  userUuid <- Scotty.param "userUuid"
+  userDto <- Scotty.jsonData
+  isSuccess <- liftIO $ changeUserPassword context userUuid userDto
+  if isSuccess
+    then Scotty.status noContent204
+    else notFoundA
+
 putUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserCurrentA context dspConfig = do
   tokenHeader <- Scotty.header "Authorization"
@@ -68,6 +78,20 @@ putUserCurrentA context dspConfig = do
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA
+
+putUserCurrentPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
+putUserCurrentPasswordA context dspConfig = do
+  tokenHeader <- Scotty.header "Authorization"
+  userPasswordDto <- Scotty.jsonData :: Scotty.ActionM UserPasswordDTO
+  isSuccess <-
+    liftIO $
+    changeCurrentUserPassword
+      context
+      (tokenHeader >>= \token -> Just . toStrict $ token)
+      userPasswordDto
+  if isSuccess
+    then Scotty.status noContent204
+    else notFoundA
 
 deleteUserA :: Context -> DSPConfig -> Scotty.ActionM ()
 deleteUserA context dspConfig = do
