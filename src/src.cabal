@@ -71,14 +71,6 @@ library
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
       Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
       Database.DAO.User.UserDAO
-      Database.Migration.Event.AnswerEventMigration
-      Database.Migration.Event.ChapterEventMigration
-      Database.Migration.Event.EventMigration
-      Database.Migration.Event.ExpertEventMigration
-      Database.Migration.Event.FollowUpQuestionEventMigration
-      Database.Migration.Event.KnowledgeModelEventMigration
-      Database.Migration.Event.QuestionEventMigration
-      Database.Migration.Event.ReferenceEventMigration
       Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator

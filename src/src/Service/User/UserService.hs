@@ -13,27 +13,37 @@ import Api.Resources.User.UserPasswordDTO
 import Common.Types
 import Common.Uuid
 import Context
+import DSPConfig
 import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserMapper
 
-getPermissionForRole :: Role -> [Permission]
-getPermissionForRole _ = ["ADD_CHAPTER", "EDIT_CHAPTER", "DELETE_CHAPTER"]
+getPermissionForRole :: DSPConfig -> Role -> [Permission]
+getPermissionForRole config role =
+  case role of
+    "ADMIN" -> config ^. dspcfgRoles ^. acrAdmin
+    "DATASTEWARD" -> config ^. dspcfgRoles ^. acrDataSteward
+    "RESEARCHER" -> config ^. dspcfgRoles ^. acrResearcher
+    _ -> []
 
 getUsers :: Context -> IO [UserDTO]
 getUsers context = do
   users <- findUsers context
   return . fmap toDTO $ users
 
-createUser :: Context -> UserCreateDTO -> IO UserDTO
-createUser context userCreateDto = do
+createUser :: Context -> DSPConfig -> UserCreateDTO -> IO UserDTO
+createUser context config userCreateDto = do
   uuid <- generateUuid
-  createUserWithGivenUuid context uuid userCreateDto
+  createUserWithGivenUuid context config uuid userCreateDto
 
-createUserWithGivenUuid :: Context -> U.UUID -> UserCreateDTO -> IO UserDTO
-createUserWithGivenUuid context userUuid userCreateDto = do
-  let roles = getPermissionForRole (userCreateDto ^. ucdtoRole)
+createUserWithGivenUuid :: Context
+                        -> DSPConfig
+                        -> U.UUID
+                        -> UserCreateDTO
+                        -> IO UserDTO
+createUserWithGivenUuid context config userUuid userCreateDto = do
+  let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)
   passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
   let user =
         fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles

@@ -74,10 +74,13 @@ runServer = do
   putStrLn "SERVER: started"
   eitherDspConfig <- loadDSPConfig
   case eitherDspConfig of
-    Left error ->
+    Left (errorDate, reason) -> do
+      putStrLn "CONFIG: load failed"
       putStrLn
         "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-    Right dspConfig ->
+      print errorDate
+    Right dspConfig -> do
+      putStrLn "CONFIG: loaded"
       createDBConn dspConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}

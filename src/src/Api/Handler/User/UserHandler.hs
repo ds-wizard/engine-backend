@@ -26,7 +26,7 @@ getUsersA context dspConfig = do
 postUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
 postUsersA context dspConfig = do
   userCreateDto <- Scotty.jsonData
-  userDto <- liftIO $ createUser context userCreateDto
+  userDto <- liftIO $ createUser context dspConfig userCreateDto
   Scotty.json userDto
 
 getUserA :: Context -> DSPConfig -> Scotty.ActionM ()

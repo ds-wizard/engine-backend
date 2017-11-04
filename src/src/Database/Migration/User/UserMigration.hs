@@ -13,6 +13,7 @@ runMigration context dspConfig = do
   deleteUsers context
   createUserWithGivenUuid
     context
+    dspConfig
     (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
     UserCreateDTO
     { _ucdtoName = "Darth"
@@ -23,16 +24,18 @@ runMigration context dspConfig = do
     }
   createUserWithGivenUuid
     context
+    dspConfig
     (fromJust (U.fromString "30d48cf4-8c8a-496f-bafe-585bd238f798"))
     UserCreateDTO
     { _ucdtoName = "Luke"
     , _ucdtoSurname = "Skywalker"
     , _ucdtoEmail = "luke.skywalker@deadstar.com"
-    , _ucdtoRole = "DATA_STEWARD"
+    , _ucdtoRole = "DATASTEWARD"
     , _ucdtoPassword = "password"
     }
   createUserWithGivenUuid
     context
+    dspConfig
     (fromJust (U.fromString "e1c58e52-0824-4526-8ebe-ec38eec67030"))
     UserCreateDTO
     { _ucdtoName = "John"

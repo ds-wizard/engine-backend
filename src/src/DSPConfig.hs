@@ -4,8 +4,9 @@ import Control.Lens
 import Control.Monad.Except
 import Control.Monad.Trans.Except
 import Data.ConfigFile
-import Data.Text
+import qualified Data.Text as T
 
+import Common.Types
 import Paths_src
 
 applicationConfigFile = "config/app-config.cfg"
@@ -26,6 +27,12 @@ data AppConfigJwt = AppConfigJwt
   { _acjwtSecret :: String
   }
 
+data AppConfigRoles = AppConfigRoles
+  { _acrAdmin :: [Permission]
+  , _acrDataSteward :: [Permission]
+  , _acrResearcher :: [Permission]
+  }
+
 data BuildInfo = BuildInfo
   { _biAppName :: String
   , _biAppVersion :: String
@@ -36,6 +43,7 @@ data DSPConfig = DSPConfig
   { _dspcfgWebConfig :: AppConfigWeb
   , _dspcfgDatabaseConfig :: AppConfigDatabase
   , _dspcfgJwtConfig :: AppConfigJwt
+  , _dspcfgRoles :: AppConfigRoles
   , _dspcfgBuildInfo :: BuildInfo
   }
 
@@ -44,6 +52,8 @@ makeLenses ''AppConfigWeb
 makeLenses ''AppConfigDatabase
 
 makeLenses ''AppConfigJwt
+
+makeLenses ''AppConfigRoles
 
 makeLenses ''BuildInfo
 
@@ -58,12 +68,14 @@ loadDSPConfig = do
     webConfig <- loadAppConfigWeb appConfigParser
     databaseConfig <- loadAppConfigDatabase appConfigParser
     jwtConfig <- loadAppConfigJwt appConfigParser
+    appRoles <- loadAppConfigRole appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSPConfig
       { _dspcfgWebConfig = webConfig
       , _dspcfgDatabaseConfig = databaseConfig
       , _dspcfgJwtConfig = jwtConfig
+      , _dspcfgRoles = appRoles
       , _dspcfgBuildInfo = buildInfo
       }
   where
@@ -80,6 +92,16 @@ loadDSPConfig = do
     loadAppConfigJwt configParser = do
       jwtSecret <- get configParser "JWT" "secret"
       return AppConfigJwt {_acjwtSecret = jwtSecret}
+    loadAppConfigRole configParser = do
+      adminPermissions <- get configParser "Role" "admin"
+      dataStewardPermissions <- get configParser "Role" "datasteward"
+      researcherPermissions <- get configParser "Role" "researcher"
+      return
+        AppConfigRoles
+        { _acrAdmin = parseList adminPermissions
+        , _acrDataSteward = parseList dataStewardPermissions
+        , _acrResearcher = parseList researcherPermissions
+        }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
@@ -90,3 +112,5 @@ loadDSPConfig = do
         , _biAppVersion = appVersion
         , _biBuiltAt = buildTimestamp
         }
+    parseList :: String -> [String]
+    parseList listString = T.unpack <$> (T.splitOn ", " (T.pack listString))
