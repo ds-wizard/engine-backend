@@ -18,7 +18,7 @@ runMigration context dspConfig = do
     UserCreateDTO
     { _ucdtoName = "Darth"
     , _ucdtoSurname = "Vader"
-    , _ucdtoEmail = "darth.vader@deadstar.com"
+    , _ucdtoEmail = "darth.vader@deathstar.com"
     , _ucdtoRole = "ADMIN"
     , _ucdtoPassword = "password"
     }
@@ -29,7 +29,7 @@ runMigration context dspConfig = do
     UserCreateDTO
     { _ucdtoName = "Luke"
     , _ucdtoSurname = "Skywalker"
-    , _ucdtoEmail = "luke.skywalker@deadstar.com"
+    , _ucdtoEmail = "luke.skywalker@deathstar.com"
     , _ucdtoRole = "DATASTEWARD"
     , _ucdtoPassword = "password"
     }
