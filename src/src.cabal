@@ -40,6 +40,7 @@ library
       Api.Handler.Package.PackageHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
+      Api.Handler.Version.VersionHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
       Api.Resources.Event.EventDTO

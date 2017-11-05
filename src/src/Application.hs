@@ -17,6 +17,7 @@ import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
+import Api.Handler.Version.VersionHandler
 import Api.Middleware.Auth
 import Api.Middleware.CORS
 import Context
@@ -75,6 +76,7 @@ runApplication context dspConfig =
        delete
          "/kmcs/:kmcUuid/events/:eventUuid"
          (deleteEventsA context dspConfig)
+       put "/kmcs/:kmcUuid/versions/:version" (putVersionA context dspConfig)
        --------------------
        -- PACKAGES
        --------------------
