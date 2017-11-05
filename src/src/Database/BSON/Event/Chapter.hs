@@ -17,7 +17,8 @@ import Model.Event.Chapter.EditChapterEvent
 -- -------------------------
 instance ToBSON AddChapterEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. achUuid)
+    [ "eventType" BSON.=: "AddChapterEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. achUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. achKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. achChapterUuid)
     , "title" BSON.=: (event ^. achTitle)
@@ -45,7 +46,8 @@ instance FromBSON AddChapterEvent where
 -- -------------------------
 instance ToBSON EditChapterEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. echUuid)
+    [ "eventType" BSON.=: "EditChapterEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. echUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. echKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. echChapterUuid)
     , "title" BSON.=: (event ^. echTitle)
@@ -76,7 +78,8 @@ instance FromBSON EditChapterEvent where
 -- -------------------------
 instance ToBSON DeleteChapterEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. dchUuid)
+    [ "eventType" BSON.=: "DeleteChapterEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. dchUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dchKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dchChapterUuid)
     ]

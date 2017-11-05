@@ -2,14 +2,13 @@ module KMMigration.Migration.Applicator.Applicator where
 
 import Control.Lens
 
-import KMMigration.Migration.Event.Common
-import KMMigration.Model.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Common
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
 import Model.Event.Expert.EditExpertEvent
@@ -25,6 +24,9 @@ import Model.Event.Reference.AddReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
 import Model.Event.Reference.EditReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+
+applyValue (Just val) ch setter = ch & setter .~ val
+applyValue Nothing ch setter = ch
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -193,6 +195,7 @@ instance ApplyEventToChapter AddQuestionEvent where
       newQuestion =
         Question
         { _qUuid = e ^. aqQuestionUuid
+        , _qShortUuid = e ^. aqShortQuestionUuid
         , _qType = e ^. aqType
         , _qTitle = e ^. aqTitle
         , _qText = e ^. aqText
@@ -310,10 +313,12 @@ instance ApplyEventToQuestion EditQuestionEvent where
   applyEventToQuestion e q =
     if equalsUuid e q
       then applyReferenceIds .
-           applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType $
+           applyExpertIds .
+           applyAnwerIds . applyText . applyTitle . applyType . applyShortUuid $
            q
       else passToAnswers e q
     where
+      applyShortUuid q = applyValue (e ^. eqShortQuestionUuid) q qShortUuid
       applyType q = applyValue (e ^. eqType) q qType
       applyTitle q = applyValue (e ^. eqTitle) q qTitle
       applyText q = applyValue (e ^. eqText) q qText
@@ -368,6 +373,8 @@ instance ApplyEventToQuestion EditFollowUpQuestionEvent where
            q
       else passToAnswers e q
     where
+      applyShortQuestionId q =
+        applyValue (e ^. efuqShortQuestionUuid) q qShortUuid
       applyType q = applyValue (e ^. efuqType) q qType
       applyTitle q = applyValue (e ^. efuqTitle) q qTitle
       applyText q = applyValue (e ^. efuqText) q qText
@@ -511,6 +518,7 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
       newFollowing =
         Question
         { _qUuid = e ^. afuqQuestionUuid
+        , _qShortUuid = e ^. afuqShortQuestionUuid
         , _qType = e ^. afuqType
         , _qTitle = e ^. afuqTitle
         , _qText = e ^. afuqText

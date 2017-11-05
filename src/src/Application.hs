@@ -27,13 +27,29 @@ unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$"]
 
 runApplication context dspConfig =
   let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
-  in scotty serverPort $ do
+  in scotty serverPort $
+       --------------------
+       -- MIDDLEWARES
+       --------------------
+      do
        middleware corsMiddleware
        middleware (authMiddleware dspConfig unauthorizedEndpoints)
+       --------------------
+       -- INFO
+       --------------------
        get "/" (getInfoA context dspConfig)
+       --------------------
+       -- TOKENS
+       --------------------
        post "/tokens" (postTokenA context dspConfig)
+       --------------------
+       -- ORGANIZATIONS
+       --------------------
        get "/organizations/current" (getOrganizationCurrentA context dspConfig)
        put "/organizations/current" (putOrganizationCurrentA context dspConfig)
+       --------------------
+       -- USERS
+       --------------------
        get "/users" (getUsersA context dspConfig)
        post "/users/" (postUsersA context dspConfig)
        get "/users/current" (getUserCurrentA context dspConfig)
@@ -43,6 +59,9 @@ runApplication context dspConfig =
        put "/users/:userUuid/password" (putUserPasswordA context dspConfig)
        put "/users/:userUuid" (putUserA context dspConfig)
        delete "/users/:userUuid" (deleteUserA context dspConfig)
+       --------------------
+       -- KNOWLEDGE MODEL
+       --------------------
        get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
        post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
        get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
@@ -50,6 +69,15 @@ runApplication context dspConfig =
        delete
          "/kmcs/:kmcUuid"
          (deleteKnowledgeModelContainerA context dspConfig)
+       get "/kmcs/:kmcUuid/km" (getKnowledgeModelA context dspConfig)
+       get "/kmcs/:kmcUuid/events" (getEventsA context dspConfig)
+       post "/kmcs/:kmcUuid/events/_bulk" (postEventsA context dspConfig)
+       delete
+         "/kmcs/:kmcUuid/events/:eventUuid"
+         (deleteEventsA context dspConfig)
+       --------------------
+       -- PACKAGES
+       --------------------
        get "/packages" (getAllPackagesA context dspConfig)
        get "/packages/:name" (getPackagesA context dspConfig)
        delete "/packages/:name" (deletePackagesByNameA context dspConfig)
@@ -57,10 +85,9 @@ runApplication context dspConfig =
        delete
          "/packages/:name/versions/:version"
          (deletePackageA context dspConfig)
-      --  get "/kmcs/:kmUuid/km" (getKnowledgeModelA context dspConfig)
-      --  get "/kmcs/:kmUuid/events" (getEventsA context dspConfig)
-      --  post "/kmcs/:kmUuid/events/_bulk" (postEventsA context dspConfig)
-      --  delete "/kmcs/:kmUuid/events/:eventUuid" (deleteEventA context dspConfig)
+       --------------------
+       -- ERROR
+       --------------------
        notFound notFoundA
 
 createDBConn dspConfig afterSuccess =

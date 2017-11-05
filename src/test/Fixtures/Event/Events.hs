@@ -16,7 +16,7 @@ import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
-import KMMigration.Migration.Event.Common
+import Model.Event.Common
 import Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
 import Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
 import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
@@ -111,6 +111,7 @@ a_km1_ch1_q1 =
  , _aqKmUuid = km1 ^. kmUuid
  , _aqChapterUuid = chapter1 ^. chUuid
  , _aqQuestionUuid = question1 ^. qUuid
+ , _aqShortQuestionUuid = question1 ^. qShortUuid
  , _aqType = question1 ^. qType
  , _aqTitle = question1 ^. qTitle
  , _aqText = question1 ^. qText
@@ -123,6 +124,7 @@ a_km1_ch1_q2 =
  , _aqKmUuid = km1 ^. kmUuid
  , _aqChapterUuid = chapter1 ^. chUuid
  , _aqQuestionUuid = question2 ^. qUuid
+ , _aqShortQuestionUuid = question2 ^. qShortUuid
  , _aqType = question2 ^. qType
  , _aqTitle = question2 ^. qTitle
  , _aqText = question2 ^. qText
@@ -135,6 +137,7 @@ a_km1_ch1_q3 =
  , _aqKmUuid = km1 ^. kmUuid
  , _aqChapterUuid = chapter1 ^. chUuid
  , _aqQuestionUuid = question3 ^. qUuid
+ , _aqShortQuestionUuid = question3 ^. qShortUuid
  , _aqType = question3 ^. qType
  , _aqTitle = question3 ^. qTitle
  , _aqText = question3 ^. qText
@@ -147,6 +150,7 @@ a_km1_ch2_q3 =
  , _aqKmUuid = km1 ^. kmUuid
  , _aqChapterUuid = chapter2 ^. chUuid
  , _aqQuestionUuid = question3 ^. qUuid
+ , _aqShortQuestionUuid = question3 ^. qShortUuid
  , _aqType = question3 ^. qType
  , _aqTitle = question3 ^. qTitle
  , _aqText = question3 ^. qText
@@ -159,6 +163,7 @@ e_km1_ch1_q2 =
  , _eqKmUuid = km1 ^. kmUuid
  , _eqChapterUuid = chapter1 ^. chUuid
  , _eqQuestionUuid = question2 ^. qUuid
+ , _eqShortQuestionUuid = Just $ question2 ^. qShortUuid
  , _eqType = Just $ question2WithChangeProperties ^. qType
  , _eqTitle = Just $ question2WithChangeProperties ^. qTitle
  , _eqText = Just $ question2WithChangeProperties ^. qText
@@ -319,6 +324,7 @@ a_km1_ch1_ansYes1_fuq1 =
  , _afuqChapterUuid = chapter1 ^. chUuid
  , _afuqAnswerUuid = answerYes1 ^. ansUuid
  , _afuqQuestionUuid = followUpQuestion1 ^. qUuid
+ , _afuqShortQuestionUuid = followUpQuestion1 ^. qShortUuid
  , _afuqType = followUpQuestion1 ^. qType
  , _afuqTitle = followUpQuestion1 ^. qTitle
  , _afuqText = followUpQuestion1 ^. qText
@@ -332,6 +338,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
  , _afuqChapterUuid = chapter1 ^. chUuid
  , _afuqAnswerUuid = answerYes3 ^. ansUuid
  , _afuqQuestionUuid = followUpQuestion2 ^. qUuid
+ , _afuqShortQuestionUuid = followUpQuestion2 ^. qShortUuid
  , _afuqType = followUpQuestion2 ^. qType
  , _afuqTitle = followUpQuestion2 ^. qTitle
  , _afuqText = followUpQuestion2 ^. qText
@@ -345,6 +352,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 =
  , _afuqChapterUuid = chapter1 ^. chUuid
  , _afuqAnswerUuid = answerYes4 ^. ansUuid
  , _afuqQuestionUuid = followUpQuestion3 ^. qUuid
+ , _afuqShortQuestionUuid = followUpQuestion3 ^. qShortUuid
  , _afuqType = followUpQuestion3 ^. qType
  , _afuqTitle = followUpQuestion3 ^. qTitle
  , _afuqText = followUpQuestion3 ^. qText
@@ -358,6 +366,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
  , _efuqChapterUuid = chapter1 ^. chUuid
  , _efuqAnswerUuid = answerYes3 ^. ansUuid
  , _efuqQuestionUuid = followUpQuestion2 ^. qUuid
+ , _efuqShortQuestionUuid = Just $ followUpQuestion2 ^. qShortUuid
  , _efuqType = Just $ followUpQuestion2Changed ^. qType
  , _efuqTitle = Just $ followUpQuestion2Changed ^. qTitle
  , _efuqText = Just $ followUpQuestion2Changed ^. qText

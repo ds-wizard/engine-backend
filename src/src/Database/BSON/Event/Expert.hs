@@ -17,7 +17,8 @@ import Model.Event.Expert.EditExpertEvent
 -- -------------------------
 instance ToBSON AddExpertEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. aexpUuid)
+    [ "eventType" BSON.=: "AddExpertEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. aexpUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. aexpKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. aexpChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. aexpQuestionUuid)
@@ -52,7 +53,8 @@ instance FromBSON AddExpertEvent where
 -- -------------------------
 instance ToBSON EditExpertEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. eexpUuid)
+    [ "eventType" BSON.=: "EditExpertEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. eexpUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. eexpKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. eexpChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. eexpQuestionUuid)
@@ -87,7 +89,8 @@ instance FromBSON EditExpertEvent where
 -- -------------------------
 instance ToBSON DeleteExpertEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. dexpUuid)
+    [ "eventType" BSON.=: "DeleteExpertEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. dexpUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dexpKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dexpChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. dexpQuestionUuid)

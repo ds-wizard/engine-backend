@@ -12,15 +12,17 @@ import Model.Event.Question.AddQuestionEvent
 import Model.Event.Question.DeleteQuestionEvent
 import Model.Event.Question.EditQuestionEvent
 
--- -------------------------
--- KNOWLEDGE MODEL ---------
--- -------------------------
+-- ------------------------
+-- ADD QUESTION EVENT -----
+-- ------------------------
 instance ToBSON AddQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. aqUuid)
+    [ "eventType" BSON.=: "AddQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. aqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. aqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. aqChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. aqQuestionUuid)
+    , "shortQuestionUuid" BSON.=: (event ^. aqShortQuestionUuid)
     , "qType" BSON.=: (event ^. aqType)
     , "title" BSON.=: (event ^. aqTitle)
     , "text" BSON.=: (event ^. aqText)
@@ -32,6 +34,7 @@ instance FromBSON AddQuestionEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qType <- BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -41,20 +44,23 @@ instance FromBSON AddQuestionEvent where
       , _aqKmUuid = kmUuid
       , _aqChapterUuid = chapterUuid
       , _aqQuestionUuid = questionUuid
+      , _aqShortQuestionUuid = shortQuestionUuid
       , _aqType = qType
       , _aqTitle = title
       , _aqText = text
       }
 
--- -------------------------
--- KNOWLEDGE MODEL ---------
--- -------------------------
+-- ------------------------
+-- EDIT QUESTION EVENT ----
+-- ------------------------
 instance ToBSON EditQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. eqUuid)
+    [ "eventType" BSON.=: "EditQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. eqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. eqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. eqChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. eqQuestionUuid)
+    , "shortQuestionUuid" BSON.=: (event ^. eqShortQuestionUuid)
     , "qType" BSON.=: (event ^. eqType)
     , "title" BSON.=: (event ^. eqTitle)
     , "text" BSON.=: (event ^. eqText)
@@ -69,6 +75,7 @@ instance FromBSON EditQuestionEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qType <- BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -82,6 +89,7 @@ instance FromBSON EditQuestionEvent where
       , _eqKmUuid = kmUuid
       , _eqChapterUuid = chapterUuid
       , _eqQuestionUuid = questionUuid
+      , _eqShortQuestionUuid = shortQuestionUuid
       , _eqType = qType
       , _eqTitle = title
       , _eqText = text
@@ -90,12 +98,13 @@ instance FromBSON EditQuestionEvent where
       , _eqReferenceIds = referenceIds
       }
 
--- -------------------------
--- KNOWLEDGE MODEL ---------
--- -------------------------
+-- ------------------------
+-- DELETE QUESTION EVENT --
+-- ------------------------
 instance ToBSON DeleteQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. dqUuid)
+    [ "eventType" BSON.=: "DeleteQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. dqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dqChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. dqQuestionUuid)

@@ -6,13 +6,13 @@ import Data.UUID (UUID)
 
 import Api.Resources.Event.EventDTO
 import Common.Types
-import KMMigration.Migration.Event.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Common
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
 import Model.Event.Expert.EditExpertEvent
@@ -103,6 +103,7 @@ instance EventToDTO AddQuestionEvent where
       , _aqdtoKmUuid = event ^. aqKmUuid
       , _aqdtoChapterUuid = event ^. aqChapterUuid
       , _aqdtoQuestionUuid = event ^. aqQuestionUuid
+      , _aqdtoShortQuestionUuid = event ^. aqShortQuestionUuid
       , _aqdtoType = event ^. aqType
       , _aqdtoTitle = event ^. aqTitle
       , _aqdtoText = event ^. aqText
@@ -116,6 +117,7 @@ instance EventToDTO EditQuestionEvent where
       , _eqdtoKmUuid = event ^. eqKmUuid
       , _eqdtoChapterUuid = event ^. eqChapterUuid
       , _eqdtoQuestionUuid = event ^. eqQuestionUuid
+      , _eqdtoShortQuestionUuid = event ^. eqShortQuestionUuid
       , _eqdtoType = event ^. eqType
       , _eqdtoTitle = event ^. eqTitle
       , _eqdtoText = event ^. eqText
@@ -265,6 +267,7 @@ instance EventToDTO AddFollowUpQuestionEvent where
       , _afuqdtoChapterUuid = event ^. afuqChapterUuid
       , _afuqdtoAnswerUuid = event ^. afuqAnswerUuid
       , _afuqdtoQuestionUuid = event ^. afuqQuestionUuid
+      , _afuqdtoShortQuestionUuid = event ^. afuqShortQuestionUuid
       , _afuqdtoType = event ^. afuqType
       , _afuqdtoTitle = event ^. afuqTitle
       , _afuqdtoText = event ^. afuqText
@@ -279,6 +282,7 @@ instance EventToDTO EditFollowUpQuestionEvent where
       , _efuqdtoChapterUuid = event ^. efuqChapterUuid
       , _efuqdtoAnswerUuid = event ^. efuqAnswerUuid
       , _efuqdtoQuestionUuid = event ^. efuqQuestionUuid
+      , _efuqdtoShortQuestionUuid = event ^. efuqShortQuestionUuid
       , _efuqdtoType = event ^. efuqType
       , _efuqdtoTitle = event ^. efuqTitle
       , _efuqdtoText = event ^. efuqText

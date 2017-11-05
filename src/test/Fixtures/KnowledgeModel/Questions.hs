@@ -18,6 +18,7 @@ question1 :: Question
 question1 =
  Question
  { _qUuid = fromJust $ U.fromString "2be1d749-9c72-4807-9309-d6c7bdbf13ba"
+ , _qShortUuid = Just "question1"
  , _qType = qTypeOption
  , _qTitle = "First Question"
  , _qText = "Here is a description of question"
@@ -31,6 +32,7 @@ question2 :: Question
 question2 =
  Question
  { _qUuid = fromJust $ U.fromString "549d4140-d3e7-4cda-a373-7af8abc6325c"
+ , _qShortUuid = Just "question2"
  -- , _qNamespace = FC.namespaceCore
  , _qType = qTypeOption
  , _qTitle = "Second Question"
@@ -44,6 +46,7 @@ question2WithChangeProperties :: Question
 question2WithChangeProperties =
  Question
  { _qUuid = question2 ^. qUuid
+ , _qShortUuid = question2 ^. qShortUuid
  -- , _qNamespace = FC.namespaceCore
  , _qType = qTypeList
  , _qTitle = "EDITED: Second Question"
@@ -57,6 +60,7 @@ question3 :: Question
 question3 =
  Question
  { _qUuid = fromJust $ U.fromString  "b12d5939-2bd5-42b3-af09-a189480014d9"
+ , _qShortUuid = Just "question3"
  -- , _qNamespace = FC.namespaceCore
  , _qType = qTypeOption
  , _qTitle = "Third Question"
@@ -70,6 +74,7 @@ question3Plain :: Question
 question3Plain =
  Question
  { _qUuid = question3 ^. qUuid
+ , _qShortUuid = question3 ^. qShortUuid
  -- , _qNamespace = FC.namespaceCore
  , _qType = qTypeOption
  , _qTitle = "Third Question"
@@ -78,4 +83,5 @@ question3Plain =
  , _qReferences = []
  , _qExperts = []
  }
+
 

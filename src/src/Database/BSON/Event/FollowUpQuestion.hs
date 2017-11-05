@@ -17,11 +17,13 @@ import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
 -- ----------------------------------
 instance ToBSON AddFollowUpQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. afuqUuid)
+    [ "eventType" BSON.=: "AddFollowUpQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. afuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. afuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. afuqChapterUuid)
     , "answerUuid" BSON.=: serializeUUID (event ^. afuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. afuqQuestionUuid)
+    , "shortQuestionUuid" BSON.=: (event ^. afuqShortQuestionUuid)
     , "qType" BSON.=: (event ^. afuqType)
     , "title" BSON.=: (event ^. afuqTitle)
     , "text" BSON.=: (event ^. afuqText)
@@ -34,6 +36,7 @@ instance FromBSON AddFollowUpQuestionEvent where
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qType <- BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -44,6 +47,7 @@ instance FromBSON AddFollowUpQuestionEvent where
       , _afuqChapterUuid = chapterUuid
       , _afuqAnswerUuid = answerUuid
       , _afuqQuestionUuid = questionUuid
+      , _afuqShortQuestionUuid = shortQuestionUuid
       , _afuqType = qType
       , _afuqTitle = title
       , _afuqText = text
@@ -54,11 +58,13 @@ instance FromBSON AddFollowUpQuestionEvent where
 -- ----------------------------------
 instance ToBSON EditFollowUpQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. efuqUuid)
+    [ "eventType" BSON.=: "EditFollowUpQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. efuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. efuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. efuqChapterUuid)
     , "answerUuid" BSON.=: serializeUUID (event ^. efuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. efuqQuestionUuid)
+    , "shortQuestionUuid" BSON.=: (event ^. efuqShortQuestionUuid)
     , "qType" BSON.=: (event ^. efuqType)
     , "title" BSON.=: (event ^. efuqTitle)
     , "text" BSON.=: (event ^. efuqText)
@@ -75,6 +81,7 @@ instance FromBSON EditFollowUpQuestionEvent where
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qType <- BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -89,6 +96,7 @@ instance FromBSON EditFollowUpQuestionEvent where
       , _efuqChapterUuid = chapterUuid
       , _efuqAnswerUuid = answerUuid
       , _efuqQuestionUuid = questionUuid
+      , _efuqShortQuestionUuid = shortQuestionUuid
       , _efuqType = qType
       , _efuqTitle = title
       , _efuqText = text
@@ -102,7 +110,8 @@ instance FromBSON EditFollowUpQuestionEvent where
 -- ----------------------------------
 instance ToBSON DeleteFollowUpQuestionEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. dfuqUuid)
+    [ "eventType" BSON.=: "DeleteFollowUpQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. dfuqUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dfuqKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dfuqChapterUuid)
     , "answerUuid" BSON.=: serializeUUID (event ^. dfuqAnswerUuid)

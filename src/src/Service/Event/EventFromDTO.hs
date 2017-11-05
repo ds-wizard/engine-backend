@@ -6,13 +6,13 @@ import Data.UUID (UUID)
 
 import Api.Resources.Event.EventDTO
 import Common.Types
-import KMMigration.Migration.Event.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Common
 import Model.Event.Event
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
@@ -41,7 +41,7 @@ class EventFromDTO a where
 -- -------------------------
 instance EventFromDTO AddKnowledgeModelEventDTO where
   fromDTO dto =
-    MkEvent
+    AddKnowledgeModelEvent'
       AddKnowledgeModelEvent
       { _akmUuid = dto ^. akmdtoUuid
       , _akmKmUuid = dto ^. akmdtoKmUuid
@@ -50,7 +50,7 @@ instance EventFromDTO AddKnowledgeModelEventDTO where
 
 instance EventFromDTO EditKnowledgeModelEventDTO where
   fromDTO dto =
-    MkEvent
+    EditKnowledgeModelEvent'
       EditKnowledgeModelEvent
       { _ekmUuid = dto ^. ekmdtoUuid
       , _ekmKmUuid = dto ^. ekmdtoKmUuid
@@ -63,7 +63,7 @@ instance EventFromDTO EditKnowledgeModelEventDTO where
 -- -------------------------
 instance EventFromDTO AddChapterEventDTO where
   fromDTO dto =
-    MkEvent
+    AddChapterEvent'
       AddChapterEvent
       { _achUuid = dto ^. achdtoUuid
       , _achKmUuid = dto ^. achdtoKmUuid
@@ -74,7 +74,7 @@ instance EventFromDTO AddChapterEventDTO where
 
 instance EventFromDTO EditChapterEventDTO where
   fromDTO dto =
-    MkEvent
+    EditChapterEvent'
       EditChapterEvent
       { _echUuid = dto ^. echdtoUuid
       , _echKmUuid = dto ^. echdtoKmUuid
@@ -86,7 +86,7 @@ instance EventFromDTO EditChapterEventDTO where
 
 instance EventFromDTO DeleteChapterEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteChapterEvent'
       DeleteChapterEvent
       { _dchUuid = dto ^. dchdtoUuid
       , _dchKmUuid = dto ^. dchdtoKmUuid
@@ -98,12 +98,13 @@ instance EventFromDTO DeleteChapterEventDTO where
 -- -------------------------
 instance EventFromDTO AddQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    AddQuestionEvent'
       AddQuestionEvent
       { _aqUuid = dto ^. aqdtoUuid
       , _aqKmUuid = dto ^. aqdtoKmUuid
       , _aqChapterUuid = dto ^. aqdtoChapterUuid
       , _aqQuestionUuid = dto ^. aqdtoQuestionUuid
+      , _aqShortQuestionUuid = dto ^. aqdtoShortQuestionUuid
       , _aqType = dto ^. aqdtoType
       , _aqTitle = dto ^. aqdtoTitle
       , _aqText = dto ^. aqdtoText
@@ -111,12 +112,13 @@ instance EventFromDTO AddQuestionEventDTO where
 
 instance EventFromDTO EditQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    EditQuestionEvent'
       EditQuestionEvent
       { _eqUuid = dto ^. eqdtoUuid
       , _eqKmUuid = dto ^. eqdtoKmUuid
       , _eqChapterUuid = dto ^. eqdtoChapterUuid
       , _eqQuestionUuid = dto ^. eqdtoQuestionUuid
+      , _eqShortQuestionUuid = dto ^. eqdtoShortQuestionUuid
       , _eqType = dto ^. eqdtoType
       , _eqTitle = dto ^. eqdtoTitle
       , _eqText = dto ^. eqdtoText
@@ -127,7 +129,7 @@ instance EventFromDTO EditQuestionEventDTO where
 
 instance EventFromDTO DeleteQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteQuestionEvent'
       DeleteQuestionEvent
       { _dqUuid = dto ^. dqdtoUuid
       , _dqKmUuid = dto ^. dqdtoKmUuid
@@ -140,7 +142,7 @@ instance EventFromDTO DeleteQuestionEventDTO where
 -- -------------------------
 instance EventFromDTO AddAnswerEventDTO where
   fromDTO dto =
-    MkEvent
+    AddAnswerEvent'
       AddAnswerEvent
       { _aansUuid = dto ^. aansdtoUuid
       , _aansKmUuid = dto ^. aansdtoKmUuid
@@ -153,7 +155,7 @@ instance EventFromDTO AddAnswerEventDTO where
 
 instance EventFromDTO EditAnswerEventDTO where
   fromDTO dto =
-    MkEvent
+    EditAnswerEvent'
       EditAnswerEvent
       { _eansUuid = dto ^. eansdtoUuid
       , _eansKmUuid = dto ^. eansdtoKmUuid
@@ -167,7 +169,7 @@ instance EventFromDTO EditAnswerEventDTO where
 
 instance EventFromDTO DeleteAnswerEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteAnswerEvent'
       DeleteAnswerEvent
       { _dansUuid = dto ^. dansdtoUuid
       , _dansKmUuid = dto ^. dansdtoKmUuid
@@ -181,7 +183,7 @@ instance EventFromDTO DeleteAnswerEventDTO where
 -- -------------------------
 instance EventFromDTO AddExpertEventDTO where
   fromDTO dto =
-    MkEvent
+    AddExpertEvent'
       AddExpertEvent
       { _aexpUuid = dto ^. aexpdtoUuid
       , _aexpKmUuid = dto ^. aexpdtoKmUuid
@@ -194,7 +196,7 @@ instance EventFromDTO AddExpertEventDTO where
 
 instance EventFromDTO EditExpertEventDTO where
   fromDTO dto =
-    MkEvent
+    EditExpertEvent'
       EditExpertEvent
       { _eexpUuid = dto ^. eexpdtoUuid
       , _eexpKmUuid = dto ^. eexpdtoKmUuid
@@ -207,7 +209,7 @@ instance EventFromDTO EditExpertEventDTO where
 
 instance EventFromDTO DeleteExpertEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteExpertEvent'
       DeleteExpertEvent
       { _dexpUuid = dto ^. dexpdtoUuid
       , _dexpKmUuid = dto ^. dexpdtoKmUuid
@@ -221,7 +223,7 @@ instance EventFromDTO DeleteExpertEventDTO where
 -- -------------------------
 instance EventFromDTO AddReferenceEventDTO where
   fromDTO dto =
-    MkEvent
+    AddReferenceEvent'
       AddReferenceEvent
       { _arefUuid = dto ^. arefdtoUuid
       , _arefKmUuid = dto ^. arefdtoKmUuid
@@ -233,7 +235,7 @@ instance EventFromDTO AddReferenceEventDTO where
 
 instance EventFromDTO EditReferenceEventDTO where
   fromDTO dto =
-    MkEvent
+    EditReferenceEvent'
       EditReferenceEvent
       { _erefUuid = dto ^. erefdtoUuid
       , _erefKmUuid = dto ^. erefdtoKmUuid
@@ -245,7 +247,7 @@ instance EventFromDTO EditReferenceEventDTO where
 
 instance EventFromDTO DeleteReferenceEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteReferenceEvent'
       DeleteReferenceEvent
       { _drefUuid = dto ^. drefdtoUuid
       , _drefKmUuid = dto ^. drefdtoKmUuid
@@ -259,13 +261,14 @@ instance EventFromDTO DeleteReferenceEventDTO where
 -- -------------------------
 instance EventFromDTO AddFollowUpQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    AddFollowUpQuestionEvent'
       AddFollowUpQuestionEvent
       { _afuqUuid = dto ^. afuqdtoUuid
       , _afuqKmUuid = dto ^. afuqdtoKmUuid
       , _afuqChapterUuid = dto ^. afuqdtoChapterUuid
       , _afuqAnswerUuid = dto ^. afuqdtoAnswerUuid
       , _afuqQuestionUuid = dto ^. afuqdtoQuestionUuid
+      , _afuqShortQuestionUuid = dto ^. afuqdtoShortQuestionUuid
       , _afuqType = dto ^. afuqdtoType
       , _afuqTitle = dto ^. afuqdtoTitle
       , _afuqText = dto ^. afuqdtoText
@@ -273,13 +276,14 @@ instance EventFromDTO AddFollowUpQuestionEventDTO where
 
 instance EventFromDTO EditFollowUpQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    EditFollowUpQuestionEvent'
       EditFollowUpQuestionEvent
       { _efuqUuid = dto ^. efuqdtoUuid
       , _efuqKmUuid = dto ^. efuqdtoKmUuid
       , _efuqChapterUuid = dto ^. efuqdtoChapterUuid
       , _efuqAnswerUuid = dto ^. efuqdtoAnswerUuid
       , _efuqQuestionUuid = dto ^. efuqdtoQuestionUuid
+      , _efuqShortQuestionUuid = dto ^. efuqdtoShortQuestionUuid
       , _efuqType = dto ^. efuqdtoType
       , _efuqTitle = dto ^. efuqdtoTitle
       , _efuqText = dto ^. efuqdtoText
@@ -290,7 +294,7 @@ instance EventFromDTO EditFollowUpQuestionEventDTO where
 
 instance EventFromDTO DeleteFollowUpQuestionEventDTO where
   fromDTO dto =
-    MkEvent
+    DeleteFollowUpQuestionEvent'
       DeleteFollowUpQuestionEvent
       { _dfuqUuid = dto ^. dfuqdtoUuid
       , _dfuqKmUuid = dto ^. dfuqdtoKmUuid

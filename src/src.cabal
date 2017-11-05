@@ -69,6 +69,8 @@ library
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
       Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
+      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents
+      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithKM
       Database.BSON.Organization.Organization
       Database.BSON.Package.Package
       Database.BSON.User.User
@@ -79,22 +81,30 @@ library
       Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
+      Database.Migration.KnowledgeModel.Data.Event.Event
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Chapters
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Common
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Experts
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.KnowledgeModels
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Questions
+      Database.Migration.KnowledgeModel.Data.KnowledgeModel.References
+      Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
       Database.Migration.Migration
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       DSPConfig
       KMMigration.Migration.Applicator.Applicator
-      KMMigration.Migration.Event.Common
       KMMigration.Migration.Migration
-      KMMigration.Model.Common
-      KMMigration.Model.PackageManagement
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
       Model.Event.Chapter.AddChapterEvent
       Model.Event.Chapter.DeleteChapterEvent
       Model.Event.Chapter.EditChapterEvent
+      Model.Event.Common
       Model.Event.Event
       Model.Event.Expert.AddExpertEvent
       Model.Event.Expert.DeleteExpertEvent

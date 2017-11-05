@@ -31,6 +31,7 @@ data EventDTO
   | AddFollowUpQuestionEventDTO' AddFollowUpQuestionEventDTO
   | EditFollowUpQuestionEventDTO' EditFollowUpQuestionEventDTO
   | DeleteFollowUpQuestionEventDTO' DeleteFollowUpQuestionEventDTO
+  deriving (Show, Eq)
 
 instance ToJSON EventDTO where
   toJSON (AddKnowledgeModelEventDTO' event) = toJSON event
@@ -157,6 +158,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _aqdtoKmUuid :: UUID
   , _aqdtoChapterUuid :: UUID
   , _aqdtoQuestionUuid :: UUID
+  , _aqdtoShortQuestionUuid :: Maybe String
   , _aqdtoType :: String
   , _aqdtoTitle :: String
   , _aqdtoText :: String
@@ -167,6 +169,7 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _eqdtoKmUuid :: UUID
   , _eqdtoChapterUuid :: UUID
   , _eqdtoQuestionUuid :: UUID
+  , _eqdtoShortQuestionUuid :: Maybe (Maybe String)
   , _eqdtoType :: Maybe String
   , _eqdtoTitle :: Maybe String
   , _eqdtoText :: Maybe String
@@ -283,6 +286,7 @@ data AddFollowUpQuestionEventDTO = AddFollowUpQuestionEventDTO
   , _afuqdtoChapterUuid :: UUID
   , _afuqdtoAnswerUuid :: UUID
   , _afuqdtoQuestionUuid :: UUID
+  , _afuqdtoShortQuestionUuid :: Maybe String
   , _afuqdtoType :: String
   , _afuqdtoTitle :: String
   , _afuqdtoText :: String
@@ -294,6 +298,7 @@ data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
   , _efuqdtoChapterUuid :: UUID
   , _efuqdtoAnswerUuid :: UUID
   , _efuqdtoQuestionUuid :: UUID
+  , _efuqdtoShortQuestionUuid :: Maybe (Maybe String)
   , _efuqdtoType :: Maybe String
   , _efuqdtoTitle :: Maybe String
   , _efuqdtoText :: Maybe String
@@ -462,6 +467,7 @@ instance FromJSON AddQuestionEventDTO where
     _aqdtoKmUuid <- o .: "kmUuid"
     _aqdtoChapterUuid <- o .: "chapterUuid"
     _aqdtoQuestionUuid <- o .: "questionUuid"
+    _aqdtoShortQuestionUuid <- o .: "shortuid"
     _aqdtoType <- o .: "type"
     _aqdtoTitle <- o .: "title"
     _aqdtoText <- o .: "text"
@@ -476,6 +482,7 @@ instance ToJSON AddQuestionEventDTO where
       , "kmUuid" .= _aqdtoKmUuid
       , "chapterUuid" .= _aqdtoChapterUuid
       , "questionUuid" .= _aqdtoQuestionUuid
+      , "shortuid" .= _aqdtoShortQuestionUuid
       , "type" .= _aqdtoType
       , "title" .= _aqdtoTitle
       , "text" .= _aqdtoText
@@ -487,6 +494,7 @@ instance FromJSON EditQuestionEventDTO where
     _eqdtoKmUuid <- o .: "kmUuid"
     _eqdtoChapterUuid <- o .: "chapterUuid"
     _eqdtoQuestionUuid <- o .: "questionUuid"
+    _eqdtoShortQuestionUuid <- o .: "shortuid"
     _eqdtoType <- o .: "type"
     _eqdtoTitle <- o .: "title"
     _eqdtoText <- o .: "text"
@@ -504,6 +512,7 @@ instance ToJSON EditQuestionEventDTO where
       , "kmUuid" .= _eqdtoKmUuid
       , "chapterUuid" .= _eqdtoChapterUuid
       , "questionUuid" .= _eqdtoQuestionUuid
+      , "shortuid" .= _eqdtoShortQuestionUuid
       , "type" .= _eqdtoType
       , "title" .= _eqdtoTitle
       , "text" .= _eqdtoText
@@ -761,6 +770,7 @@ instance FromJSON AddFollowUpQuestionEventDTO where
     _afuqdtoChapterUuid <- o .: "chapterUuid"
     _afuqdtoAnswerUuid <- o .: "answerUuid"
     _afuqdtoQuestionUuid <- o .: "questionUuid"
+    _afuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
     _afuqdtoType <- o .: "type"
     _afuqdtoTitle <- o .: "title"
     _afuqdtoText <- o .: "text"
@@ -776,6 +786,7 @@ instance ToJSON AddFollowUpQuestionEventDTO where
       , "chapterUuid" .= _afuqdtoChapterUuid
       , "answerUuid" .= _afuqdtoAnswerUuid
       , "questionUuid" .= _afuqdtoQuestionUuid
+      , "shortQuestionUuid" .= _afuqdtoShortQuestionUuid
       , "type" .= _afuqdtoType
       , "title" .= _afuqdtoTitle
       , "text" .= _afuqdtoText
@@ -788,6 +799,7 @@ instance FromJSON EditFollowUpQuestionEventDTO where
     _efuqdtoChapterUuid <- o .: "chapterUuid"
     _efuqdtoAnswerUuid <- o .: "answerUuid"
     _efuqdtoQuestionUuid <- o .: "questionUuid"
+    _efuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
     _efuqdtoType <- o .: "type"
     _efuqdtoTitle <- o .: "title"
     _efuqdtoText <- o .: "text"
@@ -806,6 +818,7 @@ instance ToJSON EditFollowUpQuestionEventDTO where
       , "chapterUuid" .= _efuqdtoChapterUuid
       , "answerUuid" .= _efuqdtoAnswerUuid
       , "questionUuid" .= _efuqdtoQuestionUuid
+      , "shortQuestionUuid" .= _efuqdtoShortQuestionUuid
       , "type" .= _efuqdtoType
       , "title" .= _efuqdtoTitle
       , "text" .= _efuqdtoText

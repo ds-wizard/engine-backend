@@ -4,8 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
-import KMMigration.Migration.Event.Common
-import KMMigration.Model.Common
+import Model.Event.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddAnswerEvent = AddAnswerEvent

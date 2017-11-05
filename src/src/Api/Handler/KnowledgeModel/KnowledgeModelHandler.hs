@@ -14,16 +14,10 @@ import Context
 import DSPConfig
 import Service.KnowledgeModel.KnowledgeModelService
 
-getKnowledgeModelsA :: Context -> DSPConfig -> Scotty.ActionM ()
-getKnowledgeModelsA context dspConfig = do
-  dtos <- liftIO $ getKnowledgeModels context
-  let a = dtos :: [KnowledgeModelDTO]
-  Scotty.json dtos
-
 getKnowledgeModelA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelA context dspConfig = do
-  kmUuid <- Scotty.param "kmUuid"
-  maybeDto <- liftIO $ getKnowledgeModelById context kmUuid
+  kmcUuid <- Scotty.param "kmcUuid"
+  maybeDto <- liftIO $ getKnowledgeModelByKmcId context kmcUuid
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA

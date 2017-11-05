@@ -6,7 +6,26 @@ import Service.Event.EventFromDTO
 import Service.Event.EventToDTO
 
 toDTOFn :: Event -> EventDTO
-toDTOFn (MkEvent event) = toDTO event
+toDTOFn (AddKnowledgeModelEvent' event) = toDTO event
+toDTOFn (EditKnowledgeModelEvent' event) = toDTO event
+toDTOFn (AddChapterEvent' event) = toDTO event
+toDTOFn (EditChapterEvent' event) = toDTO event
+toDTOFn (DeleteChapterEvent' event) = toDTO event
+toDTOFn (AddQuestionEvent' event) = toDTO event
+toDTOFn (EditQuestionEvent' event) = toDTO event
+toDTOFn (DeleteQuestionEvent' event) = toDTO event
+toDTOFn (AddAnswerEvent' event) = toDTO event
+toDTOFn (EditAnswerEvent' event) = toDTO event
+toDTOFn (DeleteAnswerEvent' event) = toDTO event
+toDTOFn (AddExpertEvent' event) = toDTO event
+toDTOFn (EditExpertEvent' event) = toDTO event
+toDTOFn (DeleteExpertEvent' event) = toDTO event
+toDTOFn (AddReferenceEvent' event) = toDTO event
+toDTOFn (EditReferenceEvent' event) = toDTO event
+toDTOFn (DeleteReferenceEvent' event) = toDTO event
+toDTOFn (AddFollowUpQuestionEvent' event) = toDTO event
+toDTOFn (EditFollowUpQuestionEvent' event) = toDTO event
+toDTOFn (DeleteFollowUpQuestionEvent' event) = toDTO event
 
 toDTOs :: [Event] -> [EventDTO]
 toDTOs = fmap toDTOFn

@@ -26,6 +26,7 @@ data ChapterDTO = ChapterDTO
 
 data QuestionDTO = QuestionDTO
   { _qdtoUuid :: UUID
+  , _qdtoShortUuid :: Maybe String
   , _qdtoType :: String
   , _qdtoTitle :: String
   , _qdtoText :: String
@@ -84,6 +85,7 @@ instance ToJSON QuestionDTO where
   toJSON QuestionDTO {..} =
     object
       [ "uuid" .= _qdtoUuid
+      , "shortUuid" .= _qdtoShortUuid
       , "type" .= _qdtoType
       , "title" .= _qdtoTitle
       , "text" .= _qdtoText

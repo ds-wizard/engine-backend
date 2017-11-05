@@ -31,6 +31,7 @@ toQuestionDTO :: Question -> QuestionDTO
 toQuestionDTO question =
   QuestionDTO
   { _qdtoUuid = question ^. qUuid
+  , _qdtoShortUuid = question ^. qShortUuid
   , _qdtoType = question ^. qType
   , _qdtoTitle = question ^. qTitle
   , _qdtoText = question ^. qText

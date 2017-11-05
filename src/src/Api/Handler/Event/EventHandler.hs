@@ -17,19 +17,25 @@ import Service.Event.EventService
 
 getEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
 getEventsA context dspConfig = do
-  dtos <- liftIO $ getEvents context
-  Scotty.json dtos
+  kmcUuid <- Scotty.param "kmcUuid"
+  maybeDtos <- liftIO $ getEvents context kmcUuid
+  case maybeDtos of
+    Just dtos -> Scotty.json dtos
+    _ -> notFoundA
 
 postEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
 postEventsA context dspConfig = do
+  kmcUuid <- Scotty.param "kmcUuid"
   eventsCreateDto <- Scotty.jsonData
-  eventsDto <- liftIO $ createEvents context eventsCreateDto
-  Scotty.json eventsDto
+  maybeEventsDto <- liftIO $ createEvents context kmcUuid eventsCreateDto
+  case maybeEventsDto of
+    Just eventsDto -> Scotty.json eventsDto
+    _ -> notFoundA
 
-deleteEventA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteEventA context dspConfig = do
-  eventUuid <- Scotty.param "eventUuid"
-  isSuccess <- liftIO $ deleteEvent context eventUuid
+deleteEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
+deleteEventsA context dspConfig = do
+  kmcUuid <- Scotty.param "kmcUuid"
+  isSuccess <- liftIO $ deleteEvents context kmcUuid
   if isSuccess
     then Scotty.status noContent204
     else notFoundA

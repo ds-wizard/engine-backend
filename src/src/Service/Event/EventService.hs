@@ -12,41 +12,48 @@ import Common.Types
 import Common.Uuid
 import Context
 import Database.DAO.Event.EventDAO
+import Database.DAO.KnowledgeModel.KnowledgeModelDAO
+import KMMigration.Migration.Migration
 import Model.Event.Event
+import Model.KnowledgeModelContainer.KnowledgeModelContainer
 import Service.Event.EventMapper
 import Service.Event.EventToDTO
+import Service.KnowledgeModel.KnowledgeModelService
+import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
-getEvents :: Context -> IO [EventDTO]
-getEvents context = do
-  events <- findEvents context
-  return . toDTOs $ events
+getEvents :: Context -> String -> IO (Maybe [EventDTO])
+getEvents context kmcUuid = do
+  maybeKmcWithEvents <- findKmcWithEventsById context kmcUuid
+  case maybeKmcWithEvents of
+    Just kmcWithEvents -> return . Just . toDTOs $ kmcWithEvents ^. kmcweEvents
+    _ -> return Nothing
 
-createEvents :: Context -> [EventDTO] -> IO [EventDTO]
-createEvents context eventsCreateDto = do
-  let events = fromDTOs eventsCreateDto
-  insertEvents context events
-  return $ toDTOs events
+createEvents :: Context -> String -> [EventDTO] -> IO (Maybe [EventDTO])
+createEvents context kmcUuid eventsCreateDto = do
+  maybeKmc <- getKnowledgeModelContainerById context kmcUuid
+  case maybeKmc of
+    Just kmc -> do
+      let events = fromDTOs eventsCreateDto
+      insertEventsToKmc context kmcUuid events
+      recompileKnowledgeModel context kmcUuid
+      return . Just . toDTOs $ events
+    Nothing -> return Nothing
 
--- getEventById :: Context -> String -> IO (Maybe EventDTO)
--- getEventById context eventUuid = do
---     maybeEvent <- findEventById context eventUuid
---     case maybeEvent of
---     Just event -> return . Just $ toDTO event
---     Nothing -> return Nothing
--- modifyEvent :: Context -> String -> EventDTO -> IO (Maybe EventDTO)
--- modifyEvent context eventUuid eventDto = do
---     maybeEvent <- findEventById context eventUuid
---     case maybeEvent of
---     Just event -> do
---         let event = fromEventDTO eventDto (event ^. uUuid) (event ^. uPasswordHash)
---         updateEventById context event
---         return . Just $ eventDto
---     Nothing -> return Nothing
-deleteEvent :: Context -> String -> IO Bool
-deleteEvent context eventUuid = do
-  maybeEvent <- findEventById context eventUuid
-  case maybeEvent of
-    Just event -> do
-      deleteEventById context eventUuid
+recompileKnowledgeModel :: Context -> String -> IO ()
+recompileKnowledgeModel context kmcUuid = do
+  maybeKmc <- findKmcWithEventsById context kmcUuid
+  case maybeKmc of
+    Just kmc -> do
+      let events = kmc ^. kmcweEvents
+      let newKM = migrate undefined events
+      updateKnowledgeModelByKmcId context kmcUuid newKM
+    _ -> return ()
+
+deleteEvents :: Context -> String -> IO Bool
+deleteEvents context kmcUuid = do
+  maybeKmc <- getKnowledgeModelContainerById context kmcUuid
+  case maybeKmc of
+    Just kmc -> do
+      deleteEventAtKmc context kmcUuid
       return True
     Nothing -> return False

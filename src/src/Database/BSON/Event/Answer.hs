@@ -18,7 +18,8 @@ import Model.Event.Answer.EditAnswerEvent
 -- -------------------------
 instance ToBSON AddAnswerEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. aansUuid)
+    [ "eventType" BSON.=: "AddAnswerEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. aansUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. aansKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. aansChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. aansQuestionUuid)
@@ -52,7 +53,8 @@ instance FromBSON AddAnswerEvent where
 -- -------------------------
 instance ToBSON EditAnswerEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. eansUuid)
+    [ "eventType" BSON.=: "EditAnswerEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. eansUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. eansKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. eansChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. eansQuestionUuid)
@@ -89,7 +91,8 @@ instance FromBSON EditAnswerEvent where
 -- -------------------------
 instance ToBSON DeleteAnswerEvent where
   toBSON event =
-    [ "uuid" BSON.=: serializeUUID (event ^. dansUuid)
+    [ "eventType" BSON.=: "DeleteAnswerEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. dansUuid)
     , "kmUuid" BSON.=: serializeUUID (event ^. dansKmUuid)
     , "chapterUuid" BSON.=: serializeUUID (event ^. dansChapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. dansQuestionUuid)

@@ -23,6 +23,7 @@ data Chapter = Chapter
 
 data Question = Question
   { _qUuid :: UUID
+  , _qShortUuid :: Maybe String
   , _qType :: String
   , _qTitle :: String
   , _qText :: String

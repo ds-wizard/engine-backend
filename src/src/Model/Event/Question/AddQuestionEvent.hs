@@ -4,8 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
-import KMMigration.Migration.Event.Common
-import KMMigration.Model.Common
+import Model.Event.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEvent = AddQuestionEvent
@@ -13,6 +12,7 @@ data AddQuestionEvent = AddQuestionEvent
   , _aqKmUuid :: UUID
   , _aqChapterUuid :: UUID
   , _aqQuestionUuid :: UUID
+  , _aqShortQuestionUuid :: Maybe String
   , _aqType :: String
   , _aqTitle :: String
   , _aqText :: String

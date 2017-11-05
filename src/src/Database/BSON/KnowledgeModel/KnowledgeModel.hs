@@ -32,13 +32,13 @@ instance FromBSON KnowledgeModel where
 -- CHAPTER -----------------
 -- -------------------------
 instance ToBSON Chapter where
-  toBSON user =
-    [ "uuid" BSON.=: toString (user ^. chUuid)
-    , "_chNamespace" BSON.=: (user ^. chNamespace)
-    , "formatVersion" BSON.=: (user ^. chFormatVersion)
-    , "title" BSON.=: (user ^. chTitle)
-    , "text" BSON.=: (user ^. chText)
-    , "questions" BSON.=: (user ^. chQuestions)
+  toBSON model =
+    [ "uuid" BSON.=: toString (model ^. chUuid)
+    , "namespace" BSON.=: (model ^. chNamespace)
+    , "formatVersion" BSON.=: (model ^. chFormatVersion)
+    , "title" BSON.=: (model ^. chTitle)
+    , "text" BSON.=: (model ^. chText)
+    , "questions" BSON.=: (model ^. chQuestions)
     ]
 
 instance FromBSON Chapter where
@@ -64,20 +64,22 @@ instance FromBSON Chapter where
 -- QUESTION ----------------
 -- -------------------------      
 instance ToBSON Question where
-  toBSON user =
-    [ "uuid" BSON.=: toString (user ^. qUuid)
-    , "type" BSON.=: (user ^. qType)
-    , "title" BSON.=: (user ^. qTitle)
-    , "text" BSON.=: (user ^. qText)
-    , "answers" BSON.=: (user ^. qAnswers)
-    , "references" BSON.=: (user ^. qReferences)
-    , "experts" BSON.=: (user ^. qExperts)
+  toBSON model =
+    [ "uuid" BSON.=: toString (model ^. qUuid)
+    , "shortUuid" BSON.=: (model ^. qShortUuid)
+    , "type" BSON.=: (model ^. qType)
+    , "title" BSON.=: (model ^. qTitle)
+    , "text" BSON.=: (model ^. qText)
+    , "answers" BSON.=: (model ^. qAnswers)
+    , "references" BSON.=: (model ^. qReferences)
+    , "experts" BSON.=: (model ^. qExperts)
     ]
 
 instance FromBSON Question where
   fromBSON doc = do
     uuidS <- BSON.lookup "uuid" doc
     uuid <- fromString uuidS
+    qShortUuid <- BSON.lookup "shortUuid" doc
     qType <- BSON.lookup "type" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -87,6 +89,7 @@ instance FromBSON Question where
     return
       Question
       { _qUuid = uuid
+      , _qShortUuid = qShortUuid
       , _qType = qType
       , _qTitle = title
       , _qText = text
@@ -99,11 +102,11 @@ instance FromBSON Question where
 -- ANSWER ------------------
 -- -------------------------      
 instance ToBSON Answer where
-  toBSON user =
-    [ "uuid" BSON.=: toString (user ^. ansUuid)
-    , "label" BSON.=: (user ^. ansLabel)
-    , "advice" BSON.=: (user ^. ansAdvice)
-    , "following" BSON.=: (user ^. ansFollowing)
+  toBSON model =
+    [ "uuid" BSON.=: toString (model ^. ansUuid)
+    , "label" BSON.=: (model ^. ansLabel)
+    , "advice" BSON.=: (model ^. ansAdvice)
+    , "following" BSON.=: (model ^. ansFollowing)
     ]
 
 instance FromBSON Answer where
@@ -125,10 +128,10 @@ instance FromBSON Answer where
 -- EXPERT ------------------
 -- -------------------------
 instance ToBSON Expert where
-  toBSON user =
-    [ "uuid" BSON.=: toString (user ^. expUuid)
-    , "name" BSON.=: (user ^. expName)
-    , "email" BSON.=: (user ^. expEmail)
+  toBSON model =
+    [ "uuid" BSON.=: toString (model ^. expUuid)
+    , "name" BSON.=: (model ^. expName)
+    , "email" BSON.=: (model ^. expEmail)
     ]
 
 instance FromBSON Expert where
@@ -143,9 +146,9 @@ instance FromBSON Expert where
 -- REFERENCE ---------------
 -- -------------------------
 instance ToBSON Reference where
-  toBSON user =
-    [ "uuid" BSON.=: toString (user ^. refUuid)
-    , "chapter" BSON.=: (user ^. refChapter)
+  toBSON model =
+    [ "uuid" BSON.=: toString (model ^. refUuid)
+    , "chapter" BSON.=: (model ^. refChapter)
     ]
 
 instance FromBSON Reference where
