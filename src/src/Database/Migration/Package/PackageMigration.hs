@@ -5,19 +5,31 @@ import qualified Data.UUID as U
 
 import Context
 import Database.DAO.Package.PackageDAO
+import Database.Migration.KnowledgeModel.Data.Event.Event
+import Model.Event.Event
+import Service.Package.PackageMapper
 import Service.Package.PackageService
 
 runMigration context dspConfig = do
   putStrLn "MIGRATION (Package/Package): started"
   deletePackages context
-  maybeBaseElixir0PackageDto <-
-    createPackage context "Elixir Base" "elixir-base" "0.0.1" Nothing
-  maybeBaseElixirPackageDto <-
-    createPackage context "Elixir Base" "elixir-base" "1.0.0" Nothing
-  createPackage
-    context
-    "Elixir Netherlands"
-    "elixir-nl"
-    "1.0.0"
-    (Just maybeBaseElixirPackageDto)
+  let baseElixir0PackageDto =
+        buildPackage "Elixir Base" "elixir-base" "0.0.1" Nothing []
+  insertPackage context baseElixir0PackageDto
+  let baseElixirPackageDto =
+        buildPackage
+          "Elixir Base"
+          "elixir-base"
+          "1.0.0"
+          Nothing
+          [AddKnowledgeModelEvent' a_km1]
+  insertPackage context baseElixirPackageDto
+  let elixirNlPackageDto =
+        buildPackage
+          "Elixir Netherlands"
+          "elixir-nl"
+          "1.0.0"
+          (Just baseElixirPackageDto)
+          [AddChapterEvent' a_km1_ch1]
+  insertPackage context elixirNlPackageDto
   putStrLn "MIGRATION (Package/Package): ended"

@@ -12,6 +12,7 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 import Common.Types
 import Context
 import Database.BSON.Package.Package
+import Database.BSON.Package.PackageWithEvents
 import Database.DAO.Common
 import Model.Package.Package
 
@@ -39,17 +40,24 @@ findPackageByNameAndVersion context shortName version = do
     Just package -> return . fromBSON $ package
     Nothing -> return Nothing
 
-insertPackage :: Context -> Package -> IO Value
+findPackageWithEventsByNameAndVersion :: Context
+                                      -> String
+                                      -> String
+                                      -> IO (Maybe PackageWithEvents)
+findPackageWithEventsByNameAndVersion context shortName version = do
+  let action =
+        findOne $
+        select ["shortName" =: shortName, "version" =: version] pkgCollection
+  maybePackage <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  case maybePackage of
+    Just package -> return . fromBSON $ package
+    Nothing -> return Nothing
+
+insertPackage :: Context -> PackageWithEvents -> IO Value
 insertPackage context package = do
   let action = insert pkgCollection (toBSON package)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
---updatePackageById :: Context -> Package -> IO ()
---updatePackageById context package = do
---  let action =
---        fetch (select ["uuid" =: (package ^. pkgId)] pkgCollection) >>=
---        save pkgCollection . merge (toBSON package)
---  runMongoDBPoolDef action (context ^. ctxDbPool)
 deletePackages :: Context -> IO ()
 deletePackages context = do
   let action = delete $ select [] pkgCollection

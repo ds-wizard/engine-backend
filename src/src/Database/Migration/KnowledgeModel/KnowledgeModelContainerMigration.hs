@@ -20,16 +20,14 @@ runMigration context dspConfig = do
         KnowledgeModelContainerDTO
         { _kmcdtoKmContainerUuid =
             (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-        , _kmcdtoName = "My Knowledge Model Container"
-        , _kmcdtoShortName = "elixir-nl"
-        , _kmcdtoParentPackageName = "elixir-base"
+        , _kmcdtoName = "KM Container from Amsterdam"
+        , _kmcdtoShortName = "elixir-nl-ams"
+        , _kmcdtoParentPackageName = "elixir-nl"
         , _kmcdtoParentPackageVersion = "1.0.0"
         }
   createKnowledgeModelContainer context kmc
   let events =
-        [ AddKnowledgeModelEvent' a_km1
-        , AddChapterEvent' a_km1_ch1
-        , AddQuestionEvent' a_km1_ch1_q1
+        [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
         , AddAnswerEvent' a_km1_ch1_q2_aYes1

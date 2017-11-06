@@ -30,7 +30,7 @@ applicatorSpec =
    -- ---------------
    describe "Apply:  KM Events" $ do
      it "Apply:  AddKnowledgeEvent" $ do
-       let computed = migrate undefined [AddKnowledgeModelEvent' a_km1]
+       let computed = migrate Nothing [AddKnowledgeModelEvent' a_km1]
        let expected = km1WithoutChapters
        computed `shouldBe` expected
      it "Apply:  EditKnowledgeEvent" $ do

@@ -10,6 +10,7 @@ import Web.Scotty
 
 import Api.Handler.Common
 import Api.Handler.Event.EventHandler
+import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
@@ -34,7 +35,6 @@ runApplication context dspConfig =
        --------------------
       do
        middleware corsMiddleware
-       middleware (authMiddleware dspConfig unauthorizedEndpoints)
        --------------------
        -- INFO
        --------------------
@@ -88,10 +88,16 @@ runApplication context dspConfig =
          "/packages/:name/versions/:version"
          (deletePackageA context dspConfig)
        --------------------
+       -- PACKAGES
+       --------------------
+       post "/import" (importA context dspConfig)
+       get "/export/:name/:version" (exportA context dspConfig)
+       --------------------
        -- ERROR
        --------------------
        notFound notFoundA
 
+--       middleware (authMiddleware dspConfig unauthorizedEndpoints)
 createDBConn dspConfig afterSuccess =
   let appConfigDatabase = dspConfig ^. dspcfgDatabaseConfig
       dbHost = appConfigDatabase ^. acdbHost

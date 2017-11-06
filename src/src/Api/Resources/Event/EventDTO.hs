@@ -57,7 +57,7 @@ instance ToJSON EventDTO where
 
 instance FromJSON EventDTO where
   parseJSON (Object o) = do
-    eventType <- o .: "type"
+    eventType <- o .: "eventType"
     case eventType of
       "AddKnowledgeModelEvent" ->
         parseJSON (Object o) >>= \event ->

@@ -33,9 +33,9 @@ applyValue Nothing ch setter = ch
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToKM e where
-  applyEventToKM :: e -> KnowledgeModel -> KnowledgeModel
+  applyEventToKM :: e -> Maybe KnowledgeModel -> KnowledgeModel
 
-passToChapters e km = km & kmChapters .~ modifiedChapters
+passToChapters e (Just km) = km & kmChapters .~ modifiedChapters
   where
     modifiedChapters = fmap (applyEventToChapter e) (km ^. kmChapters)
 
@@ -43,12 +43,12 @@ passToChapters e km = km & kmChapters .~ modifiedChapters
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToKM AddKnowledgeModelEvent where
-  applyEventToKM e _ =
+  applyEventToKM e Nothing =
     KnowledgeModel
     {_kmUuid = e ^. akmKmUuid, _kmName = e ^. akmName, _kmChapters = []}
 
 instance ApplyEventToKM EditKnowledgeModelEvent where
-  applyEventToKM e = applyChapterIds . applyName
+  applyEventToKM e (Just km) = applyChapterIds . applyName $ km
     where
       applyName km = applyValue (e ^. ekmName) km kmName
       applyChapterIds km =
@@ -58,7 +58,7 @@ instance ApplyEventToKM EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToKM AddChapterEvent where
-  applyEventToKM e km = km & kmChapters .~ modifiedChapters
+  applyEventToKM e (Just km) = km & kmChapters .~ modifiedChapters
     where
       modifiedChapters = km ^. kmChapters ++ [newChapter]
       newChapter =
@@ -75,7 +75,7 @@ instance ApplyEventToKM EditChapterEvent where
   applyEventToKM = passToChapters
 
 instance ApplyEventToKM DeleteChapterEvent where
-  applyEventToKM e km =
+  applyEventToKM e (Just km) =
     if equalsUuid e km
       then km & kmChapters .~ modifiedChapters
       else km

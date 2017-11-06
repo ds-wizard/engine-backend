@@ -34,6 +34,7 @@ library
       Api.Handler.Common
       Api.Handler.Event.EventHandler
       Api.Handler.Info.InfoHandler
+      Api.Handler.IO.IOHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
       Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
       Api.Handler.Organization.OrganizationHandler
@@ -49,6 +50,7 @@ library
       Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
       Api.Resources.Organization.OrganizationDTO
       Api.Resources.Package.PackageDTO
+      Api.Resources.Package.PackageWithEventsDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO
       Api.Resources.User.UserCreateDTO
@@ -63,6 +65,7 @@ library
       Database.BSON.Common
       Database.BSON.Event.Answer
       Database.BSON.Event.Chapter
+      Database.BSON.Event.Common
       Database.BSON.Event.Expert
       Database.BSON.Event.FollowUpQuestion
       Database.BSON.Event.KnowledgeModel
@@ -74,6 +77,7 @@ library
       Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithKM
       Database.BSON.Organization.Organization
       Database.BSON.Package.Package
+      Database.BSON.Package.PackageWithEvents
       Database.BSON.User.User
       Database.DAO.Common
       Database.DAO.Event.EventDAO

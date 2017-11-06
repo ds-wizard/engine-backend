@@ -48,6 +48,6 @@ applicatorINTSpec =
          , AddAnswerEvent' a_km1_ch2_q3_aNo2
          , AddAnswerEvent' a_km1_ch2_q3_aYes2
          ]
-   let computed = migrate undefined events
+   let computed = migrate Nothing events
    let expected = km1
    computed `shouldBe` expected

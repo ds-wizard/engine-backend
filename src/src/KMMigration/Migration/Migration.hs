@@ -1,6 +1,7 @@
 module KMMigration.Migration.Migration where
 
 import Control.Lens
+import Data.Maybe
 
 import KMMigration.Migration.Applicator.Applicator
 import Model.Event.Common
@@ -8,30 +9,30 @@ import Model.Event.Event
 import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import Model.KnowledgeModel.KnowledgeModel
 
-ncmApplyEvent :: KnowledgeModel -> Event -> KnowledgeModel
-ncmApplyEvent km (AddKnowledgeModelEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditKnowledgeModelEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddChapterEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditChapterEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteChapterEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddQuestionEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditQuestionEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteQuestionEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddAnswerEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditAnswerEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteAnswerEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddExpertEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditExpertEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteExpertEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddReferenceEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditReferenceEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteReferenceEvent' e) = applyEventToKM e km
-ncmApplyEvent km (AddFollowUpQuestionEvent' e) = applyEventToKM e km
-ncmApplyEvent km (EditFollowUpQuestionEvent' e) = applyEventToKM e km
-ncmApplyEvent km (DeleteFollowUpQuestionEvent' e) = applyEventToKM e km
+ncmApplyEvent :: Maybe KnowledgeModel -> Event -> Maybe KnowledgeModel
+ncmApplyEvent mKM (AddKnowledgeModelEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditKnowledgeModelEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddChapterEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditChapterEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteChapterEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddQuestionEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditQuestionEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteQuestionEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddAnswerEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditAnswerEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteAnswerEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddExpertEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditExpertEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteExpertEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddReferenceEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditReferenceEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteReferenceEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (AddFollowUpQuestionEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (EditFollowUpQuestionEvent' e) = Just $ applyEventToKM e mKM
+ncmApplyEvent mKM (DeleteFollowUpQuestionEvent' e) = Just $ applyEventToKM e mKM
 
-noConflictMethod :: KnowledgeModel -> Event -> KnowledgeModel
+noConflictMethod :: Maybe KnowledgeModel -> Event -> Maybe KnowledgeModel
 noConflictMethod = ncmApplyEvent
 
-migrate :: KnowledgeModel -> [Event] -> KnowledgeModel
-migrate = foldl noConflictMethod
+migrate :: Maybe KnowledgeModel -> [Event] -> KnowledgeModel
+migrate mKM events = fromJust $ foldl noConflictMethod mKM events

@@ -12,6 +12,7 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 import Common.Types
 import Context
 import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
+import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents
 import Database.DAO.Common
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
@@ -27,6 +28,17 @@ findKnowledgeModelContainerById :: Context
                                 -> String
                                 -> IO (Maybe KnowledgeModelContainer)
 findKnowledgeModelContainerById context kmcUuid = do
+  let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
+  maybeKnowledgeModelContainer <-
+    runMongoDBPoolDef action (context ^. ctxDbPool)
+  case maybeKnowledgeModelContainer of
+    Just kmc -> return . fromBSON $ kmc
+    Nothing -> return Nothing
+
+findKnowledgeModelContainerWithEventsById :: Context
+                                          -> String
+                                          -> IO (Maybe KnowledgeModelContainerWithEvents)
+findKnowledgeModelContainerWithEventsById context kmcUuid = do
   let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
   maybeKnowledgeModelContainer <-
     runMongoDBPoolDef action (context ^. ctxDbPool)
