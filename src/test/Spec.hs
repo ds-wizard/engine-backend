@@ -19,6 +19,7 @@ import Specs.API.KnowledgeModelContainerAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
 import Specs.API.UserAPISpec
+import Specs.API.VersionAPISpec
 import Specs.Service.ApplicatorINTSpec
 import Specs.Service.ApplicatorSpec
 import TestMigration
@@ -58,4 +59,5 @@ main =
              kmcAPI context dspConfig
              knowledgeModelAPI context dspConfig
              eventAPI context dspConfig
+             versionAPI context dspConfig
              packageAPI context dspConfig)

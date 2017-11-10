@@ -29,7 +29,7 @@ import Specs.API.Common
 shouldRespondWith r matcher = do
   forM_ (match r matcher) (liftIO . expectationFailure)
 
-kmcAPI context dspConfig =
+kmcAPI context dspConfig = do
   with (startWebApp context dspConfig) $ do
     describe "KNOWLEDGE MODEL CONTAINER API Spec" $
       -- ------------------------------------------------------------------------

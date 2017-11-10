@@ -256,6 +256,7 @@ test-suite hspec
       Specs.API.OrganizationAPISpec
       Specs.API.PackageAPISpec
       Specs.API.UserAPISpec
+      Specs.API.VersionAPISpec
       Specs.Service.ApplicatorINTSpec
       Specs.Service.ApplicatorSpec
       TestMigration

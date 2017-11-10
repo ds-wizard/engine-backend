@@ -20,3 +20,6 @@ instance FromJSON VersionDTO where
     _vdtoDescription <- o .: "description"
     return VersionDTO {..}
   parseJSON _ = mzero
+
+instance ToJSON VersionDTO where
+  toJSON VersionDTO {..} = object ["description" .= _vdtoDescription]
