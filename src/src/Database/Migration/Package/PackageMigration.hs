@@ -14,13 +14,20 @@ runMigration context dspConfig = do
   putStrLn "MIGRATION (Package/Package): started"
   deletePackages context
   let baseElixir0PackageDto =
-        buildPackage "Elixir Base" "elixir-base" "0.0.1" Nothing []
+        buildPackage
+          "Elixir Base"
+          "elixir-base"
+          "0.0.1"
+          "Beta version"
+          Nothing
+          []
   insertPackage context baseElixir0PackageDto
   let baseElixirPackageDto =
         buildPackage
           "Elixir Base"
           "elixir-base"
           "1.0.0"
+          "First Release"
           Nothing
           [AddKnowledgeModelEvent' a_km1]
   insertPackage context baseElixirPackageDto
@@ -29,6 +36,7 @@ runMigration context dspConfig = do
           "Elixir Netherlands"
           "elixir-nl"
           "1.0.0"
+          "First Release"
           (Just baseElixirPackageDto)
           [AddChapterEvent' a_km1_ch1]
   insertPackage context elixirNlPackageDto

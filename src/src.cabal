@@ -56,6 +56,7 @@ library
       Api.Resources.User.UserCreateDTO
       Api.Resources.User.UserDTO
       Api.Resources.User.UserPasswordDTO
+      Api.Resources.Version.VersionDTO
       Application
       Common.Types
       Common.Utils

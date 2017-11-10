@@ -10,6 +10,7 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
+import Api.Resources.Version.VersionDTO
 import Context
 import DSPConfig
 import Service.Package.PackageService
@@ -18,7 +19,10 @@ putVersionA :: Context -> DSPConfig -> Scotty.ActionM ()
 putVersionA context dspConfig = do
   kmcUuid <- Scotty.param "kmcUuid"
   version <- Scotty.param "version"
-  maybeDto <- liftIO $ createPackageFromKMC context kmcUuid version
+  createDto <- Scotty.jsonData
+  maybeDto <-
+    liftIO $
+    createPackageFromKMC context kmcUuid version (createDto ^. vdtoDescription)
   case maybeDto of
     Just dto -> Scotty.json dto
     Nothing -> notFoundA

@@ -26,6 +26,7 @@ instance ToBSON PackageWithEvents where
     , "name" BSON.=: (package ^. pkgweName)
     , "shortName" BSON.=: (package ^. pkgweShortName)
     , "version" BSON.=: (package ^. pkgweVersion)
+    , "description" BSON.=: (package ^. pkgweDescription)
     , "parentPackage" BSON.=: (package ^. pkgweParentPackage)
     , "events" BSON.=: convertEventToBSON <$> (package ^. pkgweEvents)
     ]
@@ -36,6 +37,7 @@ instance FromBSON PackageWithEvents where
     name <- BSON.lookup "name" doc
     shortName <- BSON.lookup "shortName" doc
     version <- BSON.lookup "version" doc
+    description <- BSON.lookup "description" doc
     parentPackage <- BSON.lookup "parentPackage" doc
     eventsSerialized <- BSON.lookup "events" doc
     let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
@@ -45,6 +47,7 @@ instance FromBSON PackageWithEvents where
       , _pkgweName = name
       , _pkgweShortName = shortName
       , _pkgweVersion = version
+      , _pkgweDescription = description
       , _pkgweParentPackage = parentPackage
       , _pkgweEvents = events
       }

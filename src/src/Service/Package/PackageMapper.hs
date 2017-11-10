@@ -18,6 +18,7 @@ packageToDTO package =
   , _pkgdtoName = package ^. pkgName
   , _pkgdtoShortName = package ^. pkgShortName
   , _pkgdtoVersion = package ^. pkgVersion
+  , _pkgdtoDescription = package ^. pkgDescription
   , _pkgdtoParentPackage = packageToDTO <$> (package ^. pkgParentPackage)
   }
 
@@ -28,6 +29,7 @@ packageWithEventsToDTO package =
   , _pkgdtoName = package ^. pkgweName
   , _pkgdtoShortName = package ^. pkgweShortName
   , _pkgdtoVersion = package ^. pkgweVersion
+  , _pkgdtoDescription = package ^. pkgweDescription
   , _pkgdtoParentPackage =
       packageWithEventsToDTO <$> (package ^. pkgweParentPackage)
   }
@@ -39,6 +41,7 @@ packageWithEventsToDTOWithEvents package =
   , _pkgwedtoName = package ^. pkgweName
   , _pkgwedtoShortName = package ^. pkgweShortName
   , _pkgwedtoVersion = package ^. pkgweVersion
+  , _pkgwedtoDescription = package ^. pkgweDescription
   , _pkgwedtoParentPackage =
       packageWithEventsToDTOWithEvents <$> (package ^. pkgweParentPackage)
   , _pkgwedtoEvents = toDTOs (package ^. pkgweEvents)
@@ -51,6 +54,7 @@ fromDTO dto =
   , _pkgName = dto ^. pkgdtoName
   , _pkgShortName = dto ^. pkgdtoShortName
   , _pkgVersion = dto ^. pkgdtoVersion
+  , _pkgDescription = dto ^. pkgdtoDescription
   , _pkgParentPackage = fromDTO <$> (dto ^. pkgdtoParentPackage)
   }
 
@@ -61,6 +65,7 @@ fromDTOWithEvents dto =
   , _pkgweName = dto ^. pkgwedtoName
   , _pkgweShortName = dto ^. pkgwedtoShortName
   , _pkgweVersion = dto ^. pkgwedtoVersion
+  , _pkgweDescription = dto ^. pkgwedtoDescription
   , _pkgweParentPackage = fromDTOWithEvents <$> (dto ^. pkgwedtoParentPackage)
   , _pkgweEvents = fromDTOs (dto ^. pkgwedtoEvents)
   }
@@ -69,15 +74,17 @@ buildPackage
   :: String
   -> String
   -> String
+  -> String
   -> Maybe PackageWithEvents
   -> [Event]
   -> PackageWithEvents
-buildPackage name shortName version maybeParentPackage events =
+buildPackage name shortName version description maybeParentPackage events =
   PackageWithEvents
   { _pkgweId = shortName ++ ":" ++ version
   , _pkgweName = name
   , _pkgweShortName = shortName
   , _pkgweVersion = version
+  , _pkgweDescription = description
   , _pkgweParentPackage = maybeParentPackage
   , _pkgweEvents = events
   }

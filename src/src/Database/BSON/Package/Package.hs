@@ -16,6 +16,7 @@ instance ToBSON Package where
     , "name" BSON.=: (package ^. pkgName)
     , "shortName" BSON.=: (package ^. pkgShortName)
     , "version" BSON.=: (package ^. pkgVersion)
+    , "description" BSON.=: (package ^. pkgDescription)
     , "parentPackage" BSON.=: (package ^. pkgParentPackage)
     ]
 
@@ -25,6 +26,7 @@ instance FromBSON Package where
     name <- BSON.lookup "name" doc
     shortName <- BSON.lookup "shortName" doc
     version <- BSON.lookup "version" doc
+    description <- BSON.lookup "description" doc
     parentPackage <- BSON.lookup "parentPackage" doc
     return
       Package
@@ -32,5 +34,6 @@ instance FromBSON Package where
       , _pkgName = name
       , _pkgShortName = shortName
       , _pkgVersion = version
+      , _pkgDescription = description
       , _pkgParentPackage = parentPackage
       }

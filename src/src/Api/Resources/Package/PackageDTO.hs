@@ -14,20 +14,12 @@ data PackageDTO = PackageDTO
   , _pkgdtoName :: String
   , _pkgdtoShortName :: String
   , _pkgdtoVersion :: String
+  , _pkgdtoDescription :: String
   , _pkgdtoParentPackage :: Maybe PackageDTO
   } deriving (Show, Eq)
 
 makeLenses ''PackageDTO
 
---instance FromJSON PackageDTO where
---  parseJSON (Object o) = do
---    _pkgdtoId <- o .: "packageId"
---    _pkgdtoName <- o .: "name"
---    _pkgdtoShortName <- o .: "shortName"
---    _pkgdtoVersion <- o .: "version"
---    _pkgdtoParentPackage <- o .: "parentPackge"
---    return PackageDTO {..}
---  parseJSON _ = mzero
 instance ToJSON PackageDTO where
   toJSON PackageDTO {..} =
     object
@@ -35,5 +27,6 @@ instance ToJSON PackageDTO where
       , "name" .= _pkgdtoName
       , "shortName" .= _pkgdtoShortName
       , "version" .= _pkgdtoVersion
+      , "description" .= _pkgdtoDescription
       , "parentPackge" .= _pkgdtoParentPackage
       ]

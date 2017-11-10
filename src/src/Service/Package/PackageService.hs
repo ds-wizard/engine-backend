@@ -57,16 +57,28 @@ createPackage
   -> String
   -> String
   -> String
+  -> String
   -> Maybe PackageWithEvents
   -> [Event]
   -> IO PackageDTO
-createPackage context name shortName version maybeParentPackageDto events = do
-  let package = buildPackage name shortName version maybeParentPackageDto events
+createPackage context name shortName version description maybeParentPackageDto events = do
+  let package =
+        buildPackage
+          name
+          shortName
+          version
+          description
+          maybeParentPackageDto
+          events
   insertPackage context package
   return $ packageWithEventsToDTO package
 
-createPackageFromKMC :: Context -> String -> String -> IO (Maybe PackageDTO)
-createPackageFromKMC context kmcUuid version = do
+createPackageFromKMC :: Context
+                     -> String
+                     -> String
+                     -> String
+                     -> IO (Maybe PackageDTO)
+createPackageFromKMC context kmcUuid version description = do
   maybeKmc <- findKnowledgeModelContainerWithEventsById context kmcUuid
   case maybeKmc of
     Just kmc -> do
@@ -78,7 +90,14 @@ createPackageFromKMC context kmcUuid version = do
       maybePackage <-
         findPackageWithEventsByNameAndVersion context ppName ppVersion
       createdPackage <-
-        createPackage context name shortName version maybePackage events
+        createPackage
+          context
+          name
+          shortName
+          version
+          description
+          maybePackage
+          events
       return . Just $ createdPackage
     Nothing -> return Nothing
 
@@ -91,10 +110,18 @@ importPackage context fileContent = do
       let pName = packageWithEvents ^. pkgweName
       let pShortName = packageWithEvents ^. pkgweShortName
       let pVersion = packageWithEvents ^. pkgweVersion
+      let pDescription = packageWithEvents ^. pkgweDescription
       let pParentPackage = packageWithEvents ^. pkgweParentPackage
       let pEvents = packageWithEvents ^. pkgweEvents
       createdPkg <-
-        createPackage context pName pShortName pVersion pParentPackage pEvents
+        createPackage
+          context
+          pName
+          pShortName
+          pVersion
+          pDescription
+          pParentPackage
+          pEvents
       return . Just $ createdPkg
     Left e -> do
       return Nothing

@@ -10,6 +10,7 @@ data Package = Package
   , _pkgName :: String
   , _pkgShortName :: String
   , _pkgVersion :: String
+  , _pkgDescription :: String
   , _pkgParentPackage :: Maybe Package
   } deriving (Show, Eq, Generic)
 
@@ -18,6 +19,7 @@ data PackageWithEvents = PackageWithEvents
   , _pkgweName :: String
   , _pkgweShortName :: String
   , _pkgweVersion :: String
+  , _pkgweDescription :: String
   , _pkgweParentPackage :: Maybe PackageWithEvents
   , _pkgweEvents :: [Event]
   } deriving (Show, Eq, Generic)
