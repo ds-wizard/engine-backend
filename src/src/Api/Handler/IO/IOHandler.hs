@@ -39,6 +39,6 @@ importA context dspConfig = do
       let fContent = fileContent file
       maybeDto <- liftIO $ importPackage context fContent
       case maybeDto of
-        Just dto -> Scotty.json dto
+        Just dto -> sendJson dto
         Nothing -> notFoundA
     Nothing -> notFoundA

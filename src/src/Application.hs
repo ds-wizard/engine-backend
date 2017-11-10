@@ -25,77 +25,78 @@ import Context
 import DSPConfig
 import Database.Migration.Migration
 
+applicationConfigFile = "config/app-config.cfg"
+
+buildInfoFile = "config/build-info.cfg"
+
 unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$"]
+
+createEndpoints :: Context -> DSPConfig -> ScottyM ()
+createEndpoints context dspConfig
+   --------------------
+   -- MIDDLEWARES
+   --------------------
+ = do
+  middleware corsMiddleware
+  middleware (authMiddleware dspConfig unauthorizedEndpoints)
+   --------------------
+   -- INFO
+   --------------------
+  get "/" (getInfoA context dspConfig)
+   --------------------
+   -- TOKENS
+   --------------------
+  post "/tokens" (postTokenA context dspConfig)
+   --------------------
+   -- ORGANIZATIONS
+   --------------------
+  get "/organizations/current" (getOrganizationCurrentA context dspConfig)
+  put "/organizations/current" (putOrganizationCurrentA context dspConfig)
+   --------------------
+   -- USERS
+   --------------------
+  get "/users" (getUsersA context dspConfig)
+  post "/users/" (postUsersA context dspConfig)
+  get "/users/current" (getUserCurrentA context dspConfig)
+  get "/users/:userUuid" (getUserA context dspConfig)
+  put "/users/current/password" (putUserCurrentPasswordA context dspConfig)
+  put "/users/current" (putUserCurrentA context dspConfig)
+  put "/users/:userUuid/password" (putUserPasswordA context dspConfig)
+  put "/users/:userUuid" (putUserA context dspConfig)
+  delete "/users/:userUuid" (deleteUserA context dspConfig)
+   --------------------
+   -- KNOWLEDGE MODEL
+   --------------------
+  get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
+  post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
+  get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
+  put "/kmcs/:kmcUuid" (putKnowledgeModelContainerA context dspConfig)
+  delete "/kmcs/:kmcUuid" (deleteKnowledgeModelContainerA context dspConfig)
+  get "/kmcs/:kmcUuid/km" (getKnowledgeModelA context dspConfig)
+  get "/kmcs/:kmcUuid/events" (getEventsA context dspConfig)
+  post "/kmcs/:kmcUuid/events/_bulk" (postEventsA context dspConfig)
+  delete "/kmcs/:kmcUuid/events" (deleteEventsA context dspConfig)
+  put "/kmcs/:kmcUuid/versions/:version" (putVersionA context dspConfig)
+   --------------------
+   -- PACKAGES
+   --------------------
+  get "/packages" (getPackagesA context dspConfig)
+  get "/packages/:name" (getPackageA context dspConfig)
+  delete "/packages/:name" (deletePackagesByNameA context dspConfig)
+  delete "/packages/:name/versions/:version" (deletePackageA context dspConfig)
+   --------------------
+   -- IMPORT/EXPORT
+   --------------------
+  post "/import" (importA context dspConfig)
+  get "/export/:name/:version" (exportA context dspConfig)
+   --------------------
+   -- ERROR
+   --------------------
+  notFound notFoundA
 
 runApplication context dspConfig =
   let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
-  in scotty serverPort $
-       --------------------
-       -- MIDDLEWARES
-       --------------------
-      do
-       middleware corsMiddleware
-       --------------------
-       -- INFO
-       --------------------
-       get "/" (getInfoA context dspConfig)
-       --------------------
-       -- TOKENS
-       --------------------
-       post "/tokens" (postTokenA context dspConfig)
-       --------------------
-       -- ORGANIZATIONS
-       --------------------
-       get "/organizations/current" (getOrganizationCurrentA context dspConfig)
-       put "/organizations/current" (putOrganizationCurrentA context dspConfig)
-       --------------------
-       -- USERS
-       --------------------
-       get "/users" (getUsersA context dspConfig)
-       post "/users/" (postUsersA context dspConfig)
-       get "/users/current" (getUserCurrentA context dspConfig)
-       get "/users/:userUuid" (getUserA context dspConfig)
-       put "/users/current/password" (putUserCurrentPasswordA context dspConfig)
-       put "/users/current" (putUserCurrentA context dspConfig)
-       put "/users/:userUuid/password" (putUserPasswordA context dspConfig)
-       put "/users/:userUuid" (putUserA context dspConfig)
-       delete "/users/:userUuid" (deleteUserA context dspConfig)
-       --------------------
-       -- KNOWLEDGE MODEL
-       --------------------
-       get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
-       post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
-       get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
-       put "/kmcs/:kmcUuid" (putKnowledgeModelContainerA context dspConfig)
-       delete
-         "/kmcs/:kmcUuid"
-         (deleteKnowledgeModelContainerA context dspConfig)
-       get "/kmcs/:kmcUuid/km" (getKnowledgeModelA context dspConfig)
-       get "/kmcs/:kmcUuid/events" (getEventsA context dspConfig)
-       post "/kmcs/:kmcUuid/events/_bulk" (postEventsA context dspConfig)
-       delete
-         "/kmcs/:kmcUuid/events/:eventUuid"
-         (deleteEventsA context dspConfig)
-       put "/kmcs/:kmcUuid/versions/:version" (putVersionA context dspConfig)
-       --------------------
-       -- PACKAGES
-       --------------------
-       get "/packages" (getAllPackagesA context dspConfig)
-       get "/packages/:name" (getPackagesA context dspConfig)
-       delete "/packages/:name" (deletePackagesByNameA context dspConfig)
-       get "/packages/:name/versions/:version" (getPackageA context dspConfig)
-       delete
-         "/packages/:name/versions/:version"
-         (deletePackageA context dspConfig)
-       --------------------
-       -- PACKAGES
-       --------------------
-       post "/import" (importA context dspConfig)
-       get "/export/:name/:version" (exportA context dspConfig)
-       --------------------
-       -- ERROR
-       --------------------
-       notFound notFoundA
+  in scotty serverPort (createEndpoints context dspConfig)
 
 --       middleware (authMiddleware dspConfig unauthorizedEndpoints)
 createDBConn dspConfig afterSuccess =
@@ -118,7 +119,7 @@ runServer = do
   \|                                                             |\n\                                             
   \\\-------------------------------------------------------------/"
   putStrLn "SERVER: started"
-  eitherDspConfig <- loadDSPConfig
+  eitherDspConfig <- loadDSPConfig applicationConfigFile buildInfoFile
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"

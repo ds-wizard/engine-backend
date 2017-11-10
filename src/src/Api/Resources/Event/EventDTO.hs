@@ -626,8 +626,8 @@ instance FromJSON AddExpertEventDTO where
     _aexpdtoChapterUuid <- o .: "chapterUuid"
     _aexpdtoQuestionUuid <- o .: "questionUuid"
     _aexpdtoExpertUuid <- o .: "expertUuid"
-    _aexpdtoName <- o .: "email"
-    _aexpdtoEmail <- o .: "name"
+    _aexpdtoName <- o .: "name"
+    _aexpdtoEmail <- o .: "email"
     return AddExpertEventDTO {..}
   parseJSON _ = mzero
 

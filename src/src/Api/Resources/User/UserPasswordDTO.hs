@@ -18,3 +18,6 @@ instance FromJSON UserPasswordDTO where
     _updtoPassword <- o .: "password"
     return UserPasswordDTO {..}
   parseJSON _ = mzero
+
+instance ToJSON UserPasswordDTO where
+  toJSON UserPasswordDTO {..} = object ["password" .= _updtoPassword]

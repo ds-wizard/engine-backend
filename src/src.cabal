@@ -58,6 +58,7 @@ library
       Api.Resources.User.UserPasswordDTO
       Api.Resources.Version.VersionDTO
       Application
+      Common.Error
       Common.Types
       Common.Utils
       Common.Uuid
@@ -199,20 +200,45 @@ test-suite hspec
   main-is: Spec.hs
   hs-source-dirs:
       test
+  default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
   build-depends:
       base
+    , aeson
+    , bson
+    , bytestring
+    , case-insensitive
+    , ConfigFile
+    , containers
+    , data-default
+    , http-types
+    , lens
+    , jwt
+    , mtl
+    , monad-control
+    , monad-logger
+    , mongoDB
+    , network
+    , persistent
+    , persistent-template
+    , persistent-mongoDB
+    , pwstore-fast
+    , random
+    , regex-compat
+    , scotty
+    , text
+    , time
+    , transformers
+    , uuid
+    , vector
+    , wai
+    , wai-extra
+    , wai-cors
+    , warp
     , src
     , hspec
     , hspec-expectations-pretty-diff
-    , http-types
-    , lens
-    , mtl
-    , persistent
-    , scotty
-    , time
-    , uuid
-    , wai
-    , wai-extra
+    , hspec-wai
+    , hspec-wai-json
   other-modules:
       Fixtures.Event.Events
       Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
@@ -222,7 +248,15 @@ test-suite hspec
       Fixtures.KnowledgeModel.KnowledgeModels
       Fixtures.KnowledgeModel.Questions
       Fixtures.KnowledgeModel.References
-      Specs.ApplicatorINTSpec
-      Specs.ApplicatorSpec
-      Specs.ServerSpec
+      Specs.API.Common
+      Specs.API.EventAPISpec
+      Specs.API.InfoAPISpec
+      Specs.API.KnowledgeModelAPISpec
+      Specs.API.KnowledgeModelContainerAPISpec
+      Specs.API.OrganizationAPISpec
+      Specs.API.PackageAPISpec
+      Specs.API.UserAPISpec
+      Specs.Service.ApplicatorINTSpec
+      Specs.Service.ApplicatorSpec
+      TestMigration
   default-language: Haskell2010

@@ -19,11 +19,11 @@ getOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 getOrganizationCurrentA context dspConfig = do
   maybeDto <- liftIO $ getOrganization context
   case maybeDto of
-    Just dto -> Scotty.json dto
+    Just dto -> sendJson dto
     _ -> notFoundA
 
 putOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 putOrganizationCurrentA context dspConfig = do
   organizationCreateDto <- Scotty.jsonData
   organizationDto <- liftIO $ modifyOrganization context organizationCreateDto
-  Scotty.json organizationDto
+  sendJson organizationDto

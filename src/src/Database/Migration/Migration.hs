@@ -9,10 +9,12 @@ import qualified
 import qualified Database.Migration.Package.PackageMigration as PKG
 import qualified Database.Migration.User.UserMigration as UM
 
+logState = putStrLn
+
 runMigration context dspConfig = do
-  putStrLn "MIGRATION: started"
-  ORG.runMigration context dspConfig
-  UM.runMigration context dspConfig
-  PKG.runMigration context dspConfig
-  KMC.runMigration context dspConfig
-  putStrLn "MIGRATION: ended"
+  logState "MIGRATION: started"
+  ORG.runMigration context dspConfig logState
+  UM.runMigration context dspConfig logState
+  PKG.runMigration context dspConfig logState
+  KMC.runMigration context dspConfig logState
+  logState "MIGRATION: ended"

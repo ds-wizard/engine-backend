@@ -10,7 +10,7 @@ import DSPConfig
 
 getInfoA :: Context -> DSPConfig -> Scotty.ActionM ()
 getInfoA context dspConfig =
-  Scotty.json
+  sendJson
     InfoDTO
     { _idtoName = dspConfig ^. dspcfgBuildInfo ^. biAppName
     , _idtoVersion = dspConfig ^. dspcfgBuildInfo ^. biAppVersion

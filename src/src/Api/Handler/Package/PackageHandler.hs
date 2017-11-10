@@ -15,16 +15,16 @@ import Context
 import DSPConfig
 import Service.Package.PackageService
 
-getAllPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getAllPackagesA context dspConfig = do
-  dtos <- liftIO $ getAllPackages context
-  Scotty.json dtos
-
 getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
 getPackagesA context dspConfig = do
+  dtos <- liftIO $ getAllPackages context
+  sendJson dtos
+
+getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()
+getPackageA context dspConfig = do
   name <- Scotty.param "name"
   dtos <- liftIO $ getPackagesForName context name
-  Scotty.json dtos
+  sendJson dtos
 
 deletePackagesByNameA :: Context -> DSPConfig -> Scotty.ActionM ()
 deletePackagesByNameA context dspConfig = do
@@ -32,15 +32,6 @@ deletePackagesByNameA context dspConfig = do
   isSuccess <- liftIO $ deleteAllPackagesByName context name
   liftIO $ deleteAllPackagesByName context name
   Scotty.status noContent204
-
-getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()
-getPackageA context dspConfig = do
-  name <- Scotty.param "name"
-  version <- Scotty.param "version"
-  maybeDto <- liftIO $ getPackageByNameAndVersion context name version
-  case maybeDto of
-    Just dto -> Scotty.json dto
-    Nothing -> notFoundA
 
 deletePackageA :: Context -> DSPConfig -> Scotty.ActionM ()
 deletePackageA context dspConfig = do

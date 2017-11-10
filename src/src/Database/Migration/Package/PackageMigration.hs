@@ -10,8 +10,8 @@ import Model.Event.Event
 import Service.Package.PackageMapper
 import Service.Package.PackageService
 
-runMigration context dspConfig = do
-  putStrLn "MIGRATION (Package/Package): started"
+runMigration context dspConfig logState = do
+  logState "MIGRATION (Package/Package): started"
   deletePackages context
   let baseElixir0PackageDto =
         buildPackage
@@ -40,4 +40,4 @@ runMigration context dspConfig = do
           (Just baseElixirPackageDto)
           [AddChapterEvent' a_km1_ch1]
   insertPackage context elixirNlPackageDto
-  putStrLn "MIGRATION (Package/Package): ended"
+  logState "MIGRATION (Package/Package): ended"

@@ -78,15 +78,53 @@ tests:
     source-dirs: test
     dependencies:
     - base
+    - aeson
+    - bson
+    - bytestring
+    - case-insensitive
+    - ConfigFile
+    - containers
+    - data-default
+    - http-types
+    - lens
+    - jwt
+    - mtl
+    - monad-control
+    - monad-logger
+    - mongoDB
+    - network
+    - persistent
+    - persistent-template
+    - persistent-mongoDB
+    - pwstore-fast
+    - random
+    - regex-compat
+    - scotty
+    - text
+    - time
+    - transformers
+    - uuid
+    - vector
+    - wai
+    - wai-extra
+    - wai-cors
+    - warp
     - src
     - hspec
     - hspec-expectations-pretty-diff
-    - http-types
-    - lens
-    - mtl
-    - persistent
-    - scotty
-    - time
-    - uuid
-    - wai
-    - wai-extra
+    - hspec-wai
+    - hspec-wai-json
+    default-extensions:
+      - TemplateHaskell
+      - QuasiQuotes
+      - OverloadedStrings
+      - MultiParamTypeClasses
+      - FlexibleContexts
+      - GeneralizedNewtypeDeriving
+      - GADTs
+      - TypeFamilies
+      - DeriveGeneric
+      - ExtendedDefaultRules
+      - RecordWildCards
+      - UnicodeSyntax
+      - ExistentialQuantification

@@ -73,6 +73,7 @@ deleteEvents context kmcUuid = do
   case maybeKmc of
     Just kmc -> do
       deleteEventAtKmc context kmcUuid
+      recompileKnowledgeModel context kmcUuid
       return True
     Nothing -> return False
 

@@ -8,8 +8,8 @@ import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
-runMigration context dspConfig = do
-  putStrLn "MIGRATION (Organization/Organization): started"
+runMigration context dspConfig logState = do
+  logState "MIGRATION (Organization/Organization): started"
   deleteOrganizations context
   insertOrganization
     context
@@ -19,4 +19,4 @@ runMigration context dspConfig = do
     , _orgName = "Elixir Netherlands"
     , _orgNamespace = "elixir-nl"
     }
-  putStrLn "MIGRATION (Organization/Organization): ended"
+  logState "MIGRATION (Organization/Organization): ended"

@@ -8,8 +8,8 @@ import Context
 import Database.DAO.User.UserDAO
 import Service.User.UserService
 
-runMigration context dspConfig = do
-  putStrLn "MIGRATION (User/User): started"
+runMigration context dspConfig logState = do
+  logState "MIGRATION (User/User): started"
   deleteUsers context
   createUserWithGivenUuid
     context
@@ -44,4 +44,4 @@ runMigration context dspConfig = do
     , _ucdtoRole = "RESEARCHER"
     , _ucdtoPassword = "password"
     }
-  putStrLn "MIGRATION (User/User): ended"
+  logState "MIGRATION (User/User): ended"

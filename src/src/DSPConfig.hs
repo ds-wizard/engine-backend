@@ -9,10 +9,6 @@ import qualified Data.Text as T
 import Common.Types
 import Paths_src
 
-applicationConfigFile = "config/app-config.cfg"
-
-buildInfoFile = "config/build-info.cfg"
-
 data AppConfigWeb = AppConfigWeb
   { _acwPort :: Int
   }
@@ -59,8 +55,8 @@ makeLenses ''BuildInfo
 
 makeLenses ''DSPConfig
 
-loadDSPConfig :: IO (Either CPError DSPConfig)
-loadDSPConfig = do
+loadDSPConfig :: FilePath -> FilePath -> IO (Either CPError DSPConfig)
+loadDSPConfig applicationConfigFile buildInfoFile = do
   file <- getDataFileName "" :: IO FilePath
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile

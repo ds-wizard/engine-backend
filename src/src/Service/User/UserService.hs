@@ -4,12 +4,14 @@ import Control.Lens ((^.))
 import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
+import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Api.Resources.User.UserPasswordDTO
+import Common.Error
 import Common.Types
 import Common.Uuid
 import Context
@@ -32,7 +34,10 @@ getUsers context = do
   users <- findUsers context
   return . fmap toDTO $ users
 
-createUser :: Context -> DSPConfig -> UserCreateDTO -> IO UserDTO
+createUser :: Context
+           -> DSPConfig
+           -> UserCreateDTO
+           -> IO (Either AppError UserDTO)
 createUser context config userCreateDto = do
   uuid <- generateUuid
   createUserWithGivenUuid context config uuid userCreateDto
@@ -41,14 +46,23 @@ createUserWithGivenUuid :: Context
                         -> DSPConfig
                         -> U.UUID
                         -> UserCreateDTO
-                        -> IO UserDTO
+                        -> IO (Either AppError UserDTO)
 createUserWithGivenUuid context config userUuid userCreateDto = do
-  let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)
-  passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
-  let user =
-        fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles
-  insertUser context user
-  return $ toDTO user
+  userFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
+  if isJust userFromDb
+    then return . Left . ValidationError $
+         "User with given email is already exists"
+    else do
+      let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)
+      passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
+      let user =
+            fromUserCreateDTO
+              userCreateDto
+              userUuid
+              (BS.unpack passwordHash)
+              roles
+      insertUser context user
+      return . Right $ toDTO user
 
 getCurrentUser :: Context -> Maybe T.Text -> IO (Maybe UserDTO)
 getCurrentUser context tokenHeader = do

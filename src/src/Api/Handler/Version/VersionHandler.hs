@@ -24,5 +24,5 @@ putVersionA context dspConfig = do
     liftIO $
     createPackageFromKMC context kmcUuid version (createDto ^. vdtoDescription)
   case maybeDto of
-    Just dto -> Scotty.json dto
+    Just dto -> sendJson dto
     Nothing -> notFoundA

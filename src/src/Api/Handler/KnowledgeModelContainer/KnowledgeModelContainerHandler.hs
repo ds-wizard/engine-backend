@@ -18,20 +18,21 @@ import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 getKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelContainersA context dspConfig = do
   dtos <- liftIO $ getKnowledgeModelContainers context
-  Scotty.json dtos
+  sendJson dtos
 
 postKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
 postKnowledgeModelContainersA context dspConfig = do
   kmcCreateDto <- Scotty.jsonData
   kmcDto <- liftIO $ createKnowledgeModelContainer context kmcCreateDto
-  Scotty.json kmcDto
+  Scotty.status created201
+  sendJson kmcDto
 
 getKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelContainerA context dspConfig = do
   kmcUuid <- Scotty.param "kmcUuid"
   maybeDto <- liftIO $ getKnowledgeModelContainerById context kmcUuid
   case maybeDto of
-    Just dto -> Scotty.json dto
+    Just dto -> sendJson dto
     Nothing -> notFoundA
 
 putKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
@@ -40,7 +41,7 @@ putKnowledgeModelContainerA context dspConfig = do
   kmcDto <- Scotty.jsonData
   maybeDto <- liftIO $ modifyKnowledgeModelContainer context kmcUuid kmcDto
   case maybeDto of
-    Just dto -> Scotty.json dto
+    Just dto -> sendJson dto
     Nothing -> notFoundA
 
 deleteKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()

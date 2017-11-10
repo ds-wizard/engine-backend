@@ -19,5 +19,5 @@ getKnowledgeModelA context dspConfig = do
   kmcUuid <- Scotty.param "kmcUuid"
   maybeDto <- liftIO $ getKnowledgeModelByKmcId context kmcUuid
   case maybeDto of
-    Just dto -> Scotty.json dto
+    Just dto -> sendJson dto
     Nothing -> notFoundA

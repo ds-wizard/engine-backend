@@ -21,5 +21,5 @@ postTokenA context dspConfig = do
   tokenCreateDto <- Scotty.jsonData
   maybeTokenDto <- liftIO $ getToken context dspConfig tokenCreateDto
   case maybeTokenDto of
-    Just tokenDto -> Scotty.json tokenDto
+    Just tokenDto -> sendJson tokenDto
     Nothing -> unauthorizedA

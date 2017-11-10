@@ -26,3 +26,13 @@ instance FromJSON UserCreateDTO where
     _ucdtoPassword <- o .: "password"
     return UserCreateDTO {..}
   parseJSON _ = mzero
+
+instance ToJSON UserCreateDTO where
+  toJSON UserCreateDTO {..} =
+    object
+      [ "name" .= _ucdtoName
+      , "surname" .= _ucdtoSurname
+      , "email" .= _ucdtoEmail
+      , "role" .= _ucdtoRole
+      , "password" .= _ucdtoPassword
+      ]

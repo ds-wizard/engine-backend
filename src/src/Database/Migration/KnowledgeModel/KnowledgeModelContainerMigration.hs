@@ -13,8 +13,8 @@ import Model.Event.Event
 import Service.Event.EventService
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
-runMigration context dspConfig = do
-  putStrLn "MIGRATION (KnowledgeModel/KnowledgeModelContainer): started"
+runMigration context dspConfig logState = do
+  logState "MIGRATION (KnowledgeModel/KnowledgeModelContainer): started"
   deleteKnowledgeModelContainers context
   let kmc =
         KnowledgeModelContainerDTO
@@ -48,4 +48,4 @@ runMigration context dspConfig = do
         ]
   insertEventsToKmc context (U.toString (kmc ^. kmcdtoKmContainerUuid)) events
   recompileKnowledgeModel context (U.toString (kmc ^. kmcdtoKmContainerUuid))
-  putStrLn "MIGRATION (KnowledgeModel/KnowledgeModelContainer): ended"
+  logState "MIGRATION (KnowledgeModel/KnowledgeModelContainer): ended"
