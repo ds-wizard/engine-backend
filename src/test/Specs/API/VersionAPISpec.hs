@@ -18,13 +18,13 @@ import qualified Web.Scotty as S
 
 import Data.Foldable
 
-import Api.Resources.Version.VersionDTO
 import Api.Resources.Package.PackageDTO
-import Service.Package.PackageService
+import Api.Resources.Version.VersionDTO
 import qualified
        Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
+import Service.Package.PackageService
 
 import Specs.API.Common
 
@@ -68,7 +68,8 @@ versionAPI context dspConfig =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          maybePackageFromDb <- liftIO $ getPackageByNameAndVersion context "elixir-nl-ams" "1.0.0"
+          maybePackageFromDb <-
+            liftIO $ getPackageByNameAndVersion context "elixir-nl-ams" "1.0.0"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -81,5 +82,4 @@ versionAPI context dspConfig =
           liftIO $ (isJust maybePackageFromDb) `shouldBe` True
           let packageFromDb = fromJust maybePackageFromDb
           liftIO $ packageFromDb `shouldBe` expDto
-
         createAuthTest reqMethod reqUrl [] ""
