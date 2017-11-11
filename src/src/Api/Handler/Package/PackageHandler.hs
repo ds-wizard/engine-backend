@@ -17,7 +17,7 @@ import Service.Package.PackageService
 
 getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
 getPackagesA context dspConfig = do
-  dtos <- liftIO $ getAllPackages context
+  dtos <- liftIO $ getAllSimplePackages context
   sendJson dtos
 
 getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()

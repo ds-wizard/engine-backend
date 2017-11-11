@@ -50,6 +50,7 @@ library
       Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
       Api.Resources.Organization.OrganizationDTO
       Api.Resources.Package.PackageDTO
+      Api.Resources.Package.PackageSimpleDTO
       Api.Resources.Package.PackageWithEventsDTO
       Api.Resources.Token.TokenCreateDTO
       Api.Resources.Token.TokenDTO

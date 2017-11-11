@@ -5,10 +5,12 @@ import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
+import Data.List
 import Data.UUID as U
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
 import Api.Resources.Package.PackageDTO
+import Api.Resources.Package.PackageSimpleDTO
 import Api.Resources.Package.PackageWithEventsDTO
 import Common.Types
 import Common.Uuid
@@ -24,13 +26,34 @@ import Service.Package.PackageMapper
 
 getAllPackages :: Context -> IO [PackageDTO]
 getAllPackages context = do
-  kms <- findPackages context
-  return . fmap packageToDTO $ kms
+  packages <- findPackages context
+  return . fmap packageToDTO $ packages
+
+getAllSimplePackages :: Context -> IO [PackageSimpleDTO]
+getAllSimplePackages context = do
+  packages <- findPackages context
+  let uniquePackages = makePackagesUnique packages
+  return . fmap packageToSimpleDTO $ uniquePackages
+  where
+    makePackagesUnique :: [Package] -> [Package]
+    makePackagesUnique = foldl addIfUnique []
+    addIfUnique :: [Package] -> Package -> [Package]
+    addIfUnique packages newPackage =
+      case isAlreadyInArray packages newPackage of
+        (Just _) -> packages
+        Nothing -> packages ++ [newPackage]
+    isAlreadyInArray :: [Package] -> Package -> Maybe Package
+    isAlreadyInArray packages newPackage =
+      find (equalSameShortName (newPackage ^. pkgShortName)) packages
+    hasSameShortName :: Package -> Package -> Bool
+    hasSameShortName pkg1 pkg2 = pkg1 ^. pkgShortName == pkg2 ^. pkgShortName
+    equalSameShortName :: String -> Package -> Bool
+    equalSameShortName shortName pkg = shortName == pkg ^. pkgShortName
 
 getPackagesForName :: Context -> String -> IO [PackageDTO]
 getPackagesForName context name = do
-  kms <- findPackagesByName context name
-  return . fmap packageToDTO $ kms
+  packages <- findPackagesByName context name
+  return . fmap packageToDTO $ packages
 
 getPackageByNameAndVersion :: Context
                            -> String

@@ -5,6 +5,7 @@ import Data.Aeson
 import Data.UUID (UUID)
 
 import Api.Resources.Package.PackageDTO
+import Api.Resources.Package.PackageSimpleDTO
 import Api.Resources.Package.PackageWithEventsDTO
 import Common.Types
 import Model.Event.Event
@@ -20,6 +21,14 @@ packageToDTO package =
   , _pkgdtoVersion = package ^. pkgVersion
   , _pkgdtoDescription = package ^. pkgDescription
   , _pkgdtoParentPackage = packageToDTO <$> (package ^. pkgParentPackage)
+  }
+
+packageToSimpleDTO :: Package -> PackageSimpleDTO
+packageToSimpleDTO package =
+  PackageSimpleDTO
+  { _pkgsdtoId = package ^. pkgId
+  , _pkgsdtoName = package ^. pkgName
+  , _pkgsdtoShortName = package ^. pkgShortName
   }
 
 packageWithEventsToDTO :: PackageWithEvents -> PackageDTO
