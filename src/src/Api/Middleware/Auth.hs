@@ -25,7 +25,7 @@ authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"
 
 getRequestURL :: Request -> String
-getRequestURL request = T.unpack . T.concat $ pathInfo request
+getRequestURL request = T.unpack . (T.intercalate "/") $ pathInfo request
 
 matchURL :: String -> Regex -> Bool
 matchURL requestURL unauthorizedEndpoint =
@@ -44,7 +44,7 @@ getTokenFromHeader request =
     Nothing -> Nothing
 
 authMiddleware :: DSPConfig -> [Regex] -> Middleware
-authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
+authMiddleware dspConfig unauthorizedEndpoints app request sendResponse = do
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse
     else authorize
