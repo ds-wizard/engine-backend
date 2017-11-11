@@ -29,11 +29,11 @@ postUsersA context dspConfig = do
   body <- Scotty.body
   let eitherUserCreateDto = eitherDecode body
   case eitherUserCreateDto of
-    Left error -> badRequest error
+    Left error -> badRequest (createErrorWithErrorMessage error)
     Right userCreateDto -> do
       eitherUserDto <- liftIO $ createUser context dspConfig userCreateDto
       case eitherUserDto of
-        Left (ValidationError message) -> badRequest message
+        Left appError -> badRequest appError
         Right userDto -> do
           Scotty.status created201
           sendJson userDto

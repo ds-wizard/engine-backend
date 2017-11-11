@@ -50,7 +50,7 @@ createUserWithGivenUuid :: Context
 createUserWithGivenUuid context config userUuid userCreateDto = do
   userFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
   if isJust userFromDb
-    then return . Left . ValidationError $
+    then return . Left . createErrorWithFormError $
          "User with given email is already exists"
     else do
       let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)

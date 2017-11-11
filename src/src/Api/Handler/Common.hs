@@ -10,6 +10,9 @@ import Network.HTTP.Types.Status
 import Network.Wai
 import qualified Web.Scotty as Scotty
 
+import Api.Resources.Error.ErrorDTO
+import Common.Error
+
 sendJson obj = do
   Scotty.setHeader (LT.pack "Content-Type") (LT.pack "application/json")
   Scotty.raw $ encode obj
@@ -19,11 +22,10 @@ unauthorizedA = do
   Scotty.status unauthorized401
   sendJson $ object ["status" .= 401, "error" .= "Unauthorized"]
 
-badRequest :: String -> Scotty.ActionM ()
-badRequest message = do
+badRequest :: AppError -> Scotty.ActionM ()
+badRequest appError = do
   Scotty.status badRequest400
-  sendJson $
-    object ["status" .= 400, "error" .= "Bad Request", "message" .= message]
+  sendJson appError
 
 unauthorizedL :: Response
 unauthorizedL =
