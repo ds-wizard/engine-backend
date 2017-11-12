@@ -28,10 +28,6 @@ import Service.Package.PackageService
 
 import Specs.API.Common
 
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
-
 versionAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
     describe "VERSION API Spec" $
@@ -54,12 +50,13 @@ versionAPI context dspConfig =
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           parentPackage <-
-            liftIO $ getPackageByNameAndVersion context "elixir-nl" "1.0.0"
+            liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
           let expDto =
                 PackageDTO
                 { _pkgdtoId = "elixir-nl-ams:1.0.0"
-                , _pkgdtoName = "KM Container from Amsterdam"
-                , _pkgdtoShortName = "elixir-nl-ams"
+                , _pkgdtoName = "Amsterdam KM"
+                , _pkgdtoGroupId = "elixir.nl"
+                , _pkgdtoArtefactId = "amsterdam-core"
                 , _pkgdtoVersion = "1.0.0"
                 , _pkgdtoDescription = reqDto ^. vdtoDescription
                 , _pkgdtoParentPackage = Just . fromJust $ parentPackage
@@ -69,7 +66,8 @@ versionAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           maybePackageFromDb <-
-            liftIO $ getPackageByNameAndVersion context "elixir-nl-ams" "1.0.0"
+            liftIO $
+            liftIO $ getPackageById context "elixir.nl.ams:amsterdam-core:1.0.0"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher

@@ -1,7 +1,7 @@
 module Fixtures.KnowledgeModel.Common where
 
-namespaceCore :: String
-namespaceCore = "core"
+groupIdCore :: String
+groupIdCore = "core"
 
-namespaceLocal :: String
-namespaceLocal = "local"
+groupIdLocal :: String
+groupIdLocal = "local"

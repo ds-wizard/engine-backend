@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
+import Data.Text (Text)
 import Database.MongoDB
        (find, findOne, select, insert, fetch, save, merge, delete,
         deleteOne, (=:), rest)
@@ -24,30 +25,36 @@ findPackages context = do
   packages <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return $ fmap (fromJust . fromBSON) packages
 
-findPackagesByName :: Context -> String -> IO [Package]
-findPackagesByName context shortName = do
-  let action = rest =<< find (select ["shortName" =: shortName] pkgCollection)
+findPackagesFiltered :: Context -> [(Text, Text)] -> IO [Package]
+findPackagesFiltered context queryParams = do
+  let filter = (\(p, v) -> p =: v) <$> queryParams
+  let action = rest =<< find (select filter pkgCollection)
   packages <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return $ fmap (fromJust . fromBSON) packages
 
-findPackageByNameAndVersion :: Context -> String -> String -> IO (Maybe Package)
-findPackageByNameAndVersion context shortName version = do
-  let action =
-        findOne $
-        select ["shortName" =: shortName, "version" =: version] pkgCollection
+findPackagesWitParams :: Context -> IO [Package]
+findPackagesWitParams context = do
+  let action = rest =<< find (select [] pkgCollection)
+  packages <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return $ fmap (fromJust . fromBSON) packages
+
+findPackageById :: Context -> String -> IO (Maybe Package)
+findPackageById context pkgId = do
+  let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackage <- runMongoDBPoolDef action (context ^. ctxDbPool)
   case maybePackage of
     Just package -> return . fromBSON $ package
     Nothing -> return Nothing
 
-findPackageWithEventsByNameAndVersion :: Context
-                                      -> String
-                                      -> String
-                                      -> IO (Maybe PackageWithEvents)
-findPackageWithEventsByNameAndVersion context shortName version = do
-  let action =
-        findOne $
-        select ["shortName" =: shortName, "version" =: version] pkgCollection
+findPackagesByArtefactId :: Context -> String -> IO [Package]
+findPackagesByArtefactId context artefactId = do
+  let action = rest =<< find (select ["artefactId" =: artefactId] pkgCollection)
+  packages <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return $ fmap (fromJust . fromBSON) packages
+
+findPackageWithEventsById :: Context -> String -> IO (Maybe PackageWithEvents)
+findPackageWithEventsById context pkgId = do
+  let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackage <- runMongoDBPoolDef action (context ^. ctxDbPool)
   case maybePackage of
     Just package -> return . fromBSON $ package
@@ -63,14 +70,12 @@ deletePackages context = do
   let action = delete $ select [] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-deletePackagesByName :: Context -> String -> IO ()
-deletePackagesByName context shortName = do
-  let action = delete $ select ["shortName" =: shortName] pkgCollection
+deletePackagesByArtefactId :: Context -> String -> IO ()
+deletePackagesByArtefactId context artefactId = do
+  let action = delete $ select ["artefactId" =: artefactId] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-deletePackageByNameAndVersion :: Context -> String -> String -> IO ()
-deletePackageByNameAndVersion context shortName version = do
-  let action =
-        deleteOne $
-        select ["shortName" =: shortName, "version" =: version] pkgCollection
+deletePackageById :: Context -> String -> IO ()
+deletePackageById context pkgId = do
+  let action = deleteOne $ select ["id" =: pkgId] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)

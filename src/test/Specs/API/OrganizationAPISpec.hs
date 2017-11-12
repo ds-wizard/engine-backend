@@ -4,7 +4,9 @@ import Control.Lens
 import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import Data.ByteString.Lazy
+import Data.Foldable
 import Data.Maybe
+import Data.Either
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -16,18 +18,12 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Data.Foldable
-
 import Api.Resources.Organization.OrganizationDTO
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
 import Specs.API.Common
-
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
 
 organizationAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
@@ -51,8 +47,8 @@ organizationAPI context dspConfig =
                 { _orgdtoUuid =
                     fromJust . U.fromString $
                     "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _orgdtoName = "Elixir Netherlands"
-                , _orgdtoNamespace = "elixir-nl"
+                , _orgdtoName = "Elixir Amsterdam"
+                , _orgdtoGroupId = "elixir.nl.amsterdam"
                 }
           let expBody = encode expDto
           -- WHEN: Call API
@@ -82,7 +78,7 @@ organizationAPI context dspConfig =
                     fromJust . U.fromString $
                     "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _orgdtoName = "EDITED: Elixir Netherlands"
-                , _orgdtoNamespace = "EDITED: elixir-nl"
+                , _orgdtoGroupId = "EDITED: elixir-nl"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -93,7 +89,7 @@ organizationAPI context dspConfig =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          maybeOrganization <- liftIO $ getOrganization context
+          eitherOrganization <- liftIO $ getOrganization context
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -103,13 +99,19 @@ organizationAPI context dspConfig =
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-          liftIO $ (isJust maybeOrganization) `shouldBe` True
-          let organizationFromDb = fromJust maybeOrganization
+          liftIO $ (isRight eitherOrganization) `shouldBe` True
+          let (Right organizationFromDb) = eitherOrganization
           liftIO $
             (organizationFromDb ^. orgdtoUuid) `shouldBe` (reqDto ^. orgdtoUuid)
           liftIO $
             (organizationFromDb ^. orgdtoName) `shouldBe` (reqDto ^. orgdtoName)
           liftIO $
-            (organizationFromDb ^. orgdtoNamespace) `shouldBe`
-            (reqDto ^. orgdtoNamespace)
+            (organizationFromDb ^. orgdtoGroupId) `shouldBe`
+            (reqDto ^. orgdtoGroupId)
+        createInvalidJsonTest
+          reqMethod
+          reqUrl
+          [HJ.json| { organizationUuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
+          "name"
         createAuthTest reqMethod reqUrl [] ""
+        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "ORG_PERM"

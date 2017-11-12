@@ -14,7 +14,7 @@ data KnowledgeModel = KnowledgeModel
 
 data Chapter = Chapter
   { _chUuid :: UUID
-  , _chNamespace :: String
+  , _chGroupId :: String
   , _chFormatVersion :: Int
   , _chTitle :: String
   , _chText :: String

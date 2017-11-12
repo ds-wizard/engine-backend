@@ -64,7 +64,7 @@ instance ApplyEventToKM AddChapterEvent where
       newChapter =
         Chapter
         { _chUuid = e ^. achChapterUuid
-        , _chNamespace = "core"
+        , _chGroupId = "core"
         , _chFormatVersion = 1
         , _chTitle = e ^. achTitle
         , _chText = e ^. achText

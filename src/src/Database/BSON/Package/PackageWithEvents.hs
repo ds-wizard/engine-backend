@@ -22,9 +22,10 @@ import Model.Package.Package
 
 instance ToBSON PackageWithEvents where
   toBSON package =
-    [ "uuid" BSON.=: package ^. pkgweId
+    [ "id" BSON.=: package ^. pkgweId
     , "name" BSON.=: (package ^. pkgweName)
-    , "shortName" BSON.=: (package ^. pkgweShortName)
+    , "groupId" BSON.=: (package ^. pkgweGroupId)
+    , "artefactId" BSON.=: (package ^. pkgweArtefactId)
     , "version" BSON.=: (package ^. pkgweVersion)
     , "description" BSON.=: (package ^. pkgweDescription)
     , "parentPackage" BSON.=: (package ^. pkgweParentPackage)
@@ -33,9 +34,10 @@ instance ToBSON PackageWithEvents where
 
 instance FromBSON PackageWithEvents where
   fromBSON doc = do
-    pkgId <- BSON.lookup "uuid" doc
+    pkgId <- BSON.lookup "id" doc
     name <- BSON.lookup "name" doc
-    shortName <- BSON.lookup "shortName" doc
+    groupId <- BSON.lookup "groupId" doc
+    artefactId <- BSON.lookup "artefactId" doc
     version <- BSON.lookup "version" doc
     description <- BSON.lookup "description" doc
     parentPackage <- BSON.lookup "parentPackage" doc
@@ -45,7 +47,8 @@ instance FromBSON PackageWithEvents where
       PackageWithEvents
       { _pkgweId = pkgId
       , _pkgweName = name
-      , _pkgweShortName = shortName
+      , _pkgweGroupId = groupId
+      , _pkgweArtefactId = artefactId
       , _pkgweVersion = version
       , _pkgweDescription = description
       , _pkgweParentPackage = parentPackage

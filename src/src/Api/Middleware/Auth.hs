@@ -44,7 +44,7 @@ getTokenFromHeader request =
     Nothing -> Nothing
 
 authMiddleware :: DSPConfig -> [Regex] -> Middleware
-authMiddleware dspConfig unauthorizedEndpoints app request sendResponse = do
+authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse
     else authorize

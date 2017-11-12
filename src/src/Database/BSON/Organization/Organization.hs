@@ -14,13 +14,13 @@ instance ToBSON Organization where
   toBSON organization =
     [ "uuid" BSON.=: serializeUUID (organization ^. orgUuid)
     , "name" BSON.=: (organization ^. orgName)
-    , "namespace" BSON.=: (organization ^. orgNamespace)
+    , "groupId" BSON.=: (organization ^. orgGroupId)
     ]
 
 instance FromBSON Organization where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
-    namespace <- BSON.lookup "namespace" doc
+    groupId <- BSON.lookup "groupId" doc
     return
-      Organization {_orgUuid = uuid, _orgName = name, _orgNamespace = namespace}
+      Organization {_orgUuid = uuid, _orgName = name, _orgGroupId = groupId}

@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
+import Data.Either
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.UUID as U
@@ -29,10 +30,12 @@ getPermissionForRole config role =
     "RESEARCHER" -> config ^. dspcfgRoles ^. acrResearcher
     _ -> []
 
-getUsers :: Context -> IO [UserDTO]
+getUsers :: Context -> IO (Either AppError [UserDTO])
 getUsers context = do
-  users <- findUsers context
-  return . fmap toDTO $ users
+  eitherUsers <- findUsers context
+  case eitherUsers of
+    Right users -> return . Right . fmap toDTO $ users
+    Left error -> return . Left $ error
 
 createUser :: Context
            -> DSPConfig
@@ -48,10 +51,10 @@ createUserWithGivenUuid :: Context
                         -> UserCreateDTO
                         -> IO (Either AppError UserDTO)
 createUserWithGivenUuid context config userUuid userCreateDto = do
-  userFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
-  if isJust userFromDb
-    then return . Left . createErrorWithFormError $
-         "User with given email is already exists"
+  eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
+  if isRight eitherUserFromDb
+    then return . Left . createErrorWithFieldError $
+         ("email", "User with given email is already exists")
     else do
       let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)
       passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
@@ -64,64 +67,50 @@ createUserWithGivenUuid context config userUuid userCreateDto = do
       insertUser context user
       return . Right $ toDTO user
 
-getCurrentUser :: Context -> Maybe T.Text -> IO (Maybe UserDTO)
-getCurrentUser context tokenHeader = do
-  let userUuidMaybe = getUserUuidFromToken context tokenHeader :: Maybe T.Text
-  case userUuidMaybe of
-    Just userUuid -> getUserById context (T.unpack userUuid)
-    _ -> return Nothing
-
-getUserById :: Context -> String -> IO (Maybe UserDTO)
+getUserById :: Context -> String -> IO (Either AppError UserDTO)
 getUserById context userUuid = do
-  maybeUser <- findUserById context userUuid
-  case maybeUser of
-    Just user -> return . Just $ toDTO user
-    Nothing -> return Nothing
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user -> return . Right $ toDTO user
+    Left error -> return . Left $ error
 
-modifyCurrentUser :: Context -> Maybe T.Text -> UserDTO -> IO (Maybe UserDTO)
-modifyCurrentUser context tokenHeader userDto = do
-  let userUuidMaybe = getUserUuidFromToken context tokenHeader :: Maybe T.Text
-  case userUuidMaybe of
-    Just userUuid -> modifyUser context (T.unpack userUuid) userDto
-    _ -> return Nothing
-
-modifyUser :: Context -> String -> UserDTO -> IO (Maybe UserDTO)
+modifyUser :: Context -> String -> UserDTO -> IO (Either AppError UserDTO)
 modifyUser context userUuid userDto = do
-  maybeUser <- findUserById context userUuid
-  case maybeUser of
-    Just user -> do
-      let updatedUser =
-            fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
-      updateUserById context updatedUser
-      return . Just $ userDto
-    Nothing -> return Nothing
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user -> do
+      eitherUserFromDb <- findUserByEmail context (userDto ^. udtoEmail)
+      if isAlreadyUsedAndIsNotMine eitherUserFromDb
+        then return . Left . createErrorWithFieldError $
+             ("email", "User with given email is already exists")
+        else do
+          let updatedUser =
+                fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
+          updateUserById context updatedUser
+          return . Right $ userDto
+    Left error -> return . Left $ error
+  where
+    isAlreadyUsedAndIsNotMine (Right user) = U.toString (user ^. uUuid) /= userUuid
+    isAlreadyUsedAndIsNotMine (Left _) = False
 
-changeCurrentUserPassword :: Context
-                          -> Maybe T.Text
-                          -> UserPasswordDTO
-                          -> IO Bool
-changeCurrentUserPassword context tokenHeader userPasswordDto = do
-  let userUuidMaybe = getUserUuidFromToken context tokenHeader :: Maybe T.Text
-  case userUuidMaybe of
-    Just userUuid ->
-      changeUserPassword context (T.unpack userUuid) userPasswordDto
-    _ -> return False
-
-changeUserPassword :: Context -> String -> UserPasswordDTO -> IO Bool
+changeUserPassword :: Context
+                   -> String
+                   -> UserPasswordDTO
+                   -> IO (Maybe AppError)
 changeUserPassword context userUuid userPasswordDto = do
-  maybeUser <- findUserById context userUuid
+  eitherUser <- findUserById context userUuid
   passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
-  case maybeUser of
-    Just user -> do
+  case eitherUser of
+    Right user -> do
       updateUserPasswordById context userUuid (BS.unpack passwordHash)
-      return True
-    Nothing -> return False
+      return Nothing
+    Left error -> return . Just $ error
 
-deleteUser :: Context -> String -> IO Bool
+deleteUser :: Context -> String -> IO (Maybe AppError)
 deleteUser context userUuid = do
-  maybeUser <- findUserById context userUuid
-  case maybeUser of
-    Just user -> do
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user -> do
       deleteUserById context userUuid
-      return True
-    Nothing -> return False
+      return Nothing
+    Left error -> return . Just $ error

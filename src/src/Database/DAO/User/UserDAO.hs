@@ -9,6 +9,7 @@ import Database.MongoDB
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
+import Common.Error
 import Common.Types
 import Context
 import Database.BSON.User.User
@@ -17,27 +18,23 @@ import Model.User.User
 
 userCollection = "users"
 
-findUsers :: Context -> IO [User]
+findUsers :: Context -> IO (Either AppError [User])
 findUsers context = do
   let action = rest =<< find (select [] userCollection)
-  users <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return $ fmap (fromJust . fromBSON) users
+  usersS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeEntities $ usersS
 
-findUserById :: Context -> String -> IO (Maybe User)
+findUserById :: Context -> String -> IO (Either AppError User)
 findUserById context userUuid = do
   let action = findOne $ select ["uuid" =: userUuid] userCollection
-  maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeUser of
-    Just user -> return . fromBSON $ user
-    Nothing -> return Nothing
+  maybeUserS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeUserS
 
-findUserByEmail :: Context -> Email -> IO (Maybe User)
+findUserByEmail :: Context -> Email -> IO (Either AppError User)
 findUserByEmail context userEmail = do
   let action = findOne $ select ["email" =: userEmail] userCollection
-  maybeUser <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeUser of
-    Just user -> return . fromBSON $ user
-    Nothing -> return Nothing
+  maybeUserS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeUserS
 
 insertUser :: Context -> User -> IO Value
 insertUser context user = do

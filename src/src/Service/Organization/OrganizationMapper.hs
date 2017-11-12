@@ -13,7 +13,7 @@ toDTO organization =
   OrganizationDTO
   { _orgdtoUuid = organization ^. orgUuid
   , _orgdtoName = organization ^. orgName
-  , _orgdtoNamespace = organization ^. orgNamespace
+  , _orgdtoGroupId = organization ^. orgGroupId
   }
 
 fromDTO :: OrganizationDTO -> Organization
@@ -21,5 +21,5 @@ fromDTO dto =
   Organization
   { _orgUuid = dto ^. orgdtoUuid
   , _orgName = dto ^. orgdtoName
-  , _orgNamespace = dto ^. orgdtoNamespace
+  , _orgGroupId = dto ^. orgdtoGroupId
   }

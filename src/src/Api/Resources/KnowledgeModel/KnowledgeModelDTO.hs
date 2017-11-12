@@ -17,7 +17,7 @@ data KnowledgeModelDTO = KnowledgeModelDTO
 
 data ChapterDTO = ChapterDTO
   { _chdtoUuid :: UUID
-  , _chdtoNamespace :: String
+  , _chdtoGroupId :: String
   , _chdtoFormatVersion :: Int
   , _chdtoTitle :: String
   , _chdtoText :: String
@@ -74,7 +74,7 @@ instance ToJSON ChapterDTO where
   toJSON ChapterDTO {..} =
     object
       [ "uuid" .= _chdtoUuid
-      , "namespace" .= _chdtoNamespace
+      , "groupId" .= _chdtoGroupId
       , "formatVersion" .= _chdtoFormatVersion
       , "title" .= _chdtoTitle
       , "text" .= _chdtoText

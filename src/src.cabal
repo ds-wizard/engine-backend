@@ -257,6 +257,7 @@ test-suite hspec
       Specs.API.KnowledgeModelContainerAPISpec
       Specs.API.OrganizationAPISpec
       Specs.API.PackageAPISpec
+      Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
       Specs.Service.ApplicatorINTSpec

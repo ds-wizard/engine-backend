@@ -34,7 +34,7 @@ instance FromBSON KnowledgeModel where
 instance ToBSON Chapter where
   toBSON model =
     [ "uuid" BSON.=: toString (model ^. chUuid)
-    , "namespace" BSON.=: (model ^. chNamespace)
+    , "groupId" BSON.=: (model ^. chGroupId)
     , "formatVersion" BSON.=: (model ^. chFormatVersion)
     , "title" BSON.=: (model ^. chTitle)
     , "text" BSON.=: (model ^. chText)
@@ -45,7 +45,7 @@ instance FromBSON Chapter where
   fromBSON doc = do
     uuidS <- BSON.lookup "uuid" doc
     uuid <- fromString uuidS
-    namespace <- BSON.lookup "namespace" doc
+    groupId <- BSON.lookup "groupId" doc
     formatVersion <- BSON.lookup "formatVersion" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
@@ -53,7 +53,7 @@ instance FromBSON Chapter where
     return
       Chapter
       { _chUuid = uuid
-      , _chNamespace = namespace
+      , _chGroupId = groupId
       , _chFormatVersion = formatVersion
       , _chTitle = title
       , _chText = text

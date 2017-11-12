@@ -41,10 +41,6 @@ import Fixtures.KnowledgeModel.Questions
 import Fixtures.KnowledgeModel.References
 import Specs.API.Common
 
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
-
 knowledgeModelAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
     describe "KNOWLEDGE MODEL API Spec" $

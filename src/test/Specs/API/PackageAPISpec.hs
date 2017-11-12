@@ -26,16 +26,13 @@ import Service.Package.PackageService
 
 import Specs.API.Common
 
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
-
 packageAPI context dspConfig = do
   let dto1 =
         PackageDTO
         { _pkgdtoId = "elixir-base:0.0.1"
         , _pkgdtoName = "Elixir Base"
-        , _pkgdtoShortName = "elixir-base"
+        , _pkgdtoGroupId = "elixir.base"
+        , _pkgdtoArtefactId = "core"
         , _pkgdtoVersion = "0.0.1"
         , _pkgdtoDescription = "Beta version"
         , _pkgdtoParentPackage = Nothing
@@ -44,7 +41,8 @@ packageAPI context dspConfig = do
         PackageDTO
         { _pkgdtoId = "elixir-base:1.0.0"
         , _pkgdtoName = "Elixir Base"
-        , _pkgdtoShortName = "elixir-base"
+        , _pkgdtoGroupId = "elixir.base"
+        , _pkgdtoArtefactId = "core"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
         , _pkgdtoParentPackage = Nothing
@@ -53,7 +51,8 @@ packageAPI context dspConfig = do
         PackageDTO
         { _pkgdtoId = "elixir-nl:1.0.0"
         , _pkgdtoName = "Elixir Netherlands"
-        , _pkgdtoShortName = "elixir-nl"
+        , _pkgdtoGroupId = "elixir.nl"
+        , _pkgdtoArtefactId = "core-nl"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
         , _pkgdtoParentPackage = Just dto2
@@ -132,7 +131,7 @@ packageAPI context dspConfig = do
           -- WHEN: Call API
              response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
-             packages <- liftIO $ findPackagesByName context "elixir-base"
+             packages <- liftIO $ findPackagesByArtefactId context "elixir-base"
           -- AND: Compare response with expetation
              let responseMatcher =
                    ResponseMatcher

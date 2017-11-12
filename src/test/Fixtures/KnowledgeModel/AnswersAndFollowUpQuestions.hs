@@ -113,7 +113,7 @@ followUpQuestion1 =
   Question
   { _qUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
   , _qShortUuid = Just "followUpQuestion1"
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "First Follow-Up Question"
   , _qText = "Maybe there will be some description"
@@ -127,7 +127,7 @@ followUpQuestion1Plain =
   Question
   { _qUuid = followUpQuestion1 ^. qUuid
   , _qShortUuid = followUpQuestion1 ^. qShortUuid
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Fourth Question"
   , _qText = "Just follow"
@@ -141,7 +141,7 @@ followUpQuestion2 =
   Question
   { _qUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
   , _qShortUuid = Just "followUpQuestion2"
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Second Follow-Up Question"
   , _qText = "Again just follow"
@@ -155,7 +155,7 @@ followUpQuestion2Changed =
   Question
   { _qUuid = followUpQuestion2 ^. qUuid
   , _qShortUuid = followUpQuestion2 ^. qShortUuid
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "EDITED: Second Follow-Up Question"
   , _qText = "EDITED: Again just follow"
@@ -169,7 +169,7 @@ followUpQuestion3 =
   Question
   { _qUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
   , _qShortUuid = Just "followUpQuestion3"
-   -- , _qNamespace = FC.namespaceCore
+   -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Third Follow-Up Question"
   , _qText = "Again and again just follow"

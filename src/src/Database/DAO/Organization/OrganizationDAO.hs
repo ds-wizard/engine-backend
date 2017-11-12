@@ -9,6 +9,7 @@ import Database.MongoDB
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
+import Common.Error
 import Common.Types
 import Context
 import Database.BSON.Organization.Organization
@@ -17,13 +18,11 @@ import Model.Organization.Organization
 
 orgCollection = "organizations"
 
-findOrganization :: Context -> IO (Maybe Organization)
+findOrganization :: Context -> IO (Either AppError Organization)
 findOrganization context = do
   let action = findOne $ select [] orgCollection
   maybeOrganization <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeOrganization of
-    Just organization -> return . fromBSON $ organization
-    Nothing -> return Nothing
+  return . deserializeMaybeEntity $ maybeOrganization
 
 insertOrganization :: Context -> Organization -> IO Value
 insertOrganization context organization = do

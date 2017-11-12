@@ -33,7 +33,7 @@ question2 =
   Question
   { _qUuid = fromJust $ U.fromString "549d4140-d3e7-4cda-a373-7af8abc6325c"
   , _qShortUuid = Just "question2"
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = qTypeOption
   , _qTitle = "Second Question"
   , _qText = "Some long description"
@@ -47,7 +47,7 @@ question2WithChangeProperties =
   Question
   { _qUuid = question2 ^. qUuid
   , _qShortUuid = question2 ^. qShortUuid
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = qTypeList
   , _qTitle = "EDITED: Second Question"
   , _qText = "EDITED: Some long description"
@@ -61,7 +61,7 @@ question3 =
   Question
   { _qUuid = fromJust $ U.fromString "b12d5939-2bd5-42b3-af09-a189480014d9"
   , _qShortUuid = Just "question3"
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = qTypeOption
   , _qTitle = "Third Question"
   , _qText = "Some long description"
@@ -75,7 +75,7 @@ question3Plain =
   Question
   { _qUuid = question3 ^. qUuid
   , _qShortUuid = question3 ^. qShortUuid
- -- , _qNamespace = FC.namespaceCore
+ -- , _qGroupId = FC.groupIdCore
   , _qType = qTypeOption
   , _qTitle = "Third Question"
   , _qText = "Some long description"

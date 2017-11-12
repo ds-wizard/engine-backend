@@ -18,6 +18,7 @@ import Specs.API.KnowledgeModelAPISpec
 import Specs.API.KnowledgeModelContainerAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
+import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
 import Specs.Service.ApplicatorINTSpec
@@ -54,10 +55,11 @@ main =
          before (resetDB context dspConfig) $
            describe "INTEGRATION TESTING" $ do
              infoAPI context dspConfig
-             userAPI context dspConfig
+             tokenAPI context dspConfig
              organizationAPI context dspConfig
-             kmcAPI context dspConfig
-             knowledgeModelAPI context dspConfig
-             eventAPI context dspConfig
-             versionAPI context dspConfig
-             packageAPI context dspConfig)
+             userAPI context dspConfig)
+--             kmcAPI context dspConfig
+--             knowledgeModelAPI context dspConfig
+--             eventAPI context dspConfig
+--             versionAPI context dspConfig
+--             packageAPI context dspConfig)

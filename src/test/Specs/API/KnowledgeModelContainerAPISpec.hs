@@ -25,10 +25,6 @@ import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
 import Specs.API.Common
 
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
-
 kmcAPI context dspConfig = do
   with (startWebApp context dspConfig) $ do
     describe "KNOWLEDGE MODEL CONTAINER API Spec" $
@@ -51,10 +47,9 @@ kmcAPI context dspConfig = do
                 { _kmcdtoKmContainerUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "KM Container from Amsterdam"
-                , _kmcdtoShortName = "elixir-nl-ams"
-                , _kmcdtoParentPackageName = "elixir-nl"
-                , _kmcdtoParentPackageVersion = "1.0.0"
+                , _kmcdtoName = "Amsterdam KM"
+                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context expDto
           let expBody = encode [expDto]
@@ -84,10 +79,9 @@ kmcAPI context dspConfig = do
                 { _kmcdtoKmContainerUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "KM Container from Amsterdam"
-                , _kmcdtoShortName = "elixir-nl-ams"
-                , _kmcdtoParentPackageName = "elixir-nl"
-                , _kmcdtoParentPackageVersion = "1.0.0"
+                , _kmcdtoName = "Amsterdam KM"
+                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -119,13 +113,10 @@ kmcAPI context dspConfig = do
             (reqDto ^. kmcdtoKmContainerUuid)
           liftIO $ (kmcFromDb ^. kmcName) `shouldBe` (reqDto ^. kmcdtoName)
           liftIO $
-            (kmcFromDb ^. kmcShortName) `shouldBe` (reqDto ^. kmcdtoShortName)
+            (kmcFromDb ^. kmcArtefactId) `shouldBe` (reqDto ^. kmcdtoArtefactId)
           liftIO $
-            (kmcFromDb ^. kmcParentPackageName) `shouldBe`
-            (reqDto ^. kmcdtoParentPackageName)
-          liftIO $
-            (kmcFromDb ^. kmcParentPackageVersion) `shouldBe`
-            (reqDto ^. kmcdtoParentPackageVersion)
+            (kmcFromDb ^. kmcParentPackageId) `shouldBe`
+            (reqDto ^. kmcdtoParentPackageId)
         createAuthTest reqMethod reqUrl [] ""
       -- ------------------------------------------------------------------------
       -- GET /kmcs/{kmcId}
@@ -145,10 +136,9 @@ kmcAPI context dspConfig = do
                 { _kmcdtoKmContainerUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "KM Container from Amsterdam"
-                , _kmcdtoShortName = "elixir-nl-ams"
-                , _kmcdtoParentPackageName = "elixir-nl"
-                , _kmcdtoParentPackageVersion = "1.0.0"
+                , _kmcdtoName = "Amsterdam KM"
+                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context expDto
           let expBody = encode expDto
@@ -178,10 +168,9 @@ kmcAPI context dspConfig = do
                 { _kmcdtoKmContainerUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "EDITED: KM Container from Amsterdam"
-                , _kmcdtoShortName = "EDITED: elixir-nl-ams"
-                , _kmcdtoParentPackageName = "EDITED: elixir-nl"
-                , _kmcdtoParentPackageVersion = "9.9.9"
+                , _kmcdtoName = "EDITED: Amsterdam KM"
+                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -214,13 +203,10 @@ kmcAPI context dspConfig = do
             (reqDto ^. kmcdtoKmContainerUuid)
           liftIO $ (kmcFromDb ^. kmcName) `shouldBe` (reqDto ^. kmcdtoName)
           liftIO $
-            (kmcFromDb ^. kmcShortName) `shouldBe` (reqDto ^. kmcdtoShortName)
+            (kmcFromDb ^. kmcArtefactId) `shouldBe` (reqDto ^. kmcdtoArtefactId)
           liftIO $
-            (kmcFromDb ^. kmcParentPackageName) `shouldBe`
-            (reqDto ^. kmcdtoParentPackageName)
-          liftIO $
-            (kmcFromDb ^. kmcParentPackageVersion) `shouldBe`
-            (reqDto ^. kmcdtoParentPackageVersion)
+            (kmcFromDb ^. kmcParentPackageId) `shouldBe`
+            (reqDto ^. kmcdtoParentPackageId)
         createAuthTest reqMethod reqUrl [] ""
       -- ------------------------------------------------------------------------
       -- DELETE /kmcs/{kmcId}
@@ -241,10 +227,9 @@ kmcAPI context dspConfig = do
                 { _kmcdtoKmContainerUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "KM Container from Amsterdam"
-                , _kmcdtoShortName = "elixir-nl-ams"
-                , _kmcdtoParentPackageName = "elixir-nl"
-                , _kmcdtoParentPackageVersion = "1.0.0"
+                , _kmcdtoName = "Amsterdam KM"
+                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context kmcDto
           -- WHEN: Call API

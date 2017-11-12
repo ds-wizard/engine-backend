@@ -82,19 +82,21 @@ createEndpoints context dspConfig
    -- PACKAGES
    --------------------
   get "/packages" (getPackagesA context dspConfig)
-  get "/packages/:name" (getPackageA context dspConfig)
-  delete "/packages/:name" (deletePackagesByNameA context dspConfig)
-  delete "/packages/:name/versions/:version" (deletePackageA context dspConfig)
+  get "/packages/:pkgId" (getPackageA context dspConfig)
+  delete "/packages" (deletePackagesA context dspConfig)
+  delete "/packages/:pkgId" (deletePackageA context dspConfig)
    --------------------
    -- IMPORT/EXPORT
    --------------------
   post "/import" (importA context dspConfig)
-  get "/export/:name/:version" (exportA context dspConfig)
+  get "/export/:pkgId" (exportA context dspConfig)
    --------------------
    -- ERROR
    --------------------
   notFound notFoundA
 
+--  get "/users/current" (getUserCurrentA context dspConfig)
+--  put "/users/current" (putUserCurrentA context dspConfig)
 runApplication context dspConfig =
   let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
   in scotty serverPort (createEndpoints context dspConfig)

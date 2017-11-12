@@ -12,26 +12,23 @@ import Model.KnowledgeModel.KnowledgeModel
 data KnowledgeModelContainer = KnowledgeModelContainer
   { _kmcKmContainerUuid :: UUID
   , _kmcName :: String
-  , _kmcShortName :: String
-  , _kmcParentPackageName :: String
-  , _kmcParentPackageVersion :: String
+  , _kmcArtefactId :: String
+  , _kmcParentPackageId :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data KnowledgeModelContainerWithEvents = KnowledgeModelContainerWithEvents
   { _kmcweKmContainerUuid :: UUID
   , _kmcweName :: String
-  , _kmcweShortName :: String
-  , _kmcweParentPackageName :: String
-  , _kmcweParentPackageVersion :: String
+  , _kmcweArtefactId :: String
+  , _kmcweParentPackageId :: Maybe String
   , _kmcweEvents :: [Event]
   } deriving (Generic)
 
 data KnowledgeModelContainerWithKM = KnowledgeModelContainerWithKM
   { _kmcwkmKmContainerUuid :: UUID
   , _kmcwkmName :: String
-  , _kmcwkmShortName :: String
-  , _kmcwkmParentPackageName :: String
-  , _kmcwkmParentPackageVersion :: String
+  , _kmcwkmArtefactId :: String
+  , _kmcwkmParentPackageId :: Maybe String
   , _kmcwkmKM :: KnowledgeModel
   } deriving (Show, Eq, Generic)
 

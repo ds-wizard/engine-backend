@@ -9,7 +9,7 @@ import GHC.Generics
 data Organization = Organization
   { _orgUuid :: UUID
   , _orgName :: String
-  , _orgNamespace :: String
+  , _orgGroupId :: String
   } deriving (Show, Eq, Generic)
 
 makeLenses ''Organization

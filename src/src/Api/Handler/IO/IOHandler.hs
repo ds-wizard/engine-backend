@@ -19,12 +19,11 @@ import Service.Package.PackageService
 
 exportA :: Context -> DSPConfig -> Scotty.ActionM ()
 exportA context dspConfig = do
-  name <- Scotty.param "name"
-  version <- Scotty.param "version"
-  maybeDto <- liftIO $ getPackageWithEventsByNameAndVersion context name version
+  pkgId <- Scotty.param "pkgId"
+  maybeDto <- liftIO $ getPackageWithEventsById context pkgId
   case maybeDto of
     Just dto -> do
-      let cdHeader = "attachment;filename=" ++ name ++ ":" ++ version ++ ".ep"
+      let cdHeader = "attachment;filename=" ++ pkgId ++ ".ep"
       Scotty.addHeader "Content-Disposition" (pack cdHeader)
       Scotty.addHeader "Content-Type" (pack "application/octet-stream")
       Scotty.raw $ encode dto

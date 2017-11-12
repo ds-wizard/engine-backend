@@ -4,12 +4,15 @@ type ErrorMessage = String
 
 type FormError = String
 
-type FieldError = String
+type FieldError = (String, String)
 
-data AppError =
-  ValidationError ErrorMessage
-                  [FormError]
-                  [FieldError]
+data AppError
+  = ValidationError ErrorMessage
+                    [FormError]
+                    [FieldError]
+  | ForbiddenError ErrorMessage
+  | NotExistsError ErrorMessage
+  | DatabaseError ErrorMessage
 
 createErrorWithErrorMessage errorMessage = ValidationError errorMessage [] []
 

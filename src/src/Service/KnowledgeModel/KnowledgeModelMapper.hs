@@ -20,7 +20,7 @@ toChapterDTO :: Chapter -> ChapterDTO
 toChapterDTO chapter =
   ChapterDTO
   { _chdtoUuid = chapter ^. chUuid
-  , _chdtoNamespace = chapter ^. chNamespace
+  , _chdtoGroupId = chapter ^. chGroupId
   , _chdtoFormatVersion = chapter ^. chFormatVersion
   , _chdtoTitle = chapter ^. chTitle
   , _chdtoText = chapter ^. chText

@@ -20,11 +20,10 @@ putVersionA context dspConfig = do
   kmcUuid <- Scotty.param "kmcUuid"
   version <- Scotty.param "version"
   createDto <- Scotty.jsonData
-  maybeDto <-
-    liftIO $
-    createPackageFromKMC context kmcUuid version (createDto ^. vdtoDescription)
-  case maybeDto of
-    Just dto -> do
+  let description = (createDto ^. vdtoDescription)
+  eitherDto <- liftIO $ createPackageFromKMC context kmcUuid version description
+  case eitherDto of
+    Right dto -> do
       Scotty.status created201
       sendJson dto
-    Nothing -> notFoundA
+    Left error -> sendError error

@@ -15,8 +15,9 @@ runMigration context dspConfig logState = do
   deletePackages context
   let baseElixir0PackageDto =
         buildPackage
-          "Elixir Base"
-          "elixir-base"
+          "Elixir Base Package"
+          "elixir.base"
+          "core"
           "0.0.1"
           "Beta version"
           Nothing
@@ -24,8 +25,9 @@ runMigration context dspConfig logState = do
   insertPackage context baseElixir0PackageDto
   let baseElixirPackageDto =
         buildPackage
-          "Elixir Base"
-          "elixir-base"
+          "Elixir Base Package"
+          "elixir.base"
+          "core"
           "1.0.0"
           "First Release"
           Nothing
@@ -34,7 +36,8 @@ runMigration context dspConfig logState = do
   let elixirNlPackageDto =
         buildPackage
           "Elixir Netherlands"
-          "elixir-nl"
+          "elixir.nl"
+          "core-nl"
           "1.0.0"
           "First Release"
           (Just baseElixirPackageDto)

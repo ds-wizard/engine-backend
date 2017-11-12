@@ -13,7 +13,8 @@ import Common.Uuid
 data PackageWithEventsDTO = PackageWithEventsDTO
   { _pkgwedtoId :: String
   , _pkgwedtoName :: String
-  , _pkgwedtoShortName :: String
+  , _pkgwedtoGroupId :: String
+  , _pkgwedtoArtefactId :: String
   , _pkgwedtoVersion :: String
   , _pkgwedtoDescription :: String
   , _pkgwedtoParentPackage :: Maybe PackageWithEventsDTO
@@ -26,7 +27,8 @@ instance FromJSON PackageWithEventsDTO where
   parseJSON (Object o) = do
     _pkgwedtoId <- o .: "packageId"
     _pkgwedtoName <- o .: "name"
-    _pkgwedtoShortName <- o .: "shortName"
+    _pkgwedtoGroupId <- o .: "groupId"
+    _pkgwedtoArtefactId <- o .: "artefactId"
     _pkgwedtoVersion <- o .: "version"
     _pkgwedtoDescription <- o .: "description"
     _pkgwedtoParentPackage <- o .: "parentPackage"
@@ -40,7 +42,8 @@ instance ToJSON PackageWithEventsDTO where
     object
       [ "packageId" .= _pkgwedtoId
       , "name" .= _pkgwedtoName
-      , "shortName" .= _pkgwedtoShortName
+      , "groupId" .= _pkgwedtoGroupId
+      , "artefactId" .= _pkgwedtoArtefactId
       , "version" .= _pkgwedtoVersion
       , "description" .= _pkgwedtoDescription
       , "parentPackage" .= _pkgwedtoParentPackage

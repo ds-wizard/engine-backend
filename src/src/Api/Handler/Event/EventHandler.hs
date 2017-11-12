@@ -24,15 +24,15 @@ getEventsA context dspConfig = do
     _ -> notFoundA
 
 postEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-postEventsA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  eventsCreateDto <- Scotty.jsonData
-  maybeEventsDto <- liftIO $ createEvents context kmcUuid eventsCreateDto
-  case maybeEventsDto of
-    Just eventsDto -> do
-      Scotty.status created201
-      sendJson eventsDto
-    _ -> notFoundA
+postEventsA context dspConfig =
+  getReqDto $ \reqDto -> do
+    kmcUuid <- Scotty.param "kmcUuid"
+    maybeEventsDto <- liftIO $ createEvents context kmcUuid reqDto
+    case maybeEventsDto of
+      Just eventsDto -> do
+        Scotty.status created201
+        sendJson eventsDto
+      _ -> notFoundA
 
 deleteEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
 deleteEventsA context dspConfig = do

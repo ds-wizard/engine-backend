@@ -12,9 +12,10 @@ import Model.Package.Package
 
 instance ToBSON Package where
   toBSON package =
-    [ "uuid" BSON.=: package ^. pkgId
+    [ "id" BSON.=: package ^. pkgId
     , "name" BSON.=: (package ^. pkgName)
-    , "shortName" BSON.=: (package ^. pkgShortName)
+    , "groupId" BSON.=: (package ^. pkgGroupId)
+    , "artefactId" BSON.=: (package ^. pkgArtefactId)
     , "version" BSON.=: (package ^. pkgVersion)
     , "description" BSON.=: (package ^. pkgDescription)
     , "parentPackage" BSON.=: (package ^. pkgParentPackage)
@@ -22,9 +23,10 @@ instance ToBSON Package where
 
 instance FromBSON Package where
   fromBSON doc = do
-    pkgId <- BSON.lookup "uuid" doc
+    pkgId <- BSON.lookup "id" doc
     name <- BSON.lookup "name" doc
-    shortName <- BSON.lookup "shortName" doc
+    groupId <- BSON.lookup "groupId" doc
+    artefactId <- BSON.lookup "artefactId" doc
     version <- BSON.lookup "version" doc
     description <- BSON.lookup "description" doc
     parentPackage <- BSON.lookup "parentPackage" doc
@@ -32,7 +34,8 @@ instance FromBSON Package where
       Package
       { _pkgId = pkgId
       , _pkgName = name
-      , _pkgShortName = shortName
+      , _pkgGroupId = groupId
+      , _pkgArtefactId = artefactId
       , _pkgVersion = version
       , _pkgDescription = description
       , _pkgParentPackage = parentPackage

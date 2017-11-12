@@ -9,17 +9,18 @@ import Data.UUID as U
 import Api.Resources.Organization.OrganizationDTO
 import Common.Types
 import Common.Uuid
+import Common.Error
 import Context
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationMapper
 
-getOrganization :: Context -> IO (Maybe OrganizationDTO)
+getOrganization :: Context -> IO (Either AppError OrganizationDTO)
 getOrganization context = do
-  maybeOrganization <- findOrganization context
-  case maybeOrganization of
-    Just organization -> return . Just . toDTO $ organization
-    _ -> return Nothing
+  eitherOrganization <- findOrganization context
+  case eitherOrganization of
+    Right organization -> return . Right . toDTO $ organization
+    Left error -> return . Left $ error
 
 modifyOrganization :: Context -> OrganizationDTO -> IO OrganizationDTO
 modifyOrganization context organizationDto = do

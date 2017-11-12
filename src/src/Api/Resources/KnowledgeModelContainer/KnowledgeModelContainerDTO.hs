@@ -12,9 +12,8 @@ import Common.Uuid
 data KnowledgeModelContainerDTO = KnowledgeModelContainerDTO
   { _kmcdtoKmContainerUuid :: UUID
   , _kmcdtoName :: String
-  , _kmcdtoShortName :: String
-  , _kmcdtoParentPackageName :: String
-  , _kmcdtoParentPackageVersion :: String
+  , _kmcdtoArtefactId :: String
+  , _kmcdtoParentPackageId :: Maybe String
   }
 
 makeLenses ''KnowledgeModelContainerDTO
@@ -23,9 +22,8 @@ instance FromJSON KnowledgeModelContainerDTO where
   parseJSON (Object o) = do
     _kmcdtoKmContainerUuid <- o .: "kmContainerUuid"
     _kmcdtoName <- o .: "name"
-    _kmcdtoShortName <- o .: "shortName"
-    _kmcdtoParentPackageName <- o .: "parentPackageName"
-    _kmcdtoParentPackageVersion <- o .: "parentPackageVersion"
+    _kmcdtoArtefactId <- o .: "artefactId"
+    _kmcdtoParentPackageId <- o .: "parentPackageId"
     return KnowledgeModelContainerDTO {..}
   parseJSON _ = mzero
 
@@ -34,7 +32,6 @@ instance ToJSON KnowledgeModelContainerDTO where
     object
       [ "kmContainerUuid" .= _kmcdtoKmContainerUuid
       , "name" .= _kmcdtoName
-      , "shortName" .= _kmcdtoShortName
-      , "parentPackageName" .= _kmcdtoParentPackageName
-      , "parentPackageVersion" .= _kmcdtoParentPackageVersion
+      , "artefactId" .= _kmcdtoArtefactId
+      , "parentPackageId" .= _kmcdtoParentPackageId
       ]

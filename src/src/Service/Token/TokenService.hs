@@ -11,6 +11,7 @@ import qualified Web.JWT as JWT
 
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
+import Common.Error
 import Common.Types
 import Common.Utils
 import Context
@@ -20,18 +21,22 @@ import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenMapper
 
-getToken :: Context -> DSPConfig -> TokenCreateDTO -> IO (Maybe TokenDTO)
+getToken :: Context
+         -> DSPConfig
+         -> TokenCreateDTO
+         -> IO (Either AppError TokenDTO)
 getToken context dspConfig tokenCreateDto = do
   let secret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
-  maybeUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
-  case maybeUser of
-    Just user -> do
+  eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
+  case eitherUser of
+    Right user -> do
       let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
       let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
       if verifyPassword incomingPassword passwordHashFromDB
-        then return . Just . toDTO $ createToken user secret
-        else return Nothing
-    Nothing -> return Nothing
+        then return . Right . toDTO $ createToken user secret
+        else return . Left $
+             createErrorWithErrorMessage "Given password is not corrent"
+    Left error -> return . Left $ error
 
 createToken :: User -> JWTSecret -> Token
 createToken user jwtSecret =
@@ -55,12 +60,23 @@ createToken user jwtSecret =
   in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
 
 getUserUuidFromToken :: Context -> Maybe T.Text -> Maybe T.Text
-getUserUuidFromToken context maybeTokenHeaderValue =
+getUserUuidFromToken context maybeTokenHeaderValue = do
+  (String value) <- getValueFromToken context maybeTokenHeaderValue "userUuid"
+  Just value
+
+getPermissionsFromToken :: Context -> Maybe T.Text -> Maybe [Permission]
+getPermissionsFromToken context maybeTokenHeaderValue = do
+  (Array value) <- getValueFromToken context maybeTokenHeaderValue "permissions"
+  let values = V.toList value
+  let permissionValues = fmap (\(String x) -> T.unpack x) values
+  Just permissionValues
+
+getValueFromToken :: Context -> Maybe T.Text -> T.Text -> Maybe Value
+getValueFromToken context maybeTokenHeaderValue paramName =
   case maybeTokenHeaderValue of
     Just tokenHeaderValue -> do
       decodedToken <- separateToken tokenHeaderValue >>= JWT.decode
       let cs = JWT.claims decodedToken
       let payload = JWT.unregisteredClaims cs
-      (String userUuid) <- M.lookup "userUuid" payload
-      Just userUuid
+      M.lookup paramName payload
     _ -> Nothing

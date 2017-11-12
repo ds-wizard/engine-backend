@@ -42,10 +42,6 @@ import Service.KnowledgeModel.KnowledgeModelMapper
 import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common
 
---shouldRespondWith :: HasCallStack => WaiSession SResponse -> ResponseMatcher -> WaiExpectation
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
-
 eventAPI context dspConfig = do
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
@@ -88,7 +84,7 @@ eventAPI context dspConfig = do
           let expBody = encode . toDTOs $ events
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher
                 { matchHeaders = expHeaders

@@ -10,9 +10,9 @@ import Common.Types
 import Common.Uuid
 
 data PackageSimpleDTO = PackageSimpleDTO
-  { _pkgsdtoId :: String
-  , _pkgsdtoName :: String
-  , _pkgsdtoShortName :: String
+  { _pkgsdtoName :: String
+  , _pkgsdtoGroupId :: String
+  , _pkgsdtoArtefactId :: String
   } deriving (Show, Eq)
 
 makeLenses ''PackageSimpleDTO
@@ -20,7 +20,7 @@ makeLenses ''PackageSimpleDTO
 instance ToJSON PackageSimpleDTO where
   toJSON PackageSimpleDTO {..} =
     object
-      [ "packageId" .= _pkgsdtoId
-      , "name" .= _pkgsdtoName
-      , "shortName" .= _pkgsdtoShortName
+      [ "name" .= _pkgsdtoName
+      , "groupId" .= _pkgsdtoGroupId
+      , "artefactId" .= _pkgsdtoArtefactId
       ]

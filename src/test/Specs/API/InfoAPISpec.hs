@@ -1,11 +1,13 @@
 module Specs.API.InfoAPISpec where
 
 import Data.Aeson (Value(..), object, (.=))
+import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import qualified Test.Hspec.Expectations.Pretty as TP
-import Test.Hspec.Wai
+import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.JSON
+import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Specs.API.Common
@@ -14,7 +16,14 @@ infoAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
     describe "INFO API Spec" $
       describe "GET /" $ do
-        it "HTTP 200 OK" $ do
+        it "HTTP 200 OK" $
+          -- GIVEN: Prepare request
+         do
+          let reqMethod = methodGet
+          let reqUrl = "/"
+          let reqHeaders = []
+          let reqBody = ""
+          -- GIVEN: Prepare expectation
           let expBody =
                 [json|
           {
@@ -25,5 +34,13 @@ infoAPI context dspConfig =
           |]
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expStatus = 200
-          get "/" `shouldRespondWith`
-            expBody {matchHeaders = expHeaders, matchStatus = expStatus}
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals expBody
+                }
+          response `shouldRespondWith` responseMatcher

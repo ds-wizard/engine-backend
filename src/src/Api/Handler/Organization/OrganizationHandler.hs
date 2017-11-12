@@ -17,13 +17,14 @@ import Service.Organization.OrganizationService
 
 getOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 getOrganizationCurrentA context dspConfig = do
-  maybeDto <- liftIO $ getOrganization context
-  case maybeDto of
-    Just dto -> sendJson dto
-    _ -> notFoundA
+  eitherDto <- liftIO $ getOrganization context
+  case eitherDto of
+    Right dto -> sendJson dto
+    Left error -> sendError error
 
 putOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-putOrganizationCurrentA context dspConfig = do
-  organizationCreateDto <- Scotty.jsonData
-  organizationDto <- liftIO $ modifyOrganization context organizationCreateDto
-  sendJson organizationDto
+putOrganizationCurrentA context dspConfig =
+  checkPermission context "ORG_PERM" $
+  getReqDto $ \reqDto -> do
+    organizationDto <- liftIO $ modifyOrganization context reqDto
+    sendJson organizationDto

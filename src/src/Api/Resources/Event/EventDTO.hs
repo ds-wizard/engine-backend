@@ -106,6 +106,7 @@ instance FromJSON EventDTO where
       "DeleteFollowUpQuestionEvent" ->
         parseJSON (Object o) >>= \event ->
           return (DeleteFollowUpQuestionEventDTO' event)
+      _ -> fail "Unknown event type"
   parseJSON _ = mzero
 
 -- -------------------------

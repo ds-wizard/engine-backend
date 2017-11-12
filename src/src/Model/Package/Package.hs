@@ -8,7 +8,8 @@ import Model.Event.Event
 data Package = Package
   { _pkgId :: String
   , _pkgName :: String
-  , _pkgShortName :: String
+  , _pkgGroupId :: String
+  , _pkgArtefactId :: String
   , _pkgVersion :: String
   , _pkgDescription :: String
   , _pkgParentPackage :: Maybe Package
@@ -17,7 +18,8 @@ data Package = Package
 data PackageWithEvents = PackageWithEvents
   { _pkgweId :: String
   , _pkgweName :: String
-  , _pkgweShortName :: String
+  , _pkgweGroupId :: String
+  , _pkgweArtefactId :: String
   , _pkgweVersion :: String
   , _pkgweDescription :: String
   , _pkgweParentPackage :: Maybe PackageWithEvents

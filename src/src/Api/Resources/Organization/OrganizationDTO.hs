@@ -13,7 +13,7 @@ import Common.Uuid
 data OrganizationDTO = OrganizationDTO
   { _orgdtoUuid :: UUID
   , _orgdtoName :: String
-  , _orgdtoNamespace :: String
+  , _orgdtoGroupId :: String
   } deriving (Show, Eq, Generic)
 
 makeLenses ''OrganizationDTO
@@ -22,7 +22,7 @@ instance FromJSON OrganizationDTO where
   parseJSON (Object o) = do
     _orgdtoUuid <- o .: "organizationUuid"
     _orgdtoName <- o .: "name"
-    _orgdtoNamespace <- o .: "namespace"
+    _orgdtoGroupId <- o .: "groupId"
     return OrganizationDTO {..}
   parseJSON _ = mzero
 
@@ -31,5 +31,5 @@ instance ToJSON OrganizationDTO where
     object
       [ "organizationUuid" .= _orgdtoUuid
       , "name" .= _orgdtoName
-      , "namespace" .= _orgdtoNamespace
+      , "groupId" .= _orgdtoGroupId
       ]

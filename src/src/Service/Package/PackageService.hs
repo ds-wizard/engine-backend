@@ -6,13 +6,16 @@ import Crypto.PasswordStore
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
+import Data.Text (Text)
 import Data.UUID as U
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Api.Resources.Organization.OrganizationDTO
 import Api.Resources.Package.PackageDTO
 import Api.Resources.Package.PackageSimpleDTO
 import Api.Resources.Package.PackageWithEventsDTO
 import Common.Types
+import Common.Error
 import Common.Uuid
 import Context
 import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
@@ -22,6 +25,7 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 import Model.Package.Package
 import Service.Event.EventMapper
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 
 getAllPackages :: Context -> IO [PackageDTO]
@@ -29,9 +33,9 @@ getAllPackages context = do
   packages <- findPackages context
   return . fmap packageToDTO $ packages
 
-getAllSimplePackages :: Context -> IO [PackageSimpleDTO]
-getAllSimplePackages context = do
-  packages <- findPackages context
+getSimplePackagesFiltered :: Context -> [(Text, Text)] -> IO [PackageSimpleDTO]
+getSimplePackagesFiltered context queryParams = do
+  packages <- findPackagesFiltered context queryParams
   let uniquePackages = makePackagesUnique packages
   return . fmap packageToSimpleDTO $ uniquePackages
   where
@@ -44,33 +48,27 @@ getAllSimplePackages context = do
         Nothing -> packages ++ [newPackage]
     isAlreadyInArray :: [Package] -> Package -> Maybe Package
     isAlreadyInArray packages newPackage =
-      find (equalSameShortName (newPackage ^. pkgShortName)) packages
-    hasSameShortName :: Package -> Package -> Bool
-    hasSameShortName pkg1 pkg2 = pkg1 ^. pkgShortName == pkg2 ^. pkgShortName
-    equalSameShortName :: String -> Package -> Bool
-    equalSameShortName shortName pkg = shortName == pkg ^. pkgShortName
+      find (equalSameArtefactId (newPackage ^. pkgArtefactId)) packages
+    hasSameArtefactId :: Package -> Package -> Bool
+    hasSameArtefactId pkg1 pkg2 = pkg1 ^. pkgArtefactId == pkg2 ^. pkgArtefactId
+    equalSameArtefactId :: String -> Package -> Bool
+    equalSameArtefactId artefactId pkg = artefactId == pkg ^. pkgArtefactId
 
 getPackagesForName :: Context -> String -> IO [PackageDTO]
 getPackagesForName context name = do
-  packages <- findPackagesByName context name
+  packages <- findPackagesByArtefactId context name
   return . fmap packageToDTO $ packages
 
-getPackageByNameAndVersion :: Context
-                           -> String
-                           -> String
-                           -> IO (Maybe PackageDTO)
-getPackageByNameAndVersion context name version = do
-  maybeKM <- findPackageByNameAndVersion context name version
+getPackageById :: Context -> String -> IO (Maybe PackageDTO)
+getPackageById context pkgId = do
+  maybeKM <- findPackageById context pkgId
   case maybeKM of
     Just km -> return . Just $ packageToDTO km
     Nothing -> return Nothing
 
-getPackageWithEventsByNameAndVersion :: Context
-                                     -> String
-                                     -> String
-                                     -> IO (Maybe PackageWithEventsDTO)
-getPackageWithEventsByNameAndVersion context name version = do
-  maybeKM <- findPackageWithEventsByNameAndVersion context name version
+getPackageWithEventsById :: Context -> String -> IO (Maybe PackageWithEventsDTO)
+getPackageWithEventsById context pkgId = do
+  maybeKM <- findPackageWithEventsById context pkgId
   case maybeKM of
     Just km -> return . Just $ packageWithEventsToDTOWithEvents km
     Nothing -> return Nothing
@@ -81,17 +79,19 @@ createPackage
   -> String
   -> String
   -> String
+  -> String
   -> Maybe PackageWithEvents
   -> [Event]
   -> IO PackageDTO
-createPackage context name shortName version description maybeParentPackageDto events = do
+createPackage context name groupId artefactId version description maybeParentPackage events = do
   let package =
         buildPackage
           name
-          shortName
+          groupId
+          artefactId
           version
           description
-          maybeParentPackageDto
+          maybeParentPackage
           events
   insertPackage context package
   return $ packageWithEventsToDTO package
@@ -100,29 +100,47 @@ createPackageFromKMC :: Context
                      -> String
                      -> String
                      -> String
-                     -> IO (Maybe PackageDTO)
+                     -> IO (Either AppError PackageDTO)
 createPackageFromKMC context kmcUuid version description = do
-  maybeKmc <- findKnowledgeModelContainerWithEventsById context kmcUuid
-  case maybeKmc of
-    Just kmc -> do
-      let name = kmc ^. kmcweName
-      let shortName = kmc ^. kmcweShortName
-      let ppName = kmc ^. kmcweParentPackageName
-      let ppVersion = kmc ^. kmcweParentPackageVersion
-      let events = kmc ^. kmcweEvents
-      maybePackage <-
-        findPackageWithEventsByNameAndVersion context ppName ppVersion
-      createdPackage <-
-        createPackage
-          context
-          name
-          shortName
-          version
-          description
-          maybePackage
-          events
-      return . Just $ createdPackage
-    Nothing -> return Nothing
+  eitherKmc <- findKnowledgeModelContainerWithEventsById context kmcUuid
+  case eitherKmc of
+    Right kmc -> do
+      eitherOrganization <- getOrganization context
+      case eitherOrganization of
+        Right organization -> do
+          let name = kmc ^. kmcweName
+          let groupId = organization ^. orgdtoGroupId
+          let artefactId = kmc ^. kmcweArtefactId
+          let events = kmc ^. kmcweEvents
+          let mPpId = kmc ^. kmcweParentPackageId
+          case mPpId of
+            Just ppId -> do
+              maybePackage <- findPackageWithEventsById context ppId
+              createdPackage <-
+                createPackage
+                  context
+                  name
+                  groupId
+                  artefactId
+                  version
+                  description
+                  maybePackage
+                  events
+              return . Right $ createdPackage
+            Nothing -> do
+              createdPackage <-
+                createPackage
+                  context
+                  name
+                  groupId
+                  artefactId
+                  version
+                  description
+                  Nothing
+                  events
+              return . Right $ createdPackage
+        Left error -> return . Left $ error
+    Left error -> return . Left $ error
 
 importPackage :: Context -> BS.ByteString -> IO (Maybe PackageDTO)
 importPackage context fileContent = do
@@ -131,7 +149,8 @@ importPackage context fileContent = do
     Right deserializedFile -> do
       let packageWithEvents = fromDTOWithEvents deserializedFile
       let pName = packageWithEvents ^. pkgweName
-      let pShortName = packageWithEvents ^. pkgweShortName
+      let pGroupId = packageWithEvents ^. pkgweGroupId
+      let pArtefactId = packageWithEvents ^. pkgweArtefactId
       let pVersion = packageWithEvents ^. pkgweVersion
       let pDescription = packageWithEvents ^. pkgweDescription
       let pParentPackage = packageWithEvents ^. pkgweParentPackage
@@ -140,7 +159,8 @@ importPackage context fileContent = do
         createPackage
           context
           pName
-          pShortName
+          pGroupId
+          pArtefactId
           pVersion
           pDescription
           pParentPackage
@@ -150,14 +170,14 @@ importPackage context fileContent = do
       return Nothing
 
 deleteAllPackagesByName :: Context -> String -> IO ()
-deleteAllPackagesByName context shortName = do
-  deletePackagesByName context shortName
+deleteAllPackagesByName context artefactId = do
+  deletePackagesByArtefactId context artefactId
 
-deletePackage :: Context -> String -> String -> IO Bool
-deletePackage context shortName version = do
-  maybePackage <- findPackageByNameAndVersion context shortName version
+deletePackage :: Context -> String -> IO Bool
+deletePackage context pkgId = do
+  maybePackage <- findPackageById context pkgId
   case maybePackage of
     Just package -> do
-      deletePackageByNameAndVersion context shortName version
+      deletePackageById context pkgId
       return True
     Nothing -> return False

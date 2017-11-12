@@ -3,8 +3,9 @@ module Api.Handler.Package.PackageHandler where
 import Control.Lens ((^.))
 import Control.Monad.Reader
 import Data.Aeson
+import Data.Maybe
 import Data.Monoid ((<>))
-import Data.Text.Lazy
+import Data.Text
 import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
@@ -17,17 +18,34 @@ import Service.Package.PackageService
 
 getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
 getPackagesA context dspConfig = do
-  dtos <- liftIO $ getAllSimplePackages context
+  queryParams <- getQueryParams
+  dtos <- liftIO $ getSimplePackagesFiltered context queryParams
   sendJson dtos
+  where
+    getQueryParams = do
+      groupId <- getGroupId
+      artefactId <- getArtefactId
+      return $ maybeToList groupId ++ maybeToList artefactId
+      where
+        getGroupId = do
+          mGroupId <- getQueryParam "groupId"
+          case mGroupId of
+            Just groupId -> return $ Just ("groupId", groupId)
+            Nothing -> return Nothing
+        getArtefactId = do
+          mArtefactId <- getQueryParam "artefactId"
+          case mArtefactId of
+            Just artefactId -> return $ Just ("artefactId", artefactId)
+            Nothing -> return Nothing
 
 getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()
 getPackageA context dspConfig = do
-  name <- Scotty.param "name"
-  dtos <- liftIO $ getPackagesForName context name
+  pkgId <- Scotty.param "pkgId"
+  dtos <- liftIO $ getPackageById context pkgId
   sendJson dtos
 
-deletePackagesByNameA :: Context -> DSPConfig -> Scotty.ActionM ()
-deletePackagesByNameA context dspConfig = do
+deletePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
+deletePackagesA context dspConfig = do
   name <- Scotty.param "name"
   isSuccess <- liftIO $ deleteAllPackagesByName context name
   liftIO $ deleteAllPackagesByName context name
@@ -35,9 +53,8 @@ deletePackagesByNameA context dspConfig = do
 
 deletePackageA :: Context -> DSPConfig -> Scotty.ActionM ()
 deletePackageA context dspConfig = do
-  name <- Scotty.param "name"
-  version <- Scotty.param "version"
-  isSuccess <- liftIO $ deletePackage context name version
+  pkgId <- Scotty.param "pkgId"
+  isSuccess <- liftIO $ deletePackage context pkgId
   if isSuccess
     then Scotty.status noContent204
     else notFoundA

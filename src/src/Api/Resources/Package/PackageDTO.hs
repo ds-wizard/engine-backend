@@ -12,7 +12,8 @@ import Common.Uuid
 data PackageDTO = PackageDTO
   { _pkgdtoId :: String
   , _pkgdtoName :: String
-  , _pkgdtoShortName :: String
+  , _pkgdtoGroupId :: String
+  , _pkgdtoArtefactId :: String
   , _pkgdtoVersion :: String
   , _pkgdtoDescription :: String
   , _pkgdtoParentPackage :: Maybe PackageDTO
@@ -25,7 +26,8 @@ instance ToJSON PackageDTO where
     object
       [ "packageId" .= _pkgdtoId
       , "name" .= _pkgdtoName
-      , "shortName" .= _pkgdtoShortName
+      , "groupId" .= _pkgdtoGroupId
+      , "artefactId" .= _pkgdtoArtefactId
       , "version" .= _pkgdtoVersion
       , "description" .= _pkgdtoDescription
       , "parentPackge" .= _pkgdtoParentPackage

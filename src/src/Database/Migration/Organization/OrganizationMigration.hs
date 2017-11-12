@@ -16,7 +16,7 @@ runMigration context dspConfig logState = do
     Organization
     { _orgUuid =
         (fromJust (U.fromString "d0619a24-db8a-48e1-a033-0d4ef8b8da78"))
-    , _orgName = "Elixir Netherlands"
-    , _orgNamespace = "elixir-nl"
+    , _orgName = "Elixir Amsterdam"
+    , _orgGroupId = "elixir.nl.amsterdam"
     }
   logState "MIGRATION (Organization/Organization): ended"

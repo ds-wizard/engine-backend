@@ -31,9 +31,9 @@ getEvents context kmcUuid = do
     Just kmcWithEvents -> return . Just . toDTOs $ kmcWithEvents ^. kmcweEvents
     _ -> return Nothing
 
-getEventsFromPackage :: Context -> String -> String -> IO (Maybe [Event])
-getEventsFromPackage context pName pVersion = do
-  maybePackage <- findPackageWithEventsByNameAndVersion context pName pVersion
+getEventsFromPackage :: Context -> String -> IO (Maybe [Event])
+getEventsFromPackage context pkgId = do
+  maybePackage <- findPackageWithEventsById context pkgId
   case maybePackage of
     Just package -> return . Just . getAllEventsFromPackage $ package
     _ -> return Nothing
@@ -54,17 +54,23 @@ recompileKnowledgeModel context kmcUuid = do
   maybeKmc <- findKmcWithEventsById context kmcUuid
   case maybeKmc of
     Just kmc -> do
-      let ppName = kmc ^. kmcweParentPackageName
-      let ppVersion = kmc ^. kmcweParentPackageVersion
-      maybeEventsFromPackage <- getEventsFromPackage context ppName ppVersion
-      case maybeEventsFromPackage of
-        Just eventsFromPackage -> do
-          let eventsFromKM = kmc ^. kmcweEvents
-          let events = eventsFromPackage ++ eventsFromKM
+      let mPpId = kmc ^. kmcweParentPackageId
+      case mPpId of
+        Just ppId -> do
+          maybeEventsFromPackage <- getEventsFromPackage context ppId
+          case maybeEventsFromPackage of
+            Just eventsFromPackage -> do
+              let eventsFromKM = kmc ^. kmcweEvents
+              let events = eventsFromPackage ++ eventsFromKM
+              let newKM = migrate Nothing events
+              updateKnowledgeModelByKmcId context kmcUuid newKM
+              return . Just $ newKM
+            _ -> return Nothing
+        Nothing -> do
+          let events = kmc ^. kmcweEvents
           let newKM = migrate Nothing events
           updateKnowledgeModelByKmcId context kmcUuid newKM
           return . Just $ newKM
-        _ -> return Nothing
     _ -> return Nothing
 
 deleteEvents :: Context -> String -> IO Bool
