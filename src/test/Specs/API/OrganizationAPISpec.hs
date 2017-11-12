@@ -111,7 +111,7 @@ organizationAPI context dspConfig =
         createInvalidJsonTest
           reqMethod
           reqUrl
-          [HJ.json| { organizationUuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
+          [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
           "name"
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "ORG_PERM"
