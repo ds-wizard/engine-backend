@@ -32,7 +32,7 @@ packageAPI context dspConfig = do
         { _pkgdtoId = "elixir-base:0.0.1"
         , _pkgdtoName = "Elixir Base"
         , _pkgdtoGroupId = "elixir.base"
-        , _pkgdtoArtefactId = "core"
+        , _pkgdtoArtifactId = "core"
         , _pkgdtoVersion = "0.0.1"
         , _pkgdtoDescription = "Beta version"
         , _pkgdtoParentPackage = Nothing
@@ -42,7 +42,7 @@ packageAPI context dspConfig = do
         { _pkgdtoId = "elixir-base:1.0.0"
         , _pkgdtoName = "Elixir Base"
         , _pkgdtoGroupId = "elixir.base"
-        , _pkgdtoArtefactId = "core"
+        , _pkgdtoArtifactId = "core"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
         , _pkgdtoParentPackage = Nothing
@@ -52,7 +52,7 @@ packageAPI context dspConfig = do
         { _pkgdtoId = "elixir-nl:1.0.0"
         , _pkgdtoName = "Elixir Netherlands"
         , _pkgdtoGroupId = "elixir.nl"
-        , _pkgdtoArtefactId = "core-nl"
+        , _pkgdtoArtifactId = "core-nl"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
         , _pkgdtoParentPackage = Just dto2
@@ -131,7 +131,7 @@ packageAPI context dspConfig = do
           -- WHEN: Call API
              response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
-             packages <- liftIO $ findPackagesByArtefactId context "elixir-base"
+             packages <- liftIO $ findPackagesByArtifactId context "elixir-base"
           -- AND: Compare response with expetation
              let responseMatcher =
                    ResponseMatcher

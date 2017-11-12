@@ -15,7 +15,7 @@ instance FromBSON KnowledgeModelContainerWithKM where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
-    artefactId <- BSON.lookup "artefactId" doc
+    artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
     kmSerialized <- BSON.lookup "knowledgeModel" doc
     km <- fromBSON kmSerialized
@@ -23,7 +23,7 @@ instance FromBSON KnowledgeModelContainerWithKM where
       KnowledgeModelContainerWithKM
       { _kmcwkmKmContainerUuid = uuid
       , _kmcwkmName = name
-      , _kmcwkmArtefactId = artefactId
+      , _kmcwkmArtifactId = artifactId
       , _kmcwkmParentPackageId = parentPackageId
       , _kmcwkmKM = km
       }

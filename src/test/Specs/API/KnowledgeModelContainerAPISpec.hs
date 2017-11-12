@@ -48,7 +48,7 @@ kmcAPI context dspConfig = do
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoArtifactId = "amsterdam-km"
                 , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context expDto
@@ -80,7 +80,7 @@ kmcAPI context dspConfig = do
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoArtifactId = "amsterdam-km"
                 , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
@@ -113,7 +113,7 @@ kmcAPI context dspConfig = do
             (reqDto ^. kmcdtoKmContainerUuid)
           liftIO $ (kmcFromDb ^. kmcName) `shouldBe` (reqDto ^. kmcdtoName)
           liftIO $
-            (kmcFromDb ^. kmcArtefactId) `shouldBe` (reqDto ^. kmcdtoArtefactId)
+            (kmcFromDb ^. kmcArtifactId) `shouldBe` (reqDto ^. kmcdtoArtifactId)
           liftIO $
             (kmcFromDb ^. kmcParentPackageId) `shouldBe`
             (reqDto ^. kmcdtoParentPackageId)
@@ -137,7 +137,7 @@ kmcAPI context dspConfig = do
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoArtifactId = "amsterdam-km"
                 , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context expDto
@@ -169,7 +169,7 @@ kmcAPI context dspConfig = do
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _kmcdtoName = "EDITED: Amsterdam KM"
-                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoArtifactId = "amsterdam-km"
                 , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
@@ -203,7 +203,7 @@ kmcAPI context dspConfig = do
             (reqDto ^. kmcdtoKmContainerUuid)
           liftIO $ (kmcFromDb ^. kmcName) `shouldBe` (reqDto ^. kmcdtoName)
           liftIO $
-            (kmcFromDb ^. kmcArtefactId) `shouldBe` (reqDto ^. kmcdtoArtefactId)
+            (kmcFromDb ^. kmcArtifactId) `shouldBe` (reqDto ^. kmcdtoArtifactId)
           liftIO $
             (kmcFromDb ^. kmcParentPackageId) `shouldBe`
             (reqDto ^. kmcdtoParentPackageId)
@@ -228,7 +228,7 @@ kmcAPI context dspConfig = do
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtefactId = "amsterdam-km"
+                , _kmcdtoArtifactId = "amsterdam-km"
                 , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createKnowledgeModelContainer context kmcDto

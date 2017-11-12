@@ -14,7 +14,7 @@ data PackageWithEventsDTO = PackageWithEventsDTO
   { _pkgwedtoId :: String
   , _pkgwedtoName :: String
   , _pkgwedtoGroupId :: String
-  , _pkgwedtoArtefactId :: String
+  , _pkgwedtoArtifactId :: String
   , _pkgwedtoVersion :: String
   , _pkgwedtoDescription :: String
   , _pkgwedtoParentPackage :: Maybe PackageWithEventsDTO
@@ -28,7 +28,7 @@ instance FromJSON PackageWithEventsDTO where
     _pkgwedtoId <- o .: "packageId"
     _pkgwedtoName <- o .: "name"
     _pkgwedtoGroupId <- o .: "groupId"
-    _pkgwedtoArtefactId <- o .: "artefactId"
+    _pkgwedtoArtifactId <- o .: "artifactId"
     _pkgwedtoVersion <- o .: "version"
     _pkgwedtoDescription <- o .: "description"
     _pkgwedtoParentPackage <- o .: "parentPackage"
@@ -43,7 +43,7 @@ instance ToJSON PackageWithEventsDTO where
       [ "packageId" .= _pkgwedtoId
       , "name" .= _pkgwedtoName
       , "groupId" .= _pkgwedtoGroupId
-      , "artefactId" .= _pkgwedtoArtefactId
+      , "artifactId" .= _pkgwedtoArtifactId
       , "version" .= _pkgwedtoVersion
       , "description" .= _pkgwedtoDescription
       , "parentPackage" .= _pkgwedtoParentPackage

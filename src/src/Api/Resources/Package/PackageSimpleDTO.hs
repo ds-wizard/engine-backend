@@ -12,7 +12,7 @@ import Common.Uuid
 data PackageSimpleDTO = PackageSimpleDTO
   { _pkgsdtoName :: String
   , _pkgsdtoGroupId :: String
-  , _pkgsdtoArtefactId :: String
+  , _pkgsdtoArtifactId :: String
   } deriving (Show, Eq)
 
 makeLenses ''PackageSimpleDTO
@@ -22,5 +22,5 @@ instance ToJSON PackageSimpleDTO where
     object
       [ "name" .= _pkgsdtoName
       , "groupId" .= _pkgsdtoGroupId
-      , "artefactId" .= _pkgsdtoArtefactId
+      , "artifactId" .= _pkgsdtoArtifactId
       ]

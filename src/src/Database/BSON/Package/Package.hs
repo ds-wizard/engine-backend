@@ -15,7 +15,7 @@ instance ToBSON Package where
     [ "id" BSON.=: package ^. pkgId
     , "name" BSON.=: (package ^. pkgName)
     , "groupId" BSON.=: (package ^. pkgGroupId)
-    , "artefactId" BSON.=: (package ^. pkgArtefactId)
+    , "artifactId" BSON.=: (package ^. pkgArtifactId)
     , "version" BSON.=: (package ^. pkgVersion)
     , "description" BSON.=: (package ^. pkgDescription)
     , "parentPackage" BSON.=: (package ^. pkgParentPackage)
@@ -26,7 +26,7 @@ instance FromBSON Package where
     pkgId <- BSON.lookup "id" doc
     name <- BSON.lookup "name" doc
     groupId <- BSON.lookup "groupId" doc
-    artefactId <- BSON.lookup "artefactId" doc
+    artifactId <- BSON.lookup "artifactId" doc
     version <- BSON.lookup "version" doc
     description <- BSON.lookup "description" doc
     parentPackage <- BSON.lookup "parentPackage" doc
@@ -35,7 +35,7 @@ instance FromBSON Package where
       { _pkgId = pkgId
       , _pkgName = name
       , _pkgGroupId = groupId
-      , _pkgArtefactId = artefactId
+      , _pkgArtifactId = artifactId
       , _pkgVersion = version
       , _pkgDescription = description
       , _pkgParentPackage = parentPackage

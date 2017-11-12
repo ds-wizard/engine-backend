@@ -48,15 +48,15 @@ getSimplePackagesFiltered context queryParams = do
         Nothing -> packages ++ [newPackage]
     isAlreadyInArray :: [Package] -> Package -> Maybe Package
     isAlreadyInArray packages newPackage =
-      find (equalSameArtefactId (newPackage ^. pkgArtefactId)) packages
-    hasSameArtefactId :: Package -> Package -> Bool
-    hasSameArtefactId pkg1 pkg2 = pkg1 ^. pkgArtefactId == pkg2 ^. pkgArtefactId
-    equalSameArtefactId :: String -> Package -> Bool
-    equalSameArtefactId artefactId pkg = artefactId == pkg ^. pkgArtefactId
+      find (equalSameArtifactId (newPackage ^. pkgArtifactId)) packages
+    hasSameArtifactId :: Package -> Package -> Bool
+    hasSameArtifactId pkg1 pkg2 = pkg1 ^. pkgArtifactId == pkg2 ^. pkgArtifactId
+    equalSameArtifactId :: String -> Package -> Bool
+    equalSameArtifactId artifactId pkg = artifactId == pkg ^. pkgArtifactId
 
 getPackagesForName :: Context -> String -> IO [PackageDTO]
 getPackagesForName context name = do
-  packages <- findPackagesByArtefactId context name
+  packages <- findPackagesByArtifactId context name
   return . fmap packageToDTO $ packages
 
 getPackageById :: Context -> String -> IO (Maybe PackageDTO)
@@ -83,12 +83,12 @@ createPackage
   -> Maybe PackageWithEvents
   -> [Event]
   -> IO PackageDTO
-createPackage context name groupId artefactId version description maybeParentPackage events = do
+createPackage context name groupId artifactId version description maybeParentPackage events = do
   let package =
         buildPackage
           name
           groupId
-          artefactId
+          artifactId
           version
           description
           maybeParentPackage
@@ -110,7 +110,7 @@ createPackageFromKMC context kmcUuid version description = do
         Right organization -> do
           let name = kmc ^. kmcweName
           let groupId = organization ^. orgdtoGroupId
-          let artefactId = kmc ^. kmcweArtefactId
+          let artifactId = kmc ^. kmcweArtifactId
           let events = kmc ^. kmcweEvents
           let mPpId = kmc ^. kmcweParentPackageId
           case mPpId of
@@ -121,7 +121,7 @@ createPackageFromKMC context kmcUuid version description = do
                   context
                   name
                   groupId
-                  artefactId
+                  artifactId
                   version
                   description
                   maybePackage
@@ -133,7 +133,7 @@ createPackageFromKMC context kmcUuid version description = do
                   context
                   name
                   groupId
-                  artefactId
+                  artifactId
                   version
                   description
                   Nothing
@@ -150,7 +150,7 @@ importPackage context fileContent = do
       let packageWithEvents = fromDTOWithEvents deserializedFile
       let pName = packageWithEvents ^. pkgweName
       let pGroupId = packageWithEvents ^. pkgweGroupId
-      let pArtefactId = packageWithEvents ^. pkgweArtefactId
+      let pArtifactId = packageWithEvents ^. pkgweArtifactId
       let pVersion = packageWithEvents ^. pkgweVersion
       let pDescription = packageWithEvents ^. pkgweDescription
       let pParentPackage = packageWithEvents ^. pkgweParentPackage
@@ -160,7 +160,7 @@ importPackage context fileContent = do
           context
           pName
           pGroupId
-          pArtefactId
+          pArtifactId
           pVersion
           pDescription
           pParentPackage
@@ -170,8 +170,8 @@ importPackage context fileContent = do
       return Nothing
 
 deleteAllPackagesByName :: Context -> String -> IO ()
-deleteAllPackagesByName context artefactId = do
-  deletePackagesByArtefactId context artefactId
+deleteAllPackagesByName context artifactId = do
+  deletePackagesByArtifactId context artifactId
 
 deletePackage :: Context -> String -> IO Bool
 deletePackage context pkgId = do

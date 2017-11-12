@@ -15,7 +15,7 @@ instance FromBSON KnowledgeModelContainerWithEvents where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
-    artefactId <- BSON.lookup "artefactId" doc
+    artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
     eventsSerialized <- BSON.lookup "events" doc
     let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
@@ -23,7 +23,7 @@ instance FromBSON KnowledgeModelContainerWithEvents where
       KnowledgeModelContainerWithEvents
       { _kmcweKmContainerUuid = uuid
       , _kmcweName = name
-      , _kmcweArtefactId = artefactId
+      , _kmcweArtifactId = artifactId
       , _kmcweParentPackageId = parentPackageId
       , _kmcweEvents = events
       }

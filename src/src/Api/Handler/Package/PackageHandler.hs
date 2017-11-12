@@ -24,18 +24,18 @@ getPackagesA context dspConfig = do
   where
     getQueryParams = do
       groupId <- getGroupId
-      artefactId <- getArtefactId
-      return $ maybeToList groupId ++ maybeToList artefactId
+      artifactId <- getArtifactId
+      return $ maybeToList groupId ++ maybeToList artifactId
       where
         getGroupId = do
           mGroupId <- getQueryParam "groupId"
           case mGroupId of
             Just groupId -> return $ Just ("groupId", groupId)
             Nothing -> return Nothing
-        getArtefactId = do
-          mArtefactId <- getQueryParam "artefactId"
-          case mArtefactId of
-            Just artefactId -> return $ Just ("artefactId", artefactId)
+        getArtifactId = do
+          mArtifactId <- getQueryParam "artifactId"
+          case mArtifactId of
+            Just artifactId -> return $ Just ("artifactId", artifactId)
             Nothing -> return Nothing
 
 getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()

@@ -13,7 +13,7 @@ data PackageDTO = PackageDTO
   { _pkgdtoId :: String
   , _pkgdtoName :: String
   , _pkgdtoGroupId :: String
-  , _pkgdtoArtefactId :: String
+  , _pkgdtoArtifactId :: String
   , _pkgdtoVersion :: String
   , _pkgdtoDescription :: String
   , _pkgdtoParentPackage :: Maybe PackageDTO
@@ -27,7 +27,7 @@ instance ToJSON PackageDTO where
       [ "packageId" .= _pkgdtoId
       , "name" .= _pkgdtoName
       , "groupId" .= _pkgdtoGroupId
-      , "artefactId" .= _pkgdtoArtefactId
+      , "artifactId" .= _pkgdtoArtifactId
       , "version" .= _pkgdtoVersion
       , "description" .= _pkgdtoDescription
       , "parentPackge" .= _pkgdtoParentPackage

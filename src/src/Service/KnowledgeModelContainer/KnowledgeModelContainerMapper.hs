@@ -13,7 +13,7 @@ toDTO kmc =
   KnowledgeModelContainerDTO
   { _kmcdtoKmContainerUuid = kmc ^. kmcKmContainerUuid
   , _kmcdtoName = kmc ^. kmcName
-  , _kmcdtoArtefactId = kmc ^. kmcArtefactId
+  , _kmcdtoArtifactId = kmc ^. kmcArtifactId
   , _kmcdtoParentPackageId = kmc ^. kmcParentPackageId
   }
 
@@ -22,6 +22,6 @@ fromDTO dto =
   KnowledgeModelContainer
   { _kmcKmContainerUuid = dto ^. kmcdtoKmContainerUuid
   , _kmcName = dto ^. kmcdtoName
-  , _kmcArtefactId = dto ^. kmcdtoArtefactId
+  , _kmcArtifactId = dto ^. kmcdtoArtifactId
   , _kmcParentPackageId = dto ^. kmcdtoParentPackageId
   }

@@ -21,7 +21,7 @@ runMigration context dspConfig logState = do
         { _kmcdtoKmContainerUuid =
             (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
         , _kmcdtoName = "Amsterdam KM"
-        , _kmcdtoArtefactId = "amsterdam-km"
+        , _kmcdtoArtifactId = "amsterdam-km"
         , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         }
   createKnowledgeModelContainer context kmc

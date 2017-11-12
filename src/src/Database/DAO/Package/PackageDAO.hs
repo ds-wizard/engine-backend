@@ -46,9 +46,9 @@ findPackageById context pkgId = do
     Just package -> return . fromBSON $ package
     Nothing -> return Nothing
 
-findPackagesByArtefactId :: Context -> String -> IO [Package]
-findPackagesByArtefactId context artefactId = do
-  let action = rest =<< find (select ["artefactId" =: artefactId] pkgCollection)
+findPackagesByArtifactId :: Context -> String -> IO [Package]
+findPackagesByArtifactId context artifactId = do
+  let action = rest =<< find (select ["artifactId" =: artifactId] pkgCollection)
   packages <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return $ fmap (fromJust . fromBSON) packages
 
@@ -70,9 +70,9 @@ deletePackages context = do
   let action = delete $ select [] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-deletePackagesByArtefactId :: Context -> String -> IO ()
-deletePackagesByArtefactId context artefactId = do
-  let action = delete $ select ["artefactId" =: artefactId] pkgCollection
+deletePackagesByArtifactId :: Context -> String -> IO ()
+deletePackagesByArtifactId context artifactId = do
+  let action = delete $ select ["artifactId" =: artifactId] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deletePackageById :: Context -> String -> IO ()

@@ -18,7 +18,7 @@ packageToDTO package =
   { _pkgdtoId = package ^. pkgId
   , _pkgdtoName = package ^. pkgName
   , _pkgdtoGroupId = package ^. pkgGroupId
-  , _pkgdtoArtefactId = package ^. pkgArtefactId
+  , _pkgdtoArtifactId = package ^. pkgArtifactId
   , _pkgdtoVersion = package ^. pkgVersion
   , _pkgdtoDescription = package ^. pkgDescription
   , _pkgdtoParentPackage = packageToDTO <$> (package ^. pkgParentPackage)
@@ -29,7 +29,7 @@ packageToSimpleDTO package =
   PackageSimpleDTO
   { _pkgsdtoName = package ^. pkgName
   , _pkgsdtoGroupId = package ^. pkgGroupId
-  , _pkgsdtoArtefactId = package ^. pkgArtefactId
+  , _pkgsdtoArtifactId = package ^. pkgArtifactId
   }
 
 packageWithEventsToDTO :: PackageWithEvents -> PackageDTO
@@ -38,7 +38,7 @@ packageWithEventsToDTO package =
   { _pkgdtoId = package ^. pkgweId
   , _pkgdtoName = package ^. pkgweName
   , _pkgdtoGroupId = package ^. pkgweGroupId
-  , _pkgdtoArtefactId = package ^. pkgweArtefactId
+  , _pkgdtoArtifactId = package ^. pkgweArtifactId
   , _pkgdtoVersion = package ^. pkgweVersion
   , _pkgdtoDescription = package ^. pkgweDescription
   , _pkgdtoParentPackage =
@@ -51,7 +51,7 @@ packageWithEventsToDTOWithEvents package =
   { _pkgwedtoId = package ^. pkgweId
   , _pkgwedtoName = package ^. pkgweName
   , _pkgwedtoGroupId = package ^. pkgweGroupId
-  , _pkgwedtoArtefactId = package ^. pkgweArtefactId
+  , _pkgwedtoArtifactId = package ^. pkgweArtifactId
   , _pkgwedtoVersion = package ^. pkgweVersion
   , _pkgwedtoDescription = package ^. pkgweDescription
   , _pkgwedtoParentPackage =
@@ -65,7 +65,7 @@ fromDTO dto =
   { _pkgId = dto ^. pkgdtoId
   , _pkgName = dto ^. pkgdtoName
   , _pkgGroupId = dto ^. pkgdtoGroupId
-  , _pkgArtefactId = dto ^. pkgdtoArtefactId
+  , _pkgArtifactId = dto ^. pkgdtoArtifactId
   , _pkgVersion = dto ^. pkgdtoVersion
   , _pkgDescription = dto ^. pkgdtoDescription
   , _pkgParentPackage = fromDTO <$> (dto ^. pkgdtoParentPackage)
@@ -77,7 +77,7 @@ fromDTOWithEvents dto =
   { _pkgweId = dto ^. pkgwedtoId
   , _pkgweName = dto ^. pkgwedtoName
   , _pkgweGroupId = dto ^. pkgwedtoGroupId
-  , _pkgweArtefactId = dto ^. pkgwedtoArtefactId
+  , _pkgweArtifactId = dto ^. pkgwedtoArtifactId
   , _pkgweVersion = dto ^. pkgwedtoVersion
   , _pkgweDescription = dto ^. pkgwedtoDescription
   , _pkgweParentPackage = fromDTOWithEvents <$> (dto ^. pkgwedtoParentPackage)
@@ -93,12 +93,12 @@ buildPackage
   -> Maybe PackageWithEvents
   -> [Event]
   -> PackageWithEvents
-buildPackage name groupId artefactId version description maybeParentPackage events =
+buildPackage name groupId artifactId version description maybeParentPackage events =
   PackageWithEvents
-  { _pkgweId = groupId ++ ":" ++ artefactId ++ ":" ++ version
+  { _pkgweId = groupId ++ ":" ++ artifactId ++ ":" ++ version
   , _pkgweName = name
   , _pkgweGroupId = groupId
-  , _pkgweArtefactId = artefactId
+  , _pkgweArtifactId = artifactId
   , _pkgweVersion = version
   , _pkgweDescription = description
   , _pkgweParentPackage = maybeParentPackage
