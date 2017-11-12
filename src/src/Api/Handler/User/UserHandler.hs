@@ -57,11 +57,11 @@ getUserA context dspConfig =
 putUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserCurrentA context dspConfig =
   getCurrentUserUuid context $ \userUuid ->
-  getReqDto $ \reqDto -> do
-    eitherDto <- liftIO $ modifyUser context userUuid reqDto
-    case eitherDto of
-      Right dto -> sendJson dto
-      Left error -> sendError error
+    getReqDto $ \reqDto -> do
+      eitherDto <- liftIO $ modifyUser context userUuid reqDto
+      case eitherDto of
+        Right dto -> sendJson dto
+        Left error -> sendError error
 
 putUserA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserA context dspConfig =
@@ -76,11 +76,11 @@ putUserA context dspConfig =
 putUserCurrentPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserCurrentPasswordA context dspConfig =
   getCurrentUserUuid context $ \userUuid ->
-  getReqDto $ \reqDto -> do
-    maybeError <- liftIO $ changeUserPassword context userUuid reqDto
-    case maybeError of
-      Nothing -> Scotty.status noContent204
-      Just error -> sendError error
+    getReqDto $ \reqDto -> do
+      maybeError <- liftIO $ changeUserPassword context userUuid reqDto
+      case maybeError of
+        Nothing -> Scotty.status noContent204
+        Just error -> sendError error
 
 putUserPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
 putUserPasswordA context dspConfig =

@@ -13,8 +13,8 @@ import Network.HTTP.Types.Status
 import Network.Wai
 import qualified Web.Scotty as Scotty
 
-import Common.Error
 import Api.Resources.Error.ErrorDTO
+import Common.Error
 import Service.Token.TokenService
 
 getReqDto callback = do

@@ -9,8 +9,8 @@ import Database.MongoDB
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Types
 import Common.Error
+import Common.Types
 import Context
 import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
 import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents

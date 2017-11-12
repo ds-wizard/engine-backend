@@ -4,9 +4,9 @@ import Control.Lens
 import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import Data.ByteString.Lazy
+import Data.Either
 import Data.Foldable
 import Data.Maybe
-import Data.Either
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)

@@ -90,7 +90,8 @@ modifyUser context userUuid userDto = do
           return . Right $ userDto
     Left error -> return . Left $ error
   where
-    isAlreadyUsedAndIsNotMine (Right user) = U.toString (user ^. uUuid) /= userUuid
+    isAlreadyUsedAndIsNotMine (Right user) =
+      U.toString (user ^. uUuid) /= userUuid
     isAlreadyUsedAndIsNotMine (Left _) = False
 
 changeUserPassword :: Context

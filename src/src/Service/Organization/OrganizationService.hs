@@ -7,9 +7,9 @@ import Data.ByteString.Char8 as BS
 import Data.UUID as U
 
 import Api.Resources.Organization.OrganizationDTO
+import Common.Error
 import Common.Types
 import Common.Uuid
-import Common.Error
 import Context
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization

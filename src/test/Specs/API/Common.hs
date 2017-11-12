@@ -16,8 +16,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Application
 import Api.Resources.Error.ErrorDTO
+import Application
 import Common.Error
 import Common.Types
 import Context
@@ -141,8 +141,9 @@ createNoPermissionTest dspConfig reqMethod reqUrl otherHeaders reqBody missingPe
     response `shouldRespondWith` responseMatcher
 
 createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
-  it "HTTP 404 NOT FOUND - entity doesn't exist" $ do
+  it "HTTP 404 NOT FOUND - entity doesn't exist" $
       -- GIVEN: Prepare expectation
+   do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto = NotExistsError "Entity is not exists"

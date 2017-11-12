@@ -6,9 +6,9 @@ import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import qualified Data.ByteString.Char8 as BS
 import Data.ByteString.Lazy
+import Data.Either
 import Data.Foldable
 import Data.Maybe
-import Data.Either
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -149,8 +149,8 @@ userAPI context dspConfig =
           [HJ.json| { name: "Darth" } |]
           "surname"
         it "HTTP 400 BAD REQUEST if email is already registered" $
-         do
           -- GIVEN: Prepare request
+         do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 UserCreateDTO
@@ -164,7 +164,9 @@ userAPI context dspConfig =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto =
+                createErrorWithFieldError
+                  ("email", "User with given email is already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -226,15 +228,16 @@ userAPI context dspConfig =
       -- ------------------------------------------------------------------------
       -- GET /users/{userId}
       -- ------------------------------------------------------------------------
-      describe "GET /users/{userId}" $ do
+      describe "GET /users/{userId}" $
       -- GIVEN: Prepare request
+       do
         let reqMethod = methodGet
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $
-         do
           -- GIVEN: Prepare expectation
+         do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
@@ -270,7 +273,11 @@ userAPI context dspConfig =
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/current
       -- ------------------------------------------------------------------------
@@ -327,12 +334,13 @@ userAPI context dspConfig =
           [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
           "name"
         it "HTTP 400 BAD REQUEST if email is already registered" $
-         do
          -- GIVEN: Prepare request
+         do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
+          let johnUuid =
+                fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
-               UserCreateDTO
+                UserCreateDTO
                 { _ucdtoName = "John"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
@@ -342,18 +350,23 @@ userAPI context dspConfig =
           liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto
           let reqDto =
                 UserDTO
-                  { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                  , _udtoName = "EDITED: John"
-                  , _udtoSurname = "EDITED: Doe"
-                  , _udtoEmail = "john.doe@example.com"
-                  , _udtoRole = "ADMIN"
-                  , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
-                  }
+                { _udtoUuid =
+                    fromJust . U.fromString $
+                    "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+                , _udtoName = "EDITED: John"
+                , _udtoSurname = "EDITED: Doe"
+                , _udtoEmail = "john.doe@example.com"
+                , _udtoRole = "ADMIN"
+                , _udtoPermissions =
+                    ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+                }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto =
+                createErrorWithFieldError
+                  ("email", "User with given email is already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -365,13 +378,13 @@ userAPI context dspConfig =
                 , matchBody = bodyEquals expBody
                 }
           response `shouldRespondWith` responseMatcher
-
         createAuthTest reqMethod reqUrl [] ""
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}
       -- ------------------------------------------------------------------------
-      describe "PUT /users/{userId}" $ do
+      describe "PUT /users/{userId}" $
         -- GIVEN: Prepare request
+       do
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
@@ -389,8 +402,8 @@ userAPI context dspConfig =
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
-         do
           -- GIVEN: Prepare expectation
+         do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto = reqDto
@@ -423,12 +436,13 @@ userAPI context dspConfig =
           [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
           "name"
         it "HTTP 400 BAD REQUEST if email is already registered" $
-         do
          -- GIVEN: Prepare request
+         do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
+          let johnUuid =
+                fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
-               UserCreateDTO
+                UserCreateDTO
                 { _ucdtoName = "John"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
@@ -438,21 +452,29 @@ userAPI context dspConfig =
           liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto
           let reqDto =
                 UserDTO
-                  { _udtoUuid = johnUuid
-                  , _udtoName = "EDITED: John"
-                  , _udtoSurname = "EDITED: Doe"
-                  , _udtoEmail = "darth.vader@deathstar.com"
-                  , _udtoRole = "ADMIN"
-                  , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
-                  }
+                { _udtoUuid = johnUuid
+                , _udtoName = "EDITED: John"
+                , _udtoSurname = "EDITED: Doe"
+                , _udtoEmail = "darth.vader@deathstar.com"
+                , _udtoRole = "ADMIN"
+                , _udtoPermissions =
+                    ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+                }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto =
+                createErrorWithFieldError
+                  ("email", "User with given email is already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
-          response <- request reqMethod "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f" reqHeaders reqBody
+          response <-
+            request
+              reqMethod
+              "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f"
+              reqHeaders
+              reqBody
            -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -463,7 +485,11 @@ userAPI context dspConfig =
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/current/password
       -- ------------------------------------------------------------------------
@@ -500,25 +526,22 @@ userAPI context dspConfig =
                   (BS.pack (reqDto ^. updtoPassword))
                   (BS.pack (userFromDb ^. uPasswordHash))
           liftIO $ isSame `shouldBe` True
-        createInvalidJsonTest
-          reqMethod
-          reqUrl
-          [HJ.json| { } |]
-          "password"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
         createAuthTest reqMethod reqUrl [] ""
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}/password
       -- ------------------------------------------------------------------------
-      describe "PUT /users/{userId}/password" $ do
+      describe "PUT /users/{userId}/password" $
         -- GIVEN: Prepare request
+       do
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto = UserPasswordDTO {_updtoPassword = "newPassword"}
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
-         do
           -- GIVEN: Prepare expectation
+         do
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- WHEN: Call API
@@ -542,26 +565,27 @@ userAPI context dspConfig =
                   (BS.pack (reqDto ^. updtoPassword))
                   (BS.pack (userFromDb ^. uPasswordHash))
           liftIO $ isSame `shouldBe` True
-        createInvalidJsonTest
-          reqMethod
-          reqUrl
-          [HJ.json| { } |]
-          "password"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password"
+          reqHeaders
+          reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /users/{userId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /users/{userId}" $ do
+      describe "DELETE /users/{userId}" $
         -- GIVEN: Prepare request
+       do
         let reqMethod = methodDelete
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $
-         do
           -- GIVEN: Prepare expectation
+         do
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- WHEN: Call API
@@ -581,4 +605,8 @@ userAPI context dspConfig =
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
