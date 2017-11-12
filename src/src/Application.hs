@@ -82,6 +82,7 @@ createEndpoints context dspConfig
    -- PACKAGES
    --------------------
   get "/packages" (getPackagesA context dspConfig)
+  get "/packages/unique" (getUniquePackagesA context dspConfig)
   get "/packages/:pkgId" (getPackageA context dspConfig)
   delete "/packages" (deletePackagesA context dspConfig)
   delete "/packages/:pkgId" (deletePackageA context dspConfig)

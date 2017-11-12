@@ -28,9 +28,9 @@ import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 
-getAllPackages :: Context -> IO [PackageDTO]
-getAllPackages context = do
-  packages <- findPackages context
+getPackagesFiltered :: Context -> [(Text, Text)] -> IO [PackageDTO]
+getPackagesFiltered context queryParams = do
+  packages <- findPackagesFiltered context queryParams
   return . fmap packageToDTO $ packages
 
 getSimplePackagesFiltered :: Context -> [(Text, Text)] -> IO [PackageSimpleDTO]

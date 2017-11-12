@@ -19,6 +19,28 @@ import Service.Package.PackageService
 getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
 getPackagesA context dspConfig = do
   queryParams <- getQueryParams
+  dtos <- liftIO $ getPackagesFiltered context queryParams
+  sendJson dtos
+  where
+    getQueryParams = do
+      groupId <- getGroupId
+      artifactId <- getArtifactId
+      return $ maybeToList groupId ++ maybeToList artifactId
+      where
+        getGroupId = do
+          mGroupId <- getQueryParam "groupId"
+          case mGroupId of
+            Just groupId -> return $ Just ("groupId", groupId)
+            Nothing -> return Nothing
+        getArtifactId = do
+          mArtifactId <- getQueryParam "artifactId"
+          case mArtifactId of
+            Just artifactId -> return $ Just ("artifactId", artifactId)
+            Nothing -> return Nothing
+
+getUniquePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
+getUniquePackagesA context dspConfig = do
+  queryParams <- getQueryParams
   dtos <- liftIO $ getSimplePackagesFiltered context queryParams
   sendJson dtos
   where
