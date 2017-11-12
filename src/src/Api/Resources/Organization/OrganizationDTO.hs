@@ -20,7 +20,7 @@ makeLenses ''OrganizationDTO
 
 instance FromJSON OrganizationDTO where
   parseJSON (Object o) = do
-    _orgdtoUuid <- o .: "organizationUuid"
+    _orgdtoUuid <- o .: "uuid"
     _orgdtoName <- o .: "name"
     _orgdtoGroupId <- o .: "groupId"
     return OrganizationDTO {..}
@@ -29,7 +29,7 @@ instance FromJSON OrganizationDTO where
 instance ToJSON OrganizationDTO where
   toJSON OrganizationDTO {..} =
     object
-      [ "organizationUuid" .= _orgdtoUuid
+      [ "uuid" .= _orgdtoUuid
       , "name" .= _orgdtoName
       , "groupId" .= _orgdtoGroupId
       ]

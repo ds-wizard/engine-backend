@@ -24,7 +24,7 @@ makeLenses ''PackageDTO
 instance ToJSON PackageDTO where
   toJSON PackageDTO {..} =
     object
-      [ "packageId" .= _pkgdtoId
+      [ "id" .= _pkgdtoId
       , "name" .= _pkgdtoName
       , "groupId" .= _pkgdtoGroupId
       , "artifactId" .= _pkgdtoArtifactId

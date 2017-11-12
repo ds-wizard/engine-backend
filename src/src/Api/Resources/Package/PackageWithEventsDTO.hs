@@ -25,7 +25,7 @@ makeLenses ''PackageWithEventsDTO
 
 instance FromJSON PackageWithEventsDTO where
   parseJSON (Object o) = do
-    _pkgwedtoId <- o .: "packageId"
+    _pkgwedtoId <- o .: "id"
     _pkgwedtoName <- o .: "name"
     _pkgwedtoGroupId <- o .: "groupId"
     _pkgwedtoArtifactId <- o .: "artifactId"
@@ -40,7 +40,7 @@ instance FromJSON PackageWithEventsDTO where
 instance ToJSON PackageWithEventsDTO where
   toJSON PackageWithEventsDTO {..} =
     object
-      [ "packageId" .= _pkgwedtoId
+      [ "id" .= _pkgwedtoId
       , "name" .= _pkgwedtoName
       , "groupId" .= _pkgwedtoGroupId
       , "artifactId" .= _pkgwedtoArtifactId

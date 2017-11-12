@@ -20,7 +20,7 @@ makeLenses ''KnowledgeModelContainerDTO
 
 instance FromJSON KnowledgeModelContainerDTO where
   parseJSON (Object o) = do
-    _kmcdtoKmContainerUuid <- o .: "kmContainerUuid"
+    _kmcdtoKmContainerUuid <- o .: "uuid"
     _kmcdtoName <- o .: "name"
     _kmcdtoArtifactId <- o .: "artifactId"
     _kmcdtoParentPackageId <- o .: "parentPackageId"
@@ -30,7 +30,7 @@ instance FromJSON KnowledgeModelContainerDTO where
 instance ToJSON KnowledgeModelContainerDTO where
   toJSON KnowledgeModelContainerDTO {..} =
     object
-      [ "kmContainerUuid" .= _kmcdtoKmContainerUuid
+      [ "uuid" .= _kmcdtoKmContainerUuid
       , "name" .= _kmcdtoName
       , "artifactId" .= _kmcdtoArtifactId
       , "parentPackageId" .= _kmcdtoParentPackageId
