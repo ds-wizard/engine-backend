@@ -15,9 +15,10 @@ import DSPConfig
 import Service.KnowledgeModel.KnowledgeModelService
 
 getKnowledgeModelA :: Context -> DSPConfig -> Scotty.ActionM ()
-getKnowledgeModelA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  maybeDto <- liftIO $ getKnowledgeModelByKmcId context kmcUuid
-  case maybeDto of
-    Just dto -> sendJson dto
-    Nothing -> notFoundA
+getKnowledgeModelA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    kmcUuid <- Scotty.param "kmcUuid"
+    eitherDto <- liftIO $ getKnowledgeModelByKmcId context kmcUuid
+    case eitherDto of
+      Right dto -> sendJson dto
+      Left error -> sendError error

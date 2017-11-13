@@ -4,9 +4,12 @@ import Control.Lens ((^.))
 import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
+import Data.Maybe
 import Data.UUID as U
+import Text.Regex
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Common.Error
 import Common.Types
 import Common.Uuid
 import Context
@@ -14,47 +17,85 @@ import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
 import Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
 
-getKnowledgeModelContainers :: Context -> IO [KnowledgeModelContainerDTO]
+getKnowledgeModelContainers :: Context
+                            -> IO (Either AppError [KnowledgeModelContainerDTO])
 getKnowledgeModelContainers context = do
-  kms <- findKnowledgeModelContainers context
-  return . fmap toDTO $ kms
+  eitherKmcs <- findKnowledgeModelContainers context
+  case eitherKmcs of
+    Right kmcs -> return . Right . fmap toDTO $ kmcs
+    Left error -> return . Left $ error
 
-createKnowledgeModelContainer :: Context
-                              -> KnowledgeModelContainerDTO
-                              -> IO KnowledgeModelContainerDTO
+createKnowledgeModelContainer
+  :: Context
+  -> KnowledgeModelContainerDTO
+  -> IO (Either AppError KnowledgeModelContainerDTO)
 createKnowledgeModelContainer context kmcDto = do
-  let kmc = fromDTO kmcDto
-  insertKnowledgeModelContainer context kmc
-  return $ toDTO kmc
+  let artifactId = kmcDto ^. kmcdtoArtifactId
+  if validateArtifactId artifactId
+    then do
+      eitherKmcFromDb <-
+        findKnowledgeModelContainerByArtifactId context artifactId
+      case eitherKmcFromDb of
+        Right _ ->
+          return . Left $
+          createErrorWithFieldError
+            ("artifactId", "ArtifactId is already taken")
+        Left (NotExistsError _) -> do
+          let kmc = fromDTO kmcDto
+          insertKnowledgeModelContainer context kmc
+          return . Right . toDTO $ kmc
+        Left error -> return . Left $ error
+    else return . Left . createErrorWithFieldError $
+         ("artifactId", "ArtifactId is not in valid format")
 
 getKnowledgeModelContainerById :: Context
                                -> String
-                               -> IO (Maybe KnowledgeModelContainerDTO)
+                               -> IO (Either AppError KnowledgeModelContainerDTO)
 getKnowledgeModelContainerById context kmcUuid = do
-  maybeKM <- findKnowledgeModelContainerById context kmcUuid
-  case maybeKM of
-    Just km -> return . Just $ toDTO km
-    Nothing -> return Nothing
+  eitherKmc <- findKnowledgeModelContainerById context kmcUuid
+  case eitherKmc of
+    Right kmc -> return . Right . toDTO $ kmc
+    Left error -> return . Left $ error
 
 modifyKnowledgeModelContainer
   :: Context
   -> String
   -> KnowledgeModelContainerDTO
-  -> IO (Maybe KnowledgeModelContainerDTO)
+  -> IO (Either AppError KnowledgeModelContainerDTO)
 modifyKnowledgeModelContainer context kmcUuid kmcDto = do
-  maybeKmc <- findKnowledgeModelContainerById context kmcUuid
-  case maybeKmc of
-    Just kmc -> do
-      let kmc = fromDTO kmcDto
-      updateKnowledgeModelContainerById context kmc
-      return . Just $ kmcDto
-    Nothing -> return Nothing
+  let artifactId = kmcDto ^. kmcdtoArtifactId
+  if validateArtifactId artifactId
+    then do
+      eitherKmc <- findKnowledgeModelContainerById context kmcUuid
+      case eitherKmc of
+        Right kmc -> do
+          eitherKmcFromDb <-
+            findKnowledgeModelContainerByArtifactId context artifactId
+          if isAlreadyUsedAndIsNotMine eitherKmcFromDb
+            then return . Left . createErrorWithFieldError $
+                 ("artifactId", "ArtifactId is already taken")
+            else do
+              let kmc = fromDTO kmcDto
+              updateKnowledgeModelContainerById context kmc
+              return . Right $ kmcDto
+        Left error -> return . Left $ error
+    else return . Left . createErrorWithFieldError $
+         ("artifactId", "ArtifactId is not in valid format")
+  where
+    isAlreadyUsedAndIsNotMine (Right kmc) =
+      U.toString (kmc ^. kmcKmcUuid) /= kmcUuid
+    isAlreadyUsedAndIsNotMine (Left _) = False
 
-deleteKnowledgeModelContainer :: Context -> String -> IO Bool
+deleteKnowledgeModelContainer :: Context -> String -> IO (Maybe AppError)
 deleteKnowledgeModelContainer context kmcUuid = do
-  maybeKmc <- findKnowledgeModelContainerById context kmcUuid
-  case maybeKmc of
-    Just kmc -> do
+  eitherKmc <- findKnowledgeModelContainerById context kmcUuid
+  case eitherKmc of
+    Right kmc -> do
       deleteKnowledgeModelContainerById context kmcUuid
-      return True
-    Nothing -> return False
+      return Nothing
+    Left error -> return . Just $ error
+
+validateArtifactId :: String -> Bool
+validateArtifactId artifactId = isJust $ matchRegex validationRegex artifactId
+  where
+    validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"

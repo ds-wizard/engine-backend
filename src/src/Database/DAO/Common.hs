@@ -31,7 +31,7 @@ deserializeMaybeEntity mEntityS =
         Nothing ->
           Left . DatabaseError $
           "Problem with deserialization of entity from database"
-    Nothing -> Left . NotExistsError $ "Entity is not exists"
+    Nothing -> Left . NotExistsError $ "Entity does not exist"
 
 instance Val LT.Text where
   val = String . LT.toStrict

@@ -10,7 +10,7 @@ import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 
 data KnowledgeModelContainer = KnowledgeModelContainer
-  { _kmcKmContainerUuid :: UUID
+  { _kmcKmcUuid :: UUID
   , _kmcName :: String
   , _kmcArtifactId :: String
   , _kmcParentPackageId :: Maybe String
@@ -29,7 +29,7 @@ data KnowledgeModelContainerWithKM = KnowledgeModelContainerWithKM
   , _kmcwkmName :: String
   , _kmcwkmArtifactId :: String
   , _kmcwkmParentPackageId :: Maybe String
-  , _kmcwkmKM :: KnowledgeModel
+  , _kmcwkmKM :: Maybe KnowledgeModel
   } deriving (Show, Eq, Generic)
 
 makeLenses ''KnowledgeModelContainer

@@ -17,66 +17,44 @@ import DSPConfig
 import Service.Package.PackageService
 
 getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getPackagesA context dspConfig = do
-  queryParams <- getQueryParams
-  dtos <- liftIO $ getPackagesFiltered context queryParams
-  sendJson dtos
-  where
-    getQueryParams = do
-      groupId <- getGroupId
-      artifactId <- getArtifactId
-      return $ maybeToList groupId ++ maybeToList artifactId
-      where
-        getGroupId = do
-          mGroupId <- getQueryParam "groupId"
-          case mGroupId of
-            Just groupId -> return $ Just ("groupId", groupId)
-            Nothing -> return Nothing
-        getArtifactId = do
-          mArtifactId <- getQueryParam "artifactId"
-          case mArtifactId of
-            Just artifactId -> return $ Just ("artifactId", artifactId)
-            Nothing -> return Nothing
+getPackagesA context dspConfig =
+  checkPermission context "PM_PERM" $ do
+    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    eitherResDtos <- liftIO $ getPackagesFiltered context queryParams
+    case eitherResDtos of
+      Right resDtos -> sendJson resDtos
+      Left error -> sendError error
 
 getUniquePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getUniquePackagesA context dspConfig = do
-  queryParams <- getQueryParams
-  dtos <- liftIO $ getSimplePackagesFiltered context queryParams
-  sendJson dtos
-  where
-    getQueryParams = do
-      groupId <- getGroupId
-      artifactId <- getArtifactId
-      return $ maybeToList groupId ++ maybeToList artifactId
-      where
-        getGroupId = do
-          mGroupId <- getQueryParam "groupId"
-          case mGroupId of
-            Just groupId -> return $ Just ("groupId", groupId)
-            Nothing -> return Nothing
-        getArtifactId = do
-          mArtifactId <- getQueryParam "artifactId"
-          case mArtifactId of
-            Just artifactId -> return $ Just ("artifactId", artifactId)
-            Nothing -> return Nothing
+getUniquePackagesA context dspConfig =
+  checkPermission context "PM_PERM" $ do
+    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    eitherResDtos <- liftIO $ getSimplePackagesFiltered context queryParams
+    case eitherResDtos of
+      Right resDtos -> sendJson resDtos
+      Left error -> sendError error
 
 getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()
-getPackageA context dspConfig = do
-  pkgId <- Scotty.param "pkgId"
-  dtos <- liftIO $ getPackageById context pkgId
-  sendJson dtos
+getPackageA context dspConfig =
+  checkPermission context "PM_PERM" $ do
+    pkgId <- Scotty.param "pkgId"
+    eitherResDto <- liftIO $ getPackageById context pkgId
+    case eitherResDto of
+      Right resDto -> sendJson resDto
+      Left error -> sendError error
 
 deletePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-deletePackagesA context dspConfig = do
-  name <- Scotty.param "name"
-  isSuccess <- liftIO $ deleteAllPackagesByName context name
-  liftIO $ deleteAllPackagesByName context name
-  Scotty.status noContent204
+deletePackagesA context dspConfig =
+  checkPermission context "PM_PERM" $ do
+    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    liftIO $ deletePackagesByQueryParams context queryParams
+    Scotty.status noContent204
 
 deletePackageA :: Context -> DSPConfig -> Scotty.ActionM ()
-deletePackageA context dspConfig = do
-  pkgId <- Scotty.param "pkgId"
-  isSuccess <- liftIO $ deletePackage context pkgId
-  if isSuccess
-    then Scotty.status noContent204
-    else notFoundA
+deletePackageA context dspConfig =
+  checkPermission context "PM_PERM" $ do
+    pkgId <- Scotty.param "pkgId"
+    maybeError <- liftIO $ deletePackage context pkgId
+    case maybeError of
+      Nothing -> Scotty.status noContent204
+      Just error -> sendError error

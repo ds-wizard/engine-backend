@@ -54,12 +54,12 @@ main =
            applicatorINTSpec
          before (resetDB context dspConfig) $
            describe "INTEGRATION TESTING" $ do
-             infoAPI context dspConfig
-             tokenAPI context dspConfig
-             organizationAPI context dspConfig
-             userAPI context dspConfig)
+--             infoAPI context dspConfig
+--             tokenAPI context dspConfig
+--             organizationAPI context dspConfig
+--             userAPI context dspConfig
 --             kmcAPI context dspConfig
 --             knowledgeModelAPI context dspConfig
 --             eventAPI context dspConfig
 --             versionAPI context dspConfig
---             packageAPI context dspConfig)
+             packageAPI context dspConfig)

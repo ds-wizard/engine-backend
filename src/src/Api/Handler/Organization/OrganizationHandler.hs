@@ -19,12 +19,14 @@ getOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 getOrganizationCurrentA context dspConfig = do
   eitherDto <- liftIO $ getOrganization context
   case eitherDto of
-    Right dto -> sendJson dto
+    Right resDto -> sendJson resDto
     Left error -> sendError error
 
 putOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 putOrganizationCurrentA context dspConfig =
   checkPermission context "ORG_PERM" $
   getReqDto $ \reqDto -> do
-    organizationDto <- liftIO $ modifyOrganization context reqDto
-    sendJson organizationDto
+    eitherResDto <- liftIO $ modifyOrganization context reqDto
+    case eitherResDto of
+      Right resDto -> sendJson resDto
+      Left error -> sendError error

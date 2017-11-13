@@ -20,14 +20,14 @@ import Service.Package.PackageService
 exportA :: Context -> DSPConfig -> Scotty.ActionM ()
 exportA context dspConfig = do
   pkgId <- Scotty.param "pkgId"
-  maybeDto <- liftIO $ getPackageWithEventsById context pkgId
-  case maybeDto of
-    Just dto -> do
+  eitherDto <- liftIO $ getPackageWithEventsById context pkgId
+  case eitherDto of
+    Right dto -> do
       let cdHeader = "attachment;filename=" ++ pkgId ++ ".ep"
       Scotty.addHeader "Content-Disposition" (pack cdHeader)
       Scotty.addHeader "Content-Type" (pack "application/octet-stream")
       Scotty.raw $ encode dto
-    Nothing -> notFoundA
+    Left error -> sendError error
 
 importA :: Context -> DSPConfig -> Scotty.ActionM ()
 importA context dspConfig = do
@@ -36,8 +36,8 @@ importA context dspConfig = do
     Just (fieldName, file) -> do
       let fName = fileName file
       let fContent = fileContent file
-      maybeDto <- liftIO $ importPackage context fContent
-      case maybeDto of
-        Just dto -> sendJson dto
-        Nothing -> notFoundA
+      eitherDto <- liftIO $ importPackage context fContent
+      case eitherDto of
+        Right dto -> sendJson dto
+        Left error -> sendError error
     Nothing -> notFoundA

@@ -18,7 +18,8 @@ instance FromBSON KnowledgeModelContainerWithKM where
     artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
     kmSerialized <- BSON.lookup "knowledgeModel" doc
-    km <- fromBSON kmSerialized
+--    km <- fromBSON kmSerialized
+    let km = deserializeKM kmSerialized
     return
       KnowledgeModelContainerWithKM
       { _kmcwkmKmContainerUuid = uuid
@@ -27,3 +28,6 @@ instance FromBSON KnowledgeModelContainerWithKM where
       , _kmcwkmParentPackageId = parentPackageId
       , _kmcwkmKM = km
       }
+    where
+      deserializeKM (Just kmSerialized) = fromBSON kmSerialized
+      deserializeKM Nothing = Nothing

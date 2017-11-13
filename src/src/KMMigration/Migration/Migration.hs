@@ -3,6 +3,7 @@ module KMMigration.Migration.Migration where
 import Control.Lens
 import Data.Maybe
 
+import Common.Error
 import KMMigration.Migration.Applicator.Applicator
 import Model.Event.Common
 import Model.Event.Event
@@ -34,5 +35,5 @@ ncmApplyEvent mKM (DeleteFollowUpQuestionEvent' e) = Just $ applyEventToKM e mKM
 noConflictMethod :: Maybe KnowledgeModel -> Event -> Maybe KnowledgeModel
 noConflictMethod = ncmApplyEvent
 
-migrate :: Maybe KnowledgeModel -> [Event] -> KnowledgeModel
-migrate mKM events = fromJust $ foldl noConflictMethod mKM events
+migrate :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeModel
+migrate mKM events = Right $ fromJust $ foldl noConflictMethod mKM events

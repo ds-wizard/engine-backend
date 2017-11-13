@@ -12,7 +12,7 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
 instance ToBSON KnowledgeModelContainer where
   toBSON km =
-    [ "uuid" BSON.=: serializeUUID (km ^. kmcKmContainerUuid)
+    [ "uuid" BSON.=: serializeUUID (km ^. kmcKmcUuid)
     , "name" BSON.=: (km ^. kmcName)
     , "artifactId" BSON.=: (km ^. kmcArtifactId)
     , "parentPackageId" BSON.=: (km ^. kmcParentPackageId)
@@ -26,7 +26,7 @@ instance FromBSON KnowledgeModelContainer where
     parentPackageId <- BSON.lookup "parentPackageId" doc
     return
       KnowledgeModelContainer
-      { _kmcKmContainerUuid = uuid
+      { _kmcKmcUuid = uuid
       , _kmcName = name
       , _kmcArtifactId = artifactId
       , _kmcParentPackageId = parentPackageId

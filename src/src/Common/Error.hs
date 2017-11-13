@@ -13,6 +13,7 @@ data AppError
   | ForbiddenError ErrorMessage
   | NotExistsError ErrorMessage
   | DatabaseError ErrorMessage
+  deriving (Show, Eq)
 
 createErrorWithErrorMessage errorMessage = ValidationError errorMessage [] []
 

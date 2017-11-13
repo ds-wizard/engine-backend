@@ -89,6 +89,27 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
           }
     response `shouldRespondWith` responseMatcher
 
+createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
+  it "HTTP 400 BAD REQUEST when json is not valid" $ do
+    let reqHeaders = [reqAuthHeader, reqCtHeader]
+      -- GIVEN: Prepare expectation
+    let expStatus = 400
+    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expDto =
+          createErrorWithErrorMessage $
+          "Error in $[0]: key \"" ++ missingField ++ "\" not present"
+    let expBody = encode expDto
+      -- WHEN: Call APIA
+    response <- request reqMethod reqUrl reqHeaders reqBody
+      -- AND: Compare response with expetation
+    let responseMatcher =
+          ResponseMatcher
+          { matchHeaders = expHeaders
+          , matchStatus = expStatus
+          , matchBody = bodyEquals expBody
+          }
+    response `shouldRespondWith` responseMatcher
+
 createAuthTest reqMethod reqUrl reqHeaders reqBody =
   it "HTTP 401 UNAUTHORIZED" $
     -- GIVEN: Prepare expectation
@@ -146,7 +167,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity is not exists"
+    let expDto = NotExistsError "Entity does not exist"
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody

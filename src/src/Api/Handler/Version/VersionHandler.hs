@@ -16,14 +16,15 @@ import DSPConfig
 import Service.Package.PackageService
 
 putVersionA :: Context -> DSPConfig -> Scotty.ActionM ()
-putVersionA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  version <- Scotty.param "version"
-  createDto <- Scotty.jsonData
-  let description = (createDto ^. vdtoDescription)
-  eitherDto <- liftIO $ createPackageFromKMC context kmcUuid version description
-  case eitherDto of
-    Right dto -> do
-      Scotty.status created201
-      sendJson dto
-    Left error -> sendError error
+putVersionA context dspConfig =
+  checkPermission context "KM_PUBLISH_PERM" $
+  getReqDto $ \reqDto -> do
+    kmcUuid <- Scotty.param "kmcUuid"
+    version <- Scotty.param "version"
+    let description = (reqDto ^. vdtoDescription)
+    eitherDto <- liftIO $ createPackageFromKMC context kmcUuid version description
+    case eitherDto of
+      Right dto -> do
+        Scotty.status created201
+        sendJson dto
+      Left error -> sendError error

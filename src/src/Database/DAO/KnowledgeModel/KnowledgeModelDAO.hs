@@ -9,6 +9,7 @@ import Database.MongoDB
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
+import Common.Error
 import Common.Types
 import Context
 import Database.BSON.KnowledgeModel.KnowledgeModel
@@ -20,13 +21,11 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
 findKnowledgeModelByKmcId :: Context
                           -> String
-                          -> IO (Maybe KnowledgeModelContainerWithKM)
+                          -> IO (Either AppError KnowledgeModelContainerWithKM)
 findKnowledgeModelByKmcId context kmcUuid = do
   let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
-  maybeKM <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeKM of
-    Just km -> return . fromBSON $ km
-    Nothing -> return Nothing
+  maybeKMS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeKMS
 
 updateKnowledgeModelByKmcId :: Context -> String -> KnowledgeModel -> IO ()
 updateKnowledgeModelByKmcId context kmcUuid km = do

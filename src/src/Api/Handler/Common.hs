@@ -12,6 +12,7 @@ import Network.HTTP.Types.Status
         internalServerError500)
 import Network.Wai
 import qualified Web.Scotty as Scotty
+import Data.Maybe
 
 import Api.Resources.Error.ErrorDTO
 import Common.Error
@@ -40,6 +41,19 @@ getQueryParam paramName = do
   case mValue of
     Just value -> return . Just . LT.toStrict $ value
     Nothing -> return Nothing
+
+getListOfQueryParamsIfPresent :: [LT.Text] -> Scotty.ActionM [(T.Text,T.Text)]
+getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
+  where
+    go name monadAcc = do
+      value <- extractQueryParam name
+      acc <- monadAcc
+      return $ maybeToList value ++ acc
+    extractQueryParam name = do
+      mValue <- getQueryParam name
+      case mValue of
+        Just value -> return $ Just (LT.toStrict name, value)
+        Nothing -> return Nothing
 
 checkPermission context perm callback = do
   tokenHeader <- Scotty.header "Authorization"

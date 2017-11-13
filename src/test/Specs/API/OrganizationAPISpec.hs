@@ -19,6 +19,7 @@ import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Api.Resources.Organization.OrganizationDTO
+import Common.Error
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationService
@@ -78,7 +79,7 @@ organizationAPI context dspConfig =
                     fromJust . U.fromString $
                     "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _orgdtoName = "EDITED: Elixir Netherlands"
-                , _orgdtoGroupId = "EDITED: elixir-nl"
+                , _orgdtoGroupId = "elixir.nl.amsterdam.edited"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -113,5 +114,35 @@ organizationAPI context dspConfig =
           reqUrl
           [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
           "name"
+        it "HTTP 400 BAD REQUEST when groupId is not in valid format" $
+          -- GIVEN: Prepare request
+         do
+          let reqHeaders = [reqAuthHeader, reqCtHeader]
+          let reqDto =
+                OrganizationDTO
+                { _orgdtoUuid =
+                    fromJust . U.fromString $
+                    "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                , _orgdtoName = "EDITED: Elixir Netherlands"
+                , _orgdtoGroupId = "elixir-nl"
+                }
+          let reqBody = encode reqDto
+          -- GIVEN: Prepare expectation
+          let expStatus = 400
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto =
+                createErrorWithFieldError
+                  ("groupId", "GroupId is not in valid format")
+          let expBody = encode expDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals expBody
+                }
+          response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "ORG_PERM"

@@ -30,7 +30,7 @@ applicationConfigFile = "config/app-config.cfg"
 buildInfoFile = "config/build-info.cfg"
 
 unauthorizedEndpoints =
-  [mkRegex "^$", mkRegex "^tokens$", mkRegex "^export/.*/.*$"]
+  [mkRegex "^$", mkRegex "^tokens$", mkRegex "^export/.*$"]
 
 createEndpoints :: Context -> DSPConfig -> ScottyM ()
 createEndpoints context dspConfig

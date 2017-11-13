@@ -48,13 +48,14 @@ knowledgeModelAPI context dspConfig =
       -- GET /users
       -- ------------------------------------------------------------------------
      do
-      describe "GET /kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/km" $ do
+      describe "GET /kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/km" $
+          -- GIVEN: Prepare request
+       do
         let reqMethod = methodGet
         let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/km"
-        it "HTTP 200 OK" $
-          -- GIVEN: Prepare request
-         do
-          let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 200 OK" $ do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ KMC.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
@@ -63,7 +64,7 @@ knowledgeModelAPI context dspConfig =
           let expDto = toKnowledgeModelDTO $ km1
           let expBody = encode expDto
           -- WHEN: Call API
-          response <- request reqMethod reqUrl reqHeaders ""
+          response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -72,4 +73,10 @@ knowledgeModelAPI context dspConfig =
                 , matchBody = bodyEquals expBody
                 }
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
+        createNotFoundTest
+          reqMethod
+          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km"
+          reqHeaders
+          reqBody

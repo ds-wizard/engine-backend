@@ -19,30 +19,36 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
 kmcCollection = "knowledgeModelContainers"
 
-findKnowledgeModelContainers :: Context -> IO [KnowledgeModelContainer]
+findKnowledgeModelContainers :: Context
+                             -> IO (Either AppError [KnowledgeModelContainer])
 findKnowledgeModelContainers context = do
   let action = rest =<< find (select [] kmcCollection)
-  kmcs <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return $ fmap (fromJust . fromBSON) kmcs
+  kmcsS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeEntities $ kmcsS
 
 findKnowledgeModelContainerById :: Context
                                 -> String
-                                -> IO (Maybe KnowledgeModelContainer)
+                                -> IO (Either AppError KnowledgeModelContainer)
 findKnowledgeModelContainerById context kmcUuid = do
   let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
-  maybeKnowledgeModelContainer <-
-    runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeKnowledgeModelContainer of
-    Just kmc -> return . fromBSON $ kmc
-    Nothing -> return Nothing
+  maybeKmcS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeKmcS
+
+findKnowledgeModelContainerByArtifactId :: Context
+                                        -> String
+                                        -> IO (Either AppError KnowledgeModelContainer)
+findKnowledgeModelContainerByArtifactId context artifactId = do
+  let action = findOne $ select ["artifactId" =: artifactId] kmcCollection
+  maybeKmcS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeKmcS
 
 findKnowledgeModelContainerWithEventsById :: Context
                                           -> String
                                           -> IO (Either AppError KnowledgeModelContainerWithEvents)
 findKnowledgeModelContainerWithEventsById context kmcUuid = do
   let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
-  maybeKmc <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return . deserializeMaybeEntity $ maybeKmc
+  maybeKmcS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeKmcS
 
 insertKnowledgeModelContainer :: Context -> KnowledgeModelContainer -> IO Value
 insertKnowledgeModelContainer context kmc = do
@@ -52,7 +58,7 @@ insertKnowledgeModelContainer context kmc = do
 updateKnowledgeModelContainerById :: Context -> KnowledgeModelContainer -> IO ()
 updateKnowledgeModelContainerById context kmc = do
   let action =
-        fetch (select ["uuid" =: (kmc ^. kmcKmContainerUuid)] kmcCollection) >>=
+        fetch (select ["uuid" =: (kmc ^. kmcKmcUuid)] kmcCollection) >>=
         save kmcCollection . merge (toBSON kmc)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 

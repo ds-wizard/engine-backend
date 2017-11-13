@@ -11,7 +11,7 @@ import Model.KnowledgeModelContainer.KnowledgeModelContainer
 toDTO :: KnowledgeModelContainer -> KnowledgeModelContainerDTO
 toDTO kmc =
   KnowledgeModelContainerDTO
-  { _kmcdtoKmContainerUuid = kmc ^. kmcKmContainerUuid
+  { _kmcdtoKmContainerUuid = kmc ^. kmcKmcUuid
   , _kmcdtoName = kmc ^. kmcName
   , _kmcdtoArtifactId = kmc ^. kmcArtifactId
   , _kmcdtoParentPackageId = kmc ^. kmcParentPackageId
@@ -20,7 +20,7 @@ toDTO kmc =
 fromDTO :: KnowledgeModelContainerDTO -> KnowledgeModelContainer
 fromDTO dto =
   KnowledgeModelContainer
-  { _kmcKmContainerUuid = dto ^. kmcdtoKmContainerUuid
+  { _kmcKmcUuid = dto ^. kmcdtoKmContainerUuid
   , _kmcName = dto ^. kmcdtoName
   , _kmcArtifactId = dto ^. kmcdtoArtifactId
   , _kmcParentPackageId = dto ^. kmcdtoParentPackageId

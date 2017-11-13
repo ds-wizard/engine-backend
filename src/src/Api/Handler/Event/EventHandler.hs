@@ -16,28 +16,31 @@ import DSPConfig
 import Service.Event.EventService
 
 getEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-getEventsA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  maybeDtos <- liftIO $ getEvents context kmcUuid
-  case maybeDtos of
-    Just dtos -> sendJson dtos
-    _ -> notFoundA
+getEventsA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    kmcUuid <- Scotty.param "kmcUuid"
+    eitherDtos <- liftIO $ getEvents context kmcUuid
+    case eitherDtos of
+      Right dtos -> sendJson dtos
+      Left error -> sendError error
 
 postEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
 postEventsA context dspConfig =
-  getReqDto $ \reqDto -> do
-    kmcUuid <- Scotty.param "kmcUuid"
-    maybeEventsDto <- liftIO $ createEvents context kmcUuid reqDto
-    case maybeEventsDto of
-      Just eventsDto -> do
-        Scotty.status created201
-        sendJson eventsDto
-      _ -> notFoundA
+  checkPermission context "KM_PERM" $ do
+    getReqDto $ \reqDto -> do
+      kmcUuid <- Scotty.param "kmcUuid"
+      eitherUserDto <- liftIO $ createEvents context kmcUuid reqDto
+      case eitherUserDto of
+        Left appError -> sendError appError
+        Right userDto -> do
+          Scotty.status created201
+          sendJson userDto
 
 deleteEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteEventsA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  isSuccess <- liftIO $ deleteEvents context kmcUuid
-  if isSuccess
-    then Scotty.status noContent204
-    else notFoundA
+deleteEventsA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    kmcUuid <- Scotty.param "kmcUuid"
+    maybeError <- liftIO $ deleteEvents context kmcUuid
+    case maybeError of
+      Nothing -> Scotty.status noContent204
+      Just error -> sendError error

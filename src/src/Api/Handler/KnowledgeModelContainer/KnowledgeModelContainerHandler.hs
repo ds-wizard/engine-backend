@@ -16,38 +16,49 @@ import DSPConfig
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
 getKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
-getKnowledgeModelContainersA context dspConfig = do
-  dtos <- liftIO $ getKnowledgeModelContainers context
-  sendJson dtos
+getKnowledgeModelContainersA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    eitherDtos <- liftIO $ getKnowledgeModelContainers context
+    case eitherDtos of
+      Right dtos -> sendJson dtos
+      Left error -> sendError error
 
 postKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()
-postKnowledgeModelContainersA context dspConfig = do
-  kmcCreateDto <- Scotty.jsonData
-  kmcDto <- liftIO $ createKnowledgeModelContainer context kmcCreateDto
-  Scotty.status created201
-  sendJson kmcDto
+postKnowledgeModelContainersA context dspConfig =
+  checkPermission context "KM_PERM" $
+  getReqDto $ \reqDto -> do
+    eitherResDto <- liftIO $ createKnowledgeModelContainer context reqDto
+    case eitherResDto of
+      Left appError -> sendError appError
+      Right resDto -> do
+        Scotty.status created201
+        sendJson resDto
 
 getKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
-getKnowledgeModelContainerA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  maybeDto <- liftIO $ getKnowledgeModelContainerById context kmcUuid
-  case maybeDto of
-    Just dto -> sendJson dto
-    Nothing -> notFoundA
+getKnowledgeModelContainerA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    kmcUuid <- Scotty.param "kmcUuid"
+    eitherResDto <- liftIO $ getKnowledgeModelContainerById context kmcUuid
+    case eitherResDto of
+      Left appError -> sendError appError
+      Right resDto -> sendJson resDto
 
 putKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
-putKnowledgeModelContainerA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  kmcDto <- Scotty.jsonData
-  maybeDto <- liftIO $ modifyKnowledgeModelContainer context kmcUuid kmcDto
-  case maybeDto of
-    Just dto -> sendJson dto
-    Nothing -> notFoundA
+putKnowledgeModelContainerA context dspConfig =
+  checkPermission context "KM_PERM" $
+  getReqDto $ \reqDto -> do
+    kmcUuid <- Scotty.param "kmcUuid"
+    eitherResDto <-
+      liftIO $ modifyKnowledgeModelContainer context kmcUuid reqDto
+    case eitherResDto of
+      Left appError -> sendError appError
+      Right resDto -> sendJson resDto
 
 deleteKnowledgeModelContainerA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteKnowledgeModelContainerA context dspConfig = do
-  kmcUuid <- Scotty.param "kmcUuid"
-  isSuccess <- liftIO $ deleteKnowledgeModelContainer context kmcUuid
-  if isSuccess
-    then Scotty.status noContent204
-    else notFoundA
+deleteKnowledgeModelContainerA context dspConfig =
+  checkPermission context "KM_PERM" $ do
+    kmcUuid <- Scotty.param "kmcUuid"
+    maybeError <- liftIO $ deleteKnowledgeModelContainer context kmcUuid
+    case maybeError of
+      Nothing -> Scotty.status noContent204
+      Just error -> sendError error

@@ -10,7 +10,7 @@ import Database.MongoDB
         delete, deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
--- import Common.Types
+import Common.Error
 import Context
 import Database.BSON.Event.Answer
 import Database.BSON.Event.Chapter
@@ -27,27 +27,14 @@ import Model.Event.Common
 import Model.Event.Event
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
 
--- import Model.Event.Event
 findKmcWithEventsById :: Context
                       -> String
-                      -> IO (Maybe KnowledgeModelContainerWithEvents)
+                      -> IO (Either AppError KnowledgeModelContainerWithEvents)
 findKmcWithEventsById context kmcUuid = do
   let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
-  maybeKmcWithEvents <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  case maybeKmcWithEvents of
-    Just kmcWithEvents -> return . fromBSON $ kmcWithEvents
-    Nothing -> return Nothing
+  maybeKmcWithEventsS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeKmcWithEventsS
 
---  let action = rest =<< findOne (select ["uuid" =: kmcUuid] kmcCollection)
---  maybeKmcWithEvents <- runMongoDBPoolDef action (context ^. ctxDbPool)
---  case maybeKmcWithEvents of
---    Just kmcweWithEvents -> return . Just . fromBSON $ kmcweWithEvents
---    _ -> return Nothing
---  case maybeKmcWithEvents of
---    Just kmcWithEvents -> do
---      let events = kmcWithEvents ^. kmcweWithEvents
---      return $ fmap (fromJust . chooseEventDeserializator) events
---    _ -> return Nothing
 insertEventsToKmc :: Context -> String -> [Event] -> IO ()
 insertEventsToKmc context kmcUuid events = do
   let action =
@@ -58,12 +45,6 @@ insertEventsToKmc context kmcUuid events = do
           ]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
---  let action = insertMany kmc (convertEventToBSON <$> events)
---  runMongoDBPoolDef action (context ^. ctxDbPool)
--- deleteEvents :: Context -> IO ()
--- deleteEvents context = do
---     let action = delete $ select [] eventCollection
---     runMongoDBPoolDef action (context ^. ctxDbPool)
 deleteEventAtKmc :: Context -> String -> IO ()
 deleteEventAtKmc context kmcUuid = do
   let emptyEvents = convertEventToBSON <$> []
@@ -72,5 +53,3 @@ deleteEventAtKmc context kmcUuid = do
           (select ["uuid" =: kmcUuid] kmcCollection)
           ["$set" =: ["events" =: emptyEvents]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
---  let action = deleteOne $ select ["uuid" =: userUuid] eventCollection
---  runMongoDBPoolDef action (context ^. ctxDbPool)
