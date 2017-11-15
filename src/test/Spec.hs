@@ -21,8 +21,11 @@ import Specs.API.PackageAPISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
-import Specs.Service.ApplicatorINTSpec
-import Specs.Service.ApplicatorSpec
+import Specs.Service.KMMigration.ApplicatorINTSpec
+import Specs.Service.KMMigration.ApplicatorSpec
+import Specs.Service.Organization.OrganizationServiceSpec
+import Specs.Service.Package.PackageServiceSpec
+import Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -52,14 +55,17 @@ main =
          describe "UNIT TESTING" $ do
            applicatorSpec
            applicatorINTSpec
+           organizationServiceSpec
+           knowledgeModelContainerServiceSpec
+           packageServiceSpec
          before (resetDB context dspConfig) $
            describe "INTEGRATION TESTING" $ do
---             infoAPI context dspConfig
---             tokenAPI context dspConfig
---             organizationAPI context dspConfig
---             userAPI context dspConfig
---             kmcAPI context dspConfig
---             knowledgeModelAPI context dspConfig
---             eventAPI context dspConfig
---             versionAPI context dspConfig
+             infoAPI context dspConfig
+             tokenAPI context dspConfig
+             organizationAPI context dspConfig
+             userAPI context dspConfig
+             kmcAPI context dspConfig
+             knowledgeModelAPI context dspConfig
+             eventAPI context dspConfig
+             versionAPI context dspConfig
              packageAPI context dspConfig)

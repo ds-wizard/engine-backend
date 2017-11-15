@@ -1,4 +1,4 @@
-module Specs.Service.ApplicatorSpec where
+module Specs.Service.KMMigration.ApplicatorSpec where
 
 import Control.Lens
 import Data.Maybe

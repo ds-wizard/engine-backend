@@ -31,8 +31,8 @@ createKnowledgeModelContainer
   -> IO (Either AppError KnowledgeModelContainerDTO)
 createKnowledgeModelContainer context kmcDto = do
   let artifactId = kmcDto ^. kmcdtoArtifactId
-  if validateArtifactId artifactId
-    then do
+  case isValidArtifactId artifactId of
+    Nothing -> do
       eitherKmcFromDb <-
         findKnowledgeModelContainerByArtifactId context artifactId
       case eitherKmcFromDb of
@@ -45,8 +45,7 @@ createKnowledgeModelContainer context kmcDto = do
           insertKnowledgeModelContainer context kmc
           return . Right . toDTO $ kmc
         Left error -> return . Left $ error
-    else return . Left . createErrorWithFieldError $
-         ("artifactId", "ArtifactId is not in valid format")
+    Just error -> return . Left $ error
 
 getKnowledgeModelContainerById :: Context
                                -> String
@@ -64,8 +63,8 @@ modifyKnowledgeModelContainer
   -> IO (Either AppError KnowledgeModelContainerDTO)
 modifyKnowledgeModelContainer context kmcUuid kmcDto = do
   let artifactId = kmcDto ^. kmcdtoArtifactId
-  if validateArtifactId artifactId
-    then do
+  case isValidArtifactId artifactId of
+    Nothing -> do
       eitherKmc <- findKnowledgeModelContainerById context kmcUuid
       case eitherKmc of
         Right kmc -> do
@@ -79,8 +78,7 @@ modifyKnowledgeModelContainer context kmcUuid kmcDto = do
               updateKnowledgeModelContainerById context kmc
               return . Right $ kmcDto
         Left error -> return . Left $ error
-    else return . Left . createErrorWithFieldError $
-         ("artifactId", "ArtifactId is not in valid format")
+    Just error -> return . Left $ error
   where
     isAlreadyUsedAndIsNotMine (Right kmc) =
       U.toString (kmc ^. kmcKmcUuid) /= kmcUuid
@@ -95,7 +93,10 @@ deleteKnowledgeModelContainer context kmcUuid = do
       return Nothing
     Left error -> return . Just $ error
 
-validateArtifactId :: String -> Bool
-validateArtifactId artifactId = isJust $ matchRegex validationRegex artifactId
+isValidArtifactId :: String -> Maybe AppError
+isValidArtifactId artifactId =
+  if isJust $ matchRegex validationRegex artifactId
+  then Nothing
+  else Just $ createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"

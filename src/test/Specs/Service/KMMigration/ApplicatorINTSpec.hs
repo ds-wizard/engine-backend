@@ -1,7 +1,7 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 
-module Specs.Service.ApplicatorINTSpec where
+module Specs.Service.KMMigration.ApplicatorINTSpec where
 
 import Control.Lens
 import Data.Maybe

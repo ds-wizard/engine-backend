@@ -260,7 +260,10 @@ test-suite hspec
       Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
-      Specs.Service.ApplicatorINTSpec
-      Specs.Service.ApplicatorSpec
+      Specs.Service.KMMigration.ApplicatorINTSpec
+      Specs.Service.KMMigration.ApplicatorSpec
+      Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
+      Specs.Service.Organization.OrganizationServiceSpec
+      Specs.Service.Package.PackageServiceSpec
       TestMigration
   default-language: Haskell2010
