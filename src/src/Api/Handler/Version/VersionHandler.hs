@@ -22,7 +22,8 @@ putVersionA context dspConfig =
     kmcUuid <- Scotty.param "kmcUuid"
     version <- Scotty.param "version"
     let description = (reqDto ^. vdtoDescription)
-    eitherDto <- liftIO $ createPackageFromKMC context kmcUuid version description
+    eitherDto <-
+      liftIO $ createPackageFromKMC context kmcUuid version description
     case eitherDto of
       Right dto -> do
         Scotty.status created201

@@ -1,7 +1,8 @@
-module KMMigration.Migration.Applicator.Applicator where
+module Service.Migrator.Applicator where
 
 import Control.Lens
 
+import Common.Error
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
@@ -33,22 +34,47 @@ applyValue Nothing ch setter = ch
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToKM e where
-  applyEventToKM :: e -> Maybe KnowledgeModel -> KnowledgeModel
+  applyEventToKM
+    :: e
+    -> Either AppError (Maybe KnowledgeModel)
+    -> Either AppError (Maybe KnowledgeModel)
 
-passToChapters e (Just km) = km & kmChapters .~ modifiedChapters
+passToChapters _ (Left error) = Left error
+passToChapters e (Right Nothing) =
+  Left . MigratorError $ "You have to create Knowledge Model at first"
+passToChapters e (Right (Just km)) =
+  case eModifiedChapters of
+    Left error -> Left error
+    Right modifiedChapters -> Right . Just $ km & kmChapters .~ modifiedChapters
   where
-    modifiedChapters = fmap (applyEventToChapter e) (km ^. kmChapters)
+    eModifiedChapters = foldl foldOneChapter (Right []) (km ^. kmChapters)
+    foldOneChapter :: Either AppError [Chapter]
+                   -> Chapter
+                   -> Either AppError [Chapter]
+    foldOneChapter (Left error) _ = Left error
+    foldOneChapter (Right chapters) chapter =
+      case applyEventToChapter e (Right chapter) of
+        Left error -> Left error
+        Right appliedChapter -> Right $ chapters ++ [appliedChapter]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToKM AddKnowledgeModelEvent where
-  applyEventToKM e Nothing =
+  applyEventToKM _ (Left error) = Left error
+  applyEventToKM e (Right (Just _)) =
+    Left . MigratorError $ "Knowledge Model is already created"
+  applyEventToKM e (Right Nothing) =
+    Right . Just $
     KnowledgeModel
     {_kmUuid = e ^. akmKmUuid, _kmName = e ^. akmName, _kmChapters = []}
 
 instance ApplyEventToKM EditKnowledgeModelEvent where
-  applyEventToKM e (Just km) = applyChapterIds . applyName $ km
+  applyEventToKM _ (Left error) = Left error
+  applyEventToKM e (Right Nothing) =
+    Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right (Just km)) =
+    Right . Just . applyChapterIds . applyName $ km
     where
       applyName km = applyValue (e ^. ekmName) km kmName
       applyChapterIds km =
@@ -58,7 +84,11 @@ instance ApplyEventToKM EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToKM AddChapterEvent where
-  applyEventToKM e (Just km) = km & kmChapters .~ modifiedChapters
+  applyEventToKM _ (Left error) = Left error
+  applyEventToKM e (Right Nothing) =
+    Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right (Just km)) =
+    Right . Just $ km & kmChapters .~ modifiedChapters
     where
       modifiedChapters = km ^. kmChapters ++ [newChapter]
       newChapter =
@@ -75,10 +105,13 @@ instance ApplyEventToKM EditChapterEvent where
   applyEventToKM = passToChapters
 
 instance ApplyEventToKM DeleteChapterEvent where
-  applyEventToKM e (Just km) =
+  applyEventToKM _ (Left error) = Left error
+  applyEventToKM e (Right Nothing) =
+    Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right (Just km)) =
     if equalsUuid e km
-      then km & kmChapters .~ modifiedChapters
-      else km
+      then Right . Just $ km & kmChapters .~ modifiedChapters
+      else Right . Just $ km
     where
       modifiedChapters = filter (not . equalsUuid e) (km ^. kmChapters)
 
@@ -147,32 +180,48 @@ instance ApplyEventToKM DeleteReferenceEvent where
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToChapter e where
-  applyEventToChapter :: e -> Chapter -> Chapter
+  applyEventToChapter :: e -> Either AppError Chapter -> Either AppError Chapter
 
-passToQuestions e ch = ch & chQuestions .~ modifiedQuestions
+passToQuestions _ (Left error) = Left error
+passToQuestions e (Right ch) =
+  case eModifiedQuestions of
+    Left error -> Left error
+    Right modifiedQuestions -> Right $ ch & chQuestions .~ modifiedQuestions
   where
-    modifiedQuestions = fmap (applyEventToQuestion e) (ch ^. chQuestions)
+    eModifiedQuestions = foldl foldOneQuestion (Right []) (ch ^. chQuestions)
+    foldOneQuestion :: Either AppError [Question]
+                    -> Question
+                    -> Either AppError [Question]
+    foldOneQuestion (Left error) _ = Left error
+    foldOneQuestion (Right questions) question =
+      case applyEventToQuestion e (Right question) of
+        Left error -> Left error
+        Right appliedQuestion -> Right $ questions ++ [appliedQuestion]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToChapter AddKnowledgeModelEvent where
-  applyEventToChapter _ _ = undefined
+  applyEventToChapter _ _ =
+    Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Chapter"
 
 instance ApplyEventToChapter EditKnowledgeModelEvent where
-  applyEventToChapter _ _ = undefined
+  applyEventToChapter _ _ =
+    Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Chapter"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToChapter AddChapterEvent where
-  applyEventToChapter _ _ = undefined
+  applyEventToChapter _ _ =
+    Left . MigratorError $ "You can't apply AddChapterEvent to Chapter"
 
 instance ApplyEventToChapter EditChapterEvent where
-  applyEventToChapter e ch =
+  applyEventToChapter _ (Left error) = Left error
+  applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then applyQuestionIds . applyText . applyTitle $ ch
-      else ch
+      then Right . applyQuestionIds . applyText . applyTitle $ ch
+      else Right ch
     where
       applyTitle ch = applyValue (e ^. echTitle) ch chTitle
       applyText ch = applyValue (e ^. echText) ch chText
@@ -180,16 +229,18 @@ instance ApplyEventToChapter EditChapterEvent where
         applyValue (e ^. echQuestionIds) ch chChangeQuestionIdsOrder
 
 instance ApplyEventToChapter DeleteChapterEvent where
-  applyEventToChapter _ _ = undefined
+  applyEventToChapter _ _ =
+    Left . MigratorError $ "You can't apply DeleteChapterEvent to Chapter"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToChapter AddQuestionEvent where
-  applyEventToChapter e ch =
+  applyEventToChapter _ (Left error) = Left error
+  applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then ch & chQuestions .~ modifiedQuestions
-      else ch
+      then Right $ ch & chQuestions .~ modifiedQuestions
+      else Right ch
     where
       modifiedQuestions = ch ^. chQuestions ++ [newQuestion]
       newQuestion =
@@ -208,10 +259,11 @@ instance ApplyEventToChapter EditQuestionEvent where
   applyEventToChapter = passToQuestions
 
 instance ApplyEventToChapter DeleteQuestionEvent where
-  applyEventToChapter e ch =
+  applyEventToChapter _ (Left error) = Left error
+  applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then ch & chQuestions .~ modifiedQuestions
-      else passToQuestions e ch
+      then Right $ ch & chQuestions .~ modifiedQuestions
+      else passToQuestions e (Right ch)
     where
       modifiedQuestions = filter (not . equalsUuid e) (ch ^. chQuestions)
 
@@ -268,40 +320,83 @@ instance ApplyEventToChapter DeleteReferenceEvent where
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToQuestion e where
-  applyEventToQuestion :: e -> Question -> Question
+  applyEventToQuestion :: e
+                       -> Either AppError Question
+                       -> Either AppError Question
 
-passToAnswers e q = q & qAnswers .~ modifiedAnswers
+passToAnswers _ (Left error) = Left error
+passToAnswers e (Right q) =
+  case eModifiedAnswers of
+    Left error -> Left error
+    Right modifiedAnswers -> Right $ q & qAnswers .~ modifiedAnswers
   where
-    modifiedAnswers = fmap (applyEventToAnswer e) (q ^. qAnswers)
+    eModifiedAnswers = foldl foldOneAnswer (Right []) (q ^. qAnswers)
+    foldOneAnswer :: Either AppError [Answer]
+                  -> Answer
+                  -> Either AppError [Answer]
+    foldOneAnswer (Left error) _ = Left error
+    foldOneAnswer (Right answers) answer =
+      case applyEventToAnswer e (Right answer) of
+        Left error -> Left error
+        Right appliedAnswers -> Right $ answers ++ [appliedAnswers]
 
-passToExperts e q = q & qExperts .~ modifiedExperts
+passToExperts _ (Left error) = Left error
+passToExperts e (Right q) =
+  case eModifiedExperts of
+    Left error -> Left error
+    Right modifiedExperts -> Right $ q & qExperts .~ modifiedExperts
   where
-    modifiedExperts = fmap (applyEventToExpert e) (q ^. qExperts)
+    eModifiedExperts = foldl foldOneExpert (Right []) (q ^. qExperts)
+    foldOneExpert :: Either AppError [Expert]
+                  -> Expert
+                  -> Either AppError [Expert]
+    foldOneExpert (Left error) _ = Left error
+    foldOneExpert (Right experts) expert =
+      case applyEventToExpert e (Right expert) of
+        Left error -> Left error
+        Right appliedExpert -> Right $ experts ++ [appliedExpert]
 
-passToReferences e q = q & qReferences .~ modifiedReferences
+passToReferences _ (Left error) = Left error
+passToReferences e (Right q) =
+  case eModifiedReferences of
+    Left error -> Left error
+    Right modifiedReferences -> Right $ q & qReferences .~ modifiedReferences
   where
-    modifiedReferences = fmap (applyEventToReference e) (q ^. qReferences)
-  -- -------------------------
+    eModifiedReferences = foldl foldOneReference (Right []) (q ^. qReferences)
+    foldOneReference :: Either AppError [Reference]
+                     -> Reference
+                     -> Either AppError [Reference]
+    foldOneReference (Left error) _ = Left error
+    foldOneReference (Right references) reference =
+      case applyEventToReference e (Right reference) of
+        Left error -> Left error
+        Right appliedReference -> Right $ references ++ [appliedReference]
 
+-- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToQuestion AddKnowledgeModelEvent where
-  applyEventToQuestion _ _ = undefined
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Question"
 
 instance ApplyEventToQuestion EditKnowledgeModelEvent where
-  applyEventToQuestion _ _ = undefined
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Question"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToQuestion AddChapterEvent where
-  applyEventToQuestion _ _ = undefined
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ "You can't apply AddChapterEvent to Question"
 
 instance ApplyEventToQuestion EditChapterEvent where
-  applyEventToQuestion _ _ = undefined
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ "You can't apply EditChapterEvent to Question"
 
 instance ApplyEventToQuestion DeleteChapterEvent where
-  applyEventToQuestion _ _ = undefined
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ "You can't apply DeleteChapterEvent to Question"
 
 -- -------------------
 -- QUESTIONS----------
@@ -310,13 +405,15 @@ instance ApplyEventToQuestion AddQuestionEvent where
   applyEventToQuestion = passToAnswers
 
 instance ApplyEventToQuestion EditQuestionEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then applyReferenceIds .
+      then Right .
+           applyReferenceIds .
            applyExpertIds .
            applyAnwerIds . applyText . applyTitle . applyType . applyShortUuid $
            q
-      else passToAnswers e q
+      else passToAnswers e (Right q)
     where
       applyShortUuid q = applyValue (e ^. eqShortQuestionUuid) q qShortUuid
       applyType q = applyValue (e ^. eqType) q qType
@@ -334,10 +431,11 @@ instance ApplyEventToQuestion DeleteQuestionEvent where
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToQuestion AddAnswerEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qAnswers .~ modifiedAnswers
-      else passToAnswers e q
+      then Right $ q & qAnswers .~ modifiedAnswers
+      else passToAnswers e (Right q)
     where
       modifiedAnswers = q ^. qAnswers ++ [newAnswer]
       newAnswer =
@@ -352,10 +450,11 @@ instance ApplyEventToQuestion EditAnswerEvent where
   applyEventToQuestion = passToAnswers
 
 instance ApplyEventToQuestion DeleteAnswerEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qAnswers .~ modifiedAnswers
-      else passToAnswers e q
+      then Right $ q & qAnswers .~ modifiedAnswers
+      else passToAnswers e (Right q)
     where
       modifiedAnswers = filter (not . equalsUuid e) (q ^. qAnswers)
 
@@ -366,12 +465,14 @@ instance ApplyEventToQuestion AddFollowUpQuestionEvent where
   applyEventToQuestion = passToAnswers
 
 instance ApplyEventToQuestion EditFollowUpQuestionEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then applyReferenceIds .
+      then Right .
+           applyReferenceIds .
            applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType $
            q
-      else passToAnswers e q
+      else passToAnswers e (Right q)
     where
       applyShortQuestionId q =
         applyValue (e ^. efuqShortQuestionUuid) q qShortUuid
@@ -390,10 +491,11 @@ instance ApplyEventToQuestion DeleteFollowUpQuestionEvent where
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToQuestion AddExpertEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qExperts .~ modifiedExperts
-      else passToAnswers e q
+      then Right $ q & qExperts .~ modifiedExperts
+      else passToAnswers e (Right q)
     where
       modifiedExperts = q ^. qExperts ++ [newExpert]
       newExpert =
@@ -404,14 +506,16 @@ instance ApplyEventToQuestion AddExpertEvent where
         }
 
 instance ApplyEventToQuestion EditExpertEvent where
-  applyEventToQuestion e =
-    passToReferences e . passToExperts e . passToAnswers e
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
+    passToReferences e . passToExperts e . passToAnswers e . Right $ q
 
 instance ApplyEventToQuestion DeleteExpertEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qExperts .~ modifiedExperts
-      else passToAnswers e q
+      then Right $ q & qExperts .~ modifiedExperts
+      else passToAnswers e (Right q)
     where
       modifiedExperts = filter (not . equalsUuid e) (q ^. qExperts)
 
@@ -419,10 +523,11 @@ instance ApplyEventToQuestion DeleteExpertEvent where
 -- REFERENCES---------
 -- -------------------
 instance ApplyEventToQuestion AddReferenceEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qReferences .~ modifiedReferences
-      else passToAnswers e q
+      then Right $ q & qReferences .~ modifiedReferences
+      else passToAnswers e (Right q)
     where
       modifiedReferences = q ^. qReferences ++ [newReference]
       newReference =
@@ -430,14 +535,16 @@ instance ApplyEventToQuestion AddReferenceEvent where
         {_refUuid = e ^. arefReferenceUuid, _refChapter = e ^. arefChapter}
 
 instance ApplyEventToQuestion EditReferenceEvent where
-  applyEventToQuestion e =
-    passToReferences e . passToExperts e . passToAnswers e
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
+    passToReferences e . passToExperts e . passToAnswers e . Right $ q
 
 instance ApplyEventToQuestion DeleteReferenceEvent where
-  applyEventToQuestion e q =
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then q & qReferences .~ modifiedReferences
-      else passToAnswers e q
+      then Right $ q & qReferences .~ modifiedReferences
+      else passToAnswers e (Right q)
     where
       modifiedReferences = filter (not . equalsUuid e) (q ^. qReferences)
 
@@ -446,32 +553,49 @@ instance ApplyEventToQuestion DeleteReferenceEvent where
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToAnswer e where
-  applyEventToAnswer :: e -> Answer -> Answer
+  applyEventToAnswer :: e -> Either AppError Answer -> Either AppError Answer
 
-passToFollowing e ans = ans & ansFollowing .~ modifiedFollowing
+passToFollowing _ (Left error) = Left error
+passToFollowing e (Right ans) =
+  case eModifiedFollowing of
+    Left error -> Left error
+    Right modifiedFollowing -> Right $ ans & ansFollowing .~ modifiedFollowing
   where
-    modifiedFollowing = fmap (applyEventToQuestion e) (ans ^. ansFollowing)
+    eModifiedFollowing = foldl foldOneFollowing (Right []) (ans ^. ansFollowing)
+    foldOneFollowing :: Either AppError [Question]
+                     -> Question
+                     -> Either AppError [Question]
+    foldOneFollowing (Left error) _ = Left error
+    foldOneFollowing (Right answers) answer =
+      case applyEventToQuestion e (Right answer) of
+        Left error -> Left error
+        Right appliedAnswer -> Right $ answers ++ [appliedAnswer]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToAnswer AddKnowledgeModelEvent where
-  applyEventToAnswer _ _ = undefined
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Answer"
 
 instance ApplyEventToAnswer EditKnowledgeModelEvent where
-  applyEventToAnswer _ _ = undefined
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Answer"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToAnswer AddChapterEvent where
-  applyEventToAnswer _ _ = undefined
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ "You can't apply AddChapterEvent to Answer"
 
 instance ApplyEventToAnswer EditChapterEvent where
-  applyEventToAnswer _ _ = undefined
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ "You can't apply EditChapterEvent to Answer"
 
 instance ApplyEventToAnswer DeleteChapterEvent where
-  applyEventToAnswer _ _ = undefined
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ "You can't apply DeleteChapterEvent to Answer"
 
 -- -------------------
 -- QUESTIONS----------
@@ -492,10 +616,11 @@ instance ApplyEventToAnswer AddAnswerEvent where
   applyEventToAnswer = passToFollowing
 
 instance ApplyEventToAnswer EditAnswerEvent where
-  applyEventToAnswer e ans =
+  applyEventToAnswer e (Left error) = Left error
+  applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then applyFollowing . applyAdvice . applyLabel $ ans
-      else passToFollowing e ans
+      then Right $ applyFollowing . applyAdvice . applyLabel $ ans
+      else passToFollowing e (Right ans)
     where
       applyLabel ans = applyValue (e ^. eansLabel) ans ansLabel
       applyAdvice ans = applyValue (e ^. eansAdvice) ans ansAdvice
@@ -509,10 +634,11 @@ instance ApplyEventToAnswer DeleteAnswerEvent where
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToAnswer AddFollowUpQuestionEvent where
-  applyEventToAnswer e ans =
+  applyEventToAnswer e (Left error) = Left error
+  applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then ans & ansFollowing .~ modifiedFollowing
-      else passToFollowing e ans
+      then Right $ ans & ansFollowing .~ modifiedFollowing
+      else passToFollowing e (Right ans)
     where
       modifiedFollowing = ans ^. ansFollowing ++ [newFollowing]
       newFollowing =
@@ -531,10 +657,11 @@ instance ApplyEventToAnswer EditFollowUpQuestionEvent where
   applyEventToAnswer = passToFollowing
 
 instance ApplyEventToAnswer DeleteFollowUpQuestionEvent where
-  applyEventToAnswer e ans =
+  applyEventToAnswer e (Left error) = Left error
+  applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then ans & ansFollowing .~ modifiedFollowing
-      else passToFollowing e ans
+      then Right $ ans & ansFollowing .~ modifiedFollowing
+      else passToFollowing e (Right ans)
     where
       modifiedFollowing = filter (not . equalsUuid e) (ans ^. ansFollowing)
 
@@ -567,170 +694,212 @@ instance ApplyEventToAnswer DeleteReferenceEvent where
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToExpert e where
-  applyEventToExpert :: e -> Expert -> Expert
+  applyEventToExpert :: e -> Either AppError Expert -> Either AppError Expert
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToExpert AddKnowledgeModelEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Expert"
 
 instance ApplyEventToExpert EditKnowledgeModelEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Expert"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToExpert AddChapterEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddChapterEvent to Expert"
 
 instance ApplyEventToExpert EditChapterEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply EditChapterEvent to Expert"
 
 instance ApplyEventToExpert DeleteChapterEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply DeleteChapterEvent to Expert"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToExpert AddQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddQuestionEvent to Expert"
 
 instance ApplyEventToExpert EditQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply EditQuestionEvent to Expert"
 
 instance ApplyEventToExpert DeleteQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply DeleteQuestionEvent to Expert"
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToExpert AddAnswerEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddAnswerEvent to Expert"
 
 instance ApplyEventToExpert EditAnswerEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply EditAnswerEvent to Expert"
 
 instance ApplyEventToExpert DeleteAnswerEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply DeleteAnswerEvent to Expert"
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToExpert AddFollowUpQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddFollowUpQuestionEvent to Expert"
 
 instance ApplyEventToExpert EditFollowUpQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply EditFollowUpQuestionEvent to Expert"
 
 instance ApplyEventToExpert DeleteFollowUpQuestionEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $
+    "You can't apply DeleteFollowUpQuestionEvent to Expert"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToExpert AddExpertEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddExpertEvent to Expert"
 
 instance ApplyEventToExpert EditExpertEvent where
-  applyEventToExpert e exp =
+  applyEventToExpert e (Left error) = Left error
+  applyEventToExpert e (Right exp) =
     if equalsUuid e exp
-      then applyEmail . applyName $ exp
-      else exp
+      then Right $ applyEmail . applyName $ exp
+      else Right exp
     where
       applyName exp = applyValue (e ^. eexpName) exp expName
       applyEmail exp = applyValue (e ^. eexpEmail) exp expEmail
 
 instance ApplyEventToExpert DeleteExpertEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply DeleteExpertEvent to Expert"
 
 -- -------------------
 -- REFERENCES---------
 -- -------------------
 instance ApplyEventToExpert AddReferenceEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply AddReferenceEvent to Expert"
 
 instance ApplyEventToExpert EditReferenceEvent where
   applyEventToExpert e exp = exp
 
 instance ApplyEventToExpert DeleteReferenceEvent where
-  applyEventToExpert _ _ = undefined
+  applyEventToExpert _ _ =
+    Left . MigratorError $ "You can't apply DeleteReferenceEvent to Expert"
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 class ApplyEventToReference e where
-  applyEventToReference :: e -> Reference -> Reference
+  applyEventToReference :: e
+                        -> Either AppError Reference
+                        -> Either AppError Reference
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToReference AddKnowledgeModelEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Reference"
 
 instance ApplyEventToReference EditKnowledgeModelEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    "You can't apply EditKnowledgeModelEvent to Reference"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToReference AddChapterEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply AddChapterEvent to Reference"
 
 instance ApplyEventToReference EditChapterEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply EditChapterEvent to Reference"
 
 instance ApplyEventToReference DeleteChapterEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply DeleteChapterEvent to Reference"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToReference AddQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply AddQuestionEvent to Reference"
 
 instance ApplyEventToReference EditQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply EditQuestionEvent to Reference"
 
 instance ApplyEventToReference DeleteQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply DeleteQuestionEvent to Reference"
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToReference AddAnswerEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply AddAnswerEvent to Reference"
 
 instance ApplyEventToReference EditAnswerEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply EditAnswerEvent to Reference"
 
 instance ApplyEventToReference DeleteAnswerEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply DeleteAnswerEvent to Reference"
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToReference AddFollowUpQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    "You can't apply AddFollowUpQuestionEvent to Reference"
 
 instance ApplyEventToReference EditFollowUpQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    "You can't apply EditFollowUpQuestionEvent to Reference"
 
 instance ApplyEventToReference DeleteFollowUpQuestionEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    "You can't apply DeleteFollowUpQuestionEvent to Reference"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToReference AddExpertEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply AddExpertEvent to Reference"
 
 instance ApplyEventToReference EditExpertEvent where
   applyEventToReference e ref = ref
 
 instance ApplyEventToReference DeleteExpertEvent where
-  applyEventToReference _ _ = undefined
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply DeleteExpertEvent to Reference"
 
 -- -------------------
 -- REFERENCES---------
@@ -739,10 +908,11 @@ instance ApplyEventToReference AddReferenceEvent where
   applyEventToReference _ _ = undefined
 
 instance ApplyEventToReference EditReferenceEvent where
-  applyEventToReference e ref =
+  applyEventToReference e (Left error) = Left error
+  applyEventToReference e (Right ref) =
     if equalsUuid e ref
-      then applyChapter ref
-      else ref
+      then Right $ applyChapter ref
+      else Right ref
     where
       applyChapter ref = applyValue (e ^. erefChapter) ref refChapter
 

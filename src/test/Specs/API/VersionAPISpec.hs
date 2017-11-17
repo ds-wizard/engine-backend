@@ -5,6 +5,7 @@ import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import Data.ByteString.Lazy
 import Data.Either
+import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -16,11 +17,10 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
-import Data.Foldable
 
-import Common.Error
 import Api.Resources.Package.PackageDTO
 import Api.Resources.Version.VersionDTO
+import Common.Error
 import qualified
        Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
        as KMC
@@ -70,7 +70,8 @@ versionAPI context dspConfig =
           -- THEN: Find a result
           eitherPackageFromDb <-
             liftIO $
-            liftIO $ getPackageById context "elixir.nl.amsterdam:amsterdam-km:1.0.0"
+            liftIO $
+            getPackageById context "elixir.nl.amsterdam:amsterdam-km:1.0.0"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -98,10 +99,16 @@ versionAPI context dspConfig =
             liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
-          let expDto = createErrorWithErrorMessage $ "Version is not in valid format"
+          let expDto =
+                createErrorWithErrorMessage $ "Version is not in valid format"
           let expBody = encode expDto
           -- WHEN: Call API
-          response <- request reqMethod "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0" reqHeaders reqBody
+          response <-
+            request
+              reqMethod
+              "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
+              reqHeaders
+              reqBody
           -- THEN: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -118,7 +125,12 @@ versionAPI context dspConfig =
           let reqBody = encode reqDto
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ KMC.runMigration context dspConfig fakeLogState
-          liftIO $ createPackageFromKMC context "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc"
+          liftIO $
+            createPackageFromKMC
+              context
+              "6474b24b-262b-42b1-9451-008e8363f2b6"
+              "1.0.0"
+              "Desc"
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -126,10 +138,17 @@ versionAPI context dspConfig =
             liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
-          let expDto = createErrorWithErrorMessage $ "New version has to be higher than the previous one"
+          let expDto =
+                createErrorWithErrorMessage $
+                "New version has to be higher than the previous one"
           let expBody = encode expDto
           -- WHEN: Call API
-          response <- request reqMethod "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/0.9.0" reqHeaders reqBody
+          response <-
+            request
+              reqMethod
+              "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/0.9.0"
+              reqHeaders
+              reqBody
           -- THEN: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -138,10 +157,12 @@ versionAPI context dspConfig =
                 , matchBody = bodyEquals expBody
                 }
           response `shouldRespondWith` responseMatcher
-        createInvalidJsonTest
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "description"
+        createAuthTest reqMethod reqUrl [] ""
+        createNoPermissionTest
+          dspConfig
           reqMethod
           reqUrl
-          [HJ.json| { } |]
-          "description"
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PUBLISH_PERM"
+          []
+          ""
+          "KM_PUBLISH_PERM"

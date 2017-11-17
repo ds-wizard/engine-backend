@@ -105,8 +105,6 @@ library
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       DSPConfig
-      KMMigration.Migration.Applicator.Applicator
-      KMMigration.Migration.Migration
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -143,6 +141,8 @@ library
       Service.KnowledgeModel.KnowledgeModelService
       Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
       Service.KnowledgeModelContainer.KnowledgeModelContainerService
+      Service.Migrator.Applicator
+      Service.Migrator.Migrator
       Service.Organization.OrganizationMapper
       Service.Organization.OrganizationService
       Service.Package.PackageMapper
@@ -260,9 +260,8 @@ test-suite hspec
       Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
-      Specs.Service.KMMigration.ApplicatorINTSpec
-      Specs.Service.KMMigration.ApplicatorSpec
       Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
+      Specs.Service.Migrator.ApplicatorSpec
       Specs.Service.Organization.OrganizationServiceSpec
       Specs.Service.Package.PackageServiceSpec
       TestMigration

@@ -21,11 +21,10 @@ import Specs.API.PackageAPISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
-import Specs.Service.KMMigration.ApplicatorINTSpec
-import Specs.Service.KMMigration.ApplicatorSpec
+import Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
+import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Organization.OrganizationServiceSpec
 import Specs.Service.Package.PackageServiceSpec
-import Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -54,7 +53,6 @@ main =
        hspec $ do
          describe "UNIT TESTING" $ do
            applicatorSpec
-           applicatorINTSpec
            organizationServiceSpec
            knowledgeModelContainerServiceSpec
            packageServiceSpec

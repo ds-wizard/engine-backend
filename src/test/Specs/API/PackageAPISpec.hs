@@ -5,6 +5,7 @@ import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import Data.ByteString.Lazy
 import Data.Either
+import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -16,10 +17,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
-import Data.Foldable
 
-import Common.Error
 import Api.Resources.Package.PackageDTO
+import Common.Error
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Package.Package
@@ -59,198 +59,202 @@ packageAPI context dspConfig = do
         , _pkgdtoParentPackage = Just dto2
         }
   with (startWebApp context dspConfig) $ do
-    describe "PACKAGE API Spec" $ do
+    describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /packages
       -- ------------------------------------------------------------------------
-      describe "GET /packages" $ do
+     do
+      describe "GET /packages" $
          -- GIVEN: Prepare request
-         let reqMethod = methodGet
-         let reqUrl = "/packages"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 200 OK" $
-            do
-             liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodGet
+        let reqUrl = "/packages"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 200 OK" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
-             let expStatus = 200
-             let expHeaders = [resCtHeader] ++ resCorsHeaders
-             let expDto = [dto1, dto2, dto3]
-             let expBody = encode expDto
+          let expStatus = 200
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto = [dto1, dto2, dto3]
+          let expBody = encode expDto
           -- WHEN: Call API
-             response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Compare response with expetation
-             let responseMatcher =
-                   ResponseMatcher
-                   { matchHeaders = expHeaders
-                   , matchStatus = expStatus
-                   , matchBody = bodyEquals expBody
-                   }
-             response `shouldRespondWith` responseMatcher
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals expBody
+                }
+          response `shouldRespondWith` responseMatcher
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages?groupId={groupId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
-      describe "GET /packages?groupId={groupId}&artifactId={artifactId}" $ do
+      describe "GET /packages?groupId={groupId}&artifactId={artifactId}" $
           -- GIVEN: Prepare request
-         let reqMethod = methodGet
-         let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 200 OK" $
-          do
-           liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodGet
+        let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 200 OK" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
         -- GIVEN: Prepare expectation
-           let expStatus = 200
-           let expHeaders = [resCtHeader] ++ resCorsHeaders
-           let expDto = [dto1, dto2]
-           let expBody = encode expDto
+          let expStatus = 200
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto = [dto1, dto2]
+          let expBody = encode expDto
         -- WHEN: Call API
-           response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Compare response with expetation
-           let responseMatcher =
-                 ResponseMatcher
-                 { matchHeaders = expHeaders
-                 , matchStatus = expStatus
-                 , matchBody = bodyEquals expBody
-                 }
-           response `shouldRespondWith` responseMatcher
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals expBody
+                }
+          response `shouldRespondWith` responseMatcher
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages/{pkgId}
       -- ------------------------------------------------------------------------
-      describe "GET /packages/{pkgId}" $ do
+      describe "GET /packages/{pkgId}" $
          -- GIVEN: Prepare request
-         let reqMethod = methodGet
-         let reqUrl = "/packages/elixir.base:core:1.0.0"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 200 OK" $
-          do
-           liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodGet
+        let reqUrl = "/packages/elixir.base:core:1.0.0"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 200 OK" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
            -- GIVEN: Prepare expectation
-           let expStatus = 200
-           let expHeaders = [resCtHeader] ++ resCorsHeaders
-           let expDto = dto2
-           let expBody = encode expDto
+          let expStatus = 200
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto = dto2
+          let expBody = encode expDto
            -- WHEN: Call API
-           response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
            -- THEN: Compare response with expetation
-           let responseMatcher =
-                 ResponseMatcher
-                 { matchHeaders = expHeaders
-                 , matchStatus = expStatus
-                 , matchBody = bodyEquals expBody
-                 }
-           response `shouldRespondWith` responseMatcher
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
-         createNotFoundTest
-           reqMethod
-           "/packages/elixir.nonexist:nopackage:2.0.0"
-           reqHeaders
-           reqBody
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals expBody
+                }
+          response `shouldRespondWith` responseMatcher
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNotFoundTest
+          reqMethod
+          "/packages/elixir.nonexist:nopackage:2.0.0"
+          reqHeaders
+          reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /packages
       -- ------------------------------------------------------------------------
-      describe "DELETE /packages" $ do
+      describe "DELETE /packages" $
          -- GIVEN: Prepare request
-         let reqMethod = methodDelete
-         let reqUrl = "/packages"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 204 NO CONTENT" $
-          do
-           liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodDelete
+        let reqUrl = "/packages"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 204 NO CONTENT" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
-           let expStatus = 204
-           let expHeaders = resCorsHeaders
+          let expStatus = 204
+          let expHeaders = resCorsHeaders
           -- WHEN: Call API
-           response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-           eitherPackages <- liftIO $ findPackages context
-           liftIO $ (isRight eitherPackages) `shouldBe` True
-           let (Right packages) = eitherPackages
+          eitherPackages <- liftIO $ findPackages context
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
           -- AND: Compare response with expetation
-           let responseMatcher =
-                 ResponseMatcher
-                 { matchHeaders = expHeaders
-                 , matchStatus = expStatus
-                 , matchBody = bodyEquals ""
-                 }
-           response `shouldRespondWith` responseMatcher
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals ""
+                }
+          response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-           liftIO $ packages `shouldBe` []
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+          liftIO $ packages `shouldBe` []
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages?groupId={groupId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /packages?groupId={groupId}&artifactId={artifactId}" $ do
+      describe "DELETE /packages?groupId={groupId}&artifactId={artifactId}" $
          -- GIVEN: Prepare request
-         let reqMethod = methodDelete
-         let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 204 NO CONTENT" $
-          do
-           liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodDelete
+        let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 204 NO CONTENT" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
-           let expStatus = 204
-           let expHeaders = resCorsHeaders
+          let expStatus = 204
+          let expHeaders = resCorsHeaders
           -- WHEN: Call API
-           response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-           eitherPackages <- liftIO $ findPackageByGroupIdAndArtifactId context "elixir.base" "core"
-           liftIO $ (isRight eitherPackages) `shouldBe` True
-           let (Right packages) = eitherPackages
+          eitherPackages <-
+            liftIO $
+            findPackageByGroupIdAndArtifactId context "elixir.base" "core"
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
           -- AND: Compare response with expetation
-           let responseMatcher =
-                 ResponseMatcher
-                 { matchHeaders = expHeaders
-                 , matchStatus = expStatus
-                 , matchBody = bodyEquals ""
-                 }
-           response `shouldRespondWith` responseMatcher
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals ""
+                }
+          response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-           liftIO $ packages `shouldBe` []
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+          liftIO $ packages `shouldBe` []
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages/{pkgId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /packages/{pkgId}" $ do
+      describe "DELETE /packages/{pkgId}" $
          -- GIVEN: Prepare request
-         let reqMethod = methodDelete
-         let reqUrl = "/packages/elixir.base:core:1.0.0"
-         let reqHeaders = [reqAuthHeader, reqCtHeader]
-         let reqBody = ""
-         it "HTTP 204 NO CONTENT" $
-          do
-           liftIO $ PKG.runMigration context dspConfig fakeLogState
+       do
+        let reqMethod = methodDelete
+        let reqUrl = "/packages/elixir.base:core:1.0.0"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqBody = ""
+        it "HTTP 204 NO CONTENT" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
         -- GIVEN: Prepare expectation
-           let expStatus = 204
-           let expHeaders = resCorsHeaders
+          let expStatus = 204
+          let expHeaders = resCorsHeaders
         -- WHEN: Call API
-           response <- request reqMethod reqUrl reqHeaders reqBody
+          response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Find a result
-           eitherPackage <- liftIO $ getPackageById context "elixir.base:core:1.0.0"
-           liftIO $ (isLeft eitherPackage) `shouldBe` True
-           let (Left (NotExistsError _)) = eitherPackage
+          eitherPackage <-
+            liftIO $ getPackageById context "elixir.base:core:1.0.0"
+          liftIO $ (isLeft eitherPackage) `shouldBe` True
+          let (Left (NotExistsError _)) = eitherPackage
         -- AND: Compare response with expetation
-           let responseMatcher =
-                 ResponseMatcher
-                 { matchHeaders = expHeaders
-                 , matchStatus = expStatus
-                 , matchBody = bodyEquals ""
-                 }
-           response `shouldRespondWith` responseMatcher
-         createAuthTest reqMethod reqUrl [] reqBody
-         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
-         createNotFoundTest
-            reqMethod
-            "/packages/elixir.nonexist:nopackage:2.0.0"
-            reqHeaders
-            reqBody
+          let responseMatcher =
+                ResponseMatcher
+                { matchHeaders = expHeaders
+                , matchStatus = expStatus
+                , matchBody = bodyEquals ""
+                }
+          response `shouldRespondWith` responseMatcher
+        createAuthTest reqMethod reqUrl [] reqBody
+        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNotFoundTest
+          reqMethod
+          "/packages/elixir.nonexist:nopackage:2.0.0"
+          reqHeaders
+          reqBody

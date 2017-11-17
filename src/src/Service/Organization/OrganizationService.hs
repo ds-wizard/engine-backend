@@ -46,7 +46,8 @@ getOrganizationGroupId context = do
 isValidGroupId :: String -> Maybe AppError
 isValidGroupId artifactId =
   if isJust $ matchRegex validationRegex artifactId
-  then Nothing
-  else Just . createErrorWithFieldError $ ("groupId", "GroupId is not in valid format")
+    then Nothing
+    else Just . createErrorWithFieldError $
+         ("groupId", "GroupId is not in valid format")
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"

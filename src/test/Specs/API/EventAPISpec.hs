@@ -32,13 +32,13 @@ import qualified
        Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
-import KMMigration.Migration.Migration
 import Model.Event.Event
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
 import Model.User.User
 import Service.Event.EventMapper
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
+import Service.Migrator.Migrator
 
 import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common

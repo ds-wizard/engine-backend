@@ -7,13 +7,12 @@ import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
 knowledgeModelContainerServiceSpec =
   describe "Package Service" $
-    it "isVersionInValidFormat" $ do
-      isNothing (isValidArtifactId "core") `shouldBe` True
-      isNothing (isValidArtifactId "ab") `shouldBe` True
-      isNothing (isValidArtifactId "core-nl") `shouldBe` True
-      isNothing (isValidArtifactId "core-nl-amsterdam") `shouldBe` True
-      isJust (isValidArtifactId "a") `shouldBe` True
-      isJust (isValidArtifactId "core.nl") `shouldBe` True
-      isJust (isValidArtifactId "a.b") `shouldBe` True
-      isJust (isValidArtifactId "core_nl") `shouldBe` True
-
+  it "isVersionInValidFormat" $ do
+    isNothing (isValidArtifactId "core") `shouldBe` True
+    isNothing (isValidArtifactId "ab") `shouldBe` True
+    isNothing (isValidArtifactId "core-nl") `shouldBe` True
+    isNothing (isValidArtifactId "core-nl-amsterdam") `shouldBe` True
+    isJust (isValidArtifactId "a") `shouldBe` True
+    isJust (isValidArtifactId "core.nl") `shouldBe` True
+    isJust (isValidArtifactId "a.b") `shouldBe` True
+    isJust (isValidArtifactId "core_nl") `shouldBe` True

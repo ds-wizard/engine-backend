@@ -3,6 +3,7 @@ module Api.Handler.Common where
 import Control.Monad.Reader
 import Data.Aeson
 import Data.ByteString
+import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Network.HTTP.Types (hContentType, notFound404)
@@ -12,7 +13,6 @@ import Network.HTTP.Types.Status
         internalServerError500)
 import Network.Wai
 import qualified Web.Scotty as Scotty
-import Data.Maybe
 
 import Api.Resources.Error.ErrorDTO
 import Common.Error
@@ -42,7 +42,7 @@ getQueryParam paramName = do
     Just value -> return . Just . LT.toStrict $ value
     Nothing -> return Nothing
 
-getListOfQueryParamsIfPresent :: [LT.Text] -> Scotty.ActionM [(T.Text,T.Text)]
+getListOfQueryParamsIfPresent :: [LT.Text] -> Scotty.ActionM [(T.Text, T.Text)]
 getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
   where
     go name monadAcc = do

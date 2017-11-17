@@ -14,7 +14,6 @@ import Context
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
-import KMMigration.Migration.Migration
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
@@ -23,6 +22,7 @@ import Service.Event.EventMapper
 import Service.Event.EventToDTO
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Migrator.Migrator
 
 getEvents :: Context -> String -> IO (Either AppError [EventDTO])
 getEvents context kmcUuid = do

@@ -6,12 +6,12 @@ import Crypto.PasswordStore
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
+import Data.Maybe
+import Data.Maybe
 import Data.Text (Text)
-import Data.UUID as U
 import qualified Data.Text as T
-import Data.Maybe
+import Data.UUID as U
 import Text.Regex
-import Data.Maybe
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
 import Api.Resources.Organization.OrganizationDTO
@@ -123,7 +123,11 @@ createPackageFromKMC context kmcUuid version description =
             Right organization -> do
               let groupId = organization ^. orgdtoGroupId
               let artifactId = kmc ^. kmcweArtifactId
-              eitherMaybePackage <- getTheNewestPackageByGroupIdAndArtifactId context groupId artifactId
+              eitherMaybePackage <-
+                getTheNewestPackageByGroupIdAndArtifactId
+                  context
+                  groupId
+                  artifactId
               case eitherMaybePackage of
                 Right (Just package) ->
                   case isVersionHigher version (package ^. pkgVersion) of
@@ -210,7 +214,10 @@ deletePackage context pkgId = do
       return Nothing
     Left error -> return . Just $ error
 
-getTheNewestPackageByGroupIdAndArtifactId :: Context -> String -> String -> IO (Either AppError (Maybe Package))
+getTheNewestPackageByGroupIdAndArtifactId :: Context
+                                          -> String
+                                          -> String
+                                          -> IO (Either AppError (Maybe Package))
 getTheNewestPackageByGroupIdAndArtifactId context groupId artifactId = do
   eitherPackages <- findPackageByGroupIdAndArtifactId context groupId artifactId
   case eitherPackages of
@@ -222,7 +229,10 @@ getTheNewestPackageByGroupIdAndArtifactId context groupId artifactId = do
           return . Right . Just . head $ sorted
     Left error -> return . Left $ error
   where
-    sortPackages packages = sortBy (\p1 p2 -> compareVersionNeg (p1 ^. pkgVersion) (p2 ^. pkgVersion)) packages
+    sortPackages packages =
+      sortBy
+        (\p1 p2 -> compareVersionNeg (p1 ^. pkgVersion) (p2 ^. pkgVersion))
+        packages
 
 isVersionInValidFormat :: String -> Maybe AppError
 isVersionInValidFormat version =
@@ -236,7 +246,8 @@ isVersionHigher :: String -> String -> Maybe AppError
 isVersionHigher newVersion oldVersion =
   if compareVersion newVersion oldVersion == GT
     then Nothing
-    else Just . createErrorWithErrorMessage $ "New version has to be higher than the previous one"
+    else Just . createErrorWithErrorMessage $
+         "New version has to be higher than the previous one"
 
 compareVersionNeg :: String -> String -> Ordering
 compareVersionNeg verA verB = compareVersion verB verA
@@ -246,13 +257,15 @@ compareVersion versionA versionB =
   case compare versionAMajor versionBMajor of
     LT -> LT
     GT -> GT
-    EQ -> case compare versionAMinor versionBMinor of
-      LT -> LT
-      GT -> GT
-      EQ -> case compare versionAPatch versionBPatch of
+    EQ ->
+      case compare versionAMinor versionBMinor of
         LT -> LT
         GT -> GT
-        EQ -> EQ
+        EQ ->
+          case compare versionAPatch versionBPatch of
+            LT -> LT
+            GT -> GT
+            EQ -> EQ
   where
     versionASplitted = T.splitOn "." (T.pack versionA)
     versionBSplitted = T.splitOn "." (T.pack versionB)

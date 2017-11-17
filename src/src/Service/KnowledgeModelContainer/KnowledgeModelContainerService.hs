@@ -96,7 +96,9 @@ deleteKnowledgeModelContainer context kmcUuid = do
 isValidArtifactId :: String -> Maybe AppError
 isValidArtifactId artifactId =
   if isJust $ matchRegex validationRegex artifactId
-  then Nothing
-  else Just $ createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
+    then Nothing
+    else Just $
+         createErrorWithFieldError
+           ("artifactId", "ArtifactId is not in valid format")
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"
