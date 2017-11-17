@@ -28,7 +28,7 @@ source-repository head
 
 library
   hs-source-dirs:
-      src
+      lib
   default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
   exposed-modules:
       Api.Handler.Common

@@ -5,7 +5,7 @@ WORKDIR /sources
 ADD ./app /sources/app
 ADD ./config /sources/config
 ADD ./scripts /sources/scripts
-ADD ./src /sources/src
+ADD ./lib /sources/lib
 ADD ./test /sources/test
 ADD ./src.cabal /sources/src.cabal
 ADD ./package.yaml /sources/package.yaml

@@ -16,7 +16,7 @@ data-files:
   - config/app-config.cfg
   - config/build-info.cfg
 library:
-  source-dirs: src
+  source-dirs: lib
   dependencies:
   - base
   - aeson

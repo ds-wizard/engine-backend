@@ -40,4 +40,4 @@ runServer = do
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
         runMigration context dspConfig
         let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
-        in scotty serverPort (createEndpoints context dspConfig)
+        scotty serverPort (createEndpoints context dspConfig)
