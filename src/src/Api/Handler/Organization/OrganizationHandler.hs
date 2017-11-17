@@ -11,8 +11,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.Organization.OrganizationDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.Organization.OrganizationService
 
 getOrganizationCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()

@@ -59,12 +59,14 @@ library
       Api.Resources.User.UserDTO
       Api.Resources.User.UserPasswordDTO
       Api.Resources.Version.VersionDTO
+      Api.Router
       Application
+      Common.Context
+      Common.DSPConfig
       Common.Error
       Common.Types
       Common.Utils
       Common.Uuid
-      Context
       Data.Bson.Generic
       Database.BSON.Common
       Database.BSON.Event.Answer
@@ -83,6 +85,7 @@ library
       Database.BSON.Package.Package
       Database.BSON.Package.PackageWithEvents
       Database.BSON.User.User
+      Database.Connection
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
@@ -104,7 +107,6 @@ library
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
-      DSPConfig
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -132,7 +134,6 @@ library
       Model.Organization.Organization
       Model.Package.Package
       Model.User.User
-      Paths_src_bck
       Service.Event.EventFromDTO
       Service.Event.EventMapper
       Service.Event.EventService

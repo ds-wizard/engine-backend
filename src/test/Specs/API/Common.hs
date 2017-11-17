@@ -17,11 +17,12 @@ import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Api.Resources.Error.ErrorDTO
-import Application
+import Api.Router
+import Database.Connection
 import Common.Error
 import Common.Types
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService

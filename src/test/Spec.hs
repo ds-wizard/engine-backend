@@ -8,9 +8,9 @@ import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
 import qualified Web.Scotty as S
 
-import Application
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
+import Database.Connection
 
 import Specs.API.EventAPISpec
 import Specs.API.InfoAPISpec

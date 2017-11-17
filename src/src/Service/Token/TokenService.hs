@@ -14,8 +14,8 @@ import Api.Resources.Token.TokenDTO
 import Common.Error
 import Common.Types
 import Common.Utils
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Data.Aeson
 import Database.DAO.User.UserDAO
 import Model.User.User

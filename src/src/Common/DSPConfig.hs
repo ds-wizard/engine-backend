@@ -1,4 +1,4 @@
-module DSPConfig where
+module Common.DSPConfig where
 
 import Control.Lens
 import Control.Monad.Except

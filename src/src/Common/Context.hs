@@ -1,4 +1,4 @@
-module Context where
+module Common.Context where
 
 import Control.Lens (makeLenses)
 import Database.Persist.MongoDB (ConnectionPool)

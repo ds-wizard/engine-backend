@@ -3,7 +3,7 @@ module Database.Migration.Package.PackageMigration where
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Context
+import Common.Context
 import Database.DAO.Package.PackageDAO
 import Database.Migration.KnowledgeModel.Data.Event.Event
 import Model.Event.Event

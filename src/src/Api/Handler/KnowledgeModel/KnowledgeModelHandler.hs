@@ -10,8 +10,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.KnowledgeModel.KnowledgeModelDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.KnowledgeModel.KnowledgeModelService
 
 getKnowledgeModelA :: Context -> DSPConfig -> Scotty.ActionM ()

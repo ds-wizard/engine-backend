@@ -19,7 +19,7 @@ import Web.JWT
 import Api.Handler.Common
 import Common.Types
 import Common.Utils
-import DSPConfig
+import Common.DSPConfig
 
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"

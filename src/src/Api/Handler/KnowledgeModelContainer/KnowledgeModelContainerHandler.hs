@@ -11,8 +11,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
 
 getKnowledgeModelContainersA :: Context -> DSPConfig -> Scotty.ActionM ()

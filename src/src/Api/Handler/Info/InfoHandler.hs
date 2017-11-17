@@ -5,8 +5,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.Info.InfoDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 
 getInfoA :: Context -> DSPConfig -> Scotty.ActionM ()
 getInfoA context dspConfig =

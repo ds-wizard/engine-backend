@@ -21,7 +21,7 @@ import Api.Resources.Package.PackageWithEventsDTO
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Context
+import Common.Context
 import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
 import Database.DAO.Package.PackageDAO
 import Model.Event.Event

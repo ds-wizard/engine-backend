@@ -15,8 +15,8 @@ import Api.Resources.User.UserPasswordDTO
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenService

@@ -3,7 +3,7 @@ module Database.Migration.Organization.OrganizationMigration where
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Context
+import Common.Context
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationService

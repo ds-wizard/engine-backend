@@ -11,7 +11,7 @@ import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Context
+import Common.Context
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModelContainer.KnowledgeModelContainer

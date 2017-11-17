@@ -11,7 +11,7 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Error
 import Common.Types
-import Context
+import Common.Context
 import Database.BSON.Organization.Organization
 import Database.DAO.Common
 import Model.Organization.Organization

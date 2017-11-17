@@ -12,7 +12,7 @@ import Database.MongoDB
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Types
-import Context
+import Common.Context
 import Database.BSON.Package.Package
 import Database.BSON.Package.PackageWithEvents
 import Database.DAO.Common

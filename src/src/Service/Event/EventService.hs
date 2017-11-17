@@ -10,7 +10,7 @@ import Api.Resources.Event.EventDTO
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Context
+import Common.Context
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO

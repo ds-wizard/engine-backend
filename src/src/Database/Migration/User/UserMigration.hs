@@ -4,7 +4,7 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
-import Context
+import Common.Context
 import Database.DAO.User.UserDAO
 import Service.User.UserService
 

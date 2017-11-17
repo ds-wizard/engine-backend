@@ -11,8 +11,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.Version.VersionDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.Package.PackageService
 
 putVersionA :: Context -> DSPConfig -> Scotty.ActionM ()

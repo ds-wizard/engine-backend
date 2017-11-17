@@ -14,8 +14,8 @@ import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Api.Resources.User.UserPasswordDTO
 import Common.Error
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.User.UserService
 
 getUsersA :: Context -> DSPConfig -> Scotty.ActionM ()

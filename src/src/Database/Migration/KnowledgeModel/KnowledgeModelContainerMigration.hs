@@ -5,7 +5,7 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
-import Context
+import Common.Context
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
 import Database.Migration.KnowledgeModel.Data.Event.Event

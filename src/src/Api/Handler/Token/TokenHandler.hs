@@ -13,8 +13,8 @@ import Api.Handler.Common
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
 import Common.Error
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.Token.TokenService
 
 postTokenA :: Context -> DSPConfig -> Scotty.ActionM ()

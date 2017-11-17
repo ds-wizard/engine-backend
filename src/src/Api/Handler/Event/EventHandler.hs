@@ -11,8 +11,8 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Api.Resources.Event.EventDTO
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.Event.EventService
 
 getEventsA :: Context -> DSPConfig -> Scotty.ActionM ()

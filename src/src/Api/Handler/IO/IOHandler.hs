@@ -13,8 +13,8 @@ import Network.Wai.Parse
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Context
-import DSPConfig
+import Common.Context
+import Common.DSPConfig
 import Service.Package.PackageService
 
 exportA :: Context -> DSPConfig -> Scotty.ActionM ()

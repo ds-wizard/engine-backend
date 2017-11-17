@@ -1,6 +1,6 @@
 module Database.Migration.Migration where
 
-import Context
+import Common.Context
 import qualified
        Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
        as KMC

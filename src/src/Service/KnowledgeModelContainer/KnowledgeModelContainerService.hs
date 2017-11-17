@@ -12,7 +12,7 @@ import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Context
+import Common.Context
 import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
 import Model.KnowledgeModelContainer.KnowledgeModelContainer
 import Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
