@@ -1,52 +1,95 @@
 module Service.Migrator.Migrator where
 
-import Control.Lens
-import Data.Maybe
+import Control.Lens ((^.), (&), (.~), makeLenses)
+import qualified Data.UUID as U
+import Data.Either
 
+import Common.Context
 import Common.Error
-import Model.Event.Common
+import Database.DAO.Package.PackageDAO
 import Model.Event.Event
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Migrator.MigrationState
+import Model.Package.Package
 import Service.Migrator.Applicator
+import Service.Migrator.Methods.ChoiceMethod
+import Service.Migrator.Methods.Common
+import Service.Migrator.Methods.DiffTreeMethod
+import Service.Migrator.Methods.NoConflictMethod
 
-ncmApplyEvent
-  :: Either AppError (Maybe KnowledgeModel)
-  -> Event
-  -> Either AppError (Maybe KnowledgeModel)
-ncmApplyEvent emKM (AddKnowledgeModelEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditKnowledgeModelEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddChapterEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditChapterEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteChapterEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddQuestionEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditQuestionEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteQuestionEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddAnswerEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditAnswerEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteAnswerEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddExpertEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditExpertEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteExpertEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddReferenceEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditReferenceEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (AddFollowUpQuestionEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (EditFollowUpQuestionEvent' e) = applyEventToKM e emKM
-ncmApplyEvent emKM (DeleteFollowUpQuestionEvent' e) = applyEventToKM e emKM
+createMigration :: Context
+                -> String
+                -> String
+                -> IO (Either AppError MigrationState)
+createMigration context parentPackageId localizationPackageId = do
+  eitherParentPackage <- findPackageWithEventsById context parentPackageId
+  case eitherParentPackage of
+    Left error -> return . Left $ error
+    Right parentPackage -> do
+      eitherLocalizationPackage <-
+        findPackageWithEventsById context localizationPackageId
+      case eitherLocalizationPackage of
+        Left error -> return . Left $ error
+        Right localizationPackage ->
+          return . Right $
+          createMigrationStateWithEvents
+            parentPackageId
+            localizationPackageId
+            (parentPackage ^. pkgweEvents)
+            (localizationPackage ^. pkgweEvents)
 
-noConflictMethod
-  :: Either AppError (Maybe KnowledgeModel)
-  -> Event
-  -> Either AppError (Maybe KnowledgeModel)
-noConflictMethod (Right mKm) event = ncmApplyEvent (Right mKm) event
-noConflictMethod (Left error) _ = Left error
+createMigrationStateWithEvents parentPackageId localizationPackageId parentEvents localizationEvents =
+  MigrationState
+    { _msStatus = MSCreated
+    , _msParentPackageId = parentPackageId
+    , _msLocalizationPackageId = localizationPackageId
+    , _msCurrentKnowledgeModel = Nothing
+    , _msError = NoError
+    , _msParentEvents = parentEvents
+    , _msLocalizationEvents = localizationEvents
+    , _msDiffTable = buildDiffTable parentEvents
+    , _msDiffTree = Nothing
+    }
 
-migrate :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeModel
-migrate mKM events =
-  case foldl noConflictMethod (Right mKM) events of
-    Left error -> Left error
-    Right Nothing ->
-      Left . MigratorError $
-      "Unspecified problem in building Knowledge Model happened"
-    Right (Just km) -> Right km
+doMigrate :: MigrationState -> Event -> MigrationState
+doMigrate state event =
+  let newState = runNoConflictMethod state event
+      ( _ : newLocalizationEvents) = newState ^. msLocalizationEvents
+  in newState & msLocalizationEvents .~ newLocalizationEvents
+
+migrate :: MigrationState -> MigrationState
+migrate state =
+  case state ^. msStatus of
+    MSCreated ->
+      let eitherKm = runApplicator Nothing (state ^. msParentEvents)
+      in case eitherKm of
+           Left error ->
+             state & msError .~
+             ApplicatorError
+               "Error in compiling future parent Knowledge Model events"
+           Right km ->
+             let newState = state & msStatus .~ MSRunning
+--                 newState2 = state & msDiffTree .~ Just (buildDiffTree km)
+--             in migrate $ newState2 & msCurrentKnowledgeModel .~ Just km
+             in migrate $ newState & msCurrentKnowledgeModel .~ Just km
+    MSRunning ->
+      let newState = foldl doMigrate state (state ^. msLocalizationEvents)
+      in if newState ^. msLocalizationEvents == []
+         then newState & msStatus .~ MSCompleted
+         else newState
+    MSError -> state
+    MSCompleted -> state
+--{
+--	"state": "RUNNING|CONFLICT|COMPLETED",
+--	"previousParentPackageId": "elixir.base:core:0.0.1",
+--	"futureParentPackageId": "elixir.base:core:0.0.2",
+--	"currentKnowledgeModel": {
+--		"kmUuid": "b0edbc0b-2d7d-4ee7-bf2f-bc3a22d7494f",
+--		"name": "My Knowledge Model",
+--		"chapters": []
+--	},
+--	"conflict": {
+--		"type": "NO_CONFLICT|CHOICE|DIFF_TREE|POOL"
+--	},
+--	"localizationEvents": []
+--}

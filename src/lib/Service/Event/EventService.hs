@@ -7,10 +7,10 @@ import Data.ByteString.Char8 as BS
 import Data.UUID as U
 
 import Api.Resources.Event.EventDTO
+import Common.Context
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Common.Context
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
@@ -22,7 +22,7 @@ import Service.Event.EventMapper
 import Service.Event.EventToDTO
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.KnowledgeModelContainer.KnowledgeModelContainerService
-import Service.Migrator.Migrator
+import Service.Migrator.Applicator
 
 getEvents :: Context -> String -> IO (Either AppError [EventDTO])
 getEvents context kmcUuid = do
@@ -68,7 +68,7 @@ recompileKnowledgeModel context kmcUuid = do
             Right eventsFromPackage -> do
               let eventsFromKM = kmc ^. kmcweEvents
               let events = eventsFromPackage ++ eventsFromKM
-              let eitherNewKM = migrate Nothing events
+              let eitherNewKM = runApplicator Nothing events
               case eitherNewKM of
                 Right newKM -> do
                   updateKnowledgeModelByKmcId context kmcUuid newKM
@@ -77,7 +77,7 @@ recompileKnowledgeModel context kmcUuid = do
             Left error -> return . Left $ error
         Nothing -> do
           let events = kmc ^. kmcweEvents
-          let eitherNewKM = migrate Nothing events
+          let eitherNewKM = runApplicator Nothing events
           case eitherNewKM of
             Right newKM -> do
               updateKnowledgeModelByKmcId context kmcUuid newKM

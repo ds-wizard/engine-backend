@@ -23,6 +23,7 @@ import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
 import Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
+import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Organization.OrganizationServiceSpec
 import Specs.Service.Package.PackageServiceSpec
 import TestMigration
@@ -53,17 +54,18 @@ main =
        hspec $ do
          describe "UNIT TESTING" $ do
            applicatorSpec
-           organizationServiceSpec
-           knowledgeModelContainerServiceSpec
-           packageServiceSpec
-         before (resetDB context dspConfig) $
-           describe "INTEGRATION TESTING" $ do
-             infoAPI context dspConfig
-             tokenAPI context dspConfig
-             organizationAPI context dspConfig
-             userAPI context dspConfig
-             kmcAPI context dspConfig
-             knowledgeModelAPI context dspConfig
-             eventAPI context dspConfig
-             versionAPI context dspConfig
-             packageAPI context dspConfig)
+           migratorSpec)
+--           organizationServiceSpec
+--           knowledgeModelContainerServiceSpec
+--           packageServiceSpec
+--         before (resetDB context dspConfig) $
+--           describe "INTEGRATION TESTING" $ do
+--             infoAPI context dspConfig
+--             tokenAPI context dspConfig
+--             organizationAPI context dspConfig
+--             userAPI context dspConfig
+--             kmcAPI context dspConfig
+--             knowledgeModelAPI context dspConfig
+--             eventAPI context dspConfig
+--             versionAPI context dspConfig
+--             packageAPI context dspConfig)

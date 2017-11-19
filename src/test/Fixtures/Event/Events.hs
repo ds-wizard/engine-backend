@@ -156,6 +156,22 @@ a_km1_ch2_q3 =
   , _aqText = question3 ^. qText
   }
 
+e_km1_ch1_q1_title :: EditQuestionEvent
+e_km1_ch1_q1_title =
+  EditQuestionEvent
+  { _eqUuid = fromJust $ U.fromString "de86f82b-aaaf-482e-97c7-c7e93d834cd9"
+  , _eqKmUuid = km1 ^. kmUuid
+  , _eqChapterUuid = chapter1 ^. chUuid
+  , _eqQuestionUuid = question1 ^. qUuid
+  , _eqShortQuestionUuid = Nothing
+  , _eqType = Nothing
+  , _eqTitle = Just $ "EDITED: " ++ question2WithChangeProperties ^. qTitle
+  , _eqText = Nothing
+  , _eqAnswerIds = Nothing
+  , _eqExpertIds = Nothing
+  , _eqReferenceIds = Nothing
+  }
+
 e_km1_ch1_q2 :: EditQuestionEvent
 e_km1_ch1_q2 =
   EditQuestionEvent
@@ -170,6 +186,40 @@ e_km1_ch1_q2 =
   , _eqAnswerIds = Just $ qAnwerIds question2WithChangeProperties
   , _eqExpertIds = Just $ qExpertIds question2WithChangeProperties
   , _eqReferenceIds = Just $ qReferenceIds question2WithChangeProperties
+  }
+
+e_km1_ch1_q2_second_edit :: EditQuestionEvent
+e_km1_ch1_q2_second_edit =
+  EditQuestionEvent
+  { _eqUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
+  , _eqKmUuid = km1 ^. kmUuid
+  , _eqChapterUuid = chapter1 ^. chUuid
+  , _eqQuestionUuid = question2 ^. qUuid
+  , _eqShortQuestionUuid = Just $ question2 ^. qShortUuid
+  , _eqType = Just $ question2WithChangeProperties ^. qType
+  , _eqTitle = Just "New title"
+  , _eqText = Just $ question2WithChangeProperties ^. qText
+  , _eqAnswerIds = Just $ qAnwerIds question2WithChangeProperties
+  , _eqExpertIds = Just $ qExpertIds question2WithChangeProperties
+  , _eqReferenceIds = Just $ qReferenceIds question2WithChangeProperties
+  }
+
+d_km1_ch1_q1 :: DeleteQuestionEvent
+d_km1_ch1_q1 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question1 ^. qUuid
+  }
+
+d_km1_ch1_q2 :: DeleteQuestionEvent
+d_km1_ch1_q2 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "52a7a6ae-be37-4075-ac5c-a20858707a75"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question2 ^. qUuid
   }
 
 d_km1_ch1_q3 :: DeleteQuestionEvent

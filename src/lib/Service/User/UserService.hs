@@ -12,11 +12,11 @@ import qualified Data.UUID as U
 import Api.Resources.User.UserCreateDTO
 import Api.Resources.User.UserDTO
 import Api.Resources.User.UserPasswordDTO
+import Common.Context
+import Common.DSPConfig
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Common.Context
-import Common.DSPConfig
 import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenService

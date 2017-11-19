@@ -38,7 +38,7 @@ import Model.User.User
 import Service.Event.EventMapper
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.Migrator.Migrator
+import Service.Migrator.Applicator
 
 import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common
@@ -220,7 +220,7 @@ eventAPI context dspConfig = do
           let expStatus = 204
           let expHeaders = resCorsHeaders
           let (Right expectedKm) =
-                migrate
+                runApplicator
                   Nothing
                   [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
           -- WHEN: Call API

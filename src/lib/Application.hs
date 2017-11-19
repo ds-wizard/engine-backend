@@ -7,8 +7,8 @@ import Web.Scotty
 import Api.Router
 import Common.Context
 import Common.DSPConfig
-import Database.Migration.Migration
 import Database.Connection
+import Database.Migration.Migration
 
 applicationConfigFile = "config/app-config.cfg"
 

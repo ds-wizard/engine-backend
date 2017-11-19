@@ -17,9 +17,9 @@ import Text.Regex
 import Web.JWT
 
 import Api.Handler.Common
+import Common.DSPConfig
 import Common.Types
 import Common.Utils
-import Common.DSPConfig
 
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"

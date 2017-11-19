@@ -1,7 +1,7 @@
 module Database.Connection where
 
-import Data.Text
 import Control.Lens ((^.))
+import Data.Text
 import Database.Persist.MongoDB (withMongoDBConn)
 import Network
 
@@ -15,4 +15,3 @@ createDBConn dspConfig afterSuccess =
         PortNumber (fromInteger (appConfigDatabase ^. acdbPort) :: PortNumber) :: PortID
       dbName = pack (appConfigDatabase ^. acdbDatabaseName)
   in withMongoDBConn dbName dbHost dbPort Nothing 10100 afterSuccess
-

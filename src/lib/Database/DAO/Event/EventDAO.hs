@@ -10,8 +10,8 @@ import Database.MongoDB
         delete, deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Error
 import Common.Context
+import Common.Error
 import Database.BSON.Event.Answer
 import Database.BSON.Event.Chapter
 import Database.BSON.Event.Common

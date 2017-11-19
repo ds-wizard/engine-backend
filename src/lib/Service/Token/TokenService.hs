@@ -11,11 +11,11 @@ import qualified Web.JWT as JWT
 
 import Api.Resources.Token.TokenCreateDTO
 import Api.Resources.Token.TokenDTO
+import Common.Context
+import Common.DSPConfig
 import Common.Error
 import Common.Types
 import Common.Utils
-import Common.Context
-import Common.DSPConfig
 import Data.Aeson
 import Database.DAO.User.UserDAO
 import Model.User.User

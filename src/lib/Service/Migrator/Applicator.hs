@@ -10,6 +10,7 @@ import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
 import Model.Event.Common
+import Model.Event.Event
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
 import Model.Event.Expert.EditExpertEvent
@@ -25,6 +26,42 @@ import Model.Event.Reference.AddReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
 import Model.Event.Reference.EditReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+
+runApplicator :: Maybe KnowledgeModel
+              -> [Event]
+              -> Either AppError KnowledgeModel
+runApplicator mKM events =
+  case foldl foldEvent (Right mKM) events of
+    Left error -> Left error
+    Right Nothing ->
+      Left . MigratorError $
+      "Unspecified problem in building Knowledge Model happened"
+    Right (Just km) -> Right km
+
+foldEvent
+  :: Either AppError (Maybe KnowledgeModel)
+  -> Event
+  -> Either AppError (Maybe KnowledgeModel)
+foldEvent emKM (AddKnowledgeModelEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditKnowledgeModelEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddChapterEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditChapterEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteChapterEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddAnswerEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditAnswerEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteAnswerEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddExpertEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditExpertEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteExpertEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddReferenceEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditReferenceEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddFollowUpQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditFollowUpQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteFollowUpQuestionEvent' e) = applyEventToKM e emKM
 
 applyValue (Just val) ch setter = ch & setter .~ val
 applyValue Nothing ch setter = ch

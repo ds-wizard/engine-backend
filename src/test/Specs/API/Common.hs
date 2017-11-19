@@ -18,11 +18,11 @@ import qualified Web.Scotty as S
 
 import Api.Resources.Error.ErrorDTO
 import Api.Router
-import Database.Connection
-import Common.Error
-import Common.Types
 import Common.Context
 import Common.DSPConfig
+import Common.Error
+import Common.Types
+import Database.Connection
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService

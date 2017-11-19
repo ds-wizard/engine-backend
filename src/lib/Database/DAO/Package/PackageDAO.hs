@@ -11,8 +11,8 @@ import Database.MongoDB
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Types
 import Common.Context
+import Common.Types
 import Database.BSON.Package.Package
 import Database.BSON.Package.PackageWithEvents
 import Database.DAO.Common

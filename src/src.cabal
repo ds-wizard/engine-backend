@@ -105,6 +105,7 @@ library
       Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
       Database.Migration.Migration
       Database.Migration.Organization.OrganizationMigration
+      Database.Migration.Package.Data.Package
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       Model.Event.Answer.AddAnswerEvent
@@ -131,6 +132,7 @@ library
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
       Model.KnowledgeModelContainer.KnowledgeModelContainer
+      Model.Migrator.MigrationState
       Model.Organization.Organization
       Model.Package.Package
       Model.User.User
@@ -143,6 +145,10 @@ library
       Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
       Service.KnowledgeModelContainer.KnowledgeModelContainerService
       Service.Migrator.Applicator
+      Service.Migrator.Methods.ChoiceMethod
+      Service.Migrator.Methods.Common
+      Service.Migrator.Methods.DiffTreeMethod
+      Service.Migrator.Methods.NoConflictMethod
       Service.Migrator.Migrator
       Service.Organization.OrganizationMapper
       Service.Organization.OrganizationService
@@ -251,6 +257,7 @@ test-suite hspec
       Fixtures.KnowledgeModel.KnowledgeModels
       Fixtures.KnowledgeModel.Questions
       Fixtures.KnowledgeModel.References
+      Fixtures.Migrator.MigrationState
       Specs.API.Common
       Specs.API.EventAPISpec
       Specs.API.InfoAPISpec
@@ -263,6 +270,9 @@ test-suite hspec
       Specs.API.VersionAPISpec
       Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
       Specs.Service.Migrator.ApplicatorSpec
+      Specs.Service.Migrator.Method.ChoiceMethodSpec
+      Specs.Service.Migrator.Method.NoConflictMethodSpec
+      Specs.Service.Migrator.MigratorSpec
       Specs.Service.Organization.OrganizationServiceSpec
       Specs.Service.Package.PackageServiceSpec
       TestMigration

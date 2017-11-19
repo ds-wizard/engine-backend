@@ -8,10 +8,10 @@ import Data.Maybe
 import Data.UUID as U
 
 import Api.Resources.KnowledgeModel.KnowledgeModelDTO
+import Common.Context
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Common.Context
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModelContainer.KnowledgeModelContainer

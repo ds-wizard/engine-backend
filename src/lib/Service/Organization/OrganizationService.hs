@@ -9,10 +9,10 @@ import Data.UUID as U
 import Text.Regex
 
 import Api.Resources.Organization.OrganizationDTO
+import Common.Context
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Common.Context
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationMapper
