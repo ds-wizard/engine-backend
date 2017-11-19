@@ -20,36 +20,36 @@ import Database.BSON.Event.FollowUpQuestion
 import Database.BSON.Event.KnowledgeModel
 import Database.BSON.Event.Question
 import Database.BSON.Event.Reference
-import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents
+import Database.BSON.Branch.BranchWithEvents
 import Database.DAO.Common
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+import Database.DAO.Branch.BranchDAO
 import Model.Event.Common
 import Model.Event.Event
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 
-findKmcWithEventsById :: Context
+findBranchWithEventsById :: Context
                       -> String
-                      -> IO (Either AppError KnowledgeModelContainerWithEvents)
-findKmcWithEventsById context kmcUuid = do
-  let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
-  maybeKmcWithEventsS <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return . deserializeMaybeEntity $ maybeKmcWithEventsS
+                      -> IO (Either AppError BranchWithEvents)
+findBranchWithEventsById context branchUuid = do
+  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
+  maybeBranchWithEventsS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeBranchWithEventsS
 
-insertEventsToKmc :: Context -> String -> [Event] -> IO ()
-insertEventsToKmc context kmcUuid events = do
+insertEventsToBranch :: Context -> String -> [Event] -> IO ()
+insertEventsToBranch context branchUuid events = do
   let action =
         modify
-          (select ["uuid" =: kmcUuid] kmcCollection)
+          (select ["uuid" =: branchUuid] branchCollection)
           [ "$push" =:
             ["events" =: ["$each" =: (convertEventToBSON <$> events)]]
           ]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-deleteEventAtKmc :: Context -> String -> IO ()
-deleteEventAtKmc context kmcUuid = do
+deleteEventAtBranch :: Context -> String -> IO ()
+deleteEventAtBranch context branchUuid = do
   let emptyEvents = convertEventToBSON <$> []
   let action =
         modify
-          (select ["uuid" =: kmcUuid] kmcCollection)
+          (select ["uuid" =: branchUuid] branchCollection)
           ["$set" =: ["events" =: emptyEvents]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

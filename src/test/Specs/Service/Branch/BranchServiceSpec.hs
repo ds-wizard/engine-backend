@@ -1,11 +1,11 @@
-module Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec where
+module Specs.Service.Branch.BranchServiceSpec where
 
 import Data.Maybe
 import Test.Hspec
 
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Branch.BranchService
 
-knowledgeModelContainerServiceSpec =
+branchServiceSpec =
   describe "Package Service" $
   it "isVersionInValidFormat" $ do
     isNothing (isValidArtifactId "core") `shouldBe` True

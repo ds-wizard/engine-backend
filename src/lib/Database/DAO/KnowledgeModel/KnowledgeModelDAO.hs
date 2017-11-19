@@ -13,24 +13,24 @@ import Common.Context
 import Common.Error
 import Common.Types
 import Database.BSON.KnowledgeModel.KnowledgeModel
-import Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithKM
+import Database.BSON.Branch.BranchWithKM
 import Database.DAO.Common
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+import Database.DAO.Branch.BranchDAO
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 
-findKnowledgeModelByKmcId :: Context
+findKnowledgeModelByBranchId :: Context
                           -> String
-                          -> IO (Either AppError KnowledgeModelContainerWithKM)
-findKnowledgeModelByKmcId context kmcUuid = do
-  let action = findOne $ select ["uuid" =: kmcUuid] kmcCollection
+                          -> IO (Either AppError BranchWithKM)
+findKnowledgeModelByBranchId context branchUuid = do
+  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
   maybeKMS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeKMS
 
-updateKnowledgeModelByKmcId :: Context -> String -> KnowledgeModel -> IO ()
-updateKnowledgeModelByKmcId context kmcUuid km = do
+updateKnowledgeModelByBranchId :: Context -> String -> KnowledgeModel -> IO ()
+updateKnowledgeModelByBranchId context branchUuid km = do
   let action =
         modify
-          (select ["uuid" =: kmcUuid] kmcCollection)
+          (select ["uuid" =: branchUuid] branchCollection)
           ["$set" =: ["knowledgeModel" =: (toBSON km)]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

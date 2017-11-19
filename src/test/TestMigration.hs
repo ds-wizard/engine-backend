@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 
 import Api.Resources.User.UserCreateDTO
 import Common.Context
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+import Database.DAO.Branch.BranchDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
 import Model.Organization.Organization
@@ -34,5 +34,5 @@ resetDB context dspConfig = do
     , _orgName = "Elixir Amsterdam"
     , _orgGroupId = "elixir.nl.amsterdam"
     }
-  deleteKnowledgeModelContainers context
+  deleteBranches context
   return ()

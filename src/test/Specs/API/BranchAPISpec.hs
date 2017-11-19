@@ -1,4 +1,4 @@
-module Specs.API.KnowledgeModelContainerAPISpec where
+module Specs.API.BranchAPISpec where
 
 import Control.Lens
 import Data.Aeson
@@ -19,41 +19,41 @@ import qualified Web.Scotty as S
 
 import Data.Foldable
 
-import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Api.Resources.Branch.BranchDTO
 import Common.Error
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Database.DAO.Branch.BranchDAO
+import Model.Branch.Branch
+import Service.Branch.BranchService
 
 import Specs.API.Common
 
-kmcAPI context dspConfig = do
+branchAPI context dspConfig = do
   with (startWebApp context dspConfig) $ do
     describe "KNOWLEDGE MODEL CONTAINER API Spec" $
       -- ------------------------------------------------------------------------
-      -- GET /kmcs
+      -- GET /branches
       -- ------------------------------------------------------------------------
      do
-      describe "GET /kmcs" $
+      describe "GET /branches" $
         -- GIVEN: Prepare request
        do
         let reqMethod = methodGet
-        let reqUrl = "/kmcs"
+        let reqUrl = "/branches"
         it "HTTP 200 OK" $ do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context expDto
+          liftIO $ createBranch context expDto
           let expBody = encode [expDto]
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
@@ -68,23 +68,23 @@ kmcAPI context dspConfig = do
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
       -- ------------------------------------------------------------------------
-      -- POST /kmcs
+      -- POST /branches
       -- ------------------------------------------------------------------------
-      describe "POST /kmcs" $
+      describe "POST /branches" $
         -- GIVEN: Prepare request
        do
         let reqMethod = methodPost
-        let reqUrl = "/kmcs"
+        let reqUrl = "/branches"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         it "HTTP 201 CREATED" $ do
           let reqDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -95,13 +95,13 @@ kmcAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKnowledgeModelContainerById
+            findBranchById
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
-          liftIO $ (isRight eitherKmc) `shouldBe` True
-          let (Right kmcFromDb) = eitherKmc
+          liftIO $ (isRight eitherBranch) `shouldBe` True
+          let (Right branchFromDb) = eitherBranch
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher
@@ -117,16 +117,16 @@ kmcAPI context dspConfig = do
           "name"
         it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
           let reqDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam.km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam.km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context reqDto
-          let reqBody = encode (reqDto & kmcdtoArtifactId .~ "amsterdam.km")
+          liftIO $ createBranch context reqDto
+          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -146,16 +146,16 @@ kmcAPI context dspConfig = do
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
           let reqDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO $ createKnowledgeModelContainer context reqDto
+          liftIO $ createBranch context reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -176,13 +176,13 @@ kmcAPI context dspConfig = do
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
       -- ------------------------------------------------------------------------
-      -- GET /kmcs/{kmcId}
+      -- GET /branches/{branchId}
       -- ------------------------------------------------------------------------
-      describe "GET /kmcs/{kmcId}" $
+      describe "GET /branches/{branchId}" $
         -- GIVEN: Prepare request
        do
         let reqMethod = methodGet
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $
@@ -191,15 +191,15 @@ kmcAPI context dspConfig = do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context expDto
+          liftIO $ createBranch context expDto
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -215,26 +215,26 @@ kmcAPI context dspConfig = do
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
           reqHeaders
           reqBody
       -- ------------------------------------------------------------------------
-      -- PUT /kmcs/{kmcId}
+      -- PUT /branches/{branchId}
       -- ------------------------------------------------------------------------
-      describe "PUT /kmcs/{kmcId}" $
+      describe "PUT /branches/{branchId}" $
         -- GIVEN: Prepare request
        do
         let reqMethod = methodPut
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
-              KnowledgeModelContainerDTO
-              { _kmcdtoKmContainerUuid =
+              BranchDTO
+              { _bdtoUuid =
                   (fromJust
                      (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-              , _kmcdtoName = "EDITED: Amsterdam KM"
-              , _kmcdtoArtifactId = "amsterdam-km"
-              , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+              , _bdtoName = "EDITED: Amsterdam KM"
+              , _bdtoArtifactId = "amsterdam-km"
+              , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -243,14 +243,14 @@ kmcAPI context dspConfig = do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto = reqDto
-          liftIO $ createKnowledgeModelContainer context expDto
+          liftIO $ createBranch context expDto
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKnowledgeModelContainerById
+            findBranchById
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
@@ -262,17 +262,17 @@ kmcAPI context dspConfig = do
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-          liftIO $ (isRight eitherKmc) `shouldBe` True
-          let (Right kmcFromDb) = eitherKmc
+          liftIO $ (isRight eitherBranch) `shouldBe` True
+          let (Right branchFromDb) = eitherBranch
           liftIO $
-            (kmcFromDb ^. kmcKmcUuid) `shouldBe`
-            (reqDto ^. kmcdtoKmContainerUuid)
-          liftIO $ (kmcFromDb ^. kmcName) `shouldBe` (reqDto ^. kmcdtoName)
+            (branchFromDb ^. bUuid) `shouldBe`
+            (reqDto ^. bdtoUuid)
+          liftIO $ (branchFromDb ^. bName) `shouldBe` (reqDto ^. bdtoName)
           liftIO $
-            (kmcFromDb ^. kmcArtifactId) `shouldBe` (reqDto ^. kmcdtoArtifactId)
+            (branchFromDb ^. bArtifactId) `shouldBe` (reqDto ^. bdtoArtifactId)
           liftIO $
-            (kmcFromDb ^. kmcParentPackageId) `shouldBe`
-            (reqDto ^. kmcdtoParentPackageId)
+            (branchFromDb ^. bParentPackageId) `shouldBe`
+            (reqDto ^. bdtoParentPackageId)
         createInvalidJsonTest
           reqMethod
           reqUrl
@@ -280,16 +280,16 @@ kmcAPI context dspConfig = do
           "name"
         it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
           let reqDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context reqDto
-          let reqBody = encode (reqDto & kmcdtoArtifactId .~ "amsterdam.km")
+          liftIO $ createBranch context reqDto
+          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -309,26 +309,26 @@ kmcAPI context dspConfig = do
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
           let reqDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqDto2 =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
-                , _kmcdtoName = "Amsterdam KM 2"
-                , _kmcdtoArtifactId = "amsterdam-km-2"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM 2"
+                , _bdtoArtifactId = "amsterdam-km-2"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context reqDto
-          liftIO $ createKnowledgeModelContainer context reqDto2
-          let reqBody = encode (reqDto & kmcdtoArtifactId .~ "amsterdam-km-2")
+          liftIO $ createBranch context reqDto
+          liftIO $ createBranch context reqDto2
+          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam-km-2")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -350,17 +350,17 @@ kmcAPI context dspConfig = do
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
           reqHeaders
           reqBody
       -- ------------------------------------------------------------------------
-      -- DELETE /kmcs/{kmcId}
+      -- DELETE /branches/{branchId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /kmcs/{kmcId}" $
+      describe "DELETE /branches/{branchId}" $
         -- GIVEN: Prepare request
        do
         let reqMethod = methodDelete
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $
@@ -369,22 +369,22 @@ kmcAPI context dspConfig = do
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- GIVEN: Save KMC to DB
-          let kmcDto =
-                KnowledgeModelContainerDTO
-                { _kmcdtoKmContainerUuid =
+          let branchDto =
+                BranchDTO
+                { _bdtoUuid =
                     (fromJust
                        (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _kmcdtoName = "Amsterdam KM"
-                , _kmcdtoArtifactId = "amsterdam-km"
-                , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createKnowledgeModelContainer context kmcDto
+          liftIO $ createBranch context branchDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKnowledgeModelContainerById
+            findBranchById
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
@@ -396,11 +396,11 @@ kmcAPI context dspConfig = do
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-          liftIO $ (isRight eitherKmc) `shouldBe` False
+          liftIO $ (isRight eitherBranch) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
           reqHeaders
           reqBody

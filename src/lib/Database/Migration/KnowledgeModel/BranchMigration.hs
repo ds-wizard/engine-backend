@@ -1,30 +1,30 @@
-module Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration where
+module Database.Migration.KnowledgeModel.BranchMigration where
 
 import Control.Lens
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Api.Resources.Branch.BranchDTO
 import Common.Context
 import Database.DAO.Event.EventDAO
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+import Database.DAO.Branch.BranchDAO
 import Database.Migration.KnowledgeModel.Data.Event.Event
 import Model.Event.Event
 import Service.Event.EventService
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Branch.BranchService
 
 runMigration context dspConfig logState = do
-  logState "MIGRATION (KnowledgeModel/KnowledgeModelContainer): started"
-  deleteKnowledgeModelContainers context
-  let kmc =
-        KnowledgeModelContainerDTO
-        { _kmcdtoKmContainerUuid =
+  logState "MIGRATION (KnowledgeModel/Branch): started"
+  deleteBranches context
+  let branch =
+        BranchDTO
+        { _bdtoUuid =
             (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-        , _kmcdtoName = "Amsterdam KM"
-        , _kmcdtoArtifactId = "amsterdam-km"
-        , _kmcdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+        , _bdtoName = "Amsterdam KM"
+        , _bdtoArtifactId = "amsterdam-km"
+        , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         }
-  createKnowledgeModelContainer context kmc
+  createBranch context branch
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
@@ -45,6 +45,6 @@ runMigration context dspConfig logState = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  insertEventsToKmc context (U.toString (kmc ^. kmcdtoKmContainerUuid)) events
-  recompileKnowledgeModel context (U.toString (kmc ^. kmcdtoKmContainerUuid))
-  logState "MIGRATION (KnowledgeModel/KnowledgeModelContainer): ended"
+  insertEventsToBranch context (U.toString (branch ^. bdtoUuid)) events
+  recompileKnowledgeModel context (U.toString (branch ^. bdtoUuid))
+  logState "MIGRATION (KnowledgeModel/Branch): ended"

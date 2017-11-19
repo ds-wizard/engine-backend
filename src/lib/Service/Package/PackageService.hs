@@ -13,7 +13,7 @@ import qualified Data.Text as T
 import Data.UUID as U
 import Text.Regex
 
-import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Api.Resources.Branch.BranchDTO
 import Api.Resources.Organization.OrganizationDTO
 import Api.Resources.Package.PackageDTO
 import Api.Resources.Package.PackageSimpleDTO
@@ -22,13 +22,13 @@ import Common.Context
 import Common.Error
 import Common.Types
 import Common.Uuid
-import Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
+import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Model.Event.Event
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 import Model.Package.Package
 import Service.Event.EventMapper
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Branch.BranchService
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 
@@ -112,17 +112,17 @@ createPackageFromKMC :: Context
                      -> String
                      -> String
                      -> IO (Either AppError PackageDTO)
-createPackageFromKMC context kmcUuid version description =
+createPackageFromKMC context branchUuid version description =
   case isVersionInValidFormat version of
     Nothing -> do
-      eitherKmc <- findKnowledgeModelContainerWithEventsById context kmcUuid
-      case eitherKmc of
-        Right kmc -> do
+      eitherBranch <- findBranchWithEventsById context branchUuid
+      case eitherBranch of
+        Right branch -> do
           eitherOrganization <- getOrganization context
           case eitherOrganization of
             Right organization -> do
               let groupId = organization ^. orgdtoGroupId
-              let artifactId = kmc ^. kmcweArtifactId
+              let artifactId = branch ^. bweArtifactId
               eitherMaybePackage <-
                 getTheNewestPackageByGroupIdAndArtifactId
                   context
@@ -131,20 +131,20 @@ createPackageFromKMC context kmcUuid version description =
               case eitherMaybePackage of
                 Right (Just package) ->
                   case isVersionHigher version (package ^. pkgVersion) of
-                    Nothing -> doCreatePackage kmc organization
+                    Nothing -> doCreatePackage branch organization
                     Just error -> return . Left $ error
-                Right Nothing -> doCreatePackage kmc organization
+                Right Nothing -> doCreatePackage branch organization
                 Left error -> return . Left $ error
             Left error -> return . Left $ error
         Left error -> return . Left $ error
     Just error -> return . Left $ error
   where
-    doCreatePackage kmc organization = do
-      let name = kmc ^. kmcweName
+    doCreatePackage branch organization = do
+      let name = branch ^. bweName
       let groupId = organization ^. orgdtoGroupId
-      let artifactId = kmc ^. kmcweArtifactId
-      let events = kmc ^. kmcweEvents
-      let mPpId = kmc ^. kmcweParentPackageId
+      let artifactId = branch ^. bweArtifactId
+      let events = branch ^. bweEvents
+      let mPpId = branch ^. bweParentPackageId
       case mPpId of
         Just ppId -> do
           eitherPackage <- findPackageWithEventsById context ppId

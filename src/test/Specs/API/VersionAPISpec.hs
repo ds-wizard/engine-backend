@@ -22,7 +22,7 @@ import Api.Resources.Package.PackageDTO
 import Api.Resources.Version.VersionDTO
 import Common.Error
 import qualified
-       Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
+       Database.Migration.KnowledgeModel.BranchMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Service.Package.PackageService
@@ -33,12 +33,12 @@ versionAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
     describe "VERSION API Spec" $
       -- ------------------------------------------------------------------------
-      -- PUT /kmcs/{kmcUuid}/versions/{version}
+      -- PUT /branches/{branchUuid}/versions/{version}
       -- ------------------------------------------------------------------------
      do
-      describe "PUT /kmcs/{kmcUuid}/versions/{version}" $ do
+      describe "PUT /branches/{branchUuid}/versions/{version}" $ do
         let reqMethod = methodPut
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
         it "HTTP 201 OK" $
           -- GIVEN: Prepare request
          do
@@ -106,7 +106,7 @@ versionAPI context dspConfig =
           response <-
             request
               reqMethod
-              "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
+              "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
               reqHeaders
               reqBody
           -- THEN: Compare response with expetation
@@ -146,7 +146,7 @@ versionAPI context dspConfig =
           response <-
             request
               reqMethod
-              "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/versions/0.9.0"
+              "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/0.9.0"
               reqHeaders
               reqBody
           -- THEN: Compare response with expetation

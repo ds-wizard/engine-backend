@@ -8,7 +8,7 @@ import Api.Handler.Event.EventHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
-import Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
+import Api.Handler.Branch.BranchHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
@@ -58,16 +58,16 @@ createEndpoints context dspConfig
    --------------------
    -- KNOWLEDGE MODEL
    --------------------
-  get "/kmcs" (getKnowledgeModelContainersA context dspConfig)
-  post "/kmcs" (postKnowledgeModelContainersA context dspConfig)
-  get "/kmcs/:kmcUuid" (getKnowledgeModelContainerA context dspConfig)
-  put "/kmcs/:kmcUuid" (putKnowledgeModelContainerA context dspConfig)
-  delete "/kmcs/:kmcUuid" (deleteKnowledgeModelContainerA context dspConfig)
-  get "/kmcs/:kmcUuid/km" (getKnowledgeModelA context dspConfig)
-  get "/kmcs/:kmcUuid/events" (getEventsA context dspConfig)
-  post "/kmcs/:kmcUuid/events/_bulk" (postEventsA context dspConfig)
-  delete "/kmcs/:kmcUuid/events" (deleteEventsA context dspConfig)
-  put "/kmcs/:kmcUuid/versions/:version" (putVersionA context dspConfig)
+  get "/branches" (getBranchesA context dspConfig)
+  post "/branches" (postBranchesA context dspConfig)
+  get "/branches/:branchUuid" (getBranchA context dspConfig)
+  put "/branches/:branchUuid" (putBranchA context dspConfig)
+  delete "/branches/:branchUuid" (deleteBranchA context dspConfig)
+  get "/branches/:branchUuid/km" (getKnowledgeModelA context dspConfig)
+  get "/branches/:branchUuid/events" (getEventsA context dspConfig)
+  post "/branches/:branchUuid/events/_bulk" (postEventsA context dspConfig)
+  delete "/branches/:branchUuid/events" (deleteEventsA context dspConfig)
+  put "/branches/:branchUuid/versions/:version" (putVersionA context dspConfig)
    --------------------
    -- PACKAGES
    --------------------

@@ -1,4 +1,4 @@
-module Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents where
+module Database.BSON.Branch.BranchWithEvents where
 
 import Control.Lens ((^.))
 import qualified Data.Bson as BSON
@@ -9,9 +9,9 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Database.BSON.Event.Common
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 
-instance FromBSON KnowledgeModelContainerWithEvents where
+instance FromBSON BranchWithEvents where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
@@ -20,10 +20,10 @@ instance FromBSON KnowledgeModelContainerWithEvents where
     eventsSerialized <- BSON.lookup "events" doc
     let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
     return
-      KnowledgeModelContainerWithEvents
-      { _kmcweKmContainerUuid = uuid
-      , _kmcweName = name
-      , _kmcweArtifactId = artifactId
-      , _kmcweParentPackageId = parentPackageId
-      , _kmcweEvents = events
+      BranchWithEvents
+      { _bweUuid = uuid
+      , _bweName = name
+      , _bweArtifactId = artifactId
+      , _bweParentPackageId = parentPackageId
+      , _bweEvents = events
       }

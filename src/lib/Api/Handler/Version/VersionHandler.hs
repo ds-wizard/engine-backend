@@ -19,11 +19,11 @@ putVersionA :: Context -> DSPConfig -> Scotty.ActionM ()
 putVersionA context dspConfig =
   checkPermission context "KM_PUBLISH_PERM" $
   getReqDto $ \reqDto -> do
-    kmcUuid <- Scotty.param "kmcUuid"
+    branchUuid <- Scotty.param "branchUuid"
     version <- Scotty.param "version"
     let description = (reqDto ^. vdtoDescription)
     eitherDto <-
-      liftIO $ createPackageFromKMC context kmcUuid version description
+      liftIO $ createPackageFromKMC context branchUuid version description
     case eitherDto of
       Right dto -> do
         Scotty.status created201

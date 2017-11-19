@@ -29,11 +29,11 @@ import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.User.UserDAO
 import Database.Migration.KnowledgeModel.Data.Event.Event
 import qualified
-       Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
+       Database.Migration.KnowledgeModel.BranchMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Event.Event
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 import Model.User.User
 import Service.Event.EventMapper
 import Service.Event.EventService
@@ -67,12 +67,12 @@ eventAPI context dspConfig = do
   with (startWebApp context dspConfig) $ do
     describe "EVENT API Spec" $
       -- ------------------------------------------------------------------------
-      -- GET /kmcs/{kmcId}/events
+      -- GET /branches/{branchId}/events
       -- ------------------------------------------------------------------------
      do
-      describe "GET /kmcs/{kmcId}/events" $ do
+      describe "GET /branches/{branchId}/events" $ do
         let reqMethod = methodGet
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/events"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/events"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $
@@ -98,17 +98,17 @@ eventAPI context dspConfig = do
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
           reqHeaders
           reqBody
       -- ------------------------------------------------------------------------
-      -- POST /kmcs/{kmcId}/events/_bulk
+      -- POST /branches/{branchId}/events/_bulk
       -- ------------------------------------------------------------------------
-      describe "POST /kmcs/{kmcId}/events/_bulk" $
+      describe "POST /branches/{branchId}/events/_bulk" $
           -- GIVEN: Prepare request
        do
         let reqMethod = methodPost
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/events/_bulk"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/events/_bulk"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = encode . toDTOs $ events
         it "HTTP 201 CREATED" $ do
@@ -123,12 +123,12 @@ eventAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKmcWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           eitherKm <-
             liftIO $
-            findKnowledgeModelByKmcId
+            findKnowledgeModelByBranchId
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
           let expBody = reqBody
@@ -141,12 +141,12 @@ eventAPI context dspConfig = do
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-          liftIO $ (isRight eitherKmc) `shouldBe` True
-          let (Right kmcFromDb) = eitherKmc
-          liftIO $ (kmcFromDb ^. kmcweEvents) `shouldBe` events
+          liftIO $ (isRight eitherBranch) `shouldBe` True
+          let (Right branchFromDb) = eitherBranch
+          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` events
           liftIO $ (isRight eitherKm) `shouldBe` True
           let (Right kmFromDb) = eitherKm
-          liftIO $ (kmFromDb ^. kmcwkmKM) `shouldBe` (Just expKm)
+          liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expKm)
         createInvalidJsonArrayTest
           reqMethod
           reqUrl
@@ -175,12 +175,12 @@ eventAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKmcWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           eitherKm <-
             liftIO $
-            findKnowledgeModelByKmcId
+            findKnowledgeModelByBranchId
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
@@ -192,23 +192,23 @@ eventAPI context dspConfig = do
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Events and KM was not saved
-          liftIO $ (isRight eitherKmc) `shouldBe` True
-          let (Right kmcFromDb) = eitherKmc
-          liftIO $ (kmcFromDb ^. kmcweEvents) `shouldBe` []
+          liftIO $ (isRight eitherBranch) `shouldBe` True
+          let (Right branchFromDb) = eitherBranch
+          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` []
           liftIO $ (isLeft eitherKm) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events/_bulk"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events/_bulk"
           reqHeaders
           reqBody
       -- ------------------------------------------------------------------------
-      -- DELETE /kmcs/{kmcId}/events
+      -- DELETE /branches/{branchId}/events
       -- ------------------------------------------------------------------------
-      describe "DELETE /kmcs/{kmcId}/events" $ do
+      describe "DELETE /branches/{branchId}/events" $ do
         let reqMethod = methodDelete
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/events"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/events"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $
@@ -226,12 +226,12 @@ eventAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
-          eitherKmc <-
+          eitherBranch <-
             liftIO $
-            findKmcWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           eitherKm <-
             liftIO $
-            findKnowledgeModelByKmcId
+            findKnowledgeModelByBranchId
               context
               "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
@@ -243,16 +243,16 @@ eventAPI context dspConfig = do
                 }
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
-          liftIO $ (isRight eitherKmc) `shouldBe` True
-          let (Right kmcFromDb) = eitherKmc
-          liftIO $ (kmcFromDb ^. kmcweEvents) `shouldBe` []
+          liftIO $ (isRight eitherBranch) `shouldBe` True
+          let (Right branchFromDb) = eitherBranch
+          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` []
           liftIO $ (isRight eitherKm) `shouldBe` True
           let (Right kmFromDb) = eitherKm
-          liftIO $ (kmFromDb ^. kmcwkmKM) `shouldBe` (Just expectedKm)
+          liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expectedKm)
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
           reqHeaders
           reqBody

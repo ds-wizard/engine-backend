@@ -18,19 +18,19 @@ import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Api.Resources.KnowledgeModel.KnowledgeModelDTO
-import Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
+import Api.Resources.Branch.BranchDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import qualified
-       Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
+       Database.Migration.KnowledgeModel.BranchMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Branch.BranchService
 
 import Fixtures.Event.Events
 import Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
@@ -48,11 +48,11 @@ knowledgeModelAPI context dspConfig =
       -- GET /users
       -- ------------------------------------------------------------------------
      do
-      describe "GET /kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/km" $
+      describe "GET /branches/6474b24b-262b-42b1-9451-008e8363f2b6/km" $
           -- GIVEN: Prepare request
        do
         let reqMethod = methodGet
-        let reqUrl = "/kmcs/6474b24b-262b-42b1-9451-008e8363f2b6/km"
+        let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/km"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
@@ -77,6 +77,6 @@ knowledgeModelAPI context dspConfig =
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest
           reqMethod
-          "/kmcs/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km"
+          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km"
           reqHeaders
           reqBody

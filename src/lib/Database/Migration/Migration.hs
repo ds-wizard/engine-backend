@@ -2,7 +2,7 @@ module Database.Migration.Migration where
 
 import Common.Context
 import qualified
-       Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
+       Database.Migration.KnowledgeModel.BranchMigration
        as KMC
 import qualified
        Database.Migration.Organization.OrganizationMigration as ORG

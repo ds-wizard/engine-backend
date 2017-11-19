@@ -16,20 +16,20 @@ import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 import Model.Package.Package
 import Service.Event.EventMapper
 import Service.Event.EventToDTO
 import Service.KnowledgeModel.KnowledgeModelService
-import Service.KnowledgeModelContainer.KnowledgeModelContainerService
+import Service.Branch.BranchService
 import Service.Migrator.Applicator
 
 getEvents :: Context -> String -> IO (Either AppError [EventDTO])
-getEvents context kmcUuid = do
-  eitherKmcWithEvents <- findKmcWithEventsById context kmcUuid
-  case eitherKmcWithEvents of
-    Right kmcWithEvents ->
-      return . Right . toDTOs $ kmcWithEvents ^. kmcweEvents
+getEvents context branchUuid = do
+  eitherBranchWithEvents <- findBranchWithEventsById context branchUuid
+  case eitherBranchWithEvents of
+    Right branchWithEvents ->
+      return . Right . toDTOs $ branchWithEvents ^. bweEvents
     Left error -> return . Left $ error
 
 getEventsFromPackage :: Context -> String -> IO (Either AppError [Event])
@@ -43,55 +43,55 @@ createEvents :: Context
              -> String
              -> [EventDTO]
              -> IO (Either AppError [EventDTO])
-createEvents context kmcUuid eventsCreateDto = do
-  eitherKmc <- getKnowledgeModelContainerById context kmcUuid
-  case eitherKmc of
-    Right kmc -> do
+createEvents context branchUuid eventsCreateDto = do
+  eitherBranch <- getBranchById context branchUuid
+  case eitherBranch of
+    Right branch -> do
       let events = fromDTOs eventsCreateDto
-      insertEventsToKmc context kmcUuid events
-      recompileKnowledgeModel context kmcUuid
+      insertEventsToBranch context branchUuid events
+      recompileKnowledgeModel context branchUuid
       return . Right . toDTOs $ events
     Left error -> return . Left $ error
 
 recompileKnowledgeModel :: Context
                         -> String
                         -> IO (Either AppError KnowledgeModel)
-recompileKnowledgeModel context kmcUuid = do
-  eitherKmc <- findKmcWithEventsById context kmcUuid
-  case eitherKmc of
-    Right kmc -> do
-      let mPpId = kmc ^. kmcweParentPackageId
+recompileKnowledgeModel context branchUuid = do
+  eitherBranch <- findBranchWithEventsById context branchUuid
+  case eitherBranch of
+    Right branch -> do
+      let mPpId = branch ^. bweParentPackageId
       case mPpId of
         Just ppId -> do
           eitherEventsFromPackage <- getEventsFromPackage context ppId
           case eitherEventsFromPackage of
             Right eventsFromPackage -> do
-              let eventsFromKM = kmc ^. kmcweEvents
+              let eventsFromKM = branch ^. bweEvents
               let events = eventsFromPackage ++ eventsFromKM
               let eitherNewKM = runApplicator Nothing events
               case eitherNewKM of
                 Right newKM -> do
-                  updateKnowledgeModelByKmcId context kmcUuid newKM
+                  updateKnowledgeModelByBranchId context branchUuid newKM
                   return . Right $ newKM
                 Left error -> return . Left $ error
             Left error -> return . Left $ error
         Nothing -> do
-          let events = kmc ^. kmcweEvents
+          let events = branch ^. bweEvents
           let eitherNewKM = runApplicator Nothing events
           case eitherNewKM of
             Right newKM -> do
-              updateKnowledgeModelByKmcId context kmcUuid newKM
+              updateKnowledgeModelByBranchId context branchUuid newKM
               return . Right $ newKM
             Left error -> return . Left $ error
     Left error -> return . Left $ error
 
 deleteEvents :: Context -> String -> IO (Maybe AppError)
-deleteEvents context kmcUuid = do
-  eitherKmc <- getKnowledgeModelContainerById context kmcUuid
-  case eitherKmc of
-    Right kmc -> do
-      deleteEventAtKmc context kmcUuid
-      recompileKnowledgeModel context kmcUuid
+deleteEvents context branchUuid = do
+  eitherBranch <- getBranchById context branchUuid
+  case eitherBranch of
+    Right branch -> do
+      deleteEventAtBranch context branchUuid
+      recompileKnowledgeModel context branchUuid
       return Nothing
     Left error -> return . Just $ error
 

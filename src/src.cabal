@@ -31,12 +31,12 @@ library
       lib
   default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
   exposed-modules:
+      Api.Handler.Branch.BranchHandler
       Api.Handler.Common
       Api.Handler.Event.EventHandler
       Api.Handler.Info.InfoHandler
       Api.Handler.IO.IOHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
-      Api.Handler.KnowledgeModelContainer.KnowledgeModelContainerHandler
       Api.Handler.Organization.OrganizationHandler
       Api.Handler.Package.PackageHandler
       Api.Handler.Token.TokenHandler
@@ -44,11 +44,11 @@ library
       Api.Handler.Version.VersionHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
+      Api.Resources.Branch.BranchDTO
       Api.Resources.Error.ErrorDTO
       Api.Resources.Event.EventDTO
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
-      Api.Resources.KnowledgeModelContainer.KnowledgeModelContainerDTO
       Api.Resources.Organization.OrganizationDTO
       Api.Resources.Package.PackageDTO
       Api.Resources.Package.PackageSimpleDTO
@@ -68,6 +68,9 @@ library
       Common.Utils
       Common.Uuid
       Data.Bson.Generic
+      Database.BSON.Branch.Branch
+      Database.BSON.Branch.BranchWithEvents
+      Database.BSON.Branch.BranchWithKM
       Database.BSON.Common
       Database.BSON.Event.Answer
       Database.BSON.Event.Chapter
@@ -78,21 +81,19 @@ library
       Database.BSON.Event.Question
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
-      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainer
-      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithEvents
-      Database.BSON.KnowledgeModelContainer.KnowledgeModelContainerWithKM
       Database.BSON.Organization.Organization
       Database.BSON.Package.Package
       Database.BSON.Package.PackageWithEvents
       Database.BSON.User.User
       Database.Connection
+      Database.DAO.Branch.BranchDAO
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
-      Database.DAO.KnowledgeModelContainer.KnowledgeModelContainerDAO
       Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
+      Database.Migration.KnowledgeModel.BranchMigration
       Database.Migration.KnowledgeModel.Data.Event.Event
       Database.Migration.KnowledgeModel.Data.KnowledgeModel
       Database.Migration.KnowledgeModel.Data.KnowledgeModel.AnswersAndFollowUpQuestions
@@ -102,12 +103,12 @@ library
       Database.Migration.KnowledgeModel.Data.KnowledgeModel.KnowledgeModels
       Database.Migration.KnowledgeModel.Data.KnowledgeModel.Questions
       Database.Migration.KnowledgeModel.Data.KnowledgeModel.References
-      Database.Migration.KnowledgeModel.KnowledgeModelContainerMigration
       Database.Migration.Migration
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.Data.Package
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
+      Model.Branch.Branch
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -131,19 +132,18 @@ library
       Model.Event.Reference.DeleteReferenceEvent
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
-      Model.KnowledgeModelContainer.KnowledgeModelContainer
       Model.Migrator.MigrationState
       Model.Organization.Organization
       Model.Package.Package
       Model.User.User
+      Service.Branch.BranchMapper
+      Service.Branch.BranchService
       Service.Event.EventFromDTO
       Service.Event.EventMapper
       Service.Event.EventService
       Service.Event.EventToDTO
       Service.KnowledgeModel.KnowledgeModelMapper
       Service.KnowledgeModel.KnowledgeModelService
-      Service.KnowledgeModelContainer.KnowledgeModelContainerMapper
-      Service.KnowledgeModelContainer.KnowledgeModelContainerService
       Service.Migrator.Applicator
       Service.Migrator.Methods.ChoiceMethod
       Service.Migrator.Methods.Common
@@ -258,17 +258,17 @@ test-suite hspec
       Fixtures.KnowledgeModel.Questions
       Fixtures.KnowledgeModel.References
       Fixtures.Migrator.MigrationState
+      Specs.API.BranchAPISpec
       Specs.API.Common
       Specs.API.EventAPISpec
       Specs.API.InfoAPISpec
       Specs.API.KnowledgeModelAPISpec
-      Specs.API.KnowledgeModelContainerAPISpec
       Specs.API.OrganizationAPISpec
       Specs.API.PackageAPISpec
       Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
-      Specs.Service.KnowledgeModelContainerService.KnowledgeModelContainerServiceSpec
+      Specs.Service.Branch.BranchServiceSpec
       Specs.Service.Migrator.ApplicatorSpec
       Specs.Service.Migrator.Method.ChoiceMethodSpec
       Specs.Service.Migrator.Method.NoConflictMethodSpec

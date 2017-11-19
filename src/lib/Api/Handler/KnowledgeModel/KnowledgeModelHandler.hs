@@ -17,8 +17,8 @@ import Service.KnowledgeModel.KnowledgeModelService
 getKnowledgeModelA :: Context -> DSPConfig -> Scotty.ActionM ()
 getKnowledgeModelA context dspConfig =
   checkPermission context "KM_PERM" $ do
-    kmcUuid <- Scotty.param "kmcUuid"
-    eitherDto <- liftIO $ getKnowledgeModelByKmcId context kmcUuid
+    branchUuid <- Scotty.param "branchUuid"
+    eitherDto <- liftIO $ getKnowledgeModelByBranchId context branchUuid
     case eitherDto of
       Right dto -> sendJson dto
       Left error -> sendError error

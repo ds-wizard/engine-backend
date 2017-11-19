@@ -14,17 +14,17 @@ import Common.Types
 import Common.Uuid
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelContainer.KnowledgeModelContainer
+import Model.Branch.Branch
 import Service.KnowledgeModel.KnowledgeModelMapper
 
-getKnowledgeModelByKmcId :: Context
+getKnowledgeModelByBranchId :: Context
                          -> String
                          -> IO (Either AppError KnowledgeModelDTO)
-getKnowledgeModelByKmcId context kmcUuid = do
-  eitherKmcWithKm <- findKnowledgeModelByKmcId context kmcUuid
-  case eitherKmcWithKm of
-    Right kmcWithKm -> do
-      let mKm = kmcWithKm ^. kmcwkmKM
+getKnowledgeModelByBranchId context branchUuid = do
+  eitherBranchWithKm <- findKnowledgeModelByBranchId context branchUuid
+  case eitherBranchWithKm of
+    Right branchWithKm -> do
+      let mKm = branchWithKm ^. bwkmKM
       case mKm of
         Just km -> return . Right $ toKnowledgeModelDTO km
         Nothing -> return . Left $ NotExistsError "KM does not exist"
