@@ -66,9 +66,7 @@ makeLenses ''ExpertDTO
 makeLenses ''ReferenceDTO
 
 instance ToJSON KnowledgeModelDTO where
-  toJSON KnowledgeModelDTO {..} =
-    object
-      ["uuid" .= _kmdtoUuid, "name" .= _kmdtoName, "chapters" .= _kmdtoChapters]
+  toJSON KnowledgeModelDTO {..} = object ["uuid" .= _kmdtoUuid, "name" .= _kmdtoName, "chapters" .= _kmdtoChapters]
 
 instance ToJSON ChapterDTO where
   toJSON ChapterDTO {..} =
@@ -96,18 +94,10 @@ instance ToJSON QuestionDTO where
 
 instance ToJSON AnswerDTO where
   toJSON AnswerDTO {..} =
-    object
-      [ "uuid" .= _ansdtoUuid
-      , "label" .= _ansdtoLabel
-      , "advice" .= _ansdtoAdvice
-      , "following" .= _ansdtoFollowing
-      ]
+    object ["uuid" .= _ansdtoUuid, "label" .= _ansdtoLabel, "advice" .= _ansdtoAdvice, "following" .= _ansdtoFollowing]
 
 instance ToJSON ExpertDTO where
-  toJSON ExpertDTO {..} =
-    object
-      ["uuid" .= _expdtoUuid, "name" .= _expdtoName, "email" .= _expdtoEmail]
+  toJSON ExpertDTO {..} = object ["uuid" .= _expdtoUuid, "name" .= _expdtoName, "email" .= _expdtoEmail]
 
 instance ToJSON ReferenceDTO where
-  toJSON ReferenceDTO {..} =
-    object ["uuid" .= _refdtoUuid, "chapter" .= _refdtoChapter]
+  toJSON ReferenceDTO {..} = object ["uuid" .= _refdtoUuid, "chapter" .= _refdtoChapter]

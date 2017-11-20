@@ -46,9 +46,7 @@ branchAPI context dspConfig = do
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -59,11 +57,7 @@ branchAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders ""
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
@@ -79,9 +73,7 @@ branchAPI context dspConfig = do
         it "HTTP 201 CREATED" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -95,32 +87,18 @@ branchAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchById
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createInvalidJsonTest
-          reqMethod
-          reqUrl
-          [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |]
-          "name"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |] "name"
         it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam.km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -130,26 +108,18 @@ branchAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithFieldError
-                  ("artifactId", "ArtifactId is not in valid format")
+          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -159,19 +129,13 @@ branchAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithFieldError
-                  ("artifactId", "ArtifactId is already taken")
+          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is already taken")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
@@ -192,9 +156,7 @@ branchAPI context dspConfig = do
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -205,19 +167,11 @@ branchAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- PUT /branches/{branchId}
       -- ------------------------------------------------------------------------
@@ -229,9 +183,7 @@ branchAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
               BranchDTO
-              { _bdtoUuid =
-                  (fromJust
-                     (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+              { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
               , _bdtoName = "EDITED: Amsterdam KM"
               , _bdtoArtifactId = "amsterdam-km"
               , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -248,42 +200,23 @@ branchAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchById
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          liftIO $
-            (branchFromDb ^. bUuid) `shouldBe`
-            (reqDto ^. bdtoUuid)
+          liftIO $ (branchFromDb ^. bUuid) `shouldBe` (reqDto ^. bdtoUuid)
           liftIO $ (branchFromDb ^. bName) `shouldBe` (reqDto ^. bdtoName)
-          liftIO $
-            (branchFromDb ^. bArtifactId) `shouldBe` (reqDto ^. bdtoArtifactId)
-          liftIO $
-            (branchFromDb ^. bParentPackageId) `shouldBe`
-            (reqDto ^. bdtoParentPackageId)
-        createInvalidJsonTest
-          reqMethod
-          reqUrl
-          [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |]
-          "name"
+          liftIO $ (branchFromDb ^. bArtifactId) `shouldBe` (reqDto ^. bdtoArtifactId)
+          liftIO $ (branchFromDb ^. bParentPackageId) `shouldBe` (reqDto ^. bdtoParentPackageId)
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |] "name"
         it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -293,35 +226,25 @@ branchAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithFieldError
-                  ("artifactId", "ArtifactId is not in valid format")
+          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqDto2 =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
+                { _bdtoUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
                 , _bdtoName = "Amsterdam KM 2"
                 , _bdtoArtifactId = "amsterdam-km-2"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -332,27 +255,17 @@ branchAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithFieldError
-                  ("artifactId", "ArtifactId is already taken")
+          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is already taken")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /branches/{branchId}
       -- ------------------------------------------------------------------------
@@ -371,9 +284,7 @@ branchAPI context dspConfig = do
           -- GIVEN: Save KMC to DB
           let branchDto =
                 BranchDTO
-                { _bdtoUuid =
-                    (fromJust
-                       (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -382,25 +293,13 @@ branchAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchById
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals ""
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody

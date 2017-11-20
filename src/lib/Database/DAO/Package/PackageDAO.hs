@@ -26,9 +26,7 @@ findPackages context = do
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackagesFiltered :: Context
-                     -> [(Text, Text)]
-                     -> IO (Either AppError [Package])
+findPackagesFiltered :: Context -> [(Text, Text)] -> IO (Either AppError [Package])
 findPackagesFiltered context queryParams = do
   let filter = (\(p, v) -> p =: v) <$> queryParams
   let action = rest =<< find (select filter pkgCollection)
@@ -53,23 +51,13 @@ findPackagesByArtifactId context artifactId = do
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackageByGroupIdAndArtifactId :: Context
-                                  -> String
-                                  -> String
-                                  -> IO (Either AppError [Package])
+findPackageByGroupIdAndArtifactId :: Context -> String -> String -> IO (Either AppError [Package])
 findPackageByGroupIdAndArtifactId context groupId artifactId = do
-  let action =
-        rest =<<
-        find
-          (select
-             ["groupId" =: groupId, "artifactId" =: artifactId]
-             pkgCollection)
+  let action = rest =<< find (select ["groupId" =: groupId, "artifactId" =: artifactId] pkgCollection)
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackageWithEventsById :: Context
-                          -> String
-                          -> IO (Either AppError PackageWithEvents)
+findPackageWithEventsById :: Context -> String -> IO (Either AppError PackageWithEvents)
 findPackageWithEventsById context pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackageS <- runMongoDBPoolDef action (context ^. ctxDbPool)

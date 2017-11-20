@@ -43,17 +43,12 @@ insertUser context user = do
 
 updateUserById :: Context -> User -> IO ()
 updateUserById context user = do
-  let action =
-        fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>=
-        save userCollection . merge (toBSON user)
+  let action = fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>= save userCollection . merge (toBSON user)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 updateUserPasswordById :: Context -> String -> String -> IO ()
 updateUserPasswordById context userUuid password = do
-  let action =
-        modify
-          (select ["uuid" =: userUuid] userCollection)
-          ["$set" =: ["passwordHash" =: password]]
+  let action = modify (select ["uuid" =: userUuid] userCollection) ["$set" =: ["passwordHash" =: password]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteUsers :: Context -> IO ()

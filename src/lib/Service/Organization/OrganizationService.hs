@@ -24,9 +24,7 @@ getOrganization context = do
     Right organization -> return . Right . toDTO $ organization
     Left error -> return . Left $ error
 
-modifyOrganization :: Context
-                   -> OrganizationDTO
-                   -> IO (Either AppError OrganizationDTO)
+modifyOrganization :: Context -> OrganizationDTO -> IO (Either AppError OrganizationDTO)
 modifyOrganization context organizationDto = do
   let groupId = organizationDto ^. orgdtoGroupId
   case isValidGroupId groupId of
@@ -47,7 +45,6 @@ isValidGroupId :: String -> Maybe AppError
 isValidGroupId artifactId =
   if isJust $ matchRegex validationRegex artifactId
     then Nothing
-    else Just . createErrorWithFieldError $
-         ("groupId", "GroupId is not in valid format")
+    else Just . createErrorWithFieldError $ ("groupId", "GroupId is not in valid format")
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"

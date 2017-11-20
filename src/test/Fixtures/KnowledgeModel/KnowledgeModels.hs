@@ -17,13 +17,7 @@ km1 =
 
 km1WithChangeProperties :: KnowledgeModel
 km1WithChangeProperties =
-  KnowledgeModel
-  { _kmUuid = km1 ^. kmUuid
-  , _kmName = "EDITED: My Knowledge Model"
-  , _kmChapters = [chapter2, chapter1]
-  }
+  KnowledgeModel {_kmUuid = km1 ^. kmUuid, _kmName = "EDITED: My Knowledge Model", _kmChapters = [chapter2, chapter1]}
 
 km1WithoutChapters :: KnowledgeModel
-km1WithoutChapters =
-  KnowledgeModel
-  {_kmUuid = km1 ^. kmUuid, _kmName = "My Knowledge Model", _kmChapters = []}
+km1WithoutChapters = KnowledgeModel {_kmUuid = km1 ^. kmUuid, _kmName = "My Knowledge Model", _kmChapters = []}

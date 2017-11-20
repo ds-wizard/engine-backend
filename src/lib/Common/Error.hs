@@ -31,11 +31,8 @@ addFormError (ValidationError errorMessage formErrors fieldErrors) newFormError 
 addFieldError (ValidationError errorMessage formErrors fieldErrors) newFieldError =
   ValidationError errorMessage formErrors (fieldErrors ++ [newFieldError])
 
-clearErrorMessage (ValidationError errorMessage formErrors fieldErrors) =
-  ValidationError "" formErrors fieldErrors
+clearErrorMessage (ValidationError errorMessage formErrors fieldErrors) = ValidationError "" formErrors fieldErrors
 
-clearFormError (ValidationError errorMessage formErrors fieldErrors) =
-  ValidationError errorMessage [] fieldErrors
+clearFormError (ValidationError errorMessage formErrors fieldErrors) = ValidationError errorMessage [] fieldErrors
 
-clearFieldError (ValidationError errorMessage formErrors fieldErrors) =
-  ValidationError errorMessage formErrors []
+clearFieldError (ValidationError errorMessage formErrors fieldErrors) = ValidationError errorMessage formErrors []

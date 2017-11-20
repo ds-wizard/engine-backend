@@ -12,6 +12,7 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
+import Database.BSON.Branch.BranchWithEvents
 import Database.BSON.Event.Answer
 import Database.BSON.Event.Chapter
 import Database.BSON.Event.Common
@@ -20,16 +21,13 @@ import Database.BSON.Event.FollowUpQuestion
 import Database.BSON.Event.KnowledgeModel
 import Database.BSON.Event.Question
 import Database.BSON.Event.Reference
-import Database.BSON.Branch.BranchWithEvents
-import Database.DAO.Common
 import Database.DAO.Branch.BranchDAO
+import Database.DAO.Common
+import Model.Branch.Branch
 import Model.Event.Common
 import Model.Event.Event
-import Model.Branch.Branch
 
-findBranchWithEventsById :: Context
-                      -> String
-                      -> IO (Either AppError BranchWithEvents)
+findBranchWithEventsById :: Context -> String -> IO (Either AppError BranchWithEvents)
 findBranchWithEventsById context branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
   maybeBranchWithEventsS <- runMongoDBPoolDef action (context ^. ctxDbPool)
@@ -40,16 +38,11 @@ insertEventsToBranch context branchUuid events = do
   let action =
         modify
           (select ["uuid" =: branchUuid] branchCollection)
-          [ "$push" =:
-            ["events" =: ["$each" =: (convertEventToBSON <$> events)]]
-          ]
+          ["$push" =: ["events" =: ["$each" =: (convertEventToBSON <$> events)]]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteEventAtBranch :: Context -> String -> IO ()
 deleteEventAtBranch context branchUuid = do
   let emptyEvents = convertEventToBSON <$> []
-  let action =
-        modify
-          (select ["uuid" =: branchUuid] branchCollection)
-          ["$set" =: ["events" =: emptyEvents]]
+  let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["events" =: emptyEvents]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

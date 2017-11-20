@@ -14,22 +14,21 @@ import Common.Uuid
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
+import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Branch.Branch
 import Model.Package.Package
+import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.Event.EventToDTO
 import Service.KnowledgeModel.KnowledgeModelService
-import Service.Branch.BranchService
 import Service.Migrator.Applicator
 
 getEvents :: Context -> String -> IO (Either AppError [EventDTO])
 getEvents context branchUuid = do
   eitherBranchWithEvents <- findBranchWithEventsById context branchUuid
   case eitherBranchWithEvents of
-    Right branchWithEvents ->
-      return . Right . toDTOs $ branchWithEvents ^. bweEvents
+    Right branchWithEvents -> return . Right . toDTOs $ branchWithEvents ^. bweEvents
     Left error -> return . Left $ error
 
 getEventsFromPackage :: Context -> String -> IO (Either AppError [Event])
@@ -39,10 +38,7 @@ getEventsFromPackage context pkgId = do
     Right package -> return . Right . getAllEventsFromPackage $ package
     Left error -> return . Left $ error
 
-createEvents :: Context
-             -> String
-             -> [EventDTO]
-             -> IO (Either AppError [EventDTO])
+createEvents :: Context -> String -> [EventDTO] -> IO (Either AppError [EventDTO])
 createEvents context branchUuid eventsCreateDto = do
   eitherBranch <- getBranchById context branchUuid
   case eitherBranch of
@@ -53,9 +49,7 @@ createEvents context branchUuid eventsCreateDto = do
       return . Right . toDTOs $ events
     Left error -> return . Left $ error
 
-recompileKnowledgeModel :: Context
-                        -> String
-                        -> IO (Either AppError KnowledgeModel)
+recompileKnowledgeModel :: Context -> String -> IO (Either AppError KnowledgeModel)
 recompileKnowledgeModel context branchUuid = do
   eitherBranch <- findBranchWithEventsById context branchUuid
   case eitherBranch of
@@ -96,8 +90,7 @@ deleteEvents context branchUuid = do
     Left error -> return . Just $ error
 
 getAllEventsFromPackage :: PackageWithEvents -> [Event]
-getAllEventsFromPackage package =
-  eventsFromParentPackage ++ package ^. pkgweEvents
+getAllEventsFromPackage package = eventsFromParentPackage ++ package ^. pkgweEvents
   where
     eventsFromParentPackage =
       case package ^. pkgweParentPackage of

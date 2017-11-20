@@ -38,9 +38,5 @@ infoAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher

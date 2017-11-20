@@ -11,9 +11,10 @@ runNoConflictMethod :: MigrationState -> Event -> MigrationState
 runNoConflictMethod state event =
   let eitherNewKm = runApplicator (state ^. msCurrentKnowledgeModel) [event]
   in if isRight eitherNewKm
-  then
-    let (Right newKm) = eitherNewKm
-    in state & msCurrentKnowledgeModel .~ Just newKm
-  else
-    let (Left error) = eitherNewKm
-    in convertToErrorState state (ApplicatorError $ "Error in compilation of Knowledge Model in 'NoConflictMethod' (" ++ (show error) ++ ")")
+       then let (Right newKm) = eitherNewKm
+            in state & msCurrentKnowledgeModel .~ Just newKm
+       else let (Left error) = eitherNewKm
+            in convertToErrorState
+                 state
+                 (ApplicatorError $
+                  "Error in compilation of Knowledge Model in 'NoConflictMethod' (" ++ (show error) ++ ")")

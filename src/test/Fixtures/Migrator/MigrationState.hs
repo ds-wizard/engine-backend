@@ -8,7 +8,3 @@ import Service.Migrator.Migrator
 
 createRunningMigrationStateWithoutPackage parentEvents localizationEvents =
   createMigrationStateWithEvents "..." "..." parentEvents localizationEvents
-
-
-
-

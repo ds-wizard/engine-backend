@@ -33,8 +33,7 @@ instance FromBSON AddExpertEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    expertUuid <-
-      BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
+    expertUuid <- BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
     name <- BSON.lookup "name" doc
     email <- BSON.lookup "email" doc
     return
@@ -69,8 +68,7 @@ instance FromBSON EditExpertEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    expertUuid <-
-      BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
+    expertUuid <- BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
     name <- BSON.lookup "name" doc
     email <- BSON.lookup "email" doc
     return
@@ -103,8 +101,7 @@ instance FromBSON DeleteExpertEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    expertUuid <-
-      BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
+    expertUuid <- BSON.lookup "expertUuid" doc >>= \expertUuidS -> fromString expertUuidS
     return
       DeleteExpertEvent
       { _dexpUuid = uuid

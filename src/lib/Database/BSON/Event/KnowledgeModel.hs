@@ -27,9 +27,7 @@ instance FromBSON AddKnowledgeModelEvent where
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     name <- BSON.lookup "name" doc
-    return
-      AddKnowledgeModelEvent
-      {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = name}
+    return AddKnowledgeModelEvent {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = name}
 
 -- -------------------------------
 -- EDIT KNOWLEDGE MODEL EVENT ----
@@ -49,10 +47,4 @@ instance FromBSON EditKnowledgeModelEvent where
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     name <- BSON.lookup "name" doc
     let chapterIds = deserializeMaybeUUIDList $ BSON.lookup "chapterIds" doc
-    return
-      EditKnowledgeModelEvent
-      { _ekmUuid = uuid
-      , _ekmKmUuid = kmUuid
-      , _ekmName = name
-      , _ekmChapterIds = chapterIds
-      }
+    return EditKnowledgeModelEvent {_ekmUuid = uuid, _ekmKmUuid = kmUuid, _ekmName = name, _ekmChapterIds = chapterIds}

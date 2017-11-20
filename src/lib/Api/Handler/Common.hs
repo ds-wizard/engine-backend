@@ -28,9 +28,7 @@ getReqDto callback = do
 getCurrentUserUuid context callback = do
   tokenHeader <- Scotty.header "Authorization"
   let userUuidMaybe =
-        getUserUuidFromToken
-          context
-          (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
+        getUserUuidFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
   case userUuidMaybe of
     Just userUuid -> callback (T.unpack userUuid)
     Nothing -> unauthorizedA
@@ -57,10 +55,7 @@ getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
 
 checkPermission context perm callback = do
   tokenHeader <- Scotty.header "Authorization"
-  let mUserPerms =
-        getPermissionsFromToken
-          context
-          (tokenHeader >>= \token -> Just . LT.toStrict $ token)
+  let mUserPerms = getPermissionsFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token)
   case mUserPerms of
     Just userPerms ->
       if perm `Prelude.elem` userPerms

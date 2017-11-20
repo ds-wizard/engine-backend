@@ -37,33 +37,20 @@ getUsers context = do
     Right users -> return . Right . fmap toDTO $ users
     Left error -> return . Left $ error
 
-createUser :: Context
-           -> DSPConfig
-           -> UserCreateDTO
-           -> IO (Either AppError UserDTO)
+createUser :: Context -> DSPConfig -> UserCreateDTO -> IO (Either AppError UserDTO)
 createUser context config userCreateDto = do
   uuid <- generateUuid
   createUserWithGivenUuid context config uuid userCreateDto
 
-createUserWithGivenUuid :: Context
-                        -> DSPConfig
-                        -> U.UUID
-                        -> UserCreateDTO
-                        -> IO (Either AppError UserDTO)
+createUserWithGivenUuid :: Context -> DSPConfig -> U.UUID -> UserCreateDTO -> IO (Either AppError UserDTO)
 createUserWithGivenUuid context config userUuid userCreateDto = do
   eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
   if isRight eitherUserFromDb
-    then return . Left . createErrorWithFieldError $
-         ("email", "User with given email is already exists")
+    then return . Left . createErrorWithFieldError $ ("email", "User with given email is already exists")
     else do
       let roles = getPermissionForRole config (userCreateDto ^. ucdtoRole)
       passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
-      let user =
-            fromUserCreateDTO
-              userCreateDto
-              userUuid
-              (BS.unpack passwordHash)
-              roles
+      let user = fromUserCreateDTO userCreateDto userUuid (BS.unpack passwordHash) roles
       insertUser context user
       return . Right $ toDTO user
 
@@ -81,23 +68,17 @@ modifyUser context userUuid userDto = do
     Right user -> do
       eitherUserFromDb <- findUserByEmail context (userDto ^. udtoEmail)
       if isAlreadyUsedAndIsNotMine eitherUserFromDb
-        then return . Left . createErrorWithFieldError $
-             ("email", "User with given email is already exists")
+        then return . Left . createErrorWithFieldError $ ("email", "User with given email is already exists")
         else do
-          let updatedUser =
-                fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
+          let updatedUser = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash)
           updateUserById context updatedUser
           return . Right $ userDto
     Left error -> return . Left $ error
   where
-    isAlreadyUsedAndIsNotMine (Right user) =
-      U.toString (user ^. uUuid) /= userUuid
+    isAlreadyUsedAndIsNotMine (Right user) = U.toString (user ^. uUuid) /= userUuid
     isAlreadyUsedAndIsNotMine (Left _) = False
 
-changeUserPassword :: Context
-                   -> String
-                   -> UserPasswordDTO
-                   -> IO (Maybe AppError)
+changeUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
 changeUserPassword context userUuid userPasswordDto = do
   eitherUser <- findUserById context userUuid
   passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17

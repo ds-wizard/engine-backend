@@ -19,32 +19,25 @@ import Model.Branch.Branch
 
 branchCollection = "branches"
 
-findBranches :: Context
-                             -> IO (Either AppError [Branch])
+findBranches :: Context -> IO (Either AppError [Branch])
 findBranches context = do
   let action = rest =<< find (select [] branchCollection)
   branchesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ branchesS
 
-findBranchById :: Context
-                                -> String
-                                -> IO (Either AppError Branch)
+findBranchById :: Context -> String -> IO (Either AppError Branch)
 findBranchById context branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 
-findBranchByArtifactId :: Context
-                                        -> String
-                                        -> IO (Either AppError Branch)
+findBranchByArtifactId :: Context -> String -> IO (Either AppError Branch)
 findBranchByArtifactId context artifactId = do
   let action = findOne $ select ["artifactId" =: artifactId] branchCollection
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 
-findBranchWithEventsById :: Context
-                                          -> String
-                                          -> IO (Either AppError BranchWithEvents)
+findBranchWithEventsById :: Context -> String -> IO (Either AppError BranchWithEvents)
 findBranchWithEventsById context branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
@@ -58,8 +51,7 @@ insertBranch context branch = do
 updateBranchById :: Context -> Branch -> IO ()
 updateBranchById context branch = do
   let action =
-        fetch (select ["uuid" =: (branch ^. bUuid)] branchCollection) >>=
-        save branchCollection . merge (toBSON branch)
+        fetch (select ["uuid" =: (branch ^. bUuid)] branchCollection) >>= save branchCollection . merge (toBSON branch)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteBranches :: Context -> IO ()

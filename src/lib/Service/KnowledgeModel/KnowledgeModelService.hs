@@ -13,13 +13,11 @@ import Common.Error
 import Common.Types
 import Common.Uuid
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import Model.KnowledgeModel.KnowledgeModel
 import Model.Branch.Branch
+import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelMapper
 
-getKnowledgeModelByBranchId :: Context
-                         -> String
-                         -> IO (Either AppError KnowledgeModelDTO)
+getKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError KnowledgeModelDTO)
 getKnowledgeModelByBranchId context branchUuid = do
   eitherBranchWithKm <- findKnowledgeModelByBranchId context branchUuid
   case eitherBranchWithKm of

@@ -21,10 +21,7 @@ import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenMapper
 
-getToken :: Context
-         -> DSPConfig
-         -> TokenCreateDTO
-         -> IO (Either AppError TokenDTO)
+getToken :: Context -> DSPConfig -> TokenCreateDTO -> IO (Either AppError TokenDTO)
 getToken context dspConfig tokenCreateDto = do
   let secret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
   eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
@@ -34,8 +31,7 @@ getToken context dspConfig tokenCreateDto = do
       let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
       if verifyPassword incomingPassword passwordHashFromDB
         then return . Right . toDTO $ createToken user secret
-        else return . Left $
-             createErrorWithErrorMessage "Given password is not corrent"
+        else return . Left $ createErrorWithErrorMessage "Given password is not corrent"
     Left error -> return . Left $ error
 
 createToken :: User -> JWTSecret -> Token

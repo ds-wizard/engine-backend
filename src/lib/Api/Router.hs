@@ -3,12 +3,12 @@ module Api.Router where
 import Text.Regex
 import Web.Scotty
 
+import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
 import Api.Handler.Event.EventHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
-import Api.Handler.Branch.BranchHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
@@ -19,8 +19,7 @@ import Api.Middleware.CORS
 import Common.Context
 import Common.DSPConfig
 
-unauthorizedEndpoints =
-  [mkRegex "^$", mkRegex "^tokens$", mkRegex "^export/.*$"]
+unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$", mkRegex "^export/.*$"]
 
 createEndpoints :: Context -> DSPConfig -> ScottyM ()
 createEndpoints context dspConfig

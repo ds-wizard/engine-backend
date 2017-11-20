@@ -12,16 +12,14 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 import Common.Context
 import Common.Error
 import Common.Types
-import Database.BSON.KnowledgeModel.KnowledgeModel
 import Database.BSON.Branch.BranchWithKM
-import Database.DAO.Common
+import Database.BSON.KnowledgeModel.KnowledgeModel
 import Database.DAO.Branch.BranchDAO
-import Model.KnowledgeModel.KnowledgeModel
+import Database.DAO.Common
 import Model.Branch.Branch
+import Model.KnowledgeModel.KnowledgeModel
 
-findKnowledgeModelByBranchId :: Context
-                          -> String
-                          -> IO (Either AppError BranchWithKM)
+findKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError BranchWithKM)
 findKnowledgeModelByBranchId context branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
   maybeKMS <- runMongoDBPoolDef action (context ^. ctxDbPool)
@@ -29,8 +27,5 @@ findKnowledgeModelByBranchId context branchUuid = do
 
 updateKnowledgeModelByBranchId :: Context -> String -> KnowledgeModel -> IO ()
 updateKnowledgeModelByBranchId context branchUuid km = do
-  let action =
-        modify
-          (select ["uuid" =: branchUuid] branchCollection)
-          ["$set" =: ["knowledgeModel" =: (toBSON km)]]
+  let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["knowledgeModel" =: (toBSON km)]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

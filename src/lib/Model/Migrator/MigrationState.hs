@@ -22,7 +22,13 @@ type DiffTableRecord = (U.UUID, Event)
 
 type DiffTable = [DiffTableRecord]
 
-data DiffTree = Leaf U.UUID Bool | Node U.UUID Bool [DiffTree] deriving (Show, Eq)
+data DiffTree
+  = Leaf U.UUID
+         Bool
+  | Node U.UUID
+         Bool
+         [DiffTree]
+  deriving (Show, Eq)
 
 data MigrationState = MigrationState
   { _msStatus :: MigrationStatus
@@ -51,7 +57,12 @@ instance BuildDiffTree Chapter where
   buildDiffTree ch = Node (ch ^. chUuid) True (buildDiffTree <$> (ch ^. chQuestions))
 
 instance BuildDiffTree Question where
-  buildDiffTree q = Node (q ^. qUuid) True ((buildDiffTree <$> (q ^. qAnswers)) ++ (buildDiffTree <$> (q ^. qReferences)) ++ (buildDiffTree <$> (q ^. qExperts)))
+  buildDiffTree q =
+    Node
+      (q ^. qUuid)
+      True
+      ((buildDiffTree <$> (q ^. qAnswers)) ++
+       (buildDiffTree <$> (q ^. qReferences)) ++ (buildDiffTree <$> (q ^. qExperts)))
 
 instance BuildDiffTree Answer where
   buildDiffTree ans = Node (ans ^. ansUuid) True (buildDiffTree <$> (ans ^. ansFollowing))
@@ -70,4 +81,3 @@ convertToErrorState :: MigrationState -> MigrationError -> MigrationState
 convertToErrorState state error =
   let errorState = state & msStatus .~ MSError
   in errorState & msError .~ error
-

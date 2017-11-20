@@ -45,9 +45,7 @@ organizationAPI context dspConfig =
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 OrganizationDTO
-                { _orgdtoUuid =
-                    fromJust . U.fromString $
-                    "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _orgdtoName = "Elixir Amsterdam"
                 , _orgdtoGroupId = "elixir.nl.amsterdam"
                 }
@@ -56,11 +54,7 @@ organizationAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders ""
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
       -- ------------------------------------------------------------------------
@@ -75,9 +69,7 @@ organizationAPI context dspConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 OrganizationDTO
-                { _orgdtoUuid =
-                    fromJust . U.fromString $
-                    "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _orgdtoName = "EDITED: Elixir Netherlands"
                 , _orgdtoGroupId = "elixir.nl.amsterdam.edited"
                 }
@@ -93,36 +85,22 @@ organizationAPI context dspConfig =
           eitherOrganization <- liftIO $ getOrganization context
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherOrganization) `shouldBe` True
           let (Right organizationFromDb) = eitherOrganization
-          liftIO $
-            (organizationFromDb ^. orgdtoUuid) `shouldBe` (reqDto ^. orgdtoUuid)
-          liftIO $
-            (organizationFromDb ^. orgdtoName) `shouldBe` (reqDto ^. orgdtoName)
-          liftIO $
-            (organizationFromDb ^. orgdtoGroupId) `shouldBe`
-            (reqDto ^. orgdtoGroupId)
-        createInvalidJsonTest
-          reqMethod
-          reqUrl
-          [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |]
-          "name"
+          liftIO $ (organizationFromDb ^. orgdtoUuid) `shouldBe` (reqDto ^. orgdtoUuid)
+          liftIO $ (organizationFromDb ^. orgdtoName) `shouldBe` (reqDto ^. orgdtoName)
+          liftIO $ (organizationFromDb ^. orgdtoGroupId) `shouldBe` (reqDto ^. orgdtoGroupId)
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
         it "HTTP 400 BAD REQUEST when groupId is not in valid format" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 OrganizationDTO
-                { _orgdtoUuid =
-                    fromJust . U.fromString $
-                    "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _orgdtoName = "EDITED: Elixir Netherlands"
                 , _orgdtoGroupId = "elixir-nl"
                 }
@@ -130,19 +108,13 @@ organizationAPI context dspConfig =
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithFieldError
-                  ("groupId", "GroupId is not in valid format")
+          let expDto = createErrorWithFieldError ("groupId", "GroupId is not in valid format")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "ORG_PERM"

@@ -40,13 +40,11 @@ reqAuthHeaderWithoutPerms dspConfig perm =
   let allPerms = getPermissionForRole dspConfig "ADMIN"
       user =
         User
-        { _uUuid =
-            fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
+        { _uUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
         , _uName = "John"
         , _uSurname = "Doe"
         , _uEmail = "john.doe@example.com"
-        , _uPasswordHash =
-            "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
+        , _uPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
         , _uRole = "ADMIN"
         , _uPermissions = L.delete perm allPerms
         }
@@ -60,8 +58,7 @@ resCtHeader = "Content-Type" <:> "application/json"
 
 resCorsHeaders =
   [ "Access-Control-Allow-Credential" <:> "true"
-  , "Access-Control-Allow-Headers" <:>
-    "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+  , "Access-Control-Allow-Headers" <:> "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   , "Access-Control-Allow-Methods" <:> "OPTIONS, HEAD, GET, POST, PUT, DELETE"
   , "Access-Control-Allow-Origin" <:> "*"
   ]
@@ -75,19 +72,13 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto =
-          createErrorWithErrorMessage $
-          "Error in $: key \"" ++ missingField ++ "\" not present"
+    let expDto = createErrorWithErrorMessage $ "Error in $: key \"" ++ missingField ++ "\" not present"
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expetation
     let responseMatcher =
-          ResponseMatcher
-          { matchHeaders = expHeaders
-          , matchStatus = expStatus
-          , matchBody = bodyEquals expBody
-          }
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
 createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
@@ -96,19 +87,13 @@ createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto =
-          createErrorWithErrorMessage $
-          "Error in $[0]: key \"" ++ missingField ++ "\" not present"
+    let expDto = createErrorWithErrorMessage $ "Error in $[0]: key \"" ++ missingField ++ "\" not present"
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expetation
     let responseMatcher =
-          ResponseMatcher
-          { matchHeaders = expHeaders
-          , matchStatus = expStatus
-          , matchBody = bodyEquals expBody
-          }
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
 createAuthTest reqMethod reqUrl reqHeaders reqBody =
@@ -128,11 +113,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- AND: Compare response with expetation
     let responseMatcher =
-          ResponseMatcher
-          { matchHeaders = expHeaders
-          , matchStatus = expStatus
-          , matchBody = bodyEquals expBody
-          }
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
 createNoPermissionTest dspConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
@@ -155,11 +136,7 @@ createNoPermissionTest dspConfig reqMethod reqUrl otherHeaders reqBody missingPe
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- AND: Compare response with expetation
     let responseMatcher =
-          ResponseMatcher
-          { matchHeaders = expHeaders
-          , matchStatus = expStatus
-          , matchBody = bodyEquals expBody
-          }
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
 createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
@@ -174,11 +151,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
     response <- request reqMethod reqUrl reqHeaders reqBody
       -- AND: Compare response with expetation
     let responseMatcher =
-          ResponseMatcher
-          { matchHeaders = expHeaders
-          , matchStatus = expStatus
-          , matchBody = bodyEquals expBody
-          }
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
 fakeLogState :: String -> IO ()

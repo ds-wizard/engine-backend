@@ -27,9 +27,4 @@ instance FromJSON OrganizationDTO where
   parseJSON _ = mzero
 
 instance ToJSON OrganizationDTO where
-  toJSON OrganizationDTO {..} =
-    object
-      [ "uuid" .= _orgdtoUuid
-      , "name" .= _orgdtoName
-      , "groupId" .= _orgdtoGroupId
-      ]
+  toJSON OrganizationDTO {..} = object ["uuid" .= _orgdtoUuid, "name" .= _orgdtoName, "groupId" .= _orgdtoGroupId]

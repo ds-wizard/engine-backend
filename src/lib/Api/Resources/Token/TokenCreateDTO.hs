@@ -24,5 +24,4 @@ instance FromJSON TokenCreateDTO where
   parseJSON _ = mzero
 
 instance ToJSON TokenCreateDTO where
-  toJSON TokenCreateDTO {..} =
-    object ["email" .= _tcdtoEmail, "password" .= _tcdtoPassword]
+  toJSON TokenCreateDTO {..} = object ["email" .= _tcdtoEmail, "password" .= _tcdtoPassword]

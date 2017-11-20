@@ -82,11 +82,7 @@ packageAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
@@ -111,11 +107,7 @@ packageAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
@@ -140,19 +132,11 @@ packageAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
            -- THEN: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/packages/elixir.nonexist:nopackage:2.0.0"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /packages
       -- ------------------------------------------------------------------------
@@ -176,11 +160,7 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals ""
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ packages `shouldBe` []
@@ -204,18 +184,12 @@ packageAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <-
-            liftIO $
-            findPackageByGroupIdAndArtifactId context "elixir.base" "core"
+          eitherPackages <- liftIO $ findPackageByGroupIdAndArtifactId context "elixir.base" "core"
           liftIO $ (isRight eitherPackages) `shouldBe` True
           let (Right packages) = eitherPackages
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals ""
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ packages `shouldBe` []
@@ -239,22 +213,13 @@ packageAPI context dspConfig = do
         -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Find a result
-          eitherPackage <-
-            liftIO $ getPackageById context "elixir.base:core:1.0.0"
+          eitherPackage <- liftIO $ getPackageById context "elixir.base:core:1.0.0"
           liftIO $ (isLeft eitherPackage) `shouldBe` True
           let (Left (NotExistsError _)) = eitherPackage
         -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals ""
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/packages/elixir.nonexist:nopackage:2.0.0"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody

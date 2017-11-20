@@ -30,8 +30,7 @@ runServer = do
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"
-      putStrLn
-        "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+      putStrLn "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
       print errorDate
     Right dspConfig -> do
       putStrLn "CONFIG: loaded"

@@ -16,8 +16,7 @@ deserializeEntities entitiesS = do
   let entities = catMaybes maybeEntities
   if length maybeEntities == length entities
     then Right entities
-    else Left . DatabaseError $
-         "Problem with deserialization of entity from database"
+    else Left . DatabaseError $ "Problem with deserialization of entity from database"
 
 deserializeMaybeEntity
   :: (FromBSON a)
@@ -28,9 +27,7 @@ deserializeMaybeEntity mEntityS =
       let mEntity = fromBSON entityS
       case mEntity of
         Just entity -> Right entity
-        Nothing ->
-          Left . DatabaseError $
-          "Problem with deserialization of entity from database"
+        Nothing -> Left . DatabaseError $ "Problem with deserialization of entity from database"
     Nothing -> Left . NotExistsError $ "Entity does not exist"
 
 instance Val LT.Text where

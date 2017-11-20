@@ -22,5 +22,4 @@ instance FromBSON Organization where
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
     groupId <- BSON.lookup "groupId" doc
-    return
-      Organization {_orgUuid = uuid, _orgName = name, _orgGroupId = groupId}
+    return Organization {_orgUuid = uuid, _orgName = name, _orgGroupId = groupId}

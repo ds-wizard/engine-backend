@@ -5,8 +5,7 @@ import qualified Data.UUID as U
 import Model.Event.Event
 
 isThereEventWithGivenTargetUuid :: U.UUID -> [Event] -> Bool
-isThereEventWithGivenTargetUuid uuid events =
-  length (getEventsByTargetUuid uuid events) > 0
+isThereEventWithGivenTargetUuid uuid events = length (getEventsByTargetUuid uuid events) > 0
 
 getEventsByTargetUuid :: U.UUID -> [Event] -> [Event]
 getEventsByTargetUuid uuid = foldl foldEvent []

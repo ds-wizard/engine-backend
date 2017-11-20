@@ -13,14 +13,7 @@ instance ToJSON AppError where
       , "formErrors" .= formErrors
       , "fieldErrors" .= fieldErrors
       ]
-  toJSON (ForbiddenError errorMessage) =
-    object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
-  toJSON (NotExistsError errorMessage) =
-    object ["status" .= 404, "error" .= "Not Found", "message" .= errorMessage]
+  toJSON (ForbiddenError errorMessage) = object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
+  toJSON (NotExistsError errorMessage) = object ["status" .= 404, "error" .= "Not Found", "message" .= errorMessage]
   toJSON (DatabaseError errorMessage) =
-    object
-      [ "status" .= 500
-      , "error" .= "Server Internal Error"
-      , "type" .= "DatabaseError"
-      , "message" .= errorMessage
-      ]
+    object ["status" .= 500, "error" .= "Server Internal Error", "type" .= "DatabaseError", "message" .= errorMessage]

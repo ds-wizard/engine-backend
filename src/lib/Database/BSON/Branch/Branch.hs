@@ -24,10 +24,4 @@ instance FromBSON Branch where
     name <- BSON.lookup "name" doc
     artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
-    return
-      Branch
-      { _bUuid = uuid
-      , _bName = name
-      , _bArtifactId = artifactId
-      , _bParentPackageId = parentPackageId
-      }
+    return Branch {_bUuid = uuid, _bName = name, _bArtifactId = artifactId, _bParentPackageId = parentPackageId}

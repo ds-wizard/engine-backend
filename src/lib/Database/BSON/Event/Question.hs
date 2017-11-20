@@ -81,8 +81,7 @@ instance FromBSON EditQuestionEvent where
     text <- BSON.lookup "text" doc
     let answerIds = deserializeMaybeUUIDList $ BSON.lookup "answerUuids" doc
     let expertIds = deserializeMaybeUUIDList $ BSON.lookup "expertUuids" doc
-    let referenceIds =
-          deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
+    let referenceIds = deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
     return
       EditQuestionEvent
       { _eqUuid = uuid
@@ -118,8 +117,4 @@ instance FromBSON DeleteQuestionEvent where
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
     return
       DeleteQuestionEvent
-      { _dqUuid = uuid
-      , _dqKmUuid = kmUuid
-      , _dqChapterUuid = chapterUuid
-      , _dqQuestionUuid = questionUuid
-      }
+      {_dqUuid = uuid, _dqKmUuid = kmUuid, _dqChapterUuid = chapterUuid, _dqQuestionUuid = questionUuid}

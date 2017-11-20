@@ -11,10 +11,7 @@ import Model.KnowledgeModel.KnowledgeModel
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO
 toKnowledgeModelDTO km =
   KnowledgeModelDTO
-  { _kmdtoUuid = km ^. kmUuid
-  , _kmdtoName = km ^. kmName
-  , _kmdtoChapters = toChapterDTO <$> (km ^. kmChapters)
-  }
+  {_kmdtoUuid = km ^. kmUuid, _kmdtoName = km ^. kmName, _kmdtoChapters = toChapterDTO <$> (km ^. kmChapters)}
 
 toChapterDTO :: Chapter -> ChapterDTO
 toChapterDTO chapter =
@@ -51,13 +48,7 @@ toAnswerDTO answer =
 
 toExpertDTO :: Expert -> ExpertDTO
 toExpertDTO expert =
-  ExpertDTO
-  { _expdtoUuid = expert ^. expUuid
-  , _expdtoName = expert ^. expName
-  , _expdtoEmail = expert ^. expEmail
-  }
+  ExpertDTO {_expdtoUuid = expert ^. expUuid, _expdtoName = expert ^. expName, _expdtoEmail = expert ^. expEmail}
 
 toReferenceDTO :: Reference -> ReferenceDTO
-toReferenceDTO reference =
-  ReferenceDTO
-  {_refdtoUuid = reference ^. refUuid, _refdtoChapter = reference ^. refChapter}
+toReferenceDTO reference = ReferenceDTO {_refdtoUuid = reference ^. refUuid, _refdtoChapter = reference ^. refChapter}

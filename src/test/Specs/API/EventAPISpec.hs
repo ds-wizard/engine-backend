@@ -27,13 +27,12 @@ import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.User.UserDAO
-import Database.Migration.KnowledgeModel.Data.Event.Event
-import qualified
-       Database.Migration.KnowledgeModel.BranchMigration
+import qualified Database.Migration.KnowledgeModel.BranchMigration
        as KMC
+import Database.Migration.KnowledgeModel.Data.Event.Event
 import qualified Database.Migration.Package.PackageMigration as PKG
-import Model.Event.Event
 import Model.Branch.Branch
+import Model.Event.Event
 import Model.User.User
 import Service.Event.EventMapper
 import Service.Event.EventService
@@ -88,19 +87,11 @@ eventAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expectation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- POST /branches/{branchId}/events/_bulk
       -- ------------------------------------------------------------------------
@@ -123,22 +114,12 @@ eventAPI context dspConfig = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <-
-            liftIO $
-            findKnowledgeModelByBranchId
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           let expBody = reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
@@ -168,28 +149,16 @@ eventAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                createErrorWithErrorMessage
-                  "Error in $[0]: One of the events has unsupported eventType"
+          let expDto = createErrorWithErrorMessage "Error in $[0]: One of the events has unsupported eventType"
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <-
-            liftIO $
-            findKnowledgeModelByBranchId
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
           -- AND: Events and KM was not saved
           liftIO $ (isRight eitherBranch) `shouldBe` True
@@ -198,11 +167,7 @@ eventAPI context dspConfig = do
           liftIO $ (isLeft eitherKm) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events/_bulk"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events/_bulk" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /branches/{branchId}/events
       -- ------------------------------------------------------------------------
@@ -219,28 +184,15 @@ eventAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
-          let (Right expectedKm) =
-                runApplicator
-                  Nothing
-                  [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
+          let (Right expectedKm) = runApplicator Nothing [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
-          eitherBranch <-
-            liftIO $
-            findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <-
-            liftIO $
-            findKnowledgeModelByBranchId
-              context
-              "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals reqBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals reqBody}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
@@ -251,8 +203,4 @@ eventAPI context dspConfig = do
           liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expectedKm)
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events" reqHeaders reqBody

@@ -165,8 +165,7 @@ instance (GToBSON a, Constructor c) =>
          GToBSON (C1 c a) where
   genericToBSON 0 (M1 x) = genericToBSON 0 x
   genericToBSON 1 (M1 x) = genericToBSON 1 x
-  genericToBSON n c@(M1 x) =
-    genericToBSON n x ++ [constructorLabel =: conName c]
+  genericToBSON n c@(M1 x) = genericToBSON n x ++ [constructorLabel =: conName c]
 
 -- | Selector tag
 instance (Val a, Selector s) =>
@@ -191,11 +190,7 @@ class FromBSON a where
   fromBSON :: Document -> Maybe a
   default fromBSON :: (Generic a, GConstructorCount (Rep a), GFromBSON (Rep a)) =>
     Document -> Maybe a
-  fromBSON doc =
-    maybe
-      Nothing
-      (Just . to)
-      (genericFromBSON (constructorCount (undefined :: a)) doc)
+  fromBSON doc = maybe Nothing (Just . to) (genericFromBSON (constructorCount (undefined :: a)) doc)
 
 class GFromBSON f where
   genericFromBSON :: Int -> Document -> Maybe (f a)
@@ -260,8 +255,7 @@ instance (Constructor c) =>
 
 instance (GConstructorCount a, GConstructorCount b) =>
          GConstructorCount (a :+: b) where
-  gconstructorCount (_ :: (a :+: b) r) =
-    gconstructorCount (undefined :: a r) + gconstructorCount (undefined :: b r)
+  gconstructorCount (_ :: (a :+: b) r) = gconstructorCount (undefined :: a r) + gconstructorCount (undefined :: b r)
 
 constructorCount
   :: (Generic a, GConstructorCount (Rep a))

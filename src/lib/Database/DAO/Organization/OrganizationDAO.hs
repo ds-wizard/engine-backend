@@ -31,9 +31,7 @@ insertOrganization context organization = do
 
 updateOrganization :: Context -> Organization -> IO ()
 updateOrganization context organization = do
-  let action =
-        fetch (select [] orgCollection) >>=
-        save orgCollection . merge (toBSON organization)
+  let action = fetch (select [] orgCollection) >>= save orgCollection . merge (toBSON organization)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteOrganizations :: Context -> IO ()

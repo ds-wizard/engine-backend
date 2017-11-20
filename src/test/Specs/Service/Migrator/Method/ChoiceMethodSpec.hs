@@ -22,10 +22,7 @@ choiceMethodSpec =
             , EditQuestionEvent' e_km1_ch1_q2
             ]
       let localizationEvents = [EditQuestionEvent' e_km1_ch1_q2_second_edit]
-      let ms =
-            createRunningMigrationStateWithoutPackage
-              parentEvents
-              localizationEvents
+      let ms = createRunningMigrationStateWithoutPackage parentEvents localizationEvents
       let event = EditQuestionEvent' e_km1_ch1_q2_second_edit
       isChoice ms event `shouldBe` True
     it "Test condition 1 - Delete in Core, Edit in localization" $ do
@@ -37,10 +34,7 @@ choiceMethodSpec =
             , DeleteQuestionEvent' d_km1_ch1_q2
             ]
       let localizationEvents = [EditQuestionEvent' e_km1_ch1_q2_second_edit]
-      let ms =
-            createRunningMigrationStateWithoutPackage
-              parentEvents
-              localizationEvents
+      let ms = createRunningMigrationStateWithoutPackage parentEvents localizationEvents
       let event = EditQuestionEvent' e_km1_ch1_q2_second_edit
       isChoice ms event `shouldBe` True
     it "Test condition 2 - Edit in Core, Delete in localization" $ do
@@ -52,9 +46,6 @@ choiceMethodSpec =
             , EditQuestionEvent' e_km1_ch1_q2
             ]
       let localizationEvents = [DeleteQuestionEvent' d_km1_ch1_q2]
-      let ms =
-            createRunningMigrationStateWithoutPackage
-              parentEvents
-              localizationEvents
+      let ms = createRunningMigrationStateWithoutPackage parentEvents localizationEvents
       let event = DeleteQuestionEvent' d_km1_ch1_q2
       isChoice ms event `shouldBe` True

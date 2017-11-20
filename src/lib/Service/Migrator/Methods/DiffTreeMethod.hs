@@ -15,5 +15,4 @@ isDiffTree state event = firstCondition
         else False
       where
         foldFun acc e = isEditAction e || acc
-    eventWithSameTargetUuid =
-      getEventsByTargetUuid (getTargetUuid event) (state ^. msParentEvents)
+    eventWithSameTargetUuid = getEventsByTargetUuid (getTargetUuid event) (state ^. msParentEvents)

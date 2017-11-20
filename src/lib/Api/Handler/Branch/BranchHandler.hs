@@ -48,8 +48,7 @@ putBranchA context dspConfig =
   checkPermission context "KM_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"
-    eitherResDto <-
-      liftIO $ modifyBranch context branchUuid reqDto
+    eitherResDto <- liftIO $ modifyBranch context branchUuid reqDto
     case eitherResDto of
       Left appError -> sendError appError
       Right resDto -> sendJson resDto

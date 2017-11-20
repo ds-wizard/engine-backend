@@ -11,17 +11,17 @@ import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigrationState
 import Service.Migrator.Migrator
 
-import Specs.Service.Migrator.Method.ChoiceMethodSpec
-import Fixtures.KnowledgeModel.KnowledgeModels
-import Fixtures.KnowledgeModel.Chapters
-import Fixtures.KnowledgeModel.Questions
 import Fixtures.Event.Events
+import Fixtures.KnowledgeModel.Chapters
+import Fixtures.KnowledgeModel.KnowledgeModels
+import Fixtures.KnowledgeModel.Questions
 import Fixtures.Migrator.MigrationState
+import Specs.Service.Migrator.Method.ChoiceMethodSpec
 
-migratorSpec = describe "Migrator" $ do
-  describe "Methods" $
-    choiceMethodSpec
-  describe "Situations (Core ? Localization)" $ do
+migratorSpec =
+  describe "Migrator" $ do
+    describe "Methods" $ choiceMethodSpec
+    describe "Situations (Core ? Localization)" $
 --    it "Situation n.1: Add > Add" $ do
 --      -- Given: Prepare current state
 --      let parentEvents =
@@ -76,21 +76,19 @@ migratorSpec = describe "Migrator" $ do
 --
 --      -- Then:
 --      resState `shouldBe` expState
-    it "Situation n.1: Add < Edit" $ do
+     do
+      it "Situation n.1: Add < Edit" $
       -- Given: Prepare current state
-      let parentEvents =
-            [ AddKnowledgeModelEvent' a_km1
-            , AddChapterEvent' a_km1_ch1
-            ]
-      let localizationEvents = [AddQuestionEvent' a_km1_ch1_q1, DeleteQuestionEvent' d_km1_ch1_q1]
-      let reqState = createRunningMigrationStateWithoutPackage parentEvents localizationEvents
-
+       do
+        let parentEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
+        let localizationEvents = [AddQuestionEvent' a_km1_ch1_q1, DeleteQuestionEvent' d_km1_ch1_q1]
+        let reqState = createRunningMigrationStateWithoutPackage parentEvents localizationEvents
       -- And: Prepare expected state
-      let expKm = km1 & kmChapters .~ [chapter1WithoutQuestions & chQuestions .~ []]
-      let expState = ((reqState & msStatus .~ MSCompleted) & msCurrentKnowledgeModel .~ Just expKm) & msLocalizationEvents .~ []
-
+        let expKm = km1 & kmChapters .~ [chapter1WithoutQuestions & chQuestions .~ []]
+        let expState =
+              ((reqState & msStatus .~ MSCompleted) & msCurrentKnowledgeModel .~ Just expKm) & msLocalizationEvents .~
+              []
       -- When:
-      let resState = migrate reqState
-
+        let resState = migrate reqState
       -- Then:
-      resState `shouldBe` expState
+        resState `shouldBe` expState

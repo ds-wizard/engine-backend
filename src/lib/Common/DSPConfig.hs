@@ -82,9 +82,7 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
       host <- get configParser "Database" "host"
       dbname <- get configParser "Database" "dbname"
       port <- get configParser "Database" "port"
-      return
-        AppConfigDatabase
-        {_acdbHost = host, _acdbDatabaseName = dbname, _acdbPort = port}
+      return AppConfigDatabase {_acdbHost = host, _acdbDatabaseName = dbname, _acdbPort = port}
     loadAppConfigJwt configParser = do
       jwtSecret <- get configParser "JWT" "secret"
       return AppConfigJwt {_acjwtSecret = jwtSecret}
@@ -102,11 +100,6 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
       buildTimestamp <- get configParser "DEFAULT" "builtat"
-      return
-        BuildInfo
-        { _biAppName = appName
-        , _biAppVersion = appVersion
-        , _biBuiltAt = buildTimestamp
-        }
+      return BuildInfo {_biAppName = appName, _biAppVersion = appVersion, _biBuiltAt = buildTimestamp}
     parseList :: String -> [String]
     parseList listString = T.unpack <$> (T.splitOn ", " (T.pack listString))

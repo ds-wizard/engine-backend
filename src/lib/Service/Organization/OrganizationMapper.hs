@@ -18,8 +18,4 @@ toDTO organization =
 
 fromDTO :: OrganizationDTO -> Organization
 fromDTO dto =
-  Organization
-  { _orgUuid = dto ^. orgdtoUuid
-  , _orgName = dto ^. orgdtoName
-  , _orgGroupId = dto ^. orgdtoGroupId
-  }
+  Organization {_orgUuid = dto ^. orgdtoUuid, _orgName = dto ^. orgdtoName, _orgGroupId = dto ^. orgdtoGroupId}

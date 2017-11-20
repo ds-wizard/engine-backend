@@ -59,53 +59,26 @@ instance FromJSON EventDTO where
   parseJSON (Object o) = do
     eventType <- o .: "eventType"
     case eventType of
-      "AddKnowledgeModelEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (AddKnowledgeModelEventDTO' event)
-      "EditKnowledgeModelEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (EditKnowledgeModelEventDTO' event)
-      "AddChapterEvent" ->
-        parseJSON (Object o) >>= \event -> return (AddChapterEventDTO' event)
-      "EditChapterEvent" ->
-        parseJSON (Object o) >>= \event -> return (EditChapterEventDTO' event)
-      "DeleteChapterEvent" ->
-        parseJSON (Object o) >>= \event -> return (DeleteChapterEventDTO' event)
-      "AddQuestionEvent" ->
-        parseJSON (Object o) >>= \event -> return (AddQuestionEventDTO' event)
-      "EditQuestionEvent" ->
-        parseJSON (Object o) >>= \event -> return (EditQuestionEventDTO' event)
-      "DeleteQuestionEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (DeleteQuestionEventDTO' event)
-      "AddAnswerEvent" ->
-        parseJSON (Object o) >>= \event -> return (AddAnswerEventDTO' event)
-      "EditAnswerEvent" ->
-        parseJSON (Object o) >>= \event -> return (EditAnswerEventDTO' event)
-      "DeleteAnswerEvent" ->
-        parseJSON (Object o) >>= \event -> return (DeleteAnswerEventDTO' event)
-      "AddExpertEvent" ->
-        parseJSON (Object o) >>= \event -> return (AddExpertEventDTO' event)
-      "EditExpertEvent" ->
-        parseJSON (Object o) >>= \event -> return (EditExpertEventDTO' event)
-      "DeleteExpertEvent" ->
-        parseJSON (Object o) >>= \event -> return (DeleteExpertEventDTO' event)
-      "AddReferenceEvent" ->
-        parseJSON (Object o) >>= \event -> return (AddReferenceEventDTO' event)
-      "EditReferenceEvent" ->
-        parseJSON (Object o) >>= \event -> return (EditReferenceEventDTO' event)
-      "DeleteReferenceEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (DeleteReferenceEventDTO' event)
-      "AddFollowUpQuestionEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (AddFollowUpQuestionEventDTO' event)
-      "EditFollowUpQuestionEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (EditFollowUpQuestionEventDTO' event)
-      "DeleteFollowUpQuestionEvent" ->
-        parseJSON (Object o) >>= \event ->
-          return (DeleteFollowUpQuestionEventDTO' event)
+      "AddKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (AddKnowledgeModelEventDTO' event)
+      "EditKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (EditKnowledgeModelEventDTO' event)
+      "AddChapterEvent" -> parseJSON (Object o) >>= \event -> return (AddChapterEventDTO' event)
+      "EditChapterEvent" -> parseJSON (Object o) >>= \event -> return (EditChapterEventDTO' event)
+      "DeleteChapterEvent" -> parseJSON (Object o) >>= \event -> return (DeleteChapterEventDTO' event)
+      "AddQuestionEvent" -> parseJSON (Object o) >>= \event -> return (AddQuestionEventDTO' event)
+      "EditQuestionEvent" -> parseJSON (Object o) >>= \event -> return (EditQuestionEventDTO' event)
+      "DeleteQuestionEvent" -> parseJSON (Object o) >>= \event -> return (DeleteQuestionEventDTO' event)
+      "AddAnswerEvent" -> parseJSON (Object o) >>= \event -> return (AddAnswerEventDTO' event)
+      "EditAnswerEvent" -> parseJSON (Object o) >>= \event -> return (EditAnswerEventDTO' event)
+      "DeleteAnswerEvent" -> parseJSON (Object o) >>= \event -> return (DeleteAnswerEventDTO' event)
+      "AddExpertEvent" -> parseJSON (Object o) >>= \event -> return (AddExpertEventDTO' event)
+      "EditExpertEvent" -> parseJSON (Object o) >>= \event -> return (EditExpertEventDTO' event)
+      "DeleteExpertEvent" -> parseJSON (Object o) >>= \event -> return (DeleteExpertEventDTO' event)
+      "AddReferenceEvent" -> parseJSON (Object o) >>= \event -> return (AddReferenceEventDTO' event)
+      "EditReferenceEvent" -> parseJSON (Object o) >>= \event -> return (EditReferenceEventDTO' event)
+      "DeleteReferenceEvent" -> parseJSON (Object o) >>= \event -> return (DeleteReferenceEventDTO' event)
+      "AddFollowUpQuestionEvent" -> parseJSON (Object o) >>= \event -> return (AddFollowUpQuestionEventDTO' event)
+      "EditFollowUpQuestionEvent" -> parseJSON (Object o) >>= \event -> return (EditFollowUpQuestionEventDTO' event)
+      "DeleteFollowUpQuestionEvent" -> parseJSON (Object o) >>= \event -> return (DeleteFollowUpQuestionEventDTO' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero
 
@@ -370,11 +343,7 @@ instance FromJSON AddKnowledgeModelEventDTO where
 instance ToJSON AddKnowledgeModelEventDTO where
   toJSON AddKnowledgeModelEventDTO {..} =
     object
-      [ "eventType" .= "AddKnowledgeModelEvent"
-      , "uuid" .= _akmdtoUuid
-      , "kmUuid" .= _akmdtoKmUuid
-      , "name" .= _akmdtoName
-      ]
+      ["eventType" .= "AddKnowledgeModelEvent", "uuid" .= _akmdtoUuid, "kmUuid" .= _akmdtoKmUuid, "name" .= _akmdtoName]
 
 instance FromJSON EditKnowledgeModelEventDTO where
   parseJSON (Object o) = do

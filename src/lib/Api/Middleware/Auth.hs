@@ -28,8 +28,7 @@ getRequestURL :: Request -> String
 getRequestURL request = T.unpack . (T.intercalate "/") $ pathInfo request
 
 matchURL :: String -> Regex -> Bool
-matchURL requestURL unauthorizedEndpoint =
-  isJust $ matchRegex unauthorizedEndpoint requestURL
+matchURL requestURL unauthorizedEndpoint = isJust $ matchRegex unauthorizedEndpoint requestURL
 
 isUnauthorizedEndpoint :: Request -> [Regex] -> Bool
 isUnauthorizedEndpoint request unauthorizedEndpoints =

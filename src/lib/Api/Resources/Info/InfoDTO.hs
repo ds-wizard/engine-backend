@@ -12,9 +12,4 @@ data InfoDTO = InfoDTO
 makeLenses ''InfoDTO
 
 instance ToJSON InfoDTO where
-  toJSON InfoDTO {..} =
-    object
-      [ "name" .= _idtoName
-      , "version" .= _idtoVersion
-      , "builtAt" .= _idtoBuiltAt
-      ]
+  toJSON InfoDTO {..} = object ["name" .= _idtoName, "version" .= _idtoVersion, "builtAt" .= _idtoBuiltAt]

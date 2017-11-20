@@ -70,8 +70,7 @@ instance ToBSON EditFollowUpQuestionEvent where
     , "text" BSON.=: (event ^. efuqText)
     , "answerUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqAnswerIds)
     , "expertUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqExpertIds)
-    , "referenceUuids" BSON.=:
-      serializeMaybeUUIDList (event ^. efuqReferenceIds)
+    , "referenceUuids" BSON.=: serializeMaybeUUIDList (event ^. efuqReferenceIds)
     ]
 
 instance FromBSON EditFollowUpQuestionEvent where
@@ -87,8 +86,7 @@ instance FromBSON EditFollowUpQuestionEvent where
     text <- BSON.lookup "text" doc
     let answerUuids = deserializeMaybeUUIDList $ BSON.lookup "answerUuids" doc
     let expertUuids = deserializeMaybeUUIDList $ BSON.lookup "expertUuids" doc
-    let referenceUuids =
-          deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
+    let referenceUuids = deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
     return
       EditFollowUpQuestionEvent
       { _efuqUuid = uuid

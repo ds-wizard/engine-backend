@@ -7,8 +7,7 @@ import Network.Wai (Middleware)
 import Network.Wai.Internal (Response(..))
 
 corsMiddleware :: Middleware
-corsMiddleware application request sendResponse =
-  application request $ sendResponse . removeHeader
+corsMiddleware application request sendResponse = application request $ sendResponse . removeHeader
 
 removeHeader :: Response -> Response
 removeHeader (ResponseFile s h b1 b2) = ResponseFile s (addCorsHeaders h) b1 b2
@@ -22,7 +21,6 @@ addCorsHeaders hs = hs ++ corsHeaders
 corsHeaders =
   [ ("Access-Control-Allow-Origin", "*")
   , ("Access-Control-Allow-Credential", "true")
-  , ( "Access-Control-Allow-Headers"
-    , "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+  , ("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
   , ("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE")
   ]

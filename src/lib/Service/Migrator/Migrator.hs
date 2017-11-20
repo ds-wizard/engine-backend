@@ -1,8 +1,8 @@
 module Service.Migrator.Migrator where
 
 import Control.Lens ((^.), (&), (.~), makeLenses)
-import qualified Data.UUID as U
 import Data.Either
+import qualified Data.UUID as U
 
 import Common.Context
 import Common.Error
@@ -17,17 +17,13 @@ import Service.Migrator.Methods.Common
 import Service.Migrator.Methods.DiffTreeMethod
 import Service.Migrator.Methods.NoConflictMethod
 
-createMigration :: Context
-                -> String
-                -> String
-                -> IO (Either AppError MigrationState)
+createMigration :: Context -> String -> String -> IO (Either AppError MigrationState)
 createMigration context parentPackageId localizationPackageId = do
   eitherParentPackage <- findPackageWithEventsById context parentPackageId
   case eitherParentPackage of
     Left error -> return . Left $ error
     Right parentPackage -> do
-      eitherLocalizationPackage <-
-        findPackageWithEventsById context localizationPackageId
+      eitherLocalizationPackage <- findPackageWithEventsById context localizationPackageId
       case eitherLocalizationPackage of
         Left error -> return . Left $ error
         Right localizationPackage ->
@@ -40,21 +36,21 @@ createMigration context parentPackageId localizationPackageId = do
 
 createMigrationStateWithEvents parentPackageId localizationPackageId parentEvents localizationEvents =
   MigrationState
-    { _msStatus = MSCreated
-    , _msParentPackageId = parentPackageId
-    , _msLocalizationPackageId = localizationPackageId
-    , _msCurrentKnowledgeModel = Nothing
-    , _msError = NoError
-    , _msParentEvents = parentEvents
-    , _msLocalizationEvents = localizationEvents
-    , _msDiffTable = buildDiffTable parentEvents
-    , _msDiffTree = Nothing
-    }
+  { _msStatus = MSCreated
+  , _msParentPackageId = parentPackageId
+  , _msLocalizationPackageId = localizationPackageId
+  , _msCurrentKnowledgeModel = Nothing
+  , _msError = NoError
+  , _msParentEvents = parentEvents
+  , _msLocalizationEvents = localizationEvents
+  , _msDiffTable = buildDiffTable parentEvents
+  , _msDiffTree = Nothing
+  }
 
 doMigrate :: MigrationState -> Event -> MigrationState
 doMigrate state event =
   let newState = runNoConflictMethod state event
-      ( _ : newLocalizationEvents) = newState ^. msLocalizationEvents
+      (_:newLocalizationEvents) = newState ^. msLocalizationEvents
   in newState & msLocalizationEvents .~ newLocalizationEvents
 
 migrate :: MigrationState -> MigrationState
@@ -63,10 +59,7 @@ migrate state =
     MSCreated ->
       let eitherKm = runApplicator Nothing (state ^. msParentEvents)
       in case eitherKm of
-           Left error ->
-             state & msError .~
-             ApplicatorError
-               "Error in compiling future parent Knowledge Model events"
+           Left error -> state & msError .~ ApplicatorError "Error in compiling future parent Knowledge Model events"
            Right km ->
              let newState = state & msStatus .~ MSRunning
 --                 newState2 = state & msDiffTree .~ Just (buildDiffTree km)
@@ -75,8 +68,8 @@ migrate state =
     MSRunning ->
       let newState = foldl doMigrate state (state ^. msLocalizationEvents)
       in if newState ^. msLocalizationEvents == []
-         then newState & msStatus .~ MSCompleted
-         else newState
+           then newState & msStatus .~ MSCompleted
+           else newState
     MSError -> state
     MSCompleted -> state
 --{

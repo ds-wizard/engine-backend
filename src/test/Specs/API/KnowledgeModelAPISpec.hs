@@ -17,20 +17,19 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Api.Resources.Branch.BranchDTO
+import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import qualified
-       Database.Migration.KnowledgeModel.BranchMigration
+import qualified Database.Migration.KnowledgeModel.BranchMigration
        as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
+import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Branch.Branch
+import Service.Branch.BranchService
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.Branch.BranchService
 
 import Fixtures.Event.Events
 import Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
@@ -67,16 +66,8 @@ knowledgeModelAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
-                ResponseMatcher
-                { matchHeaders = expHeaders
-                , matchStatus = expStatus
-                , matchBody = bodyEquals expBody
-                }
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km"
-          reqHeaders
-          reqBody
+        createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km" reqHeaders reqBody

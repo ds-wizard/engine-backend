@@ -12,10 +12,10 @@ import Common.Context
 import Common.DSPConfig
 import Database.Connection
 
+import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
 import Specs.API.InfoAPISpec
 import Specs.API.KnowledgeModelAPISpec
-import Specs.API.BranchAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
 import Specs.API.TokenAPISpec
@@ -37,8 +37,7 @@ prepareWebApp runCallback = do
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"
-      putStrLn
-        "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+      putStrLn "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
       print errorDate
     Right dspConfig -> do
       putStrLn "CONFIG: loaded"

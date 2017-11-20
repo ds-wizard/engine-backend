@@ -14,10 +14,7 @@ import Model.KnowledgeModel.KnowledgeModel
 -- -------------------------
 instance ToBSON KnowledgeModel where
   toBSON km =
-    [ "uuid" BSON.=: toString (km ^. kmUuid)
-    , "name" BSON.=: (km ^. kmName)
-    , "chapters" BSON.=: (km ^. kmChapters)
-    ]
+    ["uuid" BSON.=: toString (km ^. kmUuid), "name" BSON.=: (km ^. kmName), "chapters" BSON.=: (km ^. kmChapters)]
 
 instance FromBSON KnowledgeModel where
   fromBSON doc = do
@@ -25,8 +22,7 @@ instance FromBSON KnowledgeModel where
     uuid <- fromString uuidS
     name <- BSON.lookup "name" doc
     chapters <- BSON.lookup "chapters" doc
-    return
-      KnowledgeModel {_kmUuid = uuid, _kmName = name, _kmChapters = chapters}
+    return KnowledgeModel {_kmUuid = uuid, _kmName = name, _kmChapters = chapters}
 
 -- -------------------------
 -- CHAPTER -----------------
@@ -116,23 +112,14 @@ instance FromBSON Answer where
     label <- BSON.lookup "label" doc
     advice <- BSON.lookup "advice" doc
     following <- BSON.lookup "following" doc
-    return
-      Answer
-      { _ansUuid = uuid
-      , _ansLabel = label
-      , _ansAdvice = advice
-      , _ansFollowing = following
-      }
+    return Answer {_ansUuid = uuid, _ansLabel = label, _ansAdvice = advice, _ansFollowing = following}
 
 -- -------------------------
 -- EXPERT ------------------
 -- -------------------------
 instance ToBSON Expert where
   toBSON model =
-    [ "uuid" BSON.=: toString (model ^. expUuid)
-    , "name" BSON.=: (model ^. expName)
-    , "email" BSON.=: (model ^. expEmail)
-    ]
+    ["uuid" BSON.=: toString (model ^. expUuid), "name" BSON.=: (model ^. expName), "email" BSON.=: (model ^. expEmail)]
 
 instance FromBSON Expert where
   fromBSON doc = do
@@ -146,10 +133,7 @@ instance FromBSON Expert where
 -- REFERENCE ---------------
 -- -------------------------
 instance ToBSON Reference where
-  toBSON model =
-    [ "uuid" BSON.=: toString (model ^. refUuid)
-    , "chapter" BSON.=: (model ^. refChapter)
-    ]
+  toBSON model = ["uuid" BSON.=: toString (model ^. refUuid), "chapter" BSON.=: (model ^. refChapter)]
 
 instance FromBSON Reference where
   fromBSON doc = do

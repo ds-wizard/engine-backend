@@ -17,10 +17,7 @@ expertDarth =
 expertDarthChanged :: Expert
 expertDarthChanged =
   Expert
-  { _expUuid = expertDarth ^. expUuid
-  , _expName = "EDITED: Darth Vader"
-  , _expEmail = "EDITED: darth.vader@deadstar.com"
-  }
+  {_expUuid = expertDarth ^. expUuid, _expName = "EDITED: Darth Vader", _expEmail = "EDITED: darth.vader@deadstar.com"}
 
 expertLuke :: Expert
 expertLuke =

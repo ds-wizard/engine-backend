@@ -42,10 +42,7 @@ instance EventToDTO AddKnowledgeModelEvent where
   toDTO event =
     AddKnowledgeModelEventDTO'
       AddKnowledgeModelEventDTO
-      { _akmdtoUuid = event ^. akmUuid
-      , _akmdtoKmUuid = event ^. akmKmUuid
-      , _akmdtoName = event ^. akmName
-      }
+      {_akmdtoUuid = event ^. akmUuid, _akmdtoKmUuid = event ^. akmKmUuid, _akmdtoName = event ^. akmName}
 
 instance EventToDTO EditKnowledgeModelEvent where
   toDTO event =
@@ -87,10 +84,7 @@ instance EventToDTO DeleteChapterEvent where
   toDTO event =
     DeleteChapterEventDTO'
       DeleteChapterEventDTO
-      { _dchdtoUuid = event ^. dchUuid
-      , _dchdtoKmUuid = event ^. dchKmUuid
-      , _dchdtoChapterUuid = event ^. dchChapterUuid
-      }
+      {_dchdtoUuid = event ^. dchUuid, _dchdtoKmUuid = event ^. dchKmUuid, _dchdtoChapterUuid = event ^. dchChapterUuid}
 
 -- -------------------------
 -- Question ----------------

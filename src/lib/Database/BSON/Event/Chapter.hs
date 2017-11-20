@@ -34,12 +34,7 @@ instance FromBSON AddChapterEvent where
     text <- BSON.lookup "text" doc
     return
       AddChapterEvent
-      { _achUuid = uuid
-      , _achKmUuid = kmUuid
-      , _achChapterUuid = chapterUuid
-      , _achTitle = title
-      , _achText = text
-      }
+      {_achUuid = uuid, _achKmUuid = kmUuid, _achChapterUuid = chapterUuid, _achTitle = title, _achText = text}
 
 -- -------------------------
 -- EDIT CHAPTER EVENT-------
@@ -89,6 +84,4 @@ instance FromBSON DeleteChapterEvent where
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
     chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    return
-      DeleteChapterEvent
-      {_dchUuid = uuid, _dchKmUuid = kmUuid, _dchChapterUuid = chapterUuid}
+    return DeleteChapterEvent {_dchUuid = uuid, _dchKmUuid = kmUuid, _dchChapterUuid = chapterUuid}
