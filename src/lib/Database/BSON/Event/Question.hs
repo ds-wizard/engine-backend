@@ -79,9 +79,9 @@ instance FromBSON EditQuestionEvent where
     qType <- BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
-    let answerIds = deserializeMaybeUUIDList $ BSON.lookup "answerUuids" doc
-    let expertIds = deserializeMaybeUUIDList $ BSON.lookup "expertUuids" doc
-    let referenceIds = deserializeMaybeUUIDList $ BSON.lookup "referenceUuids" doc
+    let answerIds = deserializeMaybeUUIDList $ BSON.lookup "answerIds" doc
+    let expertIds = deserializeMaybeUUIDList $ BSON.lookup "expertIds" doc
+    let referenceIds = deserializeMaybeUUIDList $ BSON.lookup "referenceIds" doc
     return
       EditQuestionEvent
       { _eqUuid = uuid
