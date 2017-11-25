@@ -110,8 +110,6 @@ instance ApplyEventToKM AddChapterEvent where
       newChapter =
         Chapter
         { _chUuid = e ^. achChapterUuid
-        , _chGroupId = "core"
-        , _chFormatVersion = 1
         , _chTitle = e ^. achTitle
         , _chText = e ^. achText
         , _chQuestions = []
@@ -432,7 +430,7 @@ instance ApplyEventToQuestion AddAnswerEvent where
       modifiedAnswers = q ^. qAnswers ++ [newAnswer]
       newAnswer =
         Answer
-        {_ansUuid = e ^. aansAnswerUuid, _ansLabel = e ^. aansLabel, _ansAdvice = e ^. aansAdvice, _ansFollowing = []}
+        {_ansUuid = e ^. aansAnswerUuid, _ansLabel = e ^. aansLabel, _ansAdvice = e ^. aansAdvice, _ansFollowUps = []}
 
 instance ApplyEventToQuestion EditAnswerEvent where
   applyEventToQuestion = passToAnswers
@@ -529,16 +527,16 @@ instance ApplyEventToQuestion DeleteReferenceEvent where
 class ApplyEventToAnswer e where
   applyEventToAnswer :: e -> Either AppError Answer -> Either AppError Answer
 
-passToFollowing _ (Left error) = Left error
-passToFollowing e (Right ans) =
-  case eModifiedFollowing of
+passToFollowUps _ (Left error) = Left error
+passToFollowUps e (Right ans) =
+  case eModifiedFollowUps of
     Left error -> Left error
-    Right modifiedFollowing -> Right $ ans & ansFollowing .~ modifiedFollowing
+    Right modifiedFollowUps -> Right $ ans & ansFollowUps .~ modifiedFollowUps
   where
-    eModifiedFollowing = foldl foldOneFollowing (Right []) (ans ^. ansFollowing)
-    foldOneFollowing :: Either AppError [Question] -> Question -> Either AppError [Question]
-    foldOneFollowing (Left error) _ = Left error
-    foldOneFollowing (Right answers) answer =
+    eModifiedFollowUps = foldl foldOneFollowUps (Right []) (ans ^. ansFollowUps)
+    foldOneFollowUps :: Either AppError [Question] -> Question -> Either AppError [Question]
+    foldOneFollowUps (Left error) _ = Left error
+    foldOneFollowUps (Right answers) answer =
       case applyEventToQuestion e (Right answer) of
         Left error -> Left error
         Right appliedAnswer -> Right $ answers ++ [appliedAnswer]
@@ -568,33 +566,33 @@ instance ApplyEventToAnswer DeleteChapterEvent where
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToAnswer AddQuestionEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer EditQuestionEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer DeleteQuestionEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToAnswer AddAnswerEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer EditAnswerEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ applyFollowing . applyAdvice . applyLabel $ ans
-      else passToFollowing e (Right ans)
+      then Right $ applyFollowUps . applyAdvice . applyLabel $ ans
+      else passToFollowUps e (Right ans)
     where
       applyLabel ans = applyValue (e ^. eansLabel) ans ansLabel
       applyAdvice ans = applyValue (e ^. eansAdvice) ans ansAdvice
-      applyFollowing ans = applyValue (e ^. eansFollowingIds) ans ansChangeFollowingIdsOrder
+      applyFollowUps ans = applyValue (e ^. eansFollowUpIds) ans ansChangeFollowUpIdsOrder
 
 instance ApplyEventToAnswer DeleteAnswerEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
@@ -603,11 +601,11 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ ans & ansFollowing .~ modifiedFollowing
-      else passToFollowing e (Right ans)
+      then Right $ ans & ansFollowUps .~ modifiedFollowUps
+      else passToFollowUps e (Right ans)
     where
-      modifiedFollowing = ans ^. ansFollowing ++ [newFollowing]
-      newFollowing =
+      modifiedFollowUps = ans ^. ansFollowUps ++ [newFollowUp]
+      newFollowUp =
         Question
         { _qUuid = e ^. afuqQuestionUuid
         , _qShortUuid = e ^. afuqShortQuestionUuid
@@ -620,40 +618,40 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
         }
 
 instance ApplyEventToAnswer EditFollowUpQuestionEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer DeleteFollowUpQuestionEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ ans & ansFollowing .~ modifiedFollowing
-      else passToFollowing e (Right ans)
+      then Right $ ans & ansFollowUps .~ modifiedFollowUps
+      else passToFollowUps e (Right ans)
     where
-      modifiedFollowing = filter (not . equalsUuid e) (ans ^. ansFollowing)
+      modifiedFollowUps = filter (not . equalsUuid e) (ans ^. ansFollowUps)
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToAnswer AddExpertEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer EditExpertEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer DeleteExpertEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 -- -------------------
 -- REFERENCES---------
 -- -------------------
 instance ApplyEventToAnswer AddReferenceEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer EditReferenceEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 instance ApplyEventToAnswer DeleteReferenceEvent where
-  applyEventToAnswer = passToFollowing
+  applyEventToAnswer = passToFollowUps
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

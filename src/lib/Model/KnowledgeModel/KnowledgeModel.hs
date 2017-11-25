@@ -14,8 +14,6 @@ data KnowledgeModel = KnowledgeModel
 
 data Chapter = Chapter
   { _chUuid :: UUID
-  , _chGroupId :: String
-  , _chFormatVersion :: Int
   , _chTitle :: String
   , _chText :: String
   , _chQuestions :: [Question]
@@ -36,7 +34,7 @@ data Answer = Answer
   { _ansUuid :: UUID
   , _ansLabel :: String
   , _ansAdvice :: Maybe String
-  , _ansFollowing :: [Question]
+  , _ansFollowUps :: [Question]
   } deriving (Show, Eq, Generic)
 
 data Expert = Expert
@@ -77,6 +75,14 @@ kmChangeChapterIdsOrder convert km = Identity $ km & kmChapters .~ orderedChapte
     getChapterByUuid :: UUID -> [Chapter]
     getChapterByUuid uuid = filter (\x -> x ^. chUuid == uuid) (km ^. kmChapters)
 
+getAllChapters :: KnowledgeModel -> [Chapter]
+getAllChapters km = km ^. kmChapters
+
+isThereAnyChapterWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyChapterWithGivenUuid km uuid = uuid `elem` (getChapterUuid <$> getAllChapters km)
+  where
+    getChapterUuid chapter = chapter ^. chUuid
+
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 chQuestionIds :: Chapter -> [UUID]
@@ -91,6 +97,20 @@ chChangeQuestionIdsOrder convert ch = Identity $ ch & chQuestions .~ orderedQues
     orderedQuestions = concatMap getQuestionByUuid (runIdentity ids)
     getQuestionByUuid :: UUID -> [Question]
     getQuestionByUuid uuid = filter (\x -> x ^. qUuid == uuid) (ch ^. chQuestions)
+
+getAllQuestions :: KnowledgeModel -> [Question]
+getAllQuestions km = go (km ^.. kmChapters . traverse . chQuestions . traverse)
+  where
+    go :: [Question] -> [Question]
+    go [] = []
+    go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
+    getNestedQuestions :: Question -> [Question]
+    getNestedQuestions question = question ^.. qAnswers . traverse . ansFollowUps . traverse
+
+isThereAnyQuestionWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyQuestionWithGivenUuid km uuid = uuid `elem` (getQuestionUuid <$> getAllQuestions km)
+  where
+    getQuestionUuid question = question ^. qUuid
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
@@ -107,19 +127,30 @@ qChangeAnwerIdsOrder convert q = Identity $ q & qAnswers .~ orderedAnwers
     getAnswerByUuid :: UUID -> [Answer]
     getAnswerByUuid uuid = filter (\x -> x ^. ansUuid == uuid) (q ^. qAnswers)
 
-------------------------------------------------------------------------------------------
-ansFollowingIds :: Answer -> [UUID]
-ansFollowingIds ans = ans ^.. ansFollowing . traverse . qUuid
+getAllAnswers :: KnowledgeModel -> [Answer]
+getAllAnswers km = concat $ getAnswer <$> getAllQuestions km
+  where
+    getAnswer :: Question -> [Answer]
+    getAnswer question = question ^. qAnswers
 
-ansChangeFollowingIdsOrder :: ([Question] -> Identity [UUID]) -> Answer -> Identity Answer
-ansChangeFollowingIdsOrder convert ans = Identity $ ans & ansFollowing .~ orderedFollowing
+isThereAnyAnswerWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyAnswerWithGivenUuid km uuid = uuid `elem` (getAnswerUuid <$> getAllAnswers km)
+  where
+    getAnswerUuid answer = answer ^. ansUuid
+
+------------------------------------------------------------------------------------------
+ansFollowUpIds :: Answer -> [UUID]
+ansFollowUpIds ans = ans ^.. ansFollowUps . traverse . qUuid
+
+ansChangeFollowUpIdsOrder :: ([Question] -> Identity [UUID]) -> Answer -> Identity Answer
+ansChangeFollowUpIdsOrder convert ans = Identity $ ans & ansFollowUps .~ orderedFollowUps
   where
     ids :: Identity [UUID]
-    ids = convert (ans ^. ansFollowing)
-    orderedFollowing :: [Question]
-    orderedFollowing = concatMap getFollowingByUuid (runIdentity ids)
-    getFollowingByUuid :: UUID -> [Question]
-    getFollowingByUuid uuid = filter (\x -> x ^. qUuid == uuid) (ans ^. ansFollowing)
+    ids = convert (ans ^. ansFollowUps)
+    orderedFollowUps :: [Question]
+    orderedFollowUps = concatMap getFollowUpsByUuid (runIdentity ids)
+    getFollowUpsByUuid :: UUID -> [Question]
+    getFollowUpsByUuid uuid = filter (\x -> x ^. qUuid == uuid) (ans ^. ansFollowUps)
 
 ------------------------------------------------------------------------------------------
 qExpertIds :: Question -> [UUID]
@@ -135,6 +166,17 @@ qChangeExpertIdsOrder convert q = Identity $ q & qExperts .~ orderedExperts
     getExpertByUuid :: UUID -> [Expert]
     getExpertByUuid uuid = filter (\x -> x ^. expUuid == uuid) (q ^. qExperts)
 
+getAllExperts :: KnowledgeModel -> [Expert]
+getAllExperts km = concat $ getExpert <$> getAllQuestions km
+  where
+    getExpert :: Question -> [Expert]
+    getExpert question = question ^. qExperts
+
+isThereAnyExpertWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyExpertWithGivenUuid km uuid = uuid `elem` (getExpertUuid <$> getAllExperts km)
+  where
+    getExpertUuid expert = expert ^. expUuid
+
 ------------------------------------------------------------------------------------------
 qReferenceIds :: Question -> [UUID]
 qReferenceIds q = q ^.. qReferences . traverse . refUuid
@@ -148,3 +190,14 @@ qChangeReferenceIdsOrder convert q = Identity $ q & qReferences .~ orderedRefere
     orderedReferences = concatMap getReferenceByUuid (runIdentity ids)
     getReferenceByUuid :: UUID -> [Reference]
     getReferenceByUuid uuid = filter (\x -> x ^. refUuid == uuid) (q ^. qReferences)
+
+getAllReferences :: KnowledgeModel -> [Reference]
+getAllReferences km = concat $ getReference <$> getAllQuestions km
+  where
+    getReference :: Question -> [Reference]
+    getReference question = question ^. qReferences
+
+isThereAnyReferenceWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyReferenceWithGivenUuid km uuid = uuid `elem` (getReferenceUuid <$> getAllReferences km)
+  where
+    getReferenceUuid reference = reference ^. refUuid

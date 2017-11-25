@@ -2,87 +2,104 @@ module Service.Migrator.Migrator where
 
 import Control.Lens ((^.), (&), (.~), makeLenses)
 import Data.Either
+import Data.Maybe
 import qualified Data.UUID as U
 
 import Common.Context
 import Common.Error
+import Database.DAO.Branch.BranchDAO
+import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
+import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Migrator.MigrationState
+import Model.Migrator.MigratorState
 import Model.Package.Package
+import Service.Branch.BranchService
 import Service.Migrator.Applicator
-import Service.Migrator.Methods.ChoiceMethod
-import Service.Migrator.Methods.Common
-import Service.Migrator.Methods.DiffTreeMethod
-import Service.Migrator.Methods.NoConflictMethod
+import Service.Migrator.Methods.CleanerMethod
+import Service.Migrator.Methods.CorrectorMethod
+import Service.Package.PackageService
 
-createMigration :: Context -> String -> String -> IO (Either AppError MigrationState)
-createMigration context parentPackageId localizationPackageId = do
-  eitherParentPackage <- findPackageWithEventsById context parentPackageId
-  case eitherParentPackage of
-    Left error -> return . Left $ error
-    Right parentPackage -> do
-      eitherLocalizationPackage <- findPackageWithEventsById context localizationPackageId
-      case eitherLocalizationPackage of
+createMigration :: Context -> String -> String -> IO (Either AppError MigratorState)
+createMigration context branchId targetPackageId =
+  getBranch branchId $ \branch ->
+    getTargetParentPackage targetPackageId $ \targetParentPackage ->
+      getBranchEvents branch $ \branchEvents ->
+        getTargetParentEvents targetPackageId branch $ \targetPackageEvents ->
+          getParentPackageId branch $ \branchId -> do
+            let km = branch ^. bwkmKM
+            return . Right $ createMigratorStateWithEvents targetPackageId branchId branchEvents targetPackageEvents km
+  where
+    getBranch branchId callback = do
+      eitherBranch <- findKnowledgeModelByBranchId context branchId
+      case eitherBranch of
+        Right branch -> callback branch
+        Left (NotExistsError _) -> return . Left . MigratorError $ "Source branch does not exist"
         Left error -> return . Left $ error
-        Right localizationPackage ->
-          return . Right $
-          createMigrationStateWithEvents
-            parentPackageId
-            localizationPackageId
-            (parentPackage ^. pkgweEvents)
-            (localizationPackage ^. pkgweEvents)
+    getTargetParentPackage targetPackageId callback = do
+      eitherTargetParentPackage <- findPackageWithEventsById context targetPackageId
+      case eitherTargetParentPackage of
+        Right targetParentPackage -> callback targetParentPackage
+        Left (NotExistsError _) -> return . Left . MigratorError $ "Target parent package does not exist"
+        Left error -> return . Left $ error
+    getBranchEvents branch callback =
+      getParentPackageId branch $ \parentPackageId ->
+        getLastMergeCheckpointPackageId branch $ \lastMergeCheckpointPackageId -> do
+          let since = parentPackageId
+          let until = lastMergeCheckpointPackageId
+          eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId context since until
+          case eitherEvents of
+            Right events -> callback events
+            Left error -> return . Left $ error
+    getParentPackageId branch callback =
+      case branch ^. bwkmParentPackageId of
+        Just parentPackageId -> callback parentPackageId
+        Nothing -> return . Left . MigratorError $ "Branch has to have a parent"
+    getLastMergeCheckpointPackageId branch callback =
+      case branch ^. bwkmLastMergeCheckpointPackageId of
+        Just lastMergeCheckpointPackageId -> callback lastMergeCheckpointPackageId
+        Nothing -> return . Left . MigratorError $ "Branch has to have merge checkpoint"
+    getTargetParentEvents targetPackageId branch callback =
+      getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
+        let since = targetPackageId
+        let until = lastAppliedParentPackageId
+        eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId context since until
+        case eitherEvents of
+          Right events -> callback events
+          Left error -> return . Left $ error
+    getLastAppliedParentPackageId branch callback =
+      case branch ^. bwkmLastAppliedParentPackageId of
+        Just lastAppliedParentPackageId -> callback lastAppliedParentPackageId
+        Nothing ->
+          return . Left . MigratorError $
+          "Branch has to have checkpoint what was last parent package which was merged in"
 
-createMigrationStateWithEvents parentPackageId localizationPackageId parentEvents localizationEvents =
-  MigrationState
-  { _msStatus = MSCreated
-  , _msParentPackageId = parentPackageId
-  , _msLocalizationPackageId = localizationPackageId
-  , _msCurrentKnowledgeModel = Nothing
-  , _msError = NoError
-  , _msParentEvents = parentEvents
-  , _msLocalizationEvents = localizationEvents
-  , _msDiffTable = buildDiffTable parentEvents
-  , _msDiffTree = Nothing
+createMigratorStateWithEvents :: String -> String -> [Event] -> [Event] -> Maybe KnowledgeModel -> MigratorState
+createMigratorStateWithEvents branchParentId targetPackageId branchEvents targetPackageEvents mKm =
+  MigratorState
+  { _msMigrationState = RunningState
+  , _msBranchParentId = branchParentId
+  , _msTargetPackageId = targetPackageId
+  , _msBranchEvents = branchEvents
+  , _msTargetPackageEvents = targetPackageEvents
+  , _msCurrentKnowledgeModel = mKm
   }
 
-doMigrate :: MigrationState -> Event -> MigrationState
+doMigrate :: MigratorState -> Event -> MigratorState
 doMigrate state event =
-  let newState = runNoConflictMethod state event
-      (_:newLocalizationEvents) = newState ^. msLocalizationEvents
-  in newState & msLocalizationEvents .~ newLocalizationEvents
+  if isCleanerMethod state event
+    then runCleanerMethod state event
+    else runCorrectorMethod state event
 
-migrate :: MigrationState -> MigrationState
+migrate :: MigratorState -> MigratorState
 migrate state =
-  case state ^. msStatus of
-    MSCreated ->
-      let eitherKm = runApplicator Nothing (state ^. msParentEvents)
-      in case eitherKm of
-           Left error -> state & msError .~ ApplicatorError "Error in compiling future parent Knowledge Model events"
-           Right km ->
-             let newState = state & msStatus .~ MSRunning
---                 newState2 = state & msDiffTree .~ Just (buildDiffTree km)
---             in migrate $ newState2 & msCurrentKnowledgeModel .~ Just km
-             in migrate $ newState & msCurrentKnowledgeModel .~ Just km
-    MSRunning ->
-      let newState = foldl doMigrate state (state ^. msLocalizationEvents)
-      in if newState ^. msLocalizationEvents == []
-           then newState & msStatus .~ MSCompleted
+  case state ^. msMigrationState of
+    RunningState ->
+      let newState = foldl doMigrate state (state ^. msTargetPackageEvents)
+      in if newState ^. msTargetPackageEvents == []
+           then newState & msMigrationState .~ CompletedState
            else newState
-    MSError -> state
-    MSCompleted -> state
---{
---	"state": "RUNNING|CONFLICT|COMPLETED",
---	"previousParentPackageId": "elixir.base:core:0.0.1",
---	"futureParentPackageId": "elixir.base:core:0.0.2",
---	"currentKnowledgeModel": {
---		"kmUuid": "b0edbc0b-2d7d-4ee7-bf2f-bc3a22d7494f",
---		"name": "My Knowledge Model",
---		"chapters": []
---	},
---	"conflict": {
---		"type": "NO_CONFLICT|CHOICE|DIFF_TREE|POOL"
---	},
---	"localizationEvents": []
---}
+    ConflictState _ -> state
+    ErrorState _ -> state
+    CompletedState -> state

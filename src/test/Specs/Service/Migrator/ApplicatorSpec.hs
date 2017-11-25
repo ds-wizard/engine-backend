@@ -2,7 +2,8 @@ module Specs.Service.Migrator.ApplicatorSpec where
 
 import Control.Lens
 import Data.Maybe
-import Test.Hspec
+import Test.Hspec hiding (shouldBe)
+import Test.Hspec.Expectations.Pretty
 
 import Fixtures.Event.Events
 import Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
@@ -91,11 +92,11 @@ applicatorSpec =
         let event = a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3
         let (Right computed) = runApplicator (Just km1) [AddFollowUpQuestionEvent' event]
         let expFUQ3 = followUpQuestion3
-        let expAnswerYes4 = answerYes4 & ansFollowing .~ [expFUQ3]
+        let expAnswerYes4 = answerYes4 & ansFollowUps .~ [expFUQ3]
         let expFUQ2 = followUpQuestion2 & qAnswers .~ [answerNo4, expAnswerYes4]
-        let expAnswerYes3 = answerYes3 & ansFollowing .~ [expFUQ2]
+        let expAnswerYes3 = answerYes3 & ansFollowUps .~ [expFUQ2]
         let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowing .~ [expFUQ1]
+        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
         let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
         let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
         let expected = km1 & kmChapters .~ [expChapter1, chapter2]
@@ -104,9 +105,9 @@ applicatorSpec =
         let event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [EditFollowUpQuestionEvent' event]
         let expFUQ2 = followUpQuestion2Changed
-        let expAnswerYes3 = answerYes3 & ansFollowing .~ [expFUQ2]
+        let expAnswerYes3 = answerYes3 & ansFollowUps .~ [expFUQ2]
         let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowing .~ [expFUQ1]
+        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
         let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
         let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
         let expected = km1 & kmChapters .~ [expChapter1, chapter2]
@@ -114,9 +115,9 @@ applicatorSpec =
       it "Apply:  DeleteFollowUpQuestionEvent" $ do
         let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [DeleteFollowUpQuestionEvent' event]
-        let expAnswerYes3 = answerYes3 & ansFollowing .~ []
+        let expAnswerYes3 = answerYes3 & ansFollowUps .~ []
         let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowing .~ [expFUQ1]
+        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
         let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
         let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
         let expected = km1 & kmChapters .~ [expChapter1, chapter2]
