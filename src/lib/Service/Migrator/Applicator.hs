@@ -108,12 +108,7 @@ instance ApplyEventToKM AddChapterEvent where
     where
       modifiedChapters = km ^. kmChapters ++ [newChapter]
       newChapter =
-        Chapter
-        { _chUuid = e ^. achChapterUuid
-        , _chTitle = e ^. achTitle
-        , _chText = e ^. achText
-        , _chQuestions = []
-        }
+        Chapter {_chUuid = e ^. achChapterUuid, _chTitle = e ^. achTitle, _chText = e ^. achText, _chQuestions = []}
 
 instance ApplyEventToKM EditChapterEvent where
   applyEventToKM = passToChapters

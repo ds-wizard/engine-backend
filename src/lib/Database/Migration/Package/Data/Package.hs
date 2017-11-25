@@ -1,7 +1,10 @@
 module Database.Migration.Package.Data.Package where
 
-import Database.Migration.KnowledgeModel.Data.Event.Event
+import Control.Lens ((^.))
+
+import Database.Migration.Branch.Data.Event.Event
 import Model.Event.Event
+import Model.Package.Package
 import Service.Package.PackageMapper
 import Service.Package.PackageService
 
@@ -24,5 +27,5 @@ elixirNlPackageDto =
     "core-nl"
     "1.0.0"
     "First Release"
-    (Just baseElixirPackageDto)
+    (Just $ baseElixirPackageDto ^. pkgweId)
     [AddChapterEvent' a_km1_ch1]

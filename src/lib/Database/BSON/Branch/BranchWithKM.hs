@@ -17,6 +17,8 @@ instance FromBSON BranchWithKM where
     name <- BSON.lookup "name" doc
     artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
+    lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
+    lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
     kmSerialized <- BSON.lookup "knowledgeModel" doc
     let km = deserializeKM kmSerialized
     return
@@ -25,6 +27,8 @@ instance FromBSON BranchWithKM where
       , _bwkmName = name
       , _bwkmArtifactId = artifactId
       , _bwkmParentPackageId = parentPackageId
+      , _bwkmLastAppliedParentPackageId = lastAppliedParentPackageId
+      , _bwkmLastMergeCheckpointPackageId = lastMergeCheckpointPackageId
       , _bwkmKM = km
       }
     where

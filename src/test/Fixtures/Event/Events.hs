@@ -94,6 +94,17 @@ e_km1_ch1 =
   , _echQuestionIds = Just $ chQuestionIds chapter1WithChangeProperties
   }
 
+e_km1_ch1_2 :: EditChapterEvent
+e_km1_ch1_2 =
+  EditChapterEvent
+  { _echUuid = fromJust $ U.fromString "d4adc3e6-c70e-4277-9d1d-0941db0f0141"
+  , _echKmUuid = km1 ^. kmUuid
+  , _echChapterUuid = chapter1 ^. chUuid
+  , _echTitle = Just $ "TWICE: " ++ chapter1WithChangeProperties ^. chTitle
+  , _echText = Just $ chapter1WithChangeProperties ^. chText
+  , _echQuestionIds = Just $ chQuestionIds chapter1WithChangeProperties
+  }
+
 d_km1_ch1 :: DeleteChapterEvent
 d_km1_ch1 =
   DeleteChapterEvent
@@ -206,6 +217,15 @@ e_km1_ch1_q2_second_edit =
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
 d_km1_ch1_q1 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question1 ^. qUuid
+  }
+
+d_km1_ch1_q1_2 :: DeleteQuestionEvent
+d_km1_ch1_q1_2 =
   DeleteQuestionEvent
   { _dqUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
   , _dqKmUuid = km1 ^. kmUuid
@@ -351,7 +371,7 @@ e_km1_ch1_q2_aYes1 =
   , _eansAnswerUuid = answerYes1 ^. ansUuid
   , _eansLabel = Just $ answerYes1Changed ^. ansLabel
   , _eansAdvice = Just $ answerYes1Changed ^. ansAdvice
-  , _eansFollowingIds = Just $ ansFollowingIds answerYes1Changed
+  , _eansFollowUpIds = Just $ ansFollowUpIds answerYes1Changed
   }
 
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent

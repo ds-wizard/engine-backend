@@ -61,7 +61,7 @@ instance ToBSON EditAnswerEvent where
     , "answerUuid" BSON.=: serializeUUID (event ^. eansAnswerUuid)
     , "label" BSON.=: (event ^. eansLabel)
     , "advice" BSON.=: (event ^. eansAdvice)
-    , "followingIds" BSON.=: serializeMaybeUUIDList (event ^. eansFollowingIds)
+    , "followUpIds" BSON.=: serializeMaybeUUIDList (event ^. eansFollowUpIds)
     ]
 
 instance FromBSON EditAnswerEvent where
@@ -73,7 +73,7 @@ instance FromBSON EditAnswerEvent where
     answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     label <- BSON.lookup "label" doc
     advice <- BSON.lookup "advice" doc
-    let followingIds = deserializeMaybeUUIDList $ BSON.lookup "followingIds" doc
+    let followUpIds = deserializeMaybeUUIDList $ BSON.lookup "followUpIds" doc
     return
       EditAnswerEvent
       { _eansUuid = uuid
@@ -83,7 +83,7 @@ instance FromBSON EditAnswerEvent where
       , _eansAnswerUuid = answerUuid
       , _eansLabel = label
       , _eansAdvice = advice
-      , _eansFollowingIds = followingIds
+      , _eansFollowUpIds = followUpIds
       }
 
 -- -------------------------

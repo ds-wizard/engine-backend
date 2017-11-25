@@ -17,7 +17,7 @@ data PackageWithEventsDTO = PackageWithEventsDTO
   , _pkgwedtoArtifactId :: String
   , _pkgwedtoVersion :: String
   , _pkgwedtoDescription :: String
-  , _pkgwedtoParentPackage :: Maybe PackageWithEventsDTO
+  , _pkgwedtoParentPackageId :: Maybe String
   , _pkgwedtoEvents :: [EventDTO]
   } deriving (Show, Eq)
 
@@ -31,7 +31,7 @@ instance FromJSON PackageWithEventsDTO where
     _pkgwedtoArtifactId <- o .: "artifactId"
     _pkgwedtoVersion <- o .: "version"
     _pkgwedtoDescription <- o .: "description"
-    _pkgwedtoParentPackage <- o .: "parentPackage"
+    _pkgwedtoParentPackageId <- o .: "parentPackageId"
     eventSerialized <- o .: "events"
     _pkgwedtoEvents <- parseJSON eventSerialized
     return PackageWithEventsDTO {..}
@@ -46,6 +46,6 @@ instance ToJSON PackageWithEventsDTO where
       , "artifactId" .= _pkgwedtoArtifactId
       , "version" .= _pkgwedtoVersion
       , "description" .= _pkgwedtoDescription
-      , "parentPackage" .= _pkgwedtoParentPackage
+      , "parentPackageId" .= _pkgwedtoParentPackageId
       , "events" .= toJSON _pkgwedtoEvents
       ]

@@ -12,7 +12,7 @@ data Package = Package
   , _pkgArtifactId :: String
   , _pkgVersion :: String
   , _pkgDescription :: String
-  , _pkgParentPackage :: Maybe Package
+  , _pkgParentPackageId :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data PackageWithEvents = PackageWithEvents
@@ -22,7 +22,7 @@ data PackageWithEvents = PackageWithEvents
   , _pkgweArtifactId :: String
   , _pkgweVersion :: String
   , _pkgweDescription :: String
-  , _pkgweParentPackage :: Maybe PackageWithEvents
+  , _pkgweParentPackageId :: Maybe String
   , _pkgweEvents :: [Event]
   } deriving (Show, Eq, Generic)
 

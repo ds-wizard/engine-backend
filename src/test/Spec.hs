@@ -21,6 +21,8 @@ import Specs.API.PackageAPISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
+import Specs.Common.UtilsSpec
+import Specs.Model.KnowledgeModel.KnowledgeModelSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
@@ -52,7 +54,9 @@ main =
     (\context dspConfig ->
        hspec $ do
          describe "UNIT TESTING" $ do
+           commonUtilsSpec
            applicatorSpec
+           knowledgeModelSpec
            migratorSpec
            organizationServiceSpec
            branchServiceSpec

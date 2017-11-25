@@ -180,7 +180,7 @@ data EditAnswerEventDTO = EditAnswerEventDTO
   , _eansdtoAnswerUuid :: UUID
   , _eansdtoLabel :: Maybe String
   , _eansdtoAdvice :: Maybe (Maybe String)
-  , _eansdtoFollowingIds :: Maybe [UUID]
+  , _eansdtoFollowUpIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEventDTO = DeleteAnswerEventDTO
@@ -437,7 +437,7 @@ instance FromJSON AddQuestionEventDTO where
     _aqdtoKmUuid <- o .: "kmUuid"
     _aqdtoChapterUuid <- o .: "chapterUuid"
     _aqdtoQuestionUuid <- o .: "questionUuid"
-    _aqdtoShortQuestionUuid <- o .: "shortuid"
+    _aqdtoShortQuestionUuid <- o .: "shortUuid"
     _aqdtoType <- o .: "type"
     _aqdtoTitle <- o .: "title"
     _aqdtoText <- o .: "text"
@@ -452,7 +452,7 @@ instance ToJSON AddQuestionEventDTO where
       , "kmUuid" .= _aqdtoKmUuid
       , "chapterUuid" .= _aqdtoChapterUuid
       , "questionUuid" .= _aqdtoQuestionUuid
-      , "shortuid" .= _aqdtoShortQuestionUuid
+      , "shortUuid" .= _aqdtoShortQuestionUuid
       , "type" .= _aqdtoType
       , "title" .= _aqdtoTitle
       , "text" .= _aqdtoText
@@ -464,11 +464,11 @@ instance FromJSON EditQuestionEventDTO where
     _eqdtoKmUuid <- o .: "kmUuid"
     _eqdtoChapterUuid <- o .: "chapterUuid"
     _eqdtoQuestionUuid <- o .: "questionUuid"
-    _eqdtoShortQuestionUuid <- o .: "shortuid"
+    _eqdtoShortQuestionUuid <- o .: "shortUuid"
     _eqdtoType <- o .: "type"
     _eqdtoTitle <- o .: "title"
     _eqdtoText <- o .: "text"
-    _eqdtoAnswerIds <- o .: "answeIds"
+    _eqdtoAnswerIds <- o .: "answerIds"
     _eqdtoExpertIds <- o .: "expertIds"
     _eqdtoReferenceIds <- o .: "referenceIds"
     return EditQuestionEventDTO {..}
@@ -482,11 +482,11 @@ instance ToJSON EditQuestionEventDTO where
       , "kmUuid" .= _eqdtoKmUuid
       , "chapterUuid" .= _eqdtoChapterUuid
       , "questionUuid" .= _eqdtoQuestionUuid
-      , "shortuid" .= _eqdtoShortQuestionUuid
+      , "shortUuid" .= _eqdtoShortQuestionUuid
       , "type" .= _eqdtoType
       , "title" .= _eqdtoTitle
       , "text" .= _eqdtoText
-      , "answeIds" .= _eqdtoAnswerIds
+      , "answerIds" .= _eqdtoAnswerIds
       , "expertIds" .= _eqdtoExpertIds
       , "referenceIds" .= _eqdtoReferenceIds
       ]
@@ -547,7 +547,7 @@ instance FromJSON EditAnswerEventDTO where
     _eansdtoAnswerUuid <- o .: "answerUuid"
     _eansdtoLabel <- o .: "label"
     _eansdtoAdvice <- o .: "advice"
-    _eansdtoFollowingIds <- o .: "followingIds"
+    _eansdtoFollowUpIds <- o .: "followUpIds"
     return EditAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -562,7 +562,7 @@ instance ToJSON EditAnswerEventDTO where
       , "answerUuid" .= _eansdtoAnswerUuid
       , "label" .= _eansdtoLabel
       , "advice" .= _eansdtoAdvice
-      , "followingIds" .= _eansdtoFollowingIds
+      , "followUpIds" .= _eansdtoFollowUpIds
       ]
 
 instance FromJSON DeleteAnswerEventDTO where

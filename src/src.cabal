@@ -93,16 +93,15 @@ library
       Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
-      Database.Migration.KnowledgeModel.BranchMigration
-      Database.Migration.KnowledgeModel.Data.Event.Event
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Chapters
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Common
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Experts
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.KnowledgeModels
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.Questions
-      Database.Migration.KnowledgeModel.Data.KnowledgeModel.References
+      Database.Migration.Branch.BranchMigration
+      Database.Migration.Branch.Data.Event.Event
+      Database.Migration.Branch.Data.KnowledgeModel
+      Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+      Database.Migration.Branch.Data.KnowledgeModel.Chapters
+      Database.Migration.Branch.Data.KnowledgeModel.Experts
+      Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+      Database.Migration.Branch.Data.KnowledgeModel.Questions
+      Database.Migration.Branch.Data.KnowledgeModel.References
       Database.Migration.Migration
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.Data.Package
@@ -132,7 +131,7 @@ library
       Model.Event.Reference.DeleteReferenceEvent
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
-      Model.Migrator.MigrationState
+      Model.Migrator.MigratorState
       Model.Organization.Organization
       Model.Package.Package
       Model.User.User
@@ -145,10 +144,8 @@ library
       Service.KnowledgeModel.KnowledgeModelMapper
       Service.KnowledgeModel.KnowledgeModelService
       Service.Migrator.Applicator
-      Service.Migrator.Methods.ChoiceMethod
-      Service.Migrator.Methods.Common
-      Service.Migrator.Methods.DiffTreeMethod
-      Service.Migrator.Methods.NoConflictMethod
+      Service.Migrator.Methods.CleanerMethod
+      Service.Migrator.Methods.CorrectorMethod
       Service.Migrator.Migrator
       Service.Organization.OrganizationMapper
       Service.Organization.OrganizationService
@@ -252,12 +249,10 @@ test-suite hspec
       Fixtures.Event.Events
       Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
       Fixtures.KnowledgeModel.Chapters
-      Fixtures.KnowledgeModel.Common
       Fixtures.KnowledgeModel.Experts
       Fixtures.KnowledgeModel.KnowledgeModels
       Fixtures.KnowledgeModel.Questions
       Fixtures.KnowledgeModel.References
-      Fixtures.Migrator.MigrationState
       Specs.API.BranchAPISpec
       Specs.API.Common
       Specs.API.EventAPISpec
@@ -268,10 +263,10 @@ test-suite hspec
       Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
+      Specs.Common.UtilsSpec
+      Specs.Model.KnowledgeModel.KnowledgeModelSpec
       Specs.Service.Branch.BranchServiceSpec
       Specs.Service.Migrator.ApplicatorSpec
-      Specs.Service.Migrator.Method.ChoiceMethodSpec
-      Specs.Service.Migrator.Method.NoConflictMethodSpec
       Specs.Service.Migrator.MigratorSpec
       Specs.Service.Organization.OrganizationServiceSpec
       Specs.Service.Package.PackageServiceSpec

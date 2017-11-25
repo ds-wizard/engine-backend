@@ -1,10 +1,10 @@
-module Database.Migration.KnowledgeModel.Data.KnowledgeModel.KnowledgeModels where
+module Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels where
 
 import Control.Lens
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.Chapters
+import Database.Migration.Branch.Data.KnowledgeModel.Chapters
 import Model.KnowledgeModel.KnowledgeModel
 
 km1 :: KnowledgeModel

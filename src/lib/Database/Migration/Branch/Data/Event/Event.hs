@@ -1,15 +1,15 @@
-module Database.Migration.KnowledgeModel.Data.Event.Event where
+module Database.Migration.Branch.Data.Event.Event where
 
 import Control.Lens
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.Chapters
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.Experts
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.Questions
-import Database.Migration.KnowledgeModel.Data.KnowledgeModel.References
+import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+import Database.Migration.Branch.Data.KnowledgeModel.Chapters
+import Database.Migration.Branch.Data.KnowledgeModel.Experts
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+import Database.Migration.Branch.Data.KnowledgeModel.Questions
+import Database.Migration.Branch.Data.KnowledgeModel.References
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
@@ -301,7 +301,7 @@ e_km1_ch1_q2_aYes1 =
   , _eansAnswerUuid = answerYes1 ^. ansUuid
   , _eansLabel = Just $ answerYes1Changed ^. ansLabel
   , _eansAdvice = Just $ answerYes1Changed ^. ansAdvice
-  , _eansFollowingIds = Just $ ansFollowingIds answerYes1Changed
+  , _eansFollowUpIds = Just $ ansFollowUpIds answerYes1Changed
   }
 
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent
@@ -507,7 +507,7 @@ d_km1_ch1_q2_rCh2 =
 --import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
 --import Model.Event.Chapter.AddChapterEvent
 --import Model.Event.Question.AddQuestionEvent
---import Database.Migration.KnowledgeModel.Data.KnowledgeModel
+--import Database.Migration.Branch.Data.KnowledgeModel
 --addChapter1 = AddChapterEvent
 --  { _achUuid = fromJust (U.fromString "73209e91-4b3a-426c-9b92-145015e2346c")
 --  , _achKmUuid = akm ^. akmUuid

@@ -1,7 +1,8 @@
 module Specs.Service.Branch.BranchServiceSpec where
 
 import Data.Maybe
-import Test.Hspec
+import Test.Hspec hiding (shouldBe)
+import Test.Hspec.Expectations.Pretty
 
 import Service.Branch.BranchService
 

@@ -15,7 +15,7 @@ data EditAnswerEvent = EditAnswerEvent
   , _eansAnswerUuid :: UUID
   , _eansLabel :: Maybe String
   , _eansAdvice :: Maybe (Maybe String)
-  , _eansFollowingIds :: Maybe [UUID]
+  , _eansFollowUpIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 makeLenses ''EditAnswerEvent

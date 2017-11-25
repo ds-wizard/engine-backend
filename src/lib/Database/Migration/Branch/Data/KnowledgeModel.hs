@@ -1,4 +1,4 @@
-module Database.Migration.KnowledgeModel.Data.KnowledgeModel where
+module Database.Migration.Branch.Data.KnowledgeModel where
 
 import Data.Maybe
 import qualified Data.UUID as U

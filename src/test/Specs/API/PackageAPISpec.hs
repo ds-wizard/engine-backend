@@ -36,7 +36,7 @@ packageAPI context dspConfig = do
         , _pkgdtoArtifactId = "core"
         , _pkgdtoVersion = "0.0.1"
         , _pkgdtoDescription = "Beta version"
-        , _pkgdtoParentPackage = Nothing
+        , _pkgdtoParentPackageId = Nothing
         }
   let dto2 =
         PackageDTO
@@ -46,7 +46,7 @@ packageAPI context dspConfig = do
         , _pkgdtoArtifactId = "core"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
-        , _pkgdtoParentPackage = Nothing
+        , _pkgdtoParentPackageId = Nothing
         }
   let dto3 =
         PackageDTO
@@ -56,9 +56,9 @@ packageAPI context dspConfig = do
         , _pkgdtoArtifactId = "core-nl"
         , _pkgdtoVersion = "1.0.0"
         , _pkgdtoDescription = "First Release"
-        , _pkgdtoParentPackage = Just dto2
+        , _pkgdtoParentPackageId = Just $ dto2 ^. pkgdtoId
         }
-  with (startWebApp context dspConfig) $ do
+  with (startWebApp context dspConfig) $
     describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /packages

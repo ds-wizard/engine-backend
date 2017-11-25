@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 
 import Common.Context
 import Database.DAO.Package.PackageDAO
-import Database.Migration.KnowledgeModel.Data.Event.Event
+import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Package.Data.Package
 import Model.Event.Event
 import Service.Package.PackageMapper

@@ -21,7 +21,7 @@ packageToDTO package =
   , _pkgdtoArtifactId = package ^. pkgArtifactId
   , _pkgdtoVersion = package ^. pkgVersion
   , _pkgdtoDescription = package ^. pkgDescription
-  , _pkgdtoParentPackage = packageToDTO <$> (package ^. pkgParentPackage)
+  , _pkgdtoParentPackageId = package ^. pkgParentPackageId
   }
 
 packageToSimpleDTO :: Package -> PackageSimpleDTO
@@ -41,7 +41,7 @@ packageWithEventsToDTO package =
   , _pkgdtoArtifactId = package ^. pkgweArtifactId
   , _pkgdtoVersion = package ^. pkgweVersion
   , _pkgdtoDescription = package ^. pkgweDescription
-  , _pkgdtoParentPackage = packageWithEventsToDTO <$> (package ^. pkgweParentPackage)
+  , _pkgdtoParentPackageId = package ^. pkgweParentPackageId
   }
 
 packageWithEventsToDTOWithEvents :: PackageWithEvents -> PackageWithEventsDTO
@@ -53,7 +53,7 @@ packageWithEventsToDTOWithEvents package =
   , _pkgwedtoArtifactId = package ^. pkgweArtifactId
   , _pkgwedtoVersion = package ^. pkgweVersion
   , _pkgwedtoDescription = package ^. pkgweDescription
-  , _pkgwedtoParentPackage = packageWithEventsToDTOWithEvents <$> (package ^. pkgweParentPackage)
+  , _pkgwedtoParentPackageId = package ^. pkgweParentPackageId
   , _pkgwedtoEvents = toDTOs (package ^. pkgweEvents)
   }
 
@@ -66,7 +66,7 @@ fromDTO dto =
   , _pkgArtifactId = dto ^. pkgdtoArtifactId
   , _pkgVersion = dto ^. pkgdtoVersion
   , _pkgDescription = dto ^. pkgdtoDescription
-  , _pkgParentPackage = fromDTO <$> (dto ^. pkgdtoParentPackage)
+  , _pkgParentPackageId = dto ^. pkgdtoParentPackageId
   }
 
 fromDTOWithEvents :: PackageWithEventsDTO -> PackageWithEvents
@@ -78,19 +78,12 @@ fromDTOWithEvents dto =
   , _pkgweArtifactId = dto ^. pkgwedtoArtifactId
   , _pkgweVersion = dto ^. pkgwedtoVersion
   , _pkgweDescription = dto ^. pkgwedtoDescription
-  , _pkgweParentPackage = fromDTOWithEvents <$> (dto ^. pkgwedtoParentPackage)
+  , _pkgweParentPackageId = dto ^. pkgwedtoParentPackageId
   , _pkgweEvents = fromDTOs (dto ^. pkgwedtoEvents)
   }
 
-buildPackage :: String
-             -> String
-             -> String
-             -> String
-             -> String
-             -> Maybe PackageWithEvents
-             -> [Event]
-             -> PackageWithEvents
-buildPackage name groupId artifactId version description maybeParentPackage events =
+buildPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> PackageWithEvents
+buildPackage name groupId artifactId version description maybeParentPackageId events =
   PackageWithEvents
   { _pkgweId = groupId ++ ":" ++ artifactId ++ ":" ++ version
   , _pkgweName = name
@@ -98,6 +91,6 @@ buildPackage name groupId artifactId version description maybeParentPackage even
   , _pkgweArtifactId = artifactId
   , _pkgweVersion = version
   , _pkgweDescription = description
-  , _pkgweParentPackage = maybeParentPackage
+  , _pkgweParentPackageId = maybeParentPackageId
   , _pkgweEvents = events
   }

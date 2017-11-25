@@ -15,7 +15,7 @@ answerNo1 =
   { _ansUuid = fromJust $ U.fromString "33da0831-11dd-4faa-b754-41ed98dedcb5"
   , _ansLabel = "No"
   , _ansAdvice = Just "Super long advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerNo2 :: Answer
@@ -24,7 +24,7 @@ answerNo2 =
   { _ansUuid = fromJust $ U.fromString "12711c8c-193a-4baf-a071-53f2d3990083"
   , _ansLabel = "No"
   , _ansAdvice = Just "Super long advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerNo3 :: Answer
@@ -33,7 +33,7 @@ answerNo3 =
   { _ansUuid = fromJust $ U.fromString "8ebf2494-80c7-4dbb-a4a1-a14d3387abc0"
   , _ansLabel = "No"
   , _ansAdvice = Just "Super long advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerNo4 :: Answer
@@ -42,7 +42,7 @@ answerNo4 =
   { _ansUuid = fromJust $ U.fromString "891ebfe2-27df-433c-af83-03bb26fa2764"
   , _ansLabel = "No"
   , _ansAdvice = Just "Super long advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerYes1 :: Answer
@@ -51,7 +51,7 @@ answerYes1 =
   { _ansUuid = fromJust $ U.fromString "d6fb1eb3-3bef-4aac-8491-def68f40ac78"
   , _ansLabel = "Yes"
   , _ansAdvice = Just "Short advice"
-  , _ansFollowing = [followUpQuestion1]
+  , _ansFollowUps = [followUpQuestion1]
   }
 
 answerYes1Changed :: Answer
@@ -60,7 +60,7 @@ answerYes1Changed =
   { _ansUuid = answerYes1 ^. ansUuid
   , _ansLabel = "EDITED: Yes"
   , _ansAdvice = Just "EDITED: Short advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerYes2 :: Answer
@@ -69,7 +69,7 @@ answerYes2 =
   { _ansUuid = fromJust $ U.fromString "28d49dbe-4180-49c9-80b2-397e9ea27c77"
   , _ansLabel = "Yes"
   , _ansAdvice = Just "Short advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerYes3 :: Answer
@@ -78,7 +78,7 @@ answerYes3 =
   { _ansUuid = fromJust $ U.fromString "4d164317-d900-460c-8582-8c80e6d66dcd"
   , _ansLabel = "Yes"
   , _ansAdvice = Just "Short advice"
-  , _ansFollowing = [followUpQuestion2]
+  , _ansFollowUps = [followUpQuestion2]
   }
 
 answerYes4 :: Answer
@@ -87,7 +87,7 @@ answerYes4 =
   { _ansUuid = fromJust $ U.fromString "b6b40918-a9b7-4d2d-bacb-9f9aa5683efe"
   , _ansLabel = "Yes"
   , _ansAdvice = Just "Short advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 answerMaybe :: Answer
@@ -96,7 +96,7 @@ answerMaybe =
   { _ansUuid = fromJust $ U.fromString "1f172f5e-3d66-4a1c-a785-85ba02fcf72a"
   , _ansLabel = "Maybe"
   , _ansAdvice = Just "Great advice"
-  , _ansFollowing = []
+  , _ansFollowUps = []
   }
 
 -- -----------------------------------------------------------------
@@ -113,7 +113,6 @@ followUpQuestion1 =
   Question
   { _qUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
   , _qShortUuid = Just "followUpQuestion1"
- -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "First Follow-Up Question"
   , _qText = "Maybe there will be some description"
@@ -127,7 +126,6 @@ followUpQuestion1Plain =
   Question
   { _qUuid = followUpQuestion1 ^. qUuid
   , _qShortUuid = followUpQuestion1 ^. qShortUuid
- -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Fourth Question"
   , _qText = "Just follow"
@@ -141,7 +139,6 @@ followUpQuestion2 =
   Question
   { _qUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
   , _qShortUuid = Just "followUpQuestion2"
- -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Second Follow-Up Question"
   , _qText = "Again just follow"
@@ -155,7 +152,6 @@ followUpQuestion2Changed =
   Question
   { _qUuid = followUpQuestion2 ^. qUuid
   , _qShortUuid = followUpQuestion2 ^. qShortUuid
- -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "EDITED: Second Follow-Up Question"
   , _qText = "EDITED: Again just follow"
@@ -169,7 +165,6 @@ followUpQuestion3 =
   Question
   { _qUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
   , _qShortUuid = Just "followUpQuestion3"
-   -- , _qGroupId = FC.groupIdCore
   , _qType = fuqTypeOption
   , _qTitle = "Third Follow-Up Question"
   , _qText = "Again and again just follow"

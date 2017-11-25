@@ -17,8 +17,6 @@ data KnowledgeModelDTO = KnowledgeModelDTO
 
 data ChapterDTO = ChapterDTO
   { _chdtoUuid :: UUID
-  , _chdtoGroupId :: String
-  , _chdtoFormatVersion :: Int
   , _chdtoTitle :: String
   , _chdtoText :: String
   , _chdtoQuestions :: [QuestionDTO]
@@ -39,7 +37,7 @@ data AnswerDTO = AnswerDTO
   { _ansdtoUuid :: UUID
   , _ansdtoLabel :: String
   , _ansdtoAdvice :: Maybe String
-  , _ansdtoFollowing :: [QuestionDTO]
+  , _ansdtoFollowUps :: [QuestionDTO]
   } deriving (Show, Eq)
 
 data ExpertDTO = ExpertDTO
@@ -70,14 +68,7 @@ instance ToJSON KnowledgeModelDTO where
 
 instance ToJSON ChapterDTO where
   toJSON ChapterDTO {..} =
-    object
-      [ "uuid" .= _chdtoUuid
-      , "groupId" .= _chdtoGroupId
-      , "formatVersion" .= _chdtoFormatVersion
-      , "title" .= _chdtoTitle
-      , "text" .= _chdtoText
-      , "questions" .= _chdtoQuestions
-      ]
+    object ["uuid" .= _chdtoUuid, "title" .= _chdtoTitle, "text" .= _chdtoText, "questions" .= _chdtoQuestions]
 
 instance ToJSON QuestionDTO where
   toJSON QuestionDTO {..} =
@@ -94,10 +85,64 @@ instance ToJSON QuestionDTO where
 
 instance ToJSON AnswerDTO where
   toJSON AnswerDTO {..} =
-    object ["uuid" .= _ansdtoUuid, "label" .= _ansdtoLabel, "advice" .= _ansdtoAdvice, "following" .= _ansdtoFollowing]
+    object ["uuid" .= _ansdtoUuid, "label" .= _ansdtoLabel, "advice" .= _ansdtoAdvice, "followUps" .= _ansdtoFollowUps]
 
 instance ToJSON ExpertDTO where
   toJSON ExpertDTO {..} = object ["uuid" .= _expdtoUuid, "name" .= _expdtoName, "email" .= _expdtoEmail]
 
 instance ToJSON ReferenceDTO where
   toJSON ReferenceDTO {..} = object ["uuid" .= _refdtoUuid, "chapter" .= _refdtoChapter]
+
+instance FromJSON KnowledgeModelDTO where
+  parseJSON (Object o) = do
+    _kmdtoUuid <- o .: "uuid"
+    _kmdtoName <- o .: "name"
+    _kmdtoChapters <- o .: "chapters"
+    return KnowledgeModelDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ChapterDTO where
+  parseJSON (Object o) = do
+    _chdtoUuid <- o .: "uuid"
+    _chdtoTitle <- o .: "title"
+    _chdtoText <- o .: "text"
+    _chdtoQuestions <- o .: "questions"
+    return ChapterDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON QuestionDTO where
+  parseJSON (Object o) = do
+    _qdtoUuid <- o .: "uuid"
+    _qdtoShortUuid <- o .: "shortUuid"
+    _qdtoType <- o .: "type"
+    _qdtoTitle <- o .: "title"
+    _qdtoText <- o .: "text"
+    _qdtoReferences <- o .: "answers"
+    _qdtoAnswers <- o .: "references"
+    _qdtoExperts <- o .: "experts"
+    return QuestionDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON AnswerDTO where
+  parseJSON (Object o) = do
+    _ansdtoUuid <- o .: "uuid"
+    _ansdtoLabel <- o .: "label"
+    _ansdtoAdvice <- o .: "advice"
+    _ansdtoFollowUps <- o .: "followUps"
+    return AnswerDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ExpertDTO where
+  parseJSON (Object o) = do
+    _expdtoUuid <- o .: "uuid"
+    _expdtoName <- o .: "name"
+    _expdtoEmail <- o .: "email"
+    return ExpertDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ReferenceDTO where
+  parseJSON (Object o) = do
+    _refdtoUuid <- o .: "uuid"
+    _refdtoChapter <- o .: "chapter"
+    return ReferenceDTO {..}
+  parseJSON _ = mzero

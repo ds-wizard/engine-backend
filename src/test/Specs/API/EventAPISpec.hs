@@ -27,9 +27,8 @@ import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.User.UserDAO
-import qualified Database.Migration.KnowledgeModel.BranchMigration
-       as KMC
-import Database.Migration.KnowledgeModel.Data.Event.Event
+import qualified Database.Migration.Branch.BranchMigration as KMC
+import Database.Migration.Branch.Data.Event.Event
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
 import Model.Event.Event

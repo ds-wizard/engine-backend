@@ -1,4 +1,4 @@
-module Database.Migration.KnowledgeModel.BranchMigration where
+module Database.Migration.Branch.BranchMigration where
 
 import Control.Lens
 import Data.Maybe
@@ -8,17 +8,17 @@ import Api.Resources.Branch.BranchDTO
 import Common.Context
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.Migration.KnowledgeModel.Data.Event.Event
+import Database.Migration.Branch.Data.Event.Event
 import Model.Event.Event
 import Service.Branch.BranchService
-import Service.Event.EventService
+import Service.KnowledgeModel.KnowledgeModelService
 
 runMigration context dspConfig logState = do
   logState "MIGRATION (KnowledgeModel/Branch): started"
   deleteBranches context
   let branch =
         BranchDTO
-        { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+        { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
         , _bdtoName = "Amsterdam KM"
         , _bdtoArtifactId = "amsterdam-km"
         , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"

@@ -16,7 +16,7 @@ data PackageDTO = PackageDTO
   , _pkgdtoArtifactId :: String
   , _pkgdtoVersion :: String
   , _pkgdtoDescription :: String
-  , _pkgdtoParentPackage :: Maybe PackageDTO
+  , _pkgdtoParentPackageId :: Maybe String
   } deriving (Show, Eq)
 
 makeLenses ''PackageDTO
@@ -30,5 +30,5 @@ instance ToJSON PackageDTO where
       , "artifactId" .= _pkgdtoArtifactId
       , "version" .= _pkgdtoVersion
       , "description" .= _pkgdtoDescription
-      , "parentPackge" .= _pkgdtoParentPackage
+      , "parentPackageId" .= _pkgdtoParentPackageId
       ]

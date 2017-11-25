@@ -24,4 +24,6 @@ fromDTO dto =
   , _bName = dto ^. bdtoName
   , _bArtifactId = dto ^. bdtoArtifactId
   , _bParentPackageId = dto ^. bdtoParentPackageId
+  , _bLastAppliedParentPackageId = Nothing
+  , _bLastMergeCheckpointPackageId = Nothing
   }

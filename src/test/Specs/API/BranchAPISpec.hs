@@ -5,6 +5,7 @@ import Data.Aeson
 import Data.Aeson (Value(..), object, (.=))
 import Data.ByteString.Lazy
 import Data.Either
+import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
@@ -17,11 +18,10 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Data.Foldable
-
 import Api.Resources.Branch.BranchDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
+import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
 import Service.Branch.BranchService
 
@@ -79,6 +79,7 @@ branchAPI context dspConfig = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -137,6 +138,27 @@ branchAPI context dspConfig = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
+        it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $ do
+          let reqDto =
+                BranchDTO
+                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _bdtoName = "Amsterdam KM"
+                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoParentPackageId = Just "elixir.nl:core-nl:9.9.9"
+                }
+          let reqBody = encode reqDto
+          liftIO $ createBranch context reqDto
+          -- GIVEN: Prepare expectation
+          let expStatus = 400
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto = createErrorWithFieldError ("parentPackageId", "Parent package doesn't exist")
+          let expBody = encode expDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+          response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
       -- ------------------------------------------------------------------------
@@ -172,9 +194,9 @@ branchAPI context dspConfig = do
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
-      -- ------------------------------------------------------------------------
-      -- PUT /branches/{branchId}
-      -- ------------------------------------------------------------------------
+       ------------------------------------------------------------------------
+       -- PUT /branches/{branchId}
+       ------------------------------------------------------------------------
       describe "PUT /branches/{branchId}" $
         -- GIVEN: Prepare request
        do

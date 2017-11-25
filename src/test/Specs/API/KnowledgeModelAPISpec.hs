@@ -21,8 +21,7 @@ import Api.Resources.Branch.BranchDTO
 import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import qualified Database.Migration.KnowledgeModel.BranchMigration
-       as KMC
+import qualified Database.Migration.Branch.BranchMigration as KMC
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
 import Model.Event.Event

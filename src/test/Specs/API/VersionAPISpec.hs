@@ -21,8 +21,7 @@ import qualified Web.Scotty as S
 import Api.Resources.Package.PackageDTO
 import Api.Resources.Version.VersionDTO
 import Common.Error
-import qualified Database.Migration.KnowledgeModel.BranchMigration
-       as KMC
+import qualified Database.Migration.Branch.BranchMigration as B
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Service.Package.PackageService
 
@@ -45,7 +44,7 @@ versionAPI context dspConfig =
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
           liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -60,7 +59,7 @@ versionAPI context dspConfig =
                 , _pkgdtoArtifactId = "amsterdam-km"
                 , _pkgdtoVersion = "1.0.0"
                 , _pkgdtoDescription = reqDto ^. vdtoDescription
-                , _pkgdtoParentPackage = Just parentPackage
+                , _pkgdtoParentPackageId = Just $ parentPackage ^. pkgdtoId
                 }
           let expBody = encode expDto
           -- WHEN: Call API
@@ -82,7 +81,7 @@ versionAPI context dspConfig =
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
           liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -105,7 +104,7 @@ versionAPI context dspConfig =
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
           liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ createPackageFromKMC context "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc"
           -- GIVEN: Prepare expectation
           let expStatus = 400

@@ -16,6 +16,8 @@ instance ToBSON Branch where
     , "name" BSON.=: (branch ^. bName)
     , "artifactId" BSON.=: (branch ^. bArtifactId)
     , "parentPackageId" BSON.=: (branch ^. bParentPackageId)
+    , "lastAppliedParentPackageId" BSON.=: (branch ^. bLastAppliedParentPackageId)
+    , "lastMergeCheckpointPackageId" BSON.=: (branch ^. bLastMergeCheckpointPackageId)
     ]
 
 instance FromBSON Branch where
@@ -24,4 +26,14 @@ instance FromBSON Branch where
     name <- BSON.lookup "name" doc
     artifactId <- BSON.lookup "artifactId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
-    return Branch {_bUuid = uuid, _bName = name, _bArtifactId = artifactId, _bParentPackageId = parentPackageId}
+    lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
+    lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
+    return
+      Branch
+      { _bUuid = uuid
+      , _bName = name
+      , _bArtifactId = artifactId
+      , _bParentPackageId = parentPackageId
+      , _bLastAppliedParentPackageId = lastAppliedParentPackageId
+      , _bLastMergeCheckpointPackageId = lastMergeCheckpointPackageId
+      }

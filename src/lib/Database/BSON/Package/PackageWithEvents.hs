@@ -9,7 +9,6 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Database.BSON.Event.Answer
-import Database.BSON.Event.Answer
 import Database.BSON.Event.Chapter
 import Database.BSON.Event.Common
 import Database.BSON.Event.Expert
@@ -28,7 +27,7 @@ instance ToBSON PackageWithEvents where
     , "artifactId" BSON.=: (package ^. pkgweArtifactId)
     , "version" BSON.=: (package ^. pkgweVersion)
     , "description" BSON.=: (package ^. pkgweDescription)
-    , "parentPackage" BSON.=: (package ^. pkgweParentPackage)
+    , "parentPackageId" BSON.=: (package ^. pkgweParentPackageId)
     , "events" BSON.=: convertEventToBSON <$> (package ^. pkgweEvents)
     ]
 
@@ -40,7 +39,7 @@ instance FromBSON PackageWithEvents where
     artifactId <- BSON.lookup "artifactId" doc
     version <- BSON.lookup "version" doc
     description <- BSON.lookup "description" doc
-    parentPackage <- BSON.lookup "parentPackage" doc
+    parentPackageId <- BSON.lookup "parentPackageId" doc
     eventsSerialized <- BSON.lookup "events" doc
     let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
     return
@@ -51,6 +50,6 @@ instance FromBSON PackageWithEvents where
       , _pkgweArtifactId = artifactId
       , _pkgweVersion = version
       , _pkgweDescription = description
-      , _pkgweParentPackage = parentPackage
+      , _pkgweParentPackageId = parentPackageId
       , _pkgweEvents = events
       }

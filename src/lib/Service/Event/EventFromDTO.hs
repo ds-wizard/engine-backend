@@ -158,7 +158,7 @@ instance EventFromDTO EditAnswerEventDTO where
       , _eansAnswerUuid = dto ^. eansdtoAnswerUuid
       , _eansLabel = dto ^. eansdtoLabel
       , _eansAdvice = dto ^. eansdtoAdvice
-      , _eansFollowingIds = dto ^. eansdtoFollowingIds
+      , _eansFollowUpIds = dto ^. eansdtoFollowUpIds
       }
 
 instance EventFromDTO DeleteAnswerEventDTO where

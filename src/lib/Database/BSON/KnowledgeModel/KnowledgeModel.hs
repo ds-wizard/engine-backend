@@ -30,8 +30,6 @@ instance FromBSON KnowledgeModel where
 instance ToBSON Chapter where
   toBSON model =
     [ "uuid" BSON.=: toString (model ^. chUuid)
-    , "groupId" BSON.=: (model ^. chGroupId)
-    , "formatVersion" BSON.=: (model ^. chFormatVersion)
     , "title" BSON.=: (model ^. chTitle)
     , "text" BSON.=: (model ^. chText)
     , "questions" BSON.=: (model ^. chQuestions)
@@ -41,20 +39,10 @@ instance FromBSON Chapter where
   fromBSON doc = do
     uuidS <- BSON.lookup "uuid" doc
     uuid <- fromString uuidS
-    groupId <- BSON.lookup "groupId" doc
-    formatVersion <- BSON.lookup "formatVersion" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
     questions <- BSON.lookup "questions" doc
-    return
-      Chapter
-      { _chUuid = uuid
-      , _chGroupId = groupId
-      , _chFormatVersion = formatVersion
-      , _chTitle = title
-      , _chText = text
-      , _chQuestions = questions
-      }
+    return Chapter {_chUuid = uuid, _chTitle = title, _chText = text, _chQuestions = questions}
 
 -- -------------------------
 -- QUESTION ----------------
@@ -102,7 +90,7 @@ instance ToBSON Answer where
     [ "uuid" BSON.=: toString (model ^. ansUuid)
     , "label" BSON.=: (model ^. ansLabel)
     , "advice" BSON.=: (model ^. ansAdvice)
-    , "following" BSON.=: (model ^. ansFollowing)
+    , "followUps" BSON.=: (model ^. ansFollowUps)
     ]
 
 instance FromBSON Answer where
@@ -111,8 +99,8 @@ instance FromBSON Answer where
     uuid <- fromString uuidS
     label <- BSON.lookup "label" doc
     advice <- BSON.lookup "advice" doc
-    following <- BSON.lookup "following" doc
-    return Answer {_ansUuid = uuid, _ansLabel = label, _ansAdvice = advice, _ansFollowing = following}
+    followUps <- BSON.lookup "followUps" doc
+    return Answer {_ansUuid = uuid, _ansLabel = label, _ansAdvice = advice, _ansFollowUps = followUps}
 
 -- -------------------------
 -- EXPERT ------------------

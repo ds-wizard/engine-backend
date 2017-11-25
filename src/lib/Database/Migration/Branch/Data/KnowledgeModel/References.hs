@@ -1,4 +1,4 @@
-module Database.Migration.KnowledgeModel.Data.KnowledgeModel.References where
+module Database.Migration.Branch.Data.KnowledgeModel.References where
 
 import Control.Lens
 import Data.Maybe
