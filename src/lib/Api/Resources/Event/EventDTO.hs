@@ -437,7 +437,7 @@ instance FromJSON AddQuestionEventDTO where
     _aqdtoKmUuid <- o .: "kmUuid"
     _aqdtoChapterUuid <- o .: "chapterUuid"
     _aqdtoQuestionUuid <- o .: "questionUuid"
-    _aqdtoShortQuestionUuid <- o .: "shortUuid"
+    _aqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
     _aqdtoType <- o .: "type"
     _aqdtoTitle <- o .: "title"
     _aqdtoText <- o .: "text"
@@ -452,7 +452,7 @@ instance ToJSON AddQuestionEventDTO where
       , "kmUuid" .= _aqdtoKmUuid
       , "chapterUuid" .= _aqdtoChapterUuid
       , "questionUuid" .= _aqdtoQuestionUuid
-      , "shortUuid" .= _aqdtoShortQuestionUuid
+      , "shortQuestionUuid" .= _aqdtoShortQuestionUuid
       , "type" .= _aqdtoType
       , "title" .= _aqdtoTitle
       , "text" .= _aqdtoText
@@ -464,7 +464,7 @@ instance FromJSON EditQuestionEventDTO where
     _eqdtoKmUuid <- o .: "kmUuid"
     _eqdtoChapterUuid <- o .: "chapterUuid"
     _eqdtoQuestionUuid <- o .: "questionUuid"
-    _eqdtoShortQuestionUuid <- o .: "shortUuid"
+    _eqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
     _eqdtoType <- o .: "type"
     _eqdtoTitle <- o .: "title"
     _eqdtoText <- o .: "text"
@@ -482,7 +482,7 @@ instance ToJSON EditQuestionEventDTO where
       , "kmUuid" .= _eqdtoKmUuid
       , "chapterUuid" .= _eqdtoChapterUuid
       , "questionUuid" .= _eqdtoQuestionUuid
-      , "shortUuid" .= _eqdtoShortQuestionUuid
+      , "shortQuestionUuid" .= _eqdtoShortQuestionUuid
       , "type" .= _eqdtoType
       , "title" .= _eqdtoTitle
       , "text" .= _eqdtoText
