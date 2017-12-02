@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import Api.Resources.User.UserCreateDTO
 import Common.Context
 import Database.DAO.Branch.BranchDAO
+import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
 import Model.Organization.Organization
@@ -34,4 +35,5 @@ resetDB context dspConfig = do
     , _orgGroupId = "elixir.nl.amsterdam"
     }
   deleteBranches context
+  deleteMigratorStates context
   return ()

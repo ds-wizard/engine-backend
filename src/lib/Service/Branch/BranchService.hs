@@ -9,23 +9,42 @@ import Data.UUID as U
 import Text.Regex
 
 import Api.Resources.Branch.BranchDTO
+import Api.Resources.Branch.BranchWithStateDTO
 import Common.Context
 import Common.Error
 import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
+import Database.DAO.KnowledgeModel.KnowledgeModelDAO
+import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
+import Model.Branch.BranchState
+import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
 import Service.KnowledgeModel.KnowledgeModelService
+import Service.Package.PackageService
 
-getBranches :: Context -> IO (Either AppError [BranchDTO])
+getBranches :: Context -> IO (Either AppError [BranchWithStateDTO])
 getBranches context = do
   eitherBranches <- findBranches context
   case eitherBranches of
-    Right branches -> return . Right . fmap toDTO $ branches
+    Right branches -> toDTOs branches
     Left error -> return . Left $ error
+  where
+    toDTOs :: [Branch] -> IO (Either AppError [BranchWithStateDTO])
+    toDTOs = Prelude.foldl foldBranch (return . Right $ [])
+    foldBranch :: IO (Either AppError [BranchWithStateDTO]) -> Branch -> IO (Either AppError [BranchWithStateDTO])
+    foldBranch eitherDtosIO branch = do
+      eitherDtos <- eitherDtosIO
+      case eitherDtos of
+        Right dtos -> do
+          eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
+          case eitherBranchState of
+            Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState]
+            Left error -> return . Left $ error
+        Left error -> return . Left $ error
 
 createBranch :: Context -> BranchDTO -> IO (Either AppError BranchDTO)
 createBranch context branchDto =
@@ -34,9 +53,11 @@ createBranch context branchDto =
     let branch = fromDTO branchDto
     insertBranch context branch
     insertEventsToBranch context (U.toString $ branch ^. bUuid) []
+    updateKnowledgeModelByBranchId context (U.toString $ branch ^. bUuid) Nothing
     eitherKm <- recompileKnowledgeModel context (U.toString $ branch ^. bUuid)
+    updateMigrationInfoIfParentPackageIdPresent branch
     case eitherKm of
-      Right _ -> return . Right . toDTO $ branch
+      Right km -> return . Right . toDTO $ branch
       Left error -> return . Left $ error
   where
     validateArtifactId branchDto callback = do
@@ -56,12 +77,22 @@ createBranch context branchDto =
             Right _ -> callback
             Left error -> return . Left $ createErrorWithFieldError ("parentPackageId", "Parent package doesn't exist")
         Nothing -> callback
+    updateMigrationInfoIfParentPackageIdPresent branch = do
+      let branchUuid = U.toString $ branch ^. bUuid
+      let eitherParentPackageId = branch ^. bParentPackageId
+      case eitherParentPackageId of
+        Just parentPackageId -> updateBranchWithMigrationInfo context branchUuid parentPackageId parentPackageId
+        Nothing -> return ()
 
-getBranchById :: Context -> String -> IO (Either AppError BranchDTO)
+getBranchById :: Context -> String -> IO (Either AppError BranchWithStateDTO)
 getBranchById context branchUuid = do
   eitherBranch <- findBranchById context branchUuid
   case eitherBranch of
-    Right branch -> return . Right . toDTO $ branch
+    Right branch -> do
+      eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
+      case eitherBranchState of
+        Right branchState -> return . Right $ toWithStateDTO branch branchState
+        Left error -> return . Left $ error
     Left error -> return . Left $ error
 
 modifyBranch :: Context -> String -> BranchDTO -> IO (Either AppError BranchDTO)
@@ -103,3 +134,37 @@ isValidArtifactId artifactId =
     else Just $ createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"
+
+getBranchState :: Context -> String -> IO (Either AppError BranchState)
+getBranchState context branchUuid =
+  getIsMigrating $ \isMigrating ->
+    if isMigrating
+      then return . Right $ BSMigrating
+      else getBranch $ \branch ->
+             if isEditing branch
+               then return . Right $ BSEdited
+               else getIsOutdated branch $ \isOutdated ->
+                      if isOutdated
+                        then return . Right $ BSOutdated
+                        else return . Right $ BSDefault
+  where
+    getIsMigrating callback = do
+      eitherMs <- findMigratorStateByBranchUuid context branchUuid
+      case eitherMs of
+        Right _ -> callback True
+        Left (NotExistsError _) -> callback False
+        Left error -> return . Left $ error
+    isEditing branch = Prelude.length (branch ^. bweEvents) > 0
+    getIsOutdated branch callback =
+      case branch ^. bweLastAppliedParentPackageId of
+        Just lastAppliedParentPackageId -> do
+          eitherNewerPackages <- getNewerPackages context lastAppliedParentPackageId
+          case eitherNewerPackages of
+            Right newerPackages -> callback $ Prelude.length newerPackages > 0
+            Left error -> return . Left $ error
+        Nothing -> return . Left $ MigratorError "You can't migrate if you don't have parent"
+    getBranch callback = do
+      eitherBranch <- findBranchWithEventsById context branchUuid
+      case eitherBranch of
+        Right branch -> callback branch
+        Left error -> return . Left $ error

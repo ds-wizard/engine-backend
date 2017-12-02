@@ -19,13 +19,13 @@ import Database.DAO.Common
 import Model.Branch.Branch
 import Model.KnowledgeModel.KnowledgeModel
 
-findKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError BranchWithKM)
-findKnowledgeModelByBranchId context branchUuid = do
+findBranchWithKMByBranchId :: Context -> String -> IO (Either AppError BranchWithKM)
+findBranchWithKMByBranchId context branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
-  maybeKMS <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return . deserializeMaybeEntity $ maybeKMS
+  maybeBranchWithKMS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeMaybeEntity $ maybeBranchWithKMS
 
-updateKnowledgeModelByBranchId :: Context -> String -> KnowledgeModel -> IO ()
+updateKnowledgeModelByBranchId :: Context -> String -> Maybe KnowledgeModel -> IO ()
 updateKnowledgeModelByBranchId context branchUuid km = do
-  let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["knowledgeModel" =: (toBSON km)]]
+  let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["knowledgeModel" =: (km)]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

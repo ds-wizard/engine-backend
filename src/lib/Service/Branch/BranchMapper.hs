@@ -5,8 +5,10 @@ import Data.Aeson
 import Data.UUID (UUID)
 
 import Api.Resources.Branch.BranchDTO
+import Api.Resources.Branch.BranchWithStateDTO
 import Common.Types
 import Model.Branch.Branch
+import Model.Branch.BranchState
 
 toDTO :: Branch -> BranchDTO
 toDTO branch =
@@ -15,6 +17,16 @@ toDTO branch =
   , _bdtoName = branch ^. bName
   , _bdtoArtifactId = branch ^. bArtifactId
   , _bdtoParentPackageId = branch ^. bParentPackageId
+  }
+
+toWithStateDTO :: Branch -> BranchState -> BranchWithStateDTO
+toWithStateDTO branch state =
+  BranchWithStateDTO
+  { _bwsdtoUuid = branch ^. bUuid
+  , _bwsdtoName = branch ^. bName
+  , _bwsdtoArtifactId = branch ^. bArtifactId
+  , _bwsdtoParentPackageId = branch ^. bParentPackageId
+  , _bwsdtoState = state
   }
 
 fromDTO :: BranchDTO -> Branch

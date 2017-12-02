@@ -26,6 +26,7 @@ import Model.Package.Package
 import Service.Package.PackageService
 
 import Specs.API.Common
+import Specs.Common
 
 packageAPI context dspConfig = do
   let dto1 =
@@ -58,6 +59,16 @@ packageAPI context dspConfig = do
         , _pkgdtoDescription = "First Release"
         , _pkgdtoParentPackageId = Just $ dto2 ^. pkgdtoId
         }
+  let dto4 =
+        PackageDTO
+        { _pkgdtoId = "elixir.nl:core-nl:2.0.0"
+        , _pkgdtoName = "Elixir Netherlands"
+        , _pkgdtoGroupId = "elixir.nl"
+        , _pkgdtoArtifactId = "core-nl"
+        , _pkgdtoVersion = "2.0.0"
+        , _pkgdtoDescription = "Second Release"
+        , _pkgdtoParentPackageId = Just $ dto3 ^. pkgdtoId
+        }
   with (startWebApp context dspConfig) $
     describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
@@ -76,7 +87,7 @@ packageAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = [dto1, dto2, dto3]
+          let expDto = [dto1, dto2, dto3, dto4]
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

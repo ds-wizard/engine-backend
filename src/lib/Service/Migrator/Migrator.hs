@@ -1,90 +1,17 @@
 module Service.Migrator.Migrator where
 
-import Control.Lens ((^.), (&), (.~), makeLenses)
+import Control.Lens
 import Data.Either
 import Data.Maybe
-import qualified Data.UUID as U
 
-import Common.Context
+import Api.Resources.Migrator.MigratorConflictDTO
 import Common.Error
-import Database.DAO.Branch.BranchDAO
-import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import Database.DAO.Package.PackageDAO
-import Model.Branch.Branch
 import Model.Event.Event
-import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
-import Model.Package.Package
-import Service.Branch.BranchService
+import Service.Event.EventMapper
 import Service.Migrator.Applicator
 import Service.Migrator.Methods.CleanerMethod
 import Service.Migrator.Methods.CorrectorMethod
-import Service.Package.PackageService
-
-createMigration :: Context -> String -> String -> IO (Either AppError MigratorState)
-createMigration context branchId targetPackageId =
-  getBranch branchId $ \branch ->
-    getTargetParentPackage targetPackageId $ \targetParentPackage ->
-      getBranchEvents branch $ \branchEvents ->
-        getTargetParentEvents targetPackageId branch $ \targetPackageEvents ->
-          getParentPackageId branch $ \branchId -> do
-            let km = branch ^. bwkmKM
-            return . Right $ createMigratorStateWithEvents targetPackageId branchId branchEvents targetPackageEvents km
-  where
-    getBranch branchId callback = do
-      eitherBranch <- findKnowledgeModelByBranchId context branchId
-      case eitherBranch of
-        Right branch -> callback branch
-        Left (NotExistsError _) -> return . Left . MigratorError $ "Source branch does not exist"
-        Left error -> return . Left $ error
-    getTargetParentPackage targetPackageId callback = do
-      eitherTargetParentPackage <- findPackageWithEventsById context targetPackageId
-      case eitherTargetParentPackage of
-        Right targetParentPackage -> callback targetParentPackage
-        Left (NotExistsError _) -> return . Left . MigratorError $ "Target parent package does not exist"
-        Left error -> return . Left $ error
-    getBranchEvents branch callback =
-      getParentPackageId branch $ \parentPackageId ->
-        getLastMergeCheckpointPackageId branch $ \lastMergeCheckpointPackageId -> do
-          let since = parentPackageId
-          let until = lastMergeCheckpointPackageId
-          eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId context since until
-          case eitherEvents of
-            Right events -> callback events
-            Left error -> return . Left $ error
-    getParentPackageId branch callback =
-      case branch ^. bwkmParentPackageId of
-        Just parentPackageId -> callback parentPackageId
-        Nothing -> return . Left . MigratorError $ "Branch has to have a parent"
-    getLastMergeCheckpointPackageId branch callback =
-      case branch ^. bwkmLastMergeCheckpointPackageId of
-        Just lastMergeCheckpointPackageId -> callback lastMergeCheckpointPackageId
-        Nothing -> return . Left . MigratorError $ "Branch has to have merge checkpoint"
-    getTargetParentEvents targetPackageId branch callback =
-      getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
-        let since = targetPackageId
-        let until = lastAppliedParentPackageId
-        eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId context since until
-        case eitherEvents of
-          Right events -> callback events
-          Left error -> return . Left $ error
-    getLastAppliedParentPackageId branch callback =
-      case branch ^. bwkmLastAppliedParentPackageId of
-        Just lastAppliedParentPackageId -> callback lastAppliedParentPackageId
-        Nothing ->
-          return . Left . MigratorError $
-          "Branch has to have checkpoint what was last parent package which was merged in"
-
-createMigratorStateWithEvents :: String -> String -> [Event] -> [Event] -> Maybe KnowledgeModel -> MigratorState
-createMigratorStateWithEvents branchParentId targetPackageId branchEvents targetPackageEvents mKm =
-  MigratorState
-  { _msMigrationState = RunningState
-  , _msBranchParentId = branchParentId
-  , _msTargetPackageId = targetPackageId
-  , _msBranchEvents = branchEvents
-  , _msTargetPackageEvents = targetPackageEvents
-  , _msCurrentKnowledgeModel = mKm
-  }
 
 doMigrate :: MigratorState -> Event -> MigratorState
 doMigrate state event =
@@ -103,3 +30,29 @@ migrate state =
     ConflictState _ -> state
     ErrorState _ -> state
     CompletedState -> state
+
+solveConflictAndMigrate :: MigratorState -> MigratorConflictDTO -> MigratorState
+solveConflictAndMigrate state mcDto =
+  case mcDto ^. mcdtoAction of
+    MCAApply ->
+      let events = tail . getModifiedEvents $ state
+          targetEvent = head $ state ^. msTargetPackageEvents
+      in migrate . createNewKm targetEvent . toRunningState . updateEvents events $ state
+    MCAEdited ->
+      let events = tail . getModifiedEvents $ state
+          targetEvent = fromDTOFn . fromJust $ mcDto ^. mcdtoEvent
+      in migrate . createNewKm targetEvent . toRunningState . updateEvents events $ state
+    MCAReject ->
+      let events = tail . getModifiedEvents $ state
+      in migrate . toRunningState . updateEvents events $ state
+  where
+    getModifiedEvents newState = newState ^. msTargetPackageEvents
+    toRunningState newState = newState & msMigrationState .~ RunningState
+    updateEvents events newState = newState & msTargetPackageEvents .~ events
+    createNewKm event newState =
+      let eitherNewKm = runApplicator (newState ^. msCurrentKnowledgeModel) [event]
+      in if isRight eitherNewKm
+           then let (Right newKm) = eitherNewKm
+                in newState & msCurrentKnowledgeModel .~ (Just newKm)
+           else let (Left error) = eitherNewKm
+                in newState & msMigrationState .~ (ErrorState error)

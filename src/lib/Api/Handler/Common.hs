@@ -80,6 +80,9 @@ sendError (NotExistsError errorMessage) = do
 sendError (DatabaseError errorMessage) = do
   Scotty.status internalServerError500
   sendJson $ DatabaseError errorMessage
+sendError (MigratorError errorMessage) = do
+  Scotty.status badRequest400
+  sendJson $ MigratorError errorMessage
 
 unauthorizedA :: Scotty.ActionM ()
 unauthorizedA = do

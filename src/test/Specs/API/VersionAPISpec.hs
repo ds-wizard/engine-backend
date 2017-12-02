@@ -26,6 +26,7 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import Service.Package.PackageService
 
 import Specs.API.Common
+import Specs.Common
 
 versionAPI context dspConfig =
   with (startWebApp context dspConfig) $ do

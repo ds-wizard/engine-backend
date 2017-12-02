@@ -19,17 +19,23 @@ import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Api.Resources.Branch.BranchDTO
+import Api.Resources.Branch.BranchWithStateDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
+import Database.DAO.Package.PackageDAO
+import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
+import Model.Branch.BranchState
+import Model.Package.Package
 import Service.Branch.BranchService
 
 import Specs.API.Common
+import Specs.Common
 
 branchAPI context dspConfig = do
   with (startWebApp context dspConfig) $ do
-    describe "KNOWLEDGE MODEL CONTAINER API Spec" $
+    describe "BRANCH API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches
       -- ------------------------------------------------------------------------
@@ -41,18 +47,27 @@ branchAPI context dspConfig = do
         let reqUrl = "/branches"
         it "HTTP 200 OK" $ do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          -- GIVEN: Prepare expectation
+          -- AND: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
+                BranchWithStateDTO
+                { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _bwsdtoName = "Amsterdam KM"
+                , _bwsdtoArtifactId = "amsterdam-km"
+                , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bwsdtoState = BSDefault
+                }
+          let expBody = encode [expDto]
+          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
+          let branch =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context expDto
-          let expBody = encode [expDto]
+          liftIO $ createBranch context branch
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- AND: Compare response with expetation
@@ -177,13 +192,22 @@ branchAPI context dspConfig = do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
+                BranchWithStateDTO
+                { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _bwsdtoName = "Amsterdam KM"
+                , _bwsdtoArtifactId = "amsterdam-km"
+                , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bwsdtoState = BSDefault
+                }
+          let branch =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context expDto
+          liftIO $ createBranch context branch
+          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

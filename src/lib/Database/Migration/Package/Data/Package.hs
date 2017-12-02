@@ -29,3 +29,13 @@ elixirNlPackageDto =
     "First Release"
     (Just $ baseElixirPackageDto ^. pkgweId)
     [AddChapterEvent' a_km1_ch1]
+
+elixirNlPackage2Dto =
+  buildPackage
+    "Elixir Netherlands"
+    "elixir.nl"
+    "core-nl"
+    "2.0.0"
+    "Second Release"
+    (Just $ elixirNlPackageDto ^. pkgweId)
+    [AddChapterEvent' a_km1_ch2]

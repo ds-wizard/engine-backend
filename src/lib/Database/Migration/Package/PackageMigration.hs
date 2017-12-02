@@ -17,4 +17,5 @@ runMigration context dspConfig logState = do
   insertPackage context baseElixir0PackageDto
   insertPackage context baseElixirPackageDto
   insertPackage context elixirNlPackageDto
+  insertPackage context elixirNlPackage2Dto
   logState "MIGRATION (Package/Package): ended"

@@ -34,7 +34,7 @@ createEvents :: Context -> String -> [EventDTO] -> IO (Either AppError [EventDTO
 createEvents context branchUuid eventsCreateDto = do
   eitherBranch <- getBranchById context branchUuid
   case eitherBranch of
-    Right branch -> do
+    Right _ -> do
       let events = fromDTOs eventsCreateDto
       insertEventsToBranch context branchUuid events
       recompileKnowledgeModel context branchUuid
@@ -45,7 +45,7 @@ deleteEvents :: Context -> String -> IO (Maybe AppError)
 deleteEvents context branchUuid = do
   eitherBranch <- getBranchById context branchUuid
   case eitherBranch of
-    Right branch -> do
+    Right _ -> do
       deleteEventAtBranch context branchUuid
       recompileKnowledgeModel context branchUuid
       return Nothing

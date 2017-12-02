@@ -29,6 +29,7 @@ import Model.User.User
 import Service.User.UserService
 
 import Specs.API.Common
+import Specs.Common
 
 userAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
@@ -58,7 +59,7 @@ userAPI context dspConfig =
                       [ "UM_PERM"
                       , "ORG_PERM"
                       , "KM_PERM"
-                      , "KM_UPGADE_PERM"
+                      , "KM_UPGRADE_PERM"
                       , "KM_PUBLISH_PERM"
                       , "PM_PERM"
                       , "WIZ_PERM"
@@ -108,7 +109,7 @@ userAPI context dspConfig =
                     [ "UM_PERM"
                     , "ORG_PERM"
                     , "KM_PERM"
-                    , "KM_UPGADE_PERM"
+                    , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
                     , "WIZ_PERM"
@@ -183,7 +184,7 @@ userAPI context dspConfig =
                     [ "UM_PERM"
                     , "ORG_PERM"
                     , "KM_PERM"
-                    , "KM_UPGADE_PERM"
+                    , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
                     , "WIZ_PERM"
@@ -224,7 +225,7 @@ userAPI context dspConfig =
                     [ "UM_PERM"
                     , "ORG_PERM"
                     , "KM_PERM"
-                    , "KM_UPGADE_PERM"
+                    , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
                     , "WIZ_PERM"
@@ -258,7 +259,7 @@ userAPI context dspConfig =
                 , _udtoSurname = "EDITED: Doe"
                 , _udtoEmail = "EDITED: john.doe@example.com"
                 , _udtoRole = "ADMIN"
-                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -305,7 +306,7 @@ userAPI context dspConfig =
                 , _udtoSurname = "EDITED: Doe"
                 , _udtoEmail = "john.doe@example.com"
                 , _udtoRole = "ADMIN"
-                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
                 }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
@@ -336,7 +337,7 @@ userAPI context dspConfig =
               , _udtoSurname = "EDITED: Doe"
               , _udtoEmail = "darth.vader@deathstar.com"
               , _udtoRole = "ADMIN"
-              , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+              , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -385,7 +386,7 @@ userAPI context dspConfig =
                 , _udtoSurname = "EDITED: Doe"
                 , _udtoEmail = "darth.vader@deathstar.com"
                 , _udtoRole = "ADMIN"
-                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGADE_PERM"]
+                , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
                 }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation

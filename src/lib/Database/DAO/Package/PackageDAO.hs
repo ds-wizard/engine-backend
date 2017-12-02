@@ -33,12 +33,6 @@ findPackagesFiltered context queryParams = do
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackagesWitParams :: Context -> IO (Either AppError [Package])
-findPackagesWitParams context = do
-  let action = rest =<< find (select [] pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return . deserializeEntities $ packagesS
-
 findPackageById :: Context -> String -> IO (Either AppError Package)
 findPackageById context pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
@@ -81,5 +75,5 @@ deletePackagesFiltered context queryParams = do
 
 deletePackageById :: Context -> String -> IO ()
 deletePackageById context pkgId = do
-  let action = deleteOne $ select ["id" =: pkgId] pkgCollection
+  let action = delete $ select ["id" =: pkgId] pkgCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)

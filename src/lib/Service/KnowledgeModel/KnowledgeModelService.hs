@@ -13,6 +13,7 @@ import Common.Error
 import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
+import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
@@ -25,7 +26,7 @@ import Service.Package.PackageService
 
 getKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError KnowledgeModelDTO)
 getKnowledgeModelByBranchId context branchUuid = do
-  eitherBranchWithKm <- findKnowledgeModelByBranchId context branchUuid
+  eitherBranchWithKm <- findBranchWithKMByBranchId context branchUuid
   case eitherBranchWithKm of
     Right branchWithKm -> do
       let mKm = branchWithKm ^. bwkmKM
@@ -41,7 +42,7 @@ recompileKnowledgeModel context branchUuid =
       let eitherNewKM = runApplicator Nothing events
       case eitherNewKM of
         Right newKM -> do
-          updateKnowledgeModelByBranchId context branchUuid newKM
+          updateKnowledgeModelByBranchId context branchUuid (Just newKM)
           return . Right $ newKM
         Left error -> return . Left $ error
   where

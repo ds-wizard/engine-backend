@@ -2,6 +2,9 @@ module Common.Utils where
 
 import qualified Data.Text as T
 
+tuplify2 :: [a] -> (a, a)
+tuplify2 [x, y] = (x, y)
+
 switchMaybeAndList :: [Maybe a] -> Maybe [a]
 switchMaybeAndList = foldl go (Just [])
   where

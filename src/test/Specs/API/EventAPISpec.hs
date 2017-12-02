@@ -40,6 +40,7 @@ import Service.Migrator.Applicator
 
 import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common
+import Specs.Common
 
 eventAPI context dspConfig = do
   let events =
@@ -114,7 +115,7 @@ eventAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           let expBody = reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
@@ -154,7 +155,7 @@ eventAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -188,7 +189,7 @@ eventAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
           eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findKnowledgeModelByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals reqBody}

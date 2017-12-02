@@ -22,6 +22,7 @@ import Api.Resources.Token.TokenDTO
 import Common.Error
 
 import Specs.API.Common
+import Specs.Common
 
 tokenAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
@@ -44,7 +45,7 @@ tokenAPI context dspConfig =
           let expDto =
                 TokenDTO
                 { _tdtoToken =
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1BFUk0iLCJXSVpfUEVSTSIsIkRNUF9QRVJNIl19.uXOhszvkNi7BKMqVMAQMlTK3BAfhfD58Zdiwiz_U1Z8"
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiV0laX1BFUk0iLCJETVBfUEVSTSJdfQ.BFBXG8gjJeqt3i-hKzsp10_ePM5st34vuJqiYeNwyu4"
                 }
           let expBody = encode expDto
           -- WHEN: Call API

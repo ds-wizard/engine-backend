@@ -16,6 +16,7 @@ import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
 import Specs.API.InfoAPISpec
 import Specs.API.KnowledgeModelAPISpec
+import Specs.API.MigratorAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
 import Specs.API.TokenAPISpec
@@ -63,12 +64,15 @@ main =
            packageServiceSpec
          before (resetDB context dspConfig) $
            describe "INTEGRATION TESTING" $ do
-             infoAPI context dspConfig
-             tokenAPI context dspConfig
-             organizationAPI context dspConfig
-             userAPI context dspConfig
-             branchAPI context dspConfig
-             knowledgeModelAPI context dspConfig
-             eventAPI context dspConfig
-             versionAPI context dspConfig
-             packageAPI context dspConfig)
+             describe "Service tests" $ branchServiceIntegrationSpec context dspConfig
+             describe "API Tests" $ do
+               infoAPI context dspConfig
+               tokenAPI context dspConfig
+               organizationAPI context dspConfig
+               userAPI context dspConfig
+               branchAPI context dspConfig
+               knowledgeModelAPI context dspConfig
+               eventAPI context dspConfig
+               versionAPI context dspConfig
+               packageAPI context dspConfig
+               migratorAPI context dspConfig)

@@ -38,6 +38,7 @@ import Fixtures.KnowledgeModel.KnowledgeModels
 import Fixtures.KnowledgeModel.Questions
 import Fixtures.KnowledgeModel.References
 import Specs.API.Common
+import Specs.Common
 
 knowledgeModelAPI context dspConfig =
   with (startWebApp context dspConfig) $ do

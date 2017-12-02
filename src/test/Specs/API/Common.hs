@@ -33,7 +33,7 @@ startWebApp context dspConfig = S.scottyApp (createEndpoints context dspConfig)
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1BFUk0iLCJXSVpfUEVSTSIsIkRNUF9QRVJNIl19.uXOhszvkNi7BKMqVMAQMlTK3BAfhfD58Zdiwiz_U1Z8")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiV0laX1BFUk0iLCJETVBfUEVSTSJdfQ.BFBXG8gjJeqt3i-hKzsp10_ePM5st34vuJqiYeNwyu4")
 
 reqAuthHeaderWithoutPerms :: DSPConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms dspConfig perm =
@@ -153,6 +153,3 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-
-fakeLogState :: String -> IO ()
-fakeLogState _ = return ()

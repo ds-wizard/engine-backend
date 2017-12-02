@@ -5,7 +5,7 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
 import Database.MongoDB
-       (find, findOne, select, insert, fetch, save, merge, delete,
+       (find, findOne, select, insert, fetch, save, merge, delete, modify,
         deleteOne, (=:), rest)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
@@ -37,12 +37,6 @@ findBranchByArtifactId context artifactId = do
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 
-findBranchWithEventsById :: Context -> String -> IO (Either AppError BranchWithEvents)
-findBranchWithEventsById context branchUuid = do
-  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
-  maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
-  return . deserializeMaybeEntity $ maybeBranchS
-
 insertBranch :: Context -> Branch -> IO Value
 insertBranch context branch = do
   let action = insert branchCollection (toBSON branch)
@@ -52,6 +46,18 @@ updateBranchById :: Context -> Branch -> IO ()
 updateBranchById context branch = do
   let action =
         fetch (select ["uuid" =: (branch ^. bUuid)] branchCollection) >>= save branchCollection . merge (toBSON branch)
+  runMongoDBPoolDef action (context ^. ctxDbPool)
+
+updateBranchWithMigrationInfo :: Context -> String -> String -> String -> IO ()
+updateBranchWithMigrationInfo context branchUuid lastAppliedParentPackageId lastMergeCheckpointPackageId = do
+  let action =
+        modify
+          (select ["uuid" =: branchUuid] branchCollection)
+          [ "$set" =:
+            [ "lastAppliedParentPackageId" =: lastAppliedParentPackageId
+            , "lastMergeCheckpointPackageId" =: lastMergeCheckpointPackageId
+            ]
+          ]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteBranches :: Context -> IO ()

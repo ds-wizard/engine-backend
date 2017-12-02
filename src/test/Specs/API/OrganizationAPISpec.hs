@@ -25,6 +25,7 @@ import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
 import Specs.API.Common
+import Specs.Common
 
 organizationAPI context dspConfig =
   with (startWebApp context dspConfig) $ do

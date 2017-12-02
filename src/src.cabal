@@ -37,6 +37,7 @@ library
       Api.Handler.Info.InfoHandler
       Api.Handler.IO.IOHandler
       Api.Handler.KnowledgeModel.KnowledgeModelHandler
+      Api.Handler.Migrator.MigratorHandler
       Api.Handler.Organization.OrganizationHandler
       Api.Handler.Package.PackageHandler
       Api.Handler.Token.TokenHandler
@@ -45,10 +46,15 @@ library
       Api.Middleware.Auth
       Api.Middleware.CORS
       Api.Resources.Branch.BranchDTO
+      Api.Resources.Branch.BranchWithStateDTO
       Api.Resources.Error.ErrorDTO
       Api.Resources.Event.EventDTO
       Api.Resources.Info.InfoDTO
       Api.Resources.KnowledgeModel.KnowledgeModelDTO
+      Api.Resources.Migrator.Common
+      Api.Resources.Migrator.MigratorConflictDTO
+      Api.Resources.Migrator.MigratorStateCreateDTO
+      Api.Resources.Migrator.MigratorStateDTO
       Api.Resources.Organization.OrganizationDTO
       Api.Resources.Package.PackageDTO
       Api.Resources.Package.PackageSimpleDTO
@@ -81,6 +87,7 @@ library
       Database.BSON.Event.Question
       Database.BSON.Event.Reference
       Database.BSON.KnowledgeModel.KnowledgeModel
+      Database.BSON.Migrator.MigratorState
       Database.BSON.Organization.Organization
       Database.BSON.Package.Package
       Database.BSON.Package.PackageWithEvents
@@ -90,6 +97,7 @@ library
       Database.DAO.Common
       Database.DAO.Event.EventDAO
       Database.DAO.KnowledgeModel.KnowledgeModelDAO
+      Database.DAO.Migrator.MigratorDAO
       Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
       Database.DAO.User.UserDAO
@@ -108,6 +116,7 @@ library
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
       Model.Branch.Branch
+      Model.Branch.BranchState
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -147,6 +156,8 @@ library
       Service.Migrator.Methods.CleanerMethod
       Service.Migrator.Methods.CorrectorMethod
       Service.Migrator.Migrator
+      Service.Migrator.MigratorMapper
+      Service.Migrator.MigratorService
       Service.Organization.OrganizationMapper
       Service.Organization.OrganizationService
       Service.Package.PackageMapper
@@ -258,11 +269,13 @@ test-suite hspec
       Specs.API.EventAPISpec
       Specs.API.InfoAPISpec
       Specs.API.KnowledgeModelAPISpec
+      Specs.API.MigratorAPISpec
       Specs.API.OrganizationAPISpec
       Specs.API.PackageAPISpec
       Specs.API.TokenAPISpec
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
+      Specs.Common
       Specs.Common.UtilsSpec
       Specs.Model.KnowledgeModel.KnowledgeModelSpec
       Specs.Service.Branch.BranchServiceSpec

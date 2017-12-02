@@ -9,6 +9,7 @@ import Api.Handler.Event.EventHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
+import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
@@ -67,6 +68,10 @@ createEndpoints context dspConfig
   post "/branches/:branchUuid/events/_bulk" (postEventsA context dspConfig)
   delete "/branches/:branchUuid/events" (deleteEventsA context dspConfig)
   put "/branches/:branchUuid/versions/:version" (putVersionA context dspConfig)
+  get "/branches/:branchUuid/migrations/current" (getMigrationsCurrentA context dspConfig)
+  post "/branches/:branchUuid/migrations/current" (postMigrationsCurrentA context dspConfig)
+  delete "/branches/:branchUuid/migrations/current" (deleteMigrationsCurrentA context dspConfig)
+  post "/branches/:branchUuid/migrations/current/conflict" (postMigrationsCurrentConflictA context dspConfig)
    --------------------
    -- PACKAGES
    --------------------

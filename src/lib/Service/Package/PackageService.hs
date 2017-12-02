@@ -7,7 +7,6 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
 import Data.Maybe
-import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.UUID as U
@@ -23,6 +22,7 @@ import Common.Error
 import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
+import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
 import Model.Event.Event
@@ -138,7 +138,7 @@ importPackage context fileContent = do
     Left error -> return . Left . createErrorWithErrorMessage $ error
 
 deletePackagesByQueryParams :: Context -> [(Text, Text)] -> IO ()
-deletePackagesByQueryParams context queryParams = deletePackagesFiltered context queryParams
+deletePackagesByQueryParams = deletePackagesFiltered
 
 deletePackage :: Context -> String -> IO (Maybe AppError)
 deletePackage context pkgId = do
@@ -157,11 +157,9 @@ getTheNewestPackageByGroupIdAndArtifactId context groupId artifactId = do
       if length packages == 0
         then return . Right $ Nothing
         else do
-          let sorted = sortPackages packages
+          let sorted = sortPackagesByVersion packages
           return . Right . Just . head $ sorted
     Left error -> return . Left $ error
-  where
-    sortPackages packages = sortBy (\p1 p2 -> compareVersionNeg (p1 ^. pkgVersion) (p2 ^. pkgVersion)) packages
 
 getAllPreviousEventsSincePackageId :: Context -> String -> IO (Either AppError [Event])
 getAllPreviousEventsSincePackageId context pkgId = do
@@ -196,6 +194,21 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId context sincePkgId untilPkgI
                 Nothing -> return . Right $ package ^. pkgweEvents
             Left error -> return . Left $ error
 
+getNewerPackages :: Context -> String -> IO (Either AppError [Package])
+getNewerPackages context currentPkgId =
+  getPackages $ \packages -> do
+    let packagesWithHigherVersion = filter (\pkg -> isNothing $ isVersionHigher (pkg ^. pkgVersion) version) packages
+    return . Right . sortPackagesByVersion $ packagesWithHigherVersion
+  where
+    getPackages callback = do
+      eitherPackages <- findPackageByGroupIdAndArtifactId context groupId artifactId
+      case eitherPackages of
+        Right packages -> callback packages
+        Left error -> return . Left $ error
+    groupId = T.unpack $ splitPackageId currentPkgId !! 0
+    artifactId = T.unpack $ splitPackageId currentPkgId !! 1
+    version = T.unpack $ splitPackageId currentPkgId !! 2
+
 isVersionInValidFormat :: String -> Maybe AppError
 isVersionInValidFormat version =
   if isJust $ matchRegex validationRegex version
@@ -228,11 +241,20 @@ compareVersion versionA versionB =
             GT -> GT
             EQ -> EQ
   where
-    versionASplitted = T.splitOn "." (T.pack versionA)
-    versionBSplitted = T.splitOn "." (T.pack versionB)
+    versionASplitted = splitVersion versionA
+    versionBSplitted = splitVersion versionB
     versionAMajor = read . T.unpack $ (versionASplitted !! 0) :: Int
     versionAMinor = read . T.unpack $ (versionASplitted !! 1) :: Int
     versionAPatch = read . T.unpack $ (versionASplitted !! 2) :: Int
     versionBMajor = read . T.unpack $ (versionBSplitted !! 0) :: Int
     versionBMinor = read . T.unpack $ (versionBSplitted !! 1) :: Int
     versionBPatch = read . T.unpack $ (versionBSplitted !! 2) :: Int
+
+sortPackagesByVersion :: [Package] -> [Package]
+sortPackagesByVersion = sortBy (\p1 p2 -> compareVersionNeg (p1 ^. pkgVersion) (p2 ^. pkgVersion))
+
+splitPackageId :: String -> [Text]
+splitPackageId packageId = T.splitOn ":" (T.pack packageId)
+
+splitVersion :: String -> [Text]
+splitVersion version = T.splitOn "." (T.pack version)

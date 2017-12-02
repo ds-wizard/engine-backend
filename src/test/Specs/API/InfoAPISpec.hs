@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
 import Specs.API.Common
+import Specs.Common
 
 infoAPI context dspConfig =
   with (startWebApp context dspConfig) $ do
