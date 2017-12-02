@@ -41,8 +41,8 @@ insertEventsToBranch context branchUuid events = do
           ["$push" =: ["events" =: ["$each" =: (convertEventToBSON <$> events)]]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-deleteEventAtBranch :: Context -> String -> IO ()
-deleteEventAtBranch context branchUuid = do
+deleteEventsAtBranch :: Context -> String -> IO ()
+deleteEventsAtBranch context branchUuid = do
   let emptyEvents = convertEventToBSON <$> []
   let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["events" =: emptyEvents]]
   runMongoDBPoolDef action (context ^. ctxDbPool)

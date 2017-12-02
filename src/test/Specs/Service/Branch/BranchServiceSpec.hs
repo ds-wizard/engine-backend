@@ -42,7 +42,7 @@ branchServiceIntegrationSpec context dspConfig =
        do
         liftIO $ PKG.runMigration context dspConfig fakeLogState
         liftIO $ B.runMigration context dspConfig fakeLogState
-        liftIO $ deleteEventAtBranch context branchUuid
+        liftIO $ deleteEventsAtBranch context branchUuid
         liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
         -- AND: Prepare expectations
         let expState = BSDefault
@@ -85,7 +85,7 @@ branchServiceIntegrationSpec context dspConfig =
         liftIO $ PKG.runMigration context dspConfig fakeLogState
         liftIO $ B.runMigration context dspConfig fakeLogState
         liftIO $ insertPackage context elixirNlPackage2Dto
-        liftIO $ deleteEventAtBranch context branchUuid
+        liftIO $ deleteEventsAtBranch context branchUuid
         -- AND: Prepare expectations
         let expState = BSOutdated
         -- WHEN:
@@ -100,7 +100,7 @@ branchServiceIntegrationSpec context dspConfig =
         liftIO $ PKG.runMigration context dspConfig fakeLogState
         liftIO $ B.runMigration context dspConfig fakeLogState
         liftIO $ insertPackage context elixirNlPackage2Dto
-        liftIO $ deleteEventAtBranch context branchUuid
+        liftIO $ deleteEventsAtBranch context branchUuid
         let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
         liftIO $ createMigration context branchUuid migratorCreateDto
         -- AND: Prepare expectations

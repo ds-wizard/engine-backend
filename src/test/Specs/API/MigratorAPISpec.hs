@@ -81,7 +81,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
@@ -103,7 +103,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -142,7 +142,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -170,7 +170,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
@@ -190,7 +190,7 @@ migratorAPI context dspConfig = do
           -- AND: Prepare database
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
@@ -215,7 +215,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context (elixirNlPackage2Dto & pkgweVersion .~ "elixir.nl:core-nl:0.9.0")
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -271,7 +271,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
            -- WHEN: Call API
@@ -314,7 +314,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
@@ -349,7 +349,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
@@ -372,7 +372,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
@@ -393,7 +393,7 @@ migratorAPI context dspConfig = do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
           liftIO $ B.runMigration context dspConfig fakeLogState
           liftIO $ insertPackage context elixirNlPackage2Dto
-          liftIO $ deleteEventAtBranch context branchUuid
+          liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto

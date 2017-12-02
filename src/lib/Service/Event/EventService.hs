@@ -46,7 +46,7 @@ deleteEvents context branchUuid = do
   eitherBranch <- getBranchById context branchUuid
   case eitherBranch of
     Right _ -> do
-      deleteEventAtBranch context branchUuid
+      deleteEventsAtBranch context branchUuid
       recompileKnowledgeModel context branchUuid
       return Nothing
     Left error -> return . Just $ error

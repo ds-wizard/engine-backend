@@ -92,6 +92,7 @@ createPackageFromKMC context branchUuid version description =
         let events = branch ^. bweEvents
         let mPpId = branch ^. bweParentPackageId
         createdPackage <- createPackage context name groupId artifactId version description mPpId events
+        deleteEventsAtBranch context branchUuid
         return . Right $ createdPackage
   where
     validateVersionFormat version callback =
