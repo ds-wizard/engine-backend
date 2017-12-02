@@ -111,6 +111,7 @@ library
       Database.Migration.Branch.Data.KnowledgeModel.Questions
       Database.Migration.Branch.Data.KnowledgeModel.References
       Database.Migration.Migration
+      Database.Migration.Migrator.MigratorMigration
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.Data.Package
       Database.Migration.Package.PackageMigration
