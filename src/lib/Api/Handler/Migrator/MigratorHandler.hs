@@ -51,7 +51,7 @@ postMigrationsCurrentConflictA context dspConfig =
   checkPermission context "KM_UPGRADE_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"
-    maybeError <- liftIO $ solveConflict context branchUuid reqDto
+    maybeError <- liftIO $ solveConflictAndMigrate context branchUuid reqDto
     case maybeError of
       Nothing -> Scotty.status noContent204
       Just error -> sendError error

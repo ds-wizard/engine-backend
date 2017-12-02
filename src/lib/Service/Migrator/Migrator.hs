@@ -31,8 +31,8 @@ migrate state =
     ErrorState _ -> state
     CompletedState -> state
 
-solveConflictAndMigrate :: MigratorState -> MigratorConflictDTO -> MigratorState
-solveConflictAndMigrate state mcDto =
+solveConflict :: MigratorState -> MigratorConflictDTO -> MigratorState
+solveConflict state mcDto =
   case mcDto ^. mcdtoAction of
     MCAApply ->
       let events = tail . getModifiedEvents $ state

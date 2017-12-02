@@ -60,6 +60,14 @@ updateBranchWithMigrationInfo context branchUuid lastAppliedParentPackageId last
           ]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
+updateBranchWithParentPackageId :: Context -> String -> String -> IO ()
+updateBranchWithParentPackageId context branchUuid parentPackageId = do
+  let action =
+        modify
+          (select ["uuid" =: branchUuid] branchCollection)
+          [ "$set" =: [ "parentPackageId" =: parentPackageId] ]
+  runMongoDBPoolDef action (context ^. ctxDbPool)
+
 deleteBranches :: Context -> IO ()
 deleteBranches context = do
   let action = delete $ select [] branchCollection

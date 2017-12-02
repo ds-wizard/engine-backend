@@ -4,6 +4,7 @@ import Control.Lens ((^.), (&), (.~), makeLenses)
 import Data.Either
 import Data.Maybe
 import qualified Data.Text as T
+import qualified Data.UUID as U
 
 import Api.Resources.Migrator.MigratorConflictDTO
 import Api.Resources.Migrator.MigratorStateCreateDTO
@@ -51,8 +52,8 @@ createMigration context branchUuid mscDto = do
                   , _msTargetPackageEvents = targetPackageEvents
                   , _msCurrentKnowledgeModel = branch ^. bwkmKM
                   }
-            let migratedMs = migrate ms
-            insertMigratorState context migratedMs
+            insertMigratorState context ms
+            migratedMs <- migrateState context ms
             return . Right . toDTO $ migratedMs
   where
     getBranch branchUuid callback = do
@@ -121,16 +122,16 @@ deleteCurrentMigration context branchUuid = do
       return Nothing
     Left error -> return . Just $ error
 
-solveConflict :: Context -> String -> MigratorConflictDTO -> IO (Maybe AppError)
-solveConflict context branchUuid reqDto = do
+solveConflictAndMigrate :: Context -> String -> MigratorConflictDTO -> IO (Maybe AppError)
+solveConflictAndMigrate context branchUuid reqDto = do
   eitherMigratorState <- findMigratorStateByBranchUuid context branchUuid
   case eitherMigratorState of
     Right ms ->
       validateMigrationState ms $
       validateTargetPackageEvent ms $
       validateReqDto (ms ^. msMigrationState) reqDto $ do
-        let migratedMs = solveConflictAndMigrate ms reqDto
-        updateMigratorState context migratedMs
+        let stateWithSolvedConflicts = solveConflict ms reqDto
+        migrateState context stateWithSolvedConflicts
         return Nothing
     Left error -> return . Just $ error
   where
@@ -154,3 +155,19 @@ getMigrationState context branchUuid callback = do
   case eitherMigratorState of
     Right migrationState -> callback migrationState
     Left error -> return . Left $ error
+
+migrateState :: Context -> MigratorState -> IO MigratorState
+migrateState context ms = do
+  let migratedMs = migrate ms
+  if migratedMs ^. msMigrationState /= CompletedState
+  then do
+    updateMigratorState context migratedMs
+    return migratedMs
+  else do
+    let branchUuid = U.toString $ migratedMs ^. msBranchUuid
+    let branchParentId = migratedMs ^. msBranchParentId
+    let targetPackageId = migratedMs ^. msTargetPackageId
+    updateBranchWithMigrationInfo context branchUuid targetPackageId branchParentId
+    updateMigratorState context migratedMs
+    return migratedMs
+
