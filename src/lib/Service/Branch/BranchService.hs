@@ -24,6 +24,7 @@ import Model.Branch.BranchState
 import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
 import Service.KnowledgeModel.KnowledgeModelService
+import Service.Migrator.MigratorService
 import Service.Package.PackageService
 
 getBranches :: Context -> IO (Either AppError [BranchWithStateDTO])
@@ -124,6 +125,7 @@ deleteBranch context branchUuid = do
   case eitherBranch of
     Right branch -> do
       deleteBranchById context branchUuid
+      deleteCurrentMigration context branchUuid
       return Nothing
     Left error -> return . Just $ error
 
