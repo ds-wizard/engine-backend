@@ -50,6 +50,7 @@ createMigration context branchUuid mscDto = do
                   , _msTargetPackageId = targetPackageId
                   , _msBranchEvents = branchEvents
                   , _msTargetPackageEvents = targetPackageEvents
+                  , _msResultEvents = []
                   , _msCurrentKnowledgeModel = branch ^. bwkmKM
                   }
             insertMigratorState context ms
@@ -159,15 +160,6 @@ getMigrationState context branchUuid callback = do
 migrateState :: Context -> MigratorState -> IO MigratorState
 migrateState context ms = do
   let migratedMs = migrate ms
-  if migratedMs ^. msMigrationState /= CompletedState
-  then do
-    updateMigratorState context migratedMs
-    return migratedMs
-  else do
-    let branchUuid = U.toString $ migratedMs ^. msBranchUuid
-    let branchParentId = migratedMs ^. msBranchParentId
-    let targetPackageId = migratedMs ^. msTargetPackageId
-    updateBranchWithMigrationInfo context branchUuid targetPackageId branchParentId
-    updateMigratorState context migratedMs
-    return migratedMs
+  updateMigratorState context migratedMs
+  return migratedMs
 

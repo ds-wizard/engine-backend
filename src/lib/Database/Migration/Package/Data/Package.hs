@@ -38,4 +38,4 @@ elixirNlPackage2Dto =
     "2.0.0"
     "Second Release"
     (Just $ elixirNlPackageDto ^. pkgweId)
-    [AddChapterEvent' a_km1_ch2]
+    [AddChapterEvent' a_km1_ch3]

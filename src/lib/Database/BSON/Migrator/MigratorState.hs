@@ -46,6 +46,7 @@ instance ToBSON MigratorState where
     , "targetPackageId" BSON.=: (ms ^. msTargetPackageId)
     , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. msBranchEvents)
     , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. msTargetPackageEvents)
+    , "resultEvents" BSON.=: convertEventToBSON <$> (ms ^. msResultEvents)
     , "currentKnowledgeModel" BSON.=: (ms ^. msCurrentKnowledgeModel)
     ]
 
@@ -59,6 +60,8 @@ instance FromBSON MigratorState where
     let branchEvents = fmap (fromJust . chooseEventDeserializator) branchEventsSerialized
     targetPackageEventsSerialized <- BSON.lookup "targetPackageEvents" doc
     let targetPackageEvents = fmap (fromJust . chooseEventDeserializator) targetPackageEventsSerialized
+    resultEventsSerialized <- BSON.lookup "resultEvents" doc
+    let resultEvents = fmap (fromJust . chooseEventDeserializator) resultEventsSerialized
     currentKnowledgeModel <- BSON.lookup "currentKnowledgeModel" doc
     return
       MigratorState
@@ -68,5 +71,6 @@ instance FromBSON MigratorState where
       , _msTargetPackageId = targetPackageId
       , _msBranchEvents = branchEvents
       , _msTargetPackageEvents = targetPackageEvents
+      , _msResultEvents = resultEvents
       , _msCurrentKnowledgeModel = currentKnowledgeModel
       }

@@ -149,12 +149,12 @@ getBranchState context branchUuid =
       else getBranch $ \branch ->
              if isEditing branch
                then return . Right $ BSEdited
-               else getIsOutdated branch $ \isOutdated ->
-                      if isOutdated
-                        then return . Right $ BSOutdated
-                        else getIsMigrated $ \isMigrated ->
-                          if isMigrated
-                            then return . Right $ BSMigrated
+               else getIsMigrated $ \isMigrated ->
+                      if isMigrated
+                        then return . Right $ BSMigrated
+                        else getIsOutdated branch $ \isOutdated ->
+                          if isOutdated
+                            then return . Right $ BSOutdated
                             else return . Right $ BSDefault
   where
     getIsMigrating callback = do

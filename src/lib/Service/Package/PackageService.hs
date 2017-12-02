@@ -27,10 +27,12 @@ import Database.DAO.Package.PackageDAO
 import Database.DAO.Migrator.MigratorDAO
 import Model.Branch.Branch
 import Model.Event.Event
+import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.Event.EventMapper
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
+import Service.KnowledgeModel.KnowledgeModelApplicator
 
 getPackagesFiltered :: Context -> [(Text, Text)] -> IO (Either AppError [PackageDTO])
 getPackagesFiltered context queryParams = do
@@ -86,17 +88,19 @@ createPackageFromKMC context branchUuid version description =
   validateVersionFormat version $
   getBranch branchUuid $ \branch ->
     getCurrentOrganization $ \organization ->
-      validateVersion version branch organization $ do
-        let name = branch ^. bweName
-        let groupId = organization ^. orgdtoGroupId
-        let artifactId = branch ^. bweArtifactId
-        let events = branch ^. bweEvents
-        let mPpId = branch ^. bweParentPackageId
-        createdPackage <- createPackage context name groupId artifactId version description mPpId events
-        deleteEventsAtBranch context branchUuid
-        updateBranchWithParentPackageId context branchUuid (createdPackage ^. pkgdtoId)
-        deleteMigratorStateByBranchUuid context branchUuid
-        return . Right $ createdPackage
+      validateVersion version branch organization $
+        getEventsForPackage context branch $ \events -> do
+          let name = branch ^. bweName
+          let groupId = organization ^. orgdtoGroupId
+          let artifactId = branch ^. bweArtifactId
+          let mPpId = branch ^. bweParentPackageId
+          createdPackage <- createPackage context name groupId artifactId version description mPpId events
+          deleteEventsAtBranch context branchUuid
+          updateBranchWithParentPackageId context branchUuid (createdPackage ^. pkgdtoId)
+          updateBranchIfMigrationIsCompleted context branchUuid
+          deleteMigratorStateByBranchUuid context branchUuid
+          recompileKnowledgeModel context branch $
+            return . Right $ createdPackage
   where
     validateVersionFormat version callback =
       case isVersionInValidFormat version of
@@ -122,6 +126,29 @@ createPackageFromKMC context branchUuid version description =
             Nothing -> callback
             Just error -> return . Left $ error
         Right Nothing -> callback
+        Left error -> return . Left $ error
+    updateBranchIfMigrationIsCompleted context branchUuid = do
+      eitherMigrationState <- findMigratorStateByBranchUuid context branchUuid
+      case eitherMigrationState of
+        Right migrationState -> do
+          let branchParentId = migrationState ^. msBranchParentId
+          let targetPackageId = migrationState ^. msTargetPackageId
+          updateBranchWithMigrationInfo context branchUuid targetPackageId branchParentId
+        Left _ -> return ()
+    getEventsForPackage context branch callback = do
+      let branchUuid = U.toString $ branch ^. bweUuid
+      eitherMigrationState <- findMigratorStateByBranchUuid context branchUuid
+      case eitherMigrationState of
+        Right migrationState -> callback $ migrationState ^. msResultEvents
+        Left (NotExistsError _) -> callback $ branch ^. bweEvents
+        Left error -> return . Left $ error
+    recompileKnowledgeModel context branch callback = do
+      let branchUuid = U.toString $ branch ^. bweUuid
+      eitherEventsForUuid <- getEventsForBranchUuid context branchUuid
+      case eitherEventsForUuid of
+        Right eventsForBranchUuid -> do
+          recompileKnowledgeModelWithEvents context branchUuid eventsForBranchUuid
+          callback
         Left error -> return . Left $ error
 
 importPackage :: Context -> BS.ByteString -> IO (Either AppError PackageDTO)
@@ -197,6 +224,29 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId context sincePkgId untilPkgI
                     Left error -> return . Left $ error
                 Nothing -> return . Right $ package ^. pkgweEvents
             Left error -> return . Left $ error
+
+getEventsForBranchUuid :: Context -> String -> IO (Either AppError [Event])
+getEventsForBranchUuid context branchUuid =
+  getBranch $ \branch ->
+    case branch ^. bweParentPackageId of
+      Just ppId -> do
+        eitherEventsFromPackage <- getAllPreviousEventsSincePackageId context ppId
+        case eitherEventsFromPackage of
+          Right eventsFromPackage -> do
+            let eventsFromKM = branch ^. bweEvents
+            let events = eventsFromPackage ++ eventsFromKM
+            return . Right $ events
+          Left error -> return . Left $ error
+      Nothing -> do
+        let events = branch ^. bweEvents
+        return . Right $ events
+  where
+    getBranch callback = do
+      eitherBranch <- findBranchWithEventsById context branchUuid
+      case eitherBranch of
+        Right branch -> callback branch
+        Left error -> return . Left $ error
+
 
 getNewerPackages :: Context -> String -> IO (Either AppError [Package])
 getNewerPackages context currentPkgId =

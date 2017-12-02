@@ -33,6 +33,7 @@ data MigratorState = MigratorState
   , _msTargetPackageId :: String
   , _msBranchEvents :: [Event]
   , _msTargetPackageEvents :: [Event]
+  , _msResultEvents :: [Event]
   , _msCurrentKnowledgeModel :: Maybe KnowledgeModel
   } deriving (Show, Eq)
 

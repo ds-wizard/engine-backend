@@ -23,6 +23,7 @@ import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.Applicator
 import Service.Package.PackageService
+import Service.KnowledgeModel.KnowledgeModelApplicator
 
 getKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError KnowledgeModelDTO)
 getKnowledgeModelByBranchId context branchUuid = do
@@ -36,31 +37,8 @@ getKnowledgeModelByBranchId context branchUuid = do
     Left error -> return . Left $ error
 
 recompileKnowledgeModel :: Context -> String -> IO (Either AppError KnowledgeModel)
-recompileKnowledgeModel context branchUuid =
-  getBranch branchUuid $ \branch ->
-    getEvents branch $ \events -> do
-      let eitherNewKM = runApplicator Nothing events
-      case eitherNewKM of
-        Right newKM -> do
-          updateKnowledgeModelByBranchId context branchUuid (Just newKM)
-          return . Right $ newKM
-        Left error -> return . Left $ error
-  where
-    getBranch branchUuid callback = do
-      eitherBranch <- findBranchWithEventsById context branchUuid
-      case eitherBranch of
-        Right branch -> callback branch
-        Left error -> return . Left $ error
-    getEvents branch callback =
-      case branch ^. bweParentPackageId of
-        Just ppId -> do
-          eitherEventsFromPackage <- getAllPreviousEventsSincePackageId context ppId
-          case eitherEventsFromPackage of
-            Right eventsFromPackage -> do
-              let eventsFromKM = branch ^. bweEvents
-              let events = eventsFromPackage ++ eventsFromKM
-              callback events
-            Left error -> return . Left $ error
-        Nothing -> do
-          let events = branch ^. bweEvents
-          callback events
+recompileKnowledgeModel context branchUuid = do
+  eitherEventsForUuid <- getEventsForBranchUuid context branchUuid
+  case eitherEventsForUuid of
+    Right eventsForBranchUuid -> recompileKnowledgeModelWithEvents context branchUuid eventsForBranchUuid
+    Left error -> return . Left $ error

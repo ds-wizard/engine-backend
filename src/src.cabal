@@ -151,6 +151,7 @@ library
       Service.Event.EventMapper
       Service.Event.EventService
       Service.Event.EventToDTO
+      Service.KnowledgeModel.KnowledgeModelApplicator
       Service.KnowledgeModel.KnowledgeModelMapper
       Service.KnowledgeModel.KnowledgeModelService
       Service.Migrator.Applicator

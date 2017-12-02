@@ -15,9 +15,12 @@ import Service.Migrator.Methods.CorrectorMethod
 
 doMigrate :: MigratorState -> Event -> MigratorState
 doMigrate state event =
-  if isCleanerMethod state event
-    then runCleanerMethod state event
-    else runCorrectorMethod state event
+  case state ^. msMigrationState of
+      RunningState ->
+        if isCleanerMethod state event
+          then runCleanerMethod state event
+          else runCorrectorMethod state event
+      _ -> state
 
 migrate :: MigratorState -> MigratorState
 migrate state =
@@ -37,11 +40,11 @@ solveConflict state mcDto =
     MCAApply ->
       let events = tail . getModifiedEvents $ state
           targetEvent = head $ state ^. msTargetPackageEvents
-      in migrate . createNewKm targetEvent . toRunningState . updateEvents events $ state
+      in migrate . createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail . getModifiedEvents $ state
           targetEvent = fromDTOFn . fromJust $ mcDto ^. mcdtoEvent
-      in migrate . createNewKm targetEvent . toRunningState . updateEvents events $ state
+      in migrate . createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAReject ->
       let events = tail . getModifiedEvents $ state
       in migrate . toRunningState . updateEvents events $ state
@@ -49,6 +52,7 @@ solveConflict state mcDto =
     getModifiedEvents newState = newState ^. msTargetPackageEvents
     toRunningState newState = newState & msMigrationState .~ RunningState
     updateEvents events newState = newState & msTargetPackageEvents .~ events
+    addToResultEvent event newState = newState & msResultEvents .~ ((newState ^. msResultEvents) ++ [event])
     createNewKm event newState =
       let eitherNewKm = runApplicator (newState ^. msCurrentKnowledgeModel) [event]
       in if isRight eitherNewKm
