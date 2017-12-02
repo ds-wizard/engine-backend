@@ -14,9 +14,11 @@ import Model.Branch.BranchState
 data BranchWithStateDTO = BranchWithStateDTO
   { _bwsdtoUuid :: UUID
   , _bwsdtoName :: String
+  , _bwsdtoGroupId :: String
   , _bwsdtoArtifactId :: String
   , _bwsdtoParentPackageId :: Maybe String
   , _bwsdtoState :: BranchState
+  , _bwsdtoLastAppliedParentPackageId :: Maybe String
   }
 
 makeLenses ''BranchWithStateDTO
@@ -25,8 +27,10 @@ instance FromJSON BranchWithStateDTO where
   parseJSON (Object o) = do
     _bwsdtoUuid <- o .: "uuid"
     _bwsdtoName <- o .: "name"
+    _bwsdtoGroupId <- o .: "groupId"
     _bwsdtoArtifactId <- o .: "artifactId"
     _bwsdtoParentPackageId <- o .: "parentPackageId"
+    _bwsdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
     stateType <- o .: "stateType"
     case getState stateType of
       (Just _bwsdtoState) -> return BranchWithStateDTO {..}
@@ -44,8 +48,10 @@ instance ToJSON BranchWithStateDTO where
     object
       [ "uuid" .= _bwsdtoUuid
       , "name" .= _bwsdtoName
+      , "groupId" .= _bwsdtoGroupId
       , "artifactId" .= _bwsdtoArtifactId
       , "parentPackageId" .= _bwsdtoParentPackageId
+      , "lastAppliedParentPackageId" .= _bwsdtoLastAppliedParentPackageId
       , "stateType" .=
         case _bwsdtoState of
           BSDefault -> "Default"

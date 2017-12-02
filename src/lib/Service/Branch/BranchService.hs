@@ -18,8 +18,10 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
+import Model.Organization.Organization
 import Model.Branch.BranchState
 import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
@@ -27,29 +29,31 @@ import Service.KnowledgeModel.KnowledgeModelService
 import Service.Package.PackageService
 
 getBranches :: Context -> IO (Either AppError [BranchWithStateDTO])
-getBranches context = do
-  eitherBranches <- findBranches context
-  case eitherBranches of
-    Right branches -> toDTOs branches
-    Left error -> return . Left $ error
-  where
-    toDTOs :: [Branch] -> IO (Either AppError [BranchWithStateDTO])
-    toDTOs = Prelude.foldl foldBranch (return . Right $ [])
-    foldBranch :: IO (Either AppError [BranchWithStateDTO]) -> Branch -> IO (Either AppError [BranchWithStateDTO])
-    foldBranch eitherDtosIO branch = do
-      eitherDtos <- eitherDtosIO
-      case eitherDtos of
-        Right dtos -> do
-          eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
-          case eitherBranchState of
-            Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState]
-            Left error -> return . Left $ error
-        Left error -> return . Left $ error
+getBranches context =
+  getOrganization context $ \organization -> do
+    eitherBranches <- findBranches context
+    case eitherBranches of
+      Right branches -> toDTOs organization branches
+      Left error -> return . Left $ error
+    where
+      toDTOs :: Organization -> [Branch] -> IO (Either AppError [BranchWithStateDTO])
+      toDTOs organization = Prelude.foldl (foldBranch organization) (return . Right $ [])
+      foldBranch :: Organization -> IO (Either AppError [BranchWithStateDTO]) -> Branch -> IO (Either AppError [BranchWithStateDTO])
+      foldBranch organization eitherDtosIO branch = do
+        eitherDtos <- eitherDtosIO
+        case eitherDtos of
+          Right dtos -> do
+            eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
+            case eitherBranchState of
+              Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState organization]
+              Left error -> return . Left $ error
+          Left error -> return . Left $ error
 
 createBranch :: Context -> BranchDTO -> IO (Either AppError BranchDTO)
 createBranch context branchDto =
   validateArtifactId branchDto $
-  validatePackageId context (branchDto ^. bdtoParentPackageId) $ do
+  validatePackageId context (branchDto ^. bdtoParentPackageId) $
+  getOrganization context $ \organization -> do
     let branch = fromDTO branchDto
     insertBranch context branch
     insertEventsToBranch context (U.toString $ branch ^. bUuid) []
@@ -57,7 +61,7 @@ createBranch context branchDto =
     eitherKm <- recompileKnowledgeModel context (U.toString $ branch ^. bUuid)
     updateMigrationInfoIfParentPackageIdPresent branch
     case eitherKm of
-      Right km -> return . Right . toDTO $ branch
+      Right km -> return . Right $ toDTO branch organization
       Left error -> return . Left $ error
   where
     validateArtifactId branchDto callback = do
@@ -85,15 +89,16 @@ createBranch context branchDto =
         Nothing -> return ()
 
 getBranchById :: Context -> String -> IO (Either AppError BranchWithStateDTO)
-getBranchById context branchUuid = do
-  eitherBranch <- findBranchById context branchUuid
-  case eitherBranch of
-    Right branch -> do
-      eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
-      case eitherBranchState of
-        Right branchState -> return . Right $ toWithStateDTO branch branchState
-        Left error -> return . Left $ error
-    Left error -> return . Left $ error
+getBranchById context branchUuid =
+  getOrganization context $ \organization -> do
+    eitherBranch <- findBranchById context branchUuid
+    case eitherBranch of
+      Right branch -> do
+        eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
+        case eitherBranchState of
+          Right branchState -> return . Right $ toWithStateDTO branch branchState organization
+          Left error -> return . Left $ error
+      Left error -> return . Left $ error
 
 modifyBranch :: Context -> String -> BranchDTO -> IO (Either AppError BranchDTO)
 modifyBranch context branchUuid branchDto =
@@ -172,3 +177,9 @@ getBranchState context branchUuid =
       case eitherBranch of
         Right branch -> callback branch
         Left error -> return . Left $ error
+
+getOrganization context callback = do
+  eitherOrganization <- findOrganization context
+  case eitherOrganization of
+    Right organization -> callback organization
+    Left error -> return . Left $ error

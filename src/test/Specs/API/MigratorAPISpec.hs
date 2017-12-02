@@ -236,8 +236,10 @@ migratorAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Nothing
+                , _bdtoLastAppliedParentPackageId = Nothing
                 }
           liftIO $ createBranch context branch
           liftIO $ insertPackage context elixirNlPackage2Dto
@@ -397,7 +399,7 @@ migratorAPI context dspConfig = do
           liftIO $ deleteMigratorStates context
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
           liftIO $ createMigration context branchUuid migratorCreateDto
-          liftIO $ solveConflict context branchUuid reqDto
+          liftIO $ solveConflictAndMigrate context branchUuid reqDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation

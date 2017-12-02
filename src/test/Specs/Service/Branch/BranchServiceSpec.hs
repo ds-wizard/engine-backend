@@ -56,7 +56,7 @@ branchServiceIntegrationSpec context dspConfig =
               , _mcdtoAction = MCAReject
               , _mcdtoEvent = Nothing
               }
-        liftIO $ solveConflict context branchUuid reqDto
+        liftIO $ solveConflictAndMigrate context branchUuid reqDto
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:

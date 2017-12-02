@@ -54,8 +54,10 @@ branchAPI context dspConfig = do
                 BranchWithStateDTO
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
+                , _bwsdtoGroupId = "elixir.nl.amsterdam"
                 , _bwsdtoArtifactId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoState = BSDefault
                 }
           let expBody = encode [expDto]
@@ -64,8 +66,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context branch
           -- WHEN: Call API
@@ -90,8 +94,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           liftIO $ PKG.runMigration context dspConfig fakeLogState
@@ -116,8 +122,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam.km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
           let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
@@ -137,8 +145,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           liftIO $ createBranch context reqDto
@@ -158,8 +168,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:9.9.9"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           liftIO $ createBranch context reqDto
@@ -195,16 +207,20 @@ branchAPI context dspConfig = do
                 BranchWithStateDTO
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
+                , _bwsdtoGroupId = "elixir.nl.amsterdam"
                 , _bwsdtoArtifactId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoState = BSDefault
                 }
           let branch =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context branch
           liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
@@ -231,8 +247,10 @@ branchAPI context dspConfig = do
               BranchDTO
               { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
               , _bdtoName = "EDITED: Amsterdam KM"
+              , _bdtoGroupId = "elixir.nl.amsterdam"
               , _bdtoArtifactId = "amsterdam-km"
               , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+              , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -264,8 +282,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
           let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
@@ -285,15 +305,19 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqDto2 =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
                 , _bdtoName = "Amsterdam KM 2"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km-2"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
           liftIO $ createBranch context reqDto2
@@ -332,8 +356,10 @@ branchAPI context dspConfig = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
+                , _bdtoGroupId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context branchDto
           -- WHEN: Call API
