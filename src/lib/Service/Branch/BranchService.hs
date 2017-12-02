@@ -24,7 +24,6 @@ import Model.Branch.BranchState
 import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
 import Service.KnowledgeModel.KnowledgeModelService
-import Service.Migrator.MigratorService
 import Service.Package.PackageService
 
 getBranches :: Context -> IO (Either AppError [BranchWithStateDTO])
@@ -125,7 +124,7 @@ deleteBranch context branchUuid = do
   case eitherBranch of
     Right branch -> do
       deleteBranchById context branchUuid
-      deleteCurrentMigration context branchUuid
+      deleteMigratorStateByBranchUuid context branchUuid
       return Nothing
     Left error -> return . Just $ error
 
@@ -153,7 +152,10 @@ getBranchState context branchUuid =
     getIsMigrating callback = do
       eitherMs <- findMigratorStateByBranchUuid context branchUuid
       case eitherMs of
-        Right _ -> callback True
+        Right migrationState ->
+          if migrationState ^. msMigrationState == CompletedState
+           then callback False
+           else callback True
         Left (NotExistsError _) -> callback False
         Left error -> return . Left $ error
     isEditing branch = Prelude.length (branch ^. bweEvents) > 0

@@ -9,12 +9,16 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Api.Resources.Migrator.MigratorStateCreateDTO
+import Api.Resources.Migrator.MigratorConflictDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
 import Database.Migration.Package.Data.Package
+import Database.Migration.Branch.Data.Event.Event
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.BranchState
+import Model.Event.Chapter.AddChapterEvent
+import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.Branch.BranchService
 import Service.Migrator.MigratorService
@@ -37,13 +41,22 @@ branchServiceIntegrationSpec context dspConfig =
   describe "Branch Service Integration" $ do
     let branchUuid = "6474b24b-262b-42b1-9451-008e8363f2b6"
     describe "getBranchState" $ do
-      it "BSDefault - no edit events, no new parent package version, no migrations" $
+      it "BSDefault - no edit events, no new parent package version, no migrations (except those in CompletedState)" $
         -- GIVEN: Prepare database
        do
         liftIO $ PKG.runMigration context dspConfig fakeLogState
         liftIO $ B.runMigration context dspConfig fakeLogState
         liftIO $ deleteEventsAtBranch context branchUuid
         liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
+        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        liftIO $ createMigration context branchUuid migratorCreateDto
+        let reqDto =
+              MigratorConflictDTO
+              { _mcdtoOriginalEventUuid = a_km1_ch2 ^. achUuid
+              , _mcdtoAction = MCAReject
+              , _mcdtoEvent = Nothing
+              }
+        liftIO $ solveConflict context branchUuid reqDto
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
