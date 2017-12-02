@@ -21,18 +21,22 @@ data BranchWithStateDTO = BranchWithStateDTO
 
 makeLenses ''BranchWithStateDTO
 
-instance FromJSON BranchState
-
-instance ToJSON BranchState
-
 instance FromJSON BranchWithStateDTO where
   parseJSON (Object o) = do
     _bwsdtoUuid <- o .: "uuid"
     _bwsdtoName <- o .: "name"
     _bwsdtoArtifactId <- o .: "artifactId"
     _bwsdtoParentPackageId <- o .: "parentPackageId"
-    _bwsdtoState <- o .: "state"
-    return BranchWithStateDTO {..}
+    stateType <- o .: "stateType"
+    case getState stateType of
+      (Just _bwsdtoState) -> return BranchWithStateDTO {..}
+      Nothing -> fail "Unsupported state"
+    where
+      getState "Default" = Just BSDefault
+      getState "Edited" = Just BSEdited
+      getState "Outdated" = Just BSOutdated
+      getState "Migrating" = Just BSMigrating
+      getState _ = Nothing
   parseJSON _ = mzero
 
 instance ToJSON BranchWithStateDTO where
@@ -42,5 +46,10 @@ instance ToJSON BranchWithStateDTO where
       , "name" .= _bwsdtoName
       , "artifactId" .= _bwsdtoArtifactId
       , "parentPackageId" .= _bwsdtoParentPackageId
-      , "state" .= _bwsdtoState
+      , "stateType" .=
+        case _bwsdtoState of
+          BSDefault -> "Default"
+          BSEdited -> "Edited"
+          BSOutdated -> "Outdated"
+          BSMigrating -> "Migrating"
       ]
