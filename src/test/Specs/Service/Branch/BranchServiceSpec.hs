@@ -41,22 +41,13 @@ branchServiceIntegrationSpec context dspConfig =
   describe "Branch Service Integration" $ do
     let branchUuid = "6474b24b-262b-42b1-9451-008e8363f2b6"
     describe "getBranchState" $ do
-      it "BSDefault - no edit events, no new parent package version, no migrations (except those in CompletedState)" $
+      it "BSDefault - no edit events, no new parent package version" $
         -- GIVEN: Prepare database
        do
         liftIO $ PKG.runMigration context dspConfig fakeLogState
         liftIO $ B.runMigration context dspConfig fakeLogState
         liftIO $ deleteEventsAtBranch context branchUuid
         liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
-        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
-        liftIO $ createMigration context branchUuid migratorCreateDto
-        let reqDto =
-              MigratorConflictDTO
-              { _mcdtoOriginalEventUuid = a_km1_ch2 ^. achUuid
-              , _mcdtoAction = MCAReject
-              , _mcdtoEvent = Nothing
-              }
-        liftIO $ solveConflictAndMigrate context branchUuid reqDto
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
@@ -118,6 +109,29 @@ branchServiceIntegrationSpec context dspConfig =
         liftIO $ createMigration context branchUuid migratorCreateDto
         -- AND: Prepare expectations
         let expState = BSMigrating
+        -- WHEN:
+        eitherResState <- liftIO $ getBranchState context branchUuid
+        -- THEN:
+        liftIO $ isRight eitherResState `shouldBe` True
+        let (Right resState) = eitherResState
+        resState `shouldBe` expState
+      it "BSMigrated - no edit events and new parent package version is available and migration is in process" $
+        -- GIVEN: Prepare database
+       do
+        liftIO $ PKG.runMigration context dspConfig fakeLogState
+        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ deleteEventsAtBranch context branchUuid
+        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        liftIO $ createMigration context branchUuid migratorCreateDto
+        let reqDto =
+              MigratorConflictDTO
+              { _mcdtoOriginalEventUuid = a_km1_ch2 ^. achUuid
+              , _mcdtoAction = MCAReject
+              , _mcdtoEvent = Nothing
+              }
+        liftIO $ solveConflictAndMigrate context branchUuid reqDto
+        -- AND: Prepare expectations
+        let expState = BSMigrated
         -- WHEN:
         eitherResState <- liftIO $ getBranchState context branchUuid
         -- THEN:

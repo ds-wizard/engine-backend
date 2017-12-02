@@ -7,4 +7,5 @@ data BranchState
   | BSEdited
   | BSOutdated
   | BSMigrating
+  | BSMigrated
   deriving (Show, Eq, Generic)

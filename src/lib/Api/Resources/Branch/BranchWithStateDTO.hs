@@ -40,6 +40,7 @@ instance FromJSON BranchWithStateDTO where
       getState "Edited" = Just BSEdited
       getState "Outdated" = Just BSOutdated
       getState "Migrating" = Just BSMigrating
+      getState "Migrated" = Just BSMigrated
       getState _ = Nothing
   parseJSON _ = mzero
 
@@ -58,4 +59,5 @@ instance ToJSON BranchWithStateDTO where
           BSEdited -> "Edited"
           BSOutdated -> "Outdated"
           BSMigrating -> "Migrating"
+          BSMigrated -> "Migrated"
       ]

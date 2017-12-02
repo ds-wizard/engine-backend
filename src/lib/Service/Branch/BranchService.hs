@@ -152,7 +152,10 @@ getBranchState context branchUuid =
                else getIsOutdated branch $ \isOutdated ->
                       if isOutdated
                         then return . Right $ BSOutdated
-                        else return . Right $ BSDefault
+                        else getIsMigrated $ \isMigrated ->
+                          if isMigrated
+                            then return . Right $ BSMigrated
+                            else return . Right $ BSDefault
   where
     getIsMigrating callback = do
       eitherMs <- findMigratorStateByBranchUuid context branchUuid
@@ -176,6 +179,15 @@ getBranchState context branchUuid =
       eitherBranch <- findBranchWithEventsById context branchUuid
       case eitherBranch of
         Right branch -> callback branch
+        Left error -> return . Left $ error
+    getIsMigrated callback = do
+      eitherMs <- findMigratorStateByBranchUuid context branchUuid
+      case eitherMs of
+        Right migrationState ->
+          if migrationState ^. msMigrationState == CompletedState
+           then callback True
+           else callback False
+        Left (NotExistsError _) -> callback False
         Left error -> return . Left $ error
 
 getOrganization context callback = do

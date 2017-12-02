@@ -24,6 +24,7 @@ import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
+import Database.DAO.Migrator.MigratorDAO
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.Package.Package
@@ -94,6 +95,7 @@ createPackageFromKMC context branchUuid version description =
         createdPackage <- createPackage context name groupId artifactId version description mPpId events
         deleteEventsAtBranch context branchUuid
         updateBranchWithParentPackageId context branchUuid (createdPackage ^. pkgdtoId)
+        deleteMigratorStateByBranchUuid context branchUuid
         return . Right $ createdPackage
   where
     validateVersionFormat version callback =
