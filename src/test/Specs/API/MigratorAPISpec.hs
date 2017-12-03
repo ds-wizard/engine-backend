@@ -301,7 +301,7 @@ migratorAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
               MigratorConflictDTO
-              { _mcdtoOriginalEventUuid = a_km1_ch2 ^. achUuid
+              { _mcdtoOriginalEventUuid = a_km1_ch3 ^. achUuid
               , _mcdtoAction = MCAEdited
               , _mcdtoEvent = Just . toDTOFn . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
               }

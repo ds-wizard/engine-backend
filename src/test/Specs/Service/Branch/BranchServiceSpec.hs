@@ -125,7 +125,7 @@ branchServiceIntegrationSpec context dspConfig =
         liftIO $ createMigration context branchUuid migratorCreateDto
         let reqDto =
               MigratorConflictDTO
-              { _mcdtoOriginalEventUuid = a_km1_ch2 ^. achUuid
+              { _mcdtoOriginalEventUuid = a_km1_ch3 ^. achUuid
               , _mcdtoAction = MCAReject
               , _mcdtoEvent = Nothing
               }
