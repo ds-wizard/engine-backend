@@ -21,6 +21,8 @@ import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
+import Model.Event.Event
+import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
 import Model.Organization.Organization
 import Model.Branch.BranchState
 import Model.Migrator.MigratorState
@@ -58,8 +60,9 @@ createBranch context branchDto =
     insertBranch context branch
     insertEventsToBranch context (U.toString $ branch ^. bUuid) []
     updateKnowledgeModelByBranchId context (U.toString $ branch ^. bUuid) Nothing
-    eitherKm <- recompileKnowledgeModel context (U.toString $ branch ^. bUuid)
     updateMigrationInfoIfParentPackageIdPresent branch
+    createDefaultEventIfParentPackageIsNotPresent branch
+    eitherKm <- recompileKnowledgeModel context (U.toString $ branch ^. bUuid)
     case eitherKm of
       Right km -> return . Right $ toDTO branch organization
       Left error -> return . Left $ error
@@ -83,10 +86,25 @@ createBranch context branchDto =
         Nothing -> callback
     updateMigrationInfoIfParentPackageIdPresent branch = do
       let branchUuid = U.toString $ branch ^. bUuid
-      let eitherParentPackageId = branch ^. bParentPackageId
-      case eitherParentPackageId of
+      let maybeParentPackageId = branch ^. bParentPackageId
+      case maybeParentPackageId of
         Just parentPackageId -> updateBranchWithMigrationInfo context branchUuid parentPackageId parentPackageId
         Nothing -> return ()
+    createDefaultEventIfParentPackageIsNotPresent branch = do
+      let branchUuid = U.toString $ branch ^. bUuid
+      let maybeParentPackageId = branch ^. bParentPackageId
+      case maybeParentPackageId of
+        Just _ -> return ()
+        Nothing -> do
+          uuid <- generateUuid
+          kmUuid <- generateUuid
+          let addKMEvent =
+                AddKnowledgeModelEvent
+                 { _akmUuid = uuid
+                 , _akmKmUuid = kmUuid
+                 , _akmName = "New knowledge model"
+                 }
+          insertEventsToBranch context branchUuid [AddKnowledgeModelEvent' addKMEvent]
 
 getBranchById :: Context -> String -> IO (Either AppError BranchWithStateDTO)
 getBranchById context branchUuid =
@@ -174,7 +192,7 @@ getBranchState context branchUuid =
           case eitherNewerPackages of
             Right newerPackages -> callback $ Prelude.length newerPackages > 0
             Left error -> return . Left $ error
-        Nothing -> return . Left $ MigratorError "You can't migrate if you don't have parent"
+        Nothing -> callback False
     getBranch callback = do
       eitherBranch <- findBranchWithEventsById context branchUuid
       case eitherBranch of
