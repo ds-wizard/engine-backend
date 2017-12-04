@@ -269,7 +269,7 @@ isVersionInValidFormat version =
     then Nothing
     else Just . createErrorWithErrorMessage $ "Version is not in valid format"
   where
-    validationRegex = mkRegex "^[0-9].[0-9].[0-9]$"
+    validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
 
 isVersionHigher :: String -> String -> Maybe AppError
 isVersionHigher newVersion oldVersion =

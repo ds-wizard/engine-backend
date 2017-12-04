@@ -10,6 +10,8 @@ packageServiceSpec =
     it "isVersionInValidFormat" $ do
       isNothing (isVersionInValidFormat "0.0.0") `shouldBe` True
       isNothing (isVersionInValidFormat "1.2.0") `shouldBe` True
+      isNothing (isVersionInValidFormat "10.10.10") `shouldBe` True
+      isNothing (isVersionInValidFormat "100.100.100") `shouldBe` True
       isJust (isVersionInValidFormat "1") `shouldBe` True
       isJust (isVersionInValidFormat "1.") `shouldBe` True
       isJust (isVersionInValidFormat "1.2") `shouldBe` True
