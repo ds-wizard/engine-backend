@@ -6,6 +6,8 @@ import Data.List
 import Data.UUID
 import GHC.Generics
 
+import Model.Common
+
 data KnowledgeModel = KnowledgeModel
   { _kmUuid :: UUID
   , _kmName :: String
@@ -61,6 +63,26 @@ makeLenses ''Expert
 makeLenses ''Reference
 
 -- ------------------------------------------------------------------------------------------
+
+instance SameUuid KnowledgeModel KnowledgeModel where
+  equalsUuid km1 km2 = km1 ^. kmUuid == km2 ^. kmUuid
+
+instance SameUuid Chapter Chapter where
+  equalsUuid ch1 ch2 = ch1 ^. chUuid == ch2 ^. chUuid
+
+instance SameUuid Question Question where
+  equalsUuid q1 q2 = q1 ^. qUuid == q2 ^. qUuid
+
+instance SameUuid Answer Answer where
+  equalsUuid ans1 ans2 = ans1 ^. ansUuid == ans2 ^. ansUuid
+
+instance SameUuid Expert Expert where
+  equalsUuid exp1 exp2 = exp1 ^. expUuid == exp2 ^. expUuid
+
+instance SameUuid Reference Reference where
+  equalsUuid ref1 ref2 = ref1 ^. refUuid == ref2 ^. refUuid
+
+-- ------------------------------------------------------------------------------------------
 -- ------------------------------------------------------------------------------------------
 kmChapterIds :: KnowledgeModel -> [UUID]
 kmChapterIds km = km ^.. kmChapters . traverse . chUuid
@@ -77,6 +99,9 @@ kmChangeChapterIdsOrder convert km = Identity $ km & kmChapters .~ orderedChapte
 
 getAllChapters :: KnowledgeModel -> [Chapter]
 getAllChapters km = km ^. kmChapters
+
+getChapterByUuid :: KnowledgeModel -> UUID -> Maybe Chapter
+getChapterByUuid km chapterUuid = find (\ch -> ch ^. chUuid == chapterUuid) (getAllChapters km)
 
 isThereAnyChapterWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyChapterWithGivenUuid km uuid = uuid `elem` (getChapterUuid <$> getAllChapters km)
@@ -107,6 +132,21 @@ getAllQuestions km = go (km ^.. kmChapters . traverse . chQuestions . traverse)
     getNestedQuestions :: Question -> [Question]
     getNestedQuestions question = question ^.. qAnswers . traverse . ansFollowUps . traverse
 
+getQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
+getQuestionByUuid km questionUuid = find (\q -> q ^. qUuid == questionUuid) (getAllQuestions km)
+
+getAllQuestionsForChapterUuid :: KnowledgeModel -> UUID ->  [Question]
+getAllQuestionsForChapterUuid km chapterUuid =
+  case getChapterByUuid km chapterUuid of
+    Just chapter -> chapter ^. chQuestions
+    Nothing -> []
+
+getAllQuestionsForAnswerUuid :: KnowledgeModel -> UUID ->  [Question]
+getAllQuestionsForAnswerUuid km answerUuid =
+  case getAnswerByUuid km answerUuid of
+    Just answer -> answer ^. ansFollowUps
+    Nothing -> []
+
 isThereAnyQuestionWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyQuestionWithGivenUuid km uuid = uuid `elem` (getQuestionUuid <$> getAllQuestions km)
   where
@@ -132,6 +172,15 @@ getAllAnswers km = concat $ getAnswer <$> getAllQuestions km
   where
     getAnswer :: Question -> [Answer]
     getAnswer question = question ^. qAnswers
+
+getAnswerByUuid :: KnowledgeModel -> UUID -> Maybe Answer
+getAnswerByUuid km answerUuid = find (\ans -> ans ^. ansUuid == answerUuid) (getAllAnswers km)
+
+getAllAnswersForQuestionUuid :: KnowledgeModel -> UUID -> [Answer]
+getAllAnswersForQuestionUuid km questionUuid =
+  case getQuestionByUuid km questionUuid of
+    Just question -> question ^. qAnswers
+    Nothing -> []
 
 isThereAnyAnswerWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyAnswerWithGivenUuid km uuid = uuid `elem` (getAnswerUuid <$> getAllAnswers km)
@@ -172,6 +221,15 @@ getAllExperts km = concat $ getExpert <$> getAllQuestions km
     getExpert :: Question -> [Expert]
     getExpert question = question ^. qExperts
 
+getExpertByUuid :: KnowledgeModel -> UUID -> Maybe Expert
+getExpertByUuid km expertUuid = find (\exp -> exp ^. expUuid == expertUuid) (getAllExperts km)
+
+getAllExpertsForQuestionUuid :: KnowledgeModel -> UUID -> [Expert]
+getAllExpertsForQuestionUuid km questionUuid =
+  case getQuestionByUuid km questionUuid of
+    Just question -> question ^. qExperts
+    Nothing -> []
+
 isThereAnyExpertWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyExpertWithGivenUuid km uuid = uuid `elem` (getExpertUuid <$> getAllExperts km)
   where
@@ -196,6 +254,15 @@ getAllReferences km = concat $ getReference <$> getAllQuestions km
   where
     getReference :: Question -> [Reference]
     getReference question = question ^. qReferences
+
+getReferenceByUuid :: KnowledgeModel -> UUID -> Maybe Reference
+getReferenceByUuid km referenceUuid = find (\ref -> ref ^. refUuid == referenceUuid) (getAllReferences km)
+
+getAllReferencesForQuestionUuid :: KnowledgeModel -> UUID -> [Reference]
+getAllReferencesForQuestionUuid km questionUuid =
+  case getQuestionByUuid km questionUuid of
+    Just question -> question ^. qReferences
+    Nothing -> []
 
 isThereAnyReferenceWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyReferenceWithGivenUuid km uuid = uuid `elem` (getReferenceUuid <$> getAllReferences km)

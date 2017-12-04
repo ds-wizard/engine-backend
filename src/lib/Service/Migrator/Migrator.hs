@@ -13,26 +13,27 @@ import Service.Migrator.Applicator
 import Service.Migrator.Methods.CleanerMethod
 import Service.Migrator.Methods.CorrectorMethod
 
-doMigrate :: MigratorState -> Event -> MigratorState
-doMigrate state event =
+doMigrate :: IO MigratorState -> Event -> IO MigratorState
+doMigrate stateIO event = do
+  state <- stateIO
   case state ^. msMigrationState of
       RunningState ->
         if isCleanerMethod state event
           then runCleanerMethod state event
           else runCorrectorMethod state event
-      _ -> state
+      _ -> stateIO
 
-migrate :: MigratorState -> MigratorState
+migrate :: MigratorState -> IO MigratorState
 migrate state =
   case state ^. msMigrationState of
-    RunningState ->
-      let newState = foldl doMigrate state (state ^. msTargetPackageEvents)
-      in if newState ^. msTargetPackageEvents == []
-           then newState & msMigrationState .~ CompletedState
-           else newState
-    ConflictState _ -> state
-    ErrorState _ -> state
-    CompletedState -> state
+    RunningState -> do
+      newState <- foldl doMigrate (return state) (state ^. msTargetPackageEvents)
+      if newState ^. msTargetPackageEvents == []
+        then return $ newState & msMigrationState .~ CompletedState
+        else return newState
+    ConflictState _ -> return state
+    ErrorState _ -> return state
+    CompletedState -> return state
 
 solveConflict :: MigratorState -> MigratorConflictDTO -> MigratorState
 solveConflict state mcDto =
@@ -40,14 +41,14 @@ solveConflict state mcDto =
     MCAApply ->
       let events = tail . getModifiedEvents $ state
           targetEvent = head $ state ^. msTargetPackageEvents
-      in migrate . createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
+      in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail . getModifiedEvents $ state
           targetEvent = fromDTOFn . fromJust $ mcDto ^. mcdtoEvent
-      in migrate . createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
+      in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAReject ->
       let events = tail . getModifiedEvents $ state
-      in migrate . toRunningState . updateEvents events $ state
+      in toRunningState . updateEvents events $ state
   where
     getModifiedEvents newState = newState ^. msTargetPackageEvents
     toRunningState newState = newState & msMigrationState .~ RunningState

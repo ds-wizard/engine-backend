@@ -19,3 +19,7 @@ commonUtilsSpec =
       it "'token1' returns 'Nothing" $ separateToken (T.pack "token1") `shouldBe` Nothing
       it "'Bearer sdsa asdasd' returns 'Nothing" $ separateToken (T.pack "Bearer sdsa asdasd") `shouldBe` Nothing
       it "'' returns 'Nothing" $ separateToken (T.pack "") `shouldBe` Nothing
+    describe "removeDuplicates" $ do
+      it "[] -> []" $ removeDuplicates [] `shouldBe` []
+      it "[1,2,3] -> [1,2,3]" $ removeDuplicates [1,2,3] `shouldBe` [1,2,3]
+      it "[1,2,3,1,2] -> [1,2,3,1,2]" $ removeDuplicates [1,2,3] `shouldBe` [1,2,3]

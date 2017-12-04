@@ -157,6 +157,7 @@ library
       Service.Migrator.Applicator
       Service.Migrator.Methods.CleanerMethod
       Service.Migrator.Methods.CorrectorMethod
+      Service.Migrator.Methods.Sanitizator
       Service.Migrator.Migrator
       Service.Migrator.MigratorMapper
       Service.Migrator.MigratorService
@@ -190,6 +191,7 @@ library
     , persistent
     , persistent-template
     , persistent-mongoDB
+    , pretty-simple
     , pwstore-fast
     , random
     , regex-compat
@@ -259,13 +261,6 @@ test-suite hspec
     , hspec-wai
     , hspec-wai-json
   other-modules:
-      Fixtures.Event.Events
-      Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
-      Fixtures.KnowledgeModel.Chapters
-      Fixtures.KnowledgeModel.Experts
-      Fixtures.KnowledgeModel.KnowledgeModels
-      Fixtures.KnowledgeModel.Questions
-      Fixtures.KnowledgeModel.References
       Specs.API.BranchAPISpec
       Specs.API.Common
       Specs.API.EventAPISpec
@@ -282,6 +277,8 @@ test-suite hspec
       Specs.Model.KnowledgeModel.KnowledgeModelSpec
       Specs.Service.Branch.BranchServiceSpec
       Specs.Service.Migrator.ApplicatorSpec
+      Specs.Service.Migrator.Common
+      Specs.Service.Migrator.Methods.SanitizatorSpec
       Specs.Service.Migrator.MigratorSpec
       Specs.Service.Organization.OrganizationServiceSpec
       Specs.Service.Package.PackageServiceSpec

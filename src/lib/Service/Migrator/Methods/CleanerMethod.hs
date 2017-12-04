@@ -60,7 +60,7 @@ doIsCleanerMethod km (EditFollowUpQuestionEvent' event) =
 doIsCleanerMethod km (DeleteFollowUpQuestionEvent' event) =
   not $ isThereAnyQuestionWithGivenUuid km (event ^. dfuqQuestionUuid)
 
-runCleanerMethod :: MigratorState -> Event -> MigratorState
+runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =
   let (_:newTargetPackageEvents) = state ^. msTargetPackageEvents
-  in state & msTargetPackageEvents .~ newTargetPackageEvents
+  in return $ state & msTargetPackageEvents .~ newTargetPackageEvents

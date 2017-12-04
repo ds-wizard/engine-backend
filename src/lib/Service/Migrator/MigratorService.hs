@@ -159,7 +159,7 @@ getMigrationState context branchUuid callback = do
 
 migrateState :: Context -> MigratorState -> IO MigratorState
 migrateState context ms = do
-  let migratedMs = migrate ms
+  migratedMs <- migrate ms
   updateMigratorState context migratedMs
   return migratedMs
 
