@@ -1,6 +1,6 @@
 module Api.Resources.Info.InfoDTO where
 
-import Control.Lens (makeLenses, (^.))
+import Control.Lens ((^.), makeLenses)
 import Data.Aeson
 
 data InfoDTO = InfoDTO

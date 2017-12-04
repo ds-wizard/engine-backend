@@ -1,6 +1,6 @@
 module Specs.API.InfoAPISpec where
 
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec

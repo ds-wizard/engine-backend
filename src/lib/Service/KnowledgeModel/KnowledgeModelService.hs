@@ -20,10 +20,10 @@ import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Package.Package
+import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.Applicator
 import Service.Package.PackageService
-import Service.KnowledgeModel.KnowledgeModelApplicator
 
 getKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError KnowledgeModelDTO)
 getKnowledgeModelByBranchId context branchUuid = do

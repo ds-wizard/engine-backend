@@ -2,7 +2,7 @@ module Specs.API.MigratorAPISpec where
 
 import Control.Lens
 import Data.Aeson
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
 import Data.Either
 import Data.Foldable
@@ -30,6 +30,7 @@ import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
 import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
@@ -42,7 +43,6 @@ import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.MigratorService
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 
 import Specs.API.Common
 import Specs.Common

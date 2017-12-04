@@ -5,8 +5,8 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
 import Database.MongoDB
-       (find, findOne, select, insert, fetch, save, merge, delete, modify,
-        deleteOne, (=:), rest)
+       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
+        modify, rest, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
@@ -63,9 +63,7 @@ updateBranchWithMigrationInfo context branchUuid lastAppliedParentPackageId last
 updateBranchWithParentPackageId :: Context -> String -> String -> IO ()
 updateBranchWithParentPackageId context branchUuid parentPackageId = do
   let action =
-        modify
-          (select ["uuid" =: branchUuid] branchCollection)
-          [ "$set" =: [ "parentPackageId" =: parentPackageId] ]
+        modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["parentPackageId" =: parentPackageId]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteBranches :: Context -> IO ()

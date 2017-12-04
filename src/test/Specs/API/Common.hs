@@ -1,7 +1,7 @@
 module Specs.API.Common where
 
 import Control.Lens ((^.))
-import Data.Aeson (Value(..), object, (.=), encode)
+import Data.Aeson (Value(..), (.=), encode, object)
 import Data.ByteString.Char8 as BS
 import Data.Foldable
 import qualified Data.List as L

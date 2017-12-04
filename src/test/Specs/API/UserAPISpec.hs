@@ -3,7 +3,7 @@ module Specs.API.UserAPISpec where
 import Control.Lens
 import Crypto.PasswordStore
 import Data.Aeson
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import qualified Data.ByteString.Char8 as BS
 import Data.ByteString.Lazy
 import Data.Either

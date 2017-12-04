@@ -2,7 +2,7 @@ module Specs.API.KnowledgeModelAPISpec where
 
 import Control.Lens
 import Data.Aeson
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
 import Data.Foldable
 import Data.Maybe
@@ -22,6 +22,13 @@ import Api.Resources.KnowledgeModel.KnowledgeModelDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import qualified Database.Migration.Branch.BranchMigration as KMC
+import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+import Database.Migration.Branch.Data.KnowledgeModel.Chapters
+import Database.Migration.Branch.Data.KnowledgeModel.Experts
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+import Database.Migration.Branch.Data.KnowledgeModel.Questions
+import Database.Migration.Branch.Data.KnowledgeModel.References
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
 import Model.Event.Event
@@ -29,13 +36,6 @@ import Model.KnowledgeModel.KnowledgeModel
 import Service.Branch.BranchService
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.Chapters
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.Branch.Data.KnowledgeModel.Experts
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Branch.Data.KnowledgeModel.References
 
 import Specs.API.Common
 import Specs.Common

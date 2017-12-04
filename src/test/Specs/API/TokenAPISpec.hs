@@ -2,7 +2,7 @@ module Specs.API.TokenAPISpec where
 
 import Control.Lens
 import Data.Aeson
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
 import Data.Foldable
 import Data.Maybe

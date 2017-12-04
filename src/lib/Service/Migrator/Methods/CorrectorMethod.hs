@@ -1,4 +1,6 @@
-module Service.Migrator.Methods.CorrectorMethod (runCorrectorMethod) where
+module Service.Migrator.Methods.CorrectorMethod
+  ( runCorrectorMethod
+  ) where
 
 import Control.Lens
 
@@ -16,8 +18,6 @@ sanitizeEvent state (EditKnowledgeModelEvent' e) = sanitize state e >>= \e2 -> r
 sanitizeEvent state (EditChapterEvent' e) = sanitize state e >>= \e2 -> return . EditChapterEvent' $ e2
 sanitizeEvent state (EditQuestionEvent' e) = sanitize state e >>= \e2 -> return . EditQuestionEvent' $ e2
 sanitizeEvent state (EditAnswerEvent' e) = sanitize state e >>= \e2 -> return . EditAnswerEvent' $ e2
-sanitizeEvent state (EditFollowUpQuestionEvent' e) = sanitize state e >>= \e2 -> return . EditFollowUpQuestionEvent' $ e2
+sanitizeEvent state (EditFollowUpQuestionEvent' e) =
+  sanitize state e >>= \e2 -> return . EditFollowUpQuestionEvent' $ e2
 sanitizeEvent state event = return event
-
-
-

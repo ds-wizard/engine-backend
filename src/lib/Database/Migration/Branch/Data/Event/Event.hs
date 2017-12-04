@@ -10,13 +10,13 @@ import Database.Migration.Branch.Data.KnowledgeModel.Experts
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
+import Model.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
-import Model.Common
 import Model.Event.Event
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
@@ -386,7 +386,6 @@ e_km1_ch1_q2_aYes1_2 =
   , _eansAdvice = Just $ answerYes1Changed ^. ansAdvice
   , _eansFollowUpIds = Just $ ansFollowUpIds answerYes1
   }
-
 
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent
 d_km1_ch1_q2_aYes1 =

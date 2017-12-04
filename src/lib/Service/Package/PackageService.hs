@@ -23,16 +23,16 @@ import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.DAO.Package.PackageDAO
 import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.Event.EventMapper
+import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
-import Service.KnowledgeModel.KnowledgeModelApplicator
 
 getPackagesFiltered :: Context -> [(Text, Text)] -> IO (Either AppError [PackageDTO])
 getPackagesFiltered context queryParams = do
@@ -89,18 +89,17 @@ createPackageFromKMC context branchUuid version description =
   getBranch branchUuid $ \branch ->
     getCurrentOrganization $ \organization ->
       validateVersion version branch organization $
-        getEventsForPackage context branch $ \events -> do
-          let name = branch ^. bweName
-          let groupId = organization ^. orgdtoGroupId
-          let artifactId = branch ^. bweArtifactId
-          let mPpId = branch ^. bweParentPackageId
-          createdPackage <- createPackage context name groupId artifactId version description mPpId events
-          deleteEventsAtBranch context branchUuid
-          updateBranchWithParentPackageId context branchUuid (createdPackage ^. pkgdtoId)
-          updateBranchIfMigrationIsCompleted context branchUuid
-          deleteMigratorStateByBranchUuid context branchUuid
-          recompileKnowledgeModel context branch $
-            return . Right $ createdPackage
+      getEventsForPackage context branch $ \events -> do
+        let name = branch ^. bweName
+        let groupId = organization ^. orgdtoGroupId
+        let artifactId = branch ^. bweArtifactId
+        let mPpId = branch ^. bweParentPackageId
+        createdPackage <- createPackage context name groupId artifactId version description mPpId events
+        deleteEventsAtBranch context branchUuid
+        updateBranchWithParentPackageId context branchUuid (createdPackage ^. pkgdtoId)
+        updateBranchIfMigrationIsCompleted context branchUuid
+        deleteMigratorStateByBranchUuid context branchUuid
+        recompileKnowledgeModel context branch $ return . Right $ createdPackage
   where
     validateVersionFormat version callback =
       case isVersionInValidFormat version of
@@ -246,7 +245,6 @@ getEventsForBranchUuid context branchUuid =
       case eitherBranch of
         Right branch -> callback branch
         Left error -> return . Left $ error
-
 
 getNewerPackages :: Context -> String -> IO (Either AppError [Package])
 getNewerPackages context currentPkgId =

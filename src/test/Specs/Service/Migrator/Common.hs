@@ -19,4 +19,3 @@ createTestMigratorStateWithEvents branchEvents targetPackageEvents mKm =
   , _msResultEvents = []
   , _msCurrentKnowledgeModel = mKm
   }
-

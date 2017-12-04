@@ -5,8 +5,8 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
 import Database.MongoDB
-       (find, findOne, select, insert, fetch, save, merge, delete,
-        deleteOne, (=:), rest)
+       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
+        rest, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context

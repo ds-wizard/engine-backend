@@ -21,11 +21,11 @@ import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
+import Model.Branch.BranchState
 import Model.Event.Event
 import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-import Model.Organization.Organization
-import Model.Branch.BranchState
 import Model.Migrator.MigratorState
+import Model.Organization.Organization
 import Service.Branch.BranchMapper
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Package.PackageService
@@ -37,19 +37,23 @@ getBranches context =
     case eitherBranches of
       Right branches -> toDTOs organization branches
       Left error -> return . Left $ error
-    where
-      toDTOs :: Organization -> [Branch] -> IO (Either AppError [BranchWithStateDTO])
-      toDTOs organization = Prelude.foldl (foldBranch organization) (return . Right $ [])
-      foldBranch :: Organization -> IO (Either AppError [BranchWithStateDTO]) -> Branch -> IO (Either AppError [BranchWithStateDTO])
-      foldBranch organization eitherDtosIO branch = do
-        eitherDtos <- eitherDtosIO
-        case eitherDtos of
-          Right dtos -> do
-            eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
-            case eitherBranchState of
-              Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState organization]
-              Left error -> return . Left $ error
-          Left error -> return . Left $ error
+  where
+    toDTOs :: Organization -> [Branch] -> IO (Either AppError [BranchWithStateDTO])
+    toDTOs organization = Prelude.foldl (foldBranch organization) (return . Right $ [])
+    foldBranch ::
+         Organization
+      -> IO (Either AppError [BranchWithStateDTO])
+      -> Branch
+      -> IO (Either AppError [BranchWithStateDTO])
+    foldBranch organization eitherDtosIO branch = do
+      eitherDtos <- eitherDtosIO
+      case eitherDtos of
+        Right dtos -> do
+          eitherBranchState <- getBranchState context (U.toString $ branch ^. bUuid)
+          case eitherBranchState of
+            Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState organization]
+            Left error -> return . Left $ error
+        Left error -> return . Left $ error
 
 createBranch :: Context -> BranchDTO -> IO (Either AppError BranchDTO)
 createBranch context branchDto =
@@ -99,11 +103,7 @@ createBranch context branchDto =
           uuid <- generateUuid
           kmUuid <- generateUuid
           let addKMEvent =
-                AddKnowledgeModelEvent
-                 { _akmUuid = uuid
-                 , _akmKmUuid = kmUuid
-                 , _akmName = "New knowledge model"
-                 }
+                AddKnowledgeModelEvent {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = "New knowledge model"}
           insertEventsToBranch context branchUuid [AddKnowledgeModelEvent' addKMEvent]
 
 getBranchById :: Context -> String -> IO (Either AppError BranchWithStateDTO)
@@ -171,17 +171,17 @@ getBranchState context branchUuid =
                       if isMigrated
                         then return . Right $ BSMigrated
                         else getIsOutdated branch $ \isOutdated ->
-                          if isOutdated
-                            then return . Right $ BSOutdated
-                            else return . Right $ BSDefault
+                               if isOutdated
+                                 then return . Right $ BSOutdated
+                                 else return . Right $ BSDefault
   where
     getIsMigrating callback = do
       eitherMs <- findMigratorStateByBranchUuid context branchUuid
       case eitherMs of
         Right migrationState ->
           if migrationState ^. msMigrationState == CompletedState
-           then callback False
-           else callback True
+            then callback False
+            else callback True
         Left (NotExistsError _) -> callback False
         Left error -> return . Left $ error
     isEditing branch = Prelude.length (branch ^. bweEvents) > 0
@@ -203,8 +203,8 @@ getBranchState context branchUuid =
       case eitherMs of
         Right migrationState ->
           if migrationState ^. msMigrationState == CompletedState
-           then callback True
-           else callback False
+            then callback True
+            else callback False
         Left (NotExistsError _) -> callback False
         Left error -> return . Left $ error
 

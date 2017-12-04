@@ -8,13 +8,13 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Api.Resources.Migrator.MigratorStateCreateDTO
 import Api.Resources.Migrator.MigratorConflictDTO
+import Api.Resources.Migrator.MigratorStateCreateDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
-import Database.Migration.Package.Data.Package
 import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.BranchState
 import Model.Event.Chapter.AddChapterEvent
@@ -125,10 +125,7 @@ branchServiceIntegrationSpec context dspConfig =
         liftIO $ createMigration context branchUuid migratorCreateDto
         let reqDto =
               MigratorConflictDTO
-              { _mcdtoOriginalEventUuid = a_km1_ch3 ^. achUuid
-              , _mcdtoAction = MCAReject
-              , _mcdtoEvent = Nothing
-              }
+              {_mcdtoOriginalEventUuid = a_km1_ch3 ^. achUuid, _mcdtoAction = MCAReject, _mcdtoEvent = Nothing}
         liftIO $ solveConflictAndMigrate context branchUuid reqDto
         -- AND: Prepare expectations
         let expState = BSMigrated

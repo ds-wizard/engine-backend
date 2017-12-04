@@ -8,9 +8,7 @@ import qualified Data.UUID as U
 
 import Common.Error
 
-deserializeEntities
-  :: (FromBSON a)
-  => [Document] -> Either AppError [a]
+deserializeEntities :: (FromBSON a) => [Document] -> Either AppError [a]
 deserializeEntities entitiesS = do
   let maybeEntities = fromBSON <$> entitiesS
   let entities = catMaybes maybeEntities
@@ -18,9 +16,7 @@ deserializeEntities entitiesS = do
     then Right entities
     else Left . DatabaseError $ "Problem with deserialization of entity from database"
 
-deserializeMaybeEntity
-  :: (FromBSON a)
-  => Maybe Document -> Either AppError a
+deserializeMaybeEntity :: (FromBSON a) => Maybe Document -> Either AppError a
 deserializeMaybeEntity mEntityS =
   case mEntityS of
     Just entityS -> do

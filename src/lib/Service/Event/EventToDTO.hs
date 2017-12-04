@@ -6,13 +6,13 @@ import Data.UUID (UUID)
 
 import Api.Resources.Event.EventDTO
 import Common.Types
+import Model.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
 import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
-import Model.Common
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
 import Model.Event.Expert.EditExpertEvent

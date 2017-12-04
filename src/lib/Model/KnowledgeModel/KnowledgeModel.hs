@@ -63,7 +63,6 @@ makeLenses ''Expert
 makeLenses ''Reference
 
 -- ------------------------------------------------------------------------------------------
-
 instance SameUuid KnowledgeModel KnowledgeModel where
   equalsUuid km1 km2 = km1 ^. kmUuid == km2 ^. kmUuid
 
@@ -135,13 +134,13 @@ getAllQuestions km = go (km ^.. kmChapters . traverse . chQuestions . traverse)
 getQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
 getQuestionByUuid km questionUuid = find (\q -> q ^. qUuid == questionUuid) (getAllQuestions km)
 
-getAllQuestionsForChapterUuid :: KnowledgeModel -> UUID ->  [Question]
+getAllQuestionsForChapterUuid :: KnowledgeModel -> UUID -> [Question]
 getAllQuestionsForChapterUuid km chapterUuid =
   case getChapterByUuid km chapterUuid of
     Just chapter -> chapter ^. chQuestions
     Nothing -> []
 
-getAllQuestionsForAnswerUuid :: KnowledgeModel -> UUID ->  [Question]
+getAllQuestionsForAnswerUuid :: KnowledgeModel -> UUID -> [Question]
 getAllQuestionsForAnswerUuid km answerUuid =
   case getAnswerByUuid km answerUuid of
     Just answer -> answer ^. ansFollowUps

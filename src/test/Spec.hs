@@ -1,6 +1,6 @@
 module Main where
 
-import Data.Aeson (Value(..), object, (.=))
+import Data.Aeson (Value(..), (.=), object)
 import Network.Wai (Application)
 import Test.Hspec
 import qualified Test.Hspec.Expectations.Pretty as TP

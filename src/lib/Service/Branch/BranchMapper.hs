@@ -7,9 +7,9 @@ import Data.UUID (UUID)
 import Api.Resources.Branch.BranchDTO
 import Api.Resources.Branch.BranchWithStateDTO
 import Common.Types
-import Model.Organization.Organization
 import Model.Branch.Branch
 import Model.Branch.BranchState
+import Model.Organization.Organization
 
 toDTO :: Branch -> Organization -> BranchDTO
 toDTO branch organization =

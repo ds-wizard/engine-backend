@@ -17,11 +17,11 @@ doMigrate :: IO MigratorState -> Event -> IO MigratorState
 doMigrate stateIO event = do
   state <- stateIO
   case state ^. msMigrationState of
-      RunningState ->
-        if isCleanerMethod state event
-          then runCleanerMethod state event
-          else runCorrectorMethod state event
-      _ -> stateIO
+    RunningState ->
+      if isCleanerMethod state event
+        then runCleanerMethod state event
+        else runCorrectorMethod state event
+    _ -> stateIO
 
 migrate :: MigratorState -> IO MigratorState
 migrate state =

@@ -1,29 +1,27 @@
 module Service.Migrator.Methods.Sanitizator where
 
-import Control.Lens hiding(find)
+import Control.Lens hiding (find)
+import Data.List
+import Data.Maybe
 import qualified Data.Set as S
 import qualified Data.UUID as U
-import Data.Maybe
-import Data.List
 import Text.Pretty.Simple (pPrint)
 
-import Common.Uuid
 import Common.Utils
+import Common.Uuid
+import Model.Event.Answer.EditAnswerEvent
+import Model.Event.Chapter.EditChapterEvent
+import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
 import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import Model.Event.Question.EditQuestionEvent
-import Model.Event.Chapter.EditChapterEvent
-import Model.Event.Answer.EditAnswerEvent
-import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-import Model.Migrator.MigratorState
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Migrator.MigratorState
 
 -- ------------------------------------------------------------
-
 class Sanitizator a where
   sanitize :: MigratorState -> a -> IO a
 
 -- ------------------------------------------------------------
-
 instance Sanitizator EditKnowledgeModelEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
@@ -37,22 +35,16 @@ instance Sanitizator EditKnowledgeModelEvent where
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _chUuid <$> getAllChapters km
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-      isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+      isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
       resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-      resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+      resultUuids km childIdsFromEvent =
+        filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
 -- ------------------------------------------------------------
-
 instance Sanitizator EditChapterEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChildUuids $ \childIdsFromEvent ->
---        pPrint $ km
---        pPrint $ childIdsFromEvent
---        pPrint $ childIdsFromKM km
---        pPrint $ childIdsFromEvent ++ childIdsFromKM km
---        pPrint $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
---        pPrint $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
         changeEventUuid echUuid $ event & echQuestionIds .~ (Just $ resultUuids km childIdsFromEvent)
     where
       unwrapEventChildUuids callback =
@@ -62,12 +54,18 @@ instance Sanitizator EditChapterEvent where
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _qUuid <$> getAllQuestionsForChapterUuid km (event ^. echChapterUuid)
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-      isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+      isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
       resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-      resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+      resultUuids km childIdsFromEvent =
+        filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
+--        pPrint $ km
+--        pPrint $ childIdsFromEvent
+--        pPrint $ childIdsFromKM km
+--        pPrint $ childIdsFromEvent ++ childIdsFromKM km
+--        pPrint $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+--        pPrint $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 -- ------------------------------------------------------------
-
 instance Sanitizator EditQuestionEvent where
   sanitize state event =
     unwrapKM state event $ \km -> do
@@ -75,10 +73,10 @@ instance Sanitizator EditQuestionEvent where
       event2 <- applyReferenceChange km event1
       event3 <- applyExpertChange km event2
       changeEventUuid eqUuid event3
-    where
       -- ------------------------
       -- Answers
       -- ------------------------
+    where
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
           return $ event & eqAnswerIds .~ (Just $ resultUuids km childIdsFromEvent)
@@ -90,9 +88,10 @@ instance Sanitizator EditQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _ansUuid <$> getAllAnswersForQuestionUuid km (event ^. eqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- References
       -- ------------------------
@@ -107,9 +106,10 @@ instance Sanitizator EditQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _refUuid <$> getAllReferencesForQuestionUuid km (event ^. eqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- Experts
       -- ------------------------
@@ -124,12 +124,12 @@ instance Sanitizator EditQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _expUuid <$> getAllExpertsForQuestionUuid km (event ^. eqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
 -- ------------------------------------------------------------
-
 instance Sanitizator EditAnswerEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
@@ -143,12 +143,12 @@ instance Sanitizator EditAnswerEvent where
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _qUuid <$> getAllQuestionsForAnswerUuid km (event ^. eansAnswerUuid)
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-      isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+      isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
       resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-      resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+      resultUuids km childIdsFromEvent =
+        filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
 -- ------------------------------------------------------------
-
 instance Sanitizator EditFollowUpQuestionEvent where
   sanitize state event =
     unwrapKM state event $ \km -> do
@@ -156,10 +156,10 @@ instance Sanitizator EditFollowUpQuestionEvent where
       event2 <- applyReferenceChange km event1
       event3 <- applyExpertChange km event2
       changeEventUuid efuqUuid event3
-    where
       -- ------------------------
       -- Answers
       -- ------------------------
+    where
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
           return $ event & efuqAnswerIds .~ (Just $ resultUuids km childIdsFromEvent)
@@ -171,9 +171,10 @@ instance Sanitizator EditFollowUpQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _ansUuid <$> getAllAnswersForQuestionUuid km (event ^. efuqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- References
       -- ------------------------
@@ -188,9 +189,10 @@ instance Sanitizator EditFollowUpQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _refUuid <$> getAllReferencesForQuestionUuid km (event ^. efuqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- Experts
       -- ------------------------
@@ -205,13 +207,13 @@ instance Sanitizator EditFollowUpQuestionEvent where
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _expUuid <$> getAllExpertsForQuestionUuid km (event ^. efuqQuestionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
-          isInChildIds km uuid = isJust $ find (==uuid) (childIdsFromKM km)
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent = filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
-
 unwrapKM state event callback =
   case state ^. msCurrentKnowledgeModel of
     Nothing -> return event
@@ -220,4 +222,3 @@ unwrapKM state event callback =
 changeEventUuid setter event = do
   uuid <- generateUuid
   return $ event & setter .~ uuid
-

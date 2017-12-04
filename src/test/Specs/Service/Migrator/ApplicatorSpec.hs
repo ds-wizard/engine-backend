@@ -5,19 +5,19 @@ import Data.Maybe
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Model.Event.Chapter.AddChapterEvent
+import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+import Database.Migration.Branch.Data.KnowledgeModel.Chapters
+import Database.Migration.Branch.Data.KnowledgeModel.Experts
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+import Database.Migration.Branch.Data.KnowledgeModel.Questions
+import Database.Migration.Branch.Data.KnowledgeModel.References
 import Model.Common
+import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Event
 import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Migrator.Applicator
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.Chapters
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.Branch.Data.KnowledgeModel.Experts
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Branch.Data.KnowledgeModel.References
 
 applicatorSpec =
   describe "Applicator" $ do

@@ -1,6 +1,6 @@
 module Service.Migrator.MigratorService where
 
-import Control.Lens ((^.), (&), (.~), makeLenses)
+import Control.Lens ((&), (.~), (^.), makeLenses)
 import Data.Either
 import Data.Maybe
 import qualified Data.Text as T
@@ -162,4 +162,3 @@ migrateState context ms = do
   migratedMs <- migrate ms
   updateMigratorState context migratedMs
   return migratedMs
-

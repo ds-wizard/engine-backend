@@ -10,8 +10,8 @@ import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Network.HTTP.Types as H
 import Network.HTTP.Types.Method (methodOptions)
 import Network.Wai
-       (Middleware, Application, ResponseReceived, Request, Response,
-        requestHeaders, requestMethod, responseLBS, pathInfo)
+       (Application, Middleware, Request, Response, ResponseReceived,
+        pathInfo, requestHeaders, requestMethod, responseLBS)
 import Prelude hiding (exp)
 import Text.Regex
 import Web.JWT

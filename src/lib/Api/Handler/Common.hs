@@ -9,8 +9,8 @@ import qualified Data.Text.Lazy as LT
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
-       (ok200, badRequest400, unauthorized401, forbidden403, notFound404,
-        internalServerError500)
+       (badRequest400, forbidden403, internalServerError500, notFound404,
+        ok200, unauthorized401)
 import Network.Wai
 import qualified Web.Scotty as Scotty
 

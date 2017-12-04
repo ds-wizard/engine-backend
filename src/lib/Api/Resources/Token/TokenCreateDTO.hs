@@ -1,6 +1,6 @@
 module Api.Resources.Token.TokenCreateDTO where
 
-import Control.Lens (makeLenses, (^.))
+import Control.Lens ((^.), makeLenses)
 import Control.Monad
 import Data.Aeson
 import Data.Text
