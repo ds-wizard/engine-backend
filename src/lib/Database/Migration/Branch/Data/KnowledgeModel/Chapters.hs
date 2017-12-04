@@ -17,8 +17,6 @@ chapter1 =
   , _chQuestions = [FQ.question1, FQ.question2]
   }
 
--- chapter1WithChangedTitle = chapter1 & chTitle .~ "EDITED: Design of experiment"
--- chapter1WithChangedText = chapter1 & chText .~ "EDITED: Looong long text"
 chapter1WithChangeProperties :: Chapter
 chapter1WithChangeProperties =
   Chapter

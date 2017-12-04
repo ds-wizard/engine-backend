@@ -16,7 +16,7 @@ import Model.Event.Answer.EditAnswerEvent
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Chapter.DeleteChapterEvent
 import Model.Event.Chapter.EditChapterEvent
-import Model.Event.Common
+import Model.Common
 import Model.Event.Event
 import Model.Event.Expert.AddExpertEvent
 import Model.Event.Expert.DeleteExpertEvent
@@ -94,6 +94,17 @@ e_km1_ch1 =
   , _echQuestionIds = Just $ chQuestionIds chapter1WithChangeProperties
   }
 
+e_km1_ch1_2 :: EditChapterEvent
+e_km1_ch1_2 =
+  EditChapterEvent
+  { _echUuid = fromJust $ U.fromString "d4adc3e6-c70e-4277-9d1d-0941db0f0141"
+  , _echKmUuid = km1 ^. kmUuid
+  , _echChapterUuid = chapter1 ^. chUuid
+  , _echTitle = Just $ "TWICE: " ++ chapter1WithChangeProperties ^. chTitle
+  , _echText = Just $ chapter1WithChangeProperties ^. chText
+  , _echQuestionIds = Just $ chQuestionIds chapter1WithChangeProperties
+  }
+
 d_km1_ch1 :: DeleteChapterEvent
 d_km1_ch1 =
   DeleteChapterEvent
@@ -156,6 +167,22 @@ a_km1_ch2_q3 =
   , _aqText = question3 ^. qText
   }
 
+e_km1_ch1_q1_title :: EditQuestionEvent
+e_km1_ch1_q1_title =
+  EditQuestionEvent
+  { _eqUuid = fromJust $ U.fromString "de86f82b-aaaf-482e-97c7-c7e93d834cd9"
+  , _eqKmUuid = km1 ^. kmUuid
+  , _eqChapterUuid = chapter1 ^. chUuid
+  , _eqQuestionUuid = question1 ^. qUuid
+  , _eqShortQuestionUuid = Nothing
+  , _eqType = Nothing
+  , _eqTitle = Just $ "EDITED: " ++ question2WithChangeProperties ^. qTitle
+  , _eqText = Nothing
+  , _eqAnswerIds = Nothing
+  , _eqExpertIds = Nothing
+  , _eqReferenceIds = Nothing
+  }
+
 e_km1_ch1_q2 :: EditQuestionEvent
 e_km1_ch1_q2 =
   EditQuestionEvent
@@ -170,6 +197,49 @@ e_km1_ch1_q2 =
   , _eqAnswerIds = Just $ qAnwerIds question2WithChangeProperties
   , _eqExpertIds = Just $ qExpertIds question2WithChangeProperties
   , _eqReferenceIds = Just $ qReferenceIds question2WithChangeProperties
+  }
+
+e_km1_ch1_q2_second_edit :: EditQuestionEvent
+e_km1_ch1_q2_second_edit =
+  EditQuestionEvent
+  { _eqUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
+  , _eqKmUuid = km1 ^. kmUuid
+  , _eqChapterUuid = chapter1 ^. chUuid
+  , _eqQuestionUuid = question2 ^. qUuid
+  , _eqShortQuestionUuid = Just $ question2 ^. qShortUuid
+  , _eqType = Just $ question2WithChangeProperties ^. qType
+  , _eqTitle = Just "New title"
+  , _eqText = Just $ question2WithChangeProperties ^. qText
+  , _eqAnswerIds = Just $ qAnwerIds question2WithChangeProperties
+  , _eqExpertIds = Just $ qExpertIds question2WithChangeProperties
+  , _eqReferenceIds = Just $ qReferenceIds question2WithChangeProperties
+  }
+
+d_km1_ch1_q1 :: DeleteQuestionEvent
+d_km1_ch1_q1 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question1 ^. qUuid
+  }
+
+d_km1_ch1_q1_2 :: DeleteQuestionEvent
+d_km1_ch1_q1_2 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question1 ^. qUuid
+  }
+
+d_km1_ch1_q2 :: DeleteQuestionEvent
+d_km1_ch1_q2 =
+  DeleteQuestionEvent
+  { _dqUuid = fromJust $ U.fromString "52a7a6ae-be37-4075-ac5c-a20858707a75"
+  , _dqKmUuid = km1 ^. kmUuid
+  , _dqChapterUuid = chapter1 ^. chUuid
+  , _dqQuestionUuid = question2 ^. qUuid
   }
 
 d_km1_ch1_q3 :: DeleteQuestionEvent
@@ -304,6 +374,20 @@ e_km1_ch1_q2_aYes1 =
   , _eansFollowUpIds = Just $ ansFollowUpIds answerYes1Changed
   }
 
+e_km1_ch1_q2_aYes1_2 :: EditAnswerEvent
+e_km1_ch1_q2_aYes1_2 =
+  EditAnswerEvent
+  { _eansUuid = fromJust $ U.fromString "8c6632f6-0335-4912-924a-693a87cbe270"
+  , _eansKmUuid = km1 ^. kmUuid
+  , _eansChapterUuid = chapter1 ^. chUuid
+  , _eansQuestionUuid = question2 ^. qUuid
+  , _eansAnswerUuid = answerYes1 ^. ansUuid
+  , _eansLabel = Just $ answerYes1Changed ^. ansLabel
+  , _eansAdvice = Just $ answerYes1Changed ^. ansAdvice
+  , _eansFollowUpIds = Just $ ansFollowUpIds answerYes1
+  }
+
+
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent
 d_km1_ch1_q2_aYes1 =
   DeleteAnswerEvent
@@ -373,6 +457,23 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _efuqAnswerIds = Just $ qAnwerIds followUpQuestion2Changed
   , _efuqExpertIds = Just $ qExpertIds followUpQuestion2Changed
   , _efuqReferenceIds = Just $ qReferenceIds followUpQuestion2Changed
+  }
+
+e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 :: EditFollowUpQuestionEvent
+e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
+  EditFollowUpQuestionEvent
+  { _efuqUuid = fromJust $ U.fromString "378f1fb0-e714-400b-a23d-fa939acd3f45"
+  , _efuqKmUuid = km1 ^. kmUuid
+  , _efuqChapterUuid = chapter1 ^. chUuid
+  , _efuqAnswerUuid = answerYes3 ^. ansUuid
+  , _efuqQuestionUuid = followUpQuestion2 ^. qUuid
+  , _efuqShortQuestionUuid = Just $ followUpQuestion2 ^. qShortUuid
+  , _efuqType = Just $ followUpQuestion2Changed ^. qType
+  , _efuqTitle = Just $ followUpQuestion2Changed ^. qTitle
+  , _efuqText = Just $ followUpQuestion2Changed ^. qText
+  , _efuqAnswerIds = Just $ [answerYes4 ^. ansUuid, answerNo4 ^. ansUuid]
+  , _efuqExpertIds = Just $ qExpertIds followUpQuestion2
+  , _efuqReferenceIds = Just $ qReferenceIds followUpQuestion2
   }
 
 d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteFollowUpQuestionEvent
@@ -500,271 +601,3 @@ d_km1_ch1_q2_rCh2 =
   , _drefQuestionUuid = question2 ^. qUuid
   , _drefReferenceUuid = referenceCh2 ^. refUuid
   }
---import Control.Lens ((^.))
---import Data.Maybe
---import qualified Data.UUID as U
---
---import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
---import Model.Event.Chapter.AddChapterEvent
---import Model.Event.Question.AddQuestionEvent
---import Database.Migration.Branch.Data.KnowledgeModel
---addChapter1 = AddChapterEvent
---  { _achUuid = fromJust (U.fromString "73209e91-4b3a-426c-9b92-145015e2346c")
---  , _achKmUuid = akm ^. akmUuid
---  , _achChapterUuid = fromJust (U.fromString "2e4fdc4f-bc4b-4583-a44e-0f94e511873e")
---  , _achTitle = "Design of experiment"
---  , _achText = "Before you decide to embark on any new study, it is nowadays good practice to consider all options to keep the data generation part of your study as limited as possible. It is not because we can generate massive amounts of data that we always need to do so. Creating data with public money is bringing with it the responsibility to treat those data well and (if potentially useful) make them available for re-use by others."
---  }
---
---addQuestion1 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "84a6eaf0-2222-43bc-9b20-c4aea2446a31")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "20a9f96d-5908-4b05-a6cb-96f59dd7853e")
---  , _aqShortQuestionUuid = Just "atq"
---  , _aqType = "option"
---  , _aqTitle = "Is there any pre-existing data?"
---  , _aqText = "Are there any data sets available in the world that are relevant to your planned research?"
---  }
---
---addQuestion2 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "a10f7e43-0f7a-4a62-8806-a0fba3513bb2")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "8f2d0483-b896-4e2e-8d98-fe7d1c845635")
---  , _aqShortQuestionUuid = Just "ezi"
---  , _aqType = "option"
---  , _aqTitle = "Will you be using any pre-existing data (including other people's data)?"
---  , _aqText = "Will you be referring to any earlier measured data, reference data, or data that should be mined from existing literature? Your own data as well as data from others?"
---  }
---
---addQuestion3 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "3e034be1-475b-4564-b032-6aa7c80a8cfc")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "8c30bc1c-bad5-43af-8812-837c21d9bc97")
---  , _aqShortQuestionUuid = Just "quc"
---  , _aqType = "list"
---  , _aqTitle = "What reference data will you use?"
---  , _aqText = "Much of todays data is used in comparison with reference data. A genome for instance is compared with a reference genome to identify genomic variants. If you use reference data, there are several other issues that you should consider. What are the reference data sets that you will use?"
---  }
---
---addQuestion4 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "cdd89683-c494-4fc0-9737-63db91ee317a")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "a22ab5b4-d4f6-4575-a023-286388c3ec4d")
---  , _aqShortQuestionUuid = Just "ckt"
---  , _aqType = "option"
---  , _aqTitle = "Do you know where and how is it available?"
---  , _aqText = "Do you know where the reference data is available, what the conditions for use are, and how to reference it?"
---  }
---
---addQuestion5 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "a6070f1b-36e9-42e9-a1bd-4e84634b6fd1")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "d04fbdc3-dd7c-40ac-903a-82a93296e188")
---  , _aqShortQuestionUuid = Just "jxb"
---  , _aqType = "option"
---  , _aqTitle = "Do you know in what format the reference data is available?"
---  , _aqText = "Do you know the data format of the reference data? Is this suitable for your work? Does it need to be converted?"
---  }
---
---addQuestion6 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "899527d9-de81-4302-9de1-78f8bc61c198")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "f5b6f453-14cd-444b-a735-ea785348301c")
---  , _aqShortQuestionUuid = Just "rgy"
---  , _aqType = "option"
---  , _aqTitle = "Is the reference data resource versioned?"
---  , _aqText = "Many reference data sets evolve over time. If the reference data set changes, this may affect your results. If different versions of a reference data set exist, you need to establish your \"version policy\"."
---  }
---
---addQuestion7 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "6902ba27-d24e-4291-bea2-e38ea709d2f2")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "e27fa6c4-0eda-48bb-bc91-1f5f8b2a0cd8")
---  , _aqShortQuestionUuid = Nothing
---  , _aqType = "text"
---  , _aqTitle = "Which version will you use?"
---  , _aqText = "If there are different versions available, you have to decide with all project partners together which version you will be using. Probably you will go for the latest release as of the date of the start of your research project. However, if you have other data from older projects that need to be merged, you may need to consider using the same release you used for a previous project."
---  }
---
---addQuestion8 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "f6691d5e-6e93-4025-9b13-dc9ea0a78a06")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "e4dc5201-42df-4f3a-b11f-aa05c7b8bcbb")
---  , _aqShortQuestionUuid = Nothing
---  , _aqType = "option"
---  , _aqTitle = "Will you change version if it updates?"
---  , _aqText = "If the reference changes while you are working on your research project, you need to decide whether you will follow these changes. Most likely that will mean that you have to do some analyses again, so you will need to make sure enough resources are available to do so. You can decide to stay with the version that you started with; this can have the disadvantage that you will not benefit from added information or added consistency."
---  }
---
---addQuestion9 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "e8022e65-9041-456e-877c-ca93c8868c83")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "fb1910aa-b693-49f0-8f54-2a38f0a2045f")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion10 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "fa1cef2d-14ad-4ac0-adaa-7d7b6266d392")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "a74d59a8-4a1e-46b9-8fdd-be5d83017ca9")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion12 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion13 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion14 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion15 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion16 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion17 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion18 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion19 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion20 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion21 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion22 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion23 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }
---
---addQuestion24 = AddQuestionEvent
---  { _aqUuid = fromJust (U.fromString "")
---  , _aqKmUuid = addChapter1 ^. achKmUuid
---  , _aqChapterUuid = addChapter1 ^. achChapterUuid
---  , _aqQuestionUuid = fromJust (U.fromString "")
---  , _aqShortQuestionUuid = ""
---  , _aqType = ""
---  , _aqTitle = ""
---  , _aqText = ""
---  }

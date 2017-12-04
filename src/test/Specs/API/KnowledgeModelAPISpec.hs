@@ -29,14 +29,14 @@ import Model.KnowledgeModel.KnowledgeModel
 import Service.Branch.BranchService
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
+import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Branch.Data.KnowledgeModel.Chapters
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+import Database.Migration.Branch.Data.KnowledgeModel.Experts
+import Database.Migration.Branch.Data.KnowledgeModel.Questions
+import Database.Migration.Branch.Data.KnowledgeModel.References
 
-import Fixtures.Event.Events
-import Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions
-import Fixtures.KnowledgeModel.Chapters
-import Fixtures.KnowledgeModel.Experts
-import Fixtures.KnowledgeModel.KnowledgeModels
-import Fixtures.KnowledgeModel.Questions
-import Fixtures.KnowledgeModel.References
 import Specs.API.Common
 import Specs.Common
 

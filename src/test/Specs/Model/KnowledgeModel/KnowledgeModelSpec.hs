@@ -7,14 +7,12 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Model.KnowledgeModel.KnowledgeModel
-
-import qualified
-       Fixtures.KnowledgeModel.AnswersAndFollowUpQuestions as FA
-import qualified Fixtures.KnowledgeModel.Chapters as FCH
-import qualified Fixtures.KnowledgeModel.Experts as FE
-import qualified Fixtures.KnowledgeModel.KnowledgeModels as FKM
-import qualified Fixtures.KnowledgeModel.Questions as FQ
-import qualified Fixtures.KnowledgeModel.References as FR
+import qualified Database.Migration.Branch.Data.KnowledgeModel.Chapters as FCH
+import qualified Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels as FKM
+import qualified Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions as FA
+import qualified Database.Migration.Branch.Data.KnowledgeModel.Experts as FE
+import qualified Database.Migration.Branch.Data.KnowledgeModel.Questions as FQ
+import qualified Database.Migration.Branch.Data.KnowledgeModel.References as FR
 
 knowledgeModelSpec =
   describe "Knowledge Model" $ do

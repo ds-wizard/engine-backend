@@ -38,7 +38,7 @@ question2 =
   , _qTitle = "Second Question"
   , _qText = "Some long description"
   , _qAnswers = [FA.answerNo1, FA.answerYes1]
-  , _qReferences = [FR.referenceCh1, referenceCh2]
+  , _qReferences = [FR.referenceCh1, FR.referenceCh2]
   , _qExperts = [FE.expertDarth, FE.expertLuke]
   }
 

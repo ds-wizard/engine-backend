@@ -42,8 +42,8 @@ import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.MigratorService
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 
-import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common
 import Specs.Common
 

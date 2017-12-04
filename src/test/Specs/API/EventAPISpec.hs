@@ -29,6 +29,7 @@ import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.User.UserDAO
 import qualified Database.Migration.Branch.BranchMigration as KMC
 import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Branch.Branch
 import Model.Event.Event
@@ -38,7 +39,6 @@ import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.Applicator
 
-import Fixtures.KnowledgeModel.KnowledgeModels
 import Specs.API.Common
 import Specs.Common
 
