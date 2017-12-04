@@ -4,7 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
-import Model.Event.Common
+import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddKnowledgeModelEvent = AddKnowledgeModelEvent

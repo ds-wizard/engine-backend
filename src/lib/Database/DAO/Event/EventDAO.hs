@@ -24,7 +24,7 @@ import Database.BSON.Event.Reference
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Common
 import Model.Branch.Branch
-import Model.Event.Common
+import Model.Common
 import Model.Event.Event
 
 findBranchWithEventsById :: Context -> String -> IO (Either AppError BranchWithEvents)

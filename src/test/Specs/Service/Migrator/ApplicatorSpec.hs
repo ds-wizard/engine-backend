@@ -6,7 +6,7 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Common
+import Model.Common
 import Model.Event.Event
 import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 import Model.KnowledgeModel.KnowledgeModel

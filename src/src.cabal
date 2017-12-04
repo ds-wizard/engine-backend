@@ -118,13 +118,13 @@ library
       Database.Migration.User.UserMigration
       Model.Branch.Branch
       Model.Branch.BranchState
+      Model.Common
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
       Model.Event.Chapter.AddChapterEvent
       Model.Event.Chapter.DeleteChapterEvent
       Model.Event.Chapter.EditChapterEvent
-      Model.Event.Common
       Model.Event.Event
       Model.Event.Expert.AddExpertEvent
       Model.Event.Expert.DeleteExpertEvent
