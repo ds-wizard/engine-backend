@@ -47,8 +47,10 @@ deletePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
 deletePackagesA context dspConfig =
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
-    liftIO $ deletePackagesByQueryParams context queryParams
-    Scotty.status noContent204
+    maybeError <- liftIO $ deletePackagesByQueryParams context queryParams
+    case maybeError of
+      Nothing -> Scotty.status noContent204
+      Just error -> sendError error
 
 deletePackageA :: Context -> DSPConfig -> Scotty.ActionM ()
 deletePackageA context dspConfig =

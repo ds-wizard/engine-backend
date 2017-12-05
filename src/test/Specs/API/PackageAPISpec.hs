@@ -16,13 +16,18 @@ import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
+import Text.Pretty.Simple (pPrint)
 import qualified Web.Scotty as S
 
 import Api.Resources.Package.PackageDTO
 import Common.Error
+import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
+import qualified Database.Migration.Branch.BranchMigration as B
+import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import Model.Package.Package
+import Service.Package.PackageMapper
 import Service.Package.PackageService
 
 import Specs.API.Common
@@ -160,6 +165,7 @@ packageAPI context dspConfig = do
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
           liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ deleteBranches context
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -167,14 +173,36 @@ packageAPI context dspConfig = do
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherPackages <- liftIO $ findPackages context
-          liftIO $ (isRight eitherPackages) `shouldBe` True
-          let (Right packages) = eitherPackages
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
+        it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
+          -- GIVEN: Prepare expectation
+          let expStatus = 400
+          let expHeaders = resCorsHeaders
+          let expDto =
+                createErrorWithErrorMessage $
+                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+          let expBody = encode expDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- THEN: Find a result
+          eitherPackages <- liftIO $ findPackages context
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+          response `shouldRespondWith` responseMatcher
+          -- AND: Compare state in DB with expetation
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
+          liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
@@ -184,7 +212,7 @@ packageAPI context dspConfig = do
          -- GIVEN: Prepare request
        do
         let reqMethod = methodDelete
-        let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
+        let reqUrl = "/packages?groupId=elixir.nl&artifactId=core-nl"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
@@ -192,18 +220,42 @@ packageAPI context dspConfig = do
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
+          -- AND: Prepare DB
+          liftIO $ deleteBranches context
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackageByGroupIdAndArtifactId context "elixir.base" "core"
-          liftIO $ (isRight eitherPackages) `shouldBe` True
-          let (Right packages) = eitherPackages
+          eitherPackages <- liftIO $ findPackageByGroupIdAndArtifactId context "elixir.nl" "core-nl"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
           -- AND: Compare state in DB with expetation
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
+        it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
+          -- GIVEN: Prepare expectation
+          let expStatus = 400
+          let expHeaders = resCorsHeaders
+          let expDto =
+                createErrorWithErrorMessage $
+                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+          let expBody = encode expDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- THEN: Find a result
+          eitherPackages <- liftIO $ findPackages context
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+          response `shouldRespondWith` responseMatcher
+          -- AND: Compare state in DB with expetation
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
+          liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
@@ -213,7 +265,7 @@ packageAPI context dspConfig = do
          -- GIVEN: Prepare request
        do
         let reqMethod = methodDelete
-        let reqUrl = "/packages/elixir.base:core:1.0.0"
+        let reqUrl = "/packages/elixir.nl:core-nl:2.0.0"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
@@ -224,13 +276,42 @@ packageAPI context dspConfig = do
         -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Find a result
-          eitherPackage <- liftIO $ getPackageById context "elixir.base:core:1.0.0"
-          liftIO $ (isLeft eitherPackage) `shouldBe` True
-          let (Left (NotExistsError _)) = eitherPackage
+          eitherPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:2.0.0"
         -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
+        -- AND: Compare state in DB with expetation
+          liftIO $ (isLeft eitherPackage) `shouldBe` True
+          let (Left (NotExistsError _)) = eitherPackage
+        -- AND: We have to end with expression (if there is another way, how to do it, please fix it)
+          liftIO $ True `shouldBe` True
+        it "HTTP 400 BAD REQUEST when package can't be deleted" $
+          -- GIVEN: Prepare request
+         do
+          let reqUrl = "/packages/elixir.nl:core-nl:1.0.0"
+          -- AND: Prepare DB
+          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ B.runMigration context dspConfig fakeLogState
+          -- AND: Prepare expectation
+          let expStatus = 400
+          let expHeaders = resCorsHeaders
+          let expDto =
+                createErrorWithErrorMessage $
+                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+          let expBody = encode expDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- THEN: Find a result
+          eitherPackages <- liftIO $ findPackages context
+          -- AND: Compare response with expetation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+          response `shouldRespondWith` responseMatcher
+          -- AND: Compare state in DB with expetation
+          liftIO $ (isRight eitherPackages) `shouldBe` True
+          let (Right packages) = eitherPackages
+          liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
         createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody

@@ -37,6 +37,23 @@ findBranchByArtifactId context artifactId = do
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 
+findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId ::
+     Context -> String -> IO (Either AppError [Branch])
+findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId context packageId = do
+  let action =
+        rest =<<
+        find
+          (select
+             [ "$or" =:
+               [ ["parentPackageId" =: packageId]
+               , ["lastAppliedParentPackageId" =: packageId]
+               , ["lastMergeCheckpointPackageId" =: packageId]
+               ]
+             ]
+             branchCollection)
+  branchesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeEntities $ branchesS
+
 insertBranch :: Context -> Branch -> IO Value
 insertBranch context branch = do
   let action = insert branchCollection (toBSON branch)

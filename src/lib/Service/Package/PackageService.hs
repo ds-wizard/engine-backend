@@ -10,6 +10,7 @@ import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.UUID as U
+import Text.Pretty.Simple (pPrint)
 import Text.Regex
 
 import Api.Resources.Branch.BranchDTO
@@ -167,16 +168,30 @@ importPackage context fileContent = do
       return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
 
-deletePackagesByQueryParams :: Context -> [(Text, Text)] -> IO ()
-deletePackagesByQueryParams = deletePackagesFiltered
+deletePackagesByQueryParams :: Context -> [(Text, Text)] -> IO (Maybe AppError)
+deletePackagesByQueryParams context queryParams = do
+  eitherPackages <- findPackagesFiltered context queryParams
+  case eitherPackages of
+    Right packages -> do
+      maybeError <- validatePackagesDeletation context (_pkgId <$> packages)
+      if isJust maybeError
+        then return maybeError
+        else do
+          deletePackagesFiltered context queryParams
+          return Nothing
+    Left error -> return . Just $ error
 
 deletePackage :: Context -> String -> IO (Maybe AppError)
 deletePackage context pkgId = do
   eitherPackage <- findPackageById context pkgId
   case eitherPackage of
     Right package -> do
-      deletePackageById context pkgId
-      return Nothing
+      maybeError <- validatePackageDeletation context pkgId
+      if isJust maybeError
+        then return maybeError
+        else do
+          deletePackageById context pkgId
+          return Nothing
     Left error -> return . Just $ error
 
 getTheNewestPackageByGroupIdAndArtifactId :: Context -> String -> String -> IO (Either AppError (Maybe Package))
@@ -310,3 +325,52 @@ splitPackageId packageId = T.splitOn ":" (T.pack packageId)
 
 splitVersion :: String -> [Text]
 splitVersion version = T.splitOn "." (T.pack version)
+
+validatePackagesDeletation :: Context -> [String] -> IO (Maybe AppError)
+validatePackagesDeletation context pkgIdsToDelete =
+  foldl foldOne (return Nothing) (validateOnePackage <$> pkgIdsToDelete)
+  where
+    foldOne :: IO (Maybe AppError) -> IO (Maybe AppError) -> IO (Maybe AppError)
+    foldOne accIO resultIO = do
+      acc <- accIO
+      if isJust acc
+        then accIO
+        else resultIO
+    validateOnePackage :: String -> IO (Maybe AppError)
+    validateOnePackage pkgId = do
+      eitherBranches <-
+        findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId context pkgId
+      case eitherBranches of
+        Right [] -> do
+          eitherPkgs <- findPackagesByParentPackageId context pkgId
+          case eitherPkgs of
+            Right [] -> return Nothing
+            Right pkgs -> do
+              if length (filter (filFun) pkgs) > 0
+                then return . Just . createErrorWithErrorMessage $
+                     "Package '" ++ pkgId ++ "' can't be deleted. It's used as parent of some package."
+                else return Nothing
+            Left error -> return . Just $ error
+        Right _ ->
+          return . Just . createErrorWithErrorMessage $
+          "Package '" ++ pkgId ++ "' can't be deleted. It's used by some branch."
+        Left error -> return . Just $ error
+    filFun :: Package -> Bool
+    filFun p = not ((p ^. pkgId) `elem` pkgIdsToDelete)
+
+validatePackageDeletation :: Context -> String -> IO (Maybe AppError)
+validatePackageDeletation context pkgId = do
+  eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId context pkgId
+  case eitherBranches of
+    Right [] -> do
+      eitherPkgs <- findPackagesByParentPackageId context pkgId
+      case eitherPkgs of
+        Right [] -> return Nothing
+        Right _ ->
+          return . Just . createErrorWithErrorMessage $
+          "Package '" ++ pkgId ++ "' can't be deleted. It's used as parent of some package."
+        Left error -> return . Just $ error
+    Right _ ->
+      return . Just . createErrorWithErrorMessage $
+      "Package '" ++ pkgId ++ "' can't be deleted. It's used by some branch."
+    Left error -> return . Just $ error

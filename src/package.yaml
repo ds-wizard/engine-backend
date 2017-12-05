@@ -97,6 +97,7 @@ tests:
     - persistent
     - persistent-template
     - persistent-mongoDB
+    - pretty-simple
     - pwstore-fast
     - random
     - regex-compat

@@ -51,6 +51,12 @@ findPackageByGroupIdAndArtifactId context groupId artifactId = do
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
+findPackagesByParentPackageId :: Context -> String -> IO (Either AppError [Package])
+findPackagesByParentPackageId context parentPackageId = do
+  let action = rest =<< find (select ["parentPackageId" =: parentPackageId] pkgCollection)
+  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  return . deserializeEntities $ packagesS
+
 findPackageWithEventsById :: Context -> String -> IO (Either AppError PackageWithEvents)
 findPackageWithEventsById context pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
