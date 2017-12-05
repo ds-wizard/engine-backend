@@ -164,9 +164,31 @@ importPackage context fileContent = do
       let pDescription = packageWithEvents ^. pkgweDescription
       let pParentPackageId = packageWithEvents ^. pkgweParentPackageId
       let pEvents = packageWithEvents ^. pkgweEvents
-      createdPkg <- createPackage context pName pGroupId pArtifactId pVersion pDescription pParentPackageId pEvents
-      return . Right $ createdPkg
+      let pId = buildPackageId pGroupId pArtifactId pVersion
+      validatePackageId pId $
+        validateParentPackageId pId pParentPackageId $ do
+          createdPkg <- createPackage context pName pGroupId pArtifactId pVersion pDescription pParentPackageId pEvents
+          return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
+  where
+    validatePackageId pkgId callback = do
+      eitherPackage <- findPackageById context pkgId
+      case eitherPackage of
+        Left (NotExistsError _) -> callback
+        Right _ -> return . Left . createErrorWithErrorMessage $ "Package '" ++ pkgId ++ "' already exists"
+        Left error -> return . Left $ error
+    validateParentPackageId pkgId maybeParentPkgId callback =
+      case maybeParentPkgId of
+        Just parentPkgId -> do
+          eitherPackage <- findPackageById context parentPkgId
+          case eitherPackage of
+            Right _ -> callback
+            Left (NotExistsError _) ->
+              return . Left . createErrorWithErrorMessage $
+              "Parent ('" ++
+              parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import parent at first"
+            Left error -> return . Left $ error
+        Nothing -> callback
 
 deletePackagesByQueryParams :: Context -> [(Text, Text)] -> IO (Maybe AppError)
 deletePackagesByQueryParams context queryParams = do

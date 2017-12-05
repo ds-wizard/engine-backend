@@ -82,10 +82,13 @@ fromDTOWithEvents dto =
   , _pkgweEvents = fromDTOs (dto ^. pkgwedtoEvents)
   }
 
+buildPackageId :: String -> String -> String -> String
+buildPackageId groupId artifactId version = groupId ++ ":" ++ artifactId ++ ":" ++ version
+
 buildPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> PackageWithEvents
 buildPackage name groupId artifactId version description maybeParentPackageId events =
   PackageWithEvents
-  { _pkgweId = groupId ++ ":" ++ artifactId ++ ":" ++ version
+  { _pkgweId = buildPackageId groupId artifactId version
   , _pkgweName = name
   , _pkgweGroupId = groupId
   , _pkgweArtifactId = artifactId
