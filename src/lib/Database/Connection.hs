@@ -13,4 +13,4 @@ createDBConn dspConfig afterSuccess =
       dbHost = appConfigDatabase ^. acdbHost
       dbPort = PortNumber (fromInteger (appConfigDatabase ^. acdbPort) :: PortNumber) :: PortID
       dbName = pack (appConfigDatabase ^. acdbDatabaseName)
-  in withMongoDBConn dbName dbHost dbPort Nothing 10100 afterSuccess
+  in withMongoDBConn dbName dbHost dbPort Nothing 1 afterSuccess
