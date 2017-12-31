@@ -1,4 +1,4 @@
-module Api.Middleware.Auth where
+module Api.Middleware.AuthMiddleware where
 
 import Control.Lens ((^.))
 import Data.ByteString (ByteString, pack)

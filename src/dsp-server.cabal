@@ -43,8 +43,8 @@ library
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Handler.Version.VersionHandler
-      Api.Middleware.Auth
-      Api.Middleware.CORS
+      Api.Middleware.AuthMiddleware
+      Api.Middleware.CORSMiddleware
       Api.Resource.Branch.BranchDTO
       Api.Resource.Branch.BranchWithStateDTO
       Api.Resource.Error.ErrorDTO

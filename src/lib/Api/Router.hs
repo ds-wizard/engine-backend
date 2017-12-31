@@ -15,8 +15,8 @@ import Api.Handler.Package.PackageHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
-import Api.Middleware.Auth
-import Api.Middleware.CORS
+import Api.Middleware.AuthMiddleware
+import Api.Middleware.CORSMiddleware
 import Common.Context
 import Common.DSPConfig
 

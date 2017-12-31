@@ -1,4 +1,4 @@
-module Api.Middleware.CORS
+module Api.Middleware.CORSMiddleware
   ( corsMiddleware
   ) where
 
