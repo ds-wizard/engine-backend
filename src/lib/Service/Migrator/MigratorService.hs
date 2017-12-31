@@ -23,8 +23,8 @@ import Model.Package.Package
 import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.Migrator.Applicator
-import Service.Migrator.Methods.CleanerMethod
-import Service.Migrator.Methods.CorrectorMethod
+import Service.Migrator.CleanerMethod
+import Service.Migrator.CorrectorMethod
 import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper
 import Service.Package.PackageService

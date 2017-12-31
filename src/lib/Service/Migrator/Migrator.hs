@@ -10,8 +10,8 @@ import Model.Event.Event
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
 import Service.Migrator.Applicator
-import Service.Migrator.Methods.CleanerMethod
-import Service.Migrator.Methods.CorrectorMethod
+import Service.Migrator.CleanerMethod
+import Service.Migrator.CorrectorMethod
 
 doMigrate :: IO MigratorState -> Event -> IO MigratorState
 doMigrate stateIO event = do

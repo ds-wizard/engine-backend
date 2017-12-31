@@ -1,4 +1,4 @@
-module Service.Migrator.Methods.Sanitizator where
+module Service.Migrator.Sanitizator where
 
 import Control.Lens hiding (find)
 import Data.List

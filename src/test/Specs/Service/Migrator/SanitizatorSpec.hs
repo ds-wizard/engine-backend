@@ -1,4 +1,4 @@
-module Specs.Service.Migrator.Methods.SanitizatorSpec where
+module Specs.Service.Migrator.SanitizatorSpec where
 
 import Control.Lens
 import Data.Maybe

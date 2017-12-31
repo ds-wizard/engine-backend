@@ -1,4 +1,4 @@
-module Service.Migrator.Methods.CorrectorMethod
+module Service.Migrator.CorrectorMethod
   ( runCorrectorMethod
   ) where
 
@@ -6,7 +6,7 @@ import Control.Lens
 
 import Model.Event.Event
 import Model.Migrator.MigratorState
-import Service.Migrator.Methods.Sanitizator
+import Service.Migrator.Sanitizator
 
 runCorrectorMethod :: MigratorState -> Event -> IO MigratorState
 runCorrectorMethod state event = do

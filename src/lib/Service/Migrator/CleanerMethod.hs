@@ -1,4 +1,4 @@
-module Service.Migrator.Methods.CleanerMethod where
+module Service.Migrator.CleanerMethod where
 
 import Control.Lens
 
