@@ -2,7 +2,7 @@ module Service.Migrator.MigratorMapper where
 
 import Control.Lens ((^.))
 
-import Api.Resources.Migrator.MigratorStateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper

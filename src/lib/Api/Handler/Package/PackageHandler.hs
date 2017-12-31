@@ -11,7 +11,7 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Package.PackageDTO
+import Api.Resource.Package.PackageDTO
 import Common.Context
 import Common.DSPConfig
 import Service.Package.PackageService

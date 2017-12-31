@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Data.Aeson
 import Data.UUID (UUID)
 
-import Api.Resources.Package.PackageDTO
-import Api.Resources.Package.PackageSimpleDTO
-import Api.Resources.Package.PackageWithEventsDTO
+import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Package.PackageWithEventsDTO
 import Common.Types
 import Model.Event.Event
 import Model.Package.Package

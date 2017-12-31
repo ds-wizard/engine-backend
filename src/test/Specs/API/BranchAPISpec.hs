@@ -18,8 +18,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.Branch.BranchWithStateDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO

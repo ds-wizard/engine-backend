@@ -4,7 +4,7 @@ import Control.Lens
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Api.Resources.Branch.BranchDTO
+import Api.Resource.Branch.BranchDTO
 import Common.Context
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO

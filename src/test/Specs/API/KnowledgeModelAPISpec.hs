@@ -17,8 +17,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import qualified Database.Migration.Branch.BranchMigration as KMC

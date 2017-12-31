@@ -8,7 +8,7 @@ import Data.Maybe
 import Data.UUID as U
 import Text.Regex
 
-import Api.Resources.Organization.OrganizationDTO
+import Api.Resource.Organization.OrganizationDTO
 import Common.Context
 import Common.Error
 import Common.Types

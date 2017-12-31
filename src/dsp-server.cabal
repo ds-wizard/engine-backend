@@ -45,26 +45,26 @@ library
       Api.Handler.Version.VersionHandler
       Api.Middleware.Auth
       Api.Middleware.CORS
-      Api.Resources.Branch.BranchDTO
-      Api.Resources.Branch.BranchWithStateDTO
-      Api.Resources.Error.ErrorDTO
-      Api.Resources.Event.EventDTO
-      Api.Resources.Info.InfoDTO
-      Api.Resources.KnowledgeModel.KnowledgeModelDTO
-      Api.Resources.Migrator.Common
-      Api.Resources.Migrator.MigratorConflictDTO
-      Api.Resources.Migrator.MigratorStateCreateDTO
-      Api.Resources.Migrator.MigratorStateDTO
-      Api.Resources.Organization.OrganizationDTO
-      Api.Resources.Package.PackageDTO
-      Api.Resources.Package.PackageSimpleDTO
-      Api.Resources.Package.PackageWithEventsDTO
-      Api.Resources.Token.TokenCreateDTO
-      Api.Resources.Token.TokenDTO
-      Api.Resources.User.UserCreateDTO
-      Api.Resources.User.UserDTO
-      Api.Resources.User.UserPasswordDTO
-      Api.Resources.Version.VersionDTO
+      Api.Resource.Branch.BranchDTO
+      Api.Resource.Branch.BranchWithStateDTO
+      Api.Resource.Error.ErrorDTO
+      Api.Resource.Event.EventDTO
+      Api.Resource.Info.InfoDTO
+      Api.Resource.KnowledgeModel.KnowledgeModelDTO
+      Api.Resource.Migrator.Common
+      Api.Resource.Migrator.MigratorConflictDTO
+      Api.Resource.Migrator.MigratorStateCreateDTO
+      Api.Resource.Migrator.MigratorStateDTO
+      Api.Resource.Organization.OrganizationDTO
+      Api.Resource.Package.PackageDTO
+      Api.Resource.Package.PackageSimpleDTO
+      Api.Resource.Package.PackageWithEventsDTO
+      Api.Resource.Token.TokenCreateDTO
+      Api.Resource.Token.TokenDTO
+      Api.Resource.User.UserCreateDTO
+      Api.Resource.User.UserDTO
+      Api.Resource.User.UserPasswordDTO
+      Api.Resource.Version.VersionDTO
       Api.Router
       Application
       Common.Context

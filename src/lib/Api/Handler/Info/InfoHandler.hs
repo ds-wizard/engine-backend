@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Info.InfoDTO
+import Api.Resource.Info.InfoDTO
 import Common.Context
 import Common.DSPConfig
 

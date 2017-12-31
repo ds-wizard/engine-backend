@@ -10,9 +10,9 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.User.UserCreateDTO
-import Api.Resources.User.UserDTO
-import Api.Resources.User.UserPasswordDTO
+import Api.Resource.User.UserCreateDTO
+import Api.Resource.User.UserDTO
+import Api.Resource.User.UserPasswordDTO
 import Common.Context
 import Common.DSPConfig
 import Common.Error

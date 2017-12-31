@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Aeson
 import Data.UUID (UUID)
 
-import Api.Resources.Event.EventDTO
+import Api.Resource.Event.EventDTO
 import Common.Types
 import Model.Common
 import Model.Event.Answer.AddAnswerEvent

@@ -8,8 +8,8 @@ import Data.Maybe
 import Data.UUID as U
 import Text.Regex
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.Branch.BranchWithStateDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
 import Common.Context
 import Common.Error
 import Common.Types

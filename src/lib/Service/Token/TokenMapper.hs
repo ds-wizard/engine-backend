@@ -1,6 +1,6 @@
 module Service.Token.TokenMapper where
 
-import Api.Resources.Token.TokenDTO
+import Api.Resource.Token.TokenDTO
 import Common.Types
 
 toDTO :: Token -> TokenDTO

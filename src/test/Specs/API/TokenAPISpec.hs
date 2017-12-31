@@ -17,8 +17,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Token.TokenCreateDTO
-import Api.Resources.Token.TokenDTO
+import Api.Resource.Token.TokenCreateDTO
+import Api.Resource.Token.TokenDTO
 import Common.Error
 
 import Specs.API.Common

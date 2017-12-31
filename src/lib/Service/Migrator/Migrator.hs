@@ -4,7 +4,7 @@ import Control.Lens
 import Data.Either
 import Data.Maybe
 
-import Api.Resources.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorConflictDTO
 import Common.Error
 import Model.Event.Event
 import Model.Migrator.MigratorState

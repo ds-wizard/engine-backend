@@ -19,7 +19,7 @@ import Test.Hspec.Wai.Matcher
 import Text.Pretty.Simple (pPrint)
 import qualified Web.Scotty as S
 
-import Api.Resources.Package.PackageDTO
+import Api.Resource.Package.PackageDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO

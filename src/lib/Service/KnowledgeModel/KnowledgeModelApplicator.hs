@@ -7,7 +7,7 @@ import Data.ByteString.Char8 as BS
 import Data.Maybe
 import Data.UUID as U
 
-import Api.Resources.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Context
 import Common.Error
 import Common.Types

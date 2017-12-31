@@ -14,7 +14,7 @@ import Network.HTTP.Types.Status
 import Network.Wai
 import qualified Web.Scotty as Scotty
 
-import Api.Resources.Error.ErrorDTO
+import Api.Resource.Error.ErrorDTO
 import Common.Error
 import Service.Token.TokenService
 

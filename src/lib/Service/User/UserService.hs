@@ -9,9 +9,9 @@ import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
-import Api.Resources.User.UserCreateDTO
-import Api.Resources.User.UserDTO
-import Api.Resources.User.UserPasswordDTO
+import Api.Resource.User.UserCreateDTO
+import Api.Resource.User.UserDTO
+import Api.Resource.User.UserPasswordDTO
 import Common.Context
 import Common.DSPConfig
 import Common.Error

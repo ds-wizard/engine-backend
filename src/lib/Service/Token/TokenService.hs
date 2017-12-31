@@ -9,8 +9,8 @@ import qualified Data.UUID as U
 import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
-import Api.Resources.Token.TokenCreateDTO
-import Api.Resources.Token.TokenDTO
+import Api.Resource.Token.TokenCreateDTO
+import Api.Resource.Token.TokenDTO
 import Common.Context
 import Common.DSPConfig
 import Common.Error

@@ -18,7 +18,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Organization.OrganizationDTO
+import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization

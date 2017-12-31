@@ -1,6 +1,6 @@
 module Service.Event.EventMapper where
 
-import Api.Resources.Event.EventDTO
+import Api.Resource.Event.EventDTO
 import Model.Event.Event
 import Service.Event.EventFromDTO
 import Service.Event.EventToDTO

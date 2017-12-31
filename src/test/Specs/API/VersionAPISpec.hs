@@ -18,8 +18,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Package.PackageDTO
-import Api.Resources.Version.VersionDTO
+import Api.Resource.Package.PackageDTO
+import Api.Resource.Version.VersionDTO
 import Common.Error
 import qualified Database.Migration.Branch.BranchMigration as B
 import qualified Database.Migration.Package.PackageMigration as PKG

@@ -6,9 +6,9 @@ import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
-import Api.Resources.Migrator.MigratorConflictDTO
-import Api.Resources.Migrator.MigratorStateCreateDTO
-import Api.Resources.Migrator.MigratorStateDTO
+import Api.Resource.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Common.Context
 import Common.Error
 import Database.DAO.Branch.BranchDAO

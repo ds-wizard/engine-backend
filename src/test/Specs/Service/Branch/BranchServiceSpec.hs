@@ -8,8 +8,8 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Api.Resources.Migrator.MigratorConflictDTO
-import Api.Resources.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B

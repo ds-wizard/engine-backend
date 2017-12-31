@@ -16,7 +16,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Error.ErrorDTO
+import Api.Resource.Error.ErrorDTO
 import Api.Router
 import Common.Context
 import Common.DSPConfig

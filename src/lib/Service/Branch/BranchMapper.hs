@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Data.Aeson
 import Data.UUID (UUID)
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.Branch.BranchWithStateDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
 import Common.Types
 import Model.Branch.Branch
 import Model.Branch.BranchState

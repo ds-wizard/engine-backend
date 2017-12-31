@@ -18,11 +18,11 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.Branch.BranchWithStateDTO
-import Api.Resources.Migrator.MigratorConflictDTO
-import Api.Resources.Migrator.MigratorStateCreateDTO
-import Api.Resources.Migrator.MigratorStateDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO

@@ -3,7 +3,7 @@ module Database.Migration.User.UserMigration where
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Api.Resources.User.UserCreateDTO
+import Api.Resource.User.UserCreateDTO
 import Common.Context
 import Database.DAO.User.UserDAO
 import Service.User.UserService

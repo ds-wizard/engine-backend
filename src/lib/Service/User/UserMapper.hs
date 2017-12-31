@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Data.Aeson
 import Data.UUID (UUID)
 
-import Api.Resources.User.UserCreateDTO
-import Api.Resources.User.UserDTO
+import Api.Resource.User.UserCreateDTO
+import Api.Resource.User.UserDTO
 import Common.Types
 import Model.User.User
 

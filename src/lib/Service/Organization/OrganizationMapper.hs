@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Aeson
 import Data.UUID (UUID)
 
-import Api.Resources.Organization.OrganizationDTO
+import Api.Resource.Organization.OrganizationDTO
 import Common.Types
 import Model.Organization.Organization
 

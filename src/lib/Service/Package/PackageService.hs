@@ -13,11 +13,11 @@ import Data.UUID as U
 import Text.Pretty.Simple (pPrint)
 import Text.Regex
 
-import Api.Resources.Branch.BranchDTO
-import Api.Resources.Organization.OrganizationDTO
-import Api.Resources.Package.PackageDTO
-import Api.Resources.Package.PackageSimpleDTO
-import Api.Resources.Package.PackageWithEventsDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Package.PackageWithEventsDTO
 import Common.Context
 import Common.Error
 import Common.Types

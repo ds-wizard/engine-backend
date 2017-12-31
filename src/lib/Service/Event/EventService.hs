@@ -6,7 +6,7 @@ import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
 import Data.UUID as U
 
-import Api.Resources.Event.EventDTO
+import Api.Resource.Event.EventDTO
 import Common.Context
 import Common.Error
 import Common.Types

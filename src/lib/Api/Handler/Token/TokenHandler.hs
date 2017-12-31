@@ -10,8 +10,8 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Token.TokenCreateDTO
-import Api.Resources.Token.TokenDTO
+import Api.Resource.Token.TokenCreateDTO
+import Api.Resource.Token.TokenDTO
 import Common.Context
 import Common.DSPConfig
 import Common.Error

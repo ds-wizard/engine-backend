@@ -10,8 +10,8 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Migrator.MigratorStateCreateDTO
-import Api.Resources.Migrator.MigratorStateDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Common.Context
 import Common.DSPConfig
 import Service.Migrator.MigratorService

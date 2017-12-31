@@ -10,7 +10,7 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Event.EventDTO
+import Api.Resource.Event.EventDTO
 import Common.Context
 import Common.DSPConfig
 import Service.Event.EventService

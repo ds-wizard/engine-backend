@@ -20,9 +20,9 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
-import Api.Resources.Event.EventDTO
-import Api.Resources.User.UserDTO
-import Api.Resources.User.UserPasswordDTO
+import Api.Resource.Event.EventDTO
+import Api.Resource.User.UserDTO
+import Api.Resource.User.UserPasswordDTO
 import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO

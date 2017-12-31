@@ -10,7 +10,7 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
-import Api.Resources.Branch.BranchDTO
+import Api.Resource.Branch.BranchDTO
 import Common.Context
 import Common.DSPConfig
 import Service.Branch.BranchService
