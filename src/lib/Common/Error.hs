@@ -10,7 +10,6 @@ data AppError
   = ValidationError ErrorMessage
                     [FormError]
                     [FieldError]
-  | ForbiddenError ErrorMessage
   | NotExistsError ErrorMessage
   | DatabaseError ErrorMessage
   | MigratorError ErrorMessage

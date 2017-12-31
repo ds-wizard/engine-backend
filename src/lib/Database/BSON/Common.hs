@@ -44,7 +44,6 @@ instance ToBSON AppError where
     , "formErrors" BSON.=: formErrors
     , "fieldErrors" BSON.=: map (^.. each) fieldErrors
     ]
-  toBSON (ForbiddenError message) = ["errorType" BSON.=: "ForbiddenError", "message" BSON.=: message]
   toBSON (NotExistsError message) = ["errorType" BSON.=: "NotExistsError", "message" BSON.=: message]
   toBSON (DatabaseError message) = ["errorType" BSON.=: "DatabaseError", "message" BSON.=: message]
   toBSON (MigratorError message) = ["errorType" BSON.=: "MigratorError", "message" BSON.=: message]
@@ -58,9 +57,6 @@ instance FromBSON AppError where
         formErrors <- BSON.lookup "formErrors" doc
         fieldErrors <- BSON.lookup "fieldErrors" doc
         return $ ValidationError message formErrors (tuplify2 <$> fieldErrors)
-      "ForbiddenError" -> do
-        message <- BSON.lookup "message" doc
-        return $ ForbiddenError message
       "NotExistsError" -> do
         message <- BSON.lookup "message" doc
         return $ NotExistsError message

@@ -14,7 +14,6 @@ instance ToJSON AppError where
       , "formErrors" .= formErrors
       , "fieldErrors" .= fieldErrors
       ]
-  toJSON (ForbiddenError errorMessage) = object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
   toJSON (NotExistsError errorMessage) = object ["status" .= 404, "error" .= "Not Found", "message" .= errorMessage]
   toJSON (DatabaseError errorMessage) =
     object ["status" .= 500, "error" .= "Server Internal Error", "type" .= "DatabaseError", "message" .= errorMessage]
@@ -30,9 +29,6 @@ instance FromJSON AppError where
         formErrors <- o .: "formErrors"
         fieldErrors <- o .: "fieldErrors"
         return $ ValidationError message formErrors fieldErrors
-      "ForbiddenError" -> do
-        message <- o .: "message"
-        return $ ForbiddenError message
       "NotExistsError" -> do
         message <- o .: "message"
         return $ NotExistsError message

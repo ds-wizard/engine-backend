@@ -71,9 +71,6 @@ sendError :: AppError -> Scotty.ActionM ()
 sendError (ValidationError errorMessage formErrors fieldErrors) = do
   Scotty.status badRequest400
   sendJson $ ValidationError errorMessage formErrors fieldErrors
-sendError (ForbiddenError errorMessage) = do
-  Scotty.status unauthorized401
-  sendJson $ ForbiddenError errorMessage
 sendError (NotExistsError errorMessage) = do
   Scotty.status notFound404
   sendJson $ NotExistsError errorMessage
