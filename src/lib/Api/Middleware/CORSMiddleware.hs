@@ -7,16 +7,16 @@ import Network.Wai (Middleware)
 import Network.Wai.Internal (Response(..))
 
 corsMiddleware :: Middleware
-corsMiddleware application request sendResponse = application request $ sendResponse . removeHeader
+corsMiddleware application request sendResponse = application request $ sendResponse . modifyResponse
 
-removeHeader :: Response -> Response
-removeHeader (ResponseFile s h b1 b2) = ResponseFile s (addCorsHeaders h) b1 b2
-removeHeader (ResponseBuilder s h b) = ResponseBuilder s (addCorsHeaders h) b
-removeHeader (ResponseStream s h b) = ResponseStream s (addCorsHeaders h) b
-removeHeader r@(ResponseRaw _ _) = r
+modifyResponse :: Response -> Response
+modifyResponse (ResponseFile s hs b1 b2) = ResponseFile s (modifyHeaders hs) b1 b2
+modifyResponse (ResponseBuilder s hs b) = ResponseBuilder s (modifyHeaders hs) b
+modifyResponse (ResponseStream s hs b) = ResponseStream s (modifyHeaders hs) b
+modifyResponse r@(ResponseRaw _ _) = r
 
-addCorsHeaders :: [Header] -> [Header]
-addCorsHeaders hs = hs ++ corsHeaders
+modifyHeaders :: [Header] -> [Header]
+modifyHeaders hs = hs ++ corsHeaders
 
 corsHeaders =
   [ ("Access-Control-Allow-Origin", "*")
