@@ -1,11 +1,11 @@
-name: src
+name: dsp-server
 version: '1.0.0'
 synopsis: DSP Server
 description: DSP Server
 category: Web
 author: Vojtech Knaisl <vknaisl@gmail.com>
 maintainer: Vojtech Knaisl <vknaisl@gmail.com>
-copyright: 2017 Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2018 Vojtech Knaisl <vknaisl@gmail.com>
 license: MIT
 license-file: LICENSE.md
 homepage: https://github.com/vknaisl/dsp-server
@@ -72,7 +72,7 @@ executables:
     source-dirs: app
     dependencies:
     - base
-    - src
+    - dsp-server
 tests:
   hspec:
     main: Spec.hs
@@ -111,7 +111,7 @@ tests:
     - wai-extra
     - wai-cors
     - warp
-    - src
+    - dsp-server
     - hspec
     - hspec-expectations-pretty-diff
     - hspec-wai
