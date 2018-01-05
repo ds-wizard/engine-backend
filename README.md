@@ -2,6 +2,9 @@
 
 # Data Stewardship Portal - Server Application
 
+[![Build Status](https://travis-ci.com/vknaisl/dsp-server.svg?token=qs3srKXiShUP5c3sUzrA&branch=master)](https://travis-ci.com/vknaisl/dsp-server)
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
+
 It's a server part of the portal application. 
 
 ## Features
