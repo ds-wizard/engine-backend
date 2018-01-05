@@ -1,7 +1,6 @@
 sudo: required
 
 before_script:
-- cd src
 - docker login ccmi-elixir.cesnet.cz:5000 -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 script:
