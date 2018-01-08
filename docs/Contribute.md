@@ -23,7 +23,7 @@ Run these comands from the root of the project:
 
 1. `hpack`
 2. `stack build`
-3. `stack stack exec dsp-server`
+3. `stack exec dsp-server`
 
 ## Test the application
 
@@ -31,7 +31,7 @@ Run these comands from the root of the project:
 
 1. `hpack`
 2. `stack build`
-3. `stack stack test --jobs=1 --fast`
+3. `stack test --jobs=1 --fast`
 
 
 ## How to format code?
