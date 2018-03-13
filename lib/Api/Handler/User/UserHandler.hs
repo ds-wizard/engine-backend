@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad.Reader
 import Data.Aeson
 import Data.Monoid ((<>))
+import Data.Text as T
 import Data.Text.Lazy as TL
 import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
@@ -28,15 +29,16 @@ getUsersA context dspConfig =
 
 postUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
 postUsersA context dspConfig =
-  checkPermission context "UM_PERM" $
-  getReqDto $ \reqDto -> do
-    eitherUserDto <- liftIO $ createUser context dspConfig reqDto
-    case eitherUserDto of
-      Left appError -> sendError appError
-      Right userDto -> do
-        Scotty.status created201
-        sendJson userDto
+  getReqDto $ \reqDto ->
+    isAdmin context $ \isAdmin -> do
+      eitherUserDto <- liftIO $ createUser context dspConfig reqDto isAdmin
+      case eitherUserDto of
+        Left appError -> sendError appError
+        Right userDto -> do
+          Scotty.status created201
+          sendJson userDto
 
+--      let isAdmin = False
 getUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
 getUserCurrentA context dspConfig =
   getCurrentUserUuid context $ \userUuid -> do
@@ -90,6 +92,16 @@ putUserPasswordA context dspConfig =
     maybeError <- liftIO $ changeUserPassword context userUuid reqDto
     case maybeError of
       Nothing -> Scotty.status noContent204
+      Just error -> sendError error
+
+changeUserStateA :: Context -> DSPConfig -> Scotty.ActionM ()
+changeUserStateA context dspConfig =
+  getReqDto $ \reqDto -> do
+    userUuid <- Scotty.param "userUuid"
+    hash <- getQueryParam "hash"
+    maybeError <- liftIO $ changeUserState context userUuid (liftM T.unpack hash) reqDto
+    case maybeError of
+      Nothing -> sendJson reqDto
       Just error -> sendError error
 
 deleteUserA :: Context -> DSPConfig -> Scotty.ActionM ()

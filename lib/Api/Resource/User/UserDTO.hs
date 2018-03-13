@@ -16,6 +16,7 @@ data UserDTO = UserDTO
   , _udtoEmail :: Email
   , _udtoRole :: Role
   , _udtoPermissions :: [Permission]
+  , _udtoIsActive :: Bool
   } deriving (Show, Eq)
 
 makeLenses ''UserDTO
@@ -28,6 +29,7 @@ instance FromJSON UserDTO where
     _udtoEmail <- o .: "email"
     _udtoRole <- o .: "role"
     _udtoPermissions <- o .: "permissions"
+    _udtoIsActive <- o .: "isActive"
     return UserDTO {..}
   parseJSON _ = mzero
 
@@ -40,4 +42,5 @@ instance ToJSON UserDTO where
       , "email" .= _udtoEmail
       , "role" .= _udtoRole
       , "permissions" .= _udtoPermissions
+      , "isActive" .= _udtoIsActive
       ]

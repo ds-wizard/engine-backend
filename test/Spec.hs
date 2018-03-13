@@ -26,8 +26,8 @@ import Specs.Common.UtilsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
-import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Migrator.MigratorSpec
+import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationServiceSpec
 import Specs.Service.Package.PackageServiceSpec
 import TestMigration

@@ -47,6 +47,7 @@ reqAuthHeaderWithoutPerms dspConfig perm =
         , _uPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
         , _uRole = "ADMIN"
         , _uPermissions = L.delete perm allPerms
+        , _uIsActive = True
         }
       token = createToken user (dspConfig ^. dspcfgJwtConfig ^. acjwtSecret)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])

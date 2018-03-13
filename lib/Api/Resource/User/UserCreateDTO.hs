@@ -11,7 +11,7 @@ data UserCreateDTO = UserCreateDTO
   { _ucdtoName :: String
   , _ucdtoSurname :: String
   , _ucdtoEmail :: Email
-  , _ucdtoRole :: Role
+  , _ucdtoRole :: Maybe Role
   , _ucdtoPassword :: String
   }
 

@@ -18,6 +18,7 @@ instance ToBSON User where
     , "passwordHash" BSON.=: (user ^. uPasswordHash)
     , "role" BSON.=: (user ^. uRole)
     , "permissions" BSON.=: (user ^. uPermissions)
+    , "isActive" BSON.=: (user ^. uIsActive)
     ]
 
 instance FromBSON User where
@@ -30,6 +31,7 @@ instance FromBSON User where
     passwordHash <- BSON.lookup "passwordHash" doc
     role <- BSON.lookup "role" doc
     permissions <- BSON.lookup "permissions" doc
+    isActive <- BSON.lookup "isActive" doc
     return
       User
       { _uUuid = uuid
@@ -39,4 +41,5 @@ instance FromBSON User where
       , _uPasswordHash = passwordHash
       , _uRole = role
       , _uPermissions = permissions
+      , _uIsActive = isActive
       }

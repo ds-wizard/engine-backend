@@ -14,6 +14,7 @@ data User = User
   , _uPasswordHash :: String
   , _uRole :: Role
   , _uPermissions :: [Permission]
+  , _uIsActive :: Bool
   } deriving (Generic, Show, Eq)
 
 makeLenses ''User

@@ -2,7 +2,6 @@
 -- License: BSD3
 -- Package: bson-generic
 -- Version: 0.0.8.1
-
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DefaultSignatures #-}
 {-# LANGUAGE TypeOperators #-}

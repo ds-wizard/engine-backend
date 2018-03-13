@@ -1,5 +1,6 @@
 module Api.Handler.Common where
 
+import Control.Lens ((^.))
 import Control.Monad.Reader
 import Data.Aeson
 import Data.ByteString
@@ -15,8 +16,11 @@ import Network.Wai
 import qualified Web.Scotty as Scotty
 
 import Api.Resource.Error.ErrorDTO
+import Api.Resource.User.UserDTO
 import Common.Error
+import Model.User.User
 import Service.Token.TokenService
+import Service.User.UserService
 
 getReqDto callback = do
   body <- Scotty.body
@@ -32,6 +36,13 @@ getCurrentUserUuid context callback = do
   case userUuidMaybe of
     Just userUuid -> callback (T.unpack userUuid)
     Nothing -> unauthorizedA
+
+getCurrentUser context callback =
+  getCurrentUserUuid context $ \userUuid -> do
+    eitherUser <- liftIO $ getUserById context userUuid
+    case eitherUser of
+      Right user -> callback user
+      Left error -> sendError error
 
 getQueryParam paramName = do
   params <- Scotty.params
@@ -62,6 +73,16 @@ checkPermission context perm callback = do
         then callback
         else forbidden
     Nothing -> forbidden
+
+isLogged context callback = do
+  tokenHeader <- Scotty.header "Authorization"
+  callback . isJust $ tokenHeader
+
+isAdmin context callback =
+  isLogged context $ \userIsLogged ->
+    if userIsLogged
+      then getCurrentUser context $ \user -> callback $ user ^. udtoRole == "ADMIN"
+      else callback False
 
 sendJson obj = do
   Scotty.setHeader (LT.pack "Content-Type") (LT.pack "application/json")

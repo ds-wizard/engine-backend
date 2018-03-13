@@ -23,9 +23,13 @@ import qualified Web.Scotty as S
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
+import Api.Resource.User.UserStateDTO
 import Common.Error
+import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
+import Model.ActionKey.ActionKey
 import Model.User.User
+import Service.ActionKey.ActionKeyService
 import Service.User.UserService
 
 import Specs.API.Common
@@ -65,12 +69,13 @@ userAPI context dspConfig =
                       , "WIZ_PERM"
                       , "DMP_PERM"
                       ]
+                  , _udtoIsActive = True
                   }
                 ]
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -83,15 +88,17 @@ userAPI context dspConfig =
         let reqMethod = methodPost
         let reqUrl = "/users"
         it "HTTP 201 CREATED" $
-          -- GIVEN: Prepare request
+          -- GIVEN: Clear DB
          do
+          liftIO $ deleteActionKeys context
+          -- AND: Prepare request
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 UserCreateDTO
                 { _ucdtoName = "John"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
-                , _ucdtoRole = "ADMIN"
+                , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
           let reqBody = encode reqDto
@@ -104,7 +111,7 @@ userAPI context dspConfig =
                 , _udtoName = reqDto ^. ucdtoName
                 , _udtoSurname = reqDto ^. ucdtoSurname
                 , _udtoEmail = reqDto ^. ucdtoEmail
-                , _udtoRole = reqDto ^. ucdtoRole
+                , _udtoRole = fromJust $ reqDto ^. ucdtoRole
                 , _udtoPermissions =
                     [ "UM_PERM"
                     , "ORG_PERM"
@@ -115,6 +122,7 @@ userAPI context dspConfig =
                     , "WIZ_PERM"
                     , "DMP_PERM"
                     ]
+                , _udtoIsActive = False
                 }
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -123,16 +131,26 @@ userAPI context dspConfig =
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           let expBody = encode (expDto & udtoUuid .~ (userFromDb ^. uUuid))
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (userFromDb ^. uName) `shouldBe` (reqDto ^. ucdtoName)
           liftIO $ (userFromDb ^. uSurname) `shouldBe` (reqDto ^. ucdtoSurname)
           liftIO $ (userFromDb ^. uEmail) `shouldBe` (reqDto ^. ucdtoEmail)
-          liftIO $ (userFromDb ^. uRole) `shouldBe` (reqDto ^. ucdtoRole)
+          liftIO $ (userFromDb ^. uRole) `shouldBe` fromJust (reqDto ^. ucdtoRole)
           liftIO $ (userFromDb ^. uPermissions) `shouldBe` (expDto ^. udtoPermissions)
+          liftIO $ (userFromDb ^. uIsActive) `shouldBe` (expDto ^. udtoIsActive)
+          -- THEN: Check created action Key
+          eitherActionKeys <- liftIO $ findActionKeys context
+          liftIO $ (isRight eitherActionKeys) `shouldBe` True
+          let (Right actionKeys) = eitherActionKeys
+          liftIO $ Prelude.length actionKeys `shouldBe` 1
+          let actionKey = actionKeys !! 00
+          liftIO $ (actionKey ^. akUserId) `shouldBe` (userFromDb ^. uUuid)
+          liftIO $ (actionKey ^. akType) `shouldBe` RegistrationActionKey
+          liftIO $ Prelude.length (actionKey ^. akHash) > 0 `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Darth" } |] "surname"
         it "HTTP 400 BAD REQUEST if email is already registered" $
           -- GIVEN: Prepare request
@@ -143,7 +161,7 @@ userAPI context dspConfig =
                 { _ucdtoName = "Darth"
                 , _ucdtoSurname = "Vader"
                 , _ucdtoEmail = "darth.vader@deathstar.com"
-                , _ucdtoRole = "ADMIN"
+                , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
           let reqBody = encode reqDto
@@ -154,12 +172,10 @@ userAPI context dspConfig =
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
-           -- AND: Compare response with expetation
+           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /users/current
       -- ------------------------------------------------------------------------
@@ -190,11 +206,12 @@ userAPI context dspConfig =
                     , "WIZ_PERM"
                     , "DMP_PERM"
                     ]
+                , _udtoIsActive = True
                 }
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -231,11 +248,12 @@ userAPI context dspConfig =
                     , "WIZ_PERM"
                     , "DMP_PERM"
                     ]
+                , _udtoIsActive = True
                 }
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -260,6 +278,7 @@ userAPI context dspConfig =
                 , _udtoEmail = "EDITED: john.doe@example.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
+                , _udtoIsActive = True
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -271,11 +290,11 @@ userAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherUser <- liftIO $ findUserByEmail context (reqDto ^. udtoEmail)
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           liftIO $ (userFromDb ^. uUuid) `shouldBe` (reqDto ^. udtoUuid)
@@ -295,10 +314,10 @@ userAPI context dspConfig =
                 { _ucdtoName = "John"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
-                , _ucdtoRole = "ADMIN"
+                , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
-          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto
+          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto True
           let reqDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
@@ -307,6 +326,7 @@ userAPI context dspConfig =
                 , _udtoEmail = "john.doe@example.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
+                , _udtoIsActive = True
                 }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
@@ -316,7 +336,7 @@ userAPI context dspConfig =
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
-           -- AND: Compare response with expetation
+           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -338,6 +358,7 @@ userAPI context dspConfig =
               , _udtoEmail = "darth.vader@deathstar.com"
               , _udtoRole = "ADMIN"
               , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
+              , _udtoIsActive = True
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -351,11 +372,11 @@ userAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherUser <- liftIO $ findUserByEmail context (reqDto ^. udtoEmail)
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           liftIO $ (userFromDb ^. uUuid) `shouldBe` (reqDto ^. udtoUuid)
@@ -375,10 +396,10 @@ userAPI context dspConfig =
                 { _ucdtoName = "John"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
-                , _ucdtoRole = "ADMIN"
+                , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
-          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto
+          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto True
           let reqDto =
                 UserDTO
                 { _udtoUuid = johnUuid
@@ -387,6 +408,7 @@ userAPI context dspConfig =
                 , _udtoEmail = "darth.vader@deathstar.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
+                , _udtoIsActive = True
                 }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
@@ -396,7 +418,7 @@ userAPI context dspConfig =
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f" reqHeaders reqBody
-           -- AND: Compare response with expetation
+           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -422,11 +444,11 @@ userAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           let isSame = verifyPassword (BS.pack (reqDto ^. updtoPassword)) (BS.pack (userFromDb ^. uPasswordHash))
@@ -453,11 +475,11 @@ userAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           let isSame = verifyPassword (BS.pack (reqDto ^. updtoPassword)) (BS.pack (userFromDb ^. uPasswordHash))
@@ -466,6 +488,50 @@ userAPI context dspConfig =
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody
+      -- ------------------------------------------------------------------------
+      -- PUT /users/{userId}/state?hash={hash}
+      -- ------------------------------------------------------------------------
+      describe "/users/{userId}/state?hash={hash}" $
+        -- GIVEN:Prepare request
+       do
+        let reqMethod = methodPut
+        let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqDto = UserStateDTO {_usdtoActive = True}
+        let reqBody = encode reqDto
+        it "HTTP 204 NO CONTENT" $
+          -- AND: Prepare DB
+         do
+          let actionKey =
+                ActionKey
+                { _akUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
+                , _akUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+                , _akType = RegistrationActionKey
+                , _akHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+                }
+          eitherActionKey <- liftIO $ insertActionKey context actionKey
+          -- AND: Prepare expectation
+          let expStatus = 200
+          let expHeaders = resCorsHeaders
+          let expDto = encode reqDto
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- THEN: Find a result
+          eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+          eitherActionKeys <- liftIO $ findActionKeys context
+          -- AND: Compare response with expectation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expDto}
+          response `shouldRespondWith` responseMatcher
+          -- AND: Compare state in DB with expectation
+          liftIO $ (isRight eitherUser) `shouldBe` True
+          liftIO $ (isRight eitherActionKeys) `shouldBe` True
+          let (Right userFromDb) = eitherUser
+          let (Right actionKeys) = eitherActionKeys
+          liftIO $ (userFromDb ^. uIsActive) `shouldBe` True
+          liftIO $ Prelude.length actionKeys `shouldBe` 0
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "active"
+        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/state?hash=" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /users/{userId}
       -- ------------------------------------------------------------------------
@@ -485,11 +551,11 @@ userAPI context dspConfig =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"

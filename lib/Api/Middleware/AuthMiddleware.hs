@@ -21,20 +21,22 @@ import Common.DSPConfig
 import Common.Types
 import Common.Utils
 
+type Endpoint = (H.Method, Regex)
+
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"
 
 getRequestURL :: Request -> String
 getRequestURL request = T.unpack . (T.intercalate "/") $ pathInfo request
 
-matchURL :: String -> Regex -> Bool
-matchURL requestURL unauthorizedEndpoint = isJust $ matchRegex unauthorizedEndpoint requestURL
+matchURL :: Request -> Endpoint -> Bool
+matchURL request (method, url) = requestMethod request == method && (isJust $ matchRegex url (getRequestURL request))
 
-isUnauthorizedEndpoint :: Request -> [Regex] -> Bool
+isUnauthorizedEndpoint :: Request -> [Endpoint] -> Bool
 isUnauthorizedEndpoint request unauthorizedEndpoints =
   if requestMethod request == methodOptions
     then True
-    else or $ fmap (matchURL . getRequestURL $ request) unauthorizedEndpoints
+    else or $ matchURL request <$> unauthorizedEndpoints
 
 getTokenFromHeader :: Request -> Maybe T.Text
 getTokenFromHeader request =
@@ -42,7 +44,7 @@ getTokenFromHeader request =
     Just headerValue -> separateToken . decodeUtf8 $ headerValue
     Nothing -> Nothing
 
-authMiddleware :: DSPConfig -> [Regex] -> Middleware
+authMiddleware :: DSPConfig -> [Endpoint] -> Middleware
 authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse

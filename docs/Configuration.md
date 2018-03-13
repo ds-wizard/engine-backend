@@ -53,4 +53,10 @@ secret = secret-key
 admin = UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_PERM, WIZ_PERM, DMP_PERM
 datasteward = KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, WIZ_PERM, DMP_PERM
 researcher = WIZ_PERM, DMP_PERM
+
+[Mail]
+name = "DSP Portal"
+email = "info@dmp.fairdata.solutions"
+username =
+password =
 ```

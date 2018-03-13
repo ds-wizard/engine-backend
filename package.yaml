@@ -42,6 +42,7 @@ library:
   - random
   - regex-compat
   - scotty
+  - smtp-mail
   - text
   - time
   - transformers

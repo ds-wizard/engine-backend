@@ -1,5 +1,6 @@
 module Api.Router where
 
+import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Text.Regex
 import Web.Scotty
 
@@ -20,7 +21,13 @@ import Api.Middleware.CORSMiddleware
 import Common.Context
 import Common.DSPConfig
 
-unauthorizedEndpoints = [mkRegex "^$", mkRegex "^tokens$", mkRegex "^export/.*$"]
+unauthorizedEndpoints =
+  [ (methodGet, mkRegex "^$")
+  , (methodPost, mkRegex "^tokens$")
+  , (methodGet, mkRegex "^export/.*$")
+  , (methodPost, mkRegex "^users")
+  , (methodPut, mkRegex "^users/.*/state")
+  ]
 
 createEndpoints :: Context -> DSPConfig -> ScottyM ()
 createEndpoints context dspConfig
@@ -47,7 +54,7 @@ createEndpoints context dspConfig
    -- USERS
    --------------------
   get "/users" (getUsersA context dspConfig)
-  post "/users/" (postUsersA context dspConfig)
+  post "/users" (postUsersA context dspConfig)
   get "/users/current" (getUserCurrentA context dspConfig)
   get "/users/:userUuid" (getUserA context dspConfig)
   put "/users/current/password" (putUserCurrentPasswordA context dspConfig)
@@ -55,6 +62,7 @@ createEndpoints context dspConfig
   put "/users/:userUuid/password" (putUserPasswordA context dspConfig)
   put "/users/:userUuid" (putUserA context dspConfig)
   delete "/users/:userUuid" (deleteUserA context dspConfig)
+  put "/users/:userUuid/state" (changeUserStateA context dspConfig)
    --------------------
    -- KNOWLEDGE MODEL
    --------------------

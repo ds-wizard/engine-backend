@@ -24,9 +24,18 @@ data AppConfigJwt = AppConfigJwt
   }
 
 data AppConfigRoles = AppConfigRoles
-  { _acrAdmin :: [Permission]
+  { _acrDefaultRole :: Role
+  , _acrAdmin :: [Permission]
   , _acrDataSteward :: [Permission]
   , _acrResearcher :: [Permission]
+  }
+
+data AppConfigMail = AppConfigMail
+  { _acmName :: String
+  , _acmEmail :: String
+  , _acmHost :: String
+  , _acmUsername :: String
+  , _acmPassword :: String
   }
 
 data BuildInfo = BuildInfo
@@ -40,6 +49,7 @@ data DSPConfig = DSPConfig
   , _dspcfgDatabaseConfig :: AppConfigDatabase
   , _dspcfgJwtConfig :: AppConfigJwt
   , _dspcfgRoles :: AppConfigRoles
+  , _dspcfgMail :: AppConfigMail
   , _dspcfgBuildInfo :: BuildInfo
   }
 
@@ -50,6 +60,8 @@ makeLenses ''AppConfigDatabase
 makeLenses ''AppConfigJwt
 
 makeLenses ''AppConfigRoles
+
+makeLenses ''AppConfigMail
 
 makeLenses ''BuildInfo
 
@@ -65,6 +77,7 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
     databaseConfig <- loadAppConfigDatabase appConfigParser
     jwtConfig <- loadAppConfigJwt appConfigParser
     appRoles <- loadAppConfigRole appConfigParser
+    appMail <- loadAppConfigMail appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSPConfig
@@ -72,6 +85,7 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
       , _dspcfgDatabaseConfig = databaseConfig
       , _dspcfgJwtConfig = jwtConfig
       , _dspcfgRoles = appRoles
+      , _dspcfgMail = appMail
       , _dspcfgBuildInfo = buildInfo
       }
   where
@@ -87,14 +101,30 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
       jwtSecret <- get configParser "JWT" "secret"
       return AppConfigJwt {_acjwtSecret = jwtSecret}
     loadAppConfigRole configParser = do
+      defaultRole <- get configParser "Role" "defaultrole"
       adminPermissions <- get configParser "Role" "admin"
       dataStewardPermissions <- get configParser "Role" "datasteward"
       researcherPermissions <- get configParser "Role" "researcher"
       return
         AppConfigRoles
-        { _acrAdmin = parseList adminPermissions
+        { _acrDefaultRole = defaultRole
+        , _acrAdmin = parseList adminPermissions
         , _acrDataSteward = parseList dataStewardPermissions
         , _acrResearcher = parseList researcherPermissions
+        }
+    loadAppConfigMail configParser = do
+      mailName <- get configParser "Mail" "name"
+      mailEmail <- get configParser "Mail" "email"
+      mailHost <- get configParser "Mail" "host"
+      mailUsername <- get configParser "Mail" "username"
+      mailPassword <- get configParser "Mail" "password"
+      return
+        AppConfigMail
+        { _acmName = mailName
+        , _acmEmail = mailEmail
+        , _acmHost = mailHost
+        , _acmUsername = mailUsername
+        , _acmPassword = mailPassword
         }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"

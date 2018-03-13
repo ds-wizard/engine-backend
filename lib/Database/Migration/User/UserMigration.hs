@@ -19,9 +19,10 @@ runMigration context dspConfig logState = do
     { _ucdtoName = "Darth"
     , _ucdtoSurname = "Vader"
     , _ucdtoEmail = "darth.vader@deathstar.com"
-    , _ucdtoRole = "ADMIN"
+    , _ucdtoRole = Just "ADMIN"
     , _ucdtoPassword = "password"
     }
+    True
   createUserWithGivenUuid
     context
     dspConfig
@@ -30,9 +31,10 @@ runMigration context dspConfig logState = do
     { _ucdtoName = "Luke"
     , _ucdtoSurname = "Skywalker"
     , _ucdtoEmail = "luke.skywalker@deathstar.com"
-    , _ucdtoRole = "DATASTEWARD"
+    , _ucdtoRole = Just "DATASTEWARD"
     , _ucdtoPassword = "password"
     }
+    True
   createUserWithGivenUuid
     context
     dspConfig
@@ -41,7 +43,8 @@ runMigration context dspConfig logState = do
     { _ucdtoName = "John"
     , _ucdtoSurname = "Snow"
     , _ucdtoEmail = "john.snow@gof.com"
-    , _ucdtoRole = "RESEARCHER"
+    , _ucdtoRole = Just "RESEARCHER"
     , _ucdtoPassword = "password"
     }
+    True
   logState "MIGRATION (User/User): ended"
