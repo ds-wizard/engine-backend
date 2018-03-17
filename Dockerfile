@@ -7,7 +7,7 @@ ADD ./config /sources/config
 ADD ./scripts /sources/scripts
 ADD ./lib /sources/lib
 ADD ./test /sources/test
-ADD ./dsp-server.cabal /sources/dsp-server.cabal
+ADD ./dsw-server.cabal /sources/dsw-server.cabal
 ADD ./package.yaml /sources/package.yaml
 ADD ./Setup.hs /sources/Setup.hs
 ADD ./LICENSE.md /sources/LICENSE.md
@@ -17,4 +17,4 @@ RUN hpack
 RUN stack --system-ghc  build
 RUN stack --system-ghc install
 
-ENTRYPOINT stack --system-ghc exec dsp-server
+ENTRYPOINT stack --system-ghc exec dsw-server

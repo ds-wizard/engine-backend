@@ -17,7 +17,7 @@ import Text.Regex
 import Web.JWT
 
 import Api.Handler.Common
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Types
 import Common.Utils
 
@@ -44,14 +44,14 @@ getTokenFromHeader request =
     Just headerValue -> separateToken . decodeUtf8 $ headerValue
     Nothing -> Nothing
 
-authMiddleware :: DSPConfig -> [Endpoint] -> Middleware
-authMiddleware dspConfig unauthorizedEndpoints app request sendResponse =
+authMiddleware :: DSWConfig -> [Endpoint] -> Middleware
+authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse
     else authorize
   where
     jwtSecret :: JWTSecret
-    jwtSecret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
+    jwtSecret = dswConfig ^. dswcfgJwtConfig ^. acjwtSecret
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of

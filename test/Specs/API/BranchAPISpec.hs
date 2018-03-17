@@ -33,8 +33,8 @@ import Service.Branch.BranchService
 import Specs.API.Common
 import Specs.Common
 
-branchAPI context dspConfig = do
-  with (startWebApp context dspConfig) $ do
+branchAPI context dswConfig = do
+  with (startWebApp context dswConfig) $ do
     describe "BRANCH API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches
@@ -79,7 +79,7 @@ branchAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PERM"
       -- ------------------------------------------------------------------------
       -- POST /branches
       -- ------------------------------------------------------------------------
@@ -100,7 +100,7 @@ branchAPI context dspConfig = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -187,7 +187,7 @@ branchAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}
       -- ------------------------------------------------------------------------
@@ -232,7 +232,7 @@ branchAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
        ------------------------------------------------------------------------
        -- PUT /branches/{branchId}
@@ -334,7 +334,7 @@ branchAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /branches/{branchId}
@@ -373,5 +373,5 @@ branchAPI context dspConfig = do
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody

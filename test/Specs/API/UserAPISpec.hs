@@ -35,8 +35,8 @@ import Service.User.UserService
 import Specs.API.Common
 import Specs.Common
 
-userAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+userAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -80,7 +80,7 @@ userAPI context dspConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
       -- ------------------------------------------------------------------------
       -- POST /users
       -- ------------------------------------------------------------------------
@@ -258,7 +258,7 @@ userAPI context dspConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/current
@@ -317,7 +317,7 @@ userAPI context dspConfig =
                 , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
-          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto True
+          liftIO $ createUserWithGivenUuid context dswConfig johnUuid johnDto True
           let reqDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
@@ -399,7 +399,7 @@ userAPI context dspConfig =
                 , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
-          liftIO $ createUserWithGivenUuid context dspConfig johnUuid johnDto True
+          liftIO $ createUserWithGivenUuid context dswConfig johnUuid johnDto True
           let reqDto =
                 UserDTO
                 { _udtoUuid = johnUuid
@@ -423,7 +423,7 @@ userAPI context dspConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/current/password
@@ -486,7 +486,7 @@ userAPI context dspConfig =
           liftIO $ isSame `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}/state?hash={hash}
@@ -558,5 +558,5 @@ userAPI context dspConfig =
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody

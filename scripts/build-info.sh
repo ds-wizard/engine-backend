@@ -8,7 +8,7 @@ BUILD_INFO_FILE=../config/build-info.cfg
 # ---------------------------------------------------------------
 # 1. Set a name
 # ---------------------------------------------------------------
-appName="Data Stewardship Portal Server"
+appName="Data Stewardship Wizard Server"
 echo "name=$appName" > $BUILD_INFO_FILE
 
 
@@ -35,4 +35,3 @@ echo "version=$appVersion" >> $BUILD_INFO_FILE
 # ---------------------------------------------------------------
 builtAtTimestamp=`date +"%Y/%m/%d %TZ"`
 echo "builtat=$builtAtTimestamp" >> $BUILD_INFO_FILE
-

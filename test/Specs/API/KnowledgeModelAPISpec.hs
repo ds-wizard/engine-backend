@@ -40,8 +40,8 @@ import Service.KnowledgeModel.KnowledgeModelMapper
 import Specs.API.Common
 import Specs.Common
 
-knowledgeModelAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+knowledgeModelAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "KNOWLEDGE MODEL API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -55,8 +55,8 @@ knowledgeModelAPI context dspConfig =
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ KMC.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -69,5 +69,5 @@ knowledgeModelAPI context dspConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km" reqHeaders reqBody

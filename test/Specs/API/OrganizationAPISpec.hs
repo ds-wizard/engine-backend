@@ -27,8 +27,8 @@ import Service.Organization.OrganizationService
 import Specs.API.Common
 import Specs.Common
 
-organizationAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+organizationAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "ORGANIZATION API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /organizations/current
@@ -118,4 +118,4 @@ organizationAPI context dspConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "ORG_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "ORG_PERM"

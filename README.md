@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/DataStewardshipWizard/dsw-server.svg?branch=master)](https://travis-ci.org/DataStewardshipWizard/dsw-server)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
 
-It's a server part of the wizard application. 
+It's a server part of the wizard application.
 
 ## Features
 
@@ -17,8 +17,8 @@ It's a server part of the wizard application.
 
 ## Demo
 The application is currently deployed on a server provided by FIT CTU. Here are the addresses of running applications:
-- **Server:** https://api.dsp.fairdata.solutions
-- **Client:** https://dsp.fairdata.solutions
+- **Server:** https://api.dsw.fairdata.solutions
+- **Client:** https://dsw.fairdata.solutions
 
 
 ## How to contribute?
@@ -38,5 +38,3 @@ All about deployment process is summarized [here](docs/Deployment.md)
 
 ## License
 This project is licensed under the Apache License v2.0 - see the [LICENSE](LICENSE.md) file for more details.
-
-

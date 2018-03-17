@@ -14,11 +14,11 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Package.PackageService
 
-exportA :: Context -> DSPConfig -> Scotty.ActionM ()
-exportA context dspConfig = do
+exportA :: Context -> DSWConfig -> Scotty.ActionM ()
+exportA context dswConfig = do
   pkgId <- Scotty.param "pkgId"
   eitherDto <- liftIO $ getPackageWithEventsById context pkgId
   case eitherDto of
@@ -29,8 +29,8 @@ exportA context dspConfig = do
       Scotty.raw $ encode dto
     Left error -> sendError error
 
-importA :: Context -> DSPConfig -> Scotty.ActionM ()
-importA context dspConfig = do
+importA :: Context -> DSWConfig -> Scotty.ActionM ()
+importA context dswConfig = do
   fs <- Scotty.files
   case L.find (\(fieldName, file) -> fieldName == "file") fs of
     Just (fieldName, file) -> do

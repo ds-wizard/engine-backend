@@ -12,19 +12,19 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Branch.BranchDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Branch.BranchService
 
-getBranchesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getBranchesA context dspConfig =
+getBranchesA :: Context -> DSWConfig -> Scotty.ActionM ()
+getBranchesA context dswConfig =
   checkPermission context "KM_PERM" $ do
     eitherDtos <- liftIO $ getBranches context
     case eitherDtos of
       Right dtos -> sendJson dtos
       Left error -> sendError error
 
-postBranchesA :: Context -> DSPConfig -> Scotty.ActionM ()
-postBranchesA context dspConfig =
+postBranchesA :: Context -> DSWConfig -> Scotty.ActionM ()
+postBranchesA context dswConfig =
   checkPermission context "KM_PERM" $
   getReqDto $ \reqDto -> do
     eitherResDto <- liftIO $ createBranch context reqDto
@@ -34,8 +34,8 @@ postBranchesA context dspConfig =
         Scotty.status created201
         sendJson resDto
 
-getBranchA :: Context -> DSPConfig -> Scotty.ActionM ()
-getBranchA context dspConfig =
+getBranchA :: Context -> DSWConfig -> Scotty.ActionM ()
+getBranchA context dswConfig =
   checkPermission context "KM_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     eitherResDto <- liftIO $ getBranchById context branchUuid
@@ -43,8 +43,8 @@ getBranchA context dspConfig =
       Left appError -> sendError appError
       Right resDto -> sendJson resDto
 
-putBranchA :: Context -> DSPConfig -> Scotty.ActionM ()
-putBranchA context dspConfig =
+putBranchA :: Context -> DSWConfig -> Scotty.ActionM ()
+putBranchA context dswConfig =
   checkPermission context "KM_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"
@@ -53,8 +53,8 @@ putBranchA context dspConfig =
       Left appError -> sendError appError
       Right resDto -> sendJson resDto
 
-deleteBranchA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteBranchA context dspConfig =
+deleteBranchA :: Context -> DSWConfig -> Scotty.ActionM ()
+deleteBranchA context dswConfig =
   checkPermission context "KM_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     maybeError <- liftIO $ deleteBranch context branchUuid

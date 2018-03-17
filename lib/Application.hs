@@ -6,7 +6,7 @@ import Web.Scotty
 
 import Api.Router
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Database.Connection
 import Database.Migration.Migration
 
@@ -26,17 +26,17 @@ runServer = do
   \|                                                             |\n\                                             
   \\\-------------------------------------------------------------/"
   putStrLn "SERVER: started"
-  eitherDspConfig <- loadDSPConfig applicationConfigFile buildInfoFile
+  eitherDspConfig <- loadDSWConfig applicationConfigFile buildInfoFile
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"
       putStrLn "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
       print errorDate
-    Right dspConfig -> do
+    Right dswConfig -> do
       putStrLn "CONFIG: loaded"
-      createDBConn dspConfig $ \dbPool -> do
+      createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-        runMigration context dspConfig
-        let serverPort = dspConfig ^. dspcfgWebConfig ^. acwPort
-        scotty serverPort (createEndpoints context dspConfig)
+        runMigration context dswConfig
+        let serverPort = dswConfig ^. dswcfgWebConfig ^. acwPort
+        scotty serverPort (createEndpoints context dswConfig)

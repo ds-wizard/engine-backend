@@ -13,11 +13,11 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Package.PackageDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Package.PackageService
 
-getPackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getPackagesA context dspConfig =
+getPackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
+getPackagesA context dswConfig =
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     eitherResDtos <- liftIO $ getPackagesFiltered context queryParams
@@ -25,8 +25,8 @@ getPackagesA context dspConfig =
       Right resDtos -> sendJson resDtos
       Left error -> sendError error
 
-getUniquePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-getUniquePackagesA context dspConfig =
+getUniquePackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
+getUniquePackagesA context dswConfig =
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     eitherResDtos <- liftIO $ getSimplePackagesFiltered context queryParams
@@ -34,8 +34,8 @@ getUniquePackagesA context dspConfig =
       Right resDtos -> sendJson resDtos
       Left error -> sendError error
 
-getPackageA :: Context -> DSPConfig -> Scotty.ActionM ()
-getPackageA context dspConfig =
+getPackageA :: Context -> DSWConfig -> Scotty.ActionM ()
+getPackageA context dswConfig =
   checkPermission context "PM_PERM" $ do
     pkgId <- Scotty.param "pkgId"
     eitherResDto <- liftIO $ getPackageById context pkgId
@@ -43,8 +43,8 @@ getPackageA context dspConfig =
       Right resDto -> sendJson resDto
       Left error -> sendError error
 
-deletePackagesA :: Context -> DSPConfig -> Scotty.ActionM ()
-deletePackagesA context dspConfig =
+deletePackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
+deletePackagesA context dswConfig =
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     maybeError <- liftIO $ deletePackagesByQueryParams context queryParams
@@ -52,8 +52,8 @@ deletePackagesA context dspConfig =
       Nothing -> Scotty.status noContent204
       Just error -> sendError error
 
-deletePackageA :: Context -> DSPConfig -> Scotty.ActionM ()
-deletePackageA context dspConfig =
+deletePackageA :: Context -> DSWConfig -> Scotty.ActionM ()
+deletePackageA context dswConfig =
   checkPermission context "PM_PERM" $ do
     pkgId <- Scotty.param "pkgId"
     maybeError <- liftIO $ deletePackage context pkgId

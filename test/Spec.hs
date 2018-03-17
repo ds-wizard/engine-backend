@@ -9,7 +9,7 @@ import Test.Hspec.Wai.JSON
 import qualified Web.Scotty as S
 
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Database.Connection
 
 import Specs.API.BranchAPISpec
@@ -37,23 +37,23 @@ testApplicationConfigFile = "config/app-config-test.cfg"
 testBuildInfoFile = "config/build-info-test.cfg"
 
 prepareWebApp runCallback = do
-  eitherDspConfig <- loadDSPConfig testApplicationConfigFile testBuildInfoFile
+  eitherDspConfig <- loadDSWConfig testApplicationConfigFile testBuildInfoFile
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"
       putStrLn "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
       print errorDate
-    Right dspConfig -> do
+    Right dswConfig -> do
       putStrLn "CONFIG: loaded"
-      createDBConn dspConfig $ \dbPool -> do
+      createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-        runCallback context dspConfig
+        runCallback context dswConfig
 
 main :: IO ()
 main =
   prepareWebApp
-    (\context dspConfig ->
+    (\context dswConfig ->
        hspec $ do
          describe "UNIT TESTING" $ do
            commonUtilsSpec
@@ -64,17 +64,17 @@ main =
            organizationServiceSpec
            branchServiceSpec
            packageServiceSpec
-         before (resetDB context dspConfig) $
+         before (resetDB context dswConfig) $
            describe "INTEGRATION TESTING" $ do
-             describe "Service tests" $ branchServiceIntegrationSpec context dspConfig
+             describe "Service tests" $ branchServiceIntegrationSpec context dswConfig
              describe "API Tests" $ do
-               infoAPI context dspConfig
-               tokenAPI context dspConfig
-               organizationAPI context dspConfig
-               userAPI context dspConfig
-               branchAPI context dspConfig
-               knowledgeModelAPI context dspConfig
-               eventAPI context dspConfig
-               versionAPI context dspConfig
-               packageAPI context dspConfig
-               migratorAPI context dspConfig)
+               infoAPI context dswConfig
+               tokenAPI context dswConfig
+               organizationAPI context dswConfig
+               userAPI context dswConfig
+               branchAPI context dswConfig
+               knowledgeModelAPI context dswConfig
+               eventAPI context dswConfig
+               versionAPI context dswConfig
+               packageAPI context dswConfig
+               migratorAPI context dswConfig)

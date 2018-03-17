@@ -11,7 +11,7 @@ import Model.Event.Event
 import Service.Package.PackageMapper
 import Service.Package.PackageService
 
-runMigration context dspConfig logState = do
+runMigration context dswConfig logState = do
   logState "MIGRATION (Package/Package): started"
   deletePackages context
   insertPackage context baseElixir0PackageDto

@@ -33,7 +33,7 @@ import Service.Package.PackageService
 import Specs.API.Common
 import Specs.Common
 
-packageAPI context dspConfig = do
+packageAPI context dswConfig = do
   let dto1 =
         PackageDTO
         { _pkgdtoId = "elixir.base:core:0.0.1"
@@ -74,7 +74,7 @@ packageAPI context dspConfig = do
         , _pkgdtoDescription = "Second Release"
         , _pkgdtoParentPackageId = Just $ dto3 ^. pkgdtoId
         }
-  with (startWebApp context dspConfig) $
+  with (startWebApp context dswConfig) $
     describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /packages
@@ -88,7 +88,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -101,7 +101,7 @@ packageAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages?groupId={groupId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
@@ -113,7 +113,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
         -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -126,7 +126,7 @@ packageAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages/{pkgId}
       -- ------------------------------------------------------------------------
@@ -138,7 +138,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
            -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -151,7 +151,7 @@ packageAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
         createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /packages
@@ -164,7 +164,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
           liftIO $ deleteBranches context
           -- GIVEN: Prepare expectation
           let expStatus = 204
@@ -182,8 +182,8 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -204,7 +204,7 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages?groupId={groupId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
@@ -216,7 +216,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -235,8 +235,8 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -257,7 +257,7 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages/{pkgId}
       -- ------------------------------------------------------------------------
@@ -269,7 +269,7 @@ packageAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
         -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -291,8 +291,8 @@ packageAPI context dspConfig = do
          do
           let reqUrl = "/packages/elixir.nl:core-nl:1.0.0"
           -- AND: Prepare DB
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -313,5 +313,5 @@ packageAPI context dspConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
         createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody

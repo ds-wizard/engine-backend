@@ -17,11 +17,11 @@ import Model.User.User
 import Service.Organization.OrganizationService
 import Service.User.UserService
 
-resetDB context dspConfig = do
+resetDB context dswConfig = do
   deleteUsers context
   createUserWithGivenUuid
     context
-    dspConfig
+    dswConfig
     (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
     UserCreateDTO
     { _ucdtoName = "Darth"

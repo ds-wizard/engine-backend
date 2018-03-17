@@ -1,16 +1,16 @@
-name: dsp-server
+name: dsw-server
 version: '1.0.0'
-synopsis: DSP Server
-description: DSP Server
+synopsis: DSW Server
+description: DSW Server
 category: Web
 author: Vojtech Knaisl <vknaisl@gmail.com>
 maintainer: Vojtech Knaisl <vknaisl@gmail.com>
 copyright: 2018 Vojtech Knaisl <vknaisl@gmail.com>
 license: MIT
 license-file: LICENSE.md
-homepage: https://github.com/vknaisl/dsp-server
-git: git@github.com:vknaisl/dsp-server.git
-bug-reports: https://github.com/vknaisl/dsp-server/issues
+homepage: https://github.com/DataStewardshipWizard/dsw-server
+git: git@github.com:DataStewardshipWizard/dsw-server.git
+bug-reports: https://github.com/DataStewardshipWizard/dsw-common/issues
 tested-with: GHC==7.6.* GHC==7.8.*
 data-files:
   - config/app-config.cfg
@@ -68,12 +68,12 @@ library:
     - ExistentialQuantification
 
 executables:
-  dsp-server:
+  dsw-server:
     main: Main.hs
     source-dirs: app
     dependencies:
     - base
-    - dsp-server
+    - dsw-server
 tests:
   hspec:
     main: Spec.hs
@@ -112,7 +112,7 @@ tests:
     - wai-extra
     - wai-cors
     - warp
-    - dsp-server
+    - dsw-server
     - hspec
     - hspec-expectations-pretty-diff
     - hspec-wai

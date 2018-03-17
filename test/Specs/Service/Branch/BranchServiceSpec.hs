@@ -37,15 +37,15 @@ branchServiceSpec =
     isJust (isValidArtifactId "a.b") `shouldBe` True
     isJust (isValidArtifactId "core_nl") `shouldBe` True
 
-branchServiceIntegrationSpec context dspConfig =
+branchServiceIntegrationSpec context dswConfig =
   describe "Branch Service Integration" $ do
     let branchUuid = "6474b24b-262b-42b1-9451-008e8363f2b6"
     describe "getBranchState" $ do
       it "BSDefault - no edit events, no new parent package version" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         liftIO $ deleteEventsAtBranch context branchUuid
         liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
         -- AND: Prepare expectations
@@ -59,8 +59,8 @@ branchServiceIntegrationSpec context dspConfig =
       it "BSEdited - edit events" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
@@ -72,8 +72,8 @@ branchServiceIntegrationSpec context dspConfig =
       it "BSEdited - edit events and new parent package version is available" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         liftIO $ insertPackage context elixirNlPackage2Dto
         -- AND: Prepare expectations
         let expState = BSEdited
@@ -86,8 +86,8 @@ branchServiceIntegrationSpec context dspConfig =
       it "BSOutdated - no edit events and new parent package version is available" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         liftIO $ insertPackage context elixirNlPackage2Dto
         liftIO $ deleteEventsAtBranch context branchUuid
         -- AND: Prepare expectations
@@ -101,8 +101,8 @@ branchServiceIntegrationSpec context dspConfig =
       it "BSMigrating - no edit events and new parent package version is available and migration is in process" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         liftIO $ insertPackage context elixirNlPackage2Dto
         liftIO $ deleteEventsAtBranch context branchUuid
         let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
@@ -118,8 +118,8 @@ branchServiceIntegrationSpec context dspConfig =
       it "BSMigrated - no edit events and new parent package version is available and migration is in process" $
         -- GIVEN: Prepare database
        do
-        liftIO $ PKG.runMigration context dspConfig fakeLogState
-        liftIO $ B.runMigration context dspConfig fakeLogState
+        liftIO $ PKG.runMigration context dswConfig fakeLogState
+        liftIO $ B.runMigration context dswConfig fakeLogState
         liftIO $ deleteEventsAtBranch context branchUuid
         let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
         liftIO $ createMigration context branchUuid migratorCreateDto

@@ -1,4 +1,4 @@
-module Common.DSPConfig where
+module Common.DSWConfig where
 
 import Control.Lens
 import Control.Monad.Except
@@ -44,13 +44,13 @@ data BuildInfo = BuildInfo
   , _biBuiltAt :: String
   }
 
-data DSPConfig = DSPConfig
-  { _dspcfgWebConfig :: AppConfigWeb
-  , _dspcfgDatabaseConfig :: AppConfigDatabase
-  , _dspcfgJwtConfig :: AppConfigJwt
-  , _dspcfgRoles :: AppConfigRoles
-  , _dspcfgMail :: AppConfigMail
-  , _dspcfgBuildInfo :: BuildInfo
+data DSWConfig = DSWConfig
+  { _dswcfgWebConfig :: AppConfigWeb
+  , _dswcfgDatabaseConfig :: AppConfigDatabase
+  , _dswcfgJwtConfig :: AppConfigJwt
+  , _dswcfgRoles :: AppConfigRoles
+  , _dswcfgMail :: AppConfigMail
+  , _dswcfgBuildInfo :: BuildInfo
   }
 
 makeLenses ''AppConfigWeb
@@ -65,10 +65,10 @@ makeLenses ''AppConfigMail
 
 makeLenses ''BuildInfo
 
-makeLenses ''DSPConfig
+makeLenses ''DSWConfig
 
-loadDSPConfig :: FilePath -> FilePath -> IO (Either CPError DSPConfig)
-loadDSPConfig applicationConfigFile buildInfoFile = do
+loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError DSWConfig)
+loadDSWConfig applicationConfigFile buildInfoFile = do
   file <- getDataFileName "" :: IO FilePath
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
@@ -80,13 +80,13 @@ loadDSPConfig applicationConfigFile buildInfoFile = do
     appMail <- loadAppConfigMail appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
-      DSPConfig
-      { _dspcfgWebConfig = webConfig
-      , _dspcfgDatabaseConfig = databaseConfig
-      , _dspcfgJwtConfig = jwtConfig
-      , _dspcfgRoles = appRoles
-      , _dspcfgMail = appMail
-      , _dspcfgBuildInfo = buildInfo
+      DSWConfig
+      { _dswcfgWebConfig = webConfig
+      , _dswcfgDatabaseConfig = databaseConfig
+      , _dswcfgJwtConfig = jwtConfig
+      , _dswcfgRoles = appRoles
+      , _dswcfgMail = appMail
+      , _dswcfgBuildInfo = buildInfo
       }
   where
     loadAppConfigWeb configParser = do

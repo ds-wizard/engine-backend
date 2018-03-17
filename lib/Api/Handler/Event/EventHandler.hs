@@ -12,11 +12,11 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Event.EventDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Event.EventService
 
-getEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-getEventsA context dspConfig =
+getEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
+getEventsA context dswConfig =
   checkPermission context "KM_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     eitherDtos <- liftIO $ getEvents context branchUuid
@@ -24,8 +24,8 @@ getEventsA context dspConfig =
       Right dtos -> sendJson dtos
       Left error -> sendError error
 
-postEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-postEventsA context dspConfig =
+postEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
+postEventsA context dswConfig =
   checkPermission context "KM_PERM" $ do
     getReqDto $ \reqDto -> do
       branchUuid <- Scotty.param "branchUuid"
@@ -36,8 +36,8 @@ postEventsA context dspConfig =
           Scotty.status created201
           sendJson userDto
 
-deleteEventsA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteEventsA context dspConfig =
+deleteEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
+deleteEventsA context dswConfig =
   checkPermission context "KM_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     maybeError <- liftIO $ deleteEvents context branchUuid

@@ -42,7 +42,7 @@ import Service.Migrator.Applicator
 import Specs.API.Common
 import Specs.Common
 
-eventAPI context dspConfig = do
+eventAPI context dswConfig = do
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
@@ -63,7 +63,7 @@ eventAPI context dspConfig = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  with (startWebApp context dspConfig) $ do
+  with (startWebApp context dswConfig) $ do
     describe "EVENT API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}/events
@@ -77,8 +77,8 @@ eventAPI context dspConfig = do
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
          do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ KMC.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -90,7 +90,7 @@ eventAPI context dspConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- POST /branches/{branchId}/events/_bulk
@@ -103,8 +103,8 @@ eventAPI context dspConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = encode . toDTOs $ events
         it "HTTP 201 CREATED" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ KMC.runMigration context dswConfig fakeLogState
           liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- GIVEN: Prepare expectation
           let expStatus = 201
@@ -134,8 +134,8 @@ eventAPI context dspConfig = do
           [HJ.json| [{ uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" }] |]
           "eventType"
         it "HTTP 400 BAD REQUEST if unsupported event type" $ do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ KMC.runMigration context dswConfig fakeLogState
           liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
           let reqBody =
                 [HJ.json|
@@ -166,7 +166,7 @@ eventAPI context dspConfig = do
           liftIO $ (branchFromDb ^. bweEvents) `shouldBe` []
           liftIO $ (isLeft eitherKm) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events/_bulk" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /branches/{branchId}/events
@@ -179,8 +179,8 @@ eventAPI context dspConfig = do
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
          do
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ KMC.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ KMC.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -202,5 +202,5 @@ eventAPI context dspConfig = do
           let (Right kmFromDb) = eitherKm
           liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expectedKm)
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dspConfig reqMethod reqUrl [] reqBody "KM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events" reqHeaders reqBody

@@ -24,8 +24,8 @@ import Common.Error
 import Specs.API.Common
 import Specs.Common
 
-tokenAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+tokenAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "TOKEN API Spec" $
       -- ------------------------------------------------------------------------
       -- POST /tokens

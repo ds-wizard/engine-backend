@@ -14,7 +14,7 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserStateDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Common.Uuid
@@ -26,12 +26,12 @@ import Service.Mail.Mailer
 import Service.Token.TokenService
 import Service.User.UserMapper
 
-getPermissionForRole :: DSPConfig -> Role -> [Permission]
+getPermissionForRole :: DSWConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
-    "ADMIN" -> config ^. dspcfgRoles ^. acrAdmin
-    "DATASTEWARD" -> config ^. dspcfgRoles ^. acrDataSteward
-    "RESEARCHER" -> config ^. dspcfgRoles ^. acrResearcher
+    "ADMIN" -> config ^. dswcfgRoles ^. acrAdmin
+    "DATASTEWARD" -> config ^. dswcfgRoles ^. acrDataSteward
+    "RESEARCHER" -> config ^. dswcfgRoles ^. acrResearcher
     _ -> []
 
 getUsers :: Context -> IO (Either AppError [UserDTO])
@@ -41,12 +41,12 @@ getUsers context = do
     Right users -> return . Right . fmap toDTO $ users
     Left error -> return . Left $ error
 
-createUser :: Context -> DSPConfig -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
+createUser :: Context -> DSWConfig -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
 createUser context config userCreateDto isAdmin = do
   uuid <- generateUuid
   createUserWithGivenUuid context config uuid userCreateDto isAdmin
 
-createUserWithGivenUuid :: Context -> DSPConfig -> U.UUID -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
+createUserWithGivenUuid :: Context -> DSWConfig -> U.UUID -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
 createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
   eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
   if isRight eitherUserFromDb
@@ -69,9 +69,9 @@ createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
                 then r
                 else defaultRole
             Nothing -> defaultRole
-        defaultRole = config ^. dspcfgRoles . acrDefaultRole
+        defaultRole = config ^. dswcfgRoles . acrDefaultRole
 
---      sendRegistrationConfirmationMail (config ^. dspcfgMail) (user ^. uEmail)
+--      sendRegistrationConfirmationMail (config ^. dswcfgMail) (user ^. uEmail)
 getUserById :: Context -> String -> IO (Either AppError UserDTO)
 getUserById context userUuid = do
   eitherUser <- findUserById context userUuid

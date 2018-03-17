@@ -28,8 +28,8 @@ import Service.Package.PackageService
 import Specs.API.Common
 import Specs.Common
 
-versionAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+versionAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "VERSION API Spec" $
       -- ------------------------------------------------------------------------
       -- PUT /branches/{branchUuid}/versions/{version}
@@ -44,8 +44,8 @@ versionAPI context dspConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -81,8 +81,8 @@ versionAPI context dspConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -104,8 +104,8 @@ versionAPI context dspConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dspConfig fakeLogState
-          liftIO $ B.runMigration context dspConfig fakeLogState
+          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO $ B.runMigration context dswConfig fakeLogState
           liftIO $ createPackageFromKMC context "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc"
           -- GIVEN: Prepare expectation
           let expStatus = 400
@@ -124,4 +124,4 @@ versionAPI context dspConfig =
           response `shouldRespondWith` responseMatcher
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "description"
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dspConfig reqMethod reqUrl [] "" "KM_PUBLISH_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_PUBLISH_PERM"

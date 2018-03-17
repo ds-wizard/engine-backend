@@ -8,6 +8,5 @@ script:
 - ./build-info.sh
 - cd ..
 
-- docker build -t ccmi-elixir.cesnet.cz:5000/elixir/dsp-server .
-- docker push ccmi-elixir.cesnet.cz:5000/elixir/dsp-server
-
+- docker build -t ccmi-elixir.cesnet.cz:5000/elixir/dsw-server .
+- docker push ccmi-elixir.cesnet.cz:5000/elixir/dsw-server

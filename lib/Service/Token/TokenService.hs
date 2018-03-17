@@ -12,7 +12,7 @@ import qualified Web.JWT as JWT
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Common.Utils
@@ -21,9 +21,9 @@ import Database.DAO.User.UserDAO
 import Model.User.User
 import Service.Token.TokenMapper
 
-getToken :: Context -> DSPConfig -> TokenCreateDTO -> IO (Either AppError TokenDTO)
-getToken context dspConfig tokenCreateDto = do
-  let secret = dspConfig ^. dspcfgJwtConfig ^. acjwtSecret
+getToken :: Context -> DSWConfig -> TokenCreateDTO -> IO (Either AppError TokenDTO)
+getToken context dswConfig tokenCreateDto = do
+  let secret = dswConfig ^. dswcfgJwtConfig ^. acjwtSecret
   eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
   case eitherUser of
     Right user -> do

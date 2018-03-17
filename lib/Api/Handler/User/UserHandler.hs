@@ -15,23 +15,23 @@ import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Error
 import Service.User.UserService
 
-getUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
-getUsersA context dspConfig =
+getUsersA :: Context -> DSWConfig -> Scotty.ActionM ()
+getUsersA context dswConfig =
   checkPermission context "UM_PERM" $ do
     eitherDtos <- liftIO $ getUsers context
     case eitherDtos of
       Right dtos -> sendJson dtos
       Left error -> sendError error
 
-postUsersA :: Context -> DSPConfig -> Scotty.ActionM ()
-postUsersA context dspConfig =
+postUsersA :: Context -> DSWConfig -> Scotty.ActionM ()
+postUsersA context dswConfig =
   getReqDto $ \reqDto ->
     isAdmin context $ \isAdmin -> do
-      eitherUserDto <- liftIO $ createUser context dspConfig reqDto isAdmin
+      eitherUserDto <- liftIO $ createUser context dswConfig reqDto isAdmin
       case eitherUserDto of
         Left appError -> sendError appError
         Right userDto -> do
@@ -39,16 +39,16 @@ postUsersA context dspConfig =
           sendJson userDto
 
 --      let isAdmin = False
-getUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-getUserCurrentA context dspConfig =
+getUserCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
+getUserCurrentA context dswConfig =
   getCurrentUserUuid context $ \userUuid -> do
     eitherDto <- liftIO $ getUserById context userUuid
     case eitherDto of
       Right dto -> sendJson dto
       Left error -> sendError error
 
-getUserA :: Context -> DSPConfig -> Scotty.ActionM ()
-getUserA context dspConfig =
+getUserA :: Context -> DSWConfig -> Scotty.ActionM ()
+getUserA context dswConfig =
   checkPermission context "UM_PERM" $ do
     userUuid <- Scotty.param "userUuid"
     eitherDto <- liftIO $ getUserById context userUuid
@@ -56,8 +56,8 @@ getUserA context dspConfig =
       Right dto -> sendJson dto
       Left error -> sendError error
 
-putUserCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-putUserCurrentA context dspConfig =
+putUserCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
+putUserCurrentA context dswConfig =
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
       eitherDto <- liftIO $ modifyUser context userUuid reqDto
@@ -65,8 +65,8 @@ putUserCurrentA context dspConfig =
         Right dto -> sendJson dto
         Left error -> sendError error
 
-putUserA :: Context -> DSPConfig -> Scotty.ActionM ()
-putUserA context dspConfig =
+putUserA :: Context -> DSWConfig -> Scotty.ActionM ()
+putUserA context dswConfig =
   checkPermission context "UM_PERM" $
   getReqDto $ \reqDto -> do
     userUuid <- Scotty.param "userUuid"
@@ -75,8 +75,8 @@ putUserA context dspConfig =
       Right dto -> sendJson dto
       Left error -> sendError error
 
-putUserCurrentPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
-putUserCurrentPasswordA context dspConfig =
+putUserCurrentPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
+putUserCurrentPasswordA context dswConfig =
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
       maybeError <- liftIO $ changeUserPassword context userUuid reqDto
@@ -84,8 +84,8 @@ putUserCurrentPasswordA context dspConfig =
         Nothing -> Scotty.status noContent204
         Just error -> sendError error
 
-putUserPasswordA :: Context -> DSPConfig -> Scotty.ActionM ()
-putUserPasswordA context dspConfig =
+putUserPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
+putUserPasswordA context dswConfig =
   checkPermission context "UM_PERM" $
   getReqDto $ \reqDto -> do
     userUuid <- Scotty.param "userUuid"
@@ -94,8 +94,8 @@ putUserPasswordA context dspConfig =
       Nothing -> Scotty.status noContent204
       Just error -> sendError error
 
-changeUserStateA :: Context -> DSPConfig -> Scotty.ActionM ()
-changeUserStateA context dspConfig =
+changeUserStateA :: Context -> DSWConfig -> Scotty.ActionM ()
+changeUserStateA context dswConfig =
   getReqDto $ \reqDto -> do
     userUuid <- Scotty.param "userUuid"
     hash <- getQueryParam "hash"
@@ -104,8 +104,8 @@ changeUserStateA context dspConfig =
       Nothing -> sendJson reqDto
       Just error -> sendError error
 
-deleteUserA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteUserA context dspConfig =
+deleteUserA :: Context -> DSWConfig -> Scotty.ActionM ()
+deleteUserA context dswConfig =
   checkPermission context "UM_PERM" $ do
     userUuid <- Scotty.param "userUuid"
     maybeError <- liftIO $ deleteUser context userUuid

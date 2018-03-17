@@ -12,11 +12,11 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Version.VersionDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Package.PackageService
 
-putVersionA :: Context -> DSPConfig -> Scotty.ActionM ()
-putVersionA context dspConfig =
+putVersionA :: Context -> DSWConfig -> Scotty.ActionM ()
+putVersionA context dswConfig =
   checkPermission context "KM_PUBLISH_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"

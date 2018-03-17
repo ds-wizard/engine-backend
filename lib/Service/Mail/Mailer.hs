@@ -5,7 +5,7 @@ import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
 import Network.Mail.SMTP
 
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Types
 
 createEmail :: T.Text -> TL.Text -> AppConfigMail -> Email -> IO ()

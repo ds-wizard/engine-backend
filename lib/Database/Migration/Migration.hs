@@ -11,11 +11,11 @@ import qualified Database.Migration.User.UserMigration as UM
 
 logState = putStrLn
 
-runMigration context dspConfig = do
+runMigration context dswConfig = do
   logState "MIGRATION: started"
-  ORG.runMigration context dspConfig logState
-  UM.runMigration context dspConfig logState
-  PKG.runMigration context dspConfig logState
-  BM.runMigration context dspConfig logState
-  MM.runMigration context dspConfig logState
+  ORG.runMigration context dswConfig logState
+  UM.runMigration context dswConfig logState
+  PKG.runMigration context dswConfig logState
+  BM.runMigration context dswConfig logState
+  MM.runMigration context dswConfig logState
   logState "MIGRATION: ended"

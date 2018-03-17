@@ -13,14 +13,14 @@ import Api.Handler.Common
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Error
 import Service.Token.TokenService
 
-postTokenA :: Context -> DSPConfig -> Scotty.ActionM ()
-postTokenA context dspConfig =
+postTokenA :: Context -> DSWConfig -> Scotty.ActionM ()
+postTokenA context dswConfig =
   getReqDto $ \reqDto -> do
-    eitherTokenDto <- liftIO $ getToken context dspConfig reqDto
+    eitherTokenDto <- liftIO $ getToken context dswConfig reqDto
     case eitherTokenDto of
       Right tokenDto -> do
         Scotty.status created201

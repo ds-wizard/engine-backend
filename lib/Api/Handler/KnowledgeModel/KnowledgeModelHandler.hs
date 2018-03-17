@@ -11,11 +11,11 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.KnowledgeModel.KnowledgeModelService
 
-getKnowledgeModelA :: Context -> DSPConfig -> Scotty.ActionM ()
-getKnowledgeModelA context dspConfig =
+getKnowledgeModelA :: Context -> DSWConfig -> Scotty.ActionM ()
+getKnowledgeModelA context dswConfig =
   checkPermission context "KM_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     eitherDto <- liftIO $ getKnowledgeModelByBranchId context branchUuid

@@ -13,11 +13,11 @@ import Api.Handler.Common
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Service.Migrator.MigratorService
 
-getMigrationsCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-getMigrationsCurrentA context dspConfig = do
+getMigrationsCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
+getMigrationsCurrentA context dswConfig = do
   checkPermission context "KM_UPGRADE_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     eitherDto <- liftIO $ getCurrentMigration context branchUuid
@@ -25,8 +25,8 @@ getMigrationsCurrentA context dspConfig = do
       Right resDto -> sendJson resDto
       Left error -> sendError error
 
-postMigrationsCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-postMigrationsCurrentA context dspConfig =
+postMigrationsCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
+postMigrationsCurrentA context dswConfig =
   checkPermission context "KM_UPGRADE_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"
@@ -37,8 +37,8 @@ postMigrationsCurrentA context dspConfig =
         sendJson resDto
       Left error -> sendError error
 
-deleteMigrationsCurrentA :: Context -> DSPConfig -> Scotty.ActionM ()
-deleteMigrationsCurrentA context dspConfig =
+deleteMigrationsCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
+deleteMigrationsCurrentA context dswConfig =
   checkPermission context "KM_UPGRADE_PERM" $ do
     branchUuid <- Scotty.param "branchUuid"
     maybeError <- liftIO $ deleteCurrentMigration context branchUuid
@@ -46,8 +46,8 @@ deleteMigrationsCurrentA context dspConfig =
       Nothing -> Scotty.status noContent204
       Just error -> sendError error
 
-postMigrationsCurrentConflictA :: Context -> DSPConfig -> Scotty.ActionM ()
-postMigrationsCurrentConflictA context dspConfig =
+postMigrationsCurrentConflictA :: Context -> DSWConfig -> Scotty.ActionM ()
+postMigrationsCurrentConflictA context dswConfig =
   checkPermission context "KM_UPGRADE_PERM" $
   getReqDto $ \reqDto -> do
     branchUuid <- Scotty.param "branchUuid"

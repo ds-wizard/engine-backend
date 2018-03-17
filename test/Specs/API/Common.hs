@@ -19,7 +19,7 @@ import qualified Web.Scotty as S
 import Api.Resource.Error.ErrorDTO
 import Api.Router
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Database.Connection
@@ -27,17 +27,17 @@ import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 
-startWebApp :: Context -> DSPConfig -> IO Application
-startWebApp context dspConfig = S.scottyApp (createEndpoints context dspConfig)
+startWebApp :: Context -> DSWConfig -> IO Application
+startWebApp context dswConfig = S.scottyApp (createEndpoints context dswConfig)
 
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
   , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiV0laX1BFUk0iLCJETVBfUEVSTSJdfQ.BFBXG8gjJeqt3i-hKzsp10_ePM5st34vuJqiYeNwyu4")
 
-reqAuthHeaderWithoutPerms :: DSPConfig -> Permission -> Header
-reqAuthHeaderWithoutPerms dspConfig perm =
-  let allPerms = getPermissionForRole dspConfig "ADMIN"
+reqAuthHeaderWithoutPerms :: DSWConfig -> Permission -> Header
+reqAuthHeaderWithoutPerms dswConfig perm =
+  let allPerms = getPermissionForRole dswConfig "ADMIN"
       user =
         User
         { _uUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
@@ -49,7 +49,7 @@ reqAuthHeaderWithoutPerms dspConfig perm =
         , _uPermissions = L.delete perm allPerms
         , _uIsActive = True
         }
-      token = createToken user (dspConfig ^. dspcfgJwtConfig ^. acjwtSecret)
+      token = createToken user (dswConfig ^. dswcfgJwtConfig ^. acjwtSecret)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
@@ -117,11 +117,11 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNoPermissionTest dspConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
+createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
   it "HTTP 403 FORBIDDEN" $
     -- GIVEN: Prepare request
    do
-    let authHeader = reqAuthHeaderWithoutPerms dspConfig missingPerm
+    let authHeader = reqAuthHeaderWithoutPerms dswConfig missingPerm
     let reqHeaders = [authHeader] ++ otherHeaders
     -- GIVEN: Prepare expectation
     let expBody =

@@ -2,23 +2,23 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 1e94ee0d16ad21e9bfe7fff705e61f9bfad9afc260cc701a4e4da1c4985107e1
+-- hash: 7615c5f13f99d2df48b14d1b076beebf8871253779e449a0152e10204d8d8ed8
 
-name:                dsp-server
-version:             1.0.0
-synopsis:            DSP Server
-description:         DSP Server
-homepage:            https://github.com/vknaisl/dsp-server
-bug-reports:         https://github.com/vknaisl/dsp-server/issues
-license:             MIT
-license-file:        LICENSE.md
-tested-with:         GHC==7.6.* GHC==7.8.*
-author:              Vojtech Knaisl <vknaisl@gmail.com>
-maintainer:          Vojtech Knaisl <vknaisl@gmail.com>
-copyright:           2018 Vojtech Knaisl <vknaisl@gmail.com>
-category:            Web
-build-type:          Simple
-cabal-version:       >= 1.10
+name:           dsw-server
+version:        1.0.0
+synopsis:       DSW Server
+description:    DSW Server
+category:       Web
+homepage:       https://github.com/DataStewardshipWizard/dsw-server
+bug-reports:    https://github.com/DataStewardshipWizard/dsw-common/issues
+author:         Vojtech Knaisl <vknaisl@gmail.com>
+maintainer:     Vojtech Knaisl <vknaisl@gmail.com>
+copyright:      2018 Vojtech Knaisl <vknaisl@gmail.com>
+license:        MIT
+license-file:   LICENSE.md
+tested-with:    GHC==7.6.* GHC==7.8.*
+build-type:     Simple
+cabal-version:  >= 1.10
 
 data-files:
     config/app-config.cfg
@@ -26,12 +26,47 @@ data-files:
 
 source-repository head
   type: git
-  location: git@github.com:vknaisl/dsp-server.git
+  location: git@github.com:DataStewardshipWizard/dsw-server.git
 
 library
   hs-source-dirs:
       lib
   default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
+  build-depends:
+      ConfigFile
+    , aeson
+    , base
+    , bson
+    , bytestring
+    , case-insensitive
+    , containers
+    , data-default
+    , http-types
+    , jwt
+    , lens
+    , monad-control
+    , monad-logger
+    , mongoDB
+    , mtl
+    , network
+    , persistent
+    , persistent-mongoDB
+    , persistent-template
+    , pretty-simple
+    , pwstore-fast
+    , random
+    , regex-compat
+    , scotty
+    , smtp-mail
+    , text
+    , time
+    , transformers
+    , uuid
+    , vector
+    , wai
+    , wai-cors
+    , wai-extra
+    , warp
   exposed-modules:
       Api.Handler.Branch.BranchHandler
       Api.Handler.Common
@@ -71,7 +106,7 @@ library
       Api.Router
       Application
       Common.Context
-      Common.DSPConfig
+      Common.DSWConfig
       Common.Error
       Common.Types
       Common.Utils
@@ -179,53 +214,18 @@ library
       Service.User.UserMapper
       Service.User.UserService
   other-modules:
-      Paths_dsp_server
-  build-depends:
-      ConfigFile
-    , aeson
-    , base
-    , bson
-    , bytestring
-    , case-insensitive
-    , containers
-    , data-default
-    , http-types
-    , jwt
-    , lens
-    , monad-control
-    , monad-logger
-    , mongoDB
-    , mtl
-    , network
-    , persistent
-    , persistent-mongoDB
-    , persistent-template
-    , pretty-simple
-    , pwstore-fast
-    , random
-    , regex-compat
-    , scotty
-    , smtp-mail
-    , text
-    , time
-    , transformers
-    , uuid
-    , vector
-    , wai
-    , wai-cors
-    , wai-extra
-    , warp
+      Paths_dsw_server
   default-language: Haskell2010
 
-executable dsp-server
+executable dsw-server
   main-is: Main.hs
   hs-source-dirs:
       app
   build-depends:
       base
-    , dsp-server
+    , dsw-server
   other-modules:
-      Paths_dsp_server
+      Paths_dsw_server
   default-language: Haskell2010
 
 test-suite hspec
@@ -243,7 +243,7 @@ test-suite hspec
     , case-insensitive
     , containers
     , data-default
-    , dsp-server
+    , dsw-server
     , hspec
     , hspec-expectations-pretty-diff
     , hspec-wai
@@ -296,5 +296,5 @@ test-suite hspec
       Specs.Service.Organization.OrganizationServiceSpec
       Specs.Service.Package.PackageServiceSpec
       TestMigration
-      Paths_dsp_server
+      Paths_dsw_server
   default-language: Haskell2010

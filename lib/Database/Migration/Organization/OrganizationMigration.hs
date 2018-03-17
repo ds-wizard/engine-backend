@@ -8,7 +8,7 @@ import Database.DAO.Organization.OrganizationDAO
 import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
-runMigration context dspConfig logState = do
+runMigration context dswConfig logState = do
   logState "MIGRATION (Organization/Organization): started"
   deleteOrganizations context
   insertOrganization

@@ -13,8 +13,8 @@ import qualified Web.Scotty as S
 import Specs.API.Common
 import Specs.Common
 
-infoAPI context dspConfig =
-  with (startWebApp context dspConfig) $ do
+infoAPI context dswConfig =
+  with (startWebApp context dswConfig) $ do
     describe "INFO API Spec" $
       describe "GET /" $ do
         it "HTTP 200 OK" $
@@ -28,7 +28,7 @@ infoAPI context dspConfig =
           let expBody =
                 [json|
           {
-            name: "Data Stewardship Portal Server",
+            name: "Data Stewardship Wizard Server",
             version: "1.0.0",
             builtAt: "2017/10/25 19:50:20Z"
           }

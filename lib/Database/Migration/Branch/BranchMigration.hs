@@ -13,7 +13,7 @@ import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService
 
-runMigration context dspConfig logState = do
+runMigration context dswConfig logState = do
   logState "MIGRATION (KnowledgeModel/Branch): started"
   deleteBranches context
   let branch =

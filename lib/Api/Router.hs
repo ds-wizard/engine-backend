@@ -19,7 +19,7 @@ import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import Common.Context
-import Common.DSPConfig
+import Common.DSWConfig
 
 unauthorizedEndpoints =
   [ (methodGet, mkRegex "^$")
@@ -29,70 +29,70 @@ unauthorizedEndpoints =
   , (methodPut, mkRegex "^users/.*/state")
   ]
 
-createEndpoints :: Context -> DSPConfig -> ScottyM ()
-createEndpoints context dspConfig
+createEndpoints :: Context -> DSWConfig -> ScottyM ()
+createEndpoints context dswConfig
    --------------------
    -- MIDDLEWARES
    --------------------
  = do
   middleware corsMiddleware
-  middleware (authMiddleware dspConfig unauthorizedEndpoints)
+  middleware (authMiddleware dswConfig unauthorizedEndpoints)
    --------------------
    -- INFO
    --------------------
-  get "/" (getInfoA context dspConfig)
+  get "/" (getInfoA context dswConfig)
    --------------------
    -- TOKENS
    --------------------
-  post "/tokens" (postTokenA context dspConfig)
+  post "/tokens" (postTokenA context dswConfig)
    --------------------
    -- ORGANIZATIONS
    --------------------
-  get "/organizations/current" (getOrganizationCurrentA context dspConfig)
-  put "/organizations/current" (putOrganizationCurrentA context dspConfig)
+  get "/organizations/current" (getOrganizationCurrentA context dswConfig)
+  put "/organizations/current" (putOrganizationCurrentA context dswConfig)
    --------------------
    -- USERS
    --------------------
-  get "/users" (getUsersA context dspConfig)
-  post "/users" (postUsersA context dspConfig)
-  get "/users/current" (getUserCurrentA context dspConfig)
-  get "/users/:userUuid" (getUserA context dspConfig)
-  put "/users/current/password" (putUserCurrentPasswordA context dspConfig)
-  put "/users/current" (putUserCurrentA context dspConfig)
-  put "/users/:userUuid/password" (putUserPasswordA context dspConfig)
-  put "/users/:userUuid" (putUserA context dspConfig)
-  delete "/users/:userUuid" (deleteUserA context dspConfig)
-  put "/users/:userUuid/state" (changeUserStateA context dspConfig)
+  get "/users" (getUsersA context dswConfig)
+  post "/users" (postUsersA context dswConfig)
+  get "/users/current" (getUserCurrentA context dswConfig)
+  get "/users/:userUuid" (getUserA context dswConfig)
+  put "/users/current/password" (putUserCurrentPasswordA context dswConfig)
+  put "/users/current" (putUserCurrentA context dswConfig)
+  put "/users/:userUuid/password" (putUserPasswordA context dswConfig)
+  put "/users/:userUuid" (putUserA context dswConfig)
+  delete "/users/:userUuid" (deleteUserA context dswConfig)
+  put "/users/:userUuid/state" (changeUserStateA context dswConfig)
    --------------------
    -- KNOWLEDGE MODEL
    --------------------
-  get "/branches" (getBranchesA context dspConfig)
-  post "/branches" (postBranchesA context dspConfig)
-  get "/branches/:branchUuid" (getBranchA context dspConfig)
-  put "/branches/:branchUuid" (putBranchA context dspConfig)
-  delete "/branches/:branchUuid" (deleteBranchA context dspConfig)
-  get "/branches/:branchUuid/km" (getKnowledgeModelA context dspConfig)
-  get "/branches/:branchUuid/events" (getEventsA context dspConfig)
-  post "/branches/:branchUuid/events/_bulk" (postEventsA context dspConfig)
-  delete "/branches/:branchUuid/events" (deleteEventsA context dspConfig)
-  put "/branches/:branchUuid/versions/:version" (putVersionA context dspConfig)
-  get "/branches/:branchUuid/migrations/current" (getMigrationsCurrentA context dspConfig)
-  post "/branches/:branchUuid/migrations/current" (postMigrationsCurrentA context dspConfig)
-  delete "/branches/:branchUuid/migrations/current" (deleteMigrationsCurrentA context dspConfig)
-  post "/branches/:branchUuid/migrations/current/conflict" (postMigrationsCurrentConflictA context dspConfig)
+  get "/branches" (getBranchesA context dswConfig)
+  post "/branches" (postBranchesA context dswConfig)
+  get "/branches/:branchUuid" (getBranchA context dswConfig)
+  put "/branches/:branchUuid" (putBranchA context dswConfig)
+  delete "/branches/:branchUuid" (deleteBranchA context dswConfig)
+  get "/branches/:branchUuid/km" (getKnowledgeModelA context dswConfig)
+  get "/branches/:branchUuid/events" (getEventsA context dswConfig)
+  post "/branches/:branchUuid/events/_bulk" (postEventsA context dswConfig)
+  delete "/branches/:branchUuid/events" (deleteEventsA context dswConfig)
+  put "/branches/:branchUuid/versions/:version" (putVersionA context dswConfig)
+  get "/branches/:branchUuid/migrations/current" (getMigrationsCurrentA context dswConfig)
+  post "/branches/:branchUuid/migrations/current" (postMigrationsCurrentA context dswConfig)
+  delete "/branches/:branchUuid/migrations/current" (deleteMigrationsCurrentA context dswConfig)
+  post "/branches/:branchUuid/migrations/current/conflict" (postMigrationsCurrentConflictA context dswConfig)
    --------------------
    -- PACKAGES
    --------------------
-  get "/packages" (getPackagesA context dspConfig)
-  get "/packages/unique" (getUniquePackagesA context dspConfig)
-  get "/packages/:pkgId" (getPackageA context dspConfig)
-  delete "/packages" (deletePackagesA context dspConfig)
-  delete "/packages/:pkgId" (deletePackageA context dspConfig)
+  get "/packages" (getPackagesA context dswConfig)
+  get "/packages/unique" (getUniquePackagesA context dswConfig)
+  get "/packages/:pkgId" (getPackageA context dswConfig)
+  delete "/packages" (deletePackagesA context dswConfig)
+  delete "/packages/:pkgId" (deletePackageA context dswConfig)
    --------------------
    -- IMPORT/EXPORT
    --------------------
-  post "/import" (importA context dspConfig)
-  get "/export/:pkgId" (exportA context dspConfig)
+  post "/import" (importA context dswConfig)
+  get "/export/:pkgId" (exportA context dswConfig)
    --------------------
    -- ERROR
    --------------------
