@@ -1,11 +1,11 @@
 ![Elixir Logo](/docs/images/elixir-cz-logo.png)
 
-# Data Stewardship Portal - Server Application
+# Data Stewardship Wizard - Server Application
 
-[![Build Status](https://travis-ci.org/DataStewardshipPortal/dsp-server.svg?branch=master)](https://travis-ci.org/DataStewardshipPortal/dsp-server)
+[![Build Status](https://travis-ci.org/DataStewardshipWizard/dsw-server.svg?branch=master)](https://travis-ci.org/DataStewardshipWizard/dsw-server)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
 
-It's a server part of the portal application. 
+It's a server part of the wizard application. 
 
 ## Features
 
