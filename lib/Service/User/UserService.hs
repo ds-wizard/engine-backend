@@ -50,7 +50,7 @@ createUserWithGivenUuid :: Context -> DSWConfig -> U.UUID -> UserCreateDTO -> Bo
 createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
   eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
   if isRight eitherUserFromDb
-    then return . Left . createErrorWithFieldError $ ("email", "User with given email is already exists")
+    then return . Left . createErrorWithFieldError $ ("email", "User with given email already exists")
     else do
       passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
       buildUser config userCreateDto userUuid (BS.unpack passwordHash) (userCreateDto ^. ucdtoRole) isAdmin $ \user -> do
@@ -86,7 +86,7 @@ modifyUser context userUuid userDto = do
     Right user -> do
       eitherUserFromDb <- findUserByEmail context (userDto ^. udtoEmail)
       if isAlreadyUsedAndIsNotMine eitherUserFromDb
-        then return . Left . createErrorWithFieldError $ ("email", "User with given email is already exists")
+        then return . Left . createErrorWithFieldError $ ("email", "User with given email already exists")
         else do
           let updatedUser = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash) (user ^. uIsActive)
           updateUserById context updatedUser

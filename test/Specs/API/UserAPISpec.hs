@@ -168,7 +168,7 @@ userAPI context dswConfig =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -332,7 +332,7 @@ userAPI context dswConfig =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -414,7 +414,7 @@ userAPI context dswConfig =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email is already exists")
+          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f" reqHeaders reqBody
