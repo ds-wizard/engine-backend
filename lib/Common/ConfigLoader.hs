@@ -13,7 +13,6 @@ import Paths_src
 
 loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError DSWConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do
-  file <- getDataFileName "" :: IO FilePath
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
     buildInfoConfigParser <- join $ liftIO $ readfile emptyCP buildInfoFile

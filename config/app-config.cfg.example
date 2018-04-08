@@ -10,7 +10,7 @@ dbname = dsw-server
 port = 27017
 
 [JWT]
-secret = 
+secret =
 
 [Role]
 defaultrole = DATASTEWARD
