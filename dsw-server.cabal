@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 7615c5f13f99d2df48b14d1b076beebf8871253779e449a0152e10204d8d8ed8
+-- hash: 0bea83aac593f12d6e80159179540d793bad37183bca7d5e574e2722239f4c39
 
 name:           dsw-server
 version:        1.0.0
@@ -31,7 +31,7 @@ source-repository head
 library
   hs-source-dirs:
       lib
-  default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
+  default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification FunctionalDependencies TypeSynonymInstances FlexibleInstances
   build-depends:
       ConfigFile
     , aeson
@@ -68,6 +68,7 @@ library
     , wai-extra
     , warp
   exposed-modules:
+      Api.Handler.ActionKey.ActionKeyHandler
       Api.Handler.Branch.BranchHandler
       Api.Handler.Common
       Api.Handler.Event.EventHandler
@@ -82,6 +83,7 @@ library
       Api.Handler.Version.VersionHandler
       Api.Middleware.AuthMiddleware
       Api.Middleware.CORSMiddleware
+      Api.Resource.ActionKey.ActionKeyDTO
       Api.Resource.Branch.BranchDTO
       Api.Resource.Branch.BranchWithStateDTO
       Api.Resource.Error.ErrorDTO
@@ -105,8 +107,8 @@ library
       Api.Resource.Version.VersionDTO
       Api.Router
       Application
+      Common.ConfigLoader
       Common.Context
-      Common.DSWConfig
       Common.Error
       Common.Types
       Common.Utils
@@ -156,10 +158,12 @@ library
       Database.Migration.Package.Data.Package
       Database.Migration.Package.PackageMigration
       Database.Migration.User.UserMigration
+      LensesConfig
       Model.ActionKey.ActionKey
       Model.Branch.Branch
       Model.Branch.BranchState
       Model.Common
+      Model.Config.DSWConfig
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent
@@ -233,7 +237,7 @@ test-suite hspec
   main-is: Spec.hs
   hs-source-dirs:
       test
-  default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification
+  default-extensions: TemplateHaskell QuasiQuotes OverloadedStrings MultiParamTypeClasses FlexibleContexts GeneralizedNewtypeDeriving GADTs TypeFamilies DeriveGeneric ExtendedDefaultRules RecordWildCards UnicodeSyntax ExistentialQuantification FunctionalDependencies TypeSynonymInstances FlexibleInstances
   build-depends:
       ConfigFile
     , aeson
@@ -283,6 +287,8 @@ test-suite hspec
       Specs.API.OrganizationAPISpec
       Specs.API.PackageAPISpec
       Specs.API.TokenAPISpec
+      Specs.API.User.Detail_Password_Hash_PUT
+      Specs.API.User.Detail_Password_PUT
       Specs.API.UserAPISpec
       Specs.API.VersionAPISpec
       Specs.Common

@@ -12,7 +12,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Version.VersionDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Package.PackageService
 
 putVersionA :: Context -> DSWConfig -> Scotty.ActionM ()

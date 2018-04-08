@@ -12,7 +12,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Event.EventDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Event.EventService
 
 getEventsA :: Context -> DSWConfig -> Scotty.ActionM ()

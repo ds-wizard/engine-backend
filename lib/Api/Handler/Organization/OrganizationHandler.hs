@@ -12,7 +12,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Organization.OrganizationDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Organization.OrganizationService
 
 getOrganizationCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()

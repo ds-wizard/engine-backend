@@ -1,6 +1,5 @@
 module Model.ActionKey.ActionKey where
 
-import Control.Lens (makeLenses)
 import Data.UUID
 import GHC.Generics
 
@@ -12,10 +11,8 @@ data ActionKeyType
   deriving (Generic, Show, Eq)
 
 data ActionKey = ActionKey
-  { _akUuid :: UUID
-  , _akUserId :: UUID
-  , _akType :: ActionKeyType
-  , _akHash :: String
+  { _actionKeyUuid :: UUID
+  , _actionKeyUserId :: UUID
+  , _actionKeyAType :: ActionKeyType
+  , _actionKeyHash :: String
   } deriving (Generic, Show, Eq)
-
-makeLenses ''ActionKey

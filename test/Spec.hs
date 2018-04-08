@@ -8,9 +8,10 @@ import Test.Hspec.Wai
 import Test.Hspec.Wai.JSON
 import qualified Web.Scotty as S
 
+import Common.ConfigLoader
 import Common.Context
-import Common.DSWConfig
 import Database.Connection
+import Model.Config.DSWConfig
 
 import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec

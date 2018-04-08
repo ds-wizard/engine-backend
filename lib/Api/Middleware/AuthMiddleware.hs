@@ -14,12 +14,13 @@ import Network.Wai
         pathInfo, requestHeaders, requestMethod, responseLBS)
 import Prelude hiding (exp)
 import Text.Regex
-import Web.JWT
+import qualified Web.JWT as JWT
 
 import Api.Handler.Common
-import Common.DSWConfig
 import Common.Types
 import Common.Utils
+import LensesConfig
+import Model.Config.DSWConfig
 
 type Endpoint = (H.Method, Regex)
 
@@ -51,14 +52,14 @@ authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
     else authorize
   where
     jwtSecret :: JWTSecret
-    jwtSecret = dswConfig ^. dswcfgJwtConfig ^. acjwtSecret
+    jwtSecret = dswConfig ^. jwtConfig ^. secret
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of
-        Just token -> verifyToken $ token
+        Just token -> verifyToken token
         Nothing -> sendResponse unauthorizedL
     verifyToken :: T.Text -> IO ResponseReceived
     verifyToken jwtToken =
-      case decodeAndVerifySignature (secret (T.pack jwtSecret)) jwtToken of
+      case JWT.decodeAndVerifySignature (JWT.secret (T.pack jwtSecret)) jwtToken of
         Just token -> app request sendResponse
         Nothing -> sendResponse unauthorizedL

@@ -1,4 +1,4 @@
-module Common.DSWConfig where
+module Common.ConfigLoader where
 
 import Control.Lens
 import Control.Monad.Except
@@ -7,65 +7,9 @@ import Data.ConfigFile
 import qualified Data.Text as T
 
 import Common.Types
+import LensesConfig
+import Model.Config.DSWConfig
 import Paths_src
-
-data AppConfigWeb = AppConfigWeb
-  { _acwPort :: Int
-  }
-
-data AppConfigDatabase = AppConfigDatabase
-  { _acdbHost :: String
-  , _acdbDatabaseName :: String
-  , _acdbPort :: Integer
-  }
-
-data AppConfigJwt = AppConfigJwt
-  { _acjwtSecret :: String
-  }
-
-data AppConfigRoles = AppConfigRoles
-  { _acrDefaultRole :: Role
-  , _acrAdmin :: [Permission]
-  , _acrDataSteward :: [Permission]
-  , _acrResearcher :: [Permission]
-  }
-
-data AppConfigMail = AppConfigMail
-  { _acmName :: String
-  , _acmEmail :: String
-  , _acmHost :: String
-  , _acmUsername :: String
-  , _acmPassword :: String
-  }
-
-data BuildInfo = BuildInfo
-  { _biAppName :: String
-  , _biAppVersion :: String
-  , _biBuiltAt :: String
-  }
-
-data DSWConfig = DSWConfig
-  { _dswcfgWebConfig :: AppConfigWeb
-  , _dswcfgDatabaseConfig :: AppConfigDatabase
-  , _dswcfgJwtConfig :: AppConfigJwt
-  , _dswcfgRoles :: AppConfigRoles
-  , _dswcfgMail :: AppConfigMail
-  , _dswcfgBuildInfo :: BuildInfo
-  }
-
-makeLenses ''AppConfigWeb
-
-makeLenses ''AppConfigDatabase
-
-makeLenses ''AppConfigJwt
-
-makeLenses ''AppConfigRoles
-
-makeLenses ''AppConfigMail
-
-makeLenses ''BuildInfo
-
-makeLenses ''DSWConfig
 
 loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError DSWConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do
@@ -73,6 +17,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
     buildInfoConfigParser <- join $ liftIO $ readfile emptyCP buildInfoFile
+    clientConfig <- loadAppConfigClient appConfigParser
     webConfig <- loadAppConfigWeb appConfigParser
     databaseConfig <- loadAppConfigDatabase appConfigParser
     jwtConfig <- loadAppConfigJwt appConfigParser
@@ -81,25 +26,31 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSWConfig
-      { _dswcfgWebConfig = webConfig
-      , _dswcfgDatabaseConfig = databaseConfig
-      , _dswcfgJwtConfig = jwtConfig
-      , _dswcfgRoles = appRoles
-      , _dswcfgMail = appMail
-      , _dswcfgBuildInfo = buildInfo
+      { _dSWConfigClientConfig = clientConfig
+      , _dSWConfigWebConfig = webConfig
+      , _dSWConfigDatabaseConfig = databaseConfig
+      , _dSWConfigJwtConfig = jwtConfig
+      , _dSWConfigRoles = appRoles
+      , _dSWConfigMail = appMail
+      , _dSWConfigBuildInfo = buildInfo
       }
   where
+    loadAppConfigClient configParser = do
+      address <- get configParser "Client" "address"
+      return AppConfigClient {_appConfigClientAddress = address}
     loadAppConfigWeb configParser = do
       webPort <- get configParser "Web" "port"
-      return AppConfigWeb {_acwPort = webPort}
+      return AppConfigWeb {_appConfigWebPort = webPort}
     loadAppConfigDatabase configParser = do
       host <- get configParser "Database" "host"
       dbname <- get configParser "Database" "dbname"
       port <- get configParser "Database" "port"
-      return AppConfigDatabase {_acdbHost = host, _acdbDatabaseName = dbname, _acdbPort = port}
+      return
+        AppConfigDatabase
+        {_appConfigDatabaseHost = host, _appConfigDatabaseDatabaseName = dbname, _appConfigDatabasePort = port}
     loadAppConfigJwt configParser = do
       jwtSecret <- get configParser "JWT" "secret"
-      return AppConfigJwt {_acjwtSecret = jwtSecret}
+      return AppConfigJwt {_appConfigJwtSecret = jwtSecret}
     loadAppConfigRole configParser = do
       defaultRole <- get configParser "Role" "defaultrole"
       adminPermissions <- get configParser "Role" "admin"
@@ -107,12 +58,13 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       researcherPermissions <- get configParser "Role" "researcher"
       return
         AppConfigRoles
-        { _acrDefaultRole = defaultRole
-        , _acrAdmin = parseList adminPermissions
-        , _acrDataSteward = parseList dataStewardPermissions
-        , _acrResearcher = parseList researcherPermissions
+        { _appConfigRolesDefaultRole = defaultRole
+        , _appConfigRolesAdmin = parseList adminPermissions
+        , _appConfigRolesDataSteward = parseList dataStewardPermissions
+        , _appConfigRolesResearcher = parseList researcherPermissions
         }
     loadAppConfigMail configParser = do
+      mailEnabled <- get configParser "Mail" "enabled"
       mailName <- get configParser "Mail" "name"
       mailEmail <- get configParser "Mail" "email"
       mailHost <- get configParser "Mail" "host"
@@ -120,16 +72,18 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       mailPassword <- get configParser "Mail" "password"
       return
         AppConfigMail
-        { _acmName = mailName
-        , _acmEmail = mailEmail
-        , _acmHost = mailHost
-        , _acmUsername = mailUsername
-        , _acmPassword = mailPassword
+        { _appConfigMailEnabled = mailEnabled
+        , _appConfigMailName = mailName
+        , _appConfigMailEmail = mailEmail
+        , _appConfigMailHost = mailHost
+        , _appConfigMailUsername = mailUsername
+        , _appConfigMailPassword = mailPassword
         }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
       buildTimestamp <- get configParser "DEFAULT" "builtat"
-      return BuildInfo {_biAppName = appName, _biAppVersion = appVersion, _biBuiltAt = buildTimestamp}
+      return
+        BuildInfo {_buildInfoAppName = appName, _buildInfoAppVersion = appVersion, _buildInfoBuiltAt = buildTimestamp}
     parseList :: String -> [String]
     parseList listString = T.unpack <$> (T.splitOn ", " (T.pack listString))

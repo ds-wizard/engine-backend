@@ -15,7 +15,7 @@ import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Common.Error
 import Service.User.UserService
 
@@ -38,7 +38,6 @@ postUsersA context dswConfig =
           Scotty.status created201
           sendJson userDto
 
---      let isAdmin = False
 getUserCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
 getUserCurrentA context dswConfig =
   getCurrentUserUuid context $ \userUuid -> do
@@ -79,20 +78,21 @@ putUserCurrentPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
 putUserCurrentPasswordA context dswConfig =
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
-      maybeError <- liftIO $ changeUserPassword context userUuid reqDto
+      maybeError <- liftIO $ changeUserPassword context userUuid Nothing reqDto True
       case maybeError of
         Nothing -> Scotty.status noContent204
         Just error -> sendError error
 
 putUserPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
 putUserPasswordA context dswConfig =
-  checkPermission context "UM_PERM" $
-  getReqDto $ \reqDto -> do
-    userUuid <- Scotty.param "userUuid"
-    maybeError <- liftIO $ changeUserPassword context userUuid reqDto
-    case maybeError of
-      Nothing -> Scotty.status noContent204
-      Just error -> sendError error
+  getReqDto $ \reqDto ->
+    isAdmin context $ \isAdmin -> do
+      userUuid <- Scotty.param "userUuid"
+      hash <- getQueryParam "hash"
+      maybeError <- liftIO $ changeUserPassword context userUuid (liftM T.unpack hash) reqDto isAdmin
+      case maybeError of
+        Nothing -> Scotty.status noContent204
+        Just error -> sendError error
 
 changeUserStateA :: Context -> DSWConfig -> Scotty.ActionM ()
 changeUserStateA context dswConfig =

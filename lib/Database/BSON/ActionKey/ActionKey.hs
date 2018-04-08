@@ -8,14 +8,15 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import LensesConfig
 import Model.ActionKey.ActionKey
 
 instance ToBSON ActionKey where
   toBSON actionKey =
-    [ "uuid" BSON.=: toString (actionKey ^. akUuid)
-    , "userId" BSON.=: toString (actionKey ^. akUserId)
-    , "type" BSON.=: show (actionKey ^. akType)
-    , "hash" BSON.=: (actionKey ^. akHash)
+    [ "uuid" BSON.=: toString (actionKey ^. uuid)
+    , "userId" BSON.=: toString (actionKey ^. userId)
+    , "type" BSON.=: show (actionKey ^. aType)
+    , "hash" BSON.=: (actionKey ^. hash)
     ]
 
 --    , "createdAt" BSON.=: (actionKey ^. akCreatedAt)
@@ -25,7 +26,8 @@ instance FromBSON ActionKey where
     userId <- deserializeUUID $ BSON.lookup "userId" doc
     actionType <- deserializeActionType $ BSON.lookup "type" doc
     hash <- BSON.lookup "hash" doc
-    return ActionKey {_akUuid = uuid, _akUserId = userId, _akType = actionType, _akHash = hash}
+    return
+      ActionKey {_actionKeyUuid = uuid, _actionKeyUserId = userId, _actionKeyAType = actionType, _actionKeyHash = hash}
     where
       deserializeActionType :: Maybe String -> Maybe ActionKeyType
       deserializeActionType mActionTypeS = do

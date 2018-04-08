@@ -14,7 +14,7 @@ import qualified Web.Scotty as Scotty
 
 import Api.Handler.Common
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Package.PackageService
 
 exportA :: Context -> DSWConfig -> Scotty.ActionM ()

@@ -12,7 +12,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Branch.BranchDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Branch.BranchService
 
 getBranchesA :: Context -> DSWConfig -> Scotty.ActionM ()

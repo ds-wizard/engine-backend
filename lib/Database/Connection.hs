@@ -5,12 +5,13 @@ import Data.Text
 import Database.Persist.MongoDB (withMongoDBConn)
 import Network
 
-import Common.DSWConfig
 import Database.Migration.Migration
+import LensesConfig
+import Model.Config.DSWConfig
 
 createDBConn dswConfig afterSuccess =
-  let appConfigDatabase = dswConfig ^. dswcfgDatabaseConfig
-      dbHost = appConfigDatabase ^. acdbHost
-      dbPort = PortNumber (fromInteger (appConfigDatabase ^. acdbPort) :: PortNumber) :: PortID
-      dbName = pack (appConfigDatabase ^. acdbDatabaseName)
+  let appConfigDatabase = dswConfig ^. databaseConfig
+      dbHost = appConfigDatabase ^. host
+      dbPort = PortNumber (fromInteger (appConfigDatabase ^. port) :: PortNumber) :: PortID
+      dbName = pack (appConfigDatabase ^. databaseName)
   in withMongoDBConn dbName dbHost dbPort Nothing 1 afterSuccess

@@ -27,12 +27,15 @@ import Api.Resource.User.UserStateDTO
 import Common.Error
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
+import LensesConfig
 import Model.ActionKey.ActionKey
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.User.UserService
 
 import Specs.API.Common
+import Specs.API.User.Detail_Password_Hash_PUT
+import Specs.API.User.Detail_Password_PUT
 import Specs.Common
 
 userAPI context dswConfig =
@@ -148,9 +151,9 @@ userAPI context dswConfig =
           let (Right actionKeys) = eitherActionKeys
           liftIO $ Prelude.length actionKeys `shouldBe` 1
           let actionKey = actionKeys !! 00
-          liftIO $ (actionKey ^. akUserId) `shouldBe` (userFromDb ^. uUuid)
-          liftIO $ (actionKey ^. akType) `shouldBe` RegistrationActionKey
-          liftIO $ Prelude.length (actionKey ^. akHash) > 0 `shouldBe` True
+          liftIO $ (actionKey ^. userId) `shouldBe` (userFromDb ^. uUuid)
+          liftIO $ (actionKey ^. aType) `shouldBe` RegistrationActionKey
+          liftIO $ Prelude.length (actionKey ^. hash) > 0 `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Darth" } |] "surname"
         it "HTTP 400 BAD REQUEST if email is already registered" $
           -- GIVEN: Prepare request
@@ -411,7 +414,7 @@ userAPI context dswConfig =
                 , _udtoIsActive = True
                 }
           let reqBody = encode reqDto
-           -- GIVEN: Prepare expectation
+           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto = createErrorWithFieldError ("email", "User with given email already exists")
@@ -437,7 +440,7 @@ userAPI context dswConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = UserPasswordDTO {_updtoPassword = "newPassword"}
           let reqBody = encode reqDto
-          -- GIVEN: Prepare expectation
+          -- AND: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- WHEN: Call API
@@ -455,48 +458,17 @@ userAPI context dswConfig =
           liftIO $ isSame `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
         createAuthTest reqMethod reqUrl [] ""
-      -- ------------------------------------------------------------------------
-      -- PUT /users/{userId}/password
-      -- ------------------------------------------------------------------------
-      describe "PUT /users/{userId}/password" $
-        -- GIVEN: Prepare request
-       do
-        let reqMethod = methodPut
-        let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password"
-        let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto = UserPasswordDTO {_updtoPassword = "newPassword"}
-        let reqBody = encode reqDto
-        it "HTTP 204 NO CONTENT" $
-          -- GIVEN: Prepare expectation
-         do
-          let expStatus = 204
-          let expHeaders = resCorsHeaders
-          -- WHEN: Call API
-          response <- request reqMethod reqUrl reqHeaders reqBody
-          -- THEN: Find a result
-          eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-          -- AND: Compare response with expectation
-          let responseMatcher =
-                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
-          response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expectation
-          liftIO $ (isRight eitherUser) `shouldBe` True
-          let (Right userFromDb) = eitherUser
-          let isSame = verifyPassword (BS.pack (reqDto ^. updtoPassword)) (BS.pack (userFromDb ^. uPasswordHash))
-          liftIO $ isSame `shouldBe` True
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody
+      detail_password_put context dswConfig
+      detail_password_hash_put context dswConfig
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}/state?hash={hash}
       -- ------------------------------------------------------------------------
-      describe "/users/{userId}/state?hash={hash}" $
+      describe "PUT /users/{userId}/state?hash={hash}" $
         -- GIVEN:Prepare request
        do
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-        let reqHeaders = [reqAuthHeader, reqCtHeader]
+        let reqHeaders = [reqCtHeader]
         let reqDto = UserStateDTO {_usdtoActive = True}
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
@@ -504,10 +476,10 @@ userAPI context dswConfig =
          do
           let actionKey =
                 ActionKey
-                { _akUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
-                , _akUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _akType = RegistrationActionKey
-                , _akHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+                { _actionKeyUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
+                , _actionKeyUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+                , _actionKeyAType = RegistrationActionKey
+                , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
                 }
           eitherActionKey <- liftIO $ insertActionKey context actionKey
           -- AND: Prepare expectation

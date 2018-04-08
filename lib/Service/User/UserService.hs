@@ -9,17 +9,19 @@ import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
+import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserStateDTO
 import Common.Context
-import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Common.Uuid
 import Database.DAO.User.UserDAO
+import LensesConfig
 import Model.ActionKey.ActionKey
+import Model.Config.DSWConfig
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
@@ -29,9 +31,9 @@ import Service.User.UserMapper
 getPermissionForRole :: DSWConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
-    "ADMIN" -> config ^. dswcfgRoles ^. acrAdmin
-    "DATASTEWARD" -> config ^. dswcfgRoles ^. acrDataSteward
-    "RESEARCHER" -> config ^. dswcfgRoles ^. acrResearcher
+    "ADMIN" -> config ^. roles ^. admin
+    "DATASTEWARD" -> config ^. roles ^. dataSteward
+    "RESEARCHER" -> config ^. roles ^. researcher
     _ -> []
 
 getUsers :: Context -> IO (Either AppError [UserDTO])
@@ -55,23 +57,26 @@ createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
       passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
       buildUser config userCreateDto userUuid (BS.unpack passwordHash) (userCreateDto ^. ucdtoRole) isAdmin $ \user -> do
         insertUser context user
-        createActionKey context userUuid RegistrationActionKey
-        return . Right $ toDTO user
+        eitherActionKey <- createActionKey context userUuid RegistrationActionKey
+        case eitherActionKey of
+          Right actionKey -> do
+            sendRegistrationConfirmationMail config (user ^. uEmail) (actionKey ^. userId) (actionKey ^. hash)
+            return . Right $ toDTO user
+          Left error -> return . Left $ error
   where
     buildUser config dto userUuid password maybeRole isAdmin callback =
-      callback $ fromUserCreateDTO dto userUuid password role permissions False
+      callback $ fromUserCreateDTO dto userUuid password userRole permissions False
       where
-        permissions = getPermissionForRole config role
-        role =
+        permissions = getPermissionForRole config userRole
+        userRole =
           case maybeRole of
             Just r ->
               if isAdmin
                 then r
-                else defaultRole
-            Nothing -> defaultRole
-        defaultRole = config ^. dswcfgRoles . acrDefaultRole
+                else appDefaultRole
+            Nothing -> appDefaultRole
+        appDefaultRole = config ^. roles ^. defaultRole
 
---      sendRegistrationConfirmationMail (config ^. dswcfgMail) (user ^. uEmail)
 getUserById :: Context -> String -> IO (Either AppError UserDTO)
 getUserById context userUuid = do
   eitherUser <- findUserById context userUuid
@@ -96,8 +101,48 @@ modifyUser context userUuid userDto = do
     isAlreadyUsedAndIsNotMine (Right user) = U.toString (user ^. uUuid) /= userUuid
     isAlreadyUsedAndIsNotMine (Left _) = False
 
-changeUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
-changeUserPassword context userUuid userPasswordDto = do
+changeUserPassword :: Context -> String -> Maybe String -> UserPasswordDTO -> Bool -> IO (Maybe AppError)
+changeUserPassword context userUuid maybeHash userPasswordDto isAdminOrCurrentUser = do
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user ->
+      isAllowedToChangePassword $ do
+        passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
+        updateUserPasswordById context userUuid (BS.unpack passwordHash)
+        return Nothing
+    Left error -> return . Just $ error
+  where
+    isAllowedToChangePassword callback =
+      if isAdminOrCurrentUser
+        then callback
+        else case maybeHash of
+               Just akHash -> do
+                 eitherActionKey <- getActionKeyByHash context akHash
+                 case eitherActionKey of
+                   Right actionKey -> do
+                     deleteActionKey context (actionKey ^. hash)
+                     callback
+                   Left error -> return . Just $ error
+               Nothing ->
+                 return . Just $
+                 createErrorWithErrorMessage
+                   "You have to log in as Administrator or you have to provide a hash in query param"
+
+resetUserPassword :: Context -> DSWConfig -> ActionKeyDTO -> IO (Maybe AppError)
+resetUserPassword context config reqDto = do
+  eitherUser <- findUserByEmail context (reqDto ^. email)
+  case eitherUser of
+    Right user -> do
+      eitherActionKey <- createActionKey context (user ^. uUuid) ForgottenPasswordActionKey
+      case eitherActionKey of
+        Right actionKey -> do
+          sendResetPasswordMail config (user ^. uEmail) (actionKey ^. userId) (actionKey ^. hash)
+          return Nothing
+        Left error -> return . Just $ error
+    Left error -> return . Just $ error
+
+createForgottenUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
+createForgottenUserPassword context userUuid userPasswordDto = do
   eitherUser <- findUserById context userUuid
   passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
   case eitherUser of
@@ -108,22 +153,22 @@ changeUserPassword context userUuid userPasswordDto = do
 
 changeUserState :: Context -> String -> Maybe String -> UserStateDTO -> IO (Maybe AppError)
 changeUserState context userUuid maybeHash userStateDto =
-  validateHash maybeHash $ \hash -> do
+  validateHash maybeHash $ \akHash -> do
     eitherUser <- findUserById context userUuid
     case eitherUser of
       Right user -> do
-        eitherActionKey <- getActionKeyByHash context hash
+        eitherActionKey <- getActionKeyByHash context akHash
         case eitherActionKey of
           Right actionKey -> do
             let updatedUser = user & uIsActive .~ (userStateDto ^. usdtoActive)
             updateUserById context updatedUser
-            deleteActionKey context (actionKey ^. akHash)
+            deleteActionKey context (actionKey ^. hash)
           Left error -> return . Just $ error
       Left error -> return . Just $ error
   where
     validateHash maybeHash callback =
       case maybeHash of
-        Just hash -> callback hash
+        Just akHash -> callback akHash
         Nothing -> return . Just . createErrorWithErrorMessage $ "Hash query param has to be provided"
 
 deleteUser :: Context -> String -> IO (Maybe AppError)

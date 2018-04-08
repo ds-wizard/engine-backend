@@ -13,7 +13,7 @@ import Api.Handler.Common
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Migrator.MigratorService
 
 getMigrationsCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()

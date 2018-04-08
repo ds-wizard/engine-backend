@@ -4,6 +4,7 @@ import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Text.Regex
 import Web.Scotty
 
+import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
 import Api.Handler.Event.EventHandler
@@ -19,7 +20,7 @@ import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 
 unauthorizedEndpoints =
   [ (methodGet, mkRegex "^$")
@@ -27,6 +28,9 @@ unauthorizedEndpoints =
   , (methodGet, mkRegex "^export/.*$")
   , (methodPost, mkRegex "^users")
   , (methodPut, mkRegex "^users/.*/state")
+  , (methodPut, mkRegex "^users/.*/password")
+  , (methodPut, mkRegex "^users/.*/password?hash=.*")
+  , (methodPost, mkRegex "^action-keys$")
   ]
 
 createEndpoints :: Context -> DSWConfig -> ScottyM ()
@@ -37,9 +41,9 @@ createEndpoints context dswConfig
  = do
   middleware corsMiddleware
   middleware (authMiddleware dswConfig unauthorizedEndpoints)
-   --------------------
+   -- ------------------
    -- INFO
-   --------------------
+   -- ------------------
   get "/" (getInfoA context dswConfig)
    --------------------
    -- TOKENS
@@ -88,6 +92,10 @@ createEndpoints context dswConfig
   get "/packages/:pkgId" (getPackageA context dswConfig)
   delete "/packages" (deletePackagesA context dswConfig)
   delete "/packages/:pkgId" (deletePackageA context dswConfig)
+   --------------------
+   -- ACTION KEYS
+   --------------------
+  post "/action-keys" (postActionKeysA context dswConfig)
    --------------------
    -- IMPORT/EXPORT
    --------------------

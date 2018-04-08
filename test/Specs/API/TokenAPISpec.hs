@@ -55,22 +55,17 @@ tokenAPI context dswConfig =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { email: "darth.vader@deathstar.com" } |] "password"
-        it "HTTP 401 UNAUTHORIZED when email or password are not valid" $
+        it "HTTP 400 BAD REQUEST when email or password are not valid" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = TokenCreateDTO {_tcdtoEmail = "darth.vader@deathstar.com2", _tcdtoPassword = "password"}
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
-          let expStatus = 401
+          let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expBody =
-                [HJ.json|
-              {
-                status: 401,
-                error: "Unauthorized"
-              }
-              |]
+          let expDto = createErrorWithErrorMessage "Incorrect email or password"
+          let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation

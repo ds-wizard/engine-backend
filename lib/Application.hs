@@ -5,10 +5,11 @@ import Control.Monad.Except
 import Web.Scotty
 
 import Api.Router
+import Common.ConfigLoader
 import Common.Context
-import Common.DSWConfig
 import Database.Connection
 import Database.Migration.Migration
+import LensesConfig
 
 applicationConfigFile = "config/app-config.cfg"
 
@@ -23,7 +24,7 @@ runServer = do
   \|   | |  | |\\___ \\|  ___/   \\___ \\ / _ \\ '__\\ \\ / / _ \\ '__|  |\n\
   \|   | |__| |____) | |       ____) |  __/ |   \\ V /  __/ |     |   \n\
   \|   |_____/|_____/|_|      |_____/ \\___|_|    \\_/ \\___|_|     |   \n\
-  \|                                                             |\n\                                             
+  \|                                                             |\n\
   \\\-------------------------------------------------------------/"
   putStrLn "SERVER: started"
   eitherDspConfig <- loadDSWConfig applicationConfigFile buildInfoFile
@@ -37,6 +38,6 @@ runServer = do
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-        runMigration context dswConfig
-        let serverPort = dswConfig ^. dswcfgWebConfig ^. acwPort
+        -- runMigration context dswConfig
+        let serverPort = dswConfig ^. webConfig ^. port
         scotty serverPort (createEndpoints context dswConfig)

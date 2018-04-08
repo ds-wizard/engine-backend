@@ -19,10 +19,11 @@ import qualified Web.Scotty as S
 import Api.Resource.Error.ErrorDTO
 import Api.Router
 import Common.Context
-import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Database.Connection
+import LensesConfig
+import Model.Config.DSWConfig
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
@@ -49,7 +50,7 @@ reqAuthHeaderWithoutPerms dswConfig perm =
         , _uPermissions = L.delete perm allPerms
         , _uIsActive = True
         }
-      token = createToken user (dswConfig ^. dswcfgJwtConfig ^. acjwtSecret)
+      token = createToken user (dswConfig ^. jwtConfig ^. secret)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
@@ -118,7 +119,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
     response `shouldRespondWith` responseMatcher
 
 createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
-  it "HTTP 403 FORBIDDEN" $
+  it "HTTP 403 FORBIDDEN - no required permission" $
     -- GIVEN: Prepare request
    do
     let authHeader = reqAuthHeaderWithoutPerms dswConfig missingPerm

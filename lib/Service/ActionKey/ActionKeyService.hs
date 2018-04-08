@@ -15,7 +15,9 @@ createActionKey :: Context -> UUID -> ActionKeyType -> IO (Either AppError Actio
 createActionKey context userId actionType = do
   uuid <- generateUuid
   hash <- generateUuid
-  let actionKey = ActionKey {_akUuid = uuid, _akUserId = userId, _akType = actionType, _akHash = toString hash}
+  let actionKey =
+        ActionKey
+        {_actionKeyUuid = uuid, _actionKeyUserId = userId, _actionKeyAType = actionType, _actionKeyHash = toString hash}
   insertActionKey context actionKey
   return . Right $ actionKey
 

@@ -6,13 +6,14 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Info.InfoDTO
 import Common.Context
-import Common.DSWConfig
+import LensesConfig
+import Model.Config.DSWConfig
 
 getInfoA :: Context -> DSWConfig -> Scotty.ActionM ()
 getInfoA context dswConfig =
   sendJson
     InfoDTO
-    { _idtoName = dswConfig ^. dswcfgBuildInfo ^. biAppName
-    , _idtoVersion = dswConfig ^. dswcfgBuildInfo ^. biAppVersion
-    , _idtoBuiltAt = dswConfig ^. dswcfgBuildInfo ^. biBuiltAt
+    { _idtoName = dswConfig ^. buildInfo ^. appName
+    , _idtoVersion = dswConfig ^. buildInfo ^. appVersion
+    , _idtoBuiltAt = dswConfig ^. buildInfo ^. builtAt
     }

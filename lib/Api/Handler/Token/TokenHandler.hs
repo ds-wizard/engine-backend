@@ -13,7 +13,7 @@ import Api.Handler.Common
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Common.Error
 import Service.Token.TokenService
 
@@ -25,4 +25,4 @@ postTokenA context dswConfig =
       Right tokenDto -> do
         Scotty.status created201
         sendJson tokenDto
-      Left error -> unauthorizedA
+      Left error -> sendError error

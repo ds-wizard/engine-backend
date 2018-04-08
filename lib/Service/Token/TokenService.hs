@@ -1,7 +1,9 @@
 module Service.Token.TokenService where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader
 import Crypto.PasswordStore
+import Data.Aeson
 import Data.ByteString.Char8 as BS
 import qualified Data.Map as M
 import qualified Data.Text as T
@@ -12,26 +14,30 @@ import qualified Web.JWT as JWT
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Context
-import Common.DSWConfig
 import Common.Error
 import Common.Types
 import Common.Utils
-import Data.Aeson
 import Database.DAO.User.UserDAO
+import LensesConfig
+import Model.Config.DSWConfig
 import Model.User.User
 import Service.Token.TokenMapper
 
 getToken :: Context -> DSWConfig -> TokenCreateDTO -> IO (Either AppError TokenDTO)
 getToken context dswConfig tokenCreateDto = do
-  let secret = dswConfig ^. dswcfgJwtConfig ^. acjwtSecret
+  let tokenSecret = dswConfig ^. jwtConfig ^. secret
   eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
   case eitherUser of
-    Right user -> do
-      let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
-      let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
-      if verifyPassword incomingPassword passwordHashFromDB
-        then return . Right . toDTO $ createToken user secret
-        else return . Left $ createErrorWithErrorMessage "Given password is not corrent"
+    Right user ->
+      if user ^. uIsActive
+        then do
+          let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
+          let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
+          if verifyPassword incomingPassword passwordHashFromDB
+            then return . Right . toDTO $ createToken user tokenSecret
+            else return . Left $ createErrorWithErrorMessage "Incorrect email or password"
+        else return . Left $ createErrorWithErrorMessage "Account is not activated"
+    Left (NotExistsError _) -> return . Left $ createErrorWithErrorMessage "Incorrect email or password"
     Left error -> return . Left $ error
 
 createToken :: User -> JWTSecret -> Token

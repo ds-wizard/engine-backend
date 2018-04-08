@@ -17,8 +17,7 @@ import Model.User.User
 import Service.Organization.OrganizationService
 import Service.User.UserService
 
-resetDB context dswConfig = do
-  deleteUsers context
+createUserDarth context dswConfig = do
   createUserWithGivenUuid
     context
     dswConfig
@@ -35,6 +34,28 @@ resetDB context dswConfig = do
   let (Right user) = eitherUser
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser
+
+createUserLuke context dswConfig = do
+  createUserWithGivenUuid
+    context
+    dswConfig
+    (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
+    UserCreateDTO
+    { _ucdtoName = "Luke"
+    , _ucdtoSurname = "Skywalker"
+    , _ucdtoEmail = "luke.skywalker@deathstar.com"
+    , _ucdtoRole = Just "DATASTEWARD"
+    , _ucdtoPassword = "password"
+    }
+    True
+  eitherUser <- findUserByEmail context "luke.skywalker@deathstar.com"
+  let (Right user) = eitherUser
+  let updatedUser = user & uIsActive .~ True
+  updateUserById context updatedUser
+
+resetDB context dswConfig = do
+  deleteUsers context
+  createUserDarth context dswConfig
   deleteOrganizations context
   insertOrganization
     context

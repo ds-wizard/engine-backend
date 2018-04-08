@@ -13,7 +13,7 @@ import qualified Web.Scotty as Scotty
 import Api.Handler.Common
 import Api.Resource.Package.PackageDTO
 import Common.Context
-import Common.DSWConfig
+import Model.Config.DSWConfig
 import Service.Package.PackageService
 
 getPackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
