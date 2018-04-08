@@ -38,6 +38,6 @@ runServer = do
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-        -- runMigration context dswConfig
+        runMigration context dswConfig
         let serverPort = dswConfig ^. webConfig ^. port
         scotty serverPort (createEndpoints context dswConfig)
