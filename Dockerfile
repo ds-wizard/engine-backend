@@ -13,6 +13,8 @@ ADD ./Setup.hs /sources/Setup.hs
 ADD ./LICENSE.md /sources/LICENSE.md
 ADD ./stack.yaml /sources/stack.yaml
 
+RUN mv ./config/app-config.cfg.example /sources/config/app-config.cfg
+
 RUN hpack
 RUN stack --system-ghc  build
 RUN stack --system-ghc install
