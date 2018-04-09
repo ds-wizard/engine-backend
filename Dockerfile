@@ -1,24 +1,7 @@
-FROM ccmi-elixir.cesnet.cz:5000/elixir/stack-hpack
+FROM ubuntu:14.04
 
-WORKDIR /sources
+RUN apt-get update && apt-get update && apt-get -qq -y install libmemcached-dev
 
-ADD ./package.yaml /sources/package.yaml
-ADD ./dsw-server.cabal /sources/dsw-server.cabal
-ADD ./stack.yaml /sources/stack.yaml
+ADD .stack-work/install/x86_64-linux/lts-11.4/8.2.2/bin/dsw-server /my-exe
 
-RUN hpack
-RUN stack --system-ghc build --only-dependencies
-
-ADD ./app /sources/app
-ADD ./config /sources/config
-ADD ./scripts /sources/scripts
-ADD ./lib /sources/lib
-ADD ./test /sources/test
-ADD ./Setup.hs /sources/Setup.hs
-ADD ./LICENSE.md /sources/LICENSE.md
-
-RUN mv ./config/app-config.cfg.example /sources/config/app-config.cfg
-
-RUN stack --system-ghc build
-
-ENTRYPOINT stack --system-ghc exec dsw-server
+CMD /dsw-server
