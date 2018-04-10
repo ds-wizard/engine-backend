@@ -23,6 +23,7 @@ before_install:
   # Configure stack to use the system GHC installation
   - stack config set system-ghc --global true
   - export PATH=/opt/ghc/ghc-8.2.2/bin:$PATH
+  - cp config/app-config-test.cfg.example config/app-config-test.cfg
 
 script:
   - stack --no-terminal --skip-ghc-check test
