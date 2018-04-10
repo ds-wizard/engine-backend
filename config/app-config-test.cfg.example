@@ -5,7 +5,7 @@ address =
 port = 3000
 
 [Database]
-host = mongo
+host = localhost
 dbname = dsw-server-test
 port = 27017
 
