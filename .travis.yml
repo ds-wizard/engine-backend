@@ -13,6 +13,7 @@ before_script:
 cache:
   directories:
   - $HOME/.stack
+  - $HOME/.stack-work
 
 before_install:
   # Download and unpack the stack executable
