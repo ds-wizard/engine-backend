@@ -26,6 +26,10 @@ before_install:
   - cp config/app-config-test.cfg.example config/app-config-test.cfg
 
 script:
+  - cd scripts
+  - ./build-info.sh
+  - cd ..
+
   - stack --no-terminal --skip-ghc-check test
   - docker pull $IMAGE_TAG
   - docker build --pull --cache-from $IMAGE_TAG -t $IMAGE_TAG .
