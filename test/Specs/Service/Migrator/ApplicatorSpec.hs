@@ -12,6 +12,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.Experts
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
+import LensesConfig
 import Model.Common
 import Model.Event.Chapter.AddChapterEvent
 import Model.Event.Event
@@ -41,28 +42,28 @@ applicatorSpec =
     describe "Apply:  Chapter Events" $ do
       it "Apply:  AddChapterEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddChapterEvent' a_km1_ch3]
-        let expected = km1 & kmChapters .~ [chapter1, chapter2, chapter3WithoutQuestions]
+        let expected = km1 & chapters .~ [chapter1, chapter2, chapter3WithoutQuestions]
         computed `shouldBe` expected
       it "Apply:  EditChapterEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditChapterEvent' e_km1_ch1]
-        let expected = km1 & kmChapters .~ [chapter1WithChangeProperties, chapter2]
+        let expected = km1 & chapters .~ [chapter1WithChangeProperties, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteChapterEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteChapterEvent' d_km1_ch1]
-        let expected = km1 & kmChapters .~ [chapter2]
+        let expected = km1 & chapters .~ [chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Question Events" $ do
       it "Apply:  AddQuestionEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddQuestionEvent' a_km1_ch1_q3]
-        let expected = km1 & kmChapters .~ [chapter1WithAddedQuestion3, chapter2]
+        let expected = km1 & chapters .~ [chapter1WithAddedQuestion3, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditQuestionEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditQuestionEvent' e_km1_ch1_q2]
-        let expected = km1 & kmChapters .~ [chapter1WithChangedQuestion2, chapter2]
+        let expected = km1 & chapters .~ [chapter1WithChangedQuestion2, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteQuestionEvent" $ do
-        let initKM = km1 & kmChapters .~ [chapter1WithAddedQuestion3, chapter2]
+        let initKM = km1 & chapters .~ [chapter1WithAddedQuestion3, chapter2]
         let (Right computed) = runApplicator (Just initKM) [DeleteQuestionEvent' d_km1_ch1_q3]
         let expected = km1
         computed `shouldBe` expected
@@ -70,21 +71,21 @@ applicatorSpec =
     describe "Apply:  Answer Events" $ do
       it "Apply:  AddAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddAnswerEvent' a_km1_ch1_q2_aMaybe]
-        let question2WithAddedAnswer = question2 & qAnswers .~ [answerNo1, answerYes1, answerMaybe]
-        let chapter1WithAddedAnswer = chapter1 & chQuestions .~ [question1, question2WithAddedAnswer]
-        let expected = km1 & kmChapters .~ [chapter1WithAddedAnswer, chapter2]
+        let question2WithAddedAnswer = question2 & answers .~ [answerNo1, answerYes1, answerMaybe]
+        let chapter1WithAddedAnswer = chapter1 & questions .~ [question1, question2WithAddedAnswer]
+        let expected = km1 & chapters .~ [chapter1WithAddedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditAnswerEvent' e_km1_ch1_q2_aYes1]
-        let question2WithChangedAnswer = question2 & qAnswers .~ [answerNo1, answerYes1Changed]
-        let chapter1WithChangedAnswer = chapter1 & chQuestions .~ [question1, question2WithChangedAnswer]
-        let expected = km1 & kmChapters .~ [chapter1WithChangedAnswer, chapter2]
+        let question2WithChangedAnswer = question2 & answers .~ [answerNo1, answerYes1Changed]
+        let chapter1WithChangedAnswer = chapter1 & questions .~ [question1, question2WithChangedAnswer]
+        let expected = km1 & chapters .~ [chapter1WithChangedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteAnswerEvent' d_km1_ch1_q2_aYes1]
-        let question2WithDeletedAnswer = question2 & qAnswers .~ [answerNo1]
-        let chapter1WithDeletedAnswer = chapter1 & chQuestions .~ [question1, question2WithDeletedAnswer]
-        let expected = km1 & kmChapters .~ [chapter1WithDeletedAnswer, chapter2]
+        let question2WithDeletedAnswer = question2 & answers .~ [answerNo1]
+        let chapter1WithDeletedAnswer = chapter1 & questions .~ [question1, question2WithDeletedAnswer]
+        let expected = km1 & chapters .~ [chapter1WithDeletedAnswer, chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Follow-Up Question Events" $ do
@@ -92,75 +93,75 @@ applicatorSpec =
         let event = a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3
         let (Right computed) = runApplicator (Just km1) [AddFollowUpQuestionEvent' event]
         let expFUQ3 = followUpQuestion3
-        let expAnswerYes4 = answerYes4 & ansFollowUps .~ [expFUQ3]
-        let expFUQ2 = followUpQuestion2 & qAnswers .~ [answerNo4, expAnswerYes4]
-        let expAnswerYes3 = answerYes3 & ansFollowUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
-        let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
-        let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
-        let expected = km1 & kmChapters .~ [expChapter1, chapter2]
+        let expAnswerYes4 = answerYes4 & followUps .~ [expFUQ3]
+        let expFUQ2 = followUpQuestion2 & answers .~ [answerNo4, expAnswerYes4]
+        let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
+        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
+        let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditFollowUpQuestionEvent" $ do
         let event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [EditFollowUpQuestionEvent' event]
         let expFUQ2 = followUpQuestion2Changed
-        let expAnswerYes3 = answerYes3 & ansFollowUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
-        let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
-        let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
-        let expected = km1 & kmChapters .~ [expChapter1, chapter2]
+        let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
+        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
+        let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteFollowUpQuestionEvent" $ do
         let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [DeleteFollowUpQuestionEvent' event]
-        let expAnswerYes3 = answerYes3 & ansFollowUps .~ []
-        let expFUQ1 = followUpQuestion1 & qAnswers .~ [answerNo3, expAnswerYes3]
-        let expAnswerYes1 = answerYes1 & ansFollowUps .~ [expFUQ1]
-        let expQuestion2 = question2 & qAnswers .~ [answerNo1, expAnswerYes1]
-        let expChapter1 = chapter1 & chQuestions .~ [question1, expQuestion2]
-        let expected = km1 & kmChapters .~ [expChapter1, chapter2]
+        let expAnswerYes3 = answerYes3 & followUps .~ []
+        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
+        let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Expert Events" $ do
       it "Apply:  AddExpertEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddExpertEvent' a_km1_ch1_q2_eJohn]
-        let question2WithAddedExpert = question2 & qExperts .~ [expertDarth, expertLuke, expertJohn]
-        let chapter1WithAddedExpert = chapter1 & chQuestions .~ [question1, question2WithAddedExpert]
-        let expected = km1 & kmChapters .~ [chapter1WithAddedExpert, chapter2]
+        let question2WithAddedExpert = question2 & experts .~ [expertDarth, expertLuke, expertJohn]
+        let chapter1WithAddedExpert = chapter1 & questions .~ [question1, question2WithAddedExpert]
+        let expected = km1 & chapters .~ [chapter1WithAddedExpert, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditExpertEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditExpertEvent' e_km1_ch1_q2_eDarth]
-        let question2WithChangedExpert = question2 & qExperts .~ [expertDarthChanged, expertLuke]
-        let chapter1WithChangedExpert = chapter1 & chQuestions .~ [question1, question2WithChangedExpert]
-        let expected = km1 & kmChapters .~ [chapter1WithChangedExpert, chapter2]
+        let question2WithChangedExpert = question2 & experts .~ [expertDarthChanged, expertLuke]
+        let chapter1WithChangedExpert = chapter1 & questions .~ [question1, question2WithChangedExpert]
+        let expected = km1 & chapters .~ [chapter1WithChangedExpert, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteExpertEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteExpertEvent' d_km1_ch1_q2_eLuke]
-        let question2WithDeletedExpert = question2 & qExperts .~ [expertDarth]
-        let chapter1WithDeletedExpert = chapter1 & chQuestions .~ [question1, question2WithDeletedExpert]
-        let expected = km1 & kmChapters .~ [chapter1WithDeletedExpert, chapter2]
+        let question2WithDeletedExpert = question2 & experts .~ [expertDarth]
+        let chapter1WithDeletedExpert = chapter1 & questions .~ [question1, question2WithDeletedExpert]
+        let expected = km1 & chapters .~ [chapter1WithDeletedExpert, chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Reference Events" $ do
       it "Apply:  AddReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddReferenceEvent' a_km1_ch1_q2_rCh3]
-        let question2WithAddedReference = question2 & qReferences .~ [referenceCh1, referenceCh2, referenceCh3]
-        let chapter1WithAddedReference = chapter1 & chQuestions .~ [question1, question2WithAddedReference]
-        let expected = km1 & kmChapters .~ [chapter1WithAddedReference, chapter2]
+        let question2WithAddedReference = question2 & references .~ [referenceCh1, referenceCh2, referenceCh3]
+        let chapter1WithAddedReference = chapter1 & questions .~ [question1, question2WithAddedReference]
+        let expected = km1 & chapters .~ [chapter1WithAddedReference, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditReferenceEvent' e_km1_ch1_q2_rCh1]
-        let question2WithChangedReference = question2 & qReferences .~ [referenceCh1Changed, referenceCh2]
-        let chapter1WithChangedReference = chapter1 & chQuestions .~ [question1, question2WithChangedReference]
-        let expected = km1 & kmChapters .~ [chapter1WithChangedReference, chapter2]
+        let question2WithChangedReference = question2 & references .~ [referenceCh1Changed, referenceCh2]
+        let chapter1WithChangedReference = chapter1 & questions .~ [question1, question2WithChangedReference]
+        let expected = km1 & chapters .~ [chapter1WithChangedReference, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteReferenceEvent' d_km1_ch1_q2_rCh2]
-        let question2WithDeletedReference = question2 & qReferences .~ [referenceCh1]
-        let chapter1WithDeletedReference = chapter1 & chQuestions .~ [question1, question2WithDeletedReference]
-        let expected = km1 & kmChapters .~ [chapter1WithDeletedReference, chapter2]
+        let question2WithDeletedReference = question2 & references .~ [referenceCh1]
+        let chapter1WithDeletedReference = chapter1 & questions .~ [question1, question2WithDeletedReference]
+        let expected = km1 & chapters .~ [chapter1WithDeletedReference, chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Build whole KM" $

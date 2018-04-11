@@ -24,6 +24,7 @@ import Model.Event.Reference.AddReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
 import Model.Event.Reference.EditReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
 
 isCleanerMethod :: MigratorState -> Event -> Bool

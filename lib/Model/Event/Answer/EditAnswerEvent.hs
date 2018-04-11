@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -21,10 +22,10 @@ data EditAnswerEvent = EditAnswerEvent
 makeLenses ''EditAnswerEvent
 
 instance SameUuid EditAnswerEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. eansChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. eansChapterUuid
 
 instance SameUuid EditAnswerEvent Question where
-  equalsUuid e q = q ^. qUuid == e ^. eansQuestionUuid
+  equalsUuid e q = q ^. uuid == e ^. eansQuestionUuid
 
 instance SameUuid EditAnswerEvent Answer where
-  equalsUuid e ans = ans ^. ansUuid == e ^. eansAnswerUuid
+  equalsUuid e ans = ans ^. uuid == e ^. eansAnswerUuid

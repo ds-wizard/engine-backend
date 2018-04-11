@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0bea83aac593f12d6e80159179540d793bad37183bca7d5e574e2722239f4c39
+-- hash: 5ab1c35a9c709dab63ef10cbe676661d0b7ae536637086af19d999ac2a2e2405
 
 name:           dsw-server
 version:        1.0.0
@@ -86,6 +86,7 @@ library
       Api.Resource.ActionKey.ActionKeyDTO
       Api.Resource.Branch.BranchDTO
       Api.Resource.Branch.BranchWithStateDTO
+      Api.Resource.Common
       Api.Resource.Error.ErrorDTO
       Api.Resource.Event.EventDTO
       Api.Resource.Info.InfoDTO
@@ -186,6 +187,8 @@ library
       Model.Event.Reference.DeleteReferenceEvent
       Model.Event.Reference.EditReferenceEvent
       Model.KnowledgeModel.KnowledgeModel
+      Model.KnowledgeModel.KnowledgeModelAccessors
+      Model.KnowledgeModel.KnowledgeModelSameUuid
       Model.Migrator.MigratorState
       Model.Organization.Organization
       Model.Package.Package

@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -18,10 +19,10 @@ data DeleteReferenceEvent = DeleteReferenceEvent
 makeLenses ''DeleteReferenceEvent
 
 instance SameUuid DeleteReferenceEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. drefChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. drefChapterUuid
 
 instance SameUuid DeleteReferenceEvent Question where
-  equalsUuid e q = q ^. qUuid == e ^. drefQuestionUuid
+  equalsUuid e q = q ^. uuid == e ^. drefQuestionUuid
 
 instance SameUuid DeleteReferenceEvent Reference where
-  equalsUuid e ref = ref ^. refUuid == e ^. drefReferenceUuid
+  equalsUuid e ref = ref ^. uuid == e ^. drefReferenceUuid

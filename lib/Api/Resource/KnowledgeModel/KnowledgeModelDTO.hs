@@ -6,143 +6,147 @@ import Data.Aeson
 import Data.Text
 import Data.UUID
 
+import Api.Resource.Common
 import Common.Types
 import Common.Uuid
+import Model.KnowledgeModel.KnowledgeModel
 
 data KnowledgeModelDTO = KnowledgeModelDTO
-  { _kmdtoUuid :: UUID
-  , _kmdtoName :: String
-  , _kmdtoChapters :: [ChapterDTO]
+  { _knowledgeModelDTOUuid :: UUID
+  , _knowledgeModelDTOName :: String
+  , _knowledgeModelDTOChapters :: [ChapterDTO]
   } deriving (Show, Eq)
 
 data ChapterDTO = ChapterDTO
-  { _chdtoUuid :: UUID
-  , _chdtoTitle :: String
-  , _chdtoText :: String
-  , _chdtoQuestions :: [QuestionDTO]
+  { _chapterDTOUuid :: UUID
+  , _chapterDTOTitle :: String
+  , _chapterDTOText :: String
+  , _chapterDTOQuestions :: [QuestionDTO]
   } deriving (Show, Eq)
 
 data QuestionDTO = QuestionDTO
-  { _qdtoUuid :: UUID
-  , _qdtoShortUuid :: Maybe String
-  , _qdtoType :: String
-  , _qdtoTitle :: String
-  , _qdtoText :: String
-  , _qdtoAnswers :: [AnswerDTO]
-  , _qdtoReferences :: [ReferenceDTO]
-  , _qdtoExperts :: [ExpertDTO]
+  { _questionDTOUuid :: UUID
+  , _questionDTOShortUuid :: Maybe String
+  , _questionDTOQType :: QuestionType
+  , _questionDTOTitle :: String
+  , _questionDTOText :: String
+  , _questionDTOAnswers :: [AnswerDTO]
+  , _questionDTOReferences :: [ReferenceDTO]
+  , _questionDTOExperts :: [ExpertDTO]
   } deriving (Show, Eq)
 
 data AnswerDTO = AnswerDTO
-  { _ansdtoUuid :: UUID
-  , _ansdtoLabel :: String
-  , _ansdtoAdvice :: Maybe String
-  , _ansdtoFollowUps :: [QuestionDTO]
+  { _answerDTOUuid :: UUID
+  , _answerDTOLabel :: String
+  , _answerDTOAdvice :: Maybe String
+  , _answerDTOFollowUps :: [QuestionDTO]
   } deriving (Show, Eq)
 
 data ExpertDTO = ExpertDTO
-  { _expdtoUuid :: UUID
-  , _expdtoName :: String
-  , _expdtoEmail :: String
+  { _expertDTOUuid :: UUID
+  , _expertDTOName :: String
+  , _expertDTOEmail :: String
   } deriving (Show, Eq)
 
 data ReferenceDTO = ReferenceDTO
-  { _refdtoUuid :: UUID
-  , _refdtoChapter :: String
+  { _referenceDTOUuid :: UUID
+  , _referenceDTOChapter :: String
   } deriving (Show, Eq)
 
-makeLenses ''KnowledgeModelDTO
-
-makeLenses ''ChapterDTO
-
-makeLenses ''QuestionDTO
-
-makeLenses ''AnswerDTO
-
-makeLenses ''ExpertDTO
-
-makeLenses ''ReferenceDTO
-
 instance ToJSON KnowledgeModelDTO where
-  toJSON KnowledgeModelDTO {..} = object ["uuid" .= _kmdtoUuid, "name" .= _kmdtoName, "chapters" .= _kmdtoChapters]
+  toJSON KnowledgeModelDTO {..} =
+    object
+      ["uuid" .= _knowledgeModelDTOUuid, "name" .= _knowledgeModelDTOName, "chapters" .= _knowledgeModelDTOChapters]
 
 instance ToJSON ChapterDTO where
   toJSON ChapterDTO {..} =
-    object ["uuid" .= _chdtoUuid, "title" .= _chdtoTitle, "text" .= _chdtoText, "questions" .= _chdtoQuestions]
+    object
+      [ "uuid" .= _chapterDTOUuid
+      , "title" .= _chapterDTOTitle
+      , "text" .= _chapterDTOText
+      , "questions" .= _chapterDTOQuestions
+      ]
 
 instance ToJSON QuestionDTO where
   toJSON QuestionDTO {..} =
     object
-      [ "uuid" .= _qdtoUuid
-      , "shortUuid" .= _qdtoShortUuid
-      , "type" .= _qdtoType
-      , "title" .= _qdtoTitle
-      , "text" .= _qdtoText
-      , "answers" .= _qdtoAnswers
-      , "references" .= _qdtoReferences
-      , "experts" .= _qdtoExperts
+      [ "uuid" .= _questionDTOUuid
+      , "shortUuid" .= _questionDTOShortUuid
+      , "type" .= serializeQuestionType _questionDTOQType
+      , "title" .= _questionDTOTitle
+      , "text" .= _questionDTOText
+      , "answers" .= _questionDTOAnswers
+      , "references" .= _questionDTOReferences
+      , "experts" .= _questionDTOExperts
       ]
 
 instance ToJSON AnswerDTO where
   toJSON AnswerDTO {..} =
-    object ["uuid" .= _ansdtoUuid, "label" .= _ansdtoLabel, "advice" .= _ansdtoAdvice, "followUps" .= _ansdtoFollowUps]
+    object
+      [ "uuid" .= _answerDTOUuid
+      , "label" .= _answerDTOLabel
+      , "advice" .= _answerDTOAdvice
+      , "followUps" .= _answerDTOFollowUps
+      ]
 
 instance ToJSON ExpertDTO where
-  toJSON ExpertDTO {..} = object ["uuid" .= _expdtoUuid, "name" .= _expdtoName, "email" .= _expdtoEmail]
+  toJSON ExpertDTO {..} = object ["uuid" .= _expertDTOUuid, "name" .= _expertDTOName, "email" .= _expertDTOEmail]
 
 instance ToJSON ReferenceDTO where
-  toJSON ReferenceDTO {..} = object ["uuid" .= _refdtoUuid, "chapter" .= _refdtoChapter]
+  toJSON ReferenceDTO {..} = object ["uuid" .= _referenceDTOUuid, "chapter" .= _referenceDTOChapter]
 
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
-    _kmdtoUuid <- o .: "uuid"
-    _kmdtoName <- o .: "name"
-    _kmdtoChapters <- o .: "chapters"
+    _knowledgeModelDTOUuid <- o .: "uuid"
+    _knowledgeModelDTOName <- o .: "name"
+    _knowledgeModelDTOChapters <- o .: "chapters"
     return KnowledgeModelDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON ChapterDTO where
   parseJSON (Object o) = do
-    _chdtoUuid <- o .: "uuid"
-    _chdtoTitle <- o .: "title"
-    _chdtoText <- o .: "text"
-    _chdtoQuestions <- o .: "questions"
+    _chapterDTOUuid <- o .: "uuid"
+    _chapterDTOTitle <- o .: "title"
+    _chapterDTOText <- o .: "text"
+    _chapterDTOQuestions <- o .: "questions"
     return ChapterDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON QuestionDTO where
   parseJSON (Object o) = do
-    _qdtoUuid <- o .: "uuid"
-    _qdtoShortUuid <- o .: "shortUuid"
-    _qdtoType <- o .: "type"
-    _qdtoTitle <- o .: "title"
-    _qdtoText <- o .: "text"
-    _qdtoReferences <- o .: "answers"
-    _qdtoAnswers <- o .: "references"
-    _qdtoExperts <- o .: "experts"
-    return QuestionDTO {..}
+    _questionDTOUuid <- o .: "uuid"
+    _questionDTOShortUuid <- o .: "shortUuid"
+    _questionDTOTitle <- o .: "title"
+    _questionDTOText <- o .: "text"
+    _questionDTOReferences <- o .: "answers"
+    _questionDTOAnswers <- o .: "references"
+    _questionDTOExperts <- o .: "experts"
+    questionType <- o .: "type"
+    case deserializeQuestionType questionType of
+      (Just _questionDTOQType) -> return QuestionDTO {..}
+      Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
 instance FromJSON AnswerDTO where
   parseJSON (Object o) = do
-    _ansdtoUuid <- o .: "uuid"
-    _ansdtoLabel <- o .: "label"
-    _ansdtoAdvice <- o .: "advice"
-    _ansdtoFollowUps <- o .: "followUps"
+    _answerDTOUuid <- o .: "uuid"
+    _answerDTOLabel <- o .: "label"
+    _answerDTOAdvice <- o .: "advice"
+    _answerDTOFollowUps <- o .: "followUps"
     return AnswerDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON ExpertDTO where
   parseJSON (Object o) = do
-    _expdtoUuid <- o .: "uuid"
-    _expdtoName <- o .: "name"
-    _expdtoEmail <- o .: "email"
+    _expertDTOUuid <- o .: "uuid"
+    _expertDTOName <- o .: "name"
+    _expertDTOEmail <- o .: "email"
     return ExpertDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON ReferenceDTO where
   parseJSON (Object o) = do
-    _refdtoUuid <- o .: "uuid"
-    _refdtoChapter <- o .: "chapter"
+    _referenceDTOUuid <- o .: "uuid"
+    _referenceDTOChapter <- o .: "chapter"
     return ReferenceDTO {..}
   parseJSON _ = mzero

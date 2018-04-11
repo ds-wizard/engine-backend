@@ -6,90 +6,98 @@ import Data.UUID (UUID)
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Types
+import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO
 toKnowledgeModelDTO km =
   KnowledgeModelDTO
-  {_kmdtoUuid = km ^. kmUuid, _kmdtoName = km ^. kmName, _kmdtoChapters = toChapterDTO <$> (km ^. kmChapters)}
+  { _knowledgeModelDTOUuid = km ^. uuid
+  , _knowledgeModelDTOName = km ^. name
+  , _knowledgeModelDTOChapters = toChapterDTO <$> (km ^. chapters)
+  }
 
 toChapterDTO :: Chapter -> ChapterDTO
 toChapterDTO chapter =
   ChapterDTO
-  { _chdtoUuid = chapter ^. chUuid
-  , _chdtoTitle = chapter ^. chTitle
-  , _chdtoText = chapter ^. chText
-  , _chdtoQuestions = toQuestionDTO <$> (chapter ^. chQuestions)
+  { _chapterDTOUuid = chapter ^. uuid
+  , _chapterDTOTitle = chapter ^. title
+  , _chapterDTOText = chapter ^. text
+  , _chapterDTOQuestions = toQuestionDTO <$> (chapter ^. questions)
   }
 
 toQuestionDTO :: Question -> QuestionDTO
 toQuestionDTO question =
   QuestionDTO
-  { _qdtoUuid = question ^. qUuid
-  , _qdtoShortUuid = question ^. qShortUuid
-  , _qdtoType = question ^. qType
-  , _qdtoTitle = question ^. qTitle
-  , _qdtoText = question ^. qText
-  , _qdtoAnswers = toAnswerDTO <$> (question ^. qAnswers)
-  , _qdtoExperts = toExpertDTO <$> (question ^. qExperts)
-  , _qdtoReferences = toReferenceDTO <$> (question ^. qReferences)
+  { _questionDTOUuid = question ^. uuid
+  , _questionDTOShortUuid = question ^. shortUuid
+  , _questionDTOQType = question ^. qType
+  , _questionDTOTitle = question ^. title
+  , _questionDTOText = question ^. text
+  , _questionDTOAnswers = toAnswerDTO <$> (question ^. answers)
+  , _questionDTOExperts = toExpertDTO <$> (question ^. experts)
+  , _questionDTOReferences = toReferenceDTO <$> (question ^. references)
   }
 
 toAnswerDTO :: Answer -> AnswerDTO
 toAnswerDTO answer =
   AnswerDTO
-  { _ansdtoUuid = answer ^. ansUuid
-  , _ansdtoLabel = answer ^. ansLabel
-  , _ansdtoAdvice = answer ^. ansAdvice
-  , _ansdtoFollowUps = toQuestionDTO <$> (answer ^. ansFollowUps)
+  { _answerDTOUuid = answer ^. uuid
+  , _answerDTOLabel = answer ^. label
+  , _answerDTOAdvice = answer ^. advice
+  , _answerDTOFollowUps = toQuestionDTO <$> (answer ^. followUps)
   }
 
 toExpertDTO :: Expert -> ExpertDTO
 toExpertDTO expert =
-  ExpertDTO {_expdtoUuid = expert ^. expUuid, _expdtoName = expert ^. expName, _expdtoEmail = expert ^. expEmail}
+  ExpertDTO {_expertDTOUuid = expert ^. uuid, _expertDTOName = expert ^. name, _expertDTOEmail = expert ^. email}
 
 toReferenceDTO :: Reference -> ReferenceDTO
-toReferenceDTO reference = ReferenceDTO {_refdtoUuid = reference ^. refUuid, _refdtoChapter = reference ^. refChapter}
+toReferenceDTO reference =
+  ReferenceDTO {_referenceDTOUuid = reference ^. uuid, _referenceDTOChapter = reference ^. chapter}
 
 fromKnowledgeModelDTO :: KnowledgeModelDTO -> KnowledgeModel
 fromKnowledgeModelDTO km =
   KnowledgeModel
-  {_kmUuid = km ^. kmdtoUuid, _kmName = km ^. kmdtoName, _kmChapters = fromChapterDTO <$> (km ^. kmdtoChapters)}
+  { _knowledgeModelUuid = km ^. uuid
+  , _knowledgeModelName = km ^. name
+  , _knowledgeModelChapters = fromChapterDTO <$> (km ^. chapters)
+  }
 
 fromChapterDTO :: ChapterDTO -> Chapter
 fromChapterDTO chapter =
   Chapter
-  { _chUuid = chapter ^. chdtoUuid
-  , _chTitle = chapter ^. chdtoTitle
-  , _chText = chapter ^. chdtoText
-  , _chQuestions = fromQuestionDTO <$> (chapter ^. chdtoQuestions)
+  { _chapterUuid = chapter ^. uuid
+  , _chapterTitle = chapter ^. title
+  , _chapterText = chapter ^. text
+  , _chapterQuestions = fromQuestionDTO <$> (chapter ^. questions)
   }
 
 fromQuestionDTO :: QuestionDTO -> Question
 fromQuestionDTO question =
   Question
-  { _qUuid = question ^. qdtoUuid
-  , _qShortUuid = question ^. qdtoShortUuid
-  , _qType = question ^. qdtoType
-  , _qTitle = question ^. qdtoTitle
-  , _qText = question ^. qdtoText
-  , _qAnswers = fromAnswerDTO <$> (question ^. qdtoAnswers)
-  , _qExperts = fromExpertDTO <$> (question ^. qdtoExperts)
-  , _qReferences = fromReferenceDTO <$> (question ^. qdtoReferences)
+  { _questionUuid = question ^. uuid
+  , _questionShortUuid = question ^. shortUuid
+  , _questionQType = question ^. qType
+  , _questionTitle = question ^. title
+  , _questionText = question ^. text
+  , _questionAnswers = fromAnswerDTO <$> (question ^. answers)
+  , _questionExperts = fromExpertDTO <$> (question ^. experts)
+  , _questionReferences = fromReferenceDTO <$> (question ^. references)
   }
 
 fromAnswerDTO :: AnswerDTO -> Answer
 fromAnswerDTO answer =
   Answer
-  { _ansUuid = answer ^. ansdtoUuid
-  , _ansLabel = answer ^. ansdtoLabel
-  , _ansAdvice = answer ^. ansdtoAdvice
-  , _ansFollowUps = fromQuestionDTO <$> (answer ^. ansdtoFollowUps)
+  { _answerUuid = answer ^. uuid
+  , _answerLabel = answer ^. label
+  , _answerAdvice = answer ^. advice
+  , _answerFollowUps = fromQuestionDTO <$> (answer ^. followUps)
   }
 
 fromExpertDTO :: ExpertDTO -> Expert
 fromExpertDTO expert =
-  Expert {_expUuid = expert ^. expdtoUuid, _expName = expert ^. expdtoName, _expEmail = expert ^. expdtoEmail}
+  Expert {_expertUuid = expert ^. uuid, _expertName = expert ^. name, _expertEmail = expert ^. email}
 
 fromReferenceDTO :: ReferenceDTO -> Reference
-fromReferenceDTO reference = Reference {_refUuid = reference ^. refdtoUuid, _refChapter = reference ^. refdtoChapter}
+fromReferenceDTO reference = Reference {_referenceUuid = reference ^. uuid, _referenceChapter = reference ^. chapter}

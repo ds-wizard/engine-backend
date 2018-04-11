@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -13,7 +14,7 @@ data AddQuestionEvent = AddQuestionEvent
   , _aqChapterUuid :: UUID
   , _aqQuestionUuid :: UUID
   , _aqShortQuestionUuid :: Maybe String
-  , _aqType :: String
+  , _aqType :: QuestionType
   , _aqTitle :: String
   , _aqText :: String
   } deriving (Show, Eq, Generic)
@@ -21,7 +22,7 @@ data AddQuestionEvent = AddQuestionEvent
 makeLenses ''AddQuestionEvent
 
 instance SameUuid AddQuestionEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. aqChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. aqChapterUuid
 
 instance SameUuid AddQuestionEvent Question where
-  equalsUuid e q = q ^. qUuid == e ^. aqQuestionUuid
+  equalsUuid e q = q ^. uuid == e ^. aqQuestionUuid

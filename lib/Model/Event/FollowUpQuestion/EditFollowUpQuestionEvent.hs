@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -14,7 +15,7 @@ data EditFollowUpQuestionEvent = EditFollowUpQuestionEvent
   , _efuqAnswerUuid :: UUID
   , _efuqQuestionUuid :: UUID
   , _efuqShortQuestionUuid :: Maybe (Maybe String)
-  , _efuqType :: Maybe String
+  , _efuqType :: Maybe QuestionType
   , _efuqTitle :: Maybe String
   , _efuqText :: Maybe String
   , _efuqAnswerIds :: Maybe [UUID]
@@ -25,10 +26,10 @@ data EditFollowUpQuestionEvent = EditFollowUpQuestionEvent
 makeLenses ''EditFollowUpQuestionEvent
 
 instance SameUuid EditFollowUpQuestionEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. efuqChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. efuqChapterUuid
 
 instance SameUuid EditFollowUpQuestionEvent Question where
-  equalsUuid e q = q ^. qUuid == e ^. efuqQuestionUuid
+  equalsUuid e q = q ^. uuid == e ^. efuqQuestionUuid
 
 instance SameUuid EditFollowUpQuestionEvent Answer where
-  equalsUuid e ans = ans ^. ansUuid == e ^. efuqAnswerUuid
+  equalsUuid e ans = ans ^. uuid == e ^. efuqAnswerUuid

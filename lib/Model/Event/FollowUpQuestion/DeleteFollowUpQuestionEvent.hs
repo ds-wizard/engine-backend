@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -18,10 +19,10 @@ data DeleteFollowUpQuestionEvent = DeleteFollowUpQuestionEvent
 makeLenses ''DeleteFollowUpQuestionEvent
 
 instance SameUuid DeleteFollowUpQuestionEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. dfuqChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. dfuqChapterUuid
 
 instance SameUuid DeleteFollowUpQuestionEvent Question where
-  equalsUuid e q = q ^. qUuid == e ^. dfuqQuestionUuid
+  equalsUuid e q = q ^. uuid == e ^. dfuqQuestionUuid
 
 instance SameUuid DeleteFollowUpQuestionEvent Answer where
-  equalsUuid e ans = ans ^. ansUuid == e ^. dfuqAnswerUuid
+  equalsUuid e ans = ans ^. uuid == e ^. dfuqAnswerUuid

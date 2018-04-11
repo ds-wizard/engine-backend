@@ -3,6 +3,7 @@ module Service.Migrator.Applicator where
 import Control.Lens
 
 import Common.Error
+import LensesConfig
 import Model.Common
 import Model.Event.Answer.AddAnswerEvent
 import Model.Event.Answer.DeleteAnswerEvent
@@ -26,6 +27,7 @@ import Model.Event.Reference.AddReferenceEvent
 import Model.Event.Reference.DeleteReferenceEvent
 import Model.Event.Reference.EditReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 
 runApplicator :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeModel
 runApplicator mKM events =
@@ -71,15 +73,15 @@ passToChapters e (Right Nothing) = Left . MigratorError $ "You have to create Kn
 passToChapters e (Right (Just km)) =
   case eModifiedChapters of
     Left error -> Left error
-    Right modifiedChapters -> Right . Just $ km & kmChapters .~ modifiedChapters
+    Right modifiedChapters -> Right . Just $ km & chapters .~ modifiedChapters
   where
-    eModifiedChapters = foldl foldOneChapter (Right []) (km ^. kmChapters)
+    eModifiedChapters = foldl foldOneChapter (Right []) (km ^. chapters)
     foldOneChapter :: Either AppError [Chapter] -> Chapter -> Either AppError [Chapter]
     foldOneChapter (Left error) _ = Left error
-    foldOneChapter (Right chapters) chapter =
+    foldOneChapter (Right kmChapters) chapter =
       case applyEventToChapter e (Right chapter) of
         Left error -> Left error
-        Right appliedChapter -> Right $ chapters ++ [appliedChapter]
+        Right appliedChapter -> Right $ kmChapters ++ [appliedChapter]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -88,14 +90,16 @@ instance ApplyEventToKM AddKnowledgeModelEvent where
   applyEventToKM _ (Left error) = Left error
   applyEventToKM e (Right (Just _)) = Left . MigratorError $ "Knowledge Model is already created"
   applyEventToKM e (Right Nothing) =
-    Right . Just $ KnowledgeModel {_kmUuid = e ^. akmKmUuid, _kmName = e ^. akmName, _kmChapters = []}
+    Right . Just $
+    KnowledgeModel
+    {_knowledgeModelUuid = e ^. akmKmUuid, _knowledgeModelName = e ^. akmName, _knowledgeModelChapters = []}
 
 instance ApplyEventToKM EditKnowledgeModelEvent where
   applyEventToKM _ (Left error) = Left error
   applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
   applyEventToKM e (Right (Just km)) = Right . Just . applyChapterIds . applyName $ km
     where
-      applyName km = applyValue (e ^. ekmName) km kmName
+      applyName km = applyValue (e ^. ekmName) km name
       applyChapterIds km = applyValue (e ^. ekmChapterIds) km kmChangeChapterIdsOrder
 
 -- -------------------
@@ -104,11 +108,16 @@ instance ApplyEventToKM EditKnowledgeModelEvent where
 instance ApplyEventToKM AddChapterEvent where
   applyEventToKM _ (Left error) = Left error
   applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
-  applyEventToKM e (Right (Just km)) = Right . Just $ km & kmChapters .~ modifiedChapters
+  applyEventToKM e (Right (Just km)) = Right . Just $ km & chapters .~ modifiedChapters
     where
-      modifiedChapters = km ^. kmChapters ++ [newChapter]
+      modifiedChapters = km ^. chapters ++ [newChapter]
       newChapter =
-        Chapter {_chUuid = e ^. achChapterUuid, _chTitle = e ^. achTitle, _chText = e ^. achText, _chQuestions = []}
+        Chapter
+        { _chapterUuid = e ^. achChapterUuid
+        , _chapterTitle = e ^. achTitle
+        , _chapterText = e ^. achText
+        , _chapterQuestions = []
+        }
 
 instance ApplyEventToKM EditChapterEvent where
   applyEventToKM = passToChapters
@@ -118,10 +127,10 @@ instance ApplyEventToKM DeleteChapterEvent where
   applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
   applyEventToKM e (Right (Just km)) =
     if equalsUuid e km
-      then Right . Just $ km & kmChapters .~ modifiedChapters
+      then Right . Just $ km & chapters .~ modifiedChapters
       else Right . Just $ km
     where
-      modifiedChapters = filter (not . equalsUuid e) (km ^. kmChapters)
+      modifiedChapters = filter (not . equalsUuid e) (km ^. chapters)
 
 -- -------------------
 -- QUESTIONS----------
@@ -194,9 +203,9 @@ passToQuestions _ (Left error) = Left error
 passToQuestions e (Right ch) =
   case eModifiedQuestions of
     Left error -> Left error
-    Right modifiedQuestions -> Right $ ch & chQuestions .~ modifiedQuestions
+    Right modifiedQuestions -> Right $ ch & questions .~ modifiedQuestions
   where
-    eModifiedQuestions = foldl foldOneQuestion (Right []) (ch ^. chQuestions)
+    eModifiedQuestions = foldl foldOneQuestion (Right []) (ch ^. questions)
     foldOneQuestion :: Either AppError [Question] -> Question -> Either AppError [Question]
     foldOneQuestion (Left error) _ = Left error
     foldOneQuestion (Right questions) question =
@@ -226,8 +235,8 @@ instance ApplyEventToChapter EditChapterEvent where
       then Right . applyQuestionIds . applyText . applyTitle $ ch
       else Right ch
     where
-      applyTitle ch = applyValue (e ^. echTitle) ch chTitle
-      applyText ch = applyValue (e ^. echText) ch chText
+      applyTitle ch = applyValue (e ^. echTitle) ch title
+      applyText ch = applyValue (e ^. echText) ch text
       applyQuestionIds ch = applyValue (e ^. echQuestionIds) ch chChangeQuestionIdsOrder
 
 instance ApplyEventToChapter DeleteChapterEvent where
@@ -240,20 +249,20 @@ instance ApplyEventToChapter AddQuestionEvent where
   applyEventToChapter _ (Left error) = Left error
   applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then Right $ ch & chQuestions .~ modifiedQuestions
+      then Right $ ch & questions .~ modifiedQuestions
       else Right ch
     where
-      modifiedQuestions = ch ^. chQuestions ++ [newQuestion]
+      modifiedQuestions = ch ^. questions ++ [newQuestion]
       newQuestion =
         Question
-        { _qUuid = e ^. aqQuestionUuid
-        , _qShortUuid = e ^. aqShortQuestionUuid
-        , _qType = e ^. aqType
-        , _qTitle = e ^. aqTitle
-        , _qText = e ^. aqText
-        , _qAnswers = []
-        , _qReferences = []
-        , _qExperts = []
+        { _questionUuid = e ^. aqQuestionUuid
+        , _questionShortUuid = e ^. aqShortQuestionUuid
+        , _questionQType = e ^. aqType
+        , _questionTitle = e ^. aqTitle
+        , _questionText = e ^. aqText
+        , _questionAnswers = []
+        , _questionReferences = []
+        , _questionExperts = []
         }
 
 instance ApplyEventToChapter EditQuestionEvent where
@@ -263,10 +272,10 @@ instance ApplyEventToChapter DeleteQuestionEvent where
   applyEventToChapter _ (Left error) = Left error
   applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then Right $ ch & chQuestions .~ modifiedQuestions
+      then Right $ ch & questions .~ modifiedQuestions
       else passToQuestions e (Right ch)
     where
-      modifiedQuestions = filter (not . equalsUuid e) (ch ^. chQuestions)
+      modifiedQuestions = filter (not . equalsUuid e) (ch ^. questions)
 
 -- -------------------
 -- ANSWERS -----------
@@ -327,43 +336,43 @@ passToAnswers _ (Left error) = Left error
 passToAnswers e (Right q) =
   case eModifiedAnswers of
     Left error -> Left error
-    Right modifiedAnswers -> Right $ q & qAnswers .~ modifiedAnswers
+    Right modifiedAnswers -> Right $ q & answers .~ modifiedAnswers
   where
-    eModifiedAnswers = foldl foldOneAnswer (Right []) (q ^. qAnswers)
+    eModifiedAnswers = foldl foldOneAnswer (Right []) (q ^. answers)
     foldOneAnswer :: Either AppError [Answer] -> Answer -> Either AppError [Answer]
     foldOneAnswer (Left error) _ = Left error
-    foldOneAnswer (Right answers) answer =
+    foldOneAnswer (Right qAnswers) answer =
       case applyEventToAnswer e (Right answer) of
         Left error -> Left error
-        Right appliedAnswers -> Right $ answers ++ [appliedAnswers]
+        Right appliedAnswers -> Right $ qAnswers ++ [appliedAnswers]
 
 passToExperts _ (Left error) = Left error
 passToExperts e (Right q) =
   case eModifiedExperts of
     Left error -> Left error
-    Right modifiedExperts -> Right $ q & qExperts .~ modifiedExperts
+    Right modifiedExperts -> Right $ q & experts .~ modifiedExperts
   where
-    eModifiedExperts = foldl foldOneExpert (Right []) (q ^. qExperts)
+    eModifiedExperts = foldl foldOneExpert (Right []) (q ^. experts)
     foldOneExpert :: Either AppError [Expert] -> Expert -> Either AppError [Expert]
     foldOneExpert (Left error) _ = Left error
-    foldOneExpert (Right experts) expert =
+    foldOneExpert (Right qExperts) expert =
       case applyEventToExpert e (Right expert) of
         Left error -> Left error
-        Right appliedExpert -> Right $ experts ++ [appliedExpert]
+        Right appliedExpert -> Right $ qExperts ++ [appliedExpert]
 
 passToReferences _ (Left error) = Left error
 passToReferences e (Right q) =
   case eModifiedReferences of
     Left error -> Left error
-    Right modifiedReferences -> Right $ q & qReferences .~ modifiedReferences
+    Right modifiedReferences -> Right $ q & references .~ modifiedReferences
   where
-    eModifiedReferences = foldl foldOneReference (Right []) (q ^. qReferences)
+    eModifiedReferences = foldl foldOneReference (Right []) (q ^. references)
     foldOneReference :: Either AppError [Reference] -> Reference -> Either AppError [Reference]
     foldOneReference (Left error) _ = Left error
-    foldOneReference (Right references) reference =
+    foldOneReference (Right qReferences) reference =
       case applyEventToReference e (Right reference) of
         Left error -> Left error
-        Right appliedReference -> Right $ references ++ [appliedReference]
+        Right appliedReference -> Right $ qReferences ++ [appliedReference]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -401,10 +410,10 @@ instance ApplyEventToQuestion EditQuestionEvent where
            q
       else passToAnswers e (Right q)
     where
-      applyShortUuid q = applyValue (e ^. eqShortQuestionUuid) q qShortUuid
+      applyShortUuid q = applyValue (e ^. eqShortQuestionUuid) q shortUuid
       applyType q = applyValue (e ^. eqType) q qType
-      applyTitle q = applyValue (e ^. eqTitle) q qTitle
-      applyText q = applyValue (e ^. eqText) q qText
+      applyTitle q = applyValue (e ^. eqTitle) q title
+      applyText q = applyValue (e ^. eqText) q text
       applyAnwerIds q = applyValue (e ^. eqAnswerIds) q qChangeAnwerIdsOrder
       applyExpertIds q = applyValue (e ^. eqExpertIds) q qChangeExpertIdsOrder
       applyReferenceIds q = applyValue (e ^. eqReferenceIds) q qChangeReferenceIdsOrder
@@ -419,13 +428,17 @@ instance ApplyEventToQuestion AddAnswerEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qAnswers .~ modifiedAnswers
+      then Right $ q & answers .~ modifiedAnswers
       else passToAnswers e (Right q)
     where
-      modifiedAnswers = q ^. qAnswers ++ [newAnswer]
+      modifiedAnswers = q ^. answers ++ [newAnswer]
       newAnswer =
         Answer
-        {_ansUuid = e ^. aansAnswerUuid, _ansLabel = e ^. aansLabel, _ansAdvice = e ^. aansAdvice, _ansFollowUps = []}
+        { _answerUuid = e ^. aansAnswerUuid
+        , _answerLabel = e ^. aansLabel
+        , _answerAdvice = e ^. aansAdvice
+        , _answerFollowUps = []
+        }
 
 instance ApplyEventToQuestion EditAnswerEvent where
   applyEventToQuestion = passToAnswers
@@ -434,10 +447,10 @@ instance ApplyEventToQuestion DeleteAnswerEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qAnswers .~ modifiedAnswers
+      then Right $ q & answers .~ modifiedAnswers
       else passToAnswers e (Right q)
     where
-      modifiedAnswers = filter (not . equalsUuid e) (q ^. qAnswers)
+      modifiedAnswers = filter (not . equalsUuid e) (q ^. answers)
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
@@ -449,13 +462,16 @@ instance ApplyEventToQuestion EditFollowUpQuestionEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right . applyReferenceIds . applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType $ q
+      then Right .
+           applyReferenceIds .
+           applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType . applyShortQuestionId $
+           q
       else passToAnswers e (Right q)
     where
-      applyShortQuestionId q = applyValue (e ^. efuqShortQuestionUuid) q qShortUuid
+      applyShortQuestionId q = applyValue (e ^. efuqShortQuestionUuid) q shortUuid
       applyType q = applyValue (e ^. efuqType) q qType
-      applyTitle q = applyValue (e ^. efuqTitle) q qTitle
-      applyText q = applyValue (e ^. efuqText) q qText
+      applyTitle q = applyValue (e ^. efuqTitle) q title
+      applyText q = applyValue (e ^. efuqText) q text
       applyAnwerIds q = applyValue (e ^. efuqAnswerIds) q qChangeAnwerIdsOrder
       applyExpertIds q = applyValue (e ^. efuqExpertIds) q qChangeExpertIdsOrder
       applyReferenceIds q = applyValue (e ^. efuqReferenceIds) q qChangeReferenceIdsOrder
@@ -470,11 +486,11 @@ instance ApplyEventToQuestion AddExpertEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qExperts .~ modifiedExperts
+      then Right $ q & experts .~ modifiedExperts
       else passToAnswers e (Right q)
     where
-      modifiedExperts = q ^. qExperts ++ [newExpert]
-      newExpert = Expert {_expUuid = e ^. aexpExpertUuid, _expName = e ^. aexpName, _expEmail = e ^. aexpEmail}
+      modifiedExperts = q ^. experts ++ [newExpert]
+      newExpert = Expert {_expertUuid = e ^. aexpExpertUuid, _expertName = e ^. aexpName, _expertEmail = e ^. aexpEmail}
 
 instance ApplyEventToQuestion EditExpertEvent where
   applyEventToQuestion e (Left error) = Left error
@@ -484,10 +500,10 @@ instance ApplyEventToQuestion DeleteExpertEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qExperts .~ modifiedExperts
+      then Right $ q & experts .~ modifiedExperts
       else passToAnswers e (Right q)
     where
-      modifiedExperts = filter (not . equalsUuid e) (q ^. qExperts)
+      modifiedExperts = filter (not . equalsUuid e) (q ^. experts)
 
 -- -------------------
 -- REFERENCES---------
@@ -496,11 +512,11 @@ instance ApplyEventToQuestion AddReferenceEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qReferences .~ modifiedReferences
+      then Right $ q & references .~ modifiedReferences
       else passToAnswers e (Right q)
     where
-      modifiedReferences = q ^. qReferences ++ [newReference]
-      newReference = Reference {_refUuid = e ^. arefReferenceUuid, _refChapter = e ^. arefChapter}
+      modifiedReferences = q ^. references ++ [newReference]
+      newReference = Reference {_referenceUuid = e ^. arefReferenceUuid, _referenceChapter = e ^. arefChapter}
 
 instance ApplyEventToQuestion EditReferenceEvent where
   applyEventToQuestion e (Left error) = Left error
@@ -510,10 +526,10 @@ instance ApplyEventToQuestion DeleteReferenceEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & qReferences .~ modifiedReferences
+      then Right $ q & references .~ modifiedReferences
       else passToAnswers e (Right q)
     where
-      modifiedReferences = filter (not . equalsUuid e) (q ^. qReferences)
+      modifiedReferences = filter (not . equalsUuid e) (q ^. references)
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -526,9 +542,9 @@ passToFollowUps _ (Left error) = Left error
 passToFollowUps e (Right ans) =
   case eModifiedFollowUps of
     Left error -> Left error
-    Right modifiedFollowUps -> Right $ ans & ansFollowUps .~ modifiedFollowUps
+    Right modifiedFollowUps -> Right $ ans & followUps .~ modifiedFollowUps
   where
-    eModifiedFollowUps = foldl foldOneFollowUps (Right []) (ans ^. ansFollowUps)
+    eModifiedFollowUps = foldl foldOneFollowUps (Right []) (ans ^. followUps)
     foldOneFollowUps :: Either AppError [Question] -> Question -> Either AppError [Question]
     foldOneFollowUps (Left error) _ = Left error
     foldOneFollowUps (Right answers) answer =
@@ -582,8 +598,8 @@ instance ApplyEventToAnswer EditAnswerEvent where
       then Right $ applyFollowUps . applyAdvice . applyLabel $ ans
       else passToFollowUps e (Right ans)
     where
-      applyLabel ans = applyValue (e ^. eansLabel) ans ansLabel
-      applyAdvice ans = applyValue (e ^. eansAdvice) ans ansAdvice
+      applyLabel ans = applyValue (e ^. eansLabel) ans label
+      applyAdvice ans = applyValue (e ^. eansAdvice) ans advice
       applyFollowUps ans = applyValue (e ^. eansFollowUpIds) ans ansChangeFollowUpIdsOrder
 
 instance ApplyEventToAnswer DeleteAnswerEvent where
@@ -596,20 +612,20 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ ans & ansFollowUps .~ modifiedFollowUps
+      then Right $ ans & followUps .~ modifiedFollowUps
       else passToFollowUps e (Right ans)
     where
-      modifiedFollowUps = ans ^. ansFollowUps ++ [newFollowUp]
+      modifiedFollowUps = ans ^. followUps ++ [newFollowUp]
       newFollowUp =
         Question
-        { _qUuid = e ^. afuqQuestionUuid
-        , _qShortUuid = e ^. afuqShortQuestionUuid
-        , _qType = e ^. afuqType
-        , _qTitle = e ^. afuqTitle
-        , _qText = e ^. afuqText
-        , _qAnswers = []
-        , _qReferences = []
-        , _qExperts = []
+        { _questionUuid = e ^. afuqQuestionUuid
+        , _questionShortUuid = e ^. afuqShortQuestionUuid
+        , _questionQType = e ^. afuqType
+        , _questionTitle = e ^. afuqTitle
+        , _questionText = e ^. afuqText
+        , _questionAnswers = []
+        , _questionReferences = []
+        , _questionExperts = []
         }
 
 instance ApplyEventToAnswer EditFollowUpQuestionEvent where
@@ -619,10 +635,10 @@ instance ApplyEventToAnswer DeleteFollowUpQuestionEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ ans & ansFollowUps .~ modifiedFollowUps
+      then Right $ ans & followUps .~ modifiedFollowUps
       else passToFollowUps e (Right ans)
     where
-      modifiedFollowUps = filter (not . equalsUuid e) (ans ^. ansFollowUps)
+      modifiedFollowUps = filter (not . equalsUuid e) (ans ^. followUps)
 
 -- -------------------
 -- EXPERTS -----------
@@ -725,8 +741,8 @@ instance ApplyEventToExpert EditExpertEvent where
       then Right $ applyEmail . applyName $ exp
       else Right exp
     where
-      applyName exp = applyValue (e ^. eexpName) exp expName
-      applyEmail exp = applyValue (e ^. eexpEmail) exp expEmail
+      applyName exp = applyValue (e ^. eexpName) exp name
+      applyEmail exp = applyValue (e ^. eexpEmail) exp email
 
 instance ApplyEventToExpert DeleteExpertEvent where
   applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteExpertEvent to Expert"
@@ -832,7 +848,7 @@ instance ApplyEventToReference EditReferenceEvent where
       then Right $ applyChapter ref
       else Right ref
     where
-      applyChapter ref = applyValue (e ^. erefChapter) ref refChapter
+      applyChapter ref = applyValue (e ^. erefChapter) ref chapter
 
 instance ApplyEventToReference DeleteReferenceEvent where
   applyEventToReference _ _ = undefined

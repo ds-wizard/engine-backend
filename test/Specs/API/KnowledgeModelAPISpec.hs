@@ -30,9 +30,11 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 import Service.Branch.BranchService
 import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper

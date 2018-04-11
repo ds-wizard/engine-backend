@@ -13,6 +13,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.Experts
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
+import LensesConfig
 import Model.Event.Chapter.EditChapterEvent
 import Model.Event.Event
 import Model.Event.Question.AddQuestionEvent

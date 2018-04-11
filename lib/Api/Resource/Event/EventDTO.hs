@@ -7,8 +7,10 @@ import Data.Text
 import Data.UUID
 import GHC.Generics
 
+import Api.Resource.Common
 import Common.Types
 import Common.Uuid
+import Model.KnowledgeModel.KnowledgeModel
 
 data EventDTO
   = AddKnowledgeModelEventDTO' AddKnowledgeModelEventDTO
@@ -133,7 +135,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _aqdtoChapterUuid :: UUID
   , _aqdtoQuestionUuid :: UUID
   , _aqdtoShortQuestionUuid :: Maybe String
-  , _aqdtoType :: String
+  , _aqdtoType :: QuestionType
   , _aqdtoTitle :: String
   , _aqdtoText :: String
   } deriving (Show, Eq, Generic)
@@ -144,7 +146,7 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _eqdtoChapterUuid :: UUID
   , _eqdtoQuestionUuid :: UUID
   , _eqdtoShortQuestionUuid :: Maybe (Maybe String)
-  , _eqdtoType :: Maybe String
+  , _eqdtoType :: Maybe QuestionType
   , _eqdtoTitle :: Maybe String
   , _eqdtoText :: Maybe String
   , _eqdtoAnswerIds :: Maybe [UUID]
@@ -261,7 +263,7 @@ data AddFollowUpQuestionEventDTO = AddFollowUpQuestionEventDTO
   , _afuqdtoAnswerUuid :: UUID
   , _afuqdtoQuestionUuid :: UUID
   , _afuqdtoShortQuestionUuid :: Maybe String
-  , _afuqdtoType :: String
+  , _afuqdtoType :: QuestionType
   , _afuqdtoTitle :: String
   , _afuqdtoText :: String
   } deriving (Show, Eq, Generic)
@@ -273,7 +275,7 @@ data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
   , _efuqdtoAnswerUuid :: UUID
   , _efuqdtoQuestionUuid :: UUID
   , _efuqdtoShortQuestionUuid :: Maybe (Maybe String)
-  , _efuqdtoType :: Maybe String
+  , _efuqdtoType :: Maybe QuestionType
   , _efuqdtoTitle :: Maybe String
   , _efuqdtoText :: Maybe String
   , _efuqdtoAnswerIds :: Maybe [UUID]
@@ -438,10 +440,12 @@ instance FromJSON AddQuestionEventDTO where
     _aqdtoChapterUuid <- o .: "chapterUuid"
     _aqdtoQuestionUuid <- o .: "questionUuid"
     _aqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _aqdtoType <- o .: "type"
     _aqdtoTitle <- o .: "title"
     _aqdtoText <- o .: "text"
-    return AddQuestionEventDTO {..}
+    questionType <- o .: "type"
+    case deserializeQuestionType questionType of
+      (Just _aqdtoType) -> return AddQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
 instance ToJSON AddQuestionEventDTO where
@@ -453,7 +457,7 @@ instance ToJSON AddQuestionEventDTO where
       , "chapterUuid" .= _aqdtoChapterUuid
       , "questionUuid" .= _aqdtoQuestionUuid
       , "shortQuestionUuid" .= _aqdtoShortQuestionUuid
-      , "type" .= _aqdtoType
+      , "type" .= serializeQuestionType _aqdtoType
       , "title" .= _aqdtoTitle
       , "text" .= _aqdtoText
       ]
@@ -465,13 +469,15 @@ instance FromJSON EditQuestionEventDTO where
     _eqdtoChapterUuid <- o .: "chapterUuid"
     _eqdtoQuestionUuid <- o .: "questionUuid"
     _eqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _eqdtoType <- o .: "type"
     _eqdtoTitle <- o .: "title"
     _eqdtoText <- o .: "text"
     _eqdtoAnswerIds <- o .: "answerIds"
     _eqdtoExpertIds <- o .: "expertIds"
     _eqdtoReferenceIds <- o .: "referenceIds"
-    return EditQuestionEventDTO {..}
+    questionType <- o .: "type"
+    case deserializeQuestionType <$> questionType of
+      (Just _eqdtoType) -> return EditQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
 instance ToJSON EditQuestionEventDTO where
@@ -483,7 +489,7 @@ instance ToJSON EditQuestionEventDTO where
       , "chapterUuid" .= _eqdtoChapterUuid
       , "questionUuid" .= _eqdtoQuestionUuid
       , "shortQuestionUuid" .= _eqdtoShortQuestionUuid
-      , "type" .= _eqdtoType
+      , "type" .= (serializeQuestionType <$> _eqdtoType)
       , "title" .= _eqdtoTitle
       , "text" .= _eqdtoText
       , "answerIds" .= _eqdtoAnswerIds
@@ -662,7 +668,7 @@ instance ToJSON DeleteExpertEventDTO where
 
 -- -------------------------
 -- Reference ---------------
--- -------------------------      
+-- -------------------------
 instance FromJSON AddReferenceEventDTO where
   parseJSON (Object o) = do
     _arefdtoUuid <- o .: "uuid"
@@ -741,10 +747,12 @@ instance FromJSON AddFollowUpQuestionEventDTO where
     _afuqdtoAnswerUuid <- o .: "answerUuid"
     _afuqdtoQuestionUuid <- o .: "questionUuid"
     _afuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _afuqdtoType <- o .: "type"
     _afuqdtoTitle <- o .: "title"
     _afuqdtoText <- o .: "text"
-    return AddFollowUpQuestionEventDTO {..}
+    questionType <- o .: "type"
+    case deserializeQuestionType questionType of
+      (Just _afuqdtoType) -> return AddFollowUpQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
 instance ToJSON AddFollowUpQuestionEventDTO where
@@ -757,7 +765,7 @@ instance ToJSON AddFollowUpQuestionEventDTO where
       , "answerUuid" .= _afuqdtoAnswerUuid
       , "questionUuid" .= _afuqdtoQuestionUuid
       , "shortQuestionUuid" .= _afuqdtoShortQuestionUuid
-      , "type" .= _afuqdtoType
+      , "type" .= serializeQuestionType _afuqdtoType
       , "title" .= _afuqdtoTitle
       , "text" .= _afuqdtoText
       ]
@@ -770,13 +778,15 @@ instance FromJSON EditFollowUpQuestionEventDTO where
     _efuqdtoAnswerUuid <- o .: "answerUuid"
     _efuqdtoQuestionUuid <- o .: "questionUuid"
     _efuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _efuqdtoType <- o .: "type"
     _efuqdtoTitle <- o .: "title"
     _efuqdtoText <- o .: "text"
     _efuqdtoAnswerIds <- o .: "answerIds"
     _efuqdtoExpertIds <- o .: "expertIds"
     _efuqdtoReferenceIds <- o .: "referenceIds"
-    return EditFollowUpQuestionEventDTO {..}
+    questionType <- o .: "type"
+    case deserializeQuestionType <$> questionType of
+      (Just _efuqdtoType) -> return EditFollowUpQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
 instance ToJSON EditFollowUpQuestionEventDTO where
@@ -789,7 +799,7 @@ instance ToJSON EditFollowUpQuestionEventDTO where
       , "answerUuid" .= _efuqdtoAnswerUuid
       , "questionUuid" .= _efuqdtoQuestionUuid
       , "shortQuestionUuid" .= _efuqdtoShortQuestionUuid
-      , "type" .= _efuqdtoType
+      , "type" .= (serializeQuestionType <$> _efuqdtoType)
       , "title" .= _efuqdtoTitle
       , "text" .= _efuqdtoText
       , "answerIds" .= _efuqdtoAnswerIds

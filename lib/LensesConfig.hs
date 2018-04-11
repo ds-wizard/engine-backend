@@ -3,8 +3,10 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
+import Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------------------
 -- Model
@@ -29,8 +31,34 @@ makeFields ''BuildInfo
 
 makeFields ''DSWConfig
 
+-- Model / KnowledgeModel
+makeFields ''KnowledgeModel
+
+makeFields ''Chapter
+
+makeFields ''Question
+
+makeFields ''Answer
+
+makeFields ''Expert
+
+makeFields ''Reference
+
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
 -- Api / Resource / ActionKeyDTO
 makeFields ''ActionKeyDTO
+
+-- Api / Resource / KnowledgeModelDTO
+makeFields ''KnowledgeModelDTO
+
+makeFields ''ChapterDTO
+
+makeFields ''QuestionDTO
+
+makeFields ''AnswerDTO
+
+makeFields ''ExpertDTO
+
+makeFields ''ReferenceDTO

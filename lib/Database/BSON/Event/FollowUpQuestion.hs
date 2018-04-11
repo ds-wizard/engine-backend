@@ -24,7 +24,7 @@ instance ToBSON AddFollowUpQuestionEvent where
     , "answerUuid" BSON.=: serializeUUID (event ^. afuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. afuqQuestionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. afuqShortQuestionUuid)
-    , "qType" BSON.=: (event ^. afuqType)
+    , "qType" BSON.=: show (event ^. afuqType)
     , "title" BSON.=: (event ^. afuqTitle)
     , "text" BSON.=: (event ^. afuqText)
     ]
@@ -37,7 +37,7 @@ instance FromBSON AddFollowUpQuestionEvent where
     answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
     shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
-    qType <- BSON.lookup "qType" doc
+    qType <- deserializeQuestionType $ BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
     return
@@ -65,7 +65,7 @@ instance ToBSON EditFollowUpQuestionEvent where
     , "answerUuid" BSON.=: serializeUUID (event ^. efuqAnswerUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. efuqQuestionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. efuqShortQuestionUuid)
-    , "qType" BSON.=: (event ^. efuqType)
+    , "qType" BSON.=: show (event ^. efuqType)
     , "title" BSON.=: (event ^. efuqTitle)
     , "text" BSON.=: (event ^. efuqText)
     , "answerIds" BSON.=: serializeMaybeUUIDList (event ^. efuqAnswerIds)
@@ -81,7 +81,7 @@ instance FromBSON EditFollowUpQuestionEvent where
     answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
     shortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
-    qType <- BSON.lookup "qType" doc
+    qType <- deserializeQuestionType <$> BSON.lookup "qType" doc
     title <- BSON.lookup "title" doc
     text <- BSON.lookup "text" doc
     let answerIds = deserializeMaybeUUIDList $ BSON.lookup "answerIds" doc

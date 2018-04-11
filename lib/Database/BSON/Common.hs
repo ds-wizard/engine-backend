@@ -7,6 +7,7 @@ import Data.UUID
 
 import Common.Error
 import Common.Utils
+import Model.KnowledgeModel.KnowledgeModel
 
 serializeUUID :: UUID -> String
 serializeUUID = toString
@@ -36,6 +37,17 @@ deserializeMaybeUUIDList :: Maybe [String] -> Maybe [UUID]
 deserializeMaybeUUIDList mUuidsS = do
   uuidsS <- mUuidsS
   switchMaybeAndList $ fmap fromString uuidsS
+
+deserializeQuestionType :: Maybe String -> Maybe QuestionType
+deserializeQuestionType mQuestionTypeS = do
+  questionType <- mQuestionTypeS
+  case questionType of
+    "QuestionTypeOption" -> Just QuestionTypeOption
+    "QuestionTypeList" -> Just QuestionTypeList
+    "QuestionString" -> Just QuestionString
+    "QuestionNumber" -> Just QuestionNumber
+    "QuestionDate" -> Just QuestionDate
+    "QuestionText" -> Just QuestionText
 
 instance ToBSON AppError where
   toBSON (ValidationError message formErrors fieldErrors) =

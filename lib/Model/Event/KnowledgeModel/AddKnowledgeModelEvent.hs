@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -16,4 +17,4 @@ data AddKnowledgeModelEvent = AddKnowledgeModelEvent
 makeLenses ''AddKnowledgeModelEvent
 
 instance SameUuid AddKnowledgeModelEvent KnowledgeModel where
-  equalsUuid e km = km ^. kmUuid == e ^. akmKmUuid
+  equalsUuid e km = km ^. uuid == e ^. akmKmUuid

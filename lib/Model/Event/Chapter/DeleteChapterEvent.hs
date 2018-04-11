@@ -4,6 +4,7 @@ import Control.Lens
 import Data.UUID
 import GHC.Generics
 
+import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -16,7 +17,7 @@ data DeleteChapterEvent = DeleteChapterEvent
 makeLenses ''DeleteChapterEvent
 
 instance SameUuid DeleteChapterEvent KnowledgeModel where
-  equalsUuid e km = km ^. kmUuid == e ^. dchKmUuid
+  equalsUuid e km = km ^. uuid == e ^. dchKmUuid
 
 instance SameUuid DeleteChapterEvent Chapter where
-  equalsUuid e ch = ch ^. chUuid == e ^. dchChapterUuid
+  equalsUuid e ch = ch ^. uuid == e ^. dchChapterUuid
