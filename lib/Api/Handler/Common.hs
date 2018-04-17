@@ -2,7 +2,7 @@ module Api.Handler.Common where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader
-import Data.Aeson
+import Data.Aeson ((.=), eitherDecode, encode, object)
 import Data.ByteString
 import Data.Maybe
 import qualified Data.Text as T
@@ -14,23 +14,28 @@ import Network.HTTP.Types.Status
         ok200, unauthorized401)
 import Network.Wai
 import qualified Web.Scotty as Scotty
+import Web.Scotty.Trans
+       (ActionT, body, header, json, params, request, status)
 
 import Api.Resource.Error.ErrorDTO
 import Api.Resource.User.UserDTO
 import Common.Error
+import Model.Context.AppContext
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 
+type Endpoint = ActionT LT.Text AppContextM ()
+
 getReqDto callback = do
-  body <- Scotty.body
-  let eitherReqDto = eitherDecode body
+  reqBody <- body
+  let eitherReqDto = eitherDecode reqBody
   case eitherReqDto of
     Right reqDto -> callback reqDto
     Left error -> sendError $ createErrorWithErrorMessage error
 
 getCurrentUserUuid context callback = do
-  tokenHeader <- Scotty.header "Authorization"
+  tokenHeader <- header "Authorization"
   let userUuidMaybe =
         getUserUuidFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
   case userUuidMaybe of
@@ -45,13 +50,13 @@ getCurrentUser context callback =
       Left error -> sendError error
 
 getQueryParam paramName = do
-  params <- Scotty.params
-  let mValue = lookup paramName params
+  reqParams <- params
+  let mValue = lookup paramName reqParams
   case mValue of
     Just value -> return . Just . LT.toStrict $ value
     Nothing -> return Nothing
 
-getListOfQueryParamsIfPresent :: [LT.Text] -> Scotty.ActionM [(T.Text, T.Text)]
+getListOfQueryParamsIfPresent :: [LT.Text] -> ActionT LT.Text AppContextM [(T.Text, T.Text)]
 getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
   where
     go name monadAcc = do
@@ -65,7 +70,7 @@ getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
         Nothing -> return Nothing
 
 checkPermission context perm callback = do
-  tokenHeader <- Scotty.header "Authorization"
+  tokenHeader <- header "Authorization"
   let mUserPerms = getPermissionsFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token)
   case mUserPerms of
     Just userPerms ->
@@ -75,7 +80,7 @@ checkPermission context perm callback = do
     Nothing -> forbidden
 
 isLogged context callback = do
-  tokenHeader <- Scotty.header "Authorization"
+  tokenHeader <- header "Authorization"
   callback . isJust $ tokenHeader
 
 isAdmin context callback =
@@ -84,44 +89,40 @@ isAdmin context callback =
       then getCurrentUser context $ \user -> callback $ user ^. udtoRole == "ADMIN"
       else callback False
 
-sendJson obj = do
-  Scotty.setHeader (LT.pack "Content-Type") (LT.pack "application/json")
-  Scotty.raw $ encode obj
-
-sendError :: AppError -> Scotty.ActionM ()
+sendError :: AppError -> Endpoint
 sendError (ValidationError errorMessage formErrors fieldErrors) = do
-  Scotty.status badRequest400
-  sendJson $ ValidationError errorMessage formErrors fieldErrors
+  status badRequest400
+  json $ ValidationError errorMessage formErrors fieldErrors
 sendError (NotExistsError errorMessage) = do
-  Scotty.status notFound404
-  sendJson $ NotExistsError errorMessage
+  status notFound404
+  json $ NotExistsError errorMessage
 sendError (DatabaseError errorMessage) = do
-  Scotty.status internalServerError500
-  sendJson $ DatabaseError errorMessage
+  status internalServerError500
+  json $ DatabaseError errorMessage
 sendError (MigratorError errorMessage) = do
-  Scotty.status badRequest400
-  sendJson $ MigratorError errorMessage
+  status badRequest400
+  json $ MigratorError errorMessage
 
-unauthorizedA :: Scotty.ActionM ()
+unauthorizedA :: Endpoint
 unauthorizedA = do
-  Scotty.status unauthorized401
-  sendJson $ object ["status" .= 401, "error" .= "Unauthorized"]
+  status unauthorized401
+  json $ object ["status" .= 401, "error" .= "Unauthorized"]
 
 unauthorizedL :: Response
 unauthorizedL =
   responseLBS unauthorized401 [(hContentType, "application/json")] $
   encode (object ["status" .= 401, "error" .= "Unauthorized"])
 
-forbidden :: Scotty.ActionM ()
+forbidden :: Endpoint
 forbidden = do
-  Scotty.status forbidden403
-  sendJson $ object ["status" .= 403, "error" .= "Forbidden"]
+  status forbidden403
+  json $ object ["status" .= 403, "error" .= "Forbidden"]
 
-notFoundA :: Scotty.ActionM ()
+notFoundA :: Endpoint
 notFoundA = do
-  request <- Scotty.request
+  request <- request
   if requestMethod request == methodOptions
-    then Scotty.status ok200
+    then status ok200
     else do
-      Scotty.status notFound404
-      sendJson $ object ["status" .= 404, "error" .= "Not Found"]
+      status notFound404
+      json $ object ["status" .= 404, "error" .= "Not Found"]

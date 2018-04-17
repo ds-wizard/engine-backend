@@ -22,7 +22,7 @@ import Common.Utils
 import LensesConfig
 import Model.Config.DSWConfig
 
-type Endpoint = (H.Method, Regex)
+type EndpointDefinition = (H.Method, Regex)
 
 authorizationHeaderName :: ByteString
 authorizationHeaderName = "Authorization"
@@ -30,10 +30,10 @@ authorizationHeaderName = "Authorization"
 getRequestURL :: Request -> String
 getRequestURL request = T.unpack . (T.intercalate "/") $ pathInfo request
 
-matchURL :: Request -> Endpoint -> Bool
+matchURL :: Request -> EndpointDefinition -> Bool
 matchURL request (method, url) = requestMethod request == method && (isJust $ matchRegex url (getRequestURL request))
 
-isUnauthorizedEndpoint :: Request -> [Endpoint] -> Bool
+isUnauthorizedEndpoint :: Request -> [EndpointDefinition] -> Bool
 isUnauthorizedEndpoint request unauthorizedEndpoints =
   if requestMethod request == methodOptions
     then True
@@ -45,7 +45,7 @@ getTokenFromHeader request =
     Just headerValue -> separateToken . decodeUtf8 $ headerValue
     Nothing -> Nothing
 
-authMiddleware :: DSWConfig -> [Endpoint] -> Middleware
+authMiddleware :: DSWConfig -> [EndpointDefinition] -> Middleware
 authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse

@@ -1,25 +1,25 @@
 module Api.Handler.ActionKey.ActionKeyHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Monoid ((<>))
+import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Trans.Class (lift)
 import Data.Text.Lazy
 import Data.UUID
-import Network.HTTP.Types.Status (created201, noContent204)
-import qualified Web.Scotty as Scotty
+import Network.HTTP.Types.Status (created201)
+import Web.Scotty.Trans (status)
 
 import Api.Handler.Common
 import Api.Resource.ActionKey.ActionKeyDTO
-import Common.Context
-import Model.Config.DSWConfig
 import Common.Error
+import Model.Context.AppContext
 import Service.User.UserService
 
-postActionKeysA :: Context -> DSWConfig -> Scotty.ActionM ()
-postActionKeysA context dswConfig =
+postActionKeysA :: Endpoint
+postActionKeysA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getReqDto $ \reqDto -> do
     maybeError <- liftIO $ resetUserPassword context dswConfig reqDto
     case maybeError of
-      Nothing -> Scotty.status created201
+      Nothing -> status created201
       Just error -> sendError error

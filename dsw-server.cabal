@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5ab1c35a9c709dab63ef10cbe676661d0b7ae536637086af19d999ac2a2e2405
+-- hash: 2121a6a9e7ee49124c191ef9838a58862e4fa42757791697d7202584630401e2
 
 name:           dsw-server
 version:        1.0.0
@@ -83,6 +83,7 @@ library
       Api.Handler.Version.VersionHandler
       Api.Middleware.AuthMiddleware
       Api.Middleware.CORSMiddleware
+      Api.Middleware.JSONMiddleware
       Api.Resource.ActionKey.ActionKeyDTO
       Api.Resource.Branch.BranchDTO
       Api.Resource.Branch.BranchWithStateDTO
@@ -165,6 +166,7 @@ library
       Model.Branch.BranchState
       Model.Common
       Model.Config.DSWConfig
+      Model.Context.AppContext
       Model.Event.Answer.AddAnswerEvent
       Model.Event.Answer.DeleteAnswerEvent
       Model.Event.Answer.EditAnswerEvent

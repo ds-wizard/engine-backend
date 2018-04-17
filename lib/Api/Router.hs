@@ -1,8 +1,19 @@
 module Api.Router where
 
+import Control.Lens ((^.))
+import Control.Monad.Logger
+import Control.Monad.Reader (asks)
+import Control.Monad.Trans.Class (lift)
+import Data.Text.Lazy (Text)
 import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
+import Network.Wai (Middleware)
+import Network.Wai.Middleware.RequestLogger
+       (logStdout, logStdoutDev)
 import Text.Regex
-import Web.Scotty
+import Web.Scotty.Trans
+       (ActionT, Options, ScottyT, defaultHandler, delete, get, json,
+        jsonData, middleware, notFound, param, post, put, scottyOptsT,
+        settings, showError, status, verbose)
 
 import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.Branch.BranchHandler
@@ -19,8 +30,11 @@ import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
+import Api.Middleware.JSONMiddleware
 import Common.Context
+import LensesConfig
 import Model.Config.DSWConfig
+import Model.Context.AppContext
 
 unauthorizedEndpoints =
   [ (methodGet, mkRegex "^$")
@@ -33,74 +47,82 @@ unauthorizedEndpoints =
   , (methodPost, mkRegex "^action-keys$")
   ]
 
-createEndpoints :: Context -> DSWConfig -> ScottyM ()
-createEndpoints context dswConfig
+loggingM :: Environment -> Middleware
+loggingM Development = logStdoutDev
+loggingM Production = logStdout
+loggingM Test = id
+
+-- createEndpoints :: ScottyT Error AppContextM ()
+createEndpoints :: AppContext -> ScottyT Text AppContextM ()
+createEndpoints context
    --------------------
    -- MIDDLEWARES
    --------------------
  = do
+  middleware (loggingM (context ^. environment))
   middleware corsMiddleware
-  middleware (authMiddleware dswConfig unauthorizedEndpoints)
+  middleware jsonMiddleware
+  middleware (authMiddleware (context ^. config) unauthorizedEndpoints)
    -- ------------------
    -- INFO
    -- ------------------
-  get "/" (getInfoA context dswConfig)
+  get "/" getInfoA
    --------------------
    -- TOKENS
    --------------------
-  post "/tokens" (postTokenA context dswConfig)
+  post "/tokens" postTokenA
    --------------------
    -- ORGANIZATIONS
    --------------------
-  get "/organizations/current" (getOrganizationCurrentA context dswConfig)
-  put "/organizations/current" (putOrganizationCurrentA context dswConfig)
+  get "/organizations/current" getOrganizationCurrentA
+  put "/organizations/current" putOrganizationCurrentA
    --------------------
    -- USERS
    --------------------
-  get "/users" (getUsersA context dswConfig)
-  post "/users" (postUsersA context dswConfig)
-  get "/users/current" (getUserCurrentA context dswConfig)
-  get "/users/:userUuid" (getUserA context dswConfig)
-  put "/users/current/password" (putUserCurrentPasswordA context dswConfig)
-  put "/users/current" (putUserCurrentA context dswConfig)
-  put "/users/:userUuid/password" (putUserPasswordA context dswConfig)
-  put "/users/:userUuid" (putUserA context dswConfig)
-  delete "/users/:userUuid" (deleteUserA context dswConfig)
-  put "/users/:userUuid/state" (changeUserStateA context dswConfig)
-   --------------------
-   -- KNOWLEDGE MODEL
-   --------------------
-  get "/branches" (getBranchesA context dswConfig)
-  post "/branches" (postBranchesA context dswConfig)
-  get "/branches/:branchUuid" (getBranchA context dswConfig)
-  put "/branches/:branchUuid" (putBranchA context dswConfig)
-  delete "/branches/:branchUuid" (deleteBranchA context dswConfig)
-  get "/branches/:branchUuid/km" (getKnowledgeModelA context dswConfig)
-  get "/branches/:branchUuid/events" (getEventsA context dswConfig)
-  post "/branches/:branchUuid/events/_bulk" (postEventsA context dswConfig)
-  delete "/branches/:branchUuid/events" (deleteEventsA context dswConfig)
-  put "/branches/:branchUuid/versions/:version" (putVersionA context dswConfig)
-  get "/branches/:branchUuid/migrations/current" (getMigrationsCurrentA context dswConfig)
-  post "/branches/:branchUuid/migrations/current" (postMigrationsCurrentA context dswConfig)
-  delete "/branches/:branchUuid/migrations/current" (deleteMigrationsCurrentA context dswConfig)
-  post "/branches/:branchUuid/migrations/current/conflict" (postMigrationsCurrentConflictA context dswConfig)
+  get "/users" getUsersA
+  post "/users" postUsersA
+  get "/users/current" getUserCurrentA
+  get "/users/:userUuid" getUserA
+  put "/users/current/password" putUserCurrentPasswordA
+  put "/users/current" putUserCurrentA
+  put "/users/:userUuid/password" putUserPasswordA
+  put "/users/:userUuid" putUserA
+  delete "/users/:userUuid" deleteUserA
+  put "/users/:userUuid/state" changeUserStateA
+  --  --------------------
+  --  -- KNOWLEDGE MODEL
+  --  --------------------
+  get "/branches" getBranchesA
+  post "/branches" postBranchesA
+  get "/branches/:branchUuid" getBranchA
+  put "/branches/:branchUuid" putBranchA
+  delete "/branches/:branchUuid" deleteBranchA
+  get "/branches/:branchUuid/km" getKnowledgeModelA
+  get "/branches/:branchUuid/events" getEventsA
+  post "/branches/:branchUuid/events/_bulk" postEventsA
+  delete "/branches/:branchUuid/events" deleteEventsA
+  put "/branches/:branchUuid/versions/:version" putVersionA
+  get "/branches/:branchUuid/migrations/current" getMigrationsCurrentA
+  post "/branches/:branchUuid/migrations/current" postMigrationsCurrentA
+  delete "/branches/:branchUuid/migrations/current" deleteMigrationsCurrentA
+  post "/branches/:branchUuid/migrations/current/conflict" postMigrationsCurrentConflictA
    --------------------
    -- PACKAGES
    --------------------
-  get "/packages" (getPackagesA context dswConfig)
-  get "/packages/unique" (getUniquePackagesA context dswConfig)
-  get "/packages/:pkgId" (getPackageA context dswConfig)
-  delete "/packages" (deletePackagesA context dswConfig)
-  delete "/packages/:pkgId" (deletePackageA context dswConfig)
+  get "/packages" getPackagesA
+  get "/packages/unique" getUniquePackagesA
+  get "/packages/:pkgId" getPackageA
+  delete "/packages" deletePackagesA
+  delete "/packages/:pkgId" deletePackageA
    --------------------
    -- ACTION KEYS
    --------------------
-  post "/action-keys" (postActionKeysA context dswConfig)
+  post "/action-keys" postActionKeysA
    --------------------
    -- IMPORT/EXPORT
    --------------------
-  post "/import" (importA context dswConfig)
-  get "/export/:pkgId" (exportA context dswConfig)
+  post "/import" importA
+  get "/export/:pkgId" exportA
    --------------------
    -- ERROR
    --------------------

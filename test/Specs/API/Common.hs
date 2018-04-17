@@ -1,6 +1,8 @@
 module Specs.API.Common where
 
 import Control.Lens ((^.))
+import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Monad.Reader (runReaderT)
 import Data.Aeson (Value(..), (.=), encode, object)
 import Data.ByteString.Char8 as BS
 import Data.Foldable
@@ -14,7 +16,7 @@ import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
+import Web.Scotty.Trans (scottyAppT)
 
 import Api.Resource.Error.ErrorDTO
 import Api.Router
@@ -24,12 +26,22 @@ import Common.Types
 import Database.Connection
 import LensesConfig
 import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 
 startWebApp :: Context -> DSWConfig -> IO Application
-startWebApp context dswConfig = S.scottyApp (createEndpoints context dswConfig)
+startWebApp context dswConfig = do
+  let appContext =
+        AppContext
+        { _appContextEnvironment = Test
+        , _appContextConfig = dswConfig
+        , _appContextPool = context ^. ctxDbPool
+        , _appContextOldContext = context
+        }
+      t m = runStdoutLoggingT $ runReaderT (runAppContextM m) appContext
+  scottyAppT t (createEndpoints appContext)
 
 reqAuthHeader :: Header
 reqAuthHeader =

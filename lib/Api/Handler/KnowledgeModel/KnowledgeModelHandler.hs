@@ -1,24 +1,24 @@
 module Api.Handler.KnowledgeModel.KnowledgeModelHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Monoid ((<>))
+import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Trans.Class (lift)
 import Data.Text.Lazy
 import Data.UUID
-import qualified Web.Scotty as Scotty
+import Web.Scotty.Trans (json, param)
 
 import Api.Handler.Common
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Context
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Service.KnowledgeModel.KnowledgeModelService
 
-getKnowledgeModelA :: Context -> DSWConfig -> Scotty.ActionM ()
-getKnowledgeModelA context dswConfig =
+getKnowledgeModelA :: Endpoint
+getKnowledgeModelA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "KM_PERM" $ do
-    branchUuid <- Scotty.param "branchUuid"
+    branchUuid <- param "branchUuid"
     eitherDto <- liftIO $ getKnowledgeModelByBranchId context branchUuid
     case eitherDto of
-      Right dto -> sendJson dto
+      Right dto -> json dto
       Left error -> sendError error

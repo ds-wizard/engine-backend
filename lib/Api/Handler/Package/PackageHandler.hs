@@ -1,62 +1,70 @@
 module Api.Handler.Package.PackageHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
+import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Trans.Class (lift)
 import Data.Maybe
-import Data.Monoid ((<>))
 import Data.Text
 import Data.UUID
-import Network.HTTP.Types.Status (created201, noContent204)
-import qualified Web.Scotty as Scotty
+import Network.HTTP.Types.Status (noContent204)
+import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Package.PackageDTO
-import Common.Context
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Service.Package.PackageService
 
-getPackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
-getPackagesA context dswConfig =
+getPackagesA :: Endpoint
+getPackagesA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     eitherResDtos <- liftIO $ getPackagesFiltered context queryParams
     case eitherResDtos of
-      Right resDtos -> sendJson resDtos
+      Right resDtos -> json resDtos
       Left error -> sendError error
 
-getUniquePackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
-getUniquePackagesA context dswConfig =
+getUniquePackagesA :: Endpoint
+getUniquePackagesA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     eitherResDtos <- liftIO $ getSimplePackagesFiltered context queryParams
     case eitherResDtos of
-      Right resDtos -> sendJson resDtos
+      Right resDtos -> json resDtos
       Left error -> sendError error
 
-getPackageA :: Context -> DSWConfig -> Scotty.ActionM ()
-getPackageA context dswConfig =
+getPackageA :: Endpoint
+getPackageA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
-    pkgId <- Scotty.param "pkgId"
+    pkgId <- param "pkgId"
     eitherResDto <- liftIO $ getPackageById context pkgId
     case eitherResDto of
-      Right resDto -> sendJson resDto
+      Right resDto -> json resDto
       Left error -> sendError error
 
-deletePackagesA :: Context -> DSWConfig -> Scotty.ActionM ()
-deletePackagesA context dswConfig =
+deletePackagesA :: Endpoint
+deletePackagesA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
     maybeError <- liftIO $ deletePackagesByQueryParams context queryParams
     case maybeError of
-      Nothing -> Scotty.status noContent204
+      Nothing -> status noContent204
       Just error -> sendError error
 
-deletePackageA :: Context -> DSWConfig -> Scotty.ActionM ()
-deletePackageA context dswConfig =
+deletePackageA :: Endpoint
+deletePackageA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
-    pkgId <- Scotty.param "pkgId"
+    pkgId <- param "pkgId"
     maybeError <- liftIO $ deletePackage context pkgId
     case maybeError of
-      Nothing -> Scotty.status noContent204
+      Nothing -> status noContent204
       Just error -> sendError error

@@ -1,114 +1,131 @@
 module Api.Handler.User.UserHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Monoid ((<>))
+import Control.Monad.Reader (asks, liftIO, liftM)
+import Control.Monad.Trans.Class (lift)
 import Data.Text as T
-import Data.Text.Lazy as TL
 import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
-import qualified Web.Scotty as Scotty
+import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
-import Common.Context
-import Model.Config.DSWConfig
 import Common.Error
+import Model.Context.AppContext
 import Service.User.UserService
 
-getUsersA :: Context -> DSWConfig -> Scotty.ActionM ()
-getUsersA context dswConfig =
+getUsersA :: Endpoint
+getUsersA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "UM_PERM" $ do
     eitherDtos <- liftIO $ getUsers context
     case eitherDtos of
-      Right dtos -> sendJson dtos
+      Right dtos -> json dtos
       Left error -> sendError error
 
-postUsersA :: Context -> DSWConfig -> Scotty.ActionM ()
-postUsersA context dswConfig =
+postUsersA :: Endpoint
+postUsersA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getReqDto $ \reqDto ->
     isAdmin context $ \isAdmin -> do
       eitherUserDto <- liftIO $ createUser context dswConfig reqDto isAdmin
       case eitherUserDto of
         Left appError -> sendError appError
         Right userDto -> do
-          Scotty.status created201
-          sendJson userDto
+          status created201
+          json userDto
 
-getUserCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
-getUserCurrentA context dswConfig =
+getUserCurrentA :: Endpoint
+getUserCurrentA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getCurrentUserUuid context $ \userUuid -> do
     eitherDto <- liftIO $ getUserById context userUuid
     case eitherDto of
-      Right dto -> sendJson dto
+      Right dto -> json dto
       Left error -> sendError error
 
-getUserA :: Context -> DSWConfig -> Scotty.ActionM ()
-getUserA context dswConfig =
+getUserA :: Endpoint
+getUserA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "UM_PERM" $ do
-    userUuid <- Scotty.param "userUuid"
+    userUuid <- param "userUuid"
     eitherDto <- liftIO $ getUserById context userUuid
     case eitherDto of
-      Right dto -> sendJson dto
+      Right dto -> json dto
       Left error -> sendError error
 
-putUserCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
-putUserCurrentA context dswConfig =
+putUserCurrentA :: Endpoint
+putUserCurrentA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
       eitherDto <- liftIO $ modifyUser context userUuid reqDto
       case eitherDto of
-        Right dto -> sendJson dto
+        Right dto -> json dto
         Left error -> sendError error
 
-putUserA :: Context -> DSWConfig -> Scotty.ActionM ()
-putUserA context dswConfig =
+putUserA :: Endpoint
+putUserA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "UM_PERM" $
-  getReqDto $ \reqDto -> do
-    userUuid <- Scotty.param "userUuid"
-    eitherDto <- liftIO $ modifyUser context userUuid reqDto
-    case eitherDto of
-      Right dto -> sendJson dto
-      Left error -> sendError error
+    getReqDto $ \reqDto -> do
+      userUuid <- param "userUuid"
+      eitherDto <- liftIO $ modifyUser context userUuid reqDto
+      case eitherDto of
+        Right dto -> json dto
+        Left error -> sendError error
 
-putUserCurrentPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
-putUserCurrentPasswordA context dswConfig =
+putUserCurrentPasswordA :: Endpoint
+putUserCurrentPasswordA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
       maybeError <- liftIO $ changeUserPassword context userUuid Nothing reqDto True
       case maybeError of
-        Nothing -> Scotty.status noContent204
+        Nothing -> status noContent204
         Just error -> sendError error
 
-putUserPasswordA :: Context -> DSWConfig -> Scotty.ActionM ()
-putUserPasswordA context dswConfig =
+putUserPasswordA :: Endpoint
+putUserPasswordA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getReqDto $ \reqDto ->
     isAdmin context $ \isAdmin -> do
-      userUuid <- Scotty.param "userUuid"
+      userUuid <- param "userUuid"
       hash <- getQueryParam "hash"
       maybeError <- liftIO $ changeUserPassword context userUuid (liftM T.unpack hash) reqDto isAdmin
       case maybeError of
-        Nothing -> Scotty.status noContent204
+        Nothing -> status noContent204
         Just error -> sendError error
 
-changeUserStateA :: Context -> DSWConfig -> Scotty.ActionM ()
-changeUserStateA context dswConfig =
+changeUserStateA :: Endpoint
+changeUserStateA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   getReqDto $ \reqDto -> do
-    userUuid <- Scotty.param "userUuid"
+    userUuid <- param "userUuid"
     hash <- getQueryParam "hash"
     maybeError <- liftIO $ changeUserState context userUuid (liftM T.unpack hash) reqDto
     case maybeError of
-      Nothing -> sendJson reqDto
+      Nothing -> json reqDto
       Just error -> sendError error
 
-deleteUserA :: Context -> DSWConfig -> Scotty.ActionM ()
-deleteUserA context dswConfig =
+deleteUserA :: Endpoint
+deleteUserA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "UM_PERM" $ do
-    userUuid <- Scotty.param "userUuid"
+    userUuid <- param "userUuid"
     maybeError <- liftIO $ deleteUser context userUuid
     case maybeError of
-      Nothing -> Scotty.status noContent204
+      Nothing -> status noContent204
       Just error -> sendError error

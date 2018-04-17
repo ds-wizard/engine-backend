@@ -1,32 +1,33 @@
 module Api.Handler.Organization.OrganizationHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Monoid ((<>))
+import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Trans.Class (lift)
 import Data.Text.Lazy
 import Data.UUID
-import Network.HTTP.Types.Status (created201, noContent204)
-import qualified Web.Scotty as Scotty
+import Web.Scotty.Trans (json, param)
 
 import Api.Handler.Common
 import Api.Resource.Organization.OrganizationDTO
-import Common.Context
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Service.Organization.OrganizationService
 
-getOrganizationCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
-getOrganizationCurrentA context dswConfig = do
+getOrganizationCurrentA :: Endpoint
+getOrganizationCurrentA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   eitherDto <- liftIO $ getOrganization context
   case eitherDto of
-    Right resDto -> sendJson resDto
+    Right resDto -> json resDto
     Left error -> sendError error
 
-putOrganizationCurrentA :: Context -> DSWConfig -> Scotty.ActionM ()
-putOrganizationCurrentA context dswConfig =
+putOrganizationCurrentA :: Endpoint
+putOrganizationCurrentA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "ORG_PERM" $
-  getReqDto $ \reqDto -> do
-    eitherResDto <- liftIO $ modifyOrganization context reqDto
-    case eitherResDto of
-      Right resDto -> sendJson resDto
-      Left error -> sendError error
+    getReqDto $ \reqDto -> do
+      eitherResDto <- liftIO $ modifyOrganization context reqDto
+      case eitherResDto of
+        Right resDto -> json resDto
+        Left error -> sendError error

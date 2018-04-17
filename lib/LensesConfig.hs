@@ -6,6 +6,7 @@ import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------------------
@@ -30,6 +31,9 @@ makeFields ''AppConfigMail
 makeFields ''BuildInfo
 
 makeFields ''DSWConfig
+
+-- Model / Config
+makeFields ''AppContext
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel

@@ -1,46 +1,50 @@
 module Api.Handler.Event.EventHandler where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Data.Aeson
-import Data.Monoid ((<>))
+import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Trans.Class (lift)
 import Data.Text.Lazy
 import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
-import qualified Web.Scotty as Scotty
+import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Event.EventDTO
-import Common.Context
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Service.Event.EventService
 
-getEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
-getEventsA context dswConfig =
+getEventsA :: Endpoint
+getEventsA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "KM_PERM" $ do
-    branchUuid <- Scotty.param "branchUuid"
+    branchUuid <- param "branchUuid"
     eitherDtos <- liftIO $ getEvents context branchUuid
     case eitherDtos of
-      Right dtos -> sendJson dtos
+      Right dtos -> json dtos
       Left error -> sendError error
 
-postEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
-postEventsA context dswConfig =
+postEventsA :: Endpoint
+postEventsA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "KM_PERM" $ do
     getReqDto $ \reqDto -> do
-      branchUuid <- Scotty.param "branchUuid"
+      branchUuid <- param "branchUuid"
       eitherUserDto <- liftIO $ createEvents context branchUuid reqDto
       case eitherUserDto of
         Left appError -> sendError appError
         Right userDto -> do
-          Scotty.status created201
-          sendJson userDto
+          status created201
+          json userDto
 
-deleteEventsA :: Context -> DSWConfig -> Scotty.ActionM ()
-deleteEventsA context dswConfig =
+deleteEventsA :: Endpoint
+deleteEventsA = do
+  dswConfig <- lift . asks $ _appContextConfig
+  context <- lift . asks $ _appContextOldContext
   checkPermission context "KM_PERM" $ do
-    branchUuid <- Scotty.param "branchUuid"
+    branchUuid <- param "branchUuid"
     maybeError <- liftIO $ deleteEvents context branchUuid
     case maybeError of
-      Nothing -> Scotty.status noContent204
+      Nothing -> status noContent204
       Just error -> sendError error

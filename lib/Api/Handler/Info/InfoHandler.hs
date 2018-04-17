@@ -1,17 +1,22 @@
 module Api.Handler.Info.InfoHandler where
 
 import Control.Lens ((^.))
-import qualified Web.Scotty as Scotty
+import Control.Monad.Logger
+import Control.Monad.Reader (asks)
+import Control.Monad.Trans.Class (lift)
+import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
 import Api.Resource.Info.InfoDTO
-import Common.Context
 import LensesConfig
 import Model.Config.DSWConfig
+import Model.Context.AppContext
 
-getInfoA :: Context -> DSWConfig -> Scotty.ActionM ()
-getInfoA context dswConfig =
-  sendJson
+getInfoA :: Endpoint
+getInfoA = do
+  lift $ $(logInfo) "Jsem v infoendpointu"
+  dswConfig <- lift $ asks _appContextConfig
+  json
     InfoDTO
     { _idtoName = dswConfig ^. buildInfo ^. appName
     , _idtoVersion = dswConfig ^. buildInfo ^. appVersion
