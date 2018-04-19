@@ -51,7 +51,6 @@ runServer =
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
           lift $ $(logInfo) "DATABASE: connected"
           let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-          liftIO $ runMigration context dswConfig
           let serverPort = dswConfig ^. webConfig ^. port
           let appContext =
                 AppContext
@@ -60,6 +59,7 @@ runServer =
                 , _appContextPool = dbPool
                 , _appContextOldContext = context
                 }
+          runMigration appContext
           liftIO $ runApplication appContext
 
 runApplication :: AppContext -> IO ()
