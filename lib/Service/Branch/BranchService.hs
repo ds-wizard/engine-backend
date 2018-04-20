@@ -23,7 +23,7 @@ import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Event.Event
-import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Service.Branch.BranchMapper
@@ -103,7 +103,11 @@ createBranch context branchDto =
           uuid <- generateUuid
           kmUuid <- generateUuid
           let addKMEvent =
-                AddKnowledgeModelEvent {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = "New knowledge model"}
+                AddKnowledgeModelEvent
+                { _addKnowledgeModelEventUuid = uuid
+                , _addKnowledgeModelEventKmUuid = kmUuid
+                , _addKnowledgeModelEventName = "New knowledge model"
+                }
           insertEventsToBranch context branchUuid [AddKnowledgeModelEvent' addKMEvent]
 
 getBranchById :: Context -> String -> IO (Either AppError BranchWithStateDTO)

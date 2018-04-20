@@ -10,6 +10,7 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Event.EventDTO
+import LensesConfig
 import Model.Context.AppContext
 import Service.Event.EventService
 

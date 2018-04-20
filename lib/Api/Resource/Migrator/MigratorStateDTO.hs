@@ -11,6 +11,7 @@ import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Migrator.Common
 import Common.Types
 import Common.Uuid
+import LensesConfig
 import Model.Migrator.MigratorState
 
 data MigratorStateDTO = MigratorStateDTO

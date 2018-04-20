@@ -28,7 +28,9 @@ import Common.Error
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
+import LensesConfig
 import Model.ActionKey.ActionKey
+import Model.Context.AppContext
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.User.UserService
@@ -38,8 +40,10 @@ import Specs.API.User.Detail_Password_Hash_PUT
 import Specs.API.User.Detail_Password_PUT
 import Specs.Common
 
-userAPI context dswConfig =
-  with (startWebApp context dswConfig) $ do
+userAPI appContext =
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users

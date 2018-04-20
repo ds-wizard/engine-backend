@@ -6,6 +6,7 @@ import Data.Aeson
 import Api.Resource.Error.ErrorDTO
 import Api.Resource.Event.EventDTO
 import Common.Error
+import LensesConfig
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
 

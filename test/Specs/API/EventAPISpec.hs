@@ -1,6 +1,7 @@
 module Specs.API.EventAPISpec where
 
 import Control.Lens
+import Control.Monad.Logger (runNoLoggingT)
 import Crypto.PasswordStore
 import Data.Aeson
 import Data.Aeson (Value(..), (.=), object)
@@ -31,6 +32,7 @@ import qualified Database.Migration.Branch.BranchMigration as KMC
 import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.User.User
@@ -42,7 +44,7 @@ import Service.Migrator.Applicator
 import Specs.API.Common
 import Specs.Common
 
-eventAPI context dswConfig = do
+eventAPI appContext = do
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
@@ -63,7 +65,9 @@ eventAPI context dswConfig = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  with (startWebApp context dswConfig) $ do
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "EVENT API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}/events
@@ -77,8 +81,8 @@ eventAPI context dswConfig = do
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
          do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ KMC.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ KMC.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -103,8 +107,8 @@ eventAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = encode . toDTOs $ events
         it "HTTP 201 CREATED" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ KMC.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ KMC.runMigration appContext
           liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
           -- GIVEN: Prepare expectation
           let expStatus = 201
@@ -134,8 +138,8 @@ eventAPI context dswConfig = do
           [HJ.json| [{ uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" }] |]
           "eventType"
         it "HTTP 400 BAD REQUEST if unsupported event type" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ KMC.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ KMC.runMigration appContext
           liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
           let reqBody =
                 [HJ.json|
@@ -179,8 +183,8 @@ eventAPI context dswConfig = do
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
          do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ KMC.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ KMC.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders

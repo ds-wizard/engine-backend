@@ -9,6 +9,7 @@ import Data.UUID
 import Api.Resource.Event.EventDTO
 import Common.Types
 import Common.Uuid
+import LensesConfig
 
 data PackageWithEventsDTO = PackageWithEventsDTO
   { _pkgwedtoId :: String

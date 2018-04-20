@@ -9,9 +9,8 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
-import Model.Event.Answer.AddAnswerEvent
-import Model.Event.Answer.DeleteAnswerEvent
-import Model.Event.Answer.EditAnswerEvent
+import LensesConfig
+import Model.Event.Answer.AnswerEvent
 
 -- -------------------------
 -- ADD ANSWER EVENT --------
@@ -19,33 +18,33 @@ import Model.Event.Answer.EditAnswerEvent
 instance ToBSON AddAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. aansUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. aansKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. aansChapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. aansQuestionUuid)
-    , "answerUuid" BSON.=: serializeUUID (event ^. aansAnswerUuid)
-    , "label" BSON.=: (event ^. aansLabel)
-    , "advice" BSON.=: (event ^. aansAdvice)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
+    , "label" BSON.=: (event ^. label)
+    , "advice" BSON.=: (event ^. advice)
     ]
 
 instance FromBSON AddAnswerEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
-    label <- BSON.lookup "label" doc
-    advice <- BSON.lookup "advice" doc
+    ansUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    ansKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    ansChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    ansQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    ansAnswerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
+    ansLabel <- BSON.lookup "label" doc
+    ansAdvice <- BSON.lookup "advice" doc
     return
       AddAnswerEvent
-      { _aansUuid = uuid
-      , _aansKmUuid = kmUuid
-      , _aansChapterUuid = chapterUuid
-      , _aansQuestionUuid = questionUuid
-      , _aansAnswerUuid = answerUuid
-      , _aansLabel = label
-      , _aansAdvice = advice
+      { _addAnswerEventUuid = ansUuid
+      , _addAnswerEventKmUuid = ansKmUuid
+      , _addAnswerEventChapterUuid = ansChapterUuid
+      , _addAnswerEventQuestionUuid = ansQuestionUuid
+      , _addAnswerEventAnswerUuid = ansAnswerUuid
+      , _addAnswerEventLabel = ansLabel
+      , _addAnswerEventAdvice = ansAdvice
       }
       -- -------------------------
 
@@ -54,36 +53,36 @@ instance FromBSON AddAnswerEvent where
 instance ToBSON EditAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. eansUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. eansKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. eansChapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. eansQuestionUuid)
-    , "answerUuid" BSON.=: serializeUUID (event ^. eansAnswerUuid)
-    , "label" BSON.=: (event ^. eansLabel)
-    , "advice" BSON.=: (event ^. eansAdvice)
-    , "followUpIds" BSON.=: serializeMaybeUUIDList (event ^. eansFollowUpIds)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
+    , "label" BSON.=: (event ^. label)
+    , "advice" BSON.=: (event ^. advice)
+    , "followUpIds" BSON.=: serializeMaybeUUIDList (event ^. followUpIds)
     ]
 
 instance FromBSON EditAnswerEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
-    label <- BSON.lookup "label" doc
-    advice <- BSON.lookup "advice" doc
-    let followUpIds = deserializeMaybeUUIDList $ BSON.lookup "followUpIds" doc
+    ansUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    ansKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    ansChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    ansQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    ansAnswerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
+    ansLabel <- BSON.lookup "label" doc
+    ansAdvice <- BSON.lookup "advice" doc
+    let ansFollowUpIds = deserializeMaybeUUIDList $ BSON.lookup "followUpIds" doc
     return
       EditAnswerEvent
-      { _eansUuid = uuid
-      , _eansKmUuid = kmUuid
-      , _eansChapterUuid = chapterUuid
-      , _eansQuestionUuid = questionUuid
-      , _eansAnswerUuid = answerUuid
-      , _eansLabel = label
-      , _eansAdvice = advice
-      , _eansFollowUpIds = followUpIds
+      { _editAnswerEventUuid = ansUuid
+      , _editAnswerEventKmUuid = ansKmUuid
+      , _editAnswerEventChapterUuid = ansChapterUuid
+      , _editAnswerEventQuestionUuid = ansQuestionUuid
+      , _editAnswerEventAnswerUuid = ansAnswerUuid
+      , _editAnswerEventLabel = ansLabel
+      , _editAnswerEventAdvice = ansAdvice
+      , _editAnswerEventFollowUpIds = ansFollowUpIds
       }
 
 -- -------------------------
@@ -92,25 +91,25 @@ instance FromBSON EditAnswerEvent where
 instance ToBSON DeleteAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. dansUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. dansKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. dansChapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. dansQuestionUuid)
-    , "answerUuid" BSON.=: serializeUUID (event ^. dansAnswerUuid)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
     ]
 
 instance FromBSON DeleteAnswerEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    questionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
-    answerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
+    ansUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    ansKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    ansChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    ansQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    ansAnswerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     return
       DeleteAnswerEvent
-      { _dansUuid = uuid
-      , _dansKmUuid = kmUuid
-      , _dansChapterUuid = chapterUuid
-      , _dansQuestionUuid = questionUuid
-      , _dansAnswerUuid = answerUuid
+      { _deleteAnswerEventUuid = ansUuid
+      , _deleteAnswerEventKmUuid = ansKmUuid
+      , _deleteAnswerEventChapterUuid = ansChapterUuid
+      , _deleteAnswerEventQuestionUuid = ansQuestionUuid
+      , _deleteAnswerEventAnswerUuid = ansAnswerUuid
       }

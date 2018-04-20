@@ -14,9 +14,9 @@ import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
 import Model.Common
-import Model.Event.Chapter.AddChapterEvent
+import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Migrator.Applicator
 

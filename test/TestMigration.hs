@@ -12,12 +12,16 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
+import LensesConfig
+import Model.Context.AppContext
 import Model.Organization.Organization
 import Model.User.User
 import Service.Organization.OrganizationService
 import Service.User.UserService
 
-createUserDarth context dswConfig = do
+createUserDarth appContext = do
+  let context = appContext ^. oldContext
+  let dswConfig = appContext ^. config
   createUserWithGivenUuid
     context
     dswConfig
@@ -35,7 +39,9 @@ createUserDarth context dswConfig = do
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser
 
-createUserLuke context dswConfig = do
+createUserLuke appContext = do
+  let context = appContext ^. oldContext
+  let dswConfig = appContext ^. config
   createUserWithGivenUuid
     context
     dswConfig
@@ -53,9 +59,11 @@ createUserLuke context dswConfig = do
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser
 
-resetDB context dswConfig = do
+resetDB appContext = do
+  let context = appContext ^. oldContext
+  let dswConfig = appContext ^. config
   deleteUsers context
-  createUserDarth context dswConfig
+  createUserDarth appContext
   deleteOrganizations context
   insertOrganization
     context

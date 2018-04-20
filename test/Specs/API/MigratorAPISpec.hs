@@ -1,6 +1,7 @@
 module Specs.API.MigratorAPISpec where
 
 import Control.Lens
+import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
@@ -33,9 +34,10 @@ import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
-import Model.Event.Chapter.AddChapterEvent
+import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Migrator.MigratorState
 import Model.Package.Package
@@ -47,8 +49,10 @@ import Service.Migrator.MigratorService
 import Specs.API.Common
 import Specs.Common
 
-migratorAPI context dswConfig = do
-  with (startWebApp context dswConfig) $ do
+migratorAPI appContext = do
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "MIGRATOR API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}/migrations/current
@@ -78,8 +82,8 @@ migratorAPI context dswConfig = do
                 }
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
@@ -100,8 +104,8 @@ migratorAPI context dswConfig = do
           let expDto = NotExistsError "Entity does not exist"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -124,7 +128,7 @@ migratorAPI context dswConfig = do
         let reqDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
         let reqBody = encode reqDto
         it "HTTP 201 CREATED" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -139,8 +143,8 @@ migratorAPI context dswConfig = do
                 }
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -167,8 +171,8 @@ migratorAPI context dswConfig = do
           let expDto = MigratorError "Migration is already created"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -188,8 +192,8 @@ migratorAPI context dswConfig = do
           let expDto = MigratorError "Target parent package doesn’t exist"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
@@ -212,8 +216,8 @@ migratorAPI context dswConfig = do
           let expDto = MigratorError "Target Package is not higher than current one"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context (elixirNlPackage2Dto & pkgweVersion .~ "elixir.nl:core-nl:0.9.0")
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -231,7 +235,7 @@ migratorAPI context dswConfig = do
           let expDto = MigratorError "Branch has to have a parent"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           let branch =
                 BranchDTO
                 { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
@@ -270,8 +274,8 @@ migratorAPI context dswConfig = do
           let expStatus = 204
           let expHeaders = resCorsHeaders
            -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
@@ -301,20 +305,20 @@ migratorAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
               MigratorConflictDTO
-              { _mcdtoOriginalEventUuid = a_km1_ch3 ^. achUuid
+              { _mcdtoOriginalEventUuid = a_km1_ch3 ^. uuid
               , _mcdtoAction = MCAEdited
               , _mcdtoEvent = Just . toDTOFn . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
               }
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
           let expBody = ""
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -338,7 +342,7 @@ migratorAPI context dswConfig = do
           [HJ.json| { originalEventUuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |]
           "action"
         it "HTTP 400 BAD REQUEST when originalEventUuid doesn't match with current target event" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -348,8 +352,8 @@ migratorAPI context dswConfig = do
                 reqDto & mcdtoOriginalEventUuid .~ (fromJust . U.fromString $ "30ac5193-5685-41b1-86d7-ab0b356c516a")
           let reqBodyEdited = encode reqDtoEdited
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -362,7 +366,7 @@ migratorAPI context dswConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when edit action has to provide target event" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -371,8 +375,8 @@ migratorAPI context dswConfig = do
           let reqDtoEdited = reqDto & mcdtoEvent .~ Nothing
           let reqBodyEdited = encode reqDtoEdited
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
@@ -385,15 +389,15 @@ migratorAPI context dswConfig = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when you can't solve conflicts because Migration state isn't in conflict state" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto = MigratorError "You can't solve conflicts because Migration state isn't in conflict state"
           let expBody = encode expDto
           -- AND: Prepare database
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context

@@ -20,12 +20,16 @@ import qualified Web.Scotty as S
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Error
+import LensesConfig
+import Model.Context.AppContext
 
 import Specs.API.Common
 import Specs.Common
 
-tokenAPI context dswConfig =
-  with (startWebApp context dswConfig) $ do
+tokenAPI appContext =
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "TOKEN API Spec" $
       -- ------------------------------------------------------------------------
       -- POST /tokens

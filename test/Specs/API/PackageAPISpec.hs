@@ -1,6 +1,7 @@
 module Specs.API.PackageAPISpec where
 
 import Control.Lens
+import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
@@ -26,6 +27,7 @@ import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Model.Package.Package
 import Service.Package.PackageMapper
 import Service.Package.PackageService
@@ -33,7 +35,7 @@ import Service.Package.PackageService
 import Specs.API.Common
 import Specs.Common
 
-packageAPI context dswConfig = do
+packageAPI appContext = do
   let dto1 =
         PackageDTO
         { _pkgdtoId = "elixir.base:core:0.0.1"
@@ -74,7 +76,9 @@ packageAPI context dswConfig = do
         , _pkgdtoDescription = "Second Release"
         , _pkgdtoParentPackageId = Just $ dto3 ^. pkgdtoId
         }
-  with (startWebApp context dswConfig) $
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /packages
@@ -88,7 +92,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -113,7 +117,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
         -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -138,7 +142,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
            -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -164,7 +168,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           liftIO $ deleteBranches context
           -- GIVEN: Prepare expectation
           let expStatus = 204
@@ -182,8 +186,8 @@ packageAPI context dswConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -216,7 +220,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -235,8 +239,8 @@ packageAPI context dswConfig = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -269,7 +273,7 @@ packageAPI context dswConfig = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
         -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -291,8 +295,8 @@ packageAPI context dswConfig = do
          do
           let reqUrl = "/packages/elixir.nl:core-nl:1.0.0"
           -- AND: Prepare DB
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders

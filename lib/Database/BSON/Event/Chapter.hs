@@ -8,9 +8,8 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
-import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Chapter.DeleteChapterEvent
-import Model.Event.Chapter.EditChapterEvent
+import LensesConfig
+import Model.Event.Chapter.ChapterEvent
 
 -- -------------------------
 -- ADD CHAPTER EVENT--------
@@ -18,23 +17,28 @@ import Model.Event.Chapter.EditChapterEvent
 instance ToBSON AddChapterEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddChapterEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. achUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. achKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. achChapterUuid)
-    , "title" BSON.=: (event ^. achTitle)
-    , "text" BSON.=: (event ^. achText)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "title" BSON.=: (event ^. title)
+    , "text" BSON.=: (event ^. text)
     ]
 
 instance FromBSON AddChapterEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    title <- BSON.lookup "title" doc
-    text <- BSON.lookup "text" doc
+    chUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    chKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    chChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    chTitle <- BSON.lookup "title" doc
+    chText <- BSON.lookup "text" doc
     return
       AddChapterEvent
-      {_achUuid = uuid, _achKmUuid = kmUuid, _achChapterUuid = chapterUuid, _achTitle = title, _achText = text}
+      { _addChapterEventUuid = chUuid
+      , _addChapterEventKmUuid = chKmUuid
+      , _addChapterEventChapterUuid = chChapterUuid
+      , _addChapterEventTitle = chTitle
+      , _addChapterEventText = chText
+      }
 
 -- -------------------------
 -- EDIT CHAPTER EVENT-------
@@ -42,30 +46,30 @@ instance FromBSON AddChapterEvent where
 instance ToBSON EditChapterEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditChapterEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. echUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. echKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. echChapterUuid)
-    , "title" BSON.=: (event ^. echTitle)
-    , "text" BSON.=: (event ^. echText)
-    , "questionIds" BSON.=: serializeMaybeUUIDList (event ^. echQuestionIds)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "title" BSON.=: (event ^. title)
+    , "text" BSON.=: (event ^. text)
+    , "questionIds" BSON.=: serializeMaybeUUIDList (event ^. questionIds)
     ]
 
 instance FromBSON EditChapterEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    title <- BSON.lookup "title" doc
-    text <- BSON.lookup "text" doc
-    let questionIds = deserializeMaybeUUIDList $ BSON.lookup "questionIds" doc
+    chUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    chKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    chChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    chTitle <- BSON.lookup "title" doc
+    chText <- BSON.lookup "text" doc
+    let chQuestionIds = deserializeMaybeUUIDList $ BSON.lookup "questionIds" doc
     return
       EditChapterEvent
-      { _echUuid = uuid
-      , _echKmUuid = kmUuid
-      , _echChapterUuid = chapterUuid
-      , _echTitle = title
-      , _echText = text
-      , _echQuestionIds = questionIds
+      { _editChapterEventUuid = chUuid
+      , _editChapterEventKmUuid = chKmUuid
+      , _editChapterEventChapterUuid = chChapterUuid
+      , _editChapterEventTitle = chTitle
+      , _editChapterEventText = chText
+      , _editChapterEventQuestionIds = chQuestionIds
       }
 
 -- -------------------------
@@ -74,14 +78,19 @@ instance FromBSON EditChapterEvent where
 instance ToBSON DeleteChapterEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteChapterEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. dchUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. dchKmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. dchChapterUuid)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
     ]
 
 instance FromBSON DeleteChapterEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    chapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    return DeleteChapterEvent {_dchUuid = uuid, _dchKmUuid = kmUuid, _dchChapterUuid = chapterUuid}
+    chUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    chKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    chChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
+    return
+      DeleteChapterEvent
+      { _deleteChapterEventUuid = chUuid
+      , _deleteChapterEventKmUuid = chKmUuid
+      , _deleteChapterEventChapterUuid = chChapterUuid
+      }

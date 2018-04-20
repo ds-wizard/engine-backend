@@ -21,14 +21,18 @@ import qualified Web.Scotty as S
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Database.DAO.Organization.OrganizationDAO
+import LensesConfig
+import Model.Context.AppContext
 import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
 import Specs.API.Common
 import Specs.Common
 
-organizationAPI context dswConfig =
-  with (startWebApp context dswConfig) $ do
+organizationAPI appContext =
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "ORGANIZATION API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /organizations/current

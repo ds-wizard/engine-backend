@@ -1,5 +1,6 @@
 module Specs.API.InfoAPISpec where
 
+import Control.Lens ((^.))
 import Data.Aeson (Value(..), (.=), object)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,11 +11,16 @@ import Test.Hspec.Wai.JSON
 import Test.Hspec.Wai.Matcher
 import qualified Web.Scotty as S
 
+import LensesConfig
+import Model.Context.AppContext
+
 import Specs.API.Common
 import Specs.Common
 
-infoAPI context dswConfig =
-  with (startWebApp context dswConfig) $ do
+infoAPI appContext =
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "INFO API Spec" $
       describe "GET /" $ do
         it "HTTP 200 OK" $

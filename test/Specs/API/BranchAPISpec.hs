@@ -1,6 +1,7 @@
 module Specs.API.BranchAPISpec where
 
 import Control.Lens
+import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
@@ -25,16 +26,20 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
+import Model.Context.AppContext
 import Model.Package.Package
 import Service.Branch.BranchService
 
 import Specs.API.Common
 import Specs.Common
 
-branchAPI context dswConfig = do
-  with (startWebApp context dswConfig) $ do
+branchAPI appContext = do
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "BRANCH API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches
@@ -100,7 +105,7 @@ branchAPI context dswConfig = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders

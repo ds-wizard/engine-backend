@@ -12,6 +12,7 @@ import Common.ConfigLoader
 import Common.Context
 import Database.Connection
 import Model.Config.DSWConfig
+import Model.Context.AppContext
 
 import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
@@ -49,12 +50,19 @@ prepareWebApp runCallback = do
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
         let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-        runCallback context dswConfig
+        let appContext =
+              AppContext
+              { _appContextEnvironment = Test
+              , _appContextConfig = dswConfig
+              , _appContextPool = dbPool
+              , _appContextOldContext = context
+              }
+        runCallback appContext
 
 main :: IO ()
 main =
   prepareWebApp
-    (\context dswConfig ->
+    (\appContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
            commonUtilsSpec
@@ -65,17 +73,17 @@ main =
            organizationServiceSpec
            branchServiceSpec
            packageServiceSpec
-         before (resetDB context dswConfig) $
+         before (resetDB appContext) $
            describe "INTEGRATION TESTING" $ do
-             describe "Service tests" $ branchServiceIntegrationSpec context dswConfig
+             describe "Service tests" $ branchServiceIntegrationSpec appContext
              describe "API Tests" $ do
-               infoAPI context dswConfig
-               tokenAPI context dswConfig
-               organizationAPI context dswConfig
-               userAPI context dswConfig
-               branchAPI context dswConfig
-               knowledgeModelAPI context dswConfig
-               eventAPI context dswConfig
-               versionAPI context dswConfig
-               packageAPI context dswConfig
-               migratorAPI context dswConfig)
+               infoAPI appContext
+               tokenAPI appContext
+               organizationAPI appContext
+               userAPI appContext
+               branchAPI appContext
+               knowledgeModelAPI appContext
+               eventAPI appContext
+               versionAPI appContext
+               packageAPI appContext
+               migratorAPI appContext)

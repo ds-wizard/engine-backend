@@ -5,27 +5,16 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Common.Types
+import LensesConfig
 import Model.Common
-import Model.Event.Answer.AddAnswerEvent
-import Model.Event.Answer.DeleteAnswerEvent
-import Model.Event.Answer.EditAnswerEvent
-import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Chapter.DeleteChapterEvent
-import Model.Event.Chapter.EditChapterEvent
-import Model.Event.Expert.AddExpertEvent
-import Model.Event.Expert.DeleteExpertEvent
-import Model.Event.Expert.EditExpertEvent
-import Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
-import Model.Event.Question.AddQuestionEvent
-import Model.Event.Question.DeleteQuestionEvent
-import Model.Event.Question.EditQuestionEvent
-import Model.Event.Reference.AddReferenceEvent
-import Model.Event.Reference.DeleteReferenceEvent
-import Model.Event.Reference.EditReferenceEvent
+import Model.Event.Answer.AnswerEvent
+import Model.Event.Chapter.ChapterEvent
+import Model.Event.EventField
+import Model.Event.Expert.ExpertEvent
+import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Model.Event.Question.QuestionEvent
+import Model.Event.Reference.ReferenceEvent
 
 data Event
   = AddKnowledgeModelEvent' AddKnowledgeModelEvent
@@ -80,45 +69,45 @@ isDeleteAction (DeleteFollowUpQuestionEvent' _) = True
 isDeleteAction _ = False
 
 getEventUuid :: Event -> U.UUID
-getEventUuid (AddKnowledgeModelEvent' event) = event ^. akmUuid
-getEventUuid (EditKnowledgeModelEvent' event) = event ^. ekmUuid
-getEventUuid (AddChapterEvent' event) = event ^. achUuid
-getEventUuid (EditChapterEvent' event) = event ^. echUuid
-getEventUuid (DeleteChapterEvent' event) = event ^. dchUuid
-getEventUuid (AddQuestionEvent' event) = event ^. aqUuid
-getEventUuid (EditQuestionEvent' event) = event ^. eqUuid
-getEventUuid (DeleteQuestionEvent' event) = event ^. dqUuid
-getEventUuid (AddAnswerEvent' event) = event ^. aansUuid
-getEventUuid (EditAnswerEvent' event) = event ^. eansUuid
-getEventUuid (DeleteAnswerEvent' event) = event ^. dansUuid
-getEventUuid (AddExpertEvent' event) = event ^. aexpUuid
-getEventUuid (EditExpertEvent' event) = event ^. eexpUuid
-getEventUuid (DeleteExpertEvent' event) = event ^. dexpUuid
-getEventUuid (AddReferenceEvent' event) = event ^. arefUuid
-getEventUuid (EditReferenceEvent' event) = event ^. erefUuid
-getEventUuid (DeleteReferenceEvent' event) = event ^. drefUuid
-getEventUuid (AddFollowUpQuestionEvent' event) = event ^. afuqUuid
-getEventUuid (EditFollowUpQuestionEvent' event) = event ^. efuqUuid
-getEventUuid (DeleteFollowUpQuestionEvent' event) = event ^. dfuqUuid
+getEventUuid (AddKnowledgeModelEvent' event) = event ^. uuid
+getEventUuid (EditKnowledgeModelEvent' event) = event ^. uuid
+getEventUuid (AddChapterEvent' event) = event ^. uuid
+getEventUuid (EditChapterEvent' event) = event ^. uuid
+getEventUuid (DeleteChapterEvent' event) = event ^. uuid
+getEventUuid (AddQuestionEvent' event) = event ^. uuid
+getEventUuid (EditQuestionEvent' event) = event ^. uuid
+getEventUuid (DeleteQuestionEvent' event) = event ^. uuid
+getEventUuid (AddAnswerEvent' event) = event ^. uuid
+getEventUuid (EditAnswerEvent' event) = event ^. uuid
+getEventUuid (DeleteAnswerEvent' event) = event ^. uuid
+getEventUuid (AddExpertEvent' event) = event ^. uuid
+getEventUuid (EditExpertEvent' event) = event ^. uuid
+getEventUuid (DeleteExpertEvent' event) = event ^. uuid
+getEventUuid (AddReferenceEvent' event) = event ^. uuid
+getEventUuid (EditReferenceEvent' event) = event ^. uuid
+getEventUuid (DeleteReferenceEvent' event) = event ^. uuid
+getEventUuid (AddFollowUpQuestionEvent' event) = event ^. uuid
+getEventUuid (EditFollowUpQuestionEvent' event) = event ^. uuid
+getEventUuid (DeleteFollowUpQuestionEvent' event) = event ^. uuid
 
 getEventNodeUuid :: Event -> U.UUID
-getEventNodeUuid (AddKnowledgeModelEvent' event) = event ^. akmKmUuid
-getEventNodeUuid (EditKnowledgeModelEvent' event) = event ^. ekmKmUuid
-getEventNodeUuid (AddChapterEvent' event) = event ^. achChapterUuid
-getEventNodeUuid (EditChapterEvent' event) = event ^. echChapterUuid
-getEventNodeUuid (DeleteChapterEvent' event) = event ^. dchChapterUuid
-getEventNodeUuid (AddQuestionEvent' event) = event ^. aqQuestionUuid
-getEventNodeUuid (EditQuestionEvent' event) = event ^. eqQuestionUuid
-getEventNodeUuid (DeleteQuestionEvent' event) = event ^. dqQuestionUuid
-getEventNodeUuid (AddAnswerEvent' event) = event ^. aansAnswerUuid
-getEventNodeUuid (EditAnswerEvent' event) = event ^. eansAnswerUuid
-getEventNodeUuid (DeleteAnswerEvent' event) = event ^. dansAnswerUuid
-getEventNodeUuid (AddExpertEvent' event) = event ^. aexpExpertUuid
-getEventNodeUuid (EditExpertEvent' event) = event ^. eexpExpertUuid
-getEventNodeUuid (DeleteExpertEvent' event) = event ^. dexpExpertUuid
-getEventNodeUuid (AddReferenceEvent' event) = event ^. arefReferenceUuid
-getEventNodeUuid (EditReferenceEvent' event) = event ^. erefReferenceUuid
-getEventNodeUuid (DeleteReferenceEvent' event) = event ^. drefReferenceUuid
-getEventNodeUuid (AddFollowUpQuestionEvent' event) = event ^. afuqQuestionUuid
-getEventNodeUuid (EditFollowUpQuestionEvent' event) = event ^. efuqQuestionUuid
-getEventNodeUuid (DeleteFollowUpQuestionEvent' event) = event ^. dfuqQuestionUuid
+getEventNodeUuid (AddKnowledgeModelEvent' event) = event ^. kmUuid
+getEventNodeUuid (EditKnowledgeModelEvent' event) = event ^. kmUuid
+getEventNodeUuid (AddChapterEvent' event) = event ^. chapterUuid
+getEventNodeUuid (EditChapterEvent' event) = event ^. chapterUuid
+getEventNodeUuid (DeleteChapterEvent' event) = event ^. chapterUuid
+getEventNodeUuid (AddQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (EditQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (DeleteQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (AddAnswerEvent' event) = event ^. answerUuid
+getEventNodeUuid (EditAnswerEvent' event) = event ^. answerUuid
+getEventNodeUuid (DeleteAnswerEvent' event) = event ^. answerUuid
+getEventNodeUuid (AddExpertEvent' event) = event ^. expertUuid
+getEventNodeUuid (EditExpertEvent' event) = event ^. expertUuid
+getEventNodeUuid (DeleteExpertEvent' event) = event ^. expertUuid
+getEventNodeUuid (AddReferenceEvent' event) = event ^. referenceUuid
+getEventNodeUuid (EditReferenceEvent' event) = event ^. referenceUuid
+getEventNodeUuid (DeleteReferenceEvent' event) = event ^. referenceUuid
+getEventNodeUuid (AddFollowUpQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (EditFollowUpQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (DeleteFollowUpQuestionEvent' event) = event ^. questionUuid

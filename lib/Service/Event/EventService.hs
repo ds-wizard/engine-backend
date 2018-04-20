@@ -14,6 +14,7 @@ import Common.Uuid
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Package.PackageDAO
+import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel

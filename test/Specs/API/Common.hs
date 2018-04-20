@@ -31,16 +31,9 @@ import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 
-startWebApp :: Context -> DSWConfig -> IO Application
-startWebApp context dswConfig = do
-  let appContext =
-        AppContext
-        { _appContextEnvironment = Test
-        , _appContextConfig = dswConfig
-        , _appContextPool = context ^. ctxDbPool
-        , _appContextOldContext = context
-        }
-      t m = runStdoutLoggingT $ runReaderT (runAppContextM m) appContext
+startWebApp :: AppContext -> IO Application
+startWebApp appContext = do
+  let t m = runStdoutLoggingT $ runReaderT (runAppContextM m) appContext
   scottyAppT t (createEndpoints appContext)
 
 reqAuthHeader :: Header

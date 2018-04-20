@@ -1,6 +1,7 @@
 module Service.Event.EventMapper where
 
 import Api.Resource.Event.EventDTO
+import LensesConfig
 import Model.Event.Event
 import Service.Event.EventFromDTO
 import Service.Event.EventToDTO

@@ -1,6 +1,7 @@
 module Specs.API.VersionAPISpec where
 
 import Control.Lens
+import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Aeson (Value(..), (.=), object)
 import Data.ByteString.Lazy
@@ -23,13 +24,16 @@ import Api.Resource.Version.VersionDTO
 import Common.Error
 import qualified Database.Migration.Branch.BranchMigration as B
 import qualified Database.Migration.Package.PackageMigration as PKG
+import LensesConfig
 import Service.Package.PackageService
 
 import Specs.API.Common
 import Specs.Common
 
-versionAPI context dswConfig =
-  with (startWebApp context dswConfig) $ do
+versionAPI appContext =
+  with (startWebApp appContext) $ do
+    let context = appContext ^. oldContext
+    let dswConfig = appContext ^. config
     describe "VERSION API Spec" $
       -- ------------------------------------------------------------------------
       -- PUT /branches/{branchUuid}/versions/{version}
@@ -44,8 +48,8 @@ versionAPI context dswConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -81,8 +85,8 @@ versionAPI context dswConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -104,8 +108,8 @@ versionAPI context dswConfig =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO $ PKG.runMigration context dswConfig fakeLogState
-          liftIO $ B.runMigration context dswConfig fakeLogState
+          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ createPackageFromKMC context "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc"
           -- GIVEN: Prepare expectation
           let expStatus = 400

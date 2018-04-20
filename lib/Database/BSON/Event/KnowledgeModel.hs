@@ -8,8 +8,8 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
-import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
+import LensesConfig
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
 
 -- -------------------------------
 -- ADD KNOWLEDGE MODEL EVENT -----
@@ -17,17 +17,22 @@ import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
 instance ToBSON AddKnowledgeModelEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddKnowledgeModelEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. akmUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. akmKmUuid)
-    , "name" BSON.=: (event ^. akmName)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "name" BSON.=: (event ^. name)
     ]
 
 instance FromBSON AddKnowledgeModelEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    name <- BSON.lookup "name" doc
-    return AddKnowledgeModelEvent {_akmUuid = uuid, _akmKmUuid = kmUuid, _akmName = name}
+    kmUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    kmKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    kmName <- BSON.lookup "name" doc
+    return
+      AddKnowledgeModelEvent
+      { _addKnowledgeModelEventUuid = kmUuid
+      , _addKnowledgeModelEventKmUuid = kmKmUuid
+      , _addKnowledgeModelEventName = kmName
+      }
 
 -- -------------------------------
 -- EDIT KNOWLEDGE MODEL EVENT ----
@@ -35,16 +40,22 @@ instance FromBSON AddKnowledgeModelEvent where
 instance ToBSON EditKnowledgeModelEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditKnowledgeModelEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. ekmUuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. ekmKmUuid)
-    , "name" BSON.=: (event ^. ekmName)
-    , "chapterIds" BSON.=: serializeMaybeUUIDList (event ^. ekmChapterIds)
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
+    , "name" BSON.=: (event ^. name)
+    , "chapterIds" BSON.=: serializeMaybeUUIDList (event ^. chapterIds)
     ]
 
 instance FromBSON EditKnowledgeModelEvent where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    kmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    name <- BSON.lookup "name" doc
-    let chapterIds = deserializeMaybeUUIDList $ BSON.lookup "chapterIds" doc
-    return EditKnowledgeModelEvent {_ekmUuid = uuid, _ekmKmUuid = kmUuid, _ekmName = name, _ekmChapterIds = chapterIds}
+    kmUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    kmKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
+    kmName <- BSON.lookup "name" doc
+    let kmChapterIds = deserializeMaybeUUIDList $ BSON.lookup "chapterIds" doc
+    return
+      EditKnowledgeModelEvent
+      { _editKnowledgeModelEventUuid = kmUuid
+      , _editKnowledgeModelEventKmUuid = kmKmUuid
+      , _editKnowledgeModelEventName = kmName
+      , _editKnowledgeModelEventChapterIds = kmChapterIds
+      }

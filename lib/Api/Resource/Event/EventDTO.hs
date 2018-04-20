@@ -88,271 +88,235 @@ instance FromJSON EventDTO where
 -- Knowledge Model ---------
 -- -------------------------
 data AddKnowledgeModelEventDTO = AddKnowledgeModelEventDTO
-  { _akmdtoUuid :: UUID
-  , _akmdtoKmUuid :: UUID
-  , _akmdtoName :: String
+  { _addKnowledgeModelEventDTOUuid :: UUID
+  , _addKnowledgeModelEventDTOKmUuid :: UUID
+  , _addKnowledgeModelEventDTOName :: String
   } deriving (Show, Eq, Generic)
 
 data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
-  { _ekmdtoUuid :: UUID
-  , _ekmdtoKmUuid :: UUID
-  , _ekmdtoName :: Maybe String
-  , _ekmdtoChapterIds :: Maybe [UUID]
+  { _editKnowledgeModelEventDTOUuid :: UUID
+  , _editKnowledgeModelEventDTOKmUuid :: UUID
+  , _editKnowledgeModelEventDTOName :: Maybe String
+  , _editKnowledgeModelEventDTOChapterIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Chapter -----------------
 -- -------------------------
 data AddChapterEventDTO = AddChapterEventDTO
-  { _achdtoUuid :: UUID
-  , _achdtoKmUuid :: UUID
-  , _achdtoChapterUuid :: UUID
-  , _achdtoTitle :: String
-  , _achdtoText :: String
+  { _addChapterEventDTOUuid :: UUID
+  , _addChapterEventDTOKmUuid :: UUID
+  , _addChapterEventDTOChapterUuid :: UUID
+  , _addChapterEventDTOTitle :: String
+  , _addChapterEventDTOText :: String
   } deriving (Show, Eq, Generic)
 
 data EditChapterEventDTO = EditChapterEventDTO
-  { _echdtoUuid :: UUID
-  , _echdtoKmUuid :: UUID
-  , _echdtoChapterUuid :: UUID
-  , _echdtoTitle :: Maybe String
-  , _echdtoText :: Maybe String
-  , _echdtoQuestionIds :: Maybe [UUID]
+  { _editChapterEventDTOUuid :: UUID
+  , _editChapterEventDTOKmUuid :: UUID
+  , _editChapterEventDTOChapterUuid :: UUID
+  , _editChapterEventDTOTitle :: Maybe String
+  , _editChapterEventDTOText :: Maybe String
+  , _editChapterEventDTOQuestionIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEventDTO = DeleteChapterEventDTO
-  { _dchdtoUuid :: UUID
-  , _dchdtoKmUuid :: UUID
-  , _dchdtoChapterUuid :: UUID
+  { _deleteChapterEventDTOUuid :: UUID
+  , _deleteChapterEventDTOKmUuid :: UUID
+  , _deleteChapterEventDTOChapterUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Question ----------------
 -- -------------------------
 data AddQuestionEventDTO = AddQuestionEventDTO
-  { _aqdtoUuid :: UUID
-  , _aqdtoKmUuid :: UUID
-  , _aqdtoChapterUuid :: UUID
-  , _aqdtoQuestionUuid :: UUID
-  , _aqdtoShortQuestionUuid :: Maybe String
-  , _aqdtoType :: QuestionType
-  , _aqdtoTitle :: String
-  , _aqdtoText :: String
+  { _addQuestionEventDTOUuid :: UUID
+  , _addQuestionEventDTOKmUuid :: UUID
+  , _addQuestionEventDTOChapterUuid :: UUID
+  , _addQuestionEventDTOQuestionUuid :: UUID
+  , _addQuestionEventDTOShortQuestionUuid :: Maybe String
+  , _addQuestionEventDTOQType :: QuestionType
+  , _addQuestionEventDTOTitle :: String
+  , _addQuestionEventDTOText :: String
   } deriving (Show, Eq, Generic)
 
 data EditQuestionEventDTO = EditQuestionEventDTO
-  { _eqdtoUuid :: UUID
-  , _eqdtoKmUuid :: UUID
-  , _eqdtoChapterUuid :: UUID
-  , _eqdtoQuestionUuid :: UUID
-  , _eqdtoShortQuestionUuid :: Maybe (Maybe String)
-  , _eqdtoType :: Maybe QuestionType
-  , _eqdtoTitle :: Maybe String
-  , _eqdtoText :: Maybe String
-  , _eqdtoAnswerIds :: Maybe [UUID]
-  , _eqdtoExpertIds :: Maybe [UUID]
-  , _eqdtoReferenceIds :: Maybe [UUID]
+  { _editQuestionEventDTOUuid :: UUID
+  , _editQuestionEventDTOKmUuid :: UUID
+  , _editQuestionEventDTOChapterUuid :: UUID
+  , _editQuestionEventDTOQuestionUuid :: UUID
+  , _editQuestionEventDTOShortQuestionUuid :: Maybe (Maybe String)
+  , _editQuestionEventDTOQType :: Maybe QuestionType
+  , _editQuestionEventDTOTitle :: Maybe String
+  , _editQuestionEventDTOText :: Maybe String
+  , _editQuestionEventDTOAnswerIds :: Maybe [UUID]
+  , _editQuestionEventDTOExpertIds :: Maybe [UUID]
+  , _editQuestionEventDTOReferenceIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEventDTO = DeleteQuestionEventDTO
-  { _dqdtoUuid :: UUID
-  , _dqdtoKmUuid :: UUID
-  , _dqdtoChapterUuid :: UUID
-  , _dqdtoQuestionUuid :: UUID
+  { _deleteQuestionEventDTOUuid :: UUID
+  , _deleteQuestionEventDTOKmUuid :: UUID
+  , _deleteQuestionEventDTOChapterUuid :: UUID
+  , _deleteQuestionEventDTOQuestionUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Answer ------------------
 -- -------------------------
 data AddAnswerEventDTO = AddAnswerEventDTO
-  { _aansdtoUuid :: UUID
-  , _aansdtoKmUuid :: UUID
-  , _aansdtoChapterUuid :: UUID
-  , _aansdtoQuestionUuid :: UUID
-  , _aansdtoAnswerUuid :: UUID
-  , _aansdtoLabel :: String
-  , _aansdtoAdvice :: Maybe String
+  { _addAnswerEventDTOUuid :: UUID
+  , _addAnswerEventDTOKmUuid :: UUID
+  , _addAnswerEventDTOChapterUuid :: UUID
+  , _addAnswerEventDTOQuestionUuid :: UUID
+  , _addAnswerEventDTOAnswerUuid :: UUID
+  , _addAnswerEventDTOLabel :: String
+  , _addAnswerEventDTOAdvice :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data EditAnswerEventDTO = EditAnswerEventDTO
-  { _eansdtoUuid :: UUID
-  , _eansdtoKmUuid :: UUID
-  , _eansdtoChapterUuid :: UUID
-  , _eansdtoQuestionUuid :: UUID
-  , _eansdtoAnswerUuid :: UUID
-  , _eansdtoLabel :: Maybe String
-  , _eansdtoAdvice :: Maybe (Maybe String)
-  , _eansdtoFollowUpIds :: Maybe [UUID]
+  { _editAnswerEventDTOUuid :: UUID
+  , _editAnswerEventDTOKmUuid :: UUID
+  , _editAnswerEventDTOChapterUuid :: UUID
+  , _editAnswerEventDTOQuestionUuid :: UUID
+  , _editAnswerEventDTOAnswerUuid :: UUID
+  , _editAnswerEventDTOLabel :: Maybe String
+  , _editAnswerEventDTOAdvice :: Maybe (Maybe String)
+  , _editAnswerEventDTOFollowUpIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEventDTO = DeleteAnswerEventDTO
-  { _dansdtoUuid :: UUID
-  , _dansdtoKmUuid :: UUID
-  , _dansdtoChapterUuid :: UUID
-  , _dansdtoQuestionUuid :: UUID
-  , _dansdtoAnswerUuid :: UUID
+  { _deleteAnswerEventDTOUuid :: UUID
+  , _deleteAnswerEventDTOKmUuid :: UUID
+  , _deleteAnswerEventDTOChapterUuid :: UUID
+  , _deleteAnswerEventDTOQuestionUuid :: UUID
+  , _deleteAnswerEventDTOAnswerUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Expert ------------------
 -- -------------------------
 data AddExpertEventDTO = AddExpertEventDTO
-  { _aexpdtoUuid :: UUID
-  , _aexpdtoKmUuid :: UUID
-  , _aexpdtoChapterUuid :: UUID
-  , _aexpdtoQuestionUuid :: UUID
-  , _aexpdtoExpertUuid :: UUID
-  , _aexpdtoName :: String
-  , _aexpdtoEmail :: String
+  { _addExpertEventDTOUuid :: UUID
+  , _addExpertEventDTOKmUuid :: UUID
+  , _addExpertEventDTOChapterUuid :: UUID
+  , _addExpertEventDTOQuestionUuid :: UUID
+  , _addExpertEventDTOExpertUuid :: UUID
+  , _addExpertEventDTOName :: String
+  , _addExpertEventDTOEmail :: String
   } deriving (Show, Eq, Generic)
 
 data EditExpertEventDTO = EditExpertEventDTO
-  { _eexpdtoUuid :: UUID
-  , _eexpdtoKmUuid :: UUID
-  , _eexpdtoChapterUuid :: UUID
-  , _eexpdtoQuestionUuid :: UUID
-  , _eexpdtoExpertUuid :: UUID
-  , _eexpdtoName :: Maybe String
-  , _eexpdtoEmail :: Maybe String
+  { _editExpertEventDTOUuid :: UUID
+  , _editExpertEventDTOKmUuid :: UUID
+  , _editExpertEventDTOChapterUuid :: UUID
+  , _editExpertEventDTOQuestionUuid :: UUID
+  , _editExpertEventDTOExpertUuid :: UUID
+  , _editExpertEventDTOName :: Maybe String
+  , _editExpertEventDTOEmail :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data DeleteExpertEventDTO = DeleteExpertEventDTO
-  { _dexpdtoUuid :: UUID
-  , _dexpdtoKmUuid :: UUID
-  , _dexpdtoChapterUuid :: UUID
-  , _dexpdtoQuestionUuid :: UUID
-  , _dexpdtoExpertUuid :: UUID
+  { _deleteExpertEventDTOUuid :: UUID
+  , _deleteExpertEventDTOKmUuid :: UUID
+  , _deleteExpertEventDTOChapterUuid :: UUID
+  , _deleteExpertEventDTOQuestionUuid :: UUID
+  , _deleteExpertEventDTOExpertUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Reference ---------------
 -- -------------------------
 data AddReferenceEventDTO = AddReferenceEventDTO
-  { _arefdtoUuid :: UUID
-  , _arefdtoKmUuid :: UUID
-  , _arefdtoChapterUuid :: UUID
-  , _arefdtoQuestionUuid :: UUID
-  , _arefdtoReferenceUuid :: UUID
-  , _arefdtoChapter :: String
+  { _addReferenceEventDTOUuid :: UUID
+  , _addReferenceEventDTOKmUuid :: UUID
+  , _addReferenceEventDTOChapterUuid :: UUID
+  , _addReferenceEventDTOQuestionUuid :: UUID
+  , _addReferenceEventDTOReferenceUuid :: UUID
+  , _addReferenceEventDTOChapter :: String
   } deriving (Show, Eq, Generic)
 
 data EditReferenceEventDTO = EditReferenceEventDTO
-  { _erefdtoUuid :: UUID
-  , _erefdtoKmUuid :: UUID
-  , _erefdtoChapterUuid :: UUID
-  , _erefdtoQuestionUuid :: UUID
-  , _erefdtoReferenceUuid :: UUID
-  , _erefdtoChapter :: Maybe String
+  { _editReferenceEventDTOUuid :: UUID
+  , _editReferenceEventDTOKmUuid :: UUID
+  , _editReferenceEventDTOChapterUuid :: UUID
+  , _editReferenceEventDTOQuestionUuid :: UUID
+  , _editReferenceEventDTOReferenceUuid :: UUID
+  , _editReferenceEventDTOChapter :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data DeleteReferenceEventDTO = DeleteReferenceEventDTO
-  { _drefdtoUuid :: UUID
-  , _drefdtoKmUuid :: UUID
-  , _drefdtoChapterUuid :: UUID
-  , _drefdtoQuestionUuid :: UUID
-  , _drefdtoReferenceUuid :: UUID
+  { _deleteReferenceEventDTOUuid :: UUID
+  , _deleteReferenceEventDTOKmUuid :: UUID
+  , _deleteReferenceEventDTOChapterUuid :: UUID
+  , _deleteReferenceEventDTOQuestionUuid :: UUID
+  , _deleteReferenceEventDTOReferenceUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Follow up question ------
 -- -------------------------
 data AddFollowUpQuestionEventDTO = AddFollowUpQuestionEventDTO
-  { _afuqdtoUuid :: UUID
-  , _afuqdtoKmUuid :: UUID
-  , _afuqdtoChapterUuid :: UUID
-  , _afuqdtoAnswerUuid :: UUID
-  , _afuqdtoQuestionUuid :: UUID
-  , _afuqdtoShortQuestionUuid :: Maybe String
-  , _afuqdtoType :: QuestionType
-  , _afuqdtoTitle :: String
-  , _afuqdtoText :: String
+  { _addFollowUpQuestionEventDTOUuid :: UUID
+  , _addFollowUpQuestionEventDTOKmUuid :: UUID
+  , _addFollowUpQuestionEventDTOChapterUuid :: UUID
+  , _addFollowUpQuestionEventDTOAnswerUuid :: UUID
+  , _addFollowUpQuestionEventDTOQuestionUuid :: UUID
+  , _addFollowUpQuestionEventDTOShortQuestionUuid :: Maybe String
+  , _addFollowUpQuestionEventDTOQType :: QuestionType
+  , _addFollowUpQuestionEventDTOTitle :: String
+  , _addFollowUpQuestionEventDTOText :: String
   } deriving (Show, Eq, Generic)
 
 data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
-  { _efuqdtoUuid :: UUID
-  , _efuqdtoKmUuid :: UUID
-  , _efuqdtoChapterUuid :: UUID
-  , _efuqdtoAnswerUuid :: UUID
-  , _efuqdtoQuestionUuid :: UUID
-  , _efuqdtoShortQuestionUuid :: Maybe (Maybe String)
-  , _efuqdtoType :: Maybe QuestionType
-  , _efuqdtoTitle :: Maybe String
-  , _efuqdtoText :: Maybe String
-  , _efuqdtoAnswerIds :: Maybe [UUID]
-  , _efuqdtoExpertIds :: Maybe [UUID]
-  , _efuqdtoReferenceIds :: Maybe [UUID]
+  { _editFollowUpQuestionEventDTOUuid :: UUID
+  , _editFollowUpQuestionEventDTOKmUuid :: UUID
+  , _editFollowUpQuestionEventDTOChapterUuid :: UUID
+  , _editFollowUpQuestionEventDTOAnswerUuid :: UUID
+  , _editFollowUpQuestionEventDTOQuestionUuid :: UUID
+  , _editFollowUpQuestionEventDTOShortQuestionUuid :: Maybe (Maybe String)
+  , _editFollowUpQuestionEventDTOQType :: Maybe QuestionType
+  , _editFollowUpQuestionEventDTOTitle :: Maybe String
+  , _editFollowUpQuestionEventDTOText :: Maybe String
+  , _editFollowUpQuestionEventDTOAnswerIds :: Maybe [UUID]
+  , _editFollowUpQuestionEventDTOExpertIds :: Maybe [UUID]
+  , _editFollowUpQuestionEventDTOReferenceIds :: Maybe [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteFollowUpQuestionEventDTO = DeleteFollowUpQuestionEventDTO
-  { _dfuqdtoUuid :: UUID
-  , _dfuqdtoKmUuid :: UUID
-  , _dfuqdtoChapterUuid :: UUID
-  , _dfuqdtoAnswerUuid :: UUID
-  , _dfuqdtoQuestionUuid :: UUID
+  { _deleteFollowUpQuestionEventDTOUuid :: UUID
+  , _deleteFollowUpQuestionEventDTOKmUuid :: UUID
+  , _deleteFollowUpQuestionEventDTOChapterUuid :: UUID
+  , _deleteFollowUpQuestionEventDTOAnswerUuid :: UUID
+  , _deleteFollowUpQuestionEventDTOQuestionUuid :: UUID
   } deriving (Show, Eq, Generic)
-
-makeLenses ''AddKnowledgeModelEventDTO
-
-makeLenses ''EditKnowledgeModelEventDTO
-
-makeLenses ''AddChapterEventDTO
-
-makeLenses ''EditChapterEventDTO
-
-makeLenses ''DeleteChapterEventDTO
-
-makeLenses ''AddQuestionEventDTO
-
-makeLenses ''EditQuestionEventDTO
-
-makeLenses ''DeleteQuestionEventDTO
-
-makeLenses ''AddAnswerEventDTO
-
-makeLenses ''EditAnswerEventDTO
-
-makeLenses ''DeleteAnswerEventDTO
-
-makeLenses ''AddExpertEventDTO
-
-makeLenses ''EditExpertEventDTO
-
-makeLenses ''DeleteExpertEventDTO
-
-makeLenses ''AddReferenceEventDTO
-
-makeLenses ''EditReferenceEventDTO
-
-makeLenses ''DeleteReferenceEventDTO
-
-makeLenses ''AddFollowUpQuestionEventDTO
-
-makeLenses ''EditFollowUpQuestionEventDTO
-
-makeLenses ''DeleteFollowUpQuestionEventDTO
 
 -- -------------------------
 -- Knowledge Model ---------
 -- -------------------------
 instance FromJSON AddKnowledgeModelEventDTO where
   parseJSON (Object o) = do
-    _akmdtoUuid <- o .: "uuid"
-    _akmdtoKmUuid <- o .: "kmUuid"
-    _akmdtoName <- o .: "name"
+    _addKnowledgeModelEventDTOUuid <- o .: "uuid"
+    _addKnowledgeModelEventDTOKmUuid <- o .: "kmUuid"
+    _addKnowledgeModelEventDTOName <- o .: "name"
     return AddKnowledgeModelEventDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON AddKnowledgeModelEventDTO where
   toJSON AddKnowledgeModelEventDTO {..} =
     object
-      ["eventType" .= "AddKnowledgeModelEvent", "uuid" .= _akmdtoUuid, "kmUuid" .= _akmdtoKmUuid, "name" .= _akmdtoName]
+      [ "eventType" .= "AddKnowledgeModelEvent"
+      , "uuid" .= _addKnowledgeModelEventDTOUuid
+      , "kmUuid" .= _addKnowledgeModelEventDTOKmUuid
+      , "name" .= _addKnowledgeModelEventDTOName
+      ]
 
 instance FromJSON EditKnowledgeModelEventDTO where
   parseJSON (Object o) = do
-    _ekmdtoUuid <- o .: "uuid"
-    _ekmdtoKmUuid <- o .: "kmUuid"
-    _ekmdtoName <- o .: "name"
-    _ekmdtoChapterIds <- o .: "chapterIds"
+    _editKnowledgeModelEventDTOUuid <- o .: "uuid"
+    _editKnowledgeModelEventDTOKmUuid <- o .: "kmUuid"
+    _editKnowledgeModelEventDTOName <- o .: "name"
+    _editKnowledgeModelEventDTOChapterIds <- o .: "chapterIds"
     return EditKnowledgeModelEventDTO {..}
   parseJSON _ = mzero
 
@@ -360,10 +324,10 @@ instance ToJSON EditKnowledgeModelEventDTO where
   toJSON EditKnowledgeModelEventDTO {..} =
     object
       [ "eventType" .= "EditKnowledgeModelEvent"
-      , "uuid" .= _ekmdtoUuid
-      , "kmUuid" .= _ekmdtoKmUuid
-      , "name" .= _ekmdtoName
-      , "chapterIds" .= _ekmdtoChapterIds
+      , "uuid" .= _editKnowledgeModelEventDTOUuid
+      , "kmUuid" .= _editKnowledgeModelEventDTOKmUuid
+      , "name" .= _editKnowledgeModelEventDTOName
+      , "chapterIds" .= _editKnowledgeModelEventDTOChapterIds
       ]
 
 -------------------------
@@ -371,11 +335,11 @@ instance ToJSON EditKnowledgeModelEventDTO where
 -------------------------
 instance FromJSON AddChapterEventDTO where
   parseJSON (Object o) = do
-    _achdtoUuid <- o .: "uuid"
-    _achdtoKmUuid <- o .: "kmUuid"
-    _achdtoChapterUuid <- o .: "chapterUuid"
-    _achdtoTitle <- o .: "title"
-    _achdtoText <- o .: "text"
+    _addChapterEventDTOUuid <- o .: "uuid"
+    _addChapterEventDTOKmUuid <- o .: "kmUuid"
+    _addChapterEventDTOChapterUuid <- o .: "chapterUuid"
+    _addChapterEventDTOTitle <- o .: "title"
+    _addChapterEventDTOText <- o .: "text"
     return AddChapterEventDTO {..}
   parseJSON _ = mzero
 
@@ -383,21 +347,21 @@ instance ToJSON AddChapterEventDTO where
   toJSON AddChapterEventDTO {..} =
     object
       [ "eventType" .= "AddChapterEvent"
-      , "uuid" .= _achdtoUuid
-      , "kmUuid" .= _achdtoKmUuid
-      , "chapterUuid" .= _achdtoChapterUuid
-      , "title" .= _achdtoTitle
-      , "text" .= _achdtoText
+      , "uuid" .= _addChapterEventDTOUuid
+      , "kmUuid" .= _addChapterEventDTOKmUuid
+      , "chapterUuid" .= _addChapterEventDTOChapterUuid
+      , "title" .= _addChapterEventDTOTitle
+      , "text" .= _addChapterEventDTOText
       ]
 
 instance FromJSON EditChapterEventDTO where
   parseJSON (Object o) = do
-    _echdtoUuid <- o .: "uuid"
-    _echdtoKmUuid <- o .: "kmUuid"
-    _echdtoChapterUuid <- o .: "chapterUuid"
-    _echdtoTitle <- o .: "title"
-    _echdtoText <- o .: "text"
-    _echdtoQuestionIds <- o .: "questionIds"
+    _editChapterEventDTOUuid <- o .: "uuid"
+    _editChapterEventDTOKmUuid <- o .: "kmUuid"
+    _editChapterEventDTOChapterUuid <- o .: "chapterUuid"
+    _editChapterEventDTOTitle <- o .: "title"
+    _editChapterEventDTOText <- o .: "text"
+    _editChapterEventDTOQuestionIds <- o .: "questionIds"
     return EditChapterEventDTO {..}
   parseJSON _ = mzero
 
@@ -405,19 +369,19 @@ instance ToJSON EditChapterEventDTO where
   toJSON EditChapterEventDTO {..} =
     object
       [ "eventType" .= "EditChapterEvent"
-      , "uuid" .= _echdtoUuid
-      , "kmUuid" .= _echdtoKmUuid
-      , "chapterUuid" .= _echdtoChapterUuid
-      , "title" .= _echdtoTitle
-      , "text" .= _echdtoText
-      , "questionIds" .= _echdtoQuestionIds
+      , "uuid" .= _editChapterEventDTOUuid
+      , "kmUuid" .= _editChapterEventDTOKmUuid
+      , "chapterUuid" .= _editChapterEventDTOChapterUuid
+      , "title" .= _editChapterEventDTOTitle
+      , "text" .= _editChapterEventDTOText
+      , "questionIds" .= _editChapterEventDTOQuestionIds
       ]
 
 instance FromJSON DeleteChapterEventDTO where
   parseJSON (Object o) = do
-    _dchdtoUuid <- o .: "uuid"
-    _dchdtoKmUuid <- o .: "kmUuid"
-    _dchdtoChapterUuid <- o .: "chapterUuid"
+    _deleteChapterEventDTOUuid <- o .: "uuid"
+    _deleteChapterEventDTOKmUuid <- o .: "kmUuid"
+    _deleteChapterEventDTOChapterUuid <- o .: "chapterUuid"
     return DeleteChapterEventDTO {..}
   parseJSON _ = mzero
 
@@ -425,9 +389,9 @@ instance ToJSON DeleteChapterEventDTO where
   toJSON DeleteChapterEventDTO {..} =
     object
       [ "eventType" .= "DeleteChapterEvent"
-      , "uuid" .= _dchdtoUuid
-      , "kmUuid" .= _dchdtoKmUuid
-      , "chapterUuid" .= _dchdtoChapterUuid
+      , "uuid" .= _deleteChapterEventDTOUuid
+      , "kmUuid" .= _deleteChapterEventDTOKmUuid
+      , "chapterUuid" .= _deleteChapterEventDTOChapterUuid
       ]
 
 -- -------------------------
@@ -435,16 +399,16 @@ instance ToJSON DeleteChapterEventDTO where
 -- -------------------------
 instance FromJSON AddQuestionEventDTO where
   parseJSON (Object o) = do
-    _aqdtoUuid <- o .: "uuid"
-    _aqdtoKmUuid <- o .: "kmUuid"
-    _aqdtoChapterUuid <- o .: "chapterUuid"
-    _aqdtoQuestionUuid <- o .: "questionUuid"
-    _aqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _aqdtoTitle <- o .: "title"
-    _aqdtoText <- o .: "text"
+    _addQuestionEventDTOUuid <- o .: "uuid"
+    _addQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _addQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _addQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _addQuestionEventDTOTitle <- o .: "title"
+    _addQuestionEventDTOText <- o .: "text"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
-      (Just _aqdtoType) -> return AddQuestionEventDTO {..}
+      (Just _addQuestionEventDTOQType) -> return AddQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
@@ -452,31 +416,31 @@ instance ToJSON AddQuestionEventDTO where
   toJSON AddQuestionEventDTO {..} =
     object
       [ "eventType" .= "AddQuestionEvent"
-      , "uuid" .= _aqdtoUuid
-      , "kmUuid" .= _aqdtoKmUuid
-      , "chapterUuid" .= _aqdtoChapterUuid
-      , "questionUuid" .= _aqdtoQuestionUuid
-      , "shortQuestionUuid" .= _aqdtoShortQuestionUuid
-      , "type" .= serializeQuestionType _aqdtoType
-      , "title" .= _aqdtoTitle
-      , "text" .= _aqdtoText
+      , "uuid" .= _addQuestionEventDTOUuid
+      , "kmUuid" .= _addQuestionEventDTOKmUuid
+      , "chapterUuid" .= _addQuestionEventDTOChapterUuid
+      , "questionUuid" .= _addQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _addQuestionEventDTOShortQuestionUuid
+      , "type" .= serializeQuestionType _addQuestionEventDTOQType
+      , "title" .= _addQuestionEventDTOTitle
+      , "text" .= _addQuestionEventDTOText
       ]
 
 instance FromJSON EditQuestionEventDTO where
   parseJSON (Object o) = do
-    _eqdtoUuid <- o .: "uuid"
-    _eqdtoKmUuid <- o .: "kmUuid"
-    _eqdtoChapterUuid <- o .: "chapterUuid"
-    _eqdtoQuestionUuid <- o .: "questionUuid"
-    _eqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _eqdtoTitle <- o .: "title"
-    _eqdtoText <- o .: "text"
-    _eqdtoAnswerIds <- o .: "answerIds"
-    _eqdtoExpertIds <- o .: "expertIds"
-    _eqdtoReferenceIds <- o .: "referenceIds"
+    _editQuestionEventDTOUuid <- o .: "uuid"
+    _editQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _editQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _editQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _editQuestionEventDTOTitle <- o .: "title"
+    _editQuestionEventDTOText <- o .: "text"
+    _editQuestionEventDTOAnswerIds <- o .: "answerIds"
+    _editQuestionEventDTOExpertIds <- o .: "expertIds"
+    _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
     questionType <- o .: "type"
     case deserializeQuestionType <$> questionType of
-      (Just _eqdtoType) -> return EditQuestionEventDTO {..}
+      (Just _editQuestionEventDTOQType) -> return EditQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
@@ -484,25 +448,25 @@ instance ToJSON EditQuestionEventDTO where
   toJSON EditQuestionEventDTO {..} =
     object
       [ "eventType" .= "EditQuestionEvent"
-      , "uuid" .= _eqdtoUuid
-      , "kmUuid" .= _eqdtoKmUuid
-      , "chapterUuid" .= _eqdtoChapterUuid
-      , "questionUuid" .= _eqdtoQuestionUuid
-      , "shortQuestionUuid" .= _eqdtoShortQuestionUuid
-      , "type" .= (serializeQuestionType <$> _eqdtoType)
-      , "title" .= _eqdtoTitle
-      , "text" .= _eqdtoText
-      , "answerIds" .= _eqdtoAnswerIds
-      , "expertIds" .= _eqdtoExpertIds
-      , "referenceIds" .= _eqdtoReferenceIds
+      , "uuid" .= _editQuestionEventDTOUuid
+      , "kmUuid" .= _editQuestionEventDTOKmUuid
+      , "chapterUuid" .= _editQuestionEventDTOChapterUuid
+      , "questionUuid" .= _editQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _editQuestionEventDTOShortQuestionUuid
+      , "type" .= (serializeQuestionType <$> _editQuestionEventDTOQType)
+      , "title" .= _editQuestionEventDTOTitle
+      , "text" .= _editQuestionEventDTOText
+      , "answerIds" .= _editQuestionEventDTOAnswerIds
+      , "expertIds" .= _editQuestionEventDTOExpertIds
+      , "referenceIds" .= _editQuestionEventDTOReferenceIds
       ]
 
 instance FromJSON DeleteQuestionEventDTO where
   parseJSON (Object o) = do
-    _dqdtoUuid <- o .: "uuid"
-    _dqdtoKmUuid <- o .: "kmUuid"
-    _dqdtoChapterUuid <- o .: "chapterUuid"
-    _dqdtoQuestionUuid <- o .: "questionUuid"
+    _deleteQuestionEventDTOUuid <- o .: "uuid"
+    _deleteQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _deleteQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteQuestionEventDTOQuestionUuid <- o .: "questionUuid"
     return DeleteQuestionEventDTO {..}
   parseJSON _ = mzero
 
@@ -510,10 +474,10 @@ instance ToJSON DeleteQuestionEventDTO where
   toJSON DeleteQuestionEventDTO {..} =
     object
       [ "eventType" .= "DeleteQuestionEvent"
-      , "uuid" .= _dqdtoUuid
-      , "kmUuid" .= _dqdtoKmUuid
-      , "chapterUuid" .= _dqdtoChapterUuid
-      , "questionUuid" .= _dqdtoQuestionUuid
+      , "uuid" .= _deleteQuestionEventDTOUuid
+      , "kmUuid" .= _deleteQuestionEventDTOKmUuid
+      , "chapterUuid" .= _deleteQuestionEventDTOChapterUuid
+      , "questionUuid" .= _deleteQuestionEventDTOQuestionUuid
       ]
 
 -- -------------------------
@@ -521,13 +485,13 @@ instance ToJSON DeleteQuestionEventDTO where
 -- -------------------------
 instance FromJSON AddAnswerEventDTO where
   parseJSON (Object o) = do
-    _aansdtoUuid <- o .: "uuid"
-    _aansdtoKmUuid <- o .: "kmUuid"
-    _aansdtoChapterUuid <- o .: "chapterUuid"
-    _aansdtoQuestionUuid <- o .: "questionUuid"
-    _aansdtoAnswerUuid <- o .: "answerUuid"
-    _aansdtoLabel <- o .: "label"
-    _aansdtoAdvice <- o .: "advice"
+    _addAnswerEventDTOUuid <- o .: "uuid"
+    _addAnswerEventDTOKmUuid <- o .: "kmUuid"
+    _addAnswerEventDTOChapterUuid <- o .: "chapterUuid"
+    _addAnswerEventDTOQuestionUuid <- o .: "questionUuid"
+    _addAnswerEventDTOAnswerUuid <- o .: "answerUuid"
+    _addAnswerEventDTOLabel <- o .: "label"
+    _addAnswerEventDTOAdvice <- o .: "advice"
     return AddAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -535,25 +499,25 @@ instance ToJSON AddAnswerEventDTO where
   toJSON AddAnswerEventDTO {..} =
     object
       [ "eventType" .= "AddAnswerEvent"
-      , "uuid" .= _aansdtoUuid
-      , "kmUuid" .= _aansdtoKmUuid
-      , "chapterUuid" .= _aansdtoChapterUuid
-      , "questionUuid" .= _aansdtoQuestionUuid
-      , "answerUuid" .= _aansdtoAnswerUuid
-      , "label" .= _aansdtoLabel
-      , "advice" .= _aansdtoAdvice
+      , "uuid" .= _addAnswerEventDTOUuid
+      , "kmUuid" .= _addAnswerEventDTOKmUuid
+      , "chapterUuid" .= _addAnswerEventDTOChapterUuid
+      , "questionUuid" .= _addAnswerEventDTOQuestionUuid
+      , "answerUuid" .= _addAnswerEventDTOAnswerUuid
+      , "label" .= _addAnswerEventDTOLabel
+      , "advice" .= _addAnswerEventDTOAdvice
       ]
 
 instance FromJSON EditAnswerEventDTO where
   parseJSON (Object o) = do
-    _eansdtoUuid <- o .: "uuid"
-    _eansdtoKmUuid <- o .: "kmUuid"
-    _eansdtoChapterUuid <- o .: "chapterUuid"
-    _eansdtoQuestionUuid <- o .: "questionUuid"
-    _eansdtoAnswerUuid <- o .: "answerUuid"
-    _eansdtoLabel <- o .: "label"
-    _eansdtoAdvice <- o .: "advice"
-    _eansdtoFollowUpIds <- o .: "followUpIds"
+    _editAnswerEventDTOUuid <- o .: "uuid"
+    _editAnswerEventDTOKmUuid <- o .: "kmUuid"
+    _editAnswerEventDTOChapterUuid <- o .: "chapterUuid"
+    _editAnswerEventDTOQuestionUuid <- o .: "questionUuid"
+    _editAnswerEventDTOAnswerUuid <- o .: "answerUuid"
+    _editAnswerEventDTOLabel <- o .: "label"
+    _editAnswerEventDTOAdvice <- o .: "advice"
+    _editAnswerEventDTOFollowUpIds <- o .: "followUpIds"
     return EditAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -561,23 +525,23 @@ instance ToJSON EditAnswerEventDTO where
   toJSON EditAnswerEventDTO {..} =
     object
       [ "eventType" .= "EditAnswerEvent"
-      , "uuid" .= _eansdtoUuid
-      , "kmUuid" .= _eansdtoKmUuid
-      , "chapterUuid" .= _eansdtoChapterUuid
-      , "questionUuid" .= _eansdtoQuestionUuid
-      , "answerUuid" .= _eansdtoAnswerUuid
-      , "label" .= _eansdtoLabel
-      , "advice" .= _eansdtoAdvice
-      , "followUpIds" .= _eansdtoFollowUpIds
+      , "uuid" .= _editAnswerEventDTOUuid
+      , "kmUuid" .= _editAnswerEventDTOKmUuid
+      , "chapterUuid" .= _editAnswerEventDTOChapterUuid
+      , "questionUuid" .= _editAnswerEventDTOQuestionUuid
+      , "answerUuid" .= _editAnswerEventDTOAnswerUuid
+      , "label" .= _editAnswerEventDTOLabel
+      , "advice" .= _editAnswerEventDTOAdvice
+      , "followUpIds" .= _editAnswerEventDTOFollowUpIds
       ]
 
 instance FromJSON DeleteAnswerEventDTO where
   parseJSON (Object o) = do
-    _dansdtoUuid <- o .: "uuid"
-    _dansdtoKmUuid <- o .: "kmUuid"
-    _dansdtoChapterUuid <- o .: "chapterUuid"
-    _dansdtoQuestionUuid <- o .: "questionUuid"
-    _dansdtoAnswerUuid <- o .: "answerUuid"
+    _deleteAnswerEventDTOUuid <- o .: "uuid"
+    _deleteAnswerEventDTOKmUuid <- o .: "kmUuid"
+    _deleteAnswerEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteAnswerEventDTOQuestionUuid <- o .: "questionUuid"
+    _deleteAnswerEventDTOAnswerUuid <- o .: "answerUuid"
     return DeleteAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -585,11 +549,11 @@ instance ToJSON DeleteAnswerEventDTO where
   toJSON DeleteAnswerEventDTO {..} =
     object
       [ "eventType" .= "DeleteAnswerEvent"
-      , "uuid" .= _dansdtoUuid
-      , "kmUuid" .= _dansdtoKmUuid
-      , "chapterUuid" .= _dansdtoChapterUuid
-      , "questionUuid" .= _dansdtoQuestionUuid
-      , "answerUuid" .= _dansdtoAnswerUuid
+      , "uuid" .= _deleteAnswerEventDTOUuid
+      , "kmUuid" .= _deleteAnswerEventDTOKmUuid
+      , "chapterUuid" .= _deleteAnswerEventDTOChapterUuid
+      , "questionUuid" .= _deleteAnswerEventDTOQuestionUuid
+      , "answerUuid" .= _deleteAnswerEventDTOAnswerUuid
       ]
 
 -- -------------------------
@@ -597,13 +561,13 @@ instance ToJSON DeleteAnswerEventDTO where
 -- -------------------------
 instance FromJSON AddExpertEventDTO where
   parseJSON (Object o) = do
-    _aexpdtoUuid <- o .: "uuid"
-    _aexpdtoKmUuid <- o .: "kmUuid"
-    _aexpdtoChapterUuid <- o .: "chapterUuid"
-    _aexpdtoQuestionUuid <- o .: "questionUuid"
-    _aexpdtoExpertUuid <- o .: "expertUuid"
-    _aexpdtoName <- o .: "name"
-    _aexpdtoEmail <- o .: "email"
+    _addExpertEventDTOUuid <- o .: "uuid"
+    _addExpertEventDTOKmUuid <- o .: "kmUuid"
+    _addExpertEventDTOChapterUuid <- o .: "chapterUuid"
+    _addExpertEventDTOQuestionUuid <- o .: "questionUuid"
+    _addExpertEventDTOExpertUuid <- o .: "expertUuid"
+    _addExpertEventDTOName <- o .: "name"
+    _addExpertEventDTOEmail <- o .: "email"
     return AddExpertEventDTO {..}
   parseJSON _ = mzero
 
@@ -611,24 +575,24 @@ instance ToJSON AddExpertEventDTO where
   toJSON AddExpertEventDTO {..} =
     object
       [ "eventType" .= "AddExpertEvent"
-      , "uuid" .= _aexpdtoUuid
-      , "kmUuid" .= _aexpdtoKmUuid
-      , "chapterUuid" .= _aexpdtoChapterUuid
-      , "questionUuid" .= _aexpdtoQuestionUuid
-      , "expertUuid" .= _aexpdtoExpertUuid
-      , "name" .= _aexpdtoName
-      , "email" .= _aexpdtoEmail
+      , "uuid" .= _addExpertEventDTOUuid
+      , "kmUuid" .= _addExpertEventDTOKmUuid
+      , "chapterUuid" .= _addExpertEventDTOChapterUuid
+      , "questionUuid" .= _addExpertEventDTOQuestionUuid
+      , "expertUuid" .= _addExpertEventDTOExpertUuid
+      , "name" .= _addExpertEventDTOName
+      , "email" .= _addExpertEventDTOEmail
       ]
 
 instance FromJSON EditExpertEventDTO where
   parseJSON (Object o) = do
-    _eexpdtoUuid <- o .: "uuid"
-    _eexpdtoKmUuid <- o .: "kmUuid"
-    _eexpdtoChapterUuid <- o .: "chapterUuid"
-    _eexpdtoQuestionUuid <- o .: "questionUuid"
-    _eexpdtoExpertUuid <- o .: "expertUuid"
-    _eexpdtoName <- o .: "name"
-    _eexpdtoEmail <- o .: "email"
+    _editExpertEventDTOUuid <- o .: "uuid"
+    _editExpertEventDTOKmUuid <- o .: "kmUuid"
+    _editExpertEventDTOChapterUuid <- o .: "chapterUuid"
+    _editExpertEventDTOQuestionUuid <- o .: "questionUuid"
+    _editExpertEventDTOExpertUuid <- o .: "expertUuid"
+    _editExpertEventDTOName <- o .: "name"
+    _editExpertEventDTOEmail <- o .: "email"
     return EditExpertEventDTO {..}
   parseJSON _ = mzero
 
@@ -636,22 +600,22 @@ instance ToJSON EditExpertEventDTO where
   toJSON EditExpertEventDTO {..} =
     object
       [ "eventType" .= "EditExpertEvent"
-      , "uuid" .= _eexpdtoUuid
-      , "kmUuid" .= _eexpdtoKmUuid
-      , "chapterUuid" .= _eexpdtoChapterUuid
-      , "questionUuid" .= _eexpdtoQuestionUuid
-      , "expertUuid" .= _eexpdtoExpertUuid
-      , "name" .= _eexpdtoName
-      , "email" .= _eexpdtoEmail
+      , "uuid" .= _editExpertEventDTOUuid
+      , "kmUuid" .= _editExpertEventDTOKmUuid
+      , "chapterUuid" .= _editExpertEventDTOChapterUuid
+      , "questionUuid" .= _editExpertEventDTOQuestionUuid
+      , "expertUuid" .= _editExpertEventDTOExpertUuid
+      , "name" .= _editExpertEventDTOName
+      , "email" .= _editExpertEventDTOEmail
       ]
 
 instance FromJSON DeleteExpertEventDTO where
   parseJSON (Object o) = do
-    _dexpdtoUuid <- o .: "uuid"
-    _dexpdtoKmUuid <- o .: "kmUuid"
-    _dexpdtoChapterUuid <- o .: "chapterUuid"
-    _dexpdtoQuestionUuid <- o .: "questionUuid"
-    _dexpdtoExpertUuid <- o .: "expertUuid"
+    _deleteExpertEventDTOUuid <- o .: "uuid"
+    _deleteExpertEventDTOKmUuid <- o .: "kmUuid"
+    _deleteExpertEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteExpertEventDTOQuestionUuid <- o .: "questionUuid"
+    _deleteExpertEventDTOExpertUuid <- o .: "expertUuid"
     return DeleteExpertEventDTO {..}
   parseJSON _ = mzero
 
@@ -659,11 +623,11 @@ instance ToJSON DeleteExpertEventDTO where
   toJSON DeleteExpertEventDTO {..} =
     object
       [ "eventType" .= "DeleteExpertEvent"
-      , "uuid" .= _dexpdtoUuid
-      , "kmUuid" .= _dexpdtoKmUuid
-      , "chapterUuid" .= _dexpdtoChapterUuid
-      , "questionUuid" .= _dexpdtoQuestionUuid
-      , "expertUuid" .= _dexpdtoExpertUuid
+      , "uuid" .= _deleteExpertEventDTOUuid
+      , "kmUuid" .= _deleteExpertEventDTOKmUuid
+      , "chapterUuid" .= _deleteExpertEventDTOChapterUuid
+      , "questionUuid" .= _deleteExpertEventDTOQuestionUuid
+      , "expertUuid" .= _deleteExpertEventDTOExpertUuid
       ]
 
 -- -------------------------
@@ -671,12 +635,12 @@ instance ToJSON DeleteExpertEventDTO where
 -- -------------------------
 instance FromJSON AddReferenceEventDTO where
   parseJSON (Object o) = do
-    _arefdtoUuid <- o .: "uuid"
-    _arefdtoKmUuid <- o .: "kmUuid"
-    _arefdtoChapterUuid <- o .: "chapterUuid"
-    _arefdtoQuestionUuid <- o .: "questionUuid"
-    _arefdtoReferenceUuid <- o .: "referenceUuid"
-    _arefdtoChapter <- o .: "chapter"
+    _addReferenceEventDTOUuid <- o .: "uuid"
+    _addReferenceEventDTOKmUuid <- o .: "kmUuid"
+    _addReferenceEventDTOChapterUuid <- o .: "chapterUuid"
+    _addReferenceEventDTOQuestionUuid <- o .: "questionUuid"
+    _addReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
+    _addReferenceEventDTOChapter <- o .: "chapter"
     return AddReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -684,22 +648,22 @@ instance ToJSON AddReferenceEventDTO where
   toJSON AddReferenceEventDTO {..} =
     object
       [ "eventType" .= "AddReferenceEvent"
-      , "uuid" .= _arefdtoUuid
-      , "kmUuid" .= _arefdtoKmUuid
-      , "chapterUuid" .= _arefdtoChapterUuid
-      , "questionUuid" .= _arefdtoQuestionUuid
-      , "referenceUuid" .= _arefdtoReferenceUuid
-      , "chapter" .= _arefdtoChapter
+      , "uuid" .= _addReferenceEventDTOUuid
+      , "kmUuid" .= _addReferenceEventDTOKmUuid
+      , "chapterUuid" .= _addReferenceEventDTOChapterUuid
+      , "questionUuid" .= _addReferenceEventDTOQuestionUuid
+      , "referenceUuid" .= _addReferenceEventDTOReferenceUuid
+      , "chapter" .= _addReferenceEventDTOChapter
       ]
 
 instance FromJSON EditReferenceEventDTO where
   parseJSON (Object o) = do
-    _erefdtoUuid <- o .: "uuid"
-    _erefdtoKmUuid <- o .: "kmUuid"
-    _erefdtoChapterUuid <- o .: "chapterUuid"
-    _erefdtoQuestionUuid <- o .: "questionUuid"
-    _erefdtoReferenceUuid <- o .: "referenceUuid"
-    _erefdtoChapter <- o .: "chapter"
+    _editReferenceEventDTOUuid <- o .: "uuid"
+    _editReferenceEventDTOKmUuid <- o .: "kmUuid"
+    _editReferenceEventDTOChapterUuid <- o .: "chapterUuid"
+    _editReferenceEventDTOQuestionUuid <- o .: "questionUuid"
+    _editReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
+    _editReferenceEventDTOChapter <- o .: "chapter"
     return EditReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -707,21 +671,21 @@ instance ToJSON EditReferenceEventDTO where
   toJSON EditReferenceEventDTO {..} =
     object
       [ "eventType" .= "EditReferenceEvent"
-      , "uuid" .= _erefdtoUuid
-      , "kmUuid" .= _erefdtoKmUuid
-      , "chapterUuid" .= _erefdtoChapterUuid
-      , "questionUuid" .= _erefdtoQuestionUuid
-      , "referenceUuid" .= _erefdtoReferenceUuid
-      , "chapter" .= _erefdtoChapter
+      , "uuid" .= _editReferenceEventDTOUuid
+      , "kmUuid" .= _editReferenceEventDTOKmUuid
+      , "chapterUuid" .= _editReferenceEventDTOChapterUuid
+      , "questionUuid" .= _editReferenceEventDTOQuestionUuid
+      , "referenceUuid" .= _editReferenceEventDTOReferenceUuid
+      , "chapter" .= _editReferenceEventDTOChapter
       ]
 
 instance FromJSON DeleteReferenceEventDTO where
   parseJSON (Object o) = do
-    _drefdtoUuid <- o .: "uuid"
-    _drefdtoKmUuid <- o .: "kmUuid"
-    _drefdtoChapterUuid <- o .: "chapterUuid"
-    _drefdtoQuestionUuid <- o .: "questionUuid"
-    _drefdtoReferenceUuid <- o .: "referenceUuid"
+    _deleteReferenceEventDTOUuid <- o .: "uuid"
+    _deleteReferenceEventDTOKmUuid <- o .: "kmUuid"
+    _deleteReferenceEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteReferenceEventDTOQuestionUuid <- o .: "questionUuid"
+    _deleteReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
     return DeleteReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -729,11 +693,11 @@ instance ToJSON DeleteReferenceEventDTO where
   toJSON DeleteReferenceEventDTO {..} =
     object
       [ "eventType" .= "DeleteReferenceEvent"
-      , "uuid" .= _drefdtoUuid
-      , "kmUuid" .= _drefdtoKmUuid
-      , "chapterUuid" .= _drefdtoChapterUuid
-      , "questionUuid" .= _drefdtoQuestionUuid
-      , "referenceUuid" .= _drefdtoReferenceUuid
+      , "uuid" .= _deleteReferenceEventDTOUuid
+      , "kmUuid" .= _deleteReferenceEventDTOKmUuid
+      , "chapterUuid" .= _deleteReferenceEventDTOChapterUuid
+      , "questionUuid" .= _deleteReferenceEventDTOQuestionUuid
+      , "referenceUuid" .= _deleteReferenceEventDTOReferenceUuid
       ]
 
 -- -------------------------
@@ -741,17 +705,17 @@ instance ToJSON DeleteReferenceEventDTO where
 -- -------------------------
 instance FromJSON AddFollowUpQuestionEventDTO where
   parseJSON (Object o) = do
-    _afuqdtoUuid <- o .: "uuid"
-    _afuqdtoKmUuid <- o .: "kmUuid"
-    _afuqdtoChapterUuid <- o .: "chapterUuid"
-    _afuqdtoAnswerUuid <- o .: "answerUuid"
-    _afuqdtoQuestionUuid <- o .: "questionUuid"
-    _afuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _afuqdtoTitle <- o .: "title"
-    _afuqdtoText <- o .: "text"
+    _addFollowUpQuestionEventDTOUuid <- o .: "uuid"
+    _addFollowUpQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _addFollowUpQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _addFollowUpQuestionEventDTOAnswerUuid <- o .: "answerUuid"
+    _addFollowUpQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _addFollowUpQuestionEventDTOTitle <- o .: "title"
+    _addFollowUpQuestionEventDTOText <- o .: "text"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
-      (Just _afuqdtoType) -> return AddFollowUpQuestionEventDTO {..}
+      (Just _addFollowUpQuestionEventDTOQType) -> return AddFollowUpQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
@@ -759,33 +723,33 @@ instance ToJSON AddFollowUpQuestionEventDTO where
   toJSON AddFollowUpQuestionEventDTO {..} =
     object
       [ "eventType" .= "AddFollowUpQuestionEvent"
-      , "uuid" .= _afuqdtoUuid
-      , "kmUuid" .= _afuqdtoKmUuid
-      , "chapterUuid" .= _afuqdtoChapterUuid
-      , "answerUuid" .= _afuqdtoAnswerUuid
-      , "questionUuid" .= _afuqdtoQuestionUuid
-      , "shortQuestionUuid" .= _afuqdtoShortQuestionUuid
-      , "type" .= serializeQuestionType _afuqdtoType
-      , "title" .= _afuqdtoTitle
-      , "text" .= _afuqdtoText
+      , "uuid" .= _addFollowUpQuestionEventDTOUuid
+      , "kmUuid" .= _addFollowUpQuestionEventDTOKmUuid
+      , "chapterUuid" .= _addFollowUpQuestionEventDTOChapterUuid
+      , "answerUuid" .= _addFollowUpQuestionEventDTOAnswerUuid
+      , "questionUuid" .= _addFollowUpQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _addFollowUpQuestionEventDTOShortQuestionUuid
+      , "type" .= serializeQuestionType _addFollowUpQuestionEventDTOQType
+      , "title" .= _addFollowUpQuestionEventDTOTitle
+      , "text" .= _addFollowUpQuestionEventDTOText
       ]
 
 instance FromJSON EditFollowUpQuestionEventDTO where
   parseJSON (Object o) = do
-    _efuqdtoUuid <- o .: "uuid"
-    _efuqdtoKmUuid <- o .: "kmUuid"
-    _efuqdtoChapterUuid <- o .: "chapterUuid"
-    _efuqdtoAnswerUuid <- o .: "answerUuid"
-    _efuqdtoQuestionUuid <- o .: "questionUuid"
-    _efuqdtoShortQuestionUuid <- o .: "shortQuestionUuid"
-    _efuqdtoTitle <- o .: "title"
-    _efuqdtoText <- o .: "text"
-    _efuqdtoAnswerIds <- o .: "answerIds"
-    _efuqdtoExpertIds <- o .: "expertIds"
-    _efuqdtoReferenceIds <- o .: "referenceIds"
+    _editFollowUpQuestionEventDTOUuid <- o .: "uuid"
+    _editFollowUpQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _editFollowUpQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _editFollowUpQuestionEventDTOAnswerUuid <- o .: "answerUuid"
+    _editFollowUpQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _editFollowUpQuestionEventDTOTitle <- o .: "title"
+    _editFollowUpQuestionEventDTOText <- o .: "text"
+    _editFollowUpQuestionEventDTOAnswerIds <- o .: "answerIds"
+    _editFollowUpQuestionEventDTOExpertIds <- o .: "expertIds"
+    _editFollowUpQuestionEventDTOReferenceIds <- o .: "referenceIds"
     questionType <- o .: "type"
     case deserializeQuestionType <$> questionType of
-      (Just _efuqdtoType) -> return EditFollowUpQuestionEventDTO {..}
+      (Just _editFollowUpQuestionEventDTOQType) -> return EditFollowUpQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
@@ -793,27 +757,27 @@ instance ToJSON EditFollowUpQuestionEventDTO where
   toJSON EditFollowUpQuestionEventDTO {..} =
     object
       [ "eventType" .= "EditFollowUpQuestionEvent"
-      , "uuid" .= _efuqdtoUuid
-      , "kmUuid" .= _efuqdtoKmUuid
-      , "chapterUuid" .= _efuqdtoChapterUuid
-      , "answerUuid" .= _efuqdtoAnswerUuid
-      , "questionUuid" .= _efuqdtoQuestionUuid
-      , "shortQuestionUuid" .= _efuqdtoShortQuestionUuid
-      , "type" .= (serializeQuestionType <$> _efuqdtoType)
-      , "title" .= _efuqdtoTitle
-      , "text" .= _efuqdtoText
-      , "answerIds" .= _efuqdtoAnswerIds
-      , "expertIds" .= _efuqdtoExpertIds
-      , "referenceIds" .= _efuqdtoReferenceIds
+      , "uuid" .= _editFollowUpQuestionEventDTOUuid
+      , "kmUuid" .= _editFollowUpQuestionEventDTOKmUuid
+      , "chapterUuid" .= _editFollowUpQuestionEventDTOChapterUuid
+      , "answerUuid" .= _editFollowUpQuestionEventDTOAnswerUuid
+      , "questionUuid" .= _editFollowUpQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _editFollowUpQuestionEventDTOShortQuestionUuid
+      , "type" .= (serializeQuestionType <$> _editFollowUpQuestionEventDTOQType)
+      , "title" .= _editFollowUpQuestionEventDTOTitle
+      , "text" .= _editFollowUpQuestionEventDTOText
+      , "answerIds" .= _editFollowUpQuestionEventDTOAnswerIds
+      , "expertIds" .= _editFollowUpQuestionEventDTOExpertIds
+      , "referenceIds" .= _editFollowUpQuestionEventDTOReferenceIds
       ]
 
 instance FromJSON DeleteFollowUpQuestionEventDTO where
   parseJSON (Object o) = do
-    _dfuqdtoUuid <- o .: "uuid"
-    _dfuqdtoKmUuid <- o .: "kmUuid"
-    _dfuqdtoChapterUuid <- o .: "chapterUuid"
-    _dfuqdtoAnswerUuid <- o .: "answerUuid"
-    _dfuqdtoQuestionUuid <- o .: "questionUuid"
+    _deleteFollowUpQuestionEventDTOUuid <- o .: "uuid"
+    _deleteFollowUpQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _deleteFollowUpQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteFollowUpQuestionEventDTOAnswerUuid <- o .: "answerUuid"
+    _deleteFollowUpQuestionEventDTOQuestionUuid <- o .: "questionUuid"
     return DeleteFollowUpQuestionEventDTO {..}
   parseJSON _ = mzero
 
@@ -821,9 +785,9 @@ instance ToJSON DeleteFollowUpQuestionEventDTO where
   toJSON DeleteFollowUpQuestionEventDTO {..} =
     object
       [ "eventType" .= "DeleteFollowUpQuestionEvent"
-      , "uuid" .= _dfuqdtoUuid
-      , "kmUuid" .= _dfuqdtoKmUuid
-      , "chapterUuid" .= _dfuqdtoChapterUuid
-      , "answerUuid" .= _dfuqdtoAnswerUuid
-      , "questionUuid" .= _dfuqdtoQuestionUuid
+      , "uuid" .= _deleteFollowUpQuestionEventDTOUuid
+      , "kmUuid" .= _deleteFollowUpQuestionEventDTOKmUuid
+      , "chapterUuid" .= _deleteFollowUpQuestionEventDTOChapterUuid
+      , "answerUuid" .= _deleteFollowUpQuestionEventDTOAnswerUuid
+      , "questionUuid" .= _deleteFollowUpQuestionEventDTOQuestionUuid
       ]

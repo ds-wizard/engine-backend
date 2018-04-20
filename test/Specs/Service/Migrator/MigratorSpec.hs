@@ -14,10 +14,9 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
-import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.Question.AddQuestionEvent
-import Model.Event.Question.EditQuestionEvent
+import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
 import Service.Migrator.Applicator
@@ -64,7 +63,7 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
-        let expEvent = e_km1_ch1_q1_title & eqUuid .~ (resEvent ^. eqUuid)
+        let expEvent = e_km1_ch1_q1_title & uuid .~ (resEvent ^. uuid)
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditQuestionEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -103,7 +102,7 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. msMigrationState
-        let expEvent = e_km1_ch1_2 & echUuid .~ (resEvent ^. echUuid)
+        let expEvent = e_km1_ch1_2 & uuid .~ (resEvent ^. uuid)
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -163,7 +162,7 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. msMigrationState
-        let expEvent = e_km1_ch1 & echUuid .~ (resEvent ^. echUuid)
+        let expEvent = e_km1_ch1 & uuid .~ (resEvent ^. uuid)
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -190,7 +189,7 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. msMigrationState
-        let expEvent = e_km1_ch1 & echUuid .~ (resEvent ^. echUuid)
+        let expEvent = e_km1_ch1 & uuid .~ (resEvent ^. uuid)
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------
@@ -217,8 +216,8 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. msMigrationState
-        let expEventQuestionIds = Just [a_km1_ch1_q2 ^. aqQuestionUuid]
-        let expEvent = (e_km1_ch1 & echUuid .~ (resEvent ^. echUuid)) & echQuestionIds .~ expEventQuestionIds
+        let expEventQuestionIds = Just [a_km1_ch1_q2 ^. questionUuid]
+        let expEvent = (e_km1_ch1 & uuid .~ (resEvent ^. uuid)) & questionIds .~ expEventQuestionIds
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------

@@ -10,8 +10,8 @@ import LensesConfig
 import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
-chapterIds :: KnowledgeModel -> [UUID]
-chapterIds km = km ^.. chapters . traverse . uuid
+getChapterIds :: KnowledgeModel -> [UUID]
+getChapterIds km = km ^.. chapters . traverse . uuid
 
 kmChangeChapterIdsOrder :: ([Chapter] -> Identity [UUID]) -> KnowledgeModel -> Identity KnowledgeModel
 kmChangeChapterIdsOrder convert km = Identity $ km & chapters .~ orderedChapters
@@ -36,8 +36,8 @@ isThereAnyChapterWithGivenUuid km chUuid = chUuid `elem` (getChapterUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-questionIds :: Chapter -> [UUID]
-questionIds ch = ch ^.. questions . traverse . uuid
+getQuestionIds :: Chapter -> [UUID]
+getQuestionIds ch = ch ^.. questions . traverse . uuid
 
 chChangeQuestionIdsOrder :: ([Question] -> Identity [UUID]) -> Chapter -> Identity Chapter
 chChangeQuestionIdsOrder convert ch = Identity $ ch & questions .~ orderedQuestions
@@ -80,8 +80,8 @@ isThereAnyQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-anwerIds :: Question -> [UUID]
-anwerIds q = q ^.. answers . traverse . uuid
+getAnwerIds :: Question -> [UUID]
+getAnwerIds q = q ^.. answers . traverse . uuid
 
 qChangeAnwerIdsOrder :: ([Answer] -> Identity [UUID]) -> Question -> Identity Question
 qChangeAnwerIdsOrder convert q = Identity $ q & answers .~ orderedAnwers
@@ -114,8 +114,8 @@ isThereAnyAnswerWithGivenUuid km ansUuid = ansUuid `elem` (getAnswerUuid <$> get
     getAnswerUuid answer = answer ^. uuid
 
 ------------------------------------------------------------------------------------------
-followUpIds :: Answer -> [UUID]
-followUpIds ans = ans ^.. followUps . traverse . uuid
+getFollowUpIds :: Answer -> [UUID]
+getFollowUpIds ans = ans ^.. followUps . traverse . uuid
 
 ansChangeFollowUpIdsOrder :: ([Question] -> Identity [UUID]) -> Answer -> Identity Answer
 ansChangeFollowUpIdsOrder convert ans = Identity $ ans & followUps .~ orderedFollowUps
@@ -128,8 +128,8 @@ ansChangeFollowUpIdsOrder convert ans = Identity $ ans & followUps .~ orderedFol
     getFollowUpsByUuid fuqUuid = filter (\x -> x ^. uuid == fuqUuid) (ans ^. followUps)
 
 ------------------------------------------------------------------------------------------
-expertIds :: Question -> [UUID]
-expertIds q = q ^.. experts . traverse . uuid
+getExpertIds :: Question -> [UUID]
+getExpertIds q = q ^.. experts . traverse . uuid
 
 qChangeExpertIdsOrder :: ([Expert] -> Identity [UUID]) -> Question -> Identity Question
 qChangeExpertIdsOrder convert q = Identity $ q & experts .~ orderedExperts
@@ -162,8 +162,8 @@ isThereAnyExpertWithGivenUuid km expUuid = expUuid `elem` (getExpertUuid <$> get
     getExpertUuid expert = expert ^. uuid
 
 ------------------------------------------------------------------------------------------
-referenceIds :: Question -> [UUID]
-referenceIds q = q ^.. references . traverse . uuid
+getReferenceIds :: Question -> [UUID]
+getReferenceIds q = q ^.. references . traverse . uuid
 
 qChangeReferenceIdsOrder :: ([Reference] -> Identity [UUID]) -> Question -> Identity Question
 qChangeReferenceIdsOrder convert q = Identity $ q & references .~ orderedReferences

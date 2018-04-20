@@ -6,28 +6,17 @@ import Data.UUID (UUID)
 
 import Api.Resource.Event.EventDTO
 import Common.Types
+import LensesConfig
 import Model.Common
-import Model.Event.Answer.AddAnswerEvent
-import Model.Event.Answer.DeleteAnswerEvent
-import Model.Event.Answer.EditAnswerEvent
-import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Chapter.DeleteChapterEvent
-import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Answer.AnswerEvent
+import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.Expert.AddExpertEvent
-import Model.Event.Expert.DeleteExpertEvent
-import Model.Event.Expert.EditExpertEvent
-import Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
-import Model.Event.Question.AddQuestionEvent
-import Model.Event.Question.DeleteQuestionEvent
-import Model.Event.Question.EditQuestionEvent
-import Model.Event.Reference.AddReferenceEvent
-import Model.Event.Reference.DeleteReferenceEvent
-import Model.Event.Reference.EditReferenceEvent
+import Model.Event.EventField
+import Model.Event.Expert.ExpertEvent
+import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Model.Event.Question.QuestionEvent
+import Model.Event.Reference.ReferenceEvent
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -43,16 +32,19 @@ instance EventFromDTO AddKnowledgeModelEventDTO where
   fromDTO dto =
     AddKnowledgeModelEvent'
       AddKnowledgeModelEvent
-      {_akmUuid = dto ^. akmdtoUuid, _akmKmUuid = dto ^. akmdtoKmUuid, _akmName = dto ^. akmdtoName}
+      { _addKnowledgeModelEventUuid = dto ^. uuid
+      , _addKnowledgeModelEventKmUuid = dto ^. kmUuid
+      , _addKnowledgeModelEventName = dto ^. name
+      }
 
 instance EventFromDTO EditKnowledgeModelEventDTO where
   fromDTO dto =
     EditKnowledgeModelEvent'
       EditKnowledgeModelEvent
-      { _ekmUuid = dto ^. ekmdtoUuid
-      , _ekmKmUuid = dto ^. ekmdtoKmUuid
-      , _ekmName = dto ^. ekmdtoName
-      , _ekmChapterIds = dto ^. ekmdtoChapterIds
+      { _editKnowledgeModelEventUuid = dto ^. uuid
+      , _editKnowledgeModelEventKmUuid = dto ^. kmUuid
+      , _editKnowledgeModelEventName = dto ^. name
+      , _editKnowledgeModelEventChapterIds = dto ^. chapterIds
       }
 
 -- -------------------------
@@ -62,30 +54,33 @@ instance EventFromDTO AddChapterEventDTO where
   fromDTO dto =
     AddChapterEvent'
       AddChapterEvent
-      { _achUuid = dto ^. achdtoUuid
-      , _achKmUuid = dto ^. achdtoKmUuid
-      , _achChapterUuid = dto ^. achdtoChapterUuid
-      , _achTitle = dto ^. achdtoTitle
-      , _achText = dto ^. achdtoText
+      { _addChapterEventUuid = dto ^. uuid
+      , _addChapterEventKmUuid = dto ^. kmUuid
+      , _addChapterEventChapterUuid = dto ^. chapterUuid
+      , _addChapterEventTitle = dto ^. title
+      , _addChapterEventText = dto ^. text
       }
 
 instance EventFromDTO EditChapterEventDTO where
   fromDTO dto =
     EditChapterEvent'
       EditChapterEvent
-      { _echUuid = dto ^. echdtoUuid
-      , _echKmUuid = dto ^. echdtoKmUuid
-      , _echChapterUuid = dto ^. echdtoChapterUuid
-      , _echTitle = dto ^. echdtoTitle
-      , _echText = dto ^. echdtoText
-      , _echQuestionIds = dto ^. echdtoQuestionIds
+      { _editChapterEventUuid = dto ^. uuid
+      , _editChapterEventKmUuid = dto ^. kmUuid
+      , _editChapterEventChapterUuid = dto ^. chapterUuid
+      , _editChapterEventTitle = dto ^. title
+      , _editChapterEventText = dto ^. text
+      , _editChapterEventQuestionIds = dto ^. questionIds
       }
 
 instance EventFromDTO DeleteChapterEventDTO where
   fromDTO dto =
     DeleteChapterEvent'
       DeleteChapterEvent
-      {_dchUuid = dto ^. dchdtoUuid, _dchKmUuid = dto ^. dchdtoKmUuid, _dchChapterUuid = dto ^. dchdtoChapterUuid}
+      { _deleteChapterEventUuid = dto ^. uuid
+      , _deleteChapterEventKmUuid = dto ^. kmUuid
+      , _deleteChapterEventChapterUuid = dto ^. chapterUuid
+      }
 
 -- -------------------------
 -- Question ----------------
@@ -94,41 +89,41 @@ instance EventFromDTO AddQuestionEventDTO where
   fromDTO dto =
     AddQuestionEvent'
       AddQuestionEvent
-      { _aqUuid = dto ^. aqdtoUuid
-      , _aqKmUuid = dto ^. aqdtoKmUuid
-      , _aqChapterUuid = dto ^. aqdtoChapterUuid
-      , _aqQuestionUuid = dto ^. aqdtoQuestionUuid
-      , _aqShortQuestionUuid = dto ^. aqdtoShortQuestionUuid
-      , _aqType = dto ^. aqdtoType
-      , _aqTitle = dto ^. aqdtoTitle
-      , _aqText = dto ^. aqdtoText
+      { _addQuestionEventUuid = dto ^. uuid
+      , _addQuestionEventKmUuid = dto ^. kmUuid
+      , _addQuestionEventChapterUuid = dto ^. chapterUuid
+      , _addQuestionEventQuestionUuid = dto ^. questionUuid
+      , _addQuestionEventShortQuestionUuid = dto ^. shortQuestionUuid
+      , _addQuestionEventQType = dto ^. qType
+      , _addQuestionEventTitle = dto ^. title
+      , _addQuestionEventText = dto ^. text
       }
 
 instance EventFromDTO EditQuestionEventDTO where
   fromDTO dto =
     EditQuestionEvent'
       EditQuestionEvent
-      { _eqUuid = dto ^. eqdtoUuid
-      , _eqKmUuid = dto ^. eqdtoKmUuid
-      , _eqChapterUuid = dto ^. eqdtoChapterUuid
-      , _eqQuestionUuid = dto ^. eqdtoQuestionUuid
-      , _eqShortQuestionUuid = dto ^. eqdtoShortQuestionUuid
-      , _eqType = dto ^. eqdtoType
-      , _eqTitle = dto ^. eqdtoTitle
-      , _eqText = dto ^. eqdtoText
-      , _eqAnswerIds = dto ^. eqdtoAnswerIds
-      , _eqExpertIds = dto ^. eqdtoExpertIds
-      , _eqReferenceIds = dto ^. eqdtoReferenceIds
+      { _editQuestionEventUuid = dto ^. uuid
+      , _editQuestionEventKmUuid = dto ^. kmUuid
+      , _editQuestionEventChapterUuid = dto ^. chapterUuid
+      , _editQuestionEventQuestionUuid = dto ^. questionUuid
+      , _editQuestionEventShortQuestionUuid = dto ^. shortQuestionUuid
+      , _editQuestionEventQType = dto ^. qType
+      , _editQuestionEventTitle = dto ^. title
+      , _editQuestionEventText = dto ^. text
+      , _editQuestionEventAnswerIds = dto ^. answerIds
+      , _editQuestionEventExpertIds = dto ^. expertIds
+      , _editQuestionEventReferenceIds = dto ^. referenceIds
       }
 
 instance EventFromDTO DeleteQuestionEventDTO where
   fromDTO dto =
     DeleteQuestionEvent'
       DeleteQuestionEvent
-      { _dqUuid = dto ^. dqdtoUuid
-      , _dqKmUuid = dto ^. dqdtoKmUuid
-      , _dqChapterUuid = dto ^. dqdtoChapterUuid
-      , _dqQuestionUuid = dto ^. dqdtoQuestionUuid
+      { _deleteQuestionEventUuid = dto ^. uuid
+      , _deleteQuestionEventKmUuid = dto ^. kmUuid
+      , _deleteQuestionEventChapterUuid = dto ^. chapterUuid
+      , _deleteQuestionEventQuestionUuid = dto ^. questionUuid
       }
 
 -- -------------------------
@@ -138,38 +133,38 @@ instance EventFromDTO AddAnswerEventDTO where
   fromDTO dto =
     AddAnswerEvent'
       AddAnswerEvent
-      { _aansUuid = dto ^. aansdtoUuid
-      , _aansKmUuid = dto ^. aansdtoKmUuid
-      , _aansChapterUuid = dto ^. aansdtoChapterUuid
-      , _aansQuestionUuid = dto ^. aansdtoQuestionUuid
-      , _aansAnswerUuid = dto ^. aansdtoAnswerUuid
-      , _aansLabel = dto ^. aansdtoLabel
-      , _aansAdvice = dto ^. aansdtoAdvice
+      { _addAnswerEventUuid = dto ^. uuid
+      , _addAnswerEventKmUuid = dto ^. kmUuid
+      , _addAnswerEventChapterUuid = dto ^. chapterUuid
+      , _addAnswerEventQuestionUuid = dto ^. questionUuid
+      , _addAnswerEventAnswerUuid = dto ^. answerUuid
+      , _addAnswerEventLabel = dto ^. label
+      , _addAnswerEventAdvice = dto ^. advice
       }
 
 instance EventFromDTO EditAnswerEventDTO where
   fromDTO dto =
     EditAnswerEvent'
       EditAnswerEvent
-      { _eansUuid = dto ^. eansdtoUuid
-      , _eansKmUuid = dto ^. eansdtoKmUuid
-      , _eansChapterUuid = dto ^. eansdtoChapterUuid
-      , _eansQuestionUuid = dto ^. eansdtoQuestionUuid
-      , _eansAnswerUuid = dto ^. eansdtoAnswerUuid
-      , _eansLabel = dto ^. eansdtoLabel
-      , _eansAdvice = dto ^. eansdtoAdvice
-      , _eansFollowUpIds = dto ^. eansdtoFollowUpIds
+      { _editAnswerEventUuid = dto ^. uuid
+      , _editAnswerEventKmUuid = dto ^. kmUuid
+      , _editAnswerEventChapterUuid = dto ^. chapterUuid
+      , _editAnswerEventQuestionUuid = dto ^. questionUuid
+      , _editAnswerEventAnswerUuid = dto ^. answerUuid
+      , _editAnswerEventLabel = dto ^. label
+      , _editAnswerEventAdvice = dto ^. advice
+      , _editAnswerEventFollowUpIds = dto ^. followUpIds
       }
 
 instance EventFromDTO DeleteAnswerEventDTO where
   fromDTO dto =
     DeleteAnswerEvent'
       DeleteAnswerEvent
-      { _dansUuid = dto ^. dansdtoUuid
-      , _dansKmUuid = dto ^. dansdtoKmUuid
-      , _dansChapterUuid = dto ^. dansdtoChapterUuid
-      , _dansQuestionUuid = dto ^. dansdtoQuestionUuid
-      , _dansAnswerUuid = dto ^. dansdtoAnswerUuid
+      { _deleteAnswerEventUuid = dto ^. uuid
+      , _deleteAnswerEventKmUuid = dto ^. kmUuid
+      , _deleteAnswerEventChapterUuid = dto ^. chapterUuid
+      , _deleteAnswerEventQuestionUuid = dto ^. questionUuid
+      , _deleteAnswerEventAnswerUuid = dto ^. answerUuid
       }
 
 -- -------------------------
@@ -179,37 +174,37 @@ instance EventFromDTO AddExpertEventDTO where
   fromDTO dto =
     AddExpertEvent'
       AddExpertEvent
-      { _aexpUuid = dto ^. aexpdtoUuid
-      , _aexpKmUuid = dto ^. aexpdtoKmUuid
-      , _aexpChapterUuid = dto ^. aexpdtoChapterUuid
-      , _aexpQuestionUuid = dto ^. aexpdtoQuestionUuid
-      , _aexpExpertUuid = dto ^. aexpdtoExpertUuid
-      , _aexpName = dto ^. aexpdtoName
-      , _aexpEmail = dto ^. aexpdtoEmail
+      { _addExpertEventUuid = dto ^. uuid
+      , _addExpertEventKmUuid = dto ^. kmUuid
+      , _addExpertEventChapterUuid = dto ^. chapterUuid
+      , _addExpertEventQuestionUuid = dto ^. questionUuid
+      , _addExpertEventExpertUuid = dto ^. expertUuid
+      , _addExpertEventName = dto ^. name
+      , _addExpertEventEmail = dto ^. email
       }
 
 instance EventFromDTO EditExpertEventDTO where
   fromDTO dto =
     EditExpertEvent'
       EditExpertEvent
-      { _eexpUuid = dto ^. eexpdtoUuid
-      , _eexpKmUuid = dto ^. eexpdtoKmUuid
-      , _eexpChapterUuid = dto ^. eexpdtoChapterUuid
-      , _eexpQuestionUuid = dto ^. eexpdtoQuestionUuid
-      , _eexpExpertUuid = dto ^. eexpdtoExpertUuid
-      , _eexpName = dto ^. eexpdtoName
-      , _eexpEmail = dto ^. eexpdtoEmail
+      { _editExpertEventUuid = dto ^. uuid
+      , _editExpertEventKmUuid = dto ^. kmUuid
+      , _editExpertEventChapterUuid = dto ^. chapterUuid
+      , _editExpertEventQuestionUuid = dto ^. questionUuid
+      , _editExpertEventExpertUuid = dto ^. expertUuid
+      , _editExpertEventName = dto ^. name
+      , _editExpertEventEmail = dto ^. email
       }
 
 instance EventFromDTO DeleteExpertEventDTO where
   fromDTO dto =
     DeleteExpertEvent'
       DeleteExpertEvent
-      { _dexpUuid = dto ^. dexpdtoUuid
-      , _dexpKmUuid = dto ^. dexpdtoKmUuid
-      , _dexpChapterUuid = dto ^. dexpdtoChapterUuid
-      , _dexpQuestionUuid = dto ^. dexpdtoQuestionUuid
-      , _dexpExpertUuid = dto ^. dexpdtoExpertUuid
+      { _deleteExpertEventUuid = dto ^. uuid
+      , _deleteExpertEventKmUuid = dto ^. kmUuid
+      , _deleteExpertEventChapterUuid = dto ^. chapterUuid
+      , _deleteExpertEventQuestionUuid = dto ^. questionUuid
+      , _deleteExpertEventExpertUuid = dto ^. expertUuid
       }
 
 -- -------------------------
@@ -219,35 +214,35 @@ instance EventFromDTO AddReferenceEventDTO where
   fromDTO dto =
     AddReferenceEvent'
       AddReferenceEvent
-      { _arefUuid = dto ^. arefdtoUuid
-      , _arefKmUuid = dto ^. arefdtoKmUuid
-      , _arefChapterUuid = dto ^. arefdtoChapterUuid
-      , _arefQuestionUuid = dto ^. arefdtoQuestionUuid
-      , _arefReferenceUuid = dto ^. arefdtoReferenceUuid
-      , _arefChapter = dto ^. arefdtoChapter
+      { _addReferenceEventUuid = dto ^. uuid
+      , _addReferenceEventKmUuid = dto ^. kmUuid
+      , _addReferenceEventChapterUuid = dto ^. chapterUuid
+      , _addReferenceEventQuestionUuid = dto ^. questionUuid
+      , _addReferenceEventReferenceUuid = dto ^. referenceUuid
+      , _addReferenceEventChapter = dto ^. chapter
       }
 
 instance EventFromDTO EditReferenceEventDTO where
   fromDTO dto =
     EditReferenceEvent'
       EditReferenceEvent
-      { _erefUuid = dto ^. erefdtoUuid
-      , _erefKmUuid = dto ^. erefdtoKmUuid
-      , _erefChapterUuid = dto ^. erefdtoChapterUuid
-      , _erefQuestionUuid = dto ^. erefdtoQuestionUuid
-      , _erefReferenceUuid = dto ^. erefdtoReferenceUuid
-      , _erefChapter = dto ^. erefdtoChapter
+      { _editReferenceEventUuid = dto ^. uuid
+      , _editReferenceEventKmUuid = dto ^. kmUuid
+      , _editReferenceEventChapterUuid = dto ^. chapterUuid
+      , _editReferenceEventQuestionUuid = dto ^. questionUuid
+      , _editReferenceEventReferenceUuid = dto ^. referenceUuid
+      , _editReferenceEventChapter = dto ^. chapter
       }
 
 instance EventFromDTO DeleteReferenceEventDTO where
   fromDTO dto =
     DeleteReferenceEvent'
       DeleteReferenceEvent
-      { _drefUuid = dto ^. drefdtoUuid
-      , _drefKmUuid = dto ^. drefdtoKmUuid
-      , _drefChapterUuid = dto ^. drefdtoChapterUuid
-      , _drefQuestionUuid = dto ^. drefdtoQuestionUuid
-      , _drefReferenceUuid = dto ^. drefdtoReferenceUuid
+      { _deleteReferenceEventUuid = dto ^. uuid
+      , _deleteReferenceEventKmUuid = dto ^. kmUuid
+      , _deleteReferenceEventChapterUuid = dto ^. chapterUuid
+      , _deleteReferenceEventQuestionUuid = dto ^. questionUuid
+      , _deleteReferenceEventReferenceUuid = dto ^. referenceUuid
       }
 
 -- -------------------------
@@ -257,42 +252,42 @@ instance EventFromDTO AddFollowUpQuestionEventDTO where
   fromDTO dto =
     AddFollowUpQuestionEvent'
       AddFollowUpQuestionEvent
-      { _afuqUuid = dto ^. afuqdtoUuid
-      , _afuqKmUuid = dto ^. afuqdtoKmUuid
-      , _afuqChapterUuid = dto ^. afuqdtoChapterUuid
-      , _afuqAnswerUuid = dto ^. afuqdtoAnswerUuid
-      , _afuqQuestionUuid = dto ^. afuqdtoQuestionUuid
-      , _afuqShortQuestionUuid = dto ^. afuqdtoShortQuestionUuid
-      , _afuqType = dto ^. afuqdtoType
-      , _afuqTitle = dto ^. afuqdtoTitle
-      , _afuqText = dto ^. afuqdtoText
+      { _addFollowUpQuestionEventUuid = dto ^. uuid
+      , _addFollowUpQuestionEventKmUuid = dto ^. kmUuid
+      , _addFollowUpQuestionEventChapterUuid = dto ^. chapterUuid
+      , _addFollowUpQuestionEventAnswerUuid = dto ^. answerUuid
+      , _addFollowUpQuestionEventQuestionUuid = dto ^. questionUuid
+      , _addFollowUpQuestionEventShortQuestionUuid = dto ^. shortQuestionUuid
+      , _addFollowUpQuestionEventQType = dto ^. qType
+      , _addFollowUpQuestionEventTitle = dto ^. title
+      , _addFollowUpQuestionEventText = dto ^. text
       }
 
 instance EventFromDTO EditFollowUpQuestionEventDTO where
   fromDTO dto =
     EditFollowUpQuestionEvent'
       EditFollowUpQuestionEvent
-      { _efuqUuid = dto ^. efuqdtoUuid
-      , _efuqKmUuid = dto ^. efuqdtoKmUuid
-      , _efuqChapterUuid = dto ^. efuqdtoChapterUuid
-      , _efuqAnswerUuid = dto ^. efuqdtoAnswerUuid
-      , _efuqQuestionUuid = dto ^. efuqdtoQuestionUuid
-      , _efuqShortQuestionUuid = dto ^. efuqdtoShortQuestionUuid
-      , _efuqType = dto ^. efuqdtoType
-      , _efuqTitle = dto ^. efuqdtoTitle
-      , _efuqText = dto ^. efuqdtoText
-      , _efuqAnswerIds = dto ^. efuqdtoAnswerIds
-      , _efuqExpertIds = dto ^. efuqdtoExpertIds
-      , _efuqReferenceIds = dto ^. efuqdtoReferenceIds
+      { _editFollowUpQuestionEventUuid = dto ^. uuid
+      , _editFollowUpQuestionEventKmUuid = dto ^. kmUuid
+      , _editFollowUpQuestionEventChapterUuid = dto ^. chapterUuid
+      , _editFollowUpQuestionEventAnswerUuid = dto ^. answerUuid
+      , _editFollowUpQuestionEventQuestionUuid = dto ^. questionUuid
+      , _editFollowUpQuestionEventShortQuestionUuid = dto ^. shortQuestionUuid
+      , _editFollowUpQuestionEventQType = dto ^. qType
+      , _editFollowUpQuestionEventTitle = dto ^. title
+      , _editFollowUpQuestionEventText = dto ^. text
+      , _editFollowUpQuestionEventAnswerIds = dto ^. answerIds
+      , _editFollowUpQuestionEventExpertIds = dto ^. expertIds
+      , _editFollowUpQuestionEventReferenceIds = dto ^. referenceIds
       }
 
 instance EventFromDTO DeleteFollowUpQuestionEventDTO where
   fromDTO dto =
     DeleteFollowUpQuestionEvent'
       DeleteFollowUpQuestionEvent
-      { _dfuqUuid = dto ^. dfuqdtoUuid
-      , _dfuqKmUuid = dto ^. dfuqdtoKmUuid
-      , _dfuqChapterUuid = dto ^. dfuqdtoChapterUuid
-      , _dfuqAnswerUuid = dto ^. dfuqdtoAnswerUuid
-      , _dfuqQuestionUuid = dto ^. dfuqdtoQuestionUuid
+      { _deleteFollowUpQuestionEventUuid = dto ^. uuid
+      , _deleteFollowUpQuestionEventKmUuid = dto ^. kmUuid
+      , _deleteFollowUpQuestionEventChapterUuid = dto ^. chapterUuid
+      , _deleteFollowUpQuestionEventAnswerUuid = dto ^. answerUuid
+      , _deleteFollowUpQuestionEventQuestionUuid = dto ^. questionUuid
       }

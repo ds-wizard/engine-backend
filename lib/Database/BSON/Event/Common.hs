@@ -11,27 +11,15 @@ import Database.BSON.Event.FollowUpQuestion
 import Database.BSON.Event.KnowledgeModel
 import Database.BSON.Event.Question
 import Database.BSON.Event.Reference
-import Model.Event.Answer.AddAnswerEvent
-import Model.Event.Answer.DeleteAnswerEvent
-import Model.Event.Answer.EditAnswerEvent
-import Model.Event.Chapter.AddChapterEvent
-import Model.Event.Chapter.DeleteChapterEvent
-import Model.Event.Chapter.EditChapterEvent
+import Model.Event.Answer.AnswerEvent
+import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.Expert.AddExpertEvent
-import Model.Event.Expert.DeleteExpertEvent
-import Model.Event.Expert.EditExpertEvent
-import Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-import Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-import Model.Event.KnowledgeModel.EditKnowledgeModelEvent
-import Model.Event.Question.AddQuestionEvent
-import Model.Event.Question.DeleteQuestionEvent
-import Model.Event.Question.EditQuestionEvent
-import Model.Event.Reference.AddReferenceEvent
-import Model.Event.Reference.DeleteReferenceEvent
-import Model.Event.Reference.EditReferenceEvent
+import Model.Event.EventField
+import Model.Event.Expert.ExpertEvent
+import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
+import Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Model.Event.Question.QuestionEvent
+import Model.Event.Reference.ReferenceEvent
 
 chooseEventDeserializator :: BSON.Document -> Maybe Event
 chooseEventDeserializator doc = do

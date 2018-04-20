@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 2121a6a9e7ee49124c191ef9838a58862e4fa42757791697d7202584630401e2
+-- hash: fc68edba0f82636aef47327c9d6c91a61e2fcf90f4648a9a83b7bdefac3bf091
 
 name:           dsw-server
 version:        1.0.0
@@ -167,27 +167,22 @@ library
       Model.Common
       Model.Config.DSWConfig
       Model.Context.AppContext
-      Model.Event.Answer.AddAnswerEvent
-      Model.Event.Answer.DeleteAnswerEvent
-      Model.Event.Answer.EditAnswerEvent
-      Model.Event.Chapter.AddChapterEvent
-      Model.Event.Chapter.DeleteChapterEvent
-      Model.Event.Chapter.EditChapterEvent
+      Model.Event.Answer.AnswerEvent
+      Model.Event.Answer.AnswerEventSameUuid
+      Model.Event.Chapter.ChapterEvent
+      Model.Event.Chapter.ChapterEventSameUuid
       Model.Event.Event
-      Model.Event.Expert.AddExpertEvent
-      Model.Event.Expert.DeleteExpertEvent
-      Model.Event.Expert.EditExpertEvent
-      Model.Event.FollowUpQuestion.AddFollowUpQuestionEvent
-      Model.Event.FollowUpQuestion.DeleteFollowUpQuestionEvent
-      Model.Event.FollowUpQuestion.EditFollowUpQuestionEvent
-      Model.Event.KnowledgeModel.AddKnowledgeModelEvent
-      Model.Event.KnowledgeModel.EditKnowledgeModelEvent
-      Model.Event.Question.AddQuestionEvent
-      Model.Event.Question.DeleteQuestionEvent
-      Model.Event.Question.EditQuestionEvent
-      Model.Event.Reference.AddReferenceEvent
-      Model.Event.Reference.DeleteReferenceEvent
-      Model.Event.Reference.EditReferenceEvent
+      Model.Event.EventField
+      Model.Event.Expert.ExpertEvent
+      Model.Event.Expert.ExpertEventSameUuid
+      Model.Event.FollowUpQuestion.FollowUpQuestionEvent
+      Model.Event.FollowUpQuestion.FollowUpQuestionEventSameUuid
+      Model.Event.KnowledgeModel.KnowledgeModelEvent
+      Model.Event.KnowledgeModel.KnowledgeModelEventSameUuid
+      Model.Event.Question.QuestionEvent
+      Model.Event.Question.QuestionEventSameUuid
+      Model.Event.Reference.ReferenceEvent
+      Model.Event.Reference.ReferenceEventSameUuid
       Model.KnowledgeModel.KnowledgeModel
       Model.KnowledgeModel.KnowledgeModelAccessors
       Model.KnowledgeModel.KnowledgeModelSameUuid
