@@ -7,6 +7,7 @@ import Data.UUID
 
 import Common.Error
 import Common.Utils
+import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
 
 serializeUUID :: UUID -> String
@@ -25,6 +26,9 @@ serializeMaybeUUIDList mUuids = do
   uuids <- mUuids
   return $ serializeUUIDList uuids
 
+serializeEventFieldUUIDList :: EventField [UUID] -> EventField [String]
+serializeEventFieldUUIDList efUuids = serializeUUIDList <$> efUuids
+
 deserializeUUID :: Maybe String -> Maybe UUID
 deserializeUUID mUuidS = do
   uuidS <- mUuidS
@@ -38,6 +42,19 @@ deserializeMaybeUUIDList mUuidsS = do
   uuidsS <- mUuidsS
   switchMaybeAndList $ fmap fromString uuidsS
 
+deserializeEventFieldUUIDList :: Maybe (EventField [String]) -> EventField [UUID]
+deserializeEventFieldUUIDList maybeEfUuids =
+  case maybeEfUuids of
+    Just efUuids -> extractMaybe $ deserializeUUIDList <$> efUuids
+    Nothing -> NothingChanged
+  where
+    extractMaybe :: EventField (Maybe [UUID]) -> EventField [UUID]
+    extractMaybe maybeUuids =
+      case maybeUuids of
+        (ChangedValue (Just uuids)) -> ChangedValue uuids
+        (ChangedValue Nothing) -> NothingChanged
+        NothingChanged -> NothingChanged
+
 deserializeQuestionType :: Maybe String -> Maybe QuestionType
 deserializeQuestionType mQuestionTypeS = do
   questionType <- mQuestionTypeS
@@ -48,6 +65,21 @@ deserializeQuestionType mQuestionTypeS = do
     "QuestionNumber" -> Just QuestionNumber
     "QuestionDate" -> Just QuestionDate
     "QuestionText" -> Just QuestionText
+    _ -> Nothing
+
+deserializeEventFieldQuestionType :: Maybe String -> EventField QuestionType
+deserializeEventFieldQuestionType mQuestionTypeS =
+  case mQuestionTypeS of
+    Just questionType ->
+      case questionType of
+        "QuestionTypeOption" -> ChangedValue QuestionTypeOption
+        "QuestionTypeList" -> ChangedValue QuestionTypeList
+        "QuestionString" -> ChangedValue QuestionString
+        "QuestionNumber" -> ChangedValue QuestionNumber
+        "QuestionDate" -> ChangedValue QuestionDate
+        "QuestionText" -> ChangedValue QuestionText
+        _ -> NothingChanged
+    Nothing -> NothingChanged
 
 instance ToBSON AppError where
   toBSON (ValidationError message formErrors fieldErrors) =

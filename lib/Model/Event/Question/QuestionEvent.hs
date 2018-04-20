@@ -3,6 +3,7 @@ module Model.Event.Question.QuestionEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEvent = AddQuestionEvent
@@ -21,13 +22,13 @@ data EditQuestionEvent = EditQuestionEvent
   , _editQuestionEventKmUuid :: UUID
   , _editQuestionEventChapterUuid :: UUID
   , _editQuestionEventQuestionUuid :: UUID
-  , _editQuestionEventShortQuestionUuid :: Maybe (Maybe String)
-  , _editQuestionEventQType :: Maybe QuestionType
-  , _editQuestionEventTitle :: Maybe String
-  , _editQuestionEventText :: Maybe String
-  , _editQuestionEventAnswerIds :: Maybe [UUID]
-  , _editQuestionEventExpertIds :: Maybe [UUID]
-  , _editQuestionEventReferenceIds :: Maybe [UUID]
+  , _editQuestionEventShortQuestionUuid :: EventField (Maybe String)
+  , _editQuestionEventQType :: EventField QuestionType
+  , _editQuestionEventTitle :: EventField String
+  , _editQuestionEventText :: EventField String
+  , _editQuestionEventAnswerIds :: EventField [UUID]
+  , _editQuestionEventExpertIds :: EventField [UUID]
+  , _editQuestionEventReferenceIds :: EventField [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEvent = DeleteQuestionEvent

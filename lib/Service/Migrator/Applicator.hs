@@ -53,8 +53,8 @@ foldEvent emKM (AddFollowUpQuestionEvent' e) = applyEventToKM e emKM
 foldEvent emKM (EditFollowUpQuestionEvent' e) = applyEventToKM e emKM
 foldEvent emKM (DeleteFollowUpQuestionEvent' e) = applyEventToKM e emKM
 
-applyValue (Just val) ch setter = ch & setter .~ val
-applyValue Nothing ch setter = ch
+applyValue (ChangedValue val) ch setter = ch & setter .~ val
+applyValue NothingChanged ch setter = ch
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

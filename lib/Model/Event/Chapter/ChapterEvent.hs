@@ -3,6 +3,8 @@ module Model.Event.Chapter.ChapterEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
+
 data AddChapterEvent = AddChapterEvent
   { _addChapterEventUuid :: UUID
   , _addChapterEventKmUuid :: UUID
@@ -15,9 +17,9 @@ data EditChapterEvent = EditChapterEvent
   { _editChapterEventUuid :: UUID
   , _editChapterEventKmUuid :: UUID
   , _editChapterEventChapterUuid :: UUID
-  , _editChapterEventTitle :: Maybe String
-  , _editChapterEventText :: Maybe String
-  , _editChapterEventQuestionIds :: Maybe [UUID]
+  , _editChapterEventTitle :: EventField String
+  , _editChapterEventText :: EventField String
+  , _editChapterEventQuestionIds :: EventField [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEvent = DeleteChapterEvent

@@ -8,6 +8,7 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import Database.BSON.Event.EventField
 import LensesConfig
 import Model.Event.Question.QuestionEvent
 
@@ -63,9 +64,9 @@ instance ToBSON EditQuestionEvent where
     , "qType" BSON.=: show (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "answerIds" BSON.=: serializeMaybeUUIDList (event ^. answerIds)
-    , "expertIds" BSON.=: serializeMaybeUUIDList (event ^. expertIds)
-    , "referenceIds" BSON.=: serializeMaybeUUIDList (event ^. referenceIds)
+    , "answerIds" BSON.=: serializeEventFieldUUIDList (event ^. answerIds)
+    , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
+    , "referenceIds" BSON.=: serializeEventFieldUUIDList (event ^. referenceIds)
     ]
 
 instance FromBSON EditQuestionEvent where
@@ -75,12 +76,12 @@ instance FromBSON EditQuestionEvent where
     qChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     qQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
     qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
-    qQType <- deserializeQuestionType <$> BSON.lookup "qType" doc
+    qQType <- deserializeEventFieldQuestionType <$> BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
-    let qAnswerIds = deserializeMaybeUUIDList $ BSON.lookup "answerIds" doc
-    let qExpertIds = deserializeMaybeUUIDList $ BSON.lookup "expertIds" doc
-    let qReferenceIds = deserializeMaybeUUIDList $ BSON.lookup "referenceIds" doc
+    let qAnswerIds = deserializeEventFieldUUIDList $ BSON.lookup "answerIds" doc
+    let qExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
+    let qReferenceIds = deserializeEventFieldUUIDList $ BSON.lookup "referenceIds" doc
     return
       EditQuestionEvent
       { _editQuestionEventUuid = qUuid

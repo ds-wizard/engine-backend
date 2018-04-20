@@ -3,6 +3,7 @@ module Model.Event.FollowUpQuestion.FollowUpQuestionEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddFollowUpQuestionEvent = AddFollowUpQuestionEvent
@@ -23,13 +24,13 @@ data EditFollowUpQuestionEvent = EditFollowUpQuestionEvent
   , _editFollowUpQuestionEventChapterUuid :: UUID
   , _editFollowUpQuestionEventAnswerUuid :: UUID
   , _editFollowUpQuestionEventQuestionUuid :: UUID
-  , _editFollowUpQuestionEventShortQuestionUuid :: Maybe (Maybe String)
-  , _editFollowUpQuestionEventQType :: Maybe QuestionType
-  , _editFollowUpQuestionEventTitle :: Maybe String
-  , _editFollowUpQuestionEventText :: Maybe String
-  , _editFollowUpQuestionEventAnswerIds :: Maybe [UUID]
-  , _editFollowUpQuestionEventExpertIds :: Maybe [UUID]
-  , _editFollowUpQuestionEventReferenceIds :: Maybe [UUID]
+  , _editFollowUpQuestionEventShortQuestionUuid :: EventField (Maybe String)
+  , _editFollowUpQuestionEventQType :: EventField QuestionType
+  , _editFollowUpQuestionEventTitle :: EventField String
+  , _editFollowUpQuestionEventText :: EventField String
+  , _editFollowUpQuestionEventAnswerIds :: EventField [UUID]
+  , _editFollowUpQuestionEventExpertIds :: EventField [UUID]
+  , _editFollowUpQuestionEventReferenceIds :: EventField [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteFollowUpQuestionEvent = DeleteFollowUpQuestionEvent

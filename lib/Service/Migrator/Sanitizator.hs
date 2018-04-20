@@ -12,6 +12,7 @@ import Common.Uuid
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
+import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -30,12 +31,12 @@ instance Sanitizator EditKnowledgeModelEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChapterUuids $ \childIdsFromEvent ->
-        changeEventUuid uuid $ event & chapterIds .~ (Just $ resultUuids km childIdsFromEvent)
+        changeEventUuid uuid $ event & chapterIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
     where
       unwrapEventChapterUuids callback =
         case event ^. chapterIds of
-          Nothing -> return event
-          Just uuids -> callback uuids
+          NothingChanged -> return event
+          ChangedValue uuids -> callback uuids
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _chapterUuid <$> getAllChapters km
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -49,12 +50,12 @@ instance Sanitizator EditChapterEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChildUuids $ \childIdsFromEvent ->
-        changeEventUuid uuid $ event & questionIds .~ (Just $ resultUuids km childIdsFromEvent)
+        changeEventUuid uuid $ event & questionIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
     where
       unwrapEventChildUuids callback =
         case event ^. questionIds of
-          Nothing -> return event
-          Just uuids -> callback uuids
+          NothingChanged -> return event
+          ChangedValue uuids -> callback uuids
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _questionUuid <$> getAllQuestionsForChapterUuid km (event ^. chapterUuid)
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -83,12 +84,12 @@ instance Sanitizator EditQuestionEvent where
     where
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & answerIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & answerIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. answerIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _answerUuid <$> getAllAnswersForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -101,12 +102,12 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyReferenceChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & referenceIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & referenceIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. referenceIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _referenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -119,12 +120,12 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyExpertChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & expertIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & expertIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. expertIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _expertUuid <$> getAllExpertsForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -138,12 +139,12 @@ instance Sanitizator EditAnswerEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChildUuids $ \childIdsFromEvent ->
-        changeEventUuid uuid $ event & followUpIds .~ (Just $ resultUuids km childIdsFromEvent)
+        changeEventUuid uuid $ event & followUpIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
     where
       unwrapEventChildUuids callback =
         case event ^. followUpIds of
-          Nothing -> return event
-          Just uuids -> callback uuids
+          NothingChanged -> return event
+          ChangedValue uuids -> callback uuids
       childIdsFromKM :: KnowledgeModel -> [U.UUID]
       childIdsFromKM km = _questionUuid <$> getAllQuestionsForAnswerUuid km (event ^. answerUuid)
       isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -166,12 +167,12 @@ instance Sanitizator EditFollowUpQuestionEvent where
     where
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & answerIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & answerIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. answerIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _answerUuid <$> getAllAnswersForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -184,12 +185,12 @@ instance Sanitizator EditFollowUpQuestionEvent where
       -- ------------------------
       applyReferenceChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & referenceIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & referenceIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. referenceIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _referenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
@@ -202,12 +203,12 @@ instance Sanitizator EditFollowUpQuestionEvent where
       -- ------------------------
       applyExpertChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
-          return $ event & expertIds .~ (Just $ resultUuids km childIdsFromEvent)
+          return $ event & expertIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. expertIds of
-              Nothing -> return event
-              Just uuids -> callback uuids
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
           childIdsFromKM km = _expertUuid <$> getAllExpertsForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool

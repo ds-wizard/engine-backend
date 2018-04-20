@@ -16,6 +16,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
+import Model.Event.EventField
 import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
@@ -216,7 +217,7 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. msMigrationState
-        let expEventQuestionIds = Just [a_km1_ch1_q2 ^. questionUuid]
+        let expEventQuestionIds = ChangedValue [a_km1_ch1_q2 ^. questionUuid]
         let expEvent = (e_km1_ch1 & uuid .~ (resEvent ^. uuid)) & questionIds .~ expEventQuestionIds
         let expState = reqState & msMigrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState

@@ -16,6 +16,7 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
+import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -37,8 +38,8 @@ e_km1 =
   EditKnowledgeModelEvent
   { _editKnowledgeModelEventUuid = fromJust $ U.fromString "8294a55d-642d-416c-879b-5a42a4430c24"
   , _editKnowledgeModelEventKmUuid = km1 ^. uuid
-  , _editKnowledgeModelEventName = Just $ km1WithChangeProperties ^. name
-  , _editKnowledgeModelEventChapterIds = Just $ getChapterIds km1WithChangeProperties
+  , _editKnowledgeModelEventName = ChangedValue $ km1WithChangeProperties ^. name
+  , _editKnowledgeModelEventChapterIds = ChangedValue $ getChapterIds km1WithChangeProperties
   }
 
 -- ----------------------------------------------------------------------------
@@ -79,9 +80,9 @@ e_km1_ch1 =
   { _editChapterEventUuid = fromJust $ U.fromString "d4adc3e6-c70e-4277-9d1d-0941db0f0141"
   , _editChapterEventKmUuid = km1 ^. uuid
   , _editChapterEventChapterUuid = chapter1 ^. uuid
-  , _editChapterEventTitle = Just $ chapter1WithChangeProperties ^. title
-  , _editChapterEventText = Just $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionIds = Just $ getQuestionIds chapter1WithChangeProperties
+  , _editChapterEventTitle = ChangedValue $ chapter1WithChangeProperties ^. title
+  , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
+  , _editChapterEventQuestionIds = ChangedValue $ getQuestionIds chapter1WithChangeProperties
   }
 
 e_km1_ch1_2 :: EditChapterEvent
@@ -90,9 +91,9 @@ e_km1_ch1_2 =
   { _editChapterEventUuid = fromJust $ U.fromString "d4adc3e6-c70e-4277-9d1d-0941db0f0141"
   , _editChapterEventKmUuid = km1 ^. uuid
   , _editChapterEventChapterUuid = chapter1 ^. uuid
-  , _editChapterEventTitle = Just $ "TWICE: " ++ chapter1WithChangeProperties ^. title
-  , _editChapterEventText = Just $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionIds = Just $ getQuestionIds chapter1WithChangeProperties
+  , _editChapterEventTitle = ChangedValue $ "TWICE: " ++ chapter1WithChangeProperties ^. title
+  , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
+  , _editChapterEventQuestionIds = ChangedValue $ getQuestionIds chapter1WithChangeProperties
   }
 
 d_km1_ch1 :: DeleteChapterEvent
@@ -164,13 +165,13 @@ e_km1_ch1_q1_title =
   , _editQuestionEventKmUuid = km1 ^. uuid
   , _editQuestionEventChapterUuid = chapter1 ^. uuid
   , _editQuestionEventQuestionUuid = question1 ^. uuid
-  , _editQuestionEventShortQuestionUuid = Nothing
-  , _editQuestionEventQType = Nothing
-  , _editQuestionEventTitle = Just $ "EDITED: " ++ question2WithChangeProperties ^. title
-  , _editQuestionEventText = Nothing
-  , _editQuestionEventAnswerIds = Nothing
-  , _editQuestionEventExpertIds = Nothing
-  , _editQuestionEventReferenceIds = Nothing
+  , _editQuestionEventShortQuestionUuid = NothingChanged
+  , _editQuestionEventQType = NothingChanged
+  , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
+  , _editQuestionEventText = NothingChanged
+  , _editQuestionEventAnswerIds = NothingChanged
+  , _editQuestionEventExpertIds = NothingChanged
+  , _editQuestionEventReferenceIds = NothingChanged
   }
 
 e_km1_ch1_q2 :: EditQuestionEvent
@@ -180,13 +181,13 @@ e_km1_ch1_q2 =
   , _editQuestionEventKmUuid = km1 ^. uuid
   , _editQuestionEventChapterUuid = chapter1 ^. uuid
   , _editQuestionEventQuestionUuid = question2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = Just $ question2 ^. shortUuid
-  , _editQuestionEventQType = Just $ question2WithChangeProperties ^. qType
-  , _editQuestionEventTitle = Just $ question2WithChangeProperties ^. title
-  , _editQuestionEventText = Just $ question2WithChangeProperties ^. text
-  , _editQuestionEventAnswerIds = Just $ getAnwerIds question2WithChangeProperties
-  , _editQuestionEventExpertIds = Just $ getExpertIds question2WithChangeProperties
-  , _editQuestionEventReferenceIds = Just $ getReferenceIds question2WithChangeProperties
+  , _editQuestionEventShortQuestionUuid = ChangedValue $ question2 ^. shortUuid
+  , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
+  , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
+  , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
+  , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
+  , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
   }
 
 e_km1_ch1_q2_second_edit :: EditQuestionEvent
@@ -196,13 +197,13 @@ e_km1_ch1_q2_second_edit =
   , _editQuestionEventKmUuid = km1 ^. uuid
   , _editQuestionEventChapterUuid = chapter1 ^. uuid
   , _editQuestionEventQuestionUuid = question2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = Just $ question2 ^. shortUuid
-  , _editQuestionEventQType = Just $ question2WithChangeProperties ^. qType
-  , _editQuestionEventTitle = Just "New title"
-  , _editQuestionEventText = Just $ question2WithChangeProperties ^. text
-  , _editQuestionEventAnswerIds = Just $ getAnwerIds question2WithChangeProperties
-  , _editQuestionEventExpertIds = Just $ getExpertIds question2WithChangeProperties
-  , _editQuestionEventReferenceIds = Just $ getReferenceIds question2WithChangeProperties
+  , _editQuestionEventShortQuestionUuid = ChangedValue $ question2 ^. shortUuid
+  , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
+  , _editQuestionEventTitle = ChangedValue "New title"
+  , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
+  , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
+  , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
   }
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
@@ -359,9 +360,9 @@ e_km1_ch1_q2_aYes1 =
   , _editAnswerEventChapterUuid = chapter1 ^. uuid
   , _editAnswerEventQuestionUuid = question2 ^. uuid
   , _editAnswerEventAnswerUuid = answerYes1 ^. uuid
-  , _editAnswerEventLabel = Just $ answerYes1Changed ^. label
-  , _editAnswerEventAdvice = Just $ answerYes1Changed ^. advice
-  , _editAnswerEventFollowUpIds = Just $ getFollowUpIds answerYes1Changed
+  , _editAnswerEventLabel = ChangedValue $ answerYes1Changed ^. label
+  , _editAnswerEventAdvice = ChangedValue $ answerYes1Changed ^. advice
+  , _editAnswerEventFollowUpIds = ChangedValue $ getFollowUpIds answerYes1Changed
   }
 
 e_km1_ch1_q2_aYes1_2 :: EditAnswerEvent
@@ -372,9 +373,9 @@ e_km1_ch1_q2_aYes1_2 =
   , _editAnswerEventChapterUuid = chapter1 ^. uuid
   , _editAnswerEventQuestionUuid = question2 ^. uuid
   , _editAnswerEventAnswerUuid = answerYes1 ^. uuid
-  , _editAnswerEventLabel = Just $ answerYes1Changed ^. label
-  , _editAnswerEventAdvice = Just $ answerYes1Changed ^. advice
-  , _editAnswerEventFollowUpIds = Just $ getFollowUpIds answerYes1
+  , _editAnswerEventLabel = ChangedValue $ answerYes1Changed ^. label
+  , _editAnswerEventAdvice = ChangedValue $ answerYes1Changed ^. advice
+  , _editAnswerEventFollowUpIds = ChangedValue $ getFollowUpIds answerYes1
   }
 
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent
@@ -439,13 +440,13 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _editFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
   , _editFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
   , _editFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
-  , _editFollowUpQuestionEventShortQuestionUuid = Just $ followUpQuestion2 ^. shortUuid
-  , _editFollowUpQuestionEventQType = Just $ followUpQuestion2Changed ^. qType
-  , _editFollowUpQuestionEventTitle = Just $ followUpQuestion2Changed ^. title
-  , _editFollowUpQuestionEventText = Just $ followUpQuestion2Changed ^. text
-  , _editFollowUpQuestionEventAnswerIds = Just $ getAnwerIds followUpQuestion2Changed
-  , _editFollowUpQuestionEventExpertIds = Just $ getExpertIds followUpQuestion2Changed
-  , _editFollowUpQuestionEventReferenceIds = Just $ getReferenceIds followUpQuestion2Changed
+  , _editFollowUpQuestionEventShortQuestionUuid = ChangedValue $ followUpQuestion2 ^. shortUuid
+  , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
+  , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
+  , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
+  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ getAnwerIds followUpQuestion2Changed
+  , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2Changed
+  , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2Changed
   }
 
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 :: EditFollowUpQuestionEvent
@@ -456,13 +457,13 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   , _editFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
   , _editFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
   , _editFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
-  , _editFollowUpQuestionEventShortQuestionUuid = Just $ followUpQuestion2 ^. shortUuid
-  , _editFollowUpQuestionEventQType = Just $ followUpQuestion2Changed ^. qType
-  , _editFollowUpQuestionEventTitle = Just $ followUpQuestion2Changed ^. title
-  , _editFollowUpQuestionEventText = Just $ followUpQuestion2Changed ^. text
-  , _editFollowUpQuestionEventAnswerIds = Just $ [answerYes4 ^. uuid, answerNo4 ^. uuid]
-  , _editFollowUpQuestionEventExpertIds = Just $ getExpertIds followUpQuestion2
-  , _editFollowUpQuestionEventReferenceIds = Just $ getReferenceIds followUpQuestion2
+  , _editFollowUpQuestionEventShortQuestionUuid = ChangedValue $ followUpQuestion2 ^. shortUuid
+  , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
+  , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
+  , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
+  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ [answerYes4 ^. uuid, answerNo4 ^. uuid]
+  , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2
+  , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2
   }
 
 d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteFollowUpQuestionEvent
@@ -521,8 +522,8 @@ e_km1_ch1_q2_eDarth =
   , _editExpertEventChapterUuid = chapter1 ^. uuid
   , _editExpertEventQuestionUuid = question2 ^. uuid
   , _editExpertEventExpertUuid = expertDarth ^. uuid
-  , _editExpertEventName = Just $ expertDarthChanged ^. name
-  , _editExpertEventEmail = Just $ expertDarthChanged ^. email
+  , _editExpertEventName = ChangedValue $ expertDarthChanged ^. name
+  , _editExpertEventEmail = ChangedValue $ expertDarthChanged ^. email
   }
 
 d_km1_ch1_q2_eLuke :: DeleteExpertEvent
@@ -578,7 +579,7 @@ e_km1_ch1_q2_rCh1 =
   , _editReferenceEventChapterUuid = chapter1 ^. uuid
   , _editReferenceEventQuestionUuid = question2 ^. uuid
   , _editReferenceEventReferenceUuid = referenceCh1 ^. uuid
-  , _editReferenceEventChapter = Just $ referenceCh1Changed ^. chapter
+  , _editReferenceEventChapter = ChangedValue $ referenceCh1Changed ^. chapter
   }
 
 d_km1_ch1_q2_rCh2 :: DeleteReferenceEvent

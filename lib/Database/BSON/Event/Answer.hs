@@ -9,6 +9,7 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import Database.BSON.Event.EventField
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 
@@ -46,8 +47,8 @@ instance FromBSON AddAnswerEvent where
       , _addAnswerEventLabel = ansLabel
       , _addAnswerEventAdvice = ansAdvice
       }
-      -- -------------------------
 
+-- -------------------------
 -- EDIT ANSWER EVENT -------
 -- -------------------------
 instance ToBSON EditAnswerEvent where
@@ -60,7 +61,7 @@ instance ToBSON EditAnswerEvent where
     , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
     , "label" BSON.=: (event ^. label)
     , "advice" BSON.=: (event ^. advice)
-    , "followUpIds" BSON.=: serializeMaybeUUIDList (event ^. followUpIds)
+    , "followUpIds" BSON.=: serializeEventFieldUUIDList (event ^. followUpIds)
     ]
 
 instance FromBSON EditAnswerEvent where
@@ -72,7 +73,7 @@ instance FromBSON EditAnswerEvent where
     ansAnswerUuid <- deserializeUUID $ BSON.lookup "answerUuid" doc
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
-    let ansFollowUpIds = deserializeMaybeUUIDList $ BSON.lookup "followUpIds" doc
+    let ansFollowUpIds = deserializeEventFieldUUIDList $ BSON.lookup "followUpIds" doc
     return
       EditAnswerEvent
       { _editAnswerEventUuid = ansUuid

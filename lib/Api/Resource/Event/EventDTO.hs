@@ -8,6 +8,7 @@ import Data.UUID
 import GHC.Generics
 
 import Api.Resource.Common
+import Api.Resource.Event.EventFieldDTO
 import Common.Types
 import Common.Uuid
 import Model.KnowledgeModel.KnowledgeModel
@@ -96,8 +97,8 @@ data AddKnowledgeModelEventDTO = AddKnowledgeModelEventDTO
 data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
   { _editKnowledgeModelEventDTOUuid :: UUID
   , _editKnowledgeModelEventDTOKmUuid :: UUID
-  , _editKnowledgeModelEventDTOName :: Maybe String
-  , _editKnowledgeModelEventDTOChapterIds :: Maybe [UUID]
+  , _editKnowledgeModelEventDTOName :: EventFieldDTO String
+  , _editKnowledgeModelEventDTOChapterIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
@@ -115,9 +116,9 @@ data EditChapterEventDTO = EditChapterEventDTO
   { _editChapterEventDTOUuid :: UUID
   , _editChapterEventDTOKmUuid :: UUID
   , _editChapterEventDTOChapterUuid :: UUID
-  , _editChapterEventDTOTitle :: Maybe String
-  , _editChapterEventDTOText :: Maybe String
-  , _editChapterEventDTOQuestionIds :: Maybe [UUID]
+  , _editChapterEventDTOTitle :: EventFieldDTO String
+  , _editChapterEventDTOText :: EventFieldDTO String
+  , _editChapterEventDTOQuestionIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEventDTO = DeleteChapterEventDTO
@@ -145,13 +146,13 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOKmUuid :: UUID
   , _editQuestionEventDTOChapterUuid :: UUID
   , _editQuestionEventDTOQuestionUuid :: UUID
-  , _editQuestionEventDTOShortQuestionUuid :: Maybe (Maybe String)
-  , _editQuestionEventDTOQType :: Maybe QuestionType
-  , _editQuestionEventDTOTitle :: Maybe String
-  , _editQuestionEventDTOText :: Maybe String
-  , _editQuestionEventDTOAnswerIds :: Maybe [UUID]
-  , _editQuestionEventDTOExpertIds :: Maybe [UUID]
-  , _editQuestionEventDTOReferenceIds :: Maybe [UUID]
+  , _editQuestionEventDTOShortQuestionUuid :: EventFieldDTO (Maybe String)
+  , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
+  , _editQuestionEventDTOTitle :: EventFieldDTO String
+  , _editQuestionEventDTOText :: EventFieldDTO String
+  , _editQuestionEventDTOAnswerIds :: EventFieldDTO [UUID]
+  , _editQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
+  , _editQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEventDTO = DeleteQuestionEventDTO
@@ -180,9 +181,9 @@ data EditAnswerEventDTO = EditAnswerEventDTO
   , _editAnswerEventDTOChapterUuid :: UUID
   , _editAnswerEventDTOQuestionUuid :: UUID
   , _editAnswerEventDTOAnswerUuid :: UUID
-  , _editAnswerEventDTOLabel :: Maybe String
-  , _editAnswerEventDTOAdvice :: Maybe (Maybe String)
-  , _editAnswerEventDTOFollowUpIds :: Maybe [UUID]
+  , _editAnswerEventDTOLabel :: EventFieldDTO String
+  , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
+  , _editAnswerEventDTOFollowUpIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEventDTO = DeleteAnswerEventDTO
@@ -212,8 +213,8 @@ data EditExpertEventDTO = EditExpertEventDTO
   , _editExpertEventDTOChapterUuid :: UUID
   , _editExpertEventDTOQuestionUuid :: UUID
   , _editExpertEventDTOExpertUuid :: UUID
-  , _editExpertEventDTOName :: Maybe String
-  , _editExpertEventDTOEmail :: Maybe String
+  , _editExpertEventDTOName :: EventFieldDTO String
+  , _editExpertEventDTOEmail :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data DeleteExpertEventDTO = DeleteExpertEventDTO
@@ -242,7 +243,7 @@ data EditReferenceEventDTO = EditReferenceEventDTO
   , _editReferenceEventDTOChapterUuid :: UUID
   , _editReferenceEventDTOQuestionUuid :: UUID
   , _editReferenceEventDTOReferenceUuid :: UUID
-  , _editReferenceEventDTOChapter :: Maybe String
+  , _editReferenceEventDTOChapter :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data DeleteReferenceEventDTO = DeleteReferenceEventDTO
@@ -274,13 +275,13 @@ data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
   , _editFollowUpQuestionEventDTOChapterUuid :: UUID
   , _editFollowUpQuestionEventDTOAnswerUuid :: UUID
   , _editFollowUpQuestionEventDTOQuestionUuid :: UUID
-  , _editFollowUpQuestionEventDTOShortQuestionUuid :: Maybe (Maybe String)
-  , _editFollowUpQuestionEventDTOQType :: Maybe QuestionType
-  , _editFollowUpQuestionEventDTOTitle :: Maybe String
-  , _editFollowUpQuestionEventDTOText :: Maybe String
-  , _editFollowUpQuestionEventDTOAnswerIds :: Maybe [UUID]
-  , _editFollowUpQuestionEventDTOExpertIds :: Maybe [UUID]
-  , _editFollowUpQuestionEventDTOReferenceIds :: Maybe [UUID]
+  , _editFollowUpQuestionEventDTOShortQuestionUuid :: EventFieldDTO (Maybe String)
+  , _editFollowUpQuestionEventDTOQType :: EventFieldDTO QuestionType
+  , _editFollowUpQuestionEventDTOTitle :: EventFieldDTO String
+  , _editFollowUpQuestionEventDTOText :: EventFieldDTO String
+  , _editFollowUpQuestionEventDTOAnswerIds :: EventFieldDTO [UUID]
+  , _editFollowUpQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
+  , _editFollowUpQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteFollowUpQuestionEventDTO = DeleteFollowUpQuestionEventDTO
@@ -439,7 +440,7 @@ instance FromJSON EditQuestionEventDTO where
     _editQuestionEventDTOExpertIds <- o .: "expertIds"
     _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
     questionType <- o .: "type"
-    case deserializeQuestionType <$> questionType of
+    case deserializeEventFieldQuestionType <$> questionType of
       (Just _editQuestionEventDTOQType) -> return EditQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
@@ -748,7 +749,7 @@ instance FromJSON EditFollowUpQuestionEventDTO where
     _editFollowUpQuestionEventDTOExpertIds <- o .: "expertIds"
     _editFollowUpQuestionEventDTOReferenceIds <- o .: "referenceIds"
     questionType <- o .: "type"
-    case deserializeQuestionType <$> questionType of
+    case deserializeEventFieldQuestionType <$> questionType of
       (Just _editFollowUpQuestionEventDTOQType) -> return EditFollowUpQuestionEventDTO {..}
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero

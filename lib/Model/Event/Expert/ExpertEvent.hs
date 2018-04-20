@@ -3,6 +3,8 @@ module Model.Event.Expert.ExpertEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
+
 data AddExpertEvent = AddExpertEvent
   { _addExpertEventUuid :: UUID
   , _addExpertEventKmUuid :: UUID
@@ -19,8 +21,8 @@ data EditExpertEvent = EditExpertEvent
   , _editExpertEventChapterUuid :: UUID
   , _editExpertEventQuestionUuid :: UUID
   , _editExpertEventExpertUuid :: UUID
-  , _editExpertEventName :: Maybe String
-  , _editExpertEventEmail :: Maybe String
+  , _editExpertEventName :: EventField String
+  , _editExpertEventEmail :: EventField String
   } deriving (Show, Eq, Generic)
 
 data DeleteExpertEvent = DeleteExpertEvent

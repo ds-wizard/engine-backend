@@ -3,6 +3,8 @@ module Model.Event.Answer.AnswerEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
+
 data AddAnswerEvent = AddAnswerEvent
   { _addAnswerEventUuid :: UUID
   , _addAnswerEventKmUuid :: UUID
@@ -19,9 +21,9 @@ data EditAnswerEvent = EditAnswerEvent
   , _editAnswerEventChapterUuid :: UUID
   , _editAnswerEventQuestionUuid :: UUID
   , _editAnswerEventAnswerUuid :: UUID
-  , _editAnswerEventLabel :: Maybe String
-  , _editAnswerEventAdvice :: Maybe (Maybe String)
-  , _editAnswerEventFollowUpIds :: Maybe [UUID]
+  , _editAnswerEventLabel :: EventField String
+  , _editAnswerEventAdvice :: EventField (Maybe String)
+  , _editAnswerEventFollowUpIds :: EventField [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEvent = DeleteAnswerEvent

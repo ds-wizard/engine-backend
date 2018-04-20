@@ -8,6 +8,7 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import Database.BSON.Event.EventField
 import LensesConfig
 import Model.Event.Reference.ReferenceEvent
 

@@ -5,6 +5,7 @@ import Data.Aeson
 import Data.UUID (UUID)
 
 import Api.Resource.Event.EventDTO
+import Api.Resource.Event.EventFieldDTO
 import Common.Types
 import LensesConfig
 import Model.Common
@@ -24,6 +25,10 @@ import Model.Event.Reference.ReferenceEvent
 class EventToDTO a where
   toDTO :: a -> EventDTO
 
+toEventFieldDTO :: EventField a -> EventFieldDTO a
+toEventFieldDTO (ChangedValue value) = ChangedValueDTO value
+toEventFieldDTO NothingChanged = NothingChangedDTO
+
 -- -------------------------
 -- Knowledge Model ---------
 -- -------------------------
@@ -42,8 +47,8 @@ instance EventToDTO EditKnowledgeModelEvent where
       EditKnowledgeModelEventDTO
       { _editKnowledgeModelEventDTOUuid = event ^. uuid
       , _editKnowledgeModelEventDTOKmUuid = event ^. kmUuid
-      , _editKnowledgeModelEventDTOName = event ^. name
-      , _editKnowledgeModelEventDTOChapterIds = event ^. chapterIds
+      , _editKnowledgeModelEventDTOName = toEventFieldDTO $ event ^. name
+      , _editKnowledgeModelEventDTOChapterIds = toEventFieldDTO $ event ^. chapterIds
       }
 
 -------------------------
@@ -67,9 +72,9 @@ instance EventToDTO EditChapterEvent where
       { _editChapterEventDTOUuid = event ^. uuid
       , _editChapterEventDTOKmUuid = event ^. kmUuid
       , _editChapterEventDTOChapterUuid = event ^. chapterUuid
-      , _editChapterEventDTOTitle = event ^. title
-      , _editChapterEventDTOText = event ^. text
-      , _editChapterEventDTOQuestionIds = event ^. questionIds
+      , _editChapterEventDTOTitle = toEventFieldDTO $ event ^. title
+      , _editChapterEventDTOText = toEventFieldDTO $ event ^. text
+      , _editChapterEventDTOQuestionIds = toEventFieldDTO $ event ^. questionIds
       }
 
 instance EventToDTO DeleteChapterEvent where
@@ -106,13 +111,13 @@ instance EventToDTO EditQuestionEvent where
       , _editQuestionEventDTOKmUuid = event ^. kmUuid
       , _editQuestionEventDTOChapterUuid = event ^. chapterUuid
       , _editQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _editQuestionEventDTOShortQuestionUuid = event ^. shortQuestionUuid
-      , _editQuestionEventDTOQType = event ^. qType
-      , _editQuestionEventDTOTitle = event ^. title
-      , _editQuestionEventDTOText = event ^. text
-      , _editQuestionEventDTOAnswerIds = event ^. answerIds
-      , _editQuestionEventDTOExpertIds = event ^. expertIds
-      , _editQuestionEventDTOReferenceIds = event ^. referenceIds
+      , _editQuestionEventDTOShortQuestionUuid = toEventFieldDTO $ event ^. shortQuestionUuid
+      , _editQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
+      , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+      , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
+      , _editQuestionEventDTOExpertIds = toEventFieldDTO $ event ^. expertIds
+      , _editQuestionEventDTOReferenceIds = toEventFieldDTO $ event ^. referenceIds
       }
 
 instance EventToDTO DeleteQuestionEvent where
@@ -150,9 +155,9 @@ instance EventToDTO EditAnswerEvent where
       , _editAnswerEventDTOChapterUuid = event ^. chapterUuid
       , _editAnswerEventDTOQuestionUuid = event ^. questionUuid
       , _editAnswerEventDTOAnswerUuid = event ^. answerUuid
-      , _editAnswerEventDTOLabel = event ^. label
-      , _editAnswerEventDTOAdvice = event ^. advice
-      , _editAnswerEventDTOFollowUpIds = event ^. followUpIds
+      , _editAnswerEventDTOLabel = toEventFieldDTO $ event ^. label
+      , _editAnswerEventDTOAdvice = toEventFieldDTO $ event ^. advice
+      , _editAnswerEventDTOFollowUpIds = toEventFieldDTO $ event ^. followUpIds
       }
 
 instance EventToDTO DeleteAnswerEvent where
@@ -191,8 +196,8 @@ instance EventToDTO EditExpertEvent where
       , _editExpertEventDTOChapterUuid = event ^. chapterUuid
       , _editExpertEventDTOQuestionUuid = event ^. questionUuid
       , _editExpertEventDTOExpertUuid = event ^. expertUuid
-      , _editExpertEventDTOName = event ^. name
-      , _editExpertEventDTOEmail = event ^. email
+      , _editExpertEventDTOName = toEventFieldDTO $ event ^. name
+      , _editExpertEventDTOEmail = toEventFieldDTO $ event ^. email
       }
 
 instance EventToDTO DeleteExpertEvent where
@@ -230,7 +235,7 @@ instance EventToDTO EditReferenceEvent where
       , _editReferenceEventDTOChapterUuid = event ^. chapterUuid
       , _editReferenceEventDTOQuestionUuid = event ^. questionUuid
       , _editReferenceEventDTOReferenceUuid = event ^. referenceUuid
-      , _editReferenceEventDTOChapter = event ^. chapter
+      , _editReferenceEventDTOChapter = toEventFieldDTO $ event ^. chapter
       }
 
 instance EventToDTO DeleteReferenceEvent where
@@ -271,13 +276,13 @@ instance EventToDTO EditFollowUpQuestionEvent where
       , _editFollowUpQuestionEventDTOChapterUuid = event ^. chapterUuid
       , _editFollowUpQuestionEventDTOAnswerUuid = event ^. answerUuid
       , _editFollowUpQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _editFollowUpQuestionEventDTOShortQuestionUuid = event ^. shortQuestionUuid
-      , _editFollowUpQuestionEventDTOQType = event ^. qType
-      , _editFollowUpQuestionEventDTOTitle = event ^. title
-      , _editFollowUpQuestionEventDTOText = event ^. text
-      , _editFollowUpQuestionEventDTOAnswerIds = event ^. answerIds
-      , _editFollowUpQuestionEventDTOExpertIds = event ^. expertIds
-      , _editFollowUpQuestionEventDTOReferenceIds = event ^. referenceIds
+      , _editFollowUpQuestionEventDTOShortQuestionUuid = toEventFieldDTO $ event ^. shortQuestionUuid
+      , _editFollowUpQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
+      , _editFollowUpQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+      , _editFollowUpQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editFollowUpQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
+      , _editFollowUpQuestionEventDTOExpertIds = toEventFieldDTO $ event ^. expertIds
+      , _editFollowUpQuestionEventDTOReferenceIds = toEventFieldDTO $ event ^. referenceIds
       }
 
 instance EventToDTO DeleteFollowUpQuestionEvent where

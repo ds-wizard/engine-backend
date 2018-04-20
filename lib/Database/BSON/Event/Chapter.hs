@@ -8,6 +8,7 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import Database.BSON.Event.EventField
 import LensesConfig
 import Model.Event.Chapter.ChapterEvent
 
@@ -51,7 +52,7 @@ instance ToBSON EditChapterEvent where
     , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "questionIds" BSON.=: serializeMaybeUUIDList (event ^. questionIds)
+    , "questionIds" BSON.=: serializeEventFieldUUIDList (event ^. questionIds)
     ]
 
 instance FromBSON EditChapterEvent where
@@ -61,7 +62,7 @@ instance FromBSON EditChapterEvent where
     chChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     chTitle <- BSON.lookup "title" doc
     chText <- BSON.lookup "text" doc
-    let chQuestionIds = deserializeMaybeUUIDList $ BSON.lookup "questionIds" doc
+    let chQuestionIds = deserializeEventFieldUUIDList $ BSON.lookup "questionIds" doc
     return
       EditChapterEvent
       { _editChapterEventUuid = chUuid

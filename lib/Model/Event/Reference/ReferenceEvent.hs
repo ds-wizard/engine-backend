@@ -3,6 +3,8 @@ module Model.Event.Reference.ReferenceEvent where
 import Data.UUID
 import GHC.Generics
 
+import Model.Event.EventField
+
 data AddReferenceEvent = AddReferenceEvent
   { _addReferenceEventUuid :: UUID
   , _addReferenceEventKmUuid :: UUID
@@ -18,7 +20,7 @@ data EditReferenceEvent = EditReferenceEvent
   , _editReferenceEventChapterUuid :: UUID
   , _editReferenceEventQuestionUuid :: UUID
   , _editReferenceEventReferenceUuid :: UUID
-  , _editReferenceEventChapter :: Maybe String
+  , _editReferenceEventChapter :: EventField String
   } deriving (Show, Eq, Generic)
 
 data DeleteReferenceEvent = DeleteReferenceEvent
