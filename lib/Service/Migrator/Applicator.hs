@@ -250,7 +250,8 @@ instance ApplyEventToChapter AddQuestionEvent where
         , _questionQType = e ^. qType
         , _questionTitle = e ^. title
         , _questionText = e ^. text
-        , _questionAnswers = []
+        , _questionAnswerItemTemplate = Nothing
+        , _questionAnswers = Just []
         , _questionReferences = []
         , _questionExperts = []
         }
@@ -324,11 +325,14 @@ class ApplyEventToQuestion e where
 
 passToAnswers _ (Left error) = Left error
 passToAnswers e (Right q) =
-  case eModifiedAnswers of
-    Left error -> Left error
-    Right modifiedAnswers -> Right $ q & answers .~ modifiedAnswers
+  case q ^. answers of
+    Just as ->
+      case eModifiedAnswers as of
+        Left error -> Left error
+        Right modifiedAnswers -> Right $ q & answers .~ (Just modifiedAnswers)
+    Nothing -> Right q
   where
-    eModifiedAnswers = foldl foldOneAnswer (Right []) (q ^. answers)
+    eModifiedAnswers as = foldl foldOneAnswer (Right []) as
     foldOneAnswer :: Either AppError [Answer] -> Answer -> Either AppError [Answer]
     foldOneAnswer (Left error) _ = Left error
     foldOneAnswer (Right qAnswers) answer =
@@ -418,10 +422,13 @@ instance ApplyEventToQuestion AddAnswerEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
-      then Right $ q & answers .~ modifiedAnswers
+      then Right $ q & answers .~ (Just modifiedAnswers)
       else passToAnswers e (Right q)
     where
-      modifiedAnswers = q ^. answers ++ [newAnswer]
+      modifiedAnswers =
+        case q ^. answers of
+          Just as -> as ++ [newAnswer]
+          Nothing -> [newAnswer]
       newAnswer =
         Answer
         {_answerUuid = e ^. answerUuid, _answerLabel = e ^. label, _answerAdvice = e ^. advice, _answerFollowUps = []}
@@ -436,7 +443,10 @@ instance ApplyEventToQuestion DeleteAnswerEvent where
       then Right $ q & answers .~ modifiedAnswers
       else passToAnswers e (Right q)
     where
-      modifiedAnswers = filter (not . equalsUuid e) (q ^. answers)
+      modifiedAnswers =
+        case (q ^. answers) of
+          Just as -> Just $ filter (not . equalsUuid e) as
+          Nothing -> Nothing
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
@@ -609,7 +619,8 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
         , _questionQType = e ^. qType
         , _questionTitle = e ^. title
         , _questionText = e ^. text
-        , _questionAnswers = []
+        , _questionAnswerItemTemplate = Nothing
+        , _questionAnswers = Just []
         , _questionReferences = []
         , _questionExperts = []
         }

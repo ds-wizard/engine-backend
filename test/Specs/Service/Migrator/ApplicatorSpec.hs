@@ -71,19 +71,19 @@ applicatorSpec =
     describe "Apply:  Answer Events" $ do
       it "Apply:  AddAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddAnswerEvent' a_km1_ch1_q2_aMaybe]
-        let question2WithAddedAnswer = question2 & answers .~ [answerNo1, answerYes1, answerMaybe]
+        let question2WithAddedAnswer = question2 & answers .~ (Just [answerNo1, answerYes1, answerMaybe])
         let chapter1WithAddedAnswer = chapter1 & questions .~ [question1, question2WithAddedAnswer]
         let expected = km1 & chapters .~ [chapter1WithAddedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditAnswerEvent' e_km1_ch1_q2_aYes1]
-        let question2WithChangedAnswer = question2 & answers .~ [answerNo1, answerYes1Changed]
+        let question2WithChangedAnswer = question2 & answers .~ (Just [answerNo1, answerYes1Changed])
         let chapter1WithChangedAnswer = chapter1 & questions .~ [question1, question2WithChangedAnswer]
         let expected = km1 & chapters .~ [chapter1WithChangedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteAnswerEvent' d_km1_ch1_q2_aYes1]
-        let question2WithDeletedAnswer = question2 & answers .~ [answerNo1]
+        let question2WithDeletedAnswer = question2 & answers .~ (Just [answerNo1])
         let chapter1WithDeletedAnswer = chapter1 & questions .~ [question1, question2WithDeletedAnswer]
         let expected = km1 & chapters .~ [chapter1WithDeletedAnswer, chapter2]
         computed `shouldBe` expected
@@ -94,11 +94,11 @@ applicatorSpec =
         let (Right computed) = runApplicator (Just km1) [AddFollowUpQuestionEvent' event]
         let expFUQ3 = followUpQuestion3
         let expAnswerYes4 = answerYes4 & followUps .~ [expFUQ3]
-        let expFUQ2 = followUpQuestion2 & answers .~ [answerNo4, expAnswerYes4]
+        let expFUQ2 = followUpQuestion2 & answers .~ (Just [answerNo4, expAnswerYes4])
         let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
@@ -107,9 +107,9 @@ applicatorSpec =
         let (Right computed) = runApplicator (Just km1) [EditFollowUpQuestionEvent' event]
         let expFUQ2 = followUpQuestion2Changed
         let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
@@ -117,9 +117,9 @@ applicatorSpec =
         let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [DeleteFollowUpQuestionEvent' event]
         let expAnswerYes3 = answerYes3 & followUps .~ []
-        let expFUQ1 = followUpQuestion1 & answers .~ [answerNo3, expAnswerYes3]
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ [answerNo1, expAnswerYes1]
+        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected

@@ -9,6 +9,7 @@ import GHC.Generics
 
 import Api.Resource.Common
 import Api.Resource.Event.EventFieldDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Types
 import Common.Uuid
 import Model.KnowledgeModel.KnowledgeModel
@@ -139,6 +140,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _addQuestionEventDTOQType :: QuestionType
   , _addQuestionEventDTOTitle :: String
   , _addQuestionEventDTOText :: String
+  , _addQuestionEventDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   } deriving (Show, Eq, Generic)
 
 data EditQuestionEventDTO = EditQuestionEventDTO
@@ -150,7 +152,8 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editQuestionEventDTOTitle :: EventFieldDTO String
   , _editQuestionEventDTOText :: EventFieldDTO String
-  , _editQuestionEventDTOAnswerIds :: EventFieldDTO [UUID]
+  , _editQuestionEventDTOAnswerItemTemplate :: EventFieldDTO (Maybe AnswerItemTemplateDTO)
+  , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [UUID])
   , _editQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
   , _editQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
@@ -267,6 +270,7 @@ data AddFollowUpQuestionEventDTO = AddFollowUpQuestionEventDTO
   , _addFollowUpQuestionEventDTOQType :: QuestionType
   , _addFollowUpQuestionEventDTOTitle :: String
   , _addFollowUpQuestionEventDTOText :: String
+  , _addFollowUpQuestionEventDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   } deriving (Show, Eq, Generic)
 
 data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
@@ -279,7 +283,8 @@ data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
   , _editFollowUpQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editFollowUpQuestionEventDTOTitle :: EventFieldDTO String
   , _editFollowUpQuestionEventDTOText :: EventFieldDTO String
-  , _editFollowUpQuestionEventDTOAnswerIds :: EventFieldDTO [UUID]
+  , _editFollowUpQuestionEventDTOAnswerItemTemplate :: EventFieldDTO (Maybe AnswerItemTemplateDTO)
+  , _editFollowUpQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [UUID])
   , _editFollowUpQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
   , _editFollowUpQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
   } deriving (Show, Eq, Generic)
@@ -407,6 +412,7 @@ instance FromJSON AddQuestionEventDTO where
     _addQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _addQuestionEventDTOTitle <- o .: "title"
     _addQuestionEventDTOText <- o .: "text"
+    _addQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
       (Just _addQuestionEventDTOQType) -> return AddQuestionEventDTO {..}
@@ -425,6 +431,7 @@ instance ToJSON AddQuestionEventDTO where
       , "type" .= serializeQuestionType _addQuestionEventDTOQType
       , "title" .= _addQuestionEventDTOTitle
       , "text" .= _addQuestionEventDTOText
+      , "answerItemTemplate" .= _addQuestionEventDTOAnswerItemTemplate
       ]
 
 instance FromJSON EditQuestionEventDTO where
@@ -436,6 +443,7 @@ instance FromJSON EditQuestionEventDTO where
     _editQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _editQuestionEventDTOTitle <- o .: "title"
     _editQuestionEventDTOText <- o .: "text"
+    _editQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _editQuestionEventDTOAnswerIds <- o .: "answerIds"
     _editQuestionEventDTOExpertIds <- o .: "expertIds"
     _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
@@ -457,6 +465,7 @@ instance ToJSON EditQuestionEventDTO where
       , "type" .= (serializeQuestionType <$> _editQuestionEventDTOQType)
       , "title" .= _editQuestionEventDTOTitle
       , "text" .= _editQuestionEventDTOText
+      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplate
       , "answerIds" .= _editQuestionEventDTOAnswerIds
       , "expertIds" .= _editQuestionEventDTOExpertIds
       , "referenceIds" .= _editQuestionEventDTOReferenceIds
@@ -714,6 +723,7 @@ instance FromJSON AddFollowUpQuestionEventDTO where
     _addFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _addFollowUpQuestionEventDTOTitle <- o .: "title"
     _addFollowUpQuestionEventDTOText <- o .: "text"
+    _addFollowUpQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
       (Just _addFollowUpQuestionEventDTOQType) -> return AddFollowUpQuestionEventDTO {..}
@@ -733,6 +743,7 @@ instance ToJSON AddFollowUpQuestionEventDTO where
       , "type" .= serializeQuestionType _addFollowUpQuestionEventDTOQType
       , "title" .= _addFollowUpQuestionEventDTOTitle
       , "text" .= _addFollowUpQuestionEventDTOText
+      , "answerItemTemplate" .= _addFollowUpQuestionEventDTOAnswerItemTemplate
       ]
 
 instance FromJSON EditFollowUpQuestionEventDTO where
@@ -745,6 +756,7 @@ instance FromJSON EditFollowUpQuestionEventDTO where
     _editFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _editFollowUpQuestionEventDTOTitle <- o .: "title"
     _editFollowUpQuestionEventDTOText <- o .: "text"
+    _editFollowUpQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _editFollowUpQuestionEventDTOAnswerIds <- o .: "answerIds"
     _editFollowUpQuestionEventDTOExpertIds <- o .: "expertIds"
     _editFollowUpQuestionEventDTOReferenceIds <- o .: "referenceIds"
@@ -767,6 +779,7 @@ instance ToJSON EditFollowUpQuestionEventDTO where
       , "type" .= (serializeQuestionType <$> _editFollowUpQuestionEventDTOQType)
       , "title" .= _editFollowUpQuestionEventDTOTitle
       , "text" .= _editFollowUpQuestionEventDTOText
+      , "answerItemTemplate" .= _editFollowUpQuestionEventDTOAnswerItemTemplate
       , "answerIds" .= _editFollowUpQuestionEventDTOAnswerIds
       , "expertIds" .= _editFollowUpQuestionEventDTOExpertIds
       , "referenceIds" .= _editFollowUpQuestionEventDTOReferenceIds

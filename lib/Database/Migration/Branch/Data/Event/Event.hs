@@ -16,7 +16,6 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
-import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -117,6 +116,7 @@ a_km1_ch1_q1 =
   , _addQuestionEventQType = question1 ^. qType
   , _addQuestionEventTitle = question1 ^. title
   , _addQuestionEventText = question1 ^. text
+  , _addQuestionEventAnswerItemTemplate = Nothing
   }
 
 a_km1_ch1_q2 :: AddQuestionEvent
@@ -130,6 +130,7 @@ a_km1_ch1_q2 =
   , _addQuestionEventQType = question2 ^. qType
   , _addQuestionEventTitle = question2 ^. title
   , _addQuestionEventText = question2 ^. text
+  , _addQuestionEventAnswerItemTemplate = Nothing
   }
 
 a_km1_ch1_q3 :: AddQuestionEvent
@@ -143,6 +144,7 @@ a_km1_ch1_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
+  , _addQuestionEventAnswerItemTemplate = Nothing
   }
 
 a_km1_ch2_q3 :: AddQuestionEvent
@@ -156,6 +158,7 @@ a_km1_ch2_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
+  , _addQuestionEventAnswerItemTemplate = Nothing
   }
 
 e_km1_ch1_q1_title :: EditQuestionEvent
@@ -169,6 +172,7 @@ e_km1_ch1_q1_title =
   , _editQuestionEventQType = NothingChanged
   , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
   , _editQuestionEventText = NothingChanged
+  , _editQuestionEventAnswerItemTemplate = NothingChanged
   , _editQuestionEventAnswerIds = NothingChanged
   , _editQuestionEventExpertIds = NothingChanged
   , _editQuestionEventReferenceIds = NothingChanged
@@ -185,6 +189,7 @@ e_km1_ch1_q2 =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventAnswerItemTemplate = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
   , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
@@ -201,6 +206,7 @@ e_km1_ch1_q2_second_edit =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue "New title"
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventAnswerItemTemplate = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
   , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
@@ -402,6 +408,7 @@ a_km1_ch1_ansYes1_fuq1 =
   , _addFollowUpQuestionEventQType = followUpQuestion1 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion1 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion1 ^. text
+  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
   }
 
 a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: AddFollowUpQuestionEvent
@@ -416,6 +423,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _addFollowUpQuestionEventQType = followUpQuestion2 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion2 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion2 ^. text
+  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
   }
 
 a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 :: AddFollowUpQuestionEvent
@@ -430,6 +438,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 =
   , _addFollowUpQuestionEventQType = followUpQuestion3 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion3 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion3 ^. text
+  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
   }
 
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: EditFollowUpQuestionEvent
@@ -444,6 +453,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
   , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
   , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
+  , _editFollowUpQuestionEventAnswerItemTemplate = NothingChanged
   , _editFollowUpQuestionEventAnswerIds = ChangedValue $ getAnwerIds followUpQuestion2Changed
   , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2Changed
   , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2Changed
@@ -461,7 +471,8 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
   , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
   , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
-  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ [answerYes4 ^. uuid, answerNo4 ^. uuid]
+  , _editFollowUpQuestionEventAnswerItemTemplate = NothingChanged
+  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid]
   , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2
   , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2
   }

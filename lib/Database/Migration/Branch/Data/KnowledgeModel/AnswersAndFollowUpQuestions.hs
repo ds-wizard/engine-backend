@@ -111,7 +111,8 @@ followUpQuestion1 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "First Follow-Up Question"
   , _questionText = "Maybe there will be some description"
-  , _questionAnswers = [answerNo3, answerYes3]
+  , _questionAnswers = Just [answerNo3, answerYes3]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -124,7 +125,8 @@ followUpQuestion1Plain =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Fourth Question"
   , _questionText = "Just follow"
-  , _questionAnswers = []
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -137,7 +139,8 @@ followUpQuestion2 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Second Follow-Up Question"
   , _questionText = "Again just follow"
-  , _questionAnswers = [answerNo4, answerYes4]
+  , _questionAnswers = Just [answerNo4, answerYes4]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -150,7 +153,8 @@ followUpQuestion2Changed =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "EDITED: Second Follow-Up Question"
   , _questionText = "EDITED: Again just follow"
-  , _questionAnswers = [answerYes4, answerNo4]
+  , _questionAnswers = Just [answerYes4, answerNo4]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -163,7 +167,8 @@ followUpQuestion3 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Third Follow-Up Question"
   , _questionText = "Again and again just follow"
-  , _questionAnswers = []
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }

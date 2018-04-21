@@ -121,13 +121,13 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes1 ^. uuid, answerNo1 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
-        let qAnswerIds = [answerYes1 ^. uuid]
+        let qAnswerIds = Just [answerYes1 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
         let qExpertIds = [expertLuke ^. uuid]
         let edited_1_e_km1_ch1_q2 = e_km1_ch1_q2 & answerIds .~ ChangedValue qAnswerIds
@@ -139,13 +139,14 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes1 ^. uuid, answerNo1 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
         let qAnswerIds =
+              Just $
               [answerYes1 ^. uuid] ++
               [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [answerNo1 ^. uuid]
         let qReferenceIds =
@@ -163,7 +164,7 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes1 ^. uuid, answerNo1 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
     -- -------------------------------------------------------------
@@ -221,13 +222,13 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes4 ^. uuid, answerNo4 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
-        let qAnswerIds = [answerYes4 ^. uuid]
+        let qAnswerIds = Just [answerYes4 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
         let qExpertIds = [expertLuke ^. uuid]
         let edited_1_event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 & answerIds .~ ChangedValue qAnswerIds
@@ -239,13 +240,14 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes4 ^. uuid, answerNo4 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
         let qAnswerIds =
+              Just $
               [answerYes4 ^. uuid] ++
               [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [answerNo4 ^. uuid]
         let qReferenceIds =
@@ -263,6 +265,6 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` ChangedValue [answerYes4 ^. uuid, answerNo4 ^. uuid]
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []

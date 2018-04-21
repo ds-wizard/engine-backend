@@ -96,6 +96,8 @@ makeFields ''Question
 
 makeFields ''Answer
 
+makeFields ''AnswerItemTemplate
+
 makeFields ''Expert
 
 makeFields ''Reference
@@ -155,6 +157,8 @@ makeFields ''ChapterDTO
 makeFields ''QuestionDTO
 
 makeFields ''AnswerDTO
+
+makeFields ''AnswerItemTemplateDTO
 
 makeFields ''ExpertDTO
 

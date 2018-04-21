@@ -36,7 +36,8 @@ data Question = Question
   , _questionQType :: QuestionType
   , _questionTitle :: String
   , _questionText :: String
-  , _questionAnswers :: [Answer]
+  , _questionAnswerItemTemplate :: Maybe AnswerItemTemplate
+  , _questionAnswers :: Maybe [Answer]
   , _questionExperts :: [Expert]
   , _questionReferences :: [Reference]
   } deriving (Show, Eq, Generic)
@@ -46,6 +47,11 @@ data Answer = Answer
   , _answerLabel :: String
   , _answerAdvice :: Maybe String
   , _answerFollowUps :: [Question]
+  } deriving (Show, Eq, Generic)
+
+data AnswerItemTemplate = AnswerItemTemplate
+  { _answerItemTemplateTitle :: String
+  , _answerItemTemplateFollowUps :: [Question]
   } deriving (Show, Eq, Generic)
 
 data Expert = Expert

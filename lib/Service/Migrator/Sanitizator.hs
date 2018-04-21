@@ -94,9 +94,12 @@ instance Sanitizator EditQuestionEvent where
           childIdsFromKM km = _answerUuid <$> getAllAnswersForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
           isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
-          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent =
-            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids :: KnowledgeModel -> Maybe [U.UUID] -> Maybe [U.UUID]
+          resultUuids km maybeChildIdsFromEvent =
+            case maybeChildIdsFromEvent of
+              Just childIdsFromEvent ->
+                Just $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+              Nothing -> Nothing
       -- ------------------------
       -- References
       -- ------------------------
@@ -177,9 +180,12 @@ instance Sanitizator EditFollowUpQuestionEvent where
           childIdsFromKM km = _answerUuid <$> getAllAnswersForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
           isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
-          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
-          resultUuids km childIdsFromEvent =
-            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+          resultUuids :: KnowledgeModel -> Maybe [U.UUID] -> Maybe [U.UUID]
+          resultUuids km maybeChildIdsFromEvent =
+            case maybeChildIdsFromEvent of
+              Just childIdsFromEvent ->
+                Just $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+              Nothing -> Nothing
       -- ------------------------
       -- References
       -- ------------------------

@@ -6,6 +6,7 @@ import Data.UUID (UUID)
 
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventFieldDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Types
 import LensesConfig
 import Model.Common
@@ -17,6 +18,8 @@ import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.KnowledgeModel.KnowledgeModel
+import Service.KnowledgeModel.KnowledgeModelMapper
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -28,6 +31,13 @@ class EventToDTO a where
 toEventFieldDTO :: EventField a -> EventFieldDTO a
 toEventFieldDTO (ChangedValue value) = ChangedValueDTO value
 toEventFieldDTO NothingChanged = NothingChangedDTO
+
+toEventFieldAndAnswerItemTemplate ::
+     EventField (Maybe AnswerItemTemplate) -> EventFieldDTO (Maybe AnswerItemTemplateDTO)
+toEventFieldAndAnswerItemTemplate efMaybeAit =
+  case efMaybeAit of
+    ChangedValue maybeAit -> ChangedValueDTO $ toAnswerItemTemplateDTO <$> maybeAit
+    NothingChanged -> NothingChangedDTO
 
 -- -------------------------
 -- Knowledge Model ---------
@@ -101,6 +111,7 @@ instance EventToDTO AddQuestionEvent where
       , _addQuestionEventDTOQType = event ^. qType
       , _addQuestionEventDTOTitle = event ^. title
       , _addQuestionEventDTOText = event ^. text
+      , _addQuestionEventDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> event ^. answerItemTemplate
       }
 
 instance EventToDTO EditQuestionEvent where
@@ -115,6 +126,7 @@ instance EventToDTO EditQuestionEvent where
       , _editQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
       , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editQuestionEventDTOAnswerItemTemplate = toEventFieldAndAnswerItemTemplate $ event ^. answerItemTemplate
       , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
       , _editQuestionEventDTOExpertIds = toEventFieldDTO $ event ^. expertIds
       , _editQuestionEventDTOReferenceIds = toEventFieldDTO $ event ^. referenceIds
@@ -265,6 +277,7 @@ instance EventToDTO AddFollowUpQuestionEvent where
       , _addFollowUpQuestionEventDTOQType = event ^. qType
       , _addFollowUpQuestionEventDTOTitle = event ^. title
       , _addFollowUpQuestionEventDTOText = event ^. text
+      , _addFollowUpQuestionEventDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> event ^. answerItemTemplate
       }
 
 instance EventToDTO EditFollowUpQuestionEvent where
@@ -280,6 +293,8 @@ instance EventToDTO EditFollowUpQuestionEvent where
       , _editFollowUpQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
       , _editFollowUpQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editFollowUpQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editFollowUpQuestionEventDTOAnswerItemTemplate =
+          toEventFieldAndAnswerItemTemplate $ event ^. answerItemTemplate
       , _editFollowUpQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
       , _editFollowUpQuestionEventDTOExpertIds = toEventFieldDTO $ event ^. expertIds
       , _editFollowUpQuestionEventDTOReferenceIds = toEventFieldDTO $ event ^. referenceIds

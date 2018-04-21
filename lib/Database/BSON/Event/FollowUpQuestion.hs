@@ -27,6 +27,7 @@ instance ToBSON AddFollowUpQuestionEvent where
     , "qType" BSON.=: show (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
+    , "answerItemTemplate" BSON.=: (event ^. answerItemTemplate)
     ]
 
 instance FromBSON AddFollowUpQuestionEvent where
@@ -40,6 +41,7 @@ instance FromBSON AddFollowUpQuestionEvent where
     fuqQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     fuqTitle <- BSON.lookup "title" doc
     fuqText <- BSON.lookup "text" doc
+    fuqAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     return
       AddFollowUpQuestionEvent
       { _addFollowUpQuestionEventUuid = fuqUuid
@@ -51,6 +53,7 @@ instance FromBSON AddFollowUpQuestionEvent where
       , _addFollowUpQuestionEventQType = fuqQType
       , _addFollowUpQuestionEventTitle = fuqTitle
       , _addFollowUpQuestionEventText = fuqText
+      , _addFollowUpQuestionEventAnswerItemTemplate = fuqAnswerItemTemplate
       }
 
 -- ----------------------------------
@@ -68,7 +71,8 @@ instance ToBSON EditFollowUpQuestionEvent where
     , "qType" BSON.=: show (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "answerIds" BSON.=: serializeEventFieldUUIDList (event ^. answerIds)
+    , "answerItemTemplate" BSON.=: (event ^. answerItemTemplate)
+    , "answerIds" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerIds)
     , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
     , "referenceIds" BSON.=: serializeEventFieldUUIDList (event ^. referenceIds)
     ]
@@ -84,7 +88,8 @@ instance FromBSON EditFollowUpQuestionEvent where
     fuqQType <- deserializeEventFieldQuestionType <$> BSON.lookup "qType" doc
     fuqTitle <- BSON.lookup "title" doc
     fuqText <- BSON.lookup "text" doc
-    let fuqAnswerIds = deserializeEventFieldUUIDList $ BSON.lookup "answerIds" doc
+    fuqAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
+    let fuqAnswerIds = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerIds" doc
     let fuqExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
     let fuqReferenceIds = deserializeEventFieldUUIDList $ BSON.lookup "referenceIds" doc
     return
@@ -98,6 +103,7 @@ instance FromBSON EditFollowUpQuestionEvent where
       , _editFollowUpQuestionEventQType = fuqQType
       , _editFollowUpQuestionEventTitle = fuqTitle
       , _editFollowUpQuestionEventText = fuqText
+      , _editFollowUpQuestionEventAnswerItemTemplate = fuqAnswerItemTemplate
       , _editFollowUpQuestionEventAnswerIds = fuqAnswerIds
       , _editFollowUpQuestionEventExpertIds = fuqExpertIds
       , _editFollowUpQuestionEventReferenceIds = fuqReferenceIds

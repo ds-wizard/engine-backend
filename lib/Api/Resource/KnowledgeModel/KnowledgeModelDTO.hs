@@ -30,7 +30,8 @@ data QuestionDTO = QuestionDTO
   , _questionDTOQType :: QuestionType
   , _questionDTOTitle :: String
   , _questionDTOText :: String
-  , _questionDTOAnswers :: [AnswerDTO]
+  , _questionDTOAnswers :: Maybe [AnswerDTO]
+  , _questionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _questionDTOReferences :: [ReferenceDTO]
   , _questionDTOExperts :: [ExpertDTO]
   } deriving (Show, Eq)
@@ -40,6 +41,11 @@ data AnswerDTO = AnswerDTO
   , _answerDTOLabel :: String
   , _answerDTOAdvice :: Maybe String
   , _answerDTOFollowUps :: [QuestionDTO]
+  } deriving (Show, Eq)
+
+data AnswerItemTemplateDTO = AnswerItemTemplateDTO
+  { _answerItemTemplateDTOTitle :: String
+  , _answerItemTemplateDTOFollowUps :: [QuestionDTO]
   } deriving (Show, Eq)
 
 data ExpertDTO = ExpertDTO
@@ -76,6 +82,7 @@ instance ToJSON QuestionDTO where
       , "title" .= _questionDTOTitle
       , "text" .= _questionDTOText
       , "answers" .= _questionDTOAnswers
+      , "answerItemTemplate" .= _questionDTOAnswerItemTemplate
       , "references" .= _questionDTOReferences
       , "experts" .= _questionDTOExperts
       ]
@@ -88,6 +95,10 @@ instance ToJSON AnswerDTO where
       , "advice" .= _answerDTOAdvice
       , "followUps" .= _answerDTOFollowUps
       ]
+
+instance ToJSON AnswerItemTemplateDTO where
+  toJSON AnswerItemTemplateDTO {..} =
+    object ["title" .= _answerItemTemplateDTOTitle, "followUps" .= _answerItemTemplateDTOFollowUps]
 
 instance ToJSON ExpertDTO where
   toJSON ExpertDTO {..} = object ["uuid" .= _expertDTOUuid, "name" .= _expertDTOName, "email" .= _expertDTOEmail]
@@ -118,9 +129,10 @@ instance FromJSON QuestionDTO where
     _questionDTOShortUuid <- o .: "shortUuid"
     _questionDTOTitle <- o .: "title"
     _questionDTOText <- o .: "text"
-    _questionDTOReferences <- o .: "answers"
-    _questionDTOAnswers <- o .: "references"
+    _questionDTOAnswers <- o .: "answers"
+    _questionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _questionDTOExperts <- o .: "experts"
+    _questionDTOReferences <- o .: "answers"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
       (Just _questionDTOQType) -> return QuestionDTO {..}
@@ -134,6 +146,13 @@ instance FromJSON AnswerDTO where
     _answerDTOAdvice <- o .: "advice"
     _answerDTOFollowUps <- o .: "followUps"
     return AnswerDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON AnswerItemTemplateDTO where
+  parseJSON (Object o) = do
+    _answerItemTemplateDTOTitle <- o .: "title"
+    _answerItemTemplateDTOFollowUps <- o .: "followUps"
+    return AnswerItemTemplateDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON ExpertDTO where

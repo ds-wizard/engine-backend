@@ -15,6 +15,7 @@ data AddQuestionEvent = AddQuestionEvent
   , _addQuestionEventQType :: QuestionType
   , _addQuestionEventTitle :: String
   , _addQuestionEventText :: String
+  , _addQuestionEventAnswerItemTemplate :: Maybe AnswerItemTemplate
   } deriving (Show, Eq, Generic)
 
 data EditQuestionEvent = EditQuestionEvent
@@ -26,7 +27,8 @@ data EditQuestionEvent = EditQuestionEvent
   , _editQuestionEventQType :: EventField QuestionType
   , _editQuestionEventTitle :: EventField String
   , _editQuestionEventText :: EventField String
-  , _editQuestionEventAnswerIds :: EventField [UUID]
+  , _editQuestionEventAnswerItemTemplate :: EventField (Maybe AnswerItemTemplate)
+  , _editQuestionEventAnswerIds :: EventField (Maybe [UUID])
   , _editQuestionEventExpertIds :: EventField [UUID]
   , _editQuestionEventReferenceIds :: EventField [UUID]
   } deriving (Show, Eq, Generic)

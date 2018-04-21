@@ -3,6 +3,7 @@ module Database.BSON.Common where
 import Control.Lens
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
+import Data.Maybe (fromMaybe)
 import Data.UUID
 
 import Common.Error
@@ -29,6 +30,12 @@ serializeMaybeUUIDList mUuids = do
 serializeEventFieldUUIDList :: EventField [UUID] -> EventField [String]
 serializeEventFieldUUIDList efUuids = serializeUUIDList <$> efUuids
 
+serializeEventFieldMaybeUUIDList :: EventField (Maybe [UUID]) -> EventField (Maybe [String])
+serializeEventFieldMaybeUUIDList efMaybeUuids =
+  case efMaybeUuids of
+    ChangedValue maybeUuids -> ChangedValue $ serializeUUIDList <$> maybeUuids
+    NothingChanged -> NothingChanged
+
 deserializeUUID :: Maybe String -> Maybe UUID
 deserializeUUID mUuidS = do
   uuidS <- mUuidS
@@ -54,6 +61,18 @@ deserializeEventFieldUUIDList maybeEfUuids =
         (ChangedValue (Just uuids)) -> ChangedValue uuids
         (ChangedValue Nothing) -> NothingChanged
         NothingChanged -> NothingChanged
+
+deserializeEventFieldMaybeUUIDList :: Maybe (EventField (Maybe [String])) -> EventField (Maybe [UUID])
+deserializeEventFieldMaybeUUIDList maybeEfMaybeUuidsS =
+  case maybeEfMaybeUuidsS of
+    Just efMaybeUuidsS ->
+      case efMaybeUuidsS of
+        ChangedValue maybeUuidsS ->
+          case deserializeUUIDList <$> maybeUuidsS of
+            Just maybeUuids -> ChangedValue maybeUuids
+            Nothing -> NothingChanged
+        NothingChanged -> NothingChanged
+    Nothing -> NothingChanged
 
 deserializeQuestionType :: Maybe String -> Maybe QuestionType
 deserializeQuestionType mQuestionTypeS = do

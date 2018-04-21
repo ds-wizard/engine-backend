@@ -3,6 +3,7 @@ module Model.KnowledgeModel.KnowledgeModelAccessors where
 import Control.Lens
 import Control.Lens.Traversal
 import Data.List
+import Data.Maybe (fromMaybe)
 import Data.UUID
 import GHC.Generics
 
@@ -56,7 +57,8 @@ getAllQuestions km = go (km ^.. chapters . traverse . questions . traverse)
     go [] = []
     go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
     getNestedQuestions :: Question -> [Question]
-    getNestedQuestions question = question ^.. answers . traverse . followUps . traverse
+    getNestedQuestions Question {_questionAnswers = (Just answers)} = concat $ _answerFollowUps <$> answers
+    getNestedQuestions Question {_questionAnswers = Nothing} = []
 
 getQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
 getQuestionByUuid km questionUuid = find (\q -> q ^. uuid == questionUuid) (getAllQuestions km)
@@ -80,24 +82,31 @@ isThereAnyQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-getAnwerIds :: Question -> [UUID]
-getAnwerIds q = q ^.. answers . traverse . uuid
+getAnwerIds :: Question -> Maybe [UUID]
+getAnwerIds Question {_questionAnswers = Just answers} = Just $ answers ^.. traverse . uuid
+getAnwerIds Question {_questionAnswers = Nothing} = Nothing
 
-qChangeAnwerIdsOrder :: ([Answer] -> Identity [UUID]) -> Question -> Identity Question
+qChangeAnwerIdsOrder :: (Maybe [Answer] -> Identity (Maybe [UUID])) -> Question -> Identity Question
 qChangeAnwerIdsOrder convert q = Identity $ q & answers .~ orderedAnwers
   where
-    ids :: Identity [UUID]
+    ids :: Identity (Maybe [UUID])
     ids = convert (q ^. answers)
-    orderedAnwers :: [Answer]
-    orderedAnwers = concatMap getAnswerByUuid (runIdentity ids)
+    orderedAnwers :: Maybe [Answer]
+    orderedAnwers =
+      case (runIdentity ids) of
+        Just uuids -> Just $ concatMap getAnswerByUuid uuids
+        Nothing -> (q ^. answers)
     getAnswerByUuid :: UUID -> [Answer]
-    getAnswerByUuid ansUuid = filter (\x -> x ^. uuid == ansUuid) (q ^. answers)
+    getAnswerByUuid ansUuid =
+      case q ^. answers of
+        Just as -> filter (\x -> x ^. uuid == ansUuid) as
+        Nothing -> []
 
 getAllAnswers :: KnowledgeModel -> [Answer]
 getAllAnswers km = concat $ getAnswer <$> getAllQuestions km
   where
     getAnswer :: Question -> [Answer]
-    getAnswer question = question ^. answers
+    getAnswer question = fromMaybe [] (question ^. answers)
 
 getAnswerByUuid :: KnowledgeModel -> UUID -> Maybe Answer
 getAnswerByUuid km answerUuid = find (\ans -> ans ^. uuid == answerUuid) (getAllAnswers km)
@@ -105,7 +114,7 @@ getAnswerByUuid km answerUuid = find (\ans -> ans ^. uuid == answerUuid) (getAll
 getAllAnswersForQuestionUuid :: KnowledgeModel -> UUID -> [Answer]
 getAllAnswersForQuestionUuid km questionUuid =
   case getQuestionByUuid km questionUuid of
-    Just question -> question ^. answers
+    Just question -> fromMaybe [] (question ^. answers)
     Nothing -> []
 
 isThereAnyAnswerWithGivenUuid :: KnowledgeModel -> UUID -> Bool

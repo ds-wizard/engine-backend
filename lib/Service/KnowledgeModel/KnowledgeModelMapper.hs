@@ -34,7 +34,8 @@ toQuestionDTO question =
   , _questionDTOQType = question ^. qType
   , _questionDTOTitle = question ^. title
   , _questionDTOText = question ^. text
-  , _questionDTOAnswers = toAnswerDTO <$> (question ^. answers)
+  , _questionDTOAnswers = (fmap toAnswerDTO) <$> (question ^. answers)
+  , _questionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
   , _questionDTOExperts = toExpertDTO <$> (question ^. experts)
   , _questionDTOReferences = toReferenceDTO <$> (question ^. references)
   }
@@ -46,6 +47,13 @@ toAnswerDTO answer =
   , _answerDTOLabel = answer ^. label
   , _answerDTOAdvice = answer ^. advice
   , _answerDTOFollowUps = toQuestionDTO <$> (answer ^. followUps)
+  }
+
+toAnswerItemTemplateDTO :: AnswerItemTemplate -> AnswerItemTemplateDTO
+toAnswerItemTemplateDTO itemTemplate =
+  AnswerItemTemplateDTO
+  { _answerItemTemplateDTOTitle = itemTemplate ^. title
+  , _answerItemTemplateDTOFollowUps = toQuestionDTO <$> itemTemplate ^. followUps
   }
 
 toExpertDTO :: Expert -> ExpertDTO
@@ -81,7 +89,8 @@ fromQuestionDTO question =
   , _questionQType = question ^. qType
   , _questionTitle = question ^. title
   , _questionText = question ^. text
-  , _questionAnswers = fromAnswerDTO <$> (question ^. answers)
+  , _questionAnswers = (fmap fromAnswerDTO) <$> (question ^. answers)
+  , _questionAnswerItemTemplate = fromAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
   , _questionExperts = fromExpertDTO <$> (question ^. experts)
   , _questionReferences = fromReferenceDTO <$> (question ^. references)
   }
@@ -93,6 +102,13 @@ fromAnswerDTO answer =
   , _answerLabel = answer ^. label
   , _answerAdvice = answer ^. advice
   , _answerFollowUps = fromQuestionDTO <$> (answer ^. followUps)
+  }
+
+fromAnswerItemTemplateDTO :: AnswerItemTemplateDTO -> AnswerItemTemplate
+fromAnswerItemTemplateDTO itemTemplate =
+  AnswerItemTemplate
+  { _answerItemTemplateTitle = itemTemplate ^. title
+  , _answerItemTemplateFollowUps = fromQuestionDTO <$> itemTemplate ^. followUps
   }
 
 fromExpertDTO :: ExpertDTO -> Expert

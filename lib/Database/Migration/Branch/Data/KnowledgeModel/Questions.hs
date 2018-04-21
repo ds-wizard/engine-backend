@@ -20,7 +20,8 @@ question1 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "First Question"
   , _questionText = "Here is a description of question"
-  , _questionAnswers = []
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -34,7 +35,8 @@ question2 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Second Question"
   , _questionText = "Some long description"
-  , _questionAnswers = [FA.answerNo1, FA.answerYes1]
+  , _questionAnswers = Just [FA.answerNo1, FA.answerYes1]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = [FR.referenceCh1, FR.referenceCh2]
   , _questionExperts = [FE.expertDarth, FE.expertLuke]
   }
@@ -47,7 +49,8 @@ question2WithChangeProperties =
   , _questionQType = QuestionString
   , _questionTitle = "EDITED: Second Question"
   , _questionText = "EDITED: Some long description"
-  , _questionAnswers = [FA.answerYes1, FA.answerNo1]
+  , _questionAnswers = Just [FA.answerYes1, FA.answerNo1]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = [FR.referenceCh2, FR.referenceCh1]
   , _questionExperts = [FE.expertLuke, FE.expertDarth]
   }
@@ -60,7 +63,8 @@ question3 =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Third Question"
   , _questionText = "Some long description"
-  , _questionAnswers = [FA.answerNo2, FA.answerYes2]
+  , _questionAnswers = Just [FA.answerNo2, FA.answerYes2]
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -73,7 +77,8 @@ question3Plain =
   , _questionQType = QuestionTypeOption
   , _questionTitle = "Third Question"
   , _questionText = "Some long description"
-  , _questionAnswers = []
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }

@@ -58,6 +58,7 @@ instance ToBSON Question where
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
     , "answers" BSON.=: (model ^. answers)
+    , "answerItemTemplate" BSON.=: (model ^. answerItemTemplate)
     , "references" BSON.=: (model ^. references)
     , "experts" BSON.=: (model ^. experts)
     ]
@@ -71,6 +72,7 @@ instance FromBSON Question where
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
     qAnswers <- BSON.lookup "answers" doc
+    qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     qReferences <- BSON.lookup "references" doc
     qExperts <- BSON.lookup "experts" doc
     return
@@ -81,6 +83,7 @@ instance FromBSON Question where
       , _questionTitle = qTitle
       , _questionText = qText
       , _questionAnswers = qAnswers
+      , _questionAnswerItemTemplate = qAnswerItemTemplate
       , _questionReferences = qReferences
       , _questionExperts = qExperts
       }
@@ -106,6 +109,18 @@ instance FromBSON Answer where
     return
       Answer
       {_answerUuid = ansUuid, _answerLabel = ansLabel, _answerAdvice = ansAdvice, _answerFollowUps = ansFollowUps}
+
+-- -------------------------
+-- ANSWER ITEM TEMPLATE ----
+-- -------------------------
+instance ToBSON AnswerItemTemplate where
+  toBSON model = ["title" BSON.=: model ^. title, "followUps" BSON.=: (model ^. followUps)]
+
+instance FromBSON AnswerItemTemplate where
+  fromBSON doc = do
+    aitTitle <- BSON.lookup "title" doc
+    aitFollowUps <- BSON.lookup "followUps" doc
+    return AnswerItemTemplate {_answerItemTemplateTitle = aitTitle, _answerItemTemplateFollowUps = aitFollowUps}
 
 -- -------------------------
 -- EXPERT ------------------
