@@ -1,6 +1,6 @@
 module Database.Migration.User.UserMigration where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Logger (logInfo)
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
@@ -10,6 +10,7 @@ import Api.Resource.User.UserCreateDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.User.User
 import Service.User.UserService
 
 runMigration appContext = do
@@ -17,6 +18,12 @@ runMigration appContext = do
   let context = appContext ^. oldContext
   let dswConfig = appContext ^. config
   liftIO $ deleteUsers context
+  liftIO $ insertAdmin context dswConfig
+  liftIO $ insertDataSteward context dswConfig
+  liftIO $ insertResearcher context dswConfig
+  $(logInfo) "MIGRATION (User/User): ended"
+
+insertAdmin context dswConfig = do
   liftIO $
     createUserWithGivenUuid
       context
@@ -30,6 +37,12 @@ runMigration appContext = do
       , _ucdtoPassword = "password"
       }
       True
+  eitherUser <- findUserByEmail context "darth.vader@deathstar.com"
+  let (Right user) = eitherUser
+  let updatedUser = user & uIsActive .~ True
+  updateUserById context updatedUser
+
+insertDataSteward context dswConfig = do
   liftIO $
     createUserWithGivenUuid
       context
@@ -43,6 +56,12 @@ runMigration appContext = do
       , _ucdtoPassword = "password"
       }
       True
+  eitherUser <- findUserByEmail context "luke.skywalker@deathstar.com"
+  let (Right user) = eitherUser
+  let updatedUser = user & uIsActive .~ True
+  updateUserById context updatedUser
+
+insertResearcher context dswConfig = do
   liftIO $
     createUserWithGivenUuid
       context
@@ -56,4 +75,7 @@ runMigration appContext = do
       , _ucdtoPassword = "password"
       }
       True
-  $(logInfo) "MIGRATION (User/User): ended"
+  eitherUser <- findUserByEmail context "john.snow@gof.com"
+  let (Right user) = eitherUser
+  let updatedUser = user & uIsActive .~ True
+  updateUserById context updatedUser
