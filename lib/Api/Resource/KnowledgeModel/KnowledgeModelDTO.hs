@@ -45,7 +45,16 @@ data AnswerDTO = AnswerDTO
 
 data AnswerItemTemplateDTO = AnswerItemTemplateDTO
   { _answerItemTemplateDTOTitle :: String
-  , _answerItemTemplateDTOFollowUps :: [QuestionDTO]
+  , _answerItemTemplateDTOQuestions :: [QuestionDTO]
+  } deriving (Show, Eq)
+
+data AnswerItemTemplatePlainDTO = AnswerItemTemplatePlainDTO
+  { _answerItemTemplatePlainDTOTitle :: String
+  } deriving (Show, Eq)
+
+data AnswerItemTemplatePlainWithIdsDTO = AnswerItemTemplatePlainWithIdsDTO
+  { _answerItemTemplatePlainWithIdsDTOTitle :: String
+  , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [UUID]
   } deriving (Show, Eq)
 
 data ExpertDTO = ExpertDTO
@@ -98,7 +107,17 @@ instance ToJSON AnswerDTO where
 
 instance ToJSON AnswerItemTemplateDTO where
   toJSON AnswerItemTemplateDTO {..} =
-    object ["title" .= _answerItemTemplateDTOTitle, "followUps" .= _answerItemTemplateDTOFollowUps]
+    object ["title" .= _answerItemTemplateDTOTitle, "questions" .= _answerItemTemplateDTOQuestions]
+
+instance ToJSON AnswerItemTemplatePlainDTO where
+  toJSON AnswerItemTemplatePlainDTO {..} = object ["title" .= _answerItemTemplatePlainDTOTitle]
+
+instance ToJSON AnswerItemTemplatePlainWithIdsDTO where
+  toJSON AnswerItemTemplatePlainWithIdsDTO {..} =
+    object
+      [ "title" .= _answerItemTemplatePlainWithIdsDTOTitle
+      , "questionIds" .= _answerItemTemplatePlainWithIdsDTOQuestionIds
+      ]
 
 instance ToJSON ExpertDTO where
   toJSON ExpertDTO {..} = object ["uuid" .= _expertDTOUuid, "name" .= _expertDTOName, "email" .= _expertDTOEmail]
@@ -151,8 +170,21 @@ instance FromJSON AnswerDTO where
 instance FromJSON AnswerItemTemplateDTO where
   parseJSON (Object o) = do
     _answerItemTemplateDTOTitle <- o .: "title"
-    _answerItemTemplateDTOFollowUps <- o .: "followUps"
+    _answerItemTemplateDTOQuestions <- o .: "questions"
     return AnswerItemTemplateDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON AnswerItemTemplatePlainDTO where
+  parseJSON (Object o) = do
+    _answerItemTemplatePlainDTOTitle <- o .: "title"
+    return AnswerItemTemplatePlainDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON AnswerItemTemplatePlainWithIdsDTO where
+  parseJSON (Object o) = do
+    _answerItemTemplatePlainWithIdsDTOTitle <- o .: "title"
+    _answerItemTemplatePlainWithIdsDTOQuestionIds <- o .: "questionIds"
+    return AnswerItemTemplatePlainWithIdsDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON ExpertDTO where

@@ -24,10 +24,10 @@ instance ToBSON AddQuestionEvent where
     , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
-    , "qType" BSON.=: show (event ^. qType)
+    , "qType" BSON.=: serializeQuestionType (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "answerItemTemplate" BSON.=: (event ^. answerItemTemplate)
+    , "answerItemTemplatePlain" BSON.=: (event ^. answerItemTemplatePlain)
     ]
 
 instance FromBSON AddQuestionEvent where
@@ -40,7 +40,7 @@ instance FromBSON AddQuestionEvent where
     qQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
-    qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
+    qAnswerItemTemplatePlain <- BSON.lookup "answerItemTemplatePlain" doc
     return
       AddQuestionEvent
       { _addQuestionEventUuid = qUuid
@@ -51,7 +51,7 @@ instance FromBSON AddQuestionEvent where
       , _addQuestionEventQType = qQType
       , _addQuestionEventTitle = qTitle
       , _addQuestionEventText = qText
-      , _addQuestionEventAnswerItemTemplate = qAnswerItemTemplate
+      , _addQuestionEventAnswerItemTemplatePlain = qAnswerItemTemplatePlain
       }
 
 -- ------------------------
@@ -65,10 +65,10 @@ instance ToBSON EditQuestionEvent where
     , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
-    , "qType" BSON.=: show (event ^. qType)
+    , "qType" BSON.=: (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "answerItemTemplate" BSON.=: (event ^. answerItemTemplate)
+    , "answerItemTemplatePlainWithIds" BSON.=: (event ^. answerItemTemplatePlainWithIds)
     , "answerIds" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerIds)
     , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
     , "referenceIds" BSON.=: serializeEventFieldUUIDList (event ^. referenceIds)
@@ -81,10 +81,10 @@ instance FromBSON EditQuestionEvent where
     qChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
     qQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
     qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
-    qQType <- deserializeEventFieldQuestionType <$> BSON.lookup "qType" doc
+    qQType <- BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
-    qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
+    qAnswerItemTemplatePlainWithIds <- BSON.lookup "answerItemTemplatePlainWithIds" doc
     let qAnswerIds = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerIds" doc
     let qExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
     let qReferenceIds = deserializeEventFieldUUIDList $ BSON.lookup "referenceIds" doc
@@ -98,7 +98,7 @@ instance FromBSON EditQuestionEvent where
       , _editQuestionEventQType = qQType
       , _editQuestionEventTitle = qTitle
       , _editQuestionEventText = qText
-      , _editQuestionEventAnswerItemTemplate = qAnswerItemTemplate
+      , _editQuestionEventAnswerItemTemplatePlainWithIds = qAnswerItemTemplatePlainWithIds
       , _editQuestionEventAnswerIds = qAnswerIds
       , _editQuestionEventExpertIds = qExpertIds
       , _editQuestionEventReferenceIds = qReferenceIds

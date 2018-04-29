@@ -114,13 +114,32 @@ instance FromBSON Answer where
 -- ANSWER ITEM TEMPLATE ----
 -- -------------------------
 instance ToBSON AnswerItemTemplate where
-  toBSON model = ["title" BSON.=: model ^. title, "followUps" BSON.=: (model ^. followUps)]
+  toBSON model = ["title" BSON.=: model ^. title, "questions" BSON.=: (model ^. questions)]
 
 instance FromBSON AnswerItemTemplate where
   fromBSON doc = do
     aitTitle <- BSON.lookup "title" doc
-    aitFollowUps <- BSON.lookup "followUps" doc
-    return AnswerItemTemplate {_answerItemTemplateTitle = aitTitle, _answerItemTemplateFollowUps = aitFollowUps}
+    aitQuestions <- BSON.lookup "questions" doc
+    return AnswerItemTemplate {_answerItemTemplateTitle = aitTitle, _answerItemTemplateQuestions = aitQuestions}
+
+instance ToBSON AnswerItemTemplatePlain where
+  toBSON model = ["title" BSON.=: model ^. title]
+
+instance FromBSON AnswerItemTemplatePlain where
+  fromBSON doc = do
+    aitTitle <- BSON.lookup "title" doc
+    return AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = aitTitle}
+
+instance ToBSON AnswerItemTemplatePlainWithIds where
+  toBSON model = ["title" BSON.=: model ^. title, "questionsIds" BSON.=: serializeUUIDList (model ^. questionIds)]
+
+instance FromBSON AnswerItemTemplatePlainWithIds where
+  fromBSON doc = do
+    aitTitle <- BSON.lookup "title" doc
+    aitQuestionIds <- deserializeUUIDList $ BSON.lookup "questions" doc
+    return
+      AnswerItemTemplatePlainWithIds
+      {_answerItemTemplatePlainWithIdsTitle = aitTitle, _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds}
 
 -- -------------------------
 -- EXPERT ------------------

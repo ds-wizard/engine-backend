@@ -11,6 +11,7 @@ import Common.Types
 import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
@@ -38,6 +39,20 @@ fromEventFieldAndAnswerItemTemplate ::
 fromEventFieldAndAnswerItemTemplate efMaybeAitDto =
   case efMaybeAitDto of
     ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplateDTO <$> maybeAitDto
+    NothingChangedDTO -> NothingChanged
+
+fromEventFieldAndAnswerItemTemplatePlain ::
+     EventFieldDTO (Maybe AnswerItemTemplatePlainDTO) -> EventField (Maybe AnswerItemTemplatePlain)
+fromEventFieldAndAnswerItemTemplatePlain efMaybeAitDto =
+  case efMaybeAitDto of
+    ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplatePlainDTO <$> maybeAitDto
+    NothingChangedDTO -> NothingChanged
+
+fromEventFieldAndAnswerItemTemplatePlainWithIds ::
+     EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO) -> EventField (Maybe AnswerItemTemplatePlainWithIds)
+fromEventFieldAndAnswerItemTemplatePlainWithIds efMaybeAitDto =
+  case efMaybeAitDto of
+    ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplatePlainWithIdsDTO <$> maybeAitDto
     NothingChangedDTO -> NothingChanged
 
 -- -------------------------
@@ -112,7 +127,7 @@ instance EventFromDTO AddQuestionEventDTO where
       , _addQuestionEventQType = dto ^. qType
       , _addQuestionEventTitle = dto ^. title
       , _addQuestionEventText = dto ^. text
-      , _addQuestionEventAnswerItemTemplate = fromAnswerItemTemplateDTO <$> dto ^. answerItemTemplate
+      , _addQuestionEventAnswerItemTemplatePlain = fromAnswerItemTemplatePlainDTO <$> dto ^. answerItemTemplatePlain
       }
 
 instance EventFromDTO EditQuestionEventDTO where
@@ -127,7 +142,8 @@ instance EventFromDTO EditQuestionEventDTO where
       , _editQuestionEventQType = fromEventFieldDTO $ dto ^. qType
       , _editQuestionEventTitle = fromEventFieldDTO $ dto ^. title
       , _editQuestionEventText = fromEventFieldDTO $ dto ^. text
-      , _editQuestionEventAnswerItemTemplate = fromEventFieldAndAnswerItemTemplate $ dto ^. answerItemTemplate
+      , _editQuestionEventAnswerItemTemplatePlainWithIds =
+          fromEventFieldAndAnswerItemTemplatePlainWithIds $ dto ^. answerItemTemplatePlainWithIds
       , _editQuestionEventAnswerIds = fromEventFieldDTO $ dto ^. answerIds
       , _editQuestionEventExpertIds = fromEventFieldDTO $ dto ^. expertIds
       , _editQuestionEventReferenceIds = fromEventFieldDTO $ dto ^. referenceIds
@@ -182,6 +198,57 @@ instance EventFromDTO DeleteAnswerEventDTO where
       , _deleteAnswerEventChapterUuid = dto ^. chapterUuid
       , _deleteAnswerEventQuestionUuid = dto ^. questionUuid
       , _deleteAnswerEventAnswerUuid = dto ^. answerUuid
+      }
+
+-- ---------------------------------
+-- Answer Item Template Question ---
+-- ---------------------------------
+instance EventFromDTO AddAnswerItemTemplateQuestionEventDTO where
+  fromDTO dto =
+    AddAnswerItemTemplateQuestionEvent'
+      AddAnswerItemTemplateQuestionEvent
+      { _addAnswerItemTemplateQuestionEventUuid = dto ^. uuid
+      , _addAnswerItemTemplateQuestionEventKmUuid = dto ^. kmUuid
+      , _addAnswerItemTemplateQuestionEventChapterUuid = dto ^. chapterUuid
+      , _addAnswerItemTemplateQuestionEventParentQuestionUuid = dto ^. parentQuestionUuid
+      , _addAnswerItemTemplateQuestionEventQuestionUuid = dto ^. questionUuid
+      , _addAnswerItemTemplateQuestionEventShortQuestionUuid = dto ^. shortQuestionUuid
+      , _addAnswerItemTemplateQuestionEventQType = dto ^. qType
+      , _addAnswerItemTemplateQuestionEventTitle = dto ^. title
+      , _addAnswerItemTemplateQuestionEventText = dto ^. text
+      , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain =
+          fromAnswerItemTemplatePlainDTO <$> dto ^. answerItemTemplatePlain
+      }
+
+instance EventFromDTO EditAnswerItemTemplateQuestionEventDTO where
+  fromDTO dto =
+    EditAnswerItemTemplateQuestionEvent'
+      EditAnswerItemTemplateQuestionEvent
+      { _editAnswerItemTemplateQuestionEventUuid = dto ^. uuid
+      , _editAnswerItemTemplateQuestionEventKmUuid = dto ^. kmUuid
+      , _editAnswerItemTemplateQuestionEventChapterUuid = dto ^. chapterUuid
+      , _editAnswerItemTemplateQuestionEventParentQuestionUuid = dto ^. parentQuestionUuid
+      , _editAnswerItemTemplateQuestionEventQuestionUuid = dto ^. questionUuid
+      , _editAnswerItemTemplateQuestionEventShortQuestionUuid = fromEventFieldDTO $ dto ^. shortQuestionUuid
+      , _editAnswerItemTemplateQuestionEventQType = fromEventFieldDTO $ dto ^. qType
+      , _editAnswerItemTemplateQuestionEventTitle = fromEventFieldDTO $ dto ^. title
+      , _editAnswerItemTemplateQuestionEventText = fromEventFieldDTO $ dto ^. text
+      , _editAnswerItemTemplateQuestionEventAnswerItemTemplatePlainWithIds =
+          fromEventFieldAndAnswerItemTemplatePlainWithIds $ dto ^. answerItemTemplatePlainWithIds
+      , _editAnswerItemTemplateQuestionEventAnswerIds = fromEventFieldDTO $ dto ^. answerIds
+      , _editAnswerItemTemplateQuestionEventExpertIds = fromEventFieldDTO $ dto ^. expertIds
+      , _editAnswerItemTemplateQuestionEventReferenceIds = fromEventFieldDTO $ dto ^. referenceIds
+      }
+
+instance EventFromDTO DeleteAnswerItemTemplateQuestionEventDTO where
+  fromDTO dto =
+    DeleteAnswerItemTemplateQuestionEvent'
+      DeleteAnswerItemTemplateQuestionEvent
+      { _deleteAnswerItemTemplateQuestionEventUuid = dto ^. uuid
+      , _deleteAnswerItemTemplateQuestionEventKmUuid = dto ^. kmUuid
+      , _deleteAnswerItemTemplateQuestionEventChapterUuid = dto ^. chapterUuid
+      , _deleteAnswerItemTemplateQuestionEventParentQuestionUuid = dto ^. parentQuestionUuid
+      , _deleteAnswerItemTemplateQuestionEventQuestionUuid = dto ^. questionUuid
       }
 
 -- -------------------------
@@ -278,7 +345,8 @@ instance EventFromDTO AddFollowUpQuestionEventDTO where
       , _addFollowUpQuestionEventQType = dto ^. qType
       , _addFollowUpQuestionEventTitle = dto ^. title
       , _addFollowUpQuestionEventText = dto ^. text
-      , _addFollowUpQuestionEventAnswerItemTemplate = fromAnswerItemTemplateDTO <$> dto ^. answerItemTemplate
+      , _addFollowUpQuestionEventAnswerItemTemplatePlain =
+          fromAnswerItemTemplatePlainDTO <$> dto ^. answerItemTemplatePlain
       }
 
 instance EventFromDTO EditFollowUpQuestionEventDTO where
@@ -294,7 +362,8 @@ instance EventFromDTO EditFollowUpQuestionEventDTO where
       , _editFollowUpQuestionEventQType = fromEventFieldDTO $ dto ^. qType
       , _editFollowUpQuestionEventTitle = fromEventFieldDTO $ dto ^. title
       , _editFollowUpQuestionEventText = fromEventFieldDTO $ dto ^. text
-      , _editFollowUpQuestionEventAnswerItemTemplate = fromEventFieldAndAnswerItemTemplate $ dto ^. answerItemTemplate
+      , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds =
+          fromEventFieldAndAnswerItemTemplatePlainWithIds $ dto ^. answerItemTemplatePlainWithIds
       , _editFollowUpQuestionEventAnswerIds = fromEventFieldDTO $ dto ^. answerIds
       , _editFollowUpQuestionEventExpertIds = fromEventFieldDTO $ dto ^. expertIds
       , _editFollowUpQuestionEventReferenceIds = fromEventFieldDTO $ dto ^. referenceIds

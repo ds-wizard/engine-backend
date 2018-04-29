@@ -53,7 +53,18 @@ toAnswerItemTemplateDTO :: AnswerItemTemplate -> AnswerItemTemplateDTO
 toAnswerItemTemplateDTO itemTemplate =
   AnswerItemTemplateDTO
   { _answerItemTemplateDTOTitle = itemTemplate ^. title
-  , _answerItemTemplateDTOFollowUps = toQuestionDTO <$> itemTemplate ^. followUps
+  , _answerItemTemplateDTOQuestions = toQuestionDTO <$> itemTemplate ^. questions
+  }
+
+toAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlain -> AnswerItemTemplatePlainDTO
+toAnswerItemTemplatePlainDTO itemTemplate =
+  AnswerItemTemplatePlainDTO {_answerItemTemplatePlainDTOTitle = itemTemplate ^. title}
+
+toAnswerItemTemplatePlainWithIdsDTO :: AnswerItemTemplatePlainWithIds -> AnswerItemTemplatePlainWithIdsDTO
+toAnswerItemTemplatePlainWithIdsDTO itemTemplate =
+  AnswerItemTemplatePlainWithIdsDTO
+  { _answerItemTemplatePlainWithIdsDTOTitle = itemTemplate ^. title
+  , _answerItemTemplatePlainWithIdsDTOQuestionIds = itemTemplate ^. questionIds
   }
 
 toExpertDTO :: Expert -> ExpertDTO
@@ -108,7 +119,18 @@ fromAnswerItemTemplateDTO :: AnswerItemTemplateDTO -> AnswerItemTemplate
 fromAnswerItemTemplateDTO itemTemplate =
   AnswerItemTemplate
   { _answerItemTemplateTitle = itemTemplate ^. title
-  , _answerItemTemplateFollowUps = fromQuestionDTO <$> itemTemplate ^. followUps
+  , _answerItemTemplateQuestions = fromQuestionDTO <$> itemTemplate ^. questions
+  }
+
+fromAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlainDTO -> AnswerItemTemplatePlain
+fromAnswerItemTemplatePlainDTO itemTemplate =
+  AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = itemTemplate ^. title}
+
+fromAnswerItemTemplatePlainWithIdsDTO :: AnswerItemTemplatePlainWithIdsDTO -> AnswerItemTemplatePlainWithIds
+fromAnswerItemTemplatePlainWithIdsDTO itemTemplate =
+  AnswerItemTemplatePlainWithIds
+  { _answerItemTemplatePlainWithIdsTitle = itemTemplate ^. title
+  , _answerItemTemplatePlainWithIdsQuestionIds = itemTemplate ^. questionIds
   }
 
 fromExpertDTO :: ExpertDTO -> Expert

@@ -123,6 +123,70 @@ isThereAnyAnswerWithGivenUuid km ansUuid = ansUuid `elem` (getAnswerUuid <$> get
     getAnswerUuid answer = answer ^. uuid
 
 ------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+getAitQuestionIds :: AnswerItemTemplate -> [UUID]
+getAitQuestionIds ait = ait ^.. questions . traverse . uuid
+
+aitAnswerItemTemplatePlainWithIds ::
+     (Maybe AnswerItemTemplate -> Identity (Maybe AnswerItemTemplatePlainWithIds)) -> Question -> Identity Question
+aitAnswerItemTemplatePlainWithIds convert q =
+  case maybeAitPlainWithIds of
+    Just aitPlainWithIds -> Identity $ q & answerItemTemplate .~ changedAnswerItemTemplate aitPlainWithIds
+    Nothing -> Identity q
+  where
+    maybeAitPlainWithIds :: Maybe AnswerItemTemplatePlainWithIds
+    maybeAitPlainWithIds = runIdentity $ convert (q ^. answerItemTemplate)
+    changedAnswerItemTemplate :: AnswerItemTemplatePlainWithIds -> Maybe AnswerItemTemplate
+    changedAnswerItemTemplate aitPlainWithIds =
+      case q ^. answerItemTemplate of
+        Just ait ->
+          Just $ (ait & title .~ (aitPlainWithIds ^. title)) & aitChangeAitQuestionIdsOrder .~
+          (aitPlainWithIds ^. questionIds)
+        Nothing ->
+          Just
+            AnswerItemTemplate {_answerItemTemplateTitle = aitPlainWithIds ^. title, _answerItemTemplateQuestions = []}
+
+aitChangeAitQuestionIdsOrder :: ([Question] -> Identity [UUID]) -> AnswerItemTemplate -> Identity AnswerItemTemplate
+aitChangeAitQuestionIdsOrder convert ait = Identity $ ait & questions .~ orderedQuestions
+  where
+    ids :: Identity [UUID]
+    ids = convert (ait ^. questions)
+    orderedQuestions :: [Question]
+    orderedQuestions = concatMap getAitQuestionByUuid (runIdentity ids)
+    getAitQuestionByUuid :: UUID -> [Question]
+    getAitQuestionByUuid qUuid = filter (\x -> x ^. uuid == qUuid) (ait ^. questions)
+
+-- getAllAitQuestions :: KnowledgeModel -> [Question]
+-- getAllAitQuestions km = go (km ^.. chapters . traverse . questions . traverse)
+--   where
+--     go :: [Question] -> [Question]
+--     go [] = []
+--     go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
+--     getNestedQuestions :: Question -> [Question]
+--     getNestedQuestions Question {_questionAnswers = (Just answers)} = concat $ _answerFollowUps <$> answers
+--     getNestedQuestions Question {_questionAnswers = Nothing} = []
+--
+-- getAitQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
+-- getAitQuestionByUuid km questionUuid = find (\q -> q ^. uuid == questionUuid) (getAllAitQuestions km)
+--
+-- getAllAitQuestionsForChapterUuid :: KnowledgeModel -> UUID -> [Question]
+-- getAllAitQuestionsForChapterUuid km chapterUuid =
+--   case getChapterByUuid km chapterUuid of
+--     Just chapter -> chapter ^. questions
+--     Nothing -> []
+--
+-- getAllAitQuestionsForAnswerUuid :: KnowledgeModel -> UUID -> [Question]
+-- getAllAitQuestionsForAnswerUuid km answerUuid =
+--   case getAnswerByUuid km answerUuid of
+--     Just answer -> answer ^. followUps
+--     Nothing -> []
+--
+-- isThereAnyAitQuestionWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+-- isThereAnyAitQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> getAllQuestions km)
+--   where
+--     getQuestionUuid question = question ^. uuid
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 getFollowUpIds :: Answer -> [UUID]
 getFollowUpIds ans = ans ^.. followUps . traverse . uuid
 

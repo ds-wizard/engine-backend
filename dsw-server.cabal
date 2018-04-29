@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 3ec01bb18788f2703063f1a4d33bc34dcf59554a150a721bd14366a5654f4554
+-- hash: 762209caf7b47ef4dcdd4fe8822128c4e831588e75fa8eb2331a4c0ddb60017b
 
 name:           dsw-server
 version:        1.0.0
@@ -123,6 +123,7 @@ library
       Database.BSON.Branch.BranchWithKM
       Database.BSON.Common
       Database.BSON.Event.Answer
+      Database.BSON.Event.AnswerItemTemplateQuestion
       Database.BSON.Event.Chapter
       Database.BSON.Event.Common
       Database.BSON.Event.EventField
@@ -171,6 +172,8 @@ library
       Model.Context.AppContext
       Model.Event.Answer.AnswerEvent
       Model.Event.Answer.AnswerEventSameUuid
+      Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
+      Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid
       Model.Event.Chapter.ChapterEvent
       Model.Event.Chapter.ChapterEventSameUuid
       Model.Event.Event
@@ -295,7 +298,7 @@ test-suite hspec
       Specs.API.VersionAPISpec
       Specs.Common
       Specs.Common.UtilsSpec
-      Specs.Model.KnowledgeModel.KnowledgeModelSpec
+      Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
       Specs.Service.Branch.BranchServiceSpec
       Specs.Service.Migrator.ApplicatorSpec
       Specs.Service.Migrator.Common

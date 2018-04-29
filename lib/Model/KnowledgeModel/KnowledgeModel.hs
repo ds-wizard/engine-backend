@@ -9,12 +9,12 @@ import GHC.Generics
 import Model.Common
 
 data QuestionType
-  = QuestionTypeOption
+  = QuestionTypeOptions
   | QuestionTypeList
-  | QuestionString
-  | QuestionNumber
-  | QuestionDate
-  | QuestionText
+  | QuestionTypeString
+  | QuestionTypeNumber
+  | QuestionTypeDate
+  | QuestionTypeText
   deriving (Show, Eq, Generic)
 
 data KnowledgeModel = KnowledgeModel
@@ -51,7 +51,16 @@ data Answer = Answer
 
 data AnswerItemTemplate = AnswerItemTemplate
   { _answerItemTemplateTitle :: String
-  , _answerItemTemplateFollowUps :: [Question]
+  , _answerItemTemplateQuestions :: [Question]
+  } deriving (Show, Eq, Generic)
+
+data AnswerItemTemplatePlain = AnswerItemTemplatePlain
+  { _answerItemTemplatePlainTitle :: String
+  } deriving (Show, Eq, Generic)
+
+data AnswerItemTemplatePlainWithIds = AnswerItemTemplatePlainWithIds
+  { _answerItemTemplatePlainWithIdsTitle :: String
+  , _answerItemTemplatePlainWithIdsQuestionIds :: [UUID]
   } deriving (Show, Eq, Generic)
 
 data Expert = Expert

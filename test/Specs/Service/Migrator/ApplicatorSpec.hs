@@ -1,6 +1,7 @@
 module Specs.Service.Migrator.ApplicatorSpec where
 
 import Control.Lens
+import Control.Monad.Reader (liftIO)
 import Data.Maybe
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
@@ -62,6 +63,20 @@ applicatorSpec =
         let (Right computed) = runApplicator (Just km1) [EditQuestionEvent' e_km1_ch1_q2]
         let expected = km1 & chapters .~ [chapter1WithChangedQuestion2, chapter2]
         computed `shouldBe` expected
+      it "Apply:  EditQuestionEvent 2" $ do
+        let event = e_km1_ch2_q4
+        let (Right computed) = runApplicator (Just km1WithQ4) [EditQuestionEvent' event]
+        let expChapter2 = chapter2 & questions .~ [question3, question4WithChangeProperties]
+        let expected = km1 & chapters .~ [chapter1, expChapter2]
+        computed `shouldBe` expected
+      it "Apply:  EditQuestionEvent 3" $ do
+        let event = e_km1_ch2_q4
+        let (Right computed) = runApplicator (Just km1WithQ4Plain) [EditQuestionEvent' event]
+        let expAit = ait1WithChangeProperties & questions .~ []
+        let expQuestion4 = question4WithChangeProperties & answerItemTemplate .~ Just expAit
+        let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
+        let expected = km1 & chapters .~ [chapter1, expChapter2]
+        computed `shouldBe` expected
       it "Apply:  DeleteQuestionEvent" $ do
         let initKM = km1 & chapters .~ [chapter1WithAddedQuestion3, chapter2]
         let (Right computed) = runApplicator (Just initKM) [DeleteQuestionEvent' d_km1_ch1_q3]
@@ -122,6 +137,32 @@ applicatorSpec =
         let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
+        computed `shouldBe` expected
+   -- ---------------
+    describe "Apply:  AnswerItemTemplateQuestion Events" $ do
+      it "Apply:  AddAnswerItemTemplateQuestionEvent" $ do
+        let event = a_km1_ch2_q4_ait1
+        let (Right computed) = runApplicator (Just km1WithQ4Plain) [AddAnswerItemTemplateQuestionEvent' event]
+        let expAit1 = ait1 & questions .~ [question5]
+        let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
+        let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
+        let expected = km1 & chapters .~ [chapter1, expChapter2]
+        computed `shouldBe` expected
+      it "Apply:  EditAnswerItemTemplateQuestionEvent" $ do
+        let event = e_km1_ch2_q4_ait1_q5
+        let (Right computed) = runApplicator (Just km1WithQ4) [EditAnswerItemTemplateQuestionEvent' event]
+        let expAit1 = ait1 & questions .~ [question5WithChangeProperties, question6]
+        let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
+        let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
+        let expected = km1 & chapters .~ [chapter1, expChapter2]
+        computed `shouldBe` expected
+      it "Apply:  DeleteAnswerItemTemplateQuestionEvent" $ do
+        let event = d_km1_ch2_q4_ait1
+        let (Right computed) = runApplicator (Just km1WithQ4) [DeleteAnswerItemTemplateQuestionEvent' event]
+        let expAit1 = ait1 & questions .~ [question6]
+        let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
+        let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
+        let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Expert Events" $ do

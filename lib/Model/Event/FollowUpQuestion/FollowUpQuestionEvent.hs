@@ -16,7 +16,7 @@ data AddFollowUpQuestionEvent = AddFollowUpQuestionEvent
   , _addFollowUpQuestionEventQType :: QuestionType
   , _addFollowUpQuestionEventTitle :: String
   , _addFollowUpQuestionEventText :: String
-  , _addFollowUpQuestionEventAnswerItemTemplate :: Maybe AnswerItemTemplate
+  , _addFollowUpQuestionEventAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlain
   } deriving (Show, Eq, Generic)
 
 data EditFollowUpQuestionEvent = EditFollowUpQuestionEvent
@@ -29,7 +29,7 @@ data EditFollowUpQuestionEvent = EditFollowUpQuestionEvent
   , _editFollowUpQuestionEventQType :: EventField QuestionType
   , _editFollowUpQuestionEventTitle :: EventField String
   , _editFollowUpQuestionEventText :: EventField String
-  , _editFollowUpQuestionEventAnswerItemTemplate :: EventField (Maybe AnswerItemTemplate)
+  , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds :: EventField (Maybe AnswerItemTemplatePlainWithIds)
   , _editFollowUpQuestionEventAnswerIds :: EventField (Maybe [UUID])
   , _editFollowUpQuestionEventExpertIds :: EventField [UUID]
   , _editFollowUpQuestionEventReferenceIds :: EventField [UUID]

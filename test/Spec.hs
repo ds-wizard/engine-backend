@@ -25,7 +25,7 @@ import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
 import Specs.Common.UtilsSpec
-import Specs.Model.KnowledgeModel.KnowledgeModelSpec
+import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
@@ -67,7 +67,7 @@ main =
          describe "UNIT TESTING" $ do
            commonUtilsSpec
            applicatorSpec
-           knowledgeModelSpec
+           knowledgeModelAccessorsSpec
            sanitizatorSpec
            migratorSpec
            organizationServiceSpec

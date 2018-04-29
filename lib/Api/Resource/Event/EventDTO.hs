@@ -26,6 +26,9 @@ data EventDTO
   | AddAnswerEventDTO' AddAnswerEventDTO
   | EditAnswerEventDTO' EditAnswerEventDTO
   | DeleteAnswerEventDTO' DeleteAnswerEventDTO
+  | AddAnswerItemTemplateQuestionEventDTO' AddAnswerItemTemplateQuestionEventDTO
+  | EditAnswerItemTemplateQuestionEventDTO' EditAnswerItemTemplateQuestionEventDTO
+  | DeleteAnswerItemTemplateQuestionEventDTO' DeleteAnswerItemTemplateQuestionEventDTO
   | AddExpertEventDTO' AddExpertEventDTO
   | EditExpertEventDTO' EditExpertEventDTO
   | DeleteExpertEventDTO' DeleteExpertEventDTO
@@ -49,6 +52,9 @@ instance ToJSON EventDTO where
   toJSON (AddAnswerEventDTO' event) = toJSON event
   toJSON (EditAnswerEventDTO' event) = toJSON event
   toJSON (DeleteAnswerEventDTO' event) = toJSON event
+  toJSON (AddAnswerItemTemplateQuestionEventDTO' event) = toJSON event
+  toJSON (EditAnswerItemTemplateQuestionEventDTO' event) = toJSON event
+  toJSON (DeleteAnswerItemTemplateQuestionEventDTO' event) = toJSON event
   toJSON (AddExpertEventDTO' event) = toJSON event
   toJSON (EditExpertEventDTO' event) = toJSON event
   toJSON (DeleteExpertEventDTO' event) = toJSON event
@@ -74,6 +80,12 @@ instance FromJSON EventDTO where
       "AddAnswerEvent" -> parseJSON (Object o) >>= \event -> return (AddAnswerEventDTO' event)
       "EditAnswerEvent" -> parseJSON (Object o) >>= \event -> return (EditAnswerEventDTO' event)
       "DeleteAnswerEvent" -> parseJSON (Object o) >>= \event -> return (DeleteAnswerEventDTO' event)
+      "AddAnswerItemTemplateQuestionEvent" ->
+        parseJSON (Object o) >>= \event -> return (AddAnswerItemTemplateQuestionEventDTO' event)
+      "EditAnswerItemTemplateQuestionEvent" ->
+        parseJSON (Object o) >>= \event -> return (EditAnswerItemTemplateQuestionEventDTO' event)
+      "DeleteAnswerItemTemplateQuestionEvent" ->
+        parseJSON (Object o) >>= \event -> return (DeleteAnswerItemTemplateQuestionEventDTO' event)
       "AddExpertEvent" -> parseJSON (Object o) >>= \event -> return (AddExpertEventDTO' event)
       "EditExpertEvent" -> parseJSON (Object o) >>= \event -> return (EditExpertEventDTO' event)
       "DeleteExpertEvent" -> parseJSON (Object o) >>= \event -> return (DeleteExpertEventDTO' event)
@@ -140,7 +152,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _addQuestionEventDTOQType :: QuestionType
   , _addQuestionEventDTOTitle :: String
   , _addQuestionEventDTOText :: String
-  , _addQuestionEventDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
+  , _addQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
   } deriving (Show, Eq, Generic)
 
 data EditQuestionEventDTO = EditQuestionEventDTO
@@ -152,7 +164,7 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editQuestionEventDTOTitle :: EventFieldDTO String
   , _editQuestionEventDTOText :: EventFieldDTO String
-  , _editQuestionEventDTOAnswerItemTemplate :: EventFieldDTO (Maybe AnswerItemTemplateDTO)
+  , _editQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
   , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [UUID])
   , _editQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
   , _editQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
@@ -195,6 +207,46 @@ data DeleteAnswerEventDTO = DeleteAnswerEventDTO
   , _deleteAnswerEventDTOChapterUuid :: UUID
   , _deleteAnswerEventDTOQuestionUuid :: UUID
   , _deleteAnswerEventDTOAnswerUuid :: UUID
+  } deriving (Show, Eq, Generic)
+
+-- ---------------------------------
+-- Answer Item Template Question ---
+-- ---------------------------------
+data AddAnswerItemTemplateQuestionEventDTO = AddAnswerItemTemplateQuestionEventDTO
+  { _addAnswerItemTemplateQuestionEventDTOUuid :: UUID
+  , _addAnswerItemTemplateQuestionEventDTOKmUuid :: UUID
+  , _addAnswerItemTemplateQuestionEventDTOChapterUuid :: UUID
+  , _addAnswerItemTemplateQuestionEventDTOParentQuestionUuid :: UUID
+  , _addAnswerItemTemplateQuestionEventDTOQuestionUuid :: UUID
+  , _addAnswerItemTemplateQuestionEventDTOShortQuestionUuid :: Maybe String
+  , _addAnswerItemTemplateQuestionEventDTOQType :: QuestionType
+  , _addAnswerItemTemplateQuestionEventDTOTitle :: String
+  , _addAnswerItemTemplateQuestionEventDTOText :: String
+  , _addAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
+  } deriving (Show, Eq, Generic)
+
+data EditAnswerItemTemplateQuestionEventDTO = EditAnswerItemTemplateQuestionEventDTO
+  { _editAnswerItemTemplateQuestionEventDTOUuid :: UUID
+  , _editAnswerItemTemplateQuestionEventDTOKmUuid :: UUID
+  , _editAnswerItemTemplateQuestionEventDTOChapterUuid :: UUID
+  , _editAnswerItemTemplateQuestionEventDTOParentQuestionUuid :: UUID
+  , _editAnswerItemTemplateQuestionEventDTOQuestionUuid :: UUID
+  , _editAnswerItemTemplateQuestionEventDTOShortQuestionUuid :: EventFieldDTO (Maybe String)
+  , _editAnswerItemTemplateQuestionEventDTOQType :: EventFieldDTO QuestionType
+  , _editAnswerItemTemplateQuestionEventDTOTitle :: EventFieldDTO String
+  , _editAnswerItemTemplateQuestionEventDTOText :: EventFieldDTO String
+  , _editAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
+  , _editAnswerItemTemplateQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [UUID])
+  , _editAnswerItemTemplateQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
+  , _editAnswerItemTemplateQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
+  } deriving (Show, Eq, Generic)
+
+data DeleteAnswerItemTemplateQuestionEventDTO = DeleteAnswerItemTemplateQuestionEventDTO
+  { _deleteAnswerItemTemplateQuestionEventDTOUuid :: UUID
+  , _deleteAnswerItemTemplateQuestionEventDTOKmUuid :: UUID
+  , _deleteAnswerItemTemplateQuestionEventDTOParentQuestionUuid :: UUID
+  , _deleteAnswerItemTemplateQuestionEventDTOChapterUuid :: UUID
+  , _deleteAnswerItemTemplateQuestionEventDTOQuestionUuid :: UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
@@ -270,7 +322,7 @@ data AddFollowUpQuestionEventDTO = AddFollowUpQuestionEventDTO
   , _addFollowUpQuestionEventDTOQType :: QuestionType
   , _addFollowUpQuestionEventDTOTitle :: String
   , _addFollowUpQuestionEventDTOText :: String
-  , _addFollowUpQuestionEventDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
+  , _addFollowUpQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
   } deriving (Show, Eq, Generic)
 
 data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
@@ -283,7 +335,7 @@ data EditFollowUpQuestionEventDTO = EditFollowUpQuestionEventDTO
   , _editFollowUpQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editFollowUpQuestionEventDTOTitle :: EventFieldDTO String
   , _editFollowUpQuestionEventDTOText :: EventFieldDTO String
-  , _editFollowUpQuestionEventDTOAnswerItemTemplate :: EventFieldDTO (Maybe AnswerItemTemplateDTO)
+  , _editFollowUpQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
   , _editFollowUpQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [UUID])
   , _editFollowUpQuestionEventDTOExpertIds :: EventFieldDTO [UUID]
   , _editFollowUpQuestionEventDTOReferenceIds :: EventFieldDTO [UUID]
@@ -412,7 +464,7 @@ instance FromJSON AddQuestionEventDTO where
     _addQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _addQuestionEventDTOTitle <- o .: "title"
     _addQuestionEventDTOText <- o .: "text"
-    _addQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
+    _addQuestionEventDTOAnswerItemTemplatePlain <- o .: "answerItemTemplate"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
       (Just _addQuestionEventDTOQType) -> return AddQuestionEventDTO {..}
@@ -431,7 +483,7 @@ instance ToJSON AddQuestionEventDTO where
       , "type" .= serializeQuestionType _addQuestionEventDTOQType
       , "title" .= _addQuestionEventDTOTitle
       , "text" .= _addQuestionEventDTOText
-      , "answerItemTemplate" .= _addQuestionEventDTOAnswerItemTemplate
+      , "answerItemTemplate" .= _addQuestionEventDTOAnswerItemTemplatePlain
       ]
 
 instance FromJSON EditQuestionEventDTO where
@@ -443,7 +495,7 @@ instance FromJSON EditQuestionEventDTO where
     _editQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _editQuestionEventDTOTitle <- o .: "title"
     _editQuestionEventDTOText <- o .: "text"
-    _editQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
+    _editQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
     _editQuestionEventDTOAnswerIds <- o .: "answerIds"
     _editQuestionEventDTOExpertIds <- o .: "expertIds"
     _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
@@ -465,7 +517,7 @@ instance ToJSON EditQuestionEventDTO where
       , "type" .= (serializeQuestionType <$> _editQuestionEventDTOQType)
       , "title" .= _editQuestionEventDTOTitle
       , "text" .= _editQuestionEventDTOText
-      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplate
+      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplatePlainWithIds
       , "answerIds" .= _editQuestionEventDTOAnswerIds
       , "expertIds" .= _editQuestionEventDTOExpertIds
       , "referenceIds" .= _editQuestionEventDTOReferenceIds
@@ -564,6 +616,102 @@ instance ToJSON DeleteAnswerEventDTO where
       , "chapterUuid" .= _deleteAnswerEventDTOChapterUuid
       , "questionUuid" .= _deleteAnswerEventDTOQuestionUuid
       , "answerUuid" .= _deleteAnswerEventDTOAnswerUuid
+      ]
+
+-- ---------------------------------
+-- Answer Item Template Question ---
+-- ---------------------------------
+instance FromJSON AddAnswerItemTemplateQuestionEventDTO where
+  parseJSON (Object o) = do
+    _addAnswerItemTemplateQuestionEventDTOUuid <- o .: "uuid"
+    _addAnswerItemTemplateQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _addAnswerItemTemplateQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _addAnswerItemTemplateQuestionEventDTOParentQuestionUuid <- o .: "parentQuestionUuid"
+    _addAnswerItemTemplateQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addAnswerItemTemplateQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _addAnswerItemTemplateQuestionEventDTOTitle <- o .: "title"
+    _addAnswerItemTemplateQuestionEventDTOText <- o .: "text"
+    _addAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlain <- o .: "answerItemTemplate"
+    questionType <- o .: "type"
+    case deserializeQuestionType questionType of
+      (Just _addAnswerItemTemplateQuestionEventDTOQType) -> return AddAnswerItemTemplateQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
+  parseJSON _ = mzero
+
+instance ToJSON AddAnswerItemTemplateQuestionEventDTO where
+  toJSON AddAnswerItemTemplateQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "AddQuestionEvent"
+      , "uuid" .= _addAnswerItemTemplateQuestionEventDTOUuid
+      , "kmUuid" .= _addAnswerItemTemplateQuestionEventDTOKmUuid
+      , "chapterUuid" .= _addAnswerItemTemplateQuestionEventDTOChapterUuid
+      , "parentQuestionUuid" .= _addAnswerItemTemplateQuestionEventDTOParentQuestionUuid
+      , "questionUuid" .= _addAnswerItemTemplateQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _addAnswerItemTemplateQuestionEventDTOShortQuestionUuid
+      , "type" .= serializeQuestionType _addAnswerItemTemplateQuestionEventDTOQType
+      , "title" .= _addAnswerItemTemplateQuestionEventDTOTitle
+      , "text" .= _addAnswerItemTemplateQuestionEventDTOText
+      , "answerItemTemplate" .= _addAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlain
+      ]
+
+instance FromJSON EditAnswerItemTemplateQuestionEventDTO where
+  parseJSON (Object o) = do
+    _editAnswerItemTemplateQuestionEventDTOUuid <- o .: "uuid"
+    _editAnswerItemTemplateQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _editAnswerItemTemplateQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _editAnswerItemTemplateQuestionEventDTOParentQuestionUuid <- o .: "parentQuestionUuid"
+    _editAnswerItemTemplateQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editAnswerItemTemplateQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
+    _editAnswerItemTemplateQuestionEventDTOTitle <- o .: "title"
+    _editAnswerItemTemplateQuestionEventDTOText <- o .: "text"
+    _editAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
+    _editAnswerItemTemplateQuestionEventDTOAnswerIds <- o .: "answerIds"
+    _editAnswerItemTemplateQuestionEventDTOExpertIds <- o .: "expertIds"
+    _editAnswerItemTemplateQuestionEventDTOReferenceIds <- o .: "referenceIds"
+    questionType <- o .: "type"
+    case deserializeEventFieldQuestionType <$> questionType of
+      (Just _editAnswerItemTemplateQuestionEventDTOQType) -> return EditAnswerItemTemplateQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question type"
+  parseJSON _ = mzero
+
+instance ToJSON EditAnswerItemTemplateQuestionEventDTO where
+  toJSON EditAnswerItemTemplateQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "EditQuestionEvent"
+      , "uuid" .= _editAnswerItemTemplateQuestionEventDTOUuid
+      , "kmUuid" .= _editAnswerItemTemplateQuestionEventDTOKmUuid
+      , "chapterUuid" .= _editAnswerItemTemplateQuestionEventDTOChapterUuid
+      , "parentQuestionUuid" .= _editAnswerItemTemplateQuestionEventDTOParentQuestionUuid
+      , "questionUuid" .= _editAnswerItemTemplateQuestionEventDTOQuestionUuid
+      , "shortQuestionUuid" .= _editAnswerItemTemplateQuestionEventDTOShortQuestionUuid
+      , "type" .= (serializeQuestionType <$> _editAnswerItemTemplateQuestionEventDTOQType)
+      , "title" .= _editAnswerItemTemplateQuestionEventDTOTitle
+      , "text" .= _editAnswerItemTemplateQuestionEventDTOText
+      , "answerItemTemplate" .= _editAnswerItemTemplateQuestionEventDTOAnswerItemTemplatePlainWithIds
+      , "answerIds" .= _editAnswerItemTemplateQuestionEventDTOAnswerIds
+      , "expertIds" .= _editAnswerItemTemplateQuestionEventDTOExpertIds
+      , "referenceIds" .= _editAnswerItemTemplateQuestionEventDTOReferenceIds
+      ]
+
+instance FromJSON DeleteAnswerItemTemplateQuestionEventDTO where
+  parseJSON (Object o) = do
+    _deleteAnswerItemTemplateQuestionEventDTOUuid <- o .: "uuid"
+    _deleteAnswerItemTemplateQuestionEventDTOKmUuid <- o .: "kmUuid"
+    _deleteAnswerItemTemplateQuestionEventDTOChapterUuid <- o .: "chapterUuid"
+    _deleteAnswerItemTemplateQuestionEventDTOParentQuestionUuid <- o .: "parentQuestionUuid"
+    _deleteAnswerItemTemplateQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    return DeleteAnswerItemTemplateQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON DeleteAnswerItemTemplateQuestionEventDTO where
+  toJSON DeleteAnswerItemTemplateQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "DeleteQuestionEvent"
+      , "uuid" .= _deleteAnswerItemTemplateQuestionEventDTOUuid
+      , "kmUuid" .= _deleteAnswerItemTemplateQuestionEventDTOKmUuid
+      , "chapterUuid" .= _deleteAnswerItemTemplateQuestionEventDTOChapterUuid
+      , "parentQuestionUuid" .= _deleteAnswerItemTemplateQuestionEventDTOParentQuestionUuid
+      , "questionUuid" .= _deleteAnswerItemTemplateQuestionEventDTOQuestionUuid
       ]
 
 -- -------------------------
@@ -723,7 +871,7 @@ instance FromJSON AddFollowUpQuestionEventDTO where
     _addFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _addFollowUpQuestionEventDTOTitle <- o .: "title"
     _addFollowUpQuestionEventDTOText <- o .: "text"
-    _addFollowUpQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
+    _addFollowUpQuestionEventDTOAnswerItemTemplatePlain <- o .: "answerItemTemplate"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
       (Just _addFollowUpQuestionEventDTOQType) -> return AddFollowUpQuestionEventDTO {..}
@@ -743,7 +891,7 @@ instance ToJSON AddFollowUpQuestionEventDTO where
       , "type" .= serializeQuestionType _addFollowUpQuestionEventDTOQType
       , "title" .= _addFollowUpQuestionEventDTOTitle
       , "text" .= _addFollowUpQuestionEventDTOText
-      , "answerItemTemplate" .= _addFollowUpQuestionEventDTOAnswerItemTemplate
+      , "answerItemTemplate" .= _addFollowUpQuestionEventDTOAnswerItemTemplatePlain
       ]
 
 instance FromJSON EditFollowUpQuestionEventDTO where
@@ -756,7 +904,7 @@ instance FromJSON EditFollowUpQuestionEventDTO where
     _editFollowUpQuestionEventDTOShortQuestionUuid <- o .: "shortQuestionUuid"
     _editFollowUpQuestionEventDTOTitle <- o .: "title"
     _editFollowUpQuestionEventDTOText <- o .: "text"
-    _editFollowUpQuestionEventDTOAnswerItemTemplate <- o .: "answerItemTemplate"
+    _editFollowUpQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
     _editFollowUpQuestionEventDTOAnswerIds <- o .: "answerIds"
     _editFollowUpQuestionEventDTOExpertIds <- o .: "expertIds"
     _editFollowUpQuestionEventDTOReferenceIds <- o .: "referenceIds"
@@ -779,7 +927,7 @@ instance ToJSON EditFollowUpQuestionEventDTO where
       , "type" .= (serializeQuestionType <$> _editFollowUpQuestionEventDTOQType)
       , "title" .= _editFollowUpQuestionEventDTOTitle
       , "text" .= _editFollowUpQuestionEventDTOText
-      , "answerItemTemplate" .= _editFollowUpQuestionEventDTOAnswerItemTemplate
+      , "answerItemTemplate" .= _editFollowUpQuestionEventDTOAnswerItemTemplatePlainWithIds
       , "answerIds" .= _editFollowUpQuestionEventDTOAnswerIds
       , "expertIds" .= _editFollowUpQuestionEventDTOExpertIds
       , "referenceIds" .= _editFollowUpQuestionEventDTOReferenceIds

@@ -108,7 +108,7 @@ followUpQuestion1 =
   Question
   { _questionUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
   , _questionShortUuid = Just "followUpQuestion1"
-  , _questionQType = QuestionTypeOption
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "First Follow-Up Question"
   , _questionText = "Maybe there will be some description"
   , _questionAnswers = Just [answerNo3, answerYes3]
@@ -122,7 +122,7 @@ followUpQuestion1Plain =
   Question
   { _questionUuid = followUpQuestion1 ^. uuid
   , _questionShortUuid = followUpQuestion1 ^. shortUuid
-  , _questionQType = QuestionTypeOption
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "Fourth Question"
   , _questionText = "Just follow"
   , _questionAnswers = Just []
@@ -136,7 +136,7 @@ followUpQuestion2 =
   Question
   { _questionUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
   , _questionShortUuid = Just "followUpQuestion2"
-  , _questionQType = QuestionTypeOption
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "Second Follow-Up Question"
   , _questionText = "Again just follow"
   , _questionAnswers = Just [answerNo4, answerYes4]
@@ -150,7 +150,7 @@ followUpQuestion2Changed =
   Question
   { _questionUuid = followUpQuestion2 ^. uuid
   , _questionShortUuid = followUpQuestion2 ^. shortUuid
-  , _questionQType = QuestionTypeOption
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "EDITED: Second Follow-Up Question"
   , _questionText = "EDITED: Again just follow"
   , _questionAnswers = Just [answerYes4, answerNo4]
@@ -164,7 +164,7 @@ followUpQuestion3 =
   Question
   { _questionUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
   , _questionShortUuid = Just "followUpQuestion3"
-  , _questionQType = QuestionTypeOption
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "Third Follow-Up Question"
   , _questionText = "Again and again just follow"
   , _questionAnswers = Just []

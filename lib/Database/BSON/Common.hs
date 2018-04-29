@@ -36,6 +36,12 @@ serializeEventFieldMaybeUUIDList efMaybeUuids =
     ChangedValue maybeUuids -> ChangedValue $ serializeUUIDList <$> maybeUuids
     NothingChanged -> NothingChanged
 
+serializeQuestionType :: QuestionType -> String
+serializeQuestionType mQuestionType = show mQuestionType
+
+serializeMaybeQuestionType :: Maybe QuestionType -> Maybe String
+serializeMaybeQuestionType mQuestionType = show <$> mQuestionType
+
 deserializeUUID :: Maybe String -> Maybe UUID
 deserializeUUID mUuidS = do
   uuidS <- mUuidS
@@ -78,25 +84,37 @@ deserializeQuestionType :: Maybe String -> Maybe QuestionType
 deserializeQuestionType mQuestionTypeS = do
   questionType <- mQuestionTypeS
   case questionType of
-    "QuestionTypeOption" -> Just QuestionTypeOption
+    "QuestionTypeOptions" -> Just QuestionTypeOptions
     "QuestionTypeList" -> Just QuestionTypeList
-    "QuestionString" -> Just QuestionString
-    "QuestionNumber" -> Just QuestionNumber
-    "QuestionDate" -> Just QuestionDate
-    "QuestionText" -> Just QuestionText
+    "QuestionTypeString" -> Just QuestionTypeString
+    "QuestionTypeNumber" -> Just QuestionTypeNumber
+    "QuestionTypeDate" -> Just QuestionTypeDate
+    "QuestionTypeText" -> Just QuestionTypeText
     _ -> Nothing
+
+deserializeMaybeQuestionType :: Maybe String -> Maybe (Maybe QuestionType)
+deserializeMaybeQuestionType mQuestionTypeS = do
+  questionType <- mQuestionTypeS
+  case questionType of
+    "QuestionTypeOptions" -> Just . Just $ QuestionTypeOptions
+    "QuestionTypeList" -> Just . Just $ QuestionTypeList
+    "QuestionTypeString" -> Just . Just $ QuestionTypeString
+    "QuestionTypeNumber" -> Just . Just $ QuestionTypeNumber
+    "QuestionTypeDate" -> Just . Just $ QuestionTypeDate
+    "QuestionTypeText" -> Just . Just $ QuestionTypeText
+    _ -> Just Nothing
 
 deserializeEventFieldQuestionType :: Maybe String -> EventField QuestionType
 deserializeEventFieldQuestionType mQuestionTypeS =
   case mQuestionTypeS of
     Just questionType ->
       case questionType of
-        "QuestionTypeOption" -> ChangedValue QuestionTypeOption
+        "QuestionTypeOptions" -> ChangedValue QuestionTypeOptions
         "QuestionTypeList" -> ChangedValue QuestionTypeList
-        "QuestionString" -> ChangedValue QuestionString
-        "QuestionNumber" -> ChangedValue QuestionNumber
-        "QuestionDate" -> ChangedValue QuestionDate
-        "QuestionText" -> ChangedValue QuestionText
+        "QuestionTypeString" -> ChangedValue QuestionTypeString
+        "QuestionTypeNumber" -> ChangedValue QuestionTypeNumber
+        "QuestionTypeDate" -> ChangedValue QuestionTypeDate
+        "QuestionTypeText" -> ChangedValue QuestionTypeText
         _ -> NothingChanged
     Nothing -> NothingChanged
 

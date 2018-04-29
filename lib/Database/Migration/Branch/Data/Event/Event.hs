@@ -13,6 +13,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
@@ -116,7 +117,7 @@ a_km1_ch1_q1 =
   , _addQuestionEventQType = question1 ^. qType
   , _addQuestionEventTitle = question1 ^. title
   , _addQuestionEventText = question1 ^. text
-  , _addQuestionEventAnswerItemTemplate = Nothing
+  , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 a_km1_ch1_q2 :: AddQuestionEvent
@@ -130,7 +131,7 @@ a_km1_ch1_q2 =
   , _addQuestionEventQType = question2 ^. qType
   , _addQuestionEventTitle = question2 ^. title
   , _addQuestionEventText = question2 ^. text
-  , _addQuestionEventAnswerItemTemplate = Nothing
+  , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 a_km1_ch1_q3 :: AddQuestionEvent
@@ -144,7 +145,7 @@ a_km1_ch1_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
-  , _addQuestionEventAnswerItemTemplate = Nothing
+  , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 a_km1_ch2_q3 :: AddQuestionEvent
@@ -158,7 +159,37 @@ a_km1_ch2_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
-  , _addQuestionEventAnswerItemTemplate = Nothing
+  , _addQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4 :: AddQuestionEvent
+a_km1_ch2_q4 =
+  AddQuestionEvent
+  { _addQuestionEventUuid = fromJust $ U.fromString "bc994b0f-bee1-4f28-9945-9714b0e559e9"
+  , _addQuestionEventKmUuid = km1 ^. uuid
+  , _addQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addQuestionEventQuestionUuid = question4 ^. uuid
+  , _addQuestionEventShortQuestionUuid = question4 ^. shortUuid
+  , _addQuestionEventQType = question4 ^. qType
+  , _addQuestionEventTitle = question4 ^. title
+  , _addQuestionEventText = question4 ^. text
+  , _addQuestionEventAnswerItemTemplatePlain =
+      Just
+        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question4 ^. answerItemTemplate) ^. title}
+  }
+
+a_km1_ch2_q5 :: AddQuestionEvent
+a_km1_ch2_q5 =
+  AddQuestionEvent
+  { _addQuestionEventUuid = fromJust $ U.fromString "bc994b0f-bee1-4f28-9945-9714b0e559e9"
+  , _addQuestionEventKmUuid = km1 ^. uuid
+  , _addQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addQuestionEventQuestionUuid = question5 ^. uuid
+  , _addQuestionEventShortQuestionUuid = question5 ^. shortUuid
+  , _addQuestionEventQType = question5 ^. qType
+  , _addQuestionEventTitle = question5 ^. title
+  , _addQuestionEventText = question5 ^. text
+  , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 e_km1_ch1_q1_title :: EditQuestionEvent
@@ -172,7 +203,7 @@ e_km1_ch1_q1_title =
   , _editQuestionEventQType = NothingChanged
   , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
   , _editQuestionEventText = NothingChanged
-  , _editQuestionEventAnswerItemTemplate = NothingChanged
+  , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = NothingChanged
   , _editQuestionEventExpertIds = NothingChanged
   , _editQuestionEventReferenceIds = NothingChanged
@@ -189,7 +220,7 @@ e_km1_ch1_q2 =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
-  , _editQuestionEventAnswerItemTemplate = NothingChanged
+  , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
   , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
@@ -206,10 +237,33 @@ e_km1_ch1_q2_second_edit =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue "New title"
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
-  , _editQuestionEventAnswerItemTemplate = NothingChanged
+  , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
   , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question2WithChangeProperties
+  }
+
+e_km1_ch2_q4 :: EditQuestionEvent
+e_km1_ch2_q4 =
+  EditQuestionEvent
+  { _editQuestionEventUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
+  , _editQuestionEventKmUuid = km1 ^. uuid
+  , _editQuestionEventChapterUuid = chapter1 ^. uuid
+  , _editQuestionEventQuestionUuid = question4WithChangeProperties ^. uuid
+  , _editQuestionEventShortQuestionUuid = ChangedValue $ question4WithChangeProperties ^. shortUuid
+  , _editQuestionEventQType = ChangedValue $ question4WithChangeProperties ^. qType
+  , _editQuestionEventTitle = ChangedValue $ question4WithChangeProperties ^. title
+  , _editQuestionEventText = ChangedValue $ question4WithChangeProperties ^. text
+  , _editQuestionEventAnswerItemTemplatePlainWithIds =
+      ChangedValue . Just $
+      AnswerItemTemplatePlainWithIds
+      { _answerItemTemplatePlainWithIdsTitle = (fromJust $ question4WithChangeProperties ^. answerItemTemplate) ^. title
+      , _answerItemTemplatePlainWithIdsQuestionIds =
+          (fromJust $ question4WithChangeProperties ^. answerItemTemplate) ^.. questions . traverse . uuid
+      }
+  , _editQuestionEventAnswerIds = ChangedValue Nothing
+  , _editQuestionEventExpertIds = NothingChanged
+  , _editQuestionEventReferenceIds = NothingChanged
   }
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
@@ -396,6 +450,53 @@ d_km1_ch1_q2_aYes1 =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
+a_km1_ch2_q4_ait1 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = question4 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = question5 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = question5 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = question5 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = question5 ^. title
+  , _addAnswerItemTemplateQuestionEventText = question5 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain =
+      Just
+        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question5 ^. answerItemTemplate) ^. title}
+  }
+
+e_km1_ch2_q4_ait1_q5 :: EditAnswerItemTemplateQuestionEvent
+e_km1_ch2_q4_ait1_q5 =
+  EditAnswerItemTemplateQuestionEvent
+  { _editAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _editAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _editAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _editAnswerItemTemplateQuestionEventParentQuestionUuid = question4 ^. uuid
+  , _editAnswerItemTemplateQuestionEventQuestionUuid = question5WithChangeProperties ^. uuid
+  , _editAnswerItemTemplateQuestionEventShortQuestionUuid = ChangedValue $ question5WithChangeProperties ^. shortUuid
+  , _editAnswerItemTemplateQuestionEventQType = ChangedValue $ question5WithChangeProperties ^. qType
+  , _editAnswerItemTemplateQuestionEventTitle = ChangedValue $ question5WithChangeProperties ^. title
+  , _editAnswerItemTemplateQuestionEventText = ChangedValue $ question5WithChangeProperties ^. text
+  , _editAnswerItemTemplateQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
+  , _editAnswerItemTemplateQuestionEventAnswerIds = NothingChanged
+  , _editAnswerItemTemplateQuestionEventExpertIds = NothingChanged
+  , _editAnswerItemTemplateQuestionEventReferenceIds = NothingChanged
+  }
+
+d_km1_ch2_q4_ait1 :: DeleteAnswerItemTemplateQuestionEvent
+d_km1_ch2_q4_ait1 =
+  DeleteAnswerItemTemplateQuestionEvent
+  { _deleteAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _deleteAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _deleteAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _deleteAnswerItemTemplateQuestionEventParentQuestionUuid = question4 ^. uuid
+  , _deleteAnswerItemTemplateQuestionEventQuestionUuid = question5 ^. uuid
+  }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
 a_km1_ch1_ansYes1_fuq1 :: AddFollowUpQuestionEvent
 a_km1_ch1_ansYes1_fuq1 =
   AddFollowUpQuestionEvent
@@ -408,7 +509,7 @@ a_km1_ch1_ansYes1_fuq1 =
   , _addFollowUpQuestionEventQType = followUpQuestion1 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion1 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion1 ^. text
-  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
+  , _addFollowUpQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: AddFollowUpQuestionEvent
@@ -423,7 +524,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _addFollowUpQuestionEventQType = followUpQuestion2 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion2 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion2 ^. text
-  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
+  , _addFollowUpQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 :: AddFollowUpQuestionEvent
@@ -438,7 +539,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 =
   , _addFollowUpQuestionEventQType = followUpQuestion3 ^. qType
   , _addFollowUpQuestionEventTitle = followUpQuestion3 ^. title
   , _addFollowUpQuestionEventText = followUpQuestion3 ^. text
-  , _addFollowUpQuestionEventAnswerItemTemplate = Nothing
+  , _addFollowUpQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: EditFollowUpQuestionEvent
@@ -453,7 +554,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
   , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
   , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
-  , _editFollowUpQuestionEventAnswerItemTemplate = NothingChanged
+  , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editFollowUpQuestionEventAnswerIds = ChangedValue $ getAnwerIds followUpQuestion2Changed
   , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2Changed
   , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2Changed
@@ -471,7 +572,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
   , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
   , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
-  , _editFollowUpQuestionEventAnswerItemTemplate = NothingChanged
+  , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editFollowUpQuestionEventAnswerIds = ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid]
   , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2
   , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2

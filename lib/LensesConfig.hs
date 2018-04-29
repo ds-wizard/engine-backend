@@ -9,6 +9,7 @@ import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
 import Model.Event.Answer.AnswerEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
@@ -87,6 +88,12 @@ makeFields ''EditFollowUpQuestionEvent
 
 makeFields ''DeleteFollowUpQuestionEvent
 
+makeFields ''AddAnswerItemTemplateQuestionEvent
+
+makeFields ''EditAnswerItemTemplateQuestionEvent
+
+makeFields ''DeleteAnswerItemTemplateQuestionEvent
+
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
 
@@ -97,6 +104,10 @@ makeFields ''Question
 makeFields ''Answer
 
 makeFields ''AnswerItemTemplate
+
+makeFields ''AnswerItemTemplatePlain
+
+makeFields ''AnswerItemTemplatePlainWithIds
 
 makeFields ''Expert
 
@@ -131,6 +142,12 @@ makeFields ''EditAnswerEventDTO
 
 makeFields ''DeleteAnswerEventDTO
 
+makeFields ''AddAnswerItemTemplateQuestionEventDTO
+
+makeFields ''EditAnswerItemTemplateQuestionEventDTO
+
+makeFields ''DeleteAnswerItemTemplateQuestionEventDTO
+
 makeFields ''AddExpertEventDTO
 
 makeFields ''EditExpertEventDTO
@@ -159,6 +176,10 @@ makeFields ''QuestionDTO
 makeFields ''AnswerDTO
 
 makeFields ''AnswerItemTemplateDTO
+
+makeFields ''AnswerItemTemplatePlainDTO
+
+makeFields ''AnswerItemTemplatePlainWithIdsDTO
 
 makeFields ''ExpertDTO
 

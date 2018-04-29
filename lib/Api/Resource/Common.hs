@@ -6,27 +6,27 @@ import Model.KnowledgeModel.KnowledgeModel
 serializeQuestionType :: QuestionType -> String
 serializeQuestionType questionType =
   case questionType of
-    QuestionTypeOption -> "option"
+    QuestionTypeOptions -> "options"
     QuestionTypeList -> "list"
-    QuestionString -> "string"
-    QuestionNumber -> "number"
-    QuestionDate -> "date"
-    QuestionText -> "text"
+    QuestionTypeString -> "string"
+    QuestionTypeNumber -> "number"
+    QuestionTypeDate -> "date"
+    QuestionTypeText -> "text"
 
 deserializeQuestionType :: String -> Maybe QuestionType
-deserializeQuestionType "option" = Just QuestionTypeOption
+deserializeQuestionType "options" = Just QuestionTypeOptions
 deserializeQuestionType "list" = Just QuestionTypeList
-deserializeQuestionType "string" = Just QuestionString
-deserializeQuestionType "number" = Just QuestionNumber
-deserializeQuestionType "date" = Just QuestionDate
-deserializeQuestionType "text" = Just QuestionText
+deserializeQuestionType "string" = Just QuestionTypeString
+deserializeQuestionType "number" = Just QuestionTypeNumber
+deserializeQuestionType "date" = Just QuestionTypeDate
+deserializeQuestionType "text" = Just QuestionTypeText
 deserializeQuestionType _ = Nothing
 
-deserializeEventFieldQuestionType :: String -> EventFieldDTO QuestionType
-deserializeEventFieldQuestionType "option" = ChangedValueDTO QuestionTypeOption
-deserializeEventFieldQuestionType "list" = ChangedValueDTO QuestionTypeList
-deserializeEventFieldQuestionType "string" = ChangedValueDTO QuestionString
-deserializeEventFieldQuestionType "number" = ChangedValueDTO QuestionNumber
-deserializeEventFieldQuestionType "date" = ChangedValueDTO QuestionDate
-deserializeEventFieldQuestionType "text" = ChangedValueDTO QuestionText
+deserializeEventFieldQuestionType :: EventFieldDTO String -> EventFieldDTO QuestionType
+deserializeEventFieldQuestionType (ChangedValueDTO "options") = ChangedValueDTO QuestionTypeOptions
+deserializeEventFieldQuestionType (ChangedValueDTO "list") = ChangedValueDTO QuestionTypeList
+deserializeEventFieldQuestionType (ChangedValueDTO "string") = ChangedValueDTO QuestionTypeString
+deserializeEventFieldQuestionType (ChangedValueDTO "number") = ChangedValueDTO QuestionTypeNumber
+deserializeEventFieldQuestionType (ChangedValueDTO "date") = ChangedValueDTO QuestionTypeDate
+deserializeEventFieldQuestionType (ChangedValueDTO "text") = ChangedValueDTO QuestionTypeText
 deserializeEventFieldQuestionType _ = NothingChangedDTO

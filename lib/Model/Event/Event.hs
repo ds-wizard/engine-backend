@@ -8,6 +8,7 @@ import Common.Types
 import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
@@ -28,6 +29,9 @@ data Event
   | AddAnswerEvent' AddAnswerEvent
   | EditAnswerEvent' EditAnswerEvent
   | DeleteAnswerEvent' DeleteAnswerEvent
+  | AddAnswerItemTemplateQuestionEvent' AddAnswerItemTemplateQuestionEvent
+  | EditAnswerItemTemplateQuestionEvent' EditAnswerItemTemplateQuestionEvent
+  | DeleteAnswerItemTemplateQuestionEvent' DeleteAnswerItemTemplateQuestionEvent
   | AddExpertEvent' AddExpertEvent
   | EditExpertEvent' EditExpertEvent
   | DeleteExpertEvent' DeleteExpertEvent
@@ -44,6 +48,7 @@ isAddAction (AddKnowledgeModelEvent' _) = True
 isAddAction (AddChapterEvent' _) = True
 isAddAction (AddQuestionEvent' _) = True
 isAddAction (AddAnswerEvent' _) = True
+isAddAction (AddAnswerItemTemplateQuestionEvent' _) = True
 isAddAction (AddExpertEvent' _) = True
 isAddAction (AddReferenceEvent' _) = True
 isAddAction (AddFollowUpQuestionEvent' _) = True
@@ -54,6 +59,7 @@ isEditAction (EditKnowledgeModelEvent' _) = True
 isEditAction (EditChapterEvent' _) = True
 isEditAction (EditQuestionEvent' _) = True
 isEditAction (EditAnswerEvent' _) = True
+isEditAction (EditAnswerItemTemplateQuestionEvent' _) = True
 isEditAction (EditExpertEvent' _) = True
 isEditAction (EditReferenceEvent' _) = True
 isEditAction (EditFollowUpQuestionEvent' _) = True
@@ -63,6 +69,7 @@ isDeleteAction :: Event -> Bool
 isDeleteAction (DeleteChapterEvent' _) = True
 isDeleteAction (DeleteQuestionEvent' _) = True
 isDeleteAction (DeleteAnswerEvent' _) = True
+isDeleteAction (DeleteAnswerItemTemplateQuestionEvent' _) = True
 isDeleteAction (DeleteExpertEvent' _) = True
 isDeleteAction (DeleteReferenceEvent' _) = True
 isDeleteAction (DeleteFollowUpQuestionEvent' _) = True
@@ -80,6 +87,9 @@ getEventUuid (DeleteQuestionEvent' event) = event ^. uuid
 getEventUuid (AddAnswerEvent' event) = event ^. uuid
 getEventUuid (EditAnswerEvent' event) = event ^. uuid
 getEventUuid (DeleteAnswerEvent' event) = event ^. uuid
+getEventUuid (AddAnswerItemTemplateQuestionEvent' event) = event ^. uuid
+getEventUuid (EditAnswerItemTemplateQuestionEvent' event) = event ^. uuid
+getEventUuid (DeleteAnswerItemTemplateQuestionEvent' event) = event ^. uuid
 getEventUuid (AddExpertEvent' event) = event ^. uuid
 getEventUuid (EditExpertEvent' event) = event ^. uuid
 getEventUuid (DeleteExpertEvent' event) = event ^. uuid
@@ -102,6 +112,9 @@ getEventNodeUuid (DeleteQuestionEvent' event) = event ^. questionUuid
 getEventNodeUuid (AddAnswerEvent' event) = event ^. answerUuid
 getEventNodeUuid (EditAnswerEvent' event) = event ^. answerUuid
 getEventNodeUuid (DeleteAnswerEvent' event) = event ^. answerUuid
+getEventNodeUuid (AddAnswerItemTemplateQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (EditAnswerItemTemplateQuestionEvent' event) = event ^. questionUuid
+getEventNodeUuid (DeleteAnswerItemTemplateQuestionEvent' event) = event ^. questionUuid
 getEventNodeUuid (AddExpertEvent' event) = event ^. expertUuid
 getEventNodeUuid (EditExpertEvent' event) = event ^. expertUuid
 getEventNodeUuid (DeleteExpertEvent' event) = event ^. expertUuid

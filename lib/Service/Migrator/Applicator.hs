@@ -7,6 +7,8 @@ import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Answer.AnswerEventSameUuid
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Chapter.ChapterEventSameUuid
 import Model.Event.Event
@@ -52,6 +54,9 @@ foldEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e emKM
 foldEvent emKM (AddFollowUpQuestionEvent' e) = applyEventToKM e emKM
 foldEvent emKM (EditFollowUpQuestionEvent' e) = applyEventToKM e emKM
 foldEvent emKM (DeleteFollowUpQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (AddAnswerItemTemplateQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (EditAnswerItemTemplateQuestionEvent' e) = applyEventToKM e emKM
+foldEvent emKM (DeleteAnswerItemTemplateQuestionEvent' e) = applyEventToKM e emKM
 
 applyValue (ChangedValue val) ch setter = ch & setter .~ val
 applyValue NothingChanged ch setter = ch
@@ -156,6 +161,18 @@ instance ApplyEventToKM EditFollowUpQuestionEvent where
   applyEventToKM = passToChapters
 
 instance ApplyEventToKM DeleteFollowUpQuestionEvent where
+  applyEventToKM = passToChapters
+
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToKM AddAnswerItemTemplateQuestionEvent where
+  applyEventToKM = passToChapters
+
+instance ApplyEventToKM EditAnswerItemTemplateQuestionEvent where
+  applyEventToKM = passToChapters
+
+instance ApplyEventToKM DeleteAnswerItemTemplateQuestionEvent where
   applyEventToKM = passToChapters
 
 -- -------------------
@@ -292,6 +309,18 @@ instance ApplyEventToChapter EditFollowUpQuestionEvent where
 instance ApplyEventToChapter DeleteFollowUpQuestionEvent where
   applyEventToChapter = passToQuestions
 
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToChapter AddAnswerItemTemplateQuestionEvent where
+  applyEventToChapter = passToQuestions
+
+instance ApplyEventToChapter EditAnswerItemTemplateQuestionEvent where
+  applyEventToChapter = passToQuestions
+
+instance ApplyEventToChapter DeleteAnswerItemTemplateQuestionEvent where
+  applyEventToChapter = passToQuestions
+
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
@@ -323,22 +352,47 @@ instance ApplyEventToChapter DeleteReferenceEvent where
 class ApplyEventToQuestion e where
   applyEventToQuestion :: e -> Either AppError Question -> Either AppError Question
 
+passToAnswersAndAnswerItemTemplate e = passToAnswerItemTemplate e . passToAnswers e
+
 passToAnswers _ (Left error) = Left error
 passToAnswers e (Right q) =
   case q ^. answers of
     Just as ->
       case eModifiedAnswers as of
         Left error -> Left error
-        Right modifiedAnswers -> Right $ q & answers .~ (Just modifiedAnswers)
+        Right modifiedAnswers -> Right $ q & answers .~ Just modifiedAnswers
     Nothing -> Right q
   where
-    eModifiedAnswers as = foldl foldOneAnswer (Right []) as
+    eModifiedAnswers = foldl foldOneAnswer (Right [])
     foldOneAnswer :: Either AppError [Answer] -> Answer -> Either AppError [Answer]
     foldOneAnswer (Left error) _ = Left error
     foldOneAnswer (Right qAnswers) answer =
       case applyEventToAnswer e (Right answer) of
         Left error -> Left error
         Right appliedAnswers -> Right $ qAnswers ++ [appliedAnswers]
+
+passToAnswerItemTemplate _ (Left error) = Left error
+passToAnswerItemTemplate e (Right q) =
+  case q ^. answerItemTemplate of
+    Just ait ->
+      case eModifiedAnswerItemTemplate ait of
+        Left error -> Left error
+        Right modifiedAnswerItemTemplate -> Right $ q & answerItemTemplate .~ (Just modifiedAnswerItemTemplate)
+    Nothing -> Right q
+  where
+    eModifiedAnswerItemTemplate :: AnswerItemTemplate -> Either AppError AnswerItemTemplate
+    eModifiedAnswerItemTemplate ait =
+      case eModifiedQuestions ait of
+        Right modifiedQuestions -> Right $ ait & questions .~ modifiedQuestions
+        Left error -> Left error
+    eModifiedQuestions :: AnswerItemTemplate -> Either AppError [Question]
+    eModifiedQuestions ait = foldl foldOneQuestion (Right []) (ait ^. questions)
+    foldOneQuestion :: Either AppError [Question] -> Question -> Either AppError [Question]
+    foldOneQuestion (Left error) _ = Left error
+    foldOneQuestion (Right aitQuestions) question =
+      case applyEventToQuestion e (Right question) of
+        Left error -> Left error
+        Right appliedQuestions -> Right $ aitQuestions ++ [appliedQuestions]
 
 passToExperts _ (Left error) = Left error
 passToExperts e (Right q) =
@@ -393,27 +447,30 @@ instance ApplyEventToQuestion DeleteChapterEvent where
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToQuestion AddQuestionEvent where
-  applyEventToQuestion = passToAnswers
+  applyEventToQuestion = passToAnswersAndAnswerItemTemplate
 
 instance ApplyEventToQuestion EditQuestionEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right .
-           applyReferenceIds . applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType . applyShortUuid $
+           applyReferenceIds .
+           applyExpertIds .
+           applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType . applyShortUuid $
            q
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       applyShortUuid q = applyValue (e ^. shortQuestionUuid) q shortUuid
       applyType q = applyValue (e ^. qType) q qType
       applyTitle q = applyValue (e ^. title) q title
       applyText q = applyValue (e ^. text) q text
+      applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
       applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
       applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder
       applyReferenceIds q = applyValue (e ^. referenceIds) q qChangeReferenceIdsOrder
 
 instance ApplyEventToQuestion DeleteQuestionEvent where
-  applyEventToQuestion = passToAnswers
+  applyEventToQuestion = passToAnswersAndAnswerItemTemplate
 
 -- -------------------
 -- ANSWERS -----------
@@ -423,7 +480,7 @@ instance ApplyEventToQuestion AddAnswerEvent where
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & answers .~ (Just modifiedAnswers)
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedAnswers =
         case q ^. answers of
@@ -434,14 +491,14 @@ instance ApplyEventToQuestion AddAnswerEvent where
         {_answerUuid = e ^. answerUuid, _answerLabel = e ^. label, _answerAdvice = e ^. advice, _answerFollowUps = []}
 
 instance ApplyEventToQuestion EditAnswerEvent where
-  applyEventToQuestion = passToAnswers
+  applyEventToQuestion = passToAnswersAndAnswerItemTemplate
 
 instance ApplyEventToQuestion DeleteAnswerEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & answers .~ modifiedAnswers
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedAnswers =
         case (q ^. answers) of
@@ -452,7 +509,7 @@ instance ApplyEventToQuestion DeleteAnswerEvent where
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToQuestion AddFollowUpQuestionEvent where
-  applyEventToQuestion = passToAnswers
+  applyEventToQuestion = passToAnswersAndAnswerItemTemplate
 
 instance ApplyEventToQuestion EditFollowUpQuestionEvent where
   applyEventToQuestion e (Left error) = Left error
@@ -460,20 +517,106 @@ instance ApplyEventToQuestion EditFollowUpQuestionEvent where
     if equalsUuid e q
       then Right .
            applyReferenceIds .
-           applyExpertIds . applyAnwerIds . applyText . applyTitle . applyType . applyShortQuestionId $
+           applyExpertIds .
+           applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType . applyShortQuestionId $
            q
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       applyShortQuestionId q = applyValue (e ^. shortQuestionUuid) q shortUuid
       applyType q = applyValue (e ^. qType) q qType
       applyTitle q = applyValue (e ^. title) q title
       applyText q = applyValue (e ^. text) q text
+      applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
       applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
       applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder
       applyReferenceIds q = applyValue (e ^. referenceIds) q qChangeReferenceIdsOrder
 
 instance ApplyEventToQuestion DeleteFollowUpQuestionEvent where
-  applyEventToQuestion = passToAnswers
+  applyEventToQuestion = passToAnswersAndAnswerItemTemplate
+
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToQuestion AddAnswerItemTemplateQuestionEvent where
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
+    if (e ^. parentQuestionUuid) == (q ^. uuid)
+      then unwrapAnswerItemTemplate $ \oldAit ->
+             getModifiedAnswerItemTemplate oldAit $ \modifiedAit -> Right $ q & answerItemTemplate .~ modifiedAit
+      else passToAnswersAndAnswerItemTemplate e (Right q)
+    where
+      getModifiedAnswerItemTemplate oldAit callback =
+        getModifiedAitQuestions oldAit $ \modifiedAitQuestions ->
+          callback . Just $ oldAit & questions .~ modifiedAitQuestions
+      getModifiedAitQuestions oldAit callback =
+        getNewQuestion $ \newQuestion -> callback $ (oldAit ^. questions) ++ [newQuestion]
+      unwrapAnswerItemTemplate callback =
+        case q ^. answerItemTemplate of
+          Nothing -> Left . MigratorError $ "You can't add question to non-existing AnswerItemTemplate"
+          Just ait -> callback ait
+      getNewQuestion callback =
+        getAnswerItemTemplate $ \ait ->
+          callback
+            Question
+            { _questionUuid = e ^. questionUuid
+            , _questionShortUuid = e ^. shortQuestionUuid
+            , _questionQType = e ^. qType
+            , _questionTitle = e ^. title
+            , _questionText = e ^. text
+            , _questionAnswerItemTemplate = ait
+            , _questionAnswers =
+                case e ^. qType of
+                  QuestionTypeOptions -> Just []
+                  _ -> Nothing
+            , _questionReferences = []
+            , _questionExperts = []
+            }
+      getAnswerItemTemplate callback =
+        case e ^. qType of
+          QuestionTypeList ->
+            case e ^. answerItemTemplatePlain of
+              Just ait ->
+                callback . Just $
+                AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
+              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+          _ -> callback Nothing
+
+instance ApplyEventToQuestion EditAnswerItemTemplateQuestionEvent where
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
+    if equalsUuid e q
+      then Right .
+           applyReferenceIds .
+           applyExpertIds .
+           applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType . applyShortUuid $
+           q
+      else passToAnswersAndAnswerItemTemplate e (Right q)
+    where
+      applyShortUuid q = applyValue (e ^. shortQuestionUuid) q shortUuid
+      applyType q = applyValue (e ^. qType) q qType
+      applyTitle q = applyValue (e ^. title) q title
+      applyText q = applyValue (e ^. text) q text
+      applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
+      applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
+      applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder
+      applyReferenceIds q = applyValue (e ^. referenceIds) q qChangeReferenceIdsOrder
+
+instance ApplyEventToQuestion DeleteAnswerItemTemplateQuestionEvent where
+  applyEventToQuestion e (Left error) = Left error
+  applyEventToQuestion e (Right q) =
+    if (e ^. parentQuestionUuid) == (q ^. uuid)
+      then unwrapAnswerItemTemplate $ \oldAit ->
+             getModifiedAnswerItemTemplate oldAit $ \modifiedAit -> Right $ q & answerItemTemplate .~ modifiedAit
+      else passToAnswersAndAnswerItemTemplate e (Right q)
+    where
+      getModifiedAnswerItemTemplate oldAit callback =
+        getModifiedAitQuestions oldAit $ \modifiedAitQuestions ->
+          callback . Just $ oldAit & questions .~ modifiedAitQuestions
+      getModifiedAitQuestions oldAit callback = callback $ filter (not . equalsUuid e) (oldAit ^. questions)
+      unwrapAnswerItemTemplate callback =
+        case q ^. answerItemTemplate of
+          Nothing -> Left . MigratorError $ "You can't add question to non-existing AnswerItemTemplate"
+          Just ait -> callback ait
 
 -- -------------------
 -- EXPERTS -----------
@@ -483,21 +626,22 @@ instance ApplyEventToQuestion AddExpertEvent where
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & experts .~ modifiedExperts
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedExperts = q ^. experts ++ [newExpert]
       newExpert = Expert {_expertUuid = e ^. expertUuid, _expertName = e ^. name, _expertEmail = e ^. email}
 
 instance ApplyEventToQuestion EditExpertEvent where
   applyEventToQuestion e (Left error) = Left error
-  applyEventToQuestion e (Right q) = passToReferences e . passToExperts e . passToAnswers e . Right $ q
+  applyEventToQuestion e (Right q) =
+    passToReferences e . passToExperts e . passToAnswersAndAnswerItemTemplate e . Right $ q
 
 instance ApplyEventToQuestion DeleteExpertEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & experts .~ modifiedExperts
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedExperts = filter (not . equalsUuid e) (q ^. experts)
 
@@ -509,21 +653,22 @@ instance ApplyEventToQuestion AddReferenceEvent where
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & references .~ modifiedReferences
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedReferences = q ^. references ++ [newReference]
       newReference = Reference {_referenceUuid = e ^. referenceUuid, _referenceChapter = e ^. chapter}
 
 instance ApplyEventToQuestion EditReferenceEvent where
   applyEventToQuestion e (Left error) = Left error
-  applyEventToQuestion e (Right q) = passToReferences e . passToExperts e . passToAnswers e . Right $ q
+  applyEventToQuestion e (Right q) =
+    passToReferences e . passToExperts e . passToAnswersAndAnswerItemTemplate e . Right $ q
 
 instance ApplyEventToQuestion DeleteReferenceEvent where
   applyEventToQuestion e (Left error) = Left error
   applyEventToQuestion e (Right q) =
     if equalsUuid e q
       then Right $ q & references .~ modifiedReferences
-      else passToAnswers e (Right q)
+      else passToAnswersAndAnswerItemTemplate e (Right q)
     where
       modifiedReferences = filter (not . equalsUuid e) (q ^. references)
 
@@ -637,6 +782,18 @@ instance ApplyEventToAnswer DeleteFollowUpQuestionEvent where
     where
       modifiedFollowUps = filter (not . equalsUuid e) (ans ^. followUps)
 
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToAnswer AddAnswerItemTemplateQuestionEvent where
+  applyEventToAnswer = passToFollowUps
+
+instance ApplyEventToAnswer EditAnswerItemTemplateQuestionEvent where
+  applyEventToAnswer = passToFollowUps
+
+instance ApplyEventToAnswer DeleteAnswerItemTemplateQuestionEvent where
+  applyEventToAnswer = passToFollowUps
+
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
@@ -724,6 +881,18 @@ instance ApplyEventToExpert EditFollowUpQuestionEvent where
 
 instance ApplyEventToExpert DeleteFollowUpQuestionEvent where
   applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteFollowUpQuestionEvent to Expert"
+
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToExpert AddAnswerItemTemplateQuestionEvent where
+  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddAnswerItemTemplateQuestionEvent to Expert"
+
+instance ApplyEventToExpert EditAnswerItemTemplateQuestionEvent where
+  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditAnswerItemTemplateQuestionEvent to Expert"
+
+instance ApplyEventToExpert DeleteAnswerItemTemplateQuestionEvent where
+  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteAnswerItemTemplateQuestionEvent to Expert"
 
 -- -------------------
 -- EXPERTS -----------
@@ -819,6 +988,19 @@ instance ApplyEventToReference EditFollowUpQuestionEvent where
 
 instance ApplyEventToReference DeleteFollowUpQuestionEvent where
   applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteFollowUpQuestionEvent to Reference"
+
+-- -----------------------------------
+-- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
+-- -----------------------------------
+instance ApplyEventToReference AddAnswerItemTemplateQuestionEvent where
+  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddAnswerItemTemplateQuestionEvent to Reference"
+
+instance ApplyEventToReference EditAnswerItemTemplateQuestionEvent where
+  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditAnswerItemTemplateQuestionEvent to Reference"
+
+instance ApplyEventToReference DeleteAnswerItemTemplateQuestionEvent where
+  applyEventToReference _ _ =
+    Left . MigratorError $ "You can't apply DeleteAnswerItemTemplateQuestionEvent to Reference"
 
 -- -------------------
 -- EXPERTS -----------

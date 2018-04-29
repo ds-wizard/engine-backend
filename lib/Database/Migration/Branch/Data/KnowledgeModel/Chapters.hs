@@ -67,9 +67,27 @@ chapter2WithoutQuestions :: Chapter
 chapter2WithoutQuestions =
   Chapter
   { _chapterUuid = chapter2 ^. uuid
-  , _chapterTitle = "Implementation"
-  , _chapterText = "Some long text"
+  , _chapterTitle = chapter2 ^. title
+  , _chapterText = chapter2 ^. text
   , _chapterQuestions = []
+  }
+
+chapter2WithQ4Plain :: Chapter
+chapter2WithQ4Plain =
+  Chapter
+  { _chapterUuid = chapter2 ^. uuid
+  , _chapterTitle = chapter2 ^. title
+  , _chapterText = chapter2 ^. text
+  , _chapterQuestions = [FQ.question3, FQ.question4Plain]
+  }
+
+chapter2WithQ4 :: Chapter
+chapter2WithQ4 =
+  Chapter
+  { _chapterUuid = chapter2 ^. uuid
+  , _chapterTitle = chapter2 ^. title
+  , _chapterText = chapter2 ^. text
+  , _chapterQuestions = [FQ.question3, FQ.question4]
   }
 
 chapter3WithoutQuestions :: Chapter
