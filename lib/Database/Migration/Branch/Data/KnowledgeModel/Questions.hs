@@ -171,11 +171,12 @@ question6 =
   Question
   { _questionUuid = fromJust $ U.fromString "efcf425f-f5c6-4c36-9aaf-fd4ced17adf5"
   , _questionShortUuid = Just "question6"
-  , _questionQType = QuestionTypeString
+  , _questionQType = QuestionTypeList
   , _questionTitle = "Sixth Question"
   , _questionText = "Some non-funny description"
   , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswerItemTemplate =
+      Just AnswerItemTemplate {_answerItemTemplateTitle = "Question 6 Template", _answerItemTemplateQuestions = []}
   , _questionReferences = []
   , _questionExperts = []
   }

@@ -641,7 +641,7 @@ instance FromJSON AddAnswerItemTemplateQuestionEventDTO where
 instance ToJSON AddAnswerItemTemplateQuestionEventDTO where
   toJSON AddAnswerItemTemplateQuestionEventDTO {..} =
     object
-      [ "eventType" .= "AddQuestionEvent"
+      [ "eventType" .= "AddAnswerItemTemplateQuestionEvent"
       , "uuid" .= _addAnswerItemTemplateQuestionEventDTOUuid
       , "kmUuid" .= _addAnswerItemTemplateQuestionEventDTOKmUuid
       , "chapterUuid" .= _addAnswerItemTemplateQuestionEventDTOChapterUuid
@@ -677,7 +677,7 @@ instance FromJSON EditAnswerItemTemplateQuestionEventDTO where
 instance ToJSON EditAnswerItemTemplateQuestionEventDTO where
   toJSON EditAnswerItemTemplateQuestionEventDTO {..} =
     object
-      [ "eventType" .= "EditQuestionEvent"
+      [ "eventType" .= "EditAnswerItemTemplateQuestionEvent"
       , "uuid" .= _editAnswerItemTemplateQuestionEventDTOUuid
       , "kmUuid" .= _editAnswerItemTemplateQuestionEventDTOKmUuid
       , "chapterUuid" .= _editAnswerItemTemplateQuestionEventDTOChapterUuid
@@ -706,7 +706,7 @@ instance FromJSON DeleteAnswerItemTemplateQuestionEventDTO where
 instance ToJSON DeleteAnswerItemTemplateQuestionEventDTO where
   toJSON DeleteAnswerItemTemplateQuestionEventDTO {..} =
     object
-      [ "eventType" .= "DeleteQuestionEvent"
+      [ "eventType" .= "DeleteAnswerItemTemplateQuestionEvent"
       , "uuid" .= _deleteAnswerItemTemplateQuestionEventDTOUuid
       , "kmUuid" .= _deleteAnswerItemTemplateQuestionEventDTOKmUuid
       , "chapterUuid" .= _deleteAnswerItemTemplateQuestionEventDTOChapterUuid

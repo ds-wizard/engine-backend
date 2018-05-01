@@ -38,8 +38,10 @@ createEvents context branchUuid eventsCreateDto = do
     Right _ -> do
       let events = fromDTOs eventsCreateDto
       insertEventsToBranch context branchUuid events
-      recompileKnowledgeModel context branchUuid
-      return . Right . toDTOs $ events
+      result <- recompileKnowledgeModel context branchUuid
+      case result of
+        Right km -> return . Right . toDTOs $ events
+        Left error -> return . Left $ error
     Left error -> return . Left $ error
 
 deleteEvents :: Context -> String -> IO (Maybe AppError)
@@ -48,6 +50,8 @@ deleteEvents context branchUuid = do
   case eitherBranch of
     Right _ -> do
       deleteEventsAtBranch context branchUuid
-      recompileKnowledgeModel context branchUuid
-      return Nothing
+      result <- recompileKnowledgeModel context branchUuid
+      case result of
+        Right km -> return Nothing
+        Left error -> return . Just $ error
     Left error -> return . Just $ error

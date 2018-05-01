@@ -65,7 +65,7 @@ knowledgeModelAPI appContext =
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = toKnowledgeModelDTO $ km1
+          let expDto = toKnowledgeModelDTO $ km1WithQ4
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

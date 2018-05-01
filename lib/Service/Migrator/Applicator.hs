@@ -1,6 +1,7 @@
 module Service.Migrator.Applicator where
 
 import Control.Lens
+import System.IO.Unsafe (unsafePerformIO)
 
 import Common.Error
 import LensesConfig
@@ -256,22 +257,38 @@ instance ApplyEventToChapter AddQuestionEvent where
   applyEventToChapter _ (Left error) = Left error
   applyEventToChapter e (Right ch) =
     if equalsUuid e ch
-      then Right $ ch & questions .~ modifiedQuestions
+      then getModifiedQuestions $ \modifiedQuestions -> Right $ ch & questions .~ modifiedQuestions
       else Right ch
     where
-      modifiedQuestions = ch ^. questions ++ [newQuestion]
-      newQuestion =
-        Question
-        { _questionUuid = e ^. questionUuid
-        , _questionShortUuid = e ^. shortQuestionUuid
-        , _questionQType = e ^. qType
-        , _questionTitle = e ^. title
-        , _questionText = e ^. text
-        , _questionAnswerItemTemplate = Nothing
-        , _questionAnswers = Just []
-        , _questionReferences = []
-        , _questionExperts = []
-        }
+      getModifiedQuestions callback = getNewQuestion $ \newQuestion -> callback $ ch ^. questions ++ [newQuestion]
+      getNewQuestion callback =
+        getAnswerItemTemplate $ \maybeAit ->
+          getAnswers $ \maybeAnswers ->
+            callback
+              Question
+              { _questionUuid = e ^. questionUuid
+              , _questionShortUuid = e ^. shortQuestionUuid
+              , _questionQType = e ^. qType
+              , _questionTitle = e ^. title
+              , _questionText = e ^. text
+              , _questionAnswerItemTemplate = maybeAit
+              , _questionAnswers = maybeAnswers
+              , _questionReferences = []
+              , _questionExperts = []
+              }
+      getAnswerItemTemplate callback =
+        case e ^. qType of
+          QuestionTypeList ->
+            case e ^. answerItemTemplatePlain of
+              Just ait ->
+                callback . Just $
+                AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
+              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+          _ -> callback Nothing
+      getAnswers callback =
+        case e ^. qType of
+          QuestionTypeOptions -> callback . Just $ []
+          _ -> callback Nothing
 
 instance ApplyEventToChapter EditQuestionEvent where
   applyEventToChapter = passToQuestions
@@ -555,22 +572,20 @@ instance ApplyEventToQuestion AddAnswerItemTemplateQuestionEvent where
           Nothing -> Left . MigratorError $ "You can't add question to non-existing AnswerItemTemplate"
           Just ait -> callback ait
       getNewQuestion callback =
-        getAnswerItemTemplate $ \ait ->
-          callback
-            Question
-            { _questionUuid = e ^. questionUuid
-            , _questionShortUuid = e ^. shortQuestionUuid
-            , _questionQType = e ^. qType
-            , _questionTitle = e ^. title
-            , _questionText = e ^. text
-            , _questionAnswerItemTemplate = ait
-            , _questionAnswers =
-                case e ^. qType of
-                  QuestionTypeOptions -> Just []
-                  _ -> Nothing
-            , _questionReferences = []
-            , _questionExperts = []
-            }
+        getAnswerItemTemplate $ \maybeAit ->
+          getAnswers $ \maybeAnswers ->
+            callback
+              Question
+              { _questionUuid = e ^. questionUuid
+              , _questionShortUuid = e ^. shortQuestionUuid
+              , _questionQType = e ^. qType
+              , _questionTitle = e ^. title
+              , _questionText = e ^. text
+              , _questionAnswerItemTemplate = maybeAit
+              , _questionAnswers = maybeAnswers
+              , _questionReferences = []
+              , _questionExperts = []
+              }
       getAnswerItemTemplate callback =
         case e ^. qType of
           QuestionTypeList ->
@@ -579,6 +594,10 @@ instance ApplyEventToQuestion AddAnswerItemTemplateQuestionEvent where
                 callback . Just $
                 AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
               Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+          _ -> callback Nothing
+      getAnswers callback =
+        case e ^. qType of
+          QuestionTypeOptions -> callback . Just $ []
           _ -> callback Nothing
 
 instance ApplyEventToQuestion EditAnswerItemTemplateQuestionEvent where
@@ -753,22 +772,38 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
   applyEventToAnswer e (Left error) = Left error
   applyEventToAnswer e (Right ans) =
     if equalsUuid e ans
-      then Right $ ans & followUps .~ modifiedFollowUps
+      then getModifiedFollowUps $ \modifiedFollowUps -> Right $ ans & followUps .~ modifiedFollowUps
       else passToFollowUps e (Right ans)
     where
-      modifiedFollowUps = ans ^. followUps ++ [newFollowUp]
-      newFollowUp =
-        Question
-        { _questionUuid = e ^. questionUuid
-        , _questionShortUuid = e ^. shortQuestionUuid
-        , _questionQType = e ^. qType
-        , _questionTitle = e ^. title
-        , _questionText = e ^. text
-        , _questionAnswerItemTemplate = Nothing
-        , _questionAnswers = Just []
-        , _questionReferences = []
-        , _questionExperts = []
-        }
+      getModifiedFollowUps callback = getNewFollowUp $ \newFollowUp -> callback $ ans ^. followUps ++ [newFollowUp]
+      getNewFollowUp callback =
+        getAnswerItemTemplate $ \maybeAit ->
+          getAnswers $ \maybeAnswers ->
+            callback
+              Question
+              { _questionUuid = e ^. questionUuid
+              , _questionShortUuid = e ^. shortQuestionUuid
+              , _questionQType = e ^. qType
+              , _questionTitle = e ^. title
+              , _questionText = e ^. text
+              , _questionAnswerItemTemplate = maybeAit
+              , _questionAnswers = maybeAnswers
+              , _questionReferences = []
+              , _questionExperts = []
+              }
+      getAnswerItemTemplate callback =
+        case e ^. qType of
+          QuestionTypeList ->
+            case e ^. answerItemTemplatePlain of
+              Just ait ->
+                callback . Just $
+                AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
+              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+          _ -> callback Nothing
+      getAnswers callback =
+        case e ^. qType of
+          QuestionTypeOptions -> callback . Just $ []
+          _ -> callback Nothing
 
 instance ApplyEventToAnswer EditFollowUpQuestionEvent where
   applyEventToAnswer = passToFollowUps

@@ -32,12 +32,12 @@ postEventsA = do
   checkPermission context "KM_PERM" $ do
     getReqDto $ \reqDto -> do
       branchUuid <- param "branchUuid"
-      eitherUserDto <- liftIO $ createEvents context branchUuid reqDto
-      case eitherUserDto of
+      eitherEventsDto <- liftIO $ createEvents context branchUuid reqDto
+      case eitherEventsDto of
         Left appError -> sendError appError
-        Right userDto -> do
+        Right eventsDto -> do
           status created201
-          json userDto
+          json eventsDto
 
 deleteEventsA :: Endpoint
 deleteEventsA = do

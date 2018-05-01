@@ -141,7 +141,7 @@ applicatorSpec =
    -- ---------------
     describe "Apply:  AnswerItemTemplateQuestion Events" $ do
       it "Apply:  AddAnswerItemTemplateQuestionEvent" $ do
-        let event = a_km1_ch2_q4_ait1
+        let event = a_km1_ch2_q4_ait1_q5
         let (Right computed) = runApplicator (Just km1WithQ4Plain) [AddAnswerItemTemplateQuestionEvent' event]
         let expAit1 = ait1 & questions .~ [question5]
         let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
@@ -228,7 +228,10 @@ applicatorSpec =
               , AddQuestionEvent' a_km1_ch2_q3
               , AddAnswerEvent' a_km1_ch2_q3_aNo2
               , AddAnswerEvent' a_km1_ch2_q3_aYes2
+              , AddQuestionEvent' a_km1_ch2_q4
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
               ]
         let (Right computed) = runApplicator Nothing events
-        let expected = km1
+        let expected = km1WithQ4
         computed `shouldBe` expected

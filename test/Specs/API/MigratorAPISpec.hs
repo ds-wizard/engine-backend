@@ -78,7 +78,7 @@ migratorAPI appContext = do
                     ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
                 , _msdtoBranchParentId = "elixir.nl:core-nl:1.0.0"
                 , _msdtoTargetPackageId = "elixir.nl:core-nl:2.0.0"
-                , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
+                , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1WithQ4
                 }
           let expBody = encode expDto
           -- AND: Prepare database
@@ -139,7 +139,7 @@ migratorAPI appContext = do
                     ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
                 , _msdtoBranchParentId = "elixir.nl:core-nl:1.0.0"
                 , _msdtoTargetPackageId = "elixir.nl:core-nl:2.0.0"
-                , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
+                , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1WithQ4
                 }
           let expBody = encode expDto
           -- AND: Prepare database

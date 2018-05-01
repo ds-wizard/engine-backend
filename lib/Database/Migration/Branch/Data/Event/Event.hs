@@ -178,20 +178,6 @@ a_km1_ch2_q4 =
         AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question4 ^. answerItemTemplate) ^. title}
   }
 
-a_km1_ch2_q5 :: AddQuestionEvent
-a_km1_ch2_q5 =
-  AddQuestionEvent
-  { _addQuestionEventUuid = fromJust $ U.fromString "bc994b0f-bee1-4f28-9945-9714b0e559e9"
-  , _addQuestionEventKmUuid = km1 ^. uuid
-  , _addQuestionEventChapterUuid = chapter2 ^. uuid
-  , _addQuestionEventQuestionUuid = question5 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question5 ^. shortUuid
-  , _addQuestionEventQType = question5 ^. qType
-  , _addQuestionEventTitle = question5 ^. title
-  , _addQuestionEventText = question5 ^. text
-  , _addQuestionEventAnswerItemTemplatePlain = Nothing
-  }
-
 e_km1_ch1_q1_title :: EditQuestionEvent
 e_km1_ch1_q1_title =
   EditQuestionEvent
@@ -450,8 +436,8 @@ d_km1_ch1_q2_aYes1 =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
-a_km1_ch2_q4_ait1 :: AddAnswerItemTemplateQuestionEvent
-a_km1_ch2_q4_ait1 =
+a_km1_ch2_q4_ait1_q5 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q5 =
   AddAnswerItemTemplateQuestionEvent
   { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
   , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
@@ -462,9 +448,24 @@ a_km1_ch2_q4_ait1 =
   , _addAnswerItemTemplateQuestionEventQType = question5 ^. qType
   , _addAnswerItemTemplateQuestionEventTitle = question5 ^. title
   , _addAnswerItemTemplateQuestionEventText = question5 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4_ait1_q6 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q6 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = question4 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = question6 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = question6 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = question6 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = question6 ^. title
+  , _addAnswerItemTemplateQuestionEventText = question6 ^. text
   , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain =
       Just
-        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question5 ^. answerItemTemplate) ^. title}
+        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question6 ^. answerItemTemplate) ^. title}
   }
 
 e_km1_ch2_q4_ait1_q5 :: EditAnswerItemTemplateQuestionEvent

@@ -64,6 +64,9 @@ eventAPI appContext = do
         , AddQuestionEvent' a_km1_ch2_q3
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
+        , AddQuestionEvent' a_km1_ch2_q4
+        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
+        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
         ]
   with (startWebApp appContext) $ do
     let context = appContext ^. oldContext
@@ -113,7 +116,7 @@ eventAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expKm = km1
+          let expKm = km1WithQ4
           let expBody = encode . toDTOs $ events
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
