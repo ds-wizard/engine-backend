@@ -1,6 +1,7 @@
 module Specs.Service.Migrator.SanitizatorSpec where
 
 import Control.Lens
+import Control.Monad.Reader (liftIO)
 import Data.Maybe
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
@@ -22,6 +23,7 @@ import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
 import Service.Migrator.Applicator
 import Service.Migrator.Migrator
@@ -112,7 +114,7 @@ sanitizatorSpec =
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditQuestionEvent" $ do
-      it "Event - all KM uuids exists, no new added in event" $
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, no new added in event" $
         -- Given:
        do
         let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' e_km1_ch1_q2] (Just km1)
@@ -124,7 +126,7 @@ sanitizatorSpec =
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
-      it "Event - some KM uuids missing, no new added in event" $
+      it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
         let qAnswerIds = Just [answerYes1 ^. uuid]
@@ -142,8 +144,8 @@ sanitizatorSpec =
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
-      it "Event - all KM uuids exists, new added in event but without existing in KM" $
-        -- Given:
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
+          -- Given:
        do
         let qAnswerIds =
               Just $
@@ -159,14 +161,64 @@ sanitizatorSpec =
         let edited_2_e_km1_ch1_q2 = edited_1_e_km1_ch1_q2 & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_e_km1_ch1_q2 = edited_2_e_km1_ch1_q2 & expertIds .~ ChangedValue qExpertIds
         let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' edited_3_e_km1_ch1_q2] (Just km1)
-        -- When:
+          -- When:
         resState <- migrate reqState
-        -- Then:
+          -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
         resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+      -- -------------------------------------------------------------
+      it "QType - QuestionTypeList: Event - all KM uuids exists, no new added in event" $
+        -- Given:
+       do
+        let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' e_km1_ch2_q4] (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question6 ^. uuid, question5 ^. uuid]
+      it "QType - QuestionTypeList: Event - some KM uuids missing, no new added in event" $
+        -- Given:
+       do
+        let aitQuestionIds = [question6 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_1_e_km1_ch2_q4 = e_km1_ch2_q4 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' edited_1_e_km1_ch2_q4] (Just km1WithQ4)
+           -- When:
+        resState <- migrate reqState
+           -- Then:
+        let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question6 ^. uuid, question5 ^. uuid]
+      it "QType - QuestionTypeList: Event - all KM uuids exists, new added in event but without existing in KM" $
+          -- Given:
+       do
+        let aitQuestionIds =
+              [question6 ^. uuid] ++
+              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [question5 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_1_e_km1_ch2_q4 = e_km1_ch2_q4 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState = createTestMigratorStateWithEvents [] [EditQuestionEvent' edited_1_e_km1_ch2_q4] (Just km1WithQ4)
+          -- When:
+        resState <- migrate reqState
+          -- Then:
+        let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question6 ^. uuid, question5 ^. uuid]
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditAnswerEvent" $ do
@@ -209,7 +261,7 @@ sanitizatorSpec =
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditFollowUpQuestionEvent" $ do
-      it "Event - all KM uuids exists, no new added in event" $
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, no new added in event" $
         -- Given:
        do
         let reqState =
@@ -222,13 +274,13 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYesFuq2 ^. uuid, answerNoFuq2 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []
-      it "Event - some KM uuids missing, no new added in event" $
+      it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
-        let qAnswerIds = Just [answerYes4 ^. uuid]
+        let qAnswerIds = Just [answerYesFuq2 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
         let qExpertIds = [expertLuke ^. uuid]
         let edited_1_event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 & answerIds .~ ChangedValue qAnswerIds
@@ -240,16 +292,16 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYesFuq2 ^. uuid, answerNoFuq2 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []
-      it "Event - all KM uuids exists, new added in event but without existing in KM" $
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
         let qAnswerIds =
               Just $
-              [answerYes4 ^. uuid] ++
-              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [answerNo4 ^. uuid]
+              [answerYesFuq2 ^. uuid] ++
+              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [answerNoFuq2 ^. uuid]
         let qReferenceIds =
               [referenceCh2 ^. uuid] ++
               [fromJust . U.fromString $ "bdbd95fd-8ea5-485d-9486-ef452b0a661e"] ++ [referenceCh1 ^. uuid]
@@ -265,6 +317,211 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid])
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYesFuq2 ^. uuid, answerNoFuq2 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue []
         resEvent ^. expertIds `shouldBe` ChangedValue []
+      -- -------------------------------------------------------------
+      it "QType - QuestionTypeList: Event - all KM uuids exists, no new added in event" $
+        -- Given:
+       do
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditFollowUpQuestionEvent' e_km1_ch2_ansMaybe6_fuq4]
+                (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [followUpQuestion4_question2 ^. uuid, followUpQuestion4_question1 ^. uuid]
+      it "QType - QuestionTypeList: Event - some KM uuids missing, no new added in event" $
+        -- Given:
+       do
+        let aitQuestionIds = [followUpQuestion4_question2 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_e_km1_ch2_ansMaybe6_fuq4 =
+              e_km1_ch2_ansMaybe6_fuq4 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditFollowUpQuestionEvent' edited_e_km1_ch2_ansMaybe6_fuq4]
+                (Just km1WithQ4)
+           -- When:
+        resState <- migrate reqState
+           -- Then:
+        let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [followUpQuestion4_question2 ^. uuid, followUpQuestion4_question1 ^. uuid]
+      it "QType - QuestionTypeList: Event - all KM uuids exists, new added in event but without existing in KM" $
+          -- Given:
+       do
+        let aitQuestionIds =
+              [followUpQuestion4_question2 ^. uuid] ++
+              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++
+              [followUpQuestion4_question1 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_e_km1_ch2_ansMaybe6_fuq4 =
+              e_km1_ch2_ansMaybe6_fuq4 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditFollowUpQuestionEvent' edited_e_km1_ch2_ansMaybe6_fuq4]
+                (Just km1WithQ4)
+          -- When:
+        resState <- migrate reqState
+          -- Then:
+        let (ConflictState (CorrectorConflict (EditFollowUpQuestionEvent' resEvent))) = resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [followUpQuestion4_question2 ^. uuid, followUpQuestion4_question1 ^. uuid]
+    -- -------------------------------------------------------------
+    -- -------------------------------------------------------------
+    describe "Sanatize: EditAnswerItemTemplateQuestionEvent" $ do
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, no new added in event" $
+        -- Given:
+       do
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' e_km1_ch2_q4_ait1_q6]
+                (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
+        resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+      it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
+        -- Given:
+       do
+        let qAnswerIds = Just [answerYes6 ^. uuid]
+        let qReferenceIds = [referenceCh2 ^. uuid]
+        let qExpertIds = [expertLuke ^. uuid]
+        let edited_1_event = e_km1_ch2_q4_ait1_q6 & answerIds .~ ChangedValue qAnswerIds
+        let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
+        let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' edited_3_event]
+                (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
+        resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+      it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
+        -- Given:
+       do
+        let qAnswerIds =
+              Just $
+              [answerYes6 ^. uuid] ++
+              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [answerNoFuq2 ^. uuid]
+        let qReferenceIds =
+              [referenceCh2 ^. uuid] ++
+              [fromJust . U.fromString $ "bdbd95fd-8ea5-485d-9486-ef452b0a661e"] ++ [referenceCh1 ^. uuid]
+        let qExpertIds =
+              [expertLuke ^. uuid] ++
+              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertDarth ^. uuid]
+        let edited_1_event = e_km1_ch2_q4_ait1_q6 & answerIds .~ ChangedValue qAnswerIds
+        let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
+        let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' edited_3_event]
+                (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
+        resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
+        resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+      -- -------------------------------------------------------------
+      it "QType - QuestionTypeList: Event - all KM uuids exists, no new added in event" $
+        -- Given:
+       do
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' e_km1_ch2_q4_ait1_q5]
+                (Just km1WithQ4)
+        -- When:
+        resState <- migrate reqState
+        -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q5 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question8 ^. uuid, question7 ^. uuid]
+      it "QType - QuestionTypeList: Event - some KM uuids missing, no new added in event" $
+        -- Given:
+       do
+        let aitQuestionIds = [question8 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_e_km1_ch2_q4_ait1_q5 =
+              e_km1_ch2_q4_ait1_q5 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' edited_e_km1_ch2_q4_ait1_q5]
+                (Just km1WithQ4)
+           -- When:
+        resState <- migrate reqState
+           -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q5 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question8 ^. uuid, question7 ^. uuid]
+      it "QType - QuestionTypeList: Event - all KM uuids exists, new added in event but without existing in KM" $
+          -- Given:
+       do
+        let aitQuestionIds =
+              [question8 ^. uuid] ++
+              [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [question7 ^. uuid]
+        let aitPlainWithIds =
+              AnswerItemTemplatePlainWithIds
+              { _answerItemTemplatePlainWithIdsTitle = ait1 ^. title
+              , _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds
+              }
+        let edited_e_km1_ch2_q4_ait1_q5 =
+              e_km1_ch2_q4_ait1_q5 & answerItemTemplatePlainWithIds .~ ChangedValue (Just aitPlainWithIds)
+        let reqState =
+              createTestMigratorStateWithEvents
+                []
+                [EditAnswerItemTemplateQuestionEvent' edited_e_km1_ch2_q4_ait1_q5]
+                (Just km1WithQ4)
+          -- When:
+        resState <- migrate reqState
+          -- Then:
+        let (ConflictState (CorrectorConflict (EditAnswerItemTemplateQuestionEvent' resEvent))) =
+              resState ^. msMigrationState
+        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q5 ^. uuid
+        let (ChangedValue (Just resAit)) = resEvent ^. answerItemTemplatePlainWithIds
+        resAit ^. questionIds `shouldBe` [question8 ^. uuid, question7 ^. uuid]

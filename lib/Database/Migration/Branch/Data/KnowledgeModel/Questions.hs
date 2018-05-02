@@ -49,8 +49,8 @@ question2WithChangeProperties =
   , _questionQType = QuestionTypeString
   , _questionTitle = "EDITED: Second Question"
   , _questionText = "EDITED: Some long description"
-  , _questionAnswers = Just [FA.answerYes1, FA.answerNo1]
   , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just [FA.answerYes1, FA.answerNo1]
   , _questionReferences = [FR.referenceCh2, FR.referenceCh1]
   , _questionExperts = [FE.expertLuke, FE.expertDarth]
   }
@@ -63,8 +63,8 @@ question3 =
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Third Question"
   , _questionText = "Some long description"
-  , _questionAnswers = Just [FA.answerNo2, FA.answerYes2]
   , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just [FA.answerNo2, FA.answerYes2]
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -96,6 +96,16 @@ ait1WithChangeProperties =
 ait1Plain :: AnswerItemTemplate
 ait1Plain = AnswerItemTemplate {_answerItemTemplateTitle = "Template Title", _answerItemTemplateQuestions = []}
 
+ait2 :: AnswerItemTemplate
+ait2 =
+  AnswerItemTemplate
+  {_answerItemTemplateTitle = "Template Title 2", _answerItemTemplateQuestions = [question7, question8]}
+
+ait2WithChangeProperties :: AnswerItemTemplate
+ait2WithChangeProperties =
+  AnswerItemTemplate
+  {_answerItemTemplateTitle = "EDITED: Template Title 2", _answerItemTemplateQuestions = [question8, question7]}
+
 question4 :: Question
 question4 =
   Question
@@ -104,8 +114,8 @@ question4 =
   , _questionQType = QuestionTypeList
   , _questionTitle = "Fourth Question"
   , _questionText = "Some nice description"
-  , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Just ait1
+  , _questionAnswers = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -118,8 +128,8 @@ question4WithChangeProperties =
   , _questionQType = QuestionTypeList
   , _questionTitle = "EDITED: Fourth Question"
   , _questionText = "EDITED: Some nice description"
-  , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Just ait1WithChangeProperties
+  , _questionAnswers = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -143,11 +153,25 @@ question5 =
   Question
   { _questionUuid = fromJust $ U.fromString "9f8b1681-f6dc-4fdb-8e38-018df91fd2bd"
   , _questionShortUuid = Just "question5"
-  , _questionQType = QuestionTypeString
+  , _questionQType = QuestionTypeList
   , _questionTitle = "Fifth Question"
   , _questionText = "Some funny description"
   , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswerItemTemplate = Just ait2
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+question5Plain :: Question
+question5Plain =
+  Question
+  { _questionUuid = question5 ^. uuid
+  , _questionShortUuid = question5 ^. shortUuid
+  , _questionQType = question5 ^. qType
+  , _questionTitle = question5 ^. title
+  , _questionText = question5 ^. text
+  , _questionAnswerItemTemplate = Just (ait2 & questions .~ [])
+  , _questionAnswers = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -155,13 +179,13 @@ question5 =
 question5WithChangeProperties :: Question
 question5WithChangeProperties =
   Question
-  { _questionUuid = fromJust $ U.fromString "9f8b1681-f6dc-4fdb-8e38-018df91fd2bd"
+  { _questionUuid = question5 ^. uuid
   , _questionShortUuid = Just "question5"
   , _questionQType = QuestionTypeString
   , _questionTitle = "EDITED: Fifth Question"
   , _questionText = "EDITED: Some funny description"
+  , _questionAnswerItemTemplate = Just ait2WithChangeProperties
   , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -171,12 +195,53 @@ question6 =
   Question
   { _questionUuid = fromJust $ U.fromString "efcf425f-f5c6-4c36-9aaf-fd4ced17adf5"
   , _questionShortUuid = Just "question6"
-  , _questionQType = QuestionTypeList
+  , _questionQType = QuestionTypeOptions
   , _questionTitle = "Sixth Question"
   , _questionText = "Some non-funny description"
-  , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate =
-      Just AnswerItemTemplate {_answerItemTemplateTitle = "Question 6 Template", _answerItemTemplateQuestions = []}
+  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just [answerNo6, answerYes6]
+  , _questionReferences = [FR.referenceCh1, FR.referenceCh2]
+  , _questionExperts = [FE.expertDarth, FE.expertLuke]
+  }
+
+question6WithChangeProperties :: Question
+question6WithChangeProperties =
+  Question
+  { _questionUuid = question6 ^. uuid
+  , _questionShortUuid = Just "question6"
+  , _questionQType = QuestionTypeOptions
+  , _questionTitle = "Sixth Question"
+  , _questionText = "Some non-funny description"
+  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just [answerYes6, answerNo6]
+  , _questionReferences = [FR.referenceCh2, FR.referenceCh1]
+  , _questionExperts = [FE.expertLuke, FE.expertDarth]
+  }
+
+question7 :: Question
+question7 =
+  Question
+  { _questionUuid = fromJust $ U.fromString "385026a5-c35b-4461-9588-bcbc10c99ac5"
+  , _questionShortUuid = Just "question7"
+  , _questionQType = QuestionTypeOptions
+  , _questionTitle = "Seventh Question"
+  , _questionText = "Some non-funny description"
+  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just []
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+question8 :: Question
+question8 =
+  Question
+  { _questionUuid = fromJust $ U.fromString "f272a0b6-14fd-477f-8a95-d7ea483a4395"
+  , _questionShortUuid = Just "question8"
+  , _questionQType = QuestionTypeOptions
+  , _questionTitle = "Eighth Question"
+  , _questionText = "Some non-funny description"
+  , _questionAnswerItemTemplate = Nothing
+  , _questionAnswers = Just []
   , _questionReferences = []
   , _questionExperts = []
   }

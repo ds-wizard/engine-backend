@@ -108,10 +108,10 @@ applicatorSpec =
         let event = a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3
         let (Right computed) = runApplicator (Just km1) [AddFollowUpQuestionEvent' event]
         let expFUQ3 = followUpQuestion3
-        let expAnswerYes4 = answerYes4 & followUps .~ [expFUQ3]
-        let expFUQ2 = followUpQuestion2 & answers .~ (Just [answerNo4, expAnswerYes4])
-        let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
+        let expanswerYesFuq2 = answerYesFuq2 & followUps .~ [expFUQ3]
+        let expFUQ2 = followUpQuestion2 & answers .~ (Just [answerNoFuq2, expanswerYesFuq2])
+        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ [expFUQ2]
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
         let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
@@ -121,8 +121,8 @@ applicatorSpec =
         let event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [EditFollowUpQuestionEvent' event]
         let expFUQ2 = followUpQuestion2Changed
-        let expAnswerYes3 = answerYes3 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
+        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ [expFUQ2]
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
         let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
@@ -131,8 +131,8 @@ applicatorSpec =
       it "Apply:  DeleteFollowUpQuestionEvent" $ do
         let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [DeleteFollowUpQuestionEvent' event]
-        let expAnswerYes3 = answerYes3 & followUps .~ []
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNo3, expAnswerYes3])
+        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ []
+        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
         let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
         let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
@@ -143,7 +143,7 @@ applicatorSpec =
       it "Apply:  AddAnswerItemTemplateQuestionEvent" $ do
         let event = a_km1_ch2_q4_ait1_q5
         let (Right computed) = runApplicator (Just km1WithQ4Plain) [AddAnswerItemTemplateQuestionEvent' event]
-        let expAit1 = ait1 & questions .~ [question5]
+        let expAit1 = ait1 & questions .~ [question5Plain]
         let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
         let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
@@ -215,11 +215,11 @@ applicatorSpec =
               , AddAnswerEvent' a_km1_ch1_q2_aNo1
               , AddAnswerEvent' a_km1_ch1_q2_aYes1
               , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-              , AddAnswerEvent' a_km1_ch1_q2_aNo3
-              , AddAnswerEvent' a_km1_ch1_q2_aYes3
+              , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+              , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
               , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-              , AddAnswerEvent' a_km1_ch1_q2_aNo4
-              , AddAnswerEvent' a_km1_ch1_q2_aYes4
+              , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
+              , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
               , AddExpertEvent' a_km1_ch1_q2_eDarth
               , AddExpertEvent' a_km1_ch1_q2_eLuke
               , AddReferenceEvent' a_km1_ch1_q2_rCh1
@@ -230,7 +230,18 @@ applicatorSpec =
               , AddAnswerEvent' a_km1_ch2_q3_aYes2
               , AddQuestionEvent' a_km1_ch2_q4
               , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q7
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q8
               , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
+              , AddAnswerEvent' a_km1_ch2_q6_aNo6
+              , AddAnswerEvent' a_km1_ch2_q6_aYes6
+              , AddFollowUpQuestionEvent' a_km1_ch2_ansYes6_fuq4
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q1
+              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q2
+              , AddExpertEvent' a_km1_ch2_q6_eDarth
+              , AddExpertEvent' a_km1_ch2_q6_eLuke
+              , AddReferenceEvent' a_km1_ch2_q6_rCh1
+              , AddReferenceEvent' a_km1_ch2_q6_rCh2
               ]
         let (Right computed) = runApplicator Nothing events
         let expected = km1WithQ4

@@ -11,6 +11,7 @@ import Common.Utils
 import Common.Uuid
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
@@ -64,24 +65,43 @@ instance Sanitizator EditChapterEvent where
       resultUuids km childIdsFromEvent =
         filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 
---        pPrint $ km
---        pPrint $ childIdsFromEvent
---        pPrint $ childIdsFromKM km
---        pPrint $ childIdsFromEvent ++ childIdsFromKM km
---        pPrint $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
---        pPrint $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
 -- ------------------------------------------------------------
 instance Sanitizator EditQuestionEvent where
   sanitize state event =
     unwrapKM state event $ \km -> do
-      event1 <- applyAnswerChange km event
-      event2 <- applyReferenceChange km event1
-      event3 <- applyExpertChange km event2
-      changeEventUuid uuid event3
+      event1 <- applyAnswerItemTemplateChange km event
+      event2 <- applyAnswerChange km event1
+      event3 <- applyReferenceChange km event2
+      event4 <- applyExpertChange km event3
+      changeEventUuid uuid event4
+      -- ------------------------
+      -- Answer Item Template
+      -- ------------------------
+    where
+      applyAnswerItemTemplateChange km event =
+        unwrapEventAitPlainWithIds $ \aitPlainWithIds ->
+          return $ event & answerItemTemplatePlainWithIds .~ (ChangedValue . Just $ newAitPlainWithIds aitPlainWithIds)
+        where
+          unwrapEventAitPlainWithIds callback =
+            case event ^. answerItemTemplatePlainWithIds of
+              NothingChanged -> return event
+              ChangedValue maybeAitPlainWithIds ->
+                case maybeAitPlainWithIds of
+                  Just aitPlainWithIds -> callback aitPlainWithIds
+                  Nothing -> return event
+          newAitPlainWithIds :: AnswerItemTemplatePlainWithIds -> AnswerItemTemplatePlainWithIds
+          newAitPlainWithIds aitPlainWithIds =
+            aitPlainWithIds & questionIds .~ resultUuids km (aitPlainWithIds ^. questionIds)
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _questionUuid <$> getAllAitQuestionsForParentQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- Answers
       -- ------------------------
-    where
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
           return $ event & answerIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
@@ -160,14 +180,131 @@ instance Sanitizator EditAnswerEvent where
 instance Sanitizator EditFollowUpQuestionEvent where
   sanitize state event =
     unwrapKM state event $ \km -> do
-      event1 <- applyAnswerChange km event
-      event2 <- applyReferenceChange km event1
-      event3 <- applyExpertChange km event2
-      changeEventUuid uuid event3
+      event1 <- applyAnswerItemTemplateChange km event
+      event2 <- applyAnswerChange km event1
+      event3 <- applyReferenceChange km event2
+      event4 <- applyExpertChange km event3
+      changeEventUuid uuid event4
+      -- ------------------------
+      -- Answer Item Template
+      -- ------------------------
+    where
+      applyAnswerItemTemplateChange km event =
+        unwrapEventAitPlainWithIds $ \aitPlainWithIds ->
+          return $ event & answerItemTemplatePlainWithIds .~ (ChangedValue . Just $ newAitPlainWithIds aitPlainWithIds)
+        where
+          unwrapEventAitPlainWithIds callback =
+            case event ^. answerItemTemplatePlainWithIds of
+              NothingChanged -> return event
+              ChangedValue maybeAitPlainWithIds ->
+                case maybeAitPlainWithIds of
+                  Just aitPlainWithIds -> callback aitPlainWithIds
+                  Nothing -> return event
+          newAitPlainWithIds :: AnswerItemTemplatePlainWithIds -> AnswerItemTemplatePlainWithIds
+          newAitPlainWithIds aitPlainWithIds =
+            aitPlainWithIds & questionIds .~ resultUuids km (aitPlainWithIds ^. questionIds)
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _questionUuid <$> getAllAitQuestionsForParentQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
       -- ------------------------
       -- Answers
       -- ------------------------
+      applyAnswerChange km event =
+        unwrapEventChildUuids $ \childIdsFromEvent ->
+          return $ event & answerIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
+        where
+          unwrapEventChildUuids callback =
+            case event ^. answerIds of
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _answerUuid <$> getAllAnswersForQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> Maybe [U.UUID] -> Maybe [U.UUID]
+          resultUuids km maybeChildIdsFromEvent =
+            case maybeChildIdsFromEvent of
+              Just childIdsFromEvent ->
+                Just $ filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+              Nothing -> Nothing
+      -- ------------------------
+      -- References
+      -- ------------------------
+      applyReferenceChange km event =
+        unwrapEventChildUuids $ \childIdsFromEvent ->
+          return $ event & referenceIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
+        where
+          unwrapEventChildUuids callback =
+            case event ^. referenceIds of
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _referenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+      -- ------------------------
+      -- Experts
+      -- ------------------------
+      applyExpertChange km event =
+        unwrapEventChildUuids $ \childIdsFromEvent ->
+          return $ event & expertIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)
+        where
+          unwrapEventChildUuids callback =
+            case event ^. expertIds of
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _expertUuid <$> getAllExpertsForQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+
+-- ------------------------------------------------------------
+instance Sanitizator EditAnswerItemTemplateQuestionEvent where
+  sanitize state event =
+    unwrapKM state event $ \km -> do
+      event1 <- applyAnswerItemTemplateChange km event
+      event2 <- applyAnswerChange km event1
+      event3 <- applyReferenceChange km event2
+      event4 <- applyExpertChange km event3
+      changeEventUuid uuid event4
+      -- ------------------------
+      -- Answer Item Template
+      -- ------------------------
     where
+      applyAnswerItemTemplateChange km event =
+        unwrapEventAitPlainWithIds $ \aitPlainWithIds ->
+          return $ event & answerItemTemplatePlainWithIds .~ (ChangedValue . Just $ newAitPlainWithIds aitPlainWithIds)
+        where
+          unwrapEventAitPlainWithIds callback =
+            case event ^. answerItemTemplatePlainWithIds of
+              NothingChanged -> return event
+              ChangedValue maybeAitPlainWithIds ->
+                case maybeAitPlainWithIds of
+                  Just aitPlainWithIds -> callback aitPlainWithIds
+                  Nothing -> return event
+          newAitPlainWithIds :: AnswerItemTemplatePlainWithIds -> AnswerItemTemplatePlainWithIds
+          newAitPlainWithIds aitPlainWithIds =
+            aitPlainWithIds & questionIds .~ resultUuids km (aitPlainWithIds ^. questionIds)
+          childIdsFromKM :: KnowledgeModel -> [U.UUID]
+          childIdsFromKM km = _questionUuid <$> getAllAitQuestionsForParentQuestionUuid km (event ^. questionUuid)
+          isInChildIds :: KnowledgeModel -> U.UUID -> Bool
+          isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childIdsFromEvent =
+            filter (isInChildIds km) $ removeDuplicates $ childIdsFromEvent ++ childIdsFromKM km
+      -- ------------------------
+      -- Answers
+      -- ------------------------
       applyAnswerChange km event =
         unwrapEventChildUuids $ \childIdsFromEvent ->
           return $ event & answerIds .~ (ChangedValue $ resultUuids km childIdsFromEvent)

@@ -36,11 +36,11 @@ runMigration appContext = do
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
         , AddAnswerEvent' a_km1_ch1_q2_aYes1
         , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-        , AddAnswerEvent' a_km1_ch1_q2_aNo3
-        , AddAnswerEvent' a_km1_ch1_q2_aYes3
+        , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+        , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
         , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-        , AddAnswerEvent' a_km1_ch1_q2_aNo4
-        , AddAnswerEvent' a_km1_ch1_q2_aYes4
+        , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
+        , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
         , AddExpertEvent' a_km1_ch1_q2_eDarth
         , AddExpertEvent' a_km1_ch1_q2_eLuke
         , AddReferenceEvent' a_km1_ch1_q2_rCh1
@@ -49,9 +49,6 @@ runMigration appContext = do
         , AddQuestionEvent' a_km1_ch2_q3
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
-        , AddQuestionEvent' a_km1_ch2_q4
-        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
-        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
         ]
   liftIO $ insertEventsToBranch context (U.toString (branch ^. bdtoUuid)) events
   liftIO $ recompileKnowledgeModel context (U.toString (branch ^. bdtoUuid))

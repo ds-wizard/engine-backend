@@ -51,11 +51,11 @@ eventAPI appContext = do
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
         , AddAnswerEvent' a_km1_ch1_q2_aYes1
         , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-        , AddAnswerEvent' a_km1_ch1_q2_aNo3
-        , AddAnswerEvent' a_km1_ch1_q2_aYes3
+        , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+        , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
         , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-        , AddAnswerEvent' a_km1_ch1_q2_aNo4
-        , AddAnswerEvent' a_km1_ch1_q2_aYes4
+        , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
+        , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
         , AddExpertEvent' a_km1_ch1_q2_eDarth
         , AddExpertEvent' a_km1_ch1_q2_eLuke
         , AddReferenceEvent' a_km1_ch1_q2_rCh1
@@ -64,9 +64,6 @@ eventAPI appContext = do
         , AddQuestionEvent' a_km1_ch2_q3
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
-        , AddQuestionEvent' a_km1_ch2_q4
-        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
-        , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
         ]
   with (startWebApp appContext) $ do
     let context = appContext ^. oldContext
@@ -116,7 +113,7 @@ eventAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expKm = km1WithQ4
+          let expKm = km1
           let expBody = encode . toDTOs $ events
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

@@ -58,18 +58,18 @@ knowledgeModelAccessorsSpec =
       , FA.answerYes1
       , FA.answerNo2
       , FA.answerYes2
-      , FA.answerNo3
-      , FA.answerYes3
-      , FA.answerNo4
-      , FA.answerYes4
+      , FA.answerNoFuq1
+      , FA.answerYesFuq1
+      , FA.answerNoFuq2
+      , FA.answerYesFuq2
       ]
-    describe "getAnswerByUuid" $ it "Successfully listed" $ getAnswerByUuid FKM.km1 (FA.answerNo3 ^. uuid) `shouldBe`
-      Just FA.answerNo3
+    describe "getAnswerByUuid" $ it "Successfully listed" $ getAnswerByUuid FKM.km1 (FA.answerNoFuq1 ^. uuid) `shouldBe`
+      Just FA.answerNoFuq1
     describe "getAllAnswersForQuestionUuid" $ it "Successfully listed" $
       getAllAnswersForQuestionUuid FKM.km1 (FQ.question2 ^. uuid) `shouldBe`
       [FA.answerNo1, FA.answerYes1]
     describe "isThereAnyAnswerWithGivenUuid" $ do
-      it "Returns True if exists" $ isThereAnyAnswerWithGivenUuid FKM.km1 (FA.answerYes3 ^. uuid) `shouldBe` True
+      it "Returns True if exists" $ isThereAnyAnswerWithGivenUuid FKM.km1 (FA.answerYesFuq1 ^. uuid) `shouldBe` True
       it "Returns False if not exists" $
         isThereAnyAnswerWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
         False
@@ -104,6 +104,14 @@ knowledgeModelAccessorsSpec =
               {_answerItemTemplateTitle = FQ.ait1WithChangeProperties ^. title, _answerItemTemplateQuestions = []}
         let exp = FQ.question5 & answerItemTemplate .~ Just expAit
         res `shouldBe` exp
+    describe "getAllAnswerItemTemplates" $ it "Successfully listed" $ do
+      let expected = [FQ.ait1, FQ.ait2, FA.ait_fuq4]
+      let computed = getAllAnswerItemTemplates FKM.km1WithQ4
+      computed `shouldBe` expected
+    describe "getAllAitQuestionsForParentQuestionUuid" $ it "Successfully listed" $ do
+      let expected = [FQ.question5, FQ.question6]
+      let computed = getAllAitQuestionsForParentQuestionUuid FKM.km1WithQ4 (FQ.question4 ^. uuid)
+      computed `shouldBe` expected
     ---------------------------------------------
     describe "getAllExperts" $ it "Successfully listed" $ getAllExperts FKM.km1 `shouldBe`
       [FE.expertDarth, FE.expertLuke]

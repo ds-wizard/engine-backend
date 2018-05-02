@@ -47,9 +47,12 @@ doIsCleanerMethod km (EditFollowUpQuestionEvent' event) =
   not $ isThereAnyQuestionWithGivenUuid km (event ^. questionUuid)
 doIsCleanerMethod km (DeleteFollowUpQuestionEvent' event) =
   not $ isThereAnyQuestionWithGivenUuid km (event ^. questionUuid)
-doIsCleanerMethod km (AddAnswerItemTemplateQuestionEvent' event) = False
-doIsCleanerMethod km (EditAnswerItemTemplateQuestionEvent' event) = False
-doIsCleanerMethod km (DeleteAnswerItemTemplateQuestionEvent' event) = False
+doIsCleanerMethod km (AddAnswerItemTemplateQuestionEvent' event) =
+  not $ isThereAnyQuestionWithGivenUuid km (event ^. parentQuestionUuid)
+doIsCleanerMethod km (EditAnswerItemTemplateQuestionEvent' event) =
+  not $ isThereAnyQuestionWithGivenUuid km (event ^. questionUuid)
+doIsCleanerMethod km (DeleteAnswerItemTemplateQuestionEvent' event) =
+  not $ isThereAnyQuestionWithGivenUuid km (event ^. questionUuid)
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =

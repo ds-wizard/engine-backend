@@ -57,6 +57,7 @@ getAllQuestions km = go (km ^.. chapters . traverse . questions . traverse)
     go [] = []
     go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
     getNestedQuestions :: Question -> [Question]
+    getNestedQuestions Question {_questionAnswerItemTemplate = (Just ait)} = ait ^. questions
     getNestedQuestions Question {_questionAnswers = (Just answers)} = concat $ _answerFollowUps <$> answers
     getNestedQuestions Question {_questionAnswers = Nothing} = []
 
@@ -156,35 +157,24 @@ aitChangeAitQuestionIdsOrder convert ait = Identity $ ait & questions .~ ordered
     getAitQuestionByUuid :: UUID -> [Question]
     getAitQuestionByUuid qUuid = filter (\x -> x ^. uuid == qUuid) (ait ^. questions)
 
--- getAllAitQuestions :: KnowledgeModel -> [Question]
--- getAllAitQuestions km = go (km ^.. chapters . traverse . questions . traverse)
---   where
---     go :: [Question] -> [Question]
---     go [] = []
---     go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
---     getNestedQuestions :: Question -> [Question]
---     getNestedQuestions Question {_questionAnswers = (Just answers)} = concat $ _answerFollowUps <$> answers
---     getNestedQuestions Question {_questionAnswers = Nothing} = []
---
--- getAitQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
--- getAitQuestionByUuid km questionUuid = find (\q -> q ^. uuid == questionUuid) (getAllAitQuestions km)
---
--- getAllAitQuestionsForChapterUuid :: KnowledgeModel -> UUID -> [Question]
--- getAllAitQuestionsForChapterUuid km chapterUuid =
---   case getChapterByUuid km chapterUuid of
---     Just chapter -> chapter ^. questions
---     Nothing -> []
---
--- getAllAitQuestionsForAnswerUuid :: KnowledgeModel -> UUID -> [Question]
--- getAllAitQuestionsForAnswerUuid km answerUuid =
---   case getAnswerByUuid km answerUuid of
---     Just answer -> answer ^. followUps
---     Nothing -> []
---
--- isThereAnyAitQuestionWithGivenUuid :: KnowledgeModel -> UUID -> Bool
--- isThereAnyAitQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> getAllQuestions km)
---   where
---     getQuestionUuid question = question ^. uuid
+getAllAnswerItemTemplates :: KnowledgeModel -> [AnswerItemTemplate]
+getAllAnswerItemTemplates km = concat $ getAllAnswerItemTemplate <$> getAllQuestions km
+  where
+    getAllAnswerItemTemplate :: Question -> [AnswerItemTemplate]
+    getAllAnswerItemTemplate question =
+      case question ^. answerItemTemplate of
+        Just ait -> [ait]
+        Nothing -> []
+
+getAllAitQuestionsForParentQuestionUuid :: KnowledgeModel -> UUID -> [Question]
+getAllAitQuestionsForParentQuestionUuid km qUuid =
+  case getQuestionByUuid km qUuid of
+    Just q ->
+      case q ^. answerItemTemplate of
+        Just ait -> ait ^. questions
+        Nothing -> []
+    Nothing -> []
+
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
 getFollowUpIds :: Answer -> [UUID]

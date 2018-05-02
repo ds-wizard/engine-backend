@@ -9,6 +9,7 @@ import GHC.Generics
 
 import Database.BSON.Common
 import Database.BSON.Event.EventField
+import Database.BSON.KnowledgeModel.KnowledgeModel
 import LensesConfig
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 

@@ -247,9 +247,9 @@ e_km1_ch2_q4 =
       , _answerItemTemplatePlainWithIdsQuestionIds =
           (fromJust $ question4WithChangeProperties ^. answerItemTemplate) ^.. questions . traverse . uuid
       }
-  , _editQuestionEventAnswerIds = ChangedValue Nothing
-  , _editQuestionEventExpertIds = NothingChanged
-  , _editQuestionEventReferenceIds = NothingChanged
+  , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question4WithChangeProperties
+  , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question4WithChangeProperties
+  , _editQuestionEventReferenceIds = ChangedValue $ getReferenceIds question4WithChangeProperties
   }
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
@@ -326,52 +326,52 @@ a_km1_ch1_q2_aMaybe =
   , _addAnswerEventAdvice = answerMaybe ^. advice
   }
 
-a_km1_ch1_q2_aNo3 :: AddAnswerEvent
-a_km1_ch1_q2_aNo3 =
+a_km1_ch1_q2_aNoFu1 :: AddAnswerEvent
+a_km1_ch1_q2_aNoFu1 =
   AddAnswerEvent
   { _addAnswerEventUuid = fromJust $ U.fromString "e62168e2-afe5-4e58-8ee7-555594aec23e"
   , _addAnswerEventKmUuid = km1 ^. uuid
   , _addAnswerEventChapterUuid = chapter1 ^. uuid
   , _addAnswerEventQuestionUuid = followUpQuestion1 ^. uuid
-  , _addAnswerEventAnswerUuid = answerNo3 ^. uuid
-  , _addAnswerEventLabel = answerNo3 ^. label
-  , _addAnswerEventAdvice = answerNo3 ^. advice
+  , _addAnswerEventAnswerUuid = answerNoFuq1 ^. uuid
+  , _addAnswerEventLabel = answerNoFuq1 ^. label
+  , _addAnswerEventAdvice = answerNoFuq1 ^. advice
   }
 
-a_km1_ch1_q2_aYes3 :: AddAnswerEvent
-a_km1_ch1_q2_aYes3 =
+a_km1_ch1_q2_aYesFu1 :: AddAnswerEvent
+a_km1_ch1_q2_aYesFu1 =
   AddAnswerEvent
   { _addAnswerEventUuid = fromJust $ U.fromString "bc530681-b45b-4d36-b179-a9cb62a92838"
   , _addAnswerEventKmUuid = km1 ^. uuid
   , _addAnswerEventChapterUuid = chapter1 ^. uuid
   , _addAnswerEventQuestionUuid = followUpQuestion1 ^. uuid
-  , _addAnswerEventAnswerUuid = answerYes3 ^. uuid
-  , _addAnswerEventLabel = answerYes3 ^. label
-  , _addAnswerEventAdvice = answerYes3 ^. advice
+  , _addAnswerEventAnswerUuid = answerYesFuq1 ^. uuid
+  , _addAnswerEventLabel = answerYesFuq1 ^. label
+  , _addAnswerEventAdvice = answerYesFuq1 ^. advice
   }
 
-a_km1_ch1_q2_aNo4 :: AddAnswerEvent
-a_km1_ch1_q2_aNo4 =
+a_km1_ch1_q2_aNoFu2 :: AddAnswerEvent
+a_km1_ch1_q2_aNoFu2 =
   AddAnswerEvent
   { _addAnswerEventUuid = fromJust $ U.fromString "abf67af9-23e0-43fa-a54a-746570882624"
   , _addAnswerEventKmUuid = km1 ^. uuid
   , _addAnswerEventChapterUuid = chapter1 ^. uuid
   , _addAnswerEventQuestionUuid = followUpQuestion2 ^. uuid
-  , _addAnswerEventAnswerUuid = answerNo4 ^. uuid
-  , _addAnswerEventLabel = answerNo4 ^. label
-  , _addAnswerEventAdvice = answerNo4 ^. advice
+  , _addAnswerEventAnswerUuid = answerNoFuq2 ^. uuid
+  , _addAnswerEventLabel = answerNoFuq2 ^. label
+  , _addAnswerEventAdvice = answerNoFuq2 ^. advice
   }
 
-a_km1_ch1_q2_aYes4 :: AddAnswerEvent
-a_km1_ch1_q2_aYes4 =
+a_km1_ch1_q2_aYesFu2 :: AddAnswerEvent
+a_km1_ch1_q2_aYesFu2 =
   AddAnswerEvent
   { _addAnswerEventUuid = fromJust $ U.fromString "542c0d28-9ae3-4bbe-8030-92a78b462276"
   , _addAnswerEventKmUuid = km1 ^. uuid
   , _addAnswerEventChapterUuid = chapter1 ^. uuid
   , _addAnswerEventQuestionUuid = followUpQuestion2 ^. uuid
-  , _addAnswerEventAnswerUuid = answerYes4 ^. uuid
-  , _addAnswerEventLabel = answerYes4 ^. label
-  , _addAnswerEventAdvice = answerYes4 ^. advice
+  , _addAnswerEventAnswerUuid = answerYesFuq2 ^. uuid
+  , _addAnswerEventLabel = answerYesFuq2 ^. label
+  , _addAnswerEventAdvice = answerYesFuq2 ^. advice
   }
 
 a_km1_ch2_q3_aNo2 :: AddAnswerEvent
@@ -396,6 +396,30 @@ a_km1_ch2_q3_aYes2 =
   , _addAnswerEventAnswerUuid = answerYes2 ^. uuid
   , _addAnswerEventLabel = answerYes2 ^. label
   , _addAnswerEventAdvice = answerYes2 ^. advice
+  }
+
+a_km1_ch2_q6_aNo6 :: AddAnswerEvent
+a_km1_ch2_q6_aNo6 =
+  AddAnswerEvent
+  { _addAnswerEventUuid = fromJust $ U.fromString "c0a67ce5-21b3-47c7-8624-c2da26fb494f"
+  , _addAnswerEventKmUuid = km1 ^. uuid
+  , _addAnswerEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerEventQuestionUuid = question6 ^. uuid
+  , _addAnswerEventAnswerUuid = answerNo6 ^. uuid
+  , _addAnswerEventLabel = answerNo6 ^. label
+  , _addAnswerEventAdvice = answerNo6 ^. advice
+  }
+
+a_km1_ch2_q6_aYes6 :: AddAnswerEvent
+a_km1_ch2_q6_aYes6 =
+  AddAnswerEvent
+  { _addAnswerEventUuid = fromJust $ U.fromString "c5c42f99-613b-4b6c-ae5e-af784f51c483"
+  , _addAnswerEventKmUuid = km1 ^. uuid
+  , _addAnswerEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerEventQuestionUuid = question6 ^. uuid
+  , _addAnswerEventAnswerUuid = answerYes6 ^. uuid
+  , _addAnswerEventLabel = answerYes6 ^. label
+  , _addAnswerEventAdvice = answerYes6 ^. advice
   }
 
 e_km1_ch1_q2_aYes1 :: EditAnswerEvent
@@ -448,7 +472,9 @@ a_km1_ch2_q4_ait1_q5 =
   , _addAnswerItemTemplateQuestionEventQType = question5 ^. qType
   , _addAnswerItemTemplateQuestionEventTitle = question5 ^. title
   , _addAnswerItemTemplateQuestionEventText = question5 ^. text
-  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain =
+      Just
+        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question5 ^. answerItemTemplate) ^. title}
   }
 
 a_km1_ch2_q4_ait1_q6 :: AddAnswerItemTemplateQuestionEvent
@@ -463,9 +489,67 @@ a_km1_ch2_q4_ait1_q6 =
   , _addAnswerItemTemplateQuestionEventQType = question6 ^. qType
   , _addAnswerItemTemplateQuestionEventTitle = question6 ^. title
   , _addAnswerItemTemplateQuestionEventText = question6 ^. text
-  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain =
-      Just
-        AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question6 ^. answerItemTemplate) ^. title}
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4_ait1_q6_fuq4_q1 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q6_fuq4_q1 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "55f46913-a953-4318-b72f-673e9f65fb2a"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = followUpQuestion4 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = followUpQuestion4_question1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = followUpQuestion4_question1 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = followUpQuestion4_question1 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = followUpQuestion4_question1 ^. title
+  , _addAnswerItemTemplateQuestionEventText = followUpQuestion4_question1 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4_ait1_q6_fuq4_q2 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q6_fuq4_q2 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "6b9a7c1c-a23e-458a-a1bb-d7500c0ed96e"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = followUpQuestion4 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = followUpQuestion4_question2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = followUpQuestion4_question2 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = followUpQuestion4_question2 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = followUpQuestion4_question2 ^. title
+  , _addAnswerItemTemplateQuestionEventText = followUpQuestion4_question2 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4_ait1_q7 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q7 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = question5 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = question7 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = question7 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = question7 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = question7 ^. title
+  , _addAnswerItemTemplateQuestionEventText = question7 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
+  }
+
+a_km1_ch2_q4_ait1_q8 :: AddAnswerItemTemplateQuestionEvent
+a_km1_ch2_q4_ait1_q8 =
+  AddAnswerItemTemplateQuestionEvent
+  { _addAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _addAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _addAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addAnswerItemTemplateQuestionEventParentQuestionUuid = question5 ^. uuid
+  , _addAnswerItemTemplateQuestionEventQuestionUuid = question8 ^. uuid
+  , _addAnswerItemTemplateQuestionEventShortQuestionUuid = question8 ^. shortUuid
+  , _addAnswerItemTemplateQuestionEventQType = question8 ^. qType
+  , _addAnswerItemTemplateQuestionEventTitle = question8 ^. title
+  , _addAnswerItemTemplateQuestionEventText = question8 ^. text
+  , _addAnswerItemTemplateQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
 e_km1_ch2_q4_ait1_q5 :: EditAnswerItemTemplateQuestionEvent
@@ -480,10 +564,33 @@ e_km1_ch2_q4_ait1_q5 =
   , _editAnswerItemTemplateQuestionEventQType = ChangedValue $ question5WithChangeProperties ^. qType
   , _editAnswerItemTemplateQuestionEventTitle = ChangedValue $ question5WithChangeProperties ^. title
   , _editAnswerItemTemplateQuestionEventText = ChangedValue $ question5WithChangeProperties ^. text
-  , _editAnswerItemTemplateQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
+  , _editAnswerItemTemplateQuestionEventAnswerItemTemplatePlainWithIds =
+      ChangedValue . Just $
+      AnswerItemTemplatePlainWithIds
+      { _answerItemTemplatePlainWithIdsTitle = "EDITED: Template Title 2"
+      , _answerItemTemplatePlainWithIdsQuestionIds = [question8 ^. uuid, question7 ^. uuid]
+      }
   , _editAnswerItemTemplateQuestionEventAnswerIds = NothingChanged
   , _editAnswerItemTemplateQuestionEventExpertIds = NothingChanged
   , _editAnswerItemTemplateQuestionEventReferenceIds = NothingChanged
+  }
+
+e_km1_ch2_q4_ait1_q6 :: EditAnswerItemTemplateQuestionEvent
+e_km1_ch2_q4_ait1_q6 =
+  EditAnswerItemTemplateQuestionEvent
+  { _editAnswerItemTemplateQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _editAnswerItemTemplateQuestionEventKmUuid = km1 ^. uuid
+  , _editAnswerItemTemplateQuestionEventChapterUuid = chapter2 ^. uuid
+  , _editAnswerItemTemplateQuestionEventParentQuestionUuid = question4 ^. uuid
+  , _editAnswerItemTemplateQuestionEventQuestionUuid = question6WithChangeProperties ^. uuid
+  , _editAnswerItemTemplateQuestionEventShortQuestionUuid = ChangedValue $ question6WithChangeProperties ^. shortUuid
+  , _editAnswerItemTemplateQuestionEventQType = ChangedValue $ question6WithChangeProperties ^. qType
+  , _editAnswerItemTemplateQuestionEventTitle = ChangedValue $ question6WithChangeProperties ^. title
+  , _editAnswerItemTemplateQuestionEventText = ChangedValue $ question6WithChangeProperties ^. text
+  , _editAnswerItemTemplateQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
+  , _editAnswerItemTemplateQuestionEventAnswerIds = ChangedValue $ getAnwerIds question6WithChangeProperties
+  , _editAnswerItemTemplateQuestionEventExpertIds = ChangedValue $ getExpertIds question6WithChangeProperties
+  , _editAnswerItemTemplateQuestionEventReferenceIds = ChangedValue $ getReferenceIds question6WithChangeProperties
   }
 
 d_km1_ch2_q4_ait1 :: DeleteAnswerItemTemplateQuestionEvent
@@ -519,7 +626,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   { _addFollowUpQuestionEventUuid = fromJust $ U.fromString "8ced5634-a879-4da2-b7c9-158ca6a4e0e3"
   , _addFollowUpQuestionEventKmUuid = km1 ^. uuid
   , _addFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
-  , _addFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
+  , _addFollowUpQuestionEventAnswerUuid = answerYesFuq1 ^. uuid
   , _addFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
   , _addFollowUpQuestionEventShortQuestionUuid = followUpQuestion2 ^. shortUuid
   , _addFollowUpQuestionEventQType = followUpQuestion2 ^. qType
@@ -534,7 +641,7 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 =
   { _addFollowUpQuestionEventUuid = fromJust $ U.fromString "6e9b591f-e6f9-46dd-85e8-a90fe4acc51c"
   , _addFollowUpQuestionEventKmUuid = km1 ^. uuid
   , _addFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
-  , _addFollowUpQuestionEventAnswerUuid = answerYes4 ^. uuid
+  , _addFollowUpQuestionEventAnswerUuid = answerYesFuq2 ^. uuid
   , _addFollowUpQuestionEventQuestionUuid = followUpQuestion3 ^. uuid
   , _addFollowUpQuestionEventShortQuestionUuid = followUpQuestion3 ^. shortUuid
   , _addFollowUpQuestionEventQType = followUpQuestion3 ^. qType
@@ -543,13 +650,31 @@ a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3 =
   , _addFollowUpQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
+a_km1_ch2_ansYes6_fuq4 :: AddFollowUpQuestionEvent
+a_km1_ch2_ansYes6_fuq4 =
+  AddFollowUpQuestionEvent
+  { _addFollowUpQuestionEventUuid = fromJust $ U.fromString "c626fd42-80b8-4fd2-a16b-d38eeb8262f1"
+  , _addFollowUpQuestionEventKmUuid = km1 ^. uuid
+  , _addFollowUpQuestionEventChapterUuid = chapter2 ^. uuid
+  , _addFollowUpQuestionEventAnswerUuid = answerYes6 ^. uuid
+  , _addFollowUpQuestionEventQuestionUuid = followUpQuestion4 ^. uuid
+  , _addFollowUpQuestionEventShortQuestionUuid = followUpQuestion4 ^. shortUuid
+  , _addFollowUpQuestionEventQType = followUpQuestion4 ^. qType
+  , _addFollowUpQuestionEventTitle = followUpQuestion4 ^. title
+  , _addFollowUpQuestionEventText = followUpQuestion4 ^. text
+  , _addFollowUpQuestionEventAnswerItemTemplatePlain =
+      Just
+        AnswerItemTemplatePlain
+        {_answerItemTemplatePlainTitle = (fromJust $ followUpQuestion4 ^. answerItemTemplate) ^. title}
+  }
+
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: EditFollowUpQuestionEvent
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   EditFollowUpQuestionEvent
   { _editFollowUpQuestionEventUuid = fromJust $ U.fromString "378f1fb0-e714-400b-a23d-fa939acd3f45"
   , _editFollowUpQuestionEventKmUuid = km1 ^. uuid
   , _editFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
-  , _editFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
+  , _editFollowUpQuestionEventAnswerUuid = answerYesFuq1 ^. uuid
   , _editFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
   , _editFollowUpQuestionEventShortQuestionUuid = ChangedValue $ followUpQuestion2 ^. shortUuid
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
@@ -567,16 +692,40 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   { _editFollowUpQuestionEventUuid = fromJust $ U.fromString "378f1fb0-e714-400b-a23d-fa939acd3f45"
   , _editFollowUpQuestionEventKmUuid = km1 ^. uuid
   , _editFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
-  , _editFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
+  , _editFollowUpQuestionEventAnswerUuid = answerYesFuq1 ^. uuid
   , _editFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
   , _editFollowUpQuestionEventShortQuestionUuid = ChangedValue $ followUpQuestion2 ^. shortUuid
   , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion2Changed ^. qType
   , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion2Changed ^. title
   , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion2Changed ^. text
   , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
-  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ Just [answerYes4 ^. uuid, answerNo4 ^. uuid]
+  , _editFollowUpQuestionEventAnswerIds = ChangedValue $ Just [answerYesFuq2 ^. uuid, answerNoFuq2 ^. uuid]
   , _editFollowUpQuestionEventExpertIds = ChangedValue $ getExpertIds followUpQuestion2
   , _editFollowUpQuestionEventReferenceIds = ChangedValue $ getReferenceIds followUpQuestion2
+  }
+
+e_km1_ch2_ansMaybe6_fuq4 :: EditFollowUpQuestionEvent
+e_km1_ch2_ansMaybe6_fuq4 =
+  EditFollowUpQuestionEvent
+  { _editFollowUpQuestionEventUuid = fromJust $ U.fromString "378f1fb0-e714-400b-a23d-fa939acd3f45"
+  , _editFollowUpQuestionEventKmUuid = km1 ^. uuid
+  , _editFollowUpQuestionEventChapterUuid = chapter2 ^. uuid
+  , _editFollowUpQuestionEventAnswerUuid = answerNo6 ^. uuid
+  , _editFollowUpQuestionEventQuestionUuid = followUpQuestion4Changed ^. uuid
+  , _editFollowUpQuestionEventShortQuestionUuid = ChangedValue $ followUpQuestion4Changed ^. shortUuid
+  , _editFollowUpQuestionEventQType = ChangedValue $ followUpQuestion4Changed ^. qType
+  , _editFollowUpQuestionEventTitle = ChangedValue $ followUpQuestion4Changed ^. title
+  , _editFollowUpQuestionEventText = ChangedValue $ followUpQuestion4Changed ^. text
+  , _editFollowUpQuestionEventAnswerItemTemplatePlainWithIds =
+      ChangedValue . Just $
+      AnswerItemTemplatePlainWithIds
+      { _answerItemTemplatePlainWithIdsTitle = "EDITED: fup 4 template title"
+      , _answerItemTemplatePlainWithIdsQuestionIds =
+          [followUpQuestion4_question2 ^. uuid, followUpQuestion4_question1 ^. uuid]
+      }
+  , _editFollowUpQuestionEventAnswerIds = NothingChanged
+  , _editFollowUpQuestionEventExpertIds = NothingChanged
+  , _editFollowUpQuestionEventReferenceIds = NothingChanged
   }
 
 d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteFollowUpQuestionEvent
@@ -585,7 +734,7 @@ d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   { _deleteFollowUpQuestionEventUuid = fromJust $ U.fromString "db69d694-cfb6-4461-8a13-81c01638f348"
   , _deleteFollowUpQuestionEventKmUuid = km1 ^. uuid
   , _deleteFollowUpQuestionEventChapterUuid = chapter1 ^. uuid
-  , _deleteFollowUpQuestionEventAnswerUuid = answerYes3 ^. uuid
+  , _deleteFollowUpQuestionEventAnswerUuid = answerYesFuq1 ^. uuid
   , _deleteFollowUpQuestionEventQuestionUuid = followUpQuestion2 ^. uuid
   }
 
@@ -603,6 +752,18 @@ a_km1_ch1_q2_eDarth =
   , _addExpertEventEmail = expertDarth ^. email
   }
 
+a_km1_ch2_q6_eDarth :: AddExpertEvent
+a_km1_ch2_q6_eDarth =
+  AddExpertEvent
+  { _addExpertEventUuid = fromJust $ U.fromString "eb6bb073-ecba-4cd0-91a3-ff31d374601f"
+  , _addExpertEventKmUuid = km1 ^. uuid
+  , _addExpertEventChapterUuid = chapter2 ^. uuid
+  , _addExpertEventQuestionUuid = question6 ^. uuid
+  , _addExpertEventExpertUuid = expertDarth ^. uuid
+  , _addExpertEventName = expertDarth ^. name
+  , _addExpertEventEmail = expertDarth ^. email
+  }
+
 a_km1_ch1_q2_eLuke :: AddExpertEvent
 a_km1_ch1_q2_eLuke =
   AddExpertEvent
@@ -610,6 +771,18 @@ a_km1_ch1_q2_eLuke =
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter1 ^. uuid
   , _addExpertEventQuestionUuid = question2 ^. uuid
+  , _addExpertEventExpertUuid = expertLuke ^. uuid
+  , _addExpertEventName = expertLuke ^. name
+  , _addExpertEventEmail = expertLuke ^. email
+  }
+
+a_km1_ch2_q6_eLuke :: AddExpertEvent
+a_km1_ch2_q6_eLuke =
+  AddExpertEvent
+  { _addExpertEventUuid = fromJust $ U.fromString "53653d05-6d5a-4b76-bbc6-15ca8314ad69"
+  , _addExpertEventKmUuid = km1 ^. uuid
+  , _addExpertEventChapterUuid = chapter2 ^. uuid
+  , _addExpertEventQuestionUuid = question6 ^. uuid
   , _addExpertEventExpertUuid = expertLuke ^. uuid
   , _addExpertEventName = expertLuke ^. name
   , _addExpertEventEmail = expertLuke ^. email
@@ -662,6 +835,17 @@ a_km1_ch1_q2_rCh1 =
   , _addReferenceEventChapter = referenceCh1 ^. chapter
   }
 
+a_km1_ch2_q6_rCh1 :: AddReferenceEvent
+a_km1_ch2_q6_rCh1 =
+  AddReferenceEvent
+  { _addReferenceEventUuid = fromJust $ U.fromString "a3f6ee9a-803f-4911-9566-734a6358913a"
+  , _addReferenceEventKmUuid = km1 ^. uuid
+  , _addReferenceEventChapterUuid = chapter2 ^. uuid
+  , _addReferenceEventQuestionUuid = question6 ^. uuid
+  , _addReferenceEventReferenceUuid = referenceCh1 ^. uuid
+  , _addReferenceEventChapter = referenceCh1 ^. chapter
+  }
+
 a_km1_ch1_q2_rCh2 :: AddReferenceEvent
 a_km1_ch1_q2_rCh2 =
   AddReferenceEvent
@@ -669,6 +853,17 @@ a_km1_ch1_q2_rCh2 =
   , _addReferenceEventKmUuid = km1 ^. uuid
   , _addReferenceEventChapterUuid = chapter1 ^. uuid
   , _addReferenceEventQuestionUuid = question2 ^. uuid
+  , _addReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  , _addReferenceEventChapter = referenceCh2 ^. chapter
+  }
+
+a_km1_ch2_q6_rCh2 :: AddReferenceEvent
+a_km1_ch2_q6_rCh2 =
+  AddReferenceEvent
+  { _addReferenceEventUuid = fromJust $ U.fromString "a4ae3400-dd3c-41ab-b796-4bf9d0bdafe7"
+  , _addReferenceEventKmUuid = km1 ^. uuid
+  , _addReferenceEventChapterUuid = chapter2 ^. uuid
+  , _addReferenceEventQuestionUuid = question6 ^. uuid
   , _addReferenceEventReferenceUuid = referenceCh2 ^. uuid
   , _addReferenceEventChapter = referenceCh2 ^. chapter
   }

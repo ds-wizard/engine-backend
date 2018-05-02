@@ -28,8 +28,17 @@ answerNo2 =
   , _answerFollowUps = []
   }
 
-answerNo3 :: Answer
-answerNo3 =
+answerNo6 :: Answer
+answerNo6 =
+  Answer
+  { _answerUuid = fromJust $ U.fromString "a093c2c3-123c-42ee-9667-13af14b6249e"
+  , _answerLabel = "No"
+  , _answerAdvice = Just "Great advice"
+  , _answerFollowUps = []
+  }
+
+answerNoFuq1 :: Answer
+answerNoFuq1 =
   Answer
   { _answerUuid = fromJust $ U.fromString "8ebf2494-80c7-4dbb-a4a1-a14d3387abc0"
   , _answerLabel = "No"
@@ -37,8 +46,8 @@ answerNo3 =
   , _answerFollowUps = []
   }
 
-answerNo4 :: Answer
-answerNo4 =
+answerNoFuq2 :: Answer
+answerNoFuq2 =
   Answer
   { _answerUuid = fromJust $ U.fromString "891ebfe2-27df-433c-af83-03bb26fa2764"
   , _answerLabel = "No"
@@ -73,8 +82,8 @@ answerYes2 =
   , _answerFollowUps = []
   }
 
-answerYes3 :: Answer
-answerYes3 =
+answerYesFuq1 :: Answer
+answerYesFuq1 =
   Answer
   { _answerUuid = fromJust $ U.fromString "4d164317-d900-460c-8582-8c80e6d66dcd"
   , _answerLabel = "Yes"
@@ -82,13 +91,22 @@ answerYes3 =
   , _answerFollowUps = [followUpQuestion2]
   }
 
-answerYes4 :: Answer
-answerYes4 =
+answerYesFuq2 :: Answer
+answerYesFuq2 =
   Answer
   { _answerUuid = fromJust $ U.fromString "b6b40918-a9b7-4d2d-bacb-9f9aa5683efe"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = []
+  }
+
+answerYes6 :: Answer
+answerYes6 =
+  Answer
+  { _answerUuid = fromJust $ U.fromString "16f20d73-b335-47d8-8d35-157e8c3cd009"
+  , _answerLabel = "Yes"
+  , _answerAdvice = Just "Short advice"
+  , _answerFollowUps = [followUpQuestion4]
   }
 
 answerMaybe :: Answer
@@ -111,7 +129,7 @@ followUpQuestion1 =
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "First Follow-Up Question"
   , _questionText = "Maybe there will be some description"
-  , _questionAnswers = Just [answerNo3, answerYes3]
+  , _questionAnswers = Just [answerNoFuq1, answerYesFuq1]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
@@ -139,7 +157,7 @@ followUpQuestion2 =
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Second Follow-Up Question"
   , _questionText = "Again just follow"
-  , _questionAnswers = Just [answerNo4, answerYes4]
+  , _questionAnswers = Just [answerNoFuq2, answerYesFuq2]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
@@ -153,7 +171,7 @@ followUpQuestion2Changed =
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "EDITED: Second Follow-Up Question"
   , _questionText = "EDITED: Again just follow"
-  , _questionAnswers = Just [answerYes4, answerNo4]
+  , _questionAnswers = Just [answerYesFuq2, answerNoFuq2]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
@@ -166,6 +184,74 @@ followUpQuestion3 =
   , _questionShortUuid = Just "followUpQuestion3"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Third Follow-Up Question"
+  , _questionText = "Again and again just follow"
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+ait_fuq4 :: AnswerItemTemplate
+ait_fuq4 =
+  AnswerItemTemplate
+  { _answerItemTemplateTitle = "fup 4 template title"
+  , _answerItemTemplateQuestions = [followUpQuestion4_question1, followUpQuestion4_question2]
+  }
+
+followUpQuestion4 :: Question
+followUpQuestion4 =
+  Question
+  { _questionUuid = fromJust $ U.fromString "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
+  , _questionShortUuid = Just "followUpQuestion4"
+  , _questionQType = QuestionTypeList
+  , _questionTitle = "Fourth Follow-Up Question"
+  , _questionText = "Again and again just follow"
+  , _questionAnswers = Nothing
+  , _questionAnswerItemTemplate = Just ait_fuq4
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+followUpQuestion4Changed :: Question
+followUpQuestion4Changed =
+  Question
+  { _questionUuid = followUpQuestion4 ^. uuid
+  , _questionShortUuid = Just "followUpQuestion4Changed"
+  , _questionQType = QuestionTypeList
+  , _questionTitle = "EDITED: Third Follow-Up Question"
+  , _questionText = "EDITED: Again and again just follow"
+  , _questionAnswers = Nothing
+  , _questionAnswerItemTemplate =
+      Just
+        AnswerItemTemplate
+        { _answerItemTemplateTitle = "EDITED: fup 4 template title"
+        , _answerItemTemplateQuestions = [followUpQuestion4_question2, followUpQuestion4_question1]
+        }
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+followUpQuestion4_question1 :: Question
+followUpQuestion4_question1 =
+  Question
+  { _questionUuid = fromJust $ U.fromString "e5a3e1b2-077a-405f-b35c-3bffded63140"
+  , _questionShortUuid = Just "followUpQuestion4_question1"
+  , _questionQType = QuestionTypeOptions
+  , _questionTitle = "Sub question 1 of Follow-Up Question 4"
+  , _questionText = "Again and again just follow"
+  , _questionAnswers = Just []
+  , _questionAnswerItemTemplate = Nothing
+  , _questionReferences = []
+  , _questionExperts = []
+  }
+
+followUpQuestion4_question2 :: Question
+followUpQuestion4_question2 =
+  Question
+  { _questionUuid = fromJust $ U.fromString "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
+  , _questionShortUuid = Just "followUpQuestion4_question2"
+  , _questionQType = QuestionTypeOptions
+  , _questionTitle = "Sub question 2 of Follow-Up Question 4"
   , _questionText = "Again and again just follow"
   , _questionAnswers = Just []
   , _questionAnswerItemTemplate = Nothing
