@@ -20,6 +20,8 @@ The application is currently deployed on a server provided by FIT CTU. Here are 
 - **Server:** https://api.dsw.fairdata.solutions
 - **Client:** https://dsw.fairdata.solutions
 
+## API Docs
+https://dsw.docs.apiary.io/
 
 ## How to contribute?
 
