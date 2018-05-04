@@ -1,7 +1,9 @@
 module Api.Handler.Common where
 
 import Control.Lens ((^.))
+import Control.Monad.Logger
 import Control.Monad.Reader
+import Control.Monad.Trans.Class (lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import Data.ByteString
 import Data.Maybe
@@ -124,5 +126,6 @@ notFoundA = do
   if requestMethod request == methodOptions
     then status ok200
     else do
+      lift $ $(logInfo) "Request does not match any route"
       status notFound404
       json $ object ["status" .= 404, "error" .= "Not Found"]

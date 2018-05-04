@@ -20,6 +20,9 @@ import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.Applicator
 
+createKnowledgeModel :: [Event] -> Either AppError KnowledgeModel
+createKnowledgeModel events = runApplicator Nothing events
+
 recompileKnowledgeModelWithEvents :: Context -> String -> [Event] -> IO (Either AppError KnowledgeModel)
 recompileKnowledgeModelWithEvents context branchUuid eventsForBranchUuid = do
   let eitherNewKM = runApplicator Nothing eventsForBranchUuid

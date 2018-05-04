@@ -25,6 +25,7 @@ import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
+import Api.Handler.Questionnaire.QuestionnaireHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
@@ -123,6 +124,14 @@ createEndpoints context
    --------------------
   post "/import" importA
   get "/export/:pkgId" exportA
+   --------------------
+   -- QUESTIONNAIRES
+   --------------------
+  get "/questionnaires" getQuestionnairesA
+  post "/questionnaires" postQuestionnairesA
+  get "/questionnaires/:qtnUuid" getQuestionnaireA
+  put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
+  delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
    --------------------
    -- ERROR
    --------------------

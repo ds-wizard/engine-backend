@@ -8,6 +8,8 @@ import qualified Database.Migration.Migrator.MigratorMigration
 import qualified
        Database.Migration.Organization.OrganizationMigration as ORG
 import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Questionnaire.QuestionnaireMigration as QTN
 import qualified Database.Migration.User.UserMigration as UM
 import Model.Context.AppContext
 
@@ -18,4 +20,5 @@ runMigration appContext = do
   PKG.runMigration appContext
   BM.runMigration appContext
   MM.runMigration appContext
+  QTN.runMigration appContext
   $(logInfo) "MIGRATION: ended"

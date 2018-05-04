@@ -32,3 +32,15 @@ instance ToJSON PackageDTO where
       , "description" .= _pkgdtoDescription
       , "parentPackageId" .= _pkgdtoParentPackageId
       ]
+
+instance FromJSON PackageDTO where
+  parseJSON (Object o) = do
+    _pkgdtoId <- o .: "id"
+    _pkgdtoName <- o .: "name"
+    _pkgdtoGroupId <- o .: "groupId"
+    _pkgdtoArtifactId <- o .: "artifactId"
+    _pkgdtoVersion <- o .: "version"
+    _pkgdtoDescription <- o .: "description"
+    _pkgdtoParentPackageId <- o .: "parentPackageId"
+    return PackageDTO {..}
+  parseJSON _ = mzero

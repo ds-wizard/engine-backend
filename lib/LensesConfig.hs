@@ -5,6 +5,9 @@ import Control.Lens (makeFields)
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Api.Resource.Questionnaire.QuestionnaireDTO
+import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
@@ -18,6 +21,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Questionnaire.Questionnaire
 
 -- -------------------------------------
 -- Model
@@ -113,6 +117,9 @@ makeFields ''Expert
 
 makeFields ''Reference
 
+-- Model / Questionnaire
+makeFields ''Questionnaire
+
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
@@ -184,3 +191,10 @@ makeFields ''AnswerItemTemplatePlainWithIdsDTO
 makeFields ''ExpertDTO
 
 makeFields ''ReferenceDTO
+
+-- Model / QuestionnaireDTO
+makeFields ''QuestionnaireCreateDTO
+
+makeFields ''QuestionnaireDTO
+
+makeFields ''QuestionnaireDetailDTO

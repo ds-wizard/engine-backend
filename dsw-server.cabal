@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 762209caf7b47ef4dcdd4fe8822128c4e831588e75fa8eb2331a4c0ddb60017b
+-- hash: 6d8d31b36e13ddf8046174e97a7734dc17f1da05f71bbb50a68a3f3ca7076cc7
 
 name:           dsw-server
 version:        1.0.0
@@ -78,6 +78,7 @@ library
       Api.Handler.Migrator.MigratorHandler
       Api.Handler.Organization.OrganizationHandler
       Api.Handler.Package.PackageHandler
+      Api.Handler.Questionnaire.QuestionnaireHandler
       Api.Handler.Token.TokenHandler
       Api.Handler.User.UserHandler
       Api.Handler.Version.VersionHandler
@@ -101,6 +102,9 @@ library
       Api.Resource.Package.PackageDTO
       Api.Resource.Package.PackageSimpleDTO
       Api.Resource.Package.PackageWithEventsDTO
+      Api.Resource.Questionnaire.QuestionnaireCreateDTO
+      Api.Resource.Questionnaire.QuestionnaireDetailDTO
+      Api.Resource.Questionnaire.QuestionnaireDTO
       Api.Resource.Token.TokenCreateDTO
       Api.Resource.Token.TokenDTO
       Api.Resource.User.UserCreateDTO
@@ -137,6 +141,7 @@ library
       Database.BSON.Organization.Organization
       Database.BSON.Package.Package
       Database.BSON.Package.PackageWithEvents
+      Database.BSON.Questionnaire.Questionnaire
       Database.BSON.User.User
       Database.Connection
       Database.DAO.ActionKey.ActionKeyDAO
@@ -147,6 +152,7 @@ library
       Database.DAO.Migrator.MigratorDAO
       Database.DAO.Organization.OrganizationDAO
       Database.DAO.Package.PackageDAO
+      Database.DAO.Questionnaire.QuestionnaireDAO
       Database.DAO.User.UserDAO
       Database.Migration.Branch.BranchMigration
       Database.Migration.Branch.Data.Event.Event
@@ -162,6 +168,7 @@ library
       Database.Migration.Organization.OrganizationMigration
       Database.Migration.Package.Data.Package
       Database.Migration.Package.PackageMigration
+      Database.Migration.Questionnaire.QuestionnaireMigration
       Database.Migration.User.UserMigration
       LensesConfig
       Model.ActionKey.ActionKey
@@ -194,6 +201,7 @@ library
       Model.Migrator.MigratorState
       Model.Organization.Organization
       Model.Package.Package
+      Model.Questionnaire.Questionnaire
       Model.User.User
       Paths_src
       Service.ActionKey.ActionKeyService
@@ -218,6 +226,8 @@ library
       Service.Organization.OrganizationService
       Service.Package.PackageMapper
       Service.Package.PackageService
+      Service.Questionnaire.QuestionnaireMapper
+      Service.Questionnaire.QuestionnaireService
       Service.Token.TokenMapper
       Service.Token.TokenService
       Service.User.UserMapper

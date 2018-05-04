@@ -73,7 +73,7 @@ userAPI appContext =
                       , "KM_UPGRADE_PERM"
                       , "KM_PUBLISH_PERM"
                       , "PM_PERM"
-                      , "WIZ_PERM"
+                      , "QTN_PERM"
                       , "DMP_PERM"
                       ]
                   , _udtoIsActive = True
@@ -126,7 +126,7 @@ userAPI appContext =
                     , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
-                    , "WIZ_PERM"
+                    , "QTN_PERM"
                     , "DMP_PERM"
                     ]
                 , _udtoIsActive = False
@@ -210,7 +210,7 @@ userAPI appContext =
                     , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
-                    , "WIZ_PERM"
+                    , "QTN_PERM"
                     , "DMP_PERM"
                     ]
                 , _udtoIsActive = True
@@ -252,7 +252,7 @@ userAPI appContext =
                     , "KM_UPGRADE_PERM"
                     , "KM_PUBLISH_PERM"
                     , "PM_PERM"
-                    , "WIZ_PERM"
+                    , "QTN_PERM"
                     , "DMP_PERM"
                     ]
                 , _udtoIsActive = True

@@ -3,6 +3,7 @@ module Database.BSON.Common where
 import Control.Lens
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
+import Data.Map (Map, fromList, toList)
 import Data.Maybe (fromMaybe)
 import Data.UUID
 
@@ -147,3 +148,20 @@ instance FromBSON AppError where
       "MigratorError" -> do
         message <- BSON.lookup "message" doc
         return $ MigratorError message
+
+instance ToBSON (String, String) where
+  toBSON (key, value) = ["key" BSON.=: key, "value" BSON.=: value]
+
+instance FromBSON (String, String) where
+  fromBSON doc = do
+    key <- BSON.lookup "key" doc
+    value <- BSON.lookup "value" doc
+    return (key, value)
+
+instance ToBSON (Map String String) where
+  toBSON m = ["map" BSON.=: toList m]
+
+instance FromBSON (Map String String) where
+  fromBSON doc = do
+    mList <- BSON.lookup "map" doc
+    return $ fromList mList
