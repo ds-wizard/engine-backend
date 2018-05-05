@@ -14,6 +14,9 @@ data AppConfigDatabase = AppConfigDatabase
   { _appConfigDatabaseHost :: String
   , _appConfigDatabaseDatabaseName :: String
   , _appConfigDatabasePort :: Integer
+  , _appConfigDatabaseAuthEnabled :: Bool
+  , _appConfigDatabaseUsername :: String
+  , _appConfigDatabasePassword :: String
   }
 
 data AppConfigJwt = AppConfigJwt

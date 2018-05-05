@@ -44,9 +44,18 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       host <- get configParser "Database" "host"
       dbname <- get configParser "Database" "dbname"
       port <- get configParser "Database" "port"
+      authEnabled <- get configParser "Database" "authenabled"
+      username <- get configParser "Database" "port"
+      password <- get configParser "Database" "port"
       return
         AppConfigDatabase
-        {_appConfigDatabaseHost = host, _appConfigDatabaseDatabaseName = dbname, _appConfigDatabasePort = port}
+        { _appConfigDatabaseHost = host
+        , _appConfigDatabaseDatabaseName = dbname
+        , _appConfigDatabasePort = port
+        , _appConfigDatabaseAuthEnabled = authEnabled
+        , _appConfigDatabaseUsername = username
+        , _appConfigDatabasePassword = password
+        }
     loadAppConfigJwt configParser = do
       jwtSecret <- get configParser "JWT" "secret"
       return AppConfigJwt {_appConfigJwtSecret = jwtSecret}

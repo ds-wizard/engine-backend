@@ -2,7 +2,7 @@ module Database.Connection where
 
 import Control.Lens ((^.))
 import Data.Text
-import Database.Persist.MongoDB (withMongoDBConn)
+import Database.Persist.MongoDB
 import Network
 
 import Database.Migration.Migration
@@ -14,4 +14,7 @@ createDBConn dswConfig afterSuccess =
       dbHost = appConfigDatabase ^. host
       dbPort = PortNumber (fromInteger (appConfigDatabase ^. port) :: PortNumber) :: PortID
       dbName = pack (appConfigDatabase ^. databaseName)
-  in withMongoDBConn dbName dbHost dbPort Nothing 1 afterSuccess
+      dbCred = Just $ MongoAuth (pack $ appConfigDatabase ^. username) (pack $ appConfigDatabase ^. password)
+  in if appConfigDatabase ^. authEnabled
+       then withMongoDBConn dbName dbHost dbPort dbCred 1 afterSuccess
+       else withMongoDBConn dbName dbHost dbPort Nothing 1 afterSuccess
