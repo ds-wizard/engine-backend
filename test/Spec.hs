@@ -1,5 +1,6 @@
 module Main where
 
+import Control.Lens ((^.))
 import Data.Aeson (Value(..), (.=), object)
 import Network.Wai (Application)
 import Test.Hspec
@@ -11,6 +12,7 @@ import qualified Web.Scotty as S
 import Common.ConfigLoader
 import Common.Context
 import Database.Connection
+import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext
 
@@ -47,15 +49,14 @@ prepareWebApp runCallback = do
       print errorDate
     Right dswConfig -> do
       putStrLn "CONFIG: loaded"
+      putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
-        let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
         let appContext =
               AppContext
-              { _appContextEnvironment = Test
-              , _appContextConfig = dswConfig
+              { _appContextConfig = dswConfig
               , _appContextPool = dbPool
-              , _appContextOldContext = context
+              , _appContextOldContext = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
               }
         runCallback appContext
 
@@ -73,17 +74,16 @@ main =
            organizationServiceSpec
            branchServiceSpec
            packageServiceSpec
-         before (resetDB appContext) $
-           describe "INTEGRATION TESTING" $ do
-             describe "Service tests" $ branchServiceIntegrationSpec appContext
-             describe "API Tests" $ do
-               infoAPI appContext
-               tokenAPI appContext
-               organizationAPI appContext
-               userAPI appContext
-               branchAPI appContext
-               knowledgeModelAPI appContext
-               eventAPI appContext
-               versionAPI appContext
-               packageAPI appContext
-               migratorAPI appContext)
+         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
+           describe "Service tests" $ branchServiceIntegrationSpec appContext
+           describe "API Tests" $ do
+             infoAPI appContext
+             tokenAPI appContext
+             organizationAPI appContext
+             userAPI appContext
+             branchAPI appContext
+             knowledgeModelAPI appContext
+             eventAPI appContext
+             versionAPI appContext
+             packageAPI appContext
+             migratorAPI appContext)

@@ -740,86 +740,86 @@ d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
-a_km1_ch1_q2_eDarth :: AddExpertEvent
-a_km1_ch1_q2_eDarth =
+a_km1_ch1_q2_eAlbert :: AddExpertEvent
+a_km1_ch1_q2_eAlbert =
   AddExpertEvent
   { _addExpertEventUuid = fromJust $ U.fromString "ec76054f-d059-4a5f-81c9-1817004a913c"
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter1 ^. uuid
   , _addExpertEventQuestionUuid = question2 ^. uuid
-  , _addExpertEventExpertUuid = expertDarth ^. uuid
-  , _addExpertEventName = expertDarth ^. name
-  , _addExpertEventEmail = expertDarth ^. email
+  , _addExpertEventExpertUuid = expertAlbert ^. uuid
+  , _addExpertEventName = expertAlbert ^. name
+  , _addExpertEventEmail = expertAlbert ^. email
   }
 
-a_km1_ch2_q6_eDarth :: AddExpertEvent
-a_km1_ch2_q6_eDarth =
+a_km1_ch2_q6_eAlbert :: AddExpertEvent
+a_km1_ch2_q6_eAlbert =
   AddExpertEvent
   { _addExpertEventUuid = fromJust $ U.fromString "eb6bb073-ecba-4cd0-91a3-ff31d374601f"
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter2 ^. uuid
   , _addExpertEventQuestionUuid = question6 ^. uuid
-  , _addExpertEventExpertUuid = expertDarth ^. uuid
-  , _addExpertEventName = expertDarth ^. name
-  , _addExpertEventEmail = expertDarth ^. email
+  , _addExpertEventExpertUuid = expertAlbert ^. uuid
+  , _addExpertEventName = expertAlbert ^. name
+  , _addExpertEventEmail = expertAlbert ^. email
   }
 
-a_km1_ch1_q2_eLuke :: AddExpertEvent
-a_km1_ch1_q2_eLuke =
+a_km1_ch1_q2_eNikola :: AddExpertEvent
+a_km1_ch1_q2_eNikola =
   AddExpertEvent
   { _addExpertEventUuid = fromJust $ U.fromString "40bb45bd-4195-4430-ac8f-16ac5a61ece0"
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter1 ^. uuid
   , _addExpertEventQuestionUuid = question2 ^. uuid
-  , _addExpertEventExpertUuid = expertLuke ^. uuid
-  , _addExpertEventName = expertLuke ^. name
-  , _addExpertEventEmail = expertLuke ^. email
+  , _addExpertEventExpertUuid = expertNikola ^. uuid
+  , _addExpertEventName = expertNikola ^. name
+  , _addExpertEventEmail = expertNikola ^. email
   }
 
-a_km1_ch2_q6_eLuke :: AddExpertEvent
-a_km1_ch2_q6_eLuke =
+a_km1_ch2_q6_eNikola :: AddExpertEvent
+a_km1_ch2_q6_eNikola =
   AddExpertEvent
   { _addExpertEventUuid = fromJust $ U.fromString "53653d05-6d5a-4b76-bbc6-15ca8314ad69"
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter2 ^. uuid
   , _addExpertEventQuestionUuid = question6 ^. uuid
-  , _addExpertEventExpertUuid = expertLuke ^. uuid
-  , _addExpertEventName = expertLuke ^. name
-  , _addExpertEventEmail = expertLuke ^. email
+  , _addExpertEventExpertUuid = expertNikola ^. uuid
+  , _addExpertEventName = expertNikola ^. name
+  , _addExpertEventEmail = expertNikola ^. email
   }
 
-a_km1_ch1_q2_eJohn :: AddExpertEvent
-a_km1_ch1_q2_eJohn =
+a_km1_ch1_q2_eIsaac :: AddExpertEvent
+a_km1_ch1_q2_eIsaac =
   AddExpertEvent
   { _addExpertEventUuid = fromJust $ U.fromString "2d5eedae-1782-44ac-9d4e-3db769161448"
   , _addExpertEventKmUuid = km1 ^. uuid
   , _addExpertEventChapterUuid = chapter1 ^. uuid
   , _addExpertEventQuestionUuid = question2 ^. uuid
-  , _addExpertEventExpertUuid = expertJohn ^. uuid
-  , _addExpertEventName = expertJohn ^. name
-  , _addExpertEventEmail = expertJohn ^. email
+  , _addExpertEventExpertUuid = expertIsaac ^. uuid
+  , _addExpertEventName = expertIsaac ^. name
+  , _addExpertEventEmail = expertIsaac ^. email
   }
 
-e_km1_ch1_q2_eDarth :: EditExpertEvent
-e_km1_ch1_q2_eDarth =
+e_km1_ch1_q2_eAlbert :: EditExpertEvent
+e_km1_ch1_q2_eAlbert =
   EditExpertEvent
   { _editExpertEventUuid = fromJust $ U.fromString "01686131-2423-4d97-a949-4fea2c9ce3b7"
   , _editExpertEventKmUuid = km1 ^. uuid
   , _editExpertEventChapterUuid = chapter1 ^. uuid
   , _editExpertEventQuestionUuid = question2 ^. uuid
-  , _editExpertEventExpertUuid = expertDarth ^. uuid
-  , _editExpertEventName = ChangedValue $ expertDarthChanged ^. name
-  , _editExpertEventEmail = ChangedValue $ expertDarthChanged ^. email
+  , _editExpertEventExpertUuid = expertAlbert ^. uuid
+  , _editExpertEventName = ChangedValue $ expertAlbertChanged ^. name
+  , _editExpertEventEmail = ChangedValue $ expertAlbertChanged ^. email
   }
 
-d_km1_ch1_q2_eLuke :: DeleteExpertEvent
-d_km1_ch1_q2_eLuke =
+d_km1_ch1_q2_eNikola :: DeleteExpertEvent
+d_km1_ch1_q2_eNikola =
   DeleteExpertEvent
   { _deleteExpertEventUuid = fromJust $ U.fromString "f20bc988-6d44-4051-990d-d16b24f369ac"
   , _deleteExpertEventKmUuid = km1 ^. uuid
   , _deleteExpertEventChapterUuid = chapter1 ^. uuid
   , _deleteExpertEventQuestionUuid = question2 ^. uuid
-  , _deleteExpertEventExpertUuid = expertLuke ^. uuid
+  , _deleteExpertEventExpertUuid = expertNikola ^. uuid
   }
 
 -- ----------------------------------------------------------------------------

@@ -114,11 +114,11 @@ knowledgeModelAccessorsSpec =
       computed `shouldBe` expected
     ---------------------------------------------
     describe "getAllExperts" $ it "Successfully listed" $ getAllExperts FKM.km1 `shouldBe`
-      [FE.expertDarth, FE.expertLuke]
-    describe "getExpertByUuid" $ it "Successfully listed" $ getExpertByUuid FKM.km1 (FE.expertDarth ^. uuid) `shouldBe`
-      Just FE.expertDarth
+      [FE.expertAlbert, FE.expertNikola]
+    describe "getExpertByUuid" $ it "Successfully listed" $ getExpertByUuid FKM.km1 (FE.expertAlbert ^. uuid) `shouldBe`
+      Just FE.expertAlbert
     describe "isThereAnyExpertWithGivenUuid" $ do
-      it "Returns True if exists" $ isThereAnyExpertWithGivenUuid FKM.km1 (FE.expertDarth ^. uuid) `shouldBe` True
+      it "Returns True if exists" $ isThereAnyExpertWithGivenUuid FKM.km1 (FE.expertAlbert ^. uuid) `shouldBe` True
       it "Returns False if not exists" $
         isThereAnyExpertWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
         False

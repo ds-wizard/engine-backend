@@ -1,3 +1,7 @@
+[Environment]
+# Production / Staging / Development / Test
+env = Production
+
 [Client]
 address = http://localhost:3001
 

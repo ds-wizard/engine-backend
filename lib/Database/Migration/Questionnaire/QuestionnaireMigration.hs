@@ -24,5 +24,5 @@ runMigration appContext = do
       dswConfig
       (fromJust (U.fromString "d3408c77-d0a0-4349-b93d-929249811d5d"))
       QuestionnaireCreateDTO
-      {_questionnaireCreateDTOName = "John", _questionnaireCreateDTOPackageId = "elixir.nl:core-nl:2.0.0"}
+      {_questionnaireCreateDTOName = "Isaac", _questionnaireCreateDTOPackageId = "elixir.nl:core-nl:2.0.0"}
   $(logInfo) "MIGRATION (Questionnaire/Questionnaire): ended"

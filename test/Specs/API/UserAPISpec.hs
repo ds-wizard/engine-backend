@@ -62,9 +62,9 @@ userAPI appContext =
           let expDto =
                 [ UserDTO
                   { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                  , _udtoName = "Darth"
-                  , _udtoSurname = "Vader"
-                  , _udtoEmail = "darth.vader@deathstar.com"
+                  , _udtoName = "Albert"
+                  , _udtoSurname = "Einstein"
+                  , _udtoEmail = "albert.einstein@example.com"
                   , _udtoRole = "ADMIN"
                   , _udtoPermissions =
                       [ "UM_PERM"
@@ -158,16 +158,16 @@ userAPI appContext =
           liftIO $ (actionKey ^. userId) `shouldBe` (userFromDb ^. uUuid)
           liftIO $ (actionKey ^. aType) `shouldBe` RegistrationActionKey
           liftIO $ Prelude.length (actionKey ^. hash) > 0 `shouldBe` True
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Darth" } |] "surname"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Albert" } |] "surname"
         it "HTTP 400 BAD REQUEST if email is already registered" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 UserCreateDTO
-                { _ucdtoName = "Darth"
-                , _ucdtoSurname = "Vader"
-                , _ucdtoEmail = "darth.vader@deathstar.com"
+                { _ucdtoName = "Albert"
+                , _ucdtoSurname = "Einstein"
+                , _ucdtoEmail = "albert.einstein@example.com"
                 , _ucdtoRole = Just "ADMIN"
                 , _ucdtoPassword = "password"
                 }
@@ -199,9 +199,9 @@ userAPI appContext =
           let expDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _udtoName = "Darth"
-                , _udtoSurname = "Vader"
-                , _udtoEmail = "darth.vader@deathstar.com"
+                , _udtoName = "Albert"
+                , _udtoSurname = "Einstein"
+                , _udtoEmail = "albert.einstein@example.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions =
                     [ "UM_PERM"
@@ -241,9 +241,9 @@ userAPI appContext =
           let expDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _udtoName = "Darth"
-                , _udtoSurname = "Vader"
-                , _udtoEmail = "darth.vader@deathstar.com"
+                , _udtoName = "Albert"
+                , _udtoSurname = "Einstein"
+                , _udtoEmail = "albert.einstein@example.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions =
                     [ "UM_PERM"
@@ -280,7 +280,7 @@ userAPI appContext =
           let reqDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _udtoName = "EDITED: John"
+                , _udtoName = "EDITED: Isaac"
                 , _udtoSurname = "EDITED: Doe"
                 , _udtoEmail = "EDITED: john.doe@example.com"
                 , _udtoRole = "ADMIN"
@@ -318,7 +318,7 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                { _ucdtoName = "John"
+                { _ucdtoName = "Isaac"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
                 , _ucdtoRole = Just "ADMIN"
@@ -328,7 +328,7 @@ userAPI appContext =
           let reqDto =
                 UserDTO
                 { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _udtoName = "EDITED: John"
+                , _udtoName = "EDITED: Isaac"
                 , _udtoSurname = "EDITED: Doe"
                 , _udtoEmail = "john.doe@example.com"
                 , _udtoRole = "ADMIN"
@@ -360,9 +360,9 @@ userAPI appContext =
         let reqDto =
               UserDTO
               { _udtoUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-              , _udtoName = "EDITED: John"
+              , _udtoName = "EDITED: Isaac"
               , _udtoSurname = "EDITED: Doe"
-              , _udtoEmail = "darth.vader@deathstar.com"
+              , _udtoEmail = "albert.einstein@example.com"
               , _udtoRole = "ADMIN"
               , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
               , _udtoIsActive = True
@@ -400,7 +400,7 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                { _ucdtoName = "John"
+                { _ucdtoName = "Isaac"
                 , _ucdtoSurname = "Doe"
                 , _ucdtoEmail = "john.doe@example.com"
                 , _ucdtoRole = Just "ADMIN"
@@ -410,9 +410,9 @@ userAPI appContext =
           let reqDto =
                 UserDTO
                 { _udtoUuid = johnUuid
-                , _udtoName = "EDITED: John"
+                , _udtoName = "EDITED: Isaac"
                 , _udtoSurname = "EDITED: Doe"
-                , _udtoEmail = "darth.vader@deathstar.com"
+                , _udtoEmail = "albert.einstein@example.com"
                 , _udtoRole = "ADMIN"
                 , _udtoPermissions = ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM"]
                 , _udtoIsActive = True

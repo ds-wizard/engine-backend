@@ -41,7 +41,7 @@ tokenAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = TokenCreateDTO {_tcdtoEmail = "darth.vader@deathstar.com", _tcdtoPassword = "password"}
+          let reqDto = TokenCreateDTO {_tcdtoEmail = "albert.einstein@example.com", _tcdtoPassword = "password"}
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 201
@@ -58,12 +58,12 @@ tokenAPI appContext =
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { email: "darth.vader@deathstar.com" } |] "password"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { email: "albert.einstein@example.com" } |] "password"
         it "HTTP 400 BAD REQUEST when email or password are not valid" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = TokenCreateDTO {_tcdtoEmail = "darth.vader@deathstar.com2", _tcdtoPassword = "password"}
+          let reqDto = TokenCreateDTO {_tcdtoEmail = "albert.einstein@example.com2", _tcdtoPassword = "password"}
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 400

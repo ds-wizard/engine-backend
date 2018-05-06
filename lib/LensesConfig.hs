@@ -30,6 +30,8 @@ import Model.Questionnaire.Questionnaire
 makeFields ''ActionKey
 
 -- Model / Config
+makeFields ''AppConfigEnvironment
+
 makeFields ''AppConfigClient
 
 makeFields ''AppConfigWeb

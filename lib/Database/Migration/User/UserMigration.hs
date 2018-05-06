@@ -30,14 +30,14 @@ insertAdmin context dswConfig = do
       dswConfig
       (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
       UserCreateDTO
-      { _ucdtoName = "Darth"
-      , _ucdtoSurname = "Vader"
-      , _ucdtoEmail = "darth.vader@deathstar.com"
+      { _ucdtoName = "Albert"
+      , _ucdtoSurname = "Einstein"
+      , _ucdtoEmail = "albert.einstein@example.com"
       , _ucdtoRole = Just "ADMIN"
       , _ucdtoPassword = "password"
       }
       True
-  eitherUser <- findUserByEmail context "darth.vader@deathstar.com"
+  eitherUser <- findUserByEmail context "albert.einstein@example.com"
   let (Right user) = eitherUser
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser
@@ -49,14 +49,14 @@ insertDataSteward context dswConfig = do
       dswConfig
       (fromJust (U.fromString "30d48cf4-8c8a-496f-bafe-585bd238f798"))
       UserCreateDTO
-      { _ucdtoName = "Luke"
-      , _ucdtoSurname = "Skywalker"
-      , _ucdtoEmail = "luke.skywalker@deathstar.com"
+      { _ucdtoName = "Nikola"
+      , _ucdtoSurname = "Tesla"
+      , _ucdtoEmail = "nikola.tesla@example.com"
       , _ucdtoRole = Just "DATASTEWARD"
       , _ucdtoPassword = "password"
       }
       True
-  eitherUser <- findUserByEmail context "luke.skywalker@deathstar.com"
+  eitherUser <- findUserByEmail context "nikola.tesla@example.com"
   let (Right user) = eitherUser
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser
@@ -68,14 +68,14 @@ insertResearcher context dswConfig = do
       dswConfig
       (fromJust (U.fromString "e1c58e52-0824-4526-8ebe-ec38eec67030"))
       UserCreateDTO
-      { _ucdtoName = "John"
-      , _ucdtoSurname = "Snow"
-      , _ucdtoEmail = "john.snow@gof.com"
+      { _ucdtoName = "Isaac"
+      , _ucdtoSurname = "Newton"
+      , _ucdtoEmail = "isaac.newton@example.com"
       , _ucdtoRole = Just "RESEARCHER"
       , _ucdtoPassword = "password"
       }
       True
-  eitherUser <- findUserByEmail context "john.snow@gof.com"
+  eitherUser <- findUserByEmail context "isaac.newton@example.com"
   let (Right user) = eitherUser
   let updatedUser = user & uIsActive .~ True
   updateUserById context updatedUser

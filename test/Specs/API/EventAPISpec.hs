@@ -56,8 +56,8 @@ eventAPI appContext = do
         , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
-        , AddExpertEvent' a_km1_ch1_q2_eDarth
-        , AddExpertEvent' a_km1_ch1_q2_eLuke
+        , AddExpertEvent' a_km1_ch1_q2_eAlbert
+        , AddExpertEvent' a_km1_ch1_q2_eNikola
         , AddReferenceEvent' a_km1_ch1_q2_rCh1
         , AddReferenceEvent' a_km1_ch1_q2_rCh2
         , AddChapterEvent' a_km1_ch2

@@ -10,15 +10,8 @@ import Database.Persist.MongoDB (ConnectionPool)
 import Common.Context
 import Model.Config.DSWConfig
 
-data Environment
-  = Development
-  | Production
-  | Test
-  deriving (Eq, Read, Show)
-
 data AppContext = AppContext
-  { _appContextEnvironment :: Environment
-  , _appContextConfig :: DSWConfig
+  { _appContextConfig :: DSWConfig
   , _appContextPool :: ConnectionPool
   , _appContextOldContext :: Context
   }

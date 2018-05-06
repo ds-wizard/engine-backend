@@ -16,6 +16,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
     buildInfoConfigParser <- join $ liftIO $ readfile emptyCP buildInfoFile
+    environment <- loadAppConfigEnvironment appConfigParser
     clientConfig <- loadAppConfigClient appConfigParser
     webConfig <- loadAppConfigWeb appConfigParser
     databaseConfig <- loadAppConfigDatabase appConfigParser
@@ -25,7 +26,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSWConfig
-      { _dSWConfigClientConfig = clientConfig
+      { _dSWConfigEnvironment = environment
+      , _dSWConfigClientConfig = clientConfig
       , _dSWConfigWebConfig = webConfig
       , _dSWConfigDatabaseConfig = databaseConfig
       , _dSWConfigJwtConfig = jwtConfig
@@ -34,6 +36,9 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _dSWConfigBuildInfo = buildInfo
       }
   where
+    loadAppConfigEnvironment configParser = do
+      env <- get configParser "Environment" "env"
+      return AppConfigEnvironment {_appConfigEnvironmentEnv = env}
     loadAppConfigClient configParser = do
       address <- get configParser "Client" "address"
       return AppConfigClient {_appConfigClientAddress = address}

@@ -167,20 +167,20 @@ applicatorSpec =
    -- ---------------
     describe "Apply:  Expert Events" $ do
       it "Apply:  AddExpertEvent" $ do
-        let (Right computed) = runApplicator (Just km1) [AddExpertEvent' a_km1_ch1_q2_eJohn]
-        let question2WithAddedExpert = question2 & experts .~ [expertDarth, expertLuke, expertJohn]
+        let (Right computed) = runApplicator (Just km1) [AddExpertEvent' a_km1_ch1_q2_eIsaac]
+        let question2WithAddedExpert = question2 & experts .~ [expertAlbert, expertNikola, expertIsaac]
         let chapter1WithAddedExpert = chapter1 & questions .~ [question1, question2WithAddedExpert]
         let expected = km1 & chapters .~ [chapter1WithAddedExpert, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditExpertEvent" $ do
-        let (Right computed) = runApplicator (Just km1) [EditExpertEvent' e_km1_ch1_q2_eDarth]
-        let question2WithChangedExpert = question2 & experts .~ [expertDarthChanged, expertLuke]
+        let (Right computed) = runApplicator (Just km1) [EditExpertEvent' e_km1_ch1_q2_eAlbert]
+        let question2WithChangedExpert = question2 & experts .~ [expertAlbertChanged, expertNikola]
         let chapter1WithChangedExpert = chapter1 & questions .~ [question1, question2WithChangedExpert]
         let expected = km1 & chapters .~ [chapter1WithChangedExpert, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteExpertEvent" $ do
-        let (Right computed) = runApplicator (Just km1) [DeleteExpertEvent' d_km1_ch1_q2_eLuke]
-        let question2WithDeletedExpert = question2 & experts .~ [expertDarth]
+        let (Right computed) = runApplicator (Just km1) [DeleteExpertEvent' d_km1_ch1_q2_eNikola]
+        let question2WithDeletedExpert = question2 & experts .~ [expertAlbert]
         let chapter1WithDeletedExpert = chapter1 & questions .~ [question1, question2WithDeletedExpert]
         let expected = km1 & chapters .~ [chapter1WithDeletedExpert, chapter2]
         computed `shouldBe` expected
@@ -220,8 +220,8 @@ applicatorSpec =
               , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
               , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
               , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
-              , AddExpertEvent' a_km1_ch1_q2_eDarth
-              , AddExpertEvent' a_km1_ch1_q2_eLuke
+              , AddExpertEvent' a_km1_ch1_q2_eAlbert
+              , AddExpertEvent' a_km1_ch1_q2_eNikola
               , AddReferenceEvent' a_km1_ch1_q2_rCh1
               , AddReferenceEvent' a_km1_ch1_q2_rCh2
               , AddChapterEvent' a_km1_ch2
@@ -238,8 +238,8 @@ applicatorSpec =
               , AddFollowUpQuestionEvent' a_km1_ch2_ansYes6_fuq4
               , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q1
               , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q2
-              , AddExpertEvent' a_km1_ch2_q6_eDarth
-              , AddExpertEvent' a_km1_ch2_q6_eLuke
+              , AddExpertEvent' a_km1_ch2_q6_eAlbert
+              , AddExpertEvent' a_km1_ch2_q6_eNikola
               , AddReferenceEvent' a_km1_ch2_q6_rCh1
               , AddReferenceEvent' a_km1_ch2_q6_rCh2
               ]

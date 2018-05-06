@@ -38,7 +38,7 @@ question2 =
   , _questionAnswers = Just [FA.answerNo1, FA.answerYes1]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = [FR.referenceCh1, FR.referenceCh2]
-  , _questionExperts = [FE.expertDarth, FE.expertLuke]
+  , _questionExperts = [FE.expertAlbert, FE.expertNikola]
   }
 
 question2WithChangeProperties :: Question
@@ -52,7 +52,7 @@ question2WithChangeProperties =
   , _questionAnswerItemTemplate = Nothing
   , _questionAnswers = Just [FA.answerYes1, FA.answerNo1]
   , _questionReferences = [FR.referenceCh2, FR.referenceCh1]
-  , _questionExperts = [FE.expertLuke, FE.expertDarth]
+  , _questionExperts = [FE.expertNikola, FE.expertAlbert]
   }
 
 question3 :: Question
@@ -201,7 +201,7 @@ question6 =
   , _questionAnswerItemTemplate = Nothing
   , _questionAnswers = Just [answerNo6, answerYes6]
   , _questionReferences = [FR.referenceCh1, FR.referenceCh2]
-  , _questionExperts = [FE.expertDarth, FE.expertLuke]
+  , _questionExperts = [FE.expertAlbert, FE.expertNikola]
   }
 
 question6WithChangeProperties :: Question
@@ -215,7 +215,7 @@ question6WithChangeProperties =
   , _questionAnswerItemTemplate = Nothing
   , _questionAnswers = Just [answerYes6, answerNo6]
   , _questionReferences = [FR.referenceCh2, FR.referenceCh1]
-  , _questionExperts = [FE.expertLuke, FE.expertDarth]
+  , _questionExperts = [FE.expertNikola, FE.expertAlbert]
   }
 
 question7 :: Question

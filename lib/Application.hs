@@ -6,6 +6,7 @@ import Control.Monad.Logger
 import Control.Monad.Reader (liftIO, runReaderT)
 import Control.Monad.Trans.Class (lift)
 import Data.Default (def)
+import Data.Text (pack)
 import Network.Wai.Handler.Warp
        (Settings, defaultSettings, setPort)
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
@@ -48,19 +49,23 @@ runServer =
         $(logErrorSH) errorDate
       Right dswConfig -> do
         $(logInfo) "CONFIG: loaded"
+        $(logInfo) $ "ENVIRONMENT: set to " `mappend` (pack . show $ dswConfig ^. environment . env)
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
           lift $ $(logInfo) "DATABASE: connected"
-          let context = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
           let serverPort = dswConfig ^. webConfig ^. port
           let appContext =
                 AppContext
-                { _appContextEnvironment = Development
-                , _appContextConfig = dswConfig
+                { _appContextConfig = dswConfig
                 , _appContextPool = dbPool
-                , _appContextOldContext = context
+                , _appContextOldContext = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
                 }
-          runMigration appContext
+          initDevelopmentDatabase appContext
           liftIO $ runApplication appContext
+
+initDevelopmentDatabase context =
+  case context ^. config . environment . env of
+    Development -> runMigration context
+    _ -> return ()
 
 runApplication :: AppContext -> IO ()
 runApplication context = do
@@ -73,9 +78,10 @@ getOptions context =
   def
   { settings = getSettings context
   , verbose =
-      case context ^. environment of
-        Development -> 1
+      case context ^. config . environment . env of
         Production -> 0
+        Staging -> 1
+        Development -> 1
         Test -> 0
   }
 

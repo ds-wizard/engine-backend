@@ -48,19 +48,17 @@ unauthorizedEndpoints =
   , (methodPost, mkRegex "^action-keys$")
   ]
 
-loggingM :: Environment -> Middleware
-loggingM Development = logStdoutDev
-loggingM Production = logStdout
-loggingM Test = id
-
--- createEndpoints :: ScottyT Error AppContextM ()
+-- loggingM :: Environment -> Middleware
+-- loggingM Development = logStdoutDev
+-- loggingM Production = logStdout
+-- loggingM Test = id
 createEndpoints :: AppContext -> ScottyT Text AppContextM ()
 createEndpoints context
    --------------------
    -- MIDDLEWARES
    --------------------
+  -- middleware (loggingM (context ^. environment))
  = do
-  middleware (loggingM (context ^. environment))
   middleware corsMiddleware
   middleware jsonMiddleware
   middleware (authMiddleware (context ^. config) unauthorizedEndpoints)

@@ -38,6 +38,13 @@ In `Role` section we can assign permissions to roles. These sets of permissions 
 
 ### Example
 ```
+[Environment]
+# Production / Staging / Development / Test
+env = Production
+
+[Client]
+address = http://app.dsw.fairdata.solutions
+
 [Web]
 port = 3000
 
@@ -45,9 +52,9 @@ port = 3000
 host = mongo
 dbname = dsw-server
 port = 27017
-
-[JWT]
-secret = secret-key
+authenabled = false
+username =
+password =
 
 [Role]
 defaultrole = DATASTEWARD

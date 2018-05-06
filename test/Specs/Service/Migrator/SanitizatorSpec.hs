@@ -125,13 +125,13 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
         let qAnswerIds = Just [answerYes1 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
-        let qExpertIds = [expertLuke ^. uuid]
+        let qExpertIds = [expertNikola ^. uuid]
         let edited_1_e_km1_ch1_q2 = e_km1_ch1_q2 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_e_km1_ch1_q2 = edited_1_e_km1_ch1_q2 & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_e_km1_ch1_q2 = edited_2_e_km1_ch1_q2 & expertIds .~ ChangedValue qExpertIds
@@ -143,7 +143,7 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
           -- Given:
        do
@@ -155,8 +155,8 @@ sanitizatorSpec =
               [referenceCh2 ^. uuid] ++
               [fromJust . U.fromString $ "bdbd95fd-8ea5-485d-9486-ef452b0a661e"] ++ [referenceCh1 ^. uuid]
         let qExpertIds =
-              [expertLuke ^. uuid] ++
-              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertDarth ^. uuid]
+              [expertNikola ^. uuid] ++
+              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertAlbert ^. uuid]
         let edited_1_e_km1_ch1_q2 = e_km1_ch1_q2 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_e_km1_ch1_q2 = edited_1_e_km1_ch1_q2 & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_e_km1_ch1_q2 = edited_2_e_km1_ch1_q2 & expertIds .~ ChangedValue qExpertIds
@@ -168,7 +168,7 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes1 ^. uuid, answerNo1 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       -- -------------------------------------------------------------
       it "QType - QuestionTypeList: Event - all KM uuids exists, no new added in event" $
         -- Given:
@@ -282,7 +282,7 @@ sanitizatorSpec =
        do
         let qAnswerIds = Just [answerYesFuq2 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
-        let qExpertIds = [expertLuke ^. uuid]
+        let qExpertIds = [expertNikola ^. uuid]
         let edited_1_event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
@@ -306,8 +306,8 @@ sanitizatorSpec =
               [referenceCh2 ^. uuid] ++
               [fromJust . U.fromString $ "bdbd95fd-8ea5-485d-9486-ef452b0a661e"] ++ [referenceCh1 ^. uuid]
         let qExpertIds =
-              [expertLuke ^. uuid] ++
-              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertDarth ^. uuid]
+              [expertNikola ^. uuid] ++
+              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertAlbert ^. uuid]
         let edited_1_event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
@@ -404,13 +404,13 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
         let qAnswerIds = Just [answerYes6 ^. uuid]
         let qReferenceIds = [referenceCh2 ^. uuid]
-        let qExpertIds = [expertLuke ^. uuid]
+        let qExpertIds = [expertNikola ^. uuid]
         let edited_1_event = e_km1_ch2_q4_ait1_q6 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
@@ -427,7 +427,7 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
@@ -439,8 +439,8 @@ sanitizatorSpec =
               [referenceCh2 ^. uuid] ++
               [fromJust . U.fromString $ "bdbd95fd-8ea5-485d-9486-ef452b0a661e"] ++ [referenceCh1 ^. uuid]
         let qExpertIds =
-              [expertLuke ^. uuid] ++
-              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertDarth ^. uuid]
+              [expertNikola ^. uuid] ++
+              [fromJust . U.fromString $ "e47df67f-7e6d-4e0f-950d-5035a48087a0"] ++ [expertAlbert ^. uuid]
         let edited_1_event = e_km1_ch2_q4_ait1_q6 & answerIds .~ ChangedValue qAnswerIds
         let edited_2_event = edited_1_event & referenceIds .~ ChangedValue qReferenceIds
         let edited_3_event = edited_2_event & expertIds .~ ChangedValue qExpertIds
@@ -457,7 +457,7 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_ait1_q6 ^. uuid
         resEvent ^. answerIds `shouldBe` (ChangedValue $ Just [answerYes6 ^. uuid, answerNo6 ^. uuid])
         resEvent ^. referenceIds `shouldBe` ChangedValue [referenceCh2 ^. uuid, referenceCh1 ^. uuid]
-        resEvent ^. expertIds `shouldBe` ChangedValue [expertLuke ^. uuid, expertDarth ^. uuid]
+        resEvent ^. expertIds `shouldBe` ChangedValue [expertNikola ^. uuid, expertAlbert ^. uuid]
       -- -------------------------------------------------------------
       it "QType - QuestionTypeList: Event - all KM uuids exists, no new added in event" $
         -- Given:

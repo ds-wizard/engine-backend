@@ -2,6 +2,17 @@ module Model.Config.DSWConfig where
 
 import Common.Types
 
+data Environment
+  = Production
+  | Staging
+  | Development
+  | Test
+  deriving (Eq, Read, Show)
+
+data AppConfigEnvironment = AppConfigEnvironment
+  { _appConfigEnvironmentEnv :: Environment
+  }
+
 data AppConfigClient = AppConfigClient
   { _appConfigClientAddress :: String
   }
@@ -46,7 +57,8 @@ data BuildInfo = BuildInfo
   }
 
 data DSWConfig = DSWConfig
-  { _dSWConfigClientConfig :: AppConfigClient
+  { _dSWConfigEnvironment :: AppConfigEnvironment
+  , _dSWConfigClientConfig :: AppConfigClient
   , _dSWConfigWebConfig :: AppConfigWeb
   , _dSWConfigDatabaseConfig :: AppConfigDatabase
   , _dSWConfigJwtConfig :: AppConfigJwt

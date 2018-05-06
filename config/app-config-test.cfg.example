@@ -1,3 +1,7 @@
+[Environment]
+# Production / Staging / Development / Test
+env = Test
+
 [Client]
 address =
 
@@ -10,7 +14,7 @@ dbname = dsw-server-test
 port = 27017
 authenabled = false
 username =
-password = 
+password =
 
 [JWT]
 secret = secret-key

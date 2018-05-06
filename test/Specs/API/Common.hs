@@ -47,7 +47,7 @@ reqAuthHeaderWithoutPerms dswConfig perm =
       user =
         User
         { _uUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
-        , _uName = "John"
+        , _uName = "Isaac"
         , _uSurname = "Doe"
         , _uEmail = "john.doe@example.com"
         , _uPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
