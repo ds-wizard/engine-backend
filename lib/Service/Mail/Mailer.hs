@@ -35,7 +35,7 @@ sendRegistrationConfirmationMail config email userId hash =
       clientLink = clientAddress ++ "/signup-confirmation/" ++ U.toString userId ++ "/" ++ hash
       link = "<a href=\"" ++ clientLink ++ "\">here</a>"
       subject = "Confirmation Email"
-      body = TL.pack $ "Hi! Please click on this " ++ link ++ " to activate your account! Elixir DSW Wizard Team"
+      body = TL.pack $ "Hi! For account activation you have to click " ++ link ++ "! Elixir DSW Wizard Team"
   in createEmail config email subject body
 
 sendResetPasswordMail :: DSWConfig -> Email -> U.UUID -> String -> IO ()
