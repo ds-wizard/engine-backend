@@ -9,13 +9,13 @@ logStartMigrationProcess()
 startChange("Init packages")
 logInsert(PACKAGE_COL, "Elixir Base Core Package")
 db.packages.update({"id" : "elixir-base:core:1.0.0"}, {
-    "id": "elixir-base:core:1.0.0",
-    "groupId": "elixir-base",
-    "artifactId": "core",
+    "id": "elixir:root:1.0.0",
+    "groupId": "elixir",
+    "artifactId": "root",
     "version": "1.0.0",
-    "name": "Elixir Base Core Package",
+    "name": "ELIXIR Root Package",
     "parentPackageId": null,
-    "description": "Core package which includes base knowledge model",
+    "description": "Common ELIXIR Knowledge Model",
     "events": [
         {
             "eventType": "AddKnowledgeModelEvent",
