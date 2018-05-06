@@ -57,11 +57,18 @@ getSimplePackagesFiltered context queryParams = do
                 (Just _) -> packages
                 Nothing -> packages ++ [newPackage]
             isAlreadyInArray :: [Package] -> Package -> Maybe Package
-            isAlreadyInArray packages newPackage = find (equalSameArtifactId (newPackage ^. pkgArtifactId)) packages
+            isAlreadyInArray packages newPackage =
+              find
+                (\pkg ->
+                   equalSameArtifactId (newPackage ^. pkgArtifactId) pkg &&
+                   equalSameGroupId (newPackage ^. pkgGroupId) pkg)
+                packages
             hasSameArtifactId :: Package -> Package -> Bool
             hasSameArtifactId pkg1 pkg2 = pkg1 ^. pkgArtifactId == pkg2 ^. pkgArtifactId
             equalSameArtifactId :: String -> Package -> Bool
             equalSameArtifactId artifactId pkg = artifactId == pkg ^. pkgArtifactId
+            equalSameGroupId :: String -> Package -> Bool
+            equalSameGroupId groupId pkg = groupId == pkg ^. pkgGroupId
     Left error -> return . Left $ error
 
 getPackageById :: Context -> String -> IO (Either AppError PackageDTO)
