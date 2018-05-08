@@ -7,15 +7,15 @@ import Service.Organization.OrganizationService
 
 organizationServiceSpec =
   describe "Organization Service" $
-  it "isValidGroupId" $ do
-    isNothing (isValidGroupId "cz") `shouldBe` True
-    isNothing (isValidGroupId "base.elixir") `shouldBe` True
-    isNothing (isValidGroupId "base.elixir.e") `shouldBe` True
-    isJust (isValidGroupId "a") `shouldBe` True
-    isJust (isValidGroupId "a-b") `shouldBe` True
-    isJust (isValidGroupId "a_bc") `shouldBe` True
-    isJust (isValidGroupId ".cz") `shouldBe` True
-    isJust (isValidGroupId "cz.") `shouldBe` True
-    isJust (isValidGroupId "base.elixir.") `shouldBe` True
-    isJust (isValidGroupId ".base.elixir") `shouldBe` True
-    isJust (isValidGroupId "base.elixir-") `shouldBe` True
+  it "isValidOrganizationId" $ do
+    isNothing (isValidOrganizationId "cz") `shouldBe` True
+    isNothing (isValidOrganizationId "base.elixir") `shouldBe` True
+    isNothing (isValidOrganizationId "base.elixir.e") `shouldBe` True
+    isJust (isValidOrganizationId "a") `shouldBe` True
+    isJust (isValidOrganizationId "a-b") `shouldBe` True
+    isJust (isValidOrganizationId "a_bc") `shouldBe` True
+    isJust (isValidOrganizationId ".cz") `shouldBe` True
+    isJust (isValidOrganizationId "cz.") `shouldBe` True
+    isJust (isValidOrganizationId "base.elixir.") `shouldBe` True
+    isJust (isValidOrganizationId ".base.elixir") `shouldBe` True
+    isJust (isValidOrganizationId "base.elixir-") `shouldBe` True

@@ -20,8 +20,8 @@ runMigration appContext = do
     insertOrganization
       context
       Organization
-      { _orgUuid = (fromJust (U.fromString "d0619a24-db8a-48e1-a033-0d4ef8b8da78"))
-      , _orgName = "Elixir Amsterdam"
-      , _orgGroupId = "elixir.nl.amsterdam"
+      { _organizationUuid = (fromJust (U.fromString "d0619a24-db8a-48e1-a033-0d4ef8b8da78"))
+      , _organizationName = "Elixir Amsterdam"
+      , _organizationOrganizationId = "elixir.nl.amsterdam"
       }
   $(logInfo) "MIGRATION (Organization/Organization): ended"

@@ -27,6 +27,7 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
+import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.Migrator.MigratorState
@@ -100,7 +101,7 @@ createPackageFromKMC context branchUuid version description =
       validateVersion version branch organization $
       getEventsForPackage context branch $ \events -> do
         let name = branch ^. bweName
-        let groupId = organization ^. orgdtoGroupId
+        let groupId = organization ^. organizationId
         let artifactId = branch ^. bweArtifactId
         let mPpId = branch ^. bweParentPackageId
         createdPackage <- createPackage context name groupId artifactId version description mPpId events
@@ -125,7 +126,7 @@ createPackageFromKMC context branchUuid version description =
         Right organization -> callback organization
         Left error -> return . Left $ error
     validateVersion version branch organization callback = do
-      let groupId = organization ^. orgdtoGroupId
+      let groupId = organization ^. organizationId
       let artifactId = branch ^. bweArtifactId
       eitherMaybePackage <- getTheNewestPackageByGroupIdAndArtifactId context groupId artifactId
       case eitherMaybePackage of
@@ -381,7 +382,8 @@ validatePackagesDeletation context pkgIdsToDelete =
                 else return Nothing
             Left error -> return . Just $ error
         Right _ ->
-          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
+          return . Just . createErrorWithErrorMessage $
+          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
         Left error -> return . Just $ error
     filFun :: Package -> Bool
     filFun p = not ((p ^. pkgId) `elem` pkgIdsToDelete)
@@ -395,8 +397,10 @@ validatePackageDeletation context pkgId = do
       case eitherPkgs of
         Right [] -> return Nothing
         Right _ ->
-          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
+          return . Just . createErrorWithErrorMessage $
+          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
         Left error -> return . Just $ error
     Right _ ->
-      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
+      return . Just . createErrorWithErrorMessage $
+      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
     Left error -> return . Just $ error

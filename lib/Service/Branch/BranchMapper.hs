@@ -7,6 +7,7 @@ import Data.UUID (UUID)
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Common.Types
+import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Organization.Organization
@@ -16,7 +17,7 @@ toDTO branch organization =
   BranchDTO
   { _bdtoUuid = branch ^. bUuid
   , _bdtoName = branch ^. bName
-  , _bdtoGroupId = organization ^. orgGroupId
+  , _bdtoGroupId = organization ^. organizationId
   , _bdtoArtifactId = branch ^. bArtifactId
   , _bdtoParentPackageId = branch ^. bParentPackageId
   , _bdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId
@@ -27,7 +28,7 @@ toWithStateDTO branch state organization =
   BranchWithStateDTO
   { _bwsdtoUuid = branch ^. bUuid
   , _bwsdtoName = branch ^. bName
-  , _bwsdtoGroupId = organization ^. orgGroupId
+  , _bwsdtoGroupId = organization ^. organizationId
   , _bwsdtoArtifactId = branch ^. bArtifactId
   , _bwsdtoParentPackageId = branch ^. bParentPackageId
   , _bwsdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId

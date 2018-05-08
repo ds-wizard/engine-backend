@@ -8,18 +8,21 @@ import Data.UUID
 import GHC.Generics
 
 import Database.BSON.Common
+import LensesConfig
 import Model.Organization.Organization
 
 instance ToBSON Organization where
   toBSON organization =
-    [ "uuid" BSON.=: serializeUUID (organization ^. orgUuid)
-    , "name" BSON.=: (organization ^. orgName)
-    , "groupId" BSON.=: (organization ^. orgGroupId)
+    [ "uuid" BSON.=: serializeUUID (organization ^. uuid)
+    , "name" BSON.=: (organization ^. name)
+    , "organizationId" BSON.=: (organization ^. organizationId)
     ]
 
 instance FromBSON Organization where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    name <- BSON.lookup "name" doc
-    groupId <- BSON.lookup "groupId" doc
-    return Organization {_orgUuid = uuid, _orgName = name, _orgGroupId = groupId}
+    orgUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    orgName <- BSON.lookup "name" doc
+    orgOrganizationId <- BSON.lookup "organizationId" doc
+    return
+      Organization
+      {_organizationUuid = orgUuid, _organizationName = orgName, _organizationOrganizationId = orgOrganizationId}

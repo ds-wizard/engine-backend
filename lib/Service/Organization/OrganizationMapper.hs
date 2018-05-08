@@ -6,16 +6,21 @@ import Data.UUID (UUID)
 
 import Api.Resource.Organization.OrganizationDTO
 import Common.Types
+import LensesConfig
 import Model.Organization.Organization
 
 toDTO :: Organization -> OrganizationDTO
 toDTO organization =
   OrganizationDTO
-  { _orgdtoUuid = organization ^. orgUuid
-  , _orgdtoName = organization ^. orgName
-  , _orgdtoGroupId = organization ^. orgGroupId
+  { _organizationDTOUuid = organization ^. uuid
+  , _organizationDTOName = organization ^. name
+  , _organizationDTOOrganizationId = organization ^. organizationId
   }
 
 fromDTO :: OrganizationDTO -> Organization
 fromDTO dto =
-  Organization {_orgUuid = dto ^. orgdtoUuid, _orgName = dto ^. orgdtoName, _orgGroupId = dto ^. orgdtoGroupId}
+  Organization
+  { _organizationUuid = dto ^. uuid
+  , _organizationName = dto ^. name
+  , _organizationOrganizationId = dto ^. organizationId
+  }

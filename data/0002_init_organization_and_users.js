@@ -11,7 +11,7 @@ logInsert(ORGANIZATION_COL, "Elixir Amsterdam")
 db.organizations.update({"uuid" : "d0619a24-db8a-48e1-a033-0d4ef8b8da78"}, {
     "uuid" : "d0619a24-db8a-48e1-a033-0d4ef8b8da78",
     "name" : "Elixir Amsterdam",
-    "groupId" : "elixir.nl.amsterdam"
+    "organizationId" : "elixir.nl.amsterdam"
 }, { upsert: true });
 endChange("Init organizations")
 

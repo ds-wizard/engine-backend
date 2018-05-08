@@ -15,6 +15,7 @@ import Common.Localization
 import Common.Types
 import Common.Uuid
 import Database.DAO.Organization.OrganizationDAO
+import LensesConfig
 import Model.Organization.Organization
 import Service.Organization.OrganizationMapper
 
@@ -26,24 +27,16 @@ getOrganization context = do
     Left error -> return . Left $ error
 
 modifyOrganization :: Context -> OrganizationDTO -> IO (Either AppError OrganizationDTO)
-modifyOrganization context organizationDto = do
-  let groupId = organizationDto ^. orgdtoGroupId
-  case isValidGroupId groupId of
+modifyOrganization context organizationDto =
+  case isValidOrganizationId $ organizationDto ^. organizationId of
     Nothing -> do
       let organization = fromDTO organizationDto
       updateOrganization context organization
       return . Right $ organizationDto
     Just error -> return . Left $ error
 
-getOrganizationGroupId :: Context -> IO (Either AppError String)
-getOrganizationGroupId context = do
-  eitherOrganization <- findOrganization context
-  case eitherOrganization of
-    Right organization -> return . Right $ organization ^. orgGroupId
-    Left error -> return . Left $ error
-
-isValidGroupId :: String -> Maybe AppError
-isValidGroupId artifactId =
+isValidOrganizationId :: String -> Maybe AppError
+isValidOrganizationId artifactId =
   if isJust $ matchRegex validationRegex artifactId
     then Nothing
     else Just . createErrorWithFieldError $ ("groupId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)

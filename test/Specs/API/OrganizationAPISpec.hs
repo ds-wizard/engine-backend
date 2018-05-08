@@ -50,9 +50,9 @@ organizationAPI appContext =
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 OrganizationDTO
-                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _orgdtoName = "Elixir Amsterdam"
-                , _orgdtoGroupId = "elixir.nl.amsterdam"
+                { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                , _organizationDTOName = "Elixir Amsterdam"
+                , _organizationDTOOrganizationId = "elixir.nl.amsterdam"
                 }
           let expBody = encode expDto
           -- WHEN: Call API
@@ -74,9 +74,9 @@ organizationAPI appContext =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 OrganizationDTO
-                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _orgdtoName = "EDITED: Elixir Netherlands"
-                , _orgdtoGroupId = "elixir.nl.amsterdam.edited"
+                { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                , _organizationDTOName = "EDITED: Elixir Netherlands"
+                , _organizationDTOOrganizationId = "elixir.nl.amsterdam.edited"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -95,9 +95,9 @@ organizationAPI appContext =
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherOrganization) `shouldBe` True
           let (Right organizationFromDb) = eitherOrganization
-          liftIO $ (organizationFromDb ^. orgdtoUuid) `shouldBe` (reqDto ^. orgdtoUuid)
-          liftIO $ (organizationFromDb ^. orgdtoName) `shouldBe` (reqDto ^. orgdtoName)
-          liftIO $ (organizationFromDb ^. orgdtoGroupId) `shouldBe` (reqDto ^. orgdtoGroupId)
+          liftIO $ (organizationFromDb ^. uuid) `shouldBe` (reqDto ^. uuid)
+          liftIO $ (organizationFromDb ^. name) `shouldBe` (reqDto ^. name)
+          liftIO $ (organizationFromDb ^. organizationId) `shouldBe` (reqDto ^. organizationId)
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
         it "HTTP 400 BAD REQUEST when groupId is not in valid format" $
           -- GIVEN: Prepare request
@@ -105,9 +105,9 @@ organizationAPI appContext =
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 OrganizationDTO
-                { _orgdtoUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _orgdtoName = "EDITED: Elixir Netherlands"
-                , _orgdtoGroupId = "elixir-nl"
+                { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                , _organizationDTOName = "EDITED: Elixir Netherlands"
+                , _organizationDTOOrganizationId = "elixir-nl"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
