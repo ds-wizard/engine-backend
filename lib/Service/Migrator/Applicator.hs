@@ -4,6 +4,7 @@ import Control.Lens
 import System.IO.Unsafe (unsafePerformIO)
 
 import Common.Error
+import Common.Localization
 import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
@@ -31,7 +32,7 @@ runApplicator :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeMod
 runApplicator mKM events =
   case foldl foldEvent (Right mKM) events of
     Left error -> Left error
-    Right Nothing -> Left . MigratorError $ "Unspecified problem in building Knowledge Model happened"
+    Right Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__UNSPECIFIED_ERROR
     Right (Just km) -> Right km
 
 foldEvent :: Either AppError (Maybe KnowledgeModel) -> Event -> Either AppError (Maybe KnowledgeModel)
@@ -70,7 +71,7 @@ class ApplyEventToKM e where
   applyEventToKM :: e -> Either AppError (Maybe KnowledgeModel) -> Either AppError (Maybe KnowledgeModel)
 
 passToChapters _ (Left error) = Left error
-passToChapters e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
+passToChapters e (Right Nothing) = Left . MigratorError $ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST
 passToChapters e (Right (Just km)) =
   case eModifiedChapters of
     Left error -> Left error
@@ -89,14 +90,14 @@ passToChapters e (Right (Just km)) =
 -- -------------------------
 instance ApplyEventToKM AddKnowledgeModelEvent where
   applyEventToKM _ (Left error) = Left error
-  applyEventToKM e (Right (Just _)) = Left . MigratorError $ "Knowledge Model is already created"
+  applyEventToKM e (Right (Just _)) = Left . MigratorError $ _ERROR_MT_VALIDATION_APPLICATOR__KM_UNIQUENESS
   applyEventToKM e (Right Nothing) =
     Right . Just $
     KnowledgeModel {_knowledgeModelUuid = e ^. kmUuid, _knowledgeModelName = e ^. name, _knowledgeModelChapters = []}
 
 instance ApplyEventToKM EditKnowledgeModelEvent where
   applyEventToKM _ (Left error) = Left error
-  applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right Nothing) = Left . MigratorError $ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST
   applyEventToKM e (Right (Just km)) = Right . Just . applyChapterIds . applyName $ km
     where
       applyName km = applyValue (e ^. name) km name
@@ -107,7 +108,7 @@ instance ApplyEventToKM EditKnowledgeModelEvent where
 -- -------------------
 instance ApplyEventToKM AddChapterEvent where
   applyEventToKM _ (Left error) = Left error
-  applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right Nothing) = Left . MigratorError $ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST
   applyEventToKM e (Right (Just km)) = Right . Just $ km & chapters .~ modifiedChapters
     where
       modifiedChapters = km ^. chapters ++ [newChapter]
@@ -120,7 +121,7 @@ instance ApplyEventToKM EditChapterEvent where
 
 instance ApplyEventToKM DeleteChapterEvent where
   applyEventToKM _ (Left error) = Left error
-  applyEventToKM e (Right Nothing) = Left . MigratorError $ "You have to create Knowledge Model at first"
+  applyEventToKM e (Right Nothing) = Left . MigratorError $ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST
   applyEventToKM e (Right (Just km)) =
     if equalsUuid e km
       then Right . Just $ km & chapters .~ modifiedChapters
@@ -225,16 +226,19 @@ passToQuestions e (Right ch) =
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToChapter AddKnowledgeModelEvent where
-  applyEventToChapter _ _ = Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Chapter"
+  applyEventToChapter _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddKnowledgeModelEvent" "Chapter"
 
 instance ApplyEventToChapter EditKnowledgeModelEvent where
-  applyEventToChapter _ _ = Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Chapter"
+  applyEventToChapter _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditKnowledgeModelEvent" "Chapter"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToChapter AddChapterEvent where
-  applyEventToChapter _ _ = Left . MigratorError $ "You can't apply AddChapterEvent to Chapter"
+  applyEventToChapter _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Chapter"
 
 instance ApplyEventToChapter EditChapterEvent where
   applyEventToChapter _ (Left error) = Left error
@@ -248,7 +252,8 @@ instance ApplyEventToChapter EditChapterEvent where
       applyQuestionIds ch = applyValue (e ^. questionIds) ch chChangeQuestionIdsOrder
 
 instance ApplyEventToChapter DeleteChapterEvent where
-  applyEventToChapter _ _ = Left . MigratorError $ "You can't apply DeleteChapterEvent to Chapter"
+  applyEventToChapter _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Chapter"
 
 -- -------------------
 -- QUESTIONS----------
@@ -283,7 +288,7 @@ instance ApplyEventToChapter AddQuestionEvent where
               Just ait ->
                 callback . Just $
                 AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
-              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+              Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT
           _ -> callback Nothing
       getAnswers callback =
         case e ^. qType of
@@ -443,22 +448,27 @@ passToReferences e (Right q) =
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToQuestion AddKnowledgeModelEvent where
-  applyEventToQuestion _ _ = Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Question"
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddKnowledgeModelEvent" "Question"
 
 instance ApplyEventToQuestion EditKnowledgeModelEvent where
-  applyEventToQuestion _ _ = Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Question"
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditKnowledgeModelEvent" "Question"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToQuestion AddChapterEvent where
-  applyEventToQuestion _ _ = Left . MigratorError $ "You can't apply AddChapterEvent to Question"
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Question"
 
 instance ApplyEventToQuestion EditChapterEvent where
-  applyEventToQuestion _ _ = Left . MigratorError $ "You can't apply EditChapterEvent to Question"
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Question"
 
 instance ApplyEventToQuestion DeleteChapterEvent where
-  applyEventToQuestion _ _ = Left . MigratorError $ "You can't apply DeleteChapterEvent to Question"
+  applyEventToQuestion _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Question"
 
 -- -------------------
 -- QUESTIONS----------
@@ -569,7 +579,7 @@ instance ApplyEventToQuestion AddAnswerItemTemplateQuestionEvent where
         getNewQuestion $ \newQuestion -> callback $ (oldAit ^. questions) ++ [newQuestion]
       unwrapAnswerItemTemplate callback =
         case q ^. answerItemTemplate of
-          Nothing -> Left . MigratorError $ "You can't add question to non-existing AnswerItemTemplate"
+          Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__YOU_CANT_ADD_QUESTION_TO_NON_EXISTING_AIT
           Just ait -> callback ait
       getNewQuestion callback =
         getAnswerItemTemplate $ \maybeAit ->
@@ -593,7 +603,7 @@ instance ApplyEventToQuestion AddAnswerItemTemplateQuestionEvent where
               Just ait ->
                 callback . Just $
                 AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
-              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+              Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT
           _ -> callback Nothing
       getAnswers callback =
         case e ^. qType of
@@ -634,7 +644,7 @@ instance ApplyEventToQuestion DeleteAnswerItemTemplateQuestionEvent where
       getModifiedAitQuestions oldAit callback = callback $ filter (not . equalsUuid e) (oldAit ^. questions)
       unwrapAnswerItemTemplate callback =
         case q ^. answerItemTemplate of
-          Nothing -> Left . MigratorError $ "You can't add question to non-existing AnswerItemTemplate"
+          Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__YOU_CANT_ADD_QUESTION_TO_NON_EXISTING_AIT
           Just ait -> callback ait
 
 -- -------------------
@@ -716,22 +726,27 @@ passToFollowUps e (Right ans) =
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToAnswer AddKnowledgeModelEvent where
-  applyEventToAnswer _ _ = Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Answer"
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddKnowledgeModelEvent" "Answer"
 
 instance ApplyEventToAnswer EditKnowledgeModelEvent where
-  applyEventToAnswer _ _ = Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Answer"
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditKnowledgeModelEvent" "Answer"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToAnswer AddChapterEvent where
-  applyEventToAnswer _ _ = Left . MigratorError $ "You can't apply AddChapterEvent to Answer"
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Answer"
 
 instance ApplyEventToAnswer EditChapterEvent where
-  applyEventToAnswer _ _ = Left . MigratorError $ "You can't apply EditChapterEvent to Answer"
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Answer"
 
 instance ApplyEventToAnswer DeleteChapterEvent where
-  applyEventToAnswer _ _ = Left . MigratorError $ "You can't apply DeleteChapterEvent to Answer"
+  applyEventToAnswer _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Answer"
 
 -- -------------------
 -- QUESTIONS----------
@@ -798,7 +813,7 @@ instance ApplyEventToAnswer AddFollowUpQuestionEvent where
               Just ait ->
                 callback . Just $
                 AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
-              Nothing -> Left . MigratorError $ "Event type 'list' should have answerItemTemplate filled"
+              Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT
           _ -> callback Nothing
       getAnswers callback =
         case e ^. qType of
@@ -864,76 +879,97 @@ class ApplyEventToExpert e where
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToExpert AddKnowledgeModelEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddKnowledgeModelEvent" "Expert"
 
 instance ApplyEventToExpert EditKnowledgeModelEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditKnowledgeModelEvent" "Expert"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToExpert AddChapterEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddChapterEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Expert"
 
 instance ApplyEventToExpert EditChapterEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditChapterEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Expert"
 
 instance ApplyEventToExpert DeleteChapterEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteChapterEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Expert"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToExpert AddQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddQuestionEvent" "Expert"
 
 instance ApplyEventToExpert EditQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditQuestionEvent" "Expert"
 
 instance ApplyEventToExpert DeleteQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteQuestionEvent" "Expert"
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToExpert AddAnswerEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddAnswerEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Expert"
 
 instance ApplyEventToExpert EditAnswerEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditAnswerEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Expert"
 
 instance ApplyEventToExpert DeleteAnswerEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteAnswerEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerEvent" "Expert"
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToExpert AddFollowUpQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddFollowUpQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddFollowUpQuestionEvent" "Expert"
 
 instance ApplyEventToExpert EditFollowUpQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditFollowUpQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditFollowUpQuestionEvent" "Expert"
 
 instance ApplyEventToExpert DeleteFollowUpQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteFollowUpQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteFollowUpQuestionEvent" "Expert"
 
 -- -----------------------------------
 -- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
 -- -----------------------------------
 instance ApplyEventToExpert AddAnswerItemTemplateQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddAnswerItemTemplateQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Expert"
 
 instance ApplyEventToExpert EditAnswerItemTemplateQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply EditAnswerItemTemplateQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Expert"
 
 instance ApplyEventToExpert DeleteAnswerItemTemplateQuestionEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteAnswerItemTemplateQuestionEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Expert"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToExpert AddExpertEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddExpertEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Expert"
 
 instance ApplyEventToExpert EditExpertEvent where
   applyEventToExpert e (Left error) = Left error
@@ -946,19 +982,22 @@ instance ApplyEventToExpert EditExpertEvent where
       applyEmail exp = applyValue (e ^. email) exp email
 
 instance ApplyEventToExpert DeleteExpertEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteExpertEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteExpertEvent" "Expert"
 
 -- -------------------
 -- REFERENCES---------
 -- -------------------
 instance ApplyEventToExpert AddReferenceEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply AddReferenceEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddReferenceEvent" "Expert"
 
 instance ApplyEventToExpert EditReferenceEvent where
   applyEventToExpert e exp = exp
 
 instance ApplyEventToExpert DeleteReferenceEvent where
-  applyEventToExpert _ _ = Left . MigratorError $ "You can't apply DeleteReferenceEvent to Expert"
+  applyEventToExpert _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteReferenceEvent" "Expert"
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -971,83 +1010,104 @@ class ApplyEventToReference e where
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ApplyEventToReference AddKnowledgeModelEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddKnowledgeModelEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddKnowledgeModelEvent" "Reference"
 
 instance ApplyEventToReference EditKnowledgeModelEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditKnowledgeModelEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditKnowledgeModelEvent" "Reference"
 
 -- -------------------
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToReference AddChapterEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddChapterEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Reference"
 
 instance ApplyEventToReference EditChapterEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditChapterEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Reference"
 
 instance ApplyEventToReference DeleteChapterEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteChapterEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Reference"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToReference AddQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddQuestionEvent" "Reference"
 
 instance ApplyEventToReference EditQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditQuestionEvent" "Reference"
 
 instance ApplyEventToReference DeleteQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteQuestionEvent" "Reference"
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToReference AddAnswerEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddAnswerEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Reference"
 
 instance ApplyEventToReference EditAnswerEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditAnswerEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Reference"
 
 instance ApplyEventToReference DeleteAnswerEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteAnswerEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerEvent" "Reference"
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
 -- ------------------------
 instance ApplyEventToReference AddFollowUpQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddFollowUpQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddFollowUpQuestionEvent" "Reference"
 
 instance ApplyEventToReference EditFollowUpQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditFollowUpQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditFollowUpQuestionEvent" "Reference"
 
 instance ApplyEventToReference DeleteFollowUpQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteFollowUpQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteFollowUpQuestionEvent" "Reference"
 
 -- -----------------------------------
 -- ANSWER-ITEM-TEMPLATE-QUESTIONS ----
 -- -----------------------------------
 instance ApplyEventToReference AddAnswerItemTemplateQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddAnswerItemTemplateQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Reference"
 
 instance ApplyEventToReference EditAnswerItemTemplateQuestionEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply EditAnswerItemTemplateQuestionEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Reference"
 
 instance ApplyEventToReference DeleteAnswerItemTemplateQuestionEvent where
   applyEventToReference _ _ =
-    Left . MigratorError $ "You can't apply DeleteAnswerItemTemplateQuestionEvent to Reference"
+    Left . MigratorError $
+    _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Reference"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToReference AddExpertEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply AddExpertEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Reference"
 
 instance ApplyEventToReference EditExpertEvent where
   applyEventToReference e ref = ref
 
 instance ApplyEventToReference DeleteExpertEvent where
-  applyEventToReference _ _ = Left . MigratorError $ "You can't apply DeleteExpertEvent to Reference"
+  applyEventToReference _ _ =
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteExpertEvent" "Reference"
 
 -- -------------------
 -- REFERENCES---------

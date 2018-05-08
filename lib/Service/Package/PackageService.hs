@@ -20,6 +20,7 @@ import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
@@ -182,7 +183,7 @@ importPackage context fileContent = do
       eitherPackage <- findPackageById context pkgId
       case eitherPackage of
         Left (NotExistsError _) -> callback
-        Right _ -> return . Left . createErrorWithErrorMessage $ "Package '" ++ pkgId ++ "' already exists"
+        Right _ -> return . Left . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
         Left error -> return . Left $ error
     validateParentPackageId pkgId maybeParentPkgId callback =
       case maybeParentPkgId of
@@ -192,8 +193,7 @@ importPackage context fileContent = do
             Right _ -> callback
             Left (NotExistsError _) ->
               return . Left . createErrorWithErrorMessage $
-              "Parent ('" ++
-              parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import parent at first"
+              _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
             Left error -> return . Left $ error
         Nothing -> callback
 
@@ -309,7 +309,7 @@ isVersionInValidFormat :: String -> Maybe AppError
 isVersionInValidFormat version =
   if isJust $ matchRegex validationRegex version
     then Nothing
-    else Just . createErrorWithErrorMessage $ "Version is not in valid format"
+    else Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
   where
     validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
 
@@ -317,7 +317,7 @@ isVersionHigher :: String -> String -> Maybe AppError
 isVersionHigher newVersion oldVersion =
   if compareVersion newVersion oldVersion == GT
     then Nothing
-    else Just . createErrorWithErrorMessage $ "New version has to be higher than the previous one"
+    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
 
 compareVersionNeg :: String -> String -> Ordering
 compareVersionNeg verA verB = compareVersion verB verA
@@ -377,12 +377,11 @@ validatePackagesDeletation context pkgIdsToDelete =
             Right pkgs -> do
               if length (filter (filFun) pkgs) > 0
                 then return . Just . createErrorWithErrorMessage $
-                     "Package '" ++ pkgId ++ "' can't be deleted. It's used as parent of some package."
+                     _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
                 else return Nothing
             Left error -> return . Just $ error
         Right _ ->
-          return . Just . createErrorWithErrorMessage $
-          "Package '" ++ pkgId ++ "' can't be deleted. It's used by some branch."
+          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
         Left error -> return . Just $ error
     filFun :: Package -> Bool
     filFun p = not ((p ^. pkgId) `elem` pkgIdsToDelete)
@@ -396,10 +395,8 @@ validatePackageDeletation context pkgId = do
       case eitherPkgs of
         Right [] -> return Nothing
         Right _ ->
-          return . Just . createErrorWithErrorMessage $
-          "Package '" ++ pkgId ++ "' can't be deleted. It's used as parent of some package."
+          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
         Left error -> return . Just $ error
     Right _ ->
-      return . Just . createErrorWithErrorMessage $
-      "Package '" ++ pkgId ++ "' can't be deleted. It's used by some branch."
+      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
     Left error -> return . Just $ error

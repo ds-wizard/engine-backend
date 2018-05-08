@@ -25,6 +25,7 @@ import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
 import Common.Error
+import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -365,12 +366,12 @@ migratorAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        it "HTTP 400 BAD REQUEST when edit action has to provide target event" $ do
+        it "HTTP 400 BAD REQUEST when edit migration action has to provide target event" $ do
           liftIO . runNoLoggingT $ PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "Edit action has to provide target event"
+          let expDto = MigratorError _ERROR_MT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited = reqDto & mcdtoEvent .~ Nothing
           let reqBodyEdited = encode reqDtoEdited

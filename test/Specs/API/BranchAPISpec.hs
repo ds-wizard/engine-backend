@@ -22,6 +22,7 @@ import qualified Web.Scotty as S
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Common.Error
+import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.Migration.Package.Data.Package
@@ -133,11 +134,11 @@ branchAPI appContext = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
-          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
+          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km-")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
+          let expDto = createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -160,7 +161,9 @@ branchAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is already taken")
+          let expDto =
+                createErrorWithFieldError
+                  ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS $ reqDto ^. bdtoArtifactId)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -330,7 +333,8 @@ branchAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is already taken")
+          let expDto =
+                createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS "amsterdam-km-2")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

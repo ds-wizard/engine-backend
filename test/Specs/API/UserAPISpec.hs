@@ -25,6 +25,7 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserStateDTO
 import Common.Error
+import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
@@ -175,7 +176,8 @@ userAPI appContext =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
+          let expDto =
+                createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. ucdtoEmail)
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -339,7 +341,8 @@ userAPI appContext =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
+          let expDto =
+                createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. udtoEmail)
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -421,7 +424,8 @@ userAPI appContext =
            -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", "User with given email already exists")
+          let expDto =
+                createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. udtoEmail)
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f" reqHeaders reqBody

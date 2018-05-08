@@ -2,7 +2,7 @@
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 6d8d31b36e13ddf8046174e97a7734dc17f1da05f71bbb50a68a3f3ca7076cc7
+-- hash: c70abe69ecb784716a6eadc26fdf6b77a8c6357f5d975df5390b757031964881
 
 name:           dsw-server
 version:        1.0.0
@@ -117,6 +117,7 @@ library
       Common.ConfigLoader
       Common.Context
       Common.Error
+      Common.Localization
       Common.Types
       Common.Utils
       Common.Uuid

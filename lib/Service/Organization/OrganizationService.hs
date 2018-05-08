@@ -11,6 +11,7 @@ import Text.Regex
 import Api.Resource.Organization.OrganizationDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Common.Types
 import Common.Uuid
 import Database.DAO.Organization.OrganizationDAO
@@ -45,6 +46,6 @@ isValidGroupId :: String -> Maybe AppError
 isValidGroupId artifactId =
   if isJust $ matchRegex validationRegex artifactId
     then Nothing
-    else Just . createErrorWithFieldError $ ("groupId", "GroupId is not in valid format")
+    else Just . createErrorWithFieldError $ ("groupId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"

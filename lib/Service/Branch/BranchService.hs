@@ -12,6 +12,7 @@ import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
@@ -77,7 +78,9 @@ createBranch context branchDto =
         Nothing -> do
           eitherBranchFromDb <- findBranchByArtifactId context artifactId
           case eitherBranchFromDb of
-            Right _ -> return . Left $ createErrorWithFieldError ("artifactId", "ArtifactId is already taken")
+            Right _ ->
+              return . Left $
+              createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS artifactId)
             Left (NotExistsError _) -> callback
         Just error -> return . Left $ error
     validatePackageId context mPackageId callback =
@@ -86,7 +89,8 @@ createBranch context branchDto =
           eitherPackage <- findPackageById context packageId
           case eitherPackage of
             Right _ -> callback
-            Left error -> return . Left $ createErrorWithFieldError ("parentPackageId", "Parent package doesn't exist")
+            Left error ->
+              return . Left $ createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
         Nothing -> callback
     updateMigrationInfoIfParentPackageIdPresent branch = do
       let branchUuid = U.toString $ branch ^. bUuid
@@ -138,7 +142,8 @@ modifyBranch context branchUuid branchDto =
             Right branch -> do
               eitherBranchFromDb <- findBranchByArtifactId context artifactId
               if isAlreadyUsedAndIsNotMine eitherBranchFromDb
-                then return . Left . createErrorWithFieldError $ ("artifactId", "ArtifactId is already taken")
+                then return . Left . createErrorWithFieldError $
+                     ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS artifactId)
                 else callback
             Left error -> return . Left $ error
         Just error -> return . Left $ error
@@ -159,7 +164,7 @@ isValidArtifactId :: String -> Maybe AppError
 isValidArtifactId artifactId =
   if isJust $ matchRegex validationRegex artifactId
     then Nothing
-    else Just $ createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
+    else Just $ createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT)
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"
 

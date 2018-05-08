@@ -16,6 +16,7 @@ import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserStateDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Common.Types
 import Common.Uuid
 import Database.DAO.User.UserDAO
@@ -52,7 +53,8 @@ createUserWithGivenUuid :: Context -> DSWConfig -> U.UUID -> UserCreateDTO -> Bo
 createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
   eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
   if isRight eitherUserFromDb
-    then return . Left . createErrorWithFieldError $ ("email", "User with given email already exists")
+    then return . Left . createErrorWithFieldError $
+         ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ userCreateDto ^. ucdtoEmail)
     else do
       passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
       buildUser config userCreateDto userUuid (BS.unpack passwordHash) (userCreateDto ^. ucdtoRole) isAdmin $ \user -> do
@@ -91,7 +93,8 @@ modifyUser context userUuid userDto = do
     Right user -> do
       eitherUserFromDb <- findUserByEmail context (userDto ^. udtoEmail)
       if isAlreadyUsedAndIsNotMine eitherUserFromDb
-        then return . Left . createErrorWithFieldError $ ("email", "User with given email already exists")
+        then return . Left . createErrorWithFieldError $
+             ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ userDto ^. udtoEmail)
         else do
           let updatedUser = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash) (user ^. uIsActive)
           updateUserById context updatedUser
@@ -125,8 +128,7 @@ changeUserPassword context userUuid maybeHash userPasswordDto isAdminOrCurrentUs
                    Left error -> return . Just $ error
                Nothing ->
                  return . Just $
-                 createErrorWithErrorMessage
-                   "You have to log in as Administrator or you have to provide a hash in query param"
+                 createErrorWithErrorMessage _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
 
 resetUserPassword :: Context -> DSWConfig -> ActionKeyDTO -> IO (Maybe AppError)
 resetUserPassword context config reqDto = do
@@ -169,7 +171,7 @@ changeUserState context userUuid maybeHash userStateDto =
     validateHash maybeHash callback =
       case maybeHash of
         Just akHash -> callback akHash
-        Nothing -> return . Just . createErrorWithErrorMessage $ "Hash query param has to be provided"
+        Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
 
 deleteUser :: Context -> String -> IO (Maybe AppError)
 deleteUser context userUuid = do

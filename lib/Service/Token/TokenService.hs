@@ -15,6 +15,7 @@ import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Common.Types
 import Common.Utils
 import Database.DAO.User.UserDAO
@@ -35,9 +36,10 @@ getToken context dswConfig tokenCreateDto = do
           let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
           if verifyPassword incomingPassword passwordHashFromDB
             then return . Right . toDTO $ createToken user tokenSecret
-            else return . Left $ createErrorWithErrorMessage "Incorrect email or password"
-        else return . Left $ createErrorWithErrorMessage "Account is not activated"
-    Left (NotExistsError _) -> return . Left $ createErrorWithErrorMessage "Incorrect email or password"
+            else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+    Left (NotExistsError _) ->
+      return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     Left error -> return . Left $ error
 
 createToken :: User -> JWTSecret -> Token
