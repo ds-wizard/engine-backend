@@ -7,6 +7,7 @@ import Data.ByteString.Lazy
 import Data.Either
 import Data.Foldable
 import Data.Maybe
+import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -21,6 +22,7 @@ import qualified Web.Scotty as S
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Database.DAO.Organization.OrganizationDAO
+import Database.Migration.Organization.Data.Organizations
 import LensesConfig
 import Model.Context.AppContext
 import Model.Organization.Organization
@@ -50,9 +52,11 @@ organizationAPI appContext =
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 OrganizationDTO
-                { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _organizationDTOName = "Elixir Amsterdam"
-                , _organizationDTOOrganizationId = "elixir.nl.amsterdam"
+                { _organizationDTOUuid = org1 ^. uuid
+                , _organizationDTOName = org1 ^. name
+                , _organizationDTOOrganizationId = org1 ^. organizationId
+                , _organizationDTOCreatedAt = org1 ^. createdAt
+                , _organizationDTOUpdatedAt = org1 ^. updatedAt
                 }
           let expBody = encode expDto
           -- WHEN: Call API
@@ -77,6 +81,8 @@ organizationAPI appContext =
                 { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _organizationDTOName = "EDITED: Elixir Netherlands"
                 , _organizationDTOOrganizationId = "elixir.nl.amsterdam.edited"
+                , _organizationDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+                , _organizationDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
@@ -108,6 +114,8 @@ organizationAPI appContext =
                 { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
                 , _organizationDTOName = "EDITED: Elixir Netherlands"
                 , _organizationDTOOrganizationId = "elixir-nl"
+                , _organizationDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+                , _organizationDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation

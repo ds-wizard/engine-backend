@@ -19,7 +19,6 @@ instance ToBSON ActionKey where
     , "hash" BSON.=: (actionKey ^. hash)
     ]
 
---    , "createdAt" BSON.=: (actionKey ^. akCreatedAt)
 instance FromBSON ActionKey where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc

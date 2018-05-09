@@ -1,11 +1,11 @@
-module Specs.Service.Organization.OrganizationServiceSpec where
+module Specs.Service.Organization.OrganizationValidationSpec where
 
 import Data.Maybe
 import Test.Hspec
 
-import Service.Organization.OrganizationService
+import Service.Organization.OrganizationValidation
 
-organizationServiceSpec =
+organizationValidationSpec =
   describe "Organization Service" $
   it "isValidOrganizationId" $ do
     isNothing (isValidOrganizationId "cz") `shouldBe` True

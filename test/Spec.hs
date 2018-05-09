@@ -32,7 +32,7 @@ import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
-import Specs.Service.Organization.OrganizationServiceSpec
+import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageServiceSpec
 import TestMigration
 
@@ -71,7 +71,7 @@ main =
            knowledgeModelAccessorsSpec
            sanitizatorSpec
            migratorSpec
-           organizationServiceSpec
+           organizationValidationSpec
            branchServiceSpec
            packageServiceSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do

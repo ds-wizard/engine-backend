@@ -15,6 +15,8 @@ toDTO organization =
   { _organizationDTOUuid = organization ^. uuid
   , _organizationDTOName = organization ^. name
   , _organizationDTOOrganizationId = organization ^. organizationId
+  , _organizationDTOCreatedAt = organization ^. createdAt
+  , _organizationDTOUpdatedAt = organization ^. updatedAt
   }
 
 fromDTO :: OrganizationDTO -> Organization
@@ -23,4 +25,6 @@ fromDTO dto =
   { _organizationUuid = dto ^. uuid
   , _organizationName = dto ^. name
   , _organizationOrganizationId = dto ^. organizationId
+  , _organizationCreatedAt = dto ^. createdAt
+  , _organizationUpdatedAt = dto ^. updatedAt
   }

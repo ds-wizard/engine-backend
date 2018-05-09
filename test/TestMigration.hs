@@ -12,6 +12,7 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
+import Database.Migration.Organization.Data.Organizations
 import LensesConfig
 import Model.Context.AppContext
 import Model.Organization.Organization
@@ -65,13 +66,7 @@ resetDB appContext = do
   deleteUsers context
   createUserAlbert appContext
   deleteOrganizations context
-  insertOrganization
-    context
-    Organization
-    { _organizationUuid = (fromJust (U.fromString "d0619a24-db8a-48e1-a033-0d4ef8b8da78"))
-    , _organizationName = "Elixir Amsterdam"
-    , _organizationOrganizationId = "elixir.nl.amsterdam"
-    }
+  insertOrganization context org1
   deleteBranches context
   deleteMigratorStates context
   deleteActionKeys context

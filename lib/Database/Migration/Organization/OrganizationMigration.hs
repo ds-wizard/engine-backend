@@ -7,6 +7,7 @@ import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
 import Database.DAO.Organization.OrganizationDAO
+import Database.Migration.Organization.Data.Organizations
 import LensesConfig
 import Model.Context.AppContext
 import Model.Organization.Organization
@@ -16,12 +17,5 @@ runMigration appContext = do
   $(logInfo) "MIGRATION (Organization/Organization): started"
   let context = appContext ^. oldContext
   liftIO $ deleteOrganizations context
-  liftIO $
-    insertOrganization
-      context
-      Organization
-      { _organizationUuid = (fromJust (U.fromString "d0619a24-db8a-48e1-a033-0d4ef8b8da78"))
-      , _organizationName = "Elixir Amsterdam"
-      , _organizationOrganizationId = "elixir.nl.amsterdam"
-      }
+  liftIO $ insertOrganization context org1
   $(logInfo) "MIGRATION (Organization/Organization): ended"
