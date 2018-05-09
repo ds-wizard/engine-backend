@@ -3,3 +3,4 @@ out
 src.iml
 config/app-config.cfg
 config/app-config-test.cfg
+dsw-server.cabal
