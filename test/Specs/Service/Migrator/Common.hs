@@ -3,7 +3,6 @@ module Specs.Service.Migrator.Common where
 import Data.Maybe
 import qualified Data.UUID as U
 
-import LensesConfig
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState

@@ -6,7 +6,6 @@ import Control.Monad.Reader (liftIO)
 
 import Database.DAO.Migrator.MigratorDAO
 import LensesConfig
-import Model.Context.AppContext
 
 runMigration appContext = do
   $(logInfo) "MIGRATION (Migrator/Migrator): started"

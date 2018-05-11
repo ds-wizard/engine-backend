@@ -1,30 +1,25 @@
 module Database.DAO.Event.EventDAO where
 
 import Control.Lens ((^.))
-import Data.Bson
-import qualified Data.Bson as BSON
-import Data.Bson.Generic
-import Data.Maybe
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insertMany, merge,
-        modify, rest, save, select)
+       ((=:), findOne, 
+        modify, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Database.BSON.Branch.BranchWithEvents
-import Database.BSON.Event.Answer
-import Database.BSON.Event.Chapter
+import Database.BSON.Branch.BranchWithEvents ()
+import Database.BSON.Event.Answer ()
+import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Common
-import Database.BSON.Event.Expert
-import Database.BSON.Event.FollowUpQuestion
-import Database.BSON.Event.KnowledgeModel
-import Database.BSON.Event.Question
-import Database.BSON.Event.Reference
+import Database.BSON.Event.Expert ()
+import Database.BSON.Event.FollowUpQuestion ()
+import Database.BSON.Event.KnowledgeModel ()
+import Database.BSON.Event.Question ()
+import Database.BSON.Event.Reference ()
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Common
 import Model.Branch.Branch
-import Model.Common
 import Model.Event.Event
 
 findBranchWithEventsById :: Context -> String -> IO (Either AppError BranchWithEvents)

@@ -1,11 +1,8 @@
 module Api.Resource.User.UserStateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-
-import Common.Types
 
 data UserStateDTO = UserStateDTO
   { _usdtoActive :: Bool

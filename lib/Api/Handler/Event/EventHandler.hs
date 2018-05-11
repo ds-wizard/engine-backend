@@ -1,16 +1,12 @@
 module Api.Handler.Event.EventHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Text.Lazy
-import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.Event.EventDTO
-import LensesConfig
+import Api.Resource.Event.EventDTO ()
 import Model.Context.AppContext
 import Service.Event.EventService
 

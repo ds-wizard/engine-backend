@@ -2,13 +2,9 @@ module Api.Resource.Organization.OrganizationDTO where
 
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import Data.Time
 import Data.UUID
 import GHC.Generics
-
-import Common.Types
-import Common.Uuid
 
 data OrganizationDTO = OrganizationDTO
   { _organizationDTOUuid :: UUID

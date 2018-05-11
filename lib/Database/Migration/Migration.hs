@@ -11,7 +11,6 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import qualified
        Database.Migration.Questionnaire.QuestionnaireMigration as QTN
 import qualified Database.Migration.User.UserMigration as UM
-import Model.Context.AppContext
 
 runMigration appContext = do
   $(logInfo) "MIGRATION: started"

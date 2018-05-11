@@ -9,7 +9,6 @@ import qualified Data.UUID as U
 import Api.Resource.User.UserCreateDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Model.Context.AppContext
 import Model.User.User
 import Service.User.UserService
 

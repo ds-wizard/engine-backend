@@ -1,7 +1,6 @@
 module Service.User.UserMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
 import Data.UUID (UUID)
 
 import Api.Resource.User.UserCreateDTO

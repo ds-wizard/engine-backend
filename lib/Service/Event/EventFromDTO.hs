@@ -1,15 +1,11 @@
 module Service.Event.EventFromDTO where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import Data.UUID (UUID)
 
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventFieldDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Types
 import LensesConfig
-import Model.Common
 import Model.Event.Answer.AnswerEvent
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent

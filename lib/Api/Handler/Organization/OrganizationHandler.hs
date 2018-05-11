@@ -1,14 +1,11 @@
 module Api.Handler.Organization.OrganizationHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Text.Lazy
-import Data.UUID
-import Web.Scotty.Trans (json, param)
+import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
-import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.Organization.OrganizationDTO ()
 import Model.Context.AppContext
 import Service.Organization.OrganizationService
 

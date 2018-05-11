@@ -3,22 +3,15 @@ module Specs.API.UserAPISpec where
 import Control.Lens
 import Crypto.PasswordStore
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
 import qualified Data.ByteString.Char8 as BS
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
@@ -29,17 +22,13 @@ import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import LensesConfig
 import Model.ActionKey.ActionKey
-import Model.Context.AppContext
 import Model.User.User
-import Service.ActionKey.ActionKeyService
 import Service.User.UserService
 
 import Specs.API.Common
 import Specs.API.User.Detail_Password_Hash_PUT
 import Specs.API.User.Detail_Password_PUT
-import Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do

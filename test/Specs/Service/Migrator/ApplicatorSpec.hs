@@ -1,8 +1,6 @@
 module Specs.Service.Migrator.ApplicatorSpec where
 
 import Control.Lens
-import Control.Monad.Reader (liftIO)
-import Data.Maybe
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -14,11 +12,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
-import Model.Common
-import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Model.KnowledgeModel.KnowledgeModel
 import Service.Migrator.Applicator
 
 applicatorSpec =

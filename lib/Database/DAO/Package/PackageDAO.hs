@@ -4,17 +4,15 @@ import Common.Error
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Data.Maybe
 import Data.Text (Text)
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        rest, save, select)
+       ((=:), delete, find, findOne, insert,
+        rest, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
-import Common.Types
-import Database.BSON.Package.Package
-import Database.BSON.Package.PackageWithEvents
+import Database.BSON.Package.Package ()
+import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
 import Model.Package.Package
 

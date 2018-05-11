@@ -1,17 +1,16 @@
 module Api.Middleware.AuthMiddleware where
 
 import Control.Lens ((^.))
-import Data.ByteString (ByteString, pack)
+import Data.ByteString (ByteString)
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
-import Data.Time.Clock.POSIX (getPOSIXTime)
 import qualified Network.HTTP.Types as H
 import Network.HTTP.Types.Method (methodOptions)
 import Network.Wai
-       (Application, Middleware, Request, Response, ResponseReceived,
-        pathInfo, requestHeaders, requestMethod, responseLBS)
+       (Middleware, Request, ResponseReceived,
+        pathInfo, requestHeaders, requestMethod)
 import Prelude hiding (exp)
 import Text.Regex
 import qualified Web.JWT as JWT

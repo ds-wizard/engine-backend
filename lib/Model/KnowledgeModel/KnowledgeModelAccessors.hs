@@ -1,14 +1,11 @@
 module Model.KnowledgeModel.KnowledgeModelAccessors where
 
 import Control.Lens
-import Control.Lens.Traversal
 import Data.List
 import Data.Maybe (fromMaybe)
 import Data.UUID
-import GHC.Generics
 
 import LensesConfig
-import Model.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 getChapterIds :: KnowledgeModel -> [UUID]

@@ -1,7 +1,6 @@
 module Model.KnowledgeModel.KnowledgeModelSameUuid where
 
 import Control.Lens
-import Data.UUID
 
 import LensesConfig
 import Model.Common

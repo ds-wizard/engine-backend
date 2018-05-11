@@ -1,19 +1,12 @@
 module Main where
 
 import Control.Lens ((^.))
-import Data.Aeson (Value(..), (.=), object)
-import Network.Wai (Application)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
-import Test.Hspec.Wai
-import Test.Hspec.Wai.JSON
-import qualified Web.Scotty as S
 
 import Common.ConfigLoader
 import Common.Context
 import Database.Connection
 import LensesConfig
-import Model.Config.DSWConfig
 import Model.Context.AppContext
 
 import Specs.API.BranchAPISpec

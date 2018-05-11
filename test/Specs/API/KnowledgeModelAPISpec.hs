@@ -3,45 +3,18 @@ module Specs.API.KnowledgeModelAPISpec where
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
-import Data.Foldable
-import Data.Maybe
-import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
-import Api.Resource.Branch.BranchDTO
-import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Database.DAO.Event.EventDAO
-import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import qualified Database.Migration.Branch.BranchMigration as KMC
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.Branch.Data.KnowledgeModel.Chapters
-import Database.Migration.Branch.Data.KnowledgeModel.Experts
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Branch.Data.KnowledgeModel.References
 import qualified Database.Migration.Package.PackageMigration as PKG
+import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import LensesConfig
-import Model.Branch.Branch
-import Model.Event.Event
-import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
-import Service.Branch.BranchService
-import Service.Event.EventService
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 import Specs.API.Common
-import Specs.Common
 
 knowledgeModelAPI appContext =
   with (startWebApp appContext) $ do

@@ -11,11 +11,9 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
-import Model.Common
 import Model.Event.Answer.AnswerEvent
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
-import Model.Event.Event
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent

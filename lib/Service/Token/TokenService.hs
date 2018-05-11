@@ -1,13 +1,11 @@
 module Service.Token.TokenService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import qualified Data.Map as M
 import qualified Data.Text as T
-import qualified Data.UUID as U
 import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 

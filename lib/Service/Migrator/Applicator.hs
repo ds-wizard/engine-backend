@@ -1,30 +1,29 @@
 module Service.Migrator.Applicator where
 
 import Control.Lens
-import System.IO.Unsafe (unsafePerformIO)
 
 import Common.Error
 import Common.Localization
 import LensesConfig
 import Model.Common
 import Model.Event.Answer.AnswerEvent
-import Model.Event.Answer.AnswerEventSameUuid
+import Model.Event.Answer.AnswerEventSameUuid ()
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
-import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid ()
 import Model.Event.Chapter.ChapterEvent
-import Model.Event.Chapter.ChapterEventSameUuid
+import Model.Event.Chapter.ChapterEventSameUuid ()
 import Model.Event.Event
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
-import Model.Event.Expert.ExpertEventSameUuid
+import Model.Event.Expert.ExpertEventSameUuid ()
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEventSameUuid
+import Model.Event.FollowUpQuestion.FollowUpQuestionEventSameUuid ()
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Model.Event.KnowledgeModel.KnowledgeModelEventSameUuid
+import Model.Event.KnowledgeModel.KnowledgeModelEventSameUuid ()
 import Model.Event.Question.QuestionEvent
-import Model.Event.Question.QuestionEventSameUuid
+import Model.Event.Question.QuestionEventSameUuid ()
 import Model.Event.Reference.ReferenceEvent
-import Model.Event.Reference.ReferenceEventSameUuid
+import Model.Event.Reference.ReferenceEventSameUuid ()
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 

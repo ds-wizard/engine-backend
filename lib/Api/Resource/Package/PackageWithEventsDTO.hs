@@ -1,15 +1,10 @@
 module Api.Resource.Package.PackageWithEventsDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-import Data.UUID
 
 import Api.Resource.Event.EventDTO
-import Common.Types
-import Common.Uuid
-import LensesConfig
 
 data PackageWithEventsDTO = PackageWithEventsDTO
   { _pkgwedtoId :: String

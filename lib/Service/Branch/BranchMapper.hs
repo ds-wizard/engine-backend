@@ -1,12 +1,9 @@
 module Service.Branch.BranchMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import Data.UUID (UUID)
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
-import Common.Types
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState

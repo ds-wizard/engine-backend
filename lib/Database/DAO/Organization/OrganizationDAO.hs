@@ -3,16 +3,12 @@ module Database.DAO.Organization.OrganizationDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Data.Maybe
-import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        rest, save, select)
+import Database.MongoDB (delete, fetch, findOne, insert, merge, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Common.Types
-import Database.BSON.Organization.Organization
+import Database.BSON.Organization.Organization ()
 import Database.DAO.Common
 import Model.Organization.Organization
 

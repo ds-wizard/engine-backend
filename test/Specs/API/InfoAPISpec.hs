@@ -1,21 +1,15 @@
 module Specs.API.InfoAPISpec where
 
 import Control.Lens ((^.))
-import Data.Aeson (Value(..), (.=), object)
 import Network.HTTP.Types
-import Network.Wai (Application)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.JSON
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import LensesConfig
-import Model.Context.AppContext
 
 import Specs.API.Common
-import Specs.Common
 
 infoAPI appContext =
   with (startWebApp appContext) $ do

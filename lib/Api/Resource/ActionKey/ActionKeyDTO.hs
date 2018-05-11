@@ -1,11 +1,7 @@
 module Api.Resource.ActionKey.ActionKeyDTO where
 
-import Control.Lens ((^.), makeFields)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-
-import Common.Types
 
 data ActionKeyDTO = ActionKeyDTO
   { _actionKeyDTOAType :: String

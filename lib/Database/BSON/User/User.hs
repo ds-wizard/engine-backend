@@ -3,9 +3,7 @@ module Database.BSON.User.User where
 import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.Maybe
 import Data.UUID
-import GHC.Generics
 
 import Model.User.User
 

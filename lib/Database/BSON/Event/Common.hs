@@ -4,19 +4,18 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
-import Database.BSON.Event.Answer
-import Database.BSON.Event.AnswerItemTemplateQuestion
-import Database.BSON.Event.Chapter
-import Database.BSON.Event.Expert
-import Database.BSON.Event.FollowUpQuestion
-import Database.BSON.Event.KnowledgeModel
-import Database.BSON.Event.Question
-import Database.BSON.Event.Reference
+import Database.BSON.Event.Answer ()
+import Database.BSON.Event.AnswerItemTemplateQuestion ()
+import Database.BSON.Event.Chapter ()
+import Database.BSON.Event.Expert ()
+import Database.BSON.Event.FollowUpQuestion ()
+import Database.BSON.Event.KnowledgeModel ()
+import Database.BSON.Event.Question ()
+import Database.BSON.Event.Reference ()
 import Model.Event.Answer.AnswerEvent
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent

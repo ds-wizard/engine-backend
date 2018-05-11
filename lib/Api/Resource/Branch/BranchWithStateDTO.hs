@@ -1,13 +1,9 @@
 module Api.Resource.Branch.BranchWithStateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import Data.UUID
-
-import Common.Types
-import Common.Uuid
 
 import Model.Branch.BranchState
 

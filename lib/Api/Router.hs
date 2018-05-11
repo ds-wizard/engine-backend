@@ -1,9 +1,6 @@
 module Api.Router where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger
-import Control.Monad.Reader (asks)
-import Control.Monad.Trans.Class (lift)
 import Data.Text.Lazy (Text)
 import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Network.Wai (Middleware)
@@ -11,9 +8,8 @@ import Network.Wai.Middleware.RequestLogger
        (logStdout, logStdoutDev)
 import Text.Regex
 import Web.Scotty.Trans
-       (ActionT, Options, ScottyT, defaultHandler, delete, get, json,
-        jsonData, middleware, notFound, param, post, put, scottyOptsT,
-        settings, showError, status, verbose)
+       (ScottyT, delete, get, 
+        middleware, notFound, post, put)
 
 import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.Branch.BranchHandler
@@ -32,7 +28,6 @@ import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import Api.Middleware.JSONMiddleware
-import Common.Context
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext

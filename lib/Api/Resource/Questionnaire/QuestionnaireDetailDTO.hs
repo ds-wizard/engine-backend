@@ -1,16 +1,11 @@
 module Api.Resource.Questionnaire.QuestionnaireDetailDTO where
 
-import Control.Lens ((^.), makeLenses)
 import Control.Monad
-
 import Data.Aeson
-import Data.Text
 import Data.UUID
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Package.PackageDTO
-import Common.Types
-import Common.Uuid
 import Model.Questionnaire.Questionnaire
 
 data QuestionnaireDetailDTO = QuestionnaireDetailDTO

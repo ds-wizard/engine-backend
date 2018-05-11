@@ -3,9 +3,7 @@ module Service.Migrator.Sanitizator where
 import Control.Lens hiding (find)
 import Data.List
 import Data.Maybe
-import qualified Data.Set as S
 import qualified Data.UUID as U
-import Text.Pretty.Simple (pPrint)
 
 import Common.Utils
 import Common.Uuid
@@ -14,11 +12,9 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
-import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
-import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState

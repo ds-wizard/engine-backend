@@ -4,40 +4,28 @@ module Specs.API.User.Detail_Password_Hash_PUT
 
 import Control.Lens ((^.))
 import Crypto.PasswordStore
-import Data.Aeson (Value(..), (.=), encode, object)
+import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
-import Api.Resource.User.UserCreateDTO
-import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
-import Api.Resource.User.UserStateDTO
 import Common.Context
 import Common.Error
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
-import LensesConfig
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.User.User
-import Service.ActionKey.ActionKeyService
-import Service.User.UserService
 
 import Specs.API.Common
-import Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password?hash={hash}

@@ -1,14 +1,10 @@
 module Database.BSON.Branch.BranchWithKM where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.Maybe
-import Data.UUID
-import GHC.Generics
 
 import Database.BSON.Common
-import Database.BSON.KnowledgeModel.KnowledgeModel
+import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Model.Branch.Branch
 
 instance FromBSON BranchWithKM where

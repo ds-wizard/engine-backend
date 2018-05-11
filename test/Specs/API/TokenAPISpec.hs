@@ -2,29 +2,18 @@ module Specs.API.TokenAPISpec where
 
 import Control.Lens
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
-import Data.Foldable
-import Data.Maybe
-import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Error
 import LensesConfig
-import Model.Context.AppContext
 
 import Specs.API.Common
-import Specs.Common
 
 tokenAPI appContext =
   with (startWebApp appContext) $ do

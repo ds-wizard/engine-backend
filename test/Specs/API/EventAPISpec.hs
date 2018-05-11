@@ -2,32 +2,17 @@ module Specs.API.EventAPISpec where
 
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
-import Crypto.PasswordStore
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import qualified Data.ByteString.Char8 as BS
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
-import Data.Maybe
-import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
-import Api.Resource.Event.EventDTO
-import Api.Resource.User.UserDTO
-import Api.Resource.User.UserPasswordDTO
 import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import Database.DAO.User.UserDAO
 import qualified Database.Migration.Branch.BranchMigration as KMC
 import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
@@ -35,14 +20,11 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
-import Model.User.User
 import Service.Event.EventMapper
 import Service.Event.EventService
-import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.Applicator
 
 import Specs.API.Common
-import Specs.Common
 
 eventAPI appContext = do
   let events =

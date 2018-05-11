@@ -3,7 +3,6 @@ module Database.DAO.Branch.BranchDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Data.Maybe
 import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
@@ -11,9 +10,8 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Common.Types
-import Database.BSON.Branch.Branch
-import Database.BSON.Branch.BranchWithEvents
+import Database.BSON.Branch.Branch ()
+import Database.BSON.Branch.BranchWithEvents ()
 import Database.DAO.Common
 import Model.Branch.Branch
 

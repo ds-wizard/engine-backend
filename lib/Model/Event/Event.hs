@@ -4,13 +4,10 @@ import Control.Lens ((^.))
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Common.Types
 import LensesConfig
-import Model.Common
 import Model.Event.Answer.AnswerEvent
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
-import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent

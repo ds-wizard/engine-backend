@@ -5,25 +5,22 @@ import Control.Monad.Logger
 import Control.Monad.Reader
 import Control.Monad.Trans.Class (lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
-import Data.ByteString
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
-       (badRequest400, forbidden403, internalServerError500, notFound404,
+       (badRequest400, forbidden403, internalServerError500,
         ok200, unauthorized401)
 import Network.Wai
-import qualified Web.Scotty as Scotty
 import Web.Scotty.Trans
        (ActionT, body, header, json, params, request, status)
 
-import Api.Resource.Error.ErrorDTO
+import Api.Resource.Error.ErrorDTO ()
 import Api.Resource.User.UserDTO
 import Common.Error
 import Model.Context.AppContext
-import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 

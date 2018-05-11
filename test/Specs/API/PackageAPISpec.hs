@@ -3,37 +3,23 @@ module Specs.API.PackageAPISpec where
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
-import Data.Maybe
-import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import Text.Pretty.Simple (pPrint)
-import qualified Web.Scotty as S
 
 import Api.Resource.Package.PackageDTO
 import Common.Error
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
-import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
-import Model.Package.Package
 import Service.Package.PackageMapper
 import Service.Package.PackageService
 
 import Specs.API.Common
-import Specs.Common
 
 packageAPI appContext = do
   let dto1 =

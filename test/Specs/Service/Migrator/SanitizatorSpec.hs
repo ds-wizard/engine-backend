@@ -1,7 +1,6 @@
 module Specs.Service.Migrator.SanitizatorSpec where
 
 import Control.Lens
-import Control.Monad.Reader (liftIO)
 import Data.Maybe
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
@@ -15,17 +14,10 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
-import Model.Event.Answer.AnswerEvent
-import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
-import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
-import Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
-import Service.Migrator.Applicator
 import Service.Migrator.Migrator
 
 import Specs.Service.Migrator.Common

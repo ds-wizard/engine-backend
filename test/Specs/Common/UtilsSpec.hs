@@ -1,6 +1,5 @@
 module Specs.Common.UtilsSpec where
 
-import Data.Maybe
 import qualified Data.Text as T
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty

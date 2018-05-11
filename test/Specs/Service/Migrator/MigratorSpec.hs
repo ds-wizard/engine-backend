@@ -1,24 +1,13 @@
 module Specs.Service.Migrator.MigratorSpec where
 
 import Control.Lens
-import Data.Maybe
-import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
 import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.Branch.Data.KnowledgeModel.Chapters
-import Database.Migration.Branch.Data.KnowledgeModel.Experts
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
-import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
-import Model.Event.Question.QuestionEvent
-import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
 import Service.Migrator.Applicator
 import Service.Migrator.Migrator

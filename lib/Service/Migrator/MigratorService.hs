@@ -1,10 +1,8 @@
 module Service.Migrator.MigratorService where
 
-import Control.Lens ((&), (.~), (^.), makeLenses)
-import Data.Either
+import Control.Lens ((^.))
 import Data.Maybe
 import qualified Data.Text as T
-import qualified Data.UUID as U
 
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
@@ -12,23 +10,15 @@ import Api.Resource.Migrator.MigratorStateDTO
 import Common.Context
 import Common.Error
 import Common.Localization
-import Database.DAO.Branch.BranchDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
 import Model.Event.Event
-import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
-import Model.Package.Package
-import Service.Branch.BranchService
-import Service.Event.EventMapper
-import Service.Migrator.Applicator
-import Service.Migrator.CleanerMethod
-import Service.Migrator.CorrectorMethod
-import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper
 import Service.Package.PackageService
+import Service.Migrator.Migrator
 
 getCurrentMigration :: Context -> String -> IO (Either AppError MigratorStateDTO)
 getCurrentMigration context branchUuid = getMigrationState context branchUuid $ \ms -> return . Right . toDTO $ ms

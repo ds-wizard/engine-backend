@@ -3,15 +3,13 @@ module Database.DAO.Migrator.MigratorDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Data.Maybe
 import Database.MongoDB
-       ((=:), delete, fetch, findOne, insert, merge, rest, save, select)
+       ((=:), delete, fetch, findOne, insert, merge, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Common.Types
-import Database.BSON.Migrator.MigratorState
+import Database.BSON.Migrator.MigratorState ()
 import Database.DAO.Common
 import Model.Migrator.MigratorState
 

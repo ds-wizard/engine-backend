@@ -1,14 +1,10 @@
 module Api.Resource.KnowledgeModel.KnowledgeModelDTO where
 
-import Control.Lens ((^.), makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import Data.UUID
 
 import Api.Resource.Common
-import Common.Types
-import Common.Uuid
 import Model.KnowledgeModel.KnowledgeModel
 
 data KnowledgeModelDTO = KnowledgeModelDTO

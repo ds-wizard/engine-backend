@@ -1,16 +1,12 @@
 module Api.Handler.Package.PackageHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Maybe
-import Data.Text
-import Data.UUID
 import Network.HTTP.Types.Status (noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageDTO ()
 import Model.Context.AppContext
 import Service.Package.PackageService
 

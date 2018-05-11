@@ -1,6 +1,6 @@
 module Database.Migration.Questionnaire.QuestionnaireMigration where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import Control.Monad.Logger (logInfo)
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
@@ -9,8 +9,6 @@ import qualified Data.UUID as U
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
-import Model.Context.AppContext
-import Model.Questionnaire.Questionnaire
 import Service.Questionnaire.QuestionnaireService
 
 runMigration appContext = do

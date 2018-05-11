@@ -1,9 +1,8 @@
 module Api.Resource.User.UserCreateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 
 import Common.Types
 

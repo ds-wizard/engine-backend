@@ -1,19 +1,15 @@
 module Database.DAO.KnowledgeModel.KnowledgeModelDAO where
 
 import Control.Lens ((^.))
-import Data.Bson
-import Data.Bson.Generic
-import Data.Maybe
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        modify, rest, save, select)
+       ((=:), findOne,
+        modify, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Common.Types
-import Database.BSON.Branch.BranchWithKM
-import Database.BSON.KnowledgeModel.KnowledgeModel
+import Database.BSON.Branch.BranchWithKM ()
+import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Common
 import Model.Branch.Branch

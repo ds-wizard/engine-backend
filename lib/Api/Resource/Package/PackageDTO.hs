@@ -1,13 +1,8 @@
 module Api.Resource.Package.PackageDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-import Data.UUID
-
-import Common.Types
-import Common.Uuid
 
 data PackageDTO = PackageDTO
   { _pkgdtoId :: String

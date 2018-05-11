@@ -9,7 +9,6 @@ import Web.Scotty.Trans (json)
 import Api.Handler.Common
 import Api.Resource.Info.InfoDTO
 import LensesConfig
-import Model.Config.DSWConfig
 import Model.Context.AppContext
 
 getInfoA :: Endpoint

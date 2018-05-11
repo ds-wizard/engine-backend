@@ -11,7 +11,6 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.Migration.Branch.Data.Event.Event
 import LensesConfig
-import Model.Context.AppContext
 import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService

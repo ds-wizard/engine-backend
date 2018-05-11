@@ -3,7 +3,7 @@ module Specs.API.Common where
 import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
-import Data.Aeson (Value(..), (.=), encode, object)
+import Data.Aeson (encode)
 import Data.ByteString.Char8 as BS
 import Data.Foldable
 import qualified Data.List as L
@@ -12,18 +12,15 @@ import qualified Data.UUID as U
 import Network.HTTP.Types.Header
 import Network.Wai (Application)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import Web.Scotty.Trans (scottyAppT)
 
-import Api.Resource.Error.ErrorDTO
+import Api.Resource.Error.ErrorDTO ()
 import Api.Router
-import Common.Context
 import Common.Error
 import Common.Types
-import Database.Connection
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext

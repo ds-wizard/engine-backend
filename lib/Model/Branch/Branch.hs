@@ -1,8 +1,6 @@
 module Model.Branch.Branch where
 
 import Control.Lens
-import Control.Lens.Traversal
-import Data.List
 import Data.UUID
 import GHC.Generics
 

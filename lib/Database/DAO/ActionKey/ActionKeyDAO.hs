@@ -3,15 +3,13 @@ module Database.DAO.ActionKey.ActionKeyDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Data.Maybe
 import Database.MongoDB
        ((=:), delete, deleteOne, find, findOne, insert, rest, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context
 import Common.Error
-import Common.Types
-import Database.BSON.ActionKey.ActionKey
+import Database.BSON.ActionKey.ActionKey ()
 import Database.DAO.Common
 import Model.ActionKey.ActionKey
 

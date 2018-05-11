@@ -1,11 +1,8 @@
 module Service.Organization.OrganizationMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import Data.UUID (UUID)
 
 import Api.Resource.Organization.OrganizationDTO
-import Common.Types
 import LensesConfig
 import Model.Organization.Organization
 

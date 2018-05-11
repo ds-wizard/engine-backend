@@ -3,24 +3,16 @@ module Specs.API.MigratorAPISpec where
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.Branch.BranchDTO
-import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
@@ -36,10 +28,6 @@ import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
-import Model.Branch.Branch
-import Model.Branch.BranchState
-import Model.Event.Chapter.ChapterEvent
-import Model.Event.Event
 import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.Branch.BranchService
@@ -48,7 +36,6 @@ import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Migrator.MigratorService
 
 import Specs.API.Common
-import Specs.Common
 
 migratorAPI appContext = do
   with (startWebApp appContext) $ do

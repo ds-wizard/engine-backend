@@ -3,10 +3,7 @@ module Api.Resource.Migrator.Common where
 import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Error.ErrorDTO
-import Api.Resource.Event.EventDTO
-import Common.Error
-import LensesConfig
+import Api.Resource.Error.ErrorDTO ()
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
 

@@ -3,21 +3,14 @@ module Specs.API.BranchAPISpec where
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
 import Data.Maybe
 import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
@@ -30,12 +23,10 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
-import Model.Context.AppContext
 import Model.Package.Package
 import Service.Branch.BranchService
 
 import Specs.API.Common
-import Specs.Common
 
 branchAPI appContext = do
   with (startWebApp appContext) $ do

@@ -1,14 +1,12 @@
 module Service.Questionnaire.QuestionnaireMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
 import Data.Map
 import Data.UUID (UUID)
 
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Common.Types
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Package.Package

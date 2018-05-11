@@ -1,11 +1,7 @@
 module Api.Resource.Questionnaire.QuestionnaireCreateDTO where
 
-import Control.Lens ((^.), makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-
-import Common.Types
 
 data QuestionnaireCreateDTO = QuestionnaireCreateDTO
   { _questionnaireCreateDTOName :: String

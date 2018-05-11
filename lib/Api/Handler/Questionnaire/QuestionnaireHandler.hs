@@ -1,17 +1,13 @@
 module Api.Handler.Questionnaire.QuestionnaireHandler where
 
-import Control.Lens ((^.))
-import Control.Monad.Reader (asks, liftIO, liftM)
+import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Text as T
-import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.Questionnaire.QuestionnaireCreateDTO
-import Api.Resource.Questionnaire.QuestionnaireDTO
-import Common.Error
+import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
+import Api.Resource.Questionnaire.QuestionnaireDTO ()
 import Model.Context.AppContext
 import Service.Questionnaire.QuestionnaireService
 

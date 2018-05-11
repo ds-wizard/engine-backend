@@ -6,7 +6,6 @@ import Database.Migration.Branch.Data.Event.Event
 import Model.Event.Event
 import Model.Package.Package
 import Service.Package.PackageMapper
-import Service.Package.PackageService
 
 baseElixir0PackageDto = buildPackage "Elixir Base Package" "elixir.base" "core" "0.0.1" "Beta version" Nothing []
 

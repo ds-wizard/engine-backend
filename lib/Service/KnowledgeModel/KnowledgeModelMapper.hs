@@ -1,11 +1,8 @@
 module Service.KnowledgeModel.KnowledgeModelMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import Data.UUID (UUID)
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Types
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 

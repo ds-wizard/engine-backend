@@ -5,7 +5,6 @@ import Control.Monad.Logger (runNoLoggingT)
 import Control.Monad.Reader
 import Data.Either
 import Data.Maybe
-import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -19,13 +18,10 @@ import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.BranchState
-import Model.Event.Chapter.ChapterEvent
 import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.Branch.BranchService
 import Service.Migrator.MigratorService
-
-import Specs.Common
 
 branchServiceSpec =
   describe "Package Service" $

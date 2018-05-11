@@ -1,7 +1,6 @@
 module Model.Migrator.MigratorState where
 
-import Control.Lens ((&), (.~), (^.), makeLenses)
-import Data.Tree
+import Control.Lens (makeLenses)
 import qualified Data.UUID as U
 import GHC.Generics
 

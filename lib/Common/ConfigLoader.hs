@@ -1,15 +1,10 @@
 module Common.ConfigLoader where
 
-import Control.Lens
 import Control.Monad.Except
-import Control.Monad.Trans.Except
 import Data.ConfigFile
 import qualified Data.Text as T
 
-import Common.Types
-import LensesConfig
 import Model.Config.DSWConfig
-import Paths_src
 
 loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError DSWConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do

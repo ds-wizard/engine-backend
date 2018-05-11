@@ -1,13 +1,11 @@
 module Api.Resource.User.UserDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import Data.UUID
 
 import Common.Types
-import Common.Uuid
 
 data UserDTO = UserDTO
   { _udtoUuid :: UUID

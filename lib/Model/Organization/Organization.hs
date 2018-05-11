@@ -1,8 +1,5 @@
 module Model.Organization.Organization where
 
-import Control.Lens
-import Control.Lens.Traversal
-import Data.List
 import Data.Time
 import Data.UUID
 import GHC.Generics

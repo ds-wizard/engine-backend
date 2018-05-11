@@ -101,7 +101,7 @@ module Data.Bson.Generic
 import GHC.Generics
 
 ------------------------------------------------------------------------------
-import Control.Applicative
+import Control.Applicative ()
 import Control.Monad
 
 ------------------------------------------------------------------------------

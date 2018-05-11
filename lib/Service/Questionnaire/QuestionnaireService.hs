@@ -1,26 +1,18 @@
 module Service.Questionnaire.QuestionnaireService where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import Control.Monad.Reader
-import Crypto.PasswordStore
-import Data.ByteString.Char8 as BS
-import Data.Either
-import Data.Maybe
-import qualified Data.Text as T
 import qualified Data.UUID as U
 
-import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Common.Context
 import Common.Error
-import Common.Types
 import Common.Uuid
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
-import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire

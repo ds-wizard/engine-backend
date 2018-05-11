@@ -2,7 +2,7 @@ module Application where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger
-       (logError, logErrorSH, logInfo, runNoLoggingT, runStdoutLoggingT)
+       (logError, logErrorSH, logInfo, runStdoutLoggingT)
 import Control.Monad.Reader (liftIO, runReaderT)
 import Control.Monad.Trans.Class (lift)
 import Data.Default (def)
@@ -11,8 +11,6 @@ import Network.Wai.Handler.Warp
        (Settings, defaultSettings, setPort)
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
-import Api.Handler.Common
-import Api.Resource.Info.InfoDTO
 import Api.Router
 import Common.ConfigLoader
 import Common.Context

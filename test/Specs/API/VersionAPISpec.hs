@@ -3,21 +3,12 @@ module Specs.API.VersionAPISpec where
 import Control.Lens
 import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
-import Data.Maybe
-import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Version.VersionDTO
@@ -28,7 +19,6 @@ import LensesConfig
 import Service.Package.PackageService
 
 import Specs.API.Common
-import Specs.Common
 
 versionAPI appContext =
   with (startWebApp appContext) $ do

@@ -3,15 +3,7 @@ module Service.Migrator.CleanerMethod where
 import Control.Lens
 
 import LensesConfig
-import Model.Event.Answer.AnswerEvent
-import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
-import Model.Event.EventField
-import Model.Event.Expert.ExpertEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
-import Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Model.Event.Question.QuestionEvent
-import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState

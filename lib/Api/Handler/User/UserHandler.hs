@@ -1,18 +1,12 @@
 module Api.Handler.User.UserHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO, liftM)
 import Control.Monad.Trans.Class (lift)
 import Data.Text as T
-import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.User.UserCreateDTO
-import Api.Resource.User.UserDTO
-import Api.Resource.User.UserPasswordDTO
-import Common.Error
 import Model.Context.AppContext
 import Service.User.UserService
 

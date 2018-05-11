@@ -1,13 +1,10 @@
 module Api.Handler.IO.IOHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
 import Data.Aeson (encode)
-import qualified Data.ByteString.Char8 as BS
 import qualified Data.List as L
 import Data.Text.Lazy
-import Data.UUID
 import Network.Wai.Parse
 import Web.Scotty.Trans (addHeader, files, json, param, raw)
 

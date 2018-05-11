@@ -5,9 +5,7 @@ import Data.Text
 import Database.Persist.MongoDB
 import Network
 
-import Database.Migration.Migration
 import LensesConfig
-import Model.Config.DSWConfig
 
 createDBConn dswConfig afterSuccess =
   let appConfigDatabase = dswConfig ^. databaseConfig

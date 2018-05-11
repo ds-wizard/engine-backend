@@ -1,17 +1,13 @@
 module Api.Resource.Event.EventDTO where
 
-import Control.Lens ((^.), makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import Data.UUID
 import GHC.Generics
 
 import Api.Resource.Common
 import Api.Resource.Event.EventFieldDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Types
-import Common.Uuid
 import Model.KnowledgeModel.KnowledgeModel
 
 data EventDTO

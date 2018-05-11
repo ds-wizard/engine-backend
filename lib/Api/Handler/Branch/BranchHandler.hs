@@ -1,15 +1,11 @@
 module Api.Handler.Branch.BranchHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Text.Lazy
-import Data.UUID
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.Branch.BranchDTO
 import Model.Context.AppContext
 import Service.Branch.BranchService
 

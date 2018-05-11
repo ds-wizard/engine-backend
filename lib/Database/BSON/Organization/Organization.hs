@@ -3,9 +3,6 @@ module Database.BSON.Organization.Organization where
 import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.Maybe
-import Data.UUID
-import GHC.Generics
 
 import Database.BSON.Common
 import LensesConfig

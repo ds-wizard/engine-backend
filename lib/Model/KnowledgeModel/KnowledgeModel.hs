@@ -1,12 +1,7 @@
 module Model.KnowledgeModel.KnowledgeModel where
 
-import Control.Lens
-import Control.Lens.Traversal
-import Data.List
 import Data.UUID
 import GHC.Generics
-
-import Model.Common
 
 data QuestionType
   = QuestionTypeOptions

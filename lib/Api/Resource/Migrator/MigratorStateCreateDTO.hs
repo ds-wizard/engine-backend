@@ -1,11 +1,8 @@
 module Api.Resource.Migrator.MigratorStateCreateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.UUID
-
-import Common.Uuid
 
 data MigratorStateCreateDTO = MigratorStateCreateDTO
   { _mscdtoTargetPackageId :: String

@@ -1,12 +1,9 @@
 module Service.User.UserService where
 
 import Control.Lens ((&), (.~), (^.))
-import Control.Monad.Reader
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
 import Data.Either
-import Data.Maybe
-import qualified Data.Text as T
 import qualified Data.UUID as U
 
 import Api.Resource.ActionKey.ActionKeyDTO
@@ -26,7 +23,6 @@ import Model.Config.DSWConfig
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
-import Service.Token.TokenService
 import Service.User.UserMapper
 
 getPermissionForRole :: DSWConfig -> Role -> [Permission]

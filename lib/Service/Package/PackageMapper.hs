@@ -1,13 +1,10 @@
 module Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import Data.UUID (UUID)
 
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
-import Common.Types
 import Model.Event.Event
 import Model.Package.Package
 import Service.Event.EventMapper

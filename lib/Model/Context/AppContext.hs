@@ -4,7 +4,6 @@ import Control.Applicative (Applicative)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
-import Control.Monad.Trans.Class (MonadTrans)
 import Database.Persist.MongoDB (ConnectionPool)
 
 import Common.Context

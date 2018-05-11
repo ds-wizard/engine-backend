@@ -5,8 +5,6 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Api.Resource.User.UserCreateDTO
-import Api.Resource.User.UserDTO
-import Common.Context
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -14,10 +12,7 @@ import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
 import Database.Migration.Organization.Data.Organizations
 import LensesConfig
-import Model.Context.AppContext
-import Model.Organization.Organization
 import Model.User.User
-import Service.Organization.OrganizationService
 import Service.User.UserService
 
 createUserAlbert appContext = do

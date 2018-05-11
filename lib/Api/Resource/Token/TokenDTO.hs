@@ -1,13 +1,7 @@
 module Api.Resource.Token.TokenDTO where
 
-import Control.Lens ((^.), makeLenses)
-import Control.Monad
+import Control.Lens (makeLenses)
 import Data.Aeson
-import Data.Text
-import Data.UUID
-
-import Common.Types
-import Common.Uuid
 
 data TokenDTO = TokenDTO
   { _tdtoToken :: String

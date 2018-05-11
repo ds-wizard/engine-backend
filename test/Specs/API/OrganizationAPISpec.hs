@@ -2,34 +2,23 @@ module Specs.API.OrganizationAPISpec where
 
 import Control.Lens
 import Data.Aeson
-import Data.Aeson (Value(..), (.=), object)
-import Data.ByteString.Lazy
 import Data.Either
-import Data.Foldable
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
-import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
-import qualified Test.Hspec.Expectations.Pretty as TP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import qualified Web.Scotty as S
 
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
-import Database.DAO.Organization.OrganizationDAO
 import Database.Migration.Organization.Data.Organizations
 import LensesConfig
-import Model.Context.AppContext
-import Model.Organization.Organization
 import Service.Organization.OrganizationService
 
 import Specs.API.Common
-import Specs.Common
 
 organizationAPI appContext =
   with (startWebApp appContext) $ do

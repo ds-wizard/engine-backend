@@ -4,7 +4,6 @@ import Control.Lens
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
-import Data.Maybe (fromMaybe)
 import Data.UUID
 
 import Common.Error

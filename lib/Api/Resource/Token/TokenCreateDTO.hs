@@ -1,13 +1,8 @@
 module Api.Resource.Token.TokenCreateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
-import Data.UUID
-
-import Common.Types
-import Common.Uuid
 
 data TokenCreateDTO = TokenCreateDTO
   { _tcdtoEmail :: String

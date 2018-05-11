@@ -1,8 +1,6 @@
 module Service.Package.PackageService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Crypto.PasswordStore
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
@@ -10,19 +8,14 @@ import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.UUID as U
-import Text.Pretty.Simple (pPrint)
 import Text.Regex
 
-import Api.Resource.Branch.BranchDTO
-import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
 import Common.Context
 import Common.Error
 import Common.Localization
-import Common.Types
-import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -32,7 +25,6 @@ import Model.Branch.Branch
 import Model.Event.Event
 import Model.Migrator.MigratorState
 import Model.Package.Package
-import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper

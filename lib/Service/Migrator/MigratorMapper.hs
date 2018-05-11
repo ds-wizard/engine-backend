@@ -4,7 +4,6 @@ import Control.Lens ((^.))
 
 import Api.Resource.Migrator.MigratorStateDTO
 import Model.Migrator.MigratorState
-import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 toDTO :: MigratorState -> MigratorStateDTO

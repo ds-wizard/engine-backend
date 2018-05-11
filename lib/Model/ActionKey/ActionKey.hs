@@ -3,8 +3,6 @@ module Model.ActionKey.ActionKey where
 import Data.UUID
 import GHC.Generics
 
-import Common.Types
-
 data ActionKeyType
   = RegistrationActionKey
   | ForgottenPasswordActionKey

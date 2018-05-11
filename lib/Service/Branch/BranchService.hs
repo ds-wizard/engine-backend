@@ -1,9 +1,6 @@
 module Service.Branch.BranchService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
-import Crypto.PasswordStore
-import Data.ByteString.Char8 as BS
 import Data.Maybe
 import Data.UUID as U
 import Text.Regex
@@ -13,7 +10,6 @@ import Api.Resource.Branch.BranchWithStateDTO
 import Common.Context
 import Common.Error
 import Common.Localization
-import Common.Types
 import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO

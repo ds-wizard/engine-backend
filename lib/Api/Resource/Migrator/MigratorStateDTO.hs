@@ -1,17 +1,12 @@
 module Api.Resource.Migrator.MigratorStateDTO where
 
-import Control.Lens ((^.), makeLenses)
+import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
-import Data.Text
 import qualified Data.UUID as U
 
-import Api.Resource.Event.EventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Api.Resource.Migrator.Common
-import Common.Types
-import Common.Uuid
-import LensesConfig
+import Api.Resource.Migrator.Common ()
 import Model.Migrator.MigratorState
 
 data MigratorStateDTO = MigratorStateDTO

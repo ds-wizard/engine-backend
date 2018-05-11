@@ -3,8 +3,6 @@ module Api.Handler.Version.VersionHandler where
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Control.Monad.Trans.Class (lift)
-import Data.Text.Lazy
-import Data.UUID
 import Network.HTTP.Types.Status (created201)
 import Web.Scotty.Trans (json, param, status)
 
