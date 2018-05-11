@@ -21,6 +21,7 @@ library:
   - base
   - aeson
   - bson
+  - bson-generic
   - bytestring
   - case-insensitive
   - ConfigFile
@@ -85,6 +86,7 @@ tests:
     - base
     - aeson
     - bson
+    - bson-generic
     - bytestring
     - case-insensitive
     - ConfigFile
