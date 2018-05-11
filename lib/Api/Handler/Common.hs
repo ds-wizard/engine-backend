@@ -11,8 +11,8 @@ import qualified Data.Text.Lazy as LT
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
-       (badRequest400, forbidden403, internalServerError500,
-        ok200, unauthorized401)
+       (badRequest400, forbidden403, internalServerError500, ok200,
+        unauthorized401)
 import Network.Wai
 import Web.Scotty.Trans
        (ActionT, body, header, json, params, request, status)

@@ -3,7 +3,8 @@ module Database.DAO.Organization.OrganizationDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
-import Database.MongoDB (delete, fetch, findOne, insert, merge, save, select)
+import Database.MongoDB
+       (delete, fetch, findOne, insert, merge, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context

@@ -9,7 +9,8 @@ import Model.Common
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Answer.AnswerEventSameUuid ()
 import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
-import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid ()
+import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEventSameUuid
+       ()
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Chapter.ChapterEventSameUuid ()
 import Model.Event.Event
@@ -17,7 +18,8 @@ import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
 import Model.Event.Expert.ExpertEventSameUuid ()
 import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEventSameUuid ()
+import Model.Event.FollowUpQuestion.FollowUpQuestionEventSameUuid
+       ()
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEventSameUuid ()
 import Model.Event.Question.QuestionEvent
@@ -236,8 +238,7 @@ instance ApplyEventToChapter EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToChapter AddChapterEvent where
-  applyEventToChapter _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Chapter"
+  applyEventToChapter _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Chapter"
 
 instance ApplyEventToChapter EditChapterEvent where
   applyEventToChapter _ (Left error) = Left error
@@ -251,8 +252,7 @@ instance ApplyEventToChapter EditChapterEvent where
       applyQuestionIds ch = applyValue (e ^. questionIds) ch chChangeQuestionIdsOrder
 
 instance ApplyEventToChapter DeleteChapterEvent where
-  applyEventToChapter _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Chapter"
+  applyEventToChapter _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Chapter"
 
 -- -------------------
 -- QUESTIONS----------
@@ -458,12 +458,10 @@ instance ApplyEventToQuestion EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToQuestion AddChapterEvent where
-  applyEventToQuestion _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Question"
+  applyEventToQuestion _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Question"
 
 instance ApplyEventToQuestion EditChapterEvent where
-  applyEventToQuestion _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Question"
+  applyEventToQuestion _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Question"
 
 instance ApplyEventToQuestion DeleteChapterEvent where
   applyEventToQuestion _ _ =
@@ -736,16 +734,13 @@ instance ApplyEventToAnswer EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToAnswer AddChapterEvent where
-  applyEventToAnswer _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Answer"
+  applyEventToAnswer _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Answer"
 
 instance ApplyEventToAnswer EditChapterEvent where
-  applyEventToAnswer _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Answer"
+  applyEventToAnswer _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Answer"
 
 instance ApplyEventToAnswer DeleteChapterEvent where
-  applyEventToAnswer _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Answer"
+  applyEventToAnswer _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Answer"
 
 -- -------------------
 -- QUESTIONS----------
@@ -889,46 +884,37 @@ instance ApplyEventToExpert EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToExpert AddChapterEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Expert"
 
 instance ApplyEventToExpert EditChapterEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditChapterEvent" "Expert"
 
 instance ApplyEventToExpert DeleteChapterEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteChapterEvent" "Expert"
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
 instance ApplyEventToExpert AddQuestionEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddQuestionEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddQuestionEvent" "Expert"
 
 instance ApplyEventToExpert EditQuestionEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditQuestionEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditQuestionEvent" "Expert"
 
 instance ApplyEventToExpert DeleteQuestionEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteQuestionEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteQuestionEvent" "Expert"
 
 -- -------------------
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToExpert AddAnswerEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Expert"
 
 instance ApplyEventToExpert EditAnswerEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Expert"
 
 instance ApplyEventToExpert DeleteAnswerEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerEvent" "Expert"
 
 -- ------------------------
 -- FOLLOW-UP QUESTIONS ----
@@ -950,25 +936,21 @@ instance ApplyEventToExpert DeleteFollowUpQuestionEvent where
 -- -----------------------------------
 instance ApplyEventToExpert AddAnswerItemTemplateQuestionEvent where
   applyEventToExpert _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Expert"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Expert"
 
 instance ApplyEventToExpert EditAnswerItemTemplateQuestionEvent where
   applyEventToExpert _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Expert"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Expert"
 
 instance ApplyEventToExpert DeleteAnswerItemTemplateQuestionEvent where
   applyEventToExpert _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Expert"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Expert"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToExpert AddExpertEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Expert"
 
 instance ApplyEventToExpert EditExpertEvent where
   applyEventToExpert e (Left error) = Left error
@@ -981,22 +963,19 @@ instance ApplyEventToExpert EditExpertEvent where
       applyEmail exp = applyValue (e ^. email) exp email
 
 instance ApplyEventToExpert DeleteExpertEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteExpertEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteExpertEvent" "Expert"
 
 -- -------------------
 -- REFERENCES---------
 -- -------------------
 instance ApplyEventToExpert AddReferenceEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddReferenceEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddReferenceEvent" "Expert"
 
 instance ApplyEventToExpert EditReferenceEvent where
   applyEventToExpert e exp = exp
 
 instance ApplyEventToExpert DeleteReferenceEvent where
-  applyEventToExpert _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteReferenceEvent" "Expert"
+  applyEventToExpert _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteReferenceEvent" "Expert"
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -1020,8 +999,7 @@ instance ApplyEventToReference EditKnowledgeModelEvent where
 -- CHAPTERS ----------
 -- -------------------
 instance ApplyEventToReference AddChapterEvent where
-  applyEventToReference _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Reference"
+  applyEventToReference _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddChapterEvent" "Reference"
 
 instance ApplyEventToReference EditChapterEvent where
   applyEventToReference _ _ =
@@ -1050,12 +1028,10 @@ instance ApplyEventToReference DeleteQuestionEvent where
 -- ANSWERS -----------
 -- -------------------
 instance ApplyEventToReference AddAnswerEvent where
-  applyEventToReference _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Reference"
+  applyEventToReference _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerEvent" "Reference"
 
 instance ApplyEventToReference EditAnswerEvent where
-  applyEventToReference _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Reference"
+  applyEventToReference _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerEvent" "Reference"
 
 instance ApplyEventToReference DeleteAnswerEvent where
   applyEventToReference _ _ =
@@ -1081,25 +1057,21 @@ instance ApplyEventToReference DeleteFollowUpQuestionEvent where
 -- -----------------------------------
 instance ApplyEventToReference AddAnswerItemTemplateQuestionEvent where
   applyEventToReference _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Reference"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddAnswerItemTemplateQuestionEvent" "Reference"
 
 instance ApplyEventToReference EditAnswerItemTemplateQuestionEvent where
   applyEventToReference _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Reference"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "EditAnswerItemTemplateQuestionEvent" "Reference"
 
 instance ApplyEventToReference DeleteAnswerItemTemplateQuestionEvent where
   applyEventToReference _ _ =
-    Left . MigratorError $
-    _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Reference"
+    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "DeleteAnswerItemTemplateQuestionEvent" "Reference"
 
 -- -------------------
 -- EXPERTS -----------
 -- -------------------
 instance ApplyEventToReference AddExpertEvent where
-  applyEventToReference _ _ =
-    Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Reference"
+  applyEventToReference _ _ = Left . MigratorError $ _ERROR_MT_APPLICATOR__BAD_APPLICATION "AddExpertEvent" "Reference"
 
 instance ApplyEventToReference EditExpertEvent where
   applyEventToReference e ref = ref

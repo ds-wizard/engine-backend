@@ -8,8 +8,7 @@ import Network.Wai.Middleware.RequestLogger
        (logStdout, logStdoutDev)
 import Text.Regex
 import Web.Scotty.Trans
-       (ScottyT, delete, get, 
-        middleware, notFound, post, put)
+       (ScottyT, delete, get, middleware, notFound, post, put)
 
 import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.Branch.BranchHandler

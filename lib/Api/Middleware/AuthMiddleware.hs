@@ -9,8 +9,8 @@ import Data.Text.Encoding (decodeUtf8)
 import qualified Network.HTTP.Types as H
 import Network.HTTP.Types.Method (methodOptions)
 import Network.Wai
-       (Middleware, Request, ResponseReceived,
-        pathInfo, requestHeaders, requestMethod)
+       (Middleware, Request, ResponseReceived, pathInfo, requestHeaders,
+        requestMethod)
 import Prelude hiding (exp)
 import Text.Regex
 import qualified Web.JWT as JWT

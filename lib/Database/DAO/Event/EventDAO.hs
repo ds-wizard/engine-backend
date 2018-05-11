@@ -1,9 +1,7 @@
 module Database.DAO.Event.EventDAO where
 
 import Control.Lens ((^.))
-import Database.MongoDB
-       ((=:), findOne, 
-        modify, select)
+import Database.MongoDB ((=:), findOne, modify, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Context

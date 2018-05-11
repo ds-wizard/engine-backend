@@ -16,9 +16,9 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.User.UserPasswordDTO
 import Common.Context
-import Model.Config.DSWConfig
 import Common.Error
 import Database.DAO.User.UserDAO
+import Model.Config.DSWConfig
 import Model.User.User
 
 import Specs.API.Common

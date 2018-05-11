@@ -16,9 +16,9 @@ import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.Migrator.MigratorState
+import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper
 import Service.Package.PackageService
-import Service.Migrator.Migrator
 
 getCurrentMigration :: Context -> String -> IO (Either AppError MigratorStateDTO)
 getCurrentMigration context branchUuid = getMigrationState context branchUuid $ \ms -> return . Right . toDTO $ ms
@@ -103,8 +103,7 @@ createMigration context branchUuid mscDto = do
       case branch ^. bwkmLastAppliedParentPackageId of
         Just lastAppliedParentPackageId -> callback lastAppliedParentPackageId
         Nothing ->
-          return . Left . MigratorError $
-          _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG
+          return . Left . MigratorError $ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG
 
 deleteCurrentMigration :: Context -> String -> IO (Maybe AppError)
 deleteCurrentMigration context branchUuid = do
