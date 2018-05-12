@@ -17,6 +17,7 @@ data-files:
   - config/build-info.cfg
 library:
   source-dirs: lib
+  ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
   dependencies:
   - base
   - aeson
@@ -75,6 +76,7 @@ executables:
   dsw-server:
     main: Main.hs
     source-dirs: app
+    ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
     dependencies:
     - base
     - dsw-server
@@ -82,6 +84,7 @@ tests:
   hspec:
     main: Spec.hs
     source-dirs: test
+    ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
     dependencies:
     - base
     - aeson
