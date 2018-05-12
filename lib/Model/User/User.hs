@@ -1,20 +1,29 @@
 module Model.User.User where
 
-import Control.Lens (makeLenses)
+import Data.Time
 import Data.UUID
 import GHC.Generics
 
 import Common.Types
 
 data User = User
-  { _uUuid :: UUID
-  , _uName :: String
-  , _uSurname :: String
-  , _uEmail :: Email
-  , _uPasswordHash :: String
-  , _uRole :: Role
-  , _uPermissions :: [Permission]
-  , _uIsActive :: Bool
-  } deriving (Generic, Show, Eq)
+  { _userUuid :: UUID
+  , _userName :: String
+  , _userSurname :: String
+  , _userEmail :: Email
+  , _userPasswordHash :: String
+  , _userRole :: Role
+  , _userPermissions :: [Permission]
+  , _userIsActive :: Bool
+  , _userCreatedAt :: Maybe UTCTime
+  , _userUpdatedAt :: Maybe UTCTime
+  } deriving (Generic, Show)
 
-makeLenses ''User
+instance Eq User where
+  a == b =
+    _userUuid a == _userUuid b &&
+    _userName a == _userName b &&
+    _userSurname a == _userSurname b &&
+    _userEmail a == _userEmail b &&
+    _userPasswordHash a == _userPasswordHash b &&
+    _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userIsActive a == _userIsActive b

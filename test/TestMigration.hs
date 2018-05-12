@@ -1,65 +1,21 @@
 module TestMigration where
 
-import Control.Lens ((&), (.~), (^.))
-import Data.Maybe
-import qualified Data.UUID as U
+import Control.Lens ((^.))
 
-import Api.Resource.User.UserCreateDTO
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
 import Database.Migration.Organization.Data.Organizations
+import Database.Migration.User.Data.Users
 import LensesConfig
-import Model.User.User
-import Service.User.UserService
-
-createUserAlbert appContext = do
-  let context = appContext ^. oldContext
-  let dswConfig = appContext ^. config
-  createUserWithGivenUuid
-    context
-    dswConfig
-    (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
-    UserCreateDTO
-    { _ucdtoName = "Albert"
-    , _ucdtoSurname = "Einstein"
-    , _ucdtoEmail = "albert.einstein@example.com"
-    , _ucdtoRole = Just "ADMIN"
-    , _ucdtoPassword = "password"
-    }
-    True
-  eitherUser <- findUserByEmail context "albert.einstein@example.com"
-  let (Right user) = eitherUser
-  let updatedUser = user & uIsActive .~ True
-  updateUserById context updatedUser
-
-createUserNikola appContext = do
-  let context = appContext ^. oldContext
-  let dswConfig = appContext ^. config
-  createUserWithGivenUuid
-    context
-    dswConfig
-    (fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"))
-    UserCreateDTO
-    { _ucdtoName = "Nikola"
-    , _ucdtoSurname = "Tesla"
-    , _ucdtoEmail = "nikola.tesla@example.com"
-    , _ucdtoRole = Just "DATASTEWARD"
-    , _ucdtoPassword = "password"
-    }
-    True
-  eitherUser <- findUserByEmail context "nikola.tesla@example.com"
-  let (Right user) = eitherUser
-  let updatedUser = user & uIsActive .~ True
-  updateUserById context updatedUser
 
 resetDB appContext = do
   let context = appContext ^. oldContext
   let dswConfig = appContext ^. config
   deleteUsers context
-  createUserAlbert appContext
+  insertUser context userAlbert
   deleteOrganizations context
   insertOrganization context org1
   deleteBranches context

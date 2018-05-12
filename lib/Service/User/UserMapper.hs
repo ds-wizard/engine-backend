@@ -1,47 +1,72 @@
 module Service.User.UserMapper where
 
 import Control.Lens ((^.))
-import Data.UUID (UUID)
+import Data.Time
+import qualified Data.UUID as U
 
+import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
+import Api.Resource.User.UserProfileChangeDTO
 import Common.Types
+import LensesConfig
 import Model.User.User
 
 toDTO :: User -> UserDTO
 toDTO user =
   UserDTO
-  { _udtoUuid = user ^. uUuid
-  , _udtoName = user ^. uName
-  , _udtoSurname = user ^. uSurname
-  , _udtoEmail = user ^. uEmail
-  , _udtoRole = user ^. uRole
-  , _udtoPermissions = user ^. uPermissions
-  , _udtoIsActive = user ^. uIsActive
+  { _userDTOUuid = user ^. uuid
+  , _userDTOName = user ^. name
+  , _userDTOSurname = user ^. surname
+  , _userDTOEmail = user ^. email
+  , _userDTORole = user ^. role
+  , _userDTOPermissions = user ^. permissions
+  , _userDTOIsActive = user ^. isActive
+  , _userDTOCreatedAt = user ^. createdAt
+  , _userDTOUpdatedAt = user ^. updatedAt
   }
 
-fromUserCreateDTO :: UserCreateDTO -> UUID -> String -> Role -> [Permission] -> Bool -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions isActive =
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> UTCTime -> UTCTime -> User
+fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =
   User
-  { _uUuid = userUuid
-  , _uName = dto ^. ucdtoName
-  , _uSurname = dto ^. ucdtoSurname
-  , _uEmail = dto ^. ucdtoEmail
-  , _uPasswordHash = passwordHash
-  , _uRole = role
-  , _uPermissions = permissions
-  , _uIsActive = isActive
+  { _userUuid = userUuid
+  , _userName = dto ^. name
+  , _userSurname = dto ^. surname
+  , _userEmail = dto ^. email
+  , _userPasswordHash = passwordHash
+  , _userRole = role
+  , _userPermissions = permissions
+  , _userIsActive = False
+  , _userCreatedAt = Just createdAt
+  , _userUpdatedAt = Just updatedAt
   }
 
-fromUserDTO :: UserDTO -> UUID -> String -> Bool -> User
-fromUserDTO dto userUuid passwordHash isActive =
+fromUserChangeDTO :: UserChangeDTO -> User -> [Permission] -> User
+fromUserChangeDTO dto oldUser permission =
   User
-  { _uUuid = userUuid
-  , _uName = dto ^. udtoName
-  , _uSurname = dto ^. udtoSurname
-  , _uEmail = dto ^. udtoEmail
-  , _uPasswordHash = passwordHash
-  , _uRole = dto ^. udtoRole
-  , _uPermissions = dto ^. udtoPermissions
-  , _uIsActive = isActive
+  { _userUuid = oldUser ^. uuid
+  , _userName = dto ^. name
+  , _userSurname = dto ^. surname
+  , _userEmail = dto ^. email
+  , _userPasswordHash = oldUser ^. passwordHash
+  , _userRole = dto ^. role
+  , _userPermissions = permission
+  , _userIsActive = oldUser ^. isActive
+  , _userCreatedAt = oldUser ^. createdAt
+  , _userUpdatedAt = oldUser ^. updatedAt
+  }
+
+fromUserProfileChangeDTO :: UserProfileChangeDTO -> User -> User
+fromUserProfileChangeDTO dto oldUser =
+  User
+  { _userUuid = oldUser ^. uuid
+  , _userName = dto ^. name
+  , _userSurname = dto ^. surname
+  , _userEmail = dto ^. email
+  , _userPasswordHash = oldUser ^. passwordHash
+  , _userRole = oldUser ^. role
+  , _userPermissions = oldUser ^. permissions
+  , _userIsActive = oldUser ^. isActive
+  , _userCreatedAt = oldUser ^. createdAt
+  , _userUpdatedAt = oldUser ^. updatedAt
   }

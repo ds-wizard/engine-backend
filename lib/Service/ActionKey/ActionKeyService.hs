@@ -29,3 +29,31 @@ deleteActionKey context hash = do
       deleteActionKeyByHash context hash
       return Nothing
     Left error -> return . Just $ error
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heGetActionKeyByHash context akHash callback = do
+  eitherActionKey <- getActionKeyByHash context akHash
+  case eitherActionKey of
+    Right actionKey -> callback actionKey
+    Left error -> return . Left $ error
+
+hmGetActionKeyByHash context akHash callback = do
+  eitherActionKey <- getActionKeyByHash context akHash
+  case eitherActionKey of
+    Right actionKey -> callback actionKey
+    Left error -> return . Just $ error
+
+-- -----------------------------------------------------
+heCreateActionKey context userUuid actionType callback = do
+  eitherActionKey <- createActionKey context userUuid actionType
+  case eitherActionKey of
+    Right actionKey -> callback actionKey
+    Left error -> return . Left $ error
+
+hmCreateActionKey context userUuid actionType callback = do
+  eitherActionKey <- createActionKey context userUuid actionType
+  case eitherActionKey of
+    Right actionKey -> callback actionKey
+    Left error -> return . Just $ error

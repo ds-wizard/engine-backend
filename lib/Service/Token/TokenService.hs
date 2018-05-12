@@ -28,10 +28,10 @@ getToken context dswConfig tokenCreateDto = do
   eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
   case eitherUser of
     Right user ->
-      if user ^. uIsActive
+      if user ^. isActive
         then do
           let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
-          let passwordHashFromDB = BS.pack (user ^. uPasswordHash)
+          let passwordHashFromDB = BS.pack (user ^. passwordHash)
           if verifyPassword incomingPassword passwordHashFromDB
             then return . Right . toDTO $ createToken user tokenSecret
             else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
@@ -42,11 +42,11 @@ getToken context dswConfig tokenCreateDto = do
 
 createToken :: User -> JWTSecret -> Token
 createToken user jwtSecret =
-  let permissionValues = fmap (String . T.pack) (user ^. uPermissions)
-      permissions = Array (V.fromList permissionValues) :: Value
-      userUuid = toJSON (user ^. uUuid) :: Value
+  let permissionValues = fmap (String . T.pack) (user ^. permissions)
+      uPermissions = Array (V.fromList permissionValues) :: Value
+      userUuid = toJSON (user ^. uuid) :: Value
       payload = M.insert "userUuid" userUuid M.empty
-      payload2 = M.insert "permissions" permissions payload
+      payload2 = M.insert "permissions" uPermissions payload
       cs =
         JWT.JWTClaimsSet
         { iss = Nothing

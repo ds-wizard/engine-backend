@@ -1,44 +1,48 @@
 module Api.Resource.User.UserDTO where
 
-import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
+import Data.Time
 import Data.UUID
 
 import Common.Types
 
 data UserDTO = UserDTO
-  { _udtoUuid :: UUID
-  , _udtoName :: String
-  , _udtoSurname :: String
-  , _udtoEmail :: Email
-  , _udtoRole :: Role
-  , _udtoPermissions :: [Permission]
-  , _udtoIsActive :: Bool
+  { _userDTOUuid :: UUID
+  , _userDTOName :: String
+  , _userDTOSurname :: String
+  , _userDTOEmail :: Email
+  , _userDTORole :: Role
+  , _userDTOPermissions :: [Permission]
+  , _userDTOIsActive :: Bool
+  , _userDTOCreatedAt :: Maybe UTCTime
+  , _userDTOUpdatedAt :: Maybe UTCTime
   } deriving (Show, Eq)
-
-makeLenses ''UserDTO
 
 instance FromJSON UserDTO where
   parseJSON (Object o) = do
-    _udtoUuid <- o .: "uuid"
-    _udtoName <- o .: "name"
-    _udtoSurname <- o .: "surname"
-    _udtoEmail <- o .: "email"
-    _udtoRole <- o .: "role"
-    _udtoPermissions <- o .: "permissions"
-    _udtoIsActive <- o .: "isActive"
+    _userDTOUuid <- o .: "uuid"
+    _userDTOName <- o .: "name"
+    _userDTOSurname <- o .: "surname"
+    _userDTOEmail <- o .: "email"
+    _userDTORole <- o .: "role"
+    _userDTOPermissions <- o .: "permissions"
+    _userDTOIsActive <- o .: "isActive"
+    _userDTOCreatedAt <- o .: "createdAt"
+    _userDTOUpdatedAt <- o .: "updatedAt"
     return UserDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON UserDTO where
   toJSON UserDTO {..} =
     object
-      [ "uuid" .= _udtoUuid
-      , "name" .= _udtoName
-      , "surname" .= _udtoSurname
-      , "email" .= _udtoEmail
-      , "role" .= _udtoRole
-      , "permissions" .= _udtoPermissions
-      , "isActive" .= _udtoIsActive
+      [ "uuid" .= _userDTOUuid
+      , "name" .= _userDTOName
+      , "surname" .= _userDTOSurname
+      , "email" .= _userDTOEmail
+      , "role" .= _userDTORole
+      , "permissions" .= _userDTOPermissions
+      , "isActive" .= _userDTOIsActive
+      , "createdAt" .= _userDTOCreatedAt
+      , "updatedAt" .= _userDTOUpdatedAt
       ]

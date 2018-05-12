@@ -32,6 +32,11 @@ postUsersA = do
         Right userDto -> do
           status created201
           json userDto
+  where
+    createUser context dswConfig reqDto isAdmin =
+      if isAdmin
+        then createUserByAdmin context dswConfig reqDto
+        else registrateUser context dswConfig reqDto
 
 getUserCurrentA :: Endpoint
 getUserCurrentA = do
@@ -60,7 +65,7 @@ putUserCurrentA = do
   context <- lift . asks $ _appContextOldContext
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
-      eitherDto <- liftIO $ modifyUser context userUuid reqDto
+      eitherDto <- liftIO $ modifyProfile context dswConfig userUuid reqDto
       case eitherDto of
         Right dto -> json dto
         Left error -> sendError error
@@ -72,7 +77,7 @@ putUserA = do
   checkPermission context "UM_PERM" $
     getReqDto $ \reqDto -> do
       userUuid <- param "userUuid"
-      eitherDto <- liftIO $ modifyUser context userUuid reqDto
+      eitherDto <- liftIO $ modifyUser context dswConfig userUuid reqDto
       case eitherDto of
         Right dto -> json dto
         Left error -> sendError error
@@ -83,7 +88,7 @@ putUserCurrentPasswordA = do
   context <- lift . asks $ _appContextOldContext
   getCurrentUserUuid context $ \userUuid ->
     getReqDto $ \reqDto -> do
-      maybeError <- liftIO $ changeUserPassword context userUuid Nothing reqDto True
+      maybeError <- liftIO $ changeCurrentUserPassword context userUuid reqDto
       case maybeError of
         Nothing -> status noContent204
         Just error -> sendError error
@@ -100,6 +105,11 @@ putUserPasswordA = do
       case maybeError of
         Nothing -> status noContent204
         Just error -> sendError error
+  where
+    changeUserPassword context userUuid hash reqDto isAdmin =
+      if isAdmin
+        then changeUserPasswordByAdmin context userUuid reqDto
+        else changeUserPasswordByHash context userUuid hash reqDto
 
 changeUserStateA :: Endpoint
 changeUserStateA = do

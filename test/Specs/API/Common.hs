@@ -8,6 +8,7 @@ import Data.ByteString.Char8 as BS
 import Data.Foldable
 import qualified Data.List as L
 import Data.Maybe
+import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types.Header
 import Network.Wai (Application)
@@ -43,28 +44,41 @@ reqAuthHeaderWithoutPerms dswConfig perm =
   let allPerms = getPermissionForRole dswConfig "ADMIN"
       user =
         User
-        { _uUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
-        , _uName = "Isaac"
-        , _uSurname = "Doe"
-        , _uEmail = "john.doe@example.com"
-        , _uPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
-        , _uRole = "ADMIN"
-        , _uPermissions = L.delete perm allPerms
-        , _uIsActive = True
+        { _userUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
+        , _userName = "Isaac"
+        , _userSurname = "Doe"
+        , _userEmail = "john.doe@example.com"
+        , _userPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
+        , _userRole = "ADMIN"
+        , _userPermissions = L.delete perm allPerms
+        , _userIsActive = True
+        , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+        , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
         }
       token = createToken user (dswConfig ^. jwtConfig ^. secret)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
-reqCtHeader = ("Content-Type", "application/json")
+reqCtHeader = ("Content-Type", "application/json; charset=utf-8")
 
-resCtHeader = "Content-Type" <:> "application/json"
+resCtHeaderPlain :: Header
+resCtHeaderPlain = ("Content-Type", "application/json; charset=utf-8")
+
+resCtHeader = "Content-Type" <:> "application/json; charset=utf-8"
+
+resCorsHeadersPlain :: [Header]
+resCorsHeadersPlain =
+  [ ("Access-Control-Allow-Origin", "*")
+  , ("Access-Control-Allow-Credential", "true")
+  , ("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
+  , ("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE")
+  ]
 
 resCorsHeaders =
-  [ "Access-Control-Allow-Credential" <:> "true"
+  [ "Access-Control-Allow-Origin" <:> "*"
+  , "Access-Control-Allow-Credential" <:> "true"
   , "Access-Control-Allow-Headers" <:> "Origin, X-Requested-With, Content-Type, Accept, Authorization"
   , "Access-Control-Allow-Methods" <:> "OPTIONS, HEAD, GET, POST, PUT, DELETE"
-  , "Access-Control-Allow-Origin" <:> "*"
   ]
 
 shouldRespondWith r matcher = do

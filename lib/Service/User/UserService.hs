@@ -3,13 +3,16 @@ module Service.User.UserService where
 import Control.Lens ((&), (.~), (^.))
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
-import Data.Either
+import Data.Maybe (fromMaybe)
+import Data.Time
 import qualified Data.UUID as U
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
+import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Common.Context
 import Common.Error
@@ -20,11 +23,136 @@ import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
-import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
 import Service.User.UserMapper
+import Service.User.UserValidation
 
+getUsers :: Context -> IO (Either AppError [UserDTO])
+getUsers context = heFindUsers context $ \users -> return . Right $ toDTO <$> users
+
+createUserByAdmin :: Context -> DSWConfig -> UserCreateDTO -> IO (Either AppError UserDTO)
+createUserByAdmin context config reqDto = do
+  uUuid <- generateUuid
+  createUserByAdminWithUuid context config reqDto uUuid
+
+createUserByAdminWithUuid :: Context -> DSWConfig -> UserCreateDTO -> U.UUID -> IO (Either AppError UserDTO)
+createUserByAdminWithUuid context config reqDto uUuid = do
+  uPasswordHash <- generatePasswordHash (reqDto ^. password)
+  let uRole = fromMaybe (config ^. roles ^. defaultRole) (reqDto ^. role)
+  let uPermissions = getPermissionForRole config uRole
+  createUser context config reqDto uUuid uPasswordHash uRole uPermissions
+
+registrateUser :: Context -> DSWConfig -> UserCreateDTO -> IO (Either AppError UserDTO)
+registrateUser context config reqDto = do
+  uUuid <- generateUuid
+  uPasswordHash <- generatePasswordHash (reqDto ^. password)
+  let uRole = config ^. roles ^. defaultRole
+  let uPermissions = getPermissionForRole config uRole
+  createUser context config reqDto uUuid uPasswordHash uRole uPermissions
+
+createUser ::
+     Context -> DSWConfig -> UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> IO (Either AppError UserDTO)
+createUser context config reqDto uUuid uPasswordHash uRole uPermissions =
+  heValidateUserEmailUniqueness context (reqDto ^. email) $ do
+    now <- getCurrentTime
+    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions now now
+    insertUser context user
+    heCreateActionKey context uUuid RegistrationActionKey $ \actionKey -> do
+      sendRegistrationConfirmationMail config (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
+      return . Right $ toDTO user
+
+getUserById :: Context -> String -> IO (Either AppError UserDTO)
+getUserById context userUuid = heFindUserById context userUuid $ \user -> return . Right $ toDTO user
+
+modifyUser :: Context -> DSWConfig -> String -> UserChangeDTO -> IO (Either AppError UserDTO)
+modifyUser context dswConfig userUuid reqDto =
+  heFindUserById context userUuid $ \user ->
+    heValidateUserChangedEmailUniqueness context (reqDto ^. email) (user ^. email) $ do
+      let updatedUser = fromUserChangeDTO reqDto user (getPermissions reqDto user)
+      updateUserById context updatedUser
+      return . Right . toDTO $ updatedUser
+  where
+    getPermissions reqDto oldUser =
+      if (reqDto ^. role) /= (oldUser ^. role)
+        then getPermissionForRole dswConfig (reqDto ^. role)
+        else oldUser ^. permissions
+
+modifyProfile :: Context -> DSWConfig -> String -> UserProfileChangeDTO -> IO (Either AppError UserDTO)
+modifyProfile context dswConfig userUuid reqDto =
+  heFindUserById context userUuid $ \user ->
+    heValidateUserChangedEmailUniqueness context (reqDto ^. email) (user ^. email) $ do
+      let updatedUser = fromUserProfileChangeDTO reqDto user
+      updateUserById context updatedUser
+      return . Right . toDTO $ updatedUser
+
+changeUserPasswordByAdmin :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
+changeUserPasswordByAdmin context userUuid reqDto =
+  hmFindUserById context userUuid $ \user -> do
+    passwordHash <- generatePasswordHash (reqDto ^. password)
+    updateUserPasswordById context userUuid passwordHash
+    return Nothing
+
+changeCurrentUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
+changeCurrentUserPassword context userUuid reqDto =
+  hmFindUserById context userUuid $ \user -> do
+    passwordHash <- generatePasswordHash (reqDto ^. password)
+    updateUserPasswordById context userUuid passwordHash
+    return Nothing
+
+changeUserPasswordByHash :: Context -> String -> Maybe String -> UserPasswordDTO -> IO (Maybe AppError)
+changeUserPasswordByHash context userUuid maybeHash userPasswordDto =
+  validateHash maybeHash $ \akHash ->
+    hmFindUserById context userUuid $ \user ->
+      hmGetActionKeyByHash context akHash $ \actionKey -> do
+        passwordHash <- generatePasswordHash (userPasswordDto ^. password)
+        updateUserPasswordById context userUuid passwordHash
+        deleteActionKey context (actionKey ^. hash)
+        return Nothing
+  where
+    validateHash maybeHash callback =
+      case maybeHash of
+        Just akHash -> callback akHash
+        Nothing ->
+          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+
+resetUserPassword :: Context -> DSWConfig -> ActionKeyDTO -> IO (Maybe AppError)
+resetUserPassword context config reqDto =
+  hmFindUserByEmail context (reqDto ^. email) $ \user ->
+    hmCreateActionKey context (user ^. uuid) ForgottenPasswordActionKey $ \actionKey -> do
+      sendResetPasswordMail config (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
+      return Nothing
+
+createForgottenUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
+createForgottenUserPassword context userUuid userPasswordDto =
+  hmFindUserById context userUuid $ \user -> do
+    passwordHash <- generatePasswordHash (userPasswordDto ^. password)
+    updateUserPasswordById context userUuid passwordHash
+    return Nothing
+
+changeUserState :: Context -> String -> Maybe String -> UserStateDTO -> IO (Maybe AppError)
+changeUserState context userUuid maybeHash userStateDto =
+  validateHash maybeHash $ \akHash ->
+    hmFindUserById context userUuid $ \user ->
+      hmGetActionKeyByHash context akHash $ \actionKey -> do
+        let updatedUser = user & isActive .~ (userStateDto ^. active)
+        updateUserById context updatedUser
+        deleteActionKey context (actionKey ^. hash)
+  where
+    validateHash maybeHash callback =
+      case maybeHash of
+        Just akHash -> callback akHash
+        Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
+
+deleteUser :: Context -> String -> IO (Maybe AppError)
+deleteUser context userUuid =
+  hmFindUserById context userUuid $ \user -> do
+    deleteUserById context userUuid
+    return Nothing
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
 getPermissionForRole :: DSWConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
@@ -33,147 +161,8 @@ getPermissionForRole config role =
     "RESEARCHER" -> config ^. roles ^. researcher
     _ -> []
 
-getUsers :: Context -> IO (Either AppError [UserDTO])
-getUsers context = do
-  eitherUsers <- findUsers context
-  case eitherUsers of
-    Right users -> return . Right . fmap toDTO $ users
-    Left error -> return . Left $ error
-
-createUser :: Context -> DSWConfig -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
-createUser context config userCreateDto isAdmin = do
-  uuid <- generateUuid
-  createUserWithGivenUuid context config uuid userCreateDto isAdmin
-
-createUserWithGivenUuid :: Context -> DSWConfig -> U.UUID -> UserCreateDTO -> Bool -> IO (Either AppError UserDTO)
-createUserWithGivenUuid context config userUuid userCreateDto isAdmin = do
-  eitherUserFromDb <- findUserByEmail context (userCreateDto ^. ucdtoEmail)
-  if isRight eitherUserFromDb
-    then return . Left . createErrorWithFieldError $
-         ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ userCreateDto ^. ucdtoEmail)
-    else do
-      passwordHash <- makePassword (BS.pack (userCreateDto ^. ucdtoPassword)) 17
-      buildUser config userCreateDto userUuid (BS.unpack passwordHash) (userCreateDto ^. ucdtoRole) isAdmin $ \user -> do
-        insertUser context user
-        eitherActionKey <- createActionKey context userUuid RegistrationActionKey
-        case eitherActionKey of
-          Right actionKey -> do
-            sendRegistrationConfirmationMail config (user ^. uEmail) (actionKey ^. userId) (actionKey ^. hash)
-            return . Right $ toDTO user
-          Left error -> return . Left $ error
-  where
-    buildUser config dto userUuid password maybeRole isAdmin callback =
-      callback $ fromUserCreateDTO dto userUuid password userRole permissions False
-      where
-        permissions = getPermissionForRole config userRole
-        userRole =
-          case maybeRole of
-            Just r ->
-              if isAdmin
-                then r
-                else appDefaultRole
-            Nothing -> appDefaultRole
-        appDefaultRole = config ^. roles ^. defaultRole
-
-getUserById :: Context -> String -> IO (Either AppError UserDTO)
-getUserById context userUuid = do
-  eitherUser <- findUserById context userUuid
-  case eitherUser of
-    Right user -> return . Right $ toDTO user
-    Left error -> return . Left $ error
-
-modifyUser :: Context -> String -> UserDTO -> IO (Either AppError UserDTO)
-modifyUser context userUuid userDto = do
-  eitherUser <- findUserById context userUuid
-  case eitherUser of
-    Right user -> do
-      eitherUserFromDb <- findUserByEmail context (userDto ^. udtoEmail)
-      if isAlreadyUsedAndIsNotMine eitherUserFromDb
-        then return . Left . createErrorWithFieldError $
-             ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ userDto ^. udtoEmail)
-        else do
-          let updatedUser = fromUserDTO userDto (user ^. uUuid) (user ^. uPasswordHash) (user ^. uIsActive)
-          updateUserById context updatedUser
-          return . Right $ userDto
-    Left error -> return . Left $ error
-  where
-    isAlreadyUsedAndIsNotMine (Right user) = U.toString (user ^. uUuid) /= userUuid
-    isAlreadyUsedAndIsNotMine (Left _) = False
-
-changeUserPassword :: Context -> String -> Maybe String -> UserPasswordDTO -> Bool -> IO (Maybe AppError)
-changeUserPassword context userUuid maybeHash userPasswordDto isAdminOrCurrentUser = do
-  eitherUser <- findUserById context userUuid
-  case eitherUser of
-    Right user ->
-      isAllowedToChangePassword $ do
-        passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
-        updateUserPasswordById context userUuid (BS.unpack passwordHash)
-        return Nothing
-    Left error -> return . Just $ error
-  where
-    isAllowedToChangePassword callback =
-      if isAdminOrCurrentUser
-        then callback
-        else case maybeHash of
-               Just akHash -> do
-                 eitherActionKey <- getActionKeyByHash context akHash
-                 case eitherActionKey of
-                   Right actionKey -> do
-                     deleteActionKey context (actionKey ^. hash)
-                     callback
-                   Left error -> return . Just $ error
-               Nothing ->
-                 return . Just $
-                 createErrorWithErrorMessage _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
-
-resetUserPassword :: Context -> DSWConfig -> ActionKeyDTO -> IO (Maybe AppError)
-resetUserPassword context config reqDto = do
-  eitherUser <- findUserByEmail context (reqDto ^. email)
-  case eitherUser of
-    Right user -> do
-      eitherActionKey <- createActionKey context (user ^. uUuid) ForgottenPasswordActionKey
-      case eitherActionKey of
-        Right actionKey -> do
-          sendResetPasswordMail config (user ^. uEmail) (actionKey ^. userId) (actionKey ^. hash)
-          return Nothing
-        Left error -> return . Just $ error
-    Left error -> return . Just $ error
-
-createForgottenUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
-createForgottenUserPassword context userUuid userPasswordDto = do
-  eitherUser <- findUserById context userUuid
-  passwordHash <- makePassword (BS.pack (userPasswordDto ^. updtoPassword)) 17
-  case eitherUser of
-    Right user -> do
-      updateUserPasswordById context userUuid (BS.unpack passwordHash)
-      return Nothing
-    Left error -> return . Just $ error
-
-changeUserState :: Context -> String -> Maybe String -> UserStateDTO -> IO (Maybe AppError)
-changeUserState context userUuid maybeHash userStateDto =
-  validateHash maybeHash $ \akHash -> do
-    eitherUser <- findUserById context userUuid
-    case eitherUser of
-      Right user -> do
-        eitherActionKey <- getActionKeyByHash context akHash
-        case eitherActionKey of
-          Right actionKey -> do
-            let updatedUser = user & uIsActive .~ (userStateDto ^. usdtoActive)
-            updateUserById context updatedUser
-            deleteActionKey context (actionKey ^. hash)
-          Left error -> return . Just $ error
-      Left error -> return . Just $ error
-  where
-    validateHash maybeHash callback =
-      case maybeHash of
-        Just akHash -> callback akHash
-        Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
-
-deleteUser :: Context -> String -> IO (Maybe AppError)
-deleteUser context userUuid = do
-  eitherUser <- findUserById context userUuid
-  case eitherUser of
-    Right user -> do
-      deleteUserById context userUuid
-      return Nothing
-    Left error -> return . Just $ error
+generatePasswordHash :: String -> IO String
+generatePasswordHash password = BS.unpack <$> makePassword (BS.pack password) 17
+-- --------------------------------
+-- HELPERS
+-- --------------------------------

@@ -18,8 +18,8 @@ import Api.Resource.User.UserPasswordDTO
 import Common.Context
 import Common.Error
 import Database.DAO.User.UserDAO
+import LensesConfig
 import Model.Config.DSWConfig
-import Model.User.User
 
 import Specs.API.Common
 
@@ -43,7 +43,7 @@ reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = UserPasswordDTO {_updtoPassword = "newPassword"}
+reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
 
 reqBody = encode reqDto
 
@@ -67,7 +67,7 @@ test_204 context dswConfig =
     -- AND: Compare state in DB with expectation
     liftIO $ (isRight eitherUser) `shouldBe` True
     let (Right userFromDb) = eitherUser
-    let isSame = verifyPassword (BS.pack (reqDto ^. updtoPassword)) (BS.pack (userFromDb ^. uPasswordHash))
+    let isSame = verifyPassword (BS.pack (reqDto ^. password)) (BS.pack (userFromDb ^. passwordHash))
     liftIO $ isSame `shouldBe` True
 
 -- ----------------------------------------------------
@@ -100,7 +100,7 @@ test_403_no_hash context dswConfig =
   -- AND: Compare state in DB with expectation
     liftIO $ (isRight eitherUser) `shouldBe` True
     let (Right userFromDb) = eitherUser
-    let isSame = verifyPassword (BS.pack (reqDto ^. updtoPassword)) (BS.pack (userFromDb ^. uPasswordHash))
+    let isSame = verifyPassword (BS.pack (reqDto ^. password)) (BS.pack (userFromDb ^. passwordHash))
     liftIO $ isSame `shouldBe` False
 
 -- ----------------------------------------------------

@@ -26,7 +26,6 @@ import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
-import Api.Middleware.JSONMiddleware
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext
@@ -56,7 +55,6 @@ createEndpoints context
  = do
   middleware (loggingM (context ^. config . environment . env))
   middleware corsMiddleware
-  middleware jsonMiddleware
   middleware (authMiddleware (context ^. config) unauthorizedEndpoints)
    -- ------------------
    -- INFO
@@ -78,12 +76,12 @@ createEndpoints context
   post "/users" postUsersA
   get "/users/current" getUserCurrentA
   get "/users/:userUuid" getUserA
-  put "/users/current/password" putUserCurrentPasswordA
   put "/users/current" putUserCurrentA
-  put "/users/:userUuid/password" putUserPasswordA
+  put "/users/current/password" putUserCurrentPasswordA
   put "/users/:userUuid" putUserA
-  delete "/users/:userUuid" deleteUserA
+  put "/users/:userUuid/password" putUserPasswordA
   put "/users/:userUuid/state" changeUserStateA
+  delete "/users/:userUuid" deleteUserA
   --  --------------------
   --  -- KNOWLEDGE MODEL
   --  --------------------

@@ -18,8 +18,8 @@ import Web.Scotty.Trans
        (ActionT, body, header, json, params, request, status)
 
 import Api.Resource.Error.ErrorDTO ()
-import Api.Resource.User.UserDTO
 import Common.Error
+import LensesConfig
 import Model.Context.AppContext
 import Service.Token.TokenService
 import Service.User.UserService
@@ -85,7 +85,7 @@ isLogged context callback = do
 isAdmin context callback =
   isLogged context $ \userIsLogged ->
     if userIsLogged
-      then getCurrentUser context $ \user -> callback $ user ^. udtoRole == "ADMIN"
+      then getCurrentUser context $ \user -> callback $ user ^. role == "ADMIN"
       else callback False
 
 sendError :: AppError -> Endpoint
@@ -109,7 +109,7 @@ unauthorizedA = do
 
 unauthorizedL :: Response
 unauthorizedL =
-  responseLBS unauthorized401 [(hContentType, "application/json")] $
+  responseLBS unauthorized401 [(hContentType, "application/json; charset=utf-8")] $
   encode (object ["status" .= 401, "error" .= "Unauthorized"])
 
 forbidden :: Endpoint

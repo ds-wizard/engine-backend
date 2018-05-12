@@ -9,6 +9,12 @@ import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.User.UserChangeDTO
+import Api.Resource.User.UserCreateDTO
+import Api.Resource.User.UserDTO
+import Api.Resource.User.UserPasswordDTO
+import Api.Resource.User.UserProfileChangeDTO
+import Api.Resource.User.UserStateDTO
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
@@ -24,6 +30,7 @@ import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Organization.Organization
 import Model.Questionnaire.Questionnaire
+import Model.User.User
 
 -- -------------------------------------
 -- Model
@@ -127,6 +134,9 @@ makeFields ''Organization
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
+-- Model / User
+makeFields ''User
+
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
@@ -208,3 +218,16 @@ makeFields ''QuestionnaireCreateDTO
 makeFields ''QuestionnaireDTO
 
 makeFields ''QuestionnaireDetailDTO
+
+-- Model / UserDTO
+makeFields ''UserChangeDTO
+
+makeFields ''UserCreateDTO
+
+makeFields ''UserDTO
+
+makeFields ''UserPasswordDTO
+
+makeFields ''UserProfileChangeDTO
+
+makeFields ''UserStateDTO

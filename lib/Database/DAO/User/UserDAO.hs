@@ -13,6 +13,7 @@ import Common.Error
 import Common.Types
 import Database.BSON.User.User ()
 import Database.DAO.Common
+import LensesConfig
 import Model.User.User
 
 userCollection = "users"
@@ -42,7 +43,7 @@ insertUser context user = do
 
 updateUserById :: Context -> User -> IO ()
 updateUserById context user = do
-  let action = fetch (select ["uuid" =: (user ^. uUuid)] userCollection) >>= save userCollection . merge (toBSON user)
+  let action = fetch (select ["uuid" =: (user ^. uuid)] userCollection) >>= save userCollection . merge (toBSON user)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 updateUserPasswordById :: Context -> String -> String -> IO ()
@@ -59,3 +60,38 @@ deleteUserById :: Context -> String -> IO ()
 deleteUserById context userUuid = do
   let action = deleteOne $ select ["uuid" =: userUuid] userCollection
   runMongoDBPoolDef action (context ^. ctxDbPool)
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindUsers context callback = do
+  eitherUser <- findUsers context
+  case eitherUser of
+    Right user -> callback user
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
+heFindUserById context userUuid callback = do
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user -> callback user
+    Left error -> return . Left $ error
+
+hmFindUserById context userUuid callback = do
+  eitherUser <- findUserById context userUuid
+  case eitherUser of
+    Right user -> callback user
+    Left error -> return . Just $ error
+
+-- -----------------------------------------------------
+heFindUserByEmail context userEmail callback = do
+  eitherUser <- findUserByEmail context userEmail
+  case eitherUser of
+    Right user -> callback user
+    Left error -> return . Left $ error
+
+hmFindUserByEmail context userEmail callback = do
+  eitherUser <- findUserByEmail context userEmail
+  case eitherUser of
+    Right user -> callback user
+    Left error -> return . Just $ error

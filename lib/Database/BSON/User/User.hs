@@ -3,41 +3,47 @@ module Database.BSON.User.User where
 import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.UUID
 
+import Database.BSON.Common
+import LensesConfig
 import Model.User.User
 
 instance ToBSON User where
   toBSON user =
-    [ "uuid" BSON.=: toString (user ^. uUuid)
-    , "name" BSON.=: (user ^. uName)
-    , "surname" BSON.=: (user ^. uSurname)
-    , "email" BSON.=: (user ^. uEmail)
-    , "passwordHash" BSON.=: (user ^. uPasswordHash)
-    , "role" BSON.=: (user ^. uRole)
-    , "permissions" BSON.=: (user ^. uPermissions)
-    , "isActive" BSON.=: (user ^. uIsActive)
+    [ "uuid" BSON.=: serializeUUID (user ^. uuid)
+    , "name" BSON.=: (user ^. name)
+    , "surname" BSON.=: (user ^. surname)
+    , "email" BSON.=: (user ^. email)
+    , "passwordHash" BSON.=: (user ^. passwordHash)
+    , "role" BSON.=: (user ^. role)
+    , "permissions" BSON.=: (user ^. permissions)
+    , "isActive" BSON.=: (user ^. isActive)
+    , "createdAt" BSON.=: (user ^. createdAt)
+    , "updatedAt" BSON.=: (user ^. updatedAt)
     ]
 
 instance FromBSON User where
   fromBSON doc = do
-    uuidS <- BSON.lookup "uuid" doc
-    uuid <- fromString uuidS
-    name <- BSON.lookup "name" doc
-    surname <- BSON.lookup "surname" doc
-    email <- BSON.lookup "email" doc
-    passwordHash <- BSON.lookup "passwordHash" doc
-    role <- BSON.lookup "role" doc
-    permissions <- BSON.lookup "permissions" doc
-    isActive <- BSON.lookup "isActive" doc
+    uUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    uName <- BSON.lookup "name" doc
+    uSurname <- BSON.lookup "surname" doc
+    uEmail <- BSON.lookup "email" doc
+    uPasswordHash <- BSON.lookup "passwordHash" doc
+    uRole <- BSON.lookup "role" doc
+    uPermissions <- BSON.lookup "permissions" doc
+    uIsActive <- BSON.lookup "isActive" doc
+    uCreatedAt <- BSON.lookup "createdAt" doc
+    uUpdatedAt <- BSON.lookup "updatedAt" doc
     return
       User
-      { _uUuid = uuid
-      , _uName = name
-      , _uSurname = surname
-      , _uEmail = email
-      , _uPasswordHash = passwordHash
-      , _uRole = role
-      , _uPermissions = permissions
-      , _uIsActive = isActive
+      { _userUuid = uUuid
+      , _userName = uName
+      , _userSurname = uSurname
+      , _userEmail = uEmail
+      , _userPasswordHash = uPasswordHash
+      , _userRole = uRole
+      , _userPermissions = uPermissions
+      , _userIsActive = uIsActive
+      , _userCreatedAt = uCreatedAt
+      , _userUpdatedAt = uUpdatedAt
       }
