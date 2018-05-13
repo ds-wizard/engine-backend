@@ -23,6 +23,7 @@ import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
+import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
 import Service.User.UserMapper
@@ -69,7 +70,7 @@ modifyUser :: Context -> DSWConfig -> String -> UserChangeDTO -> IO (Either AppE
 modifyUser context dswConfig userUuid reqDto =
   heFindUserById context userUuid $ \user ->
     heValidateUserChangedEmailUniqueness context (reqDto ^. email) (user ^. email) $ do
-      let updatedUser = fromUserChangeDTO reqDto user (getPermissions reqDto user)
+      updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions reqDto user)
       updateUserById context updatedUser
       return . Right . toDTO $ updatedUser
   where
@@ -82,7 +83,7 @@ modifyProfile :: Context -> DSWConfig -> String -> UserProfileChangeDTO -> IO (E
 modifyProfile context dswConfig userUuid reqDto =
   heFindUserById context userUuid $ \user ->
     heValidateUserChangedEmailUniqueness context (reqDto ^. email) (user ^. email) $ do
-      let updatedUser = fromUserProfileChangeDTO reqDto user
+      updatedUser <- updateUserTimestamp $ fromUserProfileChangeDTO reqDto user
       updateUserById context updatedUser
       return . Right . toDTO $ updatedUser
 
@@ -90,14 +91,16 @@ changeUserPasswordByAdmin :: Context -> String -> UserPasswordDTO -> IO (Maybe A
 changeUserPasswordByAdmin context userUuid reqDto =
   hmFindUserById context userUuid $ \user -> do
     passwordHash <- generatePasswordHash (reqDto ^. password)
-    updateUserPasswordById context userUuid passwordHash
+    now <- getCurrentTime
+    updateUserPasswordById context userUuid passwordHash now
     return Nothing
 
 changeCurrentUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe AppError)
 changeCurrentUserPassword context userUuid reqDto =
   hmFindUserById context userUuid $ \user -> do
     passwordHash <- generatePasswordHash (reqDto ^. password)
-    updateUserPasswordById context userUuid passwordHash
+    now <- getCurrentTime
+    updateUserPasswordById context userUuid passwordHash now
     return Nothing
 
 changeUserPasswordByHash :: Context -> String -> Maybe String -> UserPasswordDTO -> IO (Maybe AppError)
@@ -106,7 +109,8 @@ changeUserPasswordByHash context userUuid maybeHash userPasswordDto =
     hmFindUserById context userUuid $ \user ->
       hmGetActionKeyByHash context akHash $ \actionKey -> do
         passwordHash <- generatePasswordHash (userPasswordDto ^. password)
-        updateUserPasswordById context userUuid passwordHash
+        now <- getCurrentTime
+        updateUserPasswordById context userUuid passwordHash now
         deleteActionKey context (actionKey ^. hash)
         return Nothing
   where
@@ -127,7 +131,8 @@ createForgottenUserPassword :: Context -> String -> UserPasswordDTO -> IO (Maybe
 createForgottenUserPassword context userUuid userPasswordDto =
   hmFindUserById context userUuid $ \user -> do
     passwordHash <- generatePasswordHash (userPasswordDto ^. password)
-    updateUserPasswordById context userUuid passwordHash
+    now <- getCurrentTime
+    updateUserPasswordById context userUuid passwordHash now
     return Nothing
 
 changeUserState :: Context -> String -> Maybe String -> UserStateDTO -> IO (Maybe AppError)
@@ -135,7 +140,7 @@ changeUserState context userUuid maybeHash userStateDto =
   validateHash maybeHash $ \akHash ->
     hmFindUserById context userUuid $ \user ->
       hmGetActionKeyByHash context akHash $ \actionKey -> do
-        let updatedUser = user & isActive .~ (userStateDto ^. active)
+        updatedUser <- updateUserTimestamp $ user & isActive .~ (userStateDto ^. active)
         updateUserById context updatedUser
         deleteActionKey context (actionKey ^. hash)
   where
@@ -163,3 +168,8 @@ getPermissionForRole config role =
 
 generatePasswordHash :: String -> IO String
 generatePasswordHash password = BS.unpack <$> makePassword (BS.pack password) 17
+
+updateUserTimestamp :: User -> IO User
+updateUserTimestamp user = do
+  now <- getCurrentTime
+  return $ user & updatedAt .~ Just now

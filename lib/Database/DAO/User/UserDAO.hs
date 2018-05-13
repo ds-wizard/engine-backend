@@ -3,6 +3,7 @@ module Database.DAO.User.UserDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
+import Data.Time
 import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
@@ -46,9 +47,12 @@ updateUserById context user = do
   let action = fetch (select ["uuid" =: (user ^. uuid)] userCollection) >>= save userCollection . merge (toBSON user)
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
-updateUserPasswordById :: Context -> String -> String -> IO ()
-updateUserPasswordById context userUuid password = do
-  let action = modify (select ["uuid" =: userUuid] userCollection) ["$set" =: ["passwordHash" =: password]]
+updateUserPasswordById :: Context -> String -> String -> UTCTime -> IO ()
+updateUserPasswordById context userUuid password uUpdatedAt = do
+  let action =
+        modify
+          (select ["uuid" =: userUuid] userCollection)
+          ["$set" =: ["passwordHash" =: password, "updatedAt" =: uUpdatedAt]]
   runMongoDBPoolDef action (context ^. ctxDbPool)
 
 deleteUsers :: Context -> IO ()
