@@ -16,7 +16,7 @@ isValidOrganizationId :: String -> Maybe AppError
 isValidOrganizationId artifactId =
   if isJust $ matchRegex validationRegex artifactId
     then Nothing
-    else Just . createErrorWithFieldError $ ("groupId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
+    else Just . createErrorWithFieldError $ ("organizationId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"
 

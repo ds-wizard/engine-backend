@@ -10,7 +10,7 @@ startChange("Init packages")
 logInsert(PACKAGE_COL, "Elixir Base Core Package")
 db.packages.update({"id" : "elixir-base:core:1.0.0"}, {
     "id": "elixir:root:1.0.0",
-    "groupId": "elixir",
+    "organizationId": "elixir",
     "artifactId": "root",
     "version": "1.0.0",
     "name": "ELIXIR Root Package",

@@ -29,7 +29,6 @@ import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Migrator.MigratorState
-import Model.Package.Package
 import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
@@ -63,7 +62,7 @@ migratorAPI appContext = do
                 MigratorStateDTO
                 { _msdtoBranchUuid = fromJust . U.fromString $ branchUuid
                 , _msdtoMigrationState =
-                    ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
+                    ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. events
                 , _msdtoBranchParentId = "elixir.nl:core-nl:1.0.0"
                 , _msdtoTargetPackageId = "elixir.nl:core-nl:2.0.0"
                 , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
@@ -74,7 +73,7 @@ migratorAPI appContext = do
           liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -113,7 +112,7 @@ migratorAPI appContext = do
         let reqMethod = methodPost
         let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        let reqDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
         let reqBody = encode reqDto
         it "HTTP 201 CREATED" $ do
           liftIO . runNoLoggingT $ PKG.runMigration appContext
@@ -124,7 +123,7 @@ migratorAPI appContext = do
                 MigratorStateDTO
                 { _msdtoBranchUuid = fromJust . U.fromString $ branchUuid
                 , _msdtoMigrationState =
-                    ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
+                    ConflictState . CorrectorConflict . Prelude.head $ elixirNlPackage2Dto ^. events
                 , _msdtoBranchParentId = "elixir.nl:core-nl:1.0.0"
                 , _msdtoTargetPackageId = "elixir.nl:core-nl:2.0.0"
                 , _msdtoCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
@@ -164,7 +163,7 @@ migratorAPI appContext = do
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -184,8 +183,8 @@ migratorAPI appContext = do
           liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -206,7 +205,7 @@ migratorAPI appContext = do
           -- AND: Prepare database
           liftIO . runNoLoggingT $ PKG.runMigration appContext
           liftIO . runNoLoggingT $ B.runMigration appContext
-          liftIO $ insertPackage context (elixirNlPackage2Dto & pkgweVersion .~ "elixir.nl:core-nl:0.9.0")
+          liftIO $ insertPackage context (elixirNlPackage2Dto & version .~ "elixir.nl:core-nl:0.9.0")
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
           -- WHEN: Call API
@@ -228,7 +227,7 @@ migratorAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Nothing
                 , _bdtoLastAppliedParentPackageId = Nothing
@@ -254,7 +253,7 @@ migratorAPI appContext = do
         let reqMethod = methodDelete
         let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        let reqDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
            -- GIVEN: Prepare expectation
@@ -266,7 +265,7 @@ migratorAPI appContext = do
           liftIO . runNoLoggingT $ B.runMigration appContext
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
            -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -295,7 +294,7 @@ migratorAPI appContext = do
               MigratorConflictDTO
               { _mcdtoOriginalEventUuid = a_km1_ch3 ^. uuid
               , _mcdtoAction = MCAEdited
-              , _mcdtoEvent = Just . toDTOFn . Prelude.head $ elixirNlPackage2Dto ^. pkgweEvents
+              , _mcdtoEvent = Just . toDTOFn . Prelude.head $ elixirNlPackage2Dto ^. events
               }
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $ do
@@ -310,7 +309,7 @@ migratorAPI appContext = do
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -345,7 +344,7 @@ migratorAPI appContext = do
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
@@ -368,7 +367,7 @@ migratorAPI appContext = do
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
@@ -389,7 +388,7 @@ migratorAPI appContext = do
           liftIO $ insertPackage context elixirNlPackage2Dto
           liftIO $ deleteEventsAtBranch context branchUuid
           liftIO $ deleteMigratorStates context
-          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+          let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
           liftIO $ createMigration context branchUuid migratorCreateDto
           liftIO $ solveConflictAndMigrate context branchUuid reqDto
           -- WHEN: Call API

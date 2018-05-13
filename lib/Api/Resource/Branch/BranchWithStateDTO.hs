@@ -10,7 +10,7 @@ import Model.Branch.BranchState
 data BranchWithStateDTO = BranchWithStateDTO
   { _bwsdtoUuid :: UUID
   , _bwsdtoName :: String
-  , _bwsdtoGroupId :: String
+  , _bwsdtoOrganizationId :: String
   , _bwsdtoArtifactId :: String
   , _bwsdtoParentPackageId :: Maybe String
   , _bwsdtoState :: BranchState
@@ -23,7 +23,7 @@ instance FromJSON BranchWithStateDTO where
   parseJSON (Object o) = do
     _bwsdtoUuid <- o .: "uuid"
     _bwsdtoName <- o .: "name"
-    _bwsdtoGroupId <- o .: "groupId"
+    _bwsdtoOrganizationId <- o .: "organizationId"
     _bwsdtoArtifactId <- o .: "artifactId"
     _bwsdtoParentPackageId <- o .: "parentPackageId"
     _bwsdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
@@ -45,7 +45,7 @@ instance ToJSON BranchWithStateDTO where
     object
       [ "uuid" .= _bwsdtoUuid
       , "name" .= _bwsdtoName
-      , "groupId" .= _bwsdtoGroupId
+      , "organizationId" .= _bwsdtoOrganizationId
       , "artifactId" .= _bwsdtoArtifactId
       , "parentPackageId" .= _bwsdtoParentPackageId
       , "lastAppliedParentPackageId" .= _bwsdtoLastAppliedParentPackageId

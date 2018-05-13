@@ -5,6 +5,7 @@ import Control.Lens ((^.))
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import LensesConfig
 import Model.Event.Event
 import Model.Package.Package
 import Service.Event.EventMapper
@@ -12,85 +13,85 @@ import Service.Event.EventMapper
 packageToDTO :: Package -> PackageDTO
 packageToDTO package =
   PackageDTO
-  { _pkgdtoId = package ^. pkgId
-  , _pkgdtoName = package ^. pkgName
-  , _pkgdtoGroupId = package ^. pkgGroupId
-  , _pkgdtoArtifactId = package ^. pkgArtifactId
-  , _pkgdtoVersion = package ^. pkgVersion
-  , _pkgdtoDescription = package ^. pkgDescription
-  , _pkgdtoParentPackageId = package ^. pkgParentPackageId
+  { _packageDTOPId = package ^. pId
+  , _packageDTOName = package ^. name
+  , _packageDTOOrganizationId = package ^. organizationId
+  , _packageDTOArtifactId = package ^. artifactId
+  , _packageDTOVersion = package ^. version
+  , _packageDTODescription = package ^. description
+  , _packageDTOParentPackageId = package ^. parentPackageId
   }
 
 packageToSimpleDTO :: Package -> PackageSimpleDTO
 packageToSimpleDTO package =
   PackageSimpleDTO
-  { _pkgsdtoName = package ^. pkgName
-  , _pkgsdtoGroupId = package ^. pkgGroupId
-  , _pkgsdtoArtifactId = package ^. pkgArtifactId
+  { _packageSimpleDTOName = package ^. name
+  , _packageSimpleDTOOrganizationId = package ^. organizationId
+  , _packageSimpleDTOArtifactId = package ^. artifactId
   }
 
 packageWithEventsToDTO :: PackageWithEvents -> PackageDTO
 packageWithEventsToDTO package =
   PackageDTO
-  { _pkgdtoId = package ^. pkgweId
-  , _pkgdtoName = package ^. pkgweName
-  , _pkgdtoGroupId = package ^. pkgweGroupId
-  , _pkgdtoArtifactId = package ^. pkgweArtifactId
-  , _pkgdtoVersion = package ^. pkgweVersion
-  , _pkgdtoDescription = package ^. pkgweDescription
-  , _pkgdtoParentPackageId = package ^. pkgweParentPackageId
+  { _packageDTOPId = package ^. pId
+  , _packageDTOName = package ^. name
+  , _packageDTOOrganizationId = package ^. organizationId
+  , _packageDTOArtifactId = package ^. artifactId
+  , _packageDTOVersion = package ^. version
+  , _packageDTODescription = package ^. description
+  , _packageDTOParentPackageId = package ^. parentPackageId
   }
 
 packageWithEventsToDTOWithEvents :: PackageWithEvents -> PackageWithEventsDTO
 packageWithEventsToDTOWithEvents package =
   PackageWithEventsDTO
-  { _pkgwedtoId = package ^. pkgweId
-  , _pkgwedtoName = package ^. pkgweName
-  , _pkgwedtoGroupId = package ^. pkgweGroupId
-  , _pkgwedtoArtifactId = package ^. pkgweArtifactId
-  , _pkgwedtoVersion = package ^. pkgweVersion
-  , _pkgwedtoDescription = package ^. pkgweDescription
-  , _pkgwedtoParentPackageId = package ^. pkgweParentPackageId
-  , _pkgwedtoEvents = toDTOs (package ^. pkgweEvents)
+  { _packageWithEventsDTOPId = package ^. pId
+  , _packageWithEventsDTOName = package ^. name
+  , _packageWithEventsDTOOrganizationId = package ^. organizationId
+  , _packageWithEventsDTOArtifactId = package ^. artifactId
+  , _packageWithEventsDTOVersion = package ^. version
+  , _packageWithEventsDTODescription = package ^. description
+  , _packageWithEventsDTOParentPackageId = package ^. parentPackageId
+  , _packageWithEventsDTOEvents = toDTOs (package ^. events)
   }
 
 fromDTO :: PackageDTO -> Package
 fromDTO dto =
   Package
-  { _pkgId = dto ^. pkgdtoId
-  , _pkgName = dto ^. pkgdtoName
-  , _pkgGroupId = dto ^. pkgdtoGroupId
-  , _pkgArtifactId = dto ^. pkgdtoArtifactId
-  , _pkgVersion = dto ^. pkgdtoVersion
-  , _pkgDescription = dto ^. pkgdtoDescription
-  , _pkgParentPackageId = dto ^. pkgdtoParentPackageId
+  { _packagePId = dto ^. pId
+  , _packageName = dto ^. name
+  , _packageOrganizationId = dto ^. organizationId
+  , _packageArtifactId = dto ^. artifactId
+  , _packageVersion = dto ^. version
+  , _packageDescription = dto ^. description
+  , _packageParentPackageId = dto ^. parentPackageId
   }
 
 fromDTOWithEvents :: PackageWithEventsDTO -> PackageWithEvents
 fromDTOWithEvents dto =
   PackageWithEvents
-  { _pkgweId = dto ^. pkgwedtoId
-  , _pkgweName = dto ^. pkgwedtoName
-  , _pkgweGroupId = dto ^. pkgwedtoGroupId
-  , _pkgweArtifactId = dto ^. pkgwedtoArtifactId
-  , _pkgweVersion = dto ^. pkgwedtoVersion
-  , _pkgweDescription = dto ^. pkgwedtoDescription
-  , _pkgweParentPackageId = dto ^. pkgwedtoParentPackageId
-  , _pkgweEvents = fromDTOs (dto ^. pkgwedtoEvents)
+  { _packageWithEventsPId = dto ^. pId
+  , _packageWithEventsName = dto ^. name
+  , _packageWithEventsOrganizationId = dto ^. organizationId
+  , _packageWithEventsArtifactId = dto ^. artifactId
+  , _packageWithEventsVersion = dto ^. version
+  , _packageWithEventsDescription = dto ^. description
+  , _packageWithEventsParentPackageId = dto ^. parentPackageId
+  , _packageWithEventsEvents = fromDTOs (dto ^. events)
   }
 
 buildPackageId :: String -> String -> String -> String
-buildPackageId groupId artifactId version = groupId ++ ":" ++ artifactId ++ ":" ++ version
+buildPackageId pkgOrganizationId pkgArtifactId pkgVersion = pkgOrganizationId ++ ":" ++ pkgArtifactId ++ ":" ++ pkgVersion
 
 buildPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> PackageWithEvents
-buildPackage name groupId artifactId version description maybeParentPackageId events =
+buildPackage pkgName pkgOrganizationId pkgArtifactId pkgVersion pkgDescription pkgMaybeParentPackageId pkgEvents =
   PackageWithEvents
-  { _pkgweId = buildPackageId groupId artifactId version
-  , _pkgweName = name
-  , _pkgweGroupId = groupId
-  , _pkgweArtifactId = artifactId
-  , _pkgweVersion = version
-  , _pkgweDescription = description
-  , _pkgweParentPackageId = maybeParentPackageId
-  , _pkgweEvents = events
+  { _packageWithEventsPId = buildPackageId pkgOrganizationId pkgArtifactId pkgVersion
+  , _packageWithEventsName = pkgName
+  , _packageWithEventsOrganizationId = pkgOrganizationId
+  , _packageWithEventsArtifactId = pkgArtifactId
+  , _packageWithEventsVersion = pkgVersion
+  , _packageWithEventsDescription = pkgDescription
+  , _packageWithEventsParentPackageId = pkgMaybeParentPackageId
+  , _packageWithEventsEvents = pkgEvents
   }

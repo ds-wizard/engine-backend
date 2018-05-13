@@ -1,31 +1,26 @@
 module Model.Package.Package where
 
-import Control.Lens
 import GHC.Generics
 
 import Model.Event.Event
 
 data Package = Package
-  { _pkgId :: String
-  , _pkgName :: String
-  , _pkgGroupId :: String
-  , _pkgArtifactId :: String
-  , _pkgVersion :: String
-  , _pkgDescription :: String
-  , _pkgParentPackageId :: Maybe String
+  { _packagePId :: String
+  , _packageName :: String
+  , _packageOrganizationId :: String
+  , _packageArtifactId :: String
+  , _packageVersion :: String
+  , _packageDescription :: String
+  , _packageParentPackageId :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data PackageWithEvents = PackageWithEvents
-  { _pkgweId :: String
-  , _pkgweName :: String
-  , _pkgweGroupId :: String
-  , _pkgweArtifactId :: String
-  , _pkgweVersion :: String
-  , _pkgweDescription :: String
-  , _pkgweParentPackageId :: Maybe String
-  , _pkgweEvents :: [Event]
+  { _packageWithEventsPId :: String
+  , _packageWithEventsName :: String
+  , _packageWithEventsOrganizationId :: String
+  , _packageWithEventsArtifactId :: String
+  , _packageWithEventsVersion :: String
+  , _packageWithEventsDescription :: String
+  , _packageWithEventsParentPackageId :: Maybe String
+  , _packageWithEventsEvents :: [Event]
   } deriving (Show, Eq, Generic)
-
-makeLenses ''Package
-
-makeLenses ''PackageWithEvents

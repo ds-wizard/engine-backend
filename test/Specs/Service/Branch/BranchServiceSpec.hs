@@ -19,7 +19,6 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.BranchState
 import Model.Migrator.MigratorState
-import Model.Package.Package
 import Service.Branch.BranchService
 import Service.Migrator.MigratorService
 
@@ -47,7 +46,7 @@ branchServiceIntegrationSpec appContext = do
         liftIO . runNoLoggingT $ PKG.runMigration appContext
         liftIO . runNoLoggingT $ B.runMigration appContext
         liftIO $ deleteEventsAtBranch context branchUuid
-        liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
+        liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
@@ -105,7 +104,7 @@ branchServiceIntegrationSpec appContext = do
         liftIO . runNoLoggingT $ B.runMigration appContext
         liftIO $ insertPackage context elixirNlPackage2Dto
         liftIO $ deleteEventsAtBranch context branchUuid
-        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
         liftIO $ createMigration context branchUuid migratorCreateDto
         -- AND: Prepare expectations
         let expState = BSMigrating
@@ -121,7 +120,7 @@ branchServiceIntegrationSpec appContext = do
         liftIO . runNoLoggingT $ PKG.runMigration appContext
         liftIO . runNoLoggingT $ B.runMigration appContext
         liftIO $ deleteEventsAtBranch context branchUuid
-        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pkgweId}
+        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
         liftIO $ createMigration context branchUuid migratorCreateDto
         let reqDto =
               MigratorConflictDTO

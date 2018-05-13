@@ -14,7 +14,7 @@ import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Model.Branch.Branch
-import Model.Event.Event
+import Model.Event.EventAccessors
 import Model.Migrator.MigratorState
 import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper

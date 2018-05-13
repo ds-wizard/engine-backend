@@ -23,7 +23,7 @@ runMigration appContext = do
         BranchDTO
         { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
         , _bdtoName = "Amsterdam KM"
-        , _bdtoGroupId = "elixir.nl.amsterdam"
+        , _bdtoOrganizationId = "elixir.nl.amsterdam"
         , _bdtoArtifactId = "amsterdam-km"
         , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"

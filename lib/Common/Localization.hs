@@ -15,7 +15,7 @@ _ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT = "ArtifactId is not in valid format"
 
 _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT = "Version is not in valid format"
 
-_ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "GroupId is not in valid format"
+_ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "OrganizationId is not in valid format"
 
 -- Uniqueness
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email = "User with email '" ++ email ++ "' already exists"

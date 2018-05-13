@@ -98,7 +98,7 @@ organizationAPI appContext =
           liftIO $ (organizationFromDb ^. name) `shouldBe` (reqDto ^. name)
           liftIO $ (organizationFromDb ^. organizationId) `shouldBe` (reqDto ^. organizationId)
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
-        it "HTTP 400 BAD REQUEST when groupId is not in valid format" $
+        it "HTTP 400 BAD REQUEST when organizationId is not in valid format" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
@@ -114,7 +114,7 @@ organizationAPI appContext =
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("groupId", "GroupId is not in valid format")
+          let expDto = createErrorWithFieldError ("organizationId", "OrganizationId is not in valid format")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

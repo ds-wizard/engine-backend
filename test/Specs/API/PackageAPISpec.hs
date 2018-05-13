@@ -24,43 +24,43 @@ import Specs.API.Common
 packageAPI appContext = do
   let dto1 =
         PackageDTO
-        { _pkgdtoId = "elixir.base:core:0.0.1"
-        , _pkgdtoName = "Elixir Base Package"
-        , _pkgdtoGroupId = "elixir.base"
-        , _pkgdtoArtifactId = "core"
-        , _pkgdtoVersion = "0.0.1"
-        , _pkgdtoDescription = "Beta version"
-        , _pkgdtoParentPackageId = Nothing
+        { _packageDTOPId = "elixir.base:core:0.0.1"
+        , _packageDTOName = "Elixir Base Package"
+        , _packageDTOOrganizationId = "elixir.base"
+        , _packageDTOArtifactId = "core"
+        , _packageDTOVersion = "0.0.1"
+        , _packageDTODescription = "Beta version"
+        , _packageDTOParentPackageId = Nothing
         }
   let dto2 =
         PackageDTO
-        { _pkgdtoId = "elixir.base:core:1.0.0"
-        , _pkgdtoName = "Elixir Base Package"
-        , _pkgdtoGroupId = "elixir.base"
-        , _pkgdtoArtifactId = "core"
-        , _pkgdtoVersion = "1.0.0"
-        , _pkgdtoDescription = "First Release"
-        , _pkgdtoParentPackageId = Nothing
+        { _packageDTOPId = "elixir.base:core:1.0.0"
+        , _packageDTOName = "Elixir Base Package"
+        , _packageDTOOrganizationId = "elixir.base"
+        , _packageDTOArtifactId = "core"
+        , _packageDTOVersion = "1.0.0"
+        , _packageDTODescription = "First Release"
+        , _packageDTOParentPackageId = Nothing
         }
   let dto3 =
         PackageDTO
-        { _pkgdtoId = "elixir.nl:core-nl:1.0.0"
-        , _pkgdtoName = "Elixir Netherlands"
-        , _pkgdtoGroupId = "elixir.nl"
-        , _pkgdtoArtifactId = "core-nl"
-        , _pkgdtoVersion = "1.0.0"
-        , _pkgdtoDescription = "First Release"
-        , _pkgdtoParentPackageId = Just $ dto2 ^. pkgdtoId
+        { _packageDTOPId = "elixir.nl:core-nl:1.0.0"
+        , _packageDTOName = "Elixir Netherlands"
+        , _packageDTOOrganizationId = "elixir.nl"
+        , _packageDTOArtifactId = "core-nl"
+        , _packageDTOVersion = "1.0.0"
+        , _packageDTODescription = "First Release"
+        , _packageDTOParentPackageId = Just $ dto2 ^. pId
         }
   let dto4 =
         PackageDTO
-        { _pkgdtoId = "elixir.nl:core-nl:2.0.0"
-        , _pkgdtoName = "Elixir Netherlands"
-        , _pkgdtoGroupId = "elixir.nl"
-        , _pkgdtoArtifactId = "core-nl"
-        , _pkgdtoVersion = "2.0.0"
-        , _pkgdtoDescription = "Second Release"
-        , _pkgdtoParentPackageId = Just $ dto3 ^. pkgdtoId
+        { _packageDTOPId = "elixir.nl:core-nl:2.0.0"
+        , _packageDTOName = "Elixir Netherlands"
+        , _packageDTOOrganizationId = "elixir.nl"
+        , _packageDTOArtifactId = "core-nl"
+        , _packageDTOVersion = "2.0.0"
+        , _packageDTODescription = "Second Release"
+        , _packageDTOParentPackageId = Just $ dto3 ^. pId
         }
   with (startWebApp appContext) $ do
     let context = appContext ^. oldContext
@@ -93,13 +93,13 @@ packageAPI appContext = do
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
-      -- GET /packages?groupId={groupId}&artifactId={artifactId}
+      -- GET /packages?organizationId={organizationId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
-      describe "GET /packages?groupId={groupId}&artifactId={artifactId}" $
+      describe "GET /packages?organizationId={organizationId}&artifactId={artifactId}" $
           -- GIVEN: Prepare request
        do
         let reqMethod = methodGet
-        let reqUrl = "/packages?groupId=elixir.base&artifactId=core"
+        let reqUrl = "/packages?organizationId=elixir.base&artifactId=core"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
@@ -196,13 +196,13 @@ packageAPI appContext = do
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
-      -- DELETE /packages?groupId={groupId}&artifactId={artifactId}
+      -- DELETE /packages?organizationId={organizationId}&artifactId={artifactId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /packages?groupId={groupId}&artifactId={artifactId}" $
+      describe "DELETE /packages?organizationId={organizationId}&artifactId={artifactId}" $
          -- GIVEN: Prepare request
        do
         let reqMethod = methodDelete
-        let reqUrl = "/packages?groupId=elixir.nl&artifactId=core-nl"
+        let reqUrl = "/packages?organizationId=elixir.nl&artifactId=core-nl"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
@@ -215,7 +215,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackageByGroupIdAndArtifactId context "elixir.nl" "core-nl"
+          eitherPackages <- liftIO $ findPackageByOrganizationIdAndArtifactId context "elixir.nl" "core-nl"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

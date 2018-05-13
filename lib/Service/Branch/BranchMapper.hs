@@ -14,7 +14,7 @@ toDTO branch organization =
   BranchDTO
   { _bdtoUuid = branch ^. bUuid
   , _bdtoName = branch ^. bName
-  , _bdtoGroupId = organization ^. organizationId
+  , _bdtoOrganizationId = organization ^. organizationId
   , _bdtoArtifactId = branch ^. bArtifactId
   , _bdtoParentPackageId = branch ^. bParentPackageId
   , _bdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId
@@ -25,7 +25,7 @@ toWithStateDTO branch state organization =
   BranchWithStateDTO
   { _bwsdtoUuid = branch ^. bUuid
   , _bwsdtoName = branch ^. bName
-  , _bwsdtoGroupId = organization ^. organizationId
+  , _bwsdtoOrganizationId = organization ^. organizationId
   , _bwsdtoArtifactId = branch ^. bArtifactId
   , _bwsdtoParentPackageId = branch ^. bParentPackageId
   , _bwsdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId

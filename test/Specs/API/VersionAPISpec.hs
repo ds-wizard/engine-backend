@@ -48,13 +48,13 @@ versionAPI appContext =
           let (Right parentPackage) = eitherParentPackage
           let expDto =
                 PackageDTO
-                { _pkgdtoId = "elixir.nl.amsterdam:amsterdam-km:1.0.0"
-                , _pkgdtoName = "Amsterdam KM"
-                , _pkgdtoGroupId = "elixir.nl.amsterdam"
-                , _pkgdtoArtifactId = "amsterdam-km"
-                , _pkgdtoVersion = "1.0.0"
-                , _pkgdtoDescription = reqDto ^. vdtoDescription
-                , _pkgdtoParentPackageId = Just $ parentPackage ^. pkgdtoId
+                { _packageDTOPId = "elixir.nl.amsterdam:amsterdam-km:1.0.0"
+                , _packageDTOName = "Amsterdam KM"
+                , _packageDTOOrganizationId = "elixir.nl.amsterdam"
+                , _packageDTOArtifactId = "amsterdam-km"
+                , _packageDTOVersion = "1.0.0"
+                , _packageDTODescription = reqDto ^. vdtoDescription
+                , _packageDTOParentPackageId = Just $ parentPackage ^. pId
                 }
           let expBody = encode expDto
           -- WHEN: Call API

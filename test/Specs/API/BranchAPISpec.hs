@@ -23,7 +23,6 @@ import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
-import Model.Package.Package
 import Service.Branch.BranchService
 
 import Specs.API.Common
@@ -51,19 +50,19 @@ branchAPI appContext = do
                 BranchWithStateDTO
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
-                , _bwsdtoGroupId = "elixir.nl.amsterdam"
+                , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bwsdtoArtifactId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoState = BSDefault
                 }
           let expBody = encode [expDto]
-          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
+          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
           let branch =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -91,7 +90,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -119,7 +118,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam.km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -142,7 +141,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -167,7 +166,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:9.9.9"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -206,7 +205,7 @@ branchAPI appContext = do
                 BranchWithStateDTO
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
-                , _bwsdtoGroupId = "elixir.nl.amsterdam"
+                , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bwsdtoArtifactId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -216,13 +215,13 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context branch
-          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pkgweId)
+          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -246,7 +245,7 @@ branchAPI appContext = do
               BranchDTO
               { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
               , _bdtoName = "EDITED: Amsterdam KM"
-              , _bdtoGroupId = "elixir.nl.amsterdam"
+              , _bdtoOrganizationId = "elixir.nl.amsterdam"
               , _bdtoArtifactId = "amsterdam-km"
               , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -281,7 +280,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -304,7 +303,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -313,7 +312,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
                 , _bdtoName = "Amsterdam KM 2"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km-2"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
@@ -356,7 +355,7 @@ branchAPI appContext = do
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
-                , _bdtoGroupId = "elixir.nl.amsterdam"
+                , _bdtoOrganizationId = "elixir.nl.amsterdam"
                 , _bdtoArtifactId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"

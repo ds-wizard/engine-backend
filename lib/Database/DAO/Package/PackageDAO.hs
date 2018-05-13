@@ -42,9 +42,9 @@ findPackagesByArtifactId context artifactId = do
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackageByGroupIdAndArtifactId :: Context -> String -> String -> IO (Either AppError [Package])
-findPackageByGroupIdAndArtifactId context groupId artifactId = do
-  let action = rest =<< find (select ["groupId" =: groupId, "artifactId" =: artifactId] pkgCollection)
+findPackageByOrganizationIdAndArtifactId :: Context -> String -> String -> IO (Either AppError [Package])
+findPackageByOrganizationIdAndArtifactId context organizationId artifactId = do
+  let action = rest =<< find (select ["organizationId" =: organizationId, "artifactId" =: artifactId] pkgCollection)
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 

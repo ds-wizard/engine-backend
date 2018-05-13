@@ -15,7 +15,7 @@ getPackagesA = do
   dswConfig <- lift . asks $ _appContextConfig
   context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
-    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    queryParams <- getListOfQueryParamsIfPresent ["organizationId", "artifactId"]
     eitherResDtos <- liftIO $ getPackagesFiltered context queryParams
     case eitherResDtos of
       Right resDtos -> json resDtos
@@ -26,7 +26,7 @@ getUniquePackagesA = do
   dswConfig <- lift . asks $ _appContextConfig
   context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
-    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    queryParams <- getListOfQueryParamsIfPresent ["organizationId", "artifactId"]
     eitherResDtos <- liftIO $ getSimplePackagesFiltered context queryParams
     case eitherResDtos of
       Right resDtos -> json resDtos
@@ -48,7 +48,7 @@ deletePackagesA = do
   dswConfig <- lift . asks $ _appContextConfig
   context <- lift . asks $ _appContextOldContext
   checkPermission context "PM_PERM" $ do
-    queryParams <- getListOfQueryParamsIfPresent ["groupId", "artifactId"]
+    queryParams <- getListOfQueryParamsIfPresent ["organizationId", "artifactId"]
     maybeError <- liftIO $ deletePackagesByQueryParams context queryParams
     case maybeError of
       Nothing -> status noContent204

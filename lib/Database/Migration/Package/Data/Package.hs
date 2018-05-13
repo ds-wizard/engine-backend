@@ -3,8 +3,8 @@ module Database.Migration.Package.Data.Package where
 import Control.Lens ((^.))
 
 import Database.Migration.Branch.Data.Event.Event
+import LensesConfig
 import Model.Event.Event
-import Model.Package.Package
 import Service.Package.PackageMapper
 
 baseElixir0PackageDto = buildPackage "Elixir Base Package" "elixir.base" "core" "0.0.1" "Beta version" Nothing []
@@ -26,7 +26,7 @@ elixirNlPackageDto =
     "core-nl"
     "1.0.0"
     "First Release"
-    (Just $ baseElixirPackageDto ^. pkgweId)
+    (Just $ baseElixirPackageDto ^. pId)
     [AddChapterEvent' a_km1_ch1]
 
 elixirNlPackage2Dto =
@@ -36,5 +36,5 @@ elixirNlPackage2Dto =
     "core-nl"
     "2.0.0"
     "Second Release"
-    (Just $ elixirNlPackageDto ^. pkgweId)
+    (Just $ elixirNlPackageDto ^. pId)
     [AddChapterEvent' a_km1_ch3]

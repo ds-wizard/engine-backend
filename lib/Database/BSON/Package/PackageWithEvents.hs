@@ -13,39 +13,40 @@ import Database.BSON.Event.FollowUpQuestion ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
+import LensesConfig
 import Model.Package.Package
 
 instance ToBSON PackageWithEvents where
   toBSON package =
-    [ "id" BSON.=: package ^. pkgweId
-    , "name" BSON.=: (package ^. pkgweName)
-    , "groupId" BSON.=: (package ^. pkgweGroupId)
-    , "artifactId" BSON.=: (package ^. pkgweArtifactId)
-    , "version" BSON.=: (package ^. pkgweVersion)
-    , "description" BSON.=: (package ^. pkgweDescription)
-    , "parentPackageId" BSON.=: (package ^. pkgweParentPackageId)
-    , "events" BSON.=: convertEventToBSON <$> (package ^. pkgweEvents)
+    [ "id" BSON.=: package ^. pId
+    , "name" BSON.=: (package ^. name)
+    , "organizationId" BSON.=: (package ^. organizationId)
+    , "artifactId" BSON.=: (package ^. artifactId)
+    , "version" BSON.=: (package ^. version)
+    , "description" BSON.=: (package ^. description)
+    , "parentPackageId" BSON.=: (package ^. parentPackageId)
+    , "events" BSON.=: convertEventToBSON <$> (package ^. events)
     ]
 
 instance FromBSON PackageWithEvents where
   fromBSON doc = do
-    pkgId <- BSON.lookup "id" doc
-    name <- BSON.lookup "name" doc
-    groupId <- BSON.lookup "groupId" doc
-    artifactId <- BSON.lookup "artifactId" doc
-    version <- BSON.lookup "version" doc
-    description <- BSON.lookup "description" doc
-    parentPackageId <- BSON.lookup "parentPackageId" doc
-    eventsSerialized <- BSON.lookup "events" doc
-    let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
+    pkgPId <- BSON.lookup "id" doc
+    pkgName <- BSON.lookup "name" doc
+    pkgOrganizationId <- BSON.lookup "organizationId" doc
+    pkgArtifactId <- BSON.lookup "artifactId" doc
+    pkgVersion <- BSON.lookup "version" doc
+    pkgDescription <- BSON.lookup "description" doc
+    pkgParentPackageId <- BSON.lookup "parentPackageId" doc
+    pkgEventsSerialized <- BSON.lookup "events" doc
+    let pkgEvents = (fromJust . chooseEventDeserializator) <$> pkgEventsSerialized
     return
       PackageWithEvents
-      { _pkgweId = pkgId
-      , _pkgweName = name
-      , _pkgweGroupId = groupId
-      , _pkgweArtifactId = artifactId
-      , _pkgweVersion = version
-      , _pkgweDescription = description
-      , _pkgweParentPackageId = parentPackageId
-      , _pkgweEvents = events
+      { _packageWithEventsPId = pkgPId
+      , _packageWithEventsName = pkgName
+      , _packageWithEventsOrganizationId = pkgOrganizationId
+      , _packageWithEventsArtifactId = pkgArtifactId
+      , _packageWithEventsVersion = pkgVersion
+      , _packageWithEventsDescription = pkgDescription
+      , _packageWithEventsParentPackageId = pkgParentPackageId
+      , _packageWithEventsEvents = pkgEvents
       }

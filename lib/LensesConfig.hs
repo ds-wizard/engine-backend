@@ -7,6 +7,9 @@ import Api.Resource.Event.EventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -30,6 +33,7 @@ import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Organization.Organization
+import Model.Package.Package
 import Model.Questionnaire.Questionnaire
 import Model.User.User
 
@@ -135,6 +139,11 @@ makeFields ''Organization
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
+-- Model / Package
+makeFields ''Package
+
+makeFields ''PackageWithEvents
+
 -- Model / User
 makeFields ''User
 
@@ -221,6 +230,13 @@ makeFields ''QuestionnaireCreateDTO
 makeFields ''QuestionnaireDTO
 
 makeFields ''QuestionnaireDetailDTO
+
+-- Model / UserDTO
+makeFields ''PackageDTO
+
+makeFields ''PackageSimpleDTO
+
+makeFields ''PackageWithEventsDTO
 
 -- Model / UserDTO
 makeFields ''UserChangeDTO

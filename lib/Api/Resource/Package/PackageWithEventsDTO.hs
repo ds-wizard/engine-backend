@@ -1,47 +1,44 @@
 module Api.Resource.Package.PackageWithEventsDTO where
 
-import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Event.EventDTO
 
 data PackageWithEventsDTO = PackageWithEventsDTO
-  { _pkgwedtoId :: String
-  , _pkgwedtoName :: String
-  , _pkgwedtoGroupId :: String
-  , _pkgwedtoArtifactId :: String
-  , _pkgwedtoVersion :: String
-  , _pkgwedtoDescription :: String
-  , _pkgwedtoParentPackageId :: Maybe String
-  , _pkgwedtoEvents :: [EventDTO]
+  { _packageWithEventsDTOPId :: String
+  , _packageWithEventsDTOName :: String
+  , _packageWithEventsDTOOrganizationId :: String
+  , _packageWithEventsDTOArtifactId :: String
+  , _packageWithEventsDTOVersion :: String
+  , _packageWithEventsDTODescription :: String
+  , _packageWithEventsDTOParentPackageId :: Maybe String
+  , _packageWithEventsDTOEvents :: [EventDTO]
   } deriving (Show, Eq)
-
-makeLenses ''PackageWithEventsDTO
 
 instance FromJSON PackageWithEventsDTO where
   parseJSON (Object o) = do
-    _pkgwedtoId <- o .: "id"
-    _pkgwedtoName <- o .: "name"
-    _pkgwedtoGroupId <- o .: "groupId"
-    _pkgwedtoArtifactId <- o .: "artifactId"
-    _pkgwedtoVersion <- o .: "version"
-    _pkgwedtoDescription <- o .: "description"
-    _pkgwedtoParentPackageId <- o .: "parentPackageId"
+    _packageWithEventsDTOPId <- o .: "id"
+    _packageWithEventsDTOName <- o .: "name"
+    _packageWithEventsDTOOrganizationId <- o .: "organizationId"
+    _packageWithEventsDTOArtifactId <- o .: "artifactId"
+    _packageWithEventsDTOVersion <- o .: "version"
+    _packageWithEventsDTODescription <- o .: "description"
+    _packageWithEventsDTOParentPackageId <- o .: "parentPackageId"
     eventSerialized <- o .: "events"
-    _pkgwedtoEvents <- parseJSON eventSerialized
+    _packageWithEventsDTOEvents <- parseJSON eventSerialized
     return PackageWithEventsDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON PackageWithEventsDTO where
   toJSON PackageWithEventsDTO {..} =
     object
-      [ "id" .= _pkgwedtoId
-      , "name" .= _pkgwedtoName
-      , "groupId" .= _pkgwedtoGroupId
-      , "artifactId" .= _pkgwedtoArtifactId
-      , "version" .= _pkgwedtoVersion
-      , "description" .= _pkgwedtoDescription
-      , "parentPackageId" .= _pkgwedtoParentPackageId
-      , "events" .= toJSON _pkgwedtoEvents
+      [ "id" .= _packageWithEventsDTOPId
+      , "name" .= _packageWithEventsDTOName
+      , "organizationId" .= _packageWithEventsDTOOrganizationId
+      , "artifactId" .= _packageWithEventsDTOArtifactId
+      , "version" .= _packageWithEventsDTOVersion
+      , "description" .= _packageWithEventsDTODescription
+      , "parentPackageId" .= _packageWithEventsDTOParentPackageId
+      , "events" .= toJSON _packageWithEventsDTOEvents
       ]
