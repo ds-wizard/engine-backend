@@ -5,6 +5,7 @@ import Control.Lens (makeFields)
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
@@ -211,6 +212,8 @@ makeFields ''ReferenceDTO
 
 -- Model / OrganizationDTO
 makeFields ''OrganizationDTO
+
+makeFields ''OrganizationChangeDTO
 
 -- Model / QuestionnaireDTO
 makeFields ''QuestionnaireCreateDTO

@@ -7,11 +7,13 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
+import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Database.Migration.Organization.Data.Organizations
@@ -66,17 +68,15 @@ organizationAPI appContext =
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
-                OrganizationDTO
-                { _organizationDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
-                , _organizationDTOName = "EDITED: Elixir Netherlands"
-                , _organizationDTOOrganizationId = "elixir.nl.amsterdam.edited"
-                , _organizationDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-                , _organizationDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+                OrganizationChangeDTO
+                { _organizationChangeDTOUuid = fromJust . U.fromString $ "d0619a24-db8a-48e1-a033-0d4ef8b8da78"
+                , _organizationChangeDTOName = "EDITED: Elixir Netherlands"
+                , _organizationChangeDTOOrganizationId = "elixir.nl.amsterdam.edited"
                 }
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 200
-          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           let expDto = reqDto
           let expBody = encode expDto
           -- WHEN: Call API
@@ -84,9 +84,13 @@ organizationAPI appContext =
           -- THEN: Find a result
           eitherOrganization <- liftIO $ getOrganization context
           -- AND: Compare response with expetation
-          let responseMatcher =
-                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-          response `shouldRespondWith` responseMatcher
+          let (SResponse (Status status _) headers body) = response
+          liftIO $ status `shouldBe` expStatus
+          liftIO $ headers `shouldBe` expHeaders
+          let (Right resBody) = eitherDecode body :: Either String OrganizationDTO
+          liftIO $ (resBody ^. uuid) `shouldBe` (reqDto ^. uuid)
+          liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)
+          liftIO $ (resBody ^. organizationId) `shouldBe` (reqDto ^. organizationId)
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherOrganization) `shouldBe` True
           let (Right organizationFromDb) = eitherOrganization

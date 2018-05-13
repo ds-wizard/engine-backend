@@ -1,7 +1,9 @@
 module Service.Organization.OrganizationMapper where
 
 import Control.Lens ((^.))
+import Data.Time
 
+import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import LensesConfig
 import Model.Organization.Organization
@@ -16,12 +18,12 @@ toDTO organization =
   , _organizationDTOUpdatedAt = organization ^. updatedAt
   }
 
-fromDTO :: OrganizationDTO -> Organization
-fromDTO dto =
+fromDTO :: OrganizationChangeDTO -> UTCTime -> UTCTime -> Organization
+fromDTO dto orgCreatedAt orgUpdatedAt =
   Organization
   { _organizationUuid = dto ^. uuid
   , _organizationName = dto ^. name
   , _organizationOrganizationId = dto ^. organizationId
-  , _organizationCreatedAt = dto ^. createdAt
-  , _organizationUpdatedAt = dto ^. updatedAt
+  , _organizationCreatedAt = orgCreatedAt
+  , _organizationUpdatedAt = orgUpdatedAt
   }

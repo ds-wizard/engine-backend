@@ -163,6 +163,3 @@ getPermissionForRole config role =
 
 generatePasswordHash :: String -> IO String
 generatePasswordHash password = BS.unpack <$> makePassword (BS.pack password) 17
--- --------------------------------
--- HELPERS
--- --------------------------------
