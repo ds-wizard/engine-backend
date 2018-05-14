@@ -54,7 +54,7 @@ getBranches context =
 
 createBranch :: Context -> BranchDTO -> IO (Either AppError BranchDTO)
 createBranch context branchDto =
-  validateArtifactId branchDto $
+  validateKmId branchDto $
   validatePackageId context (branchDto ^. bdtoParentPackageId) $
   getOrganization context $ \organization -> do
     let branch = fromDTO branchDto
@@ -68,15 +68,15 @@ createBranch context branchDto =
       Right km -> return . Right $ toDTO branch organization
       Left error -> return . Left $ error
   where
-    validateArtifactId branchDto callback = do
-      let artifactId = branchDto ^. bdtoArtifactId
-      case isValidArtifactId artifactId of
+    validateKmId branchDto callback = do
+      let kmId = branchDto ^. bdtoKmId
+      case isValidKmId kmId of
         Nothing -> do
-          eitherBranchFromDb <- findBranchByArtifactId context artifactId
+          eitherBranchFromDb <- findBranchByKmId context kmId
           case eitherBranchFromDb of
             Right _ ->
               return . Left $
-              createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS artifactId)
+              createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId)
             Left (NotExistsError _) -> callback
         Just error -> return . Left $ error
     validatePackageId context mPackageId callback =
@@ -124,22 +124,22 @@ getBranchById context branchUuid =
 
 modifyBranch :: Context -> String -> BranchDTO -> IO (Either AppError BranchDTO)
 modifyBranch context branchUuid branchDto =
-  validateArtifactId $ do
+  validateKmId $ do
     let branch = fromDTO branchDto
     updateBranchById context branch
     return . Right $ branchDto
   where
-    validateArtifactId callback = do
-      let artifactId = branchDto ^. bdtoArtifactId
-      case isValidArtifactId artifactId of
+    validateKmId callback = do
+      let kmId = branchDto ^. bdtoKmId
+      case isValidKmId kmId of
         Nothing -> do
           eitherBranchFromDb <- findBranchById context branchUuid
           case eitherBranchFromDb of
             Right branch -> do
-              eitherBranchFromDb <- findBranchByArtifactId context artifactId
+              eitherBranchFromDb <- findBranchByKmId context kmId
               if isAlreadyUsedAndIsNotMine eitherBranchFromDb
                 then return . Left . createErrorWithFieldError $
-                     ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS artifactId)
+                     ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId)
                 else callback
             Left error -> return . Left $ error
         Just error -> return . Left $ error
@@ -156,11 +156,11 @@ deleteBranch context branchUuid = do
       return Nothing
     Left error -> return . Just $ error
 
-isValidArtifactId :: String -> Maybe AppError
-isValidArtifactId artifactId =
-  if isJust $ matchRegex validationRegex artifactId
+isValidKmId :: String -> Maybe AppError
+isValidKmId kmId =
+  if isJust $ matchRegex validationRegex kmId
     then Nothing
-    else Just $ createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT)
+    else Just $ createErrorWithFieldError ("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"
 

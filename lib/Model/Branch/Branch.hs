@@ -10,7 +10,7 @@ import Model.KnowledgeModel.KnowledgeModel
 data Branch = Branch
   { _bUuid :: UUID
   , _bName :: String
-  , _bArtifactId :: String
+  , _bKmId :: String
   , _bParentPackageId :: Maybe String
   , _bLastAppliedParentPackageId :: Maybe String
   , _bLastMergeCheckpointPackageId :: Maybe String
@@ -19,7 +19,7 @@ data Branch = Branch
 data BranchWithEvents = BranchWithEvents
   { _bweUuid :: UUID
   , _bweName :: String
-  , _bweArtifactId :: String
+  , _bweKmId :: String
   , _bweParentPackageId :: Maybe String
   , _bweLastAppliedParentPackageId :: Maybe String
   , _bweLastMergeCheckpointPackageId :: Maybe String
@@ -29,7 +29,7 @@ data BranchWithEvents = BranchWithEvents
 data BranchWithKM = BranchWithKM
   { _bwkmUuid :: UUID
   , _bwkmName :: String
-  , _bwkmArtifactId :: String
+  , _bwkmKmId :: String
   , _bwkmParentPackageId :: Maybe String
   , _bwkmLastAppliedParentPackageId :: Maybe String
   , _bwkmLastMergeCheckpointPackageId :: Maybe String

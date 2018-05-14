@@ -11,7 +11,7 @@ instance FromBSON BranchWithKM where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
-    artifactId <- BSON.lookup "artifactId" doc
+    kmId <- BSON.lookup "kmId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
     lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
     lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
@@ -21,7 +21,7 @@ instance FromBSON BranchWithKM where
       BranchWithKM
       { _bwkmUuid = uuid
       , _bwkmName = name
-      , _bwkmArtifactId = artifactId
+      , _bwkmKmId = kmId
       , _bwkmParentPackageId = parentPackageId
       , _bwkmLastAppliedParentPackageId = lastAppliedParentPackageId
       , _bwkmLastMergeCheckpointPackageId = lastMergeCheckpointPackageId

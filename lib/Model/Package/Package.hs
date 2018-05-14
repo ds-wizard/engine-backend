@@ -8,7 +8,7 @@ data Package = Package
   { _packagePId :: String
   , _packageName :: String
   , _packageOrganizationId :: String
-  , _packageArtifactId :: String
+  , _packageKmId :: String
   , _packageVersion :: String
   , _packageDescription :: String
   , _packageParentPackageId :: Maybe String
@@ -18,7 +18,7 @@ data PackageWithEvents = PackageWithEvents
   { _packageWithEventsPId :: String
   , _packageWithEventsName :: String
   , _packageWithEventsOrganizationId :: String
-  , _packageWithEventsArtifactId :: String
+  , _packageWithEventsKmId :: String
   , _packageWithEventsVersion :: String
   , _packageWithEventsDescription :: String
   , _packageWithEventsParentPackageId :: Maybe String

@@ -51,7 +51,7 @@ branchAPI appContext = do
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
                 , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bwsdtoArtifactId = "amsterdam-km"
+                , _bwsdtoKmId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoState = BSDefault
@@ -63,7 +63,7 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -91,7 +91,7 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -113,22 +113,22 @@ branchAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |] "name"
-        it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
+        it "HTTP 400 BAD REQUEST when kmId is not in valid format" $ do
           let reqDto =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam.km"
+                , _bdtoKmId = "amsterdam.km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
-          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km-")
+          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km-")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT)
+          let expDto = createErrorWithFieldError ("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -136,13 +136,13 @@ branchAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
+        it "HTTP 400 BAD REQUEST when kmId is already taken" $ do
           let reqDto =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -153,7 +153,7 @@ branchAPI appContext = do
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 createErrorWithFieldError
-                  ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS $ reqDto ^. bdtoArtifactId)
+                  ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. bdtoKmId)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -167,7 +167,7 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:9.9.9"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -206,7 +206,7 @@ branchAPI appContext = do
                 { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bwsdtoName = "Amsterdam KM"
                 , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bwsdtoArtifactId = "amsterdam-km"
+                , _bwsdtoKmId = "amsterdam-km"
                 , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bwsdtoState = BSDefault
@@ -216,7 +216,7 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -246,7 +246,7 @@ branchAPI appContext = do
               { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
               , _bdtoName = "EDITED: Amsterdam KM"
               , _bdtoOrganizationId = "elixir.nl.amsterdam"
-              , _bdtoArtifactId = "amsterdam-km"
+              , _bdtoKmId = "amsterdam-km"
               , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               }
@@ -272,25 +272,25 @@ branchAPI appContext = do
           let (Right branchFromDb) = eitherBranch
           liftIO $ (branchFromDb ^. bUuid) `shouldBe` (reqDto ^. bdtoUuid)
           liftIO $ (branchFromDb ^. bName) `shouldBe` (reqDto ^. bdtoName)
-          liftIO $ (branchFromDb ^. bArtifactId) `shouldBe` (reqDto ^. bdtoArtifactId)
+          liftIO $ (branchFromDb ^. bKmId) `shouldBe` (reqDto ^. bdtoKmId)
           liftIO $ (branchFromDb ^. bParentPackageId) `shouldBe` (reqDto ^. bdtoParentPackageId)
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |] "name"
-        it "HTTP 400 BAD REQUEST when artifactId is not in valid format" $ do
+        it "HTTP 400 BAD REQUEST when kmId is not in valid format" $ do
           let reqDto =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
-          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam.km")
+          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("artifactId", "ArtifactId is not in valid format")
+          let expDto = createErrorWithFieldError ("kmId", "KmId is not in valid format")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -298,13 +298,13 @@ branchAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        it "HTTP 400 BAD REQUEST when artifactId is already taken" $ do
+        it "HTTP 400 BAD REQUEST when kmId is already taken" $ do
           let reqDto =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
@@ -313,18 +313,18 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
                 , _bdtoName = "Amsterdam KM 2"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km-2"
+                , _bdtoKmId = "amsterdam-km-2"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           liftIO $ createBranch context reqDto
           liftIO $ createBranch context reqDto2
-          let reqBody = encode (reqDto & bdtoArtifactId .~ "amsterdam-km-2")
+          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam-km-2")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
-                createErrorWithFieldError ("artifactId", _ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS "amsterdam-km-2")
+                createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS "amsterdam-km-2")
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -356,7 +356,7 @@ branchAPI appContext = do
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
                 , _bdtoName = "Amsterdam KM"
                 , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoArtifactId = "amsterdam-km"
+                , _bdtoKmId = "amsterdam-km"
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }

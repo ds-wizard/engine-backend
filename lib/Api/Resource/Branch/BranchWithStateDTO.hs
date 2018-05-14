@@ -11,7 +11,7 @@ data BranchWithStateDTO = BranchWithStateDTO
   { _bwsdtoUuid :: UUID
   , _bwsdtoName :: String
   , _bwsdtoOrganizationId :: String
-  , _bwsdtoArtifactId :: String
+  , _bwsdtoKmId :: String
   , _bwsdtoParentPackageId :: Maybe String
   , _bwsdtoState :: BranchState
   , _bwsdtoLastAppliedParentPackageId :: Maybe String
@@ -24,7 +24,7 @@ instance FromJSON BranchWithStateDTO where
     _bwsdtoUuid <- o .: "uuid"
     _bwsdtoName <- o .: "name"
     _bwsdtoOrganizationId <- o .: "organizationId"
-    _bwsdtoArtifactId <- o .: "artifactId"
+    _bwsdtoKmId <- o .: "kmId"
     _bwsdtoParentPackageId <- o .: "parentPackageId"
     _bwsdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
     stateType <- o .: "stateType"
@@ -46,7 +46,7 @@ instance ToJSON BranchWithStateDTO where
       [ "uuid" .= _bwsdtoUuid
       , "name" .= _bwsdtoName
       , "organizationId" .= _bwsdtoOrganizationId
-      , "artifactId" .= _bwsdtoArtifactId
+      , "kmId" .= _bwsdtoKmId
       , "parentPackageId" .= _bwsdtoParentPackageId
       , "lastAppliedParentPackageId" .= _bwsdtoLastAppliedParentPackageId
       , "stateType" .=

@@ -21,7 +21,7 @@ instance ToBSON PackageWithEvents where
     [ "id" BSON.=: package ^. pId
     , "name" BSON.=: (package ^. name)
     , "organizationId" BSON.=: (package ^. organizationId)
-    , "artifactId" BSON.=: (package ^. artifactId)
+    , "kmId" BSON.=: (package ^. kmId)
     , "version" BSON.=: (package ^. version)
     , "description" BSON.=: (package ^. description)
     , "parentPackageId" BSON.=: (package ^. parentPackageId)
@@ -33,7 +33,7 @@ instance FromBSON PackageWithEvents where
     pkgPId <- BSON.lookup "id" doc
     pkgName <- BSON.lookup "name" doc
     pkgOrganizationId <- BSON.lookup "organizationId" doc
-    pkgArtifactId <- BSON.lookup "artifactId" doc
+    pkgKmId <- BSON.lookup "kmId" doc
     pkgVersion <- BSON.lookup "version" doc
     pkgDescription <- BSON.lookup "description" doc
     pkgParentPackageId <- BSON.lookup "parentPackageId" doc
@@ -44,7 +44,7 @@ instance FromBSON PackageWithEvents where
       { _packageWithEventsPId = pkgPId
       , _packageWithEventsName = pkgName
       , _packageWithEventsOrganizationId = pkgOrganizationId
-      , _packageWithEventsArtifactId = pkgArtifactId
+      , _packageWithEventsKmId = pkgKmId
       , _packageWithEventsVersion = pkgVersion
       , _packageWithEventsDescription = pkgDescription
       , _packageWithEventsParentPackageId = pkgParentPackageId

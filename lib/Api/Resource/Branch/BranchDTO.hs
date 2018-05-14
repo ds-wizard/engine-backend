@@ -9,7 +9,7 @@ data BranchDTO = BranchDTO
   { _bdtoUuid :: UUID
   , _bdtoName :: String
   , _bdtoOrganizationId :: String
-  , _bdtoArtifactId :: String
+  , _bdtoKmId :: String
   , _bdtoParentPackageId :: Maybe String
   , _bdtoLastAppliedParentPackageId :: Maybe String
   }
@@ -21,7 +21,7 @@ instance FromJSON BranchDTO where
     _bdtoUuid <- o .: "uuid"
     _bdtoName <- o .: "name"
     _bdtoOrganizationId <- o .: "organizationId"
-    _bdtoArtifactId <- o .: "artifactId"
+    _bdtoKmId <- o .: "kmId"
     _bdtoParentPackageId <- o .: "parentPackageId"
     _bdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
     return BranchDTO {..}
@@ -33,7 +33,7 @@ instance ToJSON BranchDTO where
       [ "uuid" .= _bdtoUuid
       , "name" .= _bdtoName
       , "organizationId" .= _bdtoOrganizationId
-      , "artifactId" .= _bdtoArtifactId
+      , "kmId" .= _bdtoKmId
       , "parentPackageId" .= _bdtoParentPackageId
       , "lastAppliedParentPackageId" .= _bdtoLastAppliedParentPackageId
       ]

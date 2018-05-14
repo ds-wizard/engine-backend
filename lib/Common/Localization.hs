@@ -11,7 +11,7 @@ _ERROR_DATABASE__ENTITY_NOT_FOUND = "Entity does not exist"
 -- VALIDATION
 -- --------------------------------------
 -- Form
-_ERROR_VALIDATION__INVALID_ARTIFACT_FORMAT = "ArtifactId is not in valid format"
+_ERROR_VALIDATION__INVALID_KM_ID_FORMAT = "KmId is not in valid format"
 
 _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT = "Version is not in valid format"
 
@@ -20,7 +20,7 @@ _ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "OrganizationId is not in valid form
 -- Uniqueness
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email = "User with email '" ++ email ++ "' already exists"
 
-_ERROR_VALIDATION__ARTIFACT_ID_UNIQUENESS artifactId = "ArtifactId '" ++ artifactId ++ "' is already taken"
+_ERROR_VALIDATION__KM_ID_UNIQUENESS kmId = "KmId '" ++ kmId ++ "' is already taken"
 
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already exists"
 

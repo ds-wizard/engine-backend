@@ -11,7 +11,7 @@ instance ToBSON Branch where
   toBSON branch =
     [ "uuid" BSON.=: serializeUUID (branch ^. bUuid)
     , "name" BSON.=: (branch ^. bName)
-    , "artifactId" BSON.=: (branch ^. bArtifactId)
+    , "kmId" BSON.=: (branch ^. bKmId)
     , "parentPackageId" BSON.=: (branch ^. bParentPackageId)
     , "lastAppliedParentPackageId" BSON.=: (branch ^. bLastAppliedParentPackageId)
     , "lastMergeCheckpointPackageId" BSON.=: (branch ^. bLastMergeCheckpointPackageId)
@@ -21,7 +21,7 @@ instance FromBSON Branch where
   fromBSON doc = do
     uuid <- deserializeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
-    artifactId <- BSON.lookup "artifactId" doc
+    kmId <- BSON.lookup "kmId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc
     lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
     lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
@@ -29,7 +29,7 @@ instance FromBSON Branch where
       Branch
       { _bUuid = uuid
       , _bName = name
-      , _bArtifactId = artifactId
+      , _bKmId = kmId
       , _bParentPackageId = parentPackageId
       , _bLastAppliedParentPackageId = lastAppliedParentPackageId
       , _bLastMergeCheckpointPackageId = lastMergeCheckpointPackageId

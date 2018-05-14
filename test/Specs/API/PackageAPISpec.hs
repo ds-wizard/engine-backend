@@ -27,7 +27,7 @@ packageAPI appContext = do
         { _packageDTOPId = "elixir.base:core:0.0.1"
         , _packageDTOName = "Elixir Base Package"
         , _packageDTOOrganizationId = "elixir.base"
-        , _packageDTOArtifactId = "core"
+        , _packageDTOKmId = "core"
         , _packageDTOVersion = "0.0.1"
         , _packageDTODescription = "Beta version"
         , _packageDTOParentPackageId = Nothing
@@ -37,7 +37,7 @@ packageAPI appContext = do
         { _packageDTOPId = "elixir.base:core:1.0.0"
         , _packageDTOName = "Elixir Base Package"
         , _packageDTOOrganizationId = "elixir.base"
-        , _packageDTOArtifactId = "core"
+        , _packageDTOKmId = "core"
         , _packageDTOVersion = "1.0.0"
         , _packageDTODescription = "First Release"
         , _packageDTOParentPackageId = Nothing
@@ -47,7 +47,7 @@ packageAPI appContext = do
         { _packageDTOPId = "elixir.nl:core-nl:1.0.0"
         , _packageDTOName = "Elixir Netherlands"
         , _packageDTOOrganizationId = "elixir.nl"
-        , _packageDTOArtifactId = "core-nl"
+        , _packageDTOKmId = "core-nl"
         , _packageDTOVersion = "1.0.0"
         , _packageDTODescription = "First Release"
         , _packageDTOParentPackageId = Just $ dto2 ^. pId
@@ -57,7 +57,7 @@ packageAPI appContext = do
         { _packageDTOPId = "elixir.nl:core-nl:2.0.0"
         , _packageDTOName = "Elixir Netherlands"
         , _packageDTOOrganizationId = "elixir.nl"
-        , _packageDTOArtifactId = "core-nl"
+        , _packageDTOKmId = "core-nl"
         , _packageDTOVersion = "2.0.0"
         , _packageDTODescription = "Second Release"
         , _packageDTOParentPackageId = Just $ dto3 ^. pId
@@ -93,13 +93,13 @@ packageAPI appContext = do
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
-      -- GET /packages?organizationId={organizationId}&artifactId={artifactId}
+      -- GET /packages?organizationId={organizationId}&kmId={kmId}
       -- ------------------------------------------------------------------------
-      describe "GET /packages?organizationId={organizationId}&artifactId={artifactId}" $
+      describe "GET /packages?organizationId={organizationId}&kmId={kmId}" $
           -- GIVEN: Prepare request
        do
         let reqMethod = methodGet
-        let reqUrl = "/packages?organizationId=elixir.base&artifactId=core"
+        let reqUrl = "/packages?organizationId=elixir.base&kmId=core"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
@@ -196,13 +196,13 @@ packageAPI appContext = do
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
       -- ------------------------------------------------------------------------
-      -- DELETE /packages?organizationId={organizationId}&artifactId={artifactId}
+      -- DELETE /packages?organizationId={organizationId}&kmId={kmId}
       -- ------------------------------------------------------------------------
-      describe "DELETE /packages?organizationId={organizationId}&artifactId={artifactId}" $
+      describe "DELETE /packages?organizationId={organizationId}&kmId={kmId}" $
          -- GIVEN: Prepare request
        do
         let reqMethod = methodDelete
-        let reqUrl = "/packages?organizationId=elixir.nl&artifactId=core-nl"
+        let reqUrl = "/packages?organizationId=elixir.nl&kmId=core-nl"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
@@ -215,7 +215,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackageByOrganizationIdAndArtifactId context "elixir.nl" "core-nl"
+          eitherPackages <- liftIO $ findPackageByOrganizationIdAndKmId context "elixir.nl" "core-nl"
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

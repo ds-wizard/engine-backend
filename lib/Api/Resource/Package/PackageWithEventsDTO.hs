@@ -9,7 +9,7 @@ data PackageWithEventsDTO = PackageWithEventsDTO
   { _packageWithEventsDTOPId :: String
   , _packageWithEventsDTOName :: String
   , _packageWithEventsDTOOrganizationId :: String
-  , _packageWithEventsDTOArtifactId :: String
+  , _packageWithEventsDTOKmId :: String
   , _packageWithEventsDTOVersion :: String
   , _packageWithEventsDTODescription :: String
   , _packageWithEventsDTOParentPackageId :: Maybe String
@@ -21,7 +21,7 @@ instance FromJSON PackageWithEventsDTO where
     _packageWithEventsDTOPId <- o .: "id"
     _packageWithEventsDTOName <- o .: "name"
     _packageWithEventsDTOOrganizationId <- o .: "organizationId"
-    _packageWithEventsDTOArtifactId <- o .: "artifactId"
+    _packageWithEventsDTOKmId <- o .: "kmId"
     _packageWithEventsDTOVersion <- o .: "version"
     _packageWithEventsDTODescription <- o .: "description"
     _packageWithEventsDTOParentPackageId <- o .: "parentPackageId"
@@ -36,7 +36,7 @@ instance ToJSON PackageWithEventsDTO where
       [ "id" .= _packageWithEventsDTOPId
       , "name" .= _packageWithEventsDTOName
       , "organizationId" .= _packageWithEventsDTOOrganizationId
-      , "artifactId" .= _packageWithEventsDTOArtifactId
+      , "kmId" .= _packageWithEventsDTOKmId
       , "version" .= _packageWithEventsDTOVersion
       , "description" .= _packageWithEventsDTODescription
       , "parentPackageId" .= _packageWithEventsDTOParentPackageId

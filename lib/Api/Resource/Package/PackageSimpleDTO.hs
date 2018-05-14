@@ -5,7 +5,7 @@ import Data.Aeson
 data PackageSimpleDTO = PackageSimpleDTO
   { _packageSimpleDTOName :: String
   , _packageSimpleDTOOrganizationId :: String
-  , _packageSimpleDTOArtifactId :: String
+  , _packageSimpleDTOKmId :: String
   } deriving (Show, Eq)
 
 instance ToJSON PackageSimpleDTO where
@@ -13,5 +13,5 @@ instance ToJSON PackageSimpleDTO where
     object
       [ "name" .= _packageSimpleDTOName
       , "organizationId" .= _packageSimpleDTOOrganizationId
-      , "artifactId" .= _packageSimpleDTOArtifactId
+      , "kmId" .= _packageSimpleDTOKmId
       ]

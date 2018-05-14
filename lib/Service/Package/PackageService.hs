@@ -54,12 +54,12 @@ getSimplePackagesFiltered context queryParams = do
             isAlreadyInArray packages newPackage =
               find
                 (\pkg ->
-                   equalSameArtifactId (newPackage ^. artifactId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
+                   equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
                 packages
-            hasSameArtifactId :: Package -> Package -> Bool
-            hasSameArtifactId pkg1 pkg2 = pkg1 ^. artifactId == pkg2 ^. artifactId
-            equalSameArtifactId :: String -> Package -> Bool
-            equalSameArtifactId pkgArtifactId pkg = pkgArtifactId == pkg ^. artifactId
+            hasSameKmId :: Package -> Package -> Bool
+            hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
+            equalSameKmId :: String -> Package -> Bool
+            equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
             equalSameOrganizationId :: String -> Package -> Bool
             equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
     Left error -> return . Left $ error
@@ -79,8 +79,8 @@ getPackageWithEventsById context pkgPId = do
     Left error -> return . Left $ error
 
 createPackage :: Context -> String -> String -> String -> String -> String -> Maybe String -> [Event] -> IO PackageDTO
-createPackage context name organizationId artifactId version description maybeParentPackageId events = do
-  let package = buildPackage name organizationId artifactId version description maybeParentPackageId events
+createPackage context name organizationId kmId version description maybeParentPackageId events = do
+  let package = buildPackage name organizationId kmId version description maybeParentPackageId events
   insertPackage context package
   return $ packageWithEventsToDTO package
 
@@ -93,9 +93,9 @@ createPackageFromKMC context branchUuid pkgVersion pkgDescription =
       getEventsForPackage context branch $ \events -> do
         let pkgName = branch ^. bweName
         let pkgOrganizationId = organization ^. organizationId
-        let pkgArtifactId = branch ^. bweArtifactId
+        let pkgKmId = branch ^. bweKmId
         let mPpId = branch ^. bweParentPackageId
-        createdPackage <- createPackage context pkgName pkgOrganizationId pkgArtifactId pkgVersion pkgDescription mPpId events
+        createdPackage <- createPackage context pkgName pkgOrganizationId pkgKmId pkgVersion pkgDescription mPpId events
         deleteEventsAtBranch context branchUuid
         updateBranchWithParentPackageId context branchUuid (createdPackage ^. pId)
         updateBranchIfMigrationIsCompleted context branchUuid
@@ -118,8 +118,8 @@ createPackageFromKMC context branchUuid pkgVersion pkgDescription =
         Left error -> return . Left $ error
     validateVersion pkgVersion branch organization callback = do
       let pkgOrganizationId = organization ^. organizationId
-      let pkgArtifactId = branch ^. bweArtifactId
-      eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndArtifactId context pkgOrganizationId pkgArtifactId
+      let pkgKmId = branch ^. bweKmId
+      eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndKmId context pkgOrganizationId pkgKmId
       case eitherMaybePackage of
         Right (Just package) ->
           case isVersionHigher pkgVersion (package ^. version) of
@@ -159,15 +159,15 @@ importPackage context fileContent = do
       let packageWithEvents = fromDTOWithEvents deserializedFile
       let pName = packageWithEvents ^. name
       let pOrganizationId = packageWithEvents ^. organizationId
-      let pArtifactId = packageWithEvents ^. artifactId
+      let pKmId = packageWithEvents ^. kmId
       let pVersion = packageWithEvents ^. version
       let pDescription = packageWithEvents ^. description
       let pParentPackageId = packageWithEvents ^. parentPackageId
       let pEvents = packageWithEvents ^. events
-      let pId = buildPackageId pOrganizationId pArtifactId pVersion
+      let pId = buildPackageId pOrganizationId pKmId pVersion
       validatePackageId pId $
         validateParentPackageId pId pParentPackageId $ do
-          createdPkg <- createPackage context pName pOrganizationId pArtifactId pVersion pDescription pParentPackageId pEvents
+          createdPkg <- createPackage context pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
           return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
   where
@@ -215,9 +215,9 @@ deletePackage context pkgPId = do
           return Nothing
     Left error -> return . Just $ error
 
-getTheNewestPackageByOrganizationIdAndArtifactId :: Context -> String -> String -> IO (Either AppError (Maybe Package))
-getTheNewestPackageByOrganizationIdAndArtifactId context organizationId artifactId = do
-  eitherPackages <- findPackageByOrganizationIdAndArtifactId context organizationId artifactId
+getTheNewestPackageByOrganizationIdAndKmId :: Context -> String -> String -> IO (Either AppError (Maybe Package))
+getTheNewestPackageByOrganizationIdAndKmId context organizationId kmId = do
+  eitherPackages <- findPackageByOrganizationIdAndKmId context organizationId kmId
   case eitherPackages of
     Right packages ->
       if length packages == 0
@@ -289,12 +289,12 @@ getNewerPackages context currentPkgId =
     return . Right . sortPackagesByVersion $ packagesWithHigherVersion
   where
     getPackages callback = do
-      eitherPackages <- findPackageByOrganizationIdAndArtifactId context pkgOrganizationId pkgArtifactId
+      eitherPackages <- findPackageByOrganizationIdAndKmId context pkgOrganizationId pkgKmId
       case eitherPackages of
         Right packages -> callback packages
         Left error -> return . Left $ error
     pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
-    pkgArtifactId = T.unpack $ splitPackageId currentPkgId !! 1
+    pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
     pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2
 
 isVersionInValidFormat :: String -> Maybe AppError

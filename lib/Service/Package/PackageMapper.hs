@@ -16,7 +16,7 @@ packageToDTO package =
   { _packageDTOPId = package ^. pId
   , _packageDTOName = package ^. name
   , _packageDTOOrganizationId = package ^. organizationId
-  , _packageDTOArtifactId = package ^. artifactId
+  , _packageDTOKmId = package ^. kmId
   , _packageDTOVersion = package ^. version
   , _packageDTODescription = package ^. description
   , _packageDTOParentPackageId = package ^. parentPackageId
@@ -27,7 +27,7 @@ packageToSimpleDTO package =
   PackageSimpleDTO
   { _packageSimpleDTOName = package ^. name
   , _packageSimpleDTOOrganizationId = package ^. organizationId
-  , _packageSimpleDTOArtifactId = package ^. artifactId
+  , _packageSimpleDTOKmId = package ^. kmId
   }
 
 packageWithEventsToDTO :: PackageWithEvents -> PackageDTO
@@ -36,7 +36,7 @@ packageWithEventsToDTO package =
   { _packageDTOPId = package ^. pId
   , _packageDTOName = package ^. name
   , _packageDTOOrganizationId = package ^. organizationId
-  , _packageDTOArtifactId = package ^. artifactId
+  , _packageDTOKmId = package ^. kmId
   , _packageDTOVersion = package ^. version
   , _packageDTODescription = package ^. description
   , _packageDTOParentPackageId = package ^. parentPackageId
@@ -48,7 +48,7 @@ packageWithEventsToDTOWithEvents package =
   { _packageWithEventsDTOPId = package ^. pId
   , _packageWithEventsDTOName = package ^. name
   , _packageWithEventsDTOOrganizationId = package ^. organizationId
-  , _packageWithEventsDTOArtifactId = package ^. artifactId
+  , _packageWithEventsDTOKmId = package ^. kmId
   , _packageWithEventsDTOVersion = package ^. version
   , _packageWithEventsDTODescription = package ^. description
   , _packageWithEventsDTOParentPackageId = package ^. parentPackageId
@@ -61,7 +61,7 @@ fromDTO dto =
   { _packagePId = dto ^. pId
   , _packageName = dto ^. name
   , _packageOrganizationId = dto ^. organizationId
-  , _packageArtifactId = dto ^. artifactId
+  , _packageKmId = dto ^. kmId
   , _packageVersion = dto ^. version
   , _packageDescription = dto ^. description
   , _packageParentPackageId = dto ^. parentPackageId
@@ -73,7 +73,7 @@ fromDTOWithEvents dto =
   { _packageWithEventsPId = dto ^. pId
   , _packageWithEventsName = dto ^. name
   , _packageWithEventsOrganizationId = dto ^. organizationId
-  , _packageWithEventsArtifactId = dto ^. artifactId
+  , _packageWithEventsKmId = dto ^. kmId
   , _packageWithEventsVersion = dto ^. version
   , _packageWithEventsDescription = dto ^. description
   , _packageWithEventsParentPackageId = dto ^. parentPackageId
@@ -81,15 +81,15 @@ fromDTOWithEvents dto =
   }
 
 buildPackageId :: String -> String -> String -> String
-buildPackageId pkgOrganizationId pkgArtifactId pkgVersion = pkgOrganizationId ++ ":" ++ pkgArtifactId ++ ":" ++ pkgVersion
+buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
 
 buildPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> PackageWithEvents
-buildPackage pkgName pkgOrganizationId pkgArtifactId pkgVersion pkgDescription pkgMaybeParentPackageId pkgEvents =
+buildPackage pkgName pkgOrganizationId pkgKmId pkgVersion pkgDescription pkgMaybeParentPackageId pkgEvents =
   PackageWithEvents
-  { _packageWithEventsPId = buildPackageId pkgOrganizationId pkgArtifactId pkgVersion
+  { _packageWithEventsPId = buildPackageId pkgOrganizationId pkgKmId pkgVersion
   , _packageWithEventsName = pkgName
   , _packageWithEventsOrganizationId = pkgOrganizationId
-  , _packageWithEventsArtifactId = pkgArtifactId
+  , _packageWithEventsKmId = pkgKmId
   , _packageWithEventsVersion = pkgVersion
   , _packageWithEventsDescription = pkgDescription
   , _packageWithEventsParentPackageId = pkgMaybeParentPackageId

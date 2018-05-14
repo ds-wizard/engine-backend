@@ -25,14 +25,14 @@ import Service.Migrator.MigratorService
 branchServiceSpec =
   describe "Package Service" $
   it "isVersionInValidFormat" $ do
-    isNothing (isValidArtifactId "core") `shouldBe` True
-    isNothing (isValidArtifactId "ab") `shouldBe` True
-    isNothing (isValidArtifactId "core-nl") `shouldBe` True
-    isNothing (isValidArtifactId "core-nl-amsterdam") `shouldBe` True
-    isJust (isValidArtifactId "a") `shouldBe` True
-    isJust (isValidArtifactId "core.nl") `shouldBe` True
-    isJust (isValidArtifactId "a.b") `shouldBe` True
-    isJust (isValidArtifactId "core_nl") `shouldBe` True
+    isNothing (isValidKmId "core") `shouldBe` True
+    isNothing (isValidKmId "ab") `shouldBe` True
+    isNothing (isValidKmId "core-nl") `shouldBe` True
+    isNothing (isValidKmId "core-nl-amsterdam") `shouldBe` True
+    isJust (isValidKmId "a") `shouldBe` True
+    isJust (isValidKmId "core.nl") `shouldBe` True
+    isJust (isValidKmId "a.b") `shouldBe` True
+    isJust (isValidKmId "core_nl") `shouldBe` True
 
 branchServiceIntegrationSpec appContext = do
   let context = appContext ^. oldContext

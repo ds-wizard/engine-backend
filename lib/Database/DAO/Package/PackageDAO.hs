@@ -36,15 +36,15 @@ findPackageById context pkgId = do
   maybePackageS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybePackageS
 
-findPackagesByArtifactId :: Context -> String -> IO (Either AppError [Package])
-findPackagesByArtifactId context artifactId = do
-  let action = rest =<< find (select ["artifactId" =: artifactId] pkgCollection)
+findPackagesByKmId :: Context -> String -> IO (Either AppError [Package])
+findPackagesByKmId context kmId = do
+  let action = rest =<< find (select ["kmId" =: kmId] pkgCollection)
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 
-findPackageByOrganizationIdAndArtifactId :: Context -> String -> String -> IO (Either AppError [Package])
-findPackageByOrganizationIdAndArtifactId context organizationId artifactId = do
-  let action = rest =<< find (select ["organizationId" =: organizationId, "artifactId" =: artifactId] pkgCollection)
+findPackageByOrganizationIdAndKmId :: Context -> String -> String -> IO (Either AppError [Package])
+findPackageByOrganizationIdAndKmId context organizationId kmId = do
+  let action = rest =<< find (select ["organizationId" =: organizationId, "kmId" =: kmId] pkgCollection)
   packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeEntities $ packagesS
 

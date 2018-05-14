@@ -29,9 +29,9 @@ findBranchById context branchUuid = do
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 
-findBranchByArtifactId :: Context -> String -> IO (Either AppError Branch)
-findBranchByArtifactId context artifactId = do
-  let action = findOne $ select ["artifactId" =: artifactId] branchCollection
+findBranchByKmId :: Context -> String -> IO (Either AppError Branch)
+findBranchByKmId context kmId = do
+  let action = findOne $ select ["kmId" =: kmId] branchCollection
   maybeBranchS <- runMongoDBPoolDef action (context ^. ctxDbPool)
   return . deserializeMaybeEntity $ maybeBranchS
 

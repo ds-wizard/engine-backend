@@ -13,8 +13,8 @@ validateOrganizationDto :: OrganizationChangeDTO -> Maybe AppError
 validateOrganizationDto reqDto = isValidOrganizationId $ reqDto ^. organizationId
 
 isValidOrganizationId :: String -> Maybe AppError
-isValidOrganizationId artifactId =
-  if isJust $ matchRegex validationRegex artifactId
+isValidOrganizationId kmId =
+  if isJust $ matchRegex validationRegex kmId
     then Nothing
     else Just . createErrorWithFieldError $ ("organizationId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
   where
