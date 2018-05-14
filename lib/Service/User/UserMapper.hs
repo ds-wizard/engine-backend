@@ -51,7 +51,7 @@ fromUserChangeDTO dto oldUser permission =
   , _userPasswordHash = oldUser ^. passwordHash
   , _userRole = dto ^. role
   , _userPermissions = permission
-  , _userIsActive = oldUser ^. isActive
+  , _userIsActive = dto ^. isActive
   , _userCreatedAt = oldUser ^. createdAt
   , _userUpdatedAt = oldUser ^. updatedAt
   }
