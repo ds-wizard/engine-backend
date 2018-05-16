@@ -3,34 +3,71 @@ sudo: false
 services:
   - mongodb
 
-env:
-  - IMAGE_TAG="$DOCKER_REGISTRY/elixir/dsw-server:latest"
+stages:
+  - build
+  - tag
 
-before_script:
-  - mongo dsw-server-test --eval 'db.collection.find()'
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" $DOCKER_REGISTRY
+env:
+  - IMAGE="$DOCKER_REGISTRY/elixir/dsw-server" IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest" IMAGE_TAG_VERSION="$IMAGE:$TRAVIS_TAG"
 
 cache:
   directories:
   - $HOME/.stack
   - $HOME/.stack-work
+  
 
-before_install:
-  # Download and unpack the stack executable
+install:
+  # 1. Download and unpack the stack executable
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v1.6.5/stack-1.6.5-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-  # Configure stack to use the system GHC installation
+  # 2. Configure stack to use the system GHC installation
   - stack config set system-ghc --global true
   - export PATH=/opt/ghc/ghc-8.2.2/bin:$PATH
+  # 3. Init Application Config for tests
   - cp config/app-config-test.cfg.example config/app-config-test.cfg
 
-script:
-  - cd scripts
-  - ./build-info.sh
-  - cd ..
+before_script:
+  # 1. Log to our private Docker Registry
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" $DOCKER_REGISTRY 
+  
+jobs:
+  include:
+    - stage: build
+      script:
+        # 1. Init testing Mongo Database
+        - mongo dsw-server-test --eval 'db.collection.find()'
+        # 2. Create build info inside application
+        - cd scripts
+        - ./build-info.sh
+        - cd ..
+        # 3. Build and Test Application
+        - stack --no-terminal --skip-ghc-check test
+        # 4. Build Docker Image
+        - docker pull $IMAGE_TAG
+        - docker build --pull --cache-from $IMAGE_TAG -t $IMAGE_TAG .
+        - docker push $IMAGE_TAG
 
-  - stack --no-terminal --skip-ghc-check test
-  - docker pull $IMAGE_TAG
-  - docker build --pull --cache-from $IMAGE_TAG -t $IMAGE_TAG .
-  - docker push $IMAGE_TAG
+    - stage: tag
+      if: (branch = develop) AND (NOT (type IN (pull_request)))
+      before_install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP
+        - docker push $IMAGE_TAG_DEVELOP
+
+    - stage: tag
+      if: (branch = master) AND (NOT (type IN (pull_request)))
+      before_install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST
+        - docker push $IMAGE_TAG_LATEST
+
+    - stage: tag
+      if: tag =~ ^v
+      before_install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_VERSION
+        - docker push $IMAGE_TAG_VERSION  
