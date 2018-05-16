@@ -13,6 +13,7 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Version.VersionDTO
 import Common.Error
+import Common.Localization
 import qualified Database.Migration.Branch.BranchMigration as B
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
@@ -83,7 +84,7 @@ versionAPI appContext =
           eitherParentPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
-          let expDto = createErrorWithErrorMessage $ "Version is not in valid format"
+          let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
           let expBody = encode expDto
           -- WHEN: Call API
           response <-
@@ -107,7 +108,7 @@ versionAPI appContext =
           eitherParentPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
-          let expDto = createErrorWithErrorMessage $ "New version has to be higher than the previous one"
+          let expDto = createErrorWithErrorMessage _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
           let expBody = encode expDto
           -- WHEN: Call API
           response <-
