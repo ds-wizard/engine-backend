@@ -45,8 +45,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       dbname <- get configParser "Database" "dbname"
       port <- get configParser "Database" "port"
       authEnabled <- get configParser "Database" "authenabled"
-      username <- get configParser "Database" "port"
-      password <- get configParser "Database" "port"
+      username <- get configParser "Database" "username"
+      password <- get configParser "Database" "password"
       return
         AppConfigDatabase
         { _appConfigDatabaseHost = host
