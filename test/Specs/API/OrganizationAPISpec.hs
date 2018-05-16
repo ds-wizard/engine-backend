@@ -16,6 +16,7 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
+import Common.Localization
 import Database.Migration.Organization.Data.Organizations
 import LensesConfig
 import Service.Organization.OrganizationService
@@ -114,7 +115,7 @@ organizationAPI appContext =
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("organizationId", "OrganizationId is not in valid format")
+          let expDto = createErrorWithFieldError ("organizationId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

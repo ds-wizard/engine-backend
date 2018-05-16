@@ -200,7 +200,7 @@ migratorAPI appContext = do
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "Target Package is not higher than current one"
+          let expDto = MigratorError _ERROR_MT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
           let expBody = encode expDto
           -- AND: Prepare database
           liftIO . runNoLoggingT $ PKG.runMigration appContext
@@ -333,7 +333,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "OriginalEventUuid doesn't match with current target event"
+          let expDto = MigratorError _ERROR_MT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited =
                 reqDto & mcdtoOriginalEventUuid .~ (fromJust . U.fromString $ "30ac5193-5685-41b1-86d7-ab0b356c516a")
@@ -380,7 +380,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "You can't solve conflicts because Migration state isn't in conflict state"
+          let expDto = MigratorError _ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
           let expBody = encode expDto
           -- AND: Prepare database
           liftIO . runNoLoggingT $ PKG.runMigration appContext

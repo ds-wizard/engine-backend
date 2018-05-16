@@ -19,6 +19,7 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.User.UserPasswordDTO
 import Common.Context
 import Common.Error
+import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
@@ -102,8 +103,7 @@ test_400_hash_is_not_provided context dswConfig =
   -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto =
-          createErrorWithErrorMessage "You have to log in as Administrator or you have to provide a hash in query param"
+    let expDto = createErrorWithErrorMessage _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
     let expBody = encode expDto
   -- WHEN: Call API
     response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody
