@@ -31,6 +31,7 @@ import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Organization.Organization
 import Model.Package.Package
@@ -132,6 +133,17 @@ makeFields ''AnswerItemTemplatePlainWithIds
 makeFields ''Expert
 
 makeFields ''Reference
+
+-- Model / FilledKnowledgeModel
+makeFields ''FilledKnowledgeModel
+
+makeFields ''FilledChapter
+
+makeFields ''FilledQuestion
+
+makeFields ''FilledAnswer
+
+makeFields ''FilledAnswerItem
 
 -- Model / Organization
 makeFields ''Organization
