@@ -1,7 +1,6 @@
 module Specs.API.EventAPISpec where
 
 import Control.Lens
-import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Either
 import Network.HTTP.Types
@@ -25,6 +24,7 @@ import Service.Event.EventService
 import Service.Migrator.Applicator
 
 import Specs.API.Common
+import Specs.Common
 
 eventAPI appContext = do
   let events =
@@ -48,7 +48,6 @@ eventAPI appContext = do
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "EVENT API Spec" $
       -- ------------------------------------------------------------------------
@@ -63,8 +62,8 @@ eventAPI appContext = do
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
          do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ KMC.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO KMC.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -89,9 +88,9 @@ eventAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = encode . toDTOs $ events
         it "HTTP 201 CREATED" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ KMC.runMigration appContext
-          liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          runInContextIO PKG.runMigration appContext
+          runInContextIO KMC.runMigration appContext
+          runInContextIO (deleteEvents "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -100,8 +99,8 @@ eventAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
+          eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           let expBody = reqBody
           -- AND: Compare response with expetation
           let responseMatcher =
@@ -120,9 +119,9 @@ eventAPI appContext = do
           [HJ.json| [{ uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" }] |]
           "eventType"
         it "HTTP 400 BAD REQUEST if unsupported event type" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ KMC.runMigration appContext
-          liftIO $ deleteEvents context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          runInContextIO PKG.runMigration appContext
+          runInContextIO KMC.runMigration appContext
+          runInContextIO (deleteEvents "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           let reqBody =
                 [HJ.json|
                     [
@@ -140,8 +139,8 @@ eventAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
+          eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -165,8 +164,8 @@ eventAPI appContext = do
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
          do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ KMC.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO KMC.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -174,8 +173,8 @@ eventAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchWithEventsById context "6474b24b-262b-42b1-9451-008e8363f2b6"
-          eitherKm <- liftIO $ findBranchWithKMByBranchId context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
+          eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals reqBody}

@@ -7,52 +7,51 @@ import Data.Map (Map)
 import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
-import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Context
 import Common.Error
 import Database.BSON.Questionnaire.Questionnaire ()
 import Database.DAO.Common
 import LensesConfig
+import Model.Context.AppContext
 import Model.Questionnaire.Questionnaire
 
 qtnCollection = "questionnaires"
 
-findQuestionnaires :: Context -> IO (Either AppError [Questionnaire])
-findQuestionnaires context = do
+findQuestionnaires :: AppContextM (Either AppError [Questionnaire])
+findQuestionnaires = do
   let action = rest =<< find (select [] qtnCollection)
-  questionnairesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  questionnairesS <- runDB action
   return . deserializeEntities $ questionnairesS
 
-findQuestionnaireById :: Context -> String -> IO (Either AppError Questionnaire)
-findQuestionnaireById context questionnaireUuid = do
+findQuestionnaireById :: String -> AppContextM (Either AppError Questionnaire)
+findQuestionnaireById questionnaireUuid = do
   let action = findOne $ select ["uuid" =: questionnaireUuid] qtnCollection
-  maybeQuestionnaireS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybeQuestionnaireS <- runDB action
   return . deserializeMaybeEntity $ maybeQuestionnaireS
 
-insertQuestionnaire :: Context -> Questionnaire -> IO Value
-insertQuestionnaire context questionnaire = do
+insertQuestionnaire :: Questionnaire -> AppContextM Value
+insertQuestionnaire questionnaire = do
   let action = insert qtnCollection (toBSON questionnaire)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-updateQuestionnaireById :: Context -> Questionnaire -> IO ()
-updateQuestionnaireById context questionnaire = do
+updateQuestionnaireById :: Questionnaire -> AppContextM ()
+updateQuestionnaireById questionnaire = do
   let action =
         fetch (select ["uuid" =: (questionnaire ^. uuid)] qtnCollection) >>=
         save qtnCollection . merge (toBSON questionnaire)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-updateQuestionnaireRepliesById :: Context -> String -> Map String String -> IO ()
-updateQuestionnaireRepliesById context questionnaireUuid replies = do
+updateQuestionnaireRepliesById :: String -> Map String String -> AppContextM ()
+updateQuestionnaireRepliesById questionnaireUuid replies = do
   let action = modify (select ["uuid" =: questionnaireUuid] qtnCollection) ["$set" =: ["replies" =: replies]]
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteQuestionnaires :: Context -> IO ()
-deleteQuestionnaires context = do
+deleteQuestionnaires :: AppContextM ()
+deleteQuestionnaires = do
   let action = delete $ select [] qtnCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteQuestionnaireById :: Context -> String -> IO ()
-deleteQuestionnaireById context questionnaireUuid = do
+deleteQuestionnaireById :: String -> AppContextM ()
+deleteQuestionnaireById questionnaireUuid = do
   let action = deleteOne $ select ["uuid" =: questionnaireUuid] qtnCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action

@@ -17,27 +17,27 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.User.UserPasswordDTO
-import Common.Context
 import Common.Error
 import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.ActionKey.ActionKey
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 
 import Specs.API.Common
+import Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password?hash={hash}
 -- ------------------------------------------------------------------------
-detail_password_hash_put :: Context -> DSWConfig -> SpecWith Application
-detail_password_hash_put context dswConfig =
+detail_password_hash_put :: AppContext -> SpecWith Application
+detail_password_hash_put appContext =
   describe "PUT /users/{userId}/password?hash={hash}" $ do
-    test_204 context dswConfig
-    test_400_invalid_json context dswConfig
-    test_400_hash_is_not_provided context dswConfig
-    test_404 context dswConfig
+    test_204 appContext
+    test_400_invalid_json appContext
+    test_400_hash_is_not_provided appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -58,7 +58,7 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_204 context dswConfig =
+test_204 appContext =
   it "HTTP 204 NO CONTENT" $
   -- GIVEN: Prepare DB
    do
@@ -69,14 +69,14 @@ test_204 context dswConfig =
           , _actionKeyAType = ForgottenPasswordActionKey
           , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
           }
-    eitherActionKey <- liftIO $ insertActionKey context actionKey
+    eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
   -- AND: Prepare expectation
     let expStatus = 204
     let expHeaders = resCorsHeaders
   -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
   -- THEN: Find a result
-    eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
   -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -90,12 +90,12 @@ test_204 context dswConfig =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json context dswConfig = createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_hash_is_not_provided context dswConfig =
+test_400_hash_is_not_provided appContext =
   it "HTTP 400 BAD REQUEST when hash is not provided" $
   -- GIVEN: Prepare url
    do
@@ -108,7 +108,7 @@ test_400_hash_is_not_provided context dswConfig =
   -- WHEN: Call API
     response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody
   -- THEN: Find a result
-    eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
   -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -122,7 +122,7 @@ test_400_hash_is_not_provided context dswConfig =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 context dswConfig =
+test_404 appContext =
   createNotFoundTest
     reqMethod
     "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=e565b3da-70bf-4991-ad47-4209514b3a67"

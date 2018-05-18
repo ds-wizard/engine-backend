@@ -1,7 +1,6 @@
 module Specs.API.KnowledgeModelAPISpec where
 
 import Control.Lens
-import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Network.HTTP.Types
 import Test.Hspec
@@ -15,10 +14,10 @@ import LensesConfig
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 import Specs.API.Common
+import Specs.Common
 
 knowledgeModelAPI appContext =
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "KNOWLEDGE MODEL API Spec" $
       -- ------------------------------------------------------------------------
@@ -33,8 +32,8 @@ knowledgeModelAPI appContext =
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ KMC.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO KMC.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders

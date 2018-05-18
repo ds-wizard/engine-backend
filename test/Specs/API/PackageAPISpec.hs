@@ -1,7 +1,6 @@
 module Specs.API.PackageAPISpec where
 
 import Control.Lens
-import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Either
 import Network.HTTP.Types
@@ -20,6 +19,7 @@ import Service.Package.PackageMapper
 import Service.Package.PackageService
 
 import Specs.API.Common
+import Specs.Common
 
 packageAPI appContext = do
   let dto1 =
@@ -63,7 +63,6 @@ packageAPI appContext = do
         , _packageDTOParentPackageId = Just $ dto3 ^. pId
         }
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "PACKAGE API Spec" $
       -- ------------------------------------------------------------------------
@@ -78,7 +77,7 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -103,7 +102,7 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
         -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -128,7 +127,7 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 200 OK" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
            -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -154,15 +153,15 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO $ deleteBranches context
+          runInContextIO PKG.runMigration appContext
+          runInContextIO deleteBranches appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackages context
+          eitherPackages <- runInContextIO findPackages appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -172,8 +171,8 @@ packageAPI appContext = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -184,7 +183,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackages context
+          eitherPackages <- runInContextIO findPackages appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -206,16 +205,16 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
           -- AND: Prepare DB
-          liftIO $ deleteBranches context
+          runInContextIO deleteBranches appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackageByOrganizationIdAndKmId context "elixir.nl" "core-nl"
+          eitherPackages <- runInContextIO (findPackageByOrganizationIdAndKmId "elixir.nl" "core-nl") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -225,8 +224,8 @@ packageAPI appContext = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` []
         it "HTTP 400 BAD REQUEST when package can't be deleted" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -237,7 +236,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackages context
+          eitherPackages <- runInContextIO findPackages appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -259,14 +258,14 @@ packageAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqBody = ""
         it "HTTP 204 NO CONTENT" $ do
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
         -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
         -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
         -- THEN: Find a result
-          eitherPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:2.0.0"
+          eitherPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:2.0.0") appContext
         -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -281,8 +280,8 @@ packageAPI appContext = do
          do
           let reqUrl = "/packages/elixir.nl:core-nl:1.0.0"
           -- AND: Prepare DB
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = resCorsHeaders
@@ -293,7 +292,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- liftIO $ findPackages context
+          eitherPackages <- runInContextIO findPackages appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}

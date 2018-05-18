@@ -3,19 +3,19 @@ module Service.KnowledgeModel.KnowledgeModelService where
 import Control.Lens ((^.))
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Context
 import Common.Error
 import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.Branch.Branch
+import Model.Context.AppContext
 import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageService
 
-getKnowledgeModelByBranchId :: Context -> String -> IO (Either AppError KnowledgeModelDTO)
-getKnowledgeModelByBranchId context branchUuid = do
-  eitherBranchWithKm <- findBranchWithKMByBranchId context branchUuid
+getKnowledgeModelByBranchId :: String -> AppContextM (Either AppError KnowledgeModelDTO)
+getKnowledgeModelByBranchId branchUuid = do
+  eitherBranchWithKm <- findBranchWithKMByBranchId branchUuid
   case eitherBranchWithKm of
     Right branchWithKm -> do
       let mKm = branchWithKm ^. bwkmKM
@@ -24,9 +24,9 @@ getKnowledgeModelByBranchId context branchUuid = do
         Nothing -> return . Left . NotExistsError $ _ERROR_VALIDATION__KM_ABSENCE
     Left error -> return . Left $ error
 
-recompileKnowledgeModel :: Context -> String -> IO (Either AppError KnowledgeModel)
-recompileKnowledgeModel context branchUuid = do
-  eitherEventsForUuid <- getEventsForBranchUuid context branchUuid
+recompileKnowledgeModel :: String -> AppContextM (Either AppError KnowledgeModel)
+recompileKnowledgeModel branchUuid = do
+  eitherEventsForUuid <- getEventsForBranchUuid branchUuid
   case eitherEventsForUuid of
-    Right eventsForBranchUuid -> recompileKnowledgeModelWithEvents context branchUuid eventsForBranchUuid
+    Right eventsForBranchUuid -> recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid
     Left error -> return . Left $ error

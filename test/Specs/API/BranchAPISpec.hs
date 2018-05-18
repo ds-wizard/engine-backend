@@ -1,7 +1,6 @@
 module Specs.API.BranchAPISpec where
 
 import Control.Lens
-import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Either
 import Data.Maybe
@@ -26,10 +25,10 @@ import Model.Branch.BranchState
 import Service.Branch.BranchService
 
 import Specs.API.Common
+import Specs.Common
 
 branchAPI appContext = do
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "BRANCH API Spec" $
       -- ------------------------------------------------------------------------
@@ -57,7 +56,7 @@ branchAPI appContext = do
                 , _bwsdtoState = BSDefault
                 }
           let expBody = encode [expDto]
-          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
+          runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
           let branch =
                 BranchDTO
                 { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
@@ -67,7 +66,7 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context branch
+          runInContextIO (createBranch branch) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- AND: Compare response with expetation
@@ -96,7 +95,7 @@ branchAPI appContext = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
+          runInContextIO PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -105,7 +104,7 @@ branchAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
           -- AND: Compare response with expetation
@@ -123,7 +122,7 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context reqDto
+          runInContextIO (createBranch reqDto) appContext
           let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km-")
           -- GIVEN: Prepare expectation
           let expStatus = 400
@@ -147,7 +146,7 @@ branchAPI appContext = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO $ createBranch context reqDto
+          runInContextIO (createBranch reqDto) appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -170,7 +169,7 @@ branchAPI appContext = do
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
-          liftIO $ createBranch context reqDto
+          runInContextIO (createBranch reqDto) appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -218,8 +217,8 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context branch
-          liftIO $ deletePackageById context (elixirNlPackage2Dto ^. pId)
+          runInContextIO (createBranch branch) appContext
+          runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -255,12 +254,12 @@ branchAPI appContext = do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto = reqDto
-          liftIO $ createBranch context expDto
+          runInContextIO (createBranch expDto) appContext
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -283,7 +282,7 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context reqDto
+          runInContextIO (createBranch reqDto) appContext
           let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km")
           -- GIVEN: Prepare expectation
           let expStatus = 400
@@ -315,8 +314,8 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context reqDto
-          liftIO $ createBranch context reqDto2
+          runInContextIO (createBranch reqDto) appContext
+          runInContextIO (createBranch reqDto2) appContext
           let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam-km-2")
           -- GIVEN: Prepare expectation
           let expStatus = 400
@@ -357,11 +356,11 @@ branchAPI appContext = do
                 , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
-          liftIO $ createBranch context branchDto
+          runInContextIO (createBranch branchDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherBranch <- liftIO $ findBranchById context "6474b24b-262b-42b1-9451-008e8363f2b6"
+          eitherBranch <- runInContextIO (findBranchById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

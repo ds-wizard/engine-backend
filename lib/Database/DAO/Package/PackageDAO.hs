@@ -1,82 +1,80 @@
 module Database.DAO.Package.PackageDAO where
 
 import Common.Error
-import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Data.Text (Text)
 import Database.MongoDB
        ((=:), delete, find, findOne, insert, rest, select)
-import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Context
 import Database.BSON.Package.Package ()
 import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
+import Model.Context.AppContext
 import Model.Package.Package
 
 pkgCollection = "packages"
 
-findPackages :: Context -> IO (Either AppError [Package])
-findPackages context = do
+findPackages :: AppContextM (Either AppError [Package])
+findPackages = do
   let action = rest =<< find (select [] pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackagesFiltered :: Context -> [(Text, Text)] -> IO (Either AppError [Package])
-findPackagesFiltered context queryParams = do
+findPackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [Package])
+findPackagesFiltered queryParams = do
   let filter = (\(p, v) -> p =: v) <$> queryParams
   let action = rest =<< find (select filter pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackageById :: Context -> String -> IO (Either AppError Package)
-findPackageById context pkgId = do
+findPackageById :: String -> AppContextM (Either AppError Package)
+findPackageById pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
-  maybePackageS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybePackageS <- runDB action
   return . deserializeMaybeEntity $ maybePackageS
 
-findPackagesByKmId :: Context -> String -> IO (Either AppError [Package])
-findPackagesByKmId context kmId = do
+findPackagesByKmId :: String -> AppContextM (Either AppError [Package])
+findPackagesByKmId kmId = do
   let action = rest =<< find (select ["kmId" =: kmId] pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackageByOrganizationIdAndKmId :: Context -> String -> String -> IO (Either AppError [Package])
-findPackageByOrganizationIdAndKmId context organizationId kmId = do
+findPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError [Package])
+findPackageByOrganizationIdAndKmId organizationId kmId = do
   let action = rest =<< find (select ["organizationId" =: organizationId, "kmId" =: kmId] pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackagesByParentPackageId :: Context -> String -> IO (Either AppError [Package])
-findPackagesByParentPackageId context parentPackageId = do
+findPackagesByParentPackageId :: String -> AppContextM (Either AppError [Package])
+findPackagesByParentPackageId parentPackageId = do
   let action = rest =<< find (select ["parentPackageId" =: parentPackageId] pkgCollection)
-  packagesS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackageWithEventsById :: Context -> String -> IO (Either AppError PackageWithEvents)
-findPackageWithEventsById context pkgId = do
+findPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEvents)
+findPackageWithEventsById pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
-  maybePackageS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybePackageS <- runDB action
   return . deserializeMaybeEntity $ maybePackageS
 
-insertPackage :: Context -> PackageWithEvents -> IO Value
-insertPackage context package = do
+insertPackage :: PackageWithEvents -> AppContextM Value
+insertPackage package = do
   let action = insert pkgCollection (toBSON package)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deletePackages :: Context -> IO ()
-deletePackages context = do
+deletePackages :: AppContextM ()
+deletePackages = do
   let action = delete $ select [] pkgCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deletePackagesFiltered :: Context -> [(Text, Text)] -> IO ()
-deletePackagesFiltered context queryParams = do
+deletePackagesFiltered :: [(Text, Text)] -> AppContextM ()
+deletePackagesFiltered queryParams = do
   let filter = (\(p, v) -> p =: v) <$> queryParams
   let action = delete $ select filter pkgCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deletePackageById :: Context -> String -> IO ()
-deletePackageById context pkgId = do
+deletePackageById :: String -> AppContextM ()
+deletePackageById pkgId = do
   let action = delete $ select ["id" =: pkgId] pkgCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action

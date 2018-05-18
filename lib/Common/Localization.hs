@@ -34,7 +34,8 @@ _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 -- --------------------------------------
 -- Package
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
-  "The parent ('" ++ parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the parent first."
+  "The parent ('" ++
+  parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the parent first."
 
 _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION = "A new version has to be higher than the previous one"
 
@@ -82,7 +83,8 @@ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a 
 _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG =
   "Branch has to have a checkpoint being the last parent package that was merged into"
 
-_ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE = "You can't solve conflicts because Migration state isn't in a conflict state"
+_ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE =
+  "You can't solve conflicts because Migration state isn't in a conflict state"
 
 _ERROR_MT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE = "No events in target package event queue"
 

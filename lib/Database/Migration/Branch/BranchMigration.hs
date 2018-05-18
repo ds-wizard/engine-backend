@@ -2,7 +2,6 @@ module Database.Migration.Branch.BranchMigration where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger (logInfo)
-import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
@@ -10,15 +9,13 @@ import Api.Resource.Branch.BranchDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.Migration.Branch.Data.Event.Event
-import LensesConfig
 import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService
 
-runMigration appContext = do
+runMigration = do
   $(logInfo) "MIGRATION (KnowledgeModel/Branch): started"
-  let context = appContext ^. oldContext
-  liftIO $ deleteBranches context
+  deleteBranches
   let branch =
         BranchDTO
         { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
@@ -28,7 +25,7 @@ runMigration appContext = do
         , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         }
-  liftIO $ createBranch context branch
+  createBranch branch
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
@@ -49,6 +46,6 @@ runMigration appContext = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  liftIO $ insertEventsToBranch context (U.toString (branch ^. bdtoUuid)) events
-  liftIO $ recompileKnowledgeModel context (U.toString (branch ^. bdtoUuid))
+  insertEventsToBranch (U.toString (branch ^. bdtoUuid)) events
+  recompileKnowledgeModel (U.toString (branch ^. bdtoUuid))
   $(logInfo) "MIGRATION (KnowledgeModel/Branch): ended"

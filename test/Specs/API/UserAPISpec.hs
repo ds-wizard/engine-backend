@@ -33,10 +33,10 @@ import Service.User.UserService
 import Specs.API.Common
 import Specs.API.User.Detail_Password_Hash_PUT
 import Specs.API.User.Detail_Password_PUT
+import Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
@@ -72,7 +72,7 @@ userAPI appContext =
         it "HTTP 201 CREATED" $
           -- GIVEN: Clear DB
          do
-          liftIO $ deleteActionKeys context
+          runInContextIO deleteActionKeys appContext
           -- AND: Prepare request
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
@@ -90,7 +90,7 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserByEmail context (reqDto ^. email)
+          eitherUser <- runInContextIO (findUserByEmail (reqDto ^. email)) appContext
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           -- AND: Compare response with expectation
@@ -103,7 +103,7 @@ userAPI appContext =
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
           liftIO $ (userFromDb ^. role) `shouldBe` fromJust (reqDto ^. role)
           -- THEN: Check created action Key
-          eitherActionKeys <- liftIO $ findActionKeys context
+          eitherActionKeys <- runInContextIO findActionKeys appContext
           liftIO $ (isRight eitherActionKeys) `shouldBe` True
           let (Right actionKeys) = eitherActionKeys
           liftIO $ Prelude.length actionKeys `shouldBe` 1
@@ -211,7 +211,7 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserByEmail context (reqDto ^. email)
+          eitherUser <- runInContextIO (findUserByEmail (reqDto ^. email)) appContext
           -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
@@ -236,7 +236,7 @@ userAPI appContext =
                 , _userCreateDTORole = Just "ADMIN"
                 , _userCreateDTOPassword = "password"
                 }
-          liftIO $ createUserByAdminWithUuid context dswConfig johnDto johnUuid
+          runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
           let reqDto =
                 UserProfileChangeDTO
                 { _userProfileChangeDTOName = "EDITED: Isaac"
@@ -283,7 +283,7 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserByEmail context (reqDto ^. email)
+          eitherUser <- runInContextIO (findUserByEmail (reqDto ^. email)) appContext
           -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
@@ -314,7 +314,7 @@ userAPI appContext =
                 , _userCreateDTORole = Just "ADMIN"
                 , _userCreateDTOPassword = "password"
                 }
-          liftIO $ createUserByAdminWithUuid context dswConfig johnDto johnUuid
+          runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
           let reqDto =
                 UserChangeDTO
                 { _userChangeDTOUuid = johnUuid
@@ -357,7 +357,7 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserById context (U.toString $ userAlbert ^. uuid)
+          eitherUser <- runInContextIO (findUserById (U.toString $ userAlbert ^. uuid)) appContext
           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -369,8 +369,8 @@ userAPI appContext =
           liftIO $ isSame `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
         createAuthTest reqMethod reqUrl [] ""
-      detail_password_put context dswConfig
-      detail_password_hash_put context dswConfig
+      detail_password_put appContext
+      detail_password_hash_put appContext
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}/state?hash={hash}
       -- ------------------------------------------------------------------------
@@ -392,7 +392,7 @@ userAPI appContext =
                 , _actionKeyAType = RegistrationActionKey
                 , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
                 }
-          eitherActionKey <- liftIO $ insertActionKey context actionKey
+          eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
           -- AND: Prepare expectation
           let expStatus = 200
           let expHeaders = resCorsHeaders
@@ -400,8 +400,8 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-          eitherActionKeys <- liftIO $ findActionKeys context
+          eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
+          eitherActionKeys <- runInContextIO findActionKeys appContext
           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expDto}
@@ -433,7 +433,7 @@ userAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+          eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

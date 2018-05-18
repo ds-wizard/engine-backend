@@ -1,13 +1,20 @@
 module Database.DAO.Common where
 
+import Control.Monad.Reader (asks, liftIO)
 import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
 import qualified Data.Text.Lazy as LT
 import qualified Data.UUID as U
+import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Common.Error
 import Common.Localization
+import Model.Context.AppContext
+
+runDB action = do
+  dbPool <- asks _appContextPool
+  liftIO $ runMongoDBPoolDef action dbPool
 
 deserializeEntities :: (FromBSON a) => [Document] -> Either AppError [a]
 deserializeEntities entitiesS = do

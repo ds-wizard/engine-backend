@@ -15,25 +15,25 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.User.UserPasswordDTO
-import Common.Context
 import Common.Error
 import Common.Localization
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 
 import Specs.API.Common
+import Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password
 -- ------------------------------------------------------------------------
-detail_password_put :: Context -> DSWConfig -> SpecWith Application
-detail_password_put context dswConfig =
+detail_password_put :: AppContext -> SpecWith Application
+detail_password_put appContext =
   describe "PUT /users/{userId}/password" $ do
-    test_204 context dswConfig
-    test_400_invalid_json context dswConfig
-    test_403_no_hash context dswConfig
-    test_404 context dswConfig
+    test_204 appContext
+    test_400_invalid_json appContext
+    test_403_no_hash appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -51,7 +51,7 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_204 context dswConfig =
+test_204 appContext =
   it "HTTP 204 NO CONTENT" $
      -- GIVEN: Prepare expectation
    do
@@ -60,7 +60,7 @@ test_204 context dswConfig =
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Find a result
-    eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
     -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
@@ -74,12 +74,12 @@ test_204 context dswConfig =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json context dswConfig = createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403_no_hash context dswConfig =
+test_403_no_hash appContext =
   it "HTTP 400 BAD REQUEST when no hash/token is provided" $
    -- GIVEN: Prepare request
    do
@@ -92,7 +92,7 @@ test_403_no_hash context dswConfig =
   -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
   -- THEN: Find a result
-    eitherUser <- liftIO $ findUserById context "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
   -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -106,5 +106,5 @@ test_403_no_hash context dswConfig =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 context dswConfig =
+test_404 appContext =
   createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody

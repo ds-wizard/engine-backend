@@ -1,6 +1,7 @@
 module Service.Token.TokenService where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import Crypto.PasswordStore
 import Data.Aeson
 import Data.ByteString.Char8 as BS
@@ -11,21 +12,21 @@ import qualified Web.JWT as JWT
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
-import Common.Context
 import Common.Error
 import Common.Localization
 import Common.Types
 import Common.Utils
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Context.AppContext
 import Model.User.User
 import Service.Token.TokenMapper
 
-getToken :: Context -> DSWConfig -> TokenCreateDTO -> IO (Either AppError TokenDTO)
-getToken context dswConfig tokenCreateDto = do
+getToken :: TokenCreateDTO -> AppContextM (Either AppError TokenDTO)
+getToken tokenCreateDto = do
+  dswConfig <- asks _appContextConfig
   let tokenSecret = dswConfig ^. jwtConfig ^. secret
-  eitherUser <- findUserByEmail context (tokenCreateDto ^. tcdtoEmail)
+  eitherUser <- findUserByEmail (tokenCreateDto ^. tcdtoEmail)
   case eitherUser of
     Right user ->
       if user ^. isActive
@@ -61,20 +62,20 @@ createToken user jwtSecret =
       key = JWT.secret $ T.pack jwtSecret
   in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
 
-getUserUuidFromToken :: Context -> Maybe T.Text -> Maybe T.Text
-getUserUuidFromToken context maybeTokenHeaderValue = do
-  (String value) <- getValueFromToken context maybeTokenHeaderValue "userUuid"
+getUserUuidFromToken :: Maybe T.Text -> Maybe T.Text
+getUserUuidFromToken maybeTokenHeaderValue = do
+  (String value) <- getValueFromToken maybeTokenHeaderValue "userUuid"
   Just value
 
-getPermissionsFromToken :: Context -> Maybe T.Text -> Maybe [Permission]
-getPermissionsFromToken context maybeTokenHeaderValue = do
-  (Array value) <- getValueFromToken context maybeTokenHeaderValue "permissions"
+getPermissionsFromToken :: Maybe T.Text -> Maybe [Permission]
+getPermissionsFromToken maybeTokenHeaderValue = do
+  (Array value) <- getValueFromToken maybeTokenHeaderValue "permissions"
   let values = V.toList value
   let permissionValues = fmap (\(String x) -> T.unpack x) values
   Just permissionValues
 
-getValueFromToken :: Context -> Maybe T.Text -> T.Text -> Maybe Value
-getValueFromToken context maybeTokenHeaderValue paramName =
+getValueFromToken :: Maybe T.Text -> T.Text -> Maybe Value
+getValueFromToken maybeTokenHeaderValue paramName =
   case maybeTokenHeaderValue of
     Just tokenHeaderValue -> do
       decodedToken <- separateToken tokenHeaderValue >>= JWT.decode

@@ -4,12 +4,12 @@ import Control.Lens ((^.))
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.Organization.OrganizationDTO
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
-import Model.Organization.Organization
 
-toDTO :: Branch -> Organization -> BranchDTO
+toDTO :: Branch -> OrganizationDTO -> BranchDTO
 toDTO branch organization =
   BranchDTO
   { _bdtoUuid = branch ^. bUuid
@@ -20,7 +20,7 @@ toDTO branch organization =
   , _bdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId
   }
 
-toWithStateDTO :: Branch -> BranchState -> Organization -> BranchWithStateDTO
+toWithStateDTO :: Branch -> BranchState -> OrganizationDTO -> BranchWithStateDTO
 toWithStateDTO branch state organization =
   BranchWithStateDTO
   { _bwsdtoUuid = branch ^. bUuid

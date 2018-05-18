@@ -4,7 +4,6 @@ import Control.Lens ((^.))
 import Test.Hspec
 
 import Common.ConfigLoader
-import Common.Context
 import Database.Connection
 import LensesConfig
 import Model.Context.AppContext
@@ -45,12 +44,7 @@ prepareWebApp runCallback = do
       putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
-        let appContext =
-              AppContext
-              { _appContextConfig = dswConfig
-              , _appContextPool = dbPool
-              , _appContextOldContext = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-              }
+        let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
         runCallback appContext
 
 main :: IO ()
