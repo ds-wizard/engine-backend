@@ -40,5 +40,6 @@ data FilledAnswer = FilledAnswer
 
 data FilledAnswerItem = FilledAnswerItem
   { _filledAnswerItemTitle :: String
+  , _filledAnswerItemValue :: String
   , _filledAnswerItemQuestions :: [FilledQuestion]
   } deriving (Show, Eq, Generic)
