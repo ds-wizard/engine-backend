@@ -20,7 +20,7 @@ instance ToBSON Questionnaire where
 
 instance FromBSON Questionnaire where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
     packageId <- BSON.lookup "packageId" doc
     knowledgeModel <- BSON.lookup "knowledgeModel" doc

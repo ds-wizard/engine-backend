@@ -37,48 +37,49 @@ knowledgeModelAccessorsSpec =
         False
     ---------------------------------------------
     describe "getAllQuestions" $ it "Successfully listed" $ getAllQuestions FKM.km1 `shouldBe`
-      [FQ.question1, FQ.question2, FQ.question3, FA.followUpQuestion1, FA.followUpQuestion2]
+      [FQ.question1, FQ.question2, FQ.question3, FA.q2_aYes_fuQuestion1, FA.q2_aYes_fuq1_aYes_fuQuestion2]
     describe "getQuestionByUuid" $ it "Successfully listed" $ getQuestionByUuid FKM.km1 (FQ.question2 ^. uuid) `shouldBe`
       Just FQ.question2
     describe "getAllQuestionsForChapterUuid" $ it "Successfully listed" $
       getAllQuestionsForChapterUuid FKM.km1 (FCH.chapter1 ^. uuid) `shouldBe`
       [FQ.question1, FQ.question2]
     describe "getAllQuestionsForAnswerUuid" $ it "Successfully listed" $
-      getAllQuestionsForAnswerUuid FKM.km1 (FA.answerYes1 ^. uuid) `shouldBe`
-      [FA.followUpQuestion1]
+      getAllQuestionsForAnswerUuid FKM.km1 (FA.q2_answerYes ^. uuid) `shouldBe`
+      [FA.q2_aYes_fuQuestion1]
     describe "isThereAnyQuestionWithGivenUuid" $ do
-      it "Returns True if exists" $ isThereAnyQuestionWithGivenUuid FKM.km1 (FA.followUpQuestion1 ^. uuid) `shouldBe`
+      it "Returns True if exists" $ isThereAnyQuestionWithGivenUuid FKM.km1 (FA.q2_aYes_fuQuestion1 ^. uuid) `shouldBe`
         True
       it "Returns False if not exists" $
         isThereAnyQuestionWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
         False
     ---------------------------------------------
     describe "getAllAnswers" $ it "Successfully listed" $ getAllAnswers FKM.km1 `shouldBe`
-      [ FA.answerNo1
-      , FA.answerYes1
-      , FA.answerNo2
-      , FA.answerYes2
-      , FA.answerNoFuq1
-      , FA.answerYesFuq1
-      , FA.answerNoFuq2
-      , FA.answerYesFuq2
+      [ FA.q2_answerNo
+      , FA.q2_answerYes
+      , FA.q3_answerNo
+      , FA.q3_answerYes
+      , FA.q2_aYes_fuq1_answerNo
+      , FA.q2_aYes_fuq1_answerYes
+      , FA.q2_aYes_fuq1_aYes_fuq2_answerNo
+      , FA.q2_aYes_fuq1_aYes_fuq2_answerYes
       ]
-    describe "getAnswerByUuid" $ it "Successfully listed" $ getAnswerByUuid FKM.km1 (FA.answerNoFuq1 ^. uuid) `shouldBe`
-      Just FA.answerNoFuq1
+    describe "getAnswerByUuid" $ it "Successfully listed" $ getAnswerByUuid FKM.km1 (FA.q2_aYes_fuq1_answerNo ^. uuid) `shouldBe`
+      Just FA.q2_aYes_fuq1_answerNo
     describe "getAllAnswersForQuestionUuid" $ it "Successfully listed" $
       getAllAnswersForQuestionUuid FKM.km1 (FQ.question2 ^. uuid) `shouldBe`
-      [FA.answerNo1, FA.answerYes1]
+      [FA.q2_answerNo, FA.q2_answerYes]
     describe "isThereAnyAnswerWithGivenUuid" $ do
-      it "Returns True if exists" $ isThereAnyAnswerWithGivenUuid FKM.km1 (FA.answerYesFuq1 ^. uuid) `shouldBe` True
+      it "Returns True if exists" $ isThereAnyAnswerWithGivenUuid FKM.km1 (FA.q2_aYes_fuq1_answerYes ^. uuid) `shouldBe`
+        True
       it "Returns False if not exists" $
         isThereAnyAnswerWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
         False
     ---------------------------------------------
-    describe "getAitQuestionIds" $ it "Successfully listed" $ getAitQuestionIds FQ.ait1 `shouldBe`
-      [FQ.question5 ^. uuid, FQ.question6 ^. uuid]
+    describe "getAitQuestionIds" $ it "Successfully listed" $ getAitQuestionIds FQ.q4_ait `shouldBe`
+      [FQ.q4_ait1_question5 ^. uuid, FQ.q4_ait1_question6 ^. uuid]
     describe "aitChangeAitQuestionIdsOrder" $ it "Successfully changed" $ do
-      let res = FQ.ait1 & aitChangeAitQuestionIdsOrder .~ [FQ.question6 ^. uuid, FQ.question5 ^. uuid]
-      let exp = FQ.ait1 & questions .~ [FQ.question6, FQ.question5]
+      let res = FQ.q4_ait & aitChangeAitQuestionIdsOrder .~ [FQ.q4_ait1_question6 ^. uuid, FQ.q4_ait1_question5 ^. uuid]
+      let exp = FQ.q4_ait & questions .~ [FQ.q4_ait1_question6, FQ.q4_ait1_question5]
       res `shouldBe` exp
     describe "aitAnswerItemTemplatePlainWithIds" $ do
       it "Successfully changed" $ do
@@ -86,30 +87,29 @@ knowledgeModelAccessorsSpec =
               FQ.question4 & aitAnswerItemTemplatePlainWithIds .~
               Just
                 AnswerItemTemplatePlainWithIds
-                { _answerItemTemplatePlainWithIdsTitle = FQ.ait1WithChangeProperties ^. title
-                , _answerItemTemplatePlainWithIdsQuestionIds =
-                    FQ.ait1WithChangeProperties ^.. questions . traverse . uuid
+                { _answerItemTemplatePlainWithIdsTitle = FQ.q4_aitChanged ^. title
+                , _answerItemTemplatePlainWithIdsQuestionIds = FQ.q4_aitChanged ^.. questions . traverse . uuid
                 }
-        let exp = FQ.question4 & answerItemTemplate .~ Just FQ.ait1WithChangeProperties
+        let exp = FQ.question4 & answerItemTemplate .~ Just FQ.q4_aitChanged
         res `shouldBe` exp
       it "Successfully created" $ do
         let reqPlainWithIdsChanged =
               AnswerItemTemplatePlainWithIds
-              { _answerItemTemplatePlainWithIdsTitle = FQ.ait1WithChangeProperties ^. title
+              { _answerItemTemplatePlainWithIdsTitle = FQ.q4_aitChanged ^. title
               , _answerItemTemplatePlainWithIdsQuestionIds = []
               }
-        let res = FQ.question5 & aitAnswerItemTemplatePlainWithIds .~ Just reqPlainWithIdsChanged
+        let res = FQ.q4_ait1_question5 & aitAnswerItemTemplatePlainWithIds .~ Just reqPlainWithIdsChanged
         let expAit =
               AnswerItemTemplate
-              {_answerItemTemplateTitle = FQ.ait1WithChangeProperties ^. title, _answerItemTemplateQuestions = []}
-        let exp = FQ.question5 & answerItemTemplate .~ Just expAit
+              {_answerItemTemplateTitle = FQ.q4_aitChanged ^. title, _answerItemTemplateQuestions = []}
+        let exp = FQ.q4_ait1_question5 & answerItemTemplate .~ Just expAit
         res `shouldBe` exp
     describe "getAllAnswerItemTemplates" $ it "Successfully listed" $ do
-      let expected = [FQ.ait1, FQ.ait2, FA.ait_fuq4]
+      let expected = [FQ.q4_ait, FQ.q4_ait_q5_ait, FA.q4_ait1_q6_aYes_fuq4_ait]
       let computed = getAllAnswerItemTemplates FKM.km1WithQ4
       computed `shouldBe` expected
     describe "getAllAitQuestionsForParentQuestionUuid" $ it "Successfully listed" $ do
-      let expected = [FQ.question5, FQ.question6]
+      let expected = [FQ.q4_ait1_question5, FQ.q4_ait1_question6]
       let computed = getAllAitQuestionsForParentQuestionUuid FKM.km1WithQ4 (FQ.question4 ^. uuid)
       computed `shouldBe` expected
     ---------------------------------------------

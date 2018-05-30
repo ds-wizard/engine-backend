@@ -42,8 +42,8 @@ serializeQuestionType mQuestionType = show mQuestionType
 serializeMaybeQuestionType :: Maybe QuestionType -> Maybe String
 serializeMaybeQuestionType mQuestionType = show <$> mQuestionType
 
-deserializeUUID :: Maybe String -> Maybe UUID
-deserializeUUID mUuidS = do
+deserializeMaybeUUID :: Maybe String -> Maybe UUID
+deserializeMaybeUUID mUuidS = do
   uuidS <- mUuidS
   fromString uuidS
 

@@ -24,7 +24,7 @@ instance ToBSON User where
 
 instance FromBSON User where
   fromBSON doc = do
-    uUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    uUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     uName <- BSON.lookup "name" doc
     uSurname <- BSON.lookup "surname" doc
     uEmail <- BSON.lookup "email" doc

@@ -10,7 +10,7 @@ import Model.Branch.Branch
 
 instance FromBSON BranchWithEvents where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
     kmId <- BSON.lookup "kmId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc

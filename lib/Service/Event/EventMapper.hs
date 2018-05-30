@@ -17,18 +17,12 @@ toDTOFn (DeleteQuestionEvent' event) = toDTO event
 toDTOFn (AddAnswerEvent' event) = toDTO event
 toDTOFn (EditAnswerEvent' event) = toDTO event
 toDTOFn (DeleteAnswerEvent' event) = toDTO event
-toDTOFn (AddAnswerItemTemplateQuestionEvent' event) = toDTO event
-toDTOFn (EditAnswerItemTemplateQuestionEvent' event) = toDTO event
-toDTOFn (DeleteAnswerItemTemplateQuestionEvent' event) = toDTO event
 toDTOFn (AddExpertEvent' event) = toDTO event
 toDTOFn (EditExpertEvent' event) = toDTO event
 toDTOFn (DeleteExpertEvent' event) = toDTO event
 toDTOFn (AddReferenceEvent' event) = toDTO event
 toDTOFn (EditReferenceEvent' event) = toDTO event
 toDTOFn (DeleteReferenceEvent' event) = toDTO event
-toDTOFn (AddFollowUpQuestionEvent' event) = toDTO event
-toDTOFn (EditFollowUpQuestionEvent' event) = toDTO event
-toDTOFn (DeleteFollowUpQuestionEvent' event) = toDTO event
 
 toDTOs :: [Event] -> [EventDTO]
 toDTOs = fmap toDTOFn
@@ -45,18 +39,12 @@ fromDTOFn (DeleteQuestionEventDTO' event) = fromDTO event
 fromDTOFn (AddAnswerEventDTO' event) = fromDTO event
 fromDTOFn (EditAnswerEventDTO' event) = fromDTO event
 fromDTOFn (DeleteAnswerEventDTO' event) = fromDTO event
-fromDTOFn (AddAnswerItemTemplateQuestionEventDTO' event) = fromDTO event
-fromDTOFn (EditAnswerItemTemplateQuestionEventDTO' event) = fromDTO event
-fromDTOFn (DeleteAnswerItemTemplateQuestionEventDTO' event) = fromDTO event
 fromDTOFn (AddExpertEventDTO' event) = fromDTO event
 fromDTOFn (EditExpertEventDTO' event) = fromDTO event
 fromDTOFn (DeleteExpertEventDTO' event) = fromDTO event
 fromDTOFn (AddReferenceEventDTO' event) = fromDTO event
 fromDTOFn (EditReferenceEventDTO' event) = fromDTO event
 fromDTOFn (DeleteReferenceEventDTO' event) = fromDTO event
-fromDTOFn (AddFollowUpQuestionEventDTO' event) = fromDTO event
-fromDTOFn (EditFollowUpQuestionEventDTO' event) = fromDTO event
-fromDTOFn (DeleteFollowUpQuestionEventDTO' event) = fromDTO event
 
 fromDTOs :: [EventDTO] -> [Event]
 fromDTOs = fmap fromDTOFn

@@ -1,5 +1,9 @@
 module Common.Localization where
 
+import qualified Data.UUID as U
+
+import Model.Event.EventPath
+
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------
@@ -63,12 +67,27 @@ _ERROR_MT_APPLICATOR__UNSPECIFIED_ERROR = "Unspecified problem in building Knowl
 
 _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model first"
 
-_ERROR_MT_APPLICATOR__BAD_APPLICATION eventName entityName = "You can't apply " ++ eventName ++ " to " ++ entityName
+_ERROR_MT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
+  "Failed Event (" ++ (U.toString eUuid) ++ "): You can't apply " ++ eventName ++ " to " ++ entityName
 
 _ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT = "Event question type 'list' should have answerItemTemplate filled"
 
 _ERROR_MT_APPLICATOR__YOU_CANT_ADD_QUESTION_TO_NON_EXISTING_AIT =
   "You can't add question into a non-existing AnswerItemTemplate"
+
+_ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
+  "Failed Event (" ++ (U.toString eUuid) ++ "): Try to edit non-existing thing."
+
+_ERROR_MT_APPLICATOR__EMPTY_PATH eUuid =
+  "Failed Event (" ++ (U.toString eUuid) ++ "): Applicator ends with empty path but the event wasn't applied yet."
+
+_ERROR_MT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
+  "Failed Event (" ++
+  (U.toString eUuid) ++
+  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showEventPathShort path) ++ ")"
+
+_ERROR_MT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
+  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showEventPathShort path) ++ ")"
 
 -- Uniqueness
 _ERROR_MT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"

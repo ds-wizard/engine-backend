@@ -9,7 +9,7 @@ import LensesConfig
 import Model.Event.Event
 import Model.Event.EventField
 import Model.Migrator.MigratorState
-import Service.Migrator.Applicator
+import Service.Migrator.Applicator.Applicator
 import Service.Migrator.Migrator
 
 import Specs.Service.Migrator.Common

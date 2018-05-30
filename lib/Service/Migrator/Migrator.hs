@@ -8,7 +8,7 @@ import Api.Resource.Migrator.MigratorConflictDTO
 import Model.Event.Event
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
-import Service.Migrator.Applicator
+import Service.Migrator.Applicator.Applicator
 import Service.Migrator.CleanerMethod
 import Service.Migrator.CorrectorMethod
 

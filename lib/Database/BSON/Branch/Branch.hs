@@ -19,7 +19,7 @@ instance ToBSON Branch where
 
 instance FromBSON Branch where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
     kmId <- BSON.lookup "kmId" doc
     parentPackageId <- BSON.lookup "parentPackageId" doc

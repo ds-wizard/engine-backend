@@ -4,12 +4,11 @@ import Data.UUID
 import GHC.Generics
 
 import Model.Event.EventField
+import Model.Event.EventPath
 
 data AddExpertEvent = AddExpertEvent
   { _addExpertEventUuid :: UUID
-  , _addExpertEventKmUuid :: UUID
-  , _addExpertEventChapterUuid :: UUID
-  , _addExpertEventQuestionUuid :: UUID
+  , _addExpertEventPath :: EventPath
   , _addExpertEventExpertUuid :: UUID
   , _addExpertEventName :: String
   , _addExpertEventEmail :: String
@@ -17,9 +16,7 @@ data AddExpertEvent = AddExpertEvent
 
 data EditExpertEvent = EditExpertEvent
   { _editExpertEventUuid :: UUID
-  , _editExpertEventKmUuid :: UUID
-  , _editExpertEventChapterUuid :: UUID
-  , _editExpertEventQuestionUuid :: UUID
+  , _editExpertEventPath :: EventPath
   , _editExpertEventExpertUuid :: UUID
   , _editExpertEventName :: EventField String
   , _editExpertEventEmail :: EventField String
@@ -27,8 +24,6 @@ data EditExpertEvent = EditExpertEvent
 
 data DeleteExpertEvent = DeleteExpertEvent
   { _deleteExpertEventUuid :: UUID
-  , _deleteExpertEventKmUuid :: UUID
-  , _deleteExpertEventChapterUuid :: UUID
-  , _deleteExpertEventQuestionUuid :: UUID
+  , _deleteExpertEventPath :: EventPath
   , _deleteExpertEventExpertUuid :: UUID
   } deriving (Show, Eq, Generic)

@@ -4,12 +4,12 @@ import Data.UUID
 import GHC.Generics
 
 import Model.Event.EventField
+import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEvent = AddQuestionEvent
   { _addQuestionEventUuid :: UUID
-  , _addQuestionEventKmUuid :: UUID
-  , _addQuestionEventChapterUuid :: UUID
+  , _addQuestionEventPath :: EventPath
   , _addQuestionEventQuestionUuid :: UUID
   , _addQuestionEventShortQuestionUuid :: Maybe String
   , _addQuestionEventQType :: QuestionType
@@ -20,8 +20,7 @@ data AddQuestionEvent = AddQuestionEvent
 
 data EditQuestionEvent = EditQuestionEvent
   { _editQuestionEventUuid :: UUID
-  , _editQuestionEventKmUuid :: UUID
-  , _editQuestionEventChapterUuid :: UUID
+  , _editQuestionEventPath :: EventPath
   , _editQuestionEventQuestionUuid :: UUID
   , _editQuestionEventShortQuestionUuid :: EventField (Maybe String)
   , _editQuestionEventQType :: EventField QuestionType
@@ -35,7 +34,6 @@ data EditQuestionEvent = EditQuestionEvent
 
 data DeleteQuestionEvent = DeleteQuestionEvent
   { _deleteQuestionEventUuid :: UUID
-  , _deleteQuestionEventKmUuid :: UUID
-  , _deleteQuestionEventChapterUuid :: UUID
+  , _deleteQuestionEventPath :: EventPath
   , _deleteQuestionEventQuestionUuid :: UUID
   } deriving (Show, Eq, Generic)

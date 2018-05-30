@@ -31,10 +31,10 @@ runMigration = do
         , AddQuestionEvent' a_km1_ch1_q2
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
         , AddAnswerEvent' a_km1_ch1_q2_aYes1
-        , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-        , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+        , AddQuestionEvent' a_km1_ch1_ansYes1_fuq1
+        , AddAnswerEvent' a_km1_ch1_q2_aYes1_fuq1_aNo
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
-        , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
+        , AddQuestionEvent' a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2
         , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
         , AddExpertEvent' a_km1_ch1_q2_eAlbert

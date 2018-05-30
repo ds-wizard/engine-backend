@@ -10,7 +10,6 @@ import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Common
 import Database.BSON.Event.Expert ()
-import Database.BSON.Event.FollowUpQuestion ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
@@ -51,7 +50,7 @@ instance ToBSON MigratorState where
 
 instance FromBSON MigratorState where
   fromBSON doc = do
-    branchUuid <- deserializeUUID $ BSON.lookup "branchUuid" doc
+    branchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
     migrationState <- BSON.lookup "migrationState" doc
     branchParentId <- BSON.lookup "branchParentId" doc
     targetPackageId <- BSON.lookup "targetPackageId" doc

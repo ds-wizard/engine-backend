@@ -7,6 +7,7 @@ import Data.UUID
 
 import Database.BSON.Common
 import Database.BSON.Event.EventField ()
+import Database.BSON.Event.EventPath ()
 import LensesConfig
 import Model.Event.Reference.ReferenceEvent
 
@@ -17,27 +18,21 @@ instance ToBSON AddReferenceEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "path" BSON.=: (event ^. path)
     , "referenceUuid" BSON.=: serializeUUID (event ^. referenceUuid)
     , "chapter" BSON.=: (event ^. chapter)
     ]
 
 instance FromBSON AddReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    refKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    refChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    refQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refPath <- BSON.lookup "path" doc
     refReferenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
     refChapter <- BSON.lookup "chapter" doc
     return
       AddReferenceEvent
       { _addReferenceEventUuid = refUuid
-      , _addReferenceEventKmUuid = refKmUuid
-      , _addReferenceEventChapterUuid = refChapterUuid
-      , _addReferenceEventQuestionUuid = refQuestionUuid
+      , _addReferenceEventPath = refPath
       , _addReferenceEventReferenceUuid = refReferenceUuid
       , _addReferenceEventChapter = refChapter
       }
@@ -49,27 +44,21 @@ instance ToBSON EditReferenceEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "path" BSON.=: (event ^. path)
     , "referenceUuid" BSON.=: serializeUUID (event ^. referenceUuid)
     , "chapter" BSON.=: (event ^. chapter)
     ]
 
 instance FromBSON EditReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    refKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    refChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    refQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refPath <- BSON.lookup "path" doc
     refReferenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
     refChapter <- BSON.lookup "chapter" doc
     return
       EditReferenceEvent
       { _editReferenceEventUuid = refUuid
-      , _editReferenceEventKmUuid = refKmUuid
-      , _editReferenceEventChapterUuid = refChapterUuid
-      , _editReferenceEventQuestionUuid = refQuestionUuid
+      , _editReferenceEventPath = refPath
       , _editReferenceEventReferenceUuid = refReferenceUuid
       , _editReferenceEventChapter = refChapter
       }
@@ -81,24 +70,18 @@ instance ToBSON DeleteReferenceEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteReferenceEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    , "path" BSON.=: (event ^. path)
     , "referenceUuid" BSON.=: serializeUUID (event ^. referenceUuid)
     ]
 
 instance FromBSON DeleteReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    refKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    refChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    refQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refPath <- BSON.lookup "path" doc
     refReferenceUuid <- BSON.lookup "referenceUuid" doc >>= \referenceUuidS -> fromString referenceUuidS
     return
       DeleteReferenceEvent
       { _deleteReferenceEventUuid = refUuid
-      , _deleteReferenceEventKmUuid = refKmUuid
-      , _deleteReferenceEventChapterUuid = refChapterUuid
-      , _deleteReferenceEventQuestionUuid = refQuestionUuid
+      , _deleteReferenceEventPath = refPath
       , _deleteReferenceEventReferenceUuid = refReferenceUuid
       }

@@ -4,6 +4,7 @@ import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.Event.EventDTO
+import Api.Resource.Event.EventPathDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
@@ -23,11 +24,10 @@ import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
 import Model.Event.Answer.AnswerEvent
-import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
+import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -69,6 +69,8 @@ makeFields ''AppContext
 -- Model / Event
 makeFields ''EventField
 
+makeFields ''EventPathItem
+
 makeFields ''AddKnowledgeModelEvent
 
 makeFields ''EditKnowledgeModelEvent
@@ -102,18 +104,6 @@ makeFields ''AddReferenceEvent
 makeFields ''EditReferenceEvent
 
 makeFields ''DeleteReferenceEvent
-
-makeFields ''AddFollowUpQuestionEvent
-
-makeFields ''EditFollowUpQuestionEvent
-
-makeFields ''DeleteFollowUpQuestionEvent
-
-makeFields ''AddAnswerItemTemplateQuestionEvent
-
-makeFields ''EditAnswerItemTemplateQuestionEvent
-
-makeFields ''DeleteAnswerItemTemplateQuestionEvent
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
@@ -165,6 +155,9 @@ makeFields ''User
 -- Api / Resource / ActionKeyDTO
 makeFields ''ActionKeyDTO
 
+-- Api / Event / EventPathDTO
+makeFields ''EventPathItemDTO
+
 -- Api / Event / EventDTO
 makeFields ''AddKnowledgeModelEventDTO
 
@@ -188,12 +181,6 @@ makeFields ''EditAnswerEventDTO
 
 makeFields ''DeleteAnswerEventDTO
 
-makeFields ''AddAnswerItemTemplateQuestionEventDTO
-
-makeFields ''EditAnswerItemTemplateQuestionEventDTO
-
-makeFields ''DeleteAnswerItemTemplateQuestionEventDTO
-
 makeFields ''AddExpertEventDTO
 
 makeFields ''EditExpertEventDTO
@@ -205,12 +192,6 @@ makeFields ''AddReferenceEventDTO
 makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
-
-makeFields ''AddFollowUpQuestionEventDTO
-
-makeFields ''EditFollowUpQuestionEventDTO
-
-makeFields ''DeleteFollowUpQuestionEventDTO
 
 -- Api / Resource / KnowledgeModelDTO
 makeFields ''KnowledgeModelDTO

@@ -9,7 +9,6 @@ import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Common
 import Database.BSON.Event.Expert ()
-import Database.BSON.Event.FollowUpQuestion ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
