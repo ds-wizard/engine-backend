@@ -19,7 +19,7 @@ instance ToBSON Organization where
 
 instance FromBSON Organization where
   fromBSON doc = do
-    orgUuid <- deserializeUUID $ BSON.lookup "uuid" doc
+    orgUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     orgName <- BSON.lookup "name" doc
     orgOrganizationId <- BSON.lookup "organizationId" doc
     orgCreatedAt <- BSON.lookup "createdAt" doc

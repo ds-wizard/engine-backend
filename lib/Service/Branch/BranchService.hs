@@ -106,6 +106,7 @@ createBranch branchDto =
                 { _addKnowledgeModelEventUuid = uuid
                 , _addKnowledgeModelEventKmUuid = kmUuid
                 , _addKnowledgeModelEventName = "New knowledge model"
+                , _addKnowledgeModelEventPath = []
                 }
           insertEventsToBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
 

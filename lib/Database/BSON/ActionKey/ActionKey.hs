@@ -19,8 +19,8 @@ instance ToBSON ActionKey where
 
 instance FromBSON ActionKey where
   fromBSON doc = do
-    uuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    userId <- deserializeUUID $ BSON.lookup "userId" doc
+    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    userId <- deserializeMaybeUUID $ BSON.lookup "userId" doc
     actionType <- deserializeActionType $ BSON.lookup "type" doc
     hash <- BSON.lookup "hash" doc
     return

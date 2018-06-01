@@ -5,7 +5,7 @@ import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.Context.AppContext
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Service.Migrator.Applicator
+import Service.Migrator.Applicator.Applicator
 
 createKnowledgeModel :: [Event] -> Either AppError KnowledgeModel
 createKnowledgeModel = runApplicator Nothing

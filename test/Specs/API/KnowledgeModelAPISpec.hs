@@ -7,7 +7,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import qualified Database.Migration.Branch.BranchMigration as KMC
+import qualified Database.Migration.Branch.BranchMigration as B
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
@@ -33,7 +33,7 @@ knowledgeModelAPI appContext =
         let reqBody = ""
         it "HTTP 200 OK" $ do
           runInContextIO PKG.runMigration appContext
-          runInContextIO KMC.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
