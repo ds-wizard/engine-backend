@@ -21,6 +21,9 @@ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT = "Version is not in the valid for
 
 _ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "OrganizationId is not in the valid format"
 
+_ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
+  "This Data Management Plan format (" ++ format ++ ") is not currently supported"
+
 -- Uniqueness
 _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email = "User with email '" ++ email ++ "' already exists"
 

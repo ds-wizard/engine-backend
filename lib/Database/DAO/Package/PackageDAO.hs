@@ -78,3 +78,18 @@ deletePackageById :: String -> AppContextM ()
 deletePackageById pkgId = do
   let action = delete $ select ["id" =: pkgId] pkgCollection
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindPackageById pkgId callback = do
+  eitherPackage <- findPackageById pkgId
+  case eitherPackage of
+    Right package -> callback package
+    Left error -> return . Left $ error
+
+heFindPackageWithEventsById pkgId callback = do
+  eitherPackage <- findPackageWithEventsById pkgId
+  case eitherPackage of
+    Right package -> callback package
+    Left error -> return . Left $ error

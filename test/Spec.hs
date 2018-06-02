@@ -21,6 +21,7 @@ import Specs.API.VersionAPISpec
 import Specs.Common.UtilsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
+import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
@@ -61,6 +62,7 @@ main =
            organizationValidationSpec
            branchServiceSpec
            packageServiceSpec
+           dataManagementPlanSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "Service tests" $ branchServiceIntegrationSpec appContext
            describe "API Tests" $ do

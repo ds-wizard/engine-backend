@@ -1,7 +1,7 @@
 module Api.Handler.User.UserHandler where
 
 import Control.Monad.Reader (lift, liftM)
-import Data.Text as T
+import qualified Data.Text as T
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 

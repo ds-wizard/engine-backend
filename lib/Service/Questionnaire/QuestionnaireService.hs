@@ -1,7 +1,8 @@
 module Service.Questionnaire.QuestionnaireService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader
+import Control.Monad.Reader (liftIO)
+import Data.Time
 import qualified Data.UUID as U
 
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -53,23 +54,19 @@ getQuestionnaires = do
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaire questionnaireCreateDto = do
-  uuid <- liftIO generateUuid
-  createQuestionnaireWithGivenUuid uuid questionnaireCreateDto
+  qtnUuid <- liftIO generateUuid
+  createQuestionnaireWithGivenUuid qtnUuid questionnaireCreateDto
 
 createQuestionnaireWithGivenUuid :: U.UUID -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaireWithGivenUuid qtnUuid reqDto =
-  getPackage (reqDto ^. packageId) $ \package ->
+  heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
     getEvents (reqDto ^. packageId) $ \events ->
       getKnowledgeModel events $ \knowledgeModel -> do
-        let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel
+        now <- liftIO getCurrentTime
+        let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel now now
         insertQuestionnaire qtn
         return . Right $ toSimpleDTO qtn package
   where
-    getPackage pkgId callback = do
-      eitherPackage <- findPackageWithEventsById pkgId
-      case eitherPackage of
-        Right package -> callback package
-        Left error -> return . Left $ error
     getEvents pkgId callback = do
       eitherEvents <- getAllPreviousEventsSincePackageId pkgId
       case eitherEvents of
@@ -81,26 +78,21 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
         Right km -> callback km
         Left error -> return . Left $ error
 
-getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
+getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
 getQuestionnaireById qtnUuid =
-  getQuestionnaire qtnUuid $ \qtn ->
-    getPackage (qtn ^. packageId) $ \package -> return . Right $ toDetailDTO qtn package
-  where
-    getPackage pkgId callback = do
-      eitherPackage <- findPackageWithEventsById pkgId
-      case eitherPackage of
-        Right package -> callback package
-        Left error -> return . Left $ error
-    getQuestionnaire qtnUuid callback = do
-      eitherQuestionnaire <- findQuestionnaireById qtnUuid
-      case eitherQuestionnaire of
-        Right questionnaire -> callback questionnaire
-        Left error -> return . Left $ error
+  heFindQuestionnaireById qtnUuid $ \qtn ->
+    heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
 
-modifyQuestionnaireReplies :: String -> QuestionnaireReplies -> AppContextM (Either AppError QuestionnaireReplies)
+getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
+getQuestionnaireDetailById qtnUuid =
+  heFindQuestionnaireById qtnUuid $ \qtn ->
+    heFindPackageWithEventsById (qtn ^. packageId) $ \package -> return . Right $ toDetailDTO qtn package
+
+modifyQuestionnaireReplies :: String -> [QuestionnaireReplyDTO] -> AppContextM (Either AppError [QuestionnaireReplyDTO])
 modifyQuestionnaireReplies qtnUuid qtnReplies =
   getQuestionnaire qtnUuid $ \qtn -> do
-    updateQuestionnaireRepliesById qtnUuid qtnReplies
+    now <- liftIO getCurrentTime
+    updateQuestionnaireRepliesById qtnUuid (fromReplyDTO <$> qtnReplies) now
     return . Right $ qtnReplies
   where
     getQuestionnaire qtnUuid callback = do
@@ -117,3 +109,12 @@ deleteQuestionnaire qtnUuid = do
       deleteQuestionnaireById qtnUuid
       return Nothing
     Left error -> return . Just $ error
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heGetQuestionnaireById qtnUuid callback = do
+  eitherQuestionnaire <- getQuestionnaireById qtnUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Left $ error

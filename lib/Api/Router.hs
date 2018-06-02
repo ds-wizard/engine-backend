@@ -39,6 +39,8 @@ unauthorizedEndpoints =
   , (methodPut, mkRegex "^users/.*/password")
   , (methodPut, mkRegex "^users/.*/password?hash=.*")
   , (methodPost, mkRegex "^action-keys$")
+  , (methodGet, mkRegex "^questionnaires/.*/dmp")
+  , (methodGet, mkRegex "^questionnaires/.*/dmp?format=.*$")
   ]
 
 loggingM :: Environment -> Middleware
@@ -123,6 +125,7 @@ createEndpoints context
   post "/questionnaires" postQuestionnairesA
   get "/questionnaires/:qtnUuid" getQuestionnaireA
   put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
+  get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
    --------------------
    -- ERROR

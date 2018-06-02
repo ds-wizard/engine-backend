@@ -24,6 +24,8 @@ data FilledQuestion = FilledQuestion
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
   , _filledQuestionText :: String
+  , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
+  , _filledQuestionAnswers :: Maybe [Answer]
   , _filledQuestionAnswerValue :: Maybe String
   , _filledQuestionAnswerOption :: Maybe FilledAnswer
   , _filledQuestionAnswerItems :: Maybe [FilledAnswerItem]

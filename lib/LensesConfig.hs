@@ -3,6 +3,7 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
@@ -23,6 +24,7 @@ import Api.Resource.User.UserStateDTO
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
+import Model.DataManagementPlan.DataManagementPlan
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
@@ -65,6 +67,9 @@ makeFields ''DSWConfig
 
 -- Model / Config
 makeFields ''AppContext
+
+-- Model / DataManagementPlan
+makeFields ''DataManagementPlan
 
 -- Model / Event
 makeFields ''EventField
@@ -141,6 +146,8 @@ makeFields ''Organization
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
+makeFields ''QuestionnaireReply
+
 -- Model / Package
 makeFields ''Package
 
@@ -154,6 +161,9 @@ makeFields ''User
 -- -------------------------------------
 -- Api / Resource / ActionKeyDTO
 makeFields ''ActionKeyDTO
+
+-- Api / DataManagementPlan
+makeFields ''DataManagementPlanDTO
 
 -- Api / Event / EventPathDTO
 makeFields ''EventPathItemDTO
@@ -221,6 +231,8 @@ makeFields ''OrganizationChangeDTO
 makeFields ''QuestionnaireCreateDTO
 
 makeFields ''QuestionnaireDTO
+
+makeFields ''QuestionnaireReplyDTO
 
 makeFields ''QuestionnaireDetailDTO
 

@@ -38,3 +38,47 @@ elixirNlPackage2Dto =
     "Second Release"
     (Just $ elixirNlPackageDto ^. pId)
     [AddChapterEvent' a_km1_ch3]
+
+elixirCzPackage2Dto =
+  buildPackage
+    "Elixir Czech Republic"
+    "elixir.cz"
+    "core-cz"
+    "1.0.0"
+    "First Release"
+    (Just $ baseElixirPackageDto ^. pId)
+    [ AddKnowledgeModelEvent' a_km1
+    , AddChapterEvent' a_km1_ch1
+    , AddQuestionEvent' a_km1_ch1_q1
+    , AddQuestionEvent' a_km1_ch1_q2
+    , AddAnswerEvent' a_km1_ch1_q2_aNo1
+    , AddAnswerEvent' a_km1_ch1_q2_aYes1
+    , AddQuestionEvent' a_km1_ch1_ansYes1_fuq1
+    , AddAnswerEvent' a_km1_ch1_q2_aYes1_fuq1_aNo
+    , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
+    , AddQuestionEvent' a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2
+    , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
+    , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
+    , AddExpertEvent' a_km1_ch1_q2_eAlbert
+    , AddExpertEvent' a_km1_ch1_q2_eNikola
+    , AddReferenceEvent' a_km1_ch1_q2_rCh1
+    , AddReferenceEvent' a_km1_ch1_q2_rCh2
+    , AddChapterEvent' a_km1_ch2
+    , AddQuestionEvent' a_km1_ch2_q3
+    , AddAnswerEvent' a_km1_ch2_q3_aNo2
+    , AddAnswerEvent' a_km1_ch2_q3_aYes2
+    , AddQuestionEvent' a_km1_ch2_q4
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q5
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q7
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q8
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q6
+    , AddAnswerEvent' a_km1_ch2_q4_ait_q6_aNo
+    , AddAnswerEvent' a_km1_ch2_q4_ait_q6_aYes
+    , AddQuestionEvent' a_km1_ch2_ansYes6_fuq4
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q1
+    , AddQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q2
+    , AddExpertEvent' a_km1_ch2_q6_eAlbert
+    , AddExpertEvent' a_km1_ch2_q6_eNikola
+    , AddReferenceEvent' a_km1_ch2_q6_rCh1
+    , AddReferenceEvent' a_km1_ch2_q6_rCh2
+    ]

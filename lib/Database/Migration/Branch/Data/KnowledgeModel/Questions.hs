@@ -17,10 +17,10 @@ question1 =
   Question
   { _questionUuid = fromJust $ U.fromString "2be1d749-9c72-4807-9309-d6c7bdbf13ba"
   , _questionShortUuid = Just "question1"
-  , _questionQType = QuestionTypeOptions
+  , _questionQType = QuestionTypeString
   , _questionTitle = "First Question"
   , _questionText = "Here is a description of question"
-  , _questionAnswers = Just []
+  , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
   , _questionExperts = []
@@ -229,11 +229,11 @@ q4_ait1_q5_ait2_question7 =
   Question
   { _questionUuid = fromJust $ U.fromString "385026a5-c35b-4461-9588-bcbc10c99ac5"
   , _questionShortUuid = Just "q4_ait1_q5_ait2_question7"
-  , _questionQType = QuestionTypeOptions
+  , _questionQType = QuestionTypeString
   , _questionTitle = "Seventh Question"
   , _questionText = "Some non-funny description"
   , _questionAnswerItemTemplate = Nothing
-  , _questionAnswers = Just []
+  , _questionAnswers = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
@@ -243,11 +243,11 @@ q4_ait1_q5_ait2_question8 =
   Question
   { _questionUuid = fromJust $ U.fromString "f272a0b6-14fd-477f-8a95-d7ea483a4395"
   , _questionShortUuid = Just "q4_ait1_q5_ait2_question8"
-  , _questionQType = QuestionTypeOptions
+  , _questionQType = QuestionTypeString
   , _questionTitle = "Eighth Question"
   , _questionText = "Some non-funny description"
   , _questionAnswerItemTemplate = Nothing
-  , _questionAnswers = Just []
+  , _questionAnswers = Nothing
   , _questionReferences = []
   , _questionExperts = []
   }
