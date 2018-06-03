@@ -76,6 +76,7 @@ replyOnQuestion reply fQuestion =
     QuestionTypeDate -> createFilledAnswerValue fQuestion reply
     QuestionTypeText -> createFilledAnswerValue fQuestion reply
     QuestionTypeOptions -> createFilledAnswerOption fQuestion reply
+    QuestionTypeList -> fQuestion
 
 -- -------------------------
 -- CREATE REPLY ------------

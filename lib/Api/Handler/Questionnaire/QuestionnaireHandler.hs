@@ -67,7 +67,7 @@ getQuestionnaireDmpA = do
       case format of
         Nothing -> json dto
         Just "json" -> do
-          let cdHeader = "attachment;filename=" ++ (U.toString $ dto ^. uuid) ++ ".dmp"
+          let cdHeader = "attachment;filename=" ++ (U.toString $ dto ^. uuid) ++ ".json"
           addHeader "Content-Disposition" (TL.pack cdHeader)
           addHeader "Content-Type" (TL.pack "application/octet-stream")
           raw $ encode dto
