@@ -27,6 +27,7 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
+import Api.Resource.Version.VersionDTO
 import Model.ActionKey.ActionKey
 import Model.Branch.Branch
 import Model.Config.DSWConfig
@@ -293,3 +294,6 @@ makeFields ''UserPasswordDTO
 makeFields ''UserProfileChangeDTO
 
 makeFields ''UserStateDTO
+
+-- Api / Resource / Version
+makeFields ''VersionDTO

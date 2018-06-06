@@ -13,6 +13,7 @@ import Text.Regex
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.Version.VersionDTO
 import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
@@ -83,8 +84,8 @@ createPackage name organizationId kmId version description maybeParentPackageId 
   insertPackage package
   return $ packageWithEventsToDTO package
 
-createPackageFromKMC :: String -> String -> String -> AppContextM (Either AppError PackageDTO)
-createPackageFromKMC branchUuid pkgVersion pkgDescription =
+createPackageFromKMC :: String -> String -> VersionDTO -> AppContextM (Either AppError PackageDTO)
+createPackageFromKMC branchUuid pkgVersion versionDto =
   validateVersionFormat pkgVersion $
   getBranch branchUuid $ \branch ->
     getCurrentOrganization $ \organization ->
@@ -94,6 +95,7 @@ createPackageFromKMC branchUuid pkgVersion pkgDescription =
         let pkgOrganizationId = organization ^. organizationId
         let pkgKmId = branch ^. kmId
         let mPpId = branch ^. parentPackageId
+        let pkgDescription = versionDto ^. description
         createdPackage <- createPackage pkgName pkgOrganizationId pkgKmId pkgVersion pkgDescription mPpId events
         deleteEventsAtBranch branchUuid
         updateBranchWithParentPackageId branchUuid (createdPackage ^. pId)

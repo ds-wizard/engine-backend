@@ -36,7 +36,7 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
           runInContextIO PKG.runMigration appContext
           runInContextIO B.runMigration appContext
@@ -53,7 +53,7 @@ versionAPI appContext =
                 , _packageDTOOrganizationId = "elixir.nl.amsterdam"
                 , _packageDTOKmId = "amsterdam-km"
                 , _packageDTOVersion = "1.0.0"
-                , _packageDTODescription = reqDto ^. vdtoDescription
+                , _packageDTODescription = reqDto ^. description
                 , _packageDTOParentPackageId = Just $ parentPackage ^. pId
                 }
           let expBody = encode expDto
@@ -73,7 +73,7 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
           runInContextIO PKG.runMigration appContext
           runInContextIO B.runMigration appContext
@@ -96,11 +96,12 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
           runInContextIO PKG.runMigration appContext
           runInContextIO B.runMigration appContext
-          runInContextIO (createPackageFromKMC "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc") appContext
+          let versionDto = VersionDTO {_versionDTODescription = "Desc"}
+          runInContextIO (createPackageFromKMC "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" versionDto) appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
