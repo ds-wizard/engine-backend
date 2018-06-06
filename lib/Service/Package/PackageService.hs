@@ -27,55 +27,42 @@ import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
+import Service.Package.PackageValidation
+import Service.Package.PackageUtils
 
 getPackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageDTO])
-getPackagesFiltered queryParams = do
-  eitherPackages <- findPackagesFiltered queryParams
-  case eitherPackages of
-    Right packages -> return . Right . fmap packageToDTO $ packages
-    Left error -> return . Left $ error
+getPackagesFiltered queryParams = heFindPackagesFiltered queryParams $ \packages -> return . Right . fmap packageToDTO $ packages
 
 getSimplePackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageSimpleDTO])
 getSimplePackagesFiltered queryParams = do
-  eitherPackages <- findPackagesFiltered queryParams
-  case eitherPackages of
-    Right packages -> do
-      let uniquePackages = makePackagesUnique packages
-      return . Right . fmap packageToSimpleDTO $ uniquePackages
-      where makePackagesUnique :: [Package] -> [Package]
-            makePackagesUnique = foldl addIfUnique []
-            addIfUnique :: [Package] -> Package -> [Package]
-            addIfUnique packages newPackage =
-              case isAlreadyInArray packages newPackage of
-                (Just _) -> packages
-                Nothing -> packages ++ [newPackage]
-            isAlreadyInArray :: [Package] -> Package -> Maybe Package
-            isAlreadyInArray packages newPackage =
-              find
-                (\pkg ->
-                   equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
-                packages
-            hasSameKmId :: Package -> Package -> Bool
-            hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
-            equalSameKmId :: String -> Package -> Bool
-            equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
-            equalSameOrganizationId :: String -> Package -> Bool
-            equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
-    Left error -> return . Left $ error
+  heFindPackagesFiltered queryParams $ \packages -> do
+    let uniquePackages = makePackagesUnique packages
+    return . Right . fmap packageToSimpleDTO $ uniquePackages
+    where makePackagesUnique :: [Package] -> [Package]
+          makePackagesUnique = foldl addIfUnique []
+          addIfUnique :: [Package] -> Package -> [Package]
+          addIfUnique packages newPackage =
+            case isAlreadyInArray packages newPackage of
+              (Just _) -> packages
+              Nothing -> packages ++ [newPackage]
+          isAlreadyInArray :: [Package] -> Package -> Maybe Package
+          isAlreadyInArray packages newPackage =
+            find
+              (\pkg ->
+                 equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
+              packages
+          hasSameKmId :: Package -> Package -> Bool
+          hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
+          equalSameKmId :: String -> Package -> Bool
+          equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
+          equalSameOrganizationId :: String -> Package -> Bool
+          equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
 
 getPackageById :: String -> AppContextM (Either AppError PackageDTO)
-getPackageById pkgPId = do
-  eitherPackage <- findPackageById pkgPId
-  case eitherPackage of
-    Right package -> return . Right . packageToDTO $ package
-    Left error -> return . Left $ error
+getPackageById pkgId = heFindPackageById pkgId $ \package -> return . Right . packageToDTO $ package
 
 getPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEventsDTO)
-getPackageWithEventsById pkgPId = do
-  eitherPackage <- findPackageWithEventsById pkgPId
-  case eitherPackage of
-    Right package -> return . Right . packageWithEventsToDTOWithEvents $ package
-    Left error -> return . Left $ error
+getPackageWithEventsById pkgId = heFindPackageWithEventsById pkgId $ \package -> return . Right . packageWithEventsToDTOWithEvents $ package
 
 createPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> AppContextM PackageDTO
 createPackage name organizationId kmId version description maybeParentPackageId events = do
@@ -85,7 +72,7 @@ createPackage name organizationId kmId version description maybeParentPackageId 
 
 createPackageFromKMC :: String -> String -> VersionDTO -> AppContextM (Either AppError PackageDTO)
 createPackageFromKMC branchUuid pkgVersion versionDto =
-  validateVersionFormat pkgVersion $
+  heValidateVersionFormat pkgVersion $
   getBranch branchUuid $ \branch ->
     getCurrentOrganization $ \organization ->
       validateVersion pkgVersion branch organization $
@@ -102,10 +89,6 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
         deleteMigratorStateByBranchUuid branchUuid
         recompileKnowledgeModel branch $ return . Right $ createdPackage
   where
-    validateVersionFormat pkgVersion callback =
-      case isVersionInValidFormat pkgVersion of
-        Nothing -> callback
-        Just error -> return . Left $ error
     getBranch branchUuid callback = do
       eitherBranch <- findBranchWithEventsById branchUuid
       case eitherBranch of
@@ -122,7 +105,7 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
       eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndKmId pkgOrganizationId pkgKmId
       case eitherMaybePackage of
         Right (Just package) ->
-          case isVersionHigher pkgVersion (package ^. version) of
+          case validateIsVersionHigher pkgVersion (package ^. version) of
             Nothing -> callback
             Just error -> return . Left $ error
         Right Nothing -> callback
@@ -171,13 +154,13 @@ importPackage fileContent = do
           return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
   where
-    validatePackageId pkgPId callback = do
-      eitherPackage <- findPackageById pkgPId
+    validatePackageId pkgId callback = do
+      eitherPackage <- findPackageById pkgId
       case eitherPackage of
         Left (NotExistsError _) -> callback
-        Right _ -> return . Left . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgPId
+        Right _ -> return . Left . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
         Left error -> return . Left $ error
-    validateParentPackageId pkgPId maybeParentPkgId callback =
+    validateParentPackageId pkgId maybeParentPkgId callback =
       case maybeParentPkgId of
         Just parentPkgId -> do
           eitherPackage <- findPackageById parentPkgId
@@ -185,7 +168,7 @@ importPackage fileContent = do
             Right _ -> callback
             Left (NotExistsError _) ->
               return . Left . createErrorWithErrorMessage $
-              _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgPId
+              _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
             Left error -> return . Left $ error
         Nothing -> callback
 
@@ -203,62 +186,49 @@ deletePackagesByQueryParams queryParams = do
     Left error -> return . Just $ error
 
 deletePackage :: String -> AppContextM (Maybe AppError)
-deletePackage pkgPId = do
-  eitherPackage <- findPackageById pkgPId
-  case eitherPackage of
-    Right package -> do
-      maybeError <- validatePackageDeletation pkgPId
-      if isJust maybeError
-        then return maybeError
-        else do
-          deletePackageById pkgPId
-          return Nothing
-    Left error -> return . Just $ error
+deletePackage pkgId =
+  hmFindPackageById pkgId $ \package -> do
+    maybeError <- validatePackageDeletation pkgId
+    if isJust maybeError
+      then return maybeError
+      else do
+        deletePackageById pkgId
+        return Nothing
 
 getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError (Maybe Package))
-getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
-  eitherPackages <- findPackageByOrganizationIdAndKmId organizationId kmId
-  case eitherPackages of
-    Right packages ->
-      if length packages == 0
-        then return . Right $ Nothing
-        else do
-          let sorted = sortPackagesByVersion packages
-          return . Right . Just . head $ sorted
-    Left error -> return . Left $ error
+getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
+  heFindPackagesByOrganizationIdAndKmId organizationId kmId $ \packages -> do
+    if length packages == 0
+      then return . Right $ Nothing
+      else do
+        let sorted = sortPackagesByVersion packages
+        return . Right . Just . head $ sorted
 
 getAllPreviousEventsSincePackageId :: String -> AppContextM (Either AppError [Event])
-getAllPreviousEventsSincePackageId pkgPId = do
-  eitherPackage <- findPackageWithEventsById pkgPId
-  case eitherPackage of
-    Right package ->
-      case package ^. parentPackageId of
-        Just parentPackageId -> do
-          eitherPkgEvents <- getAllPreviousEventsSincePackageId parentPackageId
-          case eitherPkgEvents of
-            Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
-            Left error -> return . Left $ error
-        Nothing -> return . Right $ package ^. events
-    Left error -> return . Left $ error
+getAllPreviousEventsSincePackageId pkgId =
+  heFindPackageWithEventsById pkgId $ \package ->
+    case package ^. parentPackageId of
+      Just parentPackageId -> do
+        eitherPkgEvents <- getAllPreviousEventsSincePackageId parentPackageId
+        case eitherPkgEvents of
+          Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
+          Left error -> return . Left $ error
+      Nothing -> return . Right $ package ^. events
 
 getAllPreviousEventsSincePackageIdAndUntilPackageId :: String -> String -> AppContextM (Either AppError [Event])
 getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go sincePkgId
   where
-    go pkgPId =
-      if pkgPId == untilPkgId
+    go pkgId =
+      if pkgId == untilPkgId
         then return . Right $ []
-        else do
-          eitherPackage <- findPackageWithEventsById pkgPId
-          case eitherPackage of
-            Right package ->
-              case package ^. parentPackageId of
-                Just parentPackageId -> do
-                  eitherPkgEvents <- go parentPackageId
-                  case eitherPkgEvents of
-                    Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
-                    Left error -> return . Left $ error
-                Nothing -> return . Right $ package ^. events
-            Left error -> return . Left $ error
+        else heFindPackageWithEventsById pkgId $ \package ->
+          case package ^. parentPackageId of
+            Just parentPackageId -> do
+              eitherPkgEvents <- go parentPackageId
+              case eitherPkgEvents of
+                Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
+                Left error -> return . Left $ error
+            Nothing -> return . Right $ package ^. events
 
 getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
 getEventsForBranchUuid branchUuid =
@@ -283,111 +253,10 @@ getEventsForBranchUuid branchUuid =
 getNewerPackages :: String -> AppContextM (Either AppError [Package])
 getNewerPackages currentPkgId =
   getPackages $ \packages -> do
-    let packagesWithHigherVersion = filter (\pkg -> isNothing $ isVersionHigher (pkg ^. version) pkgVersion) packages
+    let packagesWithHigherVersion = filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
     return . Right . sortPackagesByVersion $ packagesWithHigherVersion
   where
-    getPackages callback = do
-      eitherPackages <- findPackageByOrganizationIdAndKmId pkgOrganizationId pkgKmId
-      case eitherPackages of
-        Right packages -> callback packages
-        Left error -> return . Left $ error
+    getPackages callback = heFindPackagesByOrganizationIdAndKmId pkgOrganizationId pkgKmId $ \packages -> callback packages
     pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
     pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
     pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2
-
-isVersionInValidFormat :: String -> Maybe AppError
-isVersionInValidFormat pkgVersion =
-  if isJust $ matchRegex validationRegex pkgVersion
-    then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
-  where
-    validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-
-isVersionHigher :: String -> String -> Maybe AppError
-isVersionHigher newVersion oldVersion =
-  if compareVersion newVersion oldVersion == GT
-    then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
-
-compareVersionNeg :: String -> String -> Ordering
-compareVersionNeg verA verB = compareVersion verB verA
-
-compareVersion :: String -> String -> Ordering
-compareVersion versionA versionB =
-  case compare versionAMajor versionBMajor of
-    LT -> LT
-    GT -> GT
-    EQ ->
-      case compare versionAMinor versionBMinor of
-        LT -> LT
-        GT -> GT
-        EQ ->
-          case compare versionAPatch versionBPatch of
-            LT -> LT
-            GT -> GT
-            EQ -> EQ
-  where
-    versionASplitted = splitVersion versionA
-    versionBSplitted = splitVersion versionB
-    versionAMajor = read . T.unpack $ (versionASplitted !! 0) :: Int
-    versionAMinor = read . T.unpack $ (versionASplitted !! 1) :: Int
-    versionAPatch = read . T.unpack $ (versionASplitted !! 2) :: Int
-    versionBMajor = read . T.unpack $ (versionBSplitted !! 0) :: Int
-    versionBMinor = read . T.unpack $ (versionBSplitted !! 1) :: Int
-    versionBPatch = read . T.unpack $ (versionBSplitted !! 2) :: Int
-
-sortPackagesByVersion :: [Package] -> [Package]
-sortPackagesByVersion = sortBy (\p1 p2 -> compareVersionNeg (p1 ^. version) (p2 ^. version))
-
-splitPackageId :: String -> [Text]
-splitPackageId packageId = T.splitOn ":" (T.pack packageId)
-
-splitVersion :: String -> [Text]
-splitVersion pkgVersion = T.splitOn "." (T.pack pkgVersion)
-
-validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
-validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (validateOnePackage <$> pkgPIdsToDelete)
-  where
-    foldOne :: AppContextM (Maybe AppError) -> AppContextM (Maybe AppError) -> AppContextM (Maybe AppError)
-    foldOne accIO resultIO = do
-      acc <- accIO
-      if isJust acc
-        then accIO
-        else resultIO
-    validateOnePackage :: String -> AppContextM (Maybe AppError)
-    validateOnePackage pkgPId = do
-      eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgPId
-      case eitherBranches of
-        Right [] -> do
-          eitherPkgs <- findPackagesByParentPackageId pkgPId
-          case eitherPkgs of
-            Right [] -> return Nothing
-            Right pkgs -> do
-              if length (filter (filFun) pkgs) > 0
-                then return . Just . createErrorWithErrorMessage $
-                     _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgPId "package"
-                else return Nothing
-            Left error -> return . Just $ error
-        Right _ ->
-          return . Just . createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgPId "branch"
-        Left error -> return . Just $ error
-    filFun :: Package -> Bool
-    filFun p = not ((p ^. pId) `elem` pkgPIdsToDelete)
-
-validatePackageDeletation :: String -> AppContextM (Maybe AppError)
-validatePackageDeletation pkgPId = do
-  eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgPId
-  case eitherBranches of
-    Right [] -> do
-      eitherPkgs <- findPackagesByParentPackageId pkgPId
-      case eitherPkgs of
-        Right [] -> return Nothing
-        Right _ ->
-          return . Just . createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgPId "package"
-        Left error -> return . Just $ error
-    Right _ ->
-      return . Just . createErrorWithErrorMessage $
-      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgPId "branch"
-    Left error -> return . Just $ error

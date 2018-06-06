@@ -26,7 +26,7 @@ import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
-import Specs.Service.Package.PackageServiceSpec
+import Specs.Service.Package.PackageValidationSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -61,7 +61,7 @@ main =
            migratorSpec
            organizationValidationSpec
            branchServiceSpec
-           packageServiceSpec
+           packageValidationSpec
            dataManagementPlanSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "Service tests" $ branchServiceIntegrationSpec appContext

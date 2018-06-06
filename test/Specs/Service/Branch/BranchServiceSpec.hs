@@ -25,7 +25,7 @@ import Specs.Common
 
 branchServiceSpec =
   describe "Package Service" $
-  it "isVersionInValidFormat" $ do
+  it "validateVersionFormat" $ do
     isNothing (isValidKmId "core") `shouldBe` True
     isNothing (isValidKmId "ab") `shouldBe` True
     isNothing (isValidKmId "core-nl") `shouldBe` True

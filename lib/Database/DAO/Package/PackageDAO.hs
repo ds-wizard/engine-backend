@@ -28,20 +28,14 @@ findPackagesFiltered queryParams = do
   packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackageById :: String -> AppContextM (Either AppError Package)
-findPackageById pkgId = do
-  let action = findOne $ select ["id" =: pkgId] pkgCollection
-  maybePackageS <- runDB action
-  return . deserializeMaybeEntity $ maybePackageS
-
 findPackagesByKmId :: String -> AppContextM (Either AppError [Package])
 findPackagesByKmId kmId = do
   let action = rest =<< find (select ["kmId" =: kmId] pkgCollection)
   packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
-findPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError [Package])
-findPackageByOrganizationIdAndKmId organizationId kmId = do
+findPackagesByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError [Package])
+findPackagesByOrganizationIdAndKmId organizationId kmId = do
   let action = rest =<< find (select ["organizationId" =: organizationId, "kmId" =: kmId] pkgCollection)
   packagesS <- runDB action
   return . deserializeEntities $ packagesS
@@ -51,6 +45,12 @@ findPackagesByParentPackageId parentPackageId = do
   let action = rest =<< find (select ["parentPackageId" =: parentPackageId] pkgCollection)
   packagesS <- runDB action
   return . deserializeEntities $ packagesS
+
+findPackageById :: String -> AppContextM (Either AppError Package)
+findPackageById pkgId = do
+  let action = findOne $ select ["id" =: pkgId] pkgCollection
+  maybePackageS <- runDB action
+  return . deserializeMaybeEntity $ maybePackageS
 
 findPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEvents)
 findPackageWithEventsById pkgId = do
@@ -82,11 +82,43 @@ deletePackageById pkgId = do
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
+heFindPackages callback = do
+  eitherPackages <- findPackages
+  case eitherPackages of
+    Right packages -> callback packages
+    Left error -> return . Left $ error
+
+-- --------------------------------
+
+heFindPackagesFiltered queryParams callback = do
+  eitherPackages <- findPackagesFiltered queryParams
+  case eitherPackages of
+    Right packages -> callback packages
+    Left error -> return . Left $ error
+
+-- --------------------------------
+
+heFindPackagesByOrganizationIdAndKmId organizationId kmId callback = do
+  eitherPackages <- findPackagesByOrganizationIdAndKmId organizationId kmId
+  case eitherPackages of
+    Right packages -> callback packages
+    Left error -> return . Left $ error
+
+-- --------------------------------
+
 heFindPackageById pkgId callback = do
   eitherPackage <- findPackageById pkgId
   case eitherPackage of
     Right package -> callback package
     Left error -> return . Left $ error
+
+hmFindPackageById pkgId callback = do
+  eitherPackage <- findPackageById pkgId
+  case eitherPackage of
+    Right package -> callback package
+    Left error -> return . Just $ error
+
+-- --------------------------------
 
 heFindPackageWithEventsById pkgId callback = do
   eitherPackage <- findPackageWithEventsById pkgId

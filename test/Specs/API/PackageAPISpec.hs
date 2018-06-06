@@ -214,7 +214,7 @@ packageAPI appContext = do
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackages <- runInContextIO (findPackageByOrganizationIdAndKmId "elixir.nl" "core-nl") appContext
+          eitherPackages <- runInContextIO (findPackagesByOrganizationIdAndKmId "elixir.nl" "core-nl") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

@@ -20,6 +20,8 @@ import Model.Migrator.MigratorState
 import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper
 import Service.Package.PackageService
+import Service.Package.PackageUtils
+import Service.Package.PackageValidation
 
 getCurrentMigration :: String -> AppContextM (Either AppError MigratorStateDTO)
 getCurrentMigration branchUuid = getMigrationState branchUuid $ \ms -> return . Right . toDTO $ ms
@@ -65,7 +67,7 @@ createMigration branchUuid mscDto = do
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
         let targetPackageVersion = T.unpack $ splitPackageId msTargetPackageId !! 2
         let lastAppliedParentPackageVersion = T.unpack $ splitPackageId lastAppliedParentPackageId !! 2
-        if isNothing $ isVersionHigher targetPackageVersion lastAppliedParentPackageVersion
+        if isNothing $ validateIsVersionHigher targetPackageVersion lastAppliedParentPackageVersion
           then callback
           else return . Left . MigratorError $ _ERROR_MT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
     getTargetParentPackage msTargetPackageId callback = do
