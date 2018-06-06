@@ -63,7 +63,14 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
     insertUser user
     heCreateActionKey uUuid RegistrationActionKey $ \actionKey -> do
       sendRegistrationConfirmationMail (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
+      sendAnalyticsEmailIfEnabled user
       return . Right $ toDTO user
+  where
+    sendAnalyticsEmailIfEnabled user = do
+      dswConfig <- asks _appContextConfig
+      if dswConfig ^. analytics . enabled
+        then sendRegistrationCreatedAnalyticsMail (user ^. name) (user ^. surname) (user ^. email)
+        else return ()
 
 getUserById :: String -> AppContextM (Either AppError UserDTO)
 getUserById userUuid = heFindUserById userUuid $ \user -> return . Right $ toDTO user

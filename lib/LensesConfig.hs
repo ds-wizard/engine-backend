@@ -80,6 +80,8 @@ makeFields ''AppConfigRoles
 
 makeFields ''AppConfigMail
 
+makeFields ''AppConfigAnalytics
+
 makeFields ''BuildInfo
 
 makeFields ''DSWConfig

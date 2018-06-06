@@ -1,5 +1,6 @@
 module Service.Mail.Mailer
   ( sendRegistrationConfirmationMail
+  , sendRegistrationCreatedAnalyticsMail
   , sendResetPasswordMail
   ) where
 
@@ -40,6 +41,16 @@ sendRegistrationConfirmationMail email userId hash = do
       subject = "Confirmation Email"
       body = TL.pack $ "Hi! For account activation you have to click " ++ link ++ "! Elixir DSW Wizard Team"
   createEmail email subject body
+
+sendRegistrationCreatedAnalyticsMail :: String -> String -> Email -> AppContextM ()
+sendRegistrationCreatedAnalyticsMail uName uSurname uEmail = do
+  dswConfig <- asks _appContextConfig
+  let analyticsAddress = dswConfig ^. analytics . email
+      subject = "DSW Wizard: New user"
+      body =
+        TL.pack $ "Hi! We have a new user (" ++ uName ++ " " ++ uSurname ++ ", " ++ uEmail ++
+        ") in our Wizard! Elixir DSW Wizard Team"
+  createEmail analyticsAddress subject body
 
 sendResetPasswordMail :: Email -> U.UUID -> String -> AppContextM ()
 sendResetPasswordMail email userId hash = do

@@ -18,6 +18,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     jwtConfig <- loadAppConfigJwt appConfigParser
     appRoles <- loadAppConfigRole appConfigParser
     appMail <- loadAppConfigMail appConfigParser
+    appAnalytics <- loadAppConfigAnalytics appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSWConfig
@@ -28,6 +29,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _dSWConfigJwtConfig = jwtConfig
       , _dSWConfigRoles = appRoles
       , _dSWConfigMail = appMail
+      , _dSWConfigAnalytics = appAnalytics
       , _dSWConfigBuildInfo = buildInfo
       }
   where
@@ -87,6 +89,11 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         , _appConfigMailUsername = mailUsername
         , _appConfigMailPassword = mailPassword
         }
+    loadAppConfigAnalytics configParser = do
+      analyticsEnabled <- get configParser "Analytics" "enabled"
+      analyticsEmail <- get configParser "Analytics" "email"
+      return
+        AppConfigAnalytics {_appConfigAnalyticsEnabled = analyticsEnabled, _appConfigAnalyticsEmail = analyticsEmail}
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
