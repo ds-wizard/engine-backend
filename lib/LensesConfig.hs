@@ -9,6 +9,7 @@ import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
+import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
@@ -218,6 +219,9 @@ makeFields ''AddReferenceEventDTO
 makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
+
+-- Api / Resource / InfoDTO
+makeFields ''InfoDTO
 
 -- Api / Resource / KnowledgeModelDTO
 makeFields ''KnowledgeModelDTO
