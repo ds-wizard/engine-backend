@@ -17,7 +17,6 @@ import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
-import Model.Branch.Branch
 import Model.Event.Event
 import Service.Event.EventMapper
 import Service.Event.EventService
@@ -27,7 +26,7 @@ import Specs.API.Common
 import Specs.Common
 
 eventAPI appContext = do
-  let events =
+  let bEvents =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
@@ -67,7 +66,7 @@ eventAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expBody = encode . toDTOs $ events
+          let expBody = encode . toDTOs $ bEvents
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expectation
@@ -86,7 +85,7 @@ eventAPI appContext = do
         let reqMethod = methodPost
         let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/events/_bulk"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqBody = encode . toDTOs $ events
+        let reqBody = encode . toDTOs $ bEvents
         it "HTTP 201 CREATED" $ do
           runInContextIO PKG.runMigration appContext
           runInContextIO KMC.runMigration appContext
@@ -95,7 +94,7 @@ eventAPI appContext = do
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expKm = km1
-          let expBody = encode . toDTOs $ events
+          let expBody = encode . toDTOs $ bEvents
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
@@ -109,10 +108,10 @@ eventAPI appContext = do
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` events
+          liftIO $ (branchFromDb ^. events) `shouldBe` bEvents
           liftIO $ (isRight eitherKm) `shouldBe` True
           let (Right kmFromDb) = eitherKm
-          liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expKm)
+          liftIO $ (kmFromDb ^. knowledgeModel) `shouldBe` (Just expKm)
         createInvalidJsonArrayTest
           reqMethod
           reqUrl
@@ -148,7 +147,7 @@ eventAPI appContext = do
           -- AND: Events and KM was not saved
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` []
+          liftIO $ (branchFromDb ^. events) `shouldBe` []
           liftIO $ (isLeft eitherKm) `shouldBe` False
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
@@ -182,10 +181,10 @@ eventAPI appContext = do
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          liftIO $ (branchFromDb ^. bweEvents) `shouldBe` []
+          liftIO $ (branchFromDb ^. events) `shouldBe` []
           liftIO $ (isRight eitherKm) `shouldBe` True
           let (Right kmFromDb) = eitherKm
-          liftIO $ (kmFromDb ^. bwkmKM) `shouldBe` (Just expectedKm)
+          liftIO $ (kmFromDb ^. knowledgeModel) `shouldBe` (Just expectedKm)
         createAuthTest reqMethod reqUrl [] reqBody
         createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "KM_PERM"
         createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/events" reqHeaders reqBody

@@ -224,12 +224,12 @@ migratorAPI appContext = do
           runInContextIO PKG.runMigration appContext
           let branch =
                 BranchDTO
-                { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Nothing
-                , _bdtoLastAppliedParentPackageId = Nothing
+                { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Nothing
+                , _branchDTOLastAppliedParentPackageId = Nothing
                 }
           runInContextIO (createBranch branch) appContext
           runInContextIO (insertPackage elixirNlPackage2Dto) appContext

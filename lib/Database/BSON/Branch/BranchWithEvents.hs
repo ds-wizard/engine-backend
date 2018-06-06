@@ -10,21 +10,21 @@ import Model.Branch.Branch
 
 instance FromBSON BranchWithEvents where
   fromBSON doc = do
-    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    name <- BSON.lookup "name" doc
-    kmId <- BSON.lookup "kmId" doc
-    parentPackageId <- BSON.lookup "parentPackageId" doc
-    lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
-    lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
-    eventsSerialized <- BSON.lookup "events" doc
-    let events = fmap (fromJust . chooseEventDeserializator) eventsSerialized
+    bUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    bName <- BSON.lookup "name" doc
+    bKmId <- BSON.lookup "kmId" doc
+    bParentPackageId <- BSON.lookup "parentPackageId" doc
+    bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
+    bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
+    bEventsSerialized <- BSON.lookup "events" doc
+    let bEvents = fmap (fromJust . chooseEventDeserializator) bEventsSerialized
     return
       BranchWithEvents
-      { _bweUuid = uuid
-      , _bweName = name
-      , _bweKmId = kmId
-      , _bweParentPackageId = parentPackageId
-      , _bweLastAppliedParentPackageId = lastAppliedParentPackageId
-      , _bweLastMergeCheckpointPackageId = lastMergeCheckpointPackageId
-      , _bweEvents = events
+      { _branchWithEventsUuid = bUuid
+      , _branchWithEventsName = bName
+      , _branchWithEventsKmId = bKmId
+      , _branchWithEventsParentPackageId = bParentPackageId
+      , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
+      , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
+      , _branchWithEventsEvents = bEvents
       }

@@ -20,7 +20,6 @@ import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
-import Model.Branch.Branch
 import Model.Context.AppContext
 import Model.Event.Event
 import Model.Migrator.MigratorState
@@ -91,10 +90,10 @@ createPackageFromKMC branchUuid pkgVersion pkgDescription =
     getCurrentOrganization $ \organization ->
       validateVersion pkgVersion branch organization $
       getEventsForPackage branch $ \events -> do
-        let pkgName = branch ^. bweName
+        let pkgName = branch ^. name
         let pkgOrganizationId = organization ^. organizationId
-        let pkgKmId = branch ^. bweKmId
-        let mPpId = branch ^. bweParentPackageId
+        let pkgKmId = branch ^. kmId
+        let mPpId = branch ^. parentPackageId
         createdPackage <- createPackage pkgName pkgOrganizationId pkgKmId pkgVersion pkgDescription mPpId events
         deleteEventsAtBranch branchUuid
         updateBranchWithParentPackageId branchUuid (createdPackage ^. pId)
@@ -118,7 +117,7 @@ createPackageFromKMC branchUuid pkgVersion pkgDescription =
         Left error -> return . Left $ error
     validateVersion pkgVersion branch organization callback = do
       let pkgOrganizationId = organization ^. organizationId
-      let pkgKmId = branch ^. bweKmId
+      let pkgKmId = branch ^. kmId
       eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndKmId pkgOrganizationId pkgKmId
       case eitherMaybePackage of
         Right (Just package) ->
@@ -136,14 +135,14 @@ createPackageFromKMC branchUuid pkgVersion pkgDescription =
           updateBranchWithMigrationInfo branchUuid targetPackageId branchParentId
         Left _ -> return ()
     getEventsForPackage branch callback = do
-      let branchUuid = U.toString $ branch ^. bweUuid
+      let branchUuid = U.toString $ branch ^. uuid
       eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
       case eitherMigrationState of
         Right migrationState -> callback $ migrationState ^. msResultEvents
-        Left (NotExistsError _) -> callback $ branch ^. bweEvents
+        Left (NotExistsError _) -> callback $ branch ^. events
         Left error -> return . Left $ error
     recompileKnowledgeModel branch callback = do
-      let branchUuid = U.toString $ branch ^. bweUuid
+      let branchUuid = U.toString $ branch ^. uuid
       eitherEventsForUuid <- getEventsForBranchUuid branchUuid
       case eitherEventsForUuid of
         Right eventsForBranchUuid -> do
@@ -263,18 +262,16 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go s
 getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
 getEventsForBranchUuid branchUuid =
   getBranch $ \branch ->
-    case branch ^. bweParentPackageId of
+    case branch ^. parentPackageId of
       Just ppId -> do
         eitherEventsFromPackage <- getAllPreviousEventsSincePackageId ppId
         case eitherEventsFromPackage of
           Right eventsFromPackage -> do
-            let eventsFromKM = branch ^. bweEvents
+            let eventsFromKM = branch ^. events
             let pkgEvents = eventsFromPackage ++ eventsFromKM
             return . Right $ pkgEvents
           Left error -> return . Left $ error
-      Nothing -> do
-        let events = branch ^. bweEvents
-        return . Right $ events
+      Nothing -> return . Right $ branch ^. events
   where
     getBranch callback = do
       eitherBranch <- findBranchWithEventsById branchUuid

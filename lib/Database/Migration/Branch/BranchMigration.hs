@@ -9,6 +9,7 @@ import Api.Resource.Branch.BranchDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.Migration.Branch.Data.Event.Event
+import LensesConfig
 import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService
@@ -18,12 +19,12 @@ runMigration = do
   deleteBranches
   let branch =
         BranchDTO
-        { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-        , _bdtoName = "Amsterdam KM"
-        , _bdtoOrganizationId = "elixir.nl.amsterdam"
-        , _bdtoKmId = "amsterdam-km"
-        , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-        , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+        { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
+        , _branchDTOName = "Amsterdam KM"
+        , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+        , _branchDTOKmId = "amsterdam-km"
+        , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+        , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         }
   createBranch branch
   let events =
@@ -46,6 +47,6 @@ runMigration = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  insertEventsToBranch (U.toString (branch ^. bdtoUuid)) events
-  recompileKnowledgeModel (U.toString (branch ^. bdtoUuid))
+  insertEventsToBranch (U.toString (branch ^. uuid)) events
+  recompileKnowledgeModel (U.toString (branch ^. uuid))
   $(logInfo) "MIGRATION (KnowledgeModel/Branch): ended"

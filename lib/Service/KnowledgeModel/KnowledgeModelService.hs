@@ -6,7 +6,7 @@ import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Common.Error
 import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import Model.Branch.Branch
+import LensesConfig
 import Model.Context.AppContext
 import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelApplicator
@@ -18,7 +18,7 @@ getKnowledgeModelByBranchId branchUuid = do
   eitherBranchWithKm <- findBranchWithKMByBranchId branchUuid
   case eitherBranchWithKm of
     Right branchWithKm -> do
-      let mKm = branchWithKm ^. bwkmKM
+      let mKm = branchWithKm ^. knowledgeModel
       case mKm of
         Just km -> return . Right $ toKnowledgeModelDTO km
         Nothing -> return . Left . NotExistsError $ _ERROR_VALIDATION__KM_ABSENCE

@@ -9,23 +9,23 @@ import Model.Branch.Branch
 
 instance FromBSON BranchWithKM where
   fromBSON doc = do
-    uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    name <- BSON.lookup "name" doc
-    kmId <- BSON.lookup "kmId" doc
-    parentPackageId <- BSON.lookup "parentPackageId" doc
-    lastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
-    lastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
-    kmSerialized <- BSON.lookup "knowledgeModel" doc
-    let km = deserializeKM kmSerialized
+    bUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    bName <- BSON.lookup "name" doc
+    bKmId <- BSON.lookup "kmId" doc
+    bParentPackageId <- BSON.lookup "parentPackageId" doc
+    bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
+    bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
+    bKmSerialized <- BSON.lookup "knowledgeModel" doc
+    let bKm = deserializeKM bKmSerialized
     return
       BranchWithKM
-      { _bwkmUuid = uuid
-      , _bwkmName = name
-      , _bwkmKmId = kmId
-      , _bwkmParentPackageId = parentPackageId
-      , _bwkmLastAppliedParentPackageId = lastAppliedParentPackageId
-      , _bwkmLastMergeCheckpointPackageId = lastMergeCheckpointPackageId
-      , _bwkmKM = km
+      { _branchWithKMUuid = bUuid
+      , _branchWithKMName = bName
+      , _branchWithKMKmId = bKmId
+      , _branchWithKMParentPackageId = bParentPackageId
+      , _branchWithKMLastAppliedParentPackageId = bLastAppliedParentPackageId
+      , _branchWithKMLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
+      , _branchWithKMKnowledgeModel = bKm
       }
     where
       deserializeKM (Just kmSerialized) = fromBSON kmSerialized

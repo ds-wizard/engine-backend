@@ -1,6 +1,5 @@
 module Model.Branch.Branch where
 
-import Control.Lens
 import Data.UUID
 import GHC.Generics
 
@@ -8,36 +7,30 @@ import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 
 data Branch = Branch
-  { _bUuid :: UUID
-  , _bName :: String
-  , _bKmId :: String
-  , _bParentPackageId :: Maybe String
-  , _bLastAppliedParentPackageId :: Maybe String
-  , _bLastMergeCheckpointPackageId :: Maybe String
+  { _branchUuid :: UUID
+  , _branchName :: String
+  , _branchKmId :: String
+  , _branchParentPackageId :: Maybe String
+  , _branchLastAppliedParentPackageId :: Maybe String
+  , _branchLastMergeCheckpointPackageId :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data BranchWithEvents = BranchWithEvents
-  { _bweUuid :: UUID
-  , _bweName :: String
-  , _bweKmId :: String
-  , _bweParentPackageId :: Maybe String
-  , _bweLastAppliedParentPackageId :: Maybe String
-  , _bweLastMergeCheckpointPackageId :: Maybe String
-  , _bweEvents :: [Event]
+  { _branchWithEventsUuid :: UUID
+  , _branchWithEventsName :: String
+  , _branchWithEventsKmId :: String
+  , _branchWithEventsParentPackageId :: Maybe String
+  , _branchWithEventsLastAppliedParentPackageId :: Maybe String
+  , _branchWithEventsLastMergeCheckpointPackageId :: Maybe String
+  , _branchWithEventsEvents :: [Event]
   } deriving (Generic)
 
 data BranchWithKM = BranchWithKM
-  { _bwkmUuid :: UUID
-  , _bwkmName :: String
-  , _bwkmKmId :: String
-  , _bwkmParentPackageId :: Maybe String
-  , _bwkmLastAppliedParentPackageId :: Maybe String
-  , _bwkmLastMergeCheckpointPackageId :: Maybe String
-  , _bwkmKM :: Maybe KnowledgeModel
+  { _branchWithKMUuid :: UUID
+  , _branchWithKMName :: String
+  , _branchWithKMKmId :: String
+  , _branchWithKMParentPackageId :: Maybe String
+  , _branchWithKMLastAppliedParentPackageId :: Maybe String
+  , _branchWithKMLastMergeCheckpointPackageId :: Maybe String
+  , _branchWithKMKnowledgeModel :: Maybe KnowledgeModel
   } deriving (Show, Eq, Generic)
-
-makeLenses ''Branch
-
-makeLenses ''BranchWithEvents
-
-makeLenses ''BranchWithKM

@@ -17,6 +17,7 @@ import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
+import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Context.AppContext
@@ -47,7 +48,7 @@ getBranches =
       eitherDtos <- eitherDtosIO
       case eitherDtos of
         Right dtos -> do
-          eitherBranchState <- getBranchState (U.toString $ branch ^. bUuid)
+          eitherBranchState <- getBranchState (U.toString $ branch ^. uuid)
           case eitherBranchState of
             Right branchState -> return . Right $ dtos ++ [toWithStateDTO branch branchState organization]
             Left error -> return . Left $ error
@@ -56,26 +57,26 @@ getBranches =
 createBranch :: BranchDTO -> AppContextM (Either AppError BranchDTO)
 createBranch branchDto =
   validateKmId branchDto $
-  validatePackageId (branchDto ^. bdtoParentPackageId) $
+  validatePackageId (branchDto ^. parentPackageId) $
   heGetOrganization $ \organization -> do
     let branch = fromDTO branchDto
     insertBranch branch
-    insertEventsToBranch (U.toString $ branch ^. bUuid) []
-    updateKnowledgeModelByBranchId (U.toString $ branch ^. bUuid) Nothing
+    insertEventsToBranch (U.toString $ branch ^. uuid) []
+    updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
     updateMigrationInfoIfParentPackageIdPresent branch
     createDefaultEventIfParentPackageIsNotPresent branch
-    eitherKm <- recompileKnowledgeModel (U.toString $ branch ^. bUuid)
+    eitherKm <- recompileKnowledgeModel (U.toString $ branch ^. uuid)
     case eitherKm of
       Right km -> return . Right $ toDTO branch organization
       Left error -> return . Left $ error
   where
     validateKmId branchDto callback = do
-      let kmId = branchDto ^. bdtoKmId
-      case isValidKmId kmId of
+      let bKmId = branchDto ^. kmId
+      case isValidKmId bKmId of
         Nothing -> do
-          eitherBranchFromDb <- findBranchByKmId kmId
+          eitherBranchFromDb <- findBranchByKmId bKmId
           case eitherBranchFromDb of
-            Right _ -> return . Left $ createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId)
+            Right _ -> return . Left $ createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)
             Left (NotExistsError _) -> callback
         Just error -> return . Left $ error
     validatePackageId mPackageId callback =
@@ -88,14 +89,14 @@ createBranch branchDto =
               return . Left $ createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
         Nothing -> callback
     updateMigrationInfoIfParentPackageIdPresent branch = do
-      let branchUuid = U.toString $ branch ^. bUuid
-      let maybeParentPackageId = branch ^. bParentPackageId
+      let branchUuid = U.toString $ branch ^. uuid
+      let maybeParentPackageId = branch ^. parentPackageId
       case maybeParentPackageId of
         Just parentPackageId -> updateBranchWithMigrationInfo branchUuid parentPackageId parentPackageId
         Nothing -> return ()
     createDefaultEventIfParentPackageIsNotPresent branch = do
-      let branchUuid = U.toString $ branch ^. bUuid
-      let maybeParentPackageId = branch ^. bParentPackageId
+      let branchUuid = U.toString $ branch ^. uuid
+      let maybeParentPackageId = branch ^. parentPackageId
       case maybeParentPackageId of
         Just _ -> return ()
         Nothing -> do
@@ -116,7 +117,7 @@ getBranchById branchUuid =
     eitherBranch <- findBranchById branchUuid
     case eitherBranch of
       Right branch -> do
-        eitherBranchState <- getBranchState (U.toString $ branch ^. bUuid)
+        eitherBranchState <- getBranchState (U.toString $ branch ^. uuid)
         case eitherBranchState of
           Right branchState -> return . Right $ toWithStateDTO branch branchState organization
           Left error -> return . Left $ error
@@ -130,19 +131,19 @@ modifyBranch branchUuid branchDto =
     return . Right $ branchDto
   where
     validateKmId callback = do
-      let kmId = branchDto ^. bdtoKmId
-      case isValidKmId kmId of
+      let bKmId = branchDto ^. kmId
+      case isValidKmId bKmId of
         Nothing -> do
           eitherBranchFromDb <- findBranchById branchUuid
           case eitherBranchFromDb of
             Right branch -> do
-              eitherBranchFromDb <- findBranchByKmId kmId
+              eitherBranchFromDb <- findBranchByKmId bKmId
               if isAlreadyUsedAndIsNotMine eitherBranchFromDb
-                then return . Left . createErrorWithFieldError $ ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId)
+                then return . Left . createErrorWithFieldError $ ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)
                 else callback
             Left error -> return . Left $ error
         Just error -> return . Left $ error
-    isAlreadyUsedAndIsNotMine (Right branch) = U.toString (branch ^. bUuid) /= branchUuid
+    isAlreadyUsedAndIsNotMine (Right branch) = U.toString (branch ^. uuid) /= branchUuid
     isAlreadyUsedAndIsNotMine (Left _) = False
 
 deleteBranch :: String -> AppContextM (Maybe AppError)
@@ -188,9 +189,9 @@ getBranchState branchUuid =
             else callback True
         Left (NotExistsError _) -> callback False
         Left error -> return . Left $ error
-    isEditing branch = Prelude.length (branch ^. bweEvents) > 0
+    isEditing branch = Prelude.length (branch ^. events) > 0
     getIsOutdated branch callback =
-      case branch ^. bweLastAppliedParentPackageId of
+      case branch ^. lastAppliedParentPackageId of
         Just lastAppliedParentPackageId -> do
           eitherNewerPackages <- getNewerPackages lastAppliedParentPackageId
           case eitherNewerPackages of

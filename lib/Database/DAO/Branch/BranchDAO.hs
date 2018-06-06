@@ -11,6 +11,7 @@ import Common.Error
 import Database.BSON.Branch.Branch ()
 import Database.BSON.Branch.BranchWithEvents ()
 import Database.DAO.Common
+import LensesConfig
 import Model.Branch.Branch
 import Model.Context.AppContext
 
@@ -59,7 +60,7 @@ insertBranch branch = do
 updateBranchById :: Branch -> AppContextM ()
 updateBranchById branch = do
   let action =
-        fetch (select ["uuid" =: (branch ^. bUuid)] branchCollection) >>= save branchCollection . merge (toBSON branch)
+        fetch (select ["uuid" =: (branch ^. uuid)] branchCollection) >>= save branchCollection . merge (toBSON branch)
   runDB action
 
 updateBranchWithMigrationInfo :: String -> String -> String -> AppContextM ()

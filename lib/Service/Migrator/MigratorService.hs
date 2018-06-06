@@ -13,7 +13,7 @@ import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
-import Model.Branch.Branch
+import LensesConfig
 import Model.Context.AppContext
 import Model.Event.EventAccessors
 import Model.Migrator.MigratorState
@@ -36,14 +36,14 @@ createMigration branchUuid mscDto = do
           getTargetParentEvents targetPackageId branch $ \targetPackageEvents -> do
             let ms =
                   MigratorState
-                  { _msBranchUuid = branch ^. bwkmUuid
+                  { _msBranchUuid = branch ^. uuid
                   , _msMigrationState = RunningState
                   , _msBranchParentId = branchParentId
                   , _msTargetPackageId = targetPackageId
                   , _msBranchEvents = branchEvents
                   , _msTargetPackageEvents = targetPackageEvents
                   , _msResultEvents = []
-                  , _msCurrentKnowledgeModel = branch ^. bwkmKM
+                  , _msCurrentKnowledgeModel = branch ^. knowledgeModel
                   }
             insertMigratorState ms
             migratedMs <- migrateState ms
@@ -85,11 +85,11 @@ createMigration branchUuid mscDto = do
             Right events -> callback events
             Left error -> return . Left $ error
     getParentPackageId branch callback =
-      case branch ^. bwkmParentPackageId of
+      case branch ^. parentPackageId of
         Just parentPackageId -> callback parentPackageId
         Nothing -> return . Left . MigratorError $ _ERROR_MT_VALIDATION_MIGRATOR__BRANCH_PARENT_ABSENCE
     getLastMergeCheckpointPackageId branch callback =
-      case branch ^. bwkmLastMergeCheckpointPackageId of
+      case branch ^. lastMergeCheckpointPackageId of
         Just lastMergeCheckpointPackageId -> callback lastMergeCheckpointPackageId
         Nothing -> return . Left . MigratorError $ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT
     getTargetParentEvents targetPackageId branch callback =
@@ -101,7 +101,7 @@ createMigration branchUuid mscDto = do
           Right events -> callback events
           Left error -> return . Left $ error
     getLastAppliedParentPackageId branch callback =
-      case branch ^. bwkmLastAppliedParentPackageId of
+      case branch ^. lastAppliedParentPackageId of
         Just lastAppliedParentPackageId -> callback lastAppliedParentPackageId
         Nothing ->
           return . Left . MigratorError $ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG

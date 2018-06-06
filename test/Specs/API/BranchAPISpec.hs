@@ -20,7 +20,6 @@ import Database.DAO.Package.PackageDAO
 import Database.Migration.Package.Data.Package
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
-import Model.Branch.Branch
 import Model.Branch.BranchState
 import Service.Branch.BranchService
 
@@ -47,24 +46,24 @@ branchAPI appContext = do
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 BranchWithStateDTO
-                { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bwsdtoName = "Amsterdam KM"
-                , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bwsdtoKmId = "amsterdam-km"
-                , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bwsdtoState = BSDefault
+                { _branchWithStateDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchWithStateDTOName = "Amsterdam KM"
+                , _branchWithStateDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchWithStateDTOKmId = "amsterdam-km"
+                , _branchWithStateDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchWithStateDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchWithStateDTOState = BSDefault
                 }
           let expBody = encode [expDto]
           runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
           let branch =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch branch) appContext
           -- WHEN: Call API
@@ -87,12 +86,12 @@ branchAPI appContext = do
         it "HTTP 201 CREATED" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           runInContextIO PKG.runMigration appContext
@@ -115,15 +114,15 @@ branchAPI appContext = do
         it "HTTP 400 BAD REQUEST when kmId is not in valid format" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam.km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam.km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch reqDto) appContext
-          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km-")
+          let reqBody = encode (reqDto & kmId .~ "amsterdam.km-")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -138,19 +137,19 @@ branchAPI appContext = do
         it "HTTP 400 BAD REQUEST when kmId is already taken" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           runInContextIO (createBranch reqDto) appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. bdtoKmId)
+          let expDto = createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -161,12 +160,12 @@ branchAPI appContext = do
         it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:9.9.9"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:9.9.9"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqBody = encode reqDto
           runInContextIO (createBranch reqDto) appContext
@@ -200,22 +199,22 @@ branchAPI appContext = do
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
                 BranchWithStateDTO
-                { _bwsdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bwsdtoName = "Amsterdam KM"
-                , _bwsdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bwsdtoKmId = "amsterdam-km"
-                , _bwsdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bwsdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bwsdtoState = BSDefault
+                { _branchWithStateDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchWithStateDTOName = "Amsterdam KM"
+                , _branchWithStateDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchWithStateDTOKmId = "amsterdam-km"
+                , _branchWithStateDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchWithStateDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchWithStateDTOState = BSDefault
                 }
           let branch =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch branch) appContext
           runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
@@ -240,12 +239,12 @@ branchAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
               BranchDTO
-              { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-              , _bdtoName = "EDITED: Amsterdam KM"
-              , _bdtoOrganizationId = "elixir.nl.amsterdam"
-              , _bdtoKmId = "amsterdam-km"
-              , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-              , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+              { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+              , _branchDTOName = "EDITED: Amsterdam KM"
+              , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+              , _branchDTOKmId = "amsterdam-km"
+              , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+              , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -267,23 +266,23 @@ branchAPI appContext = do
           -- AND: Compare state in DB with expetation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          liftIO $ (branchFromDb ^. bUuid) `shouldBe` (reqDto ^. bdtoUuid)
-          liftIO $ (branchFromDb ^. bName) `shouldBe` (reqDto ^. bdtoName)
-          liftIO $ (branchFromDb ^. bKmId) `shouldBe` (reqDto ^. bdtoKmId)
-          liftIO $ (branchFromDb ^. bParentPackageId) `shouldBe` (reqDto ^. bdtoParentPackageId)
+          liftIO $ (branchFromDb ^. uuid) `shouldBe` (reqDto ^. uuid)
+          liftIO $ (branchFromDb ^. name) `shouldBe` (reqDto ^. name)
+          liftIO $ (branchFromDb ^. kmId) `shouldBe` (reqDto ^. kmId)
+          liftIO $ (branchFromDb ^. parentPackageId) `shouldBe` (reqDto ^. parentPackageId)
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "6474b24b-262b-42b1-9451-008e8363f2b6" } |] "name"
         it "HTTP 400 BAD REQUEST when kmId is not in valid format" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch reqDto) appContext
-          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam.km")
+          let reqBody = encode (reqDto & kmId .~ "amsterdam.km")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -298,25 +297,25 @@ branchAPI appContext = do
         it "HTTP 400 BAD REQUEST when kmId is already taken" $ do
           let reqDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           let reqDto2 =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
-                , _bdtoName = "Amsterdam KM 2"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km-2"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "a0cb5aec-5977-44fc-bd87-8cc1ddf5de6a"))
+                , _branchDTOName = "Amsterdam KM 2"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km-2"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch reqDto) appContext
           runInContextIO (createBranch reqDto2) appContext
-          let reqBody = encode (reqDto & bdtoKmId .~ "amsterdam-km-2")
+          let reqBody = encode (reqDto & kmId .~ "amsterdam-km-2")
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
@@ -349,12 +348,12 @@ branchAPI appContext = do
           -- GIVEN: Save KMC to DB
           let branchDto =
                 BranchDTO
-                { _bdtoUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
-                , _bdtoName = "Amsterdam KM"
-                , _bdtoOrganizationId = "elixir.nl.amsterdam"
-                , _bdtoKmId = "amsterdam-km"
-                , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-                , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                { _branchDTOUuid = (fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6"))
+                , _branchDTOName = "Amsterdam KM"
+                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+                , _branchDTOKmId = "amsterdam-km"
+                , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+                , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
                 }
           runInContextIO (createBranch branchDto) appContext
           -- WHEN: Call API

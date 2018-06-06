@@ -1,6 +1,5 @@
 module Api.Resource.Branch.BranchWithStateDTO where
 
-import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
 import Data.UUID
@@ -8,28 +7,26 @@ import Data.UUID
 import Model.Branch.BranchState
 
 data BranchWithStateDTO = BranchWithStateDTO
-  { _bwsdtoUuid :: UUID
-  , _bwsdtoName :: String
-  , _bwsdtoOrganizationId :: String
-  , _bwsdtoKmId :: String
-  , _bwsdtoParentPackageId :: Maybe String
-  , _bwsdtoState :: BranchState
-  , _bwsdtoLastAppliedParentPackageId :: Maybe String
+  { _branchWithStateDTOUuid :: UUID
+  , _branchWithStateDTOName :: String
+  , _branchWithStateDTOOrganizationId :: String
+  , _branchWithStateDTOKmId :: String
+  , _branchWithStateDTOParentPackageId :: Maybe String
+  , _branchWithStateDTOState :: BranchState
+  , _branchWithStateDTOLastAppliedParentPackageId :: Maybe String
   }
-
-makeLenses ''BranchWithStateDTO
 
 instance FromJSON BranchWithStateDTO where
   parseJSON (Object o) = do
-    _bwsdtoUuid <- o .: "uuid"
-    _bwsdtoName <- o .: "name"
-    _bwsdtoOrganizationId <- o .: "organizationId"
-    _bwsdtoKmId <- o .: "kmId"
-    _bwsdtoParentPackageId <- o .: "parentPackageId"
-    _bwsdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
+    _branchWithStateDTOUuid <- o .: "uuid"
+    _branchWithStateDTOName <- o .: "name"
+    _branchWithStateDTOOrganizationId <- o .: "organizationId"
+    _branchWithStateDTOKmId <- o .: "kmId"
+    _branchWithStateDTOParentPackageId <- o .: "parentPackageId"
+    _branchWithStateDTOLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
     stateType <- o .: "stateType"
     case getState stateType of
-      (Just _bwsdtoState) -> return BranchWithStateDTO {..}
+      (Just _branchWithStateDTOState) -> return BranchWithStateDTO {..}
       Nothing -> fail "Unsupported state"
     where
       getState "Default" = Just BSDefault
@@ -43,14 +40,14 @@ instance FromJSON BranchWithStateDTO where
 instance ToJSON BranchWithStateDTO where
   toJSON BranchWithStateDTO {..} =
     object
-      [ "uuid" .= _bwsdtoUuid
-      , "name" .= _bwsdtoName
-      , "organizationId" .= _bwsdtoOrganizationId
-      , "kmId" .= _bwsdtoKmId
-      , "parentPackageId" .= _bwsdtoParentPackageId
-      , "lastAppliedParentPackageId" .= _bwsdtoLastAppliedParentPackageId
+      [ "uuid" .= _branchWithStateDTOUuid
+      , "name" .= _branchWithStateDTOName
+      , "organizationId" .= _branchWithStateDTOOrganizationId
+      , "kmId" .= _branchWithStateDTOKmId
+      , "parentPackageId" .= _branchWithStateDTOParentPackageId
+      , "lastAppliedParentPackageId" .= _branchWithStateDTOLastAppliedParentPackageId
       , "stateType" .=
-        case _bwsdtoState of
+        case _branchWithStateDTOState of
           BSDefault -> "Default"
           BSEdited -> "Edited"
           BSOutdated -> "Outdated"

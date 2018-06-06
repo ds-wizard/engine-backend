@@ -3,6 +3,8 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -23,6 +25,7 @@ import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Model.ActionKey.ActionKey
+import Model.Branch.Branch
 import Model.Config.DSWConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
@@ -65,6 +68,13 @@ makeFields ''AppConfigMail
 makeFields ''BuildInfo
 
 makeFields ''DSWConfig
+
+-- Model / Config
+makeFields ''Branch
+
+makeFields ''BranchWithEvents
+
+makeFields ''BranchWithKM
 
 -- Model / Config
 makeFields ''AppContext
@@ -162,6 +172,11 @@ makeFields ''User
 -- -------------------------------------
 -- Api / Resource / ActionKeyDTO
 makeFields ''ActionKeyDTO
+
+-- Api / Branch / BranchDTO
+makeFields ''BranchDTO
+
+makeFields ''BranchWithStateDTO
 
 -- Api / DataManagementPlan
 makeFields ''DataManagementPlanDTO

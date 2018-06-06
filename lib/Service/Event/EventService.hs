@@ -5,7 +5,7 @@ import Control.Lens ((^.))
 import Api.Resource.Event.EventDTO
 import Common.Error
 import Database.DAO.Event.EventDAO
-import Model.Branch.Branch
+import LensesConfig
 import Model.Context.AppContext
 import Service.Branch.BranchService
 import Service.Event.EventMapper
@@ -15,7 +15,7 @@ getEvents :: String -> AppContextM (Either AppError [EventDTO])
 getEvents branchUuid = do
   eitherBranchWithEvents <- findBranchWithEventsById branchUuid
   case eitherBranchWithEvents of
-    Right branchWithEvents -> return . Right . toDTOs $ branchWithEvents ^. bweEvents
+    Right branchWithEvents -> return . Right . toDTOs $ branchWithEvents ^. events
     Left error -> return . Left $ error
 
 createEvents :: String -> [EventDTO] -> AppContextM (Either AppError [EventDTO])
