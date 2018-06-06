@@ -14,6 +14,7 @@ import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
+import LensesConfig
 import Model.Migrator.MigratorState
 
 instance ToBSON MigrationState where
@@ -38,37 +39,37 @@ instance FromBSON MigrationState where
 
 instance ToBSON MigratorState where
   toBSON ms =
-    [ "branchUuid" BSON.=: serializeUUID (ms ^. msBranchUuid)
-    , "migrationState" BSON.=: (ms ^. msMigrationState)
-    , "branchParentId" BSON.=: (ms ^. msBranchParentId)
-    , "targetPackageId" BSON.=: (ms ^. msTargetPackageId)
-    , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. msBranchEvents)
-    , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. msTargetPackageEvents)
-    , "resultEvents" BSON.=: convertEventToBSON <$> (ms ^. msResultEvents)
-    , "currentKnowledgeModel" BSON.=: (ms ^. msCurrentKnowledgeModel)
+    [ "branchUuid" BSON.=: serializeUUID (ms ^. branchUuid)
+    , "migrationState" BSON.=: (ms ^. migrationState)
+    , "branchParentId" BSON.=: (ms ^. branchParentId)
+    , "targetPackageId" BSON.=: (ms ^. targetPackageId)
+    , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. branchEvents)
+    , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. targetPackageEvents)
+    , "resultEvents" BSON.=: convertEventToBSON <$> (ms ^. resultEvents)
+    , "currentKnowledgeModel" BSON.=: (ms ^. currentKnowledgeModel)
     ]
 
 instance FromBSON MigratorState where
   fromBSON doc = do
-    branchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
-    migrationState <- BSON.lookup "migrationState" doc
-    branchParentId <- BSON.lookup "branchParentId" doc
-    targetPackageId <- BSON.lookup "targetPackageId" doc
-    branchEventsSerialized <- BSON.lookup "branchEvents" doc
-    let branchEvents = fmap (fromJust . chooseEventDeserializator) branchEventsSerialized
-    targetPackageEventsSerialized <- BSON.lookup "targetPackageEvents" doc
-    let targetPackageEvents = fmap (fromJust . chooseEventDeserializator) targetPackageEventsSerialized
-    resultEventsSerialized <- BSON.lookup "resultEvents" doc
-    let resultEvents = fmap (fromJust . chooseEventDeserializator) resultEventsSerialized
-    currentKnowledgeModel <- BSON.lookup "currentKnowledgeModel" doc
+    msBranchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
+    msMigrationState <- BSON.lookup "migrationState" doc
+    msBranchParentId <- BSON.lookup "branchParentId" doc
+    msTargetPackageId <- BSON.lookup "targetPackageId" doc
+    msBranchEventsSerialized <- BSON.lookup "branchEvents" doc
+    let msBranchEvents = fmap (fromJust . chooseEventDeserializator) msBranchEventsSerialized
+    msTargetPackageEventsSerialized <- BSON.lookup "targetPackageEvents" doc
+    let msTargetPackageEvents = fmap (fromJust . chooseEventDeserializator) msTargetPackageEventsSerialized
+    msResultEventsSerialized <- BSON.lookup "resultEvents" doc
+    let msResultEvents = fmap (fromJust . chooseEventDeserializator) msResultEventsSerialized
+    msCurrentKnowledgeModel <- BSON.lookup "currentKnowledgeModel" doc
     return
       MigratorState
-      { _msBranchUuid = branchUuid
-      , _msMigrationState = migrationState
-      , _msBranchParentId = branchParentId
-      , _msTargetPackageId = targetPackageId
-      , _msBranchEvents = branchEvents
-      , _msTargetPackageEvents = targetPackageEvents
-      , _msResultEvents = resultEvents
-      , _msCurrentKnowledgeModel = currentKnowledgeModel
+      { _migratorStateBranchUuid = msBranchUuid
+      , _migratorStateMigrationState = msMigrationState
+      , _migratorStateBranchParentId = msBranchParentId
+      , _migratorStateTargetPackageId = msTargetPackageId
+      , _migratorStateBranchEvents = msBranchEvents
+      , _migratorStateTargetPackageEvents = msTargetPackageEvents
+      , _migratorStateResultEvents = msResultEvents
+      , _migratorStateCurrentKnowledgeModel = msCurrentKnowledgeModel
       }

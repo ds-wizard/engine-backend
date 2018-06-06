@@ -12,7 +12,7 @@ isCleanerMethod :: MigratorState -> Event -> Bool
 isCleanerMethod state event = getKM $ \km -> doIsCleanerMethod km event
   where
     getKM callback =
-      case state ^. msCurrentKnowledgeModel of
+      case state ^. currentKnowledgeModel of
         Just km -> callback km
         Nothing -> False
 
@@ -49,5 +49,5 @@ doIsCleanerMethod km (DeleteReferenceEvent' event) = not $ isThereAnyReferenceWi
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =
-  let (_:newTargetPackageEvents) = state ^. msTargetPackageEvents
-  in return $ state & msTargetPackageEvents .~ newTargetPackageEvents
+  let (_:newTargetPackageEvents) = state ^. targetPackageEvents
+  in return $ state & targetPackageEvents .~ newTargetPackageEvents

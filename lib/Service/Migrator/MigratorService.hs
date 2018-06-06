@@ -26,24 +26,24 @@ getCurrentMigration branchUuid = getMigrationState branchUuid $ \ms -> return . 
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM (Either AppError MigratorStateDTO)
 createMigration branchUuid mscDto = do
-  let targetPackageId = mscDto ^. mscdtoTargetPackageId
+  let msTargetPackageId = mscDto ^. targetPackageId
   getBranch branchUuid $ \branch ->
     validateIfMigrationAlreadyExist $
     getParentPackageId branch $ \branchParentId ->
-      validateIfTargetPackageVersionIsHigher branch targetPackageId $
-      getTargetParentPackage targetPackageId $ \targetParentPackage ->
+      validateIfTargetPackageVersionIsHigher branch msTargetPackageId $
+      getTargetParentPackage msTargetPackageId $ \targetParentPackage ->
         getBranchEvents branch $ \branchEvents ->
-          getTargetParentEvents targetPackageId branch $ \targetPackageEvents -> do
+          getTargetParentEvents msTargetPackageId branch $ \targetPackageEvents -> do
             let ms =
                   MigratorState
-                  { _msBranchUuid = branch ^. uuid
-                  , _msMigrationState = RunningState
-                  , _msBranchParentId = branchParentId
-                  , _msTargetPackageId = targetPackageId
-                  , _msBranchEvents = branchEvents
-                  , _msTargetPackageEvents = targetPackageEvents
-                  , _msResultEvents = []
-                  , _msCurrentKnowledgeModel = branch ^. knowledgeModel
+                  { _migratorStateBranchUuid = branch ^. uuid
+                  , _migratorStateMigrationState = RunningState
+                  , _migratorStateBranchParentId = branchParentId
+                  , _migratorStateTargetPackageId = msTargetPackageId
+                  , _migratorStateBranchEvents = branchEvents
+                  , _migratorStateTargetPackageEvents = targetPackageEvents
+                  , _migratorStateResultEvents = []
+                  , _migratorStateCurrentKnowledgeModel = branch ^. knowledgeModel
                   }
             insertMigratorState ms
             migratedMs <- migrateState ms
@@ -61,15 +61,15 @@ createMigration branchUuid mscDto = do
         Right migrationState -> return . Left . MigratorError $ _ERROR_MT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS
         Left (NotExistsError _) -> callback
         Left error -> return . Left $ error
-    validateIfTargetPackageVersionIsHigher branch targetPackageId callback =
+    validateIfTargetPackageVersionIsHigher branch msTargetPackageId callback =
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
-        let targetPackageVersion = T.unpack $ splitPackageId targetPackageId !! 2
+        let targetPackageVersion = T.unpack $ splitPackageId msTargetPackageId !! 2
         let lastAppliedParentPackageVersion = T.unpack $ splitPackageId lastAppliedParentPackageId !! 2
         if isNothing $ isVersionHigher targetPackageVersion lastAppliedParentPackageVersion
           then callback
           else return . Left . MigratorError $ _ERROR_MT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
-    getTargetParentPackage targetPackageId callback = do
-      eitherTargetParentPackage <- findPackageWithEventsById targetPackageId
+    getTargetParentPackage msTargetPackageId callback = do
+      eitherTargetParentPackage <- findPackageWithEventsById msTargetPackageId
       case eitherTargetParentPackage of
         Right targetParentPackage -> callback targetParentPackage
         Left (NotExistsError _) ->
@@ -92,9 +92,9 @@ createMigration branchUuid mscDto = do
       case branch ^. lastMergeCheckpointPackageId of
         Just lastMergeCheckpointPackageId -> callback lastMergeCheckpointPackageId
         Nothing -> return . Left . MigratorError $ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT
-    getTargetParentEvents targetPackageId branch callback =
+    getTargetParentEvents msTargetPackageId branch callback =
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
-        let since = targetPackageId
+        let since = msTargetPackageId
         let until = lastAppliedParentPackageId
         eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId since until
         case eitherEvents of
@@ -122,23 +122,23 @@ solveConflictAndMigrate branchUuid reqDto = do
     Right ms ->
       validateMigrationState ms $
       validateTargetPackageEvent ms $
-      validateReqDto (ms ^. msMigrationState) reqDto $ do
+      validateReqDto (ms ^. migrationState) reqDto $ do
         let stateWithSolvedConflicts = solveConflict ms reqDto
         migrateState stateWithSolvedConflicts
         return Nothing
     Left error -> return . Just $ error
   where
     validateMigrationState ms callback =
-      case ms ^. msMigrationState of
+      case ms ^. migrationState of
         ConflictState (CorrectorConflict _) -> callback
         _ -> return . Just . MigratorError $ _ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
     validateTargetPackageEvent ms callback =
-      case length (ms ^. msTargetPackageEvents) of
+      case length (ms ^. targetPackageEvents) of
         0 -> return . Just . MigratorError $ _ERROR_MT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> callback
-    validateReqDto (ConflictState (CorrectorConflict event)) reqDto callback =
-      if getEventUuid event == reqDto ^. mcdtoOriginalEventUuid
-        then if reqDto ^. mcdtoAction == MCAEdited && isNothing (reqDto ^. mcdtoEvent)
+    validateReqDto (ConflictState (CorrectorConflict e)) reqDto callback =
+      if getEventUuid e == reqDto ^. originalEventUuid
+        then if reqDto ^. action == MCAEdited && isNothing (reqDto ^. event)
                then return . Just . MigratorError $ _ERROR_MT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
                else callback
         else return . Just . MigratorError $

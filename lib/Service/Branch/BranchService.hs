@@ -183,8 +183,8 @@ getBranchState branchUuid =
     getIsMigrating callback = do
       eitherMs <- findMigratorStateByBranchUuid branchUuid
       case eitherMs of
-        Right migrationState ->
-          if migrationState ^. msMigrationState == CompletedState
+        Right ms ->
+          if ms ^. migrationState == CompletedState
             then callback False
             else callback True
         Left (NotExistsError _) -> callback False
@@ -206,8 +206,8 @@ getBranchState branchUuid =
     getIsMigrated callback = do
       eitherMs <- findMigratorStateByBranchUuid branchUuid
       case eitherMs of
-        Right migrationState ->
-          if migrationState ^. msMigrationState == CompletedState
+        Right ms ->
+          if ms ^. migrationState == CompletedState
             then callback True
             else callback False
         Left (NotExistsError _) -> callback False

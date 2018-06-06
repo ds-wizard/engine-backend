@@ -9,6 +9,7 @@ import Database.MongoDB
 import Common.Error
 import Database.BSON.Migrator.MigratorState ()
 import Database.DAO.Common
+import LensesConfig
 import Model.Context.AppContext
 import Model.Migrator.MigratorState
 
@@ -27,8 +28,8 @@ insertMigratorState ms = do
 
 updateMigratorState :: MigratorState -> AppContextM ()
 updateMigratorState ms = do
-  let branchUuid = ms ^. msBranchUuid
-  let action = fetch (select ["branchUuid" =: branchUuid] msCollection) >>= save msCollection . merge (toBSON ms)
+  let msBranchUuid = ms ^. branchUuid
+  let action = fetch (select ["branchUuid" =: msBranchUuid] msCollection) >>= save msCollection . merge (toBSON ms)
   runDB action
 
 deleteMigratorStates :: AppContextM ()

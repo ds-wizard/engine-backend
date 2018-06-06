@@ -4,6 +4,7 @@ module Service.Migrator.CorrectorMethod
 
 import Control.Lens
 
+import LensesConfig
 import Model.Event.Event
 import Model.Migrator.MigratorState
 import Service.Migrator.Sanitizator
@@ -11,7 +12,7 @@ import Service.Migrator.Sanitizator
 runCorrectorMethod :: MigratorState -> Event -> IO MigratorState
 runCorrectorMethod state event = do
   sanitizedEvent <- sanitizeEvent state event
-  return $ state & msMigrationState .~ (ConflictState . CorrectorConflict $ sanitizedEvent)
+  return $ state & migrationState .~ (ConflictState . CorrectorConflict $ sanitizedEvent)
 
 sanitizeEvent :: MigratorState -> Event -> IO Event
 sanitizeEvent state (EditKnowledgeModelEvent' e) = sanitize state e >>= \e2 -> return . EditKnowledgeModelEvent' $ e2

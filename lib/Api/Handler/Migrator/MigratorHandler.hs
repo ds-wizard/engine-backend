@@ -5,8 +5,9 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
-import Api.Resource.Migrator.MigratorStateCreateDTO ()
-import Api.Resource.Migrator.MigratorStateDTO ()
+import Api.Resource.Migrator.MigratorConflictJM ()
+import Api.Resource.Migrator.MigratorStateCreateJM ()
+import Api.Resource.Migrator.MigratorStateJM ()
 import Service.Migrator.MigratorService
 
 getMigrationsCurrentA :: Endpoint

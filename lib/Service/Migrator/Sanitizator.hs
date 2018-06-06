@@ -173,7 +173,7 @@ instance Sanitizator EditAnswerEvent where
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
 unwrapKM state event callback =
-  case state ^. msCurrentKnowledgeModel of
+  case state ^. currentKnowledgeModel of
     Nothing -> return event
     Just km -> callback km
 

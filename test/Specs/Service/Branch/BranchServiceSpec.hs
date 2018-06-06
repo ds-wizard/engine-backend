@@ -103,7 +103,8 @@ branchServiceIntegrationSpec appContext =
         runInContext B.runMigration appContext
         runInContext (insertPackage elixirNlPackage2Dto) appContext
         runInContext (deleteEventsAtBranch branchUuid) appContext
-        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
+        let migratorCreateDto =
+              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         -- AND: Prepare expectations
         let expState = BSMigrating
@@ -119,11 +120,15 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         runInContext (deleteEventsAtBranch branchUuid) appContext
-        let migratorCreateDto = MigratorStateCreateDTO {_mscdtoTargetPackageId = elixirNlPackage2Dto ^. pId}
+        let migratorCreateDto =
+              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         let reqDto =
               MigratorConflictDTO
-              {_mcdtoOriginalEventUuid = a_km1_ch3 ^. uuid, _mcdtoAction = MCAReject, _mcdtoEvent = Nothing}
+              { _migratorConflictDTOOriginalEventUuid = a_km1_ch3 ^. uuid
+              , _migratorConflictDTOAction = MCAReject
+              , _migratorConflictDTOEvent = Nothing
+              }
         runInContext (solveConflictAndMigrate branchUuid reqDto) appContext
         -- AND: Prepare expectations
         let expState = BSMigrated

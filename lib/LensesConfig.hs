@@ -11,6 +11,9 @@ import Api.Resource.Event.EventPathDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
@@ -43,6 +46,7 @@ import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
@@ -155,6 +159,13 @@ makeFields ''FilledAnswer
 
 makeFields ''FilledAnswerItem
 
+-- Model / Migrator
+makeFields ''MigratorConflictDTO
+
+makeFields ''MigratorStateCreateDTO
+
+makeFields ''MigratorStateDTO
+
 -- Model / Organization
 makeFields ''Organization
 
@@ -255,6 +266,9 @@ makeFields ''FilledQuestionDTO
 makeFields ''FilledAnswerDTO
 
 makeFields ''FilledAnswerItemDTO
+
+-- Model / Migrator
+makeFields ''MigratorState
 
 -- Api / Resource / Organization
 makeFields ''OrganizationDTO

@@ -23,7 +23,6 @@ import Database.DAO.Package.PackageDAO
 import LensesConfig
 import Model.Context.AppContext
 import Model.Event.Event
-import Model.Migrator.MigratorState
 import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
@@ -132,15 +131,15 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
       eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
       case eitherMigrationState of
         Right migrationState -> do
-          let branchParentId = migrationState ^. msBranchParentId
-          let targetPackageId = migrationState ^. msTargetPackageId
-          updateBranchWithMigrationInfo branchUuid targetPackageId branchParentId
+          let msBranchParentId = migrationState ^. branchParentId
+          let msTargetPackageId = migrationState ^. targetPackageId
+          updateBranchWithMigrationInfo branchUuid msTargetPackageId msBranchParentId
         Left _ -> return ()
     getEventsForPackage branch callback = do
       let branchUuid = U.toString $ branch ^. uuid
       eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
       case eitherMigrationState of
-        Right migrationState -> callback $ migrationState ^. msResultEvents
+        Right migrationState -> callback $ migrationState ^. resultEvents
         Left (NotExistsError _) -> callback $ branch ^. events
         Left error -> return . Left $ error
     recompileKnowledgeModel branch callback = do

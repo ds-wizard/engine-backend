@@ -1,6 +1,5 @@
 module Model.Migrator.MigratorState where
 
-import Control.Lens (makeLenses)
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -26,14 +25,12 @@ data MigrationConflictAction
   deriving (Show, Eq, Generic)
 
 data MigratorState = MigratorState
-  { _msBranchUuid :: U.UUID
-  , _msMigrationState :: MigrationState
-  , _msBranchParentId :: String
-  , _msTargetPackageId :: String
-  , _msBranchEvents :: [Event]
-  , _msTargetPackageEvents :: [Event]
-  , _msResultEvents :: [Event]
-  , _msCurrentKnowledgeModel :: Maybe KnowledgeModel
+  { _migratorStateBranchUuid :: U.UUID
+  , _migratorStateMigrationState :: MigrationState
+  , _migratorStateBranchParentId :: String
+  , _migratorStateTargetPackageId :: String
+  , _migratorStateBranchEvents :: [Event]
+  , _migratorStateTargetPackageEvents :: [Event]
+  , _migratorStateResultEvents :: [Event]
+  , _migratorStateCurrentKnowledgeModel :: Maybe KnowledgeModel
   } deriving (Show, Eq)
-
-makeLenses ''MigratorState
