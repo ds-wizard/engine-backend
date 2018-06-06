@@ -26,42 +26,44 @@ import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
-import Service.Package.PackageValidation
 import Service.Package.PackageUtils
+import Service.Package.PackageValidation
 
 getPackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageDTO])
-getPackagesFiltered queryParams = heFindPackagesFiltered queryParams $ \packages -> return . Right . fmap packageToDTO $ packages
+getPackagesFiltered queryParams =
+  heFindPackagesFiltered queryParams $ \packages -> return . Right . fmap packageToDTO $ packages
 
 getSimplePackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageSimpleDTO])
 getSimplePackagesFiltered queryParams = do
   heFindPackagesFiltered queryParams $ \packages -> do
     let uniquePackages = makePackagesUnique packages
     return . Right . fmap packageToSimpleDTO $ uniquePackages
-    where makePackagesUnique :: [Package] -> [Package]
-          makePackagesUnique = foldl addIfUnique []
-          addIfUnique :: [Package] -> Package -> [Package]
-          addIfUnique packages newPackage =
-            case isAlreadyInArray packages newPackage of
-              (Just _) -> packages
-              Nothing -> packages ++ [newPackage]
-          isAlreadyInArray :: [Package] -> Package -> Maybe Package
-          isAlreadyInArray packages newPackage =
-            find
-              (\pkg ->
-                 equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
-              packages
-          hasSameKmId :: Package -> Package -> Bool
-          hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
-          equalSameKmId :: String -> Package -> Bool
-          equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
-          equalSameOrganizationId :: String -> Package -> Bool
-          equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
+  where
+    makePackagesUnique :: [Package] -> [Package]
+    makePackagesUnique = foldl addIfUnique []
+    addIfUnique :: [Package] -> Package -> [Package]
+    addIfUnique packages newPackage =
+      case isAlreadyInArray packages newPackage of
+        (Just _) -> packages
+        Nothing -> packages ++ [newPackage]
+    isAlreadyInArray :: [Package] -> Package -> Maybe Package
+    isAlreadyInArray packages newPackage =
+      find
+        (\pkg -> equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
+        packages
+    hasSameKmId :: Package -> Package -> Bool
+    hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
+    equalSameKmId :: String -> Package -> Bool
+    equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
+    equalSameOrganizationId :: String -> Package -> Bool
+    equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
 
 getPackageById :: String -> AppContextM (Either AppError PackageDTO)
 getPackageById pkgId = heFindPackageById pkgId $ \package -> return . Right . packageToDTO $ package
 
 getPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEventsDTO)
-getPackageWithEventsById pkgId = heFindPackageWithEventsById pkgId $ \package -> return . Right . packageWithEventsToDTOWithEvents $ package
+getPackageWithEventsById pkgId =
+  heFindPackageWithEventsById pkgId $ \package -> return . Right . packageWithEventsToDTOWithEvents $ package
 
 createPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> AppContextM PackageDTO
 createPackage name organizationId kmId version description maybeParentPackageId events = do
@@ -221,13 +223,13 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go s
       if pkgId == untilPkgId
         then return . Right $ []
         else heFindPackageWithEventsById pkgId $ \package ->
-          case package ^. parentPackageId of
-            Just parentPackageId -> do
-              eitherPkgEvents <- go parentPackageId
-              case eitherPkgEvents of
-                Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
-                Left error -> return . Left $ error
-            Nothing -> return . Right $ package ^. events
+               case package ^. parentPackageId of
+                 Just parentPackageId -> do
+                   eitherPkgEvents <- go parentPackageId
+                   case eitherPkgEvents of
+                     Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
+                     Left error -> return . Left $ error
+                 Nothing -> return . Right $ package ^. events
 
 getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
 getEventsForBranchUuid branchUuid =
@@ -252,10 +254,12 @@ getEventsForBranchUuid branchUuid =
 getNewerPackages :: String -> AppContextM (Either AppError [Package])
 getNewerPackages currentPkgId =
   getPackages $ \packages -> do
-    let packagesWithHigherVersion = filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
+    let packagesWithHigherVersion =
+          filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
     return . Right . sortPackagesByVersion $ packagesWithHigherVersion
   where
-    getPackages callback = heFindPackagesByOrganizationIdAndKmId pkgOrganizationId pkgKmId $ \packages -> callback packages
+    getPackages callback =
+      heFindPackagesByOrganizationIdAndKmId pkgOrganizationId pkgKmId $ \packages -> callback packages
     pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
     pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
     pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2

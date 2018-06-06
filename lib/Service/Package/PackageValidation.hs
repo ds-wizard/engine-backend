@@ -26,8 +26,7 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
     validateOnePackage :: String -> AppContextM (Maybe AppError)
     validateOnePackage pkgId = do
       validateUsageBySomeBranch pkgId $ \() ->
-        validateUsageBySomeOtherPackage pkgId $ \() ->
-          validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
+        validateUsageBySomeOtherPackage pkgId $ \() -> validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
     validateUsageBySomeOtherPackage pkgId callback = do
       eitherPkgs <- findPackagesByParentPackageId pkgId
       case eitherPkgs of
@@ -45,9 +44,7 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
 validatePackageDeletation :: String -> AppContextM (Maybe AppError)
 validatePackageDeletation pkgId =
   validateUsageBySomeBranch pkgId $ \() ->
-    validateUsageBySomeOtherPackage pkgId $ \() ->
-      validateUsageBySomeQuestionnaire pkgId $ \() ->
-        return Nothing
+    validateUsageBySomeOtherPackage pkgId $ \() -> validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
   where
     validateUsageBySomeOtherPackage pkgId callback = do
       eitherPkgs <- findPackagesByParentPackageId pkgId
@@ -64,7 +61,7 @@ validateUsageBySomeBranch pkgId callback = do
     Right [] -> callback ()
     Right _ ->
       return . Just . createErrorWithErrorMessage $
-      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "branch"
+      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
     Left error -> return . Just $ error
 
 validateUsageBySomeQuestionnaire pkgId callback = do
@@ -93,7 +90,6 @@ validateIsVersionHigher newVersion oldVersion =
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-
 heValidateVersionFormat pkgVersion callback =
   case validateVersionFormat pkgVersion of
     Nothing -> callback

@@ -46,7 +46,7 @@ elixirCzPackage2Dto =
     "core-cz"
     "1.0.0"
     "First Release"
-    (Just $ baseElixirPackageDto ^. pId)
+    (Just $ baseElixir0PackageDto ^. pId)
     [ AddKnowledgeModelEvent' a_km1
     , AddChapterEvent' a_km1_ch1
     , AddQuestionEvent' a_km1_ch1_q1

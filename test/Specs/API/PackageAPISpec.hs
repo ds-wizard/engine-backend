@@ -10,6 +10,7 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Package.PackageDTO
 import Common.Error
+import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
@@ -178,7 +179,9 @@ packageAPI appContext = do
           let expHeaders = resCorsHeaders
           let expDto =
                 createErrorWithErrorMessage $
-                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+                _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
+                  "elixir.nl:core-nl:1.0.0"
+                  "knowledge model"
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -231,7 +234,9 @@ packageAPI appContext = do
           let expHeaders = resCorsHeaders
           let expDto =
                 createErrorWithErrorMessage $
-                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+                _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
+                  "elixir.nl:core-nl:1.0.0"
+                  "knowledge model"
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -287,7 +292,9 @@ packageAPI appContext = do
           let expHeaders = resCorsHeaders
           let expDto =
                 createErrorWithErrorMessage $
-                "Package 'elixir.nl:core-nl:1.0.0' can't be deleted. It's used by some branch."
+                _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
+                  "elixir.nl:core-nl:1.0.0"
+                  "knowledge model"
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

@@ -89,7 +89,6 @@ heFindPackages callback = do
     Left error -> return . Left $ error
 
 -- --------------------------------
-
 heFindPackagesFiltered queryParams callback = do
   eitherPackages <- findPackagesFiltered queryParams
   case eitherPackages of
@@ -97,7 +96,6 @@ heFindPackagesFiltered queryParams callback = do
     Left error -> return . Left $ error
 
 -- --------------------------------
-
 heFindPackagesByOrganizationIdAndKmId organizationId kmId callback = do
   eitherPackages <- findPackagesByOrganizationIdAndKmId organizationId kmId
   case eitherPackages of
@@ -105,7 +103,6 @@ heFindPackagesByOrganizationIdAndKmId organizationId kmId callback = do
     Left error -> return . Left $ error
 
 -- --------------------------------
-
 heFindPackageById pkgId callback = do
   eitherPackage <- findPackageById pkgId
   case eitherPackage of
@@ -119,7 +116,6 @@ hmFindPackageById pkgId callback = do
     Left error -> return . Just $ error
 
 -- --------------------------------
-
 heFindPackageWithEventsById pkgId callback = do
   eitherPackage <- findPackageWithEventsById pkgId
   case eitherPackage of
