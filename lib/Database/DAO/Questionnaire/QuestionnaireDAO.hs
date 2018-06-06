@@ -23,6 +23,12 @@ findQuestionnaires = do
   questionnairesS <- runDB action
   return . deserializeEntities $ questionnairesS
 
+findQuestionnaireByPackageId :: String -> AppContextM (Either AppError [Questionnaire])
+findQuestionnaireByPackageId pkgId = do
+  let action = rest =<< find (select ["packageId" =: pkgId] qtnCollection)
+  questionnairesS <- runDB action
+  return . deserializeEntities $ questionnairesS
+
 findQuestionnaireById :: String -> AppContextM (Either AppError Questionnaire)
 findQuestionnaireById questionnaireUuid = do
   let action = findOne $ select ["uuid" =: questionnaireUuid] qtnCollection

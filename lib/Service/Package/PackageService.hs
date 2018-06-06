@@ -8,7 +8,6 @@ import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.UUID as U
-import Text.Regex
 
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO

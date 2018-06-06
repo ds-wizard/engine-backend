@@ -1,32 +1,17 @@
 module Service.Package.PackageValidation where
 
 import Control.Lens ((^.))
-import Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BS
-import Data.List
 import Data.Maybe
-import Data.Text (Text)
-import qualified Data.Text as T
-import Data.UUID as U
 import Text.Regex
 
-import Api.Resource.Package.PackageDTO
-import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Package.PackageWithEventsDTO
-import Api.Resource.Version.VersionDTO
 import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
-import Database.DAO.Event.EventDAO
-import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
+import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
-import Model.Event.Event
 import Model.Package.Package
-import Service.KnowledgeModel.KnowledgeModelApplicator
-import Service.Organization.OrganizationService
-import Service.Package.PackageMapper
 import Service.Package.PackageUtils
 
 validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
@@ -40,40 +25,55 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
         else resultIO
     validateOnePackage :: String -> AppContextM (Maybe AppError)
     validateOnePackage pkgId = do
-      eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgId
-      case eitherBranches of
-        Right [] -> do
-          eitherPkgs <- findPackagesByParentPackageId pkgId
-          case eitherPkgs of
-            Right [] -> return Nothing
-            Right pkgs -> do
-              if length (filter (filFun) pkgs) > 0
-                then return . Just . createErrorWithErrorMessage $
-                     _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
-                else return Nothing
-            Left error -> return . Just $ error
-        Right _ ->
-          return . Just . createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
-        Left error -> return . Just $ error
-    filFun :: Package -> Bool
-    filFun p = not ((p ^. pId) `elem` pkgPIdsToDelete)
-
-validatePackageDeletation :: String -> AppContextM (Maybe AppError)
-validatePackageDeletation pkgId = do
-  eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgId
-  case eitherBranches of
-    Right [] -> do
+      validateUsageBySomeBranch pkgId $ \() ->
+        validateUsageBySomeOtherPackage pkgId $ \() ->
+          validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
+    validateUsageBySomeOtherPackage pkgId callback = do
       eitherPkgs <- findPackagesByParentPackageId pkgId
       case eitherPkgs of
-        Right [] -> return Nothing
+        Right [] -> callback ()
+        Right pkgs -> do
+          if length (filter (filFun) pkgs) > 0
+            then return . Just . createErrorWithErrorMessage $
+                 _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
+            else callback ()
+        Left error -> return . Just $ error
+      where
+        filFun :: Package -> Bool
+        filFun p = not ((p ^. pId) `elem` pkgPIdsToDelete)
+
+validatePackageDeletation :: String -> AppContextM (Maybe AppError)
+validatePackageDeletation pkgId =
+  validateUsageBySomeBranch pkgId $ \() ->
+    validateUsageBySomeOtherPackage pkgId $ \() ->
+      validateUsageBySomeQuestionnaire pkgId $ \() ->
+        return Nothing
+  where
+    validateUsageBySomeOtherPackage pkgId callback = do
+      eitherPkgs <- findPackagesByParentPackageId pkgId
+      case eitherPkgs of
+        Right [] -> callback ()
         Right _ ->
           return . Just . createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "package"
+          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
         Left error -> return . Just $ error
+
+validateUsageBySomeBranch pkgId callback = do
+  eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgId
+  case eitherBranches of
+    Right [] -> callback ()
     Right _ ->
       return . Just . createErrorWithErrorMessage $
-      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_PKG pkgId "branch"
+      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "branch"
+    Left error -> return . Just $ error
+
+validateUsageBySomeQuestionnaire pkgId callback = do
+  eitherQuestionnaires <- findQuestionnaireByPackageId pkgId
+  case eitherQuestionnaires of
+    Right [] -> callback ()
+    Right _ ->
+      return . Just . createErrorWithErrorMessage $
+      _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
     Left error -> return . Just $ error
 
 validateVersionFormat :: String -> Maybe AppError

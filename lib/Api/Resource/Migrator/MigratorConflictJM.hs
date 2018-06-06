@@ -2,9 +2,7 @@ module Api.Resource.Migrator.MigratorConflictJM where
 
 import Control.Monad
 import Data.Aeson
-import Data.UUID
 
-import Api.Resource.Event.EventDTO
 import Api.Resource.Migrator.Common ()
 import Api.Resource.Migrator.MigratorConflictDTO
 import Model.Migrator.MigratorState

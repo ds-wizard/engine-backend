@@ -2,12 +2,9 @@ module Api.Resource.Migrator.MigratorStateJM where
 
 import Control.Monad
 import Data.Aeson
-import qualified Data.UUID as U
 
-import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Migrator.Common ()
 import Api.Resource.Migrator.MigratorStateDTO
-import Model.Migrator.MigratorState
 
 instance FromJSON MigratorStateDTO where
   parseJSON (Object o) = do
