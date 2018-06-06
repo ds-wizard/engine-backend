@@ -2,6 +2,8 @@ module Service.DataManagementPlan.DataManagementPlanService where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import Data.Aeson (encode)
+import qualified Data.ByteString.Lazy as BS
 import Data.Time
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
@@ -16,6 +18,7 @@ import Model.Questionnaire.Questionnaire
 import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
 import Service.DataManagementPlan.ReplyApplicator
+import Service.DataManagementPlan.Templates.HtmlMapper
 
 createFilledKM :: Questionnaire -> FilledKnowledgeModel
 createFilledKM questionnaire =
@@ -37,3 +40,19 @@ createDataManagementPlan qtnUuid =
           , _dataManagementPlanUpdatedAt = now
           }
     return . Right . toDTO $ dmp
+
+exportDataManagementPlan :: String -> DataManagementPlanFormat -> AppContextM (Either AppError BS.ByteString)
+exportDataManagementPlan qtnUuid format = do
+  heCreateDataManagementPlan qtnUuid $ \dmp ->
+    case format of
+      JSON -> return . Right . encode $ dmp
+      HTML -> return . Right . toHTML $ dmp
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heCreateDataManagementPlan qtnUuid callback = do
+  eDmp <- createDataManagementPlan qtnUuid
+  case eDmp of
+    Right dmp -> callback dmp
+    Left error -> return . Left $ error

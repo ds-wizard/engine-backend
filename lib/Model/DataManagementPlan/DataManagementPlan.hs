@@ -6,6 +6,11 @@ import GHC.Generics
 
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 
+data DataManagementPlanFormat
+  = JSON
+  | HTML
+  deriving (Show, Eq, Generic)
+
 data DataManagementPlan = DataManagementPlan
   { _dataManagementPlanUuid :: U.UUID
   , _dataManagementPlanQuestionnaireUuid :: String

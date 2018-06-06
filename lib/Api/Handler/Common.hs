@@ -4,9 +4,11 @@ import Control.Lens ((^.))
 import Control.Monad.Logger
 import Control.Monad.Trans.Class (lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
+import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
+import qualified Data.Text.Lazy as TL
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
@@ -14,7 +16,8 @@ import Network.HTTP.Types.Status
         unauthorized401)
 import Network.Wai
 import Web.Scotty.Trans
-       (ActionT, body, header, json, params, request, status)
+       (ActionT, addHeader, body, header, json, params, raw, request,
+        status)
 
 import Api.Resource.Error.ErrorDTO ()
 import Common.Error
@@ -99,6 +102,13 @@ sendError (DatabaseError errorMessage) = do
 sendError (MigratorError errorMessage) = do
   status badRequest400
   json $ MigratorError errorMessage
+
+sendFile :: String -> BSL.ByteString -> Endpoint
+sendFile filename body = do
+  let cdHeader = "attachment;filename=" ++ filename
+  addHeader "Content-Disposition" (TL.pack cdHeader)
+  addHeader "Content-Type" (TL.pack "application/octet-stream")
+  raw body
 
 unauthorizedA :: Endpoint
 unauthorizedA = do

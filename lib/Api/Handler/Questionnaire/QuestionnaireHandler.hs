@@ -1,13 +1,9 @@
 module Api.Handler.Questionnaire.QuestionnaireHandler where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (lift)
-import Data.Aeson (encode)
 import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
-import qualified Data.UUID as U
 import Network.HTTP.Types.Status (created201, noContent204)
-import Web.Scotty.Trans (addHeader, json, param, raw, status)
+import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
@@ -15,7 +11,7 @@ import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
 import Api.Resource.Questionnaire.QuestionnaireDTO ()
 import Common.Error
 import Common.Localization
-import LensesConfig
+import Model.DataManagementPlan.DataManagementPlan
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.Questionnaire.QuestionnaireService
 
@@ -60,21 +56,39 @@ putQuestionnaireRepliesA =
 getQuestionnaireDmpA :: Endpoint
 getQuestionnaireDmpA = do
   qtnUuid <- param "qtnUuid"
-  format <- getQueryParam "format"
-  eitherDto <- lift $ createDataManagementPlan qtnUuid
-  case eitherDto of
-    Right dto -> do
+  mFormatS <- getQueryParam "format"
+  case mFormatS of
+    Nothing -> do
+      eitherDto <- lift $ createDataManagementPlan qtnUuid
+      case eitherDto of
+        Right dto -> json dto
+        Left error -> sendError error
+    -- Just "html" -> do
+    --   eitherHTMLto <- lift $ exportDataManagementPlan qtnUuid HTML
+    --   case eitherHTMLto of
+    --     Right html -> do
+    --       addHeader "Content-Type" (TL.pack "text/html; charset=utf-8")
+    --       raw $ html
+    --     Left error -> sendError error
+    Just formatS ->
+      heGetFormat formatS $ \format -> do
+        eitherBody <- lift $ exportDataManagementPlan qtnUuid format
+        case eitherBody of
+          Right body -> sendFile (getFilename qtnUuid format) body
+          Left error -> sendError error
+  where
+    heGetFormat format callback =
       case format of
-        Nothing -> json dto
-        Just "json" -> do
-          let cdHeader = "attachment;filename=" ++ (U.toString $ dto ^. uuid) ++ ".json"
-          addHeader "Content-Disposition" (TL.pack cdHeader)
-          addHeader "Content-Type" (TL.pack "application/octet-stream")
-          raw $ encode dto
-        Just unsupportedFormat ->
+        "json" -> callback JSON
+        "html" -> callback HTML
+        unsupportedFormat ->
           sendError . createErrorWithErrorMessage . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $
           (T.unpack unsupportedFormat)
-    Left error -> sendError error
+    getFilename :: String -> DataManagementPlanFormat -> String
+    getFilename qtnUuid format =
+      case format of
+        HTML -> qtnUuid ++ ".html"
+        JSON -> qtnUuid ++ ".json"
 
 deleteQuestionnaireA :: Endpoint
 deleteQuestionnaireA =
