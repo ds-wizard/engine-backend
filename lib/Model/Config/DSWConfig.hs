@@ -50,6 +50,11 @@ data AppConfigMail = AppConfigMail
   , _appConfigMailPassword :: String
   }
 
+data AppConfigAnalytics = AppConfigAnalytics
+  { _appConfigAnalyticsEnabled :: Bool
+  , _appConfigAnalyticsEmail :: String
+  }
+
 data BuildInfo = BuildInfo
   { _buildInfoAppName :: String
   , _buildInfoAppVersion :: String
@@ -64,5 +69,6 @@ data DSWConfig = DSWConfig
   , _dSWConfigJwtConfig :: AppConfigJwt
   , _dSWConfigRoles :: AppConfigRoles
   , _dSWConfigMail :: AppConfigMail
+  , _dSWConfigAnalytics :: AppConfigAnalytics
   , _dSWConfigBuildInfo :: BuildInfo
   }

@@ -4,7 +4,6 @@ import Control.Lens ((^.))
 import Test.Hspec
 
 import Common.ConfigLoader
-import Common.Context
 import Database.Connection
 import LensesConfig
 import Model.Context.AppContext
@@ -22,11 +21,12 @@ import Specs.API.VersionAPISpec
 import Specs.Common.UtilsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
+import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
-import Specs.Service.Package.PackageServiceSpec
+import Specs.Service.Package.PackageValidationSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -45,12 +45,7 @@ prepareWebApp runCallback = do
       putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
-        let appContext =
-              AppContext
-              { _appContextConfig = dswConfig
-              , _appContextPool = dbPool
-              , _appContextOldContext = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-              }
+        let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
         runCallback appContext
 
 main :: IO ()
@@ -66,7 +61,8 @@ main =
            migratorSpec
            organizationValidationSpec
            branchServiceSpec
-           packageServiceSpec
+           packageValidationSpec
+           dataManagementPlanSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "Service tests" $ branchServiceIntegrationSpec appContext
            describe "API Tests" $ do

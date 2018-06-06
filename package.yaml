@@ -26,10 +26,12 @@ library:
   dependencies:
   - base
   - aeson
+  - blaze-html
   - bson
   - bson-generic
   - bytestring
   - case-insensitive
+  - clay
   - ConfigFile
   - containers
   - data-default

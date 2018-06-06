@@ -4,10 +4,11 @@ import Data.UUID
 import GHC.Generics
 
 import Model.Event.EventField
+import Model.Event.EventPath
 
 data AddChapterEvent = AddChapterEvent
   { _addChapterEventUuid :: UUID
-  , _addChapterEventKmUuid :: UUID
+  , _addChapterEventPath :: EventPath
   , _addChapterEventChapterUuid :: UUID
   , _addChapterEventTitle :: String
   , _addChapterEventText :: String
@@ -15,7 +16,7 @@ data AddChapterEvent = AddChapterEvent
 
 data EditChapterEvent = EditChapterEvent
   { _editChapterEventUuid :: UUID
-  , _editChapterEventKmUuid :: UUID
+  , _editChapterEventPath :: EventPath
   , _editChapterEventChapterUuid :: UUID
   , _editChapterEventTitle :: EventField String
   , _editChapterEventText :: EventField String
@@ -24,6 +25,6 @@ data EditChapterEvent = EditChapterEvent
 
 data DeleteChapterEvent = DeleteChapterEvent
   { _deleteChapterEventUuid :: UUID
-  , _deleteChapterEventKmUuid :: UUID
+  , _deleteChapterEventPath :: EventPath
   , _deleteChapterEventChapterUuid :: UUID
   } deriving (Show, Eq, Generic)

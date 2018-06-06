@@ -4,4 +4,4 @@ import Api.Resource.Token.TokenDTO
 import Common.Types
 
 toDTO :: Token -> TokenDTO
-toDTO token = TokenDTO {_tdtoToken = token}
+toDTO token = TokenDTO {_tokenDTOToken = token}

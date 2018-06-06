@@ -22,10 +22,10 @@ import LensesConfig
 import Service.Organization.OrganizationService
 
 import Specs.API.Common
+import Specs.Common
 
 organizationAPI appContext =
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "ORGANIZATION API Spec" $
       -- ------------------------------------------------------------------------
@@ -83,7 +83,7 @@ organizationAPI appContext =
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherOrganization <- liftIO $ getOrganization context
+          eitherOrganization <- runInContextIO getOrganization appContext
           -- AND: Compare response with expetation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus

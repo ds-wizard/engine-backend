@@ -1,20 +1,17 @@
 module Api.Resource.Version.VersionDTO where
 
-import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
 
 data VersionDTO = VersionDTO
-  { _vdtoDescription :: String
+  { _versionDTODescription :: String
   }
-
-makeLenses ''VersionDTO
 
 instance FromJSON VersionDTO where
   parseJSON (Object o) = do
-    _vdtoDescription <- o .: "description"
+    _versionDTODescription <- o .: "description"
     return VersionDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON VersionDTO where
-  toJSON VersionDTO {..} = object ["description" .= _vdtoDescription]
+  toJSON VersionDTO {..} = object ["description" .= _versionDTODescription]

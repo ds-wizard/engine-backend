@@ -1,37 +1,35 @@
 module Database.DAO.Organization.OrganizationDAO where
 
-import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Database.MongoDB
        (delete, fetch, findOne, insert, merge, save, select)
-import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Context
 import Common.Error
 import Database.BSON.Organization.Organization ()
 import Database.DAO.Common
+import Model.Context.AppContext
 import Model.Organization.Organization
 
 orgCollection = "organizations"
 
-findOrganization :: Context -> IO (Either AppError Organization)
-findOrganization context = do
+findOrganization :: AppContextM (Either AppError Organization)
+findOrganization = do
   let action = findOne $ select [] orgCollection
-  maybeOrganization <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybeOrganization <- runDB action
   return . deserializeMaybeEntity $ maybeOrganization
 
-insertOrganization :: Context -> Organization -> IO Value
-insertOrganization context organization = do
+insertOrganization :: Organization -> AppContextM Value
+insertOrganization organization = do
   let action = insert orgCollection (toBSON organization)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-updateOrganization :: Context -> Organization -> IO ()
-updateOrganization context organization = do
+updateOrganization :: Organization -> AppContextM ()
+updateOrganization organization = do
   let action = fetch (select [] orgCollection) >>= save orgCollection . merge (toBSON organization)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteOrganizations :: Context -> IO ()
-deleteOrganizations context = do
+deleteOrganizations :: AppContextM ()
+deleteOrganizations = do
   let action = delete $ select [] orgCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action

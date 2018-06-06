@@ -5,39 +5,39 @@ import Data.Bson
 import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, fetch, findOne, insert, merge, save, select)
-import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Context
 import Common.Error
 import Database.BSON.Migrator.MigratorState ()
 import Database.DAO.Common
+import LensesConfig
+import Model.Context.AppContext
 import Model.Migrator.MigratorState
 
 msCollection = "migrations"
 
-findMigratorStateByBranchUuid :: Context -> String -> IO (Either AppError MigratorState)
-findMigratorStateByBranchUuid context branchUuid = do
+findMigratorStateByBranchUuid :: String -> AppContextM (Either AppError MigratorState)
+findMigratorStateByBranchUuid branchUuid = do
   let action = findOne $ select ["branchUuid" =: branchUuid] msCollection
-  maybeMigratorState <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybeMigratorState <- runDB action
   return . deserializeMaybeEntity $ maybeMigratorState
 
-insertMigratorState :: Context -> MigratorState -> IO Value
-insertMigratorState context ms = do
+insertMigratorState :: MigratorState -> AppContextM Value
+insertMigratorState ms = do
   let action = insert msCollection (toBSON ms)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-updateMigratorState :: Context -> MigratorState -> IO ()
-updateMigratorState context ms = do
-  let branchUuid = ms ^. msBranchUuid
-  let action = fetch (select ["branchUuid" =: branchUuid] msCollection) >>= save msCollection . merge (toBSON ms)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+updateMigratorState :: MigratorState -> AppContextM ()
+updateMigratorState ms = do
+  let msBranchUuid = ms ^. branchUuid
+  let action = fetch (select ["branchUuid" =: msBranchUuid] msCollection) >>= save msCollection . merge (toBSON ms)
+  runDB action
 
-deleteMigratorStates :: Context -> IO ()
-deleteMigratorStates context = do
+deleteMigratorStates :: AppContextM ()
+deleteMigratorStates = do
   let action = delete $ select [] msCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteMigratorStateByBranchUuid :: Context -> String -> IO ()
-deleteMigratorStateByBranchUuid context branchUuid = do
+deleteMigratorStateByBranchUuid :: String -> AppContextM ()
+deleteMigratorStateByBranchUuid branchUuid = do
   let action = delete $ select ["branchUuid" =: branchUuid] msCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action

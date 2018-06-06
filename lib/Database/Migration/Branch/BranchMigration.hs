@@ -2,7 +2,6 @@ module Database.Migration.Branch.BranchMigration where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger (logInfo)
-import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
@@ -15,29 +14,28 @@ import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService
 
-runMigration appContext = do
+runMigration = do
   $(logInfo) "MIGRATION (KnowledgeModel/Branch): started"
-  let context = appContext ^. oldContext
-  liftIO $ deleteBranches context
+  deleteBranches
   let branch =
         BranchDTO
-        { _bdtoUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-        , _bdtoName = "Amsterdam KM"
-        , _bdtoOrganizationId = "elixir.nl.amsterdam"
-        , _bdtoKmId = "amsterdam-km"
-        , _bdtoParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-        , _bdtoLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+        { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
+        , _branchDTOName = "Amsterdam KM"
+        , _branchDTOOrganizationId = "elixir.nl.amsterdam"
+        , _branchDTOKmId = "amsterdam-km"
+        , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+        , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
         }
-  liftIO $ createBranch context branch
+  createBranch branch
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
         , AddAnswerEvent' a_km1_ch1_q2_aYes1
-        , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-        , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+        , AddQuestionEvent' a_km1_ch1_ansYes1_fuq1
+        , AddAnswerEvent' a_km1_ch1_q2_aYes1_fuq1_aNo
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
-        , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
+        , AddQuestionEvent' a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2
         , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
         , AddExpertEvent' a_km1_ch1_q2_eAlbert
@@ -49,6 +47,6 @@ runMigration appContext = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  liftIO $ insertEventsToBranch context (U.toString (branch ^. bdtoUuid)) events
-  liftIO $ recompileKnowledgeModel context (U.toString (branch ^. bdtoUuid))
+  insertEventsToBranch (U.toString (branch ^. uuid)) events
+  recompileKnowledgeModel (U.toString (branch ^. uuid))
   $(logInfo) "MIGRATION (KnowledgeModel/Branch): ended"

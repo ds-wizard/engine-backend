@@ -13,7 +13,7 @@ import Model.Context.AppContext
 
 getInfoA :: Endpoint
 getInfoA = do
-  lift $ $(logInfo) "Jsem v infoendpointu"
+  lift $ $(logInfo) "Hello from infoendpoint"
   dswConfig <- lift $ asks _appContextConfig
   json
     InfoDTO

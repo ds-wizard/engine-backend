@@ -6,6 +6,7 @@ import Data.Bson.Generic
 
 import Database.BSON.Common
 import Database.BSON.Event.EventField ()
+import Database.BSON.Event.EventPath ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import LensesConfig
 import Model.Event.Question.QuestionEvent
@@ -17,8 +18,7 @@ instance ToBSON AddQuestionEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddQuestionEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: serializeQuestionType (event ^. qType)
@@ -29,10 +29,9 @@ instance ToBSON AddQuestionEvent where
 
 instance FromBSON AddQuestionEvent where
   fromBSON doc = do
-    qUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    qKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    qChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    qQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    qPath <- BSON.lookup "path" doc
+    qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
     qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
@@ -41,8 +40,7 @@ instance FromBSON AddQuestionEvent where
     return
       AddQuestionEvent
       { _addQuestionEventUuid = qUuid
-      , _addQuestionEventKmUuid = qKmUuid
-      , _addQuestionEventChapterUuid = qChapterUuid
+      , _addQuestionEventPath = qPath
       , _addQuestionEventQuestionUuid = qQuestionUuid
       , _addQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _addQuestionEventQType = qQType
@@ -58,8 +56,7 @@ instance ToBSON EditQuestionEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditQuestionEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: (event ^. qType)
@@ -73,10 +70,9 @@ instance ToBSON EditQuestionEvent where
 
 instance FromBSON EditQuestionEvent where
   fromBSON doc = do
-    qUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    qKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    qChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    qQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    qPath <- BSON.lookup "path" doc
+    qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
     qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
@@ -88,8 +84,7 @@ instance FromBSON EditQuestionEvent where
     return
       EditQuestionEvent
       { _editQuestionEventUuid = qUuid
-      , _editQuestionEventKmUuid = qKmUuid
-      , _editQuestionEventChapterUuid = qChapterUuid
+      , _editQuestionEventPath = qPath
       , _editQuestionEventQuestionUuid = qQuestionUuid
       , _editQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _editQuestionEventQType = qQType
@@ -108,21 +103,18 @@ instance ToBSON DeleteQuestionEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteQuestionEvent"
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
-    , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
+    , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     ]
 
 instance FromBSON DeleteQuestionEvent where
   fromBSON doc = do
-    qUuid <- deserializeUUID $ BSON.lookup "uuid" doc
-    qKmUuid <- deserializeUUID $ BSON.lookup "kmUuid" doc
-    qChapterUuid <- deserializeUUID $ BSON.lookup "chapterUuid" doc
-    qQuestionUuid <- deserializeUUID $ BSON.lookup "questionUuid" doc
+    qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    qPath <- BSON.lookup "path" doc
+    qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
     return
       DeleteQuestionEvent
       { _deleteQuestionEventUuid = qUuid
-      , _deleteQuestionEventKmUuid = qKmUuid
-      , _deleteQuestionEventChapterUuid = qChapterUuid
+      , _deleteQuestionEventPath = qPath
       , _deleteQuestionEventQuestionUuid = qQuestionUuid
       }

@@ -1,7 +1,6 @@
 module Specs.API.VersionAPISpec where
 
 import Control.Lens
-import Control.Monad.Logger (runNoLoggingT)
 import Data.Aeson
 import Data.Either
 import Network.HTTP.Types
@@ -20,10 +19,10 @@ import LensesConfig
 import Service.Package.PackageService
 
 import Specs.API.Common
+import Specs.Common
 
 versionAPI appContext =
   with (startWebApp appContext) $ do
-    let context = appContext ^. oldContext
     let dswConfig = appContext ^. config
     describe "VERSION API Spec" $
       -- ------------------------------------------------------------------------
@@ -37,14 +36,14 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          eitherParentPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
+          eitherParentPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:1.0.0") appContext
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
           let expDto =
@@ -54,14 +53,14 @@ versionAPI appContext =
                 , _packageDTOOrganizationId = "elixir.nl.amsterdam"
                 , _packageDTOKmId = "amsterdam-km"
                 , _packageDTOVersion = "1.0.0"
-                , _packageDTODescription = reqDto ^. vdtoDescription
+                , _packageDTODescription = reqDto ^. description
                 , _packageDTOParentPackageId = Just $ parentPackage ^. pId
                 }
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
-          eitherPackageFromDb <- liftIO $ liftIO $ getPackageById context "elixir.nl.amsterdam:amsterdam-km:1.0.0"
+          eitherPackageFromDb <- runInContextIO (getPackageById "elixir.nl.amsterdam:amsterdam-km:1.0.0") appContext
           -- AND: Compare response with expetation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -74,14 +73,14 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          eitherParentPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
+          eitherParentPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:1.0.0") appContext
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
           let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
@@ -97,15 +96,16 @@ versionAPI appContext =
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = VersionDTO {_vdtoDescription = "Second Release"}
+          let reqDto = VersionDTO {_versionDTODescription = "Second Release"}
           let reqBody = encode reqDto
-          liftIO . runNoLoggingT $ PKG.runMigration appContext
-          liftIO . runNoLoggingT $ B.runMigration appContext
-          liftIO $ createPackageFromKMC context "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" "Desc"
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
+          let versionDto = VersionDTO {_versionDTODescription = "Desc"}
+          runInContextIO (createPackageFromKMC "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" versionDto) appContext
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          eitherParentPackage <- liftIO $ getPackageById context "elixir.nl:core-nl:1.0.0"
+          eitherParentPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:1.0.0") appContext
           liftIO $ (isRight eitherParentPackage) `shouldBe` True
           let (Right parentPackage) = eitherParentPackage
           let expDto = createErrorWithErrorMessage _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION

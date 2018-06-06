@@ -2,12 +2,13 @@ module Api.Handler.Common where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger
-import Control.Monad.Reader
 import Control.Monad.Trans.Class (lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
+import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
+import qualified Data.Text.Lazy as TL
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
@@ -15,7 +16,8 @@ import Network.HTTP.Types.Status
         unauthorized401)
 import Network.Wai
 import Web.Scotty.Trans
-       (ActionT, body, header, json, params, request, status)
+       (ActionT, addHeader, body, header, json, params, raw, request,
+        status)
 
 import Api.Resource.Error.ErrorDTO ()
 import Common.Error
@@ -33,17 +35,16 @@ getReqDto callback = do
     Right reqDto -> callback reqDto
     Left error -> sendError $ createErrorWithErrorMessage error
 
-getCurrentUserUuid context callback = do
+getCurrentUserUuid callback = do
   tokenHeader <- header "Authorization"
-  let userUuidMaybe =
-        getUserUuidFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
+  let userUuidMaybe = getUserUuidFromToken (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
   case userUuidMaybe of
     Just userUuid -> callback (T.unpack userUuid)
     Nothing -> unauthorizedA
 
-getCurrentUser context callback =
-  getCurrentUserUuid context $ \userUuid -> do
-    eitherUser <- liftIO $ getUserById context userUuid
+getCurrentUser callback =
+  getCurrentUserUuid $ \userUuid -> do
+    eitherUser <- lift $ getUserById userUuid
     case eitherUser of
       Right user -> callback user
       Left error -> sendError error
@@ -68,9 +69,9 @@ getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
         Just value -> return $ Just (LT.toStrict name, value)
         Nothing -> return Nothing
 
-checkPermission context perm callback = do
+checkPermission perm callback = do
   tokenHeader <- header "Authorization"
-  let mUserPerms = getPermissionsFromToken context (tokenHeader >>= \token -> Just . LT.toStrict $ token)
+  let mUserPerms = getPermissionsFromToken (tokenHeader >>= \token -> Just . LT.toStrict $ token)
   case mUserPerms of
     Just userPerms ->
       if perm `Prelude.elem` userPerms
@@ -78,14 +79,14 @@ checkPermission context perm callback = do
         else forbidden
     Nothing -> forbidden
 
-isLogged context callback = do
+isLogged callback = do
   tokenHeader <- header "Authorization"
   callback . isJust $ tokenHeader
 
-isAdmin context callback =
-  isLogged context $ \userIsLogged ->
+isAdmin callback =
+  isLogged $ \userIsLogged ->
     if userIsLogged
-      then getCurrentUser context $ \user -> callback $ user ^. role == "ADMIN"
+      then getCurrentUser $ \user -> callback $ user ^. role == "ADMIN"
       else callback False
 
 sendError :: AppError -> Endpoint
@@ -101,6 +102,13 @@ sendError (DatabaseError errorMessage) = do
 sendError (MigratorError errorMessage) = do
   status badRequest400
   json $ MigratorError errorMessage
+
+sendFile :: String -> BSL.ByteString -> Endpoint
+sendFile filename body = do
+  let cdHeader = "attachment;filename=" ++ filename
+  addHeader "Content-Disposition" (TL.pack cdHeader)
+  addHeader "Content-Type" (TL.pack "application/octet-stream")
+  raw body
 
 unauthorizedA :: Endpoint
 unauthorizedA = do

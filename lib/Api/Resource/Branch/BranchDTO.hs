@@ -1,39 +1,36 @@
 module Api.Resource.Branch.BranchDTO where
 
-import Control.Lens (makeLenses)
 import Control.Monad
 import Data.Aeson
 import Data.UUID
 
 data BranchDTO = BranchDTO
-  { _bdtoUuid :: UUID
-  , _bdtoName :: String
-  , _bdtoOrganizationId :: String
-  , _bdtoKmId :: String
-  , _bdtoParentPackageId :: Maybe String
-  , _bdtoLastAppliedParentPackageId :: Maybe String
+  { _branchDTOUuid :: UUID
+  , _branchDTOName :: String
+  , _branchDTOOrganizationId :: String
+  , _branchDTOKmId :: String
+  , _branchDTOParentPackageId :: Maybe String
+  , _branchDTOLastAppliedParentPackageId :: Maybe String
   }
-
-makeLenses ''BranchDTO
 
 instance FromJSON BranchDTO where
   parseJSON (Object o) = do
-    _bdtoUuid <- o .: "uuid"
-    _bdtoName <- o .: "name"
-    _bdtoOrganizationId <- o .: "organizationId"
-    _bdtoKmId <- o .: "kmId"
-    _bdtoParentPackageId <- o .: "parentPackageId"
-    _bdtoLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
+    _branchDTOUuid <- o .: "uuid"
+    _branchDTOName <- o .: "name"
+    _branchDTOOrganizationId <- o .: "organizationId"
+    _branchDTOKmId <- o .: "kmId"
+    _branchDTOParentPackageId <- o .: "parentPackageId"
+    _branchDTOLastAppliedParentPackageId <- o .: "lastAppliedParentPackageId"
     return BranchDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON BranchDTO where
   toJSON BranchDTO {..} =
     object
-      [ "uuid" .= _bdtoUuid
-      , "name" .= _bdtoName
-      , "organizationId" .= _bdtoOrganizationId
-      , "kmId" .= _bdtoKmId
-      , "parentPackageId" .= _bdtoParentPackageId
-      , "lastAppliedParentPackageId" .= _bdtoLastAppliedParentPackageId
+      [ "uuid" .= _branchDTOUuid
+      , "name" .= _branchDTOName
+      , "organizationId" .= _branchDTOOrganizationId
+      , "kmId" .= _branchDTOKmId
+      , "parentPackageId" .= _branchDTOParentPackageId
+      , "lastAppliedParentPackageId" .= _branchDTOLastAppliedParentPackageId
       ]

@@ -5,19 +5,15 @@ import Data.Bson.Generic
 import Data.Maybe
 
 import Database.BSON.Event.Answer ()
-import Database.BSON.Event.AnswerItemTemplateQuestion ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Expert ()
-import Database.BSON.Event.FollowUpQuestion ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
 import Model.Event.Answer.AnswerEvent
-import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.Expert.ExpertEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -45,20 +41,6 @@ chooseEventDeserializator doc = do
     "AddReferenceEvent" -> Just . AddReferenceEvent' . fromJust $ (fromBSON doc :: Maybe AddReferenceEvent)
     "EditReferenceEvent" -> Just . EditReferenceEvent' . fromJust $ (fromBSON doc :: Maybe EditReferenceEvent)
     "DeleteReferenceEvent" -> Just . DeleteReferenceEvent' . fromJust $ (fromBSON doc :: Maybe DeleteReferenceEvent)
-    "AddFollowUpQuestionEvent" ->
-      Just . AddFollowUpQuestionEvent' . fromJust $ (fromBSON doc :: Maybe AddFollowUpQuestionEvent)
-    "EditFollowUpQuestionEvent" ->
-      Just . EditFollowUpQuestionEvent' . fromJust $ (fromBSON doc :: Maybe EditFollowUpQuestionEvent)
-    "DeleteFollowUpQuestionEvent" ->
-      Just . DeleteFollowUpQuestionEvent' . fromJust $ (fromBSON doc :: Maybe DeleteFollowUpQuestionEvent)
-    "AddAnswerItemTemplateQuestionEvent" ->
-      Just . AddAnswerItemTemplateQuestionEvent' . fromJust $ (fromBSON doc :: Maybe AddAnswerItemTemplateQuestionEvent)
-    "EditAnswerItemTemplateQuestionEvent" ->
-      Just . EditAnswerItemTemplateQuestionEvent' . fromJust $
-      (fromBSON doc :: Maybe EditAnswerItemTemplateQuestionEvent)
-    "DeleteAnswerItemTemplateQuestionEvent" ->
-      Just . DeleteAnswerItemTemplateQuestionEvent' . fromJust $
-      (fromBSON doc :: Maybe DeleteAnswerItemTemplateQuestionEvent)
 
 convertEventToBSON :: Event -> BSON.Document
 convertEventToBSON (AddKnowledgeModelEvent' event) = toBSON event
@@ -78,9 +60,3 @@ convertEventToBSON (DeleteExpertEvent' event) = toBSON event
 convertEventToBSON (AddReferenceEvent' event) = toBSON event
 convertEventToBSON (EditReferenceEvent' event) = toBSON event
 convertEventToBSON (DeleteReferenceEvent' event) = toBSON event
-convertEventToBSON (AddFollowUpQuestionEvent' event) = toBSON event
-convertEventToBSON (EditFollowUpQuestionEvent' event) = toBSON event
-convertEventToBSON (DeleteFollowUpQuestionEvent' event) = toBSON event
-convertEventToBSON (AddAnswerItemTemplateQuestionEvent' event) = toBSON event
-convertEventToBSON (EditAnswerItemTemplateQuestionEvent' event) = toBSON event
-convertEventToBSON (DeleteAnswerItemTemplateQuestionEvent' event) = toBSON event

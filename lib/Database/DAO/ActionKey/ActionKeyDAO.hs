@@ -1,54 +1,52 @@
 module Database.DAO.ActionKey.ActionKeyDAO where
 
-import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, deleteOne, find, findOne, insert, rest, select)
-import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Context
 import Common.Error
 import Database.BSON.ActionKey.ActionKey ()
 import Database.DAO.Common
 import Model.ActionKey.ActionKey
+import Model.Context.AppContext
 
 actionKeyCollection = "actionKeys"
 
-findActionKeys :: Context -> IO (Either AppError [ActionKey])
-findActionKeys context = do
+findActionKeys :: AppContextM (Either AppError [ActionKey])
+findActionKeys = do
   let action = rest =<< find (select [] actionKeyCollection)
-  actionKeysS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  actionKeysS <- runDB action
   return . deserializeEntities $ actionKeysS
 
-findActionKeyById :: Context -> String -> IO (Either AppError ActionKey)
-findActionKeyById context actionKeyUuid = do
+findActionKeyById :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyById actionKeyUuid = do
   let action = findOne $ select ["uuid" =: actionKeyUuid] actionKeyCollection
-  maybeActionKeyS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybeActionKeyS <- runDB action
   return . deserializeMaybeEntity $ maybeActionKeyS
 
-findActionKeyByHash :: Context -> String -> IO (Either AppError ActionKey)
-findActionKeyByHash context hash = do
+findActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyByHash hash = do
   let action = findOne $ select ["hash" =: hash] actionKeyCollection
-  maybeActionKeyS <- runMongoDBPoolDef action (context ^. ctxDbPool)
+  maybeActionKeyS <- runDB action
   return . deserializeMaybeEntity $ maybeActionKeyS
 
-insertActionKey :: Context -> ActionKey -> IO Value
-insertActionKey context actionKey = do
+insertActionKey :: ActionKey -> AppContextM Value
+insertActionKey actionKey = do
   let action = insert actionKeyCollection (toBSON actionKey)
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteActionKeys :: Context -> IO ()
-deleteActionKeys context = do
+deleteActionKeys :: AppContextM ()
+deleteActionKeys = do
   let action = delete $ select [] actionKeyCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteActionKeyById :: Context -> String -> IO ()
-deleteActionKeyById context actionKeyUuid = do
+deleteActionKeyById :: String -> AppContextM ()
+deleteActionKeyById actionKeyUuid = do
   let action = deleteOne $ select ["uuid" =: actionKeyUuid] actionKeyCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action
 
-deleteActionKeyByHash :: Context -> String -> IO ()
-deleteActionKeyByHash context hash = do
+deleteActionKeyByHash :: String -> AppContextM ()
+deleteActionKeyByHash hash = do
   let action = deleteOne $ select ["hash" =: hash] actionKeyCollection
-  runMongoDBPoolDef action (context ^. ctxDbPool)
+  runDB action

@@ -4,41 +4,41 @@ import Control.Lens ((^.))
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.Organization.OrganizationDTO
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
-import Model.Organization.Organization
 
-toDTO :: Branch -> Organization -> BranchDTO
+toDTO :: Branch -> OrganizationDTO -> BranchDTO
 toDTO branch organization =
   BranchDTO
-  { _bdtoUuid = branch ^. bUuid
-  , _bdtoName = branch ^. bName
-  , _bdtoOrganizationId = organization ^. organizationId
-  , _bdtoKmId = branch ^. bKmId
-  , _bdtoParentPackageId = branch ^. bParentPackageId
-  , _bdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId
+  { _branchDTOUuid = branch ^. uuid
+  , _branchDTOName = branch ^. name
+  , _branchDTOOrganizationId = organization ^. organizationId
+  , _branchDTOKmId = branch ^. kmId
+  , _branchDTOParentPackageId = branch ^. parentPackageId
+  , _branchDTOLastAppliedParentPackageId = branch ^. lastAppliedParentPackageId
   }
 
-toWithStateDTO :: Branch -> BranchState -> Organization -> BranchWithStateDTO
+toWithStateDTO :: Branch -> BranchState -> OrganizationDTO -> BranchWithStateDTO
 toWithStateDTO branch state organization =
   BranchWithStateDTO
-  { _bwsdtoUuid = branch ^. bUuid
-  , _bwsdtoName = branch ^. bName
-  , _bwsdtoOrganizationId = organization ^. organizationId
-  , _bwsdtoKmId = branch ^. bKmId
-  , _bwsdtoParentPackageId = branch ^. bParentPackageId
-  , _bwsdtoLastAppliedParentPackageId = branch ^. bLastAppliedParentPackageId
-  , _bwsdtoState = state
+  { _branchWithStateDTOUuid = branch ^. uuid
+  , _branchWithStateDTOName = branch ^. name
+  , _branchWithStateDTOOrganizationId = organization ^. organizationId
+  , _branchWithStateDTOKmId = branch ^. kmId
+  , _branchWithStateDTOParentPackageId = branch ^. parentPackageId
+  , _branchWithStateDTOLastAppliedParentPackageId = branch ^. lastAppliedParentPackageId
+  , _branchWithStateDTOState = state
   }
 
 fromDTO :: BranchDTO -> Branch
 fromDTO dto =
   Branch
-  { _bUuid = dto ^. bdtoUuid
-  , _bName = dto ^. bdtoName
-  , _bKmId = dto ^. bdtoKmId
-  , _bParentPackageId = dto ^. bdtoParentPackageId
-  , _bLastAppliedParentPackageId = dto ^. bdtoLastAppliedParentPackageId
-  , _bLastMergeCheckpointPackageId = Nothing
+  { _branchUuid = dto ^. uuid
+  , _branchName = dto ^. name
+  , _branchKmId = dto ^. kmId
+  , _branchParentPackageId = dto ^. parentPackageId
+  , _branchLastAppliedParentPackageId = dto ^. lastAppliedParentPackageId
+  , _branchLastMergeCheckpointPackageId = Nothing
   }

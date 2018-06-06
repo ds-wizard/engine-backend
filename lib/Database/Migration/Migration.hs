@@ -12,12 +12,12 @@ import qualified
        Database.Migration.Questionnaire.QuestionnaireMigration as QTN
 import qualified Database.Migration.User.UserMigration as UM
 
-runMigration appContext = do
+runMigration = do
   $(logInfo) "MIGRATION: started"
-  ORG.runMigration appContext
-  UM.runMigration appContext
-  PKG.runMigration appContext
-  BM.runMigration appContext
-  MM.runMigration appContext
-  QTN.runMigration appContext
+  ORG.runMigration
+  UM.runMigration
+  PKG.runMigration
+  BM.runMigration
+  MM.runMigration
+  QTN.runMigration
   $(logInfo) "MIGRATION: ended"

@@ -1,17 +1,22 @@
 module Model.Questionnaire.Questionnaire where
 
-import Data.Map
-import Data.UUID
+import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.KnowledgeModel.KnowledgeModel
 
-type QuestionnaireReplies = Map String String
+data QuestionnaireReply = QuestionnaireReply
+  { _questionnaireReplyPath :: String
+  , _questionnaireReplyValue :: String
+  } deriving (Generic, Show, Eq)
 
 data Questionnaire = Questionnaire
-  { _questionnaireUuid :: UUID
+  { _questionnaireUuid :: U.UUID
   , _questionnaireName :: String
   , _questionnairePackageId :: String
   , _questionnaireKnowledgeModel :: KnowledgeModel
-  , _questionnaireReplies :: QuestionnaireReplies
+  , _questionnaireReplies :: [QuestionnaireReply]
+  , _questionnaireCreatedAt :: UTCTime
+  , _questionnaireUpdatedAt :: UTCTime
   } deriving (Generic, Show, Eq)

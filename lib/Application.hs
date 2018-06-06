@@ -13,7 +13,6 @@ import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
 import Api.Router
 import Common.ConfigLoader
-import Common.Context
 import Database.Connection
 import Database.Migration.Migration
 import LensesConfig
@@ -51,18 +50,13 @@ runServer =
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
           lift $ $(logInfo) "DATABASE: connected"
           let serverPort = dswConfig ^. webConfig ^. port
-          let appContext =
-                AppContext
-                { _appContextConfig = dswConfig
-                , _appContextPool = dbPool
-                , _appContextOldContext = Context {_ctxDbPool = dbPool, _ctxConfig = Config}
-                }
-          initDevelopmentDatabase appContext
+          let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
+          liftIO $ initDevelopmentDatabase appContext
           liftIO $ runApplication appContext
 
 initDevelopmentDatabase context =
   case context ^. config . environment . env of
-    Development -> runMigration context
+    Development -> runStdoutLoggingT $ runReaderT (runAppContextM runMigration) context
     _ -> return ()
 
 runApplication :: AppContext -> IO ()

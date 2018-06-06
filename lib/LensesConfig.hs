@@ -3,8 +3,17 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
+import Api.Resource.Event.EventPathDTO
+import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
+import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Migrator.MigratorConflictDTO
+import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migrator.MigratorStateDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
@@ -13,25 +22,31 @@ import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Token.TokenCreateDTO
+import Api.Resource.Token.TokenDTO
 import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
+import Api.Resource.Version.VersionDTO
 import Model.ActionKey.ActionKey
+import Model.Branch.Branch
 import Model.Config.DSWConfig
 import Model.Context.AppContext
+import Model.DataManagementPlan.DataManagementPlan
 import Model.Event.Answer.AnswerEvent
-import Model.Event.AnswerItemTemplateQuestion.AnswerItemTemplateQuestionEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
+import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
-import Model.Event.FollowUpQuestion.FollowUpQuestionEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
@@ -42,6 +57,13 @@ import Model.User.User
 -- -------------------------------------
 -- Model / ActionKey
 makeFields ''ActionKey
+
+-- Model / Branch
+makeFields ''Branch
+
+makeFields ''BranchWithEvents
+
+makeFields ''BranchWithKM
 
 -- Model / Config
 makeFields ''AppConfigEnvironment
@@ -58,15 +80,22 @@ makeFields ''AppConfigRoles
 
 makeFields ''AppConfigMail
 
+makeFields ''AppConfigAnalytics
+
 makeFields ''BuildInfo
 
 makeFields ''DSWConfig
 
--- Model / Config
+-- Model / Context
 makeFields ''AppContext
+
+-- Model / DataManagementPlan
+makeFields ''DataManagementPlan
 
 -- Model / Event
 makeFields ''EventField
+
+makeFields ''EventPathItem
 
 makeFields ''AddKnowledgeModelEvent
 
@@ -102,17 +131,16 @@ makeFields ''EditReferenceEvent
 
 makeFields ''DeleteReferenceEvent
 
-makeFields ''AddFollowUpQuestionEvent
+-- Model / FilledKnowledgeModel
+makeFields ''FilledKnowledgeModel
 
-makeFields ''EditFollowUpQuestionEvent
+makeFields ''FilledChapter
 
-makeFields ''DeleteFollowUpQuestionEvent
+makeFields ''FilledQuestion
 
-makeFields ''AddAnswerItemTemplateQuestionEvent
+makeFields ''FilledAnswer
 
-makeFields ''EditAnswerItemTemplateQuestionEvent
-
-makeFields ''DeleteAnswerItemTemplateQuestionEvent
+makeFields ''FilledAnswerItem
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
@@ -133,16 +161,25 @@ makeFields ''Expert
 
 makeFields ''Reference
 
+-- Model / Migrator
+makeFields ''MigratorConflictDTO
+
+makeFields ''MigratorStateCreateDTO
+
+makeFields ''MigratorStateDTO
+
 -- Model / Organization
 makeFields ''Organization
-
--- Model / Questionnaire
-makeFields ''Questionnaire
 
 -- Model / Package
 makeFields ''Package
 
 makeFields ''PackageWithEvents
+
+-- Model / Questionnaire
+makeFields ''Questionnaire
+
+makeFields ''QuestionnaireReply
 
 -- Model / User
 makeFields ''User
@@ -150,10 +187,20 @@ makeFields ''User
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
--- Api / Resource / ActionKeyDTO
+-- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
 
--- Api / Event / EventDTO
+-- Api / Resource / Branch
+makeFields ''BranchDTO
+
+makeFields ''BranchWithStateDTO
+
+-- Api / Resource / DataManagementPlan
+makeFields ''DataManagementPlanDTO
+
+-- Api / Resource / Event
+makeFields ''EventPathItemDTO
+
 makeFields ''AddKnowledgeModelEventDTO
 
 makeFields ''EditKnowledgeModelEventDTO
@@ -176,12 +223,6 @@ makeFields ''EditAnswerEventDTO
 
 makeFields ''DeleteAnswerEventDTO
 
-makeFields ''AddAnswerItemTemplateQuestionEventDTO
-
-makeFields ''EditAnswerItemTemplateQuestionEventDTO
-
-makeFields ''DeleteAnswerItemTemplateQuestionEventDTO
-
 makeFields ''AddExpertEventDTO
 
 makeFields ''EditExpertEventDTO
@@ -194,13 +235,21 @@ makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
 
-makeFields ''AddFollowUpQuestionEventDTO
+-- Api / Resource / FilledKnowledgeModel
+makeFields ''FilledKnowledgeModelDTO
 
-makeFields ''EditFollowUpQuestionEventDTO
+makeFields ''FilledChapterDTO
 
-makeFields ''DeleteFollowUpQuestionEventDTO
+makeFields ''FilledQuestionDTO
 
--- Api / Resource / KnowledgeModelDTO
+makeFields ''FilledAnswerDTO
+
+makeFields ''FilledAnswerItemDTO
+
+-- Api / Resource / Info
+makeFields ''InfoDTO
+
+-- Api / Resource / KnowledgeModel
 makeFields ''KnowledgeModelDTO
 
 makeFields ''ChapterDTO
@@ -219,26 +268,36 @@ makeFields ''ExpertDTO
 
 makeFields ''ReferenceDTO
 
--- Model / OrganizationDTO
+-- Api / Resource / Migrator
+makeFields ''MigratorState
+
+-- Api / Resource / Organization
 makeFields ''OrganizationDTO
 
 makeFields ''OrganizationChangeDTO
 
--- Model / QuestionnaireDTO
-makeFields ''QuestionnaireCreateDTO
-
-makeFields ''QuestionnaireDTO
-
-makeFields ''QuestionnaireDetailDTO
-
--- Model / UserDTO
+-- Api / Resource / Package
 makeFields ''PackageDTO
 
 makeFields ''PackageSimpleDTO
 
 makeFields ''PackageWithEventsDTO
 
--- Model / UserDTO
+-- Api / Resource / Questionnaire
+makeFields ''QuestionnaireCreateDTO
+
+makeFields ''QuestionnaireDTO
+
+makeFields ''QuestionnaireReplyDTO
+
+makeFields ''QuestionnaireDetailDTO
+
+-- Api / Resource / Token
+makeFields ''TokenDTO
+
+makeFields ''TokenCreateDTO
+
+-- Api / Resource / User
 makeFields ''UserChangeDTO
 
 makeFields ''UserCreateDTO
@@ -250,3 +309,6 @@ makeFields ''UserPasswordDTO
 makeFields ''UserProfileChangeDTO
 
 makeFields ''UserStateDTO
+
+-- Api / Resource / Version
+makeFields ''VersionDTO

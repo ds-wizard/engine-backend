@@ -26,21 +26,20 @@ km1WithChangeProperties =
 
 km1WithoutChapters :: KnowledgeModel
 km1WithoutChapters =
-  KnowledgeModel
-  {_knowledgeModelUuid = km1 ^. uuid, _knowledgeModelName = "My Knowledge Model", _knowledgeModelChapters = []}
+  KnowledgeModel {_knowledgeModelUuid = km1 ^. uuid, _knowledgeModelName = km1 ^. name, _knowledgeModelChapters = []}
 
 km1WithQ4Plain :: KnowledgeModel
 km1WithQ4Plain =
   KnowledgeModel
-  { _knowledgeModelUuid = fromJust $ U.fromString "ff672529-e837-4201-b7b1-7ada557d9725"
-  , _knowledgeModelName = "My Knowledge Model"
+  { _knowledgeModelUuid = km1 ^. uuid
+  , _knowledgeModelName = km1 ^. name
   , _knowledgeModelChapters = [chapter1, chapter2WithQ4Plain]
   }
 
 km1WithQ4 :: KnowledgeModel
 km1WithQ4 =
   KnowledgeModel
-  { _knowledgeModelUuid = fromJust $ U.fromString "ff672529-e837-4201-b7b1-7ada557d9725"
-  , _knowledgeModelName = "My Knowledge Model"
+  { _knowledgeModelUuid = km1 ^. uuid
+  , _knowledgeModelName = km1 ^. name
   , _knowledgeModelChapters = [chapter1, chapter2WithQ4]
   }

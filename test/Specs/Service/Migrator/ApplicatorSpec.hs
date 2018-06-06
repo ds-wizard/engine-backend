@@ -13,7 +13,7 @@ import Database.Migration.Branch.Data.KnowledgeModel.Questions
 import Database.Migration.Branch.Data.KnowledgeModel.References
 import LensesConfig
 import Model.Event.Event
-import Service.Migrator.Applicator
+import Service.Migrator.Applicator.Applicator
 
 applicatorSpec =
   describe "Applicator" $ do
@@ -66,7 +66,7 @@ applicatorSpec =
       it "Apply:  EditQuestionEvent 3" $ do
         let event = e_km1_ch2_q4
         let (Right computed) = runApplicator (Just km1WithQ4Plain) [EditQuestionEvent' event]
-        let expAit = ait1WithChangeProperties & questions .~ []
+        let expAit = q4_aitChanged & questions .~ []
         let expQuestion4 = question4WithChangeProperties & answerItemTemplate .~ Just expAit
         let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
@@ -80,55 +80,57 @@ applicatorSpec =
     describe "Apply:  Answer Events" $ do
       it "Apply:  AddAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddAnswerEvent' a_km1_ch1_q2_aMaybe]
-        let question2WithAddedAnswer = question2 & answers .~ (Just [answerNo1, answerYes1, answerMaybe])
+        let question2WithAddedAnswer = question2 & answers .~ (Just [q2_answerNo, q2_answerYes, q2_answerMaybe])
         let chapter1WithAddedAnswer = chapter1 & questions .~ [question1, question2WithAddedAnswer]
         let expected = km1 & chapters .~ [chapter1WithAddedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditAnswerEvent' e_km1_ch1_q2_aYes1]
-        let question2WithChangedAnswer = question2 & answers .~ (Just [answerNo1, answerYes1Changed])
+        let question2WithChangedAnswer = question2 & answers .~ (Just [q2_answerNo, q2_answerYesChanged])
         let chapter1WithChangedAnswer = chapter1 & questions .~ [question1, question2WithChangedAnswer]
         let expected = km1 & chapters .~ [chapter1WithChangedAnswer, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteAnswerEvent' d_km1_ch1_q2_aYes1]
-        let question2WithDeletedAnswer = question2 & answers .~ (Just [answerNo1])
+        let question2WithDeletedAnswer = question2 & answers .~ (Just [q2_answerNo])
         let chapter1WithDeletedAnswer = chapter1 & questions .~ [question1, question2WithDeletedAnswer]
         let expected = km1 & chapters .~ [chapter1WithDeletedAnswer, chapter2]
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Follow-Up Question Events" $ do
       it "Apply:  AddFollowUpQuestionEvent" $ do
-        let event = a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_ansYes4_fuq3
-        let (Right computed) = runApplicator (Just km1) [AddFollowUpQuestionEvent' event]
-        let expFUQ3 = followUpQuestion3
-        let expanswerYesFuq2 = answerYesFuq2 & followUps .~ [expFUQ3]
-        let expFUQ2 = followUpQuestion2 & answers .~ (Just [answerNoFuq2, expanswerYesFuq2])
-        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
-        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
+        let event = a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2_ansYes4_fuq3
+        let (Right computed) = runApplicator (Just km1) [AddQuestionEvent' event]
+        let expFUQ3 = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3
+        let expq2_aYes_fuq1_aYes_fuq2_answerYes = q2_aYes_fuq1_aYes_fuq2_answerYes & followUps .~ [expFUQ3]
+        let expFUQ2 =
+              q2_aYes_fuq1_aYes_fuQuestion2 & answers .~
+              (Just [q2_aYes_fuq1_aYes_fuq2_answerNo, expq2_aYes_fuq1_aYes_fuq2_answerYes])
+        let expq2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ [expFUQ2]
+        let expFUQ1 = q2_aYes_fuQuestion1 & answers .~ (Just [q2_aYes_fuq1_answerNo, expq2_aYes_fuq1_answerYes])
+        let expQ2_AnswerYes = q2_answerYes & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ (Just [q2_answerNo, expQ2_AnswerYes])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditFollowUpQuestionEvent" $ do
         let event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-        let (Right computed) = runApplicator (Just km1) [EditFollowUpQuestionEvent' event]
-        let expFUQ2 = followUpQuestion2Changed
-        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ [expFUQ2]
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
-        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
+        let (Right computed) = runApplicator (Just km1) [EditQuestionEvent' event]
+        let expFUQ2 = q2_aYes_fuq1_aYes_fuQuestion2Changed
+        let expq2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ [expFUQ2]
+        let expFUQ1 = q2_aYes_fuQuestion1 & answers .~ (Just [q2_aYes_fuq1_answerNo, expq2_aYes_fuq1_answerYes])
+        let expQ2_AnswerYes = q2_answerYes & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ (Just [q2_answerNo, expQ2_AnswerYes])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteFollowUpQuestionEvent" $ do
         let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-        let (Right computed) = runApplicator (Just km1) [DeleteFollowUpQuestionEvent' event]
-        let expanswerYesFuq1 = answerYesFuq1 & followUps .~ []
-        let expFUQ1 = followUpQuestion1 & answers .~ (Just [answerNoFuq1, expanswerYesFuq1])
-        let expAnswerYes1 = answerYes1 & followUps .~ [expFUQ1]
-        let expQuestion2 = question2 & answers .~ (Just [answerNo1, expAnswerYes1])
+        let (Right computed) = runApplicator (Just km1) [DeleteQuestionEvent' event]
+        let expq2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ []
+        let expFUQ1 = q2_aYes_fuQuestion1 & answers .~ (Just [q2_aYes_fuq1_answerNo, expq2_aYes_fuq1_answerYes])
+        let expQ2_AnswerYes = q2_answerYes & followUps .~ [expFUQ1]
+        let expQuestion2 = question2 & answers .~ (Just [q2_answerNo, expQ2_AnswerYes])
         let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
@@ -136,24 +138,24 @@ applicatorSpec =
     describe "Apply:  AnswerItemTemplateQuestion Events" $ do
       it "Apply:  AddAnswerItemTemplateQuestionEvent" $ do
         let event = a_km1_ch2_q4_ait1_q5
-        let (Right computed) = runApplicator (Just km1WithQ4Plain) [AddAnswerItemTemplateQuestionEvent' event]
-        let expAit1 = ait1 & questions .~ [question5Plain]
+        let (Right computed) = runApplicator (Just km1WithQ4Plain) [AddQuestionEvent' event]
+        let expAit1 = q4_ait & questions .~ [q4_ait1_question5Plain]
         let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
         let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
       it "Apply:  EditAnswerItemTemplateQuestionEvent" $ do
         let event = e_km1_ch2_q4_ait1_q5
-        let (Right computed) = runApplicator (Just km1WithQ4) [EditAnswerItemTemplateQuestionEvent' event]
-        let expAit1 = ait1 & questions .~ [question5WithChangeProperties, question6]
+        let (Right computed) = runApplicator (Just km1WithQ4) [EditQuestionEvent' event]
+        let expAit1 = q4_ait & questions .~ [q4_ait1_question5Changed, q4_ait1_question6]
         let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
         let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteAnswerItemTemplateQuestionEvent" $ do
-        let event = d_km1_ch2_q4_ait1
-        let (Right computed) = runApplicator (Just km1WithQ4) [DeleteAnswerItemTemplateQuestionEvent' event]
-        let expAit1 = ait1 & questions .~ [question6]
+        let event = d_km1_ch2_q4_ait1_q5
+        let (Right computed) = runApplicator (Just km1WithQ4) [DeleteQuestionEvent' event]
+        let expAit1 = q4_ait & questions .~ [q4_ait1_question6]
         let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
         let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
@@ -208,10 +210,10 @@ applicatorSpec =
               , AddQuestionEvent' a_km1_ch1_q2
               , AddAnswerEvent' a_km1_ch1_q2_aNo1
               , AddAnswerEvent' a_km1_ch1_q2_aYes1
-              , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1
-              , AddAnswerEvent' a_km1_ch1_q2_aNoFu1
+              , AddQuestionEvent' a_km1_ch1_ansYes1_fuq1
+              , AddAnswerEvent' a_km1_ch1_q2_aYes1_fuq1_aNo
               , AddAnswerEvent' a_km1_ch1_q2_aYesFu1
-              , AddFollowUpQuestionEvent' a_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
+              , AddQuestionEvent' a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2
               , AddAnswerEvent' a_km1_ch1_q2_aNoFu2
               , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
               , AddExpertEvent' a_km1_ch1_q2_eAlbert
@@ -223,15 +225,15 @@ applicatorSpec =
               , AddAnswerEvent' a_km1_ch2_q3_aNo2
               , AddAnswerEvent' a_km1_ch2_q3_aYes2
               , AddQuestionEvent' a_km1_ch2_q4
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q5
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q7
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q8
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6
-              , AddAnswerEvent' a_km1_ch2_q6_aNo6
-              , AddAnswerEvent' a_km1_ch2_q6_aYes6
-              , AddFollowUpQuestionEvent' a_km1_ch2_ansYes6_fuq4
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q1
-              , AddAnswerItemTemplateQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q2
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q5
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q7
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q8
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q6
+              , AddAnswerEvent' a_km1_ch2_q4_ait_q6_aNo
+              , AddAnswerEvent' a_km1_ch2_q4_ait_q6_aYes
+              , AddQuestionEvent' a_km1_ch2_ansYes6_fuq4
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q1
+              , AddQuestionEvent' a_km1_ch2_q4_ait1_q6_fuq4_q2
               , AddExpertEvent' a_km1_ch2_q6_eAlbert
               , AddExpertEvent' a_km1_ch2_q6_eNikola
               , AddReferenceEvent' a_km1_ch2_q6_rCh1

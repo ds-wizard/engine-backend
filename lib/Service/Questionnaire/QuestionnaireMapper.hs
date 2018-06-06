@@ -1,7 +1,7 @@
 module Service.Questionnaire.QuestionnaireMapper where
 
 import Control.Lens ((^.))
-import Data.Map
+import Data.Time
 import Data.UUID (UUID)
 
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -20,6 +20,8 @@ toDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOPackage = packageToDTO package
+  , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
+  , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
 toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireDTO
@@ -28,7 +30,13 @@ toSimpleDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOPackage = packageWithEventsToDTO package
+  , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
+  , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
+
+toReplyDTO :: QuestionnaireReply -> QuestionnaireReplyDTO
+toReplyDTO reply =
+  QuestionnaireReplyDTO {_questionnaireReplyDTOPath = reply ^. path, _questionnaireReplyDTOValue = reply ^. value}
 
 toDetailDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireDetailDTO
 toDetailDTO questionnaire package =
@@ -37,15 +45,23 @@ toDetailDTO questionnaire package =
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOPackage = packageWithEventsToDTO package
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO $ questionnaire ^. knowledgeModel
-  , _questionnaireDetailDTOReplies = questionnaire ^. replies
+  , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
+  , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
+  , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-fromQuestionnaireCreateDTO :: QuestionnaireCreateDTO -> UUID -> KnowledgeModel -> Questionnaire
-fromQuestionnaireCreateDTO dto questionnaireUuid knowledgeModel =
+fromReplyDTO :: QuestionnaireReplyDTO -> QuestionnaireReply
+fromReplyDTO reply =
+  QuestionnaireReply {_questionnaireReplyPath = reply ^. path, _questionnaireReplyValue = reply ^. value}
+
+fromQuestionnaireCreateDTO :: QuestionnaireCreateDTO -> UUID -> KnowledgeModel -> UTCTime -> UTCTime -> Questionnaire
+fromQuestionnaireCreateDTO dto qtnUuid knowledgeModel qtnCreatedAt qtnUpdatedAt =
   Questionnaire
-  { _questionnaireUuid = questionnaireUuid
+  { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireKnowledgeModel = knowledgeModel
-  , _questionnaireReplies = empty
+  , _questionnaireReplies = []
+  , _questionnaireCreatedAt = qtnCreatedAt
+  , _questionnaireUpdatedAt = qtnUpdatedAt
   }
