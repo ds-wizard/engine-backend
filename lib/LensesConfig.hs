@@ -19,6 +19,8 @@ import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Token.TokenCreateDTO
+import Api.Resource.Token.TokenDTO
 import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
@@ -171,21 +173,21 @@ makeFields ''User
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
--- Api / Resource / ActionKeyDTO
+-- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
 
--- Api / Branch / BranchDTO
+-- Api / Branch / Branch
 makeFields ''BranchDTO
 
 makeFields ''BranchWithStateDTO
 
--- Api / DataManagementPlan
+-- Api / DataManagementPlan / DataManagementPlan
 makeFields ''DataManagementPlanDTO
 
--- Api / Event / EventPathDTO
+-- Api / Event / EventPath
 makeFields ''EventPathItemDTO
 
--- Api / Event / EventDTO
+-- Api / Event / Event
 makeFields ''AddKnowledgeModelEventDTO
 
 makeFields ''EditKnowledgeModelEventDTO
@@ -220,10 +222,10 @@ makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
 
--- Api / Resource / InfoDTO
+-- Api / Resource / Info
 makeFields ''InfoDTO
 
--- Api / Resource / KnowledgeModelDTO
+-- Api / Resource / KnowledgeModel
 makeFields ''KnowledgeModelDTO
 
 makeFields ''ChapterDTO
@@ -242,7 +244,7 @@ makeFields ''ExpertDTO
 
 makeFields ''ReferenceDTO
 
--- Model / FilledKnowledgeModel
+-- Api / Resource / FilledKnowledgeModel
 makeFields ''FilledKnowledgeModelDTO
 
 makeFields ''FilledChapterDTO
@@ -253,12 +255,12 @@ makeFields ''FilledAnswerDTO
 
 makeFields ''FilledAnswerItemDTO
 
--- Model / OrganizationDTO
+-- Api / Resource / Organization
 makeFields ''OrganizationDTO
 
 makeFields ''OrganizationChangeDTO
 
--- Model / QuestionnaireDTO
+-- Api / Resource / Questionnaire
 makeFields ''QuestionnaireCreateDTO
 
 makeFields ''QuestionnaireDTO
@@ -267,14 +269,19 @@ makeFields ''QuestionnaireReplyDTO
 
 makeFields ''QuestionnaireDetailDTO
 
--- Model / UserDTO
+-- Api / Resource / Token
+makeFields ''TokenDTO
+
+makeFields ''TokenCreateDTO
+
+-- Api / Resource / User
 makeFields ''PackageDTO
 
 makeFields ''PackageSimpleDTO
 
 makeFields ''PackageWithEventsDTO
 
--- Model / UserDTO
+-- Api / Resource / User
 makeFields ''UserChangeDTO
 
 makeFields ''UserCreateDTO

@@ -26,14 +26,15 @@ tokenAPI appContext =
           -- GIVEN: Prepare request
      do
       let reqHeaders = [reqAuthHeader, reqCtHeader]
-      let reqDto = TokenCreateDTO {_tcdtoEmail = "albert.einstein@example.com", _tcdtoPassword = "password"}
+      let reqDto =
+            TokenCreateDTO {_tokenCreateDTOEmail = "albert.einstein@example.com", _tokenCreateDTOPassword = "password"}
       let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
       let expStatus = 201
       let expHeaders = [resCtHeader] ++ resCorsHeaders
       let expDto =
             TokenDTO
-            { _tdtoToken =
+            { _tokenDTOToken =
                 "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.j53sR7cehH2ccE4etKuagBloCPCXXqS8iysE1ClmSEk"
             }
       let expBody = encode expDto
@@ -48,7 +49,8 @@ tokenAPI appContext =
           -- GIVEN: Prepare request
      do
       let reqHeaders = [reqAuthHeader, reqCtHeader]
-      let reqDto = TokenCreateDTO {_tcdtoEmail = "albert.einstein@example.com2", _tcdtoPassword = "password"}
+      let reqDto =
+            TokenCreateDTO {_tokenCreateDTOEmail = "albert.einstein@example.com2", _tokenCreateDTOPassword = "password"}
       let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
       let expStatus = 400

@@ -26,12 +26,12 @@ getToken :: TokenCreateDTO -> AppContextM (Either AppError TokenDTO)
 getToken tokenCreateDto = do
   dswConfig <- asks _appContextConfig
   let tokenSecret = dswConfig ^. jwtConfig ^. secret
-  eitherUser <- findUserByEmail (tokenCreateDto ^. tcdtoEmail)
+  eitherUser <- findUserByEmail (tokenCreateDto ^. email)
   case eitherUser of
     Right user ->
       if user ^. isActive
         then do
-          let incomingPassword = BS.pack (tokenCreateDto ^. tcdtoPassword)
+          let incomingPassword = BS.pack (tokenCreateDto ^. password)
           let passwordHashFromDB = BS.pack (user ^. passwordHash)
           if verifyPassword incomingPassword passwordHashFromDB
             then return . Right . toDTO $ createToken user tokenSecret
