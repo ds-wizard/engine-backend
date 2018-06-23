@@ -29,7 +29,7 @@ textDSW = "dsw.fairdata.solutions"
 
 dswUrl = "https://dsw.fairdata.solutions"
 
-textNotAnswered = "This questions has not been answered yet!"
+textNotAnswered = "This question has not been answered yet!"
 
 fkm2html :: FilledKnowledgeModelDTO -> H.Html
 fkm2html km =
