@@ -32,6 +32,8 @@ data AppConfigDatabase = AppConfigDatabase
 
 data AppConfigJwt = AppConfigJwt
   { _appConfigJwtSecret :: String
+  , _appConfigJwtVersion :: Integer
+  , _appConfigJwtExpiration :: Integer
   }
 
 data AppConfigRoles = AppConfigRoles
