@@ -1,11 +1,13 @@
 module Api.Middleware.AuthMiddleware where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (liftIO)
 import Data.ByteString (ByteString)
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
 import qualified Data.Text as T
 import Data.Text.Encoding (decodeUtf8)
+import Data.Time
 import qualified Network.HTTP.Types as H
 import Network.HTTP.Types.Method (methodOptions)
 import Network.Wai
@@ -13,13 +15,14 @@ import Network.Wai
         requestMethod)
 import Prelude hiding (exp)
 import Text.Regex
-import qualified Web.JWT as JWT
 
 import Api.Handler.Common
+import Common.Localization
 import Common.Types
 import Common.Utils
 import LensesConfig
 import Model.Config.DSWConfig
+import Service.Token.TokenService
 
 type EndpointDefinition = (H.Method, Regex)
 
@@ -52,13 +55,14 @@ authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
   where
     jwtSecret :: JWTSecret
     jwtSecret = dswConfig ^. jwtConfig ^. secret
+    jwtVersion :: Integer
+    jwtVersion = dswConfig ^. jwtConfig ^. version
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of
-        Just token -> verifyToken token
-        Nothing -> sendResponse unauthorizedL
-    verifyToken :: T.Text -> IO ResponseReceived
-    verifyToken jwtToken =
-      case JWT.decodeAndVerifySignature (JWT.secret (T.pack jwtSecret)) jwtToken of
-        Just token -> app request sendResponse
-        Nothing -> sendResponse unauthorizedL
+        Just token -> do
+          now <- liftIO getCurrentTime
+          case verifyToken token jwtSecret jwtVersion now of
+            Nothing -> app request sendResponse
+            Just error -> sendResponse . unauthorizedL $ error
+        Nothing -> sendResponse . unauthorizedL $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN

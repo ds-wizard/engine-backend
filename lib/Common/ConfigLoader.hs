@@ -62,7 +62,9 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       jwtSecret <- get configParser "JWT" "secret"
       jwtVersion <- get configParser "JWT" "version"
       jwtExpiration <- get configParser "JWT" "expiration"
-      return AppConfigJwt {_appConfigJwtSecret = jwtSecret, _appConfigJwtVersion=jwtVersion, _appConfigJwtExpiration=jwtExpiration}
+      return
+        AppConfigJwt
+        {_appConfigJwtSecret = jwtSecret, _appConfigJwtVersion = jwtVersion, _appConfigJwtExpiration = jwtExpiration}
     loadAppConfigRole configParser = do
       defaultRole <- get configParser "Role" "defaultrole"
       adminPermissions <- get configParser "Role" "admin"

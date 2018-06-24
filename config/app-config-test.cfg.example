@@ -18,6 +18,8 @@ password =
 
 [JWT]
 secret = secret-key
+version = 1
+expiration = 99999
 
 [Role]
 defaultrole = DATASTEWARD
@@ -35,4 +37,4 @@ password =
 
 [Analytics]
 enabled = false
-email = 
+email =

@@ -1,7 +1,9 @@
 module Specs.API.TokenAPISpec where
 
+import Control.Lens ((^.))
 import Data.Aeson
 import Network.HTTP.Types
+import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
@@ -10,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Common.Error
+import LensesConfig
 
 import Specs.API.Common
 
@@ -31,19 +34,16 @@ tokenAPI appContext =
       let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
       let expStatus = 201
-      let expHeaders = [resCtHeader] ++ resCorsHeaders
-      let expDto =
-            TokenDTO
-            { _tokenDTOToken =
-                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.j53sR7cehH2ccE4etKuagBloCPCXXqS8iysE1ClmSEk"
-            }
-      let expBody = encode expDto
+      let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expetation
-      let responseMatcher =
-            ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-      response `shouldRespondWith` responseMatcher
+      let (SResponse (Status status _) headers body) = response
+      liftIO $ status `shouldBe` expStatus
+      liftIO $ headers `shouldBe` expHeaders
+      let eBody = eitherDecode body :: Either String TokenDTO
+      let (Right body) = eBody
+      liftIO $ (body ^. token) `shouldStartWith` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
     createInvalidJsonTest reqMethod reqUrl [HJ.json| { email: "albert.einstein@example.com" } |] "password"
     it "HTTP 400 BAD REQUEST when email or password are not valid" $
           -- GIVEN: Prepare request
