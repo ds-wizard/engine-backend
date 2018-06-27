@@ -11,6 +11,7 @@ import Web.Scotty.Trans
        (ScottyT, delete, get, middleware, notFound, post, put)
 
 import Api.Handler.ActionKey.ActionKeyHandler
+import Api.Handler.BookReference.BookReferenceHandler
 import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
 import Api.Handler.Event.EventHandler
@@ -41,6 +42,7 @@ unauthorizedEndpoints =
   , (methodPost, mkRegex "^action-keys$")
   , (methodGet, mkRegex "^questionnaires/.*/dmp")
   , (methodGet, mkRegex "^questionnaires/.*/dmp?format=.*$")
+  , (methodGet, mkRegex "^book-references/.*")
   ]
 
 loggingM :: Environment -> Middleware
@@ -127,6 +129,10 @@ createEndpoints context
   put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
+   --------------------
+   -- BOOK REFERENCES
+   --------------------
+  get "/book-references/:brShortUuid" getBookReferenceA
    --------------------
    -- ERROR
    --------------------

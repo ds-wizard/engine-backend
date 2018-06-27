@@ -8,6 +8,7 @@ import Database.Connection
 import LensesConfig
 import Model.Context.AppContext
 
+import Specs.API.BookReference.APISpec
 import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
 import Specs.API.InfoAPISpec
@@ -77,4 +78,5 @@ main =
              eventAPI appContext
              versionAPI appContext
              packageAPI appContext
-             migratorAPI appContext)
+             migratorAPI appContext
+             bookReferenceAPI appContext)
