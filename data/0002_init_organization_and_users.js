@@ -31,7 +31,8 @@ db.users.update({"uuid" : "3ef96067-8e7a-479e-ae18-1be47f0e2a5d"}, {
         "KM_PERM",
         "KM_UPGRADE_PERM",
         "KM_PUBLISH_PERM",
-        "PM_PERM",
+        "PM_READ_PERM",
+        "PM_WRITE_PERM",
         "QTN_PERM",
         "DMP_PERM"
     ],
@@ -50,6 +51,7 @@ db.users.update({"uuid" : "30d48cf4-8c8a-496f-bafe-585bd238f798"}, {
         "KM_PERM",
         "KM_UPGRADE_PERM",
         "KM_PUBLISH_PERM",
+        "PM_READ_PERM",
         "QTN_PERM",
         "DMP_PERM"
     ],
@@ -65,6 +67,7 @@ db.users.update({"uuid" : "e1c58e52-0824-4526-8ebe-ec38eec67030"}, {
     "passwordHash" : "sha256|17|lWASjBQx215ktNe7mjaWHg==|btUAw+oFeBVR9bDXmoVGLMSIrGOjbs+CxC6SR7FqouQ=",
     "role" : "RESEARCHER",
     "permissions" : [
+        "PM_READ_PERM",
         "QTN_PERM",
         "DMP_PERM"
     ],
