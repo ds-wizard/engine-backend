@@ -16,6 +16,7 @@ import Specs.API.KnowledgeModelAPISpec
 import Specs.API.MigratorAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
+import Specs.API.Questionnaire.APISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
@@ -79,4 +80,5 @@ main =
              versionAPI appContext
              packageAPI appContext
              migratorAPI appContext
+             questionnaireAPI appContext
              bookReferenceAPI appContext)

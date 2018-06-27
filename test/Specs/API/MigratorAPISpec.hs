@@ -24,7 +24,7 @@ import Database.DAO.Package.PackageDAO
 import qualified Database.Migration.Branch.BranchMigration as B
 import Database.Migration.Branch.Data.Event.Event
 import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Package.Data.Package
+import Database.Migration.Package.Data.Packages
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Migrator.MigratorState

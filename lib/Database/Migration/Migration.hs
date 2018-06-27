@@ -10,6 +10,9 @@ import qualified
        Database.Migration.Organization.OrganizationMigration as ORG
 import qualified Database.Migration.Package.PackageMigration as PKG
 import qualified
+       Database.Migration.PublicQuestionnaire.PublicQuestionnaireMigration
+       as PUBQTN
+import qualified
        Database.Migration.Questionnaire.QuestionnaireMigration as QTN
 import qualified Database.Migration.User.UserMigration as UM
 
@@ -21,5 +24,6 @@ runMigration = do
   B.runMigration
   M.runMigration
   QTN.runMigration
+  PUBQTN.runMigration
   BR.runMigration
   $(logInfo) "MIGRATION: ended"

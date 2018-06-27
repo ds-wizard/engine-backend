@@ -21,6 +21,7 @@ import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
+import Api.Handler.PublicQuestionnaire.PublicQuestionnaireHandler
 import Api.Handler.Questionnaire.QuestionnaireHandler
 import Api.Handler.Token.TokenHandler
 import Api.Handler.User.UserHandler
@@ -40,6 +41,7 @@ unauthorizedEndpoints =
   , (methodPut, mkRegex "^users/.*/password")
   , (methodPut, mkRegex "^users/.*/password?hash=.*")
   , (methodPost, mkRegex "^action-keys$")
+  , (methodGet, mkRegex "^questionnaires/public$")
   , (methodGet, mkRegex "^questionnaires/.*/dmp")
   , (methodGet, mkRegex "^questionnaires/.*/dmp?format=.*$")
   , (methodGet, mkRegex "^book-references/.*")
@@ -125,6 +127,7 @@ createEndpoints context
    --------------------
   get "/questionnaires" getQuestionnairesA
   post "/questionnaires" postQuestionnairesA
+  get "/questionnaires/public" getQuestionnairePublicA
   get "/questionnaires/:qtnUuid" getQuestionnaireA
   put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA

@@ -1,4 +1,4 @@
-module Database.Migration.Package.Data.Package where
+module Database.Migration.Package.Data.Packages where
 
 import Control.Lens ((^.))
 
