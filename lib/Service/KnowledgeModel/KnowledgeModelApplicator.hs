@@ -10,10 +10,12 @@ import Service.Migrator.Applicator.Applicator
 createKnowledgeModel :: [Event] -> Either AppError KnowledgeModel
 createKnowledgeModel = runApplicator Nothing
 
+compileKnowledgeModelFromScratch :: [Event] -> Either AppError KnowledgeModel
+compileKnowledgeModelFromScratch = runApplicator Nothing
+
 recompileKnowledgeModelWithEvents :: String -> [Event] -> AppContextM (Either AppError KnowledgeModel)
-recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid = do
-  let eitherNewKM = runApplicator Nothing eventsForBranchUuid
-  case eitherNewKM of
+recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid =
+  case compileKnowledgeModelFromScratch eventsForBranchUuid of
     Right newKM -> do
       updateKnowledgeModelByBranchId branchUuid (Just newKM)
       return . Right $ newKM
