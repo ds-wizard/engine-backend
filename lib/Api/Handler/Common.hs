@@ -100,11 +100,21 @@ sendError (NotExistsError errorMessage) = do
   status notFound404
   json $ NotExistsError errorMessage
 sendError (DatabaseError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
   status internalServerError500
   json $ DatabaseError errorMessage
 sendError (MigratorError errorMessage) = do
+  lift $ $(logWarn) (T.pack errorMessage)
   status badRequest400
   json $ MigratorError errorMessage
+sendError (HttpClientError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
+  status internalServerError500
+  json $ HttpClientError errorMessage
+sendError (GeneralServerError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
+  status internalServerError500
+  json $ GeneralServerError errorMessage
 
 sendFile :: String -> BSL.ByteString -> Endpoint
 sendFile filename body = do

@@ -75,6 +75,12 @@ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
 _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS = "A hash query param has to be provided"
 
 -- --------------------------------------
+-- HTTP CLIENT
+-- --------------------------------------
+_ERROR_HTTP_CLIENT__REQUEST_FAILED serviceName endpoint =
+  "Request to external API failed (service: '" ++ serviceName ++ "', endpoint: '" ++ endpoint ++ "')"
+
+-- --------------------------------------
 -- MIGRATION TOOL
 -- --------------------------------------
 -- --------------

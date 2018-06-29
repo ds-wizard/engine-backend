@@ -19,6 +19,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     appRoles <- loadAppConfigRole appConfigParser
     appMail <- loadAppConfigMail appConfigParser
     appAnalytics <- loadAppConfigAnalytics appConfigParser
+    appFeedback <- loadAppConfigFeedback appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSWConfig
@@ -30,6 +31,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _dSWConfigRoles = appRoles
       , _dSWConfigMail = appMail
       , _dSWConfigAnalytics = appAnalytics
+      , _dSWConfigFeedback = appFeedback
       , _dSWConfigBuildInfo = buildInfo
       }
   where
@@ -98,6 +100,16 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       analyticsEmail <- get configParser "Analytics" "email"
       return
         AppConfigAnalytics {_appConfigAnalyticsEnabled = analyticsEnabled, _appConfigAnalyticsEmail = analyticsEmail}
+    loadAppConfigFeedback configParser = do
+      analyticsToken <- get configParser "Feedback" "token"
+      analyticsOwner <- get configParser "Feedback" "owner"
+      analyticsRepo <- get configParser "Feedback" "repo"
+      return
+        AppConfigFeedback
+        { _appConfigFeedbackToken = analyticsToken
+        , _appConfigFeedbackOwner = analyticsOwner
+        , _appConfigFeedbackRepo = analyticsRepo
+        }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"

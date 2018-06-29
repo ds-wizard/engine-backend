@@ -38,3 +38,8 @@ password =
 [Analytics]
 enabled = false
 email =
+
+[Feedback]
+token =
+owner =
+repo =

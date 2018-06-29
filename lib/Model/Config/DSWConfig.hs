@@ -57,6 +57,12 @@ data AppConfigAnalytics = AppConfigAnalytics
   , _appConfigAnalyticsEmail :: String
   }
 
+data AppConfigFeedback = AppConfigFeedback
+  { _appConfigFeedbackToken :: String
+  , _appConfigFeedbackOwner :: String
+  , _appConfigFeedbackRepo :: String
+  }
+
 data BuildInfo = BuildInfo
   { _buildInfoAppName :: String
   , _buildInfoAppVersion :: String
@@ -72,5 +78,6 @@ data DSWConfig = DSWConfig
   , _dSWConfigRoles :: AppConfigRoles
   , _dSWConfigMail :: AppConfigMail
   , _dSWConfigAnalytics :: AppConfigAnalytics
+  , _dSWConfigFeedback :: AppConfigFeedback
   , _dSWConfigBuildInfo :: BuildInfo
   }

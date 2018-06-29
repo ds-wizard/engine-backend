@@ -15,6 +15,7 @@ import Api.Handler.BookReference.BookReferenceHandler
 import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
 import Api.Handler.Event.EventHandler
+import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
@@ -45,6 +46,8 @@ unauthorizedEndpoints =
   , (methodGet, mkRegex "^questionnaires/.*/dmp")
   , (methodGet, mkRegex "^questionnaires/.*/dmp?format=.*$")
   , (methodGet, mkRegex "^book-references/.*")
+  , (methodGet, mkRegex "^feedbacks.*")
+  , (methodPost, mkRegex "^feedbacks.*")
   ]
 
 loggingM :: Environment -> Middleware
@@ -136,6 +139,12 @@ createEndpoints context
    -- BOOK REFERENCES
    --------------------
   get "/book-references/:brShortUuid" getBookReferenceA
+   --------------------
+   -- FEEDBACK
+   --------------------
+  get "/feedbacks" getFeedbacksA
+  post "/feedbacks" postFeedbacksA
+  get "/feedbacks/:fUuid" getFeedbackA
    --------------------
    -- ERROR
    --------------------

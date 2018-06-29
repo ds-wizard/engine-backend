@@ -9,6 +9,8 @@ import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
+import Api.Resource.Feedback.FeedbackCreateDTO
+import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
@@ -46,6 +48,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Feedback.Feedback
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
@@ -86,6 +89,8 @@ makeFields ''AppConfigRoles
 makeFields ''AppConfigMail
 
 makeFields ''AppConfigAnalytics
+
+makeFields ''AppConfigFeedback
 
 makeFields ''BuildInfo
 
@@ -135,6 +140,9 @@ makeFields ''AddReferenceEvent
 makeFields ''EditReferenceEvent
 
 makeFields ''DeleteReferenceEvent
+
+-- Model / Feedback
+makeFields ''Feedback
 
 -- Model / FilledKnowledgeModel
 makeFields ''FilledKnowledgeModel
@@ -242,6 +250,11 @@ makeFields ''AddReferenceEventDTO
 makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
+
+-- Api / Resource / Feedback
+makeFields ''FeedbackDTO
+
+makeFields ''FeedbackCreateDTO
 
 -- Api / Resource / FilledKnowledgeModel
 makeFields ''FilledKnowledgeModelDTO

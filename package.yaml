@@ -35,6 +35,8 @@ library:
   - ConfigFile
   - containers
   - data-default
+  - github
+  - http-client
   - http-types
   - lens
   - jwt
