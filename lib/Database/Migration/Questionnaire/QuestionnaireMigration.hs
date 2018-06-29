@@ -4,7 +4,7 @@ import Control.Monad.Logger (logInfo)
 
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
-import Database.Migration.Package.Data.Package
+import Database.Migration.Package.Data.Packages
 import Database.Migration.Questionnaire.Data.Questionnaires
 
 runMigration = do

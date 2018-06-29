@@ -3,6 +3,7 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
+import Api.Resource.BookReference.BookReferenceDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
@@ -32,6 +33,7 @@ import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Api.Resource.Version.VersionDTO
 import Model.ActionKey.ActionKey
+import Model.BookReference.BookReference
 import Model.Branch.Branch
 import Model.Config.DSWConfig
 import Model.Context.AppContext
@@ -57,6 +59,9 @@ import Model.User.User
 -- -------------------------------------
 -- Model / ActionKey
 makeFields ''ActionKey
+
+-- Model / BookReference
+makeFields ''BookReference
 
 -- Model / Branch
 makeFields ''Branch
@@ -189,6 +194,9 @@ makeFields ''User
 -- -------------------------------------
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
+
+-- Api / Resource / BookReference
+makeFields ''BookReferenceDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchDTO

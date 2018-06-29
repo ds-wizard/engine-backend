@@ -8,6 +8,7 @@ import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import Data.Either
 import Data.Maybe
+import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -68,6 +69,7 @@ test_204 appContext =
           , _actionKeyUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
           , _actionKeyAType = ForgottenPasswordActionKey
           , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+          , _actionKeyCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
           }
     eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
   -- AND: Prepare expectation

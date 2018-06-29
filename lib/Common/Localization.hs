@@ -54,6 +54,20 @@ _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password
 
 _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED = "The account is not activated"
 
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN = "Unable to get token"
+
+_ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN = "Unable to decode and verify token"
+
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION = "Unable to get token version from token"
+
+_ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION = "Obsolete token version"
+
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION = "Unable to get token expiration from token"
+
+_ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
+
+_ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
+
 -- User
 _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
   "You have to log in as an Administrator or you have to provide a hash in the query param"

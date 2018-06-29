@@ -17,7 +17,7 @@ import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
-import Database.Migration.Package.Data.Package
+import Database.Migration.Package.Data.Packages
 import qualified Database.Migration.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.BranchState

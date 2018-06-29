@@ -91,7 +91,7 @@ packageAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_READ_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages?organizationId={organizationId}&kmId={kmId}
       -- ------------------------------------------------------------------------
@@ -116,7 +116,7 @@ packageAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_READ_PERM"
       -- ------------------------------------------------------------------------
       -- GET /packages/{pkgId}
       -- ------------------------------------------------------------------------
@@ -141,7 +141,7 @@ packageAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_READ_PERM"
         createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody
       -- ------------------------------------------------------------------------
       -- DELETE /packages
@@ -196,7 +196,7 @@ packageAPI appContext = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages?organizationId={organizationId}&kmId={kmId}
       -- ------------------------------------------------------------------------
@@ -251,7 +251,7 @@ packageAPI appContext = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
       -- ------------------------------------------------------------------------
       -- DELETE /packages/{pkgId}
       -- ------------------------------------------------------------------------
@@ -309,5 +309,5 @@ packageAPI appContext = do
           let (Right packages) = eitherPackages
           liftIO $ packages `shouldBe` [fromDTO dto1, fromDTO dto2, fromDTO dto3, fromDTO dto4]
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_PERM"
+        createNoPermissionTest dswConfig reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
         createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody

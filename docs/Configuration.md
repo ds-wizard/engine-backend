@@ -56,16 +56,26 @@ authenabled = false
 username =
 password =
 
+[JWT]
+secret =
+version = 1
+expiration = 14
+
 [Role]
 defaultrole = DATASTEWARD
-admin = UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_PERM, QTN_PERM, DMP_PERM
-datasteward = KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, QTN_PERM, DMP_PERM
-researcher = QTN_PERM, DMP_PERM
+admin = UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM
+datasteward = KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, QTN_PERM, DMP_PERM
+researcher = PM_READ_PERM, QTN_PERM, DMP_PERM
 
 [Mail]
-name = "DSW Wizard"
-email = "info@dmp.fairdata.solutions"
-host = "dmp.fairdata.solutions"
-username = "knaisvoj"
-password = "weewowfag42-"
+enabled = false
+name =
+email =
+host =
+username =
+password =
+
+[Analytics]
+enabled = false
+email =
 ```

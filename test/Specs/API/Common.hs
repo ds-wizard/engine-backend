@@ -37,7 +37,7 @@ startWebApp appContext = do
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsInBlcm1pc3Npb25zIjpbIlVNX1BFUk0iLCJPUkdfUEVSTSIsIktNX1BFUk0iLCJLTV9VUEdSQURFX1BFUk0iLCJLTV9QVUJMSVNIX1BFUk0iLCJQTV9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.j53sR7cehH2ccE4etKuagBloCPCXXqS8iysE1ClmSEk")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjM5NDAwMzIzMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiT1JHX1BFUk0iLCJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUE1fV1JJVEVfUEVSTSIsIlFUTl9QRVJNIiwiRE1QX1BFUk0iXX0.6jt40r7YR-YBXMBmo3aKypQiE6ikrVTsU_bSKDn-gPk")
 
 reqAuthHeaderWithoutPerms :: DSWConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms dswConfig perm =
@@ -55,7 +55,14 @@ reqAuthHeaderWithoutPerms dswConfig perm =
         , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
         , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
         }
-      token = createToken user (dswConfig ^. jwtConfig ^. secret)
+      now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+      token =
+        createToken
+          user
+          now
+          (dswConfig ^. jwtConfig ^. secret)
+          (dswConfig ^. jwtConfig ^. version)
+          (dswConfig ^. jwtConfig ^. expiration)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
@@ -122,7 +129,8 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           [HJ.json|
     {
       status: 401,
-      error: "Unauthorized"
+      error: "Unauthorized",
+      message: "Unable to get token"
     }
     |]
     let expHeaders = [resCtHeader] ++ resCorsHeaders

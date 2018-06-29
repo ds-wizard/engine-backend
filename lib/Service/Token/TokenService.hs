@@ -1,12 +1,14 @@
 module Service.Token.TokenService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (asks)
+import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import qualified Data.Map as M
 import qualified Data.Text as T
+import Data.Text.Read
+import Data.Time
 import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
@@ -15,71 +17,133 @@ import Api.Resource.Token.TokenDTO
 import Common.Error
 import Common.Localization
 import Common.Types
-import Common.Utils
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.Context.AppContext
 import Model.User.User
 import Service.Token.TokenMapper
+import Util.Date
 
 getToken :: TokenCreateDTO -> AppContextM (Either AppError TokenDTO)
-getToken tokenCreateDto = do
-  dswConfig <- asks _appContextConfig
-  let tokenSecret = dswConfig ^. jwtConfig ^. secret
-  eitherUser <- findUserByEmail (tokenCreateDto ^. email)
-  case eitherUser of
-    Right user ->
+getToken tokenCreateDto =
+  getUser $ \user ->
+    checkIsUserActive user $ \() ->
+      authenticateUser user $ \() -> do
+        (jwtSecret, jwtVersion, jwtExpirationInDays) <- getJwtConfig
+        now <- liftIO getCurrentTime
+        return . Right . toDTO $ createToken user now jwtSecret jwtVersion jwtExpirationInDays
+  where
+    getUser callback = do
+      eitherUser <- findUserByEmail (tokenCreateDto ^. email)
+      case eitherUser of
+        Right user -> callback user
+        Left (NotExistsError _) ->
+          return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        Left error -> return . Left $ error
+    -- ------------------------------------------------------------
+    checkIsUserActive user callback =
       if user ^. isActive
-        then do
-          let incomingPassword = BS.pack (tokenCreateDto ^. password)
-          let passwordHashFromDB = BS.pack (user ^. passwordHash)
-          if verifyPassword incomingPassword passwordHashFromDB
-            then return . Right . toDTO $ createToken user tokenSecret
-            else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        then callback ()
         else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
-    Left (NotExistsError _) ->
-      return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
-    Left error -> return . Left $ error
+    -- ------------------------------------------------------------
+    authenticateUser user callback = do
+      let incomingPassword = BS.pack (tokenCreateDto ^. password)
+      let passwordHashFromDB = BS.pack (user ^. passwordHash)
+      if verifyPassword incomingPassword passwordHashFromDB
+        then callback ()
+        else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+    -- ------------------------------------------------------------
+    getJwtConfig = do
+      dswConfig <- asks _appContextConfig
+      let config = dswConfig ^. jwtConfig
+      return (config ^. secret, config ^. version, config ^. expiration)
 
-createToken :: User -> JWTSecret -> Token
-createToken user jwtSecret =
-  let permissionValues = fmap (String . T.pack) (user ^. permissions)
+createToken :: User -> UTCTime -> JWTSecret -> Integer -> Integer -> Token
+createToken user now jwtSecret jwtVersion jwtExpirationInDays =
+  let uUuid = toJSON (user ^. uuid) :: Value
+      permissionValues = fromString <$> (user ^. permissions)
       uPermissions = Array (V.fromList permissionValues) :: Value
-      userUuid = toJSON (user ^. uuid) :: Value
-      payload = M.insert "userUuid" userUuid M.empty
-      payload2 = M.insert "permissions" uPermissions payload
+      timeDelta = realToFrac $ jwtExpirationInDays * nominalDay
+      mExpiration = toNumericDate (addUTCTime timeDelta now)
       cs =
         JWT.JWTClaimsSet
         { iss = Nothing
         , sub = Nothing
         , aud = Nothing
-        , exp = Nothing
+        , exp = mExpiration
         , nbf = Nothing
         , iat = Nothing
         , jti = Nothing
-        , unregisteredClaims = payload2
+        , unregisteredClaims = createPayload uUuid uPermissions (fromInteger $ jwtVersion)
         }
-      key = JWT.secret $ T.pack jwtSecret
+  in signToken jwtSecret cs
+  where
+    fromInteger :: Integer -> Value
+    fromInteger = fromString . show
+    fromString :: String -> Value
+    fromString = String . T.pack
+    createPayload uUuid uPermissions jwtVersion =
+      M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty
+
+signToken :: JWTSecret -> JWT.JWTClaimsSet -> Token
+signToken jwtSecret cs =
+  let key = JWT.secret $ T.pack jwtSecret
   in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
 
-getUserUuidFromToken :: Maybe T.Text -> Maybe T.Text
-getUserUuidFromToken maybeTokenHeaderValue = do
-  (String value) <- getValueFromToken maybeTokenHeaderValue "userUuid"
+verifyToken :: T.Text -> String -> Integer -> UTCTime -> Maybe String
+verifyToken jwtToken jwtSecret currentJwtVersion now =
+  verifySignature $ \token -> verifyJwtVersion $ \() -> verifyExpiration token $ \() -> Nothing
+  where
+    verifySignature callback =
+      case JWT.decodeAndVerifySignature (JWT.secret (T.pack jwtSecret)) jwtToken of
+        Just token -> callback token
+        Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
+    verifyJwtVersion callback =
+      case getJWTVersionFromToken jwtToken of
+        Just tokenJwtVersion ->
+          if tokenJwtVersion == currentJwtVersion
+            then callback ()
+            else Just _ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION
+        Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_VERSION
+    verifyExpiration token callback =
+      case getExpirationFromToken jwtToken of
+        Just expiration ->
+          case toNumericDate now of
+            Just nowInNumericDateFormat ->
+              if nowInNumericDateFormat < expiration
+                then callback ()
+                else Just _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED
+            Nothing -> Just _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES
+        Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION
+
+getUserUuidFromToken :: T.Text -> Maybe T.Text
+getUserUuidFromToken token = do
+  (String value) <- getValueFromToken token "userUuid"
   Just value
 
-getPermissionsFromToken :: Maybe T.Text -> Maybe [Permission]
-getPermissionsFromToken maybeTokenHeaderValue = do
-  (Array value) <- getValueFromToken maybeTokenHeaderValue "permissions"
+getPermissionsFromToken :: T.Text -> Maybe [Permission]
+getPermissionsFromToken token = do
+  (Array value) <- getValueFromToken token "permissions"
   let values = V.toList value
   let permissionValues = fmap (\(String x) -> T.unpack x) values
   Just permissionValues
 
-getValueFromToken :: Maybe T.Text -> T.Text -> Maybe Value
-getValueFromToken maybeTokenHeaderValue paramName =
-  case maybeTokenHeaderValue of
-    Just tokenHeaderValue -> do
-      decodedToken <- separateToken tokenHeaderValue >>= JWT.decode
-      let cs = JWT.claims decodedToken
-      let payload = JWT.unregisteredClaims cs
-      M.lookup paramName payload
-    _ -> Nothing
+getJWTVersionFromToken :: T.Text -> Maybe Integer
+getJWTVersionFromToken token = do
+  (String value) <- getValueFromToken token "version"
+  case decimal value of
+    Right (int, _) -> Just int
+    Left _ -> Nothing
+
+getExpirationFromToken :: T.Text -> Maybe JWT.NumericDate
+getExpirationFromToken token = do
+  decodedToken <- JWT.decode token
+  let cs = JWT.claims decodedToken
+  JWT.exp cs
+
+getValueFromToken :: T.Text -> T.Text -> Maybe Value
+getValueFromToken token paramName = do
+  decodedToken <- JWT.decode token
+  let cs = JWT.claims decodedToken
+  let payload = JWT.unregisteredClaims cs
+  M.lookup paramName payload

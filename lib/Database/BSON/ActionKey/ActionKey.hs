@@ -15,6 +15,7 @@ instance ToBSON ActionKey where
     , "userId" BSON.=: toString (actionKey ^. userId)
     , "type" BSON.=: show (actionKey ^. aType)
     , "hash" BSON.=: (actionKey ^. hash)
+    , "createdAt" BSON.=: (actionKey ^. createdAt)
     ]
 
 instance FromBSON ActionKey where
@@ -23,8 +24,15 @@ instance FromBSON ActionKey where
     userId <- deserializeMaybeUUID $ BSON.lookup "userId" doc
     actionType <- deserializeActionType $ BSON.lookup "type" doc
     hash <- BSON.lookup "hash" doc
+    createdAt <- BSON.lookup "createdAt" doc
     return
-      ActionKey {_actionKeyUuid = uuid, _actionKeyUserId = userId, _actionKeyAType = actionType, _actionKeyHash = hash}
+      ActionKey
+      { _actionKeyUuid = uuid
+      , _actionKeyUserId = userId
+      , _actionKeyAType = actionType
+      , _actionKeyHash = hash
+      , _actionKeyCreatedAt = createdAt
+      }
     where
       deserializeActionType :: Maybe String -> Maybe ActionKeyType
       deserializeActionType mActionTypeS = do

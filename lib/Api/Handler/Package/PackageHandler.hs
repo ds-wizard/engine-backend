@@ -10,7 +10,7 @@ import Service.Package.PackageService
 
 getPackagesA :: Endpoint
 getPackagesA =
-  checkPermission "PM_PERM" $ do
+  checkPermission "PM_READ_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["organizationId", "kmId"]
     eitherResDtos <- lift $ getPackagesFiltered queryParams
     case eitherResDtos of
@@ -19,7 +19,7 @@ getPackagesA =
 
 getUniquePackagesA :: Endpoint
 getUniquePackagesA =
-  checkPermission "PM_PERM" $ do
+  checkPermission "PM_READ_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["organizationId", "kmId"]
     eitherResDtos <- lift $ getSimplePackagesFiltered queryParams
     case eitherResDtos of
@@ -28,7 +28,7 @@ getUniquePackagesA =
 
 getPackageA :: Endpoint
 getPackageA =
-  checkPermission "PM_PERM" $ do
+  checkPermission "PM_READ_PERM" $ do
     pkgId <- param "pkgId"
     eitherResDto <- lift $ getPackageById pkgId
     case eitherResDto of
@@ -37,7 +37,7 @@ getPackageA =
 
 deletePackagesA :: Endpoint
 deletePackagesA =
-  checkPermission "PM_PERM" $ do
+  checkPermission "PM_WRITE_PERM" $ do
     queryParams <- getListOfQueryParamsIfPresent ["organizationId", "kmId"]
     maybeError <- lift $ deletePackagesByQueryParams queryParams
     case maybeError of
@@ -46,7 +46,7 @@ deletePackagesA =
 
 deletePackageA :: Endpoint
 deletePackageA =
-  checkPermission "PM_PERM" $ do
+  checkPermission "PM_WRITE_PERM" $ do
     pkgId <- param "pkgId"
     maybeError <- lift $ deletePackage pkgId
     case maybeError of

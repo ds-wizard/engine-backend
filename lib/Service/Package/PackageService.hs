@@ -150,9 +150,10 @@ importPackage fileContent = do
       let pEvents = packageWithEvents ^. events
       let pId = buildPackageId pOrganizationId pKmId pVersion
       validatePackageId pId $
-        validateParentPackageId pId pParentPackageId $ do
-          createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
-          return . Right $ createdPkg
+        validateParentPackageId pId pParentPackageId $
+          validateKmValidity pId pParentPackageId pEvents $ do
+            createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
+            return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
   where
     validatePackageId pkgId callback = do
@@ -172,6 +173,19 @@ importPackage fileContent = do
               _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
             Left error -> return . Left $ error
         Nothing -> callback
+    validateKmValidity pkgId maybeParentPkgId pkgEvents callback =
+      case maybeParentPkgId of
+        Just ppId -> do
+          eitherEventsFromPackage <- getAllPreviousEventsSincePackageId ppId
+          case eitherEventsFromPackage of
+            Right eventsFromPackage -> do
+              case compileKnowledgeModelFromScratch $ eventsFromPackage ++ pkgEvents of
+                Right _ -> callback
+                Left error -> return . Left $ error
+            Left error -> return . Left $ error
+        Nothing -> case compileKnowledgeModelFromScratch $ pkgEvents of
+          Right _ -> callback
+          Left error -> return . Left $ error
 
 deletePackagesByQueryParams :: [(Text, Text)] -> AppContextM (Maybe AppError)
 deletePackagesByQueryParams queryParams = do
@@ -233,7 +247,7 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go s
 
 getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
 getEventsForBranchUuid branchUuid =
-  getBranch $ \branch ->
+  heGetBranch branchUuid $ \branch ->
     case branch ^. parentPackageId of
       Just ppId -> do
         eitherEventsFromPackage <- getAllPreviousEventsSincePackageId ppId
@@ -244,12 +258,6 @@ getEventsForBranchUuid branchUuid =
             return . Right $ pkgEvents
           Left error -> return . Left $ error
       Nothing -> return . Right $ branch ^. events
-  where
-    getBranch callback = do
-      eitherBranch <- findBranchWithEventsById branchUuid
-      case eitherBranch of
-        Right branch -> callback branch
-        Left error -> return . Left $ error
 
 getNewerPackages :: String -> AppContextM (Either AppError [Package])
 getNewerPackages currentPkgId =

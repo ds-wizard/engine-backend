@@ -36,3 +36,12 @@ deleteEventsAtBranch branchUuid = do
   let emptyEvents = convertEventToBSON <$> []
   let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["events" =: emptyEvents]]
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heGetBranch branchUuid callback = do
+  eitherBranch <- findBranchWithEventsById branchUuid
+  case eitherBranch of
+    Right branch -> callback branch
+    Left error -> return . Left $ error

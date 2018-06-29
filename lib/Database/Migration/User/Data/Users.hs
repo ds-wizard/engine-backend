@@ -14,7 +14,16 @@ userAlbert =
   , _userEmail = "albert.einstein@example.com"
   , _userRole = "ADMIN"
   , _userPermissions =
-      ["UM_PERM", "ORG_PERM", "KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_PERM", "QTN_PERM", "DMP_PERM"]
+      [ "UM_PERM"
+      , "ORG_PERM"
+      , "KM_PERM"
+      , "KM_UPGRADE_PERM"
+      , "KM_PUBLISH_PERM"
+      , "PM_READ_PERM"
+      , "PM_WRITE_PERM"
+      , "QTN_PERM"
+      , "DMP_PERM"
+      ]
   , _userIsActive = True
   , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
   , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -28,7 +37,7 @@ userNikola =
   , _userSurname = "Tesla"
   , _userEmail = "nikola.tesla@example.com"
   , _userRole = "DATASTEWARD"
-  , _userPermissions = ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_PERM", "QTN_PERM", "DMP_PERM"]
+  , _userPermissions = ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
   , _userIsActive = True
   , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
   , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -42,7 +51,7 @@ userIsaac =
   , _userSurname = "Newton"
   , _userEmail = "isaac.newton@example.com"
   , _userRole = "RESEARCHER"
-  , _userPermissions = ["QTN_PERM", "DMP_PERM"]
+  , _userPermissions = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
   , _userIsActive = True
   , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
   , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

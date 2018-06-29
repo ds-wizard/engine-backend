@@ -1,16 +1,24 @@
 module Model.ActionKey.ActionKey where
 
-import Data.UUID
+import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 data ActionKeyType
   = RegistrationActionKey
   | ForgottenPasswordActionKey
-  deriving (Generic, Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data ActionKey = ActionKey
-  { _actionKeyUuid :: UUID
-  , _actionKeyUserId :: UUID
+  { _actionKeyUuid :: U.UUID
+  , _actionKeyUserId :: U.UUID
   , _actionKeyAType :: ActionKeyType
   , _actionKeyHash :: String
-  } deriving (Generic, Show, Eq)
+  , _actionKeyCreatedAt :: UTCTime
+  } deriving (Show, Generic)
+
+instance Eq ActionKey where
+  a == b =
+    _actionKeyUuid a == _actionKeyUuid b &&
+    _actionKeyUserId a == _actionKeyUserId b &&
+    _actionKeyAType a == _actionKeyAType b && _actionKeyHash a == _actionKeyHash b

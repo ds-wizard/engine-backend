@@ -21,6 +21,8 @@ import Web.Scotty.Trans
 
 import Api.Resource.Error.ErrorDTO ()
 import Common.Error
+import Common.Localization
+import Common.Utils
 import LensesConfig
 import Model.Context.AppContext
 import Service.Token.TokenService
@@ -37,10 +39,11 @@ getReqDto callback = do
 
 getCurrentUserUuid callback = do
   tokenHeader <- header "Authorization"
-  let userUuidMaybe = getUserUuidFromToken (tokenHeader >>= \token -> Just . LT.toStrict $ token) :: Maybe T.Text
+  let userUuidMaybe =
+        tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getUserUuidFromToken :: Maybe T.Text
   case userUuidMaybe of
     Just userUuid -> callback (T.unpack userUuid)
-    Nothing -> unauthorizedA
+    Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN
 
 getCurrentUser callback =
   getCurrentUserUuid $ \userUuid -> do
@@ -71,7 +74,7 @@ getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
 
 checkPermission perm callback = do
   tokenHeader <- header "Authorization"
-  let mUserPerms = getPermissionsFromToken (tokenHeader >>= \token -> Just . LT.toStrict $ token)
+  let mUserPerms = tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getPermissionsFromToken
   case mUserPerms of
     Just userPerms ->
       if perm `Prelude.elem` userPerms
@@ -110,15 +113,15 @@ sendFile filename body = do
   addHeader "Content-Type" (TL.pack "application/octet-stream")
   raw body
 
-unauthorizedA :: Endpoint
-unauthorizedA = do
+unauthorizedA :: String -> Endpoint
+unauthorizedA message = do
   status unauthorized401
-  json $ object ["status" .= 401, "error" .= "Unauthorized"]
+  json $ object ["status" .= 401, "error" .= "Unauthorized", "message" .= message]
 
-unauthorizedL :: Response
-unauthorizedL =
+unauthorizedL :: String -> Response
+unauthorizedL message =
   responseLBS unauthorized401 [(hContentType, "application/json; charset=utf-8")] $
-  encode (object ["status" .= 401, "error" .= "Unauthorized"])
+  encode (object ["status" .= 401, "error" .= "Unauthorized", "message" .= message])
 
 forbidden :: Endpoint
 forbidden = do

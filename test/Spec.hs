@@ -8,6 +8,7 @@ import Database.Connection
 import LensesConfig
 import Model.Context.AppContext
 
+import Specs.API.BookReference.APISpec
 import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
 import Specs.API.InfoAPISpec
@@ -15,6 +16,7 @@ import Specs.API.KnowledgeModelAPISpec
 import Specs.API.MigratorAPISpec
 import Specs.API.OrganizationAPISpec
 import Specs.API.PackageAPISpec
+import Specs.API.Questionnaire.APISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
@@ -27,6 +29,7 @@ import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
+import Specs.Service.Token.TokenServiceSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -62,6 +65,7 @@ main =
            organizationValidationSpec
            branchServiceSpec
            packageValidationSpec
+           tokenServiceSpec
            dataManagementPlanSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "Service tests" $ branchServiceIntegrationSpec appContext
@@ -75,4 +79,6 @@ main =
              eventAPI appContext
              versionAPI appContext
              packageAPI appContext
-             migratorAPI appContext)
+             migratorAPI appContext
+             questionnaireAPI appContext
+             bookReferenceAPI appContext)
