@@ -151,9 +151,9 @@ importPackage fileContent = do
       let pId = buildPackageId pOrganizationId pKmId pVersion
       validatePackageId pId $
         validateParentPackageId pId pParentPackageId $
-          validateKmValidity pId pParentPackageId pEvents $ do
-            createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
-            return . Right $ createdPkg
+        validateKmValidity pId pParentPackageId pEvents $ do
+          createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
+          return . Right $ createdPkg
     Left error -> return . Left . createErrorWithErrorMessage $ error
   where
     validatePackageId pkgId callback = do
@@ -183,9 +183,10 @@ importPackage fileContent = do
                 Right _ -> callback
                 Left error -> return . Left $ error
             Left error -> return . Left $ error
-        Nothing -> case compileKnowledgeModelFromScratch $ pkgEvents of
-          Right _ -> callback
-          Left error -> return . Left $ error
+        Nothing ->
+          case compileKnowledgeModelFromScratch $ pkgEvents of
+            Right _ -> callback
+            Left error -> return . Left $ error
 
 deletePackagesByQueryParams :: [(Text, Text)] -> AppContextM (Maybe AppError)
 deletePackagesByQueryParams queryParams = do
