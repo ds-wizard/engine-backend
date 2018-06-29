@@ -1,6 +1,7 @@
 module Service.Feedback.Connector.GitHub.GitHubConnector where
 
 import Control.Lens ((^.))
+import Control.Monad.Logger
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
@@ -35,7 +36,9 @@ instance Connector AppContextM where
     eIssue <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
     case eIssue of
       Right issue -> return . Right . GH.untagId . GI.issueId $ issue
-      Left error -> return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
+      Left error -> do
+        $(logError) . T.pack . show $ error 
+        return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
 
 packToName :: String -> GN.Name a
 packToName str = GN.N . T.pack $ str
