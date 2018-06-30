@@ -9,7 +9,19 @@ import Model.FilledKnowledgeModel.FilledKnowledgeModel
 data DataManagementPlanFormat
   = JSON
   | HTML
-  deriving (Show, Eq, Generic)
+  | PDF
+  | LaTeX
+  | Docx
+  | ODT
+  | Markdown
+  | RTF
+  | RST
+  | AsciiDoc
+  | DokuWiki
+  | MediaWiki
+  | EPUB2
+  | EPUB3
+  deriving (Show, Eq, Enum, Bounded, Generic)
 
 data DataManagementPlan = DataManagementPlan
   { _dataManagementPlanUuid :: U.UUID

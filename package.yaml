@@ -35,6 +35,7 @@ library:
   - ConfigFile
   - containers
   - data-default
+  - fromhtml
   - github
   - http-client
   - http-types

@@ -37,7 +37,7 @@ instance Connector AppContextM where
     case eIssue of
       Right issue -> return . Right . GH.untagId . GI.issueId $ issue
       Left error -> do
-        $(logError) . T.pack . show $ error 
+        $(logError) . T.pack . show $ error
         return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
 
 packToName :: String -> GN.Name a

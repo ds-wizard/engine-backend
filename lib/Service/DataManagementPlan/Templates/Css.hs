@@ -50,10 +50,10 @@ mainCSS = do
   div # ".answer-block" |> star # ".answer" ? do
     fontWeight bold
     fontStyle italic
-  div # ".answer-block" |> star # ".answer" ? before & content (stringContent " \2714  ")
-  div # ".answer-option" |> p # ".advice" ? before & content (stringContent " \9432  ")
+  div # ".answer-block" |> star # ".answer" ? before & content (stringContent " ✔  ")
+  div # ".answer-option" |> p # ".advice" ? before & content (stringContent " ⓘ  ")
   div # ".answer-items" |> div # ".answer-item" |> span # ".title" ? display none
   p # ".no-answer" ? do
     fontWeight bold
     color red
-  p # ".no-answer" ? before & content (stringContent " \2718  ")
+  p # ".no-answer" ? before & content (stringContent " ✘  ")

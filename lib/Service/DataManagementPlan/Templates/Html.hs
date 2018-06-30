@@ -65,7 +65,6 @@ question2html question =
     experts2html $ question ^. experts
     qanswer2html question
 
--- TODO: instead of fromJust check if is answered or not and tell something if not
 qanswer2html :: FilledQuestionDTO -> H.Html
 qanswer2html question
   | notAnswered = notAnsweredHtml
