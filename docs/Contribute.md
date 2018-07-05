@@ -10,6 +10,7 @@ Go though this whole document and you will be ready.
 - Haskell, Cabal, Stack
 - Docker
 - MongoDB
+- wkhtmltopdf (recommended 0.12.5 or higher) - *for exports in PDF format only*
 
 ## How to setup the application for a local run?
 
