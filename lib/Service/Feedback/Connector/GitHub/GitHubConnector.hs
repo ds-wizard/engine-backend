@@ -35,7 +35,7 @@ instance Connector AppContextM where
     let request = GH.createIssueR (packToName fOwner) (packToName fRepo) newIssue
     eIssue <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
     case eIssue of
-      Right issue -> return . Right . GH.untagId . GI.issueId $ issue
+      Right issue -> return . Right . GI.issueNumber $ issue
       Left error -> do
         $(logError) . T.pack . show $ error
         return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
