@@ -144,6 +144,7 @@ createEndpoints context
    --------------------
   get "/feedbacks" getFeedbacksA
   post "/feedbacks" postFeedbacksA
+  get "/feedbacks/synchronization" getFeedbacksSynchronizationA
   get "/feedbacks/:fUuid" getFeedbackA
    --------------------
    -- ERROR

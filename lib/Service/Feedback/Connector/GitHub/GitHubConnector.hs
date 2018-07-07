@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 import qualified Data.Vector as V
 import qualified GitHub as GH
 import qualified GitHub.Auth as GA
+import qualified GitHub.Data as GD
 import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
@@ -17,8 +18,21 @@ import Common.Localization
 import LensesConfig
 import Model.Context.AppContext
 import Service.Feedback.Connector.Connector
+import Service.Feedback.Connector.GitHub.GitHubMapper
 
 instance Connector AppContextM where
+  getIssues = do
+    dswConfig <- asks _appContextConfig
+    let fToken = dswConfig ^. feedback . token
+    let fOwner = dswConfig ^. feedback . owner
+    let fRepo = dswConfig ^. feedback . repo
+    let request = GH.issuesForRepoR (packToName fOwner) (packToName fRepo) (mempty) GD.FetchAll
+    eIssues <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
+    case eIssues of
+      Right issues -> return . Right . V.toList $ toSimpleIssue <$> issues
+      Left error -> do
+        $(logError) . T.pack . show $ error
+        return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Get issues"
   createIssue packageId questionUuid title content = do
     dswConfig <- asks _appContextConfig
     let fToken = dswConfig ^. feedback . token

@@ -11,6 +11,7 @@ import Model.Context.AppContext
 import Specs.API.BookReference.APISpec
 import Specs.API.BranchAPISpec
 import Specs.API.EventAPISpec
+import Specs.API.Feedback.APISpec
 import Specs.API.InfoAPISpec
 import Specs.API.KnowledgeModelAPISpec
 import Specs.API.MigratorAPISpec
@@ -81,4 +82,5 @@ main =
              packageAPI appContext
              migratorAPI appContext
              questionnaireAPI appContext
-             bookReferenceAPI appContext)
+             bookReferenceAPI appContext
+             feedbackAPI appContext)

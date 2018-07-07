@@ -8,6 +8,7 @@ import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import LensesConfig
 import Model.Feedback.Feedback
+import Model.Feedback.SimpleIssue
 
 toDTO :: Feedback -> FeedbackDTO
 toDTO feedback =
@@ -33,4 +34,17 @@ fromCreateDTO dto fUuid issueId now =
   , _feedbackContent = dto ^. content
   , _feedbackCreatedAt = now
   , _feedbackUpdatedAt = now
+  }
+
+fromSimpleIssue :: Feedback -> SimpleIssue -> Feedback
+fromSimpleIssue feedback simpleIssue =
+  Feedback
+  { _feedbackUuid = feedback ^. uuid
+  , _feedbackIssueId = simpleIssue ^. issueId
+  , _feedbackQuestionUuid = feedback ^. questionUuid
+  , _feedbackPackageId = feedback ^. packageId
+  , _feedbackTitle = simpleIssue ^. title
+  , _feedbackContent = simpleIssue ^. content
+  , _feedbackCreatedAt = feedback ^. createdAt
+  , _feedbackUpdatedAt = feedback ^. updatedAt
   }

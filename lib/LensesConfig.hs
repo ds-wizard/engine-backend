@@ -49,6 +49,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.Feedback.Feedback
+import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
@@ -143,6 +144,8 @@ makeFields ''DeleteReferenceEvent
 
 -- Model / Feedback
 makeFields ''Feedback
+
+makeFields ''SimpleIssue
 
 -- Model / FilledKnowledgeModel
 makeFields ''FilledKnowledgeModel

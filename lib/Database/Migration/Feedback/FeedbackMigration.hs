@@ -9,4 +9,5 @@ runMigration = do
   $(logInfo) "MIGRATION (Feedback/Feedback): started"
   deleteFeedbacks
   insertFeedback feedback1
+  insertFeedback feedback2
   $(logInfo) "MIGRATION (Feedback/Feedback): ended"

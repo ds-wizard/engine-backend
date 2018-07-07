@@ -1,8 +1,11 @@
 module Common.ConfigLoader where
 
 import Control.Monad.Except
+import Control.Monad.Reader
 import Data.ConfigFile
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import System.Environment (lookupEnv)
 
 import Model.Config.DSWConfig
 
@@ -101,14 +104,16 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       return
         AppConfigAnalytics {_appConfigAnalyticsEnabled = analyticsEnabled, _appConfigAnalyticsEmail = analyticsEmail}
     loadAppConfigFeedback configParser = do
-      analyticsToken <- get configParser "Feedback" "token"
-      analyticsOwner <- get configParser "Feedback" "owner"
-      analyticsRepo <- get configParser "Feedback" "repo"
+      feedbackTokenFromConfig <- get configParser "Feedback" "token"
+      feedbackTokenFromEnv <- liftIO $ lookupEnv "FEEDBACK_TOKEN"
+      let feedbackToken = fromMaybe feedbackTokenFromConfig feedbackTokenFromEnv
+      feedbackOwner <- get configParser "Feedback" "owner"
+      feedbackRepo <- get configParser "Feedback" "repo"
       return
         AppConfigFeedback
-        { _appConfigFeedbackToken = analyticsToken
-        , _appConfigFeedbackOwner = analyticsOwner
-        , _appConfigFeedbackRepo = analyticsRepo
+        { _appConfigFeedbackToken = feedbackToken
+        , _appConfigFeedbackOwner = feedbackOwner
+        , _appConfigFeedbackRepo = feedbackRepo
         }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"

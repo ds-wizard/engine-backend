@@ -41,5 +41,5 @@ email =
 
 [Feedback]
 token =
-owner =
-repo = 
+owner = DSWGlobal
+repo = dsw-test

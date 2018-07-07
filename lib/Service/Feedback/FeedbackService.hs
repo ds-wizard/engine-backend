@@ -2,6 +2,7 @@ module Service.Feedback.FeedbackService where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import qualified Data.List as L
 import Data.Text (Text)
 import Data.Time
 import qualified Data.UUID as U
@@ -36,3 +37,15 @@ createFeedbackWithGivenUuid fUuid reqDto =
 
 getFeedbackByUuid :: String -> AppContextM (Either AppError FeedbackDTO)
 getFeedbackByUuid fUuid = heFindFeedbackById fUuid $ \feedback -> return . Right $ toDTO feedback
+
+synchronizeFeedbacks :: AppContextM (Maybe AppError)
+synchronizeFeedbacks =
+  hmGetIssues $ \issues ->
+    hmFindFeedbacks $ \feedbacks -> do
+      sequence $ (updateOrDeleteFeedback issues) <$> feedbacks
+      return Nothing
+  where
+    updateOrDeleteFeedback issues feedback =
+      case L.find (\issue -> feedback ^. issueId == issue ^. issueId) issues of
+        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue
+        Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)

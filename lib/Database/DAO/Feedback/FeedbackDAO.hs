@@ -67,12 +67,20 @@ heFindFeedbacks callback = do
     Right feedbacks -> callback feedbacks
     Left error -> return . Left $ error
 
+hmFindFeedbacks callback = do
+  eitherFeedbacks <- findFeedbacks
+  case eitherFeedbacks of
+    Right feedbacks -> callback feedbacks
+    Left error -> return . Just $ error
+
+-- --------------------------------
 heFindFeedbacksFiltered queryParams callback = do
   eitherFeedbacks <- findFeedbacksFiltered queryParams
   case eitherFeedbacks of
     Right feedbacks -> callback feedbacks
     Left error -> return . Left $ error
 
+-- --------------------------------
 heFindFeedbackById fUuid callback = do
   eitherFeedback <- findFeedbackById fUuid
   case eitherFeedback of

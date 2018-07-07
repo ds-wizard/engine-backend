@@ -1,7 +1,7 @@
 module Api.Handler.Feedback.FeedbackHandler where
 
 import Control.Monad.Reader (lift)
-import Network.HTTP.Types.Status (created201)
+import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
@@ -27,6 +27,13 @@ postFeedbacksA = do
       Right questionnaireDto -> do
         status created201
         json questionnaireDto
+
+getFeedbacksSynchronizationA :: Endpoint
+getFeedbacksSynchronizationA = do
+  maybeError <- lift $ synchronizeFeedbacks
+  case maybeError of
+    Nothing -> status noContent204
+    Just error -> sendError error
 
 getFeedbackA :: Endpoint
 getFeedbackA = do
