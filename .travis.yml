@@ -8,13 +8,12 @@ stages:
   - tag
 
 env:
-  - IMAGE="$DOCKER_REGISTRY/elixir/dsw-server" IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest" IMAGE_TAG_VERSION="$IMAGE:$TRAVIS_TAG"
+  - IMAGE="datastewardshipwizard/server" IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest" IMAGE_TAG_VERSION="$IMAGE:$TRAVIS_TAG"
 
 cache:
   directories:
   - $HOME/.stack
   - $HOME/.stack-work
-  
 
 install:
   # 1. Download and unpack the stack executable
@@ -29,8 +28,8 @@ install:
 
 before_script:
   # 1. Log to our private Docker Registry
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" $DOCKER_REGISTRY 
-  
+  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+
 jobs:
   include:
     - stage: build
@@ -70,4 +69,4 @@ jobs:
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_VERSION
-        - docker push $IMAGE_TAG_VERSION  
+        - docker push $IMAGE_TAG_VERSION
