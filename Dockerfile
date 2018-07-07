@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 WORKDIR /dsw
 
 # Install necessary libraries
-RUN apt-get update && apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates wget gdebi-core
+RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates wget gdebi-core
 RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_amd64.deb && gdebi -n wkhtmltox_0.12.5-1.trusty_amd64.deb
 
 # Add built exectutable binary
