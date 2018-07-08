@@ -6,6 +6,7 @@ import Data.Time
 
 data BookReferenceDTO = BookReferenceDTO
   { _bookReferenceDTOShortUuid :: String
+  , _bookReferenceDTOBookChapter :: String
   , _bookReferenceDTOContent :: String
   , _bookReferenceDTOCreatedAt :: UTCTime
   , _bookReferenceDTOUpdatedAt :: UTCTime
@@ -19,6 +20,7 @@ instance Eq BookReferenceDTO where
 instance FromJSON BookReferenceDTO where
   parseJSON (Object o) = do
     _bookReferenceDTOShortUuid <- o .: "shortUuid"
+    _bookReferenceDTOBookChapter <- o .: "bookChapter"
     _bookReferenceDTOContent <- o .: "content"
     _bookReferenceDTOCreatedAt <- o .: "createdAt"
     _bookReferenceDTOUpdatedAt <- o .: "updatedAt"
@@ -29,6 +31,7 @@ instance ToJSON BookReferenceDTO where
   toJSON BookReferenceDTO {..} =
     object
       [ "shortUuid" .= _bookReferenceDTOShortUuid
+      , "bookChapter" .= _bookReferenceDTOBookChapter
       , "content" .= _bookReferenceDTOContent
       , "createdAt" .= _bookReferenceDTOCreatedAt
       , "updatedAt" .= _bookReferenceDTOUpdatedAt
