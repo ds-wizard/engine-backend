@@ -11,6 +11,7 @@ Go though this whole document and you will be ready.
 - Docker
 - MongoDB
 - wkhtmltopdf (recommended 0.12.5 or higher) - *for exports in PDF format only*
+- pandoc (recommended 2.1 or higher) - *for exports in non HTML/PDF formats only*
 
 ## How to setup the application for a local run?
 
