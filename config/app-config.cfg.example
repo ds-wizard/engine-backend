@@ -43,3 +43,4 @@ email =
 token =
 owner =
 repo =
+issueurl = https://github.com/:owner/:dsw-staging/issues/:issueId

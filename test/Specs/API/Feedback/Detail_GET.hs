@@ -2,6 +2,7 @@ module Specs.API.Feedback.Detail_GET
   ( detail_get
   ) where
 
+import Control.Monad.Reader (asks)
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -13,6 +14,7 @@ import Database.Migration.Feedback.Data.Feedbacks
 import qualified Database.Migration.Feedback.FeedbackMigration as F
 import Model.Context.AppContext
 import Service.Feedback.FeedbackMapper
+import Service.Feedback.FeedbackService
 
 import Specs.API.Common
 import Specs.Common
@@ -46,7 +48,9 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDTO feedback1
+    dswConfig <- runInContextIO (asks _appContextConfig) appContext
+    let iUrl = createIssueUrl dswConfig feedback1
+    let expDto = toDTO feedback1 iUrl
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO F.runMigration appContext

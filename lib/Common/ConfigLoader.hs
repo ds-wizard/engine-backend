@@ -108,11 +108,13 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       let feedbackToken = fromMaybe feedbackTokenFromConfig feedbackTokenFromEnv
       feedbackOwner <- get configParser "Feedback" "owner"
       feedbackRepo <- get configParser "Feedback" "repo"
+      feedbackIssueUrl <- get configParser "Feedback" "issueurl"
       return
         AppConfigFeedback
         { _appConfigFeedbackToken = feedbackToken
         , _appConfigFeedbackOwner = feedbackOwner
         , _appConfigFeedbackRepo = feedbackRepo
+        , _appConfigFeedbackIssueUrl = feedbackIssueUrl
         }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"

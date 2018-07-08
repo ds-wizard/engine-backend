@@ -43,3 +43,4 @@ email =
 token =
 owner = DSWGlobal
 repo = dsw-test
+issueurl = https://github.com/:owner/:dsw-staging/issues/:issueId

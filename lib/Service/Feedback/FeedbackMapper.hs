@@ -10,11 +10,12 @@ import LensesConfig
 import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 
-toDTO :: Feedback -> FeedbackDTO
-toDTO feedback =
+toDTO :: Feedback -> String -> FeedbackDTO
+toDTO feedback issueUrl =
   FeedbackDTO
   { _feedbackDTOUuid = feedback ^. uuid
   , _feedbackDTOIssueId = feedback ^. issueId
+  , _feedbackDTOIssueUrl = issueUrl
   , _feedbackDTOQuestionUuid = feedback ^. questionUuid
   , _feedbackDTOPackageId = feedback ^. packageId
   , _feedbackDTOTitle = feedback ^. title
