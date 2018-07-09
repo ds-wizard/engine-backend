@@ -67,6 +67,8 @@ jobs:
       if: tag =~ ^v
       before_install: false
       env:
+        - IMAGE="datastewardshipwizard/server"
+        - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
         - IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
         - IMAGE_TAG_PATCH="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
