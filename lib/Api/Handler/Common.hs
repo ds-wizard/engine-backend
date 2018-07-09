@@ -2,7 +2,7 @@ module Api.Handler.Common where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger
-import Control.Monad.Trans.Class (lift)
+import Control.Monad.Reader (asks, lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe
@@ -82,6 +82,20 @@ checkPermission perm callback = do
         else forbidden
     Nothing -> forbidden
 
+checkServiceToken callback = do
+  tokenHeader <- header "Authorization"
+  dswConfig <- lift $ asks _appContextConfig
+  let mToken =
+        tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= validateServiceToken dswConfig
+  case mToken of
+    Just _ -> callback
+    Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN
+  where
+    validateServiceToken dswConfig token = do
+      if token == (T.pack $ dswConfig ^. webConfig . serviceToken)
+        then Just token
+        else Nothing
+
 isLogged callback = do
   tokenHeader <- header "Authorization"
   callback . isJust $ tokenHeader
@@ -100,11 +114,21 @@ sendError (NotExistsError errorMessage) = do
   status notFound404
   json $ NotExistsError errorMessage
 sendError (DatabaseError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
   status internalServerError500
   json $ DatabaseError errorMessage
 sendError (MigratorError errorMessage) = do
+  lift $ $(logWarn) (T.pack errorMessage)
   status badRequest400
   json $ MigratorError errorMessage
+sendError (HttpClientError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
+  status internalServerError500
+  json $ HttpClientError errorMessage
+sendError (GeneralServerError errorMessage) = do
+  lift $ $(logError) (T.pack errorMessage)
+  status internalServerError500
+  json $ GeneralServerError errorMessage
 
 sendFile :: String -> BSL.ByteString -> Endpoint
 sendFile filename body = do

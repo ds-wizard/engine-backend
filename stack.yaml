@@ -41,9 +41,10 @@ packages:
 # (e.g., acme-missiles-0.3)
 extra-deps:
   - vendor/bson-generic
+  - fromhtml-0.1.0.2
 
 # Override default flag values for local packages and extra-deps
-flags: {}
+# flags: {}
 
 # Extra package databases containing global packages
 extra-package-dbs: []

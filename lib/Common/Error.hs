@@ -13,6 +13,8 @@ data AppError
   | NotExistsError ErrorMessage
   | DatabaseError ErrorMessage
   | MigratorError ErrorMessage
+  | HttpClientError ErrorMessage
+  | GeneralServerError ErrorMessage
   deriving (Show, Eq)
 
 createErrorWithErrorMessage errorMessage = ValidationError errorMessage [] []

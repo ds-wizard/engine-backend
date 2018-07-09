@@ -19,6 +19,7 @@ data AppConfigClient = AppConfigClient
 
 data AppConfigWeb = AppConfigWeb
   { _appConfigWebPort :: Int
+  , _appConfigWebServiceToken :: String
   }
 
 data AppConfigDatabase = AppConfigDatabase
@@ -57,6 +58,13 @@ data AppConfigAnalytics = AppConfigAnalytics
   , _appConfigAnalyticsEmail :: String
   }
 
+data AppConfigFeedback = AppConfigFeedback
+  { _appConfigFeedbackToken :: String
+  , _appConfigFeedbackOwner :: String
+  , _appConfigFeedbackRepo :: String
+  , _appConfigFeedbackIssueUrl :: String
+  }
+
 data BuildInfo = BuildInfo
   { _buildInfoAppName :: String
   , _buildInfoAppVersion :: String
@@ -72,5 +80,6 @@ data DSWConfig = DSWConfig
   , _dSWConfigRoles :: AppConfigRoles
   , _dSWConfigMail :: AppConfigMail
   , _dSWConfigAnalytics :: AppConfigAnalytics
+  , _dSWConfigFeedback :: AppConfigFeedback
   , _dSWConfigBuildInfo :: BuildInfo
   }

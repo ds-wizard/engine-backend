@@ -7,6 +7,7 @@ address = http://localhost:3001
 
 [Web]
 port = 3000
+servicetoken = 
 
 [Database]
 host = mongo
@@ -38,3 +39,9 @@ password =
 [Analytics]
 enabled = false
 email =
+
+[Feedback]
+token =
+owner =
+repo =
+issueurl = https://github.com/:owner/:dsw-staging/issues/:issueId

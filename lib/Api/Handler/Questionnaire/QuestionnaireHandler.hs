@@ -3,6 +3,7 @@ module Api.Handler.Questionnaire.QuestionnaireHandler where
 import Control.Monad.Reader (lift)
 import qualified Data.Text as T
 import Network.HTTP.Types.Status (created201, noContent204)
+import Text.Read (readMaybe)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
@@ -12,6 +13,7 @@ import Api.Resource.Questionnaire.QuestionnaireDTO ()
 import Common.Error
 import Common.Localization
 import Model.DataManagementPlan.DataManagementPlan
+import Model.DataManagementPlan.DataManagementPlanHelpers
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.Questionnaire.QuestionnaireService
 
@@ -78,17 +80,11 @@ getQuestionnaireDmpA = do
           Left error -> sendError error
   where
     heGetFormat format callback =
-      case format of
-        "json" -> callback JSON
-        "html" -> callback HTML
-        unsupportedFormat ->
-          sendError . createErrorWithErrorMessage . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $
-          (T.unpack unsupportedFormat)
+      case readMaybe (T.unpack format) of
+        Just knownFormat -> callback knownFormat
+        Nothing -> sendError . createErrorWithErrorMessage . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $ T.unpack format
     getFilename :: String -> DataManagementPlanFormat -> String
-    getFilename qtnUuid format =
-      case format of
-        HTML -> qtnUuid ++ ".html"
-        JSON -> qtnUuid ++ ".json"
+    getFilename qtnUuid format = qtnUuid ++ formatExtension format
 
 deleteQuestionnaireA :: Endpoint
 deleteQuestionnaireA =

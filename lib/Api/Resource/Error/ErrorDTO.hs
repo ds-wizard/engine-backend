@@ -19,6 +19,11 @@ instance ToJSON AppError where
     object ["status" .= 500, "error" .= "Server Internal Error", "type" .= "DatabaseError", "message" .= errorMessage]
   toJSON (MigratorError errorMessage) =
     object ["status" .= 400, "error" .= "Bad Request", "type" .= "MigratorError", "message" .= errorMessage]
+  toJSON (HttpClientError errorMessage) =
+    object ["status" .= 500, "error" .= "Internal Server Error", "type" .= "HttpClientError", "message" .= errorMessage]
+  toJSON (GeneralServerError errorMessage) =
+    object
+      ["status" .= 500, "error" .= "Internal Server Error", "type" .= "GeneralServerError", "message" .= errorMessage]
 
 instance FromJSON AppError where
   parseJSON (Object o) = do
@@ -38,4 +43,10 @@ instance FromJSON AppError where
       "MigratorError" -> do
         message <- o .: "message"
         return $ MigratorError message
+      "HttpClientError" -> do
+        message <- o .: "message"
+        return $ HttpClientError message
+      "GeneralServerError" -> do
+        message <- o .: "message"
+        return $ GeneralServerError message
   parseJSON _ = mzero

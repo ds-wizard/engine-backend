@@ -7,6 +7,7 @@ address =
 
 [Web]
 port = 3000
+servicetoken = my-token
 
 [Database]
 host = localhost
@@ -38,3 +39,9 @@ password =
 [Analytics]
 enabled = false
 email =
+
+[Feedback]
+token =
+owner = DSWGlobal
+repo = dsw-test
+issueurl = https://github.com/:owner/:dsw-staging/issues/:issueId

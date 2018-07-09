@@ -16,7 +16,7 @@ exportA = do
   eitherDto <- lift $ getPackageWithEventsById pkgId
   case eitherDto of
     Right dto -> do
-      let cdHeader = "attachment;filename=" ++ pkgId ++ ".ep"
+      let cdHeader = "attachment;filename=" ++ pkgId ++ ".kmp"
       addHeader "Content-Disposition" (pack cdHeader)
       addHeader "Content-Type" (pack "application/octet-stream")
       raw $ encode dto

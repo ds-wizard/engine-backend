@@ -68,11 +68,24 @@ _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
 
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
+
 -- User
 _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
   "You have to log in as an Administrator or you have to provide a hash in the query param"
 
 _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS = "A hash query param has to be provided"
+
+-- DataManagementPlan
+_ERROR_SERVICE_DMP__TRANSFORMATION_FAILED = "Couldn't transform to desired document format"
+
+_ERROR_SERVICE_DMP__UKNOWN_FORMAT = "Unprocessable DMP format"
+
+-- --------------------------------------
+-- HTTP CLIENT
+-- --------------------------------------
+_ERROR_HTTP_CLIENT__REQUEST_FAILED serviceName endpoint =
+  "Request to external API failed (service: '" ++ serviceName ++ "', endpoint: '" ++ endpoint ++ "')"
 
 -- --------------------------------------
 -- MIGRATION TOOL

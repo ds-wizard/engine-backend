@@ -2,7 +2,9 @@ module Common.ConfigLoader where
 
 import Control.Monad.Except
 import Data.ConfigFile
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import System.Environment (lookupEnv)
 
 import Model.Config.DSWConfig
 
@@ -19,6 +21,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     appRoles <- loadAppConfigRole appConfigParser
     appMail <- loadAppConfigMail appConfigParser
     appAnalytics <- loadAppConfigAnalytics appConfigParser
+    appFeedback <- loadAppConfigFeedback appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       DSWConfig
@@ -30,6 +33,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _dSWConfigRoles = appRoles
       , _dSWConfigMail = appMail
       , _dSWConfigAnalytics = appAnalytics
+      , _dSWConfigFeedback = appFeedback
       , _dSWConfigBuildInfo = buildInfo
       }
   where
@@ -41,7 +45,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       return AppConfigClient {_appConfigClientAddress = address}
     loadAppConfigWeb configParser = do
       webPort <- get configParser "Web" "port"
-      return AppConfigWeb {_appConfigWebPort = webPort}
+      serviceToken <- get configParser "Web" "servicetoken"
+      return AppConfigWeb {_appConfigWebPort = webPort, _appConfigWebServiceToken = serviceToken}
     loadAppConfigDatabase configParser = do
       host <- get configParser "Database" "host"
       dbname <- get configParser "Database" "dbname"
@@ -98,6 +103,20 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       analyticsEmail <- get configParser "Analytics" "email"
       return
         AppConfigAnalytics {_appConfigAnalyticsEnabled = analyticsEnabled, _appConfigAnalyticsEmail = analyticsEmail}
+    loadAppConfigFeedback configParser = do
+      feedbackTokenFromConfig <- get configParser "Feedback" "token"
+      feedbackTokenFromEnv <- liftIO $ lookupEnv "FEEDBACK_TOKEN"
+      let feedbackToken = fromMaybe feedbackTokenFromConfig feedbackTokenFromEnv
+      feedbackOwner <- get configParser "Feedback" "owner"
+      feedbackRepo <- get configParser "Feedback" "repo"
+      feedbackIssueUrl <- get configParser "Feedback" "issueurl"
+      return
+        AppConfigFeedback
+        { _appConfigFeedbackToken = feedbackToken
+        , _appConfigFeedbackOwner = feedbackOwner
+        , _appConfigFeedbackRepo = feedbackRepo
+        , _appConfigFeedbackIssueUrl = feedbackIssueUrl
+        }
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
