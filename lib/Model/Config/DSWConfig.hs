@@ -19,6 +19,7 @@ data AppConfigClient = AppConfigClient
 
 data AppConfigWeb = AppConfigWeb
   { _appConfigWebPort :: Int
+  , _appConfigWebServiceToken :: String
   }
 
 data AppConfigDatabase = AppConfigDatabase

@@ -2,7 +2,7 @@ module Api.Handler.Common where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger
-import Control.Monad.Trans.Class (lift)
+import Control.Monad.Reader (asks, lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe
@@ -81,6 +81,20 @@ checkPermission perm callback = do
         then callback
         else forbidden
     Nothing -> forbidden
+
+checkServiceToken callback = do
+  tokenHeader <- header "Authorization"
+  dswConfig <- lift $ asks _appContextConfig
+  let mToken =
+        tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= validateServiceToken dswConfig
+  case mToken of
+    Just _ -> callback
+    Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN
+  where
+    validateServiceToken dswConfig token = do
+      if token == (T.pack $ dswConfig ^. webConfig . serviceToken)
+        then Just token
+        else Nothing
 
 isLogged callback = do
   tokenHeader <- header "Authorization"

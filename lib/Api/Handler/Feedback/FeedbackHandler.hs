@@ -29,11 +29,12 @@ postFeedbacksA = do
         json questionnaireDto
 
 getFeedbacksSynchronizationA :: Endpoint
-getFeedbacksSynchronizationA = do
-  maybeError <- lift $ synchronizeFeedbacks
-  case maybeError of
-    Nothing -> status noContent204
-    Just error -> sendError error
+getFeedbacksSynchronizationA =
+  checkServiceToken $ do
+    maybeError <- lift $ synchronizeFeedbacks
+    case maybeError of
+      Nothing -> status noContent204
+      Just error -> sendError error
 
 getFeedbackA :: Endpoint
 getFeedbackA = do

@@ -45,7 +45,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       return AppConfigClient {_appConfigClientAddress = address}
     loadAppConfigWeb configParser = do
       webPort <- get configParser "Web" "port"
-      return AppConfigWeb {_appConfigWebPort = webPort}
+      serviceToken <- get configParser "Web" "servicetoken"
+      return AppConfigWeb {_appConfigWebPort = webPort, _appConfigWebServiceToken = serviceToken}
     loadAppConfigDatabase configParser = do
       host <- get configParser "Database" "host"
       dbname <- get configParser "Database" "dbname"

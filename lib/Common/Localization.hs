@@ -68,6 +68,8 @@ _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
 
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
+
 -- User
 _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
   "You have to log in as an Administrator or you have to provide a hash in the query param"
