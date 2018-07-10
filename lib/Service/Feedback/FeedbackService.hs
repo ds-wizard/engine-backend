@@ -53,12 +53,13 @@ synchronizeFeedbacks :: AppContextM (Maybe AppError)
 synchronizeFeedbacks =
   hmGetIssues $ \issues ->
     hmFindFeedbacks $ \feedbacks -> do
-      sequence $ (updateOrDeleteFeedback issues) <$> feedbacks
+      now <- liftIO getCurrentTime
+      sequence $ (updateOrDeleteFeedback issues now) <$> feedbacks
       return Nothing
   where
-    updateOrDeleteFeedback issues feedback =
+    updateOrDeleteFeedback issues now feedback =
       case L.find (\issue -> feedback ^. issueId == issue ^. issueId) issues of
-        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue
+        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
         Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
 
 createIssueUrl :: DSWConfig -> Feedback -> String
