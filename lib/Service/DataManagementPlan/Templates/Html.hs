@@ -36,6 +36,7 @@ fkm2html km =
   H.docTypeHtml $ do
     H.head $ do
       H.title textTitle
+      H.meta ! A.charset (H.stringValue "utf-8")
       H.style . H.toHtml $ dmpCSS
     H.body $
       H.article ! A.class_ "dmp" $ do
