@@ -66,7 +66,6 @@ createQuestion :: AddQuestionEvent -> Maybe AnswerItemTemplate -> Maybe [Answer]
 createQuestion e maybeAit maybeAnswers =
   Question
   { _questionUuid = e ^. questionUuid
-  , _questionShortUuid = e ^. shortQuestionUuid
   , _questionQType = e ^. qType
   , _questionTitle = e ^. title
   , _questionText = e ^. text
@@ -78,10 +77,8 @@ createQuestion e maybeAit maybeAnswers =
 
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e =
-  applyReferenceIds .
-  applyExpertIds . applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType . applyShortUuid
+  applyReferenceIds . applyExpertIds . applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType
   where
-    applyShortUuid q = applyValue (e ^. shortQuestionUuid) q shortUuid
     applyType q = applyValue (e ^. qType) q qType
     applyTitle q = applyValue (e ^. title) q title
     applyText q = applyValue (e ^. text) q text
@@ -137,7 +134,7 @@ addReference :: Question -> Reference -> Question
 addReference q ref = q & references .~ (q ^. references ++ [ref])
 
 deleteReference :: Question -> U.UUID -> Question
-deleteReference q refUuid = q & references .~ (filter (\ref -> ref ^. uuid /= refUuid) (q ^. references))
+deleteReference q refUuid = q & references .~ (filter (\ref -> (getReferenceUuid ref) /= refUuid) (q ^. references))
 
 -- -------------------
 -- ANSWER ------------
@@ -176,9 +173,26 @@ editExpert e = applyEmail . applyName
 -- REFERENCE ---------
 -- -------------------
 createReference :: AddReferenceEvent -> Reference
-createReference e = Reference {_referenceUuid = e ^. referenceUuid, _referenceChapter = e ^. chapter}
+createReference (AddResourcePageReferenceEvent' e) =
+  ResourcePageReference' $
+  ResourcePageReference
+  {_resourcePageReferenceUuid = e ^. referenceUuid, _resourcePageReferenceShortUuid = e ^. shortUuid}
+createReference (AddURLReferenceEvent' e) =
+  URLReference' $
+  URLReference {_uRLReferenceUuid = e ^. referenceUuid, _uRLReferenceUrl = e ^. url, _uRLReferenceAnchor = e ^. anchor}
+createReference (AddCrossReferenceEvent' e) =
+  CrossReference' $
+  CrossReference {_crossReferenceUuid = e ^. referenceUuid, _crossReferenceTargetUuid = e ^. targetUuid}
 
 editReference :: EditReferenceEvent -> Reference -> Reference
-editReference e = applyChapter
+editReference (EditResourcePageReferenceEvent' e) (ResourcePageReference' ref) =
+  ResourcePageReference' . applyShortUuid $ ref
   where
-    applyChapter ref = applyValue (e ^. chapter) ref chapter
+    applyShortUuid ref = applyValue (e ^. shortUuid) ref shortUuid
+editReference (EditURLReferenceEvent' e) (URLReference' ref) = URLReference' . applyAnchor . applyUrl $ ref
+  where
+    applyUrl ref = applyValue (e ^. url) ref url
+    applyAnchor ref = applyValue (e ^. anchor) ref anchor
+editReference (EditCrossReferenceEvent' e) (CrossReference' ref) = CrossReference' . applyTarget $ ref
+  where
+    applyTarget ref = applyValue (e ^. targetUuid) ref targetUuid

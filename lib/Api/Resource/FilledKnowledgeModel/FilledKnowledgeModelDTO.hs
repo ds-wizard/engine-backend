@@ -23,7 +23,6 @@ data FilledChapterDTO = FilledChapterDTO
 
 data FilledQuestionDTO = FilledQuestionDTO
   { _filledQuestionDTOUuid :: UUID
-  , _filledQuestionDTOShortUuid :: Maybe String
   , _filledQuestionDTOQType :: QuestionType
   , _filledQuestionDTOTitle :: String
   , _filledQuestionDTOText :: String
@@ -70,7 +69,6 @@ instance ToJSON FilledQuestionDTO where
   toJSON FilledQuestionDTO {..} =
     object
       [ "uuid" .= _filledQuestionDTOUuid
-      , "shortUuid" .= _filledQuestionDTOShortUuid
       , "type" .= serializeQuestionType _filledQuestionDTOQType
       , "title" .= _filledQuestionDTOTitle
       , "text" .= _filledQuestionDTOText
@@ -120,7 +118,6 @@ instance FromJSON FilledChapterDTO where
 instance FromJSON FilledQuestionDTO where
   parseJSON (Object o) = do
     _filledQuestionDTOUuid <- o .: "uuid"
-    _filledQuestionDTOShortUuid <- o .: "shortUuid"
     _filledQuestionDTOTitle <- o .: "title"
     _filledQuestionDTOText <- o .: "text"
     _filledQuestionDTOAnswerItemTemplate <- o .: "answerItemTemplate"

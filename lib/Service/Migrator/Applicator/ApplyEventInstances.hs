@@ -7,11 +7,13 @@ import Common.Localization
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
+import Model.Event.EventAccessors
 import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 import Service.Migrator.Applicator.ApplyEvent
 import Service.Migrator.Applicator.Errors
 import Service.Migrator.Applicator.Modifiers
@@ -280,7 +282,7 @@ applyEventToReferences e path q refUuid =
     foldOneReference :: Either AppError [Reference] -> Reference -> Either AppError [Reference]
     foldOneReference (Left error) _ = Left error
     foldOneReference (Right es) reference =
-      if reference ^. uuid == refUuid
+      if (getReferenceUuid reference) == refUuid
         then heApplyEventToReference e path (Right reference) $ \appliedReference -> Right $ es ++ [appliedReference]
         else Right $ es ++ [reference]
 
@@ -380,12 +382,12 @@ instance ApplyEventToQuestion AddReferenceEvent where
 
 instance ApplyEventToQuestion EditReferenceEvent where
   applyEventToQuestion e _ (Left error) = Left error
-  applyEventToQuestion e (pQUuid:[]) (Right q) = applyEventToReferences e [] q (e ^. referenceUuid)
+  applyEventToQuestion e (pQUuid:[]) (Right q) = applyEventToReferences e [] q (getEventNodeUuid e)
   applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
 
 instance ApplyEventToQuestion DeleteReferenceEvent where
   applyEventToQuestion e _ (Left error) = Left error
-  applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteReference q (e ^. referenceUuid)
+  applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteReference q (getEventNodeUuid e)
   applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
 
 -- ------------------------------------------------------------------------

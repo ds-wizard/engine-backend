@@ -27,7 +27,6 @@ toFilledQuestion :: Question -> FilledQuestion
 toFilledQuestion q =
   FilledQuestion
   { _filledQuestionUuid = q ^. uuid
-  , _filledQuestionShortUuid = q ^. shortUuid
   , _filledQuestionQType = q ^. qType
   , _filledQuestionTitle = q ^. title
   , _filledQuestionText = q ^. text

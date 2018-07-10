@@ -126,7 +126,7 @@ instance Sanitizator EditQuestionEvent where
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
-          childIdsFromKM km = _referenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
+          childIdsFromKM km = getReferenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
           isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]

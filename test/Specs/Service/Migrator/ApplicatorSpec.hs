@@ -184,19 +184,19 @@ applicatorSpec =
     describe "Apply:  Reference Events" $ do
       it "Apply:  AddReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [AddReferenceEvent' a_km1_ch1_q2_rCh3]
-        let question2WithAddedReference = question2 & references .~ [referenceCh1, referenceCh2, referenceCh3]
+        let question2WithAddedReference = question2 & references .~ [referenceCh1', referenceCh2', referenceCh3']
         let chapter1WithAddedReference = chapter1 & questions .~ [question1, question2WithAddedReference]
         let expected = km1 & chapters .~ [chapter1WithAddedReference, chapter2]
         computed `shouldBe` expected
       it "Apply:  EditReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditReferenceEvent' e_km1_ch1_q2_rCh1]
-        let question2WithChangedReference = question2 & references .~ [referenceCh1Changed, referenceCh2]
+        let question2WithChangedReference = question2 & references .~ [referenceCh1Changed', referenceCh2']
         let chapter1WithChangedReference = chapter1 & questions .~ [question1, question2WithChangedReference]
         let expected = km1 & chapters .~ [chapter1WithChangedReference, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteReferenceEvent' d_km1_ch1_q2_rCh2]
-        let question2WithDeletedReference = question2 & references .~ [referenceCh1]
+        let question2WithDeletedReference = question2 & references .~ [referenceCh1']
         let chapter1WithDeletedReference = chapter1 & questions .~ [question1, question2WithDeletedReference]
         let expected = km1 & chapters .~ [chapter1WithDeletedReference, chapter2]
         computed `shouldBe` expected

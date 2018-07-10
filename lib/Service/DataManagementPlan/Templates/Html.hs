@@ -136,6 +136,12 @@ references2html references =
     H.h4 . H.toHtml $ "References"
     H.ul ! A.class_ "references-list" $ mapM_ reference2html references
   where
-    reference2html reference =
+    reference2html (ResourcePageReferenceDTO' reference) =
       H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
-      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. chapter
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. shortUuid
+    reference2html (URLReferenceDTO' reference) =
+      H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. url
+    reference2html (CrossReferenceDTO' reference) =
+      H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ U.toString $ reference ^. targetUuid

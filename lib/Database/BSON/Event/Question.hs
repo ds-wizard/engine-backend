@@ -20,7 +20,6 @@ instance ToBSON AddQuestionEvent where
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
     , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: serializeQuestionType (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
@@ -32,7 +31,6 @@ instance FromBSON AddQuestionEvent where
     qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     qPath <- BSON.lookup "path" doc
     qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
@@ -42,7 +40,6 @@ instance FromBSON AddQuestionEvent where
       { _addQuestionEventUuid = qUuid
       , _addQuestionEventPath = qPath
       , _addQuestionEventQuestionUuid = qQuestionUuid
-      , _addQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _addQuestionEventQType = qQType
       , _addQuestionEventTitle = qTitle
       , _addQuestionEventText = qText
@@ -58,7 +55,6 @@ instance ToBSON EditQuestionEvent where
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
     , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
@@ -73,7 +69,6 @@ instance FromBSON EditQuestionEvent where
     qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     qPath <- BSON.lookup "path" doc
     qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
@@ -86,7 +81,6 @@ instance FromBSON EditQuestionEvent where
       { _editQuestionEventUuid = qUuid
       , _editQuestionEventPath = qPath
       , _editQuestionEventQuestionUuid = qQuestionUuid
-      , _editQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _editQuestionEventQType = qQType
       , _editQuestionEventTitle = qTitle
       , _editQuestionEventText = qText

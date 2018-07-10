@@ -18,7 +18,6 @@ fQ2_answerYes =
 fQ2_aYes_fuQuestion1 =
   FilledQuestion
   { _filledQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
-  , _filledQuestionShortUuid = q2_aYes_fuQuestion1 ^. shortUuid
   , _filledQuestionQType = q2_aYes_fuQuestion1 ^. qType
   , _filledQuestionTitle = q2_aYes_fuQuestion1 ^. title
   , _filledQuestionText = q2_aYes_fuQuestion1 ^. text
@@ -62,7 +61,6 @@ fQ4_ait1 =
 fQ4_ait1_question5 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_question5 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_question5 ^. shortUuid
   , _filledQuestionQType = q4_ait1_question5 ^. qType
   , _filledQuestionTitle = q4_ait1_question5 ^. title
   , _filledQuestionText = q4_ait1_question5 ^. text
@@ -85,7 +83,6 @@ fQ4_ait1_q5_ait1 =
 fQ4_ait1_q5_ait1_question7 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_q5_ait2_question7 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_q5_ait2_question7 ^. shortUuid
   , _filledQuestionQType = q4_ait1_q5_ait2_question7 ^. qType
   , _filledQuestionTitle = q4_ait1_q5_ait2_question7 ^. title
   , _filledQuestionText = q4_ait1_q5_ait2_question7 ^. text
@@ -101,7 +98,6 @@ fQ4_ait1_q5_ait1_question7 =
 fQ4_ait1_q5_ait1_question8 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_q5_ait2_question8 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_q5_ait2_question8 ^. shortUuid
   , _filledQuestionQType = q4_ait1_q5_ait2_question8 ^. qType
   , _filledQuestionTitle = q4_ait1_q5_ait2_question8 ^. title
   , _filledQuestionText = q4_ait1_q5_ait2_question8 ^. text
@@ -118,7 +114,6 @@ fQ4_ait1_q5_ait1_question8 =
 fQ4_ait1_question6 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_question6 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_question6 ^. shortUuid
   , _filledQuestionQType = q4_ait1_question6 ^. qType
   , _filledQuestionTitle = q4_ait1_question6 ^. title
   , _filledQuestionText = q4_ait1_question6 ^. text
@@ -152,7 +147,6 @@ fQ4_ait2 =
 fQ4_ait2_question5 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_question5 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_question5 ^. shortUuid
   , _filledQuestionQType = q4_ait1_question5 ^. qType
   , _filledQuestionTitle = q4_ait1_question5 ^. title
   , _filledQuestionText = q4_ait1_question5 ^. text
@@ -175,7 +169,6 @@ fQ4_ait2_q5_ait1 =
 fQ4_ait2_q5_ait1_question7 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_q5_ait2_question7 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_q5_ait2_question7 ^. shortUuid
   , _filledQuestionQType = q4_ait1_q5_ait2_question7 ^. qType
   , _filledQuestionTitle = q4_ait1_q5_ait2_question7 ^. title
   , _filledQuestionText = q4_ait1_q5_ait2_question7 ^. text
@@ -191,7 +184,6 @@ fQ4_ait2_q5_ait1_question7 =
 fQ4_ait2_q5_ait1_question8 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_q5_ait2_question8 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_q5_ait2_question8 ^. shortUuid
   , _filledQuestionQType = q4_ait1_q5_ait2_question8 ^. qType
   , _filledQuestionTitle = q4_ait1_q5_ait2_question8 ^. title
   , _filledQuestionText = q4_ait1_q5_ait2_question8 ^. text
@@ -208,7 +200,6 @@ fQ4_ait2_q5_ait1_question8 =
 fQ4_ait2_question6 =
   FilledQuestion
   { _filledQuestionUuid = q4_ait1_question6 ^. uuid
-  , _filledQuestionShortUuid = q4_ait1_question6 ^. shortUuid
   , _filledQuestionQType = q4_ait1_question6 ^. qType
   , _filledQuestionTitle = q4_ait1_question6 ^. title
   , _filledQuestionText = q4_ait1_question6 ^. text

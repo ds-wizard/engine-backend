@@ -20,7 +20,6 @@ data FilledChapter = FilledChapter
 
 data FilledQuestion = FilledQuestion
   { _filledQuestionUuid :: UUID
-  , _filledQuestionShortUuid :: Maybe String
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
   , _filledQuestionText :: String

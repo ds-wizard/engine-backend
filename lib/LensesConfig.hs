@@ -142,6 +142,24 @@ makeFields ''EditReferenceEvent
 
 makeFields ''DeleteReferenceEvent
 
+makeFields ''AddResourcePageReferenceEvent
+
+makeFields ''EditResourcePageReferenceEvent
+
+makeFields ''DeleteResourcePageReferenceEvent
+
+makeFields ''AddURLReferenceEvent
+
+makeFields ''EditURLReferenceEvent
+
+makeFields ''DeleteURLReferenceEvent
+
+makeFields ''AddCrossReferenceEvent
+
+makeFields ''EditCrossReferenceEvent
+
+makeFields ''DeleteCrossReferenceEvent
+
 -- Model / Feedback
 makeFields ''Feedback
 
@@ -176,6 +194,12 @@ makeFields ''AnswerItemTemplatePlainWithIds
 makeFields ''Expert
 
 makeFields ''Reference
+
+makeFields ''ResourcePageReference
+
+makeFields ''URLReference
+
+makeFields ''CrossReference
 
 -- Model / Migrator
 makeFields ''MigratorConflictDTO
@@ -254,6 +278,24 @@ makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
 
+makeFields ''AddResourcePageReferenceEventDTO
+
+makeFields ''EditResourcePageReferenceEventDTO
+
+makeFields ''DeleteResourcePageReferenceEventDTO
+
+makeFields ''AddURLReferenceEventDTO
+
+makeFields ''EditURLReferenceEventDTO
+
+makeFields ''DeleteURLReferenceEventDTO
+
+makeFields ''AddCrossReferenceEventDTO
+
+makeFields ''EditCrossReferenceEventDTO
+
+makeFields ''DeleteCrossReferenceEventDTO
+
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
 
@@ -291,6 +333,12 @@ makeFields ''AnswerItemTemplatePlainWithIdsDTO
 makeFields ''ExpertDTO
 
 makeFields ''ReferenceDTO
+
+makeFields ''ResourcePageReferenceDTO
+
+makeFields ''URLReferenceDTO
+
+makeFields ''CrossReferenceDTO
 
 -- Api / Resource / Migrator
 makeFields ''MigratorState

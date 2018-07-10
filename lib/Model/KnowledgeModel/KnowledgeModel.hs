@@ -1,6 +1,6 @@
 module Model.KnowledgeModel.KnowledgeModel where
 
-import Data.UUID
+import qualified Data.UUID as U
 import GHC.Generics
 
 data QuestionType
@@ -13,21 +13,20 @@ data QuestionType
   deriving (Show, Eq, Generic)
 
 data KnowledgeModel = KnowledgeModel
-  { _knowledgeModelUuid :: UUID
+  { _knowledgeModelUuid :: U.UUID
   , _knowledgeModelName :: String
   , _knowledgeModelChapters :: [Chapter]
   } deriving (Show, Eq, Generic)
 
 data Chapter = Chapter
-  { _chapterUuid :: UUID
+  { _chapterUuid :: U.UUID
   , _chapterTitle :: String
   , _chapterText :: String
   , _chapterQuestions :: [Question]
   } deriving (Show, Eq, Generic)
 
 data Question = Question
-  { _questionUuid :: UUID
-  , _questionShortUuid :: Maybe String
+  { _questionUuid :: U.UUID
   , _questionQType :: QuestionType
   , _questionTitle :: String
   , _questionText :: String
@@ -38,7 +37,7 @@ data Question = Question
   } deriving (Show, Eq, Generic)
 
 data Answer = Answer
-  { _answerUuid :: UUID
+  { _answerUuid :: U.UUID
   , _answerLabel :: String
   , _answerAdvice :: Maybe String
   , _answerFollowUps :: [Question]
@@ -55,16 +54,33 @@ data AnswerItemTemplatePlain = AnswerItemTemplatePlain
 
 data AnswerItemTemplatePlainWithIds = AnswerItemTemplatePlainWithIds
   { _answerItemTemplatePlainWithIdsTitle :: String
-  , _answerItemTemplatePlainWithIdsQuestionIds :: [UUID]
+  , _answerItemTemplatePlainWithIdsQuestionIds :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data Expert = Expert
-  { _expertUuid :: UUID
+  { _expertUuid :: U.UUID
   , _expertName :: String
   , _expertEmail :: String
   } deriving (Show, Eq, Generic)
 
-data Reference = Reference
-  { _referenceUuid :: UUID
-  , _referenceChapter :: String
+data Reference
+  = ResourcePageReference' ResourcePageReference
+  | URLReference' URLReference
+  | CrossReference' CrossReference
+  deriving (Show, Eq, Generic)
+
+data ResourcePageReference = ResourcePageReference
+  { _resourcePageReferenceUuid :: U.UUID
+  , _resourcePageReferenceShortUuid :: String
+  } deriving (Show, Eq, Generic)
+
+data URLReference = URLReference
+  { _uRLReferenceUuid :: U.UUID
+  , _uRLReferenceUrl :: String
+  , _uRLReferenceAnchor :: String
+  } deriving (Show, Eq, Generic)
+
+data CrossReference = CrossReference
+  { _crossReferenceUuid :: U.UUID
+  , _crossReferenceTargetUuid :: U.UUID
   } deriving (Show, Eq, Generic)

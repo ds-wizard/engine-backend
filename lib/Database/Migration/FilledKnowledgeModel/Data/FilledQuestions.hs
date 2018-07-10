@@ -10,7 +10,6 @@ import Model.FilledKnowledgeModel.FilledKnowledgeModel
 fQuestion1 =
   FilledQuestion
   { _filledQuestionUuid = question1 ^. uuid
-  , _filledQuestionShortUuid = question1 ^. shortUuid
   , _filledQuestionQType = question1 ^. qType
   , _filledQuestionTitle = question1 ^. title
   , _filledQuestionText = question1 ^. text
@@ -26,7 +25,6 @@ fQuestion1 =
 fQuestion2 =
   FilledQuestion
   { _filledQuestionUuid = question2 ^. uuid
-  , _filledQuestionShortUuid = question2 ^. shortUuid
   , _filledQuestionQType = question2 ^. qType
   , _filledQuestionTitle = question2 ^. title
   , _filledQuestionText = question2 ^. text
@@ -42,7 +40,6 @@ fQuestion2 =
 fQuestion3 =
   FilledQuestion
   { _filledQuestionUuid = question3 ^. uuid
-  , _filledQuestionShortUuid = question3 ^. shortUuid
   , _filledQuestionQType = question3 ^. qType
   , _filledQuestionTitle = question3 ^. title
   , _filledQuestionText = question3 ^. text
@@ -58,7 +55,6 @@ fQuestion3 =
 fQuestion4 =
   FilledQuestion
   { _filledQuestionUuid = question4 ^. uuid
-  , _filledQuestionShortUuid = question4 ^. shortUuid
   , _filledQuestionQType = question4 ^. qType
   , _filledQuestionTitle = question4 ^. title
   , _filledQuestionText = question4 ^. text

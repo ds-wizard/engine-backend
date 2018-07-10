@@ -124,9 +124,9 @@ knowledgeModelAccessorsSpec =
         False
     ---------------------------------------------
     describe "getAllReferences" $ it "Successfully listed" $ getAllReferences FKM.km1 `shouldBe`
-      [FR.referenceCh1, FR.referenceCh2]
+      [FR.referenceCh1', FR.referenceCh2']
     describe "getReferenceByUuid" $ it "Successfully listed" $ getReferenceByUuid FKM.km1 (FR.referenceCh1 ^. uuid) `shouldBe`
-      Just FR.referenceCh1
+      Just FR.referenceCh1'
     describe "isThereAnyReferenceWithGivenUuid" $ do
       it "Returns True if exists" $ isThereAnyReferenceWithGivenUuid FKM.km1 (FR.referenceCh1 ^. uuid) `shouldBe` True
       it "Returns False if not exists" $

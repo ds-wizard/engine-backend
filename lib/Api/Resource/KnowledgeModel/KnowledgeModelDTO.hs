@@ -2,27 +2,26 @@ module Api.Resource.KnowledgeModel.KnowledgeModelDTO where
 
 import Control.Monad
 import Data.Aeson
-import Data.UUID
+import qualified Data.UUID as U
 
 import Api.Resource.Common
 import Model.KnowledgeModel.KnowledgeModel
 
 data KnowledgeModelDTO = KnowledgeModelDTO
-  { _knowledgeModelDTOUuid :: UUID
+  { _knowledgeModelDTOUuid :: U.UUID
   , _knowledgeModelDTOName :: String
   , _knowledgeModelDTOChapters :: [ChapterDTO]
   } deriving (Show, Eq)
 
 data ChapterDTO = ChapterDTO
-  { _chapterDTOUuid :: UUID
+  { _chapterDTOUuid :: U.UUID
   , _chapterDTOTitle :: String
   , _chapterDTOText :: String
   , _chapterDTOQuestions :: [QuestionDTO]
   } deriving (Show, Eq)
 
 data QuestionDTO = QuestionDTO
-  { _questionDTOUuid :: UUID
-  , _questionDTOShortUuid :: Maybe String
+  { _questionDTOUuid :: U.UUID
   , _questionDTOQType :: QuestionType
   , _questionDTOTitle :: String
   , _questionDTOText :: String
@@ -33,7 +32,7 @@ data QuestionDTO = QuestionDTO
   } deriving (Show, Eq)
 
 data AnswerDTO = AnswerDTO
-  { _answerDTOUuid :: UUID
+  { _answerDTOUuid :: U.UUID
   , _answerDTOLabel :: String
   , _answerDTOAdvice :: Maybe String
   , _answerDTOFollowUps :: [QuestionDTO]
@@ -50,20 +49,39 @@ data AnswerItemTemplatePlainDTO = AnswerItemTemplatePlainDTO
 
 data AnswerItemTemplatePlainWithIdsDTO = AnswerItemTemplatePlainWithIdsDTO
   { _answerItemTemplatePlainWithIdsDTOTitle :: String
-  , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [UUID]
+  , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [U.UUID]
   } deriving (Show, Eq)
 
 data ExpertDTO = ExpertDTO
-  { _expertDTOUuid :: UUID
+  { _expertDTOUuid :: U.UUID
   , _expertDTOName :: String
   , _expertDTOEmail :: String
   } deriving (Show, Eq)
 
-data ReferenceDTO = ReferenceDTO
-  { _referenceDTOUuid :: UUID
-  , _referenceDTOChapter :: String
+data ReferenceDTO
+  = ResourcePageReferenceDTO' ResourcePageReferenceDTO
+  | URLReferenceDTO' URLReferenceDTO
+  | CrossReferenceDTO' CrossReferenceDTO
+  deriving (Show, Eq)
+
+data ResourcePageReferenceDTO = ResourcePageReferenceDTO
+  { _resourcePageReferenceDTOUuid :: U.UUID
+  , _resourcePageReferenceDTOShortUuid :: String
   } deriving (Show, Eq)
 
+data URLReferenceDTO = URLReferenceDTO
+  { _uRLReferenceDTOUuid :: U.UUID
+  , _uRLReferenceDTOUrl :: String
+  , _uRLReferenceDTOAnchor :: String
+  } deriving (Show, Eq)
+
+data CrossReferenceDTO = CrossReferenceDTO
+  { _crossReferenceDTOUuid :: U.UUID
+  , _crossReferenceDTOTargetUuid :: U.UUID
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance ToJSON KnowledgeModelDTO where
   toJSON KnowledgeModelDTO {..} =
     object
@@ -82,7 +100,6 @@ instance ToJSON QuestionDTO where
   toJSON QuestionDTO {..} =
     object
       [ "uuid" .= _questionDTOUuid
-      , "shortUuid" .= _questionDTOShortUuid
       , "type" .= serializeQuestionType _questionDTOQType
       , "title" .= _questionDTOTitle
       , "text" .= _questionDTOText
@@ -119,8 +136,37 @@ instance ToJSON ExpertDTO where
   toJSON ExpertDTO {..} = object ["uuid" .= _expertDTOUuid, "name" .= _expertDTOName, "email" .= _expertDTOEmail]
 
 instance ToJSON ReferenceDTO where
-  toJSON ReferenceDTO {..} = object ["uuid" .= _referenceDTOUuid, "chapter" .= _referenceDTOChapter]
+  toJSON (ResourcePageReferenceDTO' event) = toJSON event
+  toJSON (URLReferenceDTO' event) = toJSON event
+  toJSON (CrossReferenceDTO' event) = toJSON event
 
+instance ToJSON ResourcePageReferenceDTO where
+  toJSON ResourcePageReferenceDTO {..} =
+    object
+      [ "referenceType" .= "ResourcePageReference"
+      , "uuid" .= _resourcePageReferenceDTOUuid
+      , "shortUuid" .= _resourcePageReferenceDTOShortUuid
+      ]
+
+instance ToJSON URLReferenceDTO where
+  toJSON URLReferenceDTO {..} =
+    object
+      [ "referenceType" .= "URLReference"
+      , "uuid" .= _uRLReferenceDTOUuid
+      , "url" .= _uRLReferenceDTOUrl
+      , "anchor" .= _uRLReferenceDTOAnchor
+      ]
+
+instance ToJSON CrossReferenceDTO where
+  toJSON CrossReferenceDTO {..} =
+    object
+      [ "referenceType" .= "CrossReference"
+      , "uuid" .= _crossReferenceDTOUuid
+      , "targetUuid" .= _crossReferenceDTOTargetUuid
+      ]
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
     _knowledgeModelDTOUuid <- o .: "uuid"
@@ -141,7 +187,6 @@ instance FromJSON ChapterDTO where
 instance FromJSON QuestionDTO where
   parseJSON (Object o) = do
     _questionDTOUuid <- o .: "uuid"
-    _questionDTOShortUuid <- o .: "shortUuid"
     _questionDTOTitle <- o .: "title"
     _questionDTOText <- o .: "text"
     _questionDTOAnswers <- o .: "answers"
@@ -193,7 +238,32 @@ instance FromJSON ExpertDTO where
 
 instance FromJSON ReferenceDTO where
   parseJSON (Object o) = do
-    _referenceDTOUuid <- o .: "uuid"
-    _referenceDTOChapter <- o .: "chapter"
-    return ReferenceDTO {..}
+    referenceType <- o .: "referenceType"
+    case referenceType of
+      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (ResourcePageReferenceDTO' event)
+      "URLReference" -> parseJSON (Object o) >>= \event -> return (URLReferenceDTO' event)
+      "CrossReference" -> parseJSON (Object o) >>= \event -> return (CrossReferenceDTO' event)
+      _ -> fail "One of the references has unsupported referenceType"
+  parseJSON _ = mzero
+
+instance FromJSON ResourcePageReferenceDTO where
+  parseJSON (Object o) = do
+    _resourcePageReferenceDTOUuid <- o .: "uuid"
+    _resourcePageReferenceDTOShortUuid <- o .: "shortUuid"
+    return ResourcePageReferenceDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON URLReferenceDTO where
+  parseJSON (Object o) = do
+    _uRLReferenceDTOUuid <- o .: "uuid"
+    _uRLReferenceDTOUrl <- o .: "url"
+    _uRLReferenceDTOAnchor <- o .: "anchor"
+    return URLReferenceDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON CrossReferenceDTO where
+  parseJSON (Object o) = do
+    _crossReferenceDTOUuid <- o .: "uuid"
+    _crossReferenceDTOTargetUuid <- o .: "targetUuid"
+    return CrossReferenceDTO {..}
   parseJSON _ = mzero

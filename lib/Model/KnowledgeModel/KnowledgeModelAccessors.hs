@@ -222,8 +222,13 @@ isThereAnyExpertWithGivenUuid km expUuid = expUuid `elem` (getExpertUuid <$> get
     getExpertUuid expert = expert ^. uuid
 
 ------------------------------------------------------------------------------------------
+getReferenceUuid :: Reference -> UUID
+getReferenceUuid (ResourcePageReference' ref) = ref ^. uuid
+getReferenceUuid (URLReference' ref) = ref ^. uuid
+getReferenceUuid (CrossReference' ref) = ref ^. uuid
+
 getReferenceIds :: Question -> [UUID]
-getReferenceIds q = q ^.. references . traverse . uuid
+getReferenceIds q = getReferenceUuid <$> (q ^. references)
 
 qChangeReferenceIdsOrder :: ([Reference] -> Identity [UUID]) -> Question -> Identity Question
 qChangeReferenceIdsOrder convert q = Identity $ q & references .~ orderedReferences
@@ -233,7 +238,7 @@ qChangeReferenceIdsOrder convert q = Identity $ q & references .~ orderedReferen
     orderedReferences :: [Reference]
     orderedReferences = concatMap getReferenceByUuid (runIdentity ids)
     getReferenceByUuid :: UUID -> [Reference]
-    getReferenceByUuid refUuid = filter (\x -> x ^. uuid == refUuid) (q ^. references)
+    getReferenceByUuid refUuid = filter (\x -> (getReferenceUuid x) == refUuid) (q ^. references)
 
 getAllReferences :: KnowledgeModel -> [Reference]
 getAllReferences km = concat $ getReference <$> getAllQuestions km
@@ -242,7 +247,7 @@ getAllReferences km = concat $ getReference <$> getAllQuestions km
     getReference question = question ^. references
 
 getReferenceByUuid :: KnowledgeModel -> UUID -> Maybe Reference
-getReferenceByUuid km referenceUuid = find (\ref -> ref ^. uuid == referenceUuid) (getAllReferences km)
+getReferenceByUuid km refUuid = find (\ref -> (getReferenceUuid ref) == refUuid) (getAllReferences km)
 
 getAllReferencesForQuestionUuid :: KnowledgeModel -> UUID -> [Reference]
 getAllReferencesForQuestionUuid km questionUuid =
@@ -252,5 +257,3 @@ getAllReferencesForQuestionUuid km questionUuid =
 
 isThereAnyReferenceWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyReferenceWithGivenUuid km refUuid = refUuid `elem` (getReferenceUuid <$> getAllReferences km)
-  where
-    getReferenceUuid reference = reference ^. uuid

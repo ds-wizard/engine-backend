@@ -125,7 +125,6 @@ q2_aYes_fuQuestion1 :: Question
 q2_aYes_fuQuestion1 =
   Question
   { _questionUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
-  , _questionShortUuid = Just "q2_aYes_fuQuestion1"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "First Follow-Up Question"
   , _questionText = "Maybe there will be some description"
@@ -139,7 +138,6 @@ q2_aYes_fuQuestion1Plain :: Question
 q2_aYes_fuQuestion1Plain =
   Question
   { _questionUuid = q2_aYes_fuQuestion1 ^. uuid
-  , _questionShortUuid = q2_aYes_fuQuestion1 ^. shortUuid
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Fourth Question"
   , _questionText = "Just follow"
@@ -154,7 +152,6 @@ q2_aYes_fuq1_aYes_fuQuestion2 :: Question
 q2_aYes_fuq1_aYes_fuQuestion2 =
   Question
   { _questionUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
-  , _questionShortUuid = Just "q2_aYes_fuq1_aYes_fuQuestion2"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Second Follow-Up Question"
   , _questionText = "Again just follow"
@@ -168,7 +165,6 @@ q2_aYes_fuq1_aYes_fuQuestion2Changed :: Question
 q2_aYes_fuq1_aYes_fuQuestion2Changed =
   Question
   { _questionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _questionShortUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. shortUuid
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "EDITED: Second Follow-Up Question"
   , _questionText = "EDITED: Again just follow"
@@ -183,7 +179,6 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 :: Question
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
   Question
   { _questionUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
-  , _questionShortUuid = Just "q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Third Follow-Up Question"
   , _questionText = "Again and again just follow"
@@ -198,7 +193,6 @@ q4_ait1_q6_aYes_followUpQuestion4 :: Question
 q4_ait1_q6_aYes_followUpQuestion4 =
   Question
   { _questionUuid = fromJust $ U.fromString "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
-  , _questionShortUuid = Just "q4_ait1_q6_aYes_followUpQuestion4"
   , _questionQType = QuestionTypeList
   , _questionTitle = "Fourth Follow-Up Question"
   , _questionText = "Again and again just follow"
@@ -219,7 +213,6 @@ q4_ait1_q6_aYes_followUpQuestion4Changed :: Question
 q4_ait1_q6_aYes_followUpQuestion4Changed =
   Question
   { _questionUuid = q4_ait1_q6_aYes_followUpQuestion4 ^. uuid
-  , _questionShortUuid = Just "q4_ait1_q6_aYes_followUpQuestion4Changed"
   , _questionQType = QuestionTypeList
   , _questionTitle = "EDITED: Third Follow-Up Question"
   , _questionText = "EDITED: Again and again just follow"
@@ -238,7 +231,6 @@ q4_ait1_q6_aYes_fuq4_ait_question1 :: Question
 q4_ait1_q6_aYes_fuq4_ait_question1 =
   Question
   { _questionUuid = fromJust $ U.fromString "e5a3e1b2-077a-405f-b35c-3bffded63140"
-  , _questionShortUuid = Just "q4_ait1_q6_aYes_fuq4_ait_question1"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Sub question 1 of Follow-Up Question 4"
   , _questionText = "Again and again just follow"
@@ -252,7 +244,6 @@ q4_ait1_q6_aYes_fuq4_ait_question2 :: Question
 q4_ait1_q6_aYes_fuq4_ait_question2 =
   Question
   { _questionUuid = fromJust $ U.fromString "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
-  , _questionShortUuid = Just "q4_ait1_q6_aYes_fuq4_ait_question2"
   , _questionQType = QuestionTypeOptions
   , _questionTitle = "Sub question 2 of Follow-Up Question 4"
   , _questionText = "Again and again just follow"

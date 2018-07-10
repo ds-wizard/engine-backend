@@ -120,7 +120,6 @@ a_km1_ch1_q1 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _addQuestionEventQuestionUuid = question1 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question1 ^. shortUuid
   , _addQuestionEventQType = question1 ^. qType
   , _addQuestionEventTitle = question1 ^. title
   , _addQuestionEventText = question1 ^. text
@@ -136,7 +135,6 @@ a_km1_ch1_q2 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _addQuestionEventQuestionUuid = question2 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question2 ^. shortUuid
   , _addQuestionEventQType = question2 ^. qType
   , _addQuestionEventTitle = question2 ^. title
   , _addQuestionEventText = question2 ^. text
@@ -152,7 +150,6 @@ a_km1_ch1_q3 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _addQuestionEventQuestionUuid = question3 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question3 ^. shortUuid
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
@@ -168,7 +165,6 @@ a_km1_ch2_q3 =
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _addQuestionEventQuestionUuid = question3 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question3 ^. shortUuid
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
@@ -184,7 +180,6 @@ a_km1_ch2_q4 =
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _addQuestionEventQuestionUuid = question4 ^. uuid
-  , _addQuestionEventShortQuestionUuid = question4 ^. shortUuid
   , _addQuestionEventQType = question4 ^. qType
   , _addQuestionEventTitle = question4 ^. title
   , _addQuestionEventText = question4 ^. text
@@ -202,7 +197,6 @@ e_km1_ch1_q1_title =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _editQuestionEventQuestionUuid = question1 ^. uuid
-  , _editQuestionEventShortQuestionUuid = NothingChanged
   , _editQuestionEventQType = NothingChanged
   , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
   , _editQuestionEventText = NothingChanged
@@ -221,7 +215,6 @@ e_km1_ch1_q2 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _editQuestionEventQuestionUuid = question2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ question2 ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
@@ -240,7 +233,6 @@ e_km1_ch1_q2_second_edit =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _editQuestionEventQuestionUuid = question2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ question2 ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue "New title"
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
@@ -259,7 +251,6 @@ e_km1_ch2_q4 =
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _editQuestionEventQuestionUuid = question4WithChangeProperties ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ question4WithChangeProperties ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ question4WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question4WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question4WithChangeProperties ^. text
@@ -554,7 +545,6 @@ a_km1_ch2_q4_ait1_q5 =
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_question5 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_question5 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_question5 ^. qType
   , _addQuestionEventTitle = q4_ait1_question5 ^. title
   , _addQuestionEventText = q4_ait1_question5 ^. text
@@ -574,7 +564,6 @@ a_km1_ch2_q4_ait1_q6 =
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_question6 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_question6 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_question6 ^. qType
   , _addQuestionEventTitle = q4_ait1_question6 ^. title
   , _addQuestionEventText = q4_ait1_question6 ^. text
@@ -598,7 +587,6 @@ a_km1_ch2_q4_ait1_q6_fuq4_q1 =
         }
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_q6_aYes_fuq4_ait_question1 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_q6_aYes_fuq4_ait_question1 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_q6_aYes_fuq4_ait_question1 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question1 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question1 ^. text
@@ -622,7 +610,6 @@ a_km1_ch2_q4_ait1_q6_fuq4_q2 =
         }
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_q6_aYes_fuq4_ait_question2 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_q6_aYes_fuq4_ait_question2 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_q6_aYes_fuq4_ait_question2 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question2 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question2 ^. text
@@ -640,7 +627,6 @@ a_km1_ch2_q4_ait1_q7 =
       , EventPathItem {_eventPathItemUuid = q4_ait1_question5 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_q5_ait2_question7 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_q5_ait2_question7 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_q5_ait2_question7 ^. qType
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question7 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question7 ^. text
@@ -658,7 +644,6 @@ a_km1_ch2_q4_ait1_q8 =
       , EventPathItem {_eventPathItemUuid = q4_ait1_question5 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_q5_ait2_question8 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_q5_ait2_question8 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_q5_ait2_question8 ^. qType
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question8 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question8 ^. text
@@ -675,7 +660,6 @@ e_km1_ch2_q4_ait1_q5 =
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editQuestionEventQuestionUuid = q4_ait1_question5Changed ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ q4_ait1_question5Changed ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ q4_ait1_question5Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question5Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question5Changed ^. text
@@ -701,7 +685,6 @@ e_km1_ch2_q4_ait1_q6 =
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editQuestionEventQuestionUuid = q4_ait1_question6Changed ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ q4_ait1_question6Changed ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ q4_ait1_question6Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question6Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question6Changed ^. text
@@ -739,7 +722,6 @@ a_km1_ch1_ansYes1_fuq1 =
       , EventPathItem {_eventPathItemUuid = q2_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _addQuestionEventQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q2_aYes_fuQuestion1 ^. shortUuid
   , _addQuestionEventQType = q2_aYes_fuQuestion1 ^. qType
   , _addQuestionEventTitle = q2_aYes_fuQuestion1 ^. title
   , _addQuestionEventText = q2_aYes_fuQuestion1 ^. text
@@ -761,7 +743,6 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2 =
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _addQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. shortUuid
   , _addQuestionEventQType = q2_aYes_fuq1_aYes_fuQuestion2 ^. qType
   , _addQuestionEventTitle = q2_aYes_fuq1_aYes_fuQuestion2 ^. title
   , _addQuestionEventText = q2_aYes_fuq1_aYes_fuQuestion2 ^. text
@@ -787,7 +768,6 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2_ansYes4_fuq3 =
         {_eventPathItemUuid = q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _addQuestionEventQuestionUuid = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. shortUuid
   , _addQuestionEventQType = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. qType
   , _addQuestionEventTitle = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. title
   , _addQuestionEventText = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. text
@@ -807,7 +787,6 @@ a_km1_ch2_ansYes6_fuq4 =
         {_eventPathItemUuid = q4_ait1_q6_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _addQuestionEventQuestionUuid = q4_ait1_q6_aYes_followUpQuestion4 ^. uuid
-  , _addQuestionEventShortQuestionUuid = q4_ait1_q6_aYes_followUpQuestion4 ^. shortUuid
   , _addQuestionEventQType = q4_ait1_q6_aYes_followUpQuestion4 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_followUpQuestion4 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_followUpQuestion4 ^. text
@@ -832,7 +811,6 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _editQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2 ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
@@ -857,7 +835,6 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _editQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2 ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
@@ -880,7 +857,6 @@ e_km1_ch2_ansMaybe6_fuq4 =
       , EventPathItem {_eventPathItemUuid = q4_ait1_q6_answerNo ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _editQuestionEventQuestionUuid = q4_ait1_q6_aYes_followUpQuestion4Changed ^. uuid
-  , _editQuestionEventShortQuestionUuid = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. shortUuid
   , _editQuestionEventQType = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. text
@@ -1017,92 +993,101 @@ d_km1_ch1_q2_eNikola =
 -- ----------------------------------------------------------------------------
 a_km1_ch1_q2_rCh1 :: AddReferenceEvent
 a_km1_ch1_q2_rCh1 =
-  AddReferenceEvent
-  { _addReferenceEventUuid = fromJust $ U.fromString "1177d72f-b7d8-466d-ad33-d5f82d0f192a"
-  , _addReferenceEventPath =
+  AddResourcePageReferenceEvent' $
+  AddResourcePageReferenceEvent
+  { _addResourcePageReferenceEventUuid = fromJust $ U.fromString "1177d72f-b7d8-466d-ad33-d5f82d0f192a"
+  , _addResourcePageReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _addReferenceEventReferenceUuid = referenceCh1 ^. uuid
-  , _addReferenceEventChapter = referenceCh1 ^. chapter
+  , _addResourcePageReferenceEventReferenceUuid = referenceCh1 ^. uuid
+  , _addResourcePageReferenceEventShortUuid = referenceCh1 ^. shortUuid
   }
 
 a_km1_ch2_q6_rCh1 :: AddReferenceEvent
 a_km1_ch2_q6_rCh1 =
-  AddReferenceEvent
-  { _addReferenceEventUuid = fromJust $ U.fromString "a3f6ee9a-803f-4911-9566-734a6358913a"
-  , _addReferenceEventPath =
+  AddResourcePageReferenceEvent' $
+  AddResourcePageReferenceEvent
+  { _addResourcePageReferenceEventUuid = fromJust $ U.fromString "a3f6ee9a-803f-4911-9566-734a6358913a"
+  , _addResourcePageReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       , EventPathItem {_eventPathItemUuid = q4_ait1_question6 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _addReferenceEventReferenceUuid = referenceCh1 ^. uuid
-  , _addReferenceEventChapter = referenceCh1 ^. chapter
+  , _addResourcePageReferenceEventReferenceUuid = referenceCh1 ^. uuid
+  , _addResourcePageReferenceEventShortUuid = referenceCh1 ^. shortUuid
   }
 
 a_km1_ch1_q2_rCh2 :: AddReferenceEvent
 a_km1_ch1_q2_rCh2 =
-  AddReferenceEvent
-  { _addReferenceEventUuid = fromJust $ U.fromString "4814f50f-8838-4b53-8b18-c0f8c568220e"
-  , _addReferenceEventPath =
+  AddURLReferenceEvent' $
+  AddURLReferenceEvent
+  { _addURLReferenceEventUuid = fromJust $ U.fromString "4814f50f-8838-4b53-8b18-c0f8c568220e"
+  , _addURLReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _addReferenceEventReferenceUuid = referenceCh2 ^. uuid
-  , _addReferenceEventChapter = referenceCh2 ^. chapter
+  , _addURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  , _addURLReferenceEventUrl = referenceCh2 ^. url
+  , _addURLReferenceEventAnchor = referenceCh2 ^. anchor
   }
 
 a_km1_ch2_q6_rCh2 :: AddReferenceEvent
 a_km1_ch2_q6_rCh2 =
-  AddReferenceEvent
-  { _addReferenceEventUuid = fromJust $ U.fromString "a4ae3400-dd3c-41ab-b796-4bf9d0bdafe7"
-  , _addReferenceEventPath =
+  AddURLReferenceEvent' $
+  AddURLReferenceEvent
+  { _addURLReferenceEventUuid = fromJust $ U.fromString "a4ae3400-dd3c-41ab-b796-4bf9d0bdafe7"
+  , _addURLReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       , EventPathItem {_eventPathItemUuid = q4_ait1_question6 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _addReferenceEventReferenceUuid = referenceCh2 ^. uuid
-  , _addReferenceEventChapter = referenceCh2 ^. chapter
+  , _addURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  , _addURLReferenceEventUrl = referenceCh2 ^. url
+  , _addURLReferenceEventAnchor = referenceCh2 ^. anchor
   }
 
 a_km1_ch1_q2_rCh3 :: AddReferenceEvent
 a_km1_ch1_q2_rCh3 =
-  AddReferenceEvent
-  { _addReferenceEventUuid = fromJust $ U.fromString "45d8ec86-34bc-4e8f-b42a-48a567a77d8b"
-  , _addReferenceEventPath =
+  AddCrossReferenceEvent' $
+  AddCrossReferenceEvent
+  { _addCrossReferenceEventUuid = fromJust $ U.fromString "45d8ec86-34bc-4e8f-b42a-48a567a77d8b"
+  , _addCrossReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _addReferenceEventReferenceUuid = referenceCh3 ^. uuid
-  , _addReferenceEventChapter = referenceCh3 ^. chapter
+  , _addCrossReferenceEventReferenceUuid = referenceCh3 ^. uuid
+  , _addCrossReferenceEventTargetUuid = referenceCh3 ^. targetUuid
   }
 
 e_km1_ch1_q2_rCh1 :: EditReferenceEvent
 e_km1_ch1_q2_rCh1 =
-  EditReferenceEvent
-  { _editReferenceEventUuid = fromJust $ U.fromString "08cd9afc-d416-48ab-8669-17e87ceb15dc"
-  , _editReferenceEventPath =
+  EditResourcePageReferenceEvent' $
+  EditResourcePageReferenceEvent
+  { _editResourcePageReferenceEventUuid = fromJust $ U.fromString "08cd9afc-d416-48ab-8669-17e87ceb15dc"
+  , _editResourcePageReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _editReferenceEventReferenceUuid = referenceCh1 ^. uuid
-  , _editReferenceEventChapter = ChangedValue $ referenceCh1Changed ^. chapter
+  , _editResourcePageReferenceEventReferenceUuid = referenceCh1 ^. uuid
+  , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh1Changed ^. shortUuid
   }
 
 d_km1_ch1_q2_rCh2 :: DeleteReferenceEvent
 d_km1_ch1_q2_rCh2 =
-  DeleteReferenceEvent
-  { _deleteReferenceEventUuid = fromJust $ U.fromString "3cc15f31-4801-404f-ba48-6b91f77d1abe"
-  , _deleteReferenceEventPath =
+  DeleteURLReferenceEvent' $
+  DeleteURLReferenceEvent
+  { _deleteURLReferenceEventUuid = fromJust $ U.fromString "3cc15f31-4801-404f-ba48-6b91f77d1abe"
+  , _deleteURLReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _deleteReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  , _deleteURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
   }

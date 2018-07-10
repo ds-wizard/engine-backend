@@ -2,12 +2,10 @@ module Service.Migrator.Applicator.Applicator
   ( runApplicator
   ) where
 
-import Control.Lens
-
 import Common.Error
 import Common.Localization
-import LensesConfig
 import Model.Event.Event
+import Model.Event.EventAccessors
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Migrator.Applicator.ApplyEvent
 import Service.Migrator.Applicator.ApplyEventInstances ()
@@ -20,20 +18,20 @@ runApplicator mKM events =
     Right (Just km) -> Right km
   where
     foldEvent :: Either AppError (Maybe KnowledgeModel) -> Event -> Either AppError (Maybe KnowledgeModel)
-    foldEvent emKM (AddKnowledgeModelEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditKnowledgeModelEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (AddChapterEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditChapterEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (DeleteChapterEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (AddQuestionEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditQuestionEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (DeleteQuestionEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (AddAnswerEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditAnswerEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (DeleteAnswerEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (AddExpertEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditExpertEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (DeleteExpertEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (AddReferenceEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (EditReferenceEvent' e) = applyEventToKM e (e ^. path) emKM
-    foldEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e (e ^. path) emKM
+    foldEvent emKM (AddKnowledgeModelEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditKnowledgeModelEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddChapterEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditChapterEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteChapterEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddQuestionEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditQuestionEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteQuestionEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddAnswerEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditAnswerEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteAnswerEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddExpertEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditExpertEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteExpertEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddReferenceEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditReferenceEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e (getPath e) emKM

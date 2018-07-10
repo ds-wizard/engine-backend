@@ -11,7 +11,6 @@ data AddQuestionEvent = AddQuestionEvent
   { _addQuestionEventUuid :: UUID
   , _addQuestionEventPath :: EventPath
   , _addQuestionEventQuestionUuid :: UUID
-  , _addQuestionEventShortQuestionUuid :: Maybe String
   , _addQuestionEventQType :: QuestionType
   , _addQuestionEventTitle :: String
   , _addQuestionEventText :: String
@@ -22,7 +21,6 @@ data EditQuestionEvent = EditQuestionEvent
   { _editQuestionEventUuid :: UUID
   , _editQuestionEventPath :: EventPath
   , _editQuestionEventQuestionUuid :: UUID
-  , _editQuestionEventShortQuestionUuid :: EventField (Maybe String)
   , _editQuestionEventQType :: EventField QuestionType
   , _editQuestionEventTitle :: EventField String
   , _editQuestionEventText :: EventField String

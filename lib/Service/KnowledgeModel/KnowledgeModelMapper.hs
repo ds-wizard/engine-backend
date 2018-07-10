@@ -27,7 +27,6 @@ toQuestionDTO :: Question -> QuestionDTO
 toQuestionDTO question =
   QuestionDTO
   { _questionDTOUuid = question ^. uuid
-  , _questionDTOShortUuid = question ^. shortUuid
   , _questionDTOQType = question ^. qType
   , _questionDTOTitle = question ^. title
   , _questionDTOText = question ^. text
@@ -69,9 +68,24 @@ toExpertDTO expert =
   ExpertDTO {_expertDTOUuid = expert ^. uuid, _expertDTOName = expert ^. name, _expertDTOEmail = expert ^. email}
 
 toReferenceDTO :: Reference -> ReferenceDTO
-toReferenceDTO reference =
-  ReferenceDTO {_referenceDTOUuid = reference ^. uuid, _referenceDTOChapter = reference ^. chapter}
+toReferenceDTO (ResourcePageReference' reference) =
+  ResourcePageReferenceDTO'
+    ResourcePageReferenceDTO
+    {_resourcePageReferenceDTOUuid = reference ^. uuid, _resourcePageReferenceDTOShortUuid = reference ^. shortUuid}
+toReferenceDTO (URLReference' reference) =
+  URLReferenceDTO'
+    URLReferenceDTO
+    { _uRLReferenceDTOUuid = reference ^. uuid
+    , _uRLReferenceDTOUrl = reference ^. url
+    , _uRLReferenceDTOAnchor = reference ^. anchor
+    }
+toReferenceDTO (CrossReference' reference) =
+  CrossReferenceDTO'
+    CrossReferenceDTO
+    {_crossReferenceDTOUuid = reference ^. uuid, _crossReferenceDTOTargetUuid = reference ^. targetUuid}
 
+-- ----------------------------------------
+-- ----------------------------------------
 fromKnowledgeModelDTO :: KnowledgeModelDTO -> KnowledgeModel
 fromKnowledgeModelDTO km =
   KnowledgeModel
@@ -93,7 +107,6 @@ fromQuestionDTO :: QuestionDTO -> Question
 fromQuestionDTO question =
   Question
   { _questionUuid = question ^. uuid
-  , _questionShortUuid = question ^. shortUuid
   , _questionQType = question ^. qType
   , _questionTitle = question ^. title
   , _questionText = question ^. text
@@ -135,4 +148,17 @@ fromExpertDTO expert =
   Expert {_expertUuid = expert ^. uuid, _expertName = expert ^. name, _expertEmail = expert ^. email}
 
 fromReferenceDTO :: ReferenceDTO -> Reference
-fromReferenceDTO reference = Reference {_referenceUuid = reference ^. uuid, _referenceChapter = reference ^. chapter}
+fromReferenceDTO (ResourcePageReferenceDTO' reference) =
+  ResourcePageReference'
+    ResourcePageReference
+    {_resourcePageReferenceUuid = reference ^. uuid, _resourcePageReferenceShortUuid = reference ^. shortUuid}
+fromReferenceDTO (URLReferenceDTO' reference) =
+  URLReference'
+    URLReference
+    { _uRLReferenceUuid = reference ^. uuid
+    , _uRLReferenceUrl = reference ^. url
+    , _uRLReferenceAnchor = reference ^. anchor
+    }
+fromReferenceDTO (CrossReferenceDTO' reference) =
+  CrossReference'
+    CrossReference {_crossReferenceUuid = reference ^. uuid, _crossReferenceTargetUuid = reference ^. targetUuid}

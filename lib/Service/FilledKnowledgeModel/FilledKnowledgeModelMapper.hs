@@ -28,7 +28,6 @@ toFilledQuestionDTO :: FilledQuestion -> FilledQuestionDTO
 toFilledQuestionDTO fQ =
   FilledQuestionDTO
   { _filledQuestionDTOUuid = fQ ^. uuid
-  , _filledQuestionDTOShortUuid = fQ ^. shortUuid
   , _filledQuestionDTOQType = fQ ^. qType
   , _filledQuestionDTOTitle = fQ ^. title
   , _filledQuestionDTOText = fQ ^. text
