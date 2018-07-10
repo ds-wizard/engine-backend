@@ -201,6 +201,10 @@ makeFields ''URLReference
 
 makeFields ''CrossReference
 
+makeFields ''Metric
+
+makeFields ''MetricMeasure
+
 -- Model / Migrator
 makeFields ''MigratorConflictDTO
 
@@ -339,6 +343,10 @@ makeFields ''ResourcePageReferenceDTO
 makeFields ''URLReferenceDTO
 
 makeFields ''CrossReferenceDTO
+
+makeFields ''MetricDTO
+
+makeFields ''MetricMeasureDTO
 
 -- Api / Resource / Migrator
 makeFields ''MigratorState

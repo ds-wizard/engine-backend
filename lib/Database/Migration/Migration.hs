@@ -6,7 +6,9 @@ import qualified
        Database.Migration.BookReference.BookReferenceMigration as BR
 import qualified Database.Migration.Branch.BranchMigration as B
 import qualified Database.Migration.Feedback.FeedbackMigration as F
-import qualified Database.Migration.Migrator.MigratorMigration as M
+import qualified Database.Migration.Metric.MetricMigration as MTR
+import qualified Database.Migration.Migrator.MigratorMigration
+       as MIG
 import qualified
        Database.Migration.Organization.OrganizationMigration as ORG
 import qualified Database.Migration.Package.PackageMigration as PKG
@@ -23,9 +25,10 @@ runMigration = do
   U.runMigration
   PKG.runMigration
   B.runMigration
-  M.runMigration
+  MIG.runMigration
   QTN.runMigration
   PUBQTN.runMigration
   BR.runMigration
   F.runMigration
+  MTR.runMigration
   $(logInfo) "MIGRATION: ended"

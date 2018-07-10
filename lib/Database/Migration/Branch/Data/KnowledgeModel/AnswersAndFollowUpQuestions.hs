@@ -4,6 +4,7 @@ import Control.Lens
 import Data.Maybe
 import qualified Data.UUID as U
 
+import Database.Migration.Branch.Data.KnowledgeModel.MetricMeasures
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -17,6 +18,7 @@ q2_answerNo =
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
   }
 
 q3_answerNo :: Answer
@@ -26,6 +28,7 @@ q3_answerNo =
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
   }
 
 q4_ait1_q6_answerNo :: Answer
@@ -35,6 +38,7 @@ q4_ait1_q6_answerNo =
   , _answerLabel = "No"
   , _answerAdvice = Just "Great advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 q2_aYes_fuq1_answerNo :: Answer
@@ -44,6 +48,7 @@ q2_aYes_fuq1_answerNo =
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 q2_aYes_fuq1_aYes_fuq2_answerNo :: Answer
@@ -53,6 +58,7 @@ q2_aYes_fuq1_aYes_fuq2_answerNo =
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 q2_answerYes :: Answer
@@ -62,6 +68,7 @@ q2_answerYes =
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = [q2_aYes_fuQuestion1]
+  , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }
 
 q2_answerYesChanged :: Answer
@@ -71,6 +78,7 @@ q2_answerYesChanged =
   , _answerLabel = "EDITED: Yes"
   , _answerAdvice = Just "EDITED: Short advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1, metricMeasureG1]
   }
 
 q3_answerYes :: Answer
@@ -80,6 +88,7 @@ q3_answerYes =
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 q2_aYes_fuq1_answerYes :: Answer
@@ -89,6 +98,7 @@ q2_aYes_fuq1_answerYes =
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = [q2_aYes_fuq1_aYes_fuQuestion2]
+  , _answerMetricMeasures = []
   }
 
 q2_aYes_fuq1_aYes_fuq2_answerYes :: Answer
@@ -98,6 +108,7 @@ q2_aYes_fuq1_aYes_fuq2_answerYes =
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 q4_ait1_q6_answerYes :: Answer
@@ -107,6 +118,7 @@ q4_ait1_q6_answerYes =
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
   , _answerFollowUps = [q4_ait1_q6_aYes_followUpQuestion4]
+  , _answerMetricMeasures = []
   }
 
 q2_answerMaybe :: Answer
@@ -116,6 +128,7 @@ q2_answerMaybe =
   , _answerLabel = "Maybe"
   , _answerAdvice = Just "Great advice"
   , _answerFollowUps = []
+  , _answerMetricMeasures = []
   }
 
 -- -----------------------------------------------------------------

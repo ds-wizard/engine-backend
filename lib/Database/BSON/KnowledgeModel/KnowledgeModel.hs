@@ -94,6 +94,7 @@ instance ToBSON Answer where
     , "label" BSON.=: (model ^. label)
     , "advice" BSON.=: (model ^. advice)
     , "followUps" BSON.=: (model ^. followUps)
+    , "metricMeasures" BSON.=: (model ^. metricMeasures)
     ]
 
 instance FromBSON Answer where
@@ -103,9 +104,15 @@ instance FromBSON Answer where
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
     ansFollowUps <- BSON.lookup "followUps" doc
+    ansMetricMeasures <- BSON.lookup "metricMeasures" doc
     return
       Answer
-      {_answerUuid = ansUuid, _answerLabel = ansLabel, _answerAdvice = ansAdvice, _answerFollowUps = ansFollowUps}
+      { _answerUuid = ansUuid
+      , _answerLabel = ansLabel
+      , _answerAdvice = ansAdvice
+      , _answerFollowUps = ansFollowUps
+      , _answerMetricMeasures = ansMetricMeasures
+      }
 
 -- -------------------------
 -- ANSWER ITEM TEMPLATE ----
@@ -219,3 +226,53 @@ instance FromBSON CrossReference where
       , _crossReferenceTargetUuid = refTargetUuid
       , _crossReferenceDescription = refDescription
       }
+
+-- -------------------------
+-- METRIC ------------------
+-- -------------------------
+instance ToBSON Metric where
+  toBSON model =
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "title" BSON.=: (model ^. title)
+    , "abbreviation" BSON.=: (model ^. abbreviation)
+    , "description" BSON.=: (model ^. description)
+    , "references" BSON.=: (model ^. references)
+    , "createdAt" BSON.=: (model ^. createdAt)
+    , "updatedAt" BSON.=: (model ^. updatedAt)
+    ]
+
+instance FromBSON Metric where
+  fromBSON doc = do
+    mUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    mTitle <- BSON.lookup "title" doc
+    mAbbreviation <- BSON.lookup "abbreviation" doc
+    mDescription <- BSON.lookup "description" doc
+    mReferences <- BSON.lookup "references" doc
+    mCreatedAt <- BSON.lookup "createdAt" doc
+    mUpdatedAt <- BSON.lookup "updatedAt" doc
+    return
+      Metric
+      { _metricUuid = mUuid
+      , _metricTitle = mTitle
+      , _metricAbbreviation = mAbbreviation
+      , _metricDescription = mDescription
+      , _metricReferences = mReferences
+      , _metricCreatedAt = mCreatedAt
+      , _metricUpdatedAt = mUpdatedAt
+      }
+
+instance ToBSON MetricMeasure where
+  toBSON model =
+    [ "metricUuid" BSON.=: serializeUUID (model ^. metricUuid)
+    , "measure" BSON.=: (model ^. measure)
+    , "weight" BSON.=: (model ^. weight)
+    ]
+
+instance FromBSON MetricMeasure where
+  fromBSON doc = do
+    mmMetricUuid <- deserializeMaybeUUID $ BSON.lookup "metricUuid" doc
+    mmMeasure <- BSON.lookup "measure" doc
+    mmWeight <- BSON.lookup "weight" doc
+    return
+      MetricMeasure
+      {_metricMeasureMetricUuid = mmMetricUuid, _metricMeasureMeasure = mmMeasure, _metricMeasureWeight = mmWeight}

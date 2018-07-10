@@ -2,6 +2,7 @@ module Api.Resource.KnowledgeModel.KnowledgeModelDTO where
 
 import Control.Monad
 import Data.Aeson
+import Data.Time
 import qualified Data.UUID as U
 
 import Api.Resource.Common
@@ -13,6 +14,7 @@ data KnowledgeModelDTO = KnowledgeModelDTO
   , _knowledgeModelDTOChapters :: [ChapterDTO]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data ChapterDTO = ChapterDTO
   { _chapterDTOUuid :: U.UUID
   , _chapterDTOTitle :: String
@@ -20,6 +22,7 @@ data ChapterDTO = ChapterDTO
   , _chapterDTOQuestions :: [QuestionDTO]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data QuestionDTO = QuestionDTO
   { _questionDTOUuid :: U.UUID
   , _questionDTOQType :: QuestionType
@@ -31,11 +34,13 @@ data QuestionDTO = QuestionDTO
   , _questionDTOExperts :: [ExpertDTO]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data AnswerDTO = AnswerDTO
   { _answerDTOUuid :: U.UUID
   , _answerDTOLabel :: String
   , _answerDTOAdvice :: Maybe String
   , _answerDTOFollowUps :: [QuestionDTO]
+  , _answerDTOMetricMeasures :: [MetricMeasureDTO]
   } deriving (Show, Eq)
 
 data AnswerItemTemplateDTO = AnswerItemTemplateDTO
@@ -52,12 +57,14 @@ data AnswerItemTemplatePlainWithIdsDTO = AnswerItemTemplatePlainWithIdsDTO
   , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [U.UUID]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data ExpertDTO = ExpertDTO
   { _expertDTOUuid :: U.UUID
   , _expertDTOName :: String
   , _expertDTOEmail :: String
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data ReferenceDTO
   = ResourcePageReferenceDTO' ResourcePageReferenceDTO
   | URLReferenceDTO' URLReferenceDTO
@@ -82,12 +89,37 @@ data CrossReferenceDTO = CrossReferenceDTO
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
+data MetricDTO = MetricDTO
+  { _metricDTOUuid :: U.UUID
+  , _metricDTOTitle :: String
+  , _metricDTOAbbreviation :: Maybe String
+  , _metricDTODescription :: Maybe String
+  , _metricDTOReferences :: [ReferenceDTO]
+  , _metricDTOCreatedAt :: UTCTime
+  , _metricDTOUpdatedAt :: UTCTime
+  } deriving (Show)
+
+instance Eq MetricDTO where
+  a == b =
+    _metricDTOUuid a == _metricDTOUuid b &&
+    _metricDTOTitle a == _metricDTOTitle b &&
+    _metricDTOAbbreviation a == _metricDTOAbbreviation b &&
+    _metricDTODescription a == _metricDTODescription b && _metricDTOReferences a == _metricDTOReferences b
+
+data MetricMeasureDTO = MetricMeasureDTO
+  { _metricMeasureDTOMetricUuid :: U.UUID
+  , _metricMeasureDTOMeasure :: Double
+  , _metricMeasureDTOWeight :: Double
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON KnowledgeModelDTO where
   toJSON KnowledgeModelDTO {..} =
     object
       ["uuid" .= _knowledgeModelDTOUuid, "name" .= _knowledgeModelDTOName, "chapters" .= _knowledgeModelDTOChapters]
 
+-- --------------------------------------------------------------------
 instance ToJSON ChapterDTO where
   toJSON ChapterDTO {..} =
     object
@@ -97,6 +129,7 @@ instance ToJSON ChapterDTO where
       , "questions" .= _chapterDTOQuestions
       ]
 
+-- --------------------------------------------------------------------
 instance ToJSON QuestionDTO where
   toJSON QuestionDTO {..} =
     object
@@ -110,6 +143,7 @@ instance ToJSON QuestionDTO where
       , "experts" .= _questionDTOExperts
       ]
 
+-- --------------------------------------------------------------------
 instance ToJSON AnswerDTO where
   toJSON AnswerDTO {..} =
     object
@@ -117,6 +151,7 @@ instance ToJSON AnswerDTO where
       , "label" .= _answerDTOLabel
       , "advice" .= _answerDTOAdvice
       , "followUps" .= _answerDTOFollowUps
+      , "metricMeasures" .= _answerDTOMetricMeasures
       ]
 
 instance ToJSON AnswerItemTemplateDTO where
@@ -133,9 +168,11 @@ instance ToJSON AnswerItemTemplatePlainWithIdsDTO where
       , "questionIds" .= _answerItemTemplatePlainWithIdsDTOQuestionIds
       ]
 
+-- --------------------------------------------------------------------
 instance ToJSON ExpertDTO where
   toJSON ExpertDTO {..} = object ["uuid" .= _expertDTOUuid, "name" .= _expertDTOName, "email" .= _expertDTOEmail]
 
+-- --------------------------------------------------------------------
 instance ToJSON ReferenceDTO where
   toJSON (ResourcePageReferenceDTO' event) = toJSON event
   toJSON (URLReferenceDTO' event) = toJSON event
@@ -168,6 +205,27 @@ instance ToJSON CrossReferenceDTO where
       ]
 
 -- --------------------------------------------------------------------
+instance ToJSON MetricDTO where
+  toJSON MetricDTO {..} =
+    object
+      [ "uuid" .= _metricDTOUuid
+      , "title" .= _metricDTOTitle
+      , "abbreviation" .= _metricDTOAbbreviation
+      , "description" .= _metricDTODescription
+      , "references" .= _metricDTOReferences
+      , "createdAt" .= _metricDTOCreatedAt
+      , "updatedAt" .= _metricDTOUpdatedAt
+      ]
+
+instance ToJSON MetricMeasureDTO where
+  toJSON MetricMeasureDTO {..} =
+    object
+      [ "metricUuid" .= _metricMeasureDTOMetricUuid
+      , "measure" .= _metricMeasureDTOMeasure
+      , "weight" .= _metricMeasureDTOWeight
+      ]
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
@@ -177,6 +235,7 @@ instance FromJSON KnowledgeModelDTO where
     return KnowledgeModelDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON ChapterDTO where
   parseJSON (Object o) = do
     _chapterDTOUuid <- o .: "uuid"
@@ -186,6 +245,7 @@ instance FromJSON ChapterDTO where
     return ChapterDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON QuestionDTO where
   parseJSON (Object o) = do
     _questionDTOUuid <- o .: "uuid"
@@ -201,12 +261,14 @@ instance FromJSON QuestionDTO where
       Nothing -> fail "Unsupported question type"
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON AnswerDTO where
   parseJSON (Object o) = do
     _answerDTOUuid <- o .: "uuid"
     _answerDTOLabel <- o .: "label"
     _answerDTOAdvice <- o .: "advice"
     _answerDTOFollowUps <- o .: "followUps"
+    _answerDTOMetricMeasures <- o .: "metricMeasures"
     return AnswerDTO {..}
   parseJSON _ = mzero
 
@@ -230,6 +292,7 @@ instance FromJSON AnswerItemTemplatePlainWithIdsDTO where
     return AnswerItemTemplatePlainWithIdsDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON ExpertDTO where
   parseJSON (Object o) = do
     _expertDTOUuid <- o .: "uuid"
@@ -238,6 +301,7 @@ instance FromJSON ExpertDTO where
     return ExpertDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON ReferenceDTO where
   parseJSON (Object o) = do
     referenceType <- o .: "referenceType"
@@ -269,4 +333,25 @@ instance FromJSON CrossReferenceDTO where
     _crossReferenceDTOTargetUuid <- o .: "targetUuid"
     _crossReferenceDTODescription <- o .: "description"
     return CrossReferenceDTO {..}
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance FromJSON MetricDTO where
+  parseJSON (Object o) = do
+    _metricDTOUuid <- o .: "uuid"
+    _metricDTOTitle <- o .: "title"
+    _metricDTOAbbreviation <- o .: "abbreviation"
+    _metricDTODescription <- o .: "description"
+    _metricDTOReferences <- o .: "references"
+    _metricDTOCreatedAt <- o .: "updatedAt"
+    _metricDTOUpdatedAt <- o .: "createdAt"
+    return MetricDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON MetricMeasureDTO where
+  parseJSON (Object o) = do
+    _metricMeasureDTOMetricUuid <- o .: "metricUuid"
+    _metricMeasureDTOMeasure <- o .: "measure"
+    _metricMeasureDTOWeight <- o .: "weight"
+    return MetricMeasureDTO {..}
   parseJSON _ = mzero

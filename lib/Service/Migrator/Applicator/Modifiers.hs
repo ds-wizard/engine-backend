@@ -141,14 +141,21 @@ deleteReference q refUuid = q & references .~ (filter (\ref -> (getReferenceUuid
 -- -------------------
 createAnswer :: AddAnswerEvent -> Answer
 createAnswer e =
-  Answer {_answerUuid = e ^. answerUuid, _answerLabel = e ^. label, _answerAdvice = e ^. advice, _answerFollowUps = []}
+  Answer
+  { _answerUuid = e ^. answerUuid
+  , _answerLabel = e ^. label
+  , _answerAdvice = e ^. advice
+  , _answerFollowUps = []
+  , _answerMetricMeasures = e ^. metricMeasures
+  }
 
 editAnswer :: EditAnswerEvent -> Answer -> Answer
-editAnswer e = applyFollowUps . applyAdvice . applyLabel
+editAnswer e = applyMetricMeasures . applyFollowUps . applyAdvice . applyLabel
   where
     applyLabel ans = applyValue (e ^. label) ans label
     applyAdvice ans = applyValue (e ^. advice) ans advice
     applyFollowUps ans = applyValue (e ^. followUpIds) ans ansChangeFollowUpIdsOrder
+    applyMetricMeasures ans = applyValue (e ^. metricMeasures) ans metricMeasures
 
 -- -------------------
 addFuQuestion :: Answer -> Question -> Answer

@@ -324,6 +324,7 @@ a_km1_ch1_q2_aNo1 =
   , _addAnswerEventAnswerUuid = q2_answerNo ^. uuid
   , _addAnswerEventLabel = q2_answerNo ^. label
   , _addAnswerEventAdvice = q2_answerNo ^. advice
+  , _addAnswerEventMetricMeasures = q2_answerNo ^. metricMeasures
   }
 
 a_km1_ch1_q2_aYes1 :: AddAnswerEvent
@@ -338,6 +339,7 @@ a_km1_ch1_q2_aYes1 =
   , _addAnswerEventAnswerUuid = q2_answerYes ^. uuid
   , _addAnswerEventLabel = q2_answerYes ^. label
   , _addAnswerEventAdvice = q2_answerYes ^. advice
+  , _addAnswerEventMetricMeasures = q2_answerYes ^. metricMeasures
   }
 
 a_km1_ch1_q2_aMaybe :: AddAnswerEvent
@@ -352,6 +354,7 @@ a_km1_ch1_q2_aMaybe =
   , _addAnswerEventAnswerUuid = q2_answerMaybe ^. uuid
   , _addAnswerEventLabel = q2_answerMaybe ^. label
   , _addAnswerEventAdvice = q2_answerMaybe ^. advice
+  , _addAnswerEventMetricMeasures = q2_answerMaybe ^. metricMeasures
   }
 
 a_km1_ch1_q2_aYes1_fuq1_aNo :: AddAnswerEvent
@@ -369,6 +372,7 @@ a_km1_ch1_q2_aYes1_fuq1_aNo =
   , _addAnswerEventAnswerUuid = q2_aYes_fuq1_answerNo ^. uuid
   , _addAnswerEventLabel = q2_aYes_fuq1_answerNo ^. label
   , _addAnswerEventAdvice = q2_aYes_fuq1_answerNo ^. advice
+  , _addAnswerEventMetricMeasures = q2_aYes_fuq1_answerNo ^. metricMeasures
   }
 
 a_km1_ch1_q2_aYesFu1 :: AddAnswerEvent
@@ -386,6 +390,7 @@ a_km1_ch1_q2_aYesFu1 =
   , _addAnswerEventAnswerUuid = q2_aYes_fuq1_answerYes ^. uuid
   , _addAnswerEventLabel = q2_aYes_fuq1_answerYes ^. label
   , _addAnswerEventAdvice = q2_aYes_fuq1_answerYes ^. advice
+  , _addAnswerEventMetricMeasures = q2_aYes_fuq1_answerYes ^. metricMeasures
   }
 
 a_km1_ch1_q2_aNoFu2 :: AddAnswerEvent
@@ -407,6 +412,7 @@ a_km1_ch1_q2_aNoFu2 =
   , _addAnswerEventAnswerUuid = q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid
   , _addAnswerEventLabel = q2_aYes_fuq1_aYes_fuq2_answerNo ^. label
   , _addAnswerEventAdvice = q2_aYes_fuq1_aYes_fuq2_answerNo ^. advice
+  , _addAnswerEventMetricMeasures = q2_aYes_fuq1_aYes_fuq2_answerNo ^. metricMeasures
   }
 
 a_km1_ch1_q2_aYesFu2 :: AddAnswerEvent
@@ -428,6 +434,7 @@ a_km1_ch1_q2_aYesFu2 =
   , _addAnswerEventAnswerUuid = q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid
   , _addAnswerEventLabel = q2_aYes_fuq1_aYes_fuq2_answerYes ^. label
   , _addAnswerEventAdvice = q2_aYes_fuq1_aYes_fuq2_answerYes ^. advice
+  , _addAnswerEventMetricMeasures = q2_aYes_fuq1_aYes_fuq2_answerYes ^. metricMeasures
   }
 
 a_km1_ch2_q3_aNo2 :: AddAnswerEvent
@@ -442,6 +449,7 @@ a_km1_ch2_q3_aNo2 =
   , _addAnswerEventAnswerUuid = q3_answerNo ^. uuid
   , _addAnswerEventLabel = q3_answerNo ^. label
   , _addAnswerEventAdvice = q3_answerNo ^. advice
+  , _addAnswerEventMetricMeasures = q3_answerNo ^. metricMeasures
   }
 
 a_km1_ch2_q3_aYes2 :: AddAnswerEvent
@@ -456,6 +464,7 @@ a_km1_ch2_q3_aYes2 =
   , _addAnswerEventAnswerUuid = q3_answerYes ^. uuid
   , _addAnswerEventLabel = q3_answerYes ^. label
   , _addAnswerEventAdvice = q3_answerYes ^. advice
+  , _addAnswerEventMetricMeasures = q3_answerYes ^. metricMeasures
   }
 
 a_km1_ch2_q4_ait_q6_aNo :: AddAnswerEvent
@@ -471,6 +480,7 @@ a_km1_ch2_q4_ait_q6_aNo =
   , _addAnswerEventAnswerUuid = q4_ait1_q6_answerNo ^. uuid
   , _addAnswerEventLabel = q4_ait1_q6_answerNo ^. label
   , _addAnswerEventAdvice = q4_ait1_q6_answerNo ^. advice
+  , _addAnswerEventMetricMeasures = q4_ait1_q6_answerNo ^. metricMeasures
   }
 
 a_km1_ch2_q4_ait_q6_aYes :: AddAnswerEvent
@@ -486,6 +496,7 @@ a_km1_ch2_q4_ait_q6_aYes =
   , _addAnswerEventAnswerUuid = q4_ait1_q6_answerYes ^. uuid
   , _addAnswerEventLabel = q4_ait1_q6_answerYes ^. label
   , _addAnswerEventAdvice = q4_ait1_q6_answerYes ^. advice
+  , _addAnswerEventMetricMeasures = q4_ait1_q6_answerYes ^. metricMeasures
   }
 
 e_km1_ch1_q2_aYes1 :: EditAnswerEvent
@@ -501,6 +512,7 @@ e_km1_ch1_q2_aYes1 =
   , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
   , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
   , _editAnswerEventFollowUpIds = ChangedValue $ getFollowUpIds q2_answerYesChanged
+  , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYesChanged ^. metricMeasures
   }
 
 e_km1_ch1_q2_aYes1_2 :: EditAnswerEvent
@@ -516,6 +528,7 @@ e_km1_ch1_q2_aYes1_2 =
   , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
   , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
   , _editAnswerEventFollowUpIds = ChangedValue $ getFollowUpIds q2_answerYes
+  , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYes ^. metricMeasures
   }
 
 d_km1_ch1_q2_aYes1 :: DeleteAnswerEvent

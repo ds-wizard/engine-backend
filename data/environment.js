@@ -9,6 +9,7 @@ BRANCHE_COL = "Organizations"
 QUESTIONNAIRE_COL = "Questionnaires"
 PUBLIC_QUESTIONNAIRE_COL = "Public Questionnaires"
 BOOK_REFERENCE_COL = "Book References"
+METRIC_COL = "Metrics"
 
 // Colors
 var NO_COLOR = "\033[0m";

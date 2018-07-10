@@ -159,6 +159,7 @@ data AddAnswerEventDTO = AddAnswerEventDTO
   , _addAnswerEventDTOAnswerUuid :: U.UUID
   , _addAnswerEventDTOLabel :: String
   , _addAnswerEventDTOAdvice :: Maybe String
+  , _addAnswerEventDTOMetricMeasures :: [MetricMeasureDTO]
   } deriving (Show, Eq, Generic)
 
 data EditAnswerEventDTO = EditAnswerEventDTO
@@ -168,6 +169,7 @@ data EditAnswerEventDTO = EditAnswerEventDTO
   , _editAnswerEventDTOLabel :: EventFieldDTO String
   , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
   , _editAnswerEventDTOFollowUpIds :: EventFieldDTO [U.UUID]
+  , _editAnswerEventDTOMetricMeasures :: EventFieldDTO [MetricMeasureDTO]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEventDTO = DeleteAnswerEventDTO
@@ -486,6 +488,7 @@ instance FromJSON AddAnswerEventDTO where
     _addAnswerEventDTOAnswerUuid <- o .: "answerUuid"
     _addAnswerEventDTOLabel <- o .: "label"
     _addAnswerEventDTOAdvice <- o .: "advice"
+    _addAnswerEventDTOMetricMeasures <- o .: "metricMeasures"
     return AddAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -498,6 +501,7 @@ instance ToJSON AddAnswerEventDTO where
       , "answerUuid" .= _addAnswerEventDTOAnswerUuid
       , "label" .= _addAnswerEventDTOLabel
       , "advice" .= _addAnswerEventDTOAdvice
+      , "metricMeasures" .= _addAnswerEventDTOMetricMeasures
       ]
 
 instance FromJSON EditAnswerEventDTO where
@@ -508,6 +512,7 @@ instance FromJSON EditAnswerEventDTO where
     _editAnswerEventDTOLabel <- o .: "label"
     _editAnswerEventDTOAdvice <- o .: "advice"
     _editAnswerEventDTOFollowUpIds <- o .: "followUpIds"
+    _editAnswerEventDTOMetricMeasures <- o .: "metricMeasures"
     return EditAnswerEventDTO {..}
   parseJSON _ = mzero
 
@@ -521,6 +526,7 @@ instance ToJSON EditAnswerEventDTO where
       , "label" .= _editAnswerEventDTOLabel
       , "advice" .= _editAnswerEventDTOAdvice
       , "followUpIds" .= _editAnswerEventDTOFollowUpIds
+      , "metricMeasures" .= _editAnswerEventDTOMetricMeasures
       ]
 
 instance FromJSON DeleteAnswerEventDTO where

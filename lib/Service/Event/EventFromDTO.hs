@@ -170,6 +170,7 @@ instance EventFromDTO AddAnswerEventDTO where
       , _addAnswerEventAnswerUuid = dto ^. answerUuid
       , _addAnswerEventLabel = dto ^. label
       , _addAnswerEventAdvice = dto ^. advice
+      , _addAnswerEventMetricMeasures = fromMetricMeasureDTO <$> dto ^. metricMeasures
       }
 
 instance EventFromDTO EditAnswerEventDTO where
@@ -182,6 +183,10 @@ instance EventFromDTO EditAnswerEventDTO where
       , _editAnswerEventLabel = fromEventFieldDTO $ dto ^. label
       , _editAnswerEventAdvice = fromEventFieldDTO $ dto ^. advice
       , _editAnswerEventFollowUpIds = fromEventFieldDTO $ dto ^. followUpIds
+      , _editAnswerEventMetricMeasures =
+          case dto ^. metricMeasures of
+            ChangedValueDTO mms -> ChangedValue $ fromMetricMeasureDTO <$> mms
+            NothingChangedDTO -> NothingChanged
       }
 
 instance EventFromDTO DeleteAnswerEventDTO where

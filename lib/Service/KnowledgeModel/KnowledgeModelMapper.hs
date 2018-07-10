@@ -43,6 +43,7 @@ toAnswerDTO answer =
   , _answerDTOLabel = answer ^. label
   , _answerDTOAdvice = answer ^. advice
   , _answerDTOFollowUps = toQuestionDTO <$> (answer ^. followUps)
+  , _answerDTOMetricMeasures = toMetricMeasureDTO <$> (answer ^. metricMeasures)
   }
 
 toAnswerItemTemplateDTO :: AnswerItemTemplate -> AnswerItemTemplateDTO
@@ -87,6 +88,14 @@ toReferenceDTO (CrossReference' reference) =
     , _crossReferenceDTODescription = reference ^. description
     }
 
+toMetricMeasureDTO :: MetricMeasure -> MetricMeasureDTO
+toMetricMeasureDTO m =
+  MetricMeasureDTO
+  { _metricMeasureDTOMetricUuid = m ^. metricUuid
+  , _metricMeasureDTOMeasure = m ^. measure
+  , _metricMeasureDTOWeight = m ^. weight
+  }
+
 -- ----------------------------------------
 -- ----------------------------------------
 fromKnowledgeModelDTO :: KnowledgeModelDTO -> KnowledgeModel
@@ -126,6 +135,7 @@ fromAnswerDTO answer =
   , _answerLabel = answer ^. label
   , _answerAdvice = answer ^. advice
   , _answerFollowUps = fromQuestionDTO <$> (answer ^. followUps)
+  , _answerMetricMeasures = fromMetricMeasureDTO <$> (answer ^. metricMeasures)
   }
 
 fromAnswerItemTemplateDTO :: AnswerItemTemplateDTO -> AnswerItemTemplate
@@ -169,3 +179,8 @@ fromReferenceDTO (CrossReferenceDTO' reference) =
     , _crossReferenceTargetUuid = reference ^. targetUuid
     , _crossReferenceDescription = reference ^. description
     }
+
+fromMetricMeasureDTO :: MetricMeasureDTO -> MetricMeasure
+fromMetricMeasureDTO m =
+  MetricMeasure
+  {_metricMeasureMetricUuid = m ^. metricUuid, _metricMeasureMeasure = m ^. measure, _metricMeasureWeight = m ^. weight}

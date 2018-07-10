@@ -19,6 +19,7 @@ import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
+import Api.Handler.Metric.MetricHandler
 import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
@@ -70,16 +71,16 @@ createEndpoints context
    -- ------------------
   get "/" getInfoA
    --------------------
-   -- TOKENS
+   -- TOKEN
    --------------------
   post "/tokens" postTokenA
    --------------------
-   -- ORGANIZATIONS
+   -- ORGANIZATION
    --------------------
   get "/organizations/current" getOrganizationCurrentA
   put "/organizations/current" putOrganizationCurrentA
    --------------------
-   -- USERS
+   -- USER
    --------------------
   get "/users" getUsersA
   post "/users" postUsersA
@@ -109,7 +110,7 @@ createEndpoints context
   delete "/branches/:branchUuid/migrations/current" deleteMigrationsCurrentA
   post "/branches/:branchUuid/migrations/current/conflict" postMigrationsCurrentConflictA
    --------------------
-   -- PACKAGES
+   -- PACKAGE
    --------------------
   get "/packages" getPackagesA
   get "/packages/unique" getUniquePackagesA
@@ -117,7 +118,7 @@ createEndpoints context
   delete "/packages" deletePackagesA
   delete "/packages/:pkgId" deletePackageA
    --------------------
-   -- ACTION KEYS
+   -- ACTION KEY
    --------------------
   post "/action-keys" postActionKeysA
    --------------------
@@ -126,7 +127,7 @@ createEndpoints context
   post "/import" importA
   get "/export/:pkgId" exportA
    --------------------
-   -- QUESTIONNAIRES
+   -- QUESTIONNAIRE
    --------------------
   get "/questionnaires" getQuestionnairesA
   post "/questionnaires" postQuestionnairesA
@@ -136,7 +137,7 @@ createEndpoints context
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
    --------------------
-   -- BOOK REFERENCES
+   -- BOOK REFERENCE
    --------------------
   get "/book-references/:brShortUuid" getBookReferenceA
    --------------------
@@ -146,6 +147,10 @@ createEndpoints context
   post "/feedbacks" postFeedbacksA
   get "/feedbacks/synchronization" getFeedbacksSynchronizationA
   get "/feedbacks/:fUuid" getFeedbackA
+   --------------------
+   -- METRIC
+   --------------------
+  get "/metrics" getMetricsA
    --------------------
    -- ERROR
    --------------------

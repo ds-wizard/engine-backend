@@ -1,5 +1,6 @@
 module Model.KnowledgeModel.KnowledgeModel where
 
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -41,6 +42,7 @@ data Answer = Answer
   , _answerLabel :: String
   , _answerAdvice :: Maybe String
   , _answerFollowUps :: [Question]
+  , _answerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
 data AnswerItemTemplate = AnswerItemTemplate
@@ -84,4 +86,27 @@ data CrossReference = CrossReference
   { _crossReferenceUuid :: U.UUID
   , _crossReferenceTargetUuid :: U.UUID
   , _crossReferenceDescription :: String
+  } deriving (Show, Eq, Generic)
+
+data Metric = Metric
+  { _metricUuid :: U.UUID
+  , _metricTitle :: String
+  , _metricAbbreviation :: Maybe String
+  , _metricDescription :: Maybe String
+  , _metricReferences :: [Reference]
+  , _metricCreatedAt :: UTCTime
+  , _metricUpdatedAt :: UTCTime
+  } deriving (Show, Generic)
+
+instance Eq Metric where
+  a == b =
+    _metricUuid a == _metricUuid b &&
+    _metricTitle a == _metricTitle b &&
+    _metricAbbreviation a == _metricAbbreviation b &&
+    _metricDescription a == _metricDescription b && _metricReferences a == _metricReferences b
+
+data MetricMeasure = MetricMeasure
+  { _metricMeasureMetricUuid :: U.UUID
+  , _metricMeasureMeasure :: Double
+  , _metricMeasureWeight :: Double
   } deriving (Show, Eq, Generic)

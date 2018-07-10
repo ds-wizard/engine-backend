@@ -5,6 +5,7 @@ import GHC.Generics
 
 import Model.Event.EventField
 import Model.Event.EventPath
+import Model.KnowledgeModel.KnowledgeModel
 
 data AddAnswerEvent = AddAnswerEvent
   { _addAnswerEventUuid :: UUID
@@ -12,6 +13,7 @@ data AddAnswerEvent = AddAnswerEvent
   , _addAnswerEventAnswerUuid :: UUID
   , _addAnswerEventLabel :: String
   , _addAnswerEventAdvice :: Maybe String
+  , _addAnswerEventMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
 data EditAnswerEvent = EditAnswerEvent
@@ -21,6 +23,7 @@ data EditAnswerEvent = EditAnswerEvent
   , _editAnswerEventLabel :: EventField String
   , _editAnswerEventAdvice :: EventField (Maybe String)
   , _editAnswerEventFollowUpIds :: EventField [UUID]
+  , _editAnswerEventMetricMeasures :: EventField [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
 data DeleteAnswerEvent = DeleteAnswerEvent
