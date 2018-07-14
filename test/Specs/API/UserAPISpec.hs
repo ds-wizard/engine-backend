@@ -25,7 +25,7 @@ import Common.Error
 import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
-import Database.Migration.User.Data.Users
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.ActionKey.ActionKey
 import Service.User.UserMapper

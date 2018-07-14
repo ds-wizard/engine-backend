@@ -6,8 +6,8 @@ import Database.DAO.Feedback.FeedbackDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.User.UserDAO
-import Database.Migration.Organization.Data.Organizations
-import Database.Migration.User.Data.Users
+import Database.Migration.Development.Organization.Data.Organizations
+import Database.Migration.Development.User.Data.Users
 
 import Specs.Common
 

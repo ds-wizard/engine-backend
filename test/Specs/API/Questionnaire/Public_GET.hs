@@ -12,10 +12,10 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.Error.ErrorDTO ()
 import Common.Error
 import Database.DAO.PublicQuestionnaire.PublicQuestionnaireDAO
-import Database.Migration.Package.Data.Packages
-import Database.Migration.PublicQuestionnaire.Data.PublicQuestionnaires
+import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import qualified
-       Database.Migration.PublicQuestionnaire.PublicQuestionnaireMigration
+       Database.Migration.Development.PublicQuestionnaire.PublicQuestionnaireMigration
        as PUBQTN
 import Model.Context.AppContext
 import Service.Questionnaire.QuestionnaireMapper

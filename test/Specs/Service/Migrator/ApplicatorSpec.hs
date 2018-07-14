@@ -4,13 +4,13 @@ import Control.Lens
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
-import Database.Migration.Branch.Data.KnowledgeModel.Chapters
-import Database.Migration.Branch.Data.KnowledgeModel.Experts
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Branch.Data.KnowledgeModel.References
+import Database.Migration.Development.Event.Data.Events
+import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Database.Migration.Development.KnowledgeModel.Data.Experts
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Database.Migration.Development.KnowledgeModel.Data.Questions
+import Database.Migration.Development.KnowledgeModel.Data.References
 import LensesConfig
 import Model.Event.Event
 import Service.Migrator.Applicator.Applicator

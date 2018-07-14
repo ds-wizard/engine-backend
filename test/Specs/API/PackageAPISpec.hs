@@ -13,8 +13,10 @@ import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
-import qualified Database.Migration.Branch.BranchMigration as B
-import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as B
+import qualified
+       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Service.Package.PackageMapper
 import Service.Package.PackageService

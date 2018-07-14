@@ -14,8 +14,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 
 import Api.Resource.Feedback.FeedbackCreateDTO
 import Database.DAO.Feedback.FeedbackDAO
-import Database.Migration.Branch.Data.KnowledgeModel.Questions
-import Database.Migration.Package.Data.Packages
+import Database.Migration.Development.KnowledgeModel.Data.Questions
+import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Context.AppContext
 

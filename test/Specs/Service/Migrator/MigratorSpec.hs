@@ -4,7 +4,7 @@ import Control.Lens
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
-import Database.Migration.Branch.Data.Event.Event
+import Database.Migration.Development.Event.Data.Events
 import LensesConfig
 import Model.Event.Event
 import Model.Event.EventField

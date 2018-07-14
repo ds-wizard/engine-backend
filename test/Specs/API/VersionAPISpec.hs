@@ -13,8 +13,10 @@ import Api.Resource.Package.PackageDTO
 import Api.Resource.Version.VersionDTO
 import Common.Error
 import Common.Localization
-import qualified Database.Migration.Branch.BranchMigration as B
-import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as B
+import qualified
+       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Service.Package.PackageService
 

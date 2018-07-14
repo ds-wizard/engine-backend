@@ -10,8 +10,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Database.Migration.Feedback.Data.Feedbacks
-import qualified Database.Migration.Feedback.FeedbackMigration as F
+import Database.Migration.Development.Feedback.Data.Feedbacks
+import qualified
+       Database.Migration.Development.Feedback.FeedbackMigration as F
 import Model.Context.AppContext
 import Service.Feedback.FeedbackMapper
 import Service.Feedback.FeedbackService

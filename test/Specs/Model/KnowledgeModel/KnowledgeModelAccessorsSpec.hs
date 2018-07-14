@@ -7,19 +7,19 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+       Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
        as FA
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Chapters as FCH
+       Database.Migration.Development.KnowledgeModel.Data.Chapters as FCH
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Experts as FE
+       Database.Migration.Development.KnowledgeModel.Data.Experts as FE
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+       Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
        as FKM
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Questions as FQ
+       Database.Migration.Development.KnowledgeModel.Data.Questions as FQ
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.References as FR
+       Database.Migration.Development.KnowledgeModel.Data.References as FR
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors

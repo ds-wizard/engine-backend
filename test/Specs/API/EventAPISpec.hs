@@ -12,10 +12,12 @@ import Test.Hspec.Wai.Matcher
 import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
-import qualified Database.Migration.Branch.BranchMigration as KMC
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as KMC
+import Database.Migration.Development.Event.Data.Events
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import qualified
+       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Event.Event
 import Service.Event.EventMapper

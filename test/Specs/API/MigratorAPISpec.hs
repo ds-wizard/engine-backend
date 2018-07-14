@@ -21,11 +21,13 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
-import qualified Database.Migration.Branch.BranchMigration as B
-import Database.Migration.Branch.Data.Event.Event
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import Database.Migration.Package.Data.Packages
-import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as B
+import Database.Migration.Development.Event.Data.Events
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Database.Migration.Development.Package.Data.Packages
+import qualified
+       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Migrator.MigratorState
 import Service.Branch.BranchService

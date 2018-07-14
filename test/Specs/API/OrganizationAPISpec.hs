@@ -17,7 +17,7 @@ import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Common.Localization
-import Database.Migration.Organization.Data.Organizations
+import Database.Migration.Development.Organization.Data.Organizations
 import LensesConfig
 import Service.Organization.OrganizationService
 

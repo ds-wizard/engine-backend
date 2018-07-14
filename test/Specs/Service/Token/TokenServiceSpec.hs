@@ -7,7 +7,7 @@ import Data.Time
 import Test.Hspec
 
 import Common.Localization
-import Database.Migration.User.Data.Users
+import Database.Migration.Development.User.Data.Users
 import Service.Token.TokenService
 import Util.Date
 
