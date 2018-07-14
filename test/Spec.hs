@@ -22,7 +22,6 @@ import Specs.API.Questionnaire.APISpec
 import Specs.API.TokenAPISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
-import Specs.Common.UtilsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
@@ -32,6 +31,8 @@ import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
 import Specs.Service.Token.TokenServiceSpec
+import Specs.Util.ListSpec
+import Specs.Util.TokenSpec
 import TestMigration
 
 testApplicationConfigFile = "config/app-config-test.cfg"
@@ -59,7 +60,6 @@ main =
     (\appContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
-           commonUtilsSpec
            applicatorSpec
            knowledgeModelAccessorsSpec
            sanitizatorSpec
@@ -69,6 +69,9 @@ main =
            packageValidationSpec
            tokenServiceSpec
            dataManagementPlanSpec
+           describe "Util" $ do
+             tokenSpec
+             listSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "Service tests" $ branchServiceIntegrationSpec appContext
            describe "API Tests" $ do

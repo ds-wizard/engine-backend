@@ -22,11 +22,11 @@ import Web.Scotty.Trans
 import Api.Resource.Error.ErrorDTO ()
 import Common.Error
 import Common.Localization
-import Common.Utils
 import LensesConfig
 import Model.Context.AppContext
 import Service.Token.TokenService
 import Service.User.UserService
+import Util.Token
 
 type Endpoint = ActionT LT.Text AppContextM ()
 

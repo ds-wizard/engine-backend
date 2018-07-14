@@ -1,4 +1,4 @@
-module Common.Uuid where
+module Util.Uuid where
 
 import qualified Data.UUID as U
 import System.Random

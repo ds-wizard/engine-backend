@@ -18,7 +18,6 @@ import Api.Resource.User.UserStateDTO
 import Common.Error
 import Common.Localization
 import Common.Types
-import Common.Uuid
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.ActionKey.ActionKey
@@ -29,6 +28,7 @@ import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
 import Service.User.UserMapper
 import Service.User.UserValidation
+import Util.Uuid
 
 getUsers :: AppContextM (Either AppError [UserDTO])
 getUsers = heFindUsers $ \users -> return . Right $ toDTO <$> users

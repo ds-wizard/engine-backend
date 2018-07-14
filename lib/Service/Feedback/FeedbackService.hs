@@ -11,7 +11,6 @@ import qualified Data.UUID as U
 import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Common.Error
-import Common.Uuid
 import Database.DAO.Feedback.FeedbackDAO
 import LensesConfig
 import Model.Config.DSWConfig
@@ -20,6 +19,7 @@ import Model.Feedback.Feedback
 import Service.Feedback.Connector.Connector
 import Service.Feedback.Connector.GitHub.GitHubConnector ()
 import Service.Feedback.FeedbackMapper
+import Util.Uuid
 
 getFeedbacksFiltered :: [(Text, Text)] -> AppContextM (Either AppError [FeedbackDTO])
 getFeedbacksFiltered queryParams =

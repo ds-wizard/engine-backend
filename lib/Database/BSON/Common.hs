@@ -7,9 +7,9 @@ import Data.Map (Map, fromList, toList)
 import Data.UUID
 
 import Common.Error
-import Common.Utils
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
+import Util.List
 
 serializeUUID :: UUID -> String
 serializeUUID = toString

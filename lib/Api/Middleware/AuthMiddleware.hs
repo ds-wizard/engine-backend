@@ -19,10 +19,10 @@ import Text.Regex
 import Api.Handler.Common
 import Common.Localization
 import Common.Types
-import Common.Utils
 import LensesConfig
 import Model.Config.DSWConfig
 import Service.Token.TokenService
+import Util.Token
 
 type EndpointDefinition = (H.Method, Regex)
 

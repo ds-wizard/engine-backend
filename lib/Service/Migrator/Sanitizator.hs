@@ -5,8 +5,6 @@ import Data.List
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Common.Utils
-import Common.Uuid
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
@@ -16,6 +14,8 @@ import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
+import Util.List
+import Util.Uuid
 
 -- ------------------------------------------------------------
 class Sanitizator a where

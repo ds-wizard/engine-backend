@@ -9,7 +9,6 @@ import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Common.Error
-import Common.Uuid
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
@@ -19,6 +18,7 @@ import Model.Questionnaire.Questionnaire
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Package.PackageService
 import Service.Questionnaire.QuestionnaireMapper
+import Util.Uuid
 
 getQuestionnaires :: AppContextM (Either AppError [QuestionnaireDTO])
 getQuestionnaires = do

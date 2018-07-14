@@ -5,10 +5,10 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Common.Error
-import Common.Uuid
 import Database.DAO.ActionKey.ActionKeyDAO
 import Model.ActionKey.ActionKey
 import Model.Context.AppContext
+import Util.Uuid
 
 getActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
 getActionKeyByHash = findActionKeyByHash

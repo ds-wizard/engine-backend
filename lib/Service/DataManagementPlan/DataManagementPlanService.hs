@@ -8,7 +8,6 @@ import Data.Time
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Common.Error
-import Common.Uuid
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
@@ -19,6 +18,7 @@ import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
 import Service.DataManagementPlan.ReplyApplicator
 import Service.DataManagementPlan.Templates.FormatMapper
+import Util.Uuid
 
 createFilledKM :: Questionnaire -> FilledKnowledgeModel
 createFilledKM questionnaire =

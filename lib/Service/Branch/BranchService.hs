@@ -11,7 +11,6 @@ import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Organization.OrganizationDTO
 import Common.Error
 import Common.Localization
-import Common.Uuid
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
@@ -28,6 +27,7 @@ import Service.Branch.BranchMapper
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Organization.OrganizationService
 import Service.Package.PackageService
+import Util.Uuid
 
 getBranches :: AppContextM (Either AppError [BranchWithStateDTO])
 getBranches =
