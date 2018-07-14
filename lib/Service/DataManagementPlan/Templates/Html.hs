@@ -4,7 +4,6 @@ module Service.DataManagementPlan.Templates.Html
 
 import Control.Lens ((^.))
 import Data.Maybe
-import Data.Monoid
 import qualified Data.UUID as U
 import Text.Blaze.Html.Renderer.Pretty (renderHtml)
 import Text.Blaze.Html5 ((!), stringValue)

@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-9.11
+resolver: lts-12.0
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -43,6 +43,9 @@ extra-deps:
   - vendor/bson-generic
   - vendor/mongoDB-migration
   - fromhtml-0.1.0.4
+  - persistent-mongoDB-2.8.0
+  - ConfigFile-1.1.4
+  - pwstore-fast-2.4.4
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

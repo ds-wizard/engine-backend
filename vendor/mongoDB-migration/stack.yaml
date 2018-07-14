@@ -1,5 +1,6 @@
 flags: {}
 packages:
 - '.'
-extra-deps: []
-resolver: lts-9.11
+extra-deps:
+  - persistent-mongoDB-2.8.0
+resolver: lts-12.0

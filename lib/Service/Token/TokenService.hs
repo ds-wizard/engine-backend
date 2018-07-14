@@ -63,7 +63,7 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
   let uUuid = toJSON (user ^. uuid) :: Value
       permissionValues = fromString <$> (user ^. permissions)
       uPermissions = Array (V.fromList permissionValues) :: Value
-      timeDelta = realToFrac $ jwtExpirationInDays * nominalDay
+      timeDelta = realToFrac $ jwtExpirationInDays * nominalDayInSeconds
       mExpiration = toNumericDate (addUTCTime timeDelta now)
       cs =
         JWT.JWTClaimsSet

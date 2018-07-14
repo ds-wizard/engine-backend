@@ -44,7 +44,7 @@ tokenServiceSpec =
         result `shouldBe` Just _ERROR_SERVICE_TOKEN__OBSOLETE_TOKEN_VERSION
       it "Token is expired" $ do
         let token = T.pack $ createToken userAlbert now jwtSecret jwtVersion jwtExpirationInDays
-        let timeDelta = realToFrac $ (jwtExpirationInDays + 1) * nominalDay
+        let timeDelta = realToFrac $ (jwtExpirationInDays + 1) * nominalDayInSeconds
         let tooFarFutureDate = addUTCTime timeDelta now
         -- WHEN:
         let result = verifyToken token jwtSecret jwtVersion tooFarFutureDate
