@@ -3,7 +3,7 @@ module Main where
 import Control.Lens ((^.))
 import Test.Hspec
 
-import Common.ConfigLoader
+import Service.Config.ConfigLoader
 import Database.Connection
 import LensesConfig
 import Model.Context.AppContext

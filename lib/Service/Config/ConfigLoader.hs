@@ -1,4 +1,4 @@
-module Common.ConfigLoader where
+module Service.Config.ConfigLoader where
 
 import Control.Monad.Except
 import Data.ConfigFile

@@ -10,7 +10,7 @@ import Network.Wai.Handler.Warp
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
 import Api.Router
-import Common.ConfigLoader
+import Service.Config.ConfigLoader
 import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
