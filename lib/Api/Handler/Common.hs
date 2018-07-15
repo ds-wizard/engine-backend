@@ -1,7 +1,6 @@
 module Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger
 import Control.Monad.Reader (asks, lift)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import qualified Data.ByteString.Lazy as BSL
@@ -26,6 +25,7 @@ import LensesConfig
 import Model.Context.AppContext
 import Service.Token.TokenService
 import Service.User.UserService
+import Util.Logger
 import Util.Token
 
 type Endpoint = ActionT LT.Text AppContextM ()
@@ -114,19 +114,19 @@ sendError (NotExistsError errorMessage) = do
   status notFound404
   json $ NotExistsError errorMessage
 sendError (DatabaseError errorMessage) = do
-  lift $ $(logError) (T.pack errorMessage)
+  lift $ logError errorMessage
   status internalServerError500
   json $ DatabaseError errorMessage
 sendError (MigratorError errorMessage) = do
-  lift $ $(logWarn) (T.pack errorMessage)
+  lift $ logWarn errorMessage
   status badRequest400
   json $ MigratorError errorMessage
 sendError (HttpClientError errorMessage) = do
-  lift $ $(logError) (T.pack errorMessage)
+  lift $ logError errorMessage
   status internalServerError500
   json $ HttpClientError errorMessage
 sendError (GeneralServerError errorMessage) = do
-  lift $ $(logError) (T.pack errorMessage)
+  lift $ logError errorMessage
   status internalServerError500
   json $ GeneralServerError errorMessage
 
@@ -158,6 +158,6 @@ notFoundA = do
   if requestMethod request == methodOptions
     then status ok200
     else do
-      lift $ $(logInfo) "Request does not match any route"
+      lift $ logInfo "Request does not match any route"
       status notFound404
       json $ object ["status" .= 404, "error" .= "Not Found"]

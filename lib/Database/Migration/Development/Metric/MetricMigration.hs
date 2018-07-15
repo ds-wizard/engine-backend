@@ -1,12 +1,11 @@
 module Database.Migration.Development.Metric.MetricMigration where
 
-import Control.Monad.Logger (logInfo)
-
 import Database.DAO.Metric.MetricDAO
 import Database.Migration.Development.Metric.Data.Metrics
+import Util.Logger
 
 runMigration = do
-  $(logInfo) "MIGRATION (Metric/Metric): started"
+  logInfo "MIGRATION (Metric/Metric): started"
   deleteMetrics
   insertMetric metricF
   insertMetric metricA
@@ -14,4 +13,4 @@ runMigration = do
   insertMetric metricR
   insertMetric metricG
   insertMetric metricO
-  $(logInfo) "MIGRATION (Metric/Metric): ended"
+  logInfo "MIGRATION (Metric/Metric): ended"

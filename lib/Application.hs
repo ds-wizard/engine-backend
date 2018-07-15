@@ -1,12 +1,10 @@
 module Application where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger
-       (logError, logErrorSH, logInfo, runStdoutLoggingT)
+import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO, runReaderT)
 import Control.Monad.Trans.Class (lift)
 import Data.Default (def)
-import Data.Text (pack)
 import Network.Wai.Handler.Warp
        (Settings, defaultSettings, setPort)
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
@@ -19,6 +17,7 @@ import qualified Database.Migration.Production.Migration as PM
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext
+import Util.Logger
 
 applicationConfigFile = "config/app-config.cfg"
 
@@ -38,18 +37,18 @@ runServer =
   \|   |_____/|_____/|_|      |_____/ \\___|_|    \\_/ \\___|_|     |   \n\
   \|                                                             |\n\
   \\\-------------------------------------------------------------/"
-    $(logInfo) "SERVER: started"
+    logInfo "SERVER: started"
     eitherDspConfig <- liftIO $ loadDSWConfig applicationConfigFile buildInfoFile
     case eitherDspConfig of
       Left (errorDate, reason) -> do
-        $(logError) "CONFIG: load failed"
-        $(logError) "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-        $(logErrorSH) errorDate
+        logError "CONFIG: load failed"
+        logError "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+        logError . show $ errorDate
       Right dswConfig -> do
-        $(logInfo) "CONFIG: loaded"
-        $(logInfo) $ "ENVIRONMENT: set to " `mappend` (pack . show $ dswConfig ^. environment . env)
+        logInfo "CONFIG: loaded"
+        logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
-          lift $ $(logInfo) "DATABASE: connected"
+          lift $ logInfo "DATABASE: connected"
           let serverPort = dswConfig ^. webConfig ^. port
           let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
           liftIO $ runDBMigrations appContext

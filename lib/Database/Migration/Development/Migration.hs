@@ -1,7 +1,5 @@
 module Database.Migration.Development.Migration where
 
-import Control.Monad.Logger (logInfo)
-
 import qualified
        Database.Migration.Development.BookReference.BookReferenceMigration
        as BR
@@ -26,9 +24,10 @@ import qualified
        as QTN
 import qualified Database.Migration.Development.User.UserMigration
        as U
+import Util.Logger
 
 runMigration = do
-  $(logInfo) "MIGRATION: started"
+  logInfo "MIGRATION: started"
   ORG.runMigration
   U.runMigration
   PKG.runMigration
@@ -39,4 +38,4 @@ runMigration = do
   BR.runMigration
   F.runMigration
   MTR.runMigration
-  $(logInfo) "MIGRATION: ended"
+  logInfo "MIGRATION: ended"
