@@ -11,9 +11,9 @@ import qualified Data.Text.Lazy as TL
 import qualified Data.UUID as U
 import qualified Network.Mail.SMTP as SMTP
 
-import Common.Types
 import LensesConfig
 import Model.Context.AppContext
+import Model.User.User
 
 createEmail :: Email -> T.Text -> TL.Text -> AppContextM ()
 createEmail to subject body = do

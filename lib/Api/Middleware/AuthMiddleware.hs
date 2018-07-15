@@ -18,7 +18,6 @@ import Text.Regex
 
 import Api.Handler.Common
 import Common.Localization
-import Common.Types
 import LensesConfig
 import Model.Config.DSWConfig
 import Service.Token.TokenService
@@ -53,7 +52,7 @@ authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
     then app request sendResponse
     else authorize
   where
-    jwtSecret :: JWTSecret
+    jwtSecret :: String
     jwtSecret = dswConfig ^. jwtConfig ^. secret
     jwtVersion :: Integer
     jwtVersion = dswConfig ^. jwtConfig ^. version

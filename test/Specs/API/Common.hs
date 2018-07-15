@@ -20,7 +20,6 @@ import Web.Scotty.Trans (scottyAppT)
 
 import Api.Resource.Error.ErrorDTO ()
 import Api.Router
-import Common.Types
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext

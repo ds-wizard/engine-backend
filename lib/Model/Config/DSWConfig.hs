@@ -1,6 +1,6 @@
 module Model.Config.DSWConfig where
 
-import Common.Types
+import Model.User.User
 
 data Environment
   = Production

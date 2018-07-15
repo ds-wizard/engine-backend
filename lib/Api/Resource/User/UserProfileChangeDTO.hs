@@ -3,7 +3,7 @@ module Api.Resource.User.UserProfileChangeDTO where
 import Control.Monad
 import Data.Aeson
 
-import Common.Types
+import Model.User.User
 
 data UserProfileChangeDTO = UserProfileChangeDTO
   { _userProfileChangeDTOName :: String

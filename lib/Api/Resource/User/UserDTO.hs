@@ -5,7 +5,7 @@ import Data.Aeson
 import Data.Time
 import Data.UUID
 
-import Common.Types
+import Model.User.User
 
 data UserDTO = UserDTO
   { _userDTOUuid :: UUID
