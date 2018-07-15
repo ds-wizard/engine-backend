@@ -15,10 +15,10 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
-import Common.Error
 import Common.Localization
 import Database.Migration.Development.Organization.Data.Organizations
 import LensesConfig
+import Model.Error.ErrorHelpers
 import Service.Organization.OrganizationService
 
 import Specs.API.Common

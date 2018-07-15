@@ -20,11 +20,12 @@ import Web.Scotty.Trans (scottyAppT)
 
 import Api.Resource.Error.ErrorDTO ()
 import Api.Router
-import Common.Error
 import Common.Types
 import LensesConfig
 import Model.Config.DSWConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService

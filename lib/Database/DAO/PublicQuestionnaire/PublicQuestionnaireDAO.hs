@@ -5,10 +5,10 @@ import Data.Bson.Generic
 import Database.MongoDB
        (delete, fetch, findOne, insert, merge, save, select)
 
-import Common.Error
 import Database.BSON.Questionnaire.Questionnaire ()
 import Database.DAO.Common
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Questionnaire.Questionnaire
 
 pubQtnCollection = "publicQuestionnaires"

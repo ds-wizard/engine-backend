@@ -3,11 +3,11 @@ module Service.KnowledgeModel.KnowledgeModelService where
 import Control.Lens ((^.))
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Error
 import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.KnowledgeModel.KnowledgeModelMapper

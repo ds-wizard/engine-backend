@@ -8,12 +8,12 @@ import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
 
-import Common.Error
 import Common.Types
 import Database.BSON.User.User ()
 import Database.DAO.Common
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.User.User
 
 userCollection = "users"

@@ -14,12 +14,13 @@ import qualified Web.JWT as JWT
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
-import Common.Error
 import Common.Localization
 import Common.Types
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.Token.TokenMapper
 import Util.Date

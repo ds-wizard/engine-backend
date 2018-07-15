@@ -6,7 +6,7 @@ import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
 import Data.UUID
 
-import Common.Error
+import Model.Error.Error
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
 import Util.List

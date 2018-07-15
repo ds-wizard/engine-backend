@@ -3,10 +3,10 @@ module Service.Event.EventService where
 import Control.Lens ((^.))
 
 import Api.Resource.Event.EventDTO
-import Common.Error
 import Database.DAO.Event.EventDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelService

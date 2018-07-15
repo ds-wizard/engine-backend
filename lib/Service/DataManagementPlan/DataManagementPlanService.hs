@@ -7,11 +7,11 @@ import qualified Data.ByteString.Lazy as BS
 import Data.Time
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Common.Error
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
+import Model.Error.Error
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Questionnaire.Questionnaire
 import Service.DataManagementPlan.Convertor

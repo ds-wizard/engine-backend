@@ -9,7 +9,6 @@ import Text.Regex
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Organization.OrganizationDTO
-import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
@@ -20,6 +19,8 @@ import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.Event.Event
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Migrator.MigratorState

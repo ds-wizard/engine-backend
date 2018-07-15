@@ -9,7 +9,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import Common.Error
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import qualified
@@ -19,6 +18,7 @@ import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
+import Model.Error.ErrorHelpers
 import Model.Event.Event
 import Service.Event.EventMapper
 import Service.Event.EventService

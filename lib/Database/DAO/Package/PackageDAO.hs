@@ -1,11 +1,11 @@
 module Database.DAO.Package.PackageDAO where
 
-import Common.Error
 import Data.Bson
 import Data.Bson.Generic
 import Data.Text (Text)
 import Database.MongoDB
        ((=:), delete, find, findOne, insert, rest, select)
+import Model.Error.Error
 
 import Database.BSON.Package.Package ()
 import Database.BSON.Package.PackageWithEvents ()

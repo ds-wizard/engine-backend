@@ -8,11 +8,11 @@ import qualified Data.UUID as U
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Common.Error
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
 import Service.KnowledgeModel.KnowledgeModelApplicator

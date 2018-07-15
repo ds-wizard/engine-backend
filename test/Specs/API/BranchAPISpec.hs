@@ -13,7 +13,6 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
-import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
@@ -22,6 +21,7 @@ import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Branch.BranchState
+import Model.Error.ErrorHelpers
 import Service.Branch.BranchService
 
 import Specs.API.Common

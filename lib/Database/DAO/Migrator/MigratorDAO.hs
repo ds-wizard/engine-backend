@@ -6,11 +6,11 @@ import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, fetch, findOne, insert, merge, save, select)
 
-import Common.Error
 import Database.BSON.Migrator.MigratorState ()
 import Database.DAO.Common
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Migrator.MigratorState
 
 msCollection = "migrations"

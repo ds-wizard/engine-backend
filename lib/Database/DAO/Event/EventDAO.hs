@@ -2,7 +2,6 @@ module Database.DAO.Event.EventDAO where
 
 import Database.MongoDB ((=:), findOne, modify, select)
 
-import Common.Error
 import Database.BSON.Branch.BranchWithEvents ()
 import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
@@ -15,6 +14,7 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Common
 import Model.Branch.Branch
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Event.Event
 
 findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)

@@ -4,13 +4,14 @@ import Control.Lens ((^.))
 import Data.Maybe
 import Text.Regex
 
-import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.Package.Package
 import Service.Package.PackageUtils
 

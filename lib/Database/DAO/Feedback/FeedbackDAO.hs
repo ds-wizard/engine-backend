@@ -8,11 +8,11 @@ import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         rest, save, select)
 
-import Common.Error
 import Database.BSON.Feedback.Feedback ()
 import Database.DAO.Common
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Feedback.Feedback
 
 feedbackCollection = "feedbacks"

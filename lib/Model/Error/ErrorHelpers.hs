@@ -1,21 +1,6 @@
-module Common.Error where
+module Model.Error.ErrorHelpers where
 
-type ErrorMessage = String
-
-type FormError = String
-
-type FieldError = (String, String)
-
-data AppError
-  = ValidationError ErrorMessage
-                    [FormError]
-                    [FieldError]
-  | NotExistsError ErrorMessage
-  | DatabaseError ErrorMessage
-  | MigratorError ErrorMessage
-  | HttpClientError ErrorMessage
-  | GeneralServerError ErrorMessage
-  deriving (Show, Eq)
+import Model.Error.Error
 
 createErrorWithErrorMessage errorMessage = ValidationError errorMessage [] []
 

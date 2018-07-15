@@ -19,10 +19,11 @@ import Web.Scotty.Trans
         status)
 
 import Api.Resource.Error.ErrorDTO ()
-import Common.Error
 import Common.Localization
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Service.Token.TokenService
 import Service.User.UserService
 import Util.Logger

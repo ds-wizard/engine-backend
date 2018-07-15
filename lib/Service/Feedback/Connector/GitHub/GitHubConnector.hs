@@ -12,10 +12,10 @@ import qualified GitHub.Data as GD
 import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
-import Common.Error
 import Common.Localization
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Feedback.Connector.Connector
 import Service.Feedback.Connector.GitHub.GitHubMapper
 import Util.Logger

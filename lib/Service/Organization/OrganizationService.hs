@@ -6,10 +6,10 @@ import Data.Time
 
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
-import Common.Error
 import Database.DAO.Organization.OrganizationDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Organization.OrganizationMapper
 import Service.Organization.OrganizationValidation
 

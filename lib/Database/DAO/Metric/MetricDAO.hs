@@ -5,10 +5,10 @@ import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, deleteOne, find, findOne, insert, rest, select)
 
-import Common.Error
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Database.DAO.Common
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
 
 metricCollection = "metrics"

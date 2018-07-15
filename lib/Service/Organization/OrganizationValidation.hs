@@ -5,9 +5,10 @@ import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
 import Api.Resource.Organization.OrganizationChangeDTO
-import Common.Error
 import Common.Localization
 import LensesConfig
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 
 validateOrganizationDto :: OrganizationChangeDTO -> Maybe AppError
 validateOrganizationDto reqDto = isValidOrganizationId $ reqDto ^. organizationId

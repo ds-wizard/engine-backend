@@ -5,11 +5,11 @@ import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, deleteOne, find, findOne, insert, rest, select)
 
-import Common.Error
 import Database.BSON.ActionKey.ActionKey ()
 import Database.DAO.Common
 import Model.ActionKey.ActionKey
 import Model.Context.AppContext
+import Model.Error.Error
 
 actionKeyCollection = "actionKeys"
 

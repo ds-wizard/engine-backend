@@ -2,8 +2,8 @@ module Service.Migrator.Applicator.Applicator
   ( runApplicator
   ) where
 
-import Common.Error
 import Common.Localization
+import Model.Error.Error
 import Model.Event.Event
 import Model.Event.EventAccessors
 import Model.KnowledgeModel.KnowledgeModel

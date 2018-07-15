@@ -1,9 +1,9 @@
 module Service.Metric.MetricService where
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Common.Error
 import Database.DAO.Metric.MetricDAO
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Metric.MetricMapper
 
 getMetrics :: AppContextM (Either AppError [MetricDTO])

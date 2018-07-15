@@ -15,7 +15,6 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
-import Common.Error
 import Common.Localization
 import Common.Types
 import Database.DAO.User.UserDAO
@@ -23,6 +22,8 @@ import LensesConfig
 import Model.ActionKey.ActionKey
 import Model.Config.DSWConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer

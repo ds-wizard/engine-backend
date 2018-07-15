@@ -2,9 +2,9 @@ module Service.Migrator.Applicator.ApplyEventInstances where
 
 import Control.Lens
 
-import Common.Error
 import Common.Localization
 import LensesConfig
+import Model.Error.Error
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventAccessors

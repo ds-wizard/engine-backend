@@ -11,13 +11,13 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Version.VersionDTO
-import Common.Error
 import Common.Localization
 import qualified
        Database.Migration.Development.Branch.BranchMigration as B
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
+import Model.Error.ErrorHelpers
 import Service.Package.PackageService
 
 import Specs.API.Common

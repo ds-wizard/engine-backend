@@ -9,7 +9,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Package.PackageDTO
-import Common.Error
 import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
@@ -18,6 +17,8 @@ import qualified
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Service.Package.PackageMapper
 import Service.Package.PackageService
 
