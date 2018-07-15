@@ -81,6 +81,9 @@ _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED = "Couldn't transform to desired docum
 
 _ERROR_SERVICE_DMP__UKNOWN_FORMAT = "Unprocessable DMP format"
 
+-- Public Questionnaire
+_ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
+
 -- --------------------------------------
 -- HTTP CLIENT
 -- --------------------------------------

@@ -21,8 +21,8 @@ userAlbert now =
     , "DMP_PERM"
     ]
   , "isActive" BSON.=: True
-  , "createdAt" BSON.=: (show now)
-  , "updatedAt" BSON.=: (show now)
+  , "createdAt" BSON.=: now
+  , "updatedAt" BSON.=: now
   ]
 
 userNikola now =
@@ -34,8 +34,8 @@ userNikola now =
   , "role" BSON.=: "DATASTEWARD"
   , "permissions" BSON.=: ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
   , "isActive" BSON.=: True
-  , "createdAt" BSON.=: (show now)
-  , "updatedAt" BSON.=: (show now)
+  , "createdAt" BSON.=: now
+  , "updatedAt" BSON.=: now
   ]
 
 userIsaac now =
@@ -47,6 +47,6 @@ userIsaac now =
   , "role" BSON.=: "RESEARCHER"
   , "permissions" BSON.=: ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
   , "isActive" BSON.=: True
-  , "createdAt" BSON.=: (show now)
-  , "updatedAt" BSON.=: (show now)
+  , "createdAt" BSON.=: now
+  , "updatedAt" BSON.=: now
   ]

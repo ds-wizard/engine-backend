@@ -16,6 +16,7 @@ import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnai
 import qualified
        Database.Migration.Development.PublicQuestionnaire.PublicQuestionnaireMigration
        as PUBQTN
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.Questionnaire.QuestionnaireMapper
@@ -67,12 +68,12 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  it "HTTP 404 NOT FOUND - entity doesn't exist" $
+  it "HTTP 404 NOT FOUND - Public questionnaire is not set up" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity does not exist"
+    let expDto = NotExistsError _ERROR_SERVICE_PQ__NOT_SET_UP
     let expBody = encode expDto
     -- AND: Delete public questionnaire
     runInContextIO deletePublicQuestionnaires appContext

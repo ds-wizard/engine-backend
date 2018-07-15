@@ -1,4 +1,4 @@
-module Database.Migration.Production.Migration_0001_organizations_init.Migration
+module Database.Migration.Production.Migration_0003_book_references_init.Migration
   ( definition
   ) where
 
@@ -9,15 +9,15 @@ import Database.MongoDB
 import Database.MongoDB.Migration.Entity
 import Database.Persist.MongoDB (ConnectionPool, runMongoDBPoolDef)
 
-import Database.Migration.Production.Migration_0001_organizations_init.Data.Organizations
+import Database.Migration.Production.Migration_0003_book_references_init.Data.BookReferences
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 1, mmName = "Organizations Init", mmDescription = ""}
+meta = MigrationMeta {mmNumber = 3, mmName = "Book References Init", mmDescription = ""}
 
 migrate :: ConnectionPool -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   now <- liftIO getCurrentTime
-  let action = insert "organizations" (organization now)
-  result <- runMongoDBPoolDef action dbPool
+  let action = insertMany "bookReferences" (bookReferences now)
+  runMongoDBPoolDef action dbPool
   return Nothing
