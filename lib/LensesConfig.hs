@@ -37,7 +37,7 @@ import Api.Resource.Version.VersionDTO
 import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
 import Model.Branch.Branch
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Event.Answer.AnswerEvent
@@ -95,7 +95,7 @@ makeFields ''AppConfigFeedback
 
 makeFields ''BuildInfo
 
-makeFields ''DSWConfig
+makeFields ''AppConfig
 
 -- Model / Context
 makeFields ''AppContext

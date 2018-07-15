@@ -1,13 +1,7 @@
-module Model.Config.DSWConfig where
+module Model.Config.AppConfig where
 
+import Model.Config.Environment
 import Model.User.User
-
-data Environment
-  = Production
-  | Staging
-  | Development
-  | Test
-  deriving (Eq, Read, Show)
 
 data AppConfigEnvironment = AppConfigEnvironment
   { _appConfigEnvironmentEnv :: Environment
@@ -71,15 +65,15 @@ data BuildInfo = BuildInfo
   , _buildInfoBuiltAt :: String
   }
 
-data DSWConfig = DSWConfig
-  { _dSWConfigEnvironment :: AppConfigEnvironment
-  , _dSWConfigClientConfig :: AppConfigClient
-  , _dSWConfigWebConfig :: AppConfigWeb
-  , _dSWConfigDatabaseConfig :: AppConfigDatabase
-  , _dSWConfigJwtConfig :: AppConfigJwt
-  , _dSWConfigRoles :: AppConfigRoles
-  , _dSWConfigMail :: AppConfigMail
-  , _dSWConfigAnalytics :: AppConfigAnalytics
-  , _dSWConfigFeedback :: AppConfigFeedback
-  , _dSWConfigBuildInfo :: BuildInfo
+data AppConfig = AppConfig
+  { _appConfigEnvironment :: AppConfigEnvironment
+  , _appConfigClientConfig :: AppConfigClient
+  , _appConfigWebConfig :: AppConfigWeb
+  , _appConfigDatabaseConfig :: AppConfigDatabase
+  , _appConfigJwtConfig :: AppConfigJwt
+  , _appConfigRoles :: AppConfigRoles
+  , _appConfigMail :: AppConfigMail
+  , _appConfigAnalytics :: AppConfigAnalytics
+  , _appConfigFeedback :: AppConfigFeedback
+  , _appConfigBuildInfo :: BuildInfo
   }

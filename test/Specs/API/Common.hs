@@ -21,7 +21,7 @@ import Web.Scotty.Trans (scottyAppT)
 import Api.Resource.Error.ErrorDTO ()
 import Api.Router
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
@@ -39,7 +39,7 @@ reqAuthHeader =
   ( "Authorization"
   , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjM5NDAwMzIzMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiT1JHX1BFUk0iLCJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUE1fV1JJVEVfUEVSTSIsIlFUTl9QRVJNIiwiRE1QX1BFUk0iXX0.6jt40r7YR-YBXMBmo3aKypQiE6ikrVTsU_bSKDn-gPk")
 
-reqAuthHeaderWithoutPerms :: DSWConfig -> Permission -> Header
+reqAuthHeaderWithoutPerms :: AppConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms dswConfig perm =
   let allPerms = getPermissionForRole dswConfig "ADMIN"
       user =

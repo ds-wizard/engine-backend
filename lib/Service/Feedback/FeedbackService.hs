@@ -12,7 +12,7 @@ import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Database.DAO.Feedback.FeedbackDAO
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Feedback.Feedback
@@ -62,7 +62,7 @@ synchronizeFeedbacks =
         Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
         Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
 
-createIssueUrl :: DSWConfig -> Feedback -> String
+createIssueUrl :: AppConfig -> Feedback -> String
 createIssueUrl dswConfig f =
   let fIssueUrlTemplate = dswConfig ^. feedback . issueUrl
       fOwner = dswConfig ^. feedback . owner

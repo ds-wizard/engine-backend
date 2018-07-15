@@ -6,9 +6,9 @@ import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import System.Environment (lookupEnv)
 
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 
-loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError DSWConfig)
+loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError AppConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
@@ -24,17 +24,17 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     appFeedback <- loadAppConfigFeedback appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
-      DSWConfig
-      { _dSWConfigEnvironment = environment
-      , _dSWConfigClientConfig = clientConfig
-      , _dSWConfigWebConfig = webConfig
-      , _dSWConfigDatabaseConfig = databaseConfig
-      , _dSWConfigJwtConfig = jwtConfig
-      , _dSWConfigRoles = appRoles
-      , _dSWConfigMail = appMail
-      , _dSWConfigAnalytics = appAnalytics
-      , _dSWConfigFeedback = appFeedback
-      , _dSWConfigBuildInfo = buildInfo
+      AppConfig
+      { _appConfigEnvironment = environment
+      , _appConfigClientConfig = clientConfig
+      , _appConfigWebConfig = webConfig
+      , _appConfigDatabaseConfig = databaseConfig
+      , _appConfigJwtConfig = jwtConfig
+      , _appConfigRoles = appRoles
+      , _appConfigMail = appMail
+      , _appConfigAnalytics = appAnalytics
+      , _appConfigFeedback = appFeedback
+      , _appConfigBuildInfo = buildInfo
       }
   where
     loadAppConfigEnvironment configParser = do

@@ -19,7 +19,7 @@ import Common.Localization
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Model.ActionKey.ActionKey
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
@@ -168,7 +168,7 @@ deleteUser userUuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPermissionForRole :: DSWConfig -> Role -> [Permission]
+getPermissionForRole :: AppConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
     "ADMIN" -> config ^. roles ^. admin

@@ -14,7 +14,7 @@ import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Config.Environment
 import Model.Context.AppContext
 import Service.Config.ConfigLoader
 import Util.Logger

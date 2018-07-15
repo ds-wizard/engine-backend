@@ -31,7 +31,7 @@ import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Config.Environment
 import Model.Context.AppContext
 
 unauthorizedEndpoints =
