@@ -15,9 +15,9 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.User.UserPasswordDTO
-import Common.Localization
 import Database.DAO.User.UserDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.ErrorHelpers
 

@@ -2,7 +2,7 @@ module Service.Migrator.Applicator.Applicator
   ( runApplicator
   ) where
 
-import Common.Localization
+import Localization
 import Model.Error.Error
 import Model.Event.Event
 import Model.Event.EventAccessors

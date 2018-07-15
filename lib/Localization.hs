@@ -1,4 +1,4 @@
-module Common.Localization where
+module Localization where
 
 import qualified Data.UUID as U
 

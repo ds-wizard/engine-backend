@@ -1,6 +1,6 @@
 module Service.Migrator.Applicator.Errors where
 
-import Common.Localization
+import Localization
 import Model.Error.Error
 import Model.Event.EventAccessors
 

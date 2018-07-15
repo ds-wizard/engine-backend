@@ -9,13 +9,13 @@ import Text.Regex
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Organization.OrganizationDTO
-import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
+import Localization
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Context.AppContext

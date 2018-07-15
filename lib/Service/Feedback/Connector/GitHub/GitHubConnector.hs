@@ -12,8 +12,8 @@ import qualified GitHub.Data as GD
 import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.Feedback.Connector.Connector

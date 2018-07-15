@@ -17,8 +17,8 @@ import Prelude hiding (exp)
 import Text.Regex
 
 import Api.Handler.Common
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.Config.AppConfig
 import Service.Token.TokenService
 import Util.Token

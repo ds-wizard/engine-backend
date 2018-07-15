@@ -19,8 +19,8 @@ import Web.Scotty.Trans
         status)
 
 import Api.Resource.Error.ErrorDTO ()
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers

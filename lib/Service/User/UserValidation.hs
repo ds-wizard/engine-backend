@@ -2,8 +2,8 @@ module Service.User.UserValidation where
 
 import Data.Either (isRight)
 
-import Common.Localization
 import Database.DAO.User.UserDAO
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers

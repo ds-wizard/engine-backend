@@ -10,7 +10,7 @@ import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
 import Api.Resource.Questionnaire.QuestionnaireDTO ()
-import Common.Localization
+import Localization
 import Model.DataManagementPlan.DataManagementPlan
 import Model.DataManagementPlan.DataManagementPlanHelpers
 import Model.Error.ErrorHelpers

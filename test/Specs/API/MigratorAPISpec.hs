@@ -15,7 +15,6 @@ import Api.Resource.Branch.BranchDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
-import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -28,6 +27,7 @@ import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
+import Localization
 import Model.Error.Error
 import Model.Migrator.MigratorState
 import Service.Branch.BranchService

@@ -13,12 +13,12 @@ import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Version.VersionDTO
-import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers

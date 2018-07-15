@@ -13,13 +13,13 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
-import Common.Localization
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
+import Localization
 import Model.Branch.BranchState
 import Model.Error.ErrorHelpers
 import Service.Branch.BranchService

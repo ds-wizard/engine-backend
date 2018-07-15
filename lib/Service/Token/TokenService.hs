@@ -14,9 +14,9 @@ import qualified Web.JWT as JWT
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
-import Common.Localization
 import Database.DAO.User.UserDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers

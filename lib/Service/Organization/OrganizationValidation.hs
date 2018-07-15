@@ -5,8 +5,8 @@ import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
 import Api.Resource.Organization.OrganizationChangeDTO
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 

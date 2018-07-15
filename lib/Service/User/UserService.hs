@@ -15,9 +15,9 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
-import Common.Localization
 import Database.DAO.User.UserDAO
 import LensesConfig
+import Localization
 import Model.ActionKey.ActionKey
 import Model.Config.AppConfig
 import Model.Context.AppContext

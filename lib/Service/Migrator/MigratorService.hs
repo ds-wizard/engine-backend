@@ -8,11 +8,11 @@ import qualified Data.Text as T
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
-import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Event.EventAccessors

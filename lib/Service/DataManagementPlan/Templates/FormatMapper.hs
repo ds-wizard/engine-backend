@@ -8,8 +8,8 @@ import qualified Data.Text.Encoding as E
 import qualified Text.FromHTML as FromHTML
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error
 import Service.DataManagementPlan.Templates.Html
