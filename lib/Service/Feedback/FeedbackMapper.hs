@@ -37,8 +37,8 @@ fromCreateDTO dto fUuid issueId now =
   , _feedbackUpdatedAt = now
   }
 
-fromSimpleIssue :: Feedback -> SimpleIssue -> Feedback
-fromSimpleIssue feedback simpleIssue =
+fromSimpleIssue :: Feedback -> SimpleIssue -> UTCTime -> Feedback
+fromSimpleIssue feedback simpleIssue now =
   Feedback
   { _feedbackUuid = feedback ^. uuid
   , _feedbackIssueId = simpleIssue ^. issueId
@@ -47,5 +47,5 @@ fromSimpleIssue feedback simpleIssue =
   , _feedbackTitle = simpleIssue ^. title
   , _feedbackContent = simpleIssue ^. content
   , _feedbackCreatedAt = feedback ^. createdAt
-  , _feedbackUpdatedAt = feedback ^. updatedAt
+  , _feedbackUpdatedAt = now
   }
