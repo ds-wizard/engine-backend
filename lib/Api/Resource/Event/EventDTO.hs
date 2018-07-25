@@ -272,6 +272,7 @@ data AddCrossReferenceEventDTO = AddCrossReferenceEventDTO
   , _addCrossReferenceEventDTOPath :: EventPathDTO
   , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
   , _addCrossReferenceEventDTOTargetUuid :: U.UUID
+  , _addCrossReferenceEventDTODescription :: String
   } deriving (Show, Eq, Generic)
 
 data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
@@ -279,6 +280,7 @@ data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
   , _editCrossReferenceEventDTOPath :: EventPathDTO
   , _editCrossReferenceEventDTOReferenceUuid :: U.UUID
   , _editCrossReferenceEventDTOTargetUuid :: EventFieldDTO U.UUID
+  , _editCrossReferenceEventDTODescription :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data DeleteCrossReferenceEventDTO = DeleteCrossReferenceEventDTO
@@ -786,6 +788,7 @@ instance FromJSON AddCrossReferenceEventDTO where
     _addCrossReferenceEventDTOPath <- o .: "path"
     _addCrossReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
     _addCrossReferenceEventDTOTargetUuid <- o .: "targetUuid"
+    _addCrossReferenceEventDTODescription <- o .: "description"
     return AddCrossReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -798,6 +801,7 @@ instance ToJSON AddCrossReferenceEventDTO where
       , "path" .= _addCrossReferenceEventDTOPath
       , "referenceUuid" .= _addCrossReferenceEventDTOReferenceUuid
       , "targetUuid" .= _addCrossReferenceEventDTOTargetUuid
+      , "description" .= _addCrossReferenceEventDTODescription
       ]
 
 -- --------------------------------------------
@@ -807,6 +811,7 @@ instance FromJSON EditCrossReferenceEventDTO where
     _editCrossReferenceEventDTOPath <- o .: "path"
     _editCrossReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
     _editCrossReferenceEventDTOTargetUuid <- o .: "targetUuid"
+    _editCrossReferenceEventDTODescription <- o .: "description"
     return EditCrossReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -819,6 +824,7 @@ instance ToJSON EditCrossReferenceEventDTO where
       , "path" .= _editCrossReferenceEventDTOPath
       , "referenceUuid" .= _editCrossReferenceEventDTOReferenceUuid
       , "targetUuid" .= _editCrossReferenceEventDTOTargetUuid
+      , "description" .= _editCrossReferenceEventDTODescription
       ]
 
 -- --------------------------------------------

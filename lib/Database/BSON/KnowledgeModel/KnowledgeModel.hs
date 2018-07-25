@@ -205,10 +205,17 @@ instance ToBSON CrossReference where
     [ "referenceType" BSON.=: "CrossReference"
     , "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "targetUuid" BSON.=: serializeUUID (model ^. targetUuid)
+    , "description" BSON.=: (model ^. description)
     ]
 
 instance FromBSON CrossReference where
   fromBSON doc = do
     refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     refTargetUuid <- deserializeMaybeUUID $ BSON.lookup "targetUuid" doc
-    return CrossReference {_crossReferenceUuid = refUuid, _crossReferenceTargetUuid = refTargetUuid}
+    refDescription <- BSON.lookup "description" doc
+    return
+      CrossReference
+      { _crossReferenceUuid = refUuid
+      , _crossReferenceTargetUuid = refTargetUuid
+      , _crossReferenceDescription = refDescription
+      }

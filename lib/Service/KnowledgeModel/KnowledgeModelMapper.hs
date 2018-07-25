@@ -82,7 +82,10 @@ toReferenceDTO (URLReference' reference) =
 toReferenceDTO (CrossReference' reference) =
   CrossReferenceDTO'
     CrossReferenceDTO
-    {_crossReferenceDTOUuid = reference ^. uuid, _crossReferenceDTOTargetUuid = reference ^. targetUuid}
+    { _crossReferenceDTOUuid = reference ^. uuid
+    , _crossReferenceDTOTargetUuid = reference ^. targetUuid
+    , _crossReferenceDTODescription = reference ^. description
+    }
 
 -- ----------------------------------------
 -- ----------------------------------------
@@ -161,4 +164,8 @@ fromReferenceDTO (URLReferenceDTO' reference) =
     }
 fromReferenceDTO (CrossReferenceDTO' reference) =
   CrossReference'
-    CrossReference {_crossReferenceUuid = reference ^. uuid, _crossReferenceTargetUuid = reference ^. targetUuid}
+    CrossReference
+    { _crossReferenceUuid = reference ^. uuid
+    , _crossReferenceTargetUuid = reference ^. targetUuid
+    , _crossReferenceDescription = reference ^. description
+    }

@@ -83,4 +83,5 @@ data URLReference = URLReference
 data CrossReference = CrossReference
   { _crossReferenceUuid :: U.UUID
   , _crossReferenceTargetUuid :: U.UUID
+  , _crossReferenceDescription :: String
   } deriving (Show, Eq, Generic)

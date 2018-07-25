@@ -43,4 +43,5 @@ referenceCh3 =
   CrossReference
   { _crossReferenceUuid = fromJust $ U.fromString "14255506-6c88-438d-a1ad-eea2071ee9cb"
   , _crossReferenceTargetUuid = fromJust $ U.fromString "2be1d749-9c72-4807-9309-d6c7bdbf13ba"
+  , _crossReferenceDescription = "Some description"
   }

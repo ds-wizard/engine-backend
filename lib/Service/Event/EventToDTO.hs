@@ -257,6 +257,7 @@ instance EventToDTO AddReferenceEvent where
     , _addCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
     , _addCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
     , _addCrossReferenceEventDTOTargetUuid = event ^. targetUuid
+    , _addCrossReferenceEventDTODescription = event ^. description
     }
 
 instance EventToDTO EditReferenceEvent where
@@ -287,6 +288,7 @@ instance EventToDTO EditReferenceEvent where
     , _editCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
     , _editCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
     , _editCrossReferenceEventDTOTargetUuid = toEventFieldDTO $ event ^. targetUuid
+    , _editCrossReferenceEventDTODescription = toEventFieldDTO $ event ^. description
     }
 
 instance EventToDTO DeleteReferenceEvent where

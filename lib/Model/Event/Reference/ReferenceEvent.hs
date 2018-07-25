@@ -74,6 +74,7 @@ data AddCrossReferenceEvent = AddCrossReferenceEvent
   , _addCrossReferenceEventPath :: EventPath
   , _addCrossReferenceEventReferenceUuid :: U.UUID
   , _addCrossReferenceEventTargetUuid :: U.UUID
+  , _addCrossReferenceEventDescription :: String
   } deriving (Show, Eq, Generic)
 
 data EditCrossReferenceEvent = EditCrossReferenceEvent
@@ -81,6 +82,7 @@ data EditCrossReferenceEvent = EditCrossReferenceEvent
   , _editCrossReferenceEventPath :: EventPath
   , _editCrossReferenceEventReferenceUuid :: U.UUID
   , _editCrossReferenceEventTargetUuid :: EventField U.UUID
+  , _editCrossReferenceEventDescription :: EventField String
   } deriving (Show, Eq, Generic)
 
 data DeleteCrossReferenceEvent = DeleteCrossReferenceEvent

@@ -78,6 +78,7 @@ data URLReferenceDTO = URLReferenceDTO
 data CrossReferenceDTO = CrossReferenceDTO
   { _crossReferenceDTOUuid :: U.UUID
   , _crossReferenceDTOTargetUuid :: U.UUID
+  , _crossReferenceDTODescription :: String
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -163,6 +164,7 @@ instance ToJSON CrossReferenceDTO where
       [ "referenceType" .= "CrossReference"
       , "uuid" .= _crossReferenceDTOUuid
       , "targetUuid" .= _crossReferenceDTOTargetUuid
+      , "description" .= _crossReferenceDTODescription
       ]
 
 -- --------------------------------------------------------------------
@@ -265,5 +267,6 @@ instance FromJSON CrossReferenceDTO where
   parseJSON (Object o) = do
     _crossReferenceDTOUuid <- o .: "uuid"
     _crossReferenceDTOTargetUuid <- o .: "targetUuid"
+    _crossReferenceDTODescription <- o .: "description"
     return CrossReferenceDTO {..}
   parseJSON _ = mzero

@@ -89,6 +89,7 @@ instance ToBSON AddCrossReferenceEvent where
     , "path" BSON.=: (model ^. path)
     , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
     , "targetUuid" BSON.=: serializeUUID (model ^. targetUuid)
+    , "description" BSON.=: (model ^. description)
     ]
 
 instance FromBSON AddCrossReferenceEvent where
@@ -97,12 +98,14 @@ instance FromBSON AddCrossReferenceEvent where
     refPath <- BSON.lookup "path" doc
     refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
     refTargetUuid <- deserializeMaybeUUID $ BSON.lookup "targetUuid" doc
+    refDescription <- BSON.lookup "description" doc
     return
       AddCrossReferenceEvent
       { _addCrossReferenceEventUuid = refUuid
       , _addCrossReferenceEventPath = refPath
       , _addCrossReferenceEventReferenceUuid = refReferenceUuid
       , _addCrossReferenceEventTargetUuid = refTargetUuid
+      , _addCrossReferenceEventDescription = refDescription
       }
 
 -- -------------------------
@@ -184,6 +187,7 @@ instance ToBSON EditCrossReferenceEvent where
     , "path" BSON.=: (model ^. path)
     , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
     , "targetUuid" BSON.=: serializeEventFieldUUID (model ^. targetUuid)
+    , "description" BSON.=: (model ^. description)
     ]
 
 instance FromBSON EditCrossReferenceEvent where
@@ -192,12 +196,14 @@ instance FromBSON EditCrossReferenceEvent where
     refPath <- BSON.lookup "path" doc
     refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
     refTargetUuid <- deserializeMaybeEventFieldUUID $ BSON.lookup "targetUuid" doc
+    refDescription <- BSON.lookup "description" doc
     return
       EditCrossReferenceEvent
       { _editCrossReferenceEventUuid = refUuid
       , _editCrossReferenceEventPath = refPath
       , _editCrossReferenceEventReferenceUuid = refReferenceUuid
       , _editCrossReferenceEventTargetUuid = refTargetUuid
+      , _editCrossReferenceEventDescription = refDescription
       }
 
 -- -------------------------

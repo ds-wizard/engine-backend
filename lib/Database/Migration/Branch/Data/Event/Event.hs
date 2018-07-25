@@ -1063,6 +1063,7 @@ a_km1_ch1_q2_rCh3 =
       ]
   , _addCrossReferenceEventReferenceUuid = referenceCh3 ^. uuid
   , _addCrossReferenceEventTargetUuid = referenceCh3 ^. targetUuid
+  , _addCrossReferenceEventDescription = referenceCh3 ^. description
   }
 
 e_km1_ch1_q2_rCh1 :: EditReferenceEvent
