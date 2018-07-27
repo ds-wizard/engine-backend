@@ -4,6 +4,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Specs.API.Common
+import Specs.API.Questionnaire.Detail_PUT
 import Specs.API.Questionnaire.Detail_Report_GET
 import Specs.API.Questionnaire.Detail_Report_Preview_POST
 import Specs.API.Questionnaire.Public_GET
@@ -14,3 +15,4 @@ questionnaireAPI appContext =
     public_get appContext
     detail_report_get appContext
     detail_report_preview_post appContext
+    detail_put appContext

@@ -14,6 +14,7 @@ import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Level.LevelDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
@@ -22,6 +23,7 @@ import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -53,6 +55,7 @@ import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
@@ -206,6 +209,9 @@ makeFields ''CrossReference
 makeFields ''Metric
 
 makeFields ''MetricMeasure
+
+-- Model / Level
+makeFields ''Level
 
 -- Model / Migrator
 makeFields ''MigratorConflictDTO
@@ -361,6 +367,9 @@ makeFields ''MetricDTO
 
 makeFields ''MetricMeasureDTO
 
+-- Model / Level
+makeFields ''LevelDTO
+
 -- Api / Resource / Migrator
 makeFields ''MigratorState
 
@@ -384,6 +393,8 @@ makeFields ''QuestionnaireDTO
 makeFields ''QuestionnaireReplyDTO
 
 makeFields ''QuestionnaireDetailDTO
+
+makeFields ''QuestionnaireChangeDTO
 
 -- Api / Resource / Report
 makeFields ''IndicationDTO

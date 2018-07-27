@@ -21,6 +21,19 @@ instance FromBSON (EventField String) where
         return $ ChangedValue efValue
       else return NothingChanged
 
+instance ToBSON (EventField (Maybe Int)) where
+  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
+  toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
+
+instance FromBSON (EventField (Maybe Int)) where
+  fromBSON doc = do
+    efChanged <- BSON.lookup "changed" doc
+    if efChanged
+      then do
+        efValue <- BSON.lookup "value" doc
+        return $ ChangedValue efValue
+      else return NothingChanged
+
 instance ToBSON (EventField (Maybe String)) where
   toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
   toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]

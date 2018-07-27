@@ -69,6 +69,7 @@ createQuestion e maybeAit maybeAnswers =
   , _questionQType = e ^. qType
   , _questionTitle = e ^. title
   , _questionText = e ^. text
+  , _questionRequiredLevel = e ^. requiredLevel
   , _questionAnswerItemTemplate = maybeAit
   , _questionAnswers = maybeAnswers
   , _questionReferences = []
@@ -77,11 +78,13 @@ createQuestion e maybeAit maybeAnswers =
 
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e =
-  applyReferenceIds . applyExpertIds . applyAnwerIds . applyAnswerItemTemplate . applyText . applyTitle . applyType
+  applyReferenceIds .
+  applyExpertIds . applyAnwerIds . applyAnswerItemTemplate . applyRequiredLevel . applyText . applyTitle . applyType
   where
     applyType q = applyValue (e ^. qType) q qType
     applyTitle q = applyValue (e ^. title) q title
     applyText q = applyValue (e ^. text) q text
+    applyRequiredLevel q = applyValue (e ^. requiredLevel) q requiredLevel
     applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
     applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
     applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder

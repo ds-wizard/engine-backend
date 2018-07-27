@@ -14,6 +14,7 @@ data QuestionnaireReply = QuestionnaireReply
 data Questionnaire = Questionnaire
   { _questionnaireUuid :: U.UUID
   , _questionnaireName :: String
+  , _questionnaireLevel :: Int
   , _questionnairePackageId :: String
   , _questionnaireKnowledgeModel :: KnowledgeModel
   , _questionnaireReplies :: [QuestionnaireReply]

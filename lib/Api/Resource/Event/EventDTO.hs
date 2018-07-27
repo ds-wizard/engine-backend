@@ -128,6 +128,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _addQuestionEventDTOQType :: QuestionType
   , _addQuestionEventDTOTitle :: String
   , _addQuestionEventDTOText :: String
+  , _addQuestionEventDTORequiredLevel :: Maybe Int
   , _addQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
   } deriving (Show, Eq, Generic)
 
@@ -138,6 +139,7 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editQuestionEventDTOTitle :: EventFieldDTO String
   , _editQuestionEventDTOText :: EventFieldDTO String
+  , _editQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
   , _editQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
   , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [U.UUID])
   , _editQuestionEventDTOExpertIds :: EventFieldDTO [U.UUID]
@@ -408,6 +410,7 @@ instance FromJSON AddQuestionEventDTO where
     _addQuestionEventDTOQuestionUuid <- o .: "questionUuid"
     _addQuestionEventDTOTitle <- o .: "title"
     _addQuestionEventDTOText <- o .: "text"
+    _addQuestionEventDTORequiredLevel <- o .: "requiredLevel"
     _addQuestionEventDTOAnswerItemTemplatePlain <- o .: "answerItemTemplate"
     questionType <- o .: "type"
     case deserializeQuestionType questionType of
@@ -425,6 +428,7 @@ instance ToJSON AddQuestionEventDTO where
       , "type" .= serializeQuestionType _addQuestionEventDTOQType
       , "title" .= _addQuestionEventDTOTitle
       , "text" .= _addQuestionEventDTOText
+      , "requiredLevel" .= _addQuestionEventDTORequiredLevel
       , "answerItemTemplate" .= _addQuestionEventDTOAnswerItemTemplatePlain
       ]
 
@@ -435,6 +439,7 @@ instance FromJSON EditQuestionEventDTO where
     _editQuestionEventDTOQuestionUuid <- o .: "questionUuid"
     _editQuestionEventDTOTitle <- o .: "title"
     _editQuestionEventDTOText <- o .: "text"
+    _editQuestionEventDTORequiredLevel <- o .: "requiredLevel"
     _editQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
     _editQuestionEventDTOAnswerIds <- o .: "answerIds"
     _editQuestionEventDTOExpertIds <- o .: "expertIds"
@@ -455,6 +460,7 @@ instance ToJSON EditQuestionEventDTO where
       , "type" .= (serializeQuestionType <$> _editQuestionEventDTOQType)
       , "title" .= _editQuestionEventDTOTitle
       , "text" .= _editQuestionEventDTOText
+      , "requiredLevel" .= _editQuestionEventDTORequiredLevel
       , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplatePlainWithIds
       , "answerIds" .= _editQuestionEventDTOAnswerIds
       , "expertIds" .= _editQuestionEventDTOExpertIds

@@ -128,6 +128,7 @@ instance EventToDTO AddQuestionEvent where
       , _addQuestionEventDTOQType = event ^. qType
       , _addQuestionEventDTOTitle = event ^. title
       , _addQuestionEventDTOText = event ^. text
+      , _addQuestionEventDTORequiredLevel = event ^. requiredLevel
       , _addQuestionEventDTOAnswerItemTemplatePlain = toAnswerItemTemplatePlainDTO <$> event ^. answerItemTemplatePlain
       }
 
@@ -141,6 +142,7 @@ instance EventToDTO EditQuestionEvent where
       , _editQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
       , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
       , _editQuestionEventDTOAnswerItemTemplatePlainWithIds =
           toEventFieldAndAnswerItemTemplatePlainWithIds $ event ^. answerItemTemplatePlainWithIds
       , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds

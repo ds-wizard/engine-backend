@@ -16,6 +16,7 @@ getPublicQuestionnaire = do
   eitherQuestionnaire <- findPublicQuestionnaire
   case eitherQuestionnaire of
     Right pubQtn ->
-      heFindPackageWithEventsById (pubQtn ^. packageId) $ \package -> return . Right $ toDetailDTO pubQtn package
+      heFindPackageWithEventsById (pubQtn ^. packageId) $ \package ->
+        return . Right $ toDetailWithPackageWithEventsDTO pubQtn package
     Left (NotExistsError _) -> return . Left . NotExistsError $ _ERROR_SERVICE_PQ__NOT_SET_UP
     Left error -> return . Left $ error

@@ -8,6 +8,7 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
+import Api.Resource.Questionnaire.QuestionnaireChangeJM ()
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
 import Api.Resource.Questionnaire.QuestionnaireDTO ()
 import Api.Resource.Report.ReportJM ()
@@ -47,12 +48,12 @@ getQuestionnaireA =
       Right dto -> json dto
       Left error -> sendError error
 
-putQuestionnaireRepliesA :: Endpoint
-putQuestionnaireRepliesA =
+putQuestionnaireA :: Endpoint
+putQuestionnaireA =
   checkPermission "QTN_PERM" $
   getReqDto $ \reqDto -> do
     qtnUuid <- param "qtnUuid"
-    eitherDto <- lift $ modifyQuestionnaireReplies qtnUuid reqDto
+    eitherDto <- lift $ modifyQuestionnaire qtnUuid reqDto
     case eitherDto of
       Right dto -> json dto
       Left error -> sendError error

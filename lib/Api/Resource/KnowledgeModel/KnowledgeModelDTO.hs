@@ -28,6 +28,7 @@ data QuestionDTO = QuestionDTO
   , _questionDTOQType :: QuestionType
   , _questionDTOTitle :: String
   , _questionDTOText :: String
+  , _questionDTORequiredLevel :: Maybe Int
   , _questionDTOAnswers :: Maybe [AnswerDTO]
   , _questionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _questionDTOReferences :: [ReferenceDTO]
@@ -137,6 +138,7 @@ instance ToJSON QuestionDTO where
       , "type" .= serializeQuestionType _questionDTOQType
       , "title" .= _questionDTOTitle
       , "text" .= _questionDTOText
+      , "requiredLevel" .= _questionDTORequiredLevel
       , "answers" .= _questionDTOAnswers
       , "answerItemTemplate" .= _questionDTOAnswerItemTemplate
       , "references" .= _questionDTOReferences
@@ -251,6 +253,7 @@ instance FromJSON QuestionDTO where
     _questionDTOUuid <- o .: "uuid"
     _questionDTOTitle <- o .: "title"
     _questionDTOText <- o .: "text"
+    _questionDTORequiredLevel <- o .: "requiredLevel"
     _questionDTOAnswers <- o .: "answers"
     _questionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _questionDTOExperts <- o .: "experts"

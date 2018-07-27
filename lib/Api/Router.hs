@@ -19,6 +19,7 @@ import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
+import Api.Handler.Level.LevelHandler
 import Api.Handler.Metric.MetricHandler
 import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
@@ -133,7 +134,7 @@ createEndpoints context
   post "/questionnaires" postQuestionnairesA
   get "/questionnaires/public" getQuestionnairePublicA
   get "/questionnaires/:qtnUuid" getQuestionnaireA
-  put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
+  put "/questionnaires/:qtnUuid" putQuestionnaireA
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
   post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
   get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
@@ -153,6 +154,10 @@ createEndpoints context
    -- METRIC
    --------------------
   get "/metrics" getMetricsA
+   --------------------
+   -- LEVEL
+   --------------------
+  get "/levels" getLevelsA
    --------------------
    -- ERROR
    --------------------

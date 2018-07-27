@@ -22,6 +22,7 @@ instance ToBSON Questionnaire where
   toBSON questionnaire =
     [ "uuid" BSON.=: serializeUUID (questionnaire ^. uuid)
     , "name" BSON.=: (questionnaire ^. name)
+    , "level" BSON.=: (questionnaire ^. level)
     , "packageId" BSON.=: (questionnaire ^. packageId)
     , "knowledgeModel" BSON.=: (questionnaire ^. knowledgeModel)
     , "replies" BSON.=: (questionnaire ^. replies)
@@ -33,6 +34,7 @@ instance FromBSON Questionnaire where
   fromBSON doc = do
     uuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     name <- BSON.lookup "name" doc
+    level <- BSON.lookup "level" doc
     packageId <- BSON.lookup "packageId" doc
     knowledgeModel <- BSON.lookup "knowledgeModel" doc
     replies <- BSON.lookup "replies" doc
@@ -42,6 +44,7 @@ instance FromBSON Questionnaire where
       Questionnaire
       { _questionnaireUuid = uuid
       , _questionnaireName = name
+      , _questionnaireLevel = level
       , _questionnairePackageId = packageId
       , _questionnaireKnowledgeModel = knowledgeModel
       , _questionnaireReplies = replies

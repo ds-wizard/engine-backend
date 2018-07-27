@@ -5,6 +5,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -86,20 +87,16 @@ getQuestionnaireById qtnUuid =
 getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
 getQuestionnaireDetailById qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
-    heFindPackageWithEventsById (qtn ^. packageId) $ \package -> return . Right $ toDetailDTO qtn package
+    heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
+      return . Right $ toDetailWithPackageWithEventsDTO qtn package
 
-modifyQuestionnaireReplies :: String -> [QuestionnaireReplyDTO] -> AppContextM (Either AppError [QuestionnaireReplyDTO])
-modifyQuestionnaireReplies qtnUuid qtnReplies =
-  getQuestionnaire qtnUuid $ \qtn -> do
+modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
+modifyQuestionnaire qtnUuid reqDto =
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
     now <- liftIO getCurrentTime
-    updateQuestionnaireRepliesById qtnUuid (fromReplyDTO <$> qtnReplies) now
-    return . Right $ qtnReplies
-  where
-    getQuestionnaire qtnUuid callback = do
-      eitherQuestionnaire <- findQuestionnaireById qtnUuid
-      case eitherQuestionnaire of
-        Right questionnaire -> callback questionnaire
-        Left error -> return . Left $ error
+    let updateQtn = fromChangeDTO qtnDto reqDto now
+    updateQuestionnaireById updateQtn
+    return . Right $ toDetailWithPackageDTODTO updateQtn (qtnDto ^. package)
 
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid = do
@@ -115,6 +112,12 @@ deleteQuestionnaire qtnUuid = do
 -- --------------------------------
 heGetQuestionnaireById qtnUuid callback = do
   eitherQuestionnaire <- getQuestionnaireById qtnUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Left $ error
+
+heGetQuestionnaireDetailById qtnUuid callback = do
+  eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error

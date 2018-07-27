@@ -17,6 +17,7 @@ questionnaire1 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
   , _questionnaireName = "My Questionnaire"
+  , _questionnaireLevel = 2
   , _questionnairePackageId = "elixir.nl:core-nl:2.0.0"
   , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies =
@@ -36,6 +37,18 @@ questionnaire1 =
       , rQ4_ait2_q6
       ]
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+  , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  }
+
+questionnaire1Changed =
+  Questionnaire
+  { _questionnaireUuid = questionnaire1 ^. uuid
+  , _questionnaireName = questionnaire1 ^. name
+  , _questionnaireLevel = 3
+  , _questionnairePackageId = questionnaire1 ^. packageId
+  , _questionnaireKnowledgeModel = questionnaire1 ^. knowledgeModel
+  , _questionnaireReplies = [fQ1, fQ2]
+  , _questionnaireCreatedAt = questionnaire1 ^. createdAt
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 

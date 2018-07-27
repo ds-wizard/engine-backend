@@ -1,9 +1,10 @@
-module Specs.API.Questionnaire.Detail_Report_GET
-  ( detail_report_get
+module Specs.API.Questionnaire.Detail_PUT
+  ( detail_put
   ) where
 
 import Control.Lens ((^.))
 import Data.Aeson (eitherDecode, encode)
+import Data.Either (isRight)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Network.Wai.Test hiding (request)
@@ -11,12 +12,12 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Api.Resource.Error.ErrorDTO ()
-import Api.Resource.Report.ReportDTO
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Report.ReportJM ()
-import Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Database.Migration.Development.Metric.Data.Metrics
+import Database.DAO.Questionnaire.QuestionnaireDAO
 import Database.Migration.Development.Package.Data.Packages
-import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
+import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
        as QTN
@@ -28,11 +29,11 @@ import Specs.API.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/report
+-- PUT /questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_report_get :: AppContext -> SpecWith Application
-detail_report_get appContext =
-  describe "GET /questionnaires/{qtnUuid}/report" $ do
+detail_put :: AppContext -> SpecWith Application
+detail_put appContext =
+  describe "PUT /questionnaires/{qtnUuid}" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -41,13 +42,16 @@ detail_report_get appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodGet
+reqMethod = methodPut
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/report"
+reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqBody = ""
+reqDto =
+  QuestionnaireChangeDTO {_questionnaireChangeDTOLevel = 3, _questionnaireChangeDTOReplies = toReplyDTO <$> [fQ1, fQ2]}
+
+reqBody = encode reqDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -58,7 +62,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire elixirNlPackage2Dto
+    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Changed elixirNlPackage2Dto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
@@ -69,27 +73,19 @@ test_200 appContext =
     liftIO $ status `shouldBe` expStatus
     liftIO $ headers `shouldBe` expHeaders
     -- AND: Compare body
-    let (Right resBody) = eitherDecode body :: Either String ReportDTO
-    let rs = resBody ^. chapterReports
-    liftIO $ (length rs) `shouldBe` 2
-    -- Chapter report 1
-    let r1 = rs !! 0
-    liftIO $ (r1 ^. chapterUuid) `shouldBe` (chapter1 ^. uuid)
-    let (AnsweredIndicationDTO' i1) = (r1 ^. indications) !! 0
-    liftIO $ (i1 ^. answeredQuestions) `shouldBe` 3
-    liftIO $ (i1 ^. unansweredQuestions) `shouldBe` 0
-    let m1 = (r1 ^. metrics) !! 0
-    liftIO $ (m1 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m1 ^. measure) `shouldBe` 0
-    -- Chapter report 2
-    let r2 = rs !! 1
-    liftIO $ (r2 ^. chapterUuid) `shouldBe` (chapter2 ^. uuid)
-    let (AnsweredIndicationDTO' i2) = (r2 ^. indications) !! 0
-    liftIO $ (i2 ^. answeredQuestions) `shouldBe` 10
-    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 0
-    let m2 = (r2 ^. metrics) !! 0
-    liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m2 ^. measure) `shouldBe` 1
+    let (Right resBody) = eitherDecode body :: Either String QuestionnaireDTO
+    liftIO $ (resBody ^. uuid) `shouldBe` expDto ^. uuid
+    liftIO $ (resBody ^. name) `shouldBe` expDto ^. name
+    liftIO $ (resBody ^. level) `shouldBe` expDto ^. level
+    liftIO $ (resBody ^. package) `shouldBe` expDto ^. package
+    liftIO $ (resBody ^. createdAt) `shouldBe` expDto ^. createdAt
+    -- AND: Find a result in DB
+    eitherQtnFromDb <- runInContextIO (findQuestionnaireById "af984a75-56e3-49f8-b16f-d6b99599910a") appContext
+    liftIO $ (isRight eitherQtnFromDb) `shouldBe` True
+    let (Right qtnFromDb) = eitherQtnFromDb
+    -- AND: Compare state in DB with expectation
+    liftIO $ (qtnFromDb ^. level) `shouldBe` (reqDto ^. level)
+    liftIO $ (toReplyDTO <$> (qtnFromDb ^. replies)) `shouldBe` (reqDto ^. replies)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -105,4 +101,4 @@ test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/report" reqHeaders reqBody
+  createNotFoundTest reqMethod "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a" reqHeaders reqBody

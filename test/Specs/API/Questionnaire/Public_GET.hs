@@ -53,7 +53,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailDTO publicQuestionnaire elixirNlPackage2Dto
+    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire elixirNlPackage2Dto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PUBQTN.runMigration appContext

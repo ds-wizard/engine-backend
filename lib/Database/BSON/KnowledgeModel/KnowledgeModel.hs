@@ -55,10 +55,10 @@ instance ToBSON Question where
     , "type" BSON.=: show (model ^. qType)
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
+    , "requiredLevel" BSON.=: (model ^. requiredLevel)
     , "answers" BSON.=: (model ^. answers)
     , "answerItemTemplate" BSON.=: (model ^. answerItemTemplate)
     , "references" BSON.=: (model ^. references)
-    -- , "references" BSON.=: convertReferenceToBSON <$> (model ^. references)
     , "experts" BSON.=: (model ^. experts)
     ]
 
@@ -69,6 +69,7 @@ instance FromBSON Question where
     qQType <- deserializeQuestionType $ BSON.lookup "type" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswers <- BSON.lookup "answers" doc
     qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     qReferences <- BSON.lookup "references" doc
@@ -79,6 +80,7 @@ instance FromBSON Question where
       , _questionQType = qQType
       , _questionTitle = qTitle
       , _questionText = qText
+      , _questionRequiredLevel = qRequiredLevel
       , _questionAnswers = qAnswers
       , _questionAnswerItemTemplate = qAnswerItemTemplate
       , _questionReferences = qReferences

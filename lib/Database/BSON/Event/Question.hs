@@ -21,6 +21,7 @@ instance ToBSON AddQuestionEvent where
     , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
     , "qType" BSON.=: serializeQuestionType (event ^. qType)
+    , "requiredLevel" BSON.=: (event ^. requiredLevel)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
     , "answerItemTemplatePlain" BSON.=: (event ^. answerItemTemplatePlain)
@@ -34,6 +35,7 @@ instance FromBSON AddQuestionEvent where
     qQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswerItemTemplatePlain <- BSON.lookup "answerItemTemplatePlain" doc
     return
       AddQuestionEvent
@@ -43,6 +45,7 @@ instance FromBSON AddQuestionEvent where
       , _addQuestionEventQType = qQType
       , _addQuestionEventTitle = qTitle
       , _addQuestionEventText = qText
+      , _addQuestionEventRequiredLevel = qRequiredLevel
       , _addQuestionEventAnswerItemTemplatePlain = qAnswerItemTemplatePlain
       }
 
@@ -58,6 +61,7 @@ instance ToBSON EditQuestionEvent where
     , "qType" BSON.=: (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
+    , "requiredLevel" BSON.=: (event ^. requiredLevel)
     , "answerItemTemplatePlainWithIds" BSON.=: (event ^. answerItemTemplatePlainWithIds)
     , "answerIds" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerIds)
     , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
@@ -72,6 +76,7 @@ instance FromBSON EditQuestionEvent where
     qQType <- BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswerItemTemplatePlainWithIds <- BSON.lookup "answerItemTemplatePlainWithIds" doc
     let qAnswerIds = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerIds" doc
     let qExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
@@ -84,6 +89,7 @@ instance FromBSON EditQuestionEvent where
       , _editQuestionEventQType = qQType
       , _editQuestionEventTitle = qTitle
       , _editQuestionEventText = qText
+      , _editQuestionEventRequiredLevel = qRequiredLevel
       , _editQuestionEventAnswerItemTemplatePlainWithIds = qAnswerItemTemplatePlainWithIds
       , _editQuestionEventAnswerIds = qAnswerIds
       , _editQuestionEventExpertIds = qExpertIds

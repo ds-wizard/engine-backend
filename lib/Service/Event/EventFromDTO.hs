@@ -129,6 +129,7 @@ instance EventFromDTO AddQuestionEventDTO where
       , _addQuestionEventQType = dto ^. qType
       , _addQuestionEventTitle = dto ^. title
       , _addQuestionEventText = dto ^. text
+      , _addQuestionEventRequiredLevel = dto ^. requiredLevel
       , _addQuestionEventAnswerItemTemplatePlain = fromAnswerItemTemplatePlainDTO <$> dto ^. answerItemTemplatePlain
       }
 
@@ -142,6 +143,7 @@ instance EventFromDTO EditQuestionEventDTO where
       , _editQuestionEventQType = fromEventFieldDTO $ dto ^. qType
       , _editQuestionEventTitle = fromEventFieldDTO $ dto ^. title
       , _editQuestionEventText = fromEventFieldDTO $ dto ^. text
+      , _editQuestionEventRequiredLevel = fromEventFieldDTO $ dto ^. requiredLevel
       , _editQuestionEventAnswerItemTemplatePlainWithIds =
           fromEventFieldAndAnswerItemTemplatePlainWithIds $ dto ^. answerItemTemplatePlainWithIds
       , _editQuestionEventAnswerIds = fromEventFieldDTO $ dto ^. answerIds

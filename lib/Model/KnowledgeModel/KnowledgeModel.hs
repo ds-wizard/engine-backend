@@ -31,6 +31,7 @@ data Question = Question
   , _questionQType :: QuestionType
   , _questionTitle :: String
   , _questionText :: String
+  , _questionRequiredLevel :: Maybe Int
   , _questionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _questionAnswers :: Maybe [Answer]
   , _questionExperts :: [Expert]

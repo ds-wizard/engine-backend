@@ -8,6 +8,8 @@ import qualified
 import qualified
        Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified
+       Database.Migration.Development.Level.LevelMigration as LVL
+import qualified
        Database.Migration.Development.Metric.MetricMigration as MTR
 import qualified
        Database.Migration.Development.Migrator.MigratorMigration as MIG
@@ -38,4 +40,5 @@ runMigration = do
   BR.runMigration
   F.runMigration
   MTR.runMigration
+  LVL.runMigration
   logInfo "MIGRATION: ended"

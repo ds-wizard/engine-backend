@@ -123,6 +123,7 @@ a_km1_ch1_q1 =
   , _addQuestionEventQType = question1 ^. qType
   , _addQuestionEventTitle = question1 ^. title
   , _addQuestionEventText = question1 ^. text
+  , _addQuestionEventRequiredLevel = question1 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -138,6 +139,7 @@ a_km1_ch1_q2 =
   , _addQuestionEventQType = question2 ^. qType
   , _addQuestionEventTitle = question2 ^. title
   , _addQuestionEventText = question2 ^. text
+  , _addQuestionEventRequiredLevel = question2 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -153,6 +155,7 @@ a_km1_ch1_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
+  , _addQuestionEventRequiredLevel = question3 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -168,6 +171,7 @@ a_km1_ch2_q3 =
   , _addQuestionEventQType = question3 ^. qType
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
+  , _addQuestionEventRequiredLevel = question3 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -183,6 +187,7 @@ a_km1_ch2_q4 =
   , _addQuestionEventQType = question4 ^. qType
   , _addQuestionEventTitle = question4 ^. title
   , _addQuestionEventText = question4 ^. text
+  , _addQuestionEventRequiredLevel = question4 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question4 ^. answerItemTemplate) ^. title}
@@ -200,6 +205,7 @@ e_km1_ch1_q1_title =
   , _editQuestionEventQType = NothingChanged
   , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
   , _editQuestionEventText = NothingChanged
+  , _editQuestionEventRequiredLevel = NothingChanged
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = NothingChanged
   , _editQuestionEventExpertIds = NothingChanged
@@ -218,6 +224,7 @@ e_km1_ch1_q2 =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
@@ -236,6 +243,7 @@ e_km1_ch1_q2_second_edit =
   , _editQuestionEventQType = ChangedValue $ question2WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue "New title"
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
@@ -254,6 +262,7 @@ e_km1_ch2_q4 =
   , _editQuestionEventQType = ChangedValue $ question4WithChangeProperties ^. qType
   , _editQuestionEventTitle = ChangedValue $ question4WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question4WithChangeProperties ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ question4WithChangeProperties ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds
@@ -561,6 +570,7 @@ a_km1_ch2_q4_ait1_q5 =
   , _addQuestionEventQType = q4_ait1_question5 ^. qType
   , _addQuestionEventTitle = q4_ait1_question5 ^. title
   , _addQuestionEventText = q4_ait1_question5 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_question5 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain
@@ -580,6 +590,7 @@ a_km1_ch2_q4_ait1_q6 =
   , _addQuestionEventQType = q4_ait1_question6 ^. qType
   , _addQuestionEventTitle = q4_ait1_question6 ^. title
   , _addQuestionEventText = q4_ait1_question6 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_question6 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -603,6 +614,7 @@ a_km1_ch2_q4_ait1_q6_fuq4_q1 =
   , _addQuestionEventQType = q4_ait1_q6_aYes_fuq4_ait_question1 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question1 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question1 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_fuq4_ait_question1 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -626,6 +638,7 @@ a_km1_ch2_q4_ait1_q6_fuq4_q2 =
   , _addQuestionEventQType = q4_ait1_q6_aYes_fuq4_ait_question2 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question2 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question2 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_fuq4_ait_question2 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -643,6 +656,7 @@ a_km1_ch2_q4_ait1_q7 =
   , _addQuestionEventQType = q4_ait1_q5_ait2_question7 ^. qType
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question7 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question7 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_q5_ait2_question7 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -660,6 +674,7 @@ a_km1_ch2_q4_ait1_q8 =
   , _addQuestionEventQType = q4_ait1_q5_ait2_question8 ^. qType
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question8 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question8 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_q5_ait2_question8 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -676,6 +691,7 @@ e_km1_ch2_q4_ait1_q5 =
   , _editQuestionEventQType = ChangedValue $ q4_ait1_question5Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question5Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question5Changed ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_question5Changed ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds
@@ -701,6 +717,7 @@ e_km1_ch2_q4_ait1_q6 =
   , _editQuestionEventQType = ChangedValue $ q4_ait1_question6Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question6Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question6Changed ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_question6Changed ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds q4_ait1_question6Changed
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds q4_ait1_question6Changed
@@ -738,6 +755,7 @@ a_km1_ch1_ansYes1_fuq1 =
   , _addQuestionEventQType = q2_aYes_fuQuestion1 ^. qType
   , _addQuestionEventTitle = q2_aYes_fuQuestion1 ^. title
   , _addQuestionEventText = q2_aYes_fuQuestion1 ^. text
+  , _addQuestionEventRequiredLevel = q2_aYes_fuQuestion1 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -759,6 +777,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2 =
   , _addQuestionEventQType = q2_aYes_fuq1_aYes_fuQuestion2 ^. qType
   , _addQuestionEventTitle = q2_aYes_fuq1_aYes_fuQuestion2 ^. title
   , _addQuestionEventText = q2_aYes_fuq1_aYes_fuQuestion2 ^. text
+  , _addQuestionEventRequiredLevel = q2_aYes_fuq1_aYes_fuQuestion2 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -784,6 +803,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2_ansYes4_fuq3 =
   , _addQuestionEventQType = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. qType
   , _addQuestionEventTitle = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. title
   , _addQuestionEventText = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. text
+  , _addQuestionEventRequiredLevel = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -803,6 +823,7 @@ a_km1_ch2_ansYes6_fuq4 =
   , _addQuestionEventQType = q4_ait1_q6_aYes_followUpQuestion4 ^. qType
   , _addQuestionEventTitle = q4_ait1_q6_aYes_followUpQuestion4 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_followUpQuestion4 ^. text
+  , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_followUpQuestion4 ^. requiredLevel
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain
@@ -827,6 +848,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _editQuestionEventQType = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds q2_aYes_fuq1_aYes_fuQuestion2Changed
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds q2_aYes_fuq1_aYes_fuQuestion2Changed
@@ -851,6 +873,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   , _editQuestionEventQType = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds =
       ChangedValue $ Just [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
@@ -873,6 +896,7 @@ e_km1_ch2_ansMaybe6_fuq4 =
   , _editQuestionEventQType = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. qType
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. text
+  , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. requiredLevel
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds

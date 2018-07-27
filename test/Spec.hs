@@ -14,6 +14,7 @@ import Specs.API.EventAPISpec
 import Specs.API.Feedback.APISpec
 import Specs.API.InfoAPISpec
 import Specs.API.KnowledgeModelAPISpec
+import Specs.API.Level.APISpec
 import Specs.API.Metric.APISpec
 import Specs.API.MigratorAPISpec
 import Specs.API.OrganizationAPISpec
@@ -87,6 +88,7 @@ main =
              feedbackAPI appContext
              infoAPI appContext
              knowledgeModelAPI appContext
+             levelAPI appContext
              metricAPI appContext
              migratorAPI appContext
              organizationAPI appContext
