@@ -7,8 +7,8 @@ import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelMapper
 
-toDTO :: Metric -> MetricDTO
-toDTO m =
+toMetricDTO :: Metric -> MetricDTO
+toMetricDTO m =
   MetricDTO
   { _metricDTOUuid = m ^. uuid
   , _metricDTOTitle = m ^. title

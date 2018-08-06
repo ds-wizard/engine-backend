@@ -25,6 +25,7 @@ import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Report.ReportDTO
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Api.Resource.User.UserChangeDTO
@@ -56,6 +57,7 @@ import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
+import Model.Report.Report
 import Model.User.User
 
 -- -------------------------------------
@@ -225,6 +227,17 @@ makeFields ''Questionnaire
 
 makeFields ''QuestionnaireReply
 
+-- Model / Report
+makeFields ''Indication
+
+makeFields ''AnsweredIndication
+
+makeFields ''MetricSummary
+
+makeFields ''ChapterReport
+
+makeFields ''Report
+
 -- Model / User
 makeFields ''User
 
@@ -371,6 +384,17 @@ makeFields ''QuestionnaireDTO
 makeFields ''QuestionnaireReplyDTO
 
 makeFields ''QuestionnaireDetailDTO
+
+-- Api / Resource / Report
+makeFields ''IndicationDTO
+
+makeFields ''AnsweredIndicationDTO
+
+makeFields ''MetricSummaryDTO
+
+makeFields ''ChapterReportDTO
+
+makeFields ''ReportDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO

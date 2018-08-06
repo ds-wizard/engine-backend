@@ -7,7 +7,7 @@ import Model.Error.Error
 import Service.Metric.MetricMapper
 
 getMetrics :: AppContextM (Either AppError [MetricDTO])
-getMetrics = heFindMetrics $ \metrics -> return . Right $ toDTO <$> metrics
+getMetrics = heFindMetrics $ \metrics -> return . Right $ toMetricDTO <$> metrics
 
 -- --------------------------------
 -- HELPERS

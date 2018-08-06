@@ -10,12 +10,14 @@ import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
 import Api.Resource.Questionnaire.QuestionnaireDTO ()
+import Api.Resource.Report.ReportJM ()
 import Localization
 import Model.DataManagementPlan.DataManagementPlan
 import Model.DataManagementPlan.DataManagementPlanHelpers
 import Model.Error.ErrorHelpers
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.Questionnaire.QuestionnaireService
+import Service.Report.ReportService
 
 getQuestionnairesA :: Endpoint
 getQuestionnairesA =
@@ -85,6 +87,25 @@ getQuestionnaireDmpA = do
         Nothing -> sendError . createErrorWithErrorMessage . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $ T.unpack format
     getFilename :: String -> DataManagementPlanFormat -> String
     getFilename qtnUuid format = qtnUuid ++ formatExtension format
+
+getQuestionnaireReportA :: Endpoint
+getQuestionnaireReportA =
+  checkPermission "QTN_PERM" $ do
+    qtnUuid <- param "qtnUuid"
+    eitherDto <- lift $ getReportByQuestionnaireUuid qtnUuid
+    case eitherDto of
+      Right dto -> json dto
+      Left error -> sendError error
+
+postQuestionnaireReportPreviewA :: Endpoint
+postQuestionnaireReportPreviewA =
+  checkPermission "QTN_PERM" $
+  getReqDto $ \reqDto -> do
+    qtnUuid <- param "qtnUuid"
+    eitherDto <- lift $ getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto
+    case eitherDto of
+      Right dto -> json dto
+      Left error -> sendError error
 
 deleteQuestionnaireA :: Endpoint
 deleteQuestionnaireA =

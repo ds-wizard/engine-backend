@@ -7,6 +7,7 @@ import qualified Data.ByteString.Lazy as BS
 import Data.Time
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
+import Database.DAO.Metric.MetricDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
@@ -18,6 +19,7 @@ import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
 import Service.DataManagementPlan.ReplyApplicator
 import Service.DataManagementPlan.Templates.FormatMapper
+import Service.Report.ReportGenerator
 import Util.Uuid
 
 createFilledKM :: Questionnaire -> FilledKnowledgeModel
@@ -27,19 +29,23 @@ createFilledKM questionnaire =
 
 createDataManagementPlan :: String -> AppContextM (Either AppError DataManagementPlanDTO)
 createDataManagementPlan qtnUuid =
-  heFindQuestionnaireById qtnUuid $ \qtn -> do
-    dmpUuid <- liftIO generateUuid
-    let filledKM = createFilledKM $ qtn
-    now <- liftIO getCurrentTime
-    let dmp =
-          DataManagementPlan
-          { _dataManagementPlanUuid = dmpUuid
-          , _dataManagementPlanQuestionnaireUuid = qtnUuid
-          , _dataManagementPlanFilledKnowledgeModel = filledKM
-          , _dataManagementPlanCreatedAt = now
-          , _dataManagementPlanUpdatedAt = now
-          }
-    return . Right . toDTO $ dmp
+  heFindQuestionnaireById qtnUuid $ \qtn ->
+    heFindMetrics $ \dmpMetrics -> do
+      dmpUuid <- liftIO generateUuid
+      let filledKM = createFilledKM $ qtn
+      now <- liftIO getCurrentTime
+      dmpReport <- liftIO $ generateReport dmpMetrics filledKM
+      let dmp =
+            DataManagementPlan
+            { _dataManagementPlanUuid = dmpUuid
+            , _dataManagementPlanQuestionnaireUuid = qtnUuid
+            , _dataManagementPlanFilledKnowledgeModel = filledKM
+            , _dataManagementPlanMetrics = dmpMetrics
+            , _dataManagementPlanReport = dmpReport
+            , _dataManagementPlanCreatedAt = now
+            , _dataManagementPlanUpdatedAt = now
+            }
+      return . Right . toDTO $ dmp
 
 exportDataManagementPlan :: String -> DataManagementPlanFormat -> AppContextM (Either AppError BS.ByteString)
 exportDataManagementPlan qtnUuid format = do

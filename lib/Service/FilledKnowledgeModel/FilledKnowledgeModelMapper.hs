@@ -47,6 +47,7 @@ toFilledAnswerDTO fAns =
   , _filledAnswerDTOLabel = fAns ^. label
   , _filledAnswerDTOAdvice = fAns ^. advice
   , _filledAnswerDTOFollowUps = toFilledQuestionDTO <$> fAns ^. followUps
+  , _filledAnswerDTOMetricMeasures = toMetricMeasureDTO <$> fAns ^. metricMeasures
   }
 
 toFilledAnswerItemDTO :: FilledAnswerItem -> FilledAnswerItemDTO

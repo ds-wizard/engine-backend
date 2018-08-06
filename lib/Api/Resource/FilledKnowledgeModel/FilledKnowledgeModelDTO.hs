@@ -40,6 +40,7 @@ data FilledAnswerDTO = FilledAnswerDTO
   , _filledAnswerDTOLabel :: String
   , _filledAnswerDTOAdvice :: Maybe String
   , _filledAnswerDTOFollowUps :: [FilledQuestionDTO]
+  , _filledAnswerDTOMetricMeasures :: [MetricMeasureDTO]
   } deriving (Show, Eq)
 
 data FilledAnswerItemDTO = FilledAnswerItemDTO
@@ -88,6 +89,7 @@ instance ToJSON FilledAnswerDTO where
       , "label" .= _filledAnswerDTOLabel
       , "advice" .= _filledAnswerDTOAdvice
       , "followUps" .= _filledAnswerDTOFollowUps
+      , "metricMeasures" .= _filledAnswerDTOMetricMeasures
       ]
 
 instance ToJSON FilledAnswerItemDTO where
@@ -139,6 +141,7 @@ instance FromJSON FilledAnswerDTO where
     _filledAnswerDTOLabel <- o .: "label"
     _filledAnswerDTOAdvice <- o .: "advice"
     _filledAnswerDTOFollowUps <- o .: "followUps"
+    _filledAnswerDTOMetricMeasures <- o .: "metricMeasures"
     return FilledAnswerDTO {..}
   parseJSON _ = mzero
 

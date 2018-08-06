@@ -46,6 +46,7 @@ toFilledAnswer ans =
   , _filledAnswerLabel = ans ^. label
   , _filledAnswerAdvice = ans ^. advice
   , _filledAnswerFollowUps = toFilledQuestion <$> ans ^. followUps
+  , _filledAnswerMetricMeasures = ans ^. metricMeasures
   }
 
 toFilledAnswerItem :: AnswerItemTemplate -> String -> FilledAnswerItem

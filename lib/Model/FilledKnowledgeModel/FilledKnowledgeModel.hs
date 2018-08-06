@@ -37,6 +37,7 @@ data FilledAnswer = FilledAnswer
   , _filledAnswerLabel :: String
   , _filledAnswerAdvice :: Maybe String
   , _filledAnswerFollowUps :: [FilledQuestion]
+  , _filledAnswerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
 data FilledAnswerItem = FilledAnswerItem

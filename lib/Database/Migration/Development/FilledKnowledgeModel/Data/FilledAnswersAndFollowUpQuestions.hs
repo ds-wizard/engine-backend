@@ -13,6 +13,7 @@ fQ2_answerYes =
   , _filledAnswerLabel = q2_answerYes ^. label
   , _filledAnswerAdvice = q2_answerYes ^. advice
   , _filledAnswerFollowUps = [fQ2_aYes_fuQuestion1]
+  , _filledAnswerMetricMeasures = q2_answerYes ^. metricMeasures
   }
 
 fQ2_aYes_fuQuestion1 =
@@ -36,6 +37,7 @@ fQ2_aYes_fuq1_answerNo =
   , _filledAnswerLabel = q2_aYes_fuq1_answerNo ^. label
   , _filledAnswerAdvice = q2_aYes_fuq1_answerNo ^. advice
   , _filledAnswerFollowUps = []
+  , _filledAnswerMetricMeasures = q2_aYes_fuq1_answerNo ^. metricMeasures
   }
 
 -- -------------------------------------------------------
@@ -46,6 +48,7 @@ fQ3_answerNo =
   , _filledAnswerLabel = q3_answerNo ^. label
   , _filledAnswerAdvice = q3_answerNo ^. advice
   , _filledAnswerFollowUps = []
+  , _filledAnswerMetricMeasures = q3_answerNo ^. metricMeasures
   }
 
 -- -------------------------------------------------------
@@ -132,6 +135,7 @@ fQ4_ait1_q6_answerNo =
   , _filledAnswerLabel = q4_ait1_q6_answerNo ^. label
   , _filledAnswerAdvice = q4_ait1_q6_answerNo ^. advice
   , _filledAnswerFollowUps = []
+  , _filledAnswerMetricMeasures = q4_ait1_q6_answerNo ^. metricMeasures
   }
 
 -- -------------------------------------------------------
@@ -218,4 +222,5 @@ fQ4_ait2_q6_answerNo =
   , _filledAnswerLabel = q4_ait1_q6_answerNo ^. label
   , _filledAnswerAdvice = q4_ait1_q6_answerNo ^. advice
   , _filledAnswerFollowUps = []
+  , _filledAnswerMetricMeasures = q4_ait1_q6_answerNo ^. metricMeasures
   }

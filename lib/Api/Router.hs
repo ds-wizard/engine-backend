@@ -135,6 +135,8 @@ createEndpoints context
   get "/questionnaires/:qtnUuid" getQuestionnaireA
   put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
+  post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
+  get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
    --------------------
    -- BOOK REFERENCE

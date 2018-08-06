@@ -47,7 +47,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDTO <$> [metricF, metricA, metricI, metricR, metricG, metricO]
+    let expDto = toMetricDTO <$> [metricF, metricA, metricI, metricR, metricG, metricO]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO MTR.runMigration appContext
