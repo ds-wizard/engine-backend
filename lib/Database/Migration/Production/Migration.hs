@@ -16,6 +16,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0004_metrics_init.Migration
        as M_0004
+import qualified
+       Database.Migration.Production.Migration_0005_levels_init.Migration
+       as M_0005
 import LensesConfig
 
 runMigration appContext = do
@@ -23,4 +26,4 @@ runMigration appContext = do
   return ()
 
 migrationDefinitions :: [MigrationDefinition]
-migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition]
+migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition, M_0005.definition]
