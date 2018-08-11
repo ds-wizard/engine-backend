@@ -25,7 +25,7 @@ data FilledQuestionDTO = FilledQuestionDTO
   { _filledQuestionDTOUuid :: UUID
   , _filledQuestionDTOQType :: QuestionType
   , _filledQuestionDTOTitle :: String
-  , _filledQuestionDTOText :: String
+  , _filledQuestionDTOText :: Maybe String
   , _filledQuestionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _filledQuestionDTOAnswers :: Maybe [AnswerDTO]
   , _filledQuestionDTOAnswerValue :: Maybe String

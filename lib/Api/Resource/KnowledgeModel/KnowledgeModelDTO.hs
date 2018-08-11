@@ -27,7 +27,7 @@ data QuestionDTO = QuestionDTO
   { _questionDTOUuid :: U.UUID
   , _questionDTOQType :: QuestionType
   , _questionDTOTitle :: String
-  , _questionDTOText :: String
+  , _questionDTOText :: Maybe String
   , _questionDTORequiredLevel :: Maybe Int
   , _questionDTOAnswers :: Maybe [AnswerDTO]
   , _questionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO

@@ -60,7 +60,7 @@ question2html :: FilledQuestionDTO -> H.Html
 question2html question =
   H.div ! A.class_ "question" ! A.id (stringValue . U.toString $ question ^. uuid) $ do
     H.h3 ! A.class_ "title" $ H.toHtml $ question ^. title
-    H.p ! A.class_ "text" $ H.toHtml $ question ^. text
+    H.p ! A.class_ "text" $ H.toHtml $ fromMaybe "" (question ^. text)
     references2html $ question ^. references
     experts2html $ question ^. experts
     qanswer2html question

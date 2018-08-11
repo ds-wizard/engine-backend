@@ -30,7 +30,7 @@ data Question = Question
   { _questionUuid :: U.UUID
   , _questionQType :: QuestionType
   , _questionTitle :: String
-  , _questionText :: String
+  , _questionText :: Maybe String
   , _questionRequiredLevel :: Maybe Int
   , _questionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _questionAnswers :: Maybe [Answer]

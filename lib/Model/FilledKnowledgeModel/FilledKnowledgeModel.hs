@@ -22,7 +22,7 @@ data FilledQuestion = FilledQuestion
   { _filledQuestionUuid :: UUID
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
-  , _filledQuestionText :: String
+  , _filledQuestionText :: Maybe String
   , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _filledQuestionAnswers :: Maybe [Answer]
   , _filledQuestionAnswerValue :: Maybe String

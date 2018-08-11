@@ -127,7 +127,7 @@ data AddQuestionEventDTO = AddQuestionEventDTO
   , _addQuestionEventDTOQuestionUuid :: U.UUID
   , _addQuestionEventDTOQType :: QuestionType
   , _addQuestionEventDTOTitle :: String
-  , _addQuestionEventDTOText :: String
+  , _addQuestionEventDTOText :: Maybe String
   , _addQuestionEventDTORequiredLevel :: Maybe Int
   , _addQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
   } deriving (Show, Eq, Generic)
@@ -138,7 +138,7 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOQuestionUuid :: U.UUID
   , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
   , _editQuestionEventDTOTitle :: EventFieldDTO String
-  , _editQuestionEventDTOText :: EventFieldDTO String
+  , _editQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
   , _editQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
   , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [U.UUID])
