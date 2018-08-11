@@ -32,7 +32,7 @@ referenceCh2 =
   URLReference
   { _uRLReferenceUuid = fromJust $ U.fromString "5004803d-43f6-4932-ab04-5a7e608894a5"
   , _uRLReferenceUrl = "http://dsw.com/fair"
-  , _uRLReferenceAnchor = "F.A.I.R Principles"
+  , _uRLReferenceLabel = "F.A.I.R Principles"
   }
 
 referenceCh3' :: Reference

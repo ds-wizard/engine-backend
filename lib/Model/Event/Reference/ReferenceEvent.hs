@@ -51,7 +51,7 @@ data AddURLReferenceEvent = AddURLReferenceEvent
   , _addURLReferenceEventPath :: EventPath
   , _addURLReferenceEventReferenceUuid :: U.UUID
   , _addURLReferenceEventUrl :: String
-  , _addURLReferenceEventAnchor :: String
+  , _addURLReferenceEventLabel :: String
   } deriving (Show, Eq, Generic)
 
 data EditURLReferenceEvent = EditURLReferenceEvent
@@ -59,7 +59,7 @@ data EditURLReferenceEvent = EditURLReferenceEvent
   , _editURLReferenceEventPath :: EventPath
   , _editURLReferenceEventReferenceUuid :: U.UUID
   , _editURLReferenceEventUrl :: EventField String
-  , _editURLReferenceEventAnchor :: EventField String
+  , _editURLReferenceEventLabel :: EventField String
   } deriving (Show, Eq, Generic)
 
 data DeleteURLReferenceEvent = DeleteURLReferenceEvent

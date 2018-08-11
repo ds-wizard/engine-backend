@@ -198,15 +198,15 @@ instance ToBSON URLReference where
     [ "referenceType" BSON.=: "URLReference"
     , "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "url" BSON.=: (model ^. url)
-    , "anchor" BSON.=: (model ^. anchor)
+    , "label" BSON.=: (model ^. label)
     ]
 
 instance FromBSON URLReference where
   fromBSON doc = do
     refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     refUrl <- BSON.lookup "url" doc
-    refAnchor <- BSON.lookup "anchor" doc
-    return URLReference {_uRLReferenceUuid = refUuid, _uRLReferenceUrl = refUrl, _uRLReferenceAnchor = refAnchor}
+    refLabel <- BSON.lookup "label" doc
+    return URLReference {_uRLReferenceUuid = refUuid, _uRLReferenceUrl = refUrl, _uRLReferenceLabel = refLabel}
 
 -- ------------------------------------------------
 instance ToBSON CrossReference where

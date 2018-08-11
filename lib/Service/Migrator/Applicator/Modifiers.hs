@@ -189,7 +189,7 @@ createReference (AddResourcePageReferenceEvent' e) =
   {_resourcePageReferenceUuid = e ^. referenceUuid, _resourcePageReferenceShortUuid = e ^. shortUuid}
 createReference (AddURLReferenceEvent' e) =
   URLReference' $
-  URLReference {_uRLReferenceUuid = e ^. referenceUuid, _uRLReferenceUrl = e ^. url, _uRLReferenceAnchor = e ^. anchor}
+  URLReference {_uRLReferenceUuid = e ^. referenceUuid, _uRLReferenceUrl = e ^. url, _uRLReferenceLabel = e ^. label}
 createReference (AddCrossReferenceEvent' e) =
   CrossReference' $
   CrossReference
@@ -206,7 +206,7 @@ editReference (EditResourcePageReferenceEvent' e) (ResourcePageReference' ref) =
 editReference (EditURLReferenceEvent' e) (URLReference' ref) = URLReference' . applyAnchor . applyUrl $ ref
   where
     applyUrl ref = applyValue (e ^. url) ref url
-    applyAnchor ref = applyValue (e ^. anchor) ref anchor
+    applyAnchor ref = applyValue (e ^. label) ref label
 editReference (EditCrossReferenceEvent' e) (CrossReference' ref) =
   CrossReference' . applyDescription . applyTarget $ ref
   where

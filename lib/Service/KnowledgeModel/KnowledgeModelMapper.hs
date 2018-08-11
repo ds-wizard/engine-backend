@@ -79,7 +79,7 @@ toReferenceDTO (URLReference' reference) =
     URLReferenceDTO
     { _uRLReferenceDTOUuid = reference ^. uuid
     , _uRLReferenceDTOUrl = reference ^. url
-    , _uRLReferenceDTOAnchor = reference ^. anchor
+    , _uRLReferenceDTOLabel = reference ^. label
     }
 toReferenceDTO (CrossReference' reference) =
   CrossReferenceDTO'
@@ -172,7 +172,7 @@ fromReferenceDTO (URLReferenceDTO' reference) =
     URLReference
     { _uRLReferenceUuid = reference ^. uuid
     , _uRLReferenceUrl = reference ^. url
-    , _uRLReferenceAnchor = reference ^. anchor
+    , _uRLReferenceLabel = reference ^. label
     }
 fromReferenceDTO (CrossReferenceDTO' reference) =
   CrossReference'

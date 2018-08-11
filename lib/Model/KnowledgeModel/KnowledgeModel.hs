@@ -80,7 +80,7 @@ data ResourcePageReference = ResourcePageReference
 data URLReference = URLReference
   { _uRLReferenceUuid :: U.UUID
   , _uRLReferenceUrl :: String
-  , _uRLReferenceAnchor :: String
+  , _uRLReferenceLabel :: String
   } deriving (Show, Eq, Generic)
 
 data CrossReference = CrossReference

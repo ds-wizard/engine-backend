@@ -61,7 +61,7 @@ instance ToBSON AddURLReferenceEvent where
     , "path" BSON.=: (model ^. path)
     , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
     , "url" BSON.=: (model ^. url)
-    , "anchor" BSON.=: (model ^. anchor)
+    , "label" BSON.=: (model ^. label)
     ]
 
 instance FromBSON AddURLReferenceEvent where
@@ -70,14 +70,14 @@ instance FromBSON AddURLReferenceEvent where
     refPath <- BSON.lookup "path" doc
     refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
     refUrl <- BSON.lookup "url" doc
-    refAnchor <- BSON.lookup "anchor" doc
+    refLabel <- BSON.lookup "label" doc
     return
       AddURLReferenceEvent
       { _addURLReferenceEventUuid = refUuid
       , _addURLReferenceEventPath = refPath
       , _addURLReferenceEventReferenceUuid = refReferenceUuid
       , _addURLReferenceEventUrl = refUrl
-      , _addURLReferenceEventAnchor = refAnchor
+      , _addURLReferenceEventLabel = refLabel
       }
 
 -- ------------------------------------------------
@@ -159,7 +159,7 @@ instance ToBSON EditURLReferenceEvent where
     , "path" BSON.=: (model ^. path)
     , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
     , "url" BSON.=: (model ^. url)
-    , "anchor" BSON.=: (model ^. anchor)
+    , "label" BSON.=: (model ^. label)
     ]
 
 instance FromBSON EditURLReferenceEvent where
@@ -168,14 +168,14 @@ instance FromBSON EditURLReferenceEvent where
     refPath <- BSON.lookup "path" doc
     refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
     refUrl <- BSON.lookup "url" doc
-    refAnchor <- BSON.lookup "anchor" doc
+    refLabel <- BSON.lookup "label" doc
     return
       EditURLReferenceEvent
       { _editURLReferenceEventUuid = refUuid
       , _editURLReferenceEventPath = refPath
       , _editURLReferenceEventReferenceUuid = refReferenceUuid
       , _editURLReferenceEventUrl = refUrl
-      , _editURLReferenceEventAnchor = refAnchor
+      , _editURLReferenceEventLabel = refLabel
       }
 
 -- ------------------------------------------------

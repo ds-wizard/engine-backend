@@ -80,7 +80,7 @@ data ResourcePageReferenceDTO = ResourcePageReferenceDTO
 data URLReferenceDTO = URLReferenceDTO
   { _uRLReferenceDTOUuid :: U.UUID
   , _uRLReferenceDTOUrl :: String
-  , _uRLReferenceDTOAnchor :: String
+  , _uRLReferenceDTOLabel :: String
   } deriving (Show, Eq)
 
 data CrossReferenceDTO = CrossReferenceDTO
@@ -194,7 +194,7 @@ instance ToJSON URLReferenceDTO where
       [ "referenceType" .= "URLReference"
       , "uuid" .= _uRLReferenceDTOUuid
       , "url" .= _uRLReferenceDTOUrl
-      , "anchor" .= _uRLReferenceDTOAnchor
+      , "label" .= _uRLReferenceDTOLabel
       ]
 
 instance ToJSON CrossReferenceDTO where
@@ -326,7 +326,7 @@ instance FromJSON URLReferenceDTO where
   parseJSON (Object o) = do
     _uRLReferenceDTOUuid <- o .: "uuid"
     _uRLReferenceDTOUrl <- o .: "url"
-    _uRLReferenceDTOAnchor <- o .: "anchor"
+    _uRLReferenceDTOLabel <- o .: "label"
     return URLReferenceDTO {..}
   parseJSON _ = mzero
 

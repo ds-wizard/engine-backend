@@ -253,7 +253,7 @@ data AddURLReferenceEventDTO = AddURLReferenceEventDTO
   , _addURLReferenceEventDTOPath :: EventPathDTO
   , _addURLReferenceEventDTOReferenceUuid :: U.UUID
   , _addURLReferenceEventDTOUrl :: String
-  , _addURLReferenceEventDTOAnchor :: String
+  , _addURLReferenceEventDTOLabel :: String
   } deriving (Show, Eq, Generic)
 
 data EditURLReferenceEventDTO = EditURLReferenceEventDTO
@@ -261,7 +261,7 @@ data EditURLReferenceEventDTO = EditURLReferenceEventDTO
   , _editURLReferenceEventDTOPath :: EventPathDTO
   , _editURLReferenceEventDTOReferenceUuid :: U.UUID
   , _editURLReferenceEventDTOUrl :: EventFieldDTO String
-  , _editURLReferenceEventDTOAnchor :: EventFieldDTO String
+  , _editURLReferenceEventDTOLabel :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data DeleteURLReferenceEventDTO = DeleteURLReferenceEventDTO
@@ -734,7 +734,7 @@ instance FromJSON AddURLReferenceEventDTO where
     _addURLReferenceEventDTOPath <- o .: "path"
     _addURLReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
     _addURLReferenceEventDTOUrl <- o .: "url"
-    _addURLReferenceEventDTOAnchor <- o .: "anchor"
+    _addURLReferenceEventDTOLabel <- o .: "label"
     return AddURLReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -747,7 +747,7 @@ instance ToJSON AddURLReferenceEventDTO where
       , "path" .= _addURLReferenceEventDTOPath
       , "referenceUuid" .= _addURLReferenceEventDTOReferenceUuid
       , "url" .= _addURLReferenceEventDTOUrl
-      , "anchor" .= _addURLReferenceEventDTOAnchor
+      , "label" .= _addURLReferenceEventDTOLabel
       ]
 
 -- --------------------------------------------
@@ -757,7 +757,7 @@ instance FromJSON EditURLReferenceEventDTO where
     _editURLReferenceEventDTOPath <- o .: "path"
     _editURLReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
     _editURLReferenceEventDTOUrl <- o .: "url"
-    _editURLReferenceEventDTOAnchor <- o .: "anchor"
+    _editURLReferenceEventDTOLabel <- o .: "label"
     return EditURLReferenceEventDTO {..}
   parseJSON _ = mzero
 
@@ -770,7 +770,7 @@ instance ToJSON EditURLReferenceEventDTO where
       , "path" .= _editURLReferenceEventDTOPath
       , "referenceUuid" .= _editURLReferenceEventDTOReferenceUuid
       , "url" .= _editURLReferenceEventDTOUrl
-      , "anchor" .= _editURLReferenceEventDTOAnchor
+      , "label" .= _editURLReferenceEventDTOLabel
       ]
 
 -- --------------------------------------------

@@ -1069,7 +1069,7 @@ a_km1_ch1_q2_rCh2 =
       ]
   , _addURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
   , _addURLReferenceEventUrl = referenceCh2 ^. url
-  , _addURLReferenceEventAnchor = referenceCh2 ^. anchor
+  , _addURLReferenceEventLabel = referenceCh2 ^. label
   }
 
 a_km1_ch2_q6_rCh2 :: AddReferenceEvent
@@ -1085,7 +1085,7 @@ a_km1_ch2_q6_rCh2 =
       ]
   , _addURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
   , _addURLReferenceEventUrl = referenceCh2 ^. url
-  , _addURLReferenceEventAnchor = referenceCh2 ^. anchor
+  , _addURLReferenceEventLabel = referenceCh2 ^. label
   }
 
 a_km1_ch1_q2_rCh3 :: AddReferenceEvent

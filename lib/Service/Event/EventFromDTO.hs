@@ -255,7 +255,7 @@ instance EventFromDTO AddReferenceEventDTO where
     , _addURLReferenceEventPath = fromEventPathDTO $ event ^. path
     , _addURLReferenceEventReferenceUuid = event ^. referenceUuid
     , _addURLReferenceEventUrl = event ^. url
-    , _addURLReferenceEventAnchor = event ^. anchor
+    , _addURLReferenceEventLabel = event ^. label
     }
   fromDTO (AddCrossReferenceEventDTO' event) =
     AddReferenceEvent' $
@@ -286,7 +286,7 @@ instance EventFromDTO EditReferenceEventDTO where
     , _editURLReferenceEventPath = fromEventPathDTO $ event ^. path
     , _editURLReferenceEventReferenceUuid = event ^. referenceUuid
     , _editURLReferenceEventUrl = fromEventFieldDTO $ event ^. url
-    , _editURLReferenceEventAnchor = fromEventFieldDTO $ event ^. anchor
+    , _editURLReferenceEventLabel = fromEventFieldDTO $ event ^. label
     }
   fromDTO (EditCrossReferenceEventDTO' event) =
     EditReferenceEvent' $
