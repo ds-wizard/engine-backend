@@ -42,7 +42,7 @@ packages:
 extra-deps:
   - vendor/bson-generic
   - vendor/mongoDB-migration
-  - fromhtml-0.1.0.4
+  - fromhtml-1.0.0
   - persistent-mongoDB-2.8.0
   - ConfigFile-1.1.4
   - pwstore-fast-2.4.4
