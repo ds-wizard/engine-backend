@@ -90,7 +90,7 @@ fromQuestionnaireCreateDTO dto qtnUuid knowledgeModel qtnCreatedAt qtnUpdatedAt 
   Questionnaire
   { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
-  , _questionnaireLevel = dto ^. level
+  , _questionnaireLevel = 1
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireKnowledgeModel = knowledgeModel
   , _questionnaireReplies = []
