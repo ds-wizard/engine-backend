@@ -39,6 +39,7 @@ createDataManagementPlan qtnUuid =
             DataManagementPlan
             { _dataManagementPlanUuid = dmpUuid
             , _dataManagementPlanQuestionnaireUuid = qtnUuid
+            , _dataManagementPlanLevel = qtn ^. level
             , _dataManagementPlanFilledKnowledgeModel = filledKM
             , _dataManagementPlanMetrics = dmpMetrics
             , _dataManagementPlanReport = dmpReport

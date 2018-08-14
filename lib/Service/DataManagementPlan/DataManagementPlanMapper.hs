@@ -14,6 +14,7 @@ toDTO dmp =
   DataManagementPlanDTO
   { _dataManagementPlanDTOUuid = dmp ^. uuid
   , _dataManagementPlanDTOQuestionnaireUuid = dmp ^. questionnaireUuid
+  , _dataManagementPlanDTOLevel = dmp ^. level
   , _dataManagementPlanDTOFilledKnowledgeModel = toFilledKMDTO $ dmp ^. filledKnowledgeModel
   , _dataManagementPlanDTOMetrics = toMetricDTO <$> dmp ^. metrics
   , _dataManagementPlanDTOReport = toReportDTO $ dmp ^. report

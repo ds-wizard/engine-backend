@@ -14,6 +14,7 @@ import Api.Resource.Report.ReportJM ()
 data DataManagementPlanDTO = DataManagementPlanDTO
   { _dataManagementPlanDTOUuid :: U.UUID
   , _dataManagementPlanDTOQuestionnaireUuid :: String
+  , _dataManagementPlanDTOLevel :: Int
   , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
   , _dataManagementPlanDTOReport :: ReportDTO
@@ -25,6 +26,7 @@ instance Eq DataManagementPlanDTO where
   a == b =
     _dataManagementPlanDTOUuid a == _dataManagementPlanDTOUuid b &&
     _dataManagementPlanDTOQuestionnaireUuid a == _dataManagementPlanDTOQuestionnaireUuid b &&
+    _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
     _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
     _dataManagementPlanDTOMetrics a == _dataManagementPlanDTOMetrics b &&
     _dataManagementPlanDTOReport a == _dataManagementPlanDTOReport b
@@ -33,6 +35,7 @@ instance FromJSON DataManagementPlanDTO where
   parseJSON (Object o) = do
     _dataManagementPlanDTOUuid <- o .: "uuid"
     _dataManagementPlanDTOQuestionnaireUuid <- o .: "questionnaireUuid"
+    _dataManagementPlanDTOLevel <- o .: "level"
     _dataManagementPlanDTOFilledKnowledgeModel <- o .: "filledKnowledgeModel"
     _dataManagementPlanDTOMetrics <- o .: "metrics"
     _dataManagementPlanDTOReport <- o .: "report"
@@ -46,6 +49,7 @@ instance ToJSON DataManagementPlanDTO where
     object
       [ "uuid" .= _dataManagementPlanDTOUuid
       , "questionnaireUuid" .= _dataManagementPlanDTOQuestionnaireUuid
+      , "level" .= _dataManagementPlanDTOLevel
       , "filledKnowledgeModel" .= _dataManagementPlanDTOFilledKnowledgeModel
       , "metrics" .= _dataManagementPlanDTOMetrics
       , "report" .= _dataManagementPlanDTOReport
