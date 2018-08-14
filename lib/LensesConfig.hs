@@ -43,6 +43,7 @@ import Model.Branch.Branch
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
+import Model.DataManagementPlan.DataManagementPlanTemplateContext
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
@@ -107,6 +108,8 @@ makeFields ''AppContext
 
 -- Model / DataManagementPlan
 makeFields ''DataManagementPlan
+
+makeFields ''DataManagementPlanTemplateContext
 
 -- Model / Event
 makeFields ''EventField

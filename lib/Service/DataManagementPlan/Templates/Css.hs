@@ -46,14 +46,22 @@ mainCSS = do
     margin (em 0.1) (em 0) (em 0.5) (em 0.2)
   li # ".expert" |> span # ".email" ? before & content (stringContent "[")
   li # ".expert" |> span # ".email" ? after & content (stringContent "]")
-  li # ".reference-dmpbook" |> span # ".dmpbook-chapter" ? before & content (stringContent "DMP Book chapter: ")
+  li # ".reference-resourcepage" |> a # ".resourcepage-link" ? before & content (stringContent "Resource page: ")
+  li # ".reference-url" |> a # ".url-link" ? before & content (stringContent "URL: ")
+  li # ".reference-xref" |> span # ".xref-uuid" ? before & content (stringContent "Related question: ")
   div # ".answer-block" |> star # ".answer" ? do
     fontWeight bold
     fontStyle italic
   div # ".answer-block" |> star # ".answer" ? before & content (stringContent " ✔  ")
   div # ".answer-option" |> p # ".advice" ? before & content (stringContent " ⓘ  ")
   div # ".answer-items" |> div # ".answer-item" |> span # ".title" ? display none
-  p # ".no-answer" ? do
+  div # ".question.required" ? p # ".no-answer" ? do
     fontWeight bold
     color red
+  div # ".question.optional" ? p # ".no-answer" ? do
+    fontWeight bold
+    color lightslategray
   p # ".no-answer" ? before & content (stringContent " ✘  ")
+  div # ".indications" |> table |> tbody |> tr |> th ? textAlign (alignSide sideLeft)
+  div # ".indications" |> table |> tbody |> tr |> th ? after & content (stringContent ": ")
+  div # ".metrics" |> table |> tbody |> tr |> td # lastOfType ? textAlign (alignSide sideRight)
