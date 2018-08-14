@@ -3,8 +3,8 @@ module Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec where
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Database.Migration.FilledKnowledgeModel.Data.FilledKnowledgeModels
-import Database.Migration.Questionnaire.Data.Questionnaires
+import Database.Migration.Development.FilledKnowledgeModel.Data.FilledKnowledgeModels
+import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Service.DataManagementPlan.DataManagementPlanService
 
 dataManagementPlanSpec =

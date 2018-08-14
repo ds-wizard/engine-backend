@@ -16,6 +16,7 @@ data QuestionnaireReplyDTO = QuestionnaireReplyDTO
 data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid :: UUID
   , _questionnaireDetailDTOName :: String
+  , _questionnaireDetailDTOLevel :: Int
   , _questionnaireDetailDTOPackage :: PackageDTO
   , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
   , _questionnaireDetailDTOReplies :: [QuestionnaireReplyDTO]
@@ -38,6 +39,7 @@ instance FromJSON QuestionnaireDetailDTO where
   parseJSON (Object o) = do
     _questionnaireDetailDTOUuid <- o .: "uuid"
     _questionnaireDetailDTOName <- o .: "name"
+    _questionnaireDetailDTOLevel <- o .: "level"
     _questionnaireDetailDTOPackage <- o .: "package"
     _questionnaireDetailDTOKnowledgeModel <- o .: "knowledgeModel"
     _questionnaireDetailDTOReplies <- o .: "replies"
@@ -51,6 +53,7 @@ instance ToJSON QuestionnaireDetailDTO where
     object
       [ "uuid" .= _questionnaireDetailDTOUuid
       , "name" .= _questionnaireDetailDTOName
+      , "level" .= _questionnaireDetailDTOLevel
       , "package" .= _questionnaireDetailDTOPackage
       , "knowledgeModel" .= _questionnaireDetailDTOKnowledgeModel
       , "replies" .= _questionnaireDetailDTOReplies

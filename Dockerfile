@@ -8,7 +8,7 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkh
 RUN wget https://github.com/jgm/pandoc/releases/download/2.2.1/pandoc-2.2.1-1-amd64.deb && gdebi -n pandoc-2.2.1-1-amd64.deb
 
 # Add built exectutable binary
-ADD .stack-work/install/x86_64-linux/lts-9.11/8.0.2/bin/dsw-server /dsw/dsw-server
+ADD .stack-work/install/x86_64-linux/lts-12.0/8.4.3/bin/dsw-server /dsw/dsw-server
 
 # Add configs
 ADD config/app-config.cfg.example /dsw/config/app-config.cfg

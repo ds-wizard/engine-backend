@@ -7,13 +7,13 @@ import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
 
-import Common.Error
 import Database.BSON.Branch.Branch ()
 import Database.BSON.Branch.BranchWithEvents ()
 import Database.DAO.Common
 import LensesConfig
 import Model.Branch.Branch
 import Model.Context.AppContext
+import Model.Error.Error
 
 branchCollection = "branches"
 

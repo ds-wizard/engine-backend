@@ -7,19 +7,19 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.AnswersAndFollowUpQuestions
+       Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
        as FA
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Chapters as FCH
+       Database.Migration.Development.KnowledgeModel.Data.Chapters as FCH
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Experts as FE
+       Database.Migration.Development.KnowledgeModel.Data.Experts as FE
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
+       Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
        as FKM
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.Questions as FQ
+       Database.Migration.Development.KnowledgeModel.Data.Questions as FQ
 import qualified
-       Database.Migration.Branch.Data.KnowledgeModel.References as FR
+       Database.Migration.Development.KnowledgeModel.Data.References as FR
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
@@ -124,9 +124,9 @@ knowledgeModelAccessorsSpec =
         False
     ---------------------------------------------
     describe "getAllReferences" $ it "Successfully listed" $ getAllReferences FKM.km1 `shouldBe`
-      [FR.referenceCh1, FR.referenceCh2]
+      [FR.referenceCh1', FR.referenceCh2']
     describe "getReferenceByUuid" $ it "Successfully listed" $ getReferenceByUuid FKM.km1 (FR.referenceCh1 ^. uuid) `shouldBe`
-      Just FR.referenceCh1
+      Just FR.referenceCh1'
     describe "isThereAnyReferenceWithGivenUuid" $ do
       it "Returns True if exists" $ isThereAnyReferenceWithGivenUuid FKM.km1 (FR.referenceCh1 ^. uuid) `shouldBe` True
       it "Returns False if not exists" $

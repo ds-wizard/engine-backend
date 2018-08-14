@@ -10,8 +10,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import qualified
-       Database.Migration.BookReference.BookReferenceMigration as BR
-import Database.Migration.BookReference.Data.BookReferences
+       Database.Migration.Development.BookReference.BookReferenceMigration
+       as BR
+import Database.Migration.Development.BookReference.Data.BookReferences
 import Model.Context.AppContext
 import Service.BookReference.BookReferenceMapper
 

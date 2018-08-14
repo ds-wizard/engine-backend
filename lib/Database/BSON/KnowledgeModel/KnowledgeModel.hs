@@ -13,7 +13,8 @@ import Model.KnowledgeModel.KnowledgeModel
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ToBSON KnowledgeModel where
-  toBSON km = ["uuid" BSON.=: toString (km ^. uuid), "name" BSON.=: (km ^. name), "chapters" BSON.=: (km ^. chapters)]
+  toBSON km =
+    ["uuid" BSON.=: serializeUUID (km ^. uuid), "name" BSON.=: (km ^. name), "chapters" BSON.=: (km ^. chapters)]
 
 instance FromBSON KnowledgeModel where
   fromBSON doc = do
@@ -29,7 +30,7 @@ instance FromBSON KnowledgeModel where
 -- -------------------------
 instance ToBSON Chapter where
   toBSON model =
-    [ "uuid" BSON.=: toString (model ^. uuid)
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
     , "questions" BSON.=: (model ^. questions)
@@ -50,11 +51,11 @@ instance FromBSON Chapter where
 -- -------------------------
 instance ToBSON Question where
   toBSON model =
-    [ "uuid" BSON.=: toString (model ^. uuid)
-    , "shortUuid" BSON.=: (model ^. shortUuid)
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "type" BSON.=: show (model ^. qType)
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
+    , "requiredLevel" BSON.=: (model ^. requiredLevel)
     , "answers" BSON.=: (model ^. answers)
     , "answerItemTemplate" BSON.=: (model ^. answerItemTemplate)
     , "references" BSON.=: (model ^. references)
@@ -65,10 +66,10 @@ instance FromBSON Question where
   fromBSON doc = do
     qUuidS <- BSON.lookup "uuid" doc
     qUuid <- fromString qUuidS
-    qShortUuid <- BSON.lookup "shortUuid" doc
     qQType <- deserializeQuestionType $ BSON.lookup "type" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswers <- BSON.lookup "answers" doc
     qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     qReferences <- BSON.lookup "references" doc
@@ -76,10 +77,10 @@ instance FromBSON Question where
     return
       Question
       { _questionUuid = qUuid
-      , _questionShortUuid = qShortUuid
       , _questionQType = qQType
       , _questionTitle = qTitle
       , _questionText = qText
+      , _questionRequiredLevel = qRequiredLevel
       , _questionAnswers = qAnswers
       , _questionAnswerItemTemplate = qAnswerItemTemplate
       , _questionReferences = qReferences
@@ -91,10 +92,11 @@ instance FromBSON Question where
 -- -------------------------
 instance ToBSON Answer where
   toBSON model =
-    [ "uuid" BSON.=: toString (model ^. uuid)
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "label" BSON.=: (model ^. label)
     , "advice" BSON.=: (model ^. advice)
     , "followUps" BSON.=: (model ^. followUps)
+    , "metricMeasures" BSON.=: (model ^. metricMeasures)
     ]
 
 instance FromBSON Answer where
@@ -104,9 +106,15 @@ instance FromBSON Answer where
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
     ansFollowUps <- BSON.lookup "followUps" doc
+    ansMetricMeasures <- BSON.lookup "metricMeasures" doc
     return
       Answer
-      {_answerUuid = ansUuid, _answerLabel = ansLabel, _answerAdvice = ansAdvice, _answerFollowUps = ansFollowUps}
+      { _answerUuid = ansUuid
+      , _answerLabel = ansLabel
+      , _answerAdvice = ansAdvice
+      , _answerFollowUps = ansFollowUps
+      , _answerMetricMeasures = ansMetricMeasures
+      }
 
 -- -------------------------
 -- ANSWER ITEM TEMPLATE ----
@@ -144,7 +152,7 @@ instance FromBSON AnswerItemTemplatePlainWithIds where
 -- -------------------------
 instance ToBSON Expert where
   toBSON model =
-    ["uuid" BSON.=: toString (model ^. uuid), "name" BSON.=: (model ^. name), "email" BSON.=: (model ^. email)]
+    ["uuid" BSON.=: serializeUUID (model ^. uuid), "name" BSON.=: (model ^. name), "email" BSON.=: (model ^. email)]
 
 instance FromBSON Expert where
   fromBSON doc = do
@@ -158,11 +166,115 @@ instance FromBSON Expert where
 -- REFERENCE ---------------
 -- -------------------------
 instance ToBSON Reference where
-  toBSON model = ["uuid" BSON.=: toString (model ^. uuid), "chapter" BSON.=: (model ^. chapter)]
+  toBSON (ResourcePageReference' event) = toBSON event
+  toBSON (URLReference' event) = toBSON event
+  toBSON (CrossReference' event) = toBSON event
 
 instance FromBSON Reference where
   fromBSON doc = do
-    refUuidS <- BSON.lookup "uuid" doc
-    refUuid <- fromString refUuidS
-    refChapter <- BSON.lookup "chapter" doc
-    return Reference {_referenceUuid = refUuid, _referenceChapter = refChapter}
+    referenceType <- BSON.lookup "referenceType" doc
+    case referenceType of
+      "ResourcePageReference" -> ResourcePageReference' <$> (fromBSON doc :: Maybe ResourcePageReference)
+      "URLReference" -> URLReference' <$> (fromBSON doc :: Maybe URLReference)
+      "CrossReference" -> CrossReference' <$> (fromBSON doc :: Maybe CrossReference)
+
+-- ------------------------------------------------
+instance ToBSON ResourcePageReference where
+  toBSON model =
+    [ "referenceType" BSON.=: "ResourcePageReference"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "shortUuid" BSON.=: (model ^. shortUuid)
+    ]
+
+instance FromBSON ResourcePageReference where
+  fromBSON doc = do
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refShortUuid <- BSON.lookup "shortUuid" doc
+    return ResourcePageReference {_resourcePageReferenceUuid = refUuid, _resourcePageReferenceShortUuid = refShortUuid}
+
+-- ------------------------------------------------
+instance ToBSON URLReference where
+  toBSON model =
+    [ "referenceType" BSON.=: "URLReference"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "url" BSON.=: (model ^. url)
+    , "label" BSON.=: (model ^. label)
+    ]
+
+instance FromBSON URLReference where
+  fromBSON doc = do
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUrl <- BSON.lookup "url" doc
+    refLabel <- BSON.lookup "label" doc
+    return URLReference {_uRLReferenceUuid = refUuid, _uRLReferenceUrl = refUrl, _uRLReferenceLabel = refLabel}
+
+-- ------------------------------------------------
+instance ToBSON CrossReference where
+  toBSON model =
+    [ "referenceType" BSON.=: "CrossReference"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "targetUuid" BSON.=: serializeUUID (model ^. targetUuid)
+    , "description" BSON.=: (model ^. description)
+    ]
+
+instance FromBSON CrossReference where
+  fromBSON doc = do
+    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refTargetUuid <- deserializeMaybeUUID $ BSON.lookup "targetUuid" doc
+    refDescription <- BSON.lookup "description" doc
+    return
+      CrossReference
+      { _crossReferenceUuid = refUuid
+      , _crossReferenceTargetUuid = refTargetUuid
+      , _crossReferenceDescription = refDescription
+      }
+
+-- -------------------------
+-- METRIC ------------------
+-- -------------------------
+instance ToBSON Metric where
+  toBSON model =
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "title" BSON.=: (model ^. title)
+    , "abbreviation" BSON.=: (model ^. abbreviation)
+    , "description" BSON.=: (model ^. description)
+    , "references" BSON.=: (model ^. references)
+    , "createdAt" BSON.=: (model ^. createdAt)
+    , "updatedAt" BSON.=: (model ^. updatedAt)
+    ]
+
+instance FromBSON Metric where
+  fromBSON doc = do
+    mUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    mTitle <- BSON.lookup "title" doc
+    mAbbreviation <- BSON.lookup "abbreviation" doc
+    mDescription <- BSON.lookup "description" doc
+    mReferences <- BSON.lookup "references" doc
+    mCreatedAt <- BSON.lookup "createdAt" doc
+    mUpdatedAt <- BSON.lookup "updatedAt" doc
+    return
+      Metric
+      { _metricUuid = mUuid
+      , _metricTitle = mTitle
+      , _metricAbbreviation = mAbbreviation
+      , _metricDescription = mDescription
+      , _metricReferences = mReferences
+      , _metricCreatedAt = mCreatedAt
+      , _metricUpdatedAt = mUpdatedAt
+      }
+
+instance ToBSON MetricMeasure where
+  toBSON model =
+    [ "metricUuid" BSON.=: serializeUUID (model ^. metricUuid)
+    , "measure" BSON.=: (model ^. measure)
+    , "weight" BSON.=: (model ^. weight)
+    ]
+
+instance FromBSON MetricMeasure where
+  fromBSON doc = do
+    mmMetricUuid <- deserializeMaybeUUID $ BSON.lookup "metricUuid" doc
+    mmMeasure <- BSON.lookup "measure" doc
+    mmWeight <- BSON.lookup "weight" doc
+    return
+      MetricMeasure
+      {_metricMeasureMetricUuid = mmMetricUuid, _metricMeasureMeasure = mmMeasure, _metricMeasureWeight = mmWeight}

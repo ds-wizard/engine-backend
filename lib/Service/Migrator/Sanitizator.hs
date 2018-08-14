@@ -5,8 +5,6 @@ import Data.List
 import Data.Maybe
 import qualified Data.UUID as U
 
-import Common.Utils
-import Common.Uuid
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
@@ -16,6 +14,8 @@ import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
+import Util.List
+import Util.Uuid
 
 -- ------------------------------------------------------------
 class Sanitizator a where
@@ -126,7 +126,7 @@ instance Sanitizator EditQuestionEvent where
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childIdsFromKM :: KnowledgeModel -> [U.UUID]
-          childIdsFromKM km = _referenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
+          childIdsFromKM km = getReferenceUuid <$> getAllReferencesForQuestionUuid km (event ^. questionUuid)
           isInChildIds :: KnowledgeModel -> U.UUID -> Bool
           isInChildIds km uuid = isJust $ find (== uuid) (childIdsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]

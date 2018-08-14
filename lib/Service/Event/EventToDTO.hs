@@ -125,10 +125,10 @@ instance EventToDTO AddQuestionEvent where
       { _addQuestionEventDTOUuid = event ^. uuid
       , _addQuestionEventDTOPath = toEventPathDTO $ event ^. path
       , _addQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _addQuestionEventDTOShortQuestionUuid = event ^. shortQuestionUuid
       , _addQuestionEventDTOQType = event ^. qType
       , _addQuestionEventDTOTitle = event ^. title
       , _addQuestionEventDTOText = event ^. text
+      , _addQuestionEventDTORequiredLevel = event ^. requiredLevel
       , _addQuestionEventDTOAnswerItemTemplatePlain = toAnswerItemTemplatePlainDTO <$> event ^. answerItemTemplatePlain
       }
 
@@ -139,10 +139,10 @@ instance EventToDTO EditQuestionEvent where
       { _editQuestionEventDTOUuid = event ^. uuid
       , _editQuestionEventDTOPath = toEventPathDTO $ event ^. path
       , _editQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _editQuestionEventDTOShortQuestionUuid = toEventFieldDTO $ event ^. shortQuestionUuid
       , _editQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
       , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
+      , _editQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
       , _editQuestionEventDTOAnswerItemTemplatePlainWithIds =
           toEventFieldAndAnswerItemTemplatePlainWithIds $ event ^. answerItemTemplatePlainWithIds
       , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
@@ -171,6 +171,7 @@ instance EventToDTO AddAnswerEvent where
       , _addAnswerEventDTOAnswerUuid = event ^. answerUuid
       , _addAnswerEventDTOLabel = event ^. label
       , _addAnswerEventDTOAdvice = event ^. advice
+      , _addAnswerEventDTOMetricMeasures = toMetricMeasureDTO <$> event ^. metricMeasures
       }
 
 instance EventToDTO EditAnswerEvent where
@@ -183,6 +184,10 @@ instance EventToDTO EditAnswerEvent where
       , _editAnswerEventDTOLabel = toEventFieldDTO $ event ^. label
       , _editAnswerEventDTOAdvice = toEventFieldDTO $ event ^. advice
       , _editAnswerEventDTOFollowUpIds = toEventFieldDTO $ event ^. followUpIds
+      , _editAnswerEventDTOMetricMeasures =
+          case event ^. metricMeasures of
+            ChangedValue mms -> ChangedValueDTO $ toMetricMeasureDTO <$> mms
+            NothingChanged -> NothingChangedDTO
       }
 
 instance EventToDTO DeleteAnswerEvent where
@@ -232,30 +237,89 @@ instance EventToDTO DeleteExpertEvent where
 -- Reference ---------------
 -- -------------------------
 instance EventToDTO AddReferenceEvent where
-  toDTO event =
-    AddReferenceEventDTO'
-      AddReferenceEventDTO
-      { _addReferenceEventDTOUuid = event ^. uuid
-      , _addReferenceEventDTOPath = toEventPathDTO $ event ^. path
-      , _addReferenceEventDTOReferenceUuid = event ^. referenceUuid
-      , _addReferenceEventDTOChapter = event ^. chapter
-      }
+  toDTO (AddResourcePageReferenceEvent' event) =
+    AddReferenceEventDTO' $
+    AddResourcePageReferenceEventDTO' $
+    AddResourcePageReferenceEventDTO
+    { _addResourcePageReferenceEventDTOUuid = event ^. uuid
+    , _addResourcePageReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _addResourcePageReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _addResourcePageReferenceEventDTOShortUuid = event ^. shortUuid
+    }
+  toDTO (AddURLReferenceEvent' event) =
+    AddReferenceEventDTO' $
+    AddURLReferenceEventDTO' $
+    AddURLReferenceEventDTO
+    { _addURLReferenceEventDTOUuid = event ^. uuid
+    , _addURLReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _addURLReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _addURLReferenceEventDTOUrl = event ^. url
+    , _addURLReferenceEventDTOLabel = event ^. label
+    }
+  toDTO (AddCrossReferenceEvent' event) =
+    AddReferenceEventDTO' $
+    AddCrossReferenceEventDTO' $
+    AddCrossReferenceEventDTO
+    { _addCrossReferenceEventDTOUuid = event ^. uuid
+    , _addCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _addCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _addCrossReferenceEventDTOTargetUuid = event ^. targetUuid
+    , _addCrossReferenceEventDTODescription = event ^. description
+    }
 
 instance EventToDTO EditReferenceEvent where
-  toDTO event =
-    EditReferenceEventDTO'
-      EditReferenceEventDTO
-      { _editReferenceEventDTOUuid = event ^. uuid
-      , _editReferenceEventDTOPath = toEventPathDTO $ event ^. path
-      , _editReferenceEventDTOReferenceUuid = event ^. referenceUuid
-      , _editReferenceEventDTOChapter = toEventFieldDTO $ event ^. chapter
-      }
+  toDTO (EditResourcePageReferenceEvent' event) =
+    EditReferenceEventDTO' $
+    EditResourcePageReferenceEventDTO' $
+    EditResourcePageReferenceEventDTO
+    { _editResourcePageReferenceEventDTOUuid = event ^. uuid
+    , _editResourcePageReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _editResourcePageReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _editResourcePageReferenceEventDTOShortUuid = toEventFieldDTO $ event ^. shortUuid
+    }
+  toDTO (EditURLReferenceEvent' event) =
+    EditReferenceEventDTO' $
+    EditURLReferenceEventDTO' $
+    EditURLReferenceEventDTO
+    { _editURLReferenceEventDTOUuid = event ^. uuid
+    , _editURLReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _editURLReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _editURLReferenceEventDTOUrl = toEventFieldDTO $ event ^. url
+    , _editURLReferenceEventDTOLabel = toEventFieldDTO $ event ^. label
+    }
+  toDTO (EditCrossReferenceEvent' event) =
+    EditReferenceEventDTO' $
+    EditCrossReferenceEventDTO' $
+    EditCrossReferenceEventDTO
+    { _editCrossReferenceEventDTOUuid = event ^. uuid
+    , _editCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _editCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    , _editCrossReferenceEventDTOTargetUuid = toEventFieldDTO $ event ^. targetUuid
+    , _editCrossReferenceEventDTODescription = toEventFieldDTO $ event ^. description
+    }
 
 instance EventToDTO DeleteReferenceEvent where
-  toDTO event =
-    DeleteReferenceEventDTO'
-      DeleteReferenceEventDTO
-      { _deleteReferenceEventDTOUuid = event ^. uuid
-      , _deleteReferenceEventDTOPath = toEventPathDTO $ event ^. path
-      , _deleteReferenceEventDTOReferenceUuid = event ^. referenceUuid
-      }
+  toDTO (DeleteResourcePageReferenceEvent' event) =
+    DeleteReferenceEventDTO' $
+    DeleteResourcePageReferenceEventDTO' $
+    DeleteResourcePageReferenceEventDTO
+    { _deleteResourcePageReferenceEventDTOUuid = event ^. uuid
+    , _deleteResourcePageReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _deleteResourcePageReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    }
+  toDTO (DeleteURLReferenceEvent' event) =
+    DeleteReferenceEventDTO' $
+    DeleteURLReferenceEventDTO' $
+    DeleteURLReferenceEventDTO
+    { _deleteURLReferenceEventDTOUuid = event ^. uuid
+    , _deleteURLReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _deleteURLReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    }
+  toDTO (DeleteCrossReferenceEvent' event) =
+    DeleteReferenceEventDTO' $
+    DeleteCrossReferenceEventDTO' $
+    DeleteCrossReferenceEventDTO
+    { _deleteCrossReferenceEventDTOUuid = event ^. uuid
+    , _deleteCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
+    , _deleteCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
+    }

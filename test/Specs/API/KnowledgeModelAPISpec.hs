@@ -7,9 +7,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import qualified Database.Migration.Branch.BranchMigration as B
-import Database.Migration.Branch.Data.KnowledgeModel.KnowledgeModels
-import qualified Database.Migration.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as B
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import qualified
+       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Service.KnowledgeModel.KnowledgeModelMapper
 

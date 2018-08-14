@@ -8,9 +8,9 @@ import qualified Data.Text.Lazy as LT
 import qualified Data.UUID as U
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Common.Error
-import Common.Localization
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
 
 runDB action = do
   dbPool <- asks _appContextPool

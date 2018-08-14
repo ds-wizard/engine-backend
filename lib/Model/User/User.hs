@@ -4,7 +4,11 @@ import Data.Time
 import Data.UUID
 import GHC.Generics
 
-import Common.Types
+type Permission = String
+
+type Role = String
+
+type Email = String
 
 data User = User
   { _userUuid :: UUID

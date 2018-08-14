@@ -21,13 +21,13 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
-import Common.Error
-import Common.Localization
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
-import Database.Migration.User.Data.Users
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
+import Localization
 import Model.ActionKey.ActionKey
+import Model.Error.ErrorHelpers
 import Service.User.UserMapper
 import Service.User.UserService
 

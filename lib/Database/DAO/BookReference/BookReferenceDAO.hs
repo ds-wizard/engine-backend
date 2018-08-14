@@ -5,11 +5,11 @@ import Data.Bson.Generic
 import Database.MongoDB
        ((=:), delete, deleteOne, find, findOne, insert, rest, select)
 
-import Common.Error
 import Database.BSON.BookReference.BookReference ()
 import Database.DAO.Common
 import Model.BookReference.BookReference
 import Model.Context.AppContext
+import Model.Error.Error
 
 bookReferenceCollection = "bookReferences"
 

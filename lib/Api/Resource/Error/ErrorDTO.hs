@@ -3,7 +3,7 @@ module Api.Resource.Error.ErrorDTO where
 import Control.Monad
 import Data.Aeson
 
-import Common.Error
+import Model.Error.Error
 
 instance ToJSON AppError where
   toJSON (ValidationError errorMessage formErrors fieldErrors) =

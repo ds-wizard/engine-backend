@@ -1,9 +1,9 @@
 module Service.BookReference.BookReferenceService where
 
 import Api.Resource.BookReference.BookReferenceDTO
-import Common.Error
 import Database.DAO.BookReference.BookReferenceDAO
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.BookReference.BookReferenceMapper
 
 getBookReference :: String -> AppContextM (Either AppError BookReferenceDTO)

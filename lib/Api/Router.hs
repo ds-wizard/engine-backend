@@ -19,6 +19,8 @@ import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
+import Api.Handler.Level.LevelHandler
+import Api.Handler.Metric.MetricHandler
 import Api.Handler.Migrator.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
@@ -30,7 +32,7 @@ import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import LensesConfig
-import Model.Config.DSWConfig
+import Model.Config.Environment
 import Model.Context.AppContext
 
 unauthorizedEndpoints =
@@ -70,16 +72,16 @@ createEndpoints context
    -- ------------------
   get "/" getInfoA
    --------------------
-   -- TOKENS
+   -- TOKEN
    --------------------
   post "/tokens" postTokenA
    --------------------
-   -- ORGANIZATIONS
+   -- ORGANIZATION
    --------------------
   get "/organizations/current" getOrganizationCurrentA
   put "/organizations/current" putOrganizationCurrentA
    --------------------
-   -- USERS
+   -- USER
    --------------------
   get "/users" getUsersA
   post "/users" postUsersA
@@ -109,7 +111,7 @@ createEndpoints context
   delete "/branches/:branchUuid/migrations/current" deleteMigrationsCurrentA
   post "/branches/:branchUuid/migrations/current/conflict" postMigrationsCurrentConflictA
    --------------------
-   -- PACKAGES
+   -- PACKAGE
    --------------------
   get "/packages" getPackagesA
   get "/packages/unique" getUniquePackagesA
@@ -117,7 +119,7 @@ createEndpoints context
   delete "/packages" deletePackagesA
   delete "/packages/:pkgId" deletePackageA
    --------------------
-   -- ACTION KEYS
+   -- ACTION KEY
    --------------------
   post "/action-keys" postActionKeysA
    --------------------
@@ -126,17 +128,19 @@ createEndpoints context
   post "/import" importA
   get "/export/:pkgId" exportA
    --------------------
-   -- QUESTIONNAIRES
+   -- QUESTIONNAIRE
    --------------------
   get "/questionnaires" getQuestionnairesA
   post "/questionnaires" postQuestionnairesA
   get "/questionnaires/public" getQuestionnairePublicA
   get "/questionnaires/:qtnUuid" getQuestionnaireA
-  put "/questionnaires/:qtnUuid/replies" putQuestionnaireRepliesA
+  put "/questionnaires/:qtnUuid" putQuestionnaireA
   get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
+  post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
+  get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
    --------------------
-   -- BOOK REFERENCES
+   -- BOOK REFERENCE
    --------------------
   get "/book-references/:brShortUuid" getBookReferenceA
    --------------------
@@ -146,6 +150,14 @@ createEndpoints context
   post "/feedbacks" postFeedbacksA
   get "/feedbacks/synchronization" getFeedbacksSynchronizationA
   get "/feedbacks/:fUuid" getFeedbackA
+   --------------------
+   -- METRIC
+   --------------------
+  get "/metrics" getMetricsA
+   --------------------
+   -- LEVEL
+   --------------------
+  get "/levels" getLevelsA
    --------------------
    -- ERROR
    --------------------

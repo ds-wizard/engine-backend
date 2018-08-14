@@ -8,13 +8,13 @@ import qualified Data.Text as T
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
-import Common.Error
-import Common.Localization
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Event.EventAccessors
 import Model.Migrator.MigratorState
 import Service.Migrator.Migrator
@@ -139,7 +139,7 @@ solveConflictAndMigrate branchUuid reqDto = do
         0 -> return . Just . MigratorError $ _ERROR_MT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> callback
     validateReqDto (ConflictState (CorrectorConflict e)) reqDto callback =
-      if getEventUuid e == reqDto ^. originalEventUuid
+      if getEventUuid' e == reqDto ^. originalEventUuid
         then if reqDto ^. action == MCAEdited && isNothing (reqDto ^. event)
                then return . Just . MigratorError $ _ERROR_MT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
                else callback

@@ -1,6 +1,6 @@
 module Service.Migrator.Applicator.ApplyEvent where
 
-import Common.Error
+import Model.Error.Error
 import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
 

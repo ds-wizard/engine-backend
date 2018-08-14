@@ -11,10 +11,10 @@ data AddQuestionEvent = AddQuestionEvent
   { _addQuestionEventUuid :: UUID
   , _addQuestionEventPath :: EventPath
   , _addQuestionEventQuestionUuid :: UUID
-  , _addQuestionEventShortQuestionUuid :: Maybe String
   , _addQuestionEventQType :: QuestionType
   , _addQuestionEventTitle :: String
-  , _addQuestionEventText :: String
+  , _addQuestionEventText :: Maybe String
+  , _addQuestionEventRequiredLevel :: Maybe Int
   , _addQuestionEventAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlain
   } deriving (Show, Eq, Generic)
 
@@ -22,10 +22,10 @@ data EditQuestionEvent = EditQuestionEvent
   { _editQuestionEventUuid :: UUID
   , _editQuestionEventPath :: EventPath
   , _editQuestionEventQuestionUuid :: UUID
-  , _editQuestionEventShortQuestionUuid :: EventField (Maybe String)
   , _editQuestionEventQType :: EventField QuestionType
   , _editQuestionEventTitle :: EventField String
-  , _editQuestionEventText :: EventField String
+  , _editQuestionEventText :: EventField (Maybe String)
+  , _editQuestionEventRequiredLevel :: EventField (Maybe Int)
   , _editQuestionEventAnswerItemTemplatePlainWithIds :: EventField (Maybe AnswerItemTemplatePlainWithIds)
   , _editQuestionEventAnswerIds :: EventField (Maybe [UUID])
   , _editQuestionEventExpertIds :: EventField [UUID]

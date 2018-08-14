@@ -1,8 +1,8 @@
 module Service.KnowledgeModel.KnowledgeModelApplicator where
 
-import Common.Error
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Migrator.Applicator.Applicator

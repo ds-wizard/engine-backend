@@ -6,10 +6,10 @@ import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
 import Data.UUID
 
-import Common.Error
-import Common.Utils
+import Model.Error.Error
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
+import Util.List
 
 serializeUUID :: UUID -> String
 serializeUUID = toString
@@ -26,6 +26,9 @@ serializeMaybeUUIDList :: Maybe [UUID] -> Maybe [String]
 serializeMaybeUUIDList mUuids = do
   uuids <- mUuids
   return $ serializeUUIDList uuids
+
+serializeEventFieldUUID :: EventField UUID -> EventField String
+serializeEventFieldUUID efUuid = serializeUUID <$> efUuid
 
 serializeEventFieldUUIDList :: EventField [UUID] -> EventField [String]
 serializeEventFieldUUIDList efUuids = serializeUUIDList <$> efUuids
@@ -54,6 +57,18 @@ deserializeMaybeUUIDList :: Maybe [String] -> Maybe [UUID]
 deserializeMaybeUUIDList mUuidsS = do
   uuidsS <- mUuidsS
   switchMaybeAndList $ fmap fromString uuidsS
+
+deserializeMaybeEventFieldUUID :: Maybe (EventField String) -> Maybe (EventField UUID)
+deserializeMaybeEventFieldUUID maybeEfUuidS =
+  case maybeEfUuidS of
+    Just efUuidS ->
+      case efUuidS of
+        ChangedValue uuidS ->
+          case fromString uuidS of
+            Just uuid -> Just . ChangedValue $ uuid
+            Nothing -> Nothing
+        NothingChanged -> Just NothingChanged
+    Nothing -> Nothing
 
 deserializeEventFieldUUIDList :: Maybe (EventField [String]) -> EventField [UUID]
 deserializeEventFieldUUIDList maybeEfUuids =

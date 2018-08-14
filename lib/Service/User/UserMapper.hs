@@ -8,7 +8,6 @@ import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
 import Api.Resource.User.UserProfileChangeDTO
-import Common.Types
 import LensesConfig
 import Model.User.User
 

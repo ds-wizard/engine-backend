@@ -28,10 +28,10 @@ toFilledQuestionDTO :: FilledQuestion -> FilledQuestionDTO
 toFilledQuestionDTO fQ =
   FilledQuestionDTO
   { _filledQuestionDTOUuid = fQ ^. uuid
-  , _filledQuestionDTOShortUuid = fQ ^. shortUuid
   , _filledQuestionDTOQType = fQ ^. qType
   , _filledQuestionDTOTitle = fQ ^. title
   , _filledQuestionDTOText = fQ ^. text
+  , _filledQuestionDTORequiredLevel = fQ ^. requiredLevel
   , _filledQuestionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> fQ ^. answerItemTemplate
   , _filledQuestionDTOAnswers = (fmap toAnswerDTO) <$> fQ ^. answers
   , _filledQuestionDTOAnswerValue = fQ ^. answerValue
@@ -48,6 +48,7 @@ toFilledAnswerDTO fAns =
   , _filledAnswerDTOLabel = fAns ^. label
   , _filledAnswerDTOAdvice = fAns ^. advice
   , _filledAnswerDTOFollowUps = toFilledQuestionDTO <$> fAns ^. followUps
+  , _filledAnswerDTOMetricMeasures = toMetricMeasureDTO <$> fAns ^. metricMeasures
   }
 
 toFilledAnswerItemDTO :: FilledAnswerItem -> FilledAnswerItemDTO

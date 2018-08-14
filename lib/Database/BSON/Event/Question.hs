@@ -20,8 +20,8 @@ instance ToBSON AddQuestionEvent where
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
     , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: serializeQuestionType (event ^. qType)
+    , "requiredLevel" BSON.=: (event ^. requiredLevel)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
     , "answerItemTemplatePlain" BSON.=: (event ^. answerItemTemplatePlain)
@@ -32,20 +32,20 @@ instance FromBSON AddQuestionEvent where
     qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     qPath <- BSON.lookup "path" doc
     qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- deserializeQuestionType $ BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswerItemTemplatePlain <- BSON.lookup "answerItemTemplatePlain" doc
     return
       AddQuestionEvent
       { _addQuestionEventUuid = qUuid
       , _addQuestionEventPath = qPath
       , _addQuestionEventQuestionUuid = qQuestionUuid
-      , _addQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _addQuestionEventQType = qQType
       , _addQuestionEventTitle = qTitle
       , _addQuestionEventText = qText
+      , _addQuestionEventRequiredLevel = qRequiredLevel
       , _addQuestionEventAnswerItemTemplatePlain = qAnswerItemTemplatePlain
       }
 
@@ -58,10 +58,10 @@ instance ToBSON EditQuestionEvent where
     , "uuid" BSON.=: serializeUUID (event ^. uuid)
     , "path" BSON.=: (event ^. path)
     , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    , "shortQuestionUuid" BSON.=: (event ^. shortQuestionUuid)
     , "qType" BSON.=: (event ^. qType)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
+    , "requiredLevel" BSON.=: (event ^. requiredLevel)
     , "answerItemTemplatePlainWithIds" BSON.=: (event ^. answerItemTemplatePlainWithIds)
     , "answerIds" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerIds)
     , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
@@ -73,10 +73,10 @@ instance FromBSON EditQuestionEvent where
     qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     qPath <- BSON.lookup "path" doc
     qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    qShortQuestionUuid <- BSON.lookup "shortQuestionUuid" doc
     qQType <- BSON.lookup "qType" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qAnswerItemTemplatePlainWithIds <- BSON.lookup "answerItemTemplatePlainWithIds" doc
     let qAnswerIds = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerIds" doc
     let qExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
@@ -86,10 +86,10 @@ instance FromBSON EditQuestionEvent where
       { _editQuestionEventUuid = qUuid
       , _editQuestionEventPath = qPath
       , _editQuestionEventQuestionUuid = qQuestionUuid
-      , _editQuestionEventShortQuestionUuid = qShortQuestionUuid
       , _editQuestionEventQType = qQType
       , _editQuestionEventTitle = qTitle
       , _editQuestionEventText = qText
+      , _editQuestionEventRequiredLevel = qRequiredLevel
       , _editQuestionEventAnswerItemTemplatePlainWithIds = qAnswerItemTemplatePlainWithIds
       , _editQuestionEventAnswerIds = qAnswerIds
       , _editQuestionEventExpertIds = qExpertIds

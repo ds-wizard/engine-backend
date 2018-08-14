@@ -6,10 +6,10 @@ import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import Database.Persist.MongoDB (ConnectionPool)
 
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 
 data AppContext = AppContext
-  { _appContextConfig :: DSWConfig
+  { _appContextConfig :: AppConfig
   , _appContextPool :: ConnectionPool
   }
 

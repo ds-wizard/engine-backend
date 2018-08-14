@@ -11,8 +11,8 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
-import Common.Error
 import LensesConfig
+import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 

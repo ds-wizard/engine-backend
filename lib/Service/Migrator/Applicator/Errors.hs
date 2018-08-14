@@ -1,16 +1,14 @@
 module Service.Migrator.Applicator.Errors where
 
-import Control.Lens ((^.))
+import Localization
+import Model.Error.Error
+import Model.Event.EventAccessors
 
-import Common.Error
-import Common.Localization
-import LensesConfig
+errorPathShouldBeEmpty e path = Left . MigratorError $ _ERROR_MT_APPLICATOR__PATH_SHOULD_BE_EMPTY (getEventUuid e) path
 
-errorPathShouldBeEmpty e path = Left . MigratorError $ _ERROR_MT_APPLICATOR__PATH_SHOULD_BE_EMPTY (e ^. uuid) path
+errorEditNonExistingThing e = Left . MigratorError $ _ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING (getEventUuid e)
 
-errorEditNonExistingThing e = Left . MigratorError $ _ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING (e ^. uuid)
-
-errorEmptyPath e = Left . MigratorError $ _ERROR_MT_APPLICATOR__EMPTY_PATH (e ^. uuid)
+errorEmptyPath e = Left . MigratorError $ _ERROR_MT_APPLICATOR__EMPTY_PATH (getEventUuid e)
 
 errorIllegalState e eventName entityName =
-  Left . MigratorError $ _ERROR_MT_APPLICATOR__ILLEGAL_STATE (e ^. uuid) eventName entityName
+  Left . MigratorError $ _ERROR_MT_APPLICATOR__ILLEGAL_STATE (getEventUuid e) eventName entityName

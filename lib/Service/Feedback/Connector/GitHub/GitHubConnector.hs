@@ -1,7 +1,6 @@
 module Service.Feedback.Connector.GitHub.GitHubConnector where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
@@ -13,12 +12,13 @@ import qualified GitHub.Data as GD
 import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
-import Common.Error
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Feedback.Connector.Connector
 import Service.Feedback.Connector.GitHub.GitHubMapper
+import Util.Logger
 
 instance Connector AppContextM where
   getIssues = do
@@ -31,7 +31,7 @@ instance Connector AppContextM where
     case eIssues of
       Right issues -> return . Right . V.toList $ toSimpleIssue <$> issues
       Left error -> do
-        $(logError) . T.pack . show $ error
+        logError . show $ error
         return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Get issues"
   createIssue packageId questionUuid title content = do
     dswConfig <- asks _appContextConfig
@@ -51,7 +51,7 @@ instance Connector AppContextM where
     case eIssue of
       Right issue -> return . Right . GI.issueNumber $ issue
       Left error -> do
-        $(logError) . T.pack . show $ error
+        logError . show $ error
         return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
 
 packToName :: String -> GN.Name a

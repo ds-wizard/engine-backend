@@ -4,6 +4,7 @@ import Control.Lens
 
 import LensesConfig
 import Model.Event.Event
+import Model.Event.EventAccessors
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Migrator.MigratorState
@@ -41,11 +42,11 @@ doIsCleanerMethod km (AddExpertEvent' event) =
 doIsCleanerMethod km (EditExpertEvent' event) = not $ isThereAnyExpertWithGivenUuid km (event ^. expertUuid)
 doIsCleanerMethod km (DeleteExpertEvent' event) = not $ isThereAnyExpertWithGivenUuid km (event ^. expertUuid)
 doIsCleanerMethod km (AddReferenceEvent' event) =
-  if not . null $ event ^. path
-    then not $ isThereAnyQuestionWithGivenUuid km ((last (event ^. path)) ^. uuid)
+  if not . null . getPath $ event
+    then not $ isThereAnyQuestionWithGivenUuid km ((last (getPath event)) ^. uuid)
     else False
-doIsCleanerMethod km (EditReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (event ^. referenceUuid)
-doIsCleanerMethod km (DeleteReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (event ^. referenceUuid)
+doIsCleanerMethod km (EditReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (getEventNodeUuid event)
+doIsCleanerMethod km (DeleteReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (getEventNodeUuid event)
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =

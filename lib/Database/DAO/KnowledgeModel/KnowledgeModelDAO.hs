@@ -2,13 +2,13 @@ module Database.DAO.KnowledgeModel.KnowledgeModelDAO where
 
 import Database.MongoDB ((=:), findOne, modify, select)
 
-import Common.Error
 import Database.BSON.Branch.BranchWithKM ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Common
 import Model.Branch.Branch
 import Model.Context.AppContext
+import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
 
 findBranchWithKMByBranchId :: String -> AppContextM (Either AppError BranchWithKM)

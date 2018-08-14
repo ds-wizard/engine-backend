@@ -6,7 +6,7 @@ category: Web
 author: Vojtech Knaisl <vknaisl@gmail.com>
 maintainer: Vojtech Knaisl <vknaisl@gmail.com>
 copyright: 2018 Vojtech Knaisl <vknaisl@gmail.com>
-license: MIT
+license: Apache
 license-file: LICENSE.md
 homepage: https://github.com/DataStewardshipWizard/dsw-server
 git: git@github.com:DataStewardshipWizard/dsw-server.git
@@ -46,6 +46,7 @@ library:
   - monad-control
   - monad-logger
   - mongoDB
+  - mongoDB-migration
   - network
   - persistent
   - persistent-mongoDB

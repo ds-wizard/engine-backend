@@ -2,11 +2,12 @@ module Service.User.UserValidation where
 
 import Data.Either (isRight)
 
-import Common.Error
-import Common.Localization
-import Common.Types
 import Database.DAO.User.UserDAO
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
+import Model.User.User
 
 validateUserEmailUniqueness :: Email -> AppContextM (Maybe AppError)
 validateUserEmailUniqueness email = do

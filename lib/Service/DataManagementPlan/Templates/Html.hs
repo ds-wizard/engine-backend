@@ -4,7 +4,6 @@ module Service.DataManagementPlan.Templates.Html
 
 import Control.Lens ((^.))
 import Data.Maybe
-import Data.Monoid
 import qualified Data.UUID as U
 import Text.Blaze.Html.Renderer.Pretty (renderHtml)
 import Text.Blaze.Html5 ((!), stringValue)
@@ -61,7 +60,7 @@ question2html :: FilledQuestionDTO -> H.Html
 question2html question =
   H.div ! A.class_ "question" ! A.id (stringValue . U.toString $ question ^. uuid) $ do
     H.h3 ! A.class_ "title" $ H.toHtml $ question ^. title
-    H.p ! A.class_ "text" $ H.toHtml $ question ^. text
+    H.p ! A.class_ "text" $ H.toHtml $ fromMaybe "" (question ^. text)
     references2html $ question ^. references
     experts2html $ question ^. experts
     qanswer2html question
@@ -136,6 +135,12 @@ references2html references =
     H.h4 . H.toHtml $ "References"
     H.ul ! A.class_ "references-list" $ mapM_ reference2html references
   where
-    reference2html reference =
+    reference2html (ResourcePageReferenceDTO' reference) =
       H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
-      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. chapter
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. shortUuid
+    reference2html (URLReferenceDTO' reference) =
+      H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ reference ^. url
+    reference2html (CrossReferenceDTO' reference) =
+      H.li ! A.class_ "reference reference-dmpbook" ! A.id (stringValue . U.toString $ reference ^. uuid) $
+      H.span ! A.class_ "dmpbook-chapter" $ H.toHtml $ U.toString $ reference ^. targetUuid

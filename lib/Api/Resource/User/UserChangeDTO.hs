@@ -4,7 +4,7 @@ import Control.Monad
 import Data.Aeson
 import Data.UUID
 
-import Common.Types
+import Model.User.User
 
 data UserChangeDTO = UserChangeDTO
   { _userChangeDTOUuid :: UUID

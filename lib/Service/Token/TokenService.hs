@@ -14,12 +14,13 @@ import qualified Web.JWT as JWT
 
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
-import Common.Error
-import Common.Localization
-import Common.Types
 import Database.DAO.User.UserDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
+import Model.Token.Token
 import Model.User.User
 import Service.Token.TokenMapper
 import Util.Date
@@ -58,12 +59,12 @@ getToken tokenCreateDto =
       let config = dswConfig ^. jwtConfig
       return (config ^. secret, config ^. version, config ^. expiration)
 
-createToken :: User -> UTCTime -> JWTSecret -> Integer -> Integer -> Token
+createToken :: User -> UTCTime -> String -> Integer -> Integer -> Token
 createToken user now jwtSecret jwtVersion jwtExpirationInDays =
   let uUuid = toJSON (user ^. uuid) :: Value
       permissionValues = fromString <$> (user ^. permissions)
       uPermissions = Array (V.fromList permissionValues) :: Value
-      timeDelta = realToFrac $ jwtExpirationInDays * nominalDay
+      timeDelta = realToFrac $ jwtExpirationInDays * nominalDayInSeconds
       mExpiration = toNumericDate (addUTCTime timeDelta now)
       cs =
         JWT.JWTClaimsSet
@@ -85,7 +86,7 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
     createPayload uUuid uPermissions jwtVersion =
       M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty
 
-signToken :: JWTSecret -> JWT.JWTClaimsSet -> Token
+signToken :: String -> JWT.JWTClaimsSet -> Token
 signToken jwtSecret cs =
   let key = JWT.secret $ T.pack jwtSecret
   in T.unpack $ JWT.encodeSigned JWT.HS256 key cs

@@ -23,10 +23,10 @@ data FilledChapterDTO = FilledChapterDTO
 
 data FilledQuestionDTO = FilledQuestionDTO
   { _filledQuestionDTOUuid :: UUID
-  , _filledQuestionDTOShortUuid :: Maybe String
   , _filledQuestionDTOQType :: QuestionType
   , _filledQuestionDTOTitle :: String
-  , _filledQuestionDTOText :: String
+  , _filledQuestionDTOText :: Maybe String
+  , _filledQuestionDTORequiredLevel :: Maybe Int
   , _filledQuestionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _filledQuestionDTOAnswers :: Maybe [AnswerDTO]
   , _filledQuestionDTOAnswerValue :: Maybe String
@@ -41,6 +41,7 @@ data FilledAnswerDTO = FilledAnswerDTO
   , _filledAnswerDTOLabel :: String
   , _filledAnswerDTOAdvice :: Maybe String
   , _filledAnswerDTOFollowUps :: [FilledQuestionDTO]
+  , _filledAnswerDTOMetricMeasures :: [MetricMeasureDTO]
   } deriving (Show, Eq)
 
 data FilledAnswerItemDTO = FilledAnswerItemDTO
@@ -70,10 +71,10 @@ instance ToJSON FilledQuestionDTO where
   toJSON FilledQuestionDTO {..} =
     object
       [ "uuid" .= _filledQuestionDTOUuid
-      , "shortUuid" .= _filledQuestionDTOShortUuid
       , "type" .= serializeQuestionType _filledQuestionDTOQType
       , "title" .= _filledQuestionDTOTitle
       , "text" .= _filledQuestionDTOText
+      , "requiredLevel" .= _filledQuestionDTORequiredLevel
       , "answerItemTemplate" .= _filledQuestionDTOAnswerItemTemplate
       , "answers" .= _filledQuestionDTOAnswers
       , "answerValue" .= _filledQuestionDTOAnswerValue
@@ -90,6 +91,7 @@ instance ToJSON FilledAnswerDTO where
       , "label" .= _filledAnswerDTOLabel
       , "advice" .= _filledAnswerDTOAdvice
       , "followUps" .= _filledAnswerDTOFollowUps
+      , "metricMeasures" .= _filledAnswerDTOMetricMeasures
       ]
 
 instance ToJSON FilledAnswerItemDTO where
@@ -120,9 +122,9 @@ instance FromJSON FilledChapterDTO where
 instance FromJSON FilledQuestionDTO where
   parseJSON (Object o) = do
     _filledQuestionDTOUuid <- o .: "uuid"
-    _filledQuestionDTOShortUuid <- o .: "shortUuid"
     _filledQuestionDTOTitle <- o .: "title"
     _filledQuestionDTOText <- o .: "text"
+    _filledQuestionDTORequiredLevel <- o .: "requiredLevel"
     _filledQuestionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _filledQuestionDTOAnswers <- o .: "answers"
     _filledQuestionDTOAnswerValue <- o .: "answerValue"
@@ -142,6 +144,7 @@ instance FromJSON FilledAnswerDTO where
     _filledAnswerDTOLabel <- o .: "label"
     _filledAnswerDTOAdvice <- o .: "advice"
     _filledAnswerDTOFollowUps <- o .: "followUps"
+    _filledAnswerDTOMetricMeasures <- o .: "metricMeasures"
     return FilledAnswerDTO {..}
   parseJSON _ = mzero
 

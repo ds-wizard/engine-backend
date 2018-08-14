@@ -3,7 +3,7 @@ module Model.Migrator.MigratorState where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Common.Error
+import Model.Error.Error
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 

@@ -2,7 +2,7 @@ module Service.Feedback.Connector.Connector where
 
 import qualified Data.UUID as U
 
-import Common.Error
+import Model.Error.Error
 import Model.Feedback.SimpleIssue
 
 class Connector a where

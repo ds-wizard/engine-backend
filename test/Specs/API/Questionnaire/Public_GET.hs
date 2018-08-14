@@ -10,14 +10,15 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
-import Common.Error
 import Database.DAO.PublicQuestionnaire.PublicQuestionnaireDAO
-import Database.Migration.Package.Data.Packages
-import Database.Migration.PublicQuestionnaire.Data.PublicQuestionnaires
+import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import qualified
-       Database.Migration.PublicQuestionnaire.PublicQuestionnaireMigration
+       Database.Migration.Development.PublicQuestionnaire.PublicQuestionnaireMigration
        as PUBQTN
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -52,7 +53,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailDTO publicQuestionnaire elixirNlPackage2Dto
+    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire elixirNlPackage2Dto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PUBQTN.runMigration appContext
@@ -67,12 +68,12 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  it "HTTP 404 NOT FOUND - entity doesn't exist" $
+  it "HTTP 404 NOT FOUND - Public questionnaire is not set up" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity does not exist"
+    let expDto = NotExistsError _ERROR_SERVICE_PQ__NOT_SET_UP
     let expBody = encode expDto
     -- AND: Delete public questionnaire
     runInContextIO deletePublicQuestionnaires appContext

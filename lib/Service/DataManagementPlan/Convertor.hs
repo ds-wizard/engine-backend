@@ -27,10 +27,10 @@ toFilledQuestion :: Question -> FilledQuestion
 toFilledQuestion q =
   FilledQuestion
   { _filledQuestionUuid = q ^. uuid
-  , _filledQuestionShortUuid = q ^. shortUuid
   , _filledQuestionQType = q ^. qType
   , _filledQuestionTitle = q ^. title
   , _filledQuestionText = q ^. text
+  , _filledQuestionRequiredLevel = q ^. requiredLevel
   , _filledQuestionAnswerItemTemplate = q ^. answerItemTemplate
   , _filledQuestionAnswers = q ^. answers
   , _filledQuestionAnswerValue = Nothing
@@ -47,6 +47,7 @@ toFilledAnswer ans =
   , _filledAnswerLabel = ans ^. label
   , _filledAnswerAdvice = ans ^. advice
   , _filledAnswerFollowUps = toFilledQuestion <$> ans ^. followUps
+  , _filledAnswerMetricMeasures = ans ^. metricMeasures
   }
 
 toFilledAnswerItem :: AnswerItemTemplate -> String -> FilledAnswerItem

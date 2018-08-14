@@ -17,12 +17,11 @@ import Prelude hiding (exp)
 import Text.Regex
 
 import Api.Handler.Common
-import Common.Localization
-import Common.Types
-import Common.Utils
 import LensesConfig
-import Model.Config.DSWConfig
+import Localization
+import Model.Config.AppConfig
 import Service.Token.TokenService
+import Util.Token
 
 type EndpointDefinition = (H.Method, Regex)
 
@@ -47,13 +46,13 @@ getTokenFromHeader request =
     Just headerValue -> separateToken . decodeUtf8 $ headerValue
     Nothing -> Nothing
 
-authMiddleware :: DSWConfig -> [EndpointDefinition] -> Middleware
+authMiddleware :: AppConfig -> [EndpointDefinition] -> Middleware
 authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
   if isUnauthorizedEndpoint request unauthorizedEndpoints
     then app request sendResponse
     else authorize
   where
-    jwtSecret :: JWTSecret
+    jwtSecret :: String
     jwtSecret = dswConfig ^. jwtConfig ^. secret
     jwtVersion :: Integer
     jwtVersion = dswConfig ^. jwtConfig ^. version

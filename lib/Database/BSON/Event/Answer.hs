@@ -21,6 +21,7 @@ instance ToBSON AddAnswerEvent where
     , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
     , "label" BSON.=: (event ^. label)
     , "advice" BSON.=: (event ^. advice)
+    , "metricMeasures" BSON.=: (event ^. metricMeasures)
     ]
 
 instance FromBSON AddAnswerEvent where
@@ -30,6 +31,7 @@ instance FromBSON AddAnswerEvent where
     ansAnswerUuid <- deserializeMaybeUUID $ BSON.lookup "answerUuid" doc
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
+    ansMetricMeasures <- BSON.lookup "metricMeasures" doc
     return
       AddAnswerEvent
       { _addAnswerEventUuid = ansUuid
@@ -37,6 +39,7 @@ instance FromBSON AddAnswerEvent where
       , _addAnswerEventAnswerUuid = ansAnswerUuid
       , _addAnswerEventLabel = ansLabel
       , _addAnswerEventAdvice = ansAdvice
+      , _addAnswerEventMetricMeasures = ansMetricMeasures
       }
 
 -- -------------------------
@@ -51,6 +54,7 @@ instance ToBSON EditAnswerEvent where
     , "label" BSON.=: (event ^. label)
     , "advice" BSON.=: (event ^. advice)
     , "followUpIds" BSON.=: serializeEventFieldUUIDList (event ^. followUpIds)
+    , "metricMeasures" BSON.=: (event ^. metricMeasures)
     ]
 
 instance FromBSON EditAnswerEvent where
@@ -61,6 +65,7 @@ instance FromBSON EditAnswerEvent where
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
     let ansFollowUpIds = deserializeEventFieldUUIDList $ BSON.lookup "followUpIds" doc
+    ansMetricMeasures <- BSON.lookup "metricMeasures" doc
     return
       EditAnswerEvent
       { _editAnswerEventUuid = ansUuid
@@ -69,6 +74,7 @@ instance FromBSON EditAnswerEvent where
       , _editAnswerEventLabel = ansLabel
       , _editAnswerEventAdvice = ansAdvice
       , _editAnswerEventFollowUpIds = ansFollowUpIds
+      , _editAnswerEventMetricMeasures = ansMetricMeasures
       }
 
 -- -------------------------

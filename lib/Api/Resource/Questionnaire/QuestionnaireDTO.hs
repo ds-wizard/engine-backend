@@ -10,6 +10,7 @@ import Api.Resource.Package.PackageDTO
 data QuestionnaireDTO = QuestionnaireDTO
   { _questionnaireDTOUuid :: UUID
   , _questionnaireDTOName :: String
+  , _questionnaireDTOLevel :: Int
   , _questionnaireDTOPackage :: PackageDTO
   , _questionnaireDTOCreatedAt :: UTCTime
   , _questionnaireDTOUpdatedAt :: UTCTime
@@ -19,6 +20,7 @@ instance FromJSON QuestionnaireDTO where
   parseJSON (Object o) = do
     _questionnaireDTOUuid <- o .: "uuid"
     _questionnaireDTOName <- o .: "name"
+    _questionnaireDTOLevel <- o .: "level"
     _questionnaireDTOPackage <- o .: "package"
     _questionnaireDTOCreatedAt <- o .: "createdAt"
     _questionnaireDTOUpdatedAt <- o .: "updatedAt"
@@ -30,6 +32,7 @@ instance ToJSON QuestionnaireDTO where
     object
       [ "uuid" .= _questionnaireDTOUuid
       , "name" .= _questionnaireDTOName
+      , "level" .= _questionnaireDTOLevel
       , "package" .= _questionnaireDTOPackage
       , "createdAt" .= _questionnaireDTOCreatedAt
       , "updatedAt" .= _questionnaireDTOUpdatedAt

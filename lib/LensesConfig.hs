@@ -14,6 +14,7 @@ import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Level.LevelDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
@@ -22,9 +23,11 @@ import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Report.ReportDTO
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Api.Resource.User.UserChangeDTO
@@ -37,7 +40,7 @@ import Api.Resource.Version.VersionDTO
 import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
 import Model.Branch.Branch
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Event.Answer.AnswerEvent
@@ -52,10 +55,12 @@ import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
+import Model.Report.Report
 import Model.User.User
 
 -- -------------------------------------
@@ -95,7 +100,7 @@ makeFields ''AppConfigFeedback
 
 makeFields ''BuildInfo
 
-makeFields ''DSWConfig
+makeFields ''AppConfig
 
 -- Model / Context
 makeFields ''AppContext
@@ -142,6 +147,24 @@ makeFields ''EditReferenceEvent
 
 makeFields ''DeleteReferenceEvent
 
+makeFields ''AddResourcePageReferenceEvent
+
+makeFields ''EditResourcePageReferenceEvent
+
+makeFields ''DeleteResourcePageReferenceEvent
+
+makeFields ''AddURLReferenceEvent
+
+makeFields ''EditURLReferenceEvent
+
+makeFields ''DeleteURLReferenceEvent
+
+makeFields ''AddCrossReferenceEvent
+
+makeFields ''EditCrossReferenceEvent
+
+makeFields ''DeleteCrossReferenceEvent
+
 -- Model / Feedback
 makeFields ''Feedback
 
@@ -177,6 +200,19 @@ makeFields ''Expert
 
 makeFields ''Reference
 
+makeFields ''ResourcePageReference
+
+makeFields ''URLReference
+
+makeFields ''CrossReference
+
+makeFields ''Metric
+
+makeFields ''MetricMeasure
+
+-- Model / Level
+makeFields ''Level
+
 -- Model / Migrator
 makeFields ''MigratorConflictDTO
 
@@ -196,6 +232,17 @@ makeFields ''PackageWithEvents
 makeFields ''Questionnaire
 
 makeFields ''QuestionnaireReply
+
+-- Model / Report
+makeFields ''Indication
+
+makeFields ''AnsweredIndication
+
+makeFields ''MetricSummary
+
+makeFields ''ChapterReport
+
+makeFields ''Report
 
 -- Model / User
 makeFields ''User
@@ -254,6 +301,24 @@ makeFields ''EditReferenceEventDTO
 
 makeFields ''DeleteReferenceEventDTO
 
+makeFields ''AddResourcePageReferenceEventDTO
+
+makeFields ''EditResourcePageReferenceEventDTO
+
+makeFields ''DeleteResourcePageReferenceEventDTO
+
+makeFields ''AddURLReferenceEventDTO
+
+makeFields ''EditURLReferenceEventDTO
+
+makeFields ''DeleteURLReferenceEventDTO
+
+makeFields ''AddCrossReferenceEventDTO
+
+makeFields ''EditCrossReferenceEventDTO
+
+makeFields ''DeleteCrossReferenceEventDTO
+
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
 
@@ -292,6 +357,19 @@ makeFields ''ExpertDTO
 
 makeFields ''ReferenceDTO
 
+makeFields ''ResourcePageReferenceDTO
+
+makeFields ''URLReferenceDTO
+
+makeFields ''CrossReferenceDTO
+
+makeFields ''MetricDTO
+
+makeFields ''MetricMeasureDTO
+
+-- Model / Level
+makeFields ''LevelDTO
+
 -- Api / Resource / Migrator
 makeFields ''MigratorState
 
@@ -315,6 +393,19 @@ makeFields ''QuestionnaireDTO
 makeFields ''QuestionnaireReplyDTO
 
 makeFields ''QuestionnaireDetailDTO
+
+makeFields ''QuestionnaireChangeDTO
+
+-- Api / Resource / Report
+makeFields ''IndicationDTO
+
+makeFields ''AnsweredIndicationDTO
+
+makeFields ''MetricSummaryDTO
+
+makeFields ''ChapterReportDTO
+
+makeFields ''ReportDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO

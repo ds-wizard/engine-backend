@@ -20,10 +20,10 @@ data FilledChapter = FilledChapter
 
 data FilledQuestion = FilledQuestion
   { _filledQuestionUuid :: UUID
-  , _filledQuestionShortUuid :: Maybe String
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
-  , _filledQuestionText :: String
+  , _filledQuestionText :: Maybe String
+  , _filledQuestionRequiredLevel :: Maybe Int
   , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _filledQuestionAnswers :: Maybe [Answer]
   , _filledQuestionAnswerValue :: Maybe String
@@ -38,6 +38,7 @@ data FilledAnswer = FilledAnswer
   , _filledAnswerLabel :: String
   , _filledAnswerAdvice :: Maybe String
   , _filledAnswerFollowUps :: [FilledQuestion]
+  , _filledAnswerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
 data FilledAnswerItem = FilledAnswerItem

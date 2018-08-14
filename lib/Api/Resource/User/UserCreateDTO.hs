@@ -3,7 +3,7 @@ module Api.Resource.User.UserCreateDTO where
 import Control.Monad
 import Data.Aeson
 
-import Common.Types
+import Model.User.User
 
 data UserCreateDTO = UserCreateDTO
   { _userCreateDTOName :: String

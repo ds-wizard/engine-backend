@@ -5,9 +5,12 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Feedback.FeedbackDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
+import Database.DAO.Package.PackageDAO
+import Database.DAO.Questionnaire.QuestionnaireDAO
 import Database.DAO.User.UserDAO
-import Database.Migration.Organization.Data.Organizations
-import Database.Migration.User.Data.Users
+import Database.Migration.Development.Organization.Data.Organizations
+import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.User.Data.Users
 
 import Specs.Common
 
@@ -20,3 +23,10 @@ resetDB appContext = do
   runInContext (deleteMigratorStates) appContext
   runInContext (deleteActionKeys) appContext
   runInContext (deleteFeedbacks) appContext
+  runInContext (deleteQuestionnaires) appContext
+  runInContext (deletePackages) appContext
+  runInContext (insertPackage baseElixir0PackageDto) appContext
+  runInContext (insertPackage baseElixirPackageDto) appContext
+  runInContext (insertPackage elixirNlPackageDto) appContext
+  runInContext (insertPackage elixirNlPackage2Dto) appContext
+  return ()

@@ -8,10 +8,10 @@ import qualified Data.Text.Encoding as E
 import qualified Text.FromHTML as FromHTML
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Common.Error
-import Common.Localization
 import LensesConfig
+import Localization
 import Model.DataManagementPlan.DataManagementPlan
+import Model.Error.Error
 import Service.DataManagementPlan.Templates.Html
 
 -- | Enumeration of supported export document types
@@ -19,6 +19,9 @@ type DMPExportType = FromHTML.ExportType
 
 strToBSL :: String -> BSL.ByteString
 strToBSL = BSL.fromStrict . E.encodeUtf8 . T.pack
+
+bsToStr :: BS.ByteString -> String
+bsToStr = T.unpack . E.decodeUtf8
 
 toHTML :: DataManagementPlanDTO -> BSL.ByteString
 toHTML = strToBSL . mkHTMLString
@@ -29,9 +32,9 @@ toFormat format = toType (formatToType format)
     toType :: Maybe DMPExportType -> DataManagementPlanDTO -> Either AppError BSL.ByteString
     toType (Just eType) dmp = handleResult . FromHTML.fromHTML eType . mkHTMLString $ dmp
     toType _ _ = Left . GeneralServerError $ _ERROR_SERVICE_DMP__UKNOWN_FORMAT
-    handleResult :: Maybe BS.ByteString -> Either AppError BSL.ByteString
-    handleResult (Just result) = Right . BSL.fromStrict $ result
-    handleResult _ = Left . GeneralServerError $ _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED
+    handleResult :: Either BS.ByteString BS.ByteString -> Either AppError BSL.ByteString
+    handleResult (Right result) = Right . BSL.fromStrict $ result
+    handleResult (Left err) = Left . GeneralServerError $ _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED (bsToStr err)
 
 mkHTMLString :: DataManagementPlanDTO -> String
 mkHTMLString dmp = dmp2html $ dmp ^. filledKnowledgeModel

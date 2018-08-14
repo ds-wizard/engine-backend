@@ -15,20 +15,20 @@ import Api.Resource.User.UserDTO
 import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
-import Common.Error
-import Common.Localization
-import Common.Types
-import Common.Uuid
 import Database.DAO.User.UserDAO
 import LensesConfig
+import Localization
 import Model.ActionKey.ActionKey
-import Model.Config.DSWConfig
+import Model.Config.AppConfig
 import Model.Context.AppContext
+import Model.Error.Error
+import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Mail.Mailer
 import Service.User.UserMapper
 import Service.User.UserValidation
+import Util.Uuid
 
 getUsers :: AppContextM (Either AppError [UserDTO])
 getUsers = heFindUsers $ \users -> return . Right $ toDTO <$> users
@@ -168,7 +168,7 @@ deleteUser userUuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPermissionForRole :: DSWConfig -> Role -> [Permission]
+getPermissionForRole :: AppConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
     "ADMIN" -> config ^. roles ^. admin
