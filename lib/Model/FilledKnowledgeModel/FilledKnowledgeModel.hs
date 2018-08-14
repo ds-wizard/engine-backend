@@ -23,6 +23,7 @@ data FilledQuestion = FilledQuestion
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
   , _filledQuestionText :: Maybe String
+  , _filledQuestionRequiredLevel :: Maybe Int
   , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _filledQuestionAnswers :: Maybe [Answer]
   , _filledQuestionAnswerValue :: Maybe String

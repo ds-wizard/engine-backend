@@ -30,6 +30,7 @@ toFilledQuestion q =
   , _filledQuestionQType = q ^. qType
   , _filledQuestionTitle = q ^. title
   , _filledQuestionText = q ^. text
+  , _filledQuestionRequiredLevel = q ^. requiredLevel
   , _filledQuestionAnswerItemTemplate = q ^. answerItemTemplate
   , _filledQuestionAnswers = q ^. answers
   , _filledQuestionAnswerValue = Nothing

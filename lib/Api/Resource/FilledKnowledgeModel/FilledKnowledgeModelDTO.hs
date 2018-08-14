@@ -26,6 +26,7 @@ data FilledQuestionDTO = FilledQuestionDTO
   , _filledQuestionDTOQType :: QuestionType
   , _filledQuestionDTOTitle :: String
   , _filledQuestionDTOText :: Maybe String
+  , _filledQuestionDTORequiredLevel :: Maybe Int
   , _filledQuestionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _filledQuestionDTOAnswers :: Maybe [AnswerDTO]
   , _filledQuestionDTOAnswerValue :: Maybe String
@@ -73,6 +74,7 @@ instance ToJSON FilledQuestionDTO where
       , "type" .= serializeQuestionType _filledQuestionDTOQType
       , "title" .= _filledQuestionDTOTitle
       , "text" .= _filledQuestionDTOText
+      , "requiredLevel" .= _filledQuestionDTORequiredLevel
       , "answerItemTemplate" .= _filledQuestionDTOAnswerItemTemplate
       , "answers" .= _filledQuestionDTOAnswers
       , "answerValue" .= _filledQuestionDTOAnswerValue
@@ -122,6 +124,7 @@ instance FromJSON FilledQuestionDTO where
     _filledQuestionDTOUuid <- o .: "uuid"
     _filledQuestionDTOTitle <- o .: "title"
     _filledQuestionDTOText <- o .: "text"
+    _filledQuestionDTORequiredLevel <- o .: "requiredLevel"
     _filledQuestionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _filledQuestionDTOAnswers <- o .: "answers"
     _filledQuestionDTOAnswerValue <- o .: "answerValue"

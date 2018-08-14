@@ -31,6 +31,7 @@ toFilledQuestionDTO fQ =
   , _filledQuestionDTOQType = fQ ^. qType
   , _filledQuestionDTOTitle = fQ ^. title
   , _filledQuestionDTOText = fQ ^. text
+  , _filledQuestionDTORequiredLevel = fQ ^. requiredLevel
   , _filledQuestionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> fQ ^. answerItemTemplate
   , _filledQuestionDTOAnswers = (fmap toAnswerDTO) <$> fQ ^. answers
   , _filledQuestionDTOAnswerValue = fQ ^. answerValue
