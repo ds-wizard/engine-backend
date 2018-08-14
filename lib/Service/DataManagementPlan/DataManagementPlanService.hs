@@ -34,7 +34,7 @@ createDataManagementPlan qtnUuid =
       dmpUuid <- liftIO generateUuid
       let filledKM = createFilledKM $ qtn
       now <- liftIO getCurrentTime
-      dmpReport <- liftIO $ generateReport dmpMetrics filledKM
+      dmpReport <- liftIO $ generateReport (qtn ^. level) dmpMetrics filledKM
       let dmp =
             DataManagementPlan
             { _dataManagementPlanUuid = dmpUuid

@@ -22,40 +22,34 @@ isQuestionAnswered fq =
     QuestionTypeDate -> isJust $ fq ^. answerValue
     QuestionTypeText -> isJust $ fq ^. answerValue
 
-computeAnsweredIndication :: FilledChapter -> Indication
-computeAnsweredIndication fChapter =
+computeAnsweredIndication :: Int -> FilledChapter -> Indication
+computeAnsweredIndication currentLevel fChapter =
   AnsweredIndication' $
   AnsweredIndication
-  {_answeredIndicationAnsweredQuestions = answered, _answeredIndicationUnansweredQuestions = unanswered}
+  { _answeredIndicationAnsweredQuestions = sum $ getQuestionCount (isQuestionAnswered) <$> fChapter ^. questions
+  , _answeredIndicationUnansweredQuestions = sum $ getQuestionCount (not . isQuestionAnswered) <$> fChapter ^. questions
+  }
   where
-    answered :: Int
-    answered = foldl (+) 0 $ getAnsweredQuestion (isQuestionAnswered) <$> fChapter ^. questions
-    unanswered = foldl (+) 0 $ getAnsweredQuestion (not . isQuestionAnswered) <$> fChapter ^. questions
-    getAnsweredQuestion :: (FilledQuestion -> Bool) -> FilledQuestion -> Int
-    getAnsweredQuestion condition fQuestion = current + childrens
+    getQuestionCount :: (FilledQuestion -> Bool) -> FilledQuestion -> Int
+    getQuestionCount condition fq = currentQuestion + childrens
       where
-        current =
-          if condition fQuestion
+        currentQuestion =
+          if condition fq && isRequiredNow
             then 1
             else 0
-        childrens =
-          (walkThroughAnswerOption $ fQuestion ^. answerOption) + (walkThroughAnswerItems $ fQuestion ^. answerItems)
-        walkThroughAnswerOption mAo =
-          foldl (+) 0 $
-          case mAo of
-            Just ao -> (getAnsweredQuestion condition) <$> ao ^. followUps
-            Nothing -> []
-        walkThroughAnswerItems mAis =
-          foldl (+) 0 $
-          case mAis of
-            Just ais -> walkThoughAnswerItem <$> ais
-            Nothing -> []
-        walkThoughAnswerItem ai = foldl (+) 0 $ (getAnsweredQuestion condition) <$> ai ^. questions
+        isRequiredNow = case fq ^. requiredLevel of
+          Just rl -> rl <= currentLevel
+          Nothing -> True
+        childrens = (walkOverAnswerOption $ fq ^. answerOption) + (walkOverAnswerItems $ fq ^. answerItems)
+          where
+            walkOverAnswerOption mAo = sum $ maybe [] (\ao -> (getQuestionCount condition) <$> ao ^. followUps) mAo
+            walkOverAnswerItems mAis = sum $ maybe [] (\ais -> walkOverAnswerItem <$> ais) mAis
+            walkOverAnswerItem ai = sum $ (getQuestionCount condition) <$> ai ^. questions
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-computeMetricSummaryF :: FilledChapter -> Metric -> MetricSummary
-computeMetricSummaryF fChapter m =
+computeMetricSummary :: FilledChapter -> Metric -> MetricSummary
+computeMetricSummary fChapter m =
   MetricSummary {_metricSummaryMetricUuid = m ^. uuid, _metricSummaryMeasure = msMeasure}
   where
     msMeasure :: Double
@@ -72,53 +66,28 @@ computeMetricSummaryF fChapter m =
     filterAccordingCurrentMetric = filter (\mm -> mm ^. metricUuid == m ^. uuid)
     mapToTouple :: [MetricMeasure] -> [(Double, Double)]
     mapToTouple = map (\mm -> (mm ^. measure, mm ^. weight))
-    -- iMeasure :: Double
-    -- iMeasure = weightAverage ((\mm -> (mm ^. measure, mm ^. weight)) <$> measures)
-    -- measures :: [MetricMeasure]
-    -- measures = catMaybes . concat $ getQuestionMeasure <$> fChapter ^. questions
-    -- getQuestionMeasure :: FilledQuestion -> [Maybe MetricMeasure]
-    -- getQuestionMeasure fQuestion = [current] ++ childrens
-    --   where
-    --     current = case fQuestion ^. qType of
-    --       QuestionTypeOptions ->  case fQuestion ^. answerOption of
-    --         Just ao -> find (m==) (ao ^. metricMeasures)
-    --         Nothing -> Nothing
-    --       _ -> Nothing
-    --     childrens =
-    --       (walkThroughAnswerOption $ fQuestion ^. answerOption) ++ (walkThroughAnswerItems $ fQuestion ^. answerItems)
-    --     walkThroughAnswerOption mAo =
-    --       concat $
-    --       case mAo of
-    --         Just ao -> getQuestionMeasure <$> ao ^. followUps
-    --         Nothing -> []
-    --     walkThroughAnswerItems mAis =
-    --       concat $
-    --       case mAis of
-    --         Just ais -> walkThoughAnswerItem <$> ais
-    --         Nothing -> []
-    --     walkThoughAnswerItem ai = concat $ getQuestionMeasure <$> ai ^. questions
 
 computeMetrics :: [Metric] -> FilledChapter -> [MetricSummary]
-computeMetrics metrics fChapter =
-  let indicationF = computeMetricSummaryF fChapter (metrics !! 0)
-  in [indicationF]
+computeMetrics metrics fChapter = (computeMetricSummary fChapter) <$> metrics
 
-computeChapterReport :: [Metric] -> FilledChapter -> ChapterReport
-computeChapterReport metrics fChapter =
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+computeChapterReport :: Int -> [Metric] -> FilledChapter -> ChapterReport
+computeChapterReport currentLevel metrics fChapter =
   ChapterReport
   { _chapterReportChapterUuid = fChapter ^. uuid
-  , _chapterReportIndications = [computeAnsweredIndication fChapter]
+  , _chapterReportIndications = [computeAnsweredIndication currentLevel fChapter]
   , _chapterReportMetrics = computeMetrics metrics fChapter
   }
 
-generateReport :: [Metric] -> FilledKnowledgeModel -> IO Report
-generateReport metrics filledKM = do
+generateReport :: Int -> [Metric] -> FilledKnowledgeModel -> IO Report
+generateReport currentLevel metrics filledKM = do
   rUuid <- generateUuid
   now <- getCurrentTime
   return
     Report
     { _reportUuid = rUuid
-    , _reportChapterReports = (computeChapterReport metrics) <$> (filledKM ^. chapters)
+    , _reportChapterReports = (computeChapterReport currentLevel metrics) <$> (filledKM ^. chapters)
     , _reportCreatedAt = now
     , _reportUpdatedAt = now
     }

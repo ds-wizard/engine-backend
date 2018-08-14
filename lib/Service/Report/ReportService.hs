@@ -1,6 +1,6 @@
 module Service.Report.ReportService where
 
-import Control.Lens ((&), (.~))
+import Control.Lens ((^.), (&), (.~))
 import Control.Monad.Reader (liftIO)
 
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -20,7 +20,7 @@ getReportByQuestionnaireUuid qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
     heFindMetrics $ \metrics -> do
       let filledKM = createFilledKM qtn
-      report <- liftIO $ generateReport metrics filledKM
+      report <- liftIO $ generateReport (qtn ^. level) metrics filledKM
       return . Right . toReportDTO $ report
 
 getPreviewOfReportByQuestionnaireUuid :: String -> [QuestionnaireReplyDTO] -> AppContextM (Either AppError ReportDTO)
@@ -29,5 +29,5 @@ getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto =
     heFindMetrics $ \metrics -> do
       let qtnWithModifiedReplies = qtn & replies .~ (fromReplyDTO <$> reqDto)
       let filledKM = createFilledKM qtnWithModifiedReplies
-      report <- liftIO $ generateReport metrics filledKM
+      report <- liftIO $ generateReport (qtn ^. level) metrics filledKM
       return . Right . toReportDTO $ report
