@@ -54,7 +54,9 @@ exportDataManagementPlan qtnUuid format = do
     case format of
       JSON -> return . Right . encode $ dmp
       HTML -> return . Right . toHTML $ dmp
-      other -> return . toFormat other $ dmp
+      other -> do
+        result <- liftIO $ toFormat other dmp
+        return result
 
 -- --------------------------------
 -- HELPERS
