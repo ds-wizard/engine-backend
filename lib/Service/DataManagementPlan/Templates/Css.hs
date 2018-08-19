@@ -53,7 +53,7 @@ mainCSS = do
     fontWeight bold
     fontStyle italic
   div # ".answer-block" |> star # ".answer" ? before & content (stringContent " ✔  ")
-  div # ".answer-option" |> p # ".advice" ? before & content (stringContent " ⓘ  ")
+  div # ".answer-option" |> p # ".advice" ? before & content (stringContent "Advice: ")
   div # ".answer-items" |> div # ".answer-item" |> span # ".title" ? display none
   div # ".question.required" ? p # ".no-answer" ? do
     fontWeight bold
