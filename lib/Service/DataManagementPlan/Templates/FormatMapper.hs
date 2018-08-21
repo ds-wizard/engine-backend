@@ -25,12 +25,15 @@ bsToStr = T.unpack . E.decodeUtf8
 toHTML :: DataManagementPlanDTO -> BSL.ByteString
 toHTML = strToBSL . mkHTMLString
 
-toFormat :: DataManagementPlanFormat -> DataManagementPlanDTO -> Either AppError BSL.ByteString
+toFormat :: DataManagementPlanFormat -> DataManagementPlanDTO -> IO (Either AppError BSL.ByteString)
 toFormat format = toType (formatToType format)
   where
-    toType :: Maybe DMPExportType -> DataManagementPlanDTO -> Either AppError BSL.ByteString
-    toType (Just eType) dmp = handleResult . FromHTML.fromHTML eType . mkHTMLString $ dmp
-    toType _ _ = Left . GeneralServerError $ _ERROR_SERVICE_DMP__UKNOWN_FORMAT
+    toType :: Maybe DMPExportType -> DataManagementPlanDTO -> IO (Either AppError BSL.ByteString)
+    toType (Just eType) dmp = do
+      result <- FromHTML.fromHTML eType . mkHTMLString $ dmp
+      return $ handleResult result
+    toType _ _ =
+      return $ Left . GeneralServerError $ _ERROR_SERVICE_DMP__UKNOWN_FORMAT
     handleResult :: Either BS.ByteString BS.ByteString -> Either AppError BSL.ByteString
     handleResult (Right result) = Right . BSL.fromStrict $ result
     handleResult (Left err) = Left . GeneralServerError $ _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED (bsToStr err)
