@@ -22,7 +22,9 @@ toDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
+  , _questionnaireDTOPrivate = questionnaire ^. private
   , _questionnaireDTOPackage = packageToDTO package
+  , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
@@ -33,7 +35,9 @@ toSimpleDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
+  , _questionnaireDTOPrivate = questionnaire ^. private
   , _questionnaireDTOPackage = packageWithEventsToDTO package
+  , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
@@ -48,9 +52,11 @@ toDetailWithPackageWithEventsDTO questionnaire package =
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
+  , _questionnaireDetailDTOPrivate = questionnaire ^. private
   , _questionnaireDetailDTOPackage = packageWithEventsToDTO package
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO $ questionnaire ^. knowledgeModel
   , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
+  , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
@@ -61,9 +67,11 @@ toDetailWithPackageDTODTO questionnaire package =
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
+  , _questionnaireDetailDTOPrivate = questionnaire ^. private
   , _questionnaireDetailDTOPackage = package
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO $ questionnaire ^. knowledgeModel
   , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
+  , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
@@ -78,22 +86,30 @@ fromChangeDTO qtn dto now =
   { _questionnaireUuid = qtn ^. uuid
   , _questionnaireName = qtn ^. name
   , _questionnaireLevel = dto ^. level
+  , _questionnairePrivate = qtn ^. private
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireKnowledgeModel = fromKnowledgeModelDTO $ qtn ^. knowledgeModel
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
+  , _questionnaireOwnerUuid = qtn ^. ownerUuid
   , _questionnaireCreatedAt = qtn ^. createdAt
   , _questionnaireUpdatedAt = now
   }
 
-fromQuestionnaireCreateDTO :: QuestionnaireCreateDTO -> UUID -> KnowledgeModel -> UTCTime -> UTCTime -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid knowledgeModel qtnCreatedAt qtnUpdatedAt =
+fromQuestionnaireCreateDTO ::
+     QuestionnaireCreateDTO -> UUID -> KnowledgeModel -> UUID -> UTCTime -> UTCTime -> Questionnaire
+fromQuestionnaireCreateDTO dto qtnUuid knowledgeModel currentUserUuid qtnCreatedAt qtnUpdatedAt =
   Questionnaire
   { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = 1
+  , _questionnairePrivate = dto ^. private
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireKnowledgeModel = knowledgeModel
   , _questionnaireReplies = []
+  , _questionnaireOwnerUuid =
+      if dto ^. private
+        then Just currentUserUuid
+        else Nothing
   , _questionnaireCreatedAt = qtnCreatedAt
   , _questionnaireUpdatedAt = qtnUpdatedAt
   }
