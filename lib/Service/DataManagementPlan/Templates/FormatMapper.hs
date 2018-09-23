@@ -1,8 +1,8 @@
 module Service.DataManagementPlan.Templates.FormatMapper where
 
-import Data.Default
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
+import Data.Default
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as E
 import qualified Text.FromHTML as FromHTML
@@ -32,8 +32,7 @@ toFormat format = toType (formatToType format)
     toType (Just eType) dmp = do
       result <- FromHTML.fromHTML eType . mkHTMLString $ dmp
       return $ handleResult result
-    toType _ _ =
-      return $ Left . GeneralServerError $ _ERROR_SERVICE_DMP__UKNOWN_FORMAT
+    toType _ _ = return $ Left . GeneralServerError $ _ERROR_SERVICE_DMP__UKNOWN_FORMAT
     handleResult :: Either BS.ByteString BS.ByteString -> Either AppError BSL.ByteString
     handleResult (Right result) = Right . BSL.fromStrict $ result
     handleResult (Left err) = Left . GeneralServerError $ _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED (bsToStr err)
