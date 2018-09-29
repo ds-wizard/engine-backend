@@ -1,5 +1,6 @@
 module Service.User.UserValidation where
 
+import Data.Char (toLower)
 import Data.Either (isRight)
 
 import Database.DAO.User.UserDAO
@@ -11,7 +12,7 @@ import Model.User.User
 
 validateUserEmailUniqueness :: Email -> AppContextM (Maybe AppError)
 validateUserEmailUniqueness email = do
-  eitherUserFromDb <- findUserByEmail email
+  eitherUserFromDb <- findUserByEmail (toLower <$> email)
   if isRight eitherUserFromDb
     then return . Just . createErrorWithFieldError $ ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email)
     else return Nothing

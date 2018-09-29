@@ -1,6 +1,7 @@
 module Service.User.UserMapper where
 
 import Control.Lens ((^.))
+import Data.Char (toLower)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -31,7 +32,7 @@ fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt
   { _userUuid = userUuid
   , _userName = dto ^. name
   , _userSurname = dto ^. surname
-  , _userEmail = dto ^. email
+  , _userEmail = toLower <$> dto ^. email
   , _userPasswordHash = passwordHash
   , _userRole = role
   , _userPermissions = permissions
@@ -46,7 +47,7 @@ fromUserChangeDTO dto oldUser permission =
   { _userUuid = oldUser ^. uuid
   , _userName = dto ^. name
   , _userSurname = dto ^. surname
-  , _userEmail = dto ^. email
+  , _userEmail = toLower <$> dto ^. email
   , _userPasswordHash = oldUser ^. passwordHash
   , _userRole = dto ^. role
   , _userPermissions = permission
@@ -61,7 +62,7 @@ fromUserProfileChangeDTO dto oldUser =
   { _userUuid = oldUser ^. uuid
   , _userName = dto ^. name
   , _userSurname = dto ^. surname
-  , _userEmail = dto ^. email
+  , _userEmail = toLower <$> dto ^. email
   , _userPasswordHash = oldUser ^. passwordHash
   , _userRole = oldUser ^. role
   , _userPermissions = oldUser ^. permissions
