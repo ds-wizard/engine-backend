@@ -12,7 +12,7 @@ data UserChangeDTO = UserChangeDTO
   , _userChangeDTOSurname :: String
   , _userChangeDTOEmail :: Email
   , _userChangeDTORole :: Role
-  , _userChangeDTOIsActive :: Bool
+  , _userChangeDTOActive :: Bool
   }
 
 instance FromJSON UserChangeDTO where
@@ -22,7 +22,7 @@ instance FromJSON UserChangeDTO where
     _userChangeDTOSurname <- o .: "surname"
     _userChangeDTOEmail <- o .: "email"
     _userChangeDTORole <- o .: "role"
-    _userChangeDTOIsActive <- o .: "isActive"
+    _userChangeDTOActive <- o .: "active"
     return UserChangeDTO {..}
   parseJSON _ = mzero
 
@@ -34,5 +34,5 @@ instance ToJSON UserChangeDTO where
       , "surname" .= _userChangeDTOSurname
       , "email" .= _userChangeDTOEmail
       , "role" .= _userChangeDTORole
-      , "isActive" .= _userChangeDTOIsActive
+      , "active" .= _userChangeDTOActive
       ]

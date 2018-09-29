@@ -56,7 +56,7 @@ reqAuthHeaderWithoutPerms dswConfig perm =
         , _userPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
         , _userRole = "ADMIN"
         , _userPermissions = L.delete perm allPerms
-        , _userIsActive = True
+        , _userActive = True
         , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
         , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
         }

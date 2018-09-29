@@ -273,7 +273,7 @@ userAPI appContext =
               , _userChangeDTOSurname = "EDITED: Newton"
               , _userChangeDTOEmail = "isaac.newton@example-edited.com"
               , _userChangeDTORole = "ADMIN"
-              , _userChangeDTOIsActive = True
+              , _userChangeDTOActive = True
               }
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
@@ -323,7 +323,7 @@ userAPI appContext =
                 , _userChangeDTOSurname = "EDITED: Newton"
                 , _userChangeDTOEmail = "albert.einstein@example.com"
                 , _userChangeDTORole = "ADMIN"
-                , _userChangeDTOIsActive = True
+                , _userChangeDTOActive = True
                 }
           let reqBody = encode reqDto
            -- AND: Prepare expectation
@@ -413,7 +413,7 @@ userAPI appContext =
           liftIO $ (isRight eitherActionKeys) `shouldBe` True
           let (Right userFromDb) = eitherUser
           let (Right actionKeys) = eitherActionKeys
-          liftIO $ (userFromDb ^. isActive) `shouldBe` True
+          liftIO $ (userFromDb ^. active) `shouldBe` True
           liftIO $ Prelude.length actionKeys `shouldBe` 0
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "active"
         createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/state?hash=" reqHeaders reqBody

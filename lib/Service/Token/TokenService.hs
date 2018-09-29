@@ -43,7 +43,7 @@ getToken tokenCreateDto =
         Left error -> return . Left $ error
     -- ------------------------------------------------------------
     checkIsUserActive user callback =
-      if user ^. isActive
+      if user ^. active
         then callback ()
         else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     -- ------------------------------------------------------------

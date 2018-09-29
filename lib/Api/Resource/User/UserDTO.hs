@@ -14,7 +14,7 @@ data UserDTO = UserDTO
   , _userDTOEmail :: Email
   , _userDTORole :: Role
   , _userDTOPermissions :: [Permission]
-  , _userDTOIsActive :: Bool
+  , _userDTOActive :: Bool
   , _userDTOCreatedAt :: Maybe UTCTime
   , _userDTOUpdatedAt :: Maybe UTCTime
   } deriving (Show, Eq)
@@ -27,7 +27,7 @@ instance FromJSON UserDTO where
     _userDTOEmail <- o .: "email"
     _userDTORole <- o .: "role"
     _userDTOPermissions <- o .: "permissions"
-    _userDTOIsActive <- o .: "isActive"
+    _userDTOActive <- o .: "active"
     _userDTOCreatedAt <- o .: "createdAt"
     _userDTOUpdatedAt <- o .: "updatedAt"
     return UserDTO {..}
@@ -42,7 +42,7 @@ instance ToJSON UserDTO where
       , "email" .= _userDTOEmail
       , "role" .= _userDTORole
       , "permissions" .= _userDTOPermissions
-      , "isActive" .= _userDTOIsActive
+      , "active" .= _userDTOActive
       , "createdAt" .= _userDTOCreatedAt
       , "updatedAt" .= _userDTOUpdatedAt
       ]

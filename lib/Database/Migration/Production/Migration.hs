@@ -22,6 +22,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0006_questionnaire_visibility.Migration
        as M_0006
+import qualified
+       Database.Migration.Production.Migration_0007_user_isActive.Migration
+       as M_0007
 import LensesConfig
 
 runMigration appContext = do
@@ -30,4 +33,11 @@ runMigration appContext = do
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
-  [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition, M_0005.definition, M_0006.definition]
+  [ M_0001.definition
+  , M_0002.definition
+  , M_0003.definition
+  , M_0004.definition
+  , M_0005.definition
+  , M_0006.definition
+  , M_0007.definition
+  ]

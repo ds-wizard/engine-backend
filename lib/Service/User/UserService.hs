@@ -150,7 +150,7 @@ changeUserState userUuid maybeHash userStateDto =
   validateHash maybeHash $ \akHash ->
     hmFindUserById userUuid $ \user ->
       hmGetActionKeyByHash akHash $ \actionKey -> do
-        updatedUser <- updateUserTimestamp $ user & isActive .~ (userStateDto ^. active)
+        updatedUser <- updateUserTimestamp $ user & active .~ (userStateDto ^. active)
         updateUserById updatedUser
         deleteActionKey (actionKey ^. hash)
   where

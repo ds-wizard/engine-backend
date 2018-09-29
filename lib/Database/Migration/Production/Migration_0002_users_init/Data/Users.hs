@@ -20,7 +20,7 @@ userAlbert now =
     , "QTN_PERM"
     , "DMP_PERM"
     ]
-  , "isActive" BSON.=: True
+  , "active" BSON.=: True
   , "createdAt" BSON.=: now
   , "updatedAt" BSON.=: now
   ]
@@ -33,7 +33,7 @@ userNikola now =
   , "passwordHash" BSON.=: "sha256|17|Nwafc2BQvbcbYdV/2m/xVQ==|Mjgj3wrtK21qIoSmz8ODiro8Yr6Upc6V27whAobIz5k=" -- password
   , "role" BSON.=: "DATASTEWARD"
   , "permissions" BSON.=: ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
-  , "isActive" BSON.=: True
+  , "active" BSON.=: True
   , "createdAt" BSON.=: now
   , "updatedAt" BSON.=: now
   ]
@@ -46,7 +46,7 @@ userIsaac now =
   , "passwordHash" BSON.=: "sha256|17|lWASjBQx215ktNe7mjaWHg==|btUAw+oFeBVR9bDXmoVGLMSIrGOjbs+CxC6SR7FqouQ=" -- password
   , "role" BSON.=: "RESEARCHER"
   , "permissions" BSON.=: ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
-  , "isActive" BSON.=: True
+  , "active" BSON.=: True
   , "createdAt" BSON.=: now
   , "updatedAt" BSON.=: now
   ]
