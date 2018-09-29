@@ -28,6 +28,7 @@ packageToSimpleDTO package =
   { _packageSimpleDTOName = package ^. name
   , _packageSimpleDTOOrganizationId = package ^. organizationId
   , _packageSimpleDTOKmId = package ^. kmId
+  , _packageSimpleDTOLatestVersion = package ^. version
   }
 
 packageWithEventsToDTO :: PackageWithEvents -> PackageDTO
@@ -40,6 +41,15 @@ packageWithEventsToDTO package =
   , _packageDTOVersion = package ^. version
   , _packageDTODescription = package ^. description
   , _packageDTOParentPackageId = package ^. parentPackageId
+  }
+
+packageWithEventsToSimpleDTO :: PackageWithEvents -> PackageSimpleDTO
+packageWithEventsToSimpleDTO package =
+  PackageSimpleDTO
+  { _packageSimpleDTOName = package ^. name
+  , _packageSimpleDTOOrganizationId = package ^. organizationId
+  , _packageSimpleDTOKmId = package ^. kmId
+  , _packageSimpleDTOLatestVersion = package ^. version
   }
 
 packageWithEventsToDTOWithEvents :: PackageWithEvents -> PackageWithEventsDTO

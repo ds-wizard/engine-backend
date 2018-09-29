@@ -21,6 +21,12 @@ findPackages = do
   packagesS <- runDB action
   return . deserializeEntities $ packagesS
 
+findPackageWithEvents :: AppContextM (Either AppError [PackageWithEvents])
+findPackageWithEvents = do
+  let action = rest =<< find (select [] pkgCollection)
+  packagesS <- runDB action
+  return . deserializeEntities $ packagesS
+
 findPackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [Package])
 findPackagesFiltered queryParams = do
   let filter = (\(p, v) -> p =: v) <$> queryParams
