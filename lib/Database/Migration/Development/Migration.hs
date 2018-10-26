@@ -1,4 +1,6 @@
-module Database.Migration.Development.Migration where
+module Database.Migration.Development.Migration
+  ( runMigration
+  ) where
 
 import qualified
        Database.Migration.Development.BookReference.BookReferenceMigration

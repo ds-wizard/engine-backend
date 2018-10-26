@@ -1,6 +1,5 @@
 module Api.Handler.Feedback.FeedbackHandler where
 
-import Control.Monad.Reader (lift)
 import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
@@ -13,7 +12,7 @@ import Service.Feedback.FeedbackService
 getFeedbacksA :: Endpoint
 getFeedbacksA = do
   queryParams <- getListOfQueryParamsIfPresent ["packageId", "questionUuid"]
-  eitherDtos <- lift $ getFeedbacksFiltered queryParams
+  eitherDtos <- runInUnauthService $ getFeedbacksFiltered queryParams
   case eitherDtos of
     Right dtos -> json dtos
     Left error -> sendError error
@@ -21,7 +20,7 @@ getFeedbacksA = do
 postFeedbacksA :: Endpoint
 postFeedbacksA = do
   getReqDto $ \reqDto -> do
-    eitherFeedbackDto <- lift $ createFeedback reqDto
+    eitherFeedbackDto <- runInUnauthService $ createFeedback reqDto
     case eitherFeedbackDto of
       Left appError -> sendError appError
       Right questionnaireDto -> do
@@ -31,7 +30,7 @@ postFeedbacksA = do
 getFeedbacksSynchronizationA :: Endpoint
 getFeedbacksSynchronizationA =
   checkServiceToken $ do
-    maybeError <- lift $ synchronizeFeedbacks
+    maybeError <- runInUnauthService $ synchronizeFeedbacks
     case maybeError of
       Nothing -> status noContent204
       Just error -> sendError error
@@ -39,7 +38,7 @@ getFeedbacksSynchronizationA =
 getFeedbackA :: Endpoint
 getFeedbackA = do
   fUuid <- param "fUuid"
-  eitherDto <- lift $ getFeedbackByUuid fUuid
+  eitherDto <- runInUnauthService $ getFeedbackByUuid fUuid
   case eitherDto of
     Right dto -> json dto
     Left error -> sendError error

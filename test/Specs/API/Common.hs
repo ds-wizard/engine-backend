@@ -23,6 +23,7 @@ import Api.Router
 import LensesConfig
 import Model.Config.AppConfig
 import Model.Context.AppContext
+import Model.Context.BaseContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.User.User
@@ -31,8 +32,9 @@ import Service.User.UserService
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
-  let t m = runStdoutLoggingT $ runReaderT (runAppContextM m) appContext
-  scottyAppT t (createEndpoints appContext)
+  let baseContext = BaseContext {_baseContextConfig = appContext ^. config, _baseContextPool = appContext ^. pool}
+      t m = runStdoutLoggingT $ runReaderT (runBaseContextM m) baseContext
+  scottyAppT t (createEndpoints baseContext)
 
 reqAuthHeader :: Header
 reqAuthHeader =

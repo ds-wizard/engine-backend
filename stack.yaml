@@ -46,6 +46,7 @@ extra-deps:
   - persistent-mongoDB-2.8.0
   - ConfigFile-1.1.4
   - pwstore-fast-2.4.4
+  - pretty-terminal-0.1.0.0
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

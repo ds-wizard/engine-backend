@@ -30,6 +30,7 @@ import Model.ActionKey.ActionKey
 import Model.Error.ErrorHelpers
 import Service.User.UserMapper
 import Service.User.UserService
+import Util.List (elems)
 
 import Specs.API.Common
 import Specs.API.User.Detail_Password_Hash_PUT
@@ -97,7 +98,7 @@ userAPI appContext =
           -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
-          liftIO $ headers `shouldBe` expHeaders
+          liftIO $ (expHeaders `elems` headers) `shouldBe` True
           -- AND: Compare state in DB with expectation
           liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
           liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
@@ -216,7 +217,7 @@ userAPI appContext =
           -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
-          liftIO $ headers `shouldBe` expHeaders
+          liftIO $ (expHeaders `elems` headers) `shouldBe` True
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
@@ -288,7 +289,7 @@ userAPI appContext =
           -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
-          liftIO $ headers `shouldBe` expHeaders
+          liftIO $ (expHeaders `elems` headers) `shouldBe` True
           let (Right resBody) = eitherDecode body :: Either String UserDTO
           liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)
           liftIO $ (resBody ^. surname) `shouldBe` (reqDto ^. surname)

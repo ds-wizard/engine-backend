@@ -1,9 +1,8 @@
-module Database.Migration.Production.Migration where
+module Database.Migration.Production.Migration
+  ( runMigration
+  ) where
 
 import Control.Lens ((^.))
-import Database.MongoDB.Migration.Entity
-import Database.MongoDB.Migration.Migration
-
 import qualified
        Database.Migration.Production.Migration_0001_organization_init.Migration
        as M_0001
@@ -28,10 +27,12 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0008_public_questionnaire_visibility.Migration
        as M_0008
+import Database.MongoDB.Migration.Entity
+import Database.MongoDB.Migration.Migration
 import LensesConfig
 
-runMigration appContext = do
-  migrateDatabase (appContext ^. pool) migrationDefinitions
+runMigration baseContext = do
+  migrateDatabase (baseContext ^. pool) migrationDefinitions
   return ()
 
 migrationDefinitions :: [MigrationDefinition]

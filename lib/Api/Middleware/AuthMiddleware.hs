@@ -2,7 +2,7 @@ module Api.Middleware.AuthMiddleware where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
-import Data.ByteString (ByteString)
+import qualified Data.ByteString.Char8 as BS
 import Data.CaseInsensitive (mk)
 import Data.Maybe (isJust)
 import qualified Data.Text as T
@@ -17,6 +17,7 @@ import Prelude hiding (exp)
 import Text.Regex
 
 import Api.Handler.Common
+import Constant.Api (authorizationHeaderName)
 import LensesConfig
 import Localization
 import Model.Config.AppConfig
@@ -24,9 +25,6 @@ import Service.Token.TokenService
 import Util.Token
 
 type EndpointDefinition = (H.Method, Regex)
-
-authorizationHeaderName :: ByteString
-authorizationHeaderName = "Authorization"
 
 getRequestURL :: Request -> String
 getRequestURL request = T.unpack . (T.intercalate "/") $ pathInfo request
@@ -42,7 +40,7 @@ isUnauthorizedEndpoint request unauthorizedEndpoints =
 
 getTokenFromHeader :: Request -> Maybe T.Text
 getTokenFromHeader request =
-  case lookup (mk authorizationHeaderName) (requestHeaders request) of
+  case lookup (mk . BS.pack $ authorizationHeaderName) (requestHeaders request) of
     Just headerValue -> separateToken . decodeUtf8 $ headerValue
     Nothing -> Nothing
 

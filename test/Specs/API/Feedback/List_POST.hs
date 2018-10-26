@@ -18,6 +18,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Context.AppContext
+import Util.List (elems)
 
 import Specs.API.Common
 import Specs.Common
@@ -68,7 +69,7 @@ test_200 appContext =
     -- AND: Compare response with expectation
     let (SResponse (Status status _) headers body) = response
     liftIO $ status `shouldBe` expStatus
-    liftIO $ headers `shouldBe` expHeaders
+    liftIO $ (expHeaders `elems` headers) `shouldBe` True
     -- AND: Compare state in DB with expectation
     liftIO $ (length feedbacks) `shouldBe` 1
     let feedback = feedbacks !! 0
