@@ -52,6 +52,7 @@ library:
   - persistent-mongoDB
   - persistent-template
   - pretty-simple
+  - pretty-terminal
   - pwstore-fast
   - random
   - regex-compat

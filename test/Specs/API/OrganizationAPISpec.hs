@@ -20,6 +20,7 @@ import LensesConfig
 import Localization
 import Model.Error.ErrorHelpers
 import Service.Organization.OrganizationService
+import Util.List (elems)
 
 import Specs.API.Common
 import Specs.Common
@@ -87,7 +88,7 @@ organizationAPI appContext =
           -- AND: Compare response with expetation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
-          liftIO $ headers `shouldBe` expHeaders
+          liftIO $ (expHeaders `elems` headers) `shouldBe` True
           let (Right resBody) = eitherDecode body :: Either String OrganizationDTO
           liftIO $ (resBody ^. uuid) `shouldBe` (reqDto ^. uuid)
           liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)

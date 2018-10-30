@@ -1,12 +1,16 @@
 module Main where
 
 import Control.Lens ((^.))
+import Data.Maybe (fromJust)
+import qualified Data.UUID as U
 import Test.Hspec
 
 import Database.Connection
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Context.AppContext
 import Service.Config.ConfigLoader
+import Service.User.UserMapper
 
 import Specs.API.BookReference.APISpec
 import Specs.API.BranchAPISpec
@@ -54,13 +58,19 @@ prepareWebApp runCallback = do
       putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
-        let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
+        let appContext =
+              AppContext
+              { _appContextConfig = dswConfig
+              , _appContextPool = dbPool
+              , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
+              , _appContextCurrentUser = Just . toDTO $ userAlbert
+              }
         runCallback appContext
 
 main :: IO ()
 main =
   prepareWebApp
-    (\appContext ->
+    (\baseContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
            describe "MODEL" $ do
@@ -80,21 +90,21 @@ main =
              listSpec
              mathSpec
              tokenSpec
-         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
+         before (resetDB baseContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
-             bookReferenceAPI appContext
-             branchAPI appContext
-             eventAPI appContext
-             feedbackAPI appContext
-             infoAPI appContext
-             knowledgeModelAPI appContext
-             levelAPI appContext
-             metricAPI appContext
-             migratorAPI appContext
-             organizationAPI appContext
-             packageAPI appContext
-             questionnaireAPI appContext
-             tokenAPI appContext
-             userAPI appContext
-             versionAPI appContext
-           describe "SERVICE" $ branchServiceIntegrationSpec appContext)
+             bookReferenceAPI baseContext
+             branchAPI baseContext
+             eventAPI baseContext
+             feedbackAPI baseContext
+             infoAPI baseContext
+             knowledgeModelAPI baseContext
+             levelAPI baseContext
+             metricAPI baseContext
+             migratorAPI baseContext
+             organizationAPI baseContext
+             packageAPI baseContext
+             questionnaireAPI baseContext
+             tokenAPI baseContext
+             userAPI baseContext
+             versionAPI baseContext
+           describe "SERVICE" $ branchServiceIntegrationSpec baseContext)

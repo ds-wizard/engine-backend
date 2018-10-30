@@ -42,6 +42,7 @@ import Model.BookReference.BookReference
 import Model.Branch.Branch
 import Model.Config.AppConfig
 import Model.Context.AppContext
+import Model.Context.BaseContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.DataManagementPlan.DataManagementPlanTemplateContext
 import Model.Event.Answer.AnswerEvent
@@ -104,6 +105,8 @@ makeFields ''BuildInfo
 makeFields ''AppConfig
 
 -- Model / Context
+makeFields ''BaseContext
+
 makeFields ''AppContext
 
 -- Model / DataManagementPlan

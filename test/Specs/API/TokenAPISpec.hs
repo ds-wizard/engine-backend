@@ -13,6 +13,7 @@ import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import LensesConfig
 import Model.Error.ErrorHelpers
+import Util.List (elems)
 
 import Specs.API.Common
 
@@ -40,7 +41,7 @@ tokenAPI appContext =
           -- AND: Compare response with expetation
       let (SResponse (Status status _) headers body) = response
       liftIO $ status `shouldBe` expStatus
-      liftIO $ headers `shouldBe` expHeaders
+      liftIO $ (expHeaders `elems` headers) `shouldBe` True
       let eBody = eitherDecode body :: Either String TokenDTO
       let (Right body) = eBody
       liftIO $ (body ^. token) `shouldStartWith` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"

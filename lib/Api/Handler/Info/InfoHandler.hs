@@ -8,13 +8,11 @@ import Web.Scotty.Trans (json)
 import Api.Handler.Common
 import Api.Resource.Info.InfoDTO
 import LensesConfig
-import Model.Context.AppContext
-import Util.Logger
+import Model.Context.BaseContext
 
 getInfoA :: Endpoint
 getInfoA = do
-  lift $ logInfo "Hello from infoendpoint"
-  dswConfig <- lift $ asks _appContextConfig
+  dswConfig <- lift $ asks _baseContextConfig
   json
     InfoDTO
     { _idtoName = dswConfig ^. buildInfo ^. appName

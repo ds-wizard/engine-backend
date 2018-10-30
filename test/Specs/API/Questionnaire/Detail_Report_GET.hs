@@ -23,6 +23,7 @@ import qualified
 import LensesConfig
 import Model.Context.AppContext
 import Service.Questionnaire.QuestionnaireMapper
+import Util.List (elems)
 
 import Specs.API.Common
 import Specs.Common
@@ -67,7 +68,7 @@ test_200 appContext =
     -- THEN: Compare response with expectation
     let (SResponse (Status status _) headers body) = response
     liftIO $ status `shouldBe` expStatus
-    liftIO $ headers `shouldBe` expHeaders
+    liftIO $ (expHeaders `elems` headers) `shouldBe` True
     -- AND: Compare body
     let (Right resBody) = eitherDecode body :: Either String ReportDTO
     let rs = resBody ^. chapterReports

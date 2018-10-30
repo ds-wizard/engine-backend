@@ -1,13 +1,14 @@
 module Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (asks, lift)
+import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Monad.Reader (asks, lift, liftIO, runReaderT)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import qualified Data.ByteString.Lazy as BSL
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
-import qualified Data.Text.Lazy as TL
+import qualified Data.UUID as U
 import Network.HTTP.Types (hContentType, notFound404)
 import Network.HTTP.Types.Method (methodOptions)
 import Network.HTTP.Types.Status
@@ -19,17 +20,51 @@ import Web.Scotty.Trans
         status)
 
 import Api.Resource.Error.ErrorDTO ()
+import Constant.Api
+       (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import LensesConfig
 import Localization
 import Model.Context.AppContext
+import Model.Context.BaseContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Service.Token.TokenService
 import Service.User.UserService
 import Util.Logger
 import Util.Token
+import Util.Uuid
 
-type Endpoint = ActionT LT.Text AppContextM ()
+type Endpoint = ActionT LT.Text BaseContextM ()
+
+runInUnauthService function = do
+  traceUuid <- liftIO generateUuid
+  addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
+  dswConfig <- lift $ asks _baseContextConfig
+  dbPool <- lift $ asks _baseContextPool
+  let appContext =
+        AppContext
+        { _appContextConfig = dswConfig
+        , _appContextPool = dbPool
+        , _appContextTraceUuid = traceUuid
+        , _appContextCurrentUser = Nothing
+        }
+  lift . BaseContextM . lift . lift $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+
+runInAuthService user function = do
+  traceUuid <- liftIO generateUuid
+  addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
+  dswConfig <- lift $ asks _baseContextConfig
+  dbPool <- lift $ asks _baseContextPool
+  let appContext =
+        AppContext
+        { _appContextConfig = dswConfig
+        , _appContextPool = dbPool
+        , _appContextTraceUuid = traceUuid
+        , _appContextCurrentUser = Just user
+        }
+  lift . BaseContextM . lift . lift $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+
+getAuthServiceExecutor callback = getCurrentUser $ \user -> callback $ runInAuthService user
 
 getReqDto callback = do
   reqBody <- body
@@ -39,7 +74,7 @@ getReqDto callback = do
     Left error -> sendError $ createErrorWithErrorMessage error
 
 getCurrentUserUuid callback = do
-  tokenHeader <- header "Authorization"
+  tokenHeader <- header (LT.pack authorizationHeaderName)
   let userUuidMaybe =
         tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getUserUuidFromToken :: Maybe T.Text
   case userUuidMaybe of
@@ -48,7 +83,7 @@ getCurrentUserUuid callback = do
 
 getCurrentUser callback =
   getCurrentUserUuid $ \userUuid -> do
-    eitherUser <- lift $ getUserById userUuid
+    eitherUser <- runInUnauthService $ getUserById userUuid
     case eitherUser of
       Right user -> callback user
       Left error -> sendError error
@@ -60,7 +95,7 @@ getQueryParam paramName = do
     Just value -> return . Just . LT.toStrict $ value
     Nothing -> return Nothing
 
-getListOfQueryParamsIfPresent :: [LT.Text] -> ActionT LT.Text AppContextM [(T.Text, T.Text)]
+getListOfQueryParamsIfPresent :: [LT.Text] -> ActionT LT.Text BaseContextM [(T.Text, T.Text)]
 getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
   where
     go name monadAcc = do
@@ -74,7 +109,7 @@ getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
         Nothing -> return Nothing
 
 checkPermission perm callback = do
-  tokenHeader <- header "Authorization"
+  tokenHeader <- header (LT.pack authorizationHeaderName)
   let mUserPerms = tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getPermissionsFromToken
   case mUserPerms of
     Just userPerms ->
@@ -84,8 +119,8 @@ checkPermission perm callback = do
     Nothing -> forbidden
 
 checkServiceToken callback = do
-  tokenHeader <- header "Authorization"
-  dswConfig <- lift $ asks _appContextConfig
+  tokenHeader <- header (LT.pack authorizationHeaderName)
+  dswConfig <- lift $ asks _baseContextConfig
   let mToken =
         tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= validateServiceToken dswConfig
   case mToken of
@@ -98,7 +133,7 @@ checkServiceToken callback = do
         else Nothing
 
 isLogged callback = do
-  tokenHeader <- header "Authorization"
+  tokenHeader <- header (LT.pack authorizationHeaderName)
   callback . isJust $ tokenHeader
 
 isAdmin callback =
@@ -134,8 +169,8 @@ sendError (GeneralServerError errorMessage) = do
 sendFile :: String -> BSL.ByteString -> Endpoint
 sendFile filename body = do
   let cdHeader = "attachment;filename=" ++ filename
-  addHeader "Content-Disposition" (TL.pack cdHeader)
-  addHeader "Content-Type" (TL.pack "application/octet-stream")
+  addHeader "Content-Disposition" (LT.pack cdHeader)
+  addHeader "Content-Type" (LT.pack "application/octet-stream")
   raw body
 
 unauthorizedA :: String -> Endpoint

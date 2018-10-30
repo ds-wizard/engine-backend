@@ -15,7 +15,8 @@ import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
 import LensesConfig
 import Model.Config.Environment
-import Model.Context.AppContext
+import Model.Context.AppContextHelpers
+import Model.Context.BaseContext
 import Service.Config.ConfigLoader
 import Util.Logger
 
@@ -50,24 +51,24 @@ runServer =
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
           lift $ logInfo "DATABASE: connected"
           let serverPort = dswConfig ^. webConfig ^. port
-          let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
-          liftIO $ runDBMigrations appContext
-          liftIO $ runApplication appContext
+          let baseContext = BaseContext {_baseContextConfig = dswConfig, _baseContextPool = dbPool}
+          liftIO $ runDBMigrations baseContext
+          liftIO $ runApplication baseContext
 
 runDBMigrations context =
   case context ^. config . environment . env of
-    Development -> runStdoutLoggingT $ runReaderT (runAppContextM DM.runMigration) context
+    Development -> runStdoutLoggingT $ runAppContextWithBaseContext DM.runMigration context
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context
     _ -> return ()
 
-runApplication :: AppContext -> IO ()
+runApplication :: BaseContext -> IO ()
 runApplication context = do
   let o = getOptions context
-  let r m = runStdoutLoggingT $ runReaderT (runAppContextM m) context
+  let r m = runStdoutLoggingT $ runReaderT (runBaseContextM m) context
   scottyOptsT o r (createEndpoints context)
 
-getOptions :: AppContext -> Options
+getOptions :: BaseContext -> Options
 getOptions context =
   def
   { settings = getSettings context
@@ -79,7 +80,7 @@ getOptions context =
         Test -> 0
   }
 
-getSettings :: AppContext -> Settings
+getSettings :: BaseContext -> Settings
 getSettings context =
   let webPort = context ^. config . webConfig . port
   in setPort webPort defaultSettings

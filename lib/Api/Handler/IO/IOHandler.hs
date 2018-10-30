@@ -1,6 +1,5 @@
 module Api.Handler.IO.IOHandler where
 
-import Control.Monad.Trans.Class (lift)
 import Data.Aeson (encode)
 import qualified Data.List as L
 import Data.Text.Lazy
@@ -13,7 +12,7 @@ import Service.Package.PackageService
 exportA :: Endpoint
 exportA = do
   pkgId <- param "pkgId"
-  eitherDto <- lift $ getPackageWithEventsById pkgId
+  eitherDto <- runInUnauthService $ getPackageWithEventsById pkgId
   case eitherDto of
     Right dto -> do
       let cdHeader = "attachment;filename=" ++ pkgId ++ ".kmp"
@@ -23,14 +22,15 @@ exportA = do
     Left error -> sendError error
 
 importA :: Endpoint
-importA = do
-  fs <- files
-  case L.find (\(fieldName, file) -> fieldName == "file") fs of
-    Just (fieldName, file) -> do
-      let fName = fileName file
-      let fContent = fileContent file
-      eitherDto <- lift $ importPackage fContent
-      case eitherDto of
-        Right dto -> json dto
-        Left error -> sendError error
-    Nothing -> notFoundA
+importA =
+  getAuthServiceExecutor $ \runInAuthService -> do
+    fs <- files
+    case L.find (\(fieldName, file) -> fieldName == "file") fs of
+      Just (fieldName, file) -> do
+        let fName = fileName file
+        let fContent = fileContent file
+        eitherDto <- runInAuthService $ importPackage fContent
+        case eitherDto of
+          Right dto -> json dto
+          Left error -> sendError error
+      Nothing -> notFoundA

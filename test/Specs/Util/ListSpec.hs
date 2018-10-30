@@ -15,3 +15,11 @@ listSpec =
       it "[] -> []" $ removeDuplicates [] `shouldBe` []
       it "[1,2,3] -> [1,2,3]" $ removeDuplicates [1, 2, 3] `shouldBe` [1, 2, 3]
       it "[1,2,3,1,2] -> [1,2,3,1,2]" $ removeDuplicates [1, 2, 3] `shouldBe` [1, 2, 3]
+    describe "elems" $ do
+      it "[] -> []" $ [] `elems` [] `shouldBe` True
+      it "[] -> [1]" $ [] `elems` [1] `shouldBe` True
+      it "[1] -> []" $ [1] `elems` [] `shouldBe` False
+      it "[1] -> [1,2]" $ [1] `elems` [1, 2] `shouldBe` True
+      it "[1,2] -> [1,2]" $ [1, 2] `elems` [1, 2] `shouldBe` True
+      it "[2,1] -> [1,2]" $ [2, 1] `elems` [1, 2] `shouldBe` True
+      it "[1,2] -> [1]" $ [1, 2] `elems` [1] `shouldBe` False
