@@ -34,6 +34,12 @@ findQuestionnaireById qtnUuid = do
   maybeQuestionnaireS <- runDB action
   return . deserializeMaybeEntity $ maybeQuestionnaireS
 
+findQuestionnaireByIdAndOwnerUuid :: String -> String -> AppContextM (Either AppError Questionnaire)
+findQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid = do
+  let action = findOne $ select ["uuid" =: qtnUuid, "ownerUuid" =: ownerUuid] qtnCollection
+  maybeQuestionnaireS <- runDB action
+  return . deserializeMaybeEntity $ maybeQuestionnaireS
+
 insertQuestionnaire :: Questionnaire -> AppContextM Value
 insertQuestionnaire questionnaire = do
   let action = insert qtnCollection (toBSON questionnaire)
@@ -61,6 +67,12 @@ deleteQuestionnaireById qtnUuid = do
 -- --------------------------------
 heFindQuestionnaireById qtnUuid callback = do
   eitherQuestionnaire <- findQuestionnaireById qtnUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Left $ error
+
+heFindQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid callback = do
+  eitherQuestionnaire <- findQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error

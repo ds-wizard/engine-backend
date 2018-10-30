@@ -17,7 +17,7 @@ instance ToBSON User where
     , "passwordHash" BSON.=: (user ^. passwordHash)
     , "role" BSON.=: (user ^. role)
     , "permissions" BSON.=: (user ^. permissions)
-    , "isActive" BSON.=: (user ^. isActive)
+    , "active" BSON.=: (user ^. active)
     , "createdAt" BSON.=: (user ^. createdAt)
     , "updatedAt" BSON.=: (user ^. updatedAt)
     ]
@@ -31,7 +31,7 @@ instance FromBSON User where
     uPasswordHash <- BSON.lookup "passwordHash" doc
     uRole <- BSON.lookup "role" doc
     uPermissions <- BSON.lookup "permissions" doc
-    uIsActive <- BSON.lookup "isActive" doc
+    uActive <- BSON.lookup "active" doc
     uCreatedAt <- BSON.lookup "createdAt" doc
     uUpdatedAt <- BSON.lookup "updatedAt" doc
     return
@@ -43,7 +43,7 @@ instance FromBSON User where
       , _userPasswordHash = uPasswordHash
       , _userRole = uRole
       , _userPermissions = uPermissions
-      , _userIsActive = uIsActive
+      , _userActive = uActive
       , _userCreatedAt = uCreatedAt
       , _userUpdatedAt = uUpdatedAt
       }

@@ -15,8 +15,10 @@ data Questionnaire = Questionnaire
   { _questionnaireUuid :: U.UUID
   , _questionnaireName :: String
   , _questionnaireLevel :: Int
+  , _questionnairePrivate :: Bool
   , _questionnairePackageId :: String
   , _questionnaireKnowledgeModel :: KnowledgeModel
+  , _questionnaireOwnerUuid :: Maybe U.UUID
   , _questionnaireReplies :: [QuestionnaireReply]
   , _questionnaireCreatedAt :: UTCTime
   , _questionnaireUpdatedAt :: UTCTime

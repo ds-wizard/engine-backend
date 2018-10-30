@@ -1,6 +1,6 @@
 module Service.Package.PackageService where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
@@ -37,27 +37,35 @@ getPackagesFiltered queryParams =
 getSimplePackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageSimpleDTO])
 getSimplePackagesFiltered queryParams = do
   heFindPackagesFiltered queryParams $ \packages -> do
-    let uniquePackages = makePackagesUnique packages
-    return . Right . fmap packageToSimpleDTO $ uniquePackages
+    let uniquePackages = foldl addIfUnique [] packages
+    return . Right $ uniquePackages
   where
-    makePackagesUnique :: [Package] -> [Package]
-    makePackagesUnique = foldl addIfUnique []
-    addIfUnique :: [Package] -> Package -> [Package]
-    addIfUnique packages newPackage =
-      case isAlreadyInArray packages newPackage of
-        (Just _) -> packages
-        Nothing -> packages ++ [newPackage]
-    isAlreadyInArray :: [Package] -> Package -> Maybe Package
-    isAlreadyInArray packages newPackage =
+    addIfUnique :: [PackageSimpleDTO] -> Package -> [PackageSimpleDTO]
+    addIfUnique packageDtos newPackage =
+      case isAlreadyInArray packageDtos newPackage of
+        (Just packageDto) ->
+          let withoutDesiredPackage = delete packageDto packageDtos
+              updatedPackageDto = computeLatestVersion packageDto newPackage
+          in withoutDesiredPackage ++ [updatedPackageDto]
+        Nothing -> packageDtos ++ [packageToSimpleDTO newPackage]
+    isAlreadyInArray :: [PackageSimpleDTO] -> Package -> Maybe PackageSimpleDTO
+    isAlreadyInArray packageDtos newPackage =
       find
         (\pkg -> equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
-        packages
+        packageDtos
     hasSameKmId :: Package -> Package -> Bool
     hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
-    equalSameKmId :: String -> Package -> Bool
+    equalSameKmId :: String -> PackageSimpleDTO -> Bool
     equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
-    equalSameOrganizationId :: String -> Package -> Bool
+    equalSameOrganizationId :: String -> PackageSimpleDTO -> Bool
     equalSameOrganizationId pkgOrganizationId pkg = pkgOrganizationId == pkg ^. organizationId
+    computeLatestVersion :: PackageSimpleDTO -> Package -> PackageSimpleDTO
+    computeLatestVersion packageDto newPackage =
+      let originalVersion = packageDto ^. latestVersion
+          newVersion = newPackage ^. version
+      in if isNothing $ validateIsVersionHigher newVersion originalVersion
+           then packageDto & latestVersion .~ newVersion
+           else packageDto
 
 getPackageById :: String -> AppContextM (Either AppError PackageDTO)
 getPackageById pkgId = heFindPackageById pkgId $ \package -> return . Right . packageToDTO $ package

@@ -1,6 +1,6 @@
 module Service.Report.ReportService where
 
-import Control.Lens ((^.), (&), (.~))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO

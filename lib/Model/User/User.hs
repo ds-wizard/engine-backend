@@ -18,7 +18,7 @@ data User = User
   , _userPasswordHash :: String
   , _userRole :: Role
   , _userPermissions :: [Permission]
-  , _userIsActive :: Bool
+  , _userActive :: Bool
   , _userCreatedAt :: Maybe UTCTime
   , _userUpdatedAt :: Maybe UTCTime
   } deriving (Generic, Show)
@@ -30,4 +30,4 @@ instance Eq User where
     _userSurname a == _userSurname b &&
     _userEmail a == _userEmail b &&
     _userPasswordHash a == _userPasswordHash b &&
-    _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userIsActive a == _userIsActive b
+    _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userActive a == _userActive b

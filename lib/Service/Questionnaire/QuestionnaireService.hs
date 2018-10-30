@@ -9,6 +9,7 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.User.UserDTO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
@@ -24,7 +25,6 @@ import Util.Uuid
 getQuestionnaires :: AppContextM (Either AppError [QuestionnaireDTO])
 getQuestionnaires = do
   eitherQuestionnaires <- findQuestionnaires
-  liftIO $ print eitherQuestionnaires
   case eitherQuestionnaires of
     Right questionnaires -> do
       let ioEitherQuestionnairesWithPackages = addPackage <$> questionnaires
@@ -53,18 +53,29 @@ getQuestionnaires = do
             Left error -> return . Left $ error
         Left error -> return . Left $ error
 
-createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
-createQuestionnaire questionnaireCreateDto = do
-  qtnUuid <- liftIO generateUuid
-  createQuestionnaireWithGivenUuid qtnUuid questionnaireCreateDto
+getQuestionnairesForCurrentUser :: UserDTO -> AppContextM (Either AppError [QuestionnaireDTO])
+getQuestionnairesForCurrentUser userDto =
+  heGetQuestionnaires $ \questionnaires ->
+    if userDto ^. role == "ADMIN"
+      then return . Right $ questionnaires
+      else return . Right $ filter justOwnersAndPublicQuestionnaires questionnaires
+  where
+    justOwnersAndPublicQuestionnaires questionnaire =
+      questionnaire ^. private == False || questionnaire ^. ownerUuid == (Just $ userDto ^. uuid)
 
-createQuestionnaireWithGivenUuid :: U.UUID -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
-createQuestionnaireWithGivenUuid qtnUuid reqDto =
+createQuestionnaire :: UserDTO -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
+createQuestionnaire userDto questionnaireCreateDto = do
+  qtnUuid <- liftIO generateUuid
+  createQuestionnaireWithGivenUuid qtnUuid userDto questionnaireCreateDto
+
+createQuestionnaireWithGivenUuid ::
+     U.UUID -> UserDTO -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
+createQuestionnaireWithGivenUuid qtnUuid userDto reqDto =
   heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
     getEvents (reqDto ^. packageId) $ \events ->
       getKnowledgeModel events $ \knowledgeModel -> do
         now <- liftIO getCurrentTime
-        let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel now now
+        let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel (userDto ^. uuid) now now
         insertQuestionnaire qtn
         return . Right $ toSimpleDTO qtn package
   where
@@ -79,45 +90,60 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
         Right km -> callback km
         Left error -> return . Left $ error
 
-getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
-getQuestionnaireById qtnUuid =
-  heFindQuestionnaireById qtnUuid $ \qtn ->
-    heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
+getQuestionnaireById :: String -> UserDTO -> AppContextM (Either AppError QuestionnaireDTO)
+getQuestionnaireById qtnUuid userDto =
+  heFindQuestionnaire $ \qtn -> heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
+  where
+    heFindQuestionnaire =
+      if userDto ^. role == "ADMIN"
+        then heFindQuestionnaireById qtnUuid
+        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
 
-getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
-getQuestionnaireDetailById qtnUuid =
-  heFindQuestionnaireById qtnUuid $ \qtn ->
+getQuestionnaireDetailById :: String -> UserDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
+getQuestionnaireDetailById qtnUuid userDto =
+  heFindQuestionnaire $ \qtn ->
     heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
       return . Right $ toDetailWithPackageWithEventsDTO qtn package
+  where
+    heFindQuestionnaire =
+      if userDto ^. role == "ADMIN"
+        then heFindQuestionnaireById qtnUuid
+        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
 
-modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
-modifyQuestionnaire qtnUuid reqDto =
-  heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
+modifyQuestionnaire ::
+     String -> UserDTO -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
+modifyQuestionnaire qtnUuid userDto reqDto =
+  heGetQuestionnaireDetailById qtnUuid userDto $ \qtnDto -> do
     now <- liftIO getCurrentTime
     let updateQtn = fromChangeDTO qtnDto reqDto now
     updateQuestionnaireById updateQtn
     return . Right $ toDetailWithPackageDTODTO updateQtn (qtnDto ^. package)
 
-deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
-deleteQuestionnaire qtnUuid = do
-  eitherQuestionnaire <- findQuestionnaireById qtnUuid
+deleteQuestionnaire :: String -> UserDTO -> AppContextM (Maybe AppError)
+deleteQuestionnaire qtnUuid userDto = do
+  eitherQuestionnaire <- heFindQuestionnaire
   case eitherQuestionnaire of
     Right questionnaire -> do
       deleteQuestionnaireById qtnUuid
       return Nothing
     Left error -> return . Just $ error
+  where
+    heFindQuestionnaire =
+      if userDto ^. role == "ADMIN"
+        then findQuestionnaireById qtnUuid
+        else findQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
 
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heGetQuestionnaireById qtnUuid callback = do
-  eitherQuestionnaire <- getQuestionnaireById qtnUuid
-  case eitherQuestionnaire of
-    Right questionnaire -> callback questionnaire
+heGetQuestionnaires callback = do
+  eitherQuestionnaires <- getQuestionnaires
+  case eitherQuestionnaires of
+    Right questionnaires -> callback questionnaires
     Left error -> return . Left $ error
 
-heGetQuestionnaireDetailById qtnUuid callback = do
-  eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid
+heGetQuestionnaireDetailById qtnUuid ownerUuid callback = do
+  eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid ownerUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error

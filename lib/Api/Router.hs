@@ -3,9 +3,6 @@ module Api.Router where
 import Control.Lens ((^.))
 import Data.Text.Lazy (Text)
 import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
-import Network.Wai (Middleware)
-import Network.Wai.Middleware.RequestLogger
-       (logStdout, logStdoutDev)
 import Text.Regex
 import Web.Scotty.Trans
        (ScottyT, delete, get, middleware, notFound, post, put)
@@ -31,8 +28,8 @@ import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
+import Api.Middleware.LoggingMiddleware
 import LensesConfig
-import Model.Config.Environment
 import Model.Context.AppContext
 
 unauthorizedEndpoints =
@@ -52,19 +49,13 @@ unauthorizedEndpoints =
   , (methodPost, mkRegex "^feedbacks.*")
   ]
 
-loggingM :: Environment -> Middleware
-loggingM Production = logStdout
-loggingM Staging = logStdoutDev
-loggingM Development = logStdoutDev
-loggingM Test = id
-
 createEndpoints :: AppContext -> ScottyT Text AppContextM ()
 createEndpoints context
    --------------------
    -- MIDDLEWARES
    --------------------
  = do
-  middleware (loggingM (context ^. config . environment . env))
+  middleware (loggingMiddleware (context ^. config . environment . env))
   middleware corsMiddleware
   middleware (authMiddleware (context ^. config) unauthorizedEndpoints)
    -- ------------------

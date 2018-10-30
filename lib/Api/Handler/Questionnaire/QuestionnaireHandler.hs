@@ -22,8 +22,9 @@ import Service.Report.ReportService
 
 getQuestionnairesA :: Endpoint
 getQuestionnairesA =
-  checkPermission "QTN_PERM" $ do
-    eitherDtos <- lift $ getQuestionnaires
+  checkPermission "QTN_PERM" $
+  getCurrentUser $ \user -> do
+    eitherDtos <- lift $ getQuestionnairesForCurrentUser user
     case eitherDtos of
       Right dtos -> json dtos
       Left error -> sendError error
@@ -31,19 +32,21 @@ getQuestionnairesA =
 postQuestionnairesA :: Endpoint
 postQuestionnairesA =
   checkPermission "QTN_PERM" $
-  getReqDto $ \reqDto -> do
-    eitherQuestionnaireDto <- lift $ createQuestionnaire reqDto
-    case eitherQuestionnaireDto of
-      Left appError -> sendError appError
-      Right questionnaireDto -> do
-        status created201
-        json questionnaireDto
+  getCurrentUser $ \user ->
+    getReqDto $ \reqDto -> do
+      eitherQuestionnaireDto <- lift $ createQuestionnaire user reqDto
+      case eitherQuestionnaireDto of
+        Left appError -> sendError appError
+        Right questionnaireDto -> do
+          status created201
+          json questionnaireDto
 
 getQuestionnaireA :: Endpoint
 getQuestionnaireA =
-  checkPermission "QTN_PERM" $ do
+  checkPermission "QTN_PERM" $
+  getCurrentUser $ \user -> do
     qtnUuid <- param "qtnUuid"
-    eitherDto <- lift $ getQuestionnaireDetailById qtnUuid
+    eitherDto <- lift $ getQuestionnaireDetailById qtnUuid user
     case eitherDto of
       Right dto -> json dto
       Left error -> sendError error
@@ -51,12 +54,13 @@ getQuestionnaireA =
 putQuestionnaireA :: Endpoint
 putQuestionnaireA =
   checkPermission "QTN_PERM" $
-  getReqDto $ \reqDto -> do
-    qtnUuid <- param "qtnUuid"
-    eitherDto <- lift $ modifyQuestionnaire qtnUuid reqDto
-    case eitherDto of
-      Right dto -> json dto
-      Left error -> sendError error
+  getCurrentUser $ \user ->
+    getReqDto $ \reqDto -> do
+      qtnUuid <- param "qtnUuid"
+      eitherDto <- lift $ modifyQuestionnaire qtnUuid user reqDto
+      case eitherDto of
+        Right dto -> json dto
+        Left error -> sendError error
 
 getQuestionnaireDmpA :: Endpoint
 getQuestionnaireDmpA = do
@@ -110,9 +114,10 @@ postQuestionnaireReportPreviewA =
 
 deleteQuestionnaireA :: Endpoint
 deleteQuestionnaireA =
-  checkPermission "QTN_PERM" $ do
+  checkPermission "QTN_PERM" $
+  getCurrentUser $ \user -> do
     qtnUuid <- param "qtnUuid"
-    maybeError <- lift $ deleteQuestionnaire qtnUuid
+    maybeError <- lift $ deleteQuestionnaire qtnUuid user
     case maybeError of
       Nothing -> status noContent204
       Just error -> sendError error

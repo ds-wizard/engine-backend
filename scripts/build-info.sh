@@ -4,13 +4,11 @@ set -e
 
 BUILD_INFO_FILE=../config/build-info.cfg
 
-
 # ---------------------------------------------------------------
 # 1. Set a name
 # ---------------------------------------------------------------
 appName="Data Stewardship Wizard Server"
 echo "name=$appName" > $BUILD_INFO_FILE
-
 
 # ---------------------------------------------------------------
 # 2. Create app version
@@ -18,7 +16,7 @@ echo "name=$appName" > $BUILD_INFO_FILE
 #       - if there is no git tag, use branch and last commit as a identification of build version
 # ---------------------------------------------------------------
 branch=`git rev-parse --abbrev-ref HEAD`
-commit=`git rev-parse HEAD`
+commit=`git rev-parse --short HEAD`
 appVersion="$branch~$commit"
 
 gittag=`git tag -l --contains HEAD | head -n 1`
@@ -28,7 +26,6 @@ then
 fi
 
 echo "version=$appVersion" >> $BUILD_INFO_FILE
-
 
 # ---------------------------------------------------------------
 # 3. Create build timestamp

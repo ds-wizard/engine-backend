@@ -8,7 +8,7 @@ stages:
   - tag
 
 env:
-  - IMAGE="datastewardshipwizard/server" IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest"
+  - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server" IMAGE="datastewardshipwizard/server" IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest"
 
 cache:
   directories:
@@ -27,8 +27,9 @@ install:
   - cp config/app-config-test.cfg.example config/app-config-test.cfg
 
 before_script:
-  # 1. Log to our private Docker Registry
+  # 1. Log to both public and our private Docker Registry
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" "$REGISTRY"
 
 jobs:
   include:
@@ -67,8 +68,9 @@ jobs:
       if: tag =~ ^v
       before_install: false
       env:
+        - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server"
         - IMAGE="datastewardshipwizard/server"
-        - IMAGE_TAG="$IMAGE:$TRAVIS_COMMIT"
+        - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
         - IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
         - IMAGE_TAG_PATCH="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`

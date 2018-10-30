@@ -37,9 +37,10 @@ computeAnsweredIndication currentLevel fChapter =
           if condition fq && isRequiredNow
             then 1
             else 0
-        isRequiredNow = case fq ^. requiredLevel of
-          Just rl -> rl <= currentLevel
-          Nothing -> True
+        isRequiredNow =
+          case fq ^. requiredLevel of
+            Just rl -> rl <= currentLevel
+            Nothing -> True
         childrens = (walkOverAnswerOption $ fq ^. answerOption) + (walkOverAnswerItems $ fq ^. answerItems)
           where
             walkOverAnswerOption mAo = sum $ maybe [] (\ao -> (getQuestionCount condition) <$> ao ^. followUps) mAo
