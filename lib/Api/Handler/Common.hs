@@ -22,6 +22,7 @@ import Web.Scotty.Trans
 import Api.Resource.Error.ErrorDTO ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
+import Constant.Component
 import LensesConfig
 import Localization
 import Model.Context.AppContext
@@ -194,6 +195,6 @@ notFoundA = do
   if requestMethod request == methodOptions
     then status ok200
     else do
-      lift $ logInfo "Request does not match any route"
+      lift . logInfo $ msg _CMP_API "Request does not match any route"
       status notFound404
       json $ object ["status" .= 404, "error" .= "Not Found"]

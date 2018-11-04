@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
+import Constant.Component
 import Api.Resource.Branch.BranchDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
@@ -15,7 +16,7 @@ import Service.KnowledgeModel.KnowledgeModelService
 import Util.Logger
 
 runMigration = do
-  logInfo "MIGRATION (KnowledgeModel/Branch): started"
+  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
   let branch =
         BranchDTO
@@ -49,4 +50,4 @@ runMigration = do
         ]
   insertEventsToBranch (U.toString (branch ^. uuid)) events
   recompileKnowledgeModel (U.toString (branch ^. uuid))
-  logInfo "MIGRATION (KnowledgeModel/Branch): ended"
+  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

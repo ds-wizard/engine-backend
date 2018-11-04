@@ -10,6 +10,7 @@ import Network.Wai.Handler.Warp
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
 import Api.Router
+import Constant.Component
 import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
@@ -38,18 +39,18 @@ runServer =
   \|   |_____/|_____/|_|      |_____/ \\___|_|    \\_/ \\___|_|     |   \n\
   \|                                                             |\n\
   \\\-------------------------------------------------------------/"
-    logInfo "SERVER: started"
+    logInfo $ msg _CMP_SERVER "started"
     eitherDspConfig <- liftIO $ loadDSWConfig applicationConfigFile buildInfoFile
     case eitherDspConfig of
       Left (errorDate, reason) -> do
-        logError "CONFIG: load failed"
-        logError "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-        logError . show $ errorDate
+        logError $ msg _CMP_CONFIG "load failed"
+        logError $ msg _CMP_CONFIG "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+        logError $ msg _CMP_CONFIG (show errorDate)
       Right dswConfig -> do
-        logInfo "CONFIG: loaded"
+        logInfo $ msg _CMP_CONFIG "loaded"
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
-          lift $ logInfo "DATABASE: connected"
+          lift . logInfo $ msg _CMP_DATABASE "connected"
           let serverPort = dswConfig ^. webConfig ^. port
           let baseContext = BaseContext {_baseContextConfig = dswConfig, _baseContextPool = dbPool}
           liftIO $ runDBMigrations baseContext

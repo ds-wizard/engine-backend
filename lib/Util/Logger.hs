@@ -11,6 +11,10 @@ import qualified Data.UUID as U
 import LensesConfig
 import Model.Context.AppContext
 
+msg :: String -> String -> String
+msg component message = component ++ ": " ++ message
+
+-- ---------------------------------------------------------------------------
 logInfo :: MonadLogger m => String -> m ()
 logInfo = logInfoN . T.pack
 
