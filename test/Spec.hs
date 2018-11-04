@@ -8,6 +8,7 @@ import Test.Hspec
 import Database.Connection
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
+import Messaging.Connection
 import Model.Context.AppContext
 import Service.Config.ConfigLoader
 import Service.User.UserMapper
@@ -58,10 +59,12 @@ prepareWebApp runCallback = do
       putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
       createDBConn dswConfig $ \dbPool -> do
         putStrLn "DATABASE: connected"
+        msgChannel <- createMessagingChannel dswConfig
         let appContext =
               AppContext
               { _appContextConfig = dswConfig
               , _appContextPool = dbPool
+              , _appContextMsgChannel = msgChannel
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               }

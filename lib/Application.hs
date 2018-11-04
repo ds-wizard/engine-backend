@@ -15,6 +15,7 @@ import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
 import LensesConfig
+import Messaging.Connection
 import Model.Config.Environment
 import Model.Context.AppContextHelpers
 import Model.Context.BaseContext
@@ -44,15 +45,20 @@ runServer =
     case eitherDspConfig of
       Left (errorDate, reason) -> do
         logError $ msg _CMP_CONFIG "load failed"
-        logError $ msg _CMP_CONFIG "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+        logError $
+          msg _CMP_CONFIG "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
         logError $ msg _CMP_CONFIG (show errorDate)
       Right dswConfig -> do
         logInfo $ msg _CMP_CONFIG "loaded"
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
           lift . logInfo $ msg _CMP_DATABASE "connected"
+          msgChannel <- liftIO $ createMessagingChannel dswConfig
+          lift . logInfo $ msg _CMP_MESSAGING "connected"
           let serverPort = dswConfig ^. webConfig ^. port
-          let baseContext = BaseContext {_baseContextConfig = dswConfig, _baseContextPool = dbPool}
+          let baseContext =
+                BaseContext
+                {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
           liftIO $ runDBMigrations baseContext
           liftIO $ runApplication baseContext
 

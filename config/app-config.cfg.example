@@ -7,7 +7,7 @@ address = http://localhost:3001
 
 [Web]
 port = 3000
-servicetoken = 
+servicetoken =
 
 [Database]
 host = mongo
@@ -16,6 +16,12 @@ port = 27017
 authenabled = false
 username =
 password =
+
+[Messaging]
+host = rabbitmq
+port = 5672
+username = guest
+password = guest
 
 [JWT]
 secret =

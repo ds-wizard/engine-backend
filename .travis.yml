@@ -4,6 +4,7 @@ language: generic
 
 services:
   - mongodb
+  - rabbitmq
 
 stages:
   - build

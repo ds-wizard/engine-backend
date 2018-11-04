@@ -42,10 +42,12 @@ runInUnauthService function = do
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
+  msgChannel <- lift $ asks _baseContextMsgChannel
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
+        , _appContextMsgChannel = msgChannel
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Nothing
         }
@@ -56,10 +58,12 @@ runInAuthService user function = do
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
+  msgChannel <- lift $ asks _baseContextMsgChannel
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
+        , _appContextMsgChannel = msgChannel
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Just user
         }

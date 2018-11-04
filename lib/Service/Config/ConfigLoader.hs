@@ -17,6 +17,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     clientConfig <- loadAppConfigClient appConfigParser
     webConfig <- loadAppConfigWeb appConfigParser
     databaseConfig <- loadAppConfigDatabase appConfigParser
+    messagingConfig <- loadAppConfigMessaging appConfigParser
     jwtConfig <- loadAppConfigJwt appConfigParser
     appRoles <- loadAppConfigRole appConfigParser
     appMail <- loadAppConfigMail appConfigParser
@@ -29,6 +30,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _appConfigClientConfig = clientConfig
       , _appConfigWebConfig = webConfig
       , _appConfigDatabaseConfig = databaseConfig
+      , _appConfigMessagingConfig = messagingConfig
       , _appConfigJwtConfig = jwtConfig
       , _appConfigRoles = appRoles
       , _appConfigMail = appMail
@@ -62,6 +64,18 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         , _appConfigDatabaseAuthEnabled = authEnabled
         , _appConfigDatabaseUsername = username
         , _appConfigDatabasePassword = password
+        }
+    loadAppConfigMessaging configParser = do
+      host <- get configParser "Messaging" "host"
+      port <- get configParser "Messaging" "port"
+      username <- get configParser "Messaging" "username"
+      password <- get configParser "Messaging" "password"
+      return
+        AppConfigMessaging
+        { _appConfigMessagingHost = host
+        , _appConfigMessagingPort = port
+        , _appConfigMessagingUsername = username
+        , _appConfigMessagingPassword = password
         }
     loadAppConfigJwt configParser = do
       jwtSecret <- get configParser "JWT" "secret"

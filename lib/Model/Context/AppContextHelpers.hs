@@ -9,12 +9,11 @@ import Util.Uuid
 
 runAppContextWithBaseContext function baseContext = do
   traceUuid <- liftIO generateUuid
-  let dswConfig = baseContext ^. config
-  let dbPool = baseContext ^. pool
   let appContext =
         AppContext
-        { _appContextConfig = dswConfig
-        , _appContextPool = dbPool
+        { _appContextConfig = baseContext ^. config
+        , _appContextPool = baseContext ^. pool
+        , _appContextMsgChannel = baseContext ^. msgChannel
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Nothing
         }

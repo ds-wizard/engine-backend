@@ -26,6 +26,7 @@ library:
   dependencies:
   - base
   - aeson
+  - amqp
   - blaze-html
   - bson
   - bson-generic
@@ -111,6 +112,7 @@ tests:
     dependencies:
     - base
     - aeson
+    - amqp
     - bson
     - bson-generic
     - bytestring

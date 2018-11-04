@@ -90,6 +90,8 @@ makeFields ''AppConfigWeb
 
 makeFields ''AppConfigDatabase
 
+makeFields ''AppConfigMessaging
+
 makeFields ''AppConfigJwt
 
 makeFields ''AppConfigRoles

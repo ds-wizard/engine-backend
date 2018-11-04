@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
-import Constant.Component
 import Api.Resource.Branch.BranchDTO
+import Constant.Component
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.Migration.Development.Event.Data.Events
