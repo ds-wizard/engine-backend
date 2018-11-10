@@ -27,6 +27,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0008_public_questionnaire_visibility.Migration
        as M_0008
+import qualified
+       Database.Migration.Production.Migration_0009_book_references_markdown.Migration
+       as M_0009
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -45,4 +48,5 @@ migrationDefinitions =
   , M_0006.definition
   , M_0007.definition
   , M_0008.definition
+  , M_0009.definition
   ]
