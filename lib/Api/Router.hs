@@ -105,6 +105,7 @@ createEndpoints context
    -- PACKAGE
    --------------------
   get "/packages" getPackagesA
+  post "/packages" postPackagesA
   get "/packages/unique" getUniquePackagesA
   get "/packages/:pkgId" getPackageA
   delete "/packages" deletePackagesA

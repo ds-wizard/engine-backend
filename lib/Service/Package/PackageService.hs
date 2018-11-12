@@ -144,26 +144,29 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
           callback
         Left error -> return . Left $ error
 
-importPackage :: BS.ByteString -> AppContextM (Either AppError PackageDTO)
-importPackage fileContent = do
+importPackageInFile :: BS.ByteString -> AppContextM (Either AppError PackageDTO)
+importPackageInFile fileContent =
   let eitherDeserializedFile = eitherDecode fileContent
-  case eitherDeserializedFile of
-    Right deserializedFile -> do
-      let packageWithEvents = fromDTOWithEvents deserializedFile
-      let pName = packageWithEvents ^. name
-      let pOrganizationId = packageWithEvents ^. organizationId
-      let pKmId = packageWithEvents ^. kmId
-      let pVersion = packageWithEvents ^. version
-      let pDescription = packageWithEvents ^. description
-      let pParentPackageId = packageWithEvents ^. parentPackageId
-      let pEvents = packageWithEvents ^. events
-      let pId = buildPackageId pOrganizationId pKmId pVersion
-      validatePackageId pId $
-        validateParentPackageId pId pParentPackageId $
-        validateKmValidity pId pParentPackageId pEvents $ do
-          createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
-          return . Right $ createdPkg
-    Left error -> return . Left . createErrorWithErrorMessage $ error
+  in case eitherDeserializedFile of
+       Right deserializedFile -> importPackage deserializedFile
+       Left error -> return . Left . createErrorWithErrorMessage $ error
+
+importPackage :: PackageWithEventsDTO -> AppContextM (Either AppError PackageDTO)
+importPackage reqDto = do
+  let packageWithEvents = fromDTOWithEvents reqDto
+  let pName = packageWithEvents ^. name
+  let pOrganizationId = packageWithEvents ^. organizationId
+  let pKmId = packageWithEvents ^. kmId
+  let pVersion = packageWithEvents ^. version
+  let pDescription = packageWithEvents ^. description
+  let pParentPackageId = packageWithEvents ^. parentPackageId
+  let pEvents = packageWithEvents ^. events
+  let pId = buildPackageId pOrganizationId pKmId pVersion
+  validatePackageId pId $
+    validateParentPackageId pId pParentPackageId $
+    validateKmValidity pId pParentPackageId pEvents $ do
+      createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
+      return . Right $ createdPkg
   where
     validatePackageId pkgId callback = do
       eitherPackage <- findPackageById pkgId

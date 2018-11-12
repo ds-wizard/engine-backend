@@ -29,7 +29,7 @@ importA =
       Just (fieldName, file) -> do
         let fName = fileName file
         let fContent = fileContent file
-        eitherDto <- runInAuthService $ importPackage fContent
+        eitherDto <- runInAuthService $ importPackageInFile fContent
         case eitherDto of
           Right dto -> json dto
           Left error -> sendError error

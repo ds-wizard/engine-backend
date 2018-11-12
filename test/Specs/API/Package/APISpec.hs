@@ -8,12 +8,14 @@ import Specs.API.Package.Detail_DELETE
 import Specs.API.Package.Detail_GET
 import Specs.API.Package.List_DELETE
 import Specs.API.Package.List_GET
+import Specs.API.Package.List_POST
 import Specs.API.Package.List_Unique_GET
 
 packageAPI appContext =
   with (startWebApp appContext) $
   describe "PACKAGE API Spec" $ do
     list_get appContext
+    list_post appContext
     list_delete appContext
     list_unique_get appContext
     detail_get appContext

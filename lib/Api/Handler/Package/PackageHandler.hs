@@ -1,6 +1,6 @@
 module Api.Handler.Package.PackageHandler where
 
-import Network.HTTP.Types.Status (noContent204)
+import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
@@ -16,6 +16,18 @@ getPackagesA =
     case eitherResDtos of
       Right resDtos -> json resDtos
       Left error -> sendError error
+
+postPackagesA :: Endpoint
+postPackagesA =
+  checkPermission "PM_WRITE_PERM" $
+  getAuthServiceExecutor $ \runInAuthService ->
+    getReqDto $ \reqDto -> do
+      eitherDto <- runInAuthService $ importPackage reqDto
+      case eitherDto of
+        Right dto -> do
+          status created201
+          json dto
+        Left error -> sendError error
 
 getUniquePackagesA :: Endpoint
 getUniquePackagesA =
