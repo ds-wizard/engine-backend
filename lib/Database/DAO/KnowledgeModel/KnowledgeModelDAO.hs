@@ -21,3 +21,12 @@ updateKnowledgeModelByBranchId :: String -> Maybe KnowledgeModel -> AppContextM 
 updateKnowledgeModelByBranchId branchUuid km = do
   let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["knowledgeModel" =: (km)]]
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindBranchWithKMByBranchId branchUuid callback = do
+  eitherBranchWithKM <- findBranchWithKMByBranchId branchUuid
+  case eitherBranchWithKM of
+    Right branchWithKM -> callback branchWithKM
+    Left error -> return . Left $ error

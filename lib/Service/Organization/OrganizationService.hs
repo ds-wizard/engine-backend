@@ -14,11 +14,7 @@ import Service.Organization.OrganizationMapper
 import Service.Organization.OrganizationValidation
 
 getOrganization :: AppContextM (Either AppError OrganizationDTO)
-getOrganization = do
-  eitherOrganization <- findOrganization
-  case eitherOrganization of
-    Right organization -> return . Right . toDTO $ organization
-    Left error -> return . Left $ error
+getOrganization = heFindOrganization $ \organization -> return . Right . toDTO $ organization
 
 modifyOrganization :: OrganizationChangeDTO -> AppContextM (Either AppError OrganizationDTO)
 modifyOrganization reqDto =

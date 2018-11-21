@@ -3,7 +3,6 @@ module Specs.Service.Branch.BranchServiceSpec where
 import Control.Lens
 import Control.Monad.Reader
 import Data.Either
-import Data.Maybe
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -24,18 +23,6 @@ import Service.Branch.BranchService
 import Service.Migrator.MigratorService
 
 import Specs.Common
-
-branchServiceSpec =
-  describe "Package Service" $
-  it "validateVersionFormat" $ do
-    isNothing (isValidKmId "core") `shouldBe` True
-    isNothing (isValidKmId "ab") `shouldBe` True
-    isNothing (isValidKmId "core-nl") `shouldBe` True
-    isNothing (isValidKmId "core-nl-amsterdam") `shouldBe` True
-    isJust (isValidKmId "a") `shouldBe` True
-    isJust (isValidKmId "core.nl") `shouldBe` True
-    isJust (isValidKmId "a.b") `shouldBe` True
-    isJust (isValidKmId "core_nl") `shouldBe` True
 
 branchServiceIntegrationSpec appContext =
   describe "Branch Service Integration" $ do

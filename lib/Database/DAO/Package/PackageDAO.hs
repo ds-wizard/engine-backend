@@ -101,6 +101,12 @@ heFindPackagesFiltered queryParams callback = do
     Right packages -> callback packages
     Left error -> return . Left $ error
 
+hmFindPackagesFiltered queryParams callback = do
+  eitherPackages <- findPackagesFiltered queryParams
+  case eitherPackages of
+    Right packages -> callback packages
+    Left error -> return . Just $ error
+
 -- --------------------------------
 heFindPackagesByOrganizationIdAndKmId organizationId kmId callback = do
   eitherPackages <- findPackagesByOrganizationIdAndKmId organizationId kmId

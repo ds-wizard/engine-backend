@@ -23,20 +23,13 @@ import Service.Questionnaire.QuestionnaireMapper
 import Util.Uuid
 
 getQuestionnaires :: AppContextM (Either AppError [QuestionnaireDTO])
-getQuestionnaires = do
-  eitherQuestionnaires <- findQuestionnaires
-  case eitherQuestionnaires of
-    Right questionnaires -> do
-      let ioEitherQuestionnairesWithPackages = addPackage <$> questionnaires
-      Prelude.foldl foldFn (return . Right $ []) ioEitherQuestionnairesWithPackages
-    Left error -> return . Left $ error
+getQuestionnaires =
+  heFindQuestionnaires $ \questionnaires -> do
+    let ioEitherQuestionnairesWithPackages = addPackage <$> questionnaires
+    Prelude.foldl foldFn (return . Right $ []) ioEitherQuestionnairesWithPackages
   where
     addPackage :: Questionnaire -> AppContextM (Either AppError (Questionnaire, Package))
-    addPackage qtn = do
-      eitherPackage <- findPackageById (qtn ^. packageId)
-      case eitherPackage of
-        Right package -> return . Right $ (qtn, package)
-        Left error -> return . Left $ error
+    addPackage qtn = heFindPackageById (qtn ^. packageId) $ \pkg -> return . Right $ (qtn, pkg)
     foldFn ::
          AppContextM (Either AppError [QuestionnaireDTO])
       -> AppContextM (Either AppError (Questionnaire, Package))
@@ -72,23 +65,12 @@ createQuestionnaireWithGivenUuid ::
      U.UUID -> UserDTO -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaireWithGivenUuid qtnUuid userDto reqDto =
   heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
-    getEvents (reqDto ^. packageId) $ \events ->
-      getKnowledgeModel events $ \knowledgeModel -> do
+    heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \events ->
+      heCreateKnowledgeModel events $ \knowledgeModel -> do
         now <- liftIO getCurrentTime
         let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel (userDto ^. uuid) now now
         insertQuestionnaire qtn
         return . Right $ toSimpleDTO qtn package
-  where
-    getEvents pkgId callback = do
-      eitherEvents <- getAllPreviousEventsSincePackageId pkgId
-      case eitherEvents of
-        Right events -> callback events
-        Left error -> return . Left $ error
-    getKnowledgeModel events callback = do
-      let eitherKm = createKnowledgeModel $ events
-      case eitherKm of
-        Right km -> callback km
-        Left error -> return . Left $ error
 
 getQuestionnaireById :: String -> UserDTO -> AppContextM (Either AppError QuestionnaireDTO)
 getQuestionnaireById qtnUuid userDto =
@@ -121,17 +103,14 @@ modifyQuestionnaire qtnUuid userDto reqDto =
 
 deleteQuestionnaire :: String -> UserDTO -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid userDto = do
-  eitherQuestionnaire <- heFindQuestionnaire
-  case eitherQuestionnaire of
-    Right questionnaire -> do
-      deleteQuestionnaireById qtnUuid
-      return Nothing
-    Left error -> return . Just $ error
+  hmFindQuestionnaire $ \questionnaire -> do
+    deleteQuestionnaireById qtnUuid
+    return Nothing
   where
-    heFindQuestionnaire =
+    hmFindQuestionnaire =
       if userDto ^. role == "ADMIN"
-        then findQuestionnaireById qtnUuid
-        else findQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
+        then hmFindQuestionnaireById qtnUuid
+        else hmFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
 
 -- --------------------------------
 -- HELPERS

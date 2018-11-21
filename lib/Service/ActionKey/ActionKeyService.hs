@@ -30,13 +30,10 @@ createActionKey userId actionType = do
   return . Right $ actionKey
 
 deleteActionKey :: String -> AppContextM (Maybe AppError)
-deleteActionKey hash = do
-  eitherActionKey <- getActionKeyByHash hash
-  case eitherActionKey of
-    Right actionKey -> do
-      deleteActionKeyByHash hash
-      return Nothing
-    Left error -> return . Just $ error
+deleteActionKey hash =
+  hmGetActionKeyByHash hash $ \actionKey -> do
+    deleteActionKeyByHash hash
+    return Nothing
 
 -- --------------------------------
 -- HELPERS

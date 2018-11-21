@@ -12,33 +12,19 @@ import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelService
 
 getEvents :: String -> AppContextM (Either AppError [EventDTO])
-getEvents branchUuid = do
-  eitherBranchWithEvents <- findBranchWithEventsById branchUuid
-  case eitherBranchWithEvents of
-    Right branchWithEvents -> return . Right . toDTOs $ branchWithEvents ^. events
-    Left error -> return . Left $ error
+getEvents branchUuid =
+  heFindBranchWithEventsById branchUuid $ \branchWithEvents -> return . Right . toDTOs $ branchWithEvents ^. events
 
 createEvents :: String -> [EventDTO] -> AppContextM (Either AppError [EventDTO])
-createEvents branchUuid eventsCreateDto = do
-  eitherBranch <- getBranchById branchUuid
-  case eitherBranch of
-    Right _ -> do
-      let events = fromDTOs eventsCreateDto
-      insertEventsToBranch branchUuid events
-      result <- recompileKnowledgeModel branchUuid
-      case result of
-        Right km -> return . Right . toDTOs $ events
-        Left error -> return . Left $ error
-    Left error -> return . Left $ error
+createEvents branchUuid eventsCreateDto =
+  heGetBranchById branchUuid $ \_ -> do
+    let events = fromDTOs eventsCreateDto
+    insertEventsToBranch branchUuid events
+    result <- recompileKnowledgeModel branchUuid
+    heRecompileKnowledgeModel branchUuid $ \_ -> return . Right . toDTOs $ events
 
 deleteEvents :: String -> AppContextM (Maybe AppError)
-deleteEvents branchUuid = do
-  eitherBranch <- getBranchById branchUuid
-  case eitherBranch of
-    Right _ -> do
-      deleteEventsAtBranch branchUuid
-      result <- recompileKnowledgeModel branchUuid
-      case result of
-        Right km -> return Nothing
-        Left error -> return . Just $ error
-    Left error -> return . Just $ error
+deleteEvents branchUuid =
+  hmGetBranchById branchUuid $ \_ -> do
+    deleteEventsAtBranch branchUuid
+    hmRecompileKnowledgeModel branchUuid $ \_ -> return Nothing

@@ -41,3 +41,18 @@ deleteMigratorStateByBranchUuid :: String -> AppContextM ()
 deleteMigratorStateByBranchUuid branchUuid = do
   let action = delete $ select ["branchUuid" =: branchUuid] msCollection
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindMigratorStateByBranchUuid branchUuid callback = do
+  eitherMigratorState <- findMigratorStateByBranchUuid branchUuid
+  case eitherMigratorState of
+    Right migratorState -> callback migratorState
+    Left error -> return . Left $ error
+
+hmFindMigratorStateByBranchUuid branchUuid callback = do
+  eitherMigratorState <- findMigratorStateByBranchUuid branchUuid
+  case eitherMigratorState of
+    Right migratorState -> callback migratorState
+    Left error -> return . Just $ error

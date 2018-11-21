@@ -65,14 +65,34 @@ deleteQuestionnaireById qtnUuid = do
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
+heFindQuestionnaires callback = do
+  eitherQuestionnaires <- findQuestionnaires
+  case eitherQuestionnaires of
+    Right questionnaires -> callback questionnaires
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
 heFindQuestionnaireById qtnUuid callback = do
   eitherQuestionnaire <- findQuestionnaireById qtnUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error
 
+hmFindQuestionnaireById qtnUuid callback = do
+  eitherQuestionnaire <- findQuestionnaireById qtnUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Just $ error
+
+-- -----------------------------------------------------
 heFindQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid callback = do
   eitherQuestionnaire <- findQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error
+
+hmFindQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid callback = do
+  eitherQuestionnaire <- findQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Just $ error

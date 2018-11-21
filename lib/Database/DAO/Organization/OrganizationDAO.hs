@@ -33,3 +33,12 @@ deleteOrganizations :: AppContextM ()
 deleteOrganizations = do
   let action = delete $ select [] orgCollection
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindOrganization callback = do
+  eitherOrganization <- findOrganization
+  case eitherOrganization of
+    Right organization -> callback organization
+    Left error -> return . Left $ error

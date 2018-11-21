@@ -31,6 +31,7 @@ import Specs.API.VersionAPISpec
 import Specs.Model.FilledKnowledgeModel.FilledKnowledgeModelAccessorsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
+import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
@@ -80,7 +81,7 @@ main =
              filledKnowledgeModelAccessorsSpec
              knowledgeModelAccessorsSpec
            describe "SERVICE" $ do
-             describe "Branch" $ branchServiceSpec
+             describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
              describe "Migrator" $ do
                applicatorSpec

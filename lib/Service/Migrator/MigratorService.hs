@@ -24,7 +24,7 @@ import Service.Package.PackageUtils
 import Service.Package.PackageValidation
 
 getCurrentMigration :: String -> AppContextM (Either AppError MigratorStateDTO)
-getCurrentMigration branchUuid = getMigrationState branchUuid $ \ms -> return . Right . toDTO $ ms
+getCurrentMigration branchUuid = heFindMigratorStateByBranchUuid branchUuid $ \ms -> return . Right . toDTO $ ms
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM (Either AppError MigratorStateDTO)
 createMigration branchUuid mscDto = do
@@ -82,10 +82,7 @@ createMigration branchUuid mscDto = do
         getLastMergeCheckpointPackageId branch $ \lastMergeCheckpointPackageId -> do
           let since = parentPackageId
           let until = lastMergeCheckpointPackageId
-          eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId since until
-          case eitherEvents of
-            Right events -> callback events
-            Left error -> return . Left $ error
+          heGetAllPreviousEventsSincePackageIdAndUntilPackageId since until $ \events -> callback events
     getParentPackageId branch callback =
       case branch ^. parentPackageId of
         Just parentPackageId -> callback parentPackageId
@@ -98,10 +95,7 @@ createMigration branchUuid mscDto = do
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
         let since = msTargetPackageId
         let until = lastAppliedParentPackageId
-        eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId since until
-        case eitherEvents of
-          Right events -> callback events
-          Left error -> return . Left $ error
+        heGetAllPreviousEventsSincePackageIdAndUntilPackageId since until $ \events -> callback events
     getLastAppliedParentPackageId branch callback =
       case branch ^. lastAppliedParentPackageId of
         Just lastAppliedParentPackageId -> callback lastAppliedParentPackageId
@@ -109,26 +103,20 @@ createMigration branchUuid mscDto = do
           return . Left . MigratorError $ _ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG
 
 deleteCurrentMigration :: String -> AppContextM (Maybe AppError)
-deleteCurrentMigration branchUuid = do
-  eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
-  case eitherMigrationState of
-    Right _ -> do
-      deleteMigratorStateByBranchUuid branchUuid
-      return Nothing
-    Left error -> return . Just $ error
+deleteCurrentMigration branchUuid =
+  hmFindMigratorStateByBranchUuid branchUuid $ \_ -> do
+    deleteMigratorStateByBranchUuid branchUuid
+    return Nothing
 
 solveConflictAndMigrate :: String -> MigratorConflictDTO -> AppContextM (Maybe AppError)
-solveConflictAndMigrate branchUuid reqDto = do
-  eitherMigratorState <- findMigratorStateByBranchUuid branchUuid
-  case eitherMigratorState of
-    Right ms ->
-      validateMigrationState ms $
-      validateTargetPackageEvent ms $
-      validateReqDto (ms ^. migrationState) reqDto $ do
-        let stateWithSolvedConflicts = solveConflict ms reqDto
-        migrateState stateWithSolvedConflicts
-        return Nothing
-    Left error -> return . Just $ error
+solveConflictAndMigrate branchUuid reqDto =
+  hmFindMigratorStateByBranchUuid branchUuid $ \ms ->
+    validateMigrationState ms $
+    validateTargetPackageEvent ms $
+    validateReqDto (ms ^. migrationState) reqDto $ do
+      let stateWithSolvedConflicts = solveConflict ms reqDto
+      migrateState stateWithSolvedConflicts
+      return Nothing
   where
     validateMigrationState ms callback =
       case ms ^. migrationState of
@@ -145,12 +133,6 @@ solveConflictAndMigrate branchUuid reqDto = do
                else callback
         else return . Just . MigratorError $
              _ERROR_MT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
-
-getMigrationState branchUuid callback = do
-  eitherMigratorState <- findMigratorStateByBranchUuid branchUuid
-  case eitherMigratorState of
-    Right migrationState -> callback migrationState
-    Left error -> return . Left $ error
 
 migrateState :: MigratorState -> AppContextM MigratorState
 migrateState ms = do
