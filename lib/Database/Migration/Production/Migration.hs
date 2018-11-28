@@ -30,6 +30,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0009_book_references_markdown.Migration
        as M_0009
+import qualified
+       Database.Migration.Production.Migration_0010_branch_owner_and_timestamp.Migration
+       as M_0010
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -49,4 +52,5 @@ migrationDefinitions =
   , M_0007.definition
   , M_0008.definition
   , M_0009.definition
+  , M_0010.definition
   ]

@@ -16,6 +16,9 @@ instance ToBSON Branch where
     , "parentPackageId" BSON.=: (branch ^. parentPackageId)
     , "lastAppliedParentPackageId" BSON.=: (branch ^. lastAppliedParentPackageId)
     , "lastMergeCheckpointPackageId" BSON.=: (branch ^. lastMergeCheckpointPackageId)
+    , "ownerUuid" BSON.=: serializeMaybeUUID (branch ^. ownerUuid)
+    , "createdAt" BSON.=: (branch ^. createdAt)
+    , "updatedAt" BSON.=: (branch ^. updatedAt)
     ]
 
 instance FromBSON Branch where
@@ -26,6 +29,9 @@ instance FromBSON Branch where
     bParentPackageId <- BSON.lookup "parentPackageId" doc
     bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
     bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
+    let bOwnerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
+    bCreatedAt <- BSON.lookup "createdAt" doc
+    bUpdatedAt <- BSON.lookup "updatedAt" doc
     return
       Branch
       { _branchUuid = bUuid
@@ -34,4 +40,7 @@ instance FromBSON Branch where
       , _branchParentPackageId = bParentPackageId
       , _branchLastAppliedParentPackageId = bLastAppliedParentPackageId
       , _branchLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
+      , _branchOwnerUuid = bOwnerUuid
+      , _branchCreatedAt = bCreatedAt
+      , _branchUpdatedAt = bUpdatedAt
       }

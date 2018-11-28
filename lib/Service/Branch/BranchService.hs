@@ -2,8 +2,10 @@ module Service.Branch.BranchService where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import Data.Time
 import Data.UUID as U
 
+import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Organization.OrganizationDTO
@@ -17,6 +19,7 @@ import Localization
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Context.AppContext
+import Model.Context.AppContextHelpers
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.Event.Event
@@ -47,21 +50,28 @@ getBranches = heGetOrganization $ \organization -> heFindBranches $ \branches ->
             return . Right $ dtos ++ [toWithStateDTO branch branchState organization]
         Left error -> return . Left $ error
 
-createBranch :: BranchDTO -> AppContextM (Either AppError BranchDTO)
-createBranch branchDto =
-  validateKmId branchDto $
-  validatePackageId (branchDto ^. parentPackageId) $
-  heGetOrganization $ \organization -> do
-    let branch = fromDTO branchDto
-    insertBranch branch
-    insertEventsToBranch (U.toString $ branch ^. uuid) []
-    updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
-    updateMigrationInfoIfParentPackageIdPresent branch
-    createDefaultEventIfParentPackageIsNotPresent branch
-    heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km -> return . Right $ toDTO branch organization
+createBranch :: BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
+createBranch reqDto = do
+  bUuid <- liftIO generateUuid
+  now <- liftIO getCurrentTime
+  createBranchWithParams bUuid now reqDto
+
+createBranchWithParams :: U.UUID -> UTCTime -> BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
+createBranchWithParams bUuid now reqDto =
+  validateKmId reqDto $
+  validatePackageId (reqDto ^. parentPackageId) $
+  heGetOrganization $ \organization ->
+    heGetCurrentUser $ \currentUser -> do
+      let branch = fromChangeDTO reqDto bUuid (reqDto ^. parentPackageId) (Just $ currentUser ^. uuid) now now
+      insertBranch branch
+      insertEventsToBranch (U.toString $ branch ^. uuid) []
+      updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
+      updateMigrationInfoIfParentPackageIdPresent branch
+      createDefaultEventIfParentPackageIsNotPresent branch
+      heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km -> return . Right $ toDTO branch organization
   where
-    validateKmId branchDto callback = do
-      let bKmId = branchDto ^. kmId
+    validateKmId reqDto callback = do
+      let bKmId = reqDto ^. kmId
       case isValidKmId bKmId of
         Nothing -> do
           eitherBranchFromDb <- findBranchByKmId bKmId
@@ -108,15 +118,25 @@ getBranchById branchUuid =
       heGetBranchState (U.toString $ branch ^. uuid) $ \branchState ->
         return . Right $ toWithStateDTO branch branchState organization
 
-modifyBranch :: String -> BranchDTO -> AppContextM (Either AppError BranchDTO)
-modifyBranch branchUuid branchDto =
-  validateKmId $ do
-    let branch = fromDTO branchDto
-    updateBranchById branch
-    return . Right $ branchDto
+modifyBranch :: String -> BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
+modifyBranch branchUuid reqDto =
+  heGetOrganization $ \organization ->
+    heFindBranchById branchUuid $ \branchFromDB ->
+      validateKmId $ do
+        now <- liftIO getCurrentTime
+        let branch =
+              fromChangeDTO
+                reqDto
+                (branchFromDB ^. uuid)
+                (reqDto ^. parentPackageId)
+                (branchFromDB ^. ownerUuid)
+                (branchFromDB ^. createdAt)
+                now
+        updateBranchById branch
+        return . Right $ toDTO branch organization
   where
     validateKmId callback = do
-      let bKmId = branchDto ^. kmId
+      let bKmId = reqDto ^. kmId
       case isValidKmId bKmId of
         Nothing -> do
           heFindBranchById branchUuid $ \branch -> do

@@ -76,6 +76,8 @@ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
 
 _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS = "A hash query param has to be provided"
 
+_ERROR_SERVICE_USER__MISSING_USER = "You have to be log in to run."
+
 -- DataManagementPlan
 _ERROR_SERVICE_DMP__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
 

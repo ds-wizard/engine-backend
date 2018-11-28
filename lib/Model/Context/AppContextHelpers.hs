@@ -1,10 +1,12 @@
 module Model.Context.AppContextHelpers where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO, runReaderT)
+import Control.Monad.Reader (asks, liftIO, runReaderT)
 
 import LensesConfig
+import Localization
 import Model.Context.AppContext
+import Model.Error.ErrorHelpers
 import Util.Uuid
 
 runAppContextWithBaseContext function baseContext = do
@@ -18,3 +20,12 @@ runAppContextWithBaseContext function baseContext = do
         , _appContextCurrentUser = Nothing
         }
   runReaderT (runAppContextM function) appContext
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heGetCurrentUser callback = do
+  mCurrentUser <- asks _appContextCurrentUser
+  case mCurrentUser of
+    Just user -> callback user
+    Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__MISSING_USER

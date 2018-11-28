@@ -4,6 +4,9 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
+import Api.Resource.Branch.BranchChangeJM ()
+import Api.Resource.Branch.BranchJM ()
+import Api.Resource.Branch.BranchWithStateJM ()
 import Service.Branch.BranchService
 
 getBranchesA :: Endpoint

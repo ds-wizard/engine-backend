@@ -18,6 +18,9 @@ instance FromBSON BranchWithEvents where
     bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
     bEventsSerialized <- BSON.lookup "events" doc
     let bEvents = fmap (fromJust . chooseEventDeserializator) bEventsSerialized
+    let bOwnerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
+    bCreatedAt <- BSON.lookup "createdAt" doc
+    bUpdatedAt <- BSON.lookup "updatedAt" doc
     return
       BranchWithEvents
       { _branchWithEventsUuid = bUuid
@@ -27,4 +30,7 @@ instance FromBSON BranchWithEvents where
       , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
       , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
       , _branchWithEventsEvents = bEvents
+      , _branchWithEventsOwnerUuid = bOwnerUuid
+      , _branchWithEventsCreatedAt = bCreatedAt
+      , _branchWithEventsUpdatedAt = bUpdatedAt
       }
