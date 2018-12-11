@@ -6,6 +6,7 @@ import Control.Monad.Reader (runReaderT)
 import Data.Aeson (encode)
 import Data.Aeson (eitherDecode)
 import Data.ByteString.Char8 as BS
+import Data.Either (isRight)
 import Data.Foldable
 import qualified Data.List as L
 import Data.Maybe
@@ -32,6 +33,8 @@ import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
 import Util.List (elems)
+
+import Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
@@ -203,3 +206,15 @@ destructResponse response =
   let (SResponse (Status status _) headers body) = response
       (Right resBody) = eitherDecode body
   in (status, headers, resBody)
+
+assertCountInDB dbFunction appContext count = do
+  eitherList <- runInContextIO dbFunction appContext
+  liftIO $ (isRight eitherList) `shouldBe` True
+  let (Right list) = eitherList
+  liftIO $ (L.length list) `shouldBe` count
+
+getFirstFromDB dbFunction appContext = do
+  eitherList <- runInContextIO dbFunction appContext
+  liftIO $ (isRight eitherList) `shouldBe` True
+  let (Right list) = eitherList
+  return $ list !! 0

@@ -4,7 +4,6 @@ module Specs.API.Package.List_DELETE
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
-import Data.Either
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -16,7 +15,6 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import qualified
        Database.Migration.Development.Branch.BranchMigration as B
-import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
@@ -64,16 +62,12 @@ test_204 appContext = do
     runInContextIO deleteBranches appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Find a result
-    eitherPackages <- runInContextIO findPackages appContext
-     -- AND: Compare response with expectation
+     -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-     -- AND: Compare state in DB with expectation
-    liftIO $ (isRight eitherPackages) `shouldBe` True
-    let (Right packages) = eitherPackages
-    liftIO $ packages `shouldBe` []
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findPackages appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -95,16 +89,12 @@ test_400 appContext = do
     runInContextIO B.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Find a result
-    eitherPackages <- runInContextIO findPackageWithEvents appContext
-    -- AND: Compare response with expectation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-    -- AND: Compare state in DB with expectation
-    liftIO $ (isRight eitherPackages) `shouldBe` True
-    let (Right packages) = eitherPackages
-    liftIO $ packages `shouldBe` [baseElixir0PackageDto, baseElixirPackageDto, elixirNlPackageDto, elixirNlPackage2Dto]
+    -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findPackages appContext 4
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -19,6 +19,7 @@ import qualified
 import qualified Database.Migration.Development.User.UserMigration
        as U
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.Questionnaire.QuestionnaireMapper
@@ -90,14 +91,14 @@ test_404 appContext = do
     -- AND: Prepare expectation
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity does not exist"
+    let expDto = NotExistsError _ERROR_DATABASE__ENTITY_NOT_FOUND
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-     -- AND: Compare response with expectation
+     -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher

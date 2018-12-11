@@ -77,13 +77,12 @@ test_204 appContext =
     let expHeaders = resCorsHeaders
   -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-  -- THEN: Find a result
-    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
-  -- AND: Compare response with expectation
+  -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
     response `shouldRespondWith` responseMatcher
-  -- AND: Compare state in DB with expectation
+  -- AND: Find result in DB and compare with expectation state
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
     liftIO $ (isRight eitherUser) `shouldBe` True
     let (Right userFromDb) = eitherUser
     let isSame = verifyPassword (BS.pack (reqDto ^. password)) (BS.pack (userFromDb ^. passwordHash))
@@ -109,13 +108,12 @@ test_400_hash_is_not_provided appContext =
     let expBody = encode expDto
   -- WHEN: Call API
     response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody
-  -- THEN: Find a result
-    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
-  -- AND: Compare response with expectation
+  -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-  -- AND: Compare state in DB with expectation
+  -- AND: Find result in DB and compare with expectation state
+    eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
     liftIO $ (isRight eitherUser) `shouldBe` True
     let (Right userFromDb) = eitherUser
     let isSame = verifyPassword (BS.pack (reqDto ^. password)) (BS.pack (userFromDb ^. passwordHash))

@@ -20,6 +20,7 @@ import Model.Context.AppContext
 import Service.Package.PackageMapper
 
 import Specs.API.Common
+import Specs.API.Package.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -65,6 +66,9 @@ test_201 appContext = do
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findPackages appContext 1
+    assertExistenceOfPackageInDB appContext reqDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

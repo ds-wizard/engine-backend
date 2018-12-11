@@ -13,6 +13,7 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Error.ErrorDTO ()
+import Database.DAO.Branch.BranchDAO
 import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
@@ -70,6 +71,7 @@ test_201 appContext = do
     assertResHeaders headers expHeaders
     compareBranchDtos resBody reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
      -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findBranches appContext 1
     assertExistenceOfBranchInDB appContext reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -98,7 +100,7 @@ test_400_not_valid_kmId appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountOfBranchesInDB appContext 0
+    assertCountInDB findBranches appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -122,7 +124,7 @@ test_400_already_taken_kmId appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountOfBranchesInDB appContext 1
+    assertCountInDB findBranches appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -145,7 +147,7 @@ test_400_not_existing_parentPackageId appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountOfBranchesInDB appContext 0
+    assertCountInDB findBranches appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

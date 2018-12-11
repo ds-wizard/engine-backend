@@ -10,12 +10,12 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
+import Database.DAO.Branch.BranchDAO
 import Database.Migration.Development.Branch.Data.Branches
 import LensesConfig
 import Model.Context.AppContext
 import Service.Branch.BranchService
 
-import Specs.API.Branch.Common
 import Specs.API.Common
 import Specs.Common
 
@@ -61,7 +61,7 @@ test_204 appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountOfBranchesInDB appContext 0
+    assertCountInDB findBranches appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
