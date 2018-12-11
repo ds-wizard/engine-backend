@@ -8,6 +8,7 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
+import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
@@ -28,6 +29,7 @@ list_post :: AppContext -> SpecWith Application
 list_post appContext =
   describe "POST /packages" $ do
     test_201 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
 
@@ -63,6 +65,11 @@ test_201 appContext = do
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common Package" } |] "id"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
