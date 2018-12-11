@@ -4,14 +4,16 @@ import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
 import Data.Aeson (encode)
+import Data.Aeson (eitherDecode)
 import Data.ByteString.Char8 as BS
 import Data.Foldable
 import qualified Data.List as L
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
-import Network.HTTP.Types.Header
+import Network.HTTP.Types
 import Network.Wai (Application)
+import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
@@ -29,6 +31,7 @@ import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
+import Util.List (elems)
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
@@ -191,3 +194,12 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+assertResStatus resStatus expStatus = liftIO $ resStatus `shouldBe` expStatus
+
+assertResHeaders resHeaders expHeaders = liftIO $ (expHeaders `elems` resHeaders) `shouldBe` True
+
+destructResponse response =
+  let (SResponse (Status status _) headers body) = response
+      (Right resBody) = eitherDecode body
+  in (status, headers, resBody)

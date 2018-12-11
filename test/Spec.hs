@@ -14,7 +14,7 @@ import Service.Config.ConfigLoader
 import Service.User.UserMapper
 
 import Specs.API.BookReference.APISpec
-import Specs.API.BranchAPISpec
+import Specs.API.Branch.APISpec
 import Specs.API.EventAPISpec
 import Specs.API.Feedback.APISpec
 import Specs.API.InfoAPISpec

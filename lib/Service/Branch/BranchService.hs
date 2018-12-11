@@ -122,7 +122,8 @@ modifyBranch :: String -> BranchChangeDTO -> AppContextM (Either AppError Branch
 modifyBranch branchUuid reqDto =
   heGetOrganization $ \organization ->
     heFindBranchById branchUuid $ \branchFromDB ->
-      validateKmId $ do
+      validateKmId $
+      validatePackageId (reqDto ^. parentPackageId) $ do
         now <- liftIO getCurrentTime
         let branch =
               fromChangeDTO
@@ -145,6 +146,15 @@ modifyBranch branchUuid reqDto =
               then return . Left . createErrorWithFieldError $ ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)
               else callback
         Just error -> return . Left $ error
+    validatePackageId mPackageId callback =
+      case mPackageId of
+        Just packageId -> do
+          eitherPackage <- findPackageById packageId
+          case eitherPackage of
+            Right _ -> callback
+            Left error ->
+              return . Left $ createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
+        Nothing -> callback
     isAlreadyUsedAndIsNotMine (Right branch) = U.toString (branch ^. uuid) /= branchUuid
     isAlreadyUsedAndIsNotMine (Left _) = False
 
