@@ -38,7 +38,7 @@ tokenAPI appContext =
       let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
       let (SResponse (Status status _) headers body) = response
       liftIO $ status `shouldBe` expStatus
       liftIO $ (expHeaders `elems` headers) `shouldBe` True
@@ -60,7 +60,7 @@ tokenAPI appContext =
       let expBody = encode expDto
           -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher

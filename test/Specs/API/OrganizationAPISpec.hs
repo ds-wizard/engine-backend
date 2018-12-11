@@ -54,7 +54,7 @@ organizationAPI appContext =
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -85,7 +85,7 @@ organizationAPI appContext =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherOrganization <- runInContextIO getOrganization appContext
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let (SResponse (Status status _) headers body) = response
           liftIO $ status `shouldBe` expStatus
           liftIO $ (expHeaders `elems` headers) `shouldBe` True
@@ -93,7 +93,7 @@ organizationAPI appContext =
           liftIO $ (resBody ^. uuid) `shouldBe` (reqDto ^. uuid)
           liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)
           liftIO $ (resBody ^. organizationId) `shouldBe` (reqDto ^. organizationId)
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherOrganization) `shouldBe` True
           let (Right organizationFromDb) = eitherOrganization
           liftIO $ (organizationFromDb ^. uuid) `shouldBe` (reqDto ^. uuid)
@@ -120,7 +120,7 @@ organizationAPI appContext =
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher

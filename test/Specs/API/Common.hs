@@ -114,9 +114,9 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto = createErrorWithErrorMessage $ "Error in $: key \"" ++ missingField ++ "\" not present"
     let expBody = encode expDto
-      -- WHEN: Call APIA
+      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -131,7 +131,7 @@ createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -152,7 +152,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
     let expStatus = 401
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expetation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -175,7 +175,7 @@ createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPe
     let expStatus = 403
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expetation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -190,7 +190,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher

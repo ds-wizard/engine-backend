@@ -63,11 +63,11 @@ versionAPI appContext =
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
           eitherPackageFromDb <- runInContextIO (getPackageById "elixir.nl.amsterdam:amsterdam-km:1.0.0") appContext
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherPackageFromDb) `shouldBe` True
           let (Right packageFromDb) = eitherPackageFromDb
           liftIO $ packageFromDb `shouldBe` expDto
@@ -90,7 +90,7 @@ versionAPI appContext =
           -- WHEN: Call API
           response <-
             request reqMethod "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0" reqHeaders reqBody
-          -- THEN: Compare response with expetation
+          -- THEN: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -115,7 +115,7 @@ versionAPI appContext =
           -- WHEN: Call API
           response <-
             request reqMethod "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/0.9.0" reqHeaders reqBody
-          -- THEN: Compare response with expetation
+          -- THEN: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher

@@ -66,11 +66,11 @@ test_204 appContext =
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Find a result
     eitherPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:2.0.0") appContext
-     -- AND: Compare response with expetation
+     -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-     -- AND: Compare state in DB with expetation
+     -- AND: Compare state in DB with expectation
     liftIO $ (isLeft eitherPackage) `shouldBe` True
     let (Left (NotExistsError _)) = eitherPackage
      -- AND: We have to end with expression (if there is another way, how to do it, please fix it)
@@ -100,11 +100,11 @@ test_400 appContext = do
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Find a result
     eitherPackages <- runInContextIO findPackageWithEvents appContext
-    -- AND: Compare response with expetation
+    -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-    -- AND: Compare state in DB with expetation
+    -- AND: Compare state in DB with expectation
     liftIO $ (isRight eitherPackages) `shouldBe` True
     let (Right packages) = eitherPackages
     liftIO $ packages `shouldBe` [baseElixir0PackageDto, baseElixirPackageDto, elixirNlPackageDto, elixirNlPackage2Dto]
