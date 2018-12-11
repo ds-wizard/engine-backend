@@ -22,7 +22,7 @@ import Specs.API.KnowledgeModelAPISpec
 import Specs.API.Level.APISpec
 import Specs.API.Metric.APISpec
 import Specs.API.MigratorAPISpec
-import Specs.API.OrganizationAPISpec
+import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
 import Specs.API.TokenAPISpec
