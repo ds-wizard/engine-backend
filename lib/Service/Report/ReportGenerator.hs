@@ -16,25 +16,34 @@ isQuestionAnswered :: FilledQuestion -> Bool
 isQuestionAnswered fq =
   case fq ^. qType of
     QuestionTypeOptions -> isJust $ fq ^. answerOption
-    QuestionTypeList -> isJust $ fq ^. answerItems
+    QuestionTypeList ->
+      case fq ^. answerItems of
+        Nothing -> False
+        Just [] -> False
+        Just (x:xs) -> True
     QuestionTypeString -> isJust $ fq ^. answerValue
     QuestionTypeNumber -> isJust $ fq ^. answerValue
     QuestionTypeDate -> isJust $ fq ^. answerValue
     QuestionTypeText -> isJust $ fq ^. answerValue
 
+isAIAnswered :: FilledAnswerItem -> Bool
+isAIAnswered fai = isJust $ fai ^. value
+
 computeAnsweredIndication :: Int -> FilledChapter -> Indication
 computeAnsweredIndication currentLevel fChapter =
   AnsweredIndication' $
   AnsweredIndication
-  { _answeredIndicationAnsweredQuestions = sum $ getQuestionCount (isQuestionAnswered) <$> fChapter ^. questions
-  , _answeredIndicationUnansweredQuestions = sum $ getQuestionCount (not . isQuestionAnswered) <$> fChapter ^. questions
+  { _answeredIndicationAnsweredQuestions =
+      sum $ getQuestionCount (isQuestionAnswered) (isAIAnswered) <$> fChapter ^. questions
+  , _answeredIndicationUnansweredQuestions =
+      sum $ getQuestionCount (not . isQuestionAnswered) (not . isAIAnswered) <$> fChapter ^. questions
   }
   where
-    getQuestionCount :: (FilledQuestion -> Bool) -> FilledQuestion -> Int
-    getQuestionCount condition fq = currentQuestion + childrens
+    getQuestionCount :: (FilledQuestion -> Bool) -> (FilledAnswerItem -> Bool) -> FilledQuestion -> Int
+    getQuestionCount conditionQ conditionAI fq = currentQuestion + childrens
       where
         currentQuestion =
-          if condition fq && isRequiredNow
+          if conditionQ fq && isRequiredNow
             then 1
             else 0
         isRequiredNow =
@@ -43,9 +52,16 @@ computeAnsweredIndication currentLevel fChapter =
             Nothing -> True
         childrens = (walkOverAnswerOption $ fq ^. answerOption) + (walkOverAnswerItems $ fq ^. answerItems)
           where
-            walkOverAnswerOption mAo = sum $ maybe [] (\ao -> (getQuestionCount condition) <$> ao ^. followUps) mAo
+            walkOverAnswerOption mAo =
+              sum $ maybe [] (\ao -> (getQuestionCount conditionQ conditionAI) <$> ao ^. followUps) mAo
             walkOverAnswerItems mAis = sum $ maybe [] (\ais -> walkOverAnswerItem <$> ais) mAis
-            walkOverAnswerItem ai = sum $ (getQuestionCount condition) <$> ai ^. questions
+            walkOverAnswerItem ai =
+              let itemName =
+                    if conditionAI ai && isRequiredNow
+                      then 1
+                      else 0
+                  questionsCount = (sum $ (getQuestionCount conditionQ conditionAI) <$> ai ^. questions)
+              in itemName + questionsCount
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

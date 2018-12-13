@@ -15,6 +15,8 @@ import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.Metric.Data.Metrics
+import qualified
+       Database.Migration.Development.Metric.MetricMigration as MTR
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import qualified
@@ -63,6 +65,7 @@ test_200 appContext =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
+    runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -87,7 +90,7 @@ test_200 appContext =
     liftIO $ (r2 ^. chapterUuid) `shouldBe` (chapter2 ^. uuid)
     let (AnsweredIndicationDTO' i2) = (r2 ^. indications) !! 0
     liftIO $ (i2 ^. answeredQuestions) `shouldBe` 10
-    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 0
+    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 1
     let m2 = (r2 ^. metrics) !! 0
     liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
     liftIO $ (m2 ^. measure) `shouldBe` 1

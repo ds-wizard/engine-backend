@@ -1,9 +1,10 @@
 module Service.Report.ReportService where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import Data.Time
 
-import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Report.ReportDTO
 import Database.DAO.Metric.MetricDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
@@ -12,6 +13,7 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.Questionnaire.QuestionnaireMapper
+import Service.Questionnaire.QuestionnaireService
 import Service.Report.ReportGenerator
 import Service.Report.ReportMapper
 
@@ -23,11 +25,12 @@ getReportByQuestionnaireUuid qtnUuid =
       report <- liftIO $ generateReport (qtn ^. level) metrics filledKM
       return . Right . toReportDTO $ report
 
-getPreviewOfReportByQuestionnaireUuid :: String -> [QuestionnaireReplyDTO] -> AppContextM (Either AppError ReportDTO)
+getPreviewOfReportByQuestionnaireUuid :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError ReportDTO)
 getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto =
-  heFindQuestionnaireById qtnUuid $ \qtn ->
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
     heFindMetrics $ \metrics -> do
-      let qtnWithModifiedReplies = qtn & replies .~ (fromReplyDTO <$> reqDto)
-      let filledKM = createFilledKM qtnWithModifiedReplies
-      report <- liftIO $ generateReport (qtn ^. level) metrics filledKM
+      now <- liftIO getCurrentTime
+      let updatedQtn = fromChangeDTO qtnDto reqDto now
+      let filledKM = createFilledKM updatedQtn
+      report <- liftIO $ generateReport (reqDto ^. level) metrics filledKM
       return . Right . toReportDTO $ report

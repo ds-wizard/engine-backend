@@ -29,3 +29,9 @@ heGetCurrentUser callback = do
   case mCurrentUser of
     Just user -> callback user
     Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__MISSING_USER
+
+hmGetCurrentUser callback = do
+  mCurrentUser <- asks _appContextCurrentUser
+  case mCurrentUser of
+    Just user -> callback user
+    Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__MISSING_USER

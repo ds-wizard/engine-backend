@@ -50,10 +50,10 @@ toFilledAnswer ans =
   , _filledAnswerMetricMeasures = ans ^. metricMeasures
   }
 
-toFilledAnswerItem :: AnswerItemTemplate -> String -> FilledAnswerItem
-toFilledAnswerItem ait titleValue =
+toFilledAnswerItem :: AnswerItemTemplate -> FilledAnswerItem
+toFilledAnswerItem ait =
   FilledAnswerItem
   { _filledAnswerItemTitle = ait ^. title
-  , _filledAnswerItemValue = titleValue
+  , _filledAnswerItemValue = Nothing
   , _filledAnswerItemQuestions = toFilledQuestion <$> ait ^. questions
   }

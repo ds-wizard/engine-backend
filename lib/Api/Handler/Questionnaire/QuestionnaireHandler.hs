@@ -22,48 +22,44 @@ import Service.Report.ReportService
 getQuestionnairesA :: Endpoint
 getQuestionnairesA =
   checkPermission "QTN_PERM" $
-  getAuthServiceExecutor $ \runInAuthService ->
-    getCurrentUser $ \user -> do
-      eitherDtos <- runInAuthService $ getQuestionnairesForCurrentUser user
-      case eitherDtos of
-        Right dtos -> json dtos
-        Left error -> sendError error
+  getAuthServiceExecutor $ \runInAuthService -> do
+    eitherDtos <- runInAuthService $ getQuestionnairesForCurrentUser
+    case eitherDtos of
+      Right dtos -> json dtos
+      Left error -> sendError error
 
 postQuestionnairesA :: Endpoint
 postQuestionnairesA =
   checkPermission "QTN_PERM" $
   getAuthServiceExecutor $ \runInAuthService ->
-    getCurrentUser $ \user ->
-      getReqDto $ \reqDto -> do
-        eitherQuestionnaireDto <- runInAuthService $ createQuestionnaire user reqDto
-        case eitherQuestionnaireDto of
-          Left appError -> sendError appError
-          Right questionnaireDto -> do
-            status created201
-            json questionnaireDto
+    getReqDto $ \reqDto -> do
+      eitherQuestionnaireDto <- runInAuthService $ createQuestionnaire reqDto
+      case eitherQuestionnaireDto of
+        Left appError -> sendError appError
+        Right questionnaireDto -> do
+          status created201
+          json questionnaireDto
 
 getQuestionnaireA :: Endpoint
 getQuestionnaireA =
   checkPermission "QTN_PERM" $
-  getAuthServiceExecutor $ \runInAuthService ->
-    getCurrentUser $ \user -> do
-      qtnUuid <- param "qtnUuid"
-      eitherDto <- runInAuthService $ getQuestionnaireDetailById qtnUuid user
-      case eitherDto of
-        Right dto -> json dto
-        Left error -> sendError error
+  getAuthServiceExecutor $ \runInAuthService -> do
+    qtnUuid <- param "qtnUuid"
+    eitherDto <- runInAuthService $ getQuestionnaireDetailById qtnUuid
+    case eitherDto of
+      Right dto -> json dto
+      Left error -> sendError error
 
 putQuestionnaireA :: Endpoint
 putQuestionnaireA =
   checkPermission "QTN_PERM" $
   getAuthServiceExecutor $ \runInAuthService ->
-    getCurrentUser $ \user ->
-      getReqDto $ \reqDto -> do
-        qtnUuid <- param "qtnUuid"
-        eitherDto <- runInAuthService $ modifyQuestionnaire qtnUuid user reqDto
-        case eitherDto of
-          Right dto -> json dto
-          Left error -> sendError error
+    getReqDto $ \reqDto -> do
+      qtnUuid <- param "qtnUuid"
+      eitherDto <- runInAuthService $ modifyQuestionnaire qtnUuid reqDto
+      case eitherDto of
+        Right dto -> json dto
+        Left error -> sendError error
 
 getQuestionnaireDmpA :: Endpoint
 getQuestionnaireDmpA = do
@@ -120,10 +116,9 @@ postQuestionnaireReportPreviewA =
 deleteQuestionnaireA :: Endpoint
 deleteQuestionnaireA =
   checkPermission "QTN_PERM" $
-  getAuthServiceExecutor $ \runInAuthService ->
-    getCurrentUser $ \user -> do
-      qtnUuid <- param "qtnUuid"
-      maybeError <- runInAuthService $ deleteQuestionnaire qtnUuid user
-      case maybeError of
-        Nothing -> status noContent204
-        Just error -> sendError error
+  getAuthServiceExecutor $ \runInAuthService -> do
+    qtnUuid <- param "qtnUuid"
+    maybeError <- runInAuthService $ deleteQuestionnaire qtnUuid
+    case maybeError of
+      Nothing -> status noContent204
+      Just error -> sendError error

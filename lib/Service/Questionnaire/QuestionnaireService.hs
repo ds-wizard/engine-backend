@@ -9,11 +9,11 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Api.Resource.User.UserDTO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Context.AppContextHelpers
 import Model.Error.Error
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
@@ -46,71 +46,76 @@ getQuestionnaires =
             Left error -> return . Left $ error
         Left error -> return . Left $ error
 
-getQuestionnairesForCurrentUser :: UserDTO -> AppContextM (Either AppError [QuestionnaireDTO])
-getQuestionnairesForCurrentUser userDto =
-  heGetQuestionnaires $ \questionnaires ->
-    if userDto ^. role == "ADMIN"
-      then return . Right $ questionnaires
-      else return . Right $ filter justOwnersAndPublicQuestionnaires questionnaires
+getQuestionnairesForCurrentUser :: AppContextM (Either AppError [QuestionnaireDTO])
+getQuestionnairesForCurrentUser =
+  heGetCurrentUser $ \currentUser ->
+    heGetQuestionnaires $ \questionnaires ->
+      if currentUser ^. role == "ADMIN"
+        then return . Right $ questionnaires
+        else return . Right $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
   where
-    justOwnersAndPublicQuestionnaires questionnaire =
-      questionnaire ^. private == False || questionnaire ^. ownerUuid == (Just $ userDto ^. uuid)
+    justOwnersAndPublicQuestionnaires currentUser questionnaire =
+      questionnaire ^. private == False || questionnaire ^. ownerUuid == (Just $ currentUser ^. uuid)
 
-createQuestionnaire :: UserDTO -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
-createQuestionnaire userDto questionnaireCreateDto = do
+createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
+createQuestionnaire questionnaireCreateDto = do
   qtnUuid <- liftIO generateUuid
-  createQuestionnaireWithGivenUuid qtnUuid userDto questionnaireCreateDto
+  createQuestionnaireWithGivenUuid qtnUuid questionnaireCreateDto
 
-createQuestionnaireWithGivenUuid ::
-     U.UUID -> UserDTO -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
-createQuestionnaireWithGivenUuid qtnUuid userDto reqDto =
-  heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
-    heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \events ->
-      heCreateKnowledgeModel events $ \knowledgeModel -> do
-        now <- liftIO getCurrentTime
-        let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel (userDto ^. uuid) now now
-        insertQuestionnaire qtn
-        return . Right $ toSimpleDTO qtn package
+createQuestionnaireWithGivenUuid :: U.UUID -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
+createQuestionnaireWithGivenUuid qtnUuid reqDto =
+  heGetCurrentUser $ \currentUser ->
+    heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
+      heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \events ->
+        heCreateKnowledgeModel events $ \knowledgeModel -> do
+          now <- liftIO getCurrentTime
+          let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel (currentUser ^. uuid) now now
+          insertQuestionnaire qtn
+          return . Right $ toSimpleDTO qtn package
 
-getQuestionnaireById :: String -> UserDTO -> AppContextM (Either AppError QuestionnaireDTO)
-getQuestionnaireById qtnUuid userDto =
-  heFindQuestionnaire $ \qtn -> heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
+getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
+getQuestionnaireById qtnUuid =
+  heGetCurrentUser $ \currentUser ->
+    heFindQuestionnaire currentUser $ \qtn ->
+      heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
   where
-    heFindQuestionnaire =
-      if userDto ^. role == "ADMIN"
+    heFindQuestionnaire currentUser =
+      if currentUser ^. role == "ADMIN"
         then heFindQuestionnaireById qtnUuid
-        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
+        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
 
-getQuestionnaireDetailById :: String -> UserDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
-getQuestionnaireDetailById qtnUuid userDto =
-  heFindQuestionnaire $ \qtn ->
-    heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
-      return . Right $ toDetailWithPackageWithEventsDTO qtn package
+getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
+getQuestionnaireDetailById qtnUuid =
+  heGetCurrentUser $ \currentUser ->
+    heFindQuestionnaire currentUser $ \qtn ->
+      heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
+        return . Right $ toDetailWithPackageWithEventsDTO qtn package
   where
-    heFindQuestionnaire =
-      if userDto ^. role == "ADMIN"
+    heFindQuestionnaire currentUser =
+      if currentUser ^. role == "ADMIN"
         then heFindQuestionnaireById qtnUuid
-        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
+        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
 
-modifyQuestionnaire ::
-     String -> UserDTO -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
-modifyQuestionnaire qtnUuid userDto reqDto =
-  heGetQuestionnaireDetailById qtnUuid userDto $ \qtnDto -> do
-    now <- liftIO getCurrentTime
-    let updateQtn = fromChangeDTO qtnDto reqDto now
-    updateQuestionnaireById updateQtn
-    return . Right $ toDetailWithPackageDTODTO updateQtn (qtnDto ^. package)
+modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
+modifyQuestionnaire qtnUuid reqDto =
+  heGetCurrentUser $ \currentUser ->
+    heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
+      now <- liftIO getCurrentTime
+      let updatedQtn = fromChangeDTO qtnDto reqDto now
+      updateQuestionnaireById updatedQtn
+      return . Right $ toDetailWithPackageDTODTO updatedQtn (qtnDto ^. package)
 
-deleteQuestionnaire :: String -> UserDTO -> AppContextM (Maybe AppError)
-deleteQuestionnaire qtnUuid userDto = do
-  hmFindQuestionnaire $ \questionnaire -> do
-    deleteQuestionnaireById qtnUuid
-    return Nothing
+deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
+deleteQuestionnaire qtnUuid =
+  hmGetCurrentUser $ \currentUser ->
+    hmFindQuestionnaire currentUser $ \questionnaire -> do
+      deleteQuestionnaireById qtnUuid
+      return Nothing
   where
-    hmFindQuestionnaire =
-      if userDto ^. role == "ADMIN"
+    hmFindQuestionnaire currentUser =
+      if currentUser ^. role == "ADMIN"
         then hmFindQuestionnaireById qtnUuid
-        else hmFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ userDto ^. uuid)
+        else hmFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
 
 -- --------------------------------
 -- HELPERS
@@ -121,8 +126,8 @@ heGetQuestionnaires callback = do
     Right questionnaires -> callback questionnaires
     Left error -> return . Left $ error
 
-heGetQuestionnaireDetailById qtnUuid ownerUuid callback = do
-  eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid ownerUuid
+heGetQuestionnaireDetailById qtnUuid callback = do
+  eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Left $ error

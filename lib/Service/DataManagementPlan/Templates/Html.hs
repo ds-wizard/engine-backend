@@ -175,7 +175,7 @@ answerItem2html ctx dmp answerItem =
   H.div ! A.class_ "answer-block answer-item" $ do
     H.div ! A.class_ "answer item" $ do
       H.span ! A.class_ "title" $ H.toHtml $ answerItem ^. title
-      H.span ! A.class_ "value" $ H.toHtml $ answerItem ^. value
+      H.span ! A.class_ "value" $ H.toHtml $ fromMaybe "" (answerItem ^. value)
     H.div ! A.class_ "followups" $ mapM_ (question2html ctx dmp) (answerItem ^. questions)
 
 experts2html :: DataManagementPlanTemplateContext -> [ExpertDTO] -> H.Html

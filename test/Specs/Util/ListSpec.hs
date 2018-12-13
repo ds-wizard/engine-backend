@@ -23,3 +23,13 @@ listSpec =
       it "[1,2] -> [1,2]" $ [1, 2] `elems` [1, 2] `shouldBe` True
       it "[2,1] -> [1,2]" $ [2, 1] `elems` [1, 2] `shouldBe` True
       it "[1,2] -> [1]" $ [1, 2] `elems` [1] `shouldBe` False
+    describe "generateList" $ do
+      it "0 -> []" $ (generateList 0) == [] `shouldBe` True
+      it "1 -> [0]" $ (generateList 1) == [0] `shouldBe` True
+      it "2 -> [0,1]" $ (generateList 2) == [0, 1] `shouldBe` True
+      it "5 -> [0,1,2,3,4]" $ (generateList 5) == [0, 1, 2, 3, 4] `shouldBe` True
+      it "-1 -> []" $ (generateList (-1)) == [] `shouldBe` True
+    describe "generateListS" $ do
+      it "'0' -> []" $ (generateListS "0") == [] `shouldBe` True
+      it "'2' -> [0,1]" $ (generateListS "2") == [0, 1] `shouldBe` True
+      it "'-1' -> []" $ (generateListS "-1") == [] `shouldBe` True
