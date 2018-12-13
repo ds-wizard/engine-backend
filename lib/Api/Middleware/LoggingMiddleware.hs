@@ -26,6 +26,7 @@ loggingMiddleware _ application request sendResponse =
 
 logRequest :: Request -> Status -> [Header] -> [Header]
 logRequest request resStatus resHeaders =
+  filterOptionsRequests request resHeaders $
   unsafePerformIO $ do
     putStrLn . (colorizeMessage resStatus) $ createLogMessage blockParts messageParts
     return resHeaders
@@ -68,10 +69,10 @@ colorizeMessage resStatus
   | resStatus == status200 = color Green
   | resStatus == status201 = color Green
   | resStatus == status204 = color Green
-  | resStatus == status400 = color Yellow
-  | resStatus == status401 = color Yellow
-  | resStatus == status403 = color Yellow
-  | resStatus == status404 = color Yellow
+  | resStatus == status400 = color Magenta
+  | resStatus == status401 = color Magenta
+  | resStatus == status403 = color Magenta
+  | resStatus == status404 = color Magenta
   | resStatus == status500 = color Red
 
 statusToString :: Status -> String
@@ -84,3 +85,8 @@ statusToString resStatus
   | resStatus == status403 = "403 Forbidden"
   | resStatus == status404 = "404 Not Found"
   | resStatus == status500 = "500 Internal Server Error"
+
+filterOptionsRequests request resHeaders callback =
+  if extractMethod request == "OPTIONS"
+    then resHeaders
+    else callback
