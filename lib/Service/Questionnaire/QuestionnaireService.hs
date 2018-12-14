@@ -12,6 +12,7 @@ import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
+import Localization
 import Model.Context.AppContext
 import Model.Context.AppContextHelpers
 import Model.Error.Error
@@ -75,47 +76,38 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
 
 getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
 getQuestionnaireById qtnUuid =
-  heGetCurrentUser $ \currentUser ->
-    heFindQuestionnaire currentUser $ \qtn ->
-      heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
-  where
-    heFindQuestionnaire currentUser =
-      if currentUser ^. role == "ADMIN"
-        then heFindQuestionnaireById qtnUuid
-        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
+  heFindQuestionnaireById qtnUuid $ \qtn ->
+    checkPermissionToQtn qtn $ heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
 
 getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
 getQuestionnaireDetailById qtnUuid =
-  heGetCurrentUser $ \currentUser ->
-    heFindQuestionnaire currentUser $ \qtn ->
+  heFindQuestionnaireById qtnUuid $ \qtn ->
+    checkPermissionToQtn qtn $ do
       heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
         return . Right $ toDetailWithPackageWithEventsDTO qtn package
-  where
-    heFindQuestionnaire currentUser =
-      if currentUser ^. role == "ADMIN"
-        then heFindQuestionnaireById qtnUuid
-        else heFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
 modifyQuestionnaire qtnUuid reqDto =
-  heGetCurrentUser $ \currentUser ->
-    heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
-      now <- liftIO getCurrentTime
-      let updatedQtn = fromChangeDTO qtnDto reqDto now
-      updateQuestionnaireById updatedQtn
-      return . Right $ toDetailWithPackageDTODTO updatedQtn (qtnDto ^. package)
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
+    now <- liftIO getCurrentTime
+    let updatedQtn = fromChangeDTO qtnDto reqDto now
+    updateQuestionnaireById updatedQtn
+    return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package)
 
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid =
-  hmGetCurrentUser $ \currentUser ->
-    hmFindQuestionnaire currentUser $ \questionnaire -> do
-      deleteQuestionnaireById qtnUuid
-      return Nothing
-  where
-    hmFindQuestionnaire currentUser =
-      if currentUser ^. role == "ADMIN"
-        then hmFindQuestionnaireById qtnUuid
-        else hmFindQuestionnaireByIdAndOwnerUuid qtnUuid (U.toString $ currentUser ^. uuid)
+  hmGetQuestionnaireById qtnUuid $ \questionnaire -> do
+    deleteQuestionnaireById qtnUuid
+    return Nothing
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+checkPermissionToQtn qtn callback =
+  heGetCurrentUser $ \currentUser ->
+    if currentUser ^. role == "ADMIN" || qtn ^. private == False || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+      then callback
+      else return . Left . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND
 
 -- --------------------------------
 -- HELPERS
@@ -126,6 +118,14 @@ heGetQuestionnaires callback = do
     Right questionnaires -> callback questionnaires
     Left error -> return . Left $ error
 
+-- -----------------------------------------------------
+hmGetQuestionnaireById qtnUuid callback = do
+  eitherQuestionnaire <- getQuestionnaireById qtnUuid
+  case eitherQuestionnaire of
+    Right questionnaire -> callback questionnaire
+    Left error -> return . Just $ error
+
+-- -----------------------------------------------------
 heGetQuestionnaireDetailById qtnUuid callback = do
   eitherQuestionnaire <- getQuestionnaireDetailById qtnUuid
   case eitherQuestionnaire of
