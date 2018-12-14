@@ -1,11 +1,12 @@
 module Database.Migration.Development.Metric.MetricMigration where
 
+import Constant.Component
 import Database.DAO.Metric.MetricDAO
 import Database.Migration.Development.Metric.Data.Metrics
 import Util.Logger
 
 runMigration = do
-  logInfo "MIGRATION (Metric/Metric): started"
+  logInfo $ msg _CMP_MIGRATION "(Metric/Metric) started"
   deleteMetrics
   insertMetric metricF
   insertMetric metricA
@@ -13,4 +14,4 @@ runMigration = do
   insertMetric metricR
   insertMetric metricG
   insertMetric metricO
-  logInfo "MIGRATION (Metric/Metric): ended"
+  logInfo $ msg _CMP_MIGRATION "(Metric/Metric) ended"

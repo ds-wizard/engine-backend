@@ -90,3 +90,25 @@ deleteBranchById :: String -> AppContextM ()
 deleteBranchById branchUuid = do
   let action = deleteOne $ select ["uuid" =: branchUuid] branchCollection
   runDB action
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heFindBranches callback = do
+  eitherBranches <- findBranches
+  case eitherBranches of
+    Right branches -> callback branches
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
+heFindBranchById branchUuid callback = do
+  eitherBranch <- findBranchById branchUuid
+  case eitherBranch of
+    Right branch -> callback branch
+    Left error -> return . Left $ error
+
+hmFindBranchById branchUuid callback = do
+  eitherBranch <- findBranchById branchUuid
+  case eitherBranch of
+    Right branch -> callback branch
+    Left error -> return . Just $ error

@@ -17,6 +17,12 @@ authenabled = false
 username =
 password =
 
+[Messaging]
+host = localhost
+port = 5672
+username = guest
+password = guest
+
 [JWT]
 secret = secret-key
 version = 1
@@ -25,7 +31,7 @@ expiration = 99999
 [Role]
 defaultrole = DATASTEWARD
 admin = UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM
-datasteward = KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, QTN_PERM, DMP_PERM
+datasteward = KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM
 researcher = PM_READ_PERM, QTN_PERM, DMP_PERM
 
 [Mail]

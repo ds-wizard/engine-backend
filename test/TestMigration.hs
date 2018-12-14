@@ -3,6 +3,7 @@ module TestMigration where
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Feedback.FeedbackDAO
+import Database.DAO.Metric.MetricDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Organization.OrganizationDAO
 import Database.DAO.Package.PackageDAO
@@ -20,6 +21,7 @@ resetDB appContext = do
   runInContext (deleteOrganizations) appContext
   runInContext (insertOrganization org1) appContext
   runInContext (deleteBranches) appContext
+  runInContext (deleteMetrics) appContext
   runInContext (deleteMigratorStates) appContext
   runInContext (deleteActionKeys) appContext
   runInContext (deleteFeedbacks) appContext

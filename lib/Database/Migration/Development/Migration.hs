@@ -1,5 +1,8 @@
-module Database.Migration.Development.Migration where
+module Database.Migration.Development.Migration
+  ( runMigration
+  ) where
 
+import Constant.Component
 import qualified
        Database.Migration.Development.BookReference.BookReferenceMigration
        as BR
@@ -29,7 +32,7 @@ import qualified Database.Migration.Development.User.UserMigration
 import Util.Logger
 
 runMigration = do
-  logInfo "MIGRATION: started"
+  logInfo $ msg _CMP_MIGRATION "started"
   ORG.runMigration
   U.runMigration
   PKG.runMigration
@@ -41,4 +44,4 @@ runMigration = do
   F.runMigration
   MTR.runMigration
   LVL.runMigration
-  logInfo "MIGRATION: ended"
+  logInfo $ msg _CMP_MIGRATION "ended"

@@ -30,7 +30,7 @@ import Api.Middleware.AuthMiddleware
 import Api.Middleware.CORSMiddleware
 import Api.Middleware.LoggingMiddleware
 import LensesConfig
-import Model.Context.AppContext
+import Model.Context.BaseContext
 
 unauthorizedEndpoints =
   [ (methodGet, mkRegex "^$")
@@ -49,7 +49,7 @@ unauthorizedEndpoints =
   , (methodPost, mkRegex "^feedbacks.*")
   ]
 
-createEndpoints :: AppContext -> ScottyT Text AppContextM ()
+createEndpoints :: BaseContext -> ScottyT Text BaseContextM ()
 createEndpoints context
    --------------------
    -- MIDDLEWARES
@@ -105,6 +105,7 @@ createEndpoints context
    -- PACKAGE
    --------------------
   get "/packages" getPackagesA
+  post "/packages" postPackagesA
   get "/packages/unique" getUniquePackagesA
   get "/packages/:pkgId" getPackageA
   delete "/packages" deletePackagesA

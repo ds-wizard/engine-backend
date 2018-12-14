@@ -3,20 +3,22 @@ module Specs.API.Questionnaire.Detail_Report_Preview_POST
   ) where
 
 import Control.Lens ((&), (.~), (^.))
-import Data.Aeson (eitherDecode, encode)
+import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.Metric.Data.Metrics
+import qualified
+       Database.Migration.Development.Metric.MetricMigration as MTR
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -48,22 +50,26 @@ reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/report/preview"
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
-  toReplyDTO <$>
-  [ fQ1
-  , fQ2
-  , rQ2_aYes_fuQ1
-  , fQ3
-  , rQ4_ait1_itemName
-  , rQ4_ait1_q5_ait1_itemName
-  , rQ4_ait1_q5_ait1_question7
-  , rQ4_ait1_q5_ait1_question8
-  , rQ4_ait1_q6
-  , rQ4_ait2_itemName
-  , rQ4_ait2_q5_ait1_itemName
-  , rQ4_ait2_q5_ait1_question7
-  , rQ4_ait2_q5_ait1_question8
-  , rQ4_ait2_q6
-  ]
+  QuestionnaireChangeDTO
+  { _questionnaireChangeDTOLevel = 3
+  , _questionnaireChangeDTOReplies =
+      toReplyDTO <$>
+      [ fQ1
+      , fQ2
+      , rQ2_aYes_fuQ1
+      , fQ3
+      , rQ4
+      , rQ4_ait1_itemName
+      , rQ4_ait1_q5
+      , rQ4_ait1_q5_ait1_itemName
+      , rQ4_ait1_q5_ait1_question7
+      , rQ4_ait1_q5_ait1_question8
+      , rQ4_ait1_q6
+      , rQ4_ait2_itemName
+      , rQ4_ait2_q5
+      , rQ4_ait2_q6
+      ]
+  }
 
 reqBody = encode reqDto
 
@@ -81,14 +87,14 @@ test_200 appContext =
      -- AND: Run migrations
     runInContextIO (insertPackage elixirCzPackage2Dto) appContext
     runInContextIO (insertQuestionnaire (questionnaire1 & replies .~ [])) appContext
+    runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let (SResponse (Status status _) headers body) = response
-    liftIO $ status `shouldBe` expStatus
-    liftIO $ headers `shouldBe` expHeaders
+     -- THEN: Compare response with expectation
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ReportDTO)
+    assertResStatus status expStatus
+    assertResHeaders headers expHeaders
     -- AND: Compare body
-    let (Right resBody) = eitherDecode body :: Either String ReportDTO
     let rs = resBody ^. chapterReports
     liftIO $ (length rs) `shouldBe` 2
     -- Chapter report 1
@@ -105,7 +111,7 @@ test_200 appContext =
     liftIO $ (r2 ^. chapterUuid) `shouldBe` (chapter2 ^. uuid)
     let (AnsweredIndicationDTO' i2) = (r2 ^. indications) !! 0
     liftIO $ (i2 ^. answeredQuestions) `shouldBe` 10
-    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 0
+    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 1
     let m2 = (r2 ^. metrics) !! 0
     liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
     liftIO $ (m2 ^. measure) `shouldBe` 1

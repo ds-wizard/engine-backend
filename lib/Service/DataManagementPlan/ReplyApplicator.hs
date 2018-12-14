@@ -14,6 +14,7 @@ import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Questionnaire.Questionnaire
 import Service.DataManagementPlan.Convertor
+import Util.List
 
 runReplyApplicator :: FilledKnowledgeModel -> [QuestionnaireReply] -> FilledKnowledgeModel
 runReplyApplicator = foldl foldReply
@@ -62,7 +63,6 @@ applyReplyToChapter reply (fQUuid:restOfPath) fCh =
 -- ------------------------------------------------------------------------
 applyReplyToQuestion :: QuestionnaireReply -> [String] -> FilledQuestion -> FilledQuestion
 applyReplyToQuestion reply [] fQuestion = replyOnQuestion reply fQuestion
-applyReplyToQuestion reply (itemNumber:"itemName":[]) fQuestion = createFilledAnswerItem fQuestion reply
 applyReplyToQuestion reply (maybeItemNumber:restOfPath) fQuestion =
   case (readMaybe maybeItemNumber :: Maybe Int) of
     Just itemNumber -> passToAnswerItems reply itemNumber restOfPath fQuestion
@@ -76,7 +76,7 @@ replyOnQuestion reply fQuestion =
     QuestionTypeDate -> createFilledAnswerValue fQuestion reply
     QuestionTypeText -> createFilledAnswerValue fQuestion reply
     QuestionTypeOptions -> createFilledAnswerOption fQuestion reply
-    QuestionTypeList -> fQuestion
+    QuestionTypeList -> createFilledAnswerItem fQuestion reply
 
 -- -------------------------
 -- CREATE REPLY ------------
@@ -99,15 +99,15 @@ createFilledAnswerItem :: FilledQuestion -> QuestionnaireReply -> FilledQuestion
 createFilledAnswerItem fQuestion reply =
   case fQuestion ^. answerItemTemplate of
     Just ait ->
-      let ai = (toFilledAnswerItem ait (reply ^. value))
-          ais = (fromMaybe [] (fQuestion ^. answerItems)) ++ [ai]
-      in fQuestion & answerItems .~ (Just ais)
+      let mAis = Just $ (\_ -> toFilledAnswerItem ait) <$> generateListS (reply ^. value)
+      in fQuestion & answerItems .~ mAis
     Nothing -> fQuestion
 
 -- -------------------------
 -- PASS TO ANSWER ITEMS ----
 -- -------------------------
 applyToAnswerItem :: QuestionnaireReply -> [String] -> FilledAnswerItem -> FilledAnswerItem
+applyToAnswerItem reply ("itemName":[]) ai = ai & value .~ (Just $ reply ^. value)
 applyToAnswerItem reply (fQUuid:restOfPath) ai =
   let mfQuestions = foldl foldOneQuestion [] (ai ^. questions)
   in ai & questions .~ mfQuestions

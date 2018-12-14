@@ -13,6 +13,7 @@ import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import LensesConfig
 import Model.Error.ErrorHelpers
+import Util.List (elems)
 
 import Specs.API.Common
 
@@ -37,10 +38,10 @@ tokenAPI appContext =
       let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
       let (SResponse (Status status _) headers body) = response
       liftIO $ status `shouldBe` expStatus
-      liftIO $ headers `shouldBe` expHeaders
+      liftIO $ (expHeaders `elems` headers) `shouldBe` True
       let eBody = eitherDecode body :: Either String TokenDTO
       let (Right body) = eBody
       liftIO $ (body ^. token) `shouldStartWith` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
@@ -59,7 +60,7 @@ tokenAPI appContext =
       let expBody = encode expDto
           -- WHEN: Call API
       response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
       let responseMatcher =
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher

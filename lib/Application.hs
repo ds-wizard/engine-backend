@@ -10,12 +10,15 @@ import Network.Wai.Handler.Warp
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
 import Api.Router
+import Constant.Component
 import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
 import LensesConfig
+import Messaging.Connection
 import Model.Config.Environment
-import Model.Context.AppContext
+import Model.Context.AppContextHelpers
+import Model.Context.BaseContext
 import Service.Config.ConfigLoader
 import Util.Logger
 
@@ -37,37 +40,42 @@ runServer =
   \|   |_____/|_____/|_|      |_____/ \\___|_|    \\_/ \\___|_|     |   \n\
   \|                                                             |\n\
   \\\-------------------------------------------------------------/"
-    logInfo "SERVER: started"
+    logInfo $ msg _CMP_SERVER "started"
     eitherDspConfig <- liftIO $ loadDSWConfig applicationConfigFile buildInfoFile
     case eitherDspConfig of
       Left (errorDate, reason) -> do
-        logError "CONFIG: load failed"
-        logError "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-        logError . show $ errorDate
+        logError $ msg _CMP_CONFIG "load failed"
+        logError $
+          msg _CMP_CONFIG "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
+        logError $ msg _CMP_CONFIG (show errorDate)
       Right dswConfig -> do
-        logInfo "CONFIG: loaded"
+        logInfo $ msg _CMP_CONFIG "loaded"
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
         runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
-          lift $ logInfo "DATABASE: connected"
+          lift . logInfo $ msg _CMP_DATABASE "connected"
+          msgChannel <- liftIO $ createMessagingChannel dswConfig
+          lift . logInfo $ msg _CMP_MESSAGING "connected"
           let serverPort = dswConfig ^. webConfig ^. port
-          let appContext = AppContext {_appContextConfig = dswConfig, _appContextPool = dbPool}
-          liftIO $ runDBMigrations appContext
-          liftIO $ runApplication appContext
+          let baseContext =
+                BaseContext
+                {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
+          liftIO $ runDBMigrations baseContext
+          liftIO $ runApplication baseContext
 
 runDBMigrations context =
   case context ^. config . environment . env of
-    Development -> runStdoutLoggingT $ runReaderT (runAppContextM DM.runMigration) context
+    Development -> runStdoutLoggingT $ runAppContextWithBaseContext DM.runMigration context
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context
     _ -> return ()
 
-runApplication :: AppContext -> IO ()
+runApplication :: BaseContext -> IO ()
 runApplication context = do
   let o = getOptions context
-  let r m = runStdoutLoggingT $ runReaderT (runAppContextM m) context
+  let r m = runStdoutLoggingT $ runReaderT (runBaseContextM m) context
   scottyOptsT o r (createEndpoints context)
 
-getOptions :: AppContext -> Options
+getOptions :: BaseContext -> Options
 getOptions context =
   def
   { settings = getSettings context
@@ -79,7 +87,7 @@ getOptions context =
         Test -> 0
   }
 
-getSettings :: AppContext -> Settings
+getSettings :: BaseContext -> Settings
 getSettings context =
   let webPort = context ^. config . webConfig . port
   in setPort webPort defaultSettings

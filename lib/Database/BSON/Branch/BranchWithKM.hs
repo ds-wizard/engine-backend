@@ -17,6 +17,9 @@ instance FromBSON BranchWithKM where
     bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
     bKmSerialized <- BSON.lookup "knowledgeModel" doc
     let bKm = deserializeKM bKmSerialized
+    let bOwnerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
+    bCreatedAt <- BSON.lookup "createdAt" doc
+    bUpdatedAt <- BSON.lookup "updatedAt" doc
     return
       BranchWithKM
       { _branchWithKMUuid = bUuid
@@ -26,6 +29,9 @@ instance FromBSON BranchWithKM where
       , _branchWithKMLastAppliedParentPackageId = bLastAppliedParentPackageId
       , _branchWithKMLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
       , _branchWithKMKnowledgeModel = bKm
+      , _branchWithKMOwnerUuid = bOwnerUuid
+      , _branchWithKMCreatedAt = bCreatedAt
+      , _branchWithKMUpdatedAt = bUpdatedAt
       }
     where
       deserializeKM (Just kmSerialized) = fromBSON kmSerialized

@@ -46,7 +46,7 @@ data FilledAnswerDTO = FilledAnswerDTO
 
 data FilledAnswerItemDTO = FilledAnswerItemDTO
   { _filledAnswerItemDTOTitle :: String
-  , _filledAnswerItemDTOValue :: String
+  , _filledAnswerItemDTOValue :: Maybe String
   , _filledAnswerItemDTOQuestions :: [FilledQuestionDTO]
   } deriving (Show, Eq)
 

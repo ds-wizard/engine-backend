@@ -1,6 +1,5 @@
 module Api.Handler.Token.TokenHandler where
 
-import Control.Monad.Trans.Class (lift)
 import Network.HTTP.Types.Status (created201)
 import Web.Scotty.Trans (json, status)
 
@@ -10,7 +9,7 @@ import Service.Token.TokenService
 postTokenA :: Endpoint
 postTokenA =
   getReqDto $ \reqDto -> do
-    eitherTokenDto <- lift $ getToken reqDto
+    eitherTokenDto <- runInUnauthService $ getToken reqDto
     case eitherTokenDto of
       Right tokenDto -> do
         status created201

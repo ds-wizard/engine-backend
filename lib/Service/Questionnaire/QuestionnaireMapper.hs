@@ -61,8 +61,8 @@ toDetailWithPackageWithEventsDTO questionnaire package =
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-toDetailWithPackageDTODTO :: Questionnaire -> PackageDTO -> QuestionnaireDetailDTO
-toDetailWithPackageDTODTO questionnaire package =
+toDetailWithPackageDTO :: Questionnaire -> PackageDTO -> QuestionnaireDetailDTO
+toDetailWithPackageDTO questionnaire package =
   QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name

@@ -27,6 +27,4 @@ filledKnowledgeModelAccessorsSpec =
       , FA.fQ4_ait2_question6
       , FA.fQ4_ait1_q5_ait1_question7
       , FA.fQ4_ait1_q5_ait1_question8
-      , FA.fQ4_ait2_q5_ait1_question7
-      , FA.fQ4_ait2_q5_ait1_question8
       ]

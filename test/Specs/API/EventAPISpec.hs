@@ -103,11 +103,11 @@ eventAPI appContext = do
           eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           let expBody = reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
           liftIO $ (branchFromDb ^. events) `shouldBe` bEvents
@@ -142,7 +142,7 @@ eventAPI appContext = do
           -- THEN: Find a result
           eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -176,11 +176,11 @@ eventAPI appContext = do
           -- THEN: Find a result
           eitherBranch <- runInContextIO (findBranchWithEventsById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           eitherKm <- runInContextIO (findBranchWithKMByBranchId "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals reqBody}
           response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expetation
+          -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
           liftIO $ (branchFromDb ^. events) `shouldBe` []

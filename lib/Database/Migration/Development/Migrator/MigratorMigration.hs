@@ -1,9 +1,10 @@
 module Database.Migration.Development.Migrator.MigratorMigration where
 
+import Constant.Component
 import Database.DAO.Migrator.MigratorDAO
 import Util.Logger
 
 runMigration = do
-  logInfo "MIGRATION (Migrator/Migrator): started"
+  logInfo $ msg _CMP_MIGRATION "(Migrator/Migrator) started"
   deleteMigratorStates
-  logInfo "MIGRATION (Migrator/Migrator): ended"
+  logInfo $ msg _CMP_MIGRATION "(Migrator/Migrator) ended"

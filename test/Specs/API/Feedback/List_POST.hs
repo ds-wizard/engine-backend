@@ -4,23 +4,21 @@ module Specs.API.Feedback.List_POST
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
-import Data.Either (isRight)
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 
 import Api.Resource.Feedback.FeedbackCreateDTO
-import Database.DAO.Feedback.FeedbackDAO
+import Api.Resource.Feedback.FeedbackDTO
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Context.AppContext
 
 import Specs.API.Common
-import Specs.Common
+import Specs.API.Feedback.Common
 
 -- ------------------------------------------------------------------------
 -- POST /feedbacks
@@ -61,21 +59,13 @@ test_200 appContext =
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Find a result
-    eitheFeedbacks <- runInContextIO findFeedbacks appContext
-    liftIO $ (isRight eitheFeedbacks) `shouldBe` True
-    let (Right feedbacks) = eitheFeedbacks
-    -- AND: Compare response with expectation
-    let (SResponse (Status status _) headers body) = response
-    liftIO $ status `shouldBe` expStatus
-    liftIO $ headers `shouldBe` expHeaders
+    -- THEN: Compare response with expectation
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, FeedbackDTO)
+    assertResStatus status expStatus
+    assertResHeaders headers expHeaders
+    compareFeedbackDtos resBody reqDto
     -- AND: Compare state in DB with expectation
-    liftIO $ (length feedbacks) `shouldBe` 1
-    let feedback = feedbacks !! 0
-    liftIO $ (feedback ^. questionUuid) `shouldBe` (reqDto ^. questionUuid)
-    liftIO $ (feedback ^. packageId) `shouldBe` (reqDto ^. packageId)
-    liftIO $ (feedback ^. title) `shouldBe` (reqDto ^. title)
-    liftIO $ (feedback ^. content) `shouldBe` (reqDto ^. content)
+    assertExistenceOfFeedbackInDB appContext reqDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

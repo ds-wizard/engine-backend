@@ -1,5 +1,5 @@
 name: dsw-server
-version: '1.0.0'
+version: '1.1.0'
 synopsis: DSW Server
 description: DSW Server
 category: Web
@@ -26,6 +26,7 @@ library:
   dependencies:
   - base
   - aeson
+  - amqp
   - blaze-html
   - bson
   - bson-generic
@@ -52,6 +53,7 @@ library:
   - persistent-mongoDB
   - persistent-template
   - pretty-simple
+  - pretty-terminal
   - pwstore-fast
   - random
   - regex-compat
@@ -110,6 +112,7 @@ tests:
     dependencies:
     - base
     - aeson
+    - amqp
     - bson
     - bson-generic
     - bytestring

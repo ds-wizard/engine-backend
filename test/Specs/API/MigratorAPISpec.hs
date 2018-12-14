@@ -4,6 +4,7 @@ import Control.Lens
 import Data.Aeson
 import Data.Either
 import Data.Maybe
+import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Test.Hspec
@@ -11,7 +12,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Branch.BranchDTO
+import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
@@ -37,6 +38,8 @@ import Service.Migrator.MigratorService
 
 import Specs.API.Common
 import Specs.Common
+
+timestamp = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
 
 migratorAPI appContext = do
   with (startWebApp appContext) $ do
@@ -79,7 +82,7 @@ migratorAPI appContext = do
           runInContextIO (createMigration branchUuid migratorCreateDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -100,7 +103,7 @@ migratorAPI appContext = do
           runInContextIO deleteMigratorStates appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -143,7 +146,7 @@ migratorAPI appContext = do
           eitherBranch <- runInContextIO (findBranchById "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           liftIO $ (isRight eitherBranch) `shouldBe` True
           let (Right branchFromDb) = eitherBranch
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -170,7 +173,7 @@ migratorAPI appContext = do
           runInContextIO (createMigration branchUuid migratorCreateDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -192,7 +195,7 @@ migratorAPI appContext = do
           runInContextIO (createMigration branchUuid migratorCreateDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -214,7 +217,7 @@ migratorAPI appContext = do
           runInContextIO deleteMigratorStates appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -227,21 +230,19 @@ migratorAPI appContext = do
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
+          let branchUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
           let branch =
-                BranchDTO
-                { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-                , _branchDTOName = "Amsterdam KM"
-                , _branchDTOOrganizationId = "elixir.nl.amsterdam"
-                , _branchDTOKmId = "amsterdam-km"
-                , _branchDTOParentPackageId = Nothing
-                , _branchDTOLastAppliedParentPackageId = Nothing
+                BranchChangeDTO
+                { _branchChangeDTOName = "Amsterdam KM"
+                , _branchChangeDTOKmId = "amsterdam-km"
+                , _branchChangeDTOParentPackageId = Nothing
                 }
-          runInContextIO (createBranch branch) appContext
+          runInContextIO (createBranchWithParams branchUuid timestamp branch) appContext
           runInContextIO (insertPackage elixirNlPackage2Dto) appContext
           runInContextIO deleteMigratorStates appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -276,11 +277,11 @@ migratorAPI appContext = do
           response <- request reqMethod reqUrl reqHeaders reqBody
            -- THEN: Find a result
           eitherMS <- runInContextIO (findMigratorStateByBranchUuid branchUuid) appContext
-           -- AND: Compare response with expetation
+           -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
           response `shouldRespondWith` responseMatcher
-           -- AND: Compare state in DB with expetation
+           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherMS) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
@@ -323,7 +324,7 @@ migratorAPI appContext = do
           eitherMigration <- runInContextIO (getCurrentMigration "6474b24b-262b-42b1-9451-008e8363f2b6") appContext
           liftIO $ (isRight eitherMigration) `shouldBe` True
           let (Right migrationFromDb) = eitherMigration
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -355,7 +356,7 @@ migratorAPI appContext = do
           runInContextIO (createMigration branchUuid migratorCreateDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -379,7 +380,7 @@ migratorAPI appContext = do
           runInContextIO (createMigration branchUuid migratorCreateDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
@@ -402,7 +403,7 @@ migratorAPI appContext = do
           runInContextIO (solveConflictAndMigrate branchUuid reqDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expetation
+          -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher

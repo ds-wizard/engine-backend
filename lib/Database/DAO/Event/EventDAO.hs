@@ -40,7 +40,7 @@ deleteEventsAtBranch branchUuid = do
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heGetBranch branchUuid callback = do
+heFindBranchWithEventsById branchUuid callback = do
   eitherBranch <- findBranchWithEventsById branchUuid
   case eitherBranch of
     Right branch -> callback branch

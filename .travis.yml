@@ -1,7 +1,10 @@
 sudo: false
 
+language: generic
+
 services:
   - mongodb
+  - rabbitmq
 
 stages:
   - build

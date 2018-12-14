@@ -1,12 +1,12 @@
 module Database.Migration.Development.Branch.BranchMigration where
 
 import Control.Lens ((^.))
-import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 
-import Api.Resource.Branch.BranchDTO
+import Constant.Component
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
+import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.Event.Data.Events
 import LensesConfig
 import Model.Event.Event
@@ -15,18 +15,9 @@ import Service.KnowledgeModel.KnowledgeModelService
 import Util.Logger
 
 runMigration = do
-  logInfo "MIGRATION (KnowledgeModel/Branch): started"
+  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
-  let branch =
-        BranchDTO
-        { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-        , _branchDTOName = "Amsterdam KM"
-        , _branchDTOOrganizationId = "elixir.nl.amsterdam"
-        , _branchDTOKmId = "amsterdam-km"
-        , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-        , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-        }
-  createBranch branch
+  createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2
@@ -47,6 +38,6 @@ runMigration = do
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-  insertEventsToBranch (U.toString (branch ^. uuid)) events
-  recompileKnowledgeModel (U.toString (branch ^. uuid))
-  logInfo "MIGRATION (KnowledgeModel/Branch): ended"
+  insertEventsToBranch (U.toString $ amsterdamBranch ^. uuid) events
+  recompileKnowledgeModel (U.toString $ amsterdamBranch ^. uuid)
+  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

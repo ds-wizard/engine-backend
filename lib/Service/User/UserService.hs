@@ -18,6 +18,7 @@ import Api.Resource.User.UserStateDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
 import Localization
+import Messaging.Out.Topic.UserTopic
 import Model.ActionKey.ActionKey
 import Model.Config.AppConfig
 import Model.Context.AppContext
@@ -62,6 +63,7 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
     let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions now now
     insertUser user
     heCreateActionKey uUuid RegistrationActionKey $ \actionKey -> do
+      publishToUserCreatedTopic user
       sendRegistrationConfirmationMail (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
       sendAnalyticsEmailIfEnabled user
       return . Right $ toDTO user

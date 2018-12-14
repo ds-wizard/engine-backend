@@ -25,6 +25,13 @@ data AppConfigDatabase = AppConfigDatabase
   , _appConfigDatabasePassword :: String
   }
 
+data AppConfigMessaging = AppConfigMessaging
+  { _appConfigMessagingHost :: String
+  , _appConfigMessagingPort :: Integer
+  , _appConfigMessagingUsername :: String
+  , _appConfigMessagingPassword :: String
+  }
+
 data AppConfigJwt = AppConfigJwt
   { _appConfigJwtSecret :: String
   , _appConfigJwtVersion :: Integer
@@ -70,6 +77,7 @@ data AppConfig = AppConfig
   , _appConfigClientConfig :: AppConfigClient
   , _appConfigWebConfig :: AppConfigWeb
   , _appConfigDatabaseConfig :: AppConfigDatabase
+  , _appConfigMessagingConfig :: AppConfigMessaging
   , _appConfigJwtConfig :: AppConfigJwt
   , _appConfigRoles :: AppConfigRoles
   , _appConfigMail :: AppConfigMail

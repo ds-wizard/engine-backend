@@ -4,14 +4,17 @@ import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
 import Data.Aeson (encode)
+import Data.Aeson (eitherDecode)
 import Data.ByteString.Char8 as BS
+import Data.Either (isRight)
 import Data.Foldable
 import qualified Data.List as L
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
-import Network.HTTP.Types.Header
+import Network.HTTP.Types
 import Network.Wai (Application)
+import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
@@ -23,16 +26,26 @@ import Api.Router
 import LensesConfig
 import Model.Config.AppConfig
 import Model.Context.AppContext
+import Model.Context.BaseContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
+import Util.List (elems)
+
+import Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
-  let t m = runStdoutLoggingT $ runReaderT (runAppContextM m) appContext
-  scottyAppT t (createEndpoints appContext)
+  let baseContext =
+        BaseContext
+        { _baseContextConfig = appContext ^. config
+        , _baseContextPool = appContext ^. pool
+        , _baseContextMsgChannel = appContext ^. msgChannel
+        }
+      t m = runStdoutLoggingT $ runReaderT (runBaseContextM m) baseContext
+  scottyAppT t (createEndpoints baseContext)
 
 reqAuthHeader :: Header
 reqAuthHeader =
@@ -104,9 +117,9 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto = createErrorWithErrorMessage $ "Error in $: key \"" ++ missingField ++ "\" not present"
     let expBody = encode expDto
-      -- WHEN: Call APIA
+      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -121,7 +134,7 @@ createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -142,7 +155,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
     let expStatus = 401
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expetation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -165,7 +178,7 @@ createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPe
     let expStatus = 403
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expetation
+    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -180,7 +193,28 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
-      -- AND: Compare response with expetation
+      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+assertResStatus resStatus expStatus = liftIO $ resStatus `shouldBe` expStatus
+
+assertResHeaders resHeaders expHeaders = liftIO $ (expHeaders `elems` resHeaders) `shouldBe` True
+
+destructResponse response =
+  let (SResponse (Status status _) headers body) = response
+      (Right resBody) = eitherDecode body
+  in (status, headers, resBody)
+
+assertCountInDB dbFunction appContext count = do
+  eitherList <- runInContextIO dbFunction appContext
+  liftIO $ (isRight eitherList) `shouldBe` True
+  let (Right list) = eitherList
+  liftIO $ (L.length list) `shouldBe` count
+
+getFirstFromDB dbFunction appContext = do
+  eitherList <- runInContextIO dbFunction appContext
+  liftIO $ (isRight eitherList) `shouldBe` True
+  let (Right list) = eitherList
+  return $ list !! 0

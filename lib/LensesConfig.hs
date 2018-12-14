@@ -4,6 +4,7 @@ import Control.Lens (makeFields)
 
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.BookReference.BookReferenceDTO
+import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
@@ -42,6 +43,7 @@ import Model.BookReference.BookReference
 import Model.Branch.Branch
 import Model.Config.AppConfig
 import Model.Context.AppContext
+import Model.Context.BaseContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.DataManagementPlan.DataManagementPlanTemplateContext
 import Model.Event.Answer.AnswerEvent
@@ -89,6 +91,8 @@ makeFields ''AppConfigWeb
 
 makeFields ''AppConfigDatabase
 
+makeFields ''AppConfigMessaging
+
 makeFields ''AppConfigJwt
 
 makeFields ''AppConfigRoles
@@ -104,6 +108,8 @@ makeFields ''BuildInfo
 makeFields ''AppConfig
 
 -- Model / Context
+makeFields ''BaseContext
+
 makeFields ''AppContext
 
 -- Model / DataManagementPlan
@@ -260,6 +266,8 @@ makeFields ''ActionKeyDTO
 makeFields ''BookReferenceDTO
 
 -- Api / Resource / Branch
+makeFields ''BranchChangeDTO
+
 makeFields ''BranchDTO
 
 makeFields ''BranchWithStateDTO

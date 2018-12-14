@@ -20,3 +20,18 @@ recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid =
       updateKnowledgeModelByBranchId branchUuid (Just newKM)
       return . Right $ newKM
     Left error -> return . Left $ error
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heCreateKnowledgeModel events callback = do
+  let eitherKm = createKnowledgeModel $ events
+  case eitherKm of
+    Right km -> callback km
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
+heCompileKnowledgeModelFromScratch events callback =
+  case compileKnowledgeModelFromScratch events of
+    Right km -> callback km
+    Left error -> return . Left $ error
