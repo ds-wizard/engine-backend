@@ -1,0 +1,68 @@
+module Api.Resource.Questionnaire.QuestionnaireReplyJS where
+
+import Control.Monad
+import Data.Aeson
+
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
+
+instance FromJSON ReplyDTO where
+  parseJSON (Object o) = do
+    _replyDTOPath <- o .: "path"
+    _replyDTOValue <- o .: "value"
+    return ReplyDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ReplyValueDTO where
+  parseJSON (Object o) = do
+    rvType <- o .: "type"
+    case rvType of
+      "StringReply" -> do
+        _stringReplyDTOValue <- o .: "value"
+        return StringReplyDTO {..}
+      "AnswerReply" -> do
+        _answerReplyDTOValue <- o .: "value"
+        return AnswerReplyDTO {..}
+      "ItemListReply" -> do
+        _itemListReplyDTOValue <- o .: "value"
+        return ItemListReplyDTO {..}
+      "IntegrationReply" -> do
+        _integrationReplyDTOValue <- o .: "value"
+        return IntegrationReplyDTO {..}
+      _ -> fail "One of the replies has unsupported reply type"
+  parseJSON _ = mzero
+
+instance FromJSON IntegrationReplyValueDTO where
+  parseJSON (Object o) = do
+    iType <- o .: "type"
+    case iType of
+      "Fairsharing" -> parseJSON (Object o) >>= \iValue -> return (FairsharingIntegrationReplyDTO' iValue)
+      _ -> fail "One of the replies has unsupported integration reply type"
+  parseJSON _ = mzero
+
+instance FromJSON FairsharingIntegrationReplyDTO where
+  parseJSON (Object o) = do
+    _fairsharingIntegrationReplyDTOIntId <- o .: "id"
+    _fairsharingIntegrationReplyDTOName <- o .: "name"
+    return FairsharingIntegrationReplyDTO {..}
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance ToJSON ReplyDTO where
+  toJSON ReplyDTO {..} = object ["path" .= _replyDTOPath, "value" .= _replyDTOValue]
+
+instance ToJSON ReplyValueDTO where
+  toJSON StringReplyDTO {..} = object ["type" .= "StringReply", "value" .= _stringReplyDTOValue]
+  toJSON AnswerReplyDTO {..} = object ["type" .= "AnswerReply", "value" .= _answerReplyDTOValue]
+  toJSON ItemListReplyDTO {..} = object ["type" .= "ItemListReply", "value" .= _itemListReplyDTOValue]
+  toJSON IntegrationReplyDTO {..} = object ["type" .= "IntegrationReply", "value" .= _integrationReplyDTOValue]
+
+instance ToJSON IntegrationReplyValueDTO where
+  toJSON (FairsharingIntegrationReplyDTO' iValue) = toJSON iValue
+
+instance ToJSON FairsharingIntegrationReplyDTO where
+  toJSON FairsharingIntegrationReplyDTO {..} =
+    object
+      [ "type" .= "Fairsharing"
+      , "id" .= _fairsharingIntegrationReplyDTOIntId
+      , "name" .= _fairsharingIntegrationReplyDTOName
+      ]

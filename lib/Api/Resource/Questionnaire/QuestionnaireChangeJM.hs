@@ -4,6 +4,7 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 
 instance FromJSON QuestionnaireChangeDTO where
   parseJSON (Object o) = do

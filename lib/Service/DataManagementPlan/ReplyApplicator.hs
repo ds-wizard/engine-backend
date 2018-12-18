@@ -12,14 +12,14 @@ import Text.Read
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireReply
 import Service.DataManagementPlan.Convertor
 import Util.List
 
-runReplyApplicator :: FilledKnowledgeModel -> [QuestionnaireReply] -> FilledKnowledgeModel
+runReplyApplicator :: FilledKnowledgeModel -> [Reply] -> FilledKnowledgeModel
 runReplyApplicator = foldl foldReply
   where
-    foldReply :: FilledKnowledgeModel -> QuestionnaireReply -> FilledKnowledgeModel
+    foldReply :: FilledKnowledgeModel -> Reply -> FilledKnowledgeModel
     foldReply fKM reply =
       let pathParsed = getPathParsed (reply ^. path)
       in applyReplyToKM reply pathParsed fKM
@@ -29,7 +29,7 @@ runReplyApplicator = foldl foldReply
 -- APPLY TO KNOWLEDGE MODEL
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyReplyToKM :: QuestionnaireReply -> [String] -> FilledKnowledgeModel -> FilledKnowledgeModel
+applyReplyToKM :: Reply -> [String] -> FilledKnowledgeModel -> FilledKnowledgeModel
 applyReplyToKM reply (fChUuid:restOfPath) fKM =
   let mfChapters = foldl foldOneChapter [] (fKM ^. chapters)
   in fKM & chapters .~ mfChapters
@@ -45,7 +45,7 @@ applyReplyToKM reply (fChUuid:restOfPath) fKM =
 -- APPLY TO CHAPTER
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyReplyToChapter :: QuestionnaireReply -> [String] -> FilledChapter -> FilledChapter
+applyReplyToChapter :: Reply -> [String] -> FilledChapter -> FilledChapter
 applyReplyToChapter reply (fQUuid:restOfPath) fCh =
   let mfQuestions = foldl foldOneQuestion [] (fCh ^. questions)
   in fCh & questions .~ mfQuestions
@@ -61,14 +61,14 @@ applyReplyToChapter reply (fQUuid:restOfPath) fCh =
 -- APPLY TO QUESTION
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyReplyToQuestion :: QuestionnaireReply -> [String] -> FilledQuestion -> FilledQuestion
+applyReplyToQuestion :: Reply -> [String] -> FilledQuestion -> FilledQuestion
 applyReplyToQuestion reply [] fQuestion = replyOnQuestion reply fQuestion
 applyReplyToQuestion reply (maybeItemNumber:restOfPath) fQuestion =
   case (readMaybe maybeItemNumber :: Maybe Int) of
     Just itemNumber -> passToAnswerItems reply itemNumber restOfPath fQuestion
     Nothing -> passToAnswerOption reply restOfPath fQuestion
 
-replyOnQuestion :: QuestionnaireReply -> FilledQuestion -> FilledQuestion
+replyOnQuestion :: Reply -> FilledQuestion -> FilledQuestion
 replyOnQuestion reply fQuestion =
   case fQuestion ^. qType of
     QuestionTypeString -> createFilledAnswerValue fQuestion reply
@@ -81,33 +81,46 @@ replyOnQuestion reply fQuestion =
 -- -------------------------
 -- CREATE REPLY ------------
 -- -------------------------
-createFilledAnswerValue :: FilledQuestion -> QuestionnaireReply -> FilledQuestion
-createFilledAnswerValue fQuestion reply = fQuestion & answerValue .~ Just (reply ^. value)
+createFilledAnswerValue :: FilledQuestion -> Reply -> FilledQuestion
+createFilledAnswerValue fQuestion reply = fQuestion & answerValue .~ Just (getReplyValue $ reply ^. value)
+  where
+    getReplyValue :: ReplyValue -> String
+    getReplyValue StringReply {..} = _stringReplyValue
+    getReplyValue IntegrationReply {..} = getIntReplyValue _integrationReplyValue
+      where
+        getIntReplyValue :: IntegrationReplyValue -> String
+        getIntReplyValue (FairsharingIntegrationReply' FairsharingIntegrationReply {..}) =
+          _fairsharingIntegrationReplyName
 
-createFilledAnswerOption :: FilledQuestion -> QuestionnaireReply -> FilledQuestion
+createFilledAnswerOption :: FilledQuestion -> Reply -> FilledQuestion
 createFilledAnswerOption fQuestion reply = fQuestion & answerOption .~ mFilledAnswer
   where
     mFilledAnswer :: Maybe FilledAnswer
-    mFilledAnswer = toFilledAnswer <$> getAnswerByUuid fQuestion (reply ^. value)
-    getAnswerByUuid :: FilledQuestion -> String -> Maybe Answer
-    getAnswerByUuid fQuestion ansUuidS =
-      case U.fromString ansUuidS of
-        Just ansUuid -> find (\ans -> ans ^. uuid == ansUuid) (fromMaybe [] (fQuestion ^. answers))
-        Nothing -> Nothing
+    mFilledAnswer = toFilledAnswer <$> getAnswerByUuid fQuestion (getReplyValue $ reply ^. value)
+    getAnswerByUuid :: FilledQuestion -> U.UUID -> Maybe Answer
+    getAnswerByUuid fQuestion ansUuid = find (\ans -> ans ^. uuid == ansUuid) (fromMaybe [] (fQuestion ^. answers))
+    getReplyValue :: ReplyValue -> U.UUID
+    getReplyValue AnswerReply {..} = _answerReplyValue
 
-createFilledAnswerItem :: FilledQuestion -> QuestionnaireReply -> FilledQuestion
+createFilledAnswerItem :: FilledQuestion -> Reply -> FilledQuestion
 createFilledAnswerItem fQuestion reply =
   case fQuestion ^. answerItemTemplate of
     Just ait ->
-      let mAis = Just $ (\_ -> toFilledAnswerItem ait) <$> generateListS (reply ^. value)
+      let mAis = Just $ (\_ -> toFilledAnswerItem ait) <$> generateList (getReplyValue $ reply ^. value)
       in fQuestion & answerItems .~ mAis
     Nothing -> fQuestion
+  where
+    getReplyValue :: ReplyValue -> Int
+    getReplyValue ItemListReply {..} = _itemListReplyValue
 
 -- -------------------------
 -- PASS TO ANSWER ITEMS ----
 -- -------------------------
-applyToAnswerItem :: QuestionnaireReply -> [String] -> FilledAnswerItem -> FilledAnswerItem
-applyToAnswerItem reply ("itemName":[]) ai = ai & value .~ (Just $ reply ^. value)
+applyToAnswerItem :: Reply -> [String] -> FilledAnswerItem -> FilledAnswerItem
+applyToAnswerItem reply ("itemName":[]) ai = ai & value .~ (Just . getReplyValue $ reply ^. value)
+  where
+    getReplyValue :: ReplyValue -> String
+    getReplyValue StringReply {..} = _stringReplyValue
 applyToAnswerItem reply (fQUuid:restOfPath) ai =
   let mfQuestions = foldl foldOneQuestion [] (ai ^. questions)
   in ai & questions .~ mfQuestions
@@ -118,7 +131,7 @@ applyToAnswerItem reply (fQUuid:restOfPath) ai =
         then fQs ++ [applyReplyToQuestion reply restOfPath fQuestion]
         else fQs ++ [fQuestion]
 
-passToAnswerItems :: QuestionnaireReply -> Int -> [String] -> FilledQuestion -> FilledQuestion
+passToAnswerItems :: Reply -> Int -> [String] -> FilledQuestion -> FilledQuestion
 passToAnswerItems reply itemNumber path fQuestion =
   if length ais <= itemNumber
     then fQuestion -- Maybe return error
@@ -131,7 +144,7 @@ passToAnswerItems reply itemNumber path fQuestion =
 -- -------------------------
 -- PASS TO ANSWER OPTIONS --
 -- -------------------------
-applyToAnswerOption :: QuestionnaireReply -> [String] -> FilledAnswer -> FilledAnswer
+applyToAnswerOption :: Reply -> [String] -> FilledAnswer -> FilledAnswer
 applyToAnswerOption reply (fQUuid:restOfPath) fAnswer =
   let mfQuestions = foldl foldOneQuestion [] (fAnswer ^. followUps)
   in fAnswer & followUps .~ mfQuestions
@@ -142,7 +155,7 @@ applyToAnswerOption reply (fQUuid:restOfPath) fAnswer =
         then fQs ++ [applyReplyToQuestion reply restOfPath fQuestion]
         else fQs ++ [fQuestion]
 
-passToAnswerOption :: QuestionnaireReply -> [String] -> FilledQuestion -> FilledQuestion
+passToAnswerOption :: Reply -> [String] -> FilledQuestion -> FilledQuestion
 passToAnswerOption reply path fQuestion =
   case fQuestion ^. answerOption of
     Just answer ->

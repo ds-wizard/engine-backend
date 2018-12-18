@@ -5,11 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.KnowledgeModel.KnowledgeModel
-
-data QuestionnaireReply = QuestionnaireReply
-  { _questionnaireReplyPath :: String
-  , _questionnaireReplyValue :: String
-  } deriving (Generic, Show, Eq)
+import Model.Questionnaire.QuestionnaireReply
 
 data Questionnaire = Questionnaire
   { _questionnaireUuid :: U.UUID
@@ -19,7 +15,7 @@ data Questionnaire = Questionnaire
   , _questionnairePackageId :: String
   , _questionnaireKnowledgeModel :: KnowledgeModel
   , _questionnaireOwnerUuid :: Maybe U.UUID
-  , _questionnaireReplies :: [QuestionnaireReply]
+  , _questionnaireReplies :: [Reply]
   , _questionnaireCreatedAt :: UTCTime
   , _questionnaireUpdatedAt :: UTCTime
   } deriving (Generic, Show, Eq)

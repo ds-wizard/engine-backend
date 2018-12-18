@@ -36,6 +36,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0011_update_data_steward_perms.Migration
        as M_0011
+import qualified
+       Database.Migration.Production.Migration_0012_erase_questionnaire_replies.Migration
+       as M_0012
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -57,4 +60,5 @@ migrationDefinitions =
   , M_0009.definition
   , M_0010.definition
   , M_0011.definition
+  , M_0012.definition
   ]
