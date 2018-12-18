@@ -1,8 +1,8 @@
 module Api.Resource.Questionnaire.QuestionnaireChangeDTO where
 
-import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 
 data QuestionnaireChangeDTO = QuestionnaireChangeDTO
   { _questionnaireChangeDTOLevel :: Int
-  , _questionnaireChangeDTOReplies :: [QuestionnaireReplyDTO]
+  , _questionnaireChangeDTOReplies :: [ReplyDTO]
   }

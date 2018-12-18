@@ -28,6 +28,7 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
@@ -63,6 +64,7 @@ import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
 import Model.User.User
 
@@ -240,7 +242,13 @@ makeFields ''PackageWithEvents
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
-makeFields ''QuestionnaireReply
+makeFields ''Reply
+
+makeFields ''ReplyValue
+
+makeFields ''IntegrationReplyValue
+
+makeFields ''FairsharingIntegrationReply
 
 -- Model / Report
 makeFields ''Indication
@@ -401,11 +409,17 @@ makeFields ''QuestionnaireCreateDTO
 
 makeFields ''QuestionnaireDTO
 
-makeFields ''QuestionnaireReplyDTO
-
 makeFields ''QuestionnaireDetailDTO
 
 makeFields ''QuestionnaireChangeDTO
+
+makeFields ''ReplyDTO
+
+makeFields ''ReplyValueDTO
+
+makeFields ''IntegrationReplyValueDTO
+
+makeFields ''FairsharingIntegrationReplyDTO
 
 -- Api / Resource / Report
 makeFields ''IndicationDTO

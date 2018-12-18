@@ -9,10 +9,12 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireReply
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageMapper
 
@@ -42,9 +44,26 @@ toSimpleDTO questionnaire package =
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-toReplyDTO :: QuestionnaireReply -> QuestionnaireReplyDTO
-toReplyDTO reply =
-  QuestionnaireReplyDTO {_questionnaireReplyDTOPath = reply ^. path, _questionnaireReplyDTOValue = reply ^. value}
+toReplyDTO :: Reply -> ReplyDTO
+toReplyDTO reply = ReplyDTO {_replyDTOPath = reply ^. path, _replyDTOValue = toReplyValueDTO $ reply ^. value}
+
+toReplyValueDTO :: ReplyValue -> ReplyValueDTO
+toReplyValueDTO StringReply {..} = StringReplyDTO {_stringReplyDTOValue = _stringReplyValue}
+toReplyValueDTO AnswerReply {..} = AnswerReplyDTO {_answerReplyDTOValue = _answerReplyValue}
+toReplyValueDTO ItemListReply {..} = ItemListReplyDTO {_itemListReplyDTOValue = _itemListReplyValue}
+toReplyValueDTO IntegrationReply {..} =
+  IntegrationReplyDTO {_integrationReplyDTOValue = toIntegrationReplyValueDTO _integrationReplyValue}
+
+toIntegrationReplyValueDTO :: IntegrationReplyValue -> IntegrationReplyValueDTO
+toIntegrationReplyValueDTO (FairsharingIntegrationReply' reply) =
+  FairsharingIntegrationReplyDTO' . toFairsharingIntegrationReplyDTO $ reply
+
+toFairsharingIntegrationReplyDTO :: FairsharingIntegrationReply -> FairsharingIntegrationReplyDTO
+toFairsharingIntegrationReplyDTO FairsharingIntegrationReply {..} =
+  FairsharingIntegrationReplyDTO
+  { _fairsharingIntegrationReplyDTOIntId = _fairsharingIntegrationReplyIntId
+  , _fairsharingIntegrationReplyDTOName = _fairsharingIntegrationReplyName
+  }
 
 toDetailWithPackageWithEventsDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireDetailDTO
 toDetailWithPackageWithEventsDTO questionnaire package =
@@ -76,9 +95,26 @@ toDetailWithPackageDTO questionnaire package =
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-fromReplyDTO :: QuestionnaireReplyDTO -> QuestionnaireReply
-fromReplyDTO reply =
-  QuestionnaireReply {_questionnaireReplyPath = reply ^. path, _questionnaireReplyValue = reply ^. value}
+fromReplyDTO :: ReplyDTO -> Reply
+fromReplyDTO reply = Reply {_replyPath = reply ^. path, _replyValue = fromReplyValueDTO $ reply ^. value}
+
+fromReplyValueDTO :: ReplyValueDTO -> ReplyValue
+fromReplyValueDTO StringReplyDTO {..} = StringReply {_stringReplyValue = _stringReplyDTOValue}
+fromReplyValueDTO AnswerReplyDTO {..} = AnswerReply {_answerReplyValue = _answerReplyDTOValue}
+fromReplyValueDTO ItemListReplyDTO {..} = ItemListReply {_itemListReplyValue = _itemListReplyDTOValue}
+fromReplyValueDTO IntegrationReplyDTO {..} =
+  IntegrationReply {_integrationReplyValue = fromIntegrationReplyValueDTO _integrationReplyDTOValue}
+
+fromIntegrationReplyValueDTO :: IntegrationReplyValueDTO -> IntegrationReplyValue
+fromIntegrationReplyValueDTO (FairsharingIntegrationReplyDTO' reply) =
+  FairsharingIntegrationReply' . fromFairsharingIntegrationReplyDTO $ reply
+
+fromFairsharingIntegrationReplyDTO :: FairsharingIntegrationReplyDTO -> FairsharingIntegrationReply
+fromFairsharingIntegrationReplyDTO FairsharingIntegrationReplyDTO {..} =
+  FairsharingIntegrationReply
+  { _fairsharingIntegrationReplyIntId = _fairsharingIntegrationReplyDTOIntId
+  , _fairsharingIntegrationReplyName = _fairsharingIntegrationReplyDTOName
+  }
 
 fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UTCTime -> Questionnaire
 fromChangeDTO qtn dto now =

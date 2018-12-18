@@ -7,11 +7,8 @@ import qualified Data.UUID as U
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Package.PackageDTO
-
-data QuestionnaireReplyDTO = QuestionnaireReplyDTO
-  { _questionnaireReplyDTOPath :: String
-  , _questionnaireReplyDTOValue :: String
-  } deriving (Show, Eq)
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 
 data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid :: U.UUID
@@ -20,22 +17,11 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , _questionnaireDetailDTOPrivate :: Bool
   , _questionnaireDetailDTOPackage :: PackageDTO
   , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
-  , _questionnaireDetailDTOReplies :: [QuestionnaireReplyDTO]
+  , _questionnaireDetailDTOReplies :: [ReplyDTO]
   , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
   , _questionnaireDetailDTOCreatedAt :: UTCTime
   , _questionnaireDetailDTOUpdatedAt :: UTCTime
   } deriving (Show, Eq)
-
-instance FromJSON QuestionnaireReplyDTO where
-  parseJSON (Object o) = do
-    _questionnaireReplyDTOPath <- o .: "path"
-    _questionnaireReplyDTOValue <- o .: "value"
-    return QuestionnaireReplyDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON QuestionnaireReplyDTO where
-  toJSON QuestionnaireReplyDTO {..} =
-    object ["path" .= _questionnaireReplyDTOPath, "value" .= _questionnaireReplyDTOValue]
 
 instance FromJSON QuestionnaireDetailDTO where
   parseJSON (Object o) = do

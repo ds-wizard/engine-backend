@@ -6,17 +6,9 @@ import Data.Bson.Generic
 
 import Database.BSON.Common
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
+import Database.BSON.Questionnaire.QuestionnaireReply ()
 import LensesConfig
 import Model.Questionnaire.Questionnaire
-
-instance ToBSON QuestionnaireReply where
-  toBSON reply = ["path" BSON.=: (reply ^. path), "value" BSON.=: (reply ^. value)]
-
-instance FromBSON QuestionnaireReply where
-  fromBSON doc = do
-    path <- BSON.lookup "path" doc
-    value <- BSON.lookup "value" doc
-    return QuestionnaireReply {_questionnaireReplyPath = path, _questionnaireReplyValue = value}
 
 instance ToBSON Questionnaire where
   toBSON questionnaire =
