@@ -25,7 +25,7 @@ import Specs.API.MigratorAPISpec
 import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
-import Specs.API.TokenAPISpec
+import Specs.API.Token.APISpec
 import Specs.API.UserAPISpec
 import Specs.API.VersionAPISpec
 import Specs.Model.FilledKnowledgeModel.FilledKnowledgeModelAccessorsSpec
