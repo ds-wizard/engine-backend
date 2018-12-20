@@ -27,7 +27,7 @@ import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
 import Specs.API.Token.APISpec
 import Specs.API.UserAPISpec
-import Specs.API.VersionAPISpec
+import Specs.API.Version.APISpec
 import Specs.Model.FilledKnowledgeModel.FilledKnowledgeModelAccessorsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec

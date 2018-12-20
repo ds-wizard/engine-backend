@@ -39,6 +39,16 @@ elixirNlPackage2Dto =
     (Just $ elixirNlPackageDto ^. pId)
     [AddChapterEvent' a_km1_ch3]
 
+amsterdamPackage1Dto =
+  buildPackage
+    "Amsterdam KM"
+    "elixir.nl.amsterdam"
+    "amsterdam-km"
+    "1.0.0"
+    "First Release"
+    (Just $ elixirNlPackageDto ^. pId)
+    []
+
 elixirCzPackage2Dto =
   buildPackage
     "Elixir Czech Republic"
