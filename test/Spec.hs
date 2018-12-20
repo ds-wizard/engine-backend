@@ -18,7 +18,7 @@ import Specs.API.Branch.APISpec
 import Specs.API.EventAPISpec
 import Specs.API.Feedback.APISpec
 import Specs.API.Info.APISpec
-import Specs.API.KnowledgeModelAPISpec
+import Specs.API.KnowledgeModel.APISpec
 import Specs.API.Level.APISpec
 import Specs.API.Metric.APISpec
 import Specs.API.MigratorAPISpec
