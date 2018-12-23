@@ -1,9 +1,10 @@
 module Application where
 
 import Control.Lens ((^.))
+import Control.Monad.Catch
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO, runReaderT)
-import Control.Monad.Trans.Class (lift)
+import Control.Retry
 import Data.Default (def)
 import Network.Wai.Handler.Warp
        (Settings, defaultSettings, setPort)
@@ -25,6 +26,12 @@ import Util.Logger
 applicationConfigFile = "config/app-config.cfg"
 
 buildInfoFile = "config/build-info.cfg"
+
+retryCount = 5
+
+retryBaseWait = 2000000
+
+retryBackoff = exponentialBackoff retryBaseWait <> limitRetries retryCount
 
 runServer :: IO ()
 runServer =
@@ -51,16 +58,48 @@ runServer =
       Right dswConfig -> do
         logInfo $ msg _CMP_CONFIG "loaded"
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
-        runStdoutLoggingT $ createDBConn dswConfig $ \dbPool -> do
-          lift . logInfo $ msg _CMP_DATABASE "connected"
-          msgChannel <- liftIO $ createMessagingChannel dswConfig
-          lift . logInfo $ msg _CMP_MESSAGING "connected"
-          let serverPort = dswConfig ^. webConfig ^. port
-          let baseContext =
-                BaseContext
-                {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
-          liftIO $ runDBMigrations baseContext
-          liftIO $ runApplication baseContext
+        logInfo $ msg _CMP_DATABASE "connecting to the database"
+        dbPool <-
+          liftIO $
+          withRetry
+            retryBackoff
+            _CMP_DATABASE
+            "failed to connect to the database"
+            (createDatabaseConnectionPool dswConfig)
+        logInfo $ msg _CMP_DATABASE "connected"
+        logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
+        msgChannel <-
+          liftIO $
+          withRetry
+            retryBackoff
+            _CMP_MESSAGING
+            "failed to connect to the message broker"
+            (createMessagingChannel dswConfig)
+        logInfo $ msg _CMP_MESSAGING "connected"
+        let serverPort = dswConfig ^. webConfig ^. port
+        let baseContext =
+              BaseContext
+              {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
+        liftIO $ runDBMigrations baseContext
+        liftIO $ runApplication baseContext
+
+withRetry :: RetryPolicyM IO -> String -> String -> IO a -> IO a
+withRetry backoff _CMP description action = recovering backoff handlers wrappedAction
+  where
+    wrappedAction _ = action
+    handlers = skipAsyncExceptions ++ [handler]
+    handler retryStatus = Handler $ \(_ :: SomeException) -> loggingHandler retryStatus
+    loggingHandler retryStatus = do
+      let nextWait =
+            case rsPreviousDelay retryStatus of
+              Just x -> 2 * (fromIntegral x) / 1000000
+              Nothing -> fromIntegral retryBaseWait / 1000000
+      if rsIterNumber retryStatus < retryCount
+        then do
+          let retryInfo = "retry #" ++ show (rsIterNumber retryStatus + 1) ++ " in " ++ show nextWait ++ " seconds"
+          runStdoutLoggingT $ logWarn $ msg _CMP (description ++ " - " ++ retryInfo)
+        else runStdoutLoggingT $ logError $ msg _CMP description
+      return True
 
 runDBMigrations context =
   case context ^. config . environment . env of
