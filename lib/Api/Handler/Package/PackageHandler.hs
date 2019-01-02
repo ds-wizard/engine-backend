@@ -5,6 +5,7 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Package.PackageDTO ()
+import Service.IO.IOService
 import Service.Package.PackageService
 
 getPackagesA :: Endpoint

@@ -7,6 +7,7 @@ import Network.Wai.Parse
 import Web.Scotty.Trans (addHeader, files, json, param, raw)
 
 import Api.Handler.Common
+import Service.IO.IOService
 import Service.Package.PackageService
 
 exportA :: Endpoint
