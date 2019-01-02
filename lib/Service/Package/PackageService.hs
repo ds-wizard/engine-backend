@@ -1,8 +1,24 @@
-module Service.Package.PackageService where
+module Service.Package.PackageService
+  ( getPackagesFiltered
+  , getSimplePackagesFiltered
+  , getPackageById
+  , getPackageWithEventsById
+  , getTheNewestPackageByOrganizationIdAndKmId
+  , getAllPreviousEventsSincePackageId
+  , getAllPreviousEventsSincePackageIdAndUntilPackageId
+  , getEventsForBranchUuid
+  , createPackage
+  , createPackageFromKMC
+  , deletePackagesByQueryParams
+  , deletePackage
+  -- Helpers
+  , heGetEventsForBranchUuid
+  , heGetAllPreviousEventsSincePackageId
+  , heGetAllPreviousEventsSincePackageIdAndUntilPackageId
+  , heGetNewerPackages
+  ) where
 
 import Control.Lens ((&), (.~), (^.))
-import Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List
 import Data.Maybe
 import Data.Text (Text)
@@ -18,10 +34,8 @@ import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
-import Localization
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.Event.Event
 import Model.Package.Package
 import Service.KnowledgeModel.KnowledgeModelApplicator
@@ -73,6 +87,61 @@ getPackageById pkgId = heFindPackageById pkgId $ \package -> return . Right . pa
 getPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEventsDTO)
 getPackageWithEventsById pkgId =
   heFindPackageWithEventsById pkgId $ \package -> return . Right . packageWithEventsToDTOWithEvents $ package
+
+getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError (Maybe Package))
+getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
+  heFindPackagesByOrganizationIdAndKmId organizationId kmId $ \packages -> do
+    if length packages == 0
+      then return . Right $ Nothing
+      else do
+        let sorted = sortPackagesByVersion packages
+        return . Right . Just . head $ sorted
+
+getAllPreviousEventsSincePackageId :: String -> AppContextM (Either AppError [Event])
+getAllPreviousEventsSincePackageId pkgId =
+  heFindPackageWithEventsById pkgId $ \package ->
+    case package ^. parentPackageId of
+      Just parentPackageId ->
+        heGetAllPreviousEventsSincePackageId parentPackageId $ \pkgEvents ->
+          return . Right $ pkgEvents ++ (package ^. events)
+      Nothing -> return . Right $ package ^. events
+
+getAllPreviousEventsSincePackageIdAndUntilPackageId :: String -> String -> AppContextM (Either AppError [Event])
+getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go sincePkgId
+  where
+    go pkgId =
+      if pkgId == untilPkgId
+        then return . Right $ []
+        else heFindPackageWithEventsById pkgId $ \package ->
+               case package ^. parentPackageId of
+                 Just parentPackageId -> do
+                   eitherPkgEvents <- go parentPackageId
+                   case eitherPkgEvents of
+                     Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
+                     Left error -> return . Left $ error
+                 Nothing -> return . Right $ package ^. events
+
+getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
+getEventsForBranchUuid branchUuid =
+  heFindBranchWithEventsById branchUuid $ \branch ->
+    case branch ^. parentPackageId of
+      Just ppId ->
+        heGetAllPreviousEventsSincePackageId ppId $ \eventsFromPackage -> do
+          let eventsFromKM = branch ^. events
+          let pkgEvents = eventsFromPackage ++ eventsFromKM
+          return . Right $ pkgEvents
+      Nothing -> return . Right $ branch ^. events
+
+getNewerPackages :: String -> AppContextM (Either AppError [Package])
+getNewerPackages currentPkgId =
+  heFindPackagesByOrganizationIdAndKmId pkgOrganizationId pkgKmId $ \packages -> do
+    let packagesWithHigherVersion =
+          filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
+    return . Right . sortPackagesByVersion $ packagesWithHigherVersion
+  where
+    pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
+    pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
+    pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2
 
 createPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> AppContextM PackageDTO
 createPackage name organizationId kmId version description maybeParentPackageId events = do
@@ -131,54 +200,6 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
         recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid
         callback
 
-importPackageInFile :: BS.ByteString -> AppContextM (Either AppError PackageDTO)
-importPackageInFile fileContent =
-  let eitherDeserializedFile = eitherDecode fileContent
-  in case eitherDeserializedFile of
-       Right deserializedFile -> importPackage deserializedFile
-       Left error -> return . Left . createErrorWithErrorMessage $ error
-
-importPackage :: PackageWithEventsDTO -> AppContextM (Either AppError PackageDTO)
-importPackage reqDto = do
-  let packageWithEvents = fromDTOWithEvents reqDto
-  let pName = packageWithEvents ^. name
-  let pOrganizationId = packageWithEvents ^. organizationId
-  let pKmId = packageWithEvents ^. kmId
-  let pVersion = packageWithEvents ^. version
-  let pDescription = packageWithEvents ^. description
-  let pParentPackageId = packageWithEvents ^. parentPackageId
-  let pEvents = packageWithEvents ^. events
-  let pId = buildPackageId pOrganizationId pKmId pVersion
-  validatePackageId pId $
-    validateParentPackageId pId pParentPackageId $
-    validateKmValidity pId pParentPackageId pEvents $ do
-      createdPkg <- createPackage pName pOrganizationId pKmId pVersion pDescription pParentPackageId pEvents
-      return . Right $ createdPkg
-  where
-    validatePackageId pkgId callback = do
-      eitherPackage <- findPackageById pkgId
-      case eitherPackage of
-        Left (NotExistsError _) -> callback
-        Right _ -> return . Left . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
-        Left error -> return . Left $ error
-    validateParentPackageId pkgId maybeParentPkgId callback =
-      case maybeParentPkgId of
-        Just parentPkgId -> do
-          eitherPackage <- findPackageById parentPkgId
-          case eitherPackage of
-            Right _ -> callback
-            Left (NotExistsError _) ->
-              return . Left . createErrorWithErrorMessage $
-              _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
-            Left error -> return . Left $ error
-        Nothing -> callback
-    validateKmValidity pkgId maybeParentPkgId pkgEvents callback =
-      case maybeParentPkgId of
-        Just ppId ->
-          heGetAllPreviousEventsSincePackageId ppId $ \eventsFromPackage ->
-            heCompileKnowledgeModelFromScratch (eventsFromPackage ++ pkgEvents) $ \_ -> callback
-        Nothing -> heCompileKnowledgeModelFromScratch pkgEvents $ \_ -> callback
-
 deletePackagesByQueryParams :: [(Text, Text)] -> AppContextM (Maybe AppError)
 deletePackagesByQueryParams queryParams =
   hmFindPackagesFiltered queryParams $ \packages -> do
@@ -198,61 +219,6 @@ deletePackage pkgId =
       else do
         deletePackageById pkgId
         return Nothing
-
-getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError (Maybe Package))
-getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
-  heFindPackagesByOrganizationIdAndKmId organizationId kmId $ \packages -> do
-    if length packages == 0
-      then return . Right $ Nothing
-      else do
-        let sorted = sortPackagesByVersion packages
-        return . Right . Just . head $ sorted
-
-getAllPreviousEventsSincePackageId :: String -> AppContextM (Either AppError [Event])
-getAllPreviousEventsSincePackageId pkgId =
-  heFindPackageWithEventsById pkgId $ \package ->
-    case package ^. parentPackageId of
-      Just parentPackageId ->
-        heGetAllPreviousEventsSincePackageId parentPackageId $ \pkgEvents ->
-          return . Right $ pkgEvents ++ (package ^. events)
-      Nothing -> return . Right $ package ^. events
-
-getAllPreviousEventsSincePackageIdAndUntilPackageId :: String -> String -> AppContextM (Either AppError [Event])
-getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go sincePkgId
-  where
-    go pkgId =
-      if pkgId == untilPkgId
-        then return . Right $ []
-        else heFindPackageWithEventsById pkgId $ \package ->
-               case package ^. parentPackageId of
-                 Just parentPackageId -> do
-                   eitherPkgEvents <- go parentPackageId
-                   case eitherPkgEvents of
-                     Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
-                     Left error -> return . Left $ error
-                 Nothing -> return . Right $ package ^. events
-
-getEventsForBranchUuid :: String -> AppContextM (Either AppError [Event])
-getEventsForBranchUuid branchUuid =
-  heFindBranchWithEventsById branchUuid $ \branch ->
-    case branch ^. parentPackageId of
-      Just ppId ->
-        heGetAllPreviousEventsSincePackageId ppId $ \eventsFromPackage -> do
-          let eventsFromKM = branch ^. events
-          let pkgEvents = eventsFromPackage ++ eventsFromKM
-          return . Right $ pkgEvents
-      Nothing -> return . Right $ branch ^. events
-
-getNewerPackages :: String -> AppContextM (Either AppError [Package])
-getNewerPackages currentPkgId =
-  heFindPackagesByOrganizationIdAndKmId pkgOrganizationId pkgKmId $ \packages -> do
-    let packagesWithHigherVersion =
-          filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
-    return . Right . sortPackagesByVersion $ packagesWithHigherVersion
-  where
-    pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
-    pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
-    pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2
 
 -- --------------------------------
 -- HELPERS
