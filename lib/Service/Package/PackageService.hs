@@ -4,17 +4,21 @@ module Service.Package.PackageService
   , getPackageById
   , getPackageWithEventsById
   , getTheNewestPackageByOrganizationIdAndKmId
+  , getSeriesOfPackages
   , getAllPreviousEventsSincePackageId
   , getAllPreviousEventsSincePackageIdAndUntilPackageId
   , getEventsForBranchUuid
+  , getNewerPackages
   , createPackage
   , createPackageFromKMC
   , deletePackagesByQueryParams
   , deletePackage
   -- Helpers
-  , heGetEventsForBranchUuid
+  , heGetSeriesOfPackages
   , heGetAllPreviousEventsSincePackageId
+  , hmGetAllPreviousEventsSincePackageId
   , heGetAllPreviousEventsSincePackageIdAndUntilPackageId
+  , heGetEventsForBranchUuid
   , heGetNewerPackages
   ) where
 
@@ -96,6 +100,14 @@ getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
       else do
         let sorted = sortPackagesByVersion packages
         return . Right . Just . head $ sorted
+
+getSeriesOfPackages :: String -> AppContextM (Either AppError [PackageWithEvents])
+getSeriesOfPackages pkgId =
+  heFindPackageWithEventsById pkgId $ \package ->
+    case package ^. parentPackageId of
+      Just parentPkgId ->
+        heGetSeriesOfPackages parentPkgId $ \parentPackages -> return . Right $ parentPackages ++ [package]
+      Nothing -> return . Right $ [package]
 
 getAllPreviousEventsSincePackageId :: String -> AppContextM (Either AppError [Event])
 getAllPreviousEventsSincePackageId pkgId =
@@ -223,10 +235,10 @@ deletePackage pkgId =
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heGetEventsForBranchUuid branchUuid callback = do
-  eitherEvents <- getEventsForBranchUuid branchUuid
-  case eitherEvents of
-    Right events -> callback events
+heGetSeriesOfPackages pkgId callback = do
+  eitherPackages <- getSeriesOfPackages pkgId
+  case eitherPackages of
+    Right package -> callback package
     Left error -> return . Left $ error
 
 -- -----------------------------------------------------
@@ -236,9 +248,22 @@ heGetAllPreviousEventsSincePackageId pkgId callback = do
     Right events -> callback events
     Left error -> return . Left $ error
 
+hmGetAllPreviousEventsSincePackageId pkgId callback = do
+  eitherEvents <- getAllPreviousEventsSincePackageId pkgId
+  case eitherEvents of
+    Right events -> callback events
+    Left error -> return . Just $ error
+
 -- -----------------------------------------------------
 heGetAllPreviousEventsSincePackageIdAndUntilPackageId since until callback = do
   eitherEvents <- getAllPreviousEventsSincePackageIdAndUntilPackageId since until
+  case eitherEvents of
+    Right events -> callback events
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
+heGetEventsForBranchUuid branchUuid callback = do
+  eitherEvents <- getEventsForBranchUuid branchUuid
   case eitherEvents of
     Right events -> callback events
     Left error -> return . Left $ error

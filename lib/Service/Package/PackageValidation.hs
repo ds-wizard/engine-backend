@@ -1,4 +1,22 @@
-module Service.Package.PackageValidation where
+module Service.Package.PackageValidation
+  ( validateVersionFormat
+  , validateIsVersionHigher
+  , validatePackageIdWithCoordinates
+  , validatePackageIdUniqueness
+  , validateParentPackageIdExistence
+  , validatePackagesDeletation
+  , validatePackageDeletation
+  , validateUsageBySomeBranch
+  , validateUsageBySomeQuestionnaire
+  -- Helpers
+  , heValidateVersionFormat
+  , heValidatePackageIdWithCoordinates
+  , heValidatePackageIdUniqueness
+  , heValidateParentPackageIdExistence
+  , heValidateMaybeParentPackageIdExistence
+  , hmValidateUsageBySomeBranch
+  , hmValidateUsageBySomeQuestionnaire
+  ) where
 
 import Control.Lens ((^.))
 import Data.Maybe
@@ -13,7 +31,45 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.Package.Package
+import Service.Package.PackageMapper
 import Service.Package.PackageUtils
+
+validateVersionFormat :: String -> Maybe AppError
+validateVersionFormat pkgVersion =
+  if isJust $ matchRegex validationRegex pkgVersion
+    then Nothing
+    else Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
+  where
+    validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+
+validateIsVersionHigher :: String -> String -> Maybe AppError
+validateIsVersionHigher newVersion oldVersion =
+  if compareVersion newVersion oldVersion == GT
+    then Nothing
+    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
+
+validatePackageIdWithCoordinates :: String -> String -> String -> String -> Maybe AppError
+validatePackageIdWithCoordinates pId organizationId kmId version =
+  if pId == buildPackageId organizationId kmId version
+    then Nothing
+    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pId
+
+validatePackageIdUniqueness :: String -> AppContextM (Maybe AppError)
+validatePackageIdUniqueness pkgId = do
+  eitherPackage <- findPackageById pkgId
+  case eitherPackage of
+    Left (NotExistsError _) -> return Nothing
+    Right _ -> return . Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
+    Left error -> return . Just $ error
+
+validateParentPackageIdExistence :: String -> String -> AppContextM (Maybe AppError)
+validateParentPackageIdExistence pkgId parentPkgId = do
+  eitherPackage <- findPackageById parentPkgId
+  case eitherPackage of
+    Right _ -> return Nothing
+    Left (NotExistsError _) ->
+      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
+    Left error -> return . Just $ error
 
 validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
 validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (validateOnePackage <$> pkgPIdsToDelete)
@@ -26,8 +82,8 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
         else resultIO
     validateOnePackage :: String -> AppContextM (Maybe AppError)
     validateOnePackage pkgId = do
-      validateUsageBySomeBranch pkgId $ \() ->
-        validateUsageBySomeOtherPackage pkgId $ \() -> validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
+      hmValidateUsageBySomeBranch pkgId $ \() ->
+        validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
     validateUsageBySomeOtherPackage pkgId callback = do
       eitherPkgs <- findPackagesByParentPackageId pkgId
       case eitherPkgs of
@@ -44,8 +100,8 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
 
 validatePackageDeletation :: String -> AppContextM (Maybe AppError)
 validatePackageDeletation pkgId =
-  validateUsageBySomeBranch pkgId $ \() ->
-    validateUsageBySomeOtherPackage pkgId $ \() -> validateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
+  hmValidateUsageBySomeBranch pkgId $ \() ->
+    validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
   where
     validateUsageBySomeOtherPackage pkgId callback = do
       eitherPkgs <- findPackagesByParentPackageId pkgId
@@ -56,37 +112,25 @@ validatePackageDeletation pkgId =
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
         Left error -> return . Just $ error
 
-validateUsageBySomeBranch pkgId callback = do
+validateUsageBySomeBranch :: String -> AppContextM (Maybe AppError)
+validateUsageBySomeBranch pkgId = do
   eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgId
   case eitherBranches of
-    Right [] -> callback ()
+    Right [] -> return Nothing
     Right _ ->
       return . Just . createErrorWithErrorMessage $
       _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
     Left error -> return . Just $ error
 
-validateUsageBySomeQuestionnaire pkgId callback = do
+validateUsageBySomeQuestionnaire :: String -> AppContextM (Maybe AppError)
+validateUsageBySomeQuestionnaire pkgId = do
   eitherQuestionnaires <- findQuestionnaireByPackageId pkgId
   case eitherQuestionnaires of
-    Right [] -> callback ()
+    Right [] -> return Nothing
     Right _ ->
       return . Just . createErrorWithErrorMessage $
       _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
     Left error -> return . Just $ error
-
-validateVersionFormat :: String -> Maybe AppError
-validateVersionFormat pkgVersion =
-  if isJust $ matchRegex validationRegex pkgVersion
-    then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
-  where
-    validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-
-validateIsVersionHigher :: String -> String -> Maybe AppError
-validateIsVersionHigher newVersion oldVersion =
-  if compareVersion newVersion oldVersion == GT
-    then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
 
 -- --------------------------------
 -- HELPERS
@@ -95,3 +139,42 @@ heValidateVersionFormat pkgVersion callback =
   case validateVersionFormat pkgVersion of
     Nothing -> callback
     Just error -> return . Left $ error
+
+-- -----------------------------------------------------
+heValidatePackageIdWithCoordinates pkgId organizationId kmId version callback =
+  case validatePackageIdWithCoordinates pkgId organizationId kmId version of
+    Nothing -> callback
+    Just error -> return . Left $ error
+
+-- -----------------------------------------------------
+heValidatePackageIdUniqueness pkgId callback = do
+  maybeError <- validatePackageIdUniqueness pkgId
+  case maybeError of
+    Nothing -> callback
+    Just error -> return . Left $ error
+
+-- -----------------------------------------------------
+heValidateParentPackageIdExistence pkgId parentPkgId callback = do
+  maybeError <- validateParentPackageIdExistence pkgId parentPkgId
+  case maybeError of
+    Nothing -> callback
+    Just error -> return . Left $ error
+
+heValidateMaybeParentPackageIdExistence pkgId maybeParentPkgId callback =
+  case maybeParentPkgId of
+    Just parentPkgId -> heValidateParentPackageIdExistence pkgId parentPkgId $ callback
+    Nothing -> callback
+
+-- -----------------------------------------------------
+hmValidateUsageBySomeBranch pkgId callback = do
+  maybeError <- validateUsageBySomeBranch pkgId
+  case maybeError of
+    Nothing -> callback ()
+    Just error -> return . Just $ error
+
+-- -----------------------------------------------------
+hmValidateUsageBySomeQuestionnaire pkgId callback = do
+  maybeError <- validateUsageBySomeQuestionnaire pkgId
+  case maybeError of
+    Nothing -> callback ()
+    Just error -> return . Just $ error

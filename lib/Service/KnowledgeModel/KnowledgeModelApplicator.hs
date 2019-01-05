@@ -35,3 +35,8 @@ heCompileKnowledgeModelFromScratch events callback =
   case compileKnowledgeModelFromScratch events of
     Right km -> callback km
     Left error -> return . Left $ error
+
+hmCompileKnowledgeModelFromScratch events callback =
+  case compileKnowledgeModelFromScratch events of
+    Right km -> callback km
+    Left error -> return . Just $ error

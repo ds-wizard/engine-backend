@@ -31,3 +31,11 @@ packageValidationSpec =
       isJust (validateIsVersionHigher "1.0.0" "1.0.0") `shouldBe` True
       isJust (validateIsVersionHigher "0.1.0" "1.0.0") `shouldBe` True
       isJust (validateIsVersionHigher "0.0.1" "1.0.0") `shouldBe` True
+    it "validatePackageIdWithCoordinates" $ do
+      isNothing (validatePackageIdWithCoordinates "com:dsw:1.0.0" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates "" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates ":dsw:1.0.0" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates "com::1.0.0" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates "com:dsw:" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates "com:dsw:1.1.0" "com" "dsw" "1.0.0") `shouldBe` True
+      isJust (validatePackageIdWithCoordinates "com:dsw-2:1.1.0" "com" "dsw" "1.0.0") `shouldBe` True

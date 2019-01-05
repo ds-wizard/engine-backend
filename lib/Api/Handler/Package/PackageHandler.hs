@@ -5,7 +5,7 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Package.PackageDTO ()
-import Service.IO.IOService
+import Service.KnowledgeModelBundle.KnowledgeModelBundleService
 import Service.Package.PackageService
 
 getPackagesA :: Endpoint
@@ -23,7 +23,7 @@ postPackagesA =
   checkPermission "PM_WRITE_PERM" $
   getAuthServiceExecutor $ \runInAuthService ->
     getReqDto $ \reqDto -> do
-      eitherDto <- runInAuthService $ importPackage reqDto
+      eitherDto <- runInAuthService $ importKnowledgeModelBundle reqDto
       case eitherDto of
         Right dto -> do
           status created201

@@ -7,16 +7,16 @@ import Network.Wai.Parse
 import Web.Scotty.Trans (addHeader, files, json, param, raw)
 
 import Api.Handler.Common
-import Service.IO.IOService
-import Service.Package.PackageService
+import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleJM ()
+import Service.KnowledgeModelBundle.KnowledgeModelBundleService
 
 exportA :: Endpoint
 exportA = do
-  pkgId <- param "pkgId"
-  eitherDto <- runInUnauthService $ getPackageWithEventsById pkgId
+  kmbId <- param "kmbId"
+  eitherDto <- runInUnauthService $ exportKnowledgeModelBundle kmbId
   case eitherDto of
     Right dto -> do
-      let cdHeader = "attachment;filename=" ++ pkgId ++ ".kmp"
+      let cdHeader = "attachment;filename=" ++ kmbId ++ ".km"
       addHeader "Content-Disposition" (pack cdHeader)
       addHeader "Content-Type" (pack "application/octet-stream")
       raw $ encode dto
@@ -30,7 +30,7 @@ importA =
       Just (fieldName, file) -> do
         let fName = fileName file
         let fContent = fileContent file
-        eitherDto <- runInAuthService $ importPackageInFile fContent
+        eitherDto <- runInAuthService $ importKnowledgeModelBundleFromFile fContent
         case eitherDto of
           Right dto -> json dto
           Left error -> sendError error
