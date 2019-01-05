@@ -15,6 +15,7 @@ import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
@@ -59,6 +60,7 @@ import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModelBundle.KnowledgeModelBundle
 import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
@@ -220,6 +222,9 @@ makeFields ''CrossReference
 makeFields ''Metric
 
 makeFields ''MetricMeasure
+
+-- Model / KnowledgeModelBundle
+makeFields ''KnowledgeModelBundle
 
 -- Model / Level
 makeFields ''Level
@@ -385,6 +390,9 @@ makeFields ''CrossReferenceDTO
 makeFields ''MetricDTO
 
 makeFields ''MetricMeasureDTO
+
+-- Api / Resource / KnowledgeModelBundle
+makeFields ''KnowledgeModelBundleDTO
 
 -- Model / Level
 makeFields ''LevelDTO

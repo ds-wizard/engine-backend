@@ -218,3 +218,9 @@ getFirstFromDB dbFunction appContext = do
   liftIO $ (isRight eitherList) `shouldBe` True
   let (Right list) = eitherList
   return $ list !! 0
+
+getOneFromDB dbFunction appContext = do
+  eitherOne <- runInContextIO dbFunction appContext
+  liftIO $ (isRight eitherOne) `shouldBe` True
+  let (Right one) = eitherOne
+  return one

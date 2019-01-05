@@ -118,7 +118,7 @@ createEndpoints context
    -- IMPORT/EXPORT
    --------------------
   post "/import" importA
-  get "/export/:pkgId" exportA
+  get "/export/:kmbId" exportA
    --------------------
    -- QUESTIONNAIRE
    --------------------

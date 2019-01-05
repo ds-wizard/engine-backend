@@ -14,8 +14,7 @@ import Specs.API.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfPackageInDB appContext package = do
-  packageFromDb <-
-    getFirstFromDB (findPackagesByOrganizationIdAndKmId (package ^. organizationId) (package ^. kmId)) appContext
+  packageFromDb <- getOneFromDB (findPackageById (package ^. pId)) appContext
   comparePackageDtos packageFromDb package
 
 -- --------------------------------
