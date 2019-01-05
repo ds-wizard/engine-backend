@@ -54,6 +54,16 @@ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY 
 
 _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn't correspond with Package Coordinates"
 
+-- Public Questionnaire
+_ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
+
+-- Template
+_ERROR_SERVICE_TEMPLATE__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
+
+_ERROR_SERVICE_TEMPLATE__UKNOWN_FORMAT = "Unprocessable DMP format"
+
+_ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
+
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password"
 
@@ -82,14 +92,6 @@ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
 _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS = "A hash query param has to be provided"
 
 _ERROR_SERVICE_USER__MISSING_USER = "You have to be log in to run."
-
--- DataManagementPlan
-_ERROR_SERVICE_DMP__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
-
-_ERROR_SERVICE_DMP__UKNOWN_FORMAT = "Unprocessable DMP format"
-
--- Public Questionnaire
-_ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
 
 -- --------------------------------------
 -- HTTP CLIENT

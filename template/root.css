@@ -1,0 +1,223 @@
+/**************************/
+/* GENERAL STYLE          */
+/**************************/
+
+body {
+  max-width: 1000px;
+  margin: auto;
+  font-family: sans-serif;
+  font-size: .95rem;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #333;
+}
+
+a {
+  color: #868e96;
+}
+
+.text-light {
+  color: #868e96!important;
+}
+
+.text-muted {
+  color: #AEA79F!important;
+}
+
+/**************************/
+
+header {
+  padding-bottom: 1rem;
+  border-bottom: solid 3px #aaaaaa;
+}
+
+header > h1 {
+  font-size: 200%;
+  margin: 0.5rem 0 ;
+}
+
+header > h1 > svg {
+  height: 2rem;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+header::after {
+  content: "";
+  display: block;
+  clear: both;
+}
+
+/**************************/
+
+dl {
+  color: #868e96;
+}
+
+dl dt {
+  display: inline-block;
+  width: 15%;
+  padding: 0.2rem 0;
+  float: left;
+}
+
+dl dt::after {
+  content: ":";
+}
+
+dl dd {
+  display: inline-block;
+  width: 85%;
+  margin: 0;
+  padding: 0.2rem 0;
+  float: left;
+  font-style: italic;
+}
+
+/**************************/
+
+table th {
+  padding: 0.5rem;
+  border-right: 1px solid #E1E1E1;
+  border-top: 1px solid #E1E1E1;
+}
+
+table th:first-child {
+  border-left: 1px solid #E1E1E1;
+}
+
+table tr:first-child td {
+  border-top: 1px solid #E1E1E1;
+}
+
+table td {
+  padding: 0.5rem;
+  border-right: 1px solid #E1E1E1;
+  border-bottom: 1px solid #E1E1E1;
+  text-align: center;
+}
+
+table td:first-child {
+  border-left: 1px solid #E1E1E1;
+  text-align: left;
+}
+
+/**************************/
+
+footer {
+  padding: 0.5em 0.5em 0.5em 0.5em;
+  text-align: center;
+  font-size: 90%;
+}
+
+/**************************/
+/* KM-SPECIFIC STYLE      */
+/**************************/
+
+.report {
+  margin-bottom: 1rem;
+}
+
+/**************************/
+
+.chapter {
+  border-bottom: solid 2px #cccccc;
+}
+
+/**************************/
+
+.question {
+  margin-bottom: 20px;
+  padding: 0.3rem 0.6rem;
+  padding-left: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-left: 5px solid #ddd;
+}
+
+.question > h4 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.question .text {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+}
+
+.question > .extra-data {
+  margin-bottom: 0.75rem;
+}
+
+.question b {
+  font-weight: normal;
+}
+
+/**************************/
+
+.experts, .references {
+  color: #868e96;
+  line-height: 1.5;
+}
+
+.experts b, .reference b,
+.experts a, .reference a {
+  vertical-align: middle;
+}
+
+.experts svg, .references svg {
+  width: 13px;
+  height: 14px;
+  margin-right: 7px;
+  vertical-align: middle;
+  color: #495057;
+}
+
+.expert::after, .reference::after {
+  content: ",";
+}
+
+.expert:last-of-type::after, .reference:last-of-type::after {
+  content: " ";
+}
+
+/**************************/
+
+.answer-block .answer {
+  font-style: italic;
+}
+
+.answer-block .answer span {
+  vertical-align: middle;
+}
+
+.answer-block .answer svg {
+  height: 1rem;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+.no-answer {
+  font-weight: bold;
+}
+
+.no-answer svg {
+  height: 1rem;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+}
+
+.no-answer span {
+  vertical-align: middle;
+}
+
+.question.required .no-answer {
+  color: #D0021B;
+}
+
+.question.optional .no-answer {
+  color: #9B9B9B;
+}

@@ -8,8 +8,14 @@ import GHC.Generics
 
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.Level.LevelDTO
+import Api.Resource.Level.LevelJS ()
+import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageDTO ()
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
+import Api.Resource.User.UserDTO
 
 data DataManagementPlanDTO = DataManagementPlanDTO
   { _dataManagementPlanDTOUuid :: U.UUID
@@ -17,7 +23,11 @@ data DataManagementPlanDTO = DataManagementPlanDTO
   , _dataManagementPlanDTOLevel :: Int
   , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
+  , _dataManagementPlanDTOLevels :: [LevelDTO]
   , _dataManagementPlanDTOReport :: ReportDTO
+  , _dataManagementPlanDTOPackage :: PackageDTO
+  , _dataManagementPlanDTOOrganization :: OrganizationDTO
+  , _dataManagementPlanDTOCreatedBy :: Maybe UserDTO
   , _dataManagementPlanDTOCreatedAt :: UTCTime
   , _dataManagementPlanDTOUpdatedAt :: UTCTime
   } deriving (Show, Generic)
@@ -29,7 +39,11 @@ instance Eq DataManagementPlanDTO where
     _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
     _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
     _dataManagementPlanDTOMetrics a == _dataManagementPlanDTOMetrics b &&
-    _dataManagementPlanDTOReport a == _dataManagementPlanDTOReport b
+    _dataManagementPlanDTOLevels a == _dataManagementPlanDTOLevels b &&
+    _dataManagementPlanDTOReport a == _dataManagementPlanDTOReport b &&
+    _dataManagementPlanDTOPackage a == _dataManagementPlanDTOPackage b &&
+    _dataManagementPlanDTOOrganization a == _dataManagementPlanDTOOrganization b &&
+    _dataManagementPlanDTOCreatedBy a == _dataManagementPlanDTOCreatedBy b
 
 instance FromJSON DataManagementPlanDTO where
   parseJSON (Object o) = do
@@ -38,7 +52,11 @@ instance FromJSON DataManagementPlanDTO where
     _dataManagementPlanDTOLevel <- o .: "level"
     _dataManagementPlanDTOFilledKnowledgeModel <- o .: "filledKnowledgeModel"
     _dataManagementPlanDTOMetrics <- o .: "metrics"
+    _dataManagementPlanDTOLevels <- o .: "levels"
     _dataManagementPlanDTOReport <- o .: "report"
+    _dataManagementPlanDTOPackage <- o .: "package"
+    _dataManagementPlanDTOOrganization <- o .: "organization"
+    _dataManagementPlanDTOCreatedBy <- o .: "createdBy"
     _dataManagementPlanDTOCreatedAt <- o .: "createdAt"
     _dataManagementPlanDTOUpdatedAt <- o .: "updatedAt"
     return DataManagementPlanDTO {..}
@@ -52,7 +70,11 @@ instance ToJSON DataManagementPlanDTO where
       , "level" .= _dataManagementPlanDTOLevel
       , "filledKnowledgeModel" .= _dataManagementPlanDTOFilledKnowledgeModel
       , "metrics" .= _dataManagementPlanDTOMetrics
+      , "levels" .= _dataManagementPlanDTOLevels
       , "report" .= _dataManagementPlanDTOReport
+      , "package" .= _dataManagementPlanDTOPackage
+      , "organization" .= _dataManagementPlanDTOOrganization
+      , "createdBy" .= _dataManagementPlanDTOCreatedBy
       , "createdAt" .= _dataManagementPlanDTOCreatedAt
       , "updatedAt" .= _dataManagementPlanDTOUpdatedAt
       ]

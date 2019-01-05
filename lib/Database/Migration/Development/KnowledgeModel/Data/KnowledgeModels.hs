@@ -12,7 +12,7 @@ km1 :: KnowledgeModel
 km1 =
   KnowledgeModel
   { _knowledgeModelUuid = fromJust $ U.fromString "ff672529-e837-4201-b7b1-7ada557d9725"
-  , _knowledgeModelName = "My Knowledge Model"
+  , _knowledgeModelName = "Data Management Plan for Smart Researchers"
   , _knowledgeModelChapters = [chapter1, chapter2]
   }
 
@@ -20,7 +20,7 @@ km1WithChangeProperties :: KnowledgeModel
 km1WithChangeProperties =
   KnowledgeModel
   { _knowledgeModelUuid = km1 ^. uuid
-  , _knowledgeModelName = "EDITED: My Knowledge Model"
+  , _knowledgeModelName = "EDITED: " ++ (km1 ^. name)
   , _knowledgeModelChapters = [chapter2, chapter1]
   }
 

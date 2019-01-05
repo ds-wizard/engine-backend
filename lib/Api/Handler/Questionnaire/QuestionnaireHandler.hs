@@ -1,9 +1,10 @@
 module Api.Handler.Questionnaire.QuestionnaireHandler where
 
 import qualified Data.Text as T
+import qualified Data.Text.Lazy as LT
 import Network.HTTP.Types.Status (created201, noContent204)
 import Text.Read (readMaybe)
-import Web.Scotty.Trans (json, param, status)
+import Web.Scotty.Trans (addHeader, json, param, raw, status)
 
 import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
@@ -71,13 +72,13 @@ getQuestionnaireDmpA = do
       case eitherDto of
         Right dto -> json dto
         Left error -> sendError error
-    -- Just "html" -> do
-    --   eitherHTMLto <- runInUnauthService $ exportDataManagementPlan qtnUuid HTML
-    --   case eitherHTMLto of
-    --     Right html -> do
-    --       addHeader "Content-Type" (TL.pack "text/html; charset=utf-8")
-    --       raw $ html
-    --     Left error -> sendError error
+    Just "html-preview" -> do
+      eitherHTMLto <- runInUnauthService $ exportDataManagementPlan qtnUuid HTML
+      case eitherHTMLto of
+        Right html -> do
+          addHeader "Content-Type" (LT.pack "text/html; charset=utf-8")
+          raw $ html
+        Left error -> sendError error
     Just formatS ->
       heGetFormat formatS $ \format -> do
         eitherBody <- runInUnauthService $ exportDataManagementPlan qtnUuid format

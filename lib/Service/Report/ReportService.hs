@@ -22,7 +22,7 @@ getReportByQuestionnaireUuid qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
     heFindMetrics $ \metrics -> do
       let filledKM = createFilledKM qtn
-      report <- liftIO $ generateReport (qtn ^. level) metrics filledKM
+      report <- generateReport (qtn ^. level) metrics filledKM
       return . Right . toReportDTO $ report
 
 getPreviewOfReportByQuestionnaireUuid :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError ReportDTO)
@@ -32,5 +32,5 @@ getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto =
       now <- liftIO getCurrentTime
       let updatedQtn = fromChangeDTO qtnDto reqDto now
       let filledKM = createFilledKM updatedQtn
-      report <- liftIO $ generateReport (reqDto ^. level) metrics filledKM
+      report <- generateReport (reqDto ^. level) metrics filledKM
       return . Right . toReportDTO $ report

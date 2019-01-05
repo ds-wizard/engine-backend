@@ -66,7 +66,9 @@ q2_answerYes =
   Answer
   { _answerUuid = fromJust $ U.fromString "d6fb1eb3-3bef-4aac-8491-def68f40ac78"
   , _answerLabel = "Yes"
-  , _answerAdvice = Just "Short advice"
+  , _answerAdvice =
+      Just
+        "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
   , _answerFollowUps = [q2_aYes_fuQuestion1]
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }

@@ -33,8 +33,8 @@ question2 =
   Question
   { _questionUuid = fromJust $ U.fromString "549d4140-d3e7-4cda-a373-7af8abc6325c"
   , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Second Question"
-  , _questionText = Just "Some long description"
+  , _questionTitle = "Is there any pre-existing data?"
+  , _questionText = Just "Are there any data sets available in the world that are relevant to your planned research?"
   , _questionRequiredLevel = Just 2
   , _questionAnswers = Just [FA.q2_answerNo, FA.q2_answerYes]
   , _questionAnswerItemTemplate = Nothing

@@ -1,10 +1,12 @@
 module Service.Report.ReportGenerator where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (liftIO)
 import Data.Maybe (catMaybes, isJust)
 import Data.Time
 
 import LensesConfig
+import Model.Context.AppContext
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.FilledKnowledgeModel.FilledKnowledgeModelAccessors
 import Model.KnowledgeModel.KnowledgeModel
@@ -97,10 +99,10 @@ computeChapterReport currentLevel metrics fChapter =
   , _chapterReportMetrics = computeMetrics metrics fChapter
   }
 
-generateReport :: Int -> [Metric] -> FilledKnowledgeModel -> IO Report
+generateReport :: Int -> [Metric] -> FilledKnowledgeModel -> AppContextM Report
 generateReport currentLevel metrics filledKM = do
-  rUuid <- generateUuid
-  now <- getCurrentTime
+  rUuid <- liftIO generateUuid
+  now <- liftIO getCurrentTime
   return
     Report
     { _reportUuid = rUuid

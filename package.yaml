@@ -15,6 +15,8 @@ tested-with: GHC==7.6.* GHC==7.8.*
 data-files:
   - config/app-config.cfg
   - config/build-info.cfg
+  - template/root.css
+  - template/root.html.jinja
 library:
   source-dirs: lib
   when:
@@ -38,7 +40,9 @@ library:
   - data-default
   - exceptions
   - fromhtml
+  - ginger
   - github
+  - hashable
   - http-client
   - http-types
   - jwt
@@ -64,6 +68,7 @@ library:
   - text
   - time
   - transformers
+  - unordered-containers
   - uuid
   - vector
   - wai
@@ -123,6 +128,7 @@ tests:
     - ConfigFile
     - containers
     - data-default
+    - ginger
     - http-types
     - lens
     - jwt
