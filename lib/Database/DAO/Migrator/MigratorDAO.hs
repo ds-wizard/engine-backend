@@ -13,7 +13,7 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Migrator.MigratorState
 
-msCollection = "migrations"
+msCollection = "kmMigrations"
 
 findMigratorStateByBranchUuid :: String -> AppContextM (Either AppError MigratorState)
 findMigratorStateByBranchUuid branchUuid = do
