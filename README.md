@@ -1,5 +1,3 @@
-![Elixir Logo](/resources/elixir-cz-logo.png)
-
 # Data Stewardship Wizard - Server Application
 > It's a server part of the wizard application.
 
