@@ -1,17 +1,18 @@
 # Data Stewardship Wizard - Server Application
 > It's a server part of the wizard application.
 
-[![Build Status](https://travis-ci.org/DataStewardshipWizard/dsw-server.svg?branch=master)](https://travis-ci.org/DataStewardshipWizard/dsw-server)
+[![Build Status](https://travis-ci.org/ds-wizard/dsw-server.svg?branch=master)](https://travis-ci.org/ds-wizard/dsw-server)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
 
 ## Features
 
 - User Management
-- Package Management
-- Editor of Knowledge Model
-- Migration Tool for Knowledge Model
+- Organization Management
+- Knowledge Model Management
+- Knowledge Model Editor
+- Migration Tool for obsolete Knowledge Model
 - Questionnaire
-- Data Management Generator
+- Data Management Plan Generator
 - Feedback
 
 ## Demo
@@ -40,11 +41,11 @@ The application is currently deployed on a server provided by FIT CTU. Here are 
 
 ### Requirements
 
- - **Stack** (recommended 1.6.5 or higher)
+ - **Stack** (recommended 1.9.3 or higher)
  - **MongoDB** (recommended 3.4.10 or higher)
  - **RabbitMQ** (recommended 3.7.8 or higher)
  - **wkhtmltopdf** (recommended 0.12.5 or higher) - *for exports in PDF format only*
- - **Pandoc** (recommended 2.1 or higher) - *for exports in non HTML/PDF formats only*
+ - **Pandoc** (recommended 2.2.1 or higher) - *for exports in non HTML/PDF formats only*
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
 
 ### Build & Run
