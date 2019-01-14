@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 WORKDIR /dsw
 
 # Install necessary libraries
-RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates wget gdebi-core
+RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates wget gdebi-core curl
 RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.trusty_amd64.deb && gdebi -n wkhtmltox_0.12.5-1.trusty_amd64.deb
 RUN wget https://github.com/jgm/pandoc/releases/download/2.2.1/pandoc-2.2.1-1-amd64.deb && gdebi -n pandoc-2.2.1-1-amd64.deb
 
@@ -15,5 +15,8 @@ ADD config/app-config.cfg.example /dsw/config/app-config.cfg
 ADD config/build-info.cfg /dsw/config/build-info.cfg
 ADD template/root.css /dsw/template/root.css
 ADD template/root.html.jinja /dsw/template/root.html.jinja
+
+HEALTHCHECK --interval=5m --timeout=10s \
+  CMD curl -f http://localhost:3000/ || exit 1
 
 CMD ["./dsw-server"]
