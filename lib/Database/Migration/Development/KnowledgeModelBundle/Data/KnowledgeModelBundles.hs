@@ -5,7 +5,6 @@ import Control.Lens ((^.))
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.KnowledgeModelBundle.KnowledgeModelBundle
-import Service.Package.PackageMapper
 
 elixirNlPackage2DtoKMBudle =
   KnowledgeModelBundle
