@@ -5,6 +5,7 @@ import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
 import Data.Aeson
 import Data.ByteString.Char8 as BS
+import Data.Char (toLower)
 import qualified Data.Map as M
 import qualified Data.Text as T
 import Data.Text.Read
@@ -35,7 +36,7 @@ getToken tokenCreateDto =
         return . Right . toDTO $ createToken user now jwtSecret jwtVersion jwtExpirationInDays
   where
     getUser callback = do
-      eitherUser <- findUserByEmail (tokenCreateDto ^. email)
+      eitherUser <- findUserByEmail (toLower <$> tokenCreateDto ^. email)
       case eitherUser of
         Right user -> callback user
         Left (NotExistsError _) ->
