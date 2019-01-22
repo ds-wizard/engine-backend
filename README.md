@@ -19,8 +19,8 @@
 
 The application is currently deployed on a server provided by FIT CTU. Here are the addresses of running applications:
 
-- **Server:** https://api.dsw.fairdata.solutions
-- **Client:** https://dsw.fairdata.solutions
+- **Server:** https://api.ds-wizard.org
+- **Client:** https://app.ds-wizard.org
 
 ## Documentation
 
@@ -35,7 +35,7 @@ The application is currently deployed on a server provided by FIT CTU. Here are 
 
 **API Documentation:**
 
-> https://docs.dsw.fairdata.solutions
+> https://docs.ds-wizard.org
 
 ## Contribute
 
