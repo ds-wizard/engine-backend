@@ -50,6 +50,8 @@ data AppConfigMail = AppConfigMail
   , _appConfigMailName :: String
   , _appConfigMailEmail :: String
   , _appConfigMailHost :: String
+  , _appConfigMailPort :: Maybe Int
+  , _appConfigMailSsl :: Bool
   , _appConfigMailUsername :: String
   , _appConfigMailPassword :: String
   }

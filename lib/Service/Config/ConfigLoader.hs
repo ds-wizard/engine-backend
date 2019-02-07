@@ -8,6 +8,10 @@ import System.Environment (lookupEnv)
 
 import Model.Config.AppConfig
 
+getOptional configParser section option
+  | has_option configParser section option = get configParser section option >>= return . Just
+  | otherwise = return Nothing
+
 loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError AppConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
@@ -101,6 +105,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       mailName <- get configParser "Mail" "name"
       mailEmail <- get configParser "Mail" "email"
       mailHost <- get configParser "Mail" "host"
+      mailPort <- getOptional configParser "Mail" "port"
+      mailSSL <- getOptional configParser "Mail" "ssl"
       mailUsername <- get configParser "Mail" "username"
       mailPassword <- get configParser "Mail" "password"
       return
@@ -109,6 +115,8 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         , _appConfigMailName = mailName
         , _appConfigMailEmail = mailEmail
         , _appConfigMailHost = mailHost
+        , _appConfigMailPort = mailPort
+        , _appConfigMailSsl = fromMaybe False mailSSL
         , _appConfigMailUsername = mailUsername
         , _appConfigMailPassword = mailPassword
         }
