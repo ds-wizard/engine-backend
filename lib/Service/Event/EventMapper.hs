@@ -23,6 +23,9 @@ toDTOFn (DeleteExpertEvent' event) = toDTO event
 toDTOFn (AddReferenceEvent' event) = toDTO event
 toDTOFn (EditReferenceEvent' event) = toDTO event
 toDTOFn (DeleteReferenceEvent' event) = toDTO event
+toDTOFn (AddTagEvent' event) = toDTO event
+toDTOFn (EditTagEvent' event) = toDTO event
+toDTOFn (DeleteTagEvent' event) = toDTO event
 
 toDTOs :: [Event] -> [EventDTO]
 toDTOs = fmap toDTOFn
@@ -45,6 +48,9 @@ fromDTOFn (DeleteExpertEventDTO' event) = fromDTO event
 fromDTOFn (AddReferenceEventDTO' event) = fromDTO event
 fromDTOFn (EditReferenceEventDTO' event) = fromDTO event
 fromDTOFn (DeleteReferenceEventDTO' event) = fromDTO event
+fromDTOFn (AddTagEventDTO' event) = fromDTO event
+fromDTOFn (EditTagEventDTO' event) = fromDTO event
+fromDTOFn (DeleteTagEventDTO' event) = fromDTO event
 
 fromDTOs :: [EventDTO] -> [Event]
 fromDTOs = fmap fromDTOFn

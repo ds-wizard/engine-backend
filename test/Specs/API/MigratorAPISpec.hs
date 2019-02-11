@@ -237,7 +237,9 @@ migratorAPI appContext = do
                 , _branchChangeDTOKmId = "amsterdam-km"
                 , _branchChangeDTOParentPackageId = Nothing
                 }
-          runInContextIO (createBranchWithParams branchUuid timestamp branch) appContext
+          runInContextIO
+            (createBranchWithParams branchUuid timestamp (fromJust $ appContext ^. currentUser) branch)
+            appContext
           runInContextIO (insertPackage elixirNlPackage2Dto) appContext
           runInContextIO deleteMigratorStates appContext
           -- WHEN: Call API

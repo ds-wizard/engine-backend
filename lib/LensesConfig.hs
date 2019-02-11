@@ -56,6 +56,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
@@ -178,6 +179,12 @@ makeFields ''EditCrossReferenceEvent
 
 makeFields ''DeleteCrossReferenceEvent
 
+makeFields ''AddTagEvent
+
+makeFields ''EditTagEvent
+
+makeFields ''DeleteTagEvent
+
 -- Model / Feedback
 makeFields ''Feedback
 
@@ -222,6 +229,8 @@ makeFields ''CrossReference
 makeFields ''Metric
 
 makeFields ''MetricMeasure
+
+makeFields ''Tag
 
 -- Model / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundle
@@ -343,6 +352,12 @@ makeFields ''EditCrossReferenceEventDTO
 
 makeFields ''DeleteCrossReferenceEventDTO
 
+makeFields ''AddTagEventDTO
+
+makeFields ''EditTagEventDTO
+
+makeFields ''DeleteTagEventDTO
+
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
 
@@ -390,6 +405,8 @@ makeFields ''CrossReferenceDTO
 makeFields ''MetricDTO
 
 makeFields ''MetricMeasureDTO
+
+makeFields ''TagDTO
 
 -- Api / Resource / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundleDTO

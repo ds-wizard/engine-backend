@@ -1,6 +1,6 @@
 module Model.Event.Question.QuestionEvent where
 
-import Data.UUID
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.Event.EventField
@@ -8,32 +8,34 @@ import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEvent = AddQuestionEvent
-  { _addQuestionEventUuid :: UUID
+  { _addQuestionEventUuid :: U.UUID
   , _addQuestionEventPath :: EventPath
-  , _addQuestionEventQuestionUuid :: UUID
+  , _addQuestionEventQuestionUuid :: U.UUID
   , _addQuestionEventQType :: QuestionType
   , _addQuestionEventTitle :: String
   , _addQuestionEventText :: Maybe String
   , _addQuestionEventRequiredLevel :: Maybe Int
+  , _addQuestionEventTagUuids :: [U.UUID]
   , _addQuestionEventAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlain
   } deriving (Show, Eq, Generic)
 
 data EditQuestionEvent = EditQuestionEvent
-  { _editQuestionEventUuid :: UUID
+  { _editQuestionEventUuid :: U.UUID
   , _editQuestionEventPath :: EventPath
-  , _editQuestionEventQuestionUuid :: UUID
+  , _editQuestionEventQuestionUuid :: U.UUID
   , _editQuestionEventQType :: EventField QuestionType
   , _editQuestionEventTitle :: EventField String
   , _editQuestionEventText :: EventField (Maybe String)
   , _editQuestionEventRequiredLevel :: EventField (Maybe Int)
+  , _editQuestionEventTagUuids :: EventField [U.UUID]
   , _editQuestionEventAnswerItemTemplatePlainWithIds :: EventField (Maybe AnswerItemTemplatePlainWithIds)
-  , _editQuestionEventAnswerIds :: EventField (Maybe [UUID])
-  , _editQuestionEventExpertIds :: EventField [UUID]
-  , _editQuestionEventReferenceIds :: EventField [UUID]
+  , _editQuestionEventAnswerIds :: EventField (Maybe [U.UUID])
+  , _editQuestionEventExpertIds :: EventField [U.UUID]
+  , _editQuestionEventReferenceIds :: EventField [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEvent = DeleteQuestionEvent
-  { _deleteQuestionEventUuid :: UUID
+  { _deleteQuestionEventUuid :: U.UUID
   , _deleteQuestionEventPath :: EventPath
-  , _deleteQuestionEventQuestionUuid :: UUID
+  , _deleteQuestionEventQuestionUuid :: U.UUID
   } deriving (Show, Eq, Generic)

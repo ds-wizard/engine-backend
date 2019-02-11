@@ -21,6 +21,16 @@ kmChangeChapterIdsOrder convert km = Identity $ km & chapters .~ orderedChapters
     getChapterByUuid :: UUID -> [Chapter]
     getChapterByUuid chUuid = filter (\x -> x ^. uuid == chUuid) (km ^. chapters)
 
+kmChangeTagUuidsOrder :: ([Tag] -> Identity [UUID]) -> KnowledgeModel -> Identity KnowledgeModel
+kmChangeTagUuidsOrder convert km = Identity $ km & tags .~ orderedTags
+  where
+    ids :: Identity [UUID]
+    ids = convert (km ^. tags)
+    orderedTags :: [Tag]
+    orderedTags = concatMap getTagByUuid (runIdentity ids)
+    getTagByUuid :: UUID -> [Tag]
+    getTagByUuid tUuid = filter (\x -> x ^. uuid == tUuid) (km ^. tags)
+
 getAllChapters :: KnowledgeModel -> [Chapter]
 getAllChapters km = km ^. chapters
 
@@ -257,3 +267,7 @@ getAllReferencesForQuestionUuid km questionUuid =
 
 isThereAnyReferenceWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyReferenceWithGivenUuid km refUuid = refUuid `elem` (getReferenceUuid <$> getAllReferences km)
+
+------------------------------------------------------------------------------------------
+getTagUuids :: KnowledgeModel -> [UUID]
+getTagUuids km = km ^.. tags . traverse . uuid

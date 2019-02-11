@@ -12,6 +12,7 @@ data KnowledgeModelDTO = KnowledgeModelDTO
   { _knowledgeModelDTOUuid :: U.UUID
   , _knowledgeModelDTOName :: String
   , _knowledgeModelDTOChapters :: [ChapterDTO]
+  , _knowledgeModelDTOTags :: [TagDTO]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -29,6 +30,7 @@ data QuestionDTO = QuestionDTO
   , _questionDTOTitle :: String
   , _questionDTOText :: Maybe String
   , _questionDTORequiredLevel :: Maybe Int
+  , _questionDTOTagUuids :: [U.UUID]
   , _questionDTOAnswers :: Maybe [AnswerDTO]
   , _questionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _questionDTOReferences :: [ReferenceDTO]
@@ -114,11 +116,23 @@ data MetricMeasureDTO = MetricMeasureDTO
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
+data TagDTO = TagDTO
+  { _tagDTOUuid :: U.UUID
+  , _tagDTOName :: String
+  , _tagDTODescription :: Maybe String
+  , _tagDTOColor :: String
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON KnowledgeModelDTO where
   toJSON KnowledgeModelDTO {..} =
     object
-      ["uuid" .= _knowledgeModelDTOUuid, "name" .= _knowledgeModelDTOName, "chapters" .= _knowledgeModelDTOChapters]
+      [ "uuid" .= _knowledgeModelDTOUuid
+      , "name" .= _knowledgeModelDTOName
+      , "chapters" .= _knowledgeModelDTOChapters
+      , "tags" .= _knowledgeModelDTOTags
+      ]
 
 -- --------------------------------------------------------------------
 instance ToJSON ChapterDTO where
@@ -139,6 +153,7 @@ instance ToJSON QuestionDTO where
       , "title" .= _questionDTOTitle
       , "text" .= _questionDTOText
       , "requiredLevel" .= _questionDTORequiredLevel
+      , "tagUuids" .= _questionDTOTagUuids
       , "answers" .= _questionDTOAnswers
       , "answerItemTemplate" .= _questionDTOAnswerItemTemplate
       , "references" .= _questionDTOReferences
@@ -228,12 +243,18 @@ instance ToJSON MetricMeasureDTO where
       ]
 
 -- --------------------------------------------------------------------
+instance ToJSON TagDTO where
+  toJSON TagDTO {..} =
+    object ["uuid" .= _tagDTOUuid, "name" .= _tagDTOName, "description" .= _tagDTODescription, "color" .= _tagDTOColor]
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
     _knowledgeModelDTOUuid <- o .: "uuid"
     _knowledgeModelDTOName <- o .: "name"
     _knowledgeModelDTOChapters <- o .: "chapters"
+    _knowledgeModelDTOTags <- o .: "tags"
     return KnowledgeModelDTO {..}
   parseJSON _ = mzero
 
@@ -254,6 +275,7 @@ instance FromJSON QuestionDTO where
     _questionDTOTitle <- o .: "title"
     _questionDTOText <- o .: "text"
     _questionDTORequiredLevel <- o .: "requiredLevel"
+    _questionDTOTagUuids <- o .: "tagUuids"
     _questionDTOAnswers <- o .: "answers"
     _questionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _questionDTOExperts <- o .: "experts"
@@ -357,4 +379,14 @@ instance FromJSON MetricMeasureDTO where
     _metricMeasureDTOMeasure <- o .: "measure"
     _metricMeasureDTOWeight <- o .: "weight"
     return MetricMeasureDTO {..}
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance FromJSON TagDTO where
+  parseJSON (Object o) = do
+    _tagDTOUuid <- o .: "uuid"
+    _tagDTOName <- o .: "name"
+    _tagDTODescription <- o .: "description"
+    _tagDTOColor <- o .: "color"
+    return TagDTO {..}
   parseJSON _ = mzero

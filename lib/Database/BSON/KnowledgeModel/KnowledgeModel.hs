@@ -14,7 +14,11 @@ import Model.KnowledgeModel.KnowledgeModel
 -- -------------------------
 instance ToBSON KnowledgeModel where
   toBSON km =
-    ["uuid" BSON.=: serializeUUID (km ^. uuid), "name" BSON.=: (km ^. name), "chapters" BSON.=: (km ^. chapters)]
+    [ "uuid" BSON.=: serializeUUID (km ^. uuid)
+    , "name" BSON.=: (km ^. name)
+    , "chapters" BSON.=: (km ^. chapters)
+    , "tags" BSON.=: (km ^. tags)
+    ]
 
 instance FromBSON KnowledgeModel where
   fromBSON doc = do
@@ -22,8 +26,14 @@ instance FromBSON KnowledgeModel where
     kmUuid <- fromString kmUuidS
     kmName <- BSON.lookup "name" doc
     kmChapters <- BSON.lookup "chapters" doc
+    kmTags <- BSON.lookup "tags" doc
     return
-      KnowledgeModel {_knowledgeModelUuid = kmUuid, _knowledgeModelName = kmName, _knowledgeModelChapters = kmChapters}
+      KnowledgeModel
+      { _knowledgeModelUuid = kmUuid
+      , _knowledgeModelName = kmName
+      , _knowledgeModelChapters = kmChapters
+      , _knowledgeModelTags = kmTags
+      }
 
 -- -------------------------
 -- CHAPTER -----------------
@@ -56,6 +66,7 @@ instance ToBSON Question where
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
     , "requiredLevel" BSON.=: (model ^. requiredLevel)
+    , "tagUuids" BSON.=: serializeUUIDList (model ^. tagUuids)
     , "answers" BSON.=: (model ^. answers)
     , "answerItemTemplate" BSON.=: (model ^. answerItemTemplate)
     , "references" BSON.=: (model ^. references)
@@ -70,6 +81,7 @@ instance FromBSON Question where
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
     qRequiredLevel <- BSON.lookup "requiredLevel" doc
+    qTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
     qAnswers <- BSON.lookup "answers" doc
     qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     qReferences <- BSON.lookup "references" doc
@@ -81,6 +93,7 @@ instance FromBSON Question where
       , _questionTitle = qTitle
       , _questionText = qText
       , _questionRequiredLevel = qRequiredLevel
+      , _questionTagUuids = qTagUuids
       , _questionAnswers = qAnswers
       , _questionAnswerItemTemplate = qAnswerItemTemplate
       , _questionReferences = qReferences
@@ -142,7 +155,7 @@ instance ToBSON AnswerItemTemplatePlainWithIds where
 instance FromBSON AnswerItemTemplatePlainWithIds where
   fromBSON doc = do
     aitTitle <- BSON.lookup "title" doc
-    aitQuestionIds <- deserializeUUIDList $ BSON.lookup "questions" doc
+    aitQuestionIds <- deserializeMaybeUUIDList $ BSON.lookup "questions" doc
     return
       AnswerItemTemplatePlainWithIds
       {_answerItemTemplatePlainWithIdsTitle = aitTitle, _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds}
@@ -278,3 +291,22 @@ instance FromBSON MetricMeasure where
     return
       MetricMeasure
       {_metricMeasureMetricUuid = mmMetricUuid, _metricMeasureMeasure = mmMeasure, _metricMeasureWeight = mmWeight}
+
+-- -------------------------
+-- TAG ---------------------
+-- -------------------------
+instance ToBSON Tag where
+  toBSON model =
+    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "name" BSON.=: (model ^. name)
+    , "description" BSON.=: (model ^. description)
+    , "color" BSON.=: (model ^. color)
+    ]
+
+instance FromBSON Tag where
+  fromBSON doc = do
+    tUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    tName <- BSON.lookup "name" doc
+    tDescription <- BSON.lookup "description" doc
+    tColor <- BSON.lookup "color" doc
+    return Tag {_tagUuid = tUuid, _tagName = tName, _tagDescription = tDescription, _tagColor = tColor}

@@ -8,16 +8,22 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.Event.Data.Events
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Event.Event
 import Service.Branch.BranchService
 import Service.KnowledgeModel.KnowledgeModelService
+import Service.User.UserMapper
 import Util.Logger
 
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
-  createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange
+  createBranchWithParams
+    (amsterdamBranch ^. uuid)
+    (amsterdamBranch ^. createdAt)
+    (toDTO userAlbert)
+    amsterdamBranchChange
   let events =
         [ AddQuestionEvent' a_km1_ch1_q1
         , AddQuestionEvent' a_km1_ch1_q2

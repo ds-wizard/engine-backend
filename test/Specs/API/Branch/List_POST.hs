@@ -4,6 +4,7 @@ module Specs.API.Branch.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -115,7 +116,11 @@ test_400_already_taken_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

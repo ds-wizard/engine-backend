@@ -150,3 +150,16 @@ instance FromBSON (EventField [MetricMeasure]) where
         efValue <- BSON.lookup "value" doc
         return $ ChangedValue efValue
       else return NothingChanged
+
+instance ToBSON (EventField [Tag]) where
+  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
+  toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
+
+instance FromBSON (EventField [Tag]) where
+  fromBSON doc = do
+    efChanged <- BSON.lookup "changed" doc
+    if efChanged
+      then do
+        efValue <- BSON.lookup "value" doc
+        return $ ChangedValue efValue
+      else return NothingChanged

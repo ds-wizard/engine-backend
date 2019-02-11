@@ -10,6 +10,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Experts
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
+import Database.Migration.Development.KnowledgeModel.Data.Tags
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
@@ -19,6 +20,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 
@@ -27,8 +29,8 @@ a_km1 =
   AddKnowledgeModelEvent
   { _addKnowledgeModelEventUuid = fromJust $ U.fromString "b0edbc0b-2d7d-4ee7-bf2f-bc3a22d7494f"
   , _addKnowledgeModelEventPath = []
-  , _addKnowledgeModelEventKmUuid = km1WithoutChapters ^. uuid
-  , _addKnowledgeModelEventName = km1WithoutChapters ^. name
+  , _addKnowledgeModelEventKmUuid = km1WithoutChaptersAndTags ^. uuid
+  , _addKnowledgeModelEventName = km1WithoutChaptersAndTags ^. name
   }
 
 e_km1 :: EditKnowledgeModelEvent
@@ -39,6 +41,7 @@ e_km1 =
   , _editKnowledgeModelEventKmUuid = km1 ^. uuid
   , _editKnowledgeModelEventName = ChangedValue $ km1WithChangeProperties ^. name
   , _editKnowledgeModelEventChapterIds = ChangedValue $ getChapterIds km1WithChangeProperties
+  , _editKnowledgeModelEventTagUuids = ChangedValue $ getTagUuids km1WithChangeProperties
   }
 
 -- ----------------------------------------------------------------------------
@@ -124,6 +127,7 @@ a_km1_ch1_q1 =
   , _addQuestionEventTitle = question1 ^. title
   , _addQuestionEventText = question1 ^. text
   , _addQuestionEventRequiredLevel = question1 ^. requiredLevel
+  , _addQuestionEventTagUuids = question1 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -140,6 +144,7 @@ a_km1_ch1_q2 =
   , _addQuestionEventTitle = question2 ^. title
   , _addQuestionEventText = question2 ^. text
   , _addQuestionEventRequiredLevel = question2 ^. requiredLevel
+  , _addQuestionEventTagUuids = question2 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -156,6 +161,7 @@ a_km1_ch1_q3 =
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
   , _addQuestionEventRequiredLevel = question3 ^. requiredLevel
+  , _addQuestionEventTagUuids = question3 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -172,6 +178,7 @@ a_km1_ch2_q3 =
   , _addQuestionEventTitle = question3 ^. title
   , _addQuestionEventText = question3 ^. text
   , _addQuestionEventRequiredLevel = question3 ^. requiredLevel
+  , _addQuestionEventTagUuids = question3 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -188,6 +195,7 @@ a_km1_ch2_q4 =
   , _addQuestionEventTitle = question4 ^. title
   , _addQuestionEventText = question4 ^. text
   , _addQuestionEventRequiredLevel = question4 ^. requiredLevel
+  , _addQuestionEventTagUuids = question4 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = (fromJust $ question4 ^. answerItemTemplate) ^. title}
@@ -206,6 +214,7 @@ e_km1_ch1_q1_title =
   , _editQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
   , _editQuestionEventText = NothingChanged
   , _editQuestionEventRequiredLevel = NothingChanged
+  , _editQuestionEventTagUuids = NothingChanged
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = NothingChanged
   , _editQuestionEventExpertIds = NothingChanged
@@ -225,6 +234,7 @@ e_km1_ch1_q2 =
   , _editQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ question2WithChangeProperties ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
@@ -244,6 +254,7 @@ e_km1_ch1_q2_second_edit =
   , _editQuestionEventTitle = ChangedValue "New title"
   , _editQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ question2WithChangeProperties ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds question2WithChangeProperties
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds question2WithChangeProperties
@@ -263,6 +274,7 @@ e_km1_ch2_q4 =
   , _editQuestionEventTitle = ChangedValue $ question4WithChangeProperties ^. title
   , _editQuestionEventText = ChangedValue $ question4WithChangeProperties ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ question4WithChangeProperties ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ question4WithChangeProperties ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds
@@ -571,6 +583,7 @@ a_km1_ch2_q4_ait1_q5 =
   , _addQuestionEventTitle = q4_ait1_question5 ^. title
   , _addQuestionEventText = q4_ait1_question5 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_question5 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_question5 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain
@@ -591,6 +604,7 @@ a_km1_ch2_q4_ait1_q6 =
   , _addQuestionEventTitle = q4_ait1_question6 ^. title
   , _addQuestionEventText = q4_ait1_question6 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_question6 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_question6 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -615,6 +629,7 @@ a_km1_ch2_q4_ait1_q6_fuq4_q1 =
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question1 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question1 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_fuq4_ait_question1 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_q6_aYes_fuq4_ait_question1 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -639,6 +654,7 @@ a_km1_ch2_q4_ait1_q6_fuq4_q2 =
   , _addQuestionEventTitle = q4_ait1_q6_aYes_fuq4_ait_question2 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_fuq4_ait_question2 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_fuq4_ait_question2 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_q6_aYes_fuq4_ait_question2 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -657,6 +673,7 @@ a_km1_ch2_q4_ait1_q7 =
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question7 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question7 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_q5_ait2_question7 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_q5_ait2_question7 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -675,6 +692,7 @@ a_km1_ch2_q4_ait1_q8 =
   , _addQuestionEventTitle = q4_ait1_q5_ait2_question8 ^. title
   , _addQuestionEventText = q4_ait1_q5_ait2_question8 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_q5_ait2_question8 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_q5_ait2_question8 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -692,6 +710,7 @@ e_km1_ch2_q4_ait1_q5 =
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question5Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question5Changed ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_question5Changed ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ q4_ait1_question5Changed ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds
@@ -718,6 +737,7 @@ e_km1_ch2_q4_ait1_q6 =
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_question6Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_question6Changed ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_question6Changed ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ q4_ait1_question6Changed ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds q4_ait1_question6Changed
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds q4_ait1_question6Changed
@@ -756,6 +776,7 @@ a_km1_ch1_ansYes1_fuq1 =
   , _addQuestionEventTitle = q2_aYes_fuQuestion1 ^. title
   , _addQuestionEventText = q2_aYes_fuQuestion1 ^. text
   , _addQuestionEventRequiredLevel = q2_aYes_fuQuestion1 ^. requiredLevel
+  , _addQuestionEventTagUuids = q2_aYes_fuQuestion1 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -778,6 +799,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2 =
   , _addQuestionEventTitle = q2_aYes_fuq1_aYes_fuQuestion2 ^. title
   , _addQuestionEventText = q2_aYes_fuq1_aYes_fuQuestion2 ^. text
   , _addQuestionEventRequiredLevel = q2_aYes_fuq1_aYes_fuQuestion2 ^. requiredLevel
+  , _addQuestionEventTagUuids = q2_aYes_fuq1_aYes_fuQuestion2 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -804,6 +826,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2_ansYes4_fuq3 =
   , _addQuestionEventTitle = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. title
   , _addQuestionEventText = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. text
   , _addQuestionEventRequiredLevel = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. requiredLevel
+  , _addQuestionEventTagUuids = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain = Nothing
   }
 
@@ -824,6 +847,7 @@ a_km1_ch2_ansYes6_fuq4 =
   , _addQuestionEventTitle = q4_ait1_q6_aYes_followUpQuestion4 ^. title
   , _addQuestionEventText = q4_ait1_q6_aYes_followUpQuestion4 ^. text
   , _addQuestionEventRequiredLevel = q4_ait1_q6_aYes_followUpQuestion4 ^. requiredLevel
+  , _addQuestionEventTagUuids = q4_ait1_q6_aYes_followUpQuestion4 ^. tagUuids
   , _addQuestionEventAnswerItemTemplatePlain =
       Just
         AnswerItemTemplatePlain
@@ -849,6 +873,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds = ChangedValue $ getAnwerIds q2_aYes_fuq1_aYes_fuQuestion2Changed
   , _editQuestionEventExpertIds = ChangedValue $ getExpertIds q2_aYes_fuq1_aYes_fuQuestion2Changed
@@ -874,6 +899,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
   , _editQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
   , _editQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds = NothingChanged
   , _editQuestionEventAnswerIds =
       ChangedValue $ Just [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
@@ -897,6 +923,7 @@ e_km1_ch2_ansMaybe6_fuq4 =
   , _editQuestionEventTitle = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. title
   , _editQuestionEventText = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. text
   , _editQuestionEventRequiredLevel = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. requiredLevel
+  , _editQuestionEventTagUuids = ChangedValue $ q4_ait1_q6_aYes_followUpQuestion4Changed ^. tagUuids
   , _editQuestionEventAnswerItemTemplatePlainWithIds =
       ChangedValue . Just $
       AnswerItemTemplatePlainWithIds
@@ -1128,4 +1155,47 @@ d_km1_ch1_q2_rCh2 =
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _deleteURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_tds :: AddTagEvent
+a_km1_tds =
+  AddTagEvent
+  { _addTagEventUuid = fromJust $ U.fromString "dedc4a9d-00d9-41b6-8494-a10a238be03b"
+  , _addTagEventPath = [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _addTagEventTagUuid = tagDataScience ^. uuid
+  , _addTagEventName = tagDataScience ^. name
+  , _addTagEventDescription = tagDataScience ^. description
+  , _addTagEventColor = tagDataScience ^. color
+  }
+
+a_km1_tbi :: AddTagEvent
+a_km1_tbi =
+  AddTagEvent
+  { _addTagEventUuid = fromJust $ U.fromString "b6b0e53c-5702-403c-950c-e04960e09e73"
+  , _addTagEventPath = [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _addTagEventTagUuid = tagBioInformatic ^. uuid
+  , _addTagEventName = tagBioInformatic ^. name
+  , _addTagEventDescription = tagBioInformatic ^. description
+  , _addTagEventColor = tagBioInformatic ^. color
+  }
+
+e_km1_tds :: EditTagEvent
+e_km1_tds =
+  EditTagEvent
+  { _editTagEventUuid = fromJust $ U.fromString "f68f764b-48d1-4b30-8d53-48cfa2752801"
+  , _editTagEventPath = [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _editTagEventTagUuid = tagDataScienceEdited ^. uuid
+  , _editTagEventName = ChangedValue $ tagDataScienceEdited ^. name
+  , _editTagEventDescription = ChangedValue $ tagDataScienceEdited ^. description
+  , _editTagEventColor = ChangedValue $ tagDataScienceEdited ^. color
+  }
+
+d_km1_tds :: DeleteTagEvent
+d_km1_tds =
+  DeleteTagEvent
+  { _deleteTagEventUuid = fromJust $ U.fromString "969d00c2-062d-4763-a372-536d486c532f"
+  , _deleteTagEventPath = [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _deleteTagEventTagUuid = tagDataScience ^. uuid
   }

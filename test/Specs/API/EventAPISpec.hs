@@ -170,7 +170,14 @@ eventAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
-          let (Right expectedKm) = runApplicator Nothing [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
+          let (Right expectedKm) =
+                runApplicator
+                  Nothing
+                  [ AddKnowledgeModelEvent' a_km1
+                  , AddTagEvent' a_km1_tds
+                  , AddTagEvent' a_km1_tbi
+                  , AddChapterEvent' a_km1_ch1
+                  ]
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders ""
           -- THEN: Find a result

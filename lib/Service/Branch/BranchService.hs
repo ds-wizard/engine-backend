@@ -9,6 +9,7 @@ import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchWithStateDTO
 import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.User.UserDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
@@ -54,21 +55,20 @@ createBranch :: BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
 createBranch reqDto = do
   bUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  createBranchWithParams bUuid now reqDto
+  heGetCurrentUser $ \currentUser -> createBranchWithParams bUuid now currentUser reqDto
 
-createBranchWithParams :: U.UUID -> UTCTime -> BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
-createBranchWithParams bUuid now reqDto =
+createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchChangeDTO -> AppContextM (Either AppError BranchDTO)
+createBranchWithParams bUuid now currentUser reqDto =
   validateKmId reqDto $
   validatePackageId (reqDto ^. parentPackageId) $
-  heGetOrganization $ \organization ->
-    heGetCurrentUser $ \currentUser -> do
-      let branch = fromChangeDTO reqDto bUuid (reqDto ^. parentPackageId) (Just $ currentUser ^. uuid) now now
-      insertBranch branch
-      insertEventsToBranch (U.toString $ branch ^. uuid) []
-      updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
-      updateMigrationInfoIfParentPackageIdPresent branch
-      createDefaultEventIfParentPackageIsNotPresent branch
-      heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km -> return . Right $ toDTO branch organization
+  heGetOrganization $ \organization -> do
+    let branch = fromChangeDTO reqDto bUuid (reqDto ^. parentPackageId) (Just $ currentUser ^. uuid) now now
+    insertBranch branch
+    insertEventsToBranch (U.toString $ branch ^. uuid) []
+    updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
+    updateMigrationInfoIfParentPackageIdPresent branch
+    createDefaultEventIfParentPackageIsNotPresent branch
+    heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km -> return . Right $ toDTO branch organization
   where
     validateKmId reqDto callback = do
       let bKmId = reqDto ^. kmId
@@ -105,9 +105,9 @@ createBranchWithParams bUuid now reqDto =
           let addKMEvent =
                 AddKnowledgeModelEvent
                 { _addKnowledgeModelEventUuid = uuid
+                , _addKnowledgeModelEventPath = []
                 , _addKnowledgeModelEventKmUuid = kmUuid
                 , _addKnowledgeModelEventName = "New knowledge model"
-                , _addKnowledgeModelEventPath = []
                 }
           insertEventsToBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
 

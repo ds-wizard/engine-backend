@@ -2,7 +2,7 @@ module Specs.API.Package.List_POST
   ( list_post
   ) where
 
-import Control.Lens ((^.), (&), (.~))
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -207,7 +207,9 @@ test_400_missing_parent_package appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST (elixirNlPackageDto ^. pId) (elixirNlPackage2Dto ^. pId)
+    let expDto =
+          createErrorWithErrorMessage $
+          _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST (elixirNlPackageDto ^. pId) (elixirNlPackage2Dto ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

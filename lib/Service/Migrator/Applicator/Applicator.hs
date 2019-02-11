@@ -35,3 +35,6 @@ runApplicator mKM events =
     foldEvent emKM (AddReferenceEvent' e) = applyEventToKM e (getPath e) emKM
     foldEvent emKM (EditReferenceEvent' e) = applyEventToKM e (getPath e) emKM
     foldEvent emKM (DeleteReferenceEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddTagEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditTagEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteTagEvent' e) = applyEventToKM e (getPath e) emKM

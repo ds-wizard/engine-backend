@@ -11,6 +11,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 
@@ -22,13 +23,19 @@ applyValue NothingChanged ch setter = ch
 -- -------------------------
 createKM :: AddKnowledgeModelEvent -> KnowledgeModel
 createKM e =
-  KnowledgeModel {_knowledgeModelUuid = e ^. kmUuid, _knowledgeModelName = e ^. name, _knowledgeModelChapters = []}
+  KnowledgeModel
+  { _knowledgeModelUuid = e ^. kmUuid
+  , _knowledgeModelName = e ^. name
+  , _knowledgeModelChapters = []
+  , _knowledgeModelTags = []
+  }
 
 editKM :: EditKnowledgeModelEvent -> KnowledgeModel -> KnowledgeModel
-editKM e = applyChapterIds . applyName
+editKM e = applyTagUuids . applyChapterIds . applyName
   where
     applyName km = applyValue (e ^. name) km name
     applyChapterIds km = applyValue (e ^. chapterIds) km kmChangeChapterIdsOrder
+    applyTagUuids km = applyValue (e ^. tagUuids) km kmChangeTagUuidsOrder
 
 -- -------------------
 addChapter :: KnowledgeModel -> Chapter -> KnowledgeModel
@@ -36,6 +43,13 @@ addChapter km ch = km & chapters .~ (km ^. chapters ++ [ch])
 
 deleteChapter :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteChapter km chUuid = km & chapters .~ (filter (\ch -> ch ^. uuid /= chUuid) (km ^. chapters))
+
+-- -------------------
+addTag :: KnowledgeModel -> Tag -> KnowledgeModel
+addTag km t = km & tags .~ (km ^. tags ++ [t])
+
+deleteTag :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteTag km tUuid = km & tags .~ (filter (\t -> t ^. uuid /= tUuid) (km ^. tags))
 
 -- -------------------
 -- CHAPTERS ----------
@@ -70,6 +84,7 @@ createQuestion e maybeAit maybeAnswers =
   , _questionTitle = e ^. title
   , _questionText = e ^. text
   , _questionRequiredLevel = e ^. requiredLevel
+  , _questionTagUuids = e ^. tagUuids
   , _questionAnswerItemTemplate = maybeAit
   , _questionAnswers = maybeAnswers
   , _questionReferences = []
@@ -79,12 +94,14 @@ createQuestion e maybeAit maybeAnswers =
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e =
   applyReferenceIds .
-  applyExpertIds . applyAnwerIds . applyAnswerItemTemplate . applyRequiredLevel . applyText . applyTitle . applyType
+  applyExpertIds .
+  applyAnwerIds . applyAnswerItemTemplate . applyTagUuids . applyRequiredLevel . applyText . applyTitle . applyType
   where
     applyType q = applyValue (e ^. qType) q qType
     applyTitle q = applyValue (e ^. title) q title
     applyText q = applyValue (e ^. text) q text
     applyRequiredLevel q = applyValue (e ^. requiredLevel) q requiredLevel
+    applyTagUuids q = applyValue (e ^. tagUuids) q tagUuids
     applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
     applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
     applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder
@@ -212,3 +229,17 @@ editReference (EditCrossReferenceEvent' e) (CrossReference' ref) =
   where
     applyTarget ref = applyValue (e ^. targetUuid) ref targetUuid
     applyDescription ref = applyValue (e ^. description) ref description
+
+-- -------------------
+-- TAG ------------
+-- -------------------
+createTag :: AddTagEvent -> Tag
+createTag e =
+  Tag {_tagUuid = e ^. tagUuid, _tagName = e ^. name, _tagDescription = e ^. description, _tagColor = e ^. color}
+
+editTag :: EditTagEvent -> Tag -> Tag
+editTag e = applyColor . applyDescription . applyName
+  where
+    applyName tag = applyValue (e ^. name) tag name
+    applyDescription tag = applyValue (e ^. description) tag description
+    applyColor tag = applyValue (e ^. color) tag color

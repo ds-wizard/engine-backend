@@ -17,6 +17,7 @@ data KnowledgeModel = KnowledgeModel
   { _knowledgeModelUuid :: U.UUID
   , _knowledgeModelName :: String
   , _knowledgeModelChapters :: [Chapter]
+  , _knowledgeModelTags :: [Tag]
   } deriving (Show, Eq, Generic)
 
 data Chapter = Chapter
@@ -32,6 +33,7 @@ data Question = Question
   , _questionTitle :: String
   , _questionText :: Maybe String
   , _questionRequiredLevel :: Maybe Int
+  , _questionTagUuids :: [U.UUID]
   , _questionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _questionAnswers :: Maybe [Answer]
   , _questionExperts :: [Expert]
@@ -110,4 +112,11 @@ data MetricMeasure = MetricMeasure
   { _metricMeasureMetricUuid :: U.UUID
   , _metricMeasureMeasure :: Double
   , _metricMeasureWeight :: Double
+  } deriving (Show, Eq, Generic)
+
+data Tag = Tag
+  { _tagUuid :: U.UUID
+  , _tagName :: String
+  , _tagDescription :: Maybe String
+  , _tagColor :: String
   } deriving (Show, Eq, Generic)

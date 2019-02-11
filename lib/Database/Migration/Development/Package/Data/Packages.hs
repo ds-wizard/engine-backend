@@ -17,7 +17,7 @@ baseElixirPackageDto =
     "1.0.0"
     "First Release"
     Nothing
-    [AddKnowledgeModelEvent' a_km1]
+    [AddKnowledgeModelEvent' a_km1, AddTagEvent' a_km1_tds, AddTagEvent' a_km1_tbi]
 
 elixirNlPackageDto =
   buildPackage
@@ -58,6 +58,8 @@ elixirCzPackage2Dto =
     "First Release"
     (Just $ baseElixir0PackageDto ^. pId)
     [ AddKnowledgeModelEvent' a_km1
+    , AddTagEvent' a_km1_tds
+    , AddTagEvent' a_km1_tbi
     , AddChapterEvent' a_km1_ch1
     , AddQuestionEvent' a_km1_ch1_q1
     , AddQuestionEvent' a_km1_ch1_q2

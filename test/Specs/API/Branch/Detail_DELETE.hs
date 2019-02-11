@@ -3,6 +3,7 @@ module Specs.API.Branch.Detail_DELETE
   ) where
 
 import Control.Lens ((^.))
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -52,7 +53,11 @@ test_204 appContext = do
     let expBody = ""
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

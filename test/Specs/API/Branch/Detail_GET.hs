@@ -4,6 +4,7 @@ module Specs.API.Branch.Detail_GET
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -57,7 +58,11 @@ test_200 appContext = do
      -- AND: Run migrations
     runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

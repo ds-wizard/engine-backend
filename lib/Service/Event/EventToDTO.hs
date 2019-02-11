@@ -15,6 +15,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelMapper
 
@@ -78,10 +79,11 @@ instance EventToDTO EditKnowledgeModelEvent where
       , _editKnowledgeModelEventDTOKmUuid = event ^. kmUuid
       , _editKnowledgeModelEventDTOName = toEventFieldDTO $ event ^. name
       , _editKnowledgeModelEventDTOChapterIds = toEventFieldDTO $ event ^. chapterIds
+      , _editKnowledgeModelEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
       }
 
 -------------------------
--- Chapter -----------------
+-- Chapter --------------
 -------------------------
 instance EventToDTO AddChapterEvent where
   toDTO event =
@@ -129,6 +131,7 @@ instance EventToDTO AddQuestionEvent where
       , _addQuestionEventDTOTitle = event ^. title
       , _addQuestionEventDTOText = event ^. text
       , _addQuestionEventDTORequiredLevel = event ^. requiredLevel
+      , _addQuestionEventDTOTagUuids = event ^. tagUuids
       , _addQuestionEventDTOAnswerItemTemplatePlain = toAnswerItemTemplatePlainDTO <$> event ^. answerItemTemplatePlain
       }
 
@@ -143,6 +146,7 @@ instance EventToDTO EditQuestionEvent where
       , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
       , _editQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
+      , _editQuestionEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
       , _editQuestionEventDTOAnswerItemTemplatePlainWithIds =
           toEventFieldAndAnswerItemTemplatePlainWithIds $ event ^. answerItemTemplatePlainWithIds
       , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
@@ -323,3 +327,39 @@ instance EventToDTO DeleteReferenceEvent where
     , _deleteCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
     , _deleteCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
     }
+
+-------------------------
+-- Tag ------------------
+-------------------------
+instance EventToDTO AddTagEvent where
+  toDTO event =
+    AddTagEventDTO'
+      AddTagEventDTO
+      { _addTagEventDTOUuid = event ^. uuid
+      , _addTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _addTagEventDTOTagUuid = event ^. tagUuid
+      , _addTagEventDTOName = event ^. name
+      , _addTagEventDTODescription = event ^. description
+      , _addTagEventDTOColor = event ^. color
+      }
+
+instance EventToDTO EditTagEvent where
+  toDTO event =
+    EditTagEventDTO'
+      EditTagEventDTO
+      { _editTagEventDTOUuid = event ^. uuid
+      , _editTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _editTagEventDTOTagUuid = event ^. tagUuid
+      , _editTagEventDTOName = toEventFieldDTO $ event ^. name
+      , _editTagEventDTODescription = toEventFieldDTO $ event ^. description
+      , _editTagEventDTOColor = toEventFieldDTO $ event ^. color
+      }
+
+instance EventToDTO DeleteTagEvent where
+  toDTO event =
+    DeleteTagEventDTO'
+      DeleteTagEventDTO
+      { _deleteTagEventDTOUuid = event ^. uuid
+      , _deleteTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteTagEventDTOTagUuid = event ^. tagUuid
+      }

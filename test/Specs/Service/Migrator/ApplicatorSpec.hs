@@ -11,6 +11,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Experts
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
+import Database.Migration.Development.KnowledgeModel.Data.Tags
 import LensesConfig
 import Model.Event.Event
 import Service.Migrator.Applicator.Applicator
@@ -27,7 +28,7 @@ applicatorSpec =
     describe "Apply:  KM Events" $ do
       it "Apply:  AddKnowledgeEvent" $ do
         let (Right computed) = runApplicator Nothing [AddKnowledgeModelEvent' a_km1]
-        let expected = km1WithoutChapters
+        let expected = km1WithoutChaptersAndTags
         computed `shouldBe` expected
       it "Apply:  EditKnowledgeEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditKnowledgeModelEvent' e_km1]
@@ -201,10 +202,38 @@ applicatorSpec =
         let expected = km1 & chapters .~ [chapter1WithDeletedReference, chapter2]
         computed `shouldBe` expected
    -- ---------------
+    describe "Apply:  Tag Events" $ do
+      it "Apply:  AddTagEvent" $ do
+        let (Right computed) = runApplicator (Just km1WithoutChaptersAndTags) [AddTagEvent' a_km1_tds]
+        let expected = km1WithoutChaptersAndTags & tags .~ [tagDataScience]
+        computed `shouldBe` expected
+      it "Apply:  EditTagEvent" $ do
+        let (Right computed) = runApplicator (Just km1) [EditTagEvent' e_km1_tds]
+        let expected = km1 & tags .~ [tagDataScienceEdited, tagBioInformatic]
+        computed `shouldBe` expected
+      it "Apply:  DeleteTagEvent" $ do
+        let (Right computed) = runApplicator (Just km1WithQ4) [DeleteTagEvent' d_km1_tds]
+        -- Chapter 1
+        let expQuestion1 = question1 & tagUuids .~ []
+        let expQ2_aYes_fuQuestion1 = q2_aYes_fuQuestion1 & tagUuids .~ []
+        let expQ2_answerYes = q2_answerYes & followUps .~ [expQ2_aYes_fuQuestion1]
+        let expQuestion2 = question2 & answers .~ Just [q2_answerNo, expQ2_answerYes]
+        let expChapter1 = chapter1 & questions .~ [expQuestion1, expQuestion2]
+        -- Chapter 2
+        let expQ4_ait1_question6 = q4_ait1_question6 & tagUuids .~ []
+        let expAit1 = q4_ait & questions .~ [q4_ait1_question5, expQ4_ait1_question6]
+        let expQuestion4 = question4 & answerItemTemplate .~ Just expAit1
+        let expChapter2 = chapter2 & questions .~ [question3, expQuestion4]
+        -- KM
+        let expected = (km1WithQ4 & chapters .~ [expChapter1, expChapter2]) & tags .~ [tagBioInformatic]
+        computed `shouldBe` expected
+   -- ---------------
     describe "Build whole KM" $
       it "Apply: Create KM from scratch" $ do
         let events =
               [ AddKnowledgeModelEvent' a_km1
+              , AddTagEvent' a_km1_tds
+              , AddTagEvent' a_km1_tbi
               , AddChapterEvent' a_km1_ch1
               , AddQuestionEvent' a_km1_ch1_q1
               , AddQuestionEvent' a_km1_ch1_q2

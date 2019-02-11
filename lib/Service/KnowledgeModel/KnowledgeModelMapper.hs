@@ -11,6 +11,7 @@ toKnowledgeModelDTO km =
   KnowledgeModelDTO
   { _knowledgeModelDTOUuid = km ^. uuid
   , _knowledgeModelDTOName = km ^. name
+  , _knowledgeModelDTOTags = toTagDTO <$> (km ^. tags)
   , _knowledgeModelDTOChapters = toChapterDTO <$> (km ^. chapters)
   }
 
@@ -31,6 +32,7 @@ toQuestionDTO question =
   , _questionDTOTitle = question ^. title
   , _questionDTOText = question ^. text
   , _questionDTORequiredLevel = question ^. requiredLevel
+  , _questionDTOTagUuids = question ^. tagUuids
   , _questionDTOAnswers = (fmap toAnswerDTO) <$> (question ^. answers)
   , _questionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
   , _questionDTOExperts = toExpertDTO <$> (question ^. experts)
@@ -97,6 +99,15 @@ toMetricMeasureDTO m =
   , _metricMeasureDTOWeight = m ^. weight
   }
 
+toTagDTO :: Tag -> TagDTO
+toTagDTO tag =
+  TagDTO
+  { _tagDTOUuid = tag ^. uuid
+  , _tagDTOName = tag ^. name
+  , _tagDTODescription = tag ^. description
+  , _tagDTOColor = tag ^. color
+  }
+
 -- ----------------------------------------
 -- ----------------------------------------
 fromKnowledgeModelDTO :: KnowledgeModelDTO -> KnowledgeModel
@@ -104,6 +115,7 @@ fromKnowledgeModelDTO km =
   KnowledgeModel
   { _knowledgeModelUuid = km ^. uuid
   , _knowledgeModelName = km ^. name
+  , _knowledgeModelTags = fromTagDTO <$> (km ^. tags)
   , _knowledgeModelChapters = fromChapterDTO <$> (km ^. chapters)
   }
 
@@ -124,6 +136,7 @@ fromQuestionDTO question =
   , _questionTitle = question ^. title
   , _questionText = question ^. text
   , _questionRequiredLevel = question ^. requiredLevel
+  , _questionTagUuids = question ^. tagUuids
   , _questionAnswers = (fmap fromAnswerDTO) <$> (question ^. answers)
   , _questionAnswerItemTemplate = fromAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
   , _questionExperts = fromExpertDTO <$> (question ^. experts)
@@ -186,3 +199,7 @@ fromMetricMeasureDTO :: MetricMeasureDTO -> MetricMeasure
 fromMetricMeasureDTO m =
   MetricMeasure
   {_metricMeasureMetricUuid = m ^. metricUuid, _metricMeasureMeasure = m ^. measure, _metricMeasureWeight = m ^. weight}
+
+fromTagDTO :: TagDTO -> Tag
+fromTagDTO tag =
+  Tag {_tagUuid = tag ^. uuid, _tagName = tag ^. name, _tagDescription = tag ^. description, _tagColor = tag ^. color}

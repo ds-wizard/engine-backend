@@ -13,4 +13,4 @@ data BranchDTO = BranchDTO
   , _branchDTOOwnerUuid :: Maybe U.UUID
   , _branchDTOCreatedAt :: UTCTime
   , _branchDTOUpdatedAt :: UTCTime
-  }
+  } deriving (Show)

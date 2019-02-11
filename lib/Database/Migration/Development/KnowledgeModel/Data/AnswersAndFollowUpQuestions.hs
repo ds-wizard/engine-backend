@@ -5,6 +5,8 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Database.Migration.Development.KnowledgeModel.Data.MetricMeasures
+import Database.Migration.Development.KnowledgeModel.Data.Tags
+       as FT
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -144,6 +146,7 @@ q2_aYes_fuQuestion1 =
   , _questionTitle = "First Follow-Up Question"
   , _questionText = Just "Maybe there will be some description"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = [FT.tagDataScience ^. uuid]
   , _questionAnswers = Just [q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -158,6 +161,7 @@ q2_aYes_fuQuestion1Plain =
   , _questionTitle = "Fourth Question"
   , _questionText = Just "Just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Just []
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -173,6 +177,7 @@ q2_aYes_fuq1_aYes_fuQuestion2 =
   , _questionTitle = "Second Follow-Up Question"
   , _questionText = Just "Again just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Just [q2_aYes_fuq1_aYes_fuq2_answerNo, q2_aYes_fuq1_aYes_fuq2_answerYes]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -187,6 +192,7 @@ q2_aYes_fuq1_aYes_fuQuestion2Changed =
   , _questionTitle = "EDITED: Second Follow-Up Question"
   , _questionText = Just "EDITED: Again just follow"
   , _questionRequiredLevel = Just 1
+  , _questionTagUuids = []
   , _questionAnswers = Just [q2_aYes_fuq1_aYes_fuq2_answerYes, q2_aYes_fuq1_aYes_fuq2_answerNo]
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -202,6 +208,7 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
   , _questionTitle = "Third Follow-Up Question"
   , _questionText = Just "Again and again just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Just []
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -217,6 +224,7 @@ q4_ait1_q6_aYes_followUpQuestion4 =
   , _questionTitle = "Fourth Follow-Up Question"
   , _questionText = Just "Again and again just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Just q4_ait1_q6_aYes_fuq4_ait
   , _questionReferences = []
@@ -238,6 +246,7 @@ q4_ait1_q6_aYes_followUpQuestion4Changed =
   , _questionTitle = "EDITED: Third Follow-Up Question"
   , _questionText = Just "EDITED: Again and again just follow"
   , _questionRequiredLevel = Just 1
+  , _questionTagUuids = []
   , _questionAnswers = Nothing
   , _questionAnswerItemTemplate =
       Just
@@ -257,6 +266,7 @@ q4_ait1_q6_aYes_fuq4_ait_question1 =
   , _questionTitle = "Sub question 1 of Follow-Up Question 4"
   , _questionText = Just "Again and again just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Just []
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []
@@ -271,6 +281,7 @@ q4_ait1_q6_aYes_fuq4_ait_question2 =
   , _questionTitle = "Sub question 2 of Follow-Up Question 4"
   , _questionText = Just "Again and again just follow"
   , _questionRequiredLevel = Just 2
+  , _questionTagUuids = []
   , _questionAnswers = Just []
   , _questionAnswerItemTemplate = Nothing
   , _questionReferences = []

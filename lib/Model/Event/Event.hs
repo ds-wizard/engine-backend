@@ -8,6 +8,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 
 data Event
   = AddKnowledgeModelEvent' AddKnowledgeModelEvent
@@ -27,4 +28,7 @@ data Event
   | AddReferenceEvent' AddReferenceEvent
   | EditReferenceEvent' EditReferenceEvent
   | DeleteReferenceEvent' DeleteReferenceEvent
+  | AddTagEvent' AddTagEvent
+  | EditTagEvent' EditTagEvent
+  | DeleteTagEvent' DeleteTagEvent
   deriving (Show, Eq, Generic)

@@ -12,6 +12,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 
 isAddAction :: Event -> Bool
 isAddAction (AddKnowledgeModelEvent' _) = True
@@ -20,6 +21,7 @@ isAddAction (AddQuestionEvent' _) = True
 isAddAction (AddAnswerEvent' _) = True
 isAddAction (AddExpertEvent' _) = True
 isAddAction (AddReferenceEvent' _) = True
+isAddAction (AddTagEvent' _) = True
 isAddAction _ = False
 
 isEditAction :: Event -> Bool
@@ -29,6 +31,7 @@ isEditAction (EditQuestionEvent' _) = True
 isEditAction (EditAnswerEvent' _) = True
 isEditAction (EditExpertEvent' _) = True
 isEditAction (EditReferenceEvent' _) = True
+isEditAction (EditTagEvent' _) = True
 isEditAction _ = False
 
 isDeleteAction :: Event -> Bool
@@ -37,6 +40,7 @@ isDeleteAction (DeleteQuestionEvent' _) = True
 isDeleteAction (DeleteAnswerEvent' _) = True
 isDeleteAction (DeleteExpertEvent' _) = True
 isDeleteAction (DeleteReferenceEvent' _) = True
+isDeleteAction (DeleteTagEvent' _) = True
 isDeleteAction _ = False
 
 getEventUuid' :: Event -> U.UUID
@@ -57,6 +61,9 @@ getEventUuid' (DeleteExpertEvent' event) = getEventUuid event
 getEventUuid' (AddReferenceEvent' event) = getEventUuid event
 getEventUuid' (EditReferenceEvent' event) = getEventUuid event
 getEventUuid' (DeleteReferenceEvent' event) = getEventUuid event
+getEventUuid' (AddTagEvent' event) = getEventUuid event
+getEventUuid' (EditTagEvent' event) = getEventUuid event
+getEventUuid' (DeleteTagEvent' event) = getEventUuid event
 
 class EventAccesors a where
   getEventUuid :: a -> U.UUID
@@ -165,3 +172,18 @@ instance EventAccesors DeleteReferenceEvent where
   getPath (DeleteResourcePageReferenceEvent' e) = e ^. path
   getPath (DeleteURLReferenceEvent' e) = e ^. path
   getPath (DeleteCrossReferenceEvent' e) = e ^. path
+
+instance EventAccesors AddTagEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. tagUuid
+  getPath event = event ^. path
+
+instance EventAccesors EditTagEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. tagUuid
+  getPath event = event ^. path
+
+instance EventAccesors DeleteTagEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. tagUuid
+  getPath event = event ^. path

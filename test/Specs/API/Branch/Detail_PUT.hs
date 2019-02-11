@@ -4,6 +4,7 @@ module Specs.API.Branch.Detail_PUT
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -65,7 +66,11 @@ test_200 appContext = do
     let expDto = amsterdamBranchWithState
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -98,7 +103,11 @@ test_400_not_valid_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -129,10 +138,18 @@ test_400_already_taken_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
     runInContextIO
-      (createBranchWithParams (leidenBranch ^. uuid) (leidenBranch ^. createdAt) leidenBranchChange)
+      (createBranchWithParams
+         (leidenBranch ^. uuid)
+         (leidenBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         leidenBranchChange)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -163,7 +180,11 @@ test_400_not_existing_parentPackageId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchChange)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
