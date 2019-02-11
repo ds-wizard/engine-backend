@@ -1,5 +1,7 @@
 module Service.KnowledgeModel.KnowledgeModelApplicator where
 
+import qualified Data.UUID as U
+
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Model.Context.AppContext
 import Model.Error.Error
@@ -20,6 +22,9 @@ recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid =
       updateKnowledgeModelByBranchId branchUuid (Just newKM)
       return . Right $ newKM
     Left error -> return . Left $ error
+
+filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
+filterKnowledgeModel tagUuids km = km
 
 -- --------------------------------
 -- HELPERS

@@ -1,4 +1,16 @@
-module Service.Branch.BranchService where
+module Service.Branch.BranchService
+  ( getBranches
+  , createBranch
+  , createBranchWithParams
+  , getBranchById
+  , modifyBranch
+  , deleteBranch
+  , getBranchState
+  -- Helpers
+  , heGetBranchById
+  , hmGetBranchById
+  , heGetBranchState
+  ) where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)

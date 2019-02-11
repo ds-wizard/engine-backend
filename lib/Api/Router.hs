@@ -101,6 +101,7 @@ createEndpoints context
   post "/branches/:branchUuid/migrations/current" postMigrationsCurrentA
   delete "/branches/:branchUuid/migrations/current" deleteMigrationsCurrentA
   post "/branches/:branchUuid/migrations/current/conflict" postMigrationsCurrentConflictA
+  post "/knowledge-models/preview" postKnowledgeModelPreviewA
    --------------------
    -- PACKAGE
    --------------------

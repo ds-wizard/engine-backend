@@ -33,6 +33,7 @@ import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
+import Specs.Service.KnowledgeModel.KnowledgeModelApplicatorSpec
 import Specs.Service.Migrator.ApplicatorSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
@@ -83,6 +84,7 @@ main =
            describe "SERVICE" $ do
              describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
+             describe "KnowledgeModel" $ knowledgeModelApplicatorSpec
              describe "Migrator" $ do
                applicatorSpec
                migratorSpec

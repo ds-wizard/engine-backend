@@ -14,6 +14,7 @@ import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
@@ -378,6 +379,8 @@ makeFields ''FilledAnswerItemDTO
 makeFields ''InfoDTO
 
 -- Api / Resource / KnowledgeModel
+makeFields ''KnowledgeModelChangeDTO
+
 makeFields ''KnowledgeModelDTO
 
 makeFields ''ChapterDTO
