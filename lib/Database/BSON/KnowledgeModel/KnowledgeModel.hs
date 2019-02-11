@@ -149,16 +149,18 @@ instance FromBSON AnswerItemTemplatePlain where
     aitTitle <- BSON.lookup "title" doc
     return AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = aitTitle}
 
-instance ToBSON AnswerItemTemplatePlainWithIds where
-  toBSON model = ["title" BSON.=: model ^. title, "questionsIds" BSON.=: serializeUUIDList (model ^. questionIds)]
+instance ToBSON AnswerItemTemplatePlainWithUuids where
+  toBSON model = ["title" BSON.=: model ^. title, "questionsUuids" BSON.=: serializeUUIDList (model ^. questionUuids)]
 
-instance FromBSON AnswerItemTemplatePlainWithIds where
+instance FromBSON AnswerItemTemplatePlainWithUuids where
   fromBSON doc = do
     aitTitle <- BSON.lookup "title" doc
-    aitQuestionIds <- deserializeMaybeUUIDList $ BSON.lookup "questions" doc
+    aitQuestionUuids <- deserializeMaybeUUIDList $ BSON.lookup "questions" doc
     return
-      AnswerItemTemplatePlainWithIds
-      {_answerItemTemplatePlainWithIdsTitle = aitTitle, _answerItemTemplatePlainWithIdsQuestionIds = aitQuestionIds}
+      AnswerItemTemplatePlainWithUuids
+      { _answerItemTemplatePlainWithUuidsTitle = aitTitle
+      , _answerItemTemplatePlainWithUuidsQuestionUuids = aitQuestionUuids
+      }
 
 -- -------------------------
 -- EXPERT ------------------

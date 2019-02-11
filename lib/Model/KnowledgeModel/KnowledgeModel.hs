@@ -57,9 +57,9 @@ data AnswerItemTemplatePlain = AnswerItemTemplatePlain
   { _answerItemTemplatePlainTitle :: String
   } deriving (Show, Eq, Generic)
 
-data AnswerItemTemplatePlainWithIds = AnswerItemTemplatePlainWithIds
-  { _answerItemTemplatePlainWithIdsTitle :: String
-  , _answerItemTemplatePlainWithIdsQuestionIds :: [U.UUID]
+data AnswerItemTemplatePlainWithUuids = AnswerItemTemplatePlainWithUuids
+  { _answerItemTemplatePlainWithUuidsTitle :: String
+  , _answerItemTemplatePlainWithUuidsQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data Expert = Expert

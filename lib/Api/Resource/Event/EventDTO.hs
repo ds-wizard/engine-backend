@@ -98,7 +98,7 @@ data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
   , _editKnowledgeModelEventDTOPath :: EventPathDTO
   , _editKnowledgeModelEventDTOKmUuid :: U.UUID
   , _editKnowledgeModelEventDTOName :: EventFieldDTO String
-  , _editKnowledgeModelEventDTOChapterIds :: EventFieldDTO [U.UUID]
+  , _editKnowledgeModelEventDTOChapterUuids :: EventFieldDTO [U.UUID]
   , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
@@ -119,7 +119,7 @@ data EditChapterEventDTO = EditChapterEventDTO
   , _editChapterEventDTOChapterUuid :: U.UUID
   , _editChapterEventDTOTitle :: EventFieldDTO String
   , _editChapterEventDTOText :: EventFieldDTO String
-  , _editChapterEventDTOQuestionIds :: EventFieldDTO [U.UUID]
+  , _editChapterEventDTOQuestionUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEventDTO = DeleteChapterEventDTO
@@ -152,10 +152,10 @@ data EditQuestionEventDTO = EditQuestionEventDTO
   , _editQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
   , _editQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
-  , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [U.UUID])
-  , _editQuestionEventDTOExpertIds :: EventFieldDTO [U.UUID]
-  , _editQuestionEventDTOReferenceIds :: EventFieldDTO [U.UUID]
+  , _editQuestionEventDTOAnswerItemTemplatePlainWithUuids :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithUuidsDTO)
+  , _editQuestionEventDTOAnswerUuids :: EventFieldDTO (Maybe [U.UUID])
+  , _editQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+  , _editQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEventDTO = DeleteQuestionEventDTO
@@ -182,7 +182,7 @@ data EditAnswerEventDTO = EditAnswerEventDTO
   , _editAnswerEventDTOAnswerUuid :: U.UUID
   , _editAnswerEventDTOLabel :: EventFieldDTO String
   , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
-  , _editAnswerEventDTOFollowUpIds :: EventFieldDTO [U.UUID]
+  , _editAnswerEventDTOFollowUpUuids :: EventFieldDTO [U.UUID]
   , _editAnswerEventDTOMetricMeasures :: EventFieldDTO [MetricMeasureDTO]
   } deriving (Show, Eq, Generic)
 
@@ -360,7 +360,7 @@ instance FromJSON EditKnowledgeModelEventDTO where
     _editKnowledgeModelEventDTOPath <- o .: "path"
     _editKnowledgeModelEventDTOKmUuid <- o .: "kmUuid"
     _editKnowledgeModelEventDTOName <- o .: "name"
-    _editKnowledgeModelEventDTOChapterIds <- o .: "chapterIds"
+    _editKnowledgeModelEventDTOChapterUuids <- o .: "chapterUuids"
     _editKnowledgeModelEventDTOTagUuids <- o .: "tagUuids"
     return EditKnowledgeModelEventDTO {..}
   parseJSON _ = mzero
@@ -373,7 +373,7 @@ instance ToJSON EditKnowledgeModelEventDTO where
       , "path" .= _editKnowledgeModelEventDTOPath
       , "kmUuid" .= _editKnowledgeModelEventDTOKmUuid
       , "name" .= _editKnowledgeModelEventDTOName
-      , "chapterIds" .= _editKnowledgeModelEventDTOChapterIds
+      , "chapterUuids" .= _editKnowledgeModelEventDTOChapterUuids
       , "tagUuids" .= _editKnowledgeModelEventDTOTagUuids
       ]
 
@@ -408,7 +408,7 @@ instance FromJSON EditChapterEventDTO where
     _editChapterEventDTOChapterUuid <- o .: "chapterUuid"
     _editChapterEventDTOTitle <- o .: "title"
     _editChapterEventDTOText <- o .: "text"
-    _editChapterEventDTOQuestionIds <- o .: "questionIds"
+    _editChapterEventDTOQuestionUuids <- o .: "questionUuids"
     return EditChapterEventDTO {..}
   parseJSON _ = mzero
 
@@ -421,7 +421,7 @@ instance ToJSON EditChapterEventDTO where
       , "chapterUuid" .= _editChapterEventDTOChapterUuid
       , "title" .= _editChapterEventDTOTitle
       , "text" .= _editChapterEventDTOText
-      , "questionIds" .= _editChapterEventDTOQuestionIds
+      , "questionUuids" .= _editChapterEventDTOQuestionUuids
       ]
 
 instance FromJSON DeleteChapterEventDTO where
@@ -484,10 +484,10 @@ instance FromJSON EditQuestionEventDTO where
     _editQuestionEventDTOText <- o .: "text"
     _editQuestionEventDTORequiredLevel <- o .: "requiredLevel"
     _editQuestionEventDTOTagUuids <- o .: "tagUuids"
-    _editQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
-    _editQuestionEventDTOAnswerIds <- o .: "answerIds"
-    _editQuestionEventDTOExpertIds <- o .: "expertIds"
-    _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
+    _editQuestionEventDTOAnswerItemTemplatePlainWithUuids <- o .: "answerItemTemplate"
+    _editQuestionEventDTOAnswerUuids <- o .: "answerUuids"
+    _editQuestionEventDTOExpertUuids <- o .: "expertUuids"
+    _editQuestionEventDTOReferenceUuids <- o .: "referenceUuids"
     questionType <- o .: "type"
     case deserializeEventFieldQuestionType <$> questionType of
       (Just _editQuestionEventDTOQType) -> return EditQuestionEventDTO {..}
@@ -506,10 +506,10 @@ instance ToJSON EditQuestionEventDTO where
       , "text" .= _editQuestionEventDTOText
       , "requiredLevel" .= _editQuestionEventDTORequiredLevel
       , "tagUuids" .= _editQuestionEventDTOTagUuids
-      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplatePlainWithIds
-      , "answerIds" .= _editQuestionEventDTOAnswerIds
-      , "expertIds" .= _editQuestionEventDTOExpertIds
-      , "referenceIds" .= _editQuestionEventDTOReferenceIds
+      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplatePlainWithUuids
+      , "answerUuids" .= _editQuestionEventDTOAnswerUuids
+      , "expertUuids" .= _editQuestionEventDTOExpertUuids
+      , "referenceUuids" .= _editQuestionEventDTOReferenceUuids
       ]
 
 instance FromJSON DeleteQuestionEventDTO where
@@ -562,7 +562,7 @@ instance FromJSON EditAnswerEventDTO where
     _editAnswerEventDTOAnswerUuid <- o .: "answerUuid"
     _editAnswerEventDTOLabel <- o .: "label"
     _editAnswerEventDTOAdvice <- o .: "advice"
-    _editAnswerEventDTOFollowUpIds <- o .: "followUpIds"
+    _editAnswerEventDTOFollowUpUuids <- o .: "followUpUuids"
     _editAnswerEventDTOMetricMeasures <- o .: "metricMeasures"
     return EditAnswerEventDTO {..}
   parseJSON _ = mzero
@@ -576,7 +576,7 @@ instance ToJSON EditAnswerEventDTO where
       , "answerUuid" .= _editAnswerEventDTOAnswerUuid
       , "label" .= _editAnswerEventDTOLabel
       , "advice" .= _editAnswerEventDTOAdvice
-      , "followUpIds" .= _editAnswerEventDTOFollowUpIds
+      , "followUpUuids" .= _editAnswerEventDTOFollowUpUuids
       , "metricMeasures" .= _editAnswerEventDTOMetricMeasures
       ]
 

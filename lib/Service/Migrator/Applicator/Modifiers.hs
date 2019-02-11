@@ -31,10 +31,10 @@ createKM e =
   }
 
 editKM :: EditKnowledgeModelEvent -> KnowledgeModel -> KnowledgeModel
-editKM e = applyTagUuids . applyChapterIds . applyName
+editKM e = applyTagUuids . applyChapterUuids . applyName
   where
     applyName km = applyValue (e ^. name) km name
-    applyChapterIds km = applyValue (e ^. chapterIds) km kmChangeChapterIdsOrder
+    applyChapterUuids km = applyValue (e ^. chapterUuids) km kmChangeChapterUuidsOrder
     applyTagUuids km = applyValue (e ^. tagUuids) km kmChangeTagUuidsOrder
 
 -- -------------------
@@ -60,11 +60,11 @@ createChapter e =
   {_chapterUuid = e ^. chapterUuid, _chapterTitle = e ^. title, _chapterText = e ^. text, _chapterQuestions = []}
 
 editChapter :: EditChapterEvent -> Chapter -> Chapter
-editChapter e = applyQuestionIds . applyText . applyTitle
+editChapter e = applyQuestionUuids . applyText . applyTitle
   where
     applyTitle ch = applyValue (e ^. title) ch title
     applyText ch = applyValue (e ^. text) ch text
-    applyQuestionIds ch = applyValue (e ^. questionIds) ch chChangeQuestionIdsOrder
+    applyQuestionUuids ch = applyValue (e ^. questionUuids) ch chChangeQuestionUuidsOrder
 
 -- -------------------
 addQuestion :: Chapter -> Question -> Chapter
@@ -93,19 +93,19 @@ createQuestion e maybeAit maybeAnswers =
 
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e =
-  applyReferenceIds .
-  applyExpertIds .
-  applyAnwerIds . applyAnswerItemTemplate . applyTagUuids . applyRequiredLevel . applyText . applyTitle . applyType
+  applyReferenceUuids .
+  applyExpertUuids .
+  applyAnwerUuids . applyAnswerItemTemplate . applyTagUuids . applyRequiredLevel . applyText . applyTitle . applyType
   where
     applyType q = applyValue (e ^. qType) q qType
     applyTitle q = applyValue (e ^. title) q title
     applyText q = applyValue (e ^. text) q text
     applyRequiredLevel q = applyValue (e ^. requiredLevel) q requiredLevel
     applyTagUuids q = applyValue (e ^. tagUuids) q tagUuids
-    applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithIds) q aitAnswerItemTemplatePlainWithIds
-    applyAnwerIds q = applyValue (e ^. answerIds) q qChangeAnwerIdsOrder
-    applyExpertIds q = applyValue (e ^. expertIds) q qChangeExpertIdsOrder
-    applyReferenceIds q = applyValue (e ^. referenceIds) q qChangeReferenceIdsOrder
+    applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithUuids) q aitAnswerItemTemplatePlainWithUuids
+    applyAnwerUuids q = applyValue (e ^. answerUuids) q qChangeAnwerUuidsOrder
+    applyExpertUuids q = applyValue (e ^. expertUuids) q qChangeExpertUuidsOrder
+    applyReferenceUuids q = applyValue (e ^. referenceUuids) q qChangeReferenceUuidsOrder
 
 -- -------------------
 addAitQuestion :: Question -> Question -> Question
@@ -174,7 +174,7 @@ editAnswer e = applyMetricMeasures . applyFollowUps . applyAdvice . applyLabel
   where
     applyLabel ans = applyValue (e ^. label) ans label
     applyAdvice ans = applyValue (e ^. advice) ans advice
-    applyFollowUps ans = applyValue (e ^. followUpIds) ans ansChangeFollowUpIdsOrder
+    applyFollowUps ans = applyValue (e ^. followUpUuids) ans ansChangeFollowUpUuidsOrder
     applyMetricMeasures ans = applyValue (e ^. metricMeasures) ans metricMeasures
 
 -- -------------------

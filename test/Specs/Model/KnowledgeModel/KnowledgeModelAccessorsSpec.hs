@@ -75,30 +75,31 @@ knowledgeModelAccessorsSpec =
         isThereAnyAnswerWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
         False
     ---------------------------------------------
-    describe "getAitQuestionIds" $ it "Successfully listed" $ getAitQuestionIds FQ.q4_ait `shouldBe`
+    describe "getAitQuestionUuids" $ it "Successfully listed" $ getAitQuestionUuids FQ.q4_ait `shouldBe`
       [FQ.q4_ait1_question5 ^. uuid, FQ.q4_ait1_question6 ^. uuid]
-    describe "aitChangeAitQuestionIdsOrder" $ it "Successfully changed" $ do
-      let res = FQ.q4_ait & aitChangeAitQuestionIdsOrder .~ [FQ.q4_ait1_question6 ^. uuid, FQ.q4_ait1_question5 ^. uuid]
+    describe "aitChangeAitQuestionUuidsOrder" $ it "Successfully changed" $ do
+      let res =
+            FQ.q4_ait & aitChangeAitQuestionUuidsOrder .~ [FQ.q4_ait1_question6 ^. uuid, FQ.q4_ait1_question5 ^. uuid]
       let exp = FQ.q4_ait & questions .~ [FQ.q4_ait1_question6, FQ.q4_ait1_question5]
       res `shouldBe` exp
-    describe "aitAnswerItemTemplatePlainWithIds" $ do
+    describe "aitAnswerItemTemplatePlainWithUuids" $ do
       it "Successfully changed" $ do
         let res =
-              FQ.question4 & aitAnswerItemTemplatePlainWithIds .~
+              FQ.question4 & aitAnswerItemTemplatePlainWithUuids .~
               Just
-                AnswerItemTemplatePlainWithIds
-                { _answerItemTemplatePlainWithIdsTitle = FQ.q4_aitChanged ^. title
-                , _answerItemTemplatePlainWithIdsQuestionIds = FQ.q4_aitChanged ^.. questions . traverse . uuid
+                AnswerItemTemplatePlainWithUuids
+                { _answerItemTemplatePlainWithUuidsTitle = FQ.q4_aitChanged ^. title
+                , _answerItemTemplatePlainWithUuidsQuestionUuids = FQ.q4_aitChanged ^.. questions . traverse . uuid
                 }
         let exp = FQ.question4 & answerItemTemplate .~ Just FQ.q4_aitChanged
         res `shouldBe` exp
       it "Successfully created" $ do
-        let reqPlainWithIdsChanged =
-              AnswerItemTemplatePlainWithIds
-              { _answerItemTemplatePlainWithIdsTitle = FQ.q4_aitChanged ^. title
-              , _answerItemTemplatePlainWithIdsQuestionIds = []
+        let reqPlainWithUuidsChanged =
+              AnswerItemTemplatePlainWithUuids
+              { _answerItemTemplatePlainWithUuidsTitle = FQ.q4_aitChanged ^. title
+              , _answerItemTemplatePlainWithUuidsQuestionUuids = []
               }
-        let res = FQ.q4_ait1_question5 & aitAnswerItemTemplatePlainWithIds .~ Just reqPlainWithIdsChanged
+        let res = FQ.q4_ait1_question5 & aitAnswerItemTemplatePlainWithUuids .~ Just reqPlainWithUuidsChanged
         let expAit =
               AnswerItemTemplate
               {_answerItemTemplateTitle = FQ.q4_aitChanged ^. title, _answerItemTemplateQuestions = []}

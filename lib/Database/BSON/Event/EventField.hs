@@ -99,11 +99,11 @@ instance FromBSON (EventField (Maybe AnswerItemTemplatePlain)) where
         return $ ChangedValue efValue
       else return NothingChanged
 
-instance ToBSON (EventField (Maybe AnswerItemTemplatePlainWithIds)) where
+instance ToBSON (EventField (Maybe AnswerItemTemplatePlainWithUuids)) where
   toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
   toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
 
-instance FromBSON (EventField (Maybe AnswerItemTemplatePlainWithIds)) where
+instance FromBSON (EventField (Maybe AnswerItemTemplatePlainWithUuids)) where
   fromBSON doc = do
     efChanged <- BSON.lookup "changed" doc
     if efChanged

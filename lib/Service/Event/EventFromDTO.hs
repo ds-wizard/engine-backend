@@ -51,11 +51,11 @@ fromEventFieldAndAnswerItemTemplatePlain efMaybeAitDto =
     ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplatePlainDTO <$> maybeAitDto
     NothingChangedDTO -> NothingChanged
 
-fromEventFieldAndAnswerItemTemplatePlainWithIds ::
-     EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO) -> EventField (Maybe AnswerItemTemplatePlainWithIds)
-fromEventFieldAndAnswerItemTemplatePlainWithIds efMaybeAitDto =
+fromEventFieldAndAnswerItemTemplatePlainWithUuids ::
+     EventFieldDTO (Maybe AnswerItemTemplatePlainWithUuidsDTO) -> EventField (Maybe AnswerItemTemplatePlainWithUuids)
+fromEventFieldAndAnswerItemTemplatePlainWithUuids efMaybeAitDto =
   case efMaybeAitDto of
-    ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplatePlainWithIdsDTO <$> maybeAitDto
+    ChangedValueDTO maybeAitDto -> ChangedValue $ fromAnswerItemTemplatePlainWithUuidsDTO <$> maybeAitDto
     NothingChangedDTO -> NothingChanged
 
 -- -------------------------
@@ -79,7 +79,7 @@ instance EventFromDTO EditKnowledgeModelEventDTO where
       , _editKnowledgeModelEventPath = fromEventPathDTO $ dto ^. path
       , _editKnowledgeModelEventKmUuid = dto ^. kmUuid
       , _editKnowledgeModelEventName = fromEventFieldDTO $ dto ^. name
-      , _editKnowledgeModelEventChapterIds = fromEventFieldDTO $ dto ^. chapterIds
+      , _editKnowledgeModelEventChapterUuids = fromEventFieldDTO $ dto ^. chapterUuids
       , _editKnowledgeModelEventTagUuids = fromEventFieldDTO $ dto ^. tagUuids
       }
 
@@ -106,7 +106,7 @@ instance EventFromDTO EditChapterEventDTO where
       , _editChapterEventChapterUuid = dto ^. chapterUuid
       , _editChapterEventTitle = fromEventFieldDTO $ dto ^. title
       , _editChapterEventText = fromEventFieldDTO $ dto ^. text
-      , _editChapterEventQuestionIds = fromEventFieldDTO $ dto ^. questionIds
+      , _editChapterEventQuestionUuids = fromEventFieldDTO $ dto ^. questionUuids
       }
 
 instance EventFromDTO DeleteChapterEventDTO where
@@ -148,11 +148,11 @@ instance EventFromDTO EditQuestionEventDTO where
       , _editQuestionEventText = fromEventFieldDTO $ dto ^. text
       , _editQuestionEventRequiredLevel = fromEventFieldDTO $ dto ^. requiredLevel
       , _editQuestionEventTagUuids = fromEventFieldDTO $ dto ^. tagUuids
-      , _editQuestionEventAnswerItemTemplatePlainWithIds =
-          fromEventFieldAndAnswerItemTemplatePlainWithIds $ dto ^. answerItemTemplatePlainWithIds
-      , _editQuestionEventAnswerIds = fromEventFieldDTO $ dto ^. answerIds
-      , _editQuestionEventExpertIds = fromEventFieldDTO $ dto ^. expertIds
-      , _editQuestionEventReferenceIds = fromEventFieldDTO $ dto ^. referenceIds
+      , _editQuestionEventAnswerItemTemplatePlainWithUuids =
+          fromEventFieldAndAnswerItemTemplatePlainWithUuids $ dto ^. answerItemTemplatePlainWithUuids
+      , _editQuestionEventAnswerUuids = fromEventFieldDTO $ dto ^. answerUuids
+      , _editQuestionEventExpertUuids = fromEventFieldDTO $ dto ^. expertUuids
+      , _editQuestionEventReferenceUuids = fromEventFieldDTO $ dto ^. referenceUuids
       }
 
 instance EventFromDTO DeleteQuestionEventDTO where
@@ -188,7 +188,7 @@ instance EventFromDTO EditAnswerEventDTO where
       , _editAnswerEventAnswerUuid = dto ^. answerUuid
       , _editAnswerEventLabel = fromEventFieldDTO $ dto ^. label
       , _editAnswerEventAdvice = fromEventFieldDTO $ dto ^. advice
-      , _editAnswerEventFollowUpIds = fromEventFieldDTO $ dto ^. followUpIds
+      , _editAnswerEventFollowUpUuids = fromEventFieldDTO $ dto ^. followUpUuids
       , _editAnswerEventMetricMeasures =
           case dto ^. metricMeasures of
             ChangedValueDTO mms -> ChangedValue $ fromMetricMeasureDTO <$> mms

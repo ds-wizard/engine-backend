@@ -28,10 +28,10 @@ data EditQuestionEvent = EditQuestionEvent
   , _editQuestionEventText :: EventField (Maybe String)
   , _editQuestionEventRequiredLevel :: EventField (Maybe Int)
   , _editQuestionEventTagUuids :: EventField [U.UUID]
-  , _editQuestionEventAnswerItemTemplatePlainWithIds :: EventField (Maybe AnswerItemTemplatePlainWithIds)
-  , _editQuestionEventAnswerIds :: EventField (Maybe [U.UUID])
-  , _editQuestionEventExpertIds :: EventField [U.UUID]
-  , _editQuestionEventReferenceIds :: EventField [U.UUID]
+  , _editQuestionEventAnswerItemTemplatePlainWithUuids :: EventField (Maybe AnswerItemTemplatePlainWithUuids)
+  , _editQuestionEventAnswerUuids :: EventField (Maybe [U.UUID])
+  , _editQuestionEventExpertUuids :: EventField [U.UUID]
+  , _editQuestionEventReferenceUuids :: EventField [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteQuestionEvent = DeleteQuestionEvent

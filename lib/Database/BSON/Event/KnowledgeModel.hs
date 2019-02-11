@@ -47,7 +47,7 @@ instance ToBSON EditKnowledgeModelEvent where
     , "path" BSON.=: (event ^. path)
     , "kmUuid" BSON.=: serializeUUID (event ^. kmUuid)
     , "name" BSON.=: (event ^. name)
-    , "chapterIds" BSON.=: serializeEventFieldUUIDList (event ^. chapterIds)
+    , "chapterUuids" BSON.=: serializeEventFieldUUIDList (event ^. chapterUuids)
     , "tagUuids" BSON.=: serializeEventFieldUUIDList (event ^. tagUuids)
     ]
 
@@ -57,7 +57,7 @@ instance FromBSON EditKnowledgeModelEvent where
     kmPath <- BSON.lookup "path" doc
     kmKmUuid <- deserializeMaybeUUID $ BSON.lookup "kmUuid" doc
     kmName <- BSON.lookup "name" doc
-    let kmChapterIds = deserializeEventFieldUUIDList $ BSON.lookup "chapterIds" doc
+    let kmChapterUuids = deserializeEventFieldUUIDList $ BSON.lookup "chapterUuids" doc
     let kmTagsUuids = deserializeEventFieldUUIDList $ BSON.lookup "tagUuids" doc
     return
       EditKnowledgeModelEvent
@@ -65,6 +65,6 @@ instance FromBSON EditKnowledgeModelEvent where
       , _editKnowledgeModelEventPath = kmPath
       , _editKnowledgeModelEventKmUuid = kmKmUuid
       , _editKnowledgeModelEventName = kmName
-      , _editKnowledgeModelEventChapterIds = kmChapterIds
+      , _editKnowledgeModelEventChapterUuids = kmChapterUuids
       , _editKnowledgeModelEventTagUuids = kmTagsUuids
       }

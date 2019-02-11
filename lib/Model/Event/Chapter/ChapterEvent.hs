@@ -20,7 +20,7 @@ data EditChapterEvent = EditChapterEvent
   , _editChapterEventChapterUuid :: UUID
   , _editChapterEventTitle :: EventField String
   , _editChapterEventText :: EventField String
-  , _editChapterEventQuestionIds :: EventField [UUID]
+  , _editChapterEventQuestionUuids :: EventField [UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEvent = DeleteChapterEvent

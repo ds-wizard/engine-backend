@@ -60,11 +60,11 @@ toAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlain -> AnswerItemTemplatePla
 toAnswerItemTemplatePlainDTO itemTemplate =
   AnswerItemTemplatePlainDTO {_answerItemTemplatePlainDTOTitle = itemTemplate ^. title}
 
-toAnswerItemTemplatePlainWithIdsDTO :: AnswerItemTemplatePlainWithIds -> AnswerItemTemplatePlainWithIdsDTO
-toAnswerItemTemplatePlainWithIdsDTO itemTemplate =
-  AnswerItemTemplatePlainWithIdsDTO
-  { _answerItemTemplatePlainWithIdsDTOTitle = itemTemplate ^. title
-  , _answerItemTemplatePlainWithIdsDTOQuestionIds = itemTemplate ^. questionIds
+toAnswerItemTemplatePlainWithUuidsDTO :: AnswerItemTemplatePlainWithUuids -> AnswerItemTemplatePlainWithUuidsDTO
+toAnswerItemTemplatePlainWithUuidsDTO itemTemplate =
+  AnswerItemTemplatePlainWithUuidsDTO
+  { _answerItemTemplatePlainWithUuidsDTOTitle = itemTemplate ^. title
+  , _answerItemTemplatePlainWithUuidsDTOQuestionUuids = itemTemplate ^. questionUuids
   }
 
 toExpertDTO :: Expert -> ExpertDTO
@@ -164,11 +164,11 @@ fromAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlainDTO -> AnswerItemTempla
 fromAnswerItemTemplatePlainDTO itemTemplate =
   AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = itemTemplate ^. title}
 
-fromAnswerItemTemplatePlainWithIdsDTO :: AnswerItemTemplatePlainWithIdsDTO -> AnswerItemTemplatePlainWithIds
-fromAnswerItemTemplatePlainWithIdsDTO itemTemplate =
-  AnswerItemTemplatePlainWithIds
-  { _answerItemTemplatePlainWithIdsTitle = itemTemplate ^. title
-  , _answerItemTemplatePlainWithIdsQuestionIds = itemTemplate ^. questionIds
+fromAnswerItemTemplatePlainWithUuidsDTO :: AnswerItemTemplatePlainWithUuidsDTO -> AnswerItemTemplatePlainWithUuids
+fromAnswerItemTemplatePlainWithUuidsDTO itemTemplate =
+  AnswerItemTemplatePlainWithUuids
+  { _answerItemTemplatePlainWithUuidsTitle = itemTemplate ^. title
+  , _answerItemTemplatePlainWithUuidsQuestionUuids = itemTemplate ^. questionUuids
   }
 
 fromExpertDTO :: ExpertDTO -> Expert

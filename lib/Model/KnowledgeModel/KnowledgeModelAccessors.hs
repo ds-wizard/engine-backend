@@ -8,11 +8,11 @@ import Data.UUID
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
-getChapterIds :: KnowledgeModel -> [UUID]
-getChapterIds km = km ^.. chapters . traverse . uuid
+getChapterUuids :: KnowledgeModel -> [UUID]
+getChapterUuids km = km ^.. chapters . traverse . uuid
 
-kmChangeChapterIdsOrder :: ([Chapter] -> Identity [UUID]) -> KnowledgeModel -> Identity KnowledgeModel
-kmChangeChapterIdsOrder convert km = Identity $ km & chapters .~ orderedChapters
+kmChangeChapterUuidsOrder :: ([Chapter] -> Identity [UUID]) -> KnowledgeModel -> Identity KnowledgeModel
+kmChangeChapterUuidsOrder convert km = Identity $ km & chapters .~ orderedChapters
   where
     ids :: Identity [UUID]
     ids = convert (km ^. chapters)
@@ -44,11 +44,11 @@ isThereAnyChapterWithGivenUuid km chUuid = chUuid `elem` (getChapterUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-getQuestionIds :: Chapter -> [UUID]
-getQuestionIds ch = ch ^.. questions . traverse . uuid
+getQuestionUuids :: Chapter -> [UUID]
+getQuestionUuids ch = ch ^.. questions . traverse . uuid
 
-chChangeQuestionIdsOrder :: ([Question] -> Identity [UUID]) -> Chapter -> Identity Chapter
-chChangeQuestionIdsOrder convert ch = Identity $ ch & questions .~ orderedQuestions
+chChangeQuestionUuidsOrder :: ([Question] -> Identity [UUID]) -> Chapter -> Identity Chapter
+chChangeQuestionUuidsOrder convert ch = Identity $ ch & questions .~ orderedQuestions
   where
     ids :: Identity [UUID]
     ids = convert (ch ^. questions)
@@ -90,12 +90,12 @@ isThereAnyQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-getAnwerIds :: Question -> Maybe [UUID]
-getAnwerIds Question {_questionAnswers = Just answers} = Just $ answers ^.. traverse . uuid
-getAnwerIds Question {_questionAnswers = Nothing} = Nothing
+getAnwerUuids :: Question -> Maybe [UUID]
+getAnwerUuids Question {_questionAnswers = Just answers} = Just $ answers ^.. traverse . uuid
+getAnwerUuids Question {_questionAnswers = Nothing} = Nothing
 
-qChangeAnwerIdsOrder :: (Maybe [Answer] -> Identity (Maybe [UUID])) -> Question -> Identity Question
-qChangeAnwerIdsOrder convert q = Identity $ q & answers .~ orderedAnwers
+qChangeAnwerUuidsOrder :: (Maybe [Answer] -> Identity (Maybe [UUID])) -> Question -> Identity Question
+qChangeAnwerUuidsOrder convert q = Identity $ q & answers .~ orderedAnwers
   where
     ids :: Identity (Maybe [UUID])
     ids = convert (q ^. answers)
@@ -132,30 +132,31 @@ isThereAnyAnswerWithGivenUuid km ansUuid = ansUuid `elem` (getAnswerUuid <$> get
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-getAitQuestionIds :: AnswerItemTemplate -> [UUID]
-getAitQuestionIds ait = ait ^.. questions . traverse . uuid
+getAitQuestionUuids :: AnswerItemTemplate -> [UUID]
+getAitQuestionUuids ait = ait ^.. questions . traverse . uuid
 
-aitAnswerItemTemplatePlainWithIds ::
-     (Maybe AnswerItemTemplate -> Identity (Maybe AnswerItemTemplatePlainWithIds)) -> Question -> Identity Question
-aitAnswerItemTemplatePlainWithIds convert q =
-  case maybeAitPlainWithIds of
-    Just aitPlainWithIds -> Identity $ q & answerItemTemplate .~ changedAnswerItemTemplate aitPlainWithIds
+aitAnswerItemTemplatePlainWithUuids ::
+     (Maybe AnswerItemTemplate -> Identity (Maybe AnswerItemTemplatePlainWithUuids)) -> Question -> Identity Question
+aitAnswerItemTemplatePlainWithUuids convert q =
+  case maybeAitPlainWithUuids of
+    Just aitPlainWithUuids -> Identity $ q & answerItemTemplate .~ changedAnswerItemTemplate aitPlainWithUuids
     Nothing -> Identity q
   where
-    maybeAitPlainWithIds :: Maybe AnswerItemTemplatePlainWithIds
-    maybeAitPlainWithIds = runIdentity $ convert (q ^. answerItemTemplate)
-    changedAnswerItemTemplate :: AnswerItemTemplatePlainWithIds -> Maybe AnswerItemTemplate
-    changedAnswerItemTemplate aitPlainWithIds =
+    maybeAitPlainWithUuids :: Maybe AnswerItemTemplatePlainWithUuids
+    maybeAitPlainWithUuids = runIdentity $ convert (q ^. answerItemTemplate)
+    changedAnswerItemTemplate :: AnswerItemTemplatePlainWithUuids -> Maybe AnswerItemTemplate
+    changedAnswerItemTemplate aitPlainWithUuids =
       case q ^. answerItemTemplate of
         Just ait ->
-          Just $ (ait & title .~ (aitPlainWithIds ^. title)) & aitChangeAitQuestionIdsOrder .~
-          (aitPlainWithIds ^. questionIds)
+          Just $ (ait & title .~ (aitPlainWithUuids ^. title)) & aitChangeAitQuestionUuidsOrder .~
+          (aitPlainWithUuids ^. questionUuids)
         Nothing ->
           Just
-            AnswerItemTemplate {_answerItemTemplateTitle = aitPlainWithIds ^. title, _answerItemTemplateQuestions = []}
+            AnswerItemTemplate
+            {_answerItemTemplateTitle = aitPlainWithUuids ^. title, _answerItemTemplateQuestions = []}
 
-aitChangeAitQuestionIdsOrder :: ([Question] -> Identity [UUID]) -> AnswerItemTemplate -> Identity AnswerItemTemplate
-aitChangeAitQuestionIdsOrder convert ait = Identity $ ait & questions .~ orderedQuestions
+aitChangeAitQuestionUuidsOrder :: ([Question] -> Identity [UUID]) -> AnswerItemTemplate -> Identity AnswerItemTemplate
+aitChangeAitQuestionUuidsOrder convert ait = Identity $ ait & questions .~ orderedQuestions
   where
     ids :: Identity [UUID]
     ids = convert (ait ^. questions)
@@ -184,11 +185,11 @@ getAllAitQuestionsForParentQuestionUuid km qUuid =
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-getFollowUpIds :: Answer -> [UUID]
-getFollowUpIds ans = ans ^.. followUps . traverse . uuid
+getFollowUpUuids :: Answer -> [UUID]
+getFollowUpUuids ans = ans ^.. followUps . traverse . uuid
 
-ansChangeFollowUpIdsOrder :: ([Question] -> Identity [UUID]) -> Answer -> Identity Answer
-ansChangeFollowUpIdsOrder convert ans = Identity $ ans & followUps .~ orderedFollowUps
+ansChangeFollowUpUuidsOrder :: ([Question] -> Identity [UUID]) -> Answer -> Identity Answer
+ansChangeFollowUpUuidsOrder convert ans = Identity $ ans & followUps .~ orderedFollowUps
   where
     ids :: Identity [UUID]
     ids = convert (ans ^. followUps)
@@ -198,11 +199,11 @@ ansChangeFollowUpIdsOrder convert ans = Identity $ ans & followUps .~ orderedFol
     getFollowUpsByUuid fuqUuid = filter (\x -> x ^. uuid == fuqUuid) (ans ^. followUps)
 
 ------------------------------------------------------------------------------------------
-getExpertIds :: Question -> [UUID]
-getExpertIds q = q ^.. experts . traverse . uuid
+getExpertUuids :: Question -> [UUID]
+getExpertUuids q = q ^.. experts . traverse . uuid
 
-qChangeExpertIdsOrder :: ([Expert] -> Identity [UUID]) -> Question -> Identity Question
-qChangeExpertIdsOrder convert q = Identity $ q & experts .~ orderedExperts
+qChangeExpertUuidsOrder :: ([Expert] -> Identity [UUID]) -> Question -> Identity Question
+qChangeExpertUuidsOrder convert q = Identity $ q & experts .~ orderedExperts
   where
     ids :: Identity [UUID]
     ids = convert (q ^. experts)
@@ -237,11 +238,11 @@ getReferenceUuid (ResourcePageReference' ref) = ref ^. uuid
 getReferenceUuid (URLReference' ref) = ref ^. uuid
 getReferenceUuid (CrossReference' ref) = ref ^. uuid
 
-getReferenceIds :: Question -> [UUID]
-getReferenceIds q = getReferenceUuid <$> (q ^. references)
+getReferenceUuids :: Question -> [UUID]
+getReferenceUuids q = getReferenceUuid <$> (q ^. references)
 
-qChangeReferenceIdsOrder :: ([Reference] -> Identity [UUID]) -> Question -> Identity Question
-qChangeReferenceIdsOrder convert q = Identity $ q & references .~ orderedReferences
+qChangeReferenceUuidsOrder :: ([Reference] -> Identity [UUID]) -> Question -> Identity Question
+qChangeReferenceUuidsOrder convert q = Identity $ q & references .~ orderedReferences
   where
     ids :: Identity [UUID]
     ids = convert (q ^. references)

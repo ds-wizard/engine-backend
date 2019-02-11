@@ -214,7 +214,7 @@ makeFields ''AnswerItemTemplate
 
 makeFields ''AnswerItemTemplatePlain
 
-makeFields ''AnswerItemTemplatePlainWithIds
+makeFields ''AnswerItemTemplatePlainWithUuids
 
 makeFields ''Expert
 
@@ -390,7 +390,7 @@ makeFields ''AnswerItemTemplateDTO
 
 makeFields ''AnswerItemTemplatePlainDTO
 
-makeFields ''AnswerItemTemplatePlainWithIdsDTO
+makeFields ''AnswerItemTemplatePlainWithUuidsDTO
 
 makeFields ''ExpertDTO
 

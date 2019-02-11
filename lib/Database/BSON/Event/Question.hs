@@ -66,10 +66,10 @@ instance ToBSON EditQuestionEvent where
     , "text" BSON.=: (event ^. text)
     , "requiredLevel" BSON.=: (event ^. requiredLevel)
     , "tagUuids" BSON.=: serializeEventFieldUUIDList (event ^. tagUuids)
-    , "answerItemTemplatePlainWithIds" BSON.=: (event ^. answerItemTemplatePlainWithIds)
-    , "answerIds" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerIds)
-    , "expertIds" BSON.=: serializeEventFieldUUIDList (event ^. expertIds)
-    , "referenceIds" BSON.=: serializeEventFieldUUIDList (event ^. referenceIds)
+    , "answerItemTemplatePlainWithUuids" BSON.=: (event ^. answerItemTemplatePlainWithUuids)
+    , "answerUuids" BSON.=: serializeEventFieldMaybeUUIDList (event ^. answerUuids)
+    , "expertUuids" BSON.=: serializeEventFieldUUIDList (event ^. expertUuids)
+    , "referenceUuids" BSON.=: serializeEventFieldUUIDList (event ^. referenceUuids)
     ]
 
 instance FromBSON EditQuestionEvent where
@@ -82,10 +82,10 @@ instance FromBSON EditQuestionEvent where
     qText <- BSON.lookup "text" doc
     qRequiredLevel <- BSON.lookup "requiredLevel" doc
     let qTagUuids = deserializeEventFieldUUIDList $ BSON.lookup "tagUuids" doc
-    qAnswerItemTemplatePlainWithIds <- BSON.lookup "answerItemTemplatePlainWithIds" doc
-    let qAnswerIds = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerIds" doc
-    let qExpertIds = deserializeEventFieldUUIDList $ BSON.lookup "expertIds" doc
-    let qReferenceIds = deserializeEventFieldUUIDList $ BSON.lookup "referenceIds" doc
+    qAnswerItemTemplatePlainWithUuids <- BSON.lookup "answerItemTemplatePlainWithUuids" doc
+    let qAnswerUuids = deserializeEventFieldMaybeUUIDList $ BSON.lookup "answerUuids" doc
+    let qExpertUuids = deserializeEventFieldUUIDList $ BSON.lookup "expertUuids" doc
+    let qReferenceUuids = deserializeEventFieldUUIDList $ BSON.lookup "referenceUuids" doc
     return
       EditQuestionEvent
       { _editQuestionEventUuid = qUuid
@@ -96,10 +96,10 @@ instance FromBSON EditQuestionEvent where
       , _editQuestionEventText = qText
       , _editQuestionEventRequiredLevel = qRequiredLevel
       , _editQuestionEventTagUuids = qTagUuids
-      , _editQuestionEventAnswerItemTemplatePlainWithIds = qAnswerItemTemplatePlainWithIds
-      , _editQuestionEventAnswerIds = qAnswerIds
-      , _editQuestionEventExpertIds = qExpertIds
-      , _editQuestionEventReferenceIds = qReferenceIds
+      , _editQuestionEventAnswerItemTemplatePlainWithUuids = qAnswerItemTemplatePlainWithUuids
+      , _editQuestionEventAnswerUuids = qAnswerUuids
+      , _editQuestionEventExpertUuids = qExpertUuids
+      , _editQuestionEventReferenceUuids = qReferenceUuids
       }
 
 -- ------------------------

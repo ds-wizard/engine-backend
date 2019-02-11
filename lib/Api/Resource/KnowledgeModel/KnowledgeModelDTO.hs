@@ -55,9 +55,9 @@ data AnswerItemTemplatePlainDTO = AnswerItemTemplatePlainDTO
   { _answerItemTemplatePlainDTOTitle :: String
   } deriving (Show, Eq)
 
-data AnswerItemTemplatePlainWithIdsDTO = AnswerItemTemplatePlainWithIdsDTO
-  { _answerItemTemplatePlainWithIdsDTOTitle :: String
-  , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [U.UUID]
+data AnswerItemTemplatePlainWithUuidsDTO = AnswerItemTemplatePlainWithUuidsDTO
+  { _answerItemTemplatePlainWithUuidsDTOTitle :: String
+  , _answerItemTemplatePlainWithUuidsDTOQuestionUuids :: [U.UUID]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -178,11 +178,11 @@ instance ToJSON AnswerItemTemplateDTO where
 instance ToJSON AnswerItemTemplatePlainDTO where
   toJSON AnswerItemTemplatePlainDTO {..} = object ["title" .= _answerItemTemplatePlainDTOTitle]
 
-instance ToJSON AnswerItemTemplatePlainWithIdsDTO where
-  toJSON AnswerItemTemplatePlainWithIdsDTO {..} =
+instance ToJSON AnswerItemTemplatePlainWithUuidsDTO where
+  toJSON AnswerItemTemplatePlainWithUuidsDTO {..} =
     object
-      [ "title" .= _answerItemTemplatePlainWithIdsDTOTitle
-      , "questionIds" .= _answerItemTemplatePlainWithIdsDTOQuestionIds
+      [ "title" .= _answerItemTemplatePlainWithUuidsDTOTitle
+      , "questionUuids" .= _answerItemTemplatePlainWithUuidsDTOQuestionUuids
       ]
 
 -- --------------------------------------------------------------------
@@ -310,11 +310,11 @@ instance FromJSON AnswerItemTemplatePlainDTO where
     return AnswerItemTemplatePlainDTO {..}
   parseJSON _ = mzero
 
-instance FromJSON AnswerItemTemplatePlainWithIdsDTO where
+instance FromJSON AnswerItemTemplatePlainWithUuidsDTO where
   parseJSON (Object o) = do
-    _answerItemTemplatePlainWithIdsDTOTitle <- o .: "title"
-    _answerItemTemplatePlainWithIdsDTOQuestionIds <- o .: "questionIds"
-    return AnswerItemTemplatePlainWithIdsDTO {..}
+    _answerItemTemplatePlainWithUuidsDTOTitle <- o .: "title"
+    _answerItemTemplatePlainWithUuidsDTOQuestionUuids <- o .: "questionUuids"
+    return AnswerItemTemplatePlainWithUuidsDTO {..}
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------

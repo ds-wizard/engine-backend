@@ -206,8 +206,8 @@ migratorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
-        let expEventQuestionIds = ChangedValue [a_km1_ch1_q2 ^. questionUuid]
-        let expEvent = (e_km1_ch1 & uuid .~ (resEvent ^. uuid)) & questionIds .~ expEventQuestionIds
+        let expEventQuestionUuids = ChangedValue [a_km1_ch1_q2 ^. questionUuid]
+        let expEvent = (e_km1_ch1 & uuid .~ (resEvent ^. uuid)) & questionUuids .~ expEventQuestionUuids
         let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
         resState `shouldBe` expState
       -- -------------------------------------------------------------
