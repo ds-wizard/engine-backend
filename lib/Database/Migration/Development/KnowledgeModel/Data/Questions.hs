@@ -128,7 +128,7 @@ question4 =
   , _questionTitle = "Fourth Question"
   , _questionText = Just "Some nice description"
   , _questionRequiredLevel = Nothing
-  , _questionTagUuids = []
+  , _questionTagUuids = [FT.tagBioInformatic ^. uuid]
   , _questionAnswerItemTemplate = Just q4_ait
   , _questionAnswers = Nothing
   , _questionReferences = []
@@ -138,31 +138,31 @@ question4 =
 question4WithChangeProperties :: Question
 question4WithChangeProperties =
   Question
-  { _questionUuid = fromJust $ U.fromString "5c995368-b8dc-49e2-9b38-b79d4eb2779b"
-  , _questionQType = QuestionTypeList
-  , _questionTitle = "EDITED: Fourth Question"
-  , _questionText = Just "EDITED: Some nice description"
+  { _questionUuid = question4 ^. uuid
+  , _questionQType = question4 ^. qType
+  , _questionTitle = "EDITED: " ++ question4 ^. title
+  , _questionText = Just $ "EDITED: " ++ (fromJust $ question4 ^. text)
   , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
+  , _questionTagUuids = question4 ^. tagUuids
   , _questionAnswerItemTemplate = Just q4_aitChanged
   , _questionAnswers = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  , _questionReferences = question4 ^. references
+  , _questionExperts = question4 ^. experts
   }
 
 question4Plain :: Question
 question4Plain =
   Question
-  { _questionUuid = fromJust $ U.fromString "5c995368-b8dc-49e2-9b38-b79d4eb2779b"
-  , _questionQType = QuestionTypeList
-  , _questionTitle = "Fourth Question"
-  , _questionText = Just "Some nice description"
-  , _questionRequiredLevel = Nothing
-  , _questionTagUuids = []
+  { _questionUuid = question4 ^. uuid
+  , _questionQType = question4 ^. qType
+  , _questionTitle = question4 ^. title
+  , _questionText = question4 ^. text
+  , _questionRequiredLevel = question4 ^. requiredLevel
+  , _questionTagUuids = question4 ^. tagUuids
   , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Just q4_aitPlain
-  , _questionReferences = []
-  , _questionExperts = []
+  , _questionReferences = question4 ^. references
+  , _questionExperts = question4 ^. experts
   }
 
 q4_ait1_question5 :: Question
@@ -173,7 +173,7 @@ q4_ait1_question5 =
   , _questionTitle = "Fifth Question"
   , _questionText = Just "Some funny description"
   , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
+  , _questionTagUuids = [FT.tagBioInformatic ^. uuid]
   , _questionAnswers = Nothing
   , _questionAnswerItemTemplate = Just q4_ait_q5_ait
   , _questionReferences = []
@@ -188,11 +188,11 @@ q4_ait1_question5Plain =
   , _questionTitle = q4_ait1_question5 ^. title
   , _questionText = q4_ait1_question5 ^. text
   , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
+  , _questionTagUuids = q4_ait1_question5 ^. tagUuids
   , _questionAnswerItemTemplate = Just (q4_ait_q5_ait & questions .~ [])
-  , _questionAnswers = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  , _questionAnswers = q4_ait1_question5 ^. answers
+  , _questionReferences = q4_ait1_question5 ^. references
+  , _questionExperts = q4_ait1_question5 ^. experts
   }
 
 q4_ait1_question5Changed :: Question
@@ -203,11 +203,11 @@ q4_ait1_question5Changed =
   , _questionTitle = "EDITED: Fifth Question"
   , _questionText = Just "EDITED: Some funny description"
   , _questionRequiredLevel = Just 3
-  , _questionTagUuids = []
+  , _questionTagUuids = q4_ait1_question5 ^. tagUuids
   , _questionAnswerItemTemplate = Just ait2WithChangeProperties
-  , _questionAnswers = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  , _questionAnswers = q4_ait1_question5 ^. answers
+  , _questionReferences = q4_ait1_question5 ^. references
+  , _questionExperts = q4_ait1_question5 ^. experts
   }
 
 q4_ait1_question6 :: Question
@@ -218,7 +218,7 @@ q4_ait1_question6 =
   , _questionTitle = "Sixth Question"
   , _questionText = Just "Some non-funny description"
   , _questionRequiredLevel = Just 2
-  , _questionTagUuids = [FT.tagDataScience ^. uuid]
+  , _questionTagUuids = []
   , _questionAnswerItemTemplate = Nothing
   , _questionAnswers = Just [q4_ait1_q6_answerNo, q4_ait1_q6_answerYes]
   , _questionReferences = [FR.referenceCh1', FR.referenceCh2']

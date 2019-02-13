@@ -12,6 +12,7 @@ import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelApplicator
+import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageService
 
