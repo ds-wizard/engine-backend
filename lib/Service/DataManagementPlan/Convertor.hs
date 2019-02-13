@@ -12,6 +12,7 @@ toFilledKM km =
   { _filledKnowledgeModelUuid = km ^. uuid
   , _filledKnowledgeModelName = km ^. name
   , _filledKnowledgeModelChapters = toFilledChapter <$> km ^. chapters
+  , _filledKnowledgeModelTags = km ^. tags
   }
 
 toFilledChapter :: Chapter -> FilledChapter
@@ -31,6 +32,7 @@ toFilledQuestion q =
   , _filledQuestionTitle = q ^. title
   , _filledQuestionText = q ^. text
   , _filledQuestionRequiredLevel = q ^. requiredLevel
+  , _filledQuestionTagUuids = q ^. tagUuids
   , _filledQuestionAnswerItemTemplate = q ^. answerItemTemplate
   , _filledQuestionAnswers = q ^. answers
   , _filledQuestionAnswerValue = Nothing

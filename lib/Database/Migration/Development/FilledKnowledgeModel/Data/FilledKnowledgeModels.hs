@@ -12,4 +12,5 @@ fKm1WithQ4 =
   { _filledKnowledgeModelUuid = km1 ^. uuid
   , _filledKnowledgeModelName = km1 ^. name
   , _filledKnowledgeModelChapters = [fChapter1, fChapter2]
+  , _filledKnowledgeModelTags = km1 ^. tags
   }

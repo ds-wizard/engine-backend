@@ -2,31 +2,33 @@ module Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO where
 
 import Control.Monad
 import Data.Aeson
-import Data.UUID
+import qualified Data.UUID as U
 
 import Api.Resource.Common
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Model.KnowledgeModel.KnowledgeModel
 
 data FilledKnowledgeModelDTO = FilledKnowledgeModelDTO
-  { _filledKnowledgeModelDTOUuid :: UUID
+  { _filledKnowledgeModelDTOUuid :: U.UUID
   , _filledKnowledgeModelDTOName :: String
   , _filledKnowledgeModelDTOChapters :: [FilledChapterDTO]
+  , _filledKnowledgeModelDTOTags :: [TagDTO]
   } deriving (Show, Eq)
 
 data FilledChapterDTO = FilledChapterDTO
-  { _filledChapterDTOUuid :: UUID
+  { _filledChapterDTOUuid :: U.UUID
   , _filledChapterDTOTitle :: String
   , _filledChapterDTOText :: String
   , _filledChapterDTOQuestions :: [FilledQuestionDTO]
   } deriving (Show, Eq)
 
 data FilledQuestionDTO = FilledQuestionDTO
-  { _filledQuestionDTOUuid :: UUID
+  { _filledQuestionDTOUuid :: U.UUID
   , _filledQuestionDTOQType :: QuestionType
   , _filledQuestionDTOTitle :: String
   , _filledQuestionDTOText :: Maybe String
   , _filledQuestionDTORequiredLevel :: Maybe Int
+  , _filledQuestionDTOTagUuids :: [U.UUID]
   , _filledQuestionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
   , _filledQuestionDTOAnswers :: Maybe [AnswerDTO]
   , _filledQuestionDTOAnswerValue :: Maybe String
@@ -37,7 +39,7 @@ data FilledQuestionDTO = FilledQuestionDTO
   } deriving (Show, Eq)
 
 data FilledAnswerDTO = FilledAnswerDTO
-  { _filledAnswerDTOUuid :: UUID
+  { _filledAnswerDTOUuid :: U.UUID
   , _filledAnswerDTOLabel :: String
   , _filledAnswerDTOAdvice :: Maybe String
   , _filledAnswerDTOFollowUps :: [FilledQuestionDTO]
@@ -56,6 +58,7 @@ instance ToJSON FilledKnowledgeModelDTO where
       [ "uuid" .= _filledKnowledgeModelDTOUuid
       , "name" .= _filledKnowledgeModelDTOName
       , "chapters" .= _filledKnowledgeModelDTOChapters
+      , "tags" .= _filledKnowledgeModelDTOTags
       ]
 
 instance ToJSON FilledChapterDTO where
@@ -75,6 +78,7 @@ instance ToJSON FilledQuestionDTO where
       , "title" .= _filledQuestionDTOTitle
       , "text" .= _filledQuestionDTOText
       , "requiredLevel" .= _filledQuestionDTORequiredLevel
+      , "tagUuids" .= _filledQuestionDTOTagUuids
       , "answerItemTemplate" .= _filledQuestionDTOAnswerItemTemplate
       , "answers" .= _filledQuestionDTOAnswers
       , "answerValue" .= _filledQuestionDTOAnswerValue
@@ -107,6 +111,7 @@ instance FromJSON FilledKnowledgeModelDTO where
     _filledKnowledgeModelDTOUuid <- o .: "uuid"
     _filledKnowledgeModelDTOName <- o .: "name"
     _filledKnowledgeModelDTOChapters <- o .: "chapters"
+    _filledKnowledgeModelDTOTags <- o .: "tags"
     return FilledKnowledgeModelDTO {..}
   parseJSON _ = mzero
 
@@ -125,6 +130,7 @@ instance FromJSON FilledQuestionDTO where
     _filledQuestionDTOTitle <- o .: "title"
     _filledQuestionDTOText <- o .: "text"
     _filledQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _filledQuestionDTOTagUuids <- o .: "tagUuids"
     _filledQuestionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
     _filledQuestionDTOAnswers <- o .: "answers"
     _filledQuestionDTOAnswerValue <- o .: "answerValue"

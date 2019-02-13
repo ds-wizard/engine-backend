@@ -1,29 +1,31 @@
 module Model.FilledKnowledgeModel.FilledKnowledgeModel where
 
-import Data.UUID
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.KnowledgeModel.KnowledgeModel
 
 data FilledKnowledgeModel = FilledKnowledgeModel
-  { _filledKnowledgeModelUuid :: UUID
+  { _filledKnowledgeModelUuid :: U.UUID
   , _filledKnowledgeModelName :: String
   , _filledKnowledgeModelChapters :: [FilledChapter]
+  , _filledKnowledgeModelTags :: [Tag]
   } deriving (Show, Eq, Generic)
 
 data FilledChapter = FilledChapter
-  { _filledChapterUuid :: UUID
+  { _filledChapterUuid :: U.UUID
   , _filledChapterTitle :: String
   , _filledChapterText :: String
   , _filledChapterQuestions :: [FilledQuestion]
   } deriving (Show, Eq, Generic)
 
 data FilledQuestion = FilledQuestion
-  { _filledQuestionUuid :: UUID
+  { _filledQuestionUuid :: U.UUID
   , _filledQuestionQType :: QuestionType
   , _filledQuestionTitle :: String
   , _filledQuestionText :: Maybe String
   , _filledQuestionRequiredLevel :: Maybe Int
+  , _filledQuestionTagUuids :: [U.UUID]
   , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
   , _filledQuestionAnswers :: Maybe [Answer]
   , _filledQuestionAnswerValue :: Maybe String
@@ -34,7 +36,7 @@ data FilledQuestion = FilledQuestion
   } deriving (Show, Eq, Generic)
 
 data FilledAnswer = FilledAnswer
-  { _filledAnswerUuid :: UUID
+  { _filledAnswerUuid :: U.UUID
   , _filledAnswerLabel :: String
   , _filledAnswerAdvice :: Maybe String
   , _filledAnswerFollowUps :: [FilledQuestion]

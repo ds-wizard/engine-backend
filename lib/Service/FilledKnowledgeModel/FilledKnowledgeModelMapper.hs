@@ -13,6 +13,7 @@ toFilledKMDTO fKM =
   { _filledKnowledgeModelDTOUuid = fKM ^. uuid
   , _filledKnowledgeModelDTOName = fKM ^. name
   , _filledKnowledgeModelDTOChapters = toFilledChapterDTO <$> fKM ^. chapters
+  , _filledKnowledgeModelDTOTags = toTagDTO <$> fKM ^. tags
   }
 
 toFilledChapterDTO :: FilledChapter -> FilledChapterDTO
@@ -32,6 +33,7 @@ toFilledQuestionDTO fQ =
   , _filledQuestionDTOTitle = fQ ^. title
   , _filledQuestionDTOText = fQ ^. text
   , _filledQuestionDTORequiredLevel = fQ ^. requiredLevel
+  , _filledQuestionDTOTagUuids = fQ ^. tagUuids
   , _filledQuestionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> fQ ^. answerItemTemplate
   , _filledQuestionDTOAnswers = (fmap toAnswerDTO) <$> fQ ^. answers
   , _filledQuestionDTOAnswerValue = fQ ^. answerValue
