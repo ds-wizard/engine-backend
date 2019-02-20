@@ -11,6 +11,7 @@ import Text.Read
 
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
+import Model.FilledKnowledgeModel.FilledKnowledgeModelAccessors
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Questionnaire.QuestionnaireReply
 import Service.DataManagementPlan.Convertor
@@ -52,7 +53,7 @@ applyReplyToChapter reply (fQUuid:restOfPath) fCh =
   where
     foldOneQuestion :: [FilledQuestion] -> FilledQuestion -> [FilledQuestion]
     foldOneQuestion fQs fQuestion =
-      if (U.toString $ fQuestion ^. uuid) == fQUuid
+      if (U.toString . getFilledQuestionUuid $ fQuestion) == fQUuid
         then fQs ++ [applyReplyToQuestion reply restOfPath fQuestion]
         else fQs ++ [fQuestion]
 
@@ -69,19 +70,15 @@ applyReplyToQuestion reply (maybeItemNumber:restOfPath) fQuestion =
     Nothing -> passToAnswerOption reply restOfPath fQuestion
 
 replyOnQuestion :: Reply -> FilledQuestion -> FilledQuestion
-replyOnQuestion reply fQuestion =
-  case fQuestion ^. qType of
-    QuestionTypeString -> createFilledAnswerValue fQuestion reply
-    QuestionTypeNumber -> createFilledAnswerValue fQuestion reply
-    QuestionTypeDate -> createFilledAnswerValue fQuestion reply
-    QuestionTypeText -> createFilledAnswerValue fQuestion reply
-    QuestionTypeOptions -> createFilledAnswerOption fQuestion reply
-    QuestionTypeList -> createFilledAnswerItem fQuestion reply
+replyOnQuestion reply (FilledOptionsQuestion' fQuestion) =
+  FilledOptionsQuestion' $ createFilledAnswerOption fQuestion reply
+replyOnQuestion reply (FilledListQuestion' fQuestion) = FilledListQuestion' $ createFilledAnswerItem fQuestion reply
+replyOnQuestion reply (FilledValueQuestion' fQuestion) = FilledValueQuestion' $ createFilledAnswerValue fQuestion reply
 
 -- -------------------------
 -- CREATE REPLY ------------
 -- -------------------------
-createFilledAnswerValue :: FilledQuestion -> Reply -> FilledQuestion
+createFilledAnswerValue :: FilledValueQuestion -> Reply -> FilledValueQuestion
 createFilledAnswerValue fQuestion reply = fQuestion & answerValue .~ Just (getReplyValue $ reply ^. value)
   where
     getReplyValue :: ReplyValue -> String
@@ -92,23 +89,20 @@ createFilledAnswerValue fQuestion reply = fQuestion & answerValue .~ Just (getRe
         getIntReplyValue (FairsharingIntegrationReply' FairsharingIntegrationReply {..}) =
           _fairsharingIntegrationReplyName
 
-createFilledAnswerOption :: FilledQuestion -> Reply -> FilledQuestion
+createFilledAnswerOption :: FilledOptionsQuestion -> Reply -> FilledOptionsQuestion
 createFilledAnswerOption fQuestion reply = fQuestion & answerOption .~ mFilledAnswer
   where
     mFilledAnswer :: Maybe FilledAnswer
     mFilledAnswer = toFilledAnswer <$> getAnswerByUuid fQuestion (getReplyValue $ reply ^. value)
-    getAnswerByUuid :: FilledQuestion -> U.UUID -> Maybe Answer
-    getAnswerByUuid fQuestion ansUuid = find (\ans -> ans ^. uuid == ansUuid) (fromMaybe [] (fQuestion ^. answers))
+    getAnswerByUuid :: FilledOptionsQuestion -> U.UUID -> Maybe Answer
+    getAnswerByUuid fQuestion ansUuid = find (\ans -> ans ^. uuid == ansUuid) (fQuestion ^. answers)
     getReplyValue :: ReplyValue -> U.UUID
     getReplyValue AnswerReply {..} = _answerReplyValue
 
-createFilledAnswerItem :: FilledQuestion -> Reply -> FilledQuestion
+createFilledAnswerItem :: FilledListQuestion -> Reply -> FilledListQuestion
 createFilledAnswerItem fQuestion reply =
-  case fQuestion ^. answerItemTemplate of
-    Just ait ->
-      let mAis = Just $ (\_ -> toFilledAnswerItem ait) <$> generateList (getReplyValue $ reply ^. value)
-      in fQuestion & answerItems .~ mAis
-    Nothing -> fQuestion
+  let mAis = Just $ (\_ -> toFilledAnswerItem fQuestion) <$> generateList (getReplyValue $ reply ^. value)
+  in fQuestion & items .~ mAis
   where
     getReplyValue :: ReplyValue -> Int
     getReplyValue ItemListReply {..} = _itemListReplyValue
@@ -127,19 +121,20 @@ applyToAnswerItem reply (fQUuid:restOfPath) ai =
   where
     foldOneQuestion :: [FilledQuestion] -> FilledQuestion -> [FilledQuestion]
     foldOneQuestion fQs fQuestion =
-      if (U.toString $ fQuestion ^. uuid) == fQUuid
+      if (U.toString . getFilledQuestionUuid $ fQuestion) == fQUuid
         then fQs ++ [applyReplyToQuestion reply restOfPath fQuestion]
         else fQs ++ [fQuestion]
 
 passToAnswerItems :: Reply -> Int -> [String] -> FilledQuestion -> FilledQuestion
-passToAnswerItems reply itemNumber path fQuestion =
+passToAnswerItems reply itemNumber path (FilledListQuestion' fQuestion) =
   if length ais <= itemNumber
-    then fQuestion -- Maybe return error
-    else fQuestion & answerItems .~ Just mAis
+    then FilledListQuestion' fQuestion -- Maybe return error
+    else FilledListQuestion' $ fQuestion & items .~ Just mAis
   where
-    ais = fromMaybe [] (fQuestion ^. answerItems)
+    ais = fromMaybe [] (fQuestion ^. items)
     mAis = ais & element itemNumber .~ mAi
     mAi = applyToAnswerItem reply path (ais !! itemNumber)
+passToAnswerItems reply itemNumber path fQuestion = fQuestion -- Maybe return error
 
 -- -------------------------
 -- PASS TO ANSWER OPTIONS --
@@ -151,17 +146,18 @@ applyToAnswerOption reply (fQUuid:restOfPath) fAnswer =
   where
     foldOneQuestion :: [FilledQuestion] -> FilledQuestion -> [FilledQuestion]
     foldOneQuestion fQs fQuestion =
-      if (U.toString $ fQuestion ^. uuid) == fQUuid
+      if (U.toString . getFilledQuestionUuid $ fQuestion) == fQUuid
         then fQs ++ [applyReplyToQuestion reply restOfPath fQuestion]
         else fQs ++ [fQuestion]
 
 passToAnswerOption :: Reply -> [String] -> FilledQuestion -> FilledQuestion
-passToAnswerOption reply path fQuestion =
+passToAnswerOption reply path (FilledOptionsQuestion' fQuestion) =
   case fQuestion ^. answerOption of
     Just answer ->
       let mAnswer = applyToAnswerOption reply path answer
-      in fQuestion & answerOption .~ Just mAnswer
-    Nothing -> fQuestion
+      in FilledOptionsQuestion' $ fQuestion & answerOption .~ Just mAnswer
+    Nothing -> FilledOptionsQuestion' $ fQuestion
+passToAnswerOption reply path fQuestion = fQuestion
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

@@ -19,6 +19,7 @@ import Model.Error.Error
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
 import Service.KnowledgeModel.KnowledgeModelApplicator
+import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.Package.PackageService
 import Service.Questionnaire.QuestionnaireMapper
 import Util.Uuid
@@ -69,8 +70,9 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
     heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
       heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \events ->
         heCreateKnowledgeModel events $ \knowledgeModel -> do
+          let filteredKm = filterKnowledgeModel (reqDto ^. tagUuids) knowledgeModel
           now <- liftIO getCurrentTime
-          let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid knowledgeModel (currentUser ^. uuid) now now
+          let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid filteredKm (currentUser ^. uuid) now now
           insertQuestionnaire qtn
           return . Right $ toSimpleDTO qtn package
 

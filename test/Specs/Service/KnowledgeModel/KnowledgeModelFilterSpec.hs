@@ -9,8 +9,8 @@ import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.Tags
-
 import LensesConfig
+import Model.KnowledgeModel.KnowledgeModel
 import Service.KnowledgeModel.KnowledgeModelFilter
 
 knowledgeModelFilterSpec =
@@ -33,7 +33,7 @@ knowledgeModelFilterSpec =
       let inTags = [tagDataScience ^. uuid]
       let inKm = km1WithQ4
         -- AND: Prepare expectations
-      let expChapter1 = chapter1 & questions .~ [question1]
+      let expChapter1 = chapter1 & questions .~ [question1']
       let expectedKm = (km1WithQ4 & chapters .~ [expChapter1]) & tags .~ [tagDataScience]
         -- WHEN:
       let computedKm = filterKnowledgeModel inTags inKm
@@ -47,17 +47,14 @@ knowledgeModelFilterSpec =
         -- AND: Prepare expectations
         -- Chapter 1
       let expQ2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ []
-      let expQ2_aYes_fuQuestion1 =
-            q2_aYes_fuQuestion1 & answers .~ Just [q2_aYes_fuq1_answerNo, expQ2_aYes_fuq1_answerYes]
-      let expQ2_answerYes = q2_answerYes & followUps .~ [expQ2_aYes_fuQuestion1]
-      let expQuestion2 = question2 & answers .~ Just [q2_answerNo, expQ2_answerYes]
-      let expChapter1 = chapter1 & questions .~ [question1, expQuestion2]
+      let expQ2_aYes_fuQuestion1 = q2_aYes_fuQuestion1 & answers .~ [q2_aYes_fuq1_answerNo, expQ2_aYes_fuq1_answerYes]
+      let expQ2_answerYes = q2_answerYes & followUps .~ [OptionsQuestion' expQ2_aYes_fuQuestion1]
+      let expQuestion2 = question2 & answers .~ [q2_answerNo, expQ2_answerYes]
+      let expChapter1 = chapter1 & questions .~ [question1', OptionsQuestion' expQuestion2]
         -- Chapter 2
-      let expQ4_ait_q5_ait = q4_ait_q5_ait & questions .~ []
-      let expQ4_ait1_question5 = q4_ait1_question5 & answerItemTemplate .~ Just expQ4_ait_q5_ait
-      let expQ4_ait = q4_ait & questions .~ [expQ4_ait1_question5]
-      let expQuestion4 = question4 & answerItemTemplate .~ Just expQ4_ait
-      let expChapter2 = chapter2 & questions .~ [expQuestion4]
+      let expQ4_it1_question5 = q4_it1_question5 & itemTemplateQuestions .~ []
+      let expQuestion4 = question4 & itemTemplateQuestions .~ [ListQuestion' expQ4_it1_question5]
+      let expChapter2 = chapter2 & questions .~ [ListQuestion' expQuestion4]
         -- Knowledge Model
       let expectedKm = km1WithQ4 & chapters .~ [expChapter1, expChapter2]
         -- WHEN:

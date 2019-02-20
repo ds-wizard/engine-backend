@@ -25,19 +25,43 @@ toChapterDTO chapter =
   }
 
 toQuestionDTO :: Question -> QuestionDTO
-toQuestionDTO question =
-  QuestionDTO
-  { _questionDTOUuid = question ^. uuid
-  , _questionDTOQType = question ^. qType
-  , _questionDTOTitle = question ^. title
-  , _questionDTOText = question ^. text
-  , _questionDTORequiredLevel = question ^. requiredLevel
-  , _questionDTOTagUuids = question ^. tagUuids
-  , _questionDTOAnswers = (fmap toAnswerDTO) <$> (question ^. answers)
-  , _questionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
-  , _questionDTOExperts = toExpertDTO <$> (question ^. experts)
-  , _questionDTOReferences = toReferenceDTO <$> (question ^. references)
-  }
+toQuestionDTO (OptionsQuestion' question) =
+  OptionsQuestionDTO'
+    OptionsQuestionDTO
+    { _optionsQuestionDTOUuid = question ^. uuid
+    , _optionsQuestionDTOTitle = question ^. title
+    , _optionsQuestionDTOText = question ^. text
+    , _optionsQuestionDTORequiredLevel = question ^. requiredLevel
+    , _optionsQuestionDTOTagUuids = question ^. tagUuids
+    , _optionsQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
+    , _optionsQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _optionsQuestionDTOAnswers = toAnswerDTO <$> (question ^. answers)
+    }
+toQuestionDTO (ListQuestion' question) =
+  ListQuestionDTO'
+    ListQuestionDTO
+    { _listQuestionDTOUuid = question ^. uuid
+    , _listQuestionDTOTitle = question ^. title
+    , _listQuestionDTOText = question ^. text
+    , _listQuestionDTORequiredLevel = question ^. requiredLevel
+    , _listQuestionDTOTagUuids = question ^. tagUuids
+    , _listQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
+    , _listQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _listQuestionDTOItemTemplateTitle = question ^. itemTemplateTitle
+    , _listQuestionDTOItemTemplateQuestions = toQuestionDTO <$> (question ^. itemTemplateQuestions)
+    }
+toQuestionDTO (ValueQuestion' question) =
+  ValueQuestionDTO'
+    ValueQuestionDTO
+    { _valueQuestionDTOUuid = question ^. uuid
+    , _valueQuestionDTOTitle = question ^. title
+    , _valueQuestionDTOText = question ^. text
+    , _valueQuestionDTORequiredLevel = question ^. requiredLevel
+    , _valueQuestionDTOTagUuids = question ^. tagUuids
+    , _valueQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
+    , _valueQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _valueQuestionDTOValueType = question ^. valueType
+    }
 
 toAnswerDTO :: Answer -> AnswerDTO
 toAnswerDTO answer =
@@ -47,24 +71,6 @@ toAnswerDTO answer =
   , _answerDTOAdvice = answer ^. advice
   , _answerDTOFollowUps = toQuestionDTO <$> (answer ^. followUps)
   , _answerDTOMetricMeasures = toMetricMeasureDTO <$> (answer ^. metricMeasures)
-  }
-
-toAnswerItemTemplateDTO :: AnswerItemTemplate -> AnswerItemTemplateDTO
-toAnswerItemTemplateDTO itemTemplate =
-  AnswerItemTemplateDTO
-  { _answerItemTemplateDTOTitle = itemTemplate ^. title
-  , _answerItemTemplateDTOQuestions = toQuestionDTO <$> itemTemplate ^. questions
-  }
-
-toAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlain -> AnswerItemTemplatePlainDTO
-toAnswerItemTemplatePlainDTO itemTemplate =
-  AnswerItemTemplatePlainDTO {_answerItemTemplatePlainDTOTitle = itemTemplate ^. title}
-
-toAnswerItemTemplatePlainWithUuidsDTO :: AnswerItemTemplatePlainWithUuids -> AnswerItemTemplatePlainWithUuidsDTO
-toAnswerItemTemplatePlainWithUuidsDTO itemTemplate =
-  AnswerItemTemplatePlainWithUuidsDTO
-  { _answerItemTemplatePlainWithUuidsDTOTitle = itemTemplate ^. title
-  , _answerItemTemplatePlainWithUuidsDTOQuestionUuids = itemTemplate ^. questionUuids
   }
 
 toExpertDTO :: Expert -> ExpertDTO
@@ -129,19 +135,43 @@ fromChapterDTO chapter =
   }
 
 fromQuestionDTO :: QuestionDTO -> Question
-fromQuestionDTO question =
-  Question
-  { _questionUuid = question ^. uuid
-  , _questionQType = question ^. qType
-  , _questionTitle = question ^. title
-  , _questionText = question ^. text
-  , _questionRequiredLevel = question ^. requiredLevel
-  , _questionTagUuids = question ^. tagUuids
-  , _questionAnswers = (fmap fromAnswerDTO) <$> (question ^. answers)
-  , _questionAnswerItemTemplate = fromAnswerItemTemplateDTO <$> (question ^. answerItemTemplate)
-  , _questionExperts = fromExpertDTO <$> (question ^. experts)
-  , _questionReferences = fromReferenceDTO <$> (question ^. references)
-  }
+fromQuestionDTO (OptionsQuestionDTO' question) =
+  OptionsQuestion'
+    OptionsQuestion
+    { _optionsQuestionUuid = question ^. uuid
+    , _optionsQuestionTitle = question ^. title
+    , _optionsQuestionText = question ^. text
+    , _optionsQuestionRequiredLevel = question ^. requiredLevel
+    , _optionsQuestionTagUuids = question ^. tagUuids
+    , _optionsQuestionExperts = fromExpertDTO <$> (question ^. experts)
+    , _optionsQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _optionsQuestionAnswers = fromAnswerDTO <$> (question ^. answers)
+    }
+fromQuestionDTO (ListQuestionDTO' question) =
+  ListQuestion'
+    ListQuestion
+    { _listQuestionUuid = question ^. uuid
+    , _listQuestionTitle = question ^. title
+    , _listQuestionText = question ^. text
+    , _listQuestionRequiredLevel = question ^. requiredLevel
+    , _listQuestionTagUuids = question ^. tagUuids
+    , _listQuestionExperts = fromExpertDTO <$> (question ^. experts)
+    , _listQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _listQuestionItemTemplateTitle = question ^. itemTemplateTitle
+    , _listQuestionItemTemplateQuestions = fromQuestionDTO <$> (question ^. itemTemplateQuestions)
+    }
+fromQuestionDTO (ValueQuestionDTO' question) =
+  ValueQuestion'
+    ValueQuestion
+    { _valueQuestionUuid = question ^. uuid
+    , _valueQuestionTitle = question ^. title
+    , _valueQuestionText = question ^. text
+    , _valueQuestionRequiredLevel = question ^. requiredLevel
+    , _valueQuestionTagUuids = question ^. tagUuids
+    , _valueQuestionExperts = fromExpertDTO <$> (question ^. experts)
+    , _valueQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _valueQuestionValueType = question ^. valueType
+    }
 
 fromAnswerDTO :: AnswerDTO -> Answer
 fromAnswerDTO answer =
@@ -151,24 +181,6 @@ fromAnswerDTO answer =
   , _answerAdvice = answer ^. advice
   , _answerFollowUps = fromQuestionDTO <$> (answer ^. followUps)
   , _answerMetricMeasures = fromMetricMeasureDTO <$> (answer ^. metricMeasures)
-  }
-
-fromAnswerItemTemplateDTO :: AnswerItemTemplateDTO -> AnswerItemTemplate
-fromAnswerItemTemplateDTO itemTemplate =
-  AnswerItemTemplate
-  { _answerItemTemplateTitle = itemTemplate ^. title
-  , _answerItemTemplateQuestions = fromQuestionDTO <$> itemTemplate ^. questions
-  }
-
-fromAnswerItemTemplatePlainDTO :: AnswerItemTemplatePlainDTO -> AnswerItemTemplatePlain
-fromAnswerItemTemplatePlainDTO itemTemplate =
-  AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = itemTemplate ^. title}
-
-fromAnswerItemTemplatePlainWithUuidsDTO :: AnswerItemTemplatePlainWithUuidsDTO -> AnswerItemTemplatePlainWithUuids
-fromAnswerItemTemplatePlainWithUuidsDTO itemTemplate =
-  AnswerItemTemplatePlainWithUuids
-  { _answerItemTemplatePlainWithUuidsTitle = itemTemplate ^. title
-  , _answerItemTemplatePlainWithUuidsQuestionUuids = itemTemplate ^. questionUuids
   }
 
 fromExpertDTO :: ExpertDTO -> Expert

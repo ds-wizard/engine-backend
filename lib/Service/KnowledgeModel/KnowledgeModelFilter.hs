@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelAccessors
 
 filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
 filterKnowledgeModel [] km = km
@@ -28,25 +29,18 @@ filterQuestions selectedTagUuids qs = catMaybes $ filterQuestion selectedTagUuid
 
 filterQuestion :: [U.UUID] -> Question -> Maybe Question
 filterQuestion selectedTagUuids q =
-  case filter (\qTagUuid -> qTagUuid `elem` selectedTagUuids) (q ^. tagUuids) of
+  case filter (\qTagUuid -> qTagUuid `elem` selectedTagUuids) (getTagUuids q) of
     [] -> Nothing
-    filteredQuestionTagUuids -> Just . applyToChildren $ q & tagUuids .~ filteredQuestionTagUuids
+    filteredQuestionTagUuids -> Just . applyToChildren $ q & qChangeTagUuids .~ filteredQuestionTagUuids
   where
-    applyToChildren = applyToAnswers . applyToAnswerItemTemplate
-    applyToAnswers q =
-      case q ^. answers of
-        Just as -> q & answers .~ (Just $ filterAnswers selectedTagUuids as)
-        Nothing -> q
-    applyToAnswerItemTemplate q =
-      case q ^. answerItemTemplate of
-        Just ait -> q & answerItemTemplate .~ (Just $ filterAnswerItemTemplate selectedTagUuids ait)
-        Nothing -> q
+    applyToChildren (OptionsQuestion' q) =
+      OptionsQuestion' $ q & answers .~ (filterAnswers selectedTagUuids (q ^. answers))
+    applyToChildren (ListQuestion' q) =
+      ListQuestion' $ q & itemTemplateQuestions .~ (filterQuestions selectedTagUuids (q ^. itemTemplateQuestions))
+    applyToChildren q = q
 
 filterAnswers :: [U.UUID] -> [Answer] -> [Answer]
 filterAnswers selectedTagUuids as = filterAnswer selectedTagUuids <$> as
 
 filterAnswer :: [U.UUID] -> Answer -> Answer
 filterAnswer selectedTagUuids a = a & followUps .~ (filterQuestions selectedTagUuids (a ^. followUps))
-
-filterAnswerItemTemplate :: [U.UUID] -> AnswerItemTemplate -> AnswerItemTemplate
-filterAnswerItemTemplate selectedTagUuids ait = ait & questions .~ (filterQuestions selectedTagUuids (ait ^. questions))

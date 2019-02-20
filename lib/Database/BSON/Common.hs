@@ -39,11 +39,14 @@ serializeEventFieldMaybeUUIDList efMaybeUuids =
     ChangedValue maybeUuids -> ChangedValue $ serializeUUIDList <$> maybeUuids
     NothingChanged -> NothingChanged
 
-serializeQuestionType :: QuestionType -> String
-serializeQuestionType mQuestionType = show mQuestionType
+serializeQuestionValueType :: QuestionValueType -> String
+serializeQuestionValueType StringQuestionValueType = "StringValue"
+serializeQuestionValueType NumberQuestionValueType = "NumberValue"
+serializeQuestionValueType DateQuestionValueType = "DateValue"
+serializeQuestionValueType TextQuestionValueType = "TextValue"
 
-serializeMaybeQuestionType :: Maybe QuestionType -> Maybe String
-serializeMaybeQuestionType mQuestionType = show <$> mQuestionType
+serializeMaybeQuestionValueType :: Maybe QuestionValueType -> Maybe String
+serializeMaybeQuestionValueType mQuestionValueType = serializeQuestionValueType <$> mQuestionValueType
 
 deserializeMaybeUUID :: Maybe String -> Maybe UUID
 deserializeMaybeUUID mUuidS = do
@@ -95,41 +98,35 @@ deserializeEventFieldMaybeUUIDList maybeEfMaybeUuidsS =
         NothingChanged -> NothingChanged
     Nothing -> NothingChanged
 
-deserializeQuestionType :: Maybe String -> Maybe QuestionType
-deserializeQuestionType mQuestionTypeS = do
-  questionType <- mQuestionTypeS
-  case questionType of
-    "QuestionTypeOptions" -> Just QuestionTypeOptions
-    "QuestionTypeList" -> Just QuestionTypeList
-    "QuestionTypeString" -> Just QuestionTypeString
-    "QuestionTypeNumber" -> Just QuestionTypeNumber
-    "QuestionTypeDate" -> Just QuestionTypeDate
-    "QuestionTypeText" -> Just QuestionTypeText
+deserializeQuestionValueType :: Maybe String -> Maybe QuestionValueType
+deserializeQuestionValueType mQuestionValueTypeS = do
+  questionValueTypeS <- mQuestionValueTypeS
+  case questionValueTypeS of
+    "StringValue" -> Just StringQuestionValueType
+    "NumberValue" -> Just NumberQuestionValueType
+    "DateValue" -> Just DateQuestionValueType
+    "TextValue" -> Just TextQuestionValueType
     _ -> Nothing
 
-deserializeMaybeQuestionType :: Maybe String -> Maybe (Maybe QuestionType)
-deserializeMaybeQuestionType mQuestionTypeS = do
-  questionType <- mQuestionTypeS
-  case questionType of
-    "QuestionTypeOptions" -> Just . Just $ QuestionTypeOptions
-    "QuestionTypeList" -> Just . Just $ QuestionTypeList
-    "QuestionTypeString" -> Just . Just $ QuestionTypeString
-    "QuestionTypeNumber" -> Just . Just $ QuestionTypeNumber
-    "QuestionTypeDate" -> Just . Just $ QuestionTypeDate
-    "QuestionTypeText" -> Just . Just $ QuestionTypeText
+deserializeMaybeQuestionValueType :: Maybe String -> Maybe (Maybe QuestionValueType)
+deserializeMaybeQuestionValueType mQuestionValueTypeS = do
+  questionValueType <- mQuestionValueTypeS
+  case questionValueType of
+    "StringValue" -> Just . Just $ StringQuestionValueType
+    "NumberValue" -> Just . Just $ NumberQuestionValueType
+    "DateValue" -> Just . Just $ DateQuestionValueType
+    "TextValue" -> Just . Just $ TextQuestionValueType
     _ -> Just Nothing
 
-deserializeEventFieldQuestionType :: Maybe String -> EventField QuestionType
-deserializeEventFieldQuestionType mQuestionTypeS =
-  case mQuestionTypeS of
-    Just questionType ->
-      case questionType of
-        "QuestionTypeOptions" -> ChangedValue QuestionTypeOptions
-        "QuestionTypeList" -> ChangedValue QuestionTypeList
-        "QuestionTypeString" -> ChangedValue QuestionTypeString
-        "QuestionTypeNumber" -> ChangedValue QuestionTypeNumber
-        "QuestionTypeDate" -> ChangedValue QuestionTypeDate
-        "QuestionTypeText" -> ChangedValue QuestionTypeText
+deserializeEventFieldQuestionValueType :: Maybe String -> EventField QuestionValueType
+deserializeEventFieldQuestionValueType mQuestionValueTypeS =
+  case mQuestionValueTypeS of
+    Just questionValueType ->
+      case questionValueType of
+        "StringValue" -> ChangedValue StringQuestionValueType
+        "NumberValue" -> ChangedValue NumberQuestionValueType
+        "DateValue" -> ChangedValue DateQuestionValueType
+        "TextValue" -> ChangedValue TextQuestionValueType
         _ -> NothingChanged
     Nothing -> NothingChanged
 

@@ -119,11 +119,6 @@ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model
 _ERROR_MT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
   "Failed Event (" ++ (U.toString eUuid) ++ "): You can't apply " ++ eventName ++ " to " ++ entityName
 
-_ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT = "Event question type 'list' should have answerItemTemplate filled"
-
-_ERROR_MT_APPLICATOR__YOU_CANT_ADD_QUESTION_TO_NON_EXISTING_AIT =
-  "You can't add question into a non-existing AnswerItemTemplate"
-
 _ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
   "Failed Event (" ++ (U.toString eUuid) ++ "): Try to edit non-existing thing."
 

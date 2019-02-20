@@ -144,6 +144,24 @@ makeFields ''EditQuestionEvent
 
 makeFields ''DeleteQuestionEvent
 
+makeFields ''AddOptionsQuestionEvent
+
+makeFields ''EditOptionsQuestionEvent
+
+makeFields ''DeleteOptionsQuestionEvent
+
+makeFields ''AddListQuestionEvent
+
+makeFields ''EditListQuestionEvent
+
+makeFields ''DeleteListQuestionEvent
+
+makeFields ''AddValueQuestionEvent
+
+makeFields ''EditValueQuestionEvent
+
+makeFields ''DeleteValueQuestionEvent
+
 makeFields ''AddAnswerEvent
 
 makeFields ''EditAnswerEvent
@@ -198,6 +216,12 @@ makeFields ''FilledChapter
 
 makeFields ''FilledQuestion
 
+makeFields ''FilledOptionsQuestion
+
+makeFields ''FilledListQuestion
+
+makeFields ''FilledValueQuestion
+
 makeFields ''FilledAnswer
 
 makeFields ''FilledAnswerItem
@@ -209,13 +233,13 @@ makeFields ''Chapter
 
 makeFields ''Question
 
+makeFields ''OptionsQuestion
+
+makeFields ''ListQuestion
+
+makeFields ''ValueQuestion
+
 makeFields ''Answer
-
-makeFields ''AnswerItemTemplate
-
-makeFields ''AnswerItemTemplatePlain
-
-makeFields ''AnswerItemTemplatePlainWithUuids
 
 makeFields ''Expert
 
@@ -317,6 +341,24 @@ makeFields ''EditQuestionEventDTO
 
 makeFields ''DeleteQuestionEventDTO
 
+makeFields ''AddOptionsQuestionEventDTO
+
+makeFields ''EditOptionsQuestionEventDTO
+
+makeFields ''DeleteOptionsQuestionEventDTO
+
+makeFields ''AddListQuestionEventDTO
+
+makeFields ''EditListQuestionEventDTO
+
+makeFields ''DeleteListQuestionEventDTO
+
+makeFields ''AddValueQuestionEventDTO
+
+makeFields ''EditValueQuestionEventDTO
+
+makeFields ''DeleteValueQuestionEventDTO
+
 makeFields ''AddAnswerEventDTO
 
 makeFields ''EditAnswerEventDTO
@@ -371,6 +413,12 @@ makeFields ''FilledChapterDTO
 
 makeFields ''FilledQuestionDTO
 
+makeFields ''FilledOptionsQuestionDTO
+
+makeFields ''FilledListQuestionDTO
+
+makeFields ''FilledValueQuestionDTO
+
 makeFields ''FilledAnswerDTO
 
 makeFields ''FilledAnswerItemDTO
@@ -387,13 +435,13 @@ makeFields ''ChapterDTO
 
 makeFields ''QuestionDTO
 
+makeFields ''OptionsQuestionDTO
+
+makeFields ''ListQuestionDTO
+
+makeFields ''ValueQuestionDTO
+
 makeFields ''AnswerDTO
-
-makeFields ''AnswerItemTemplateDTO
-
-makeFields ''AnswerItemTemplatePlainDTO
-
-makeFields ''AnswerItemTemplatePlainWithUuidsDTO
 
 makeFields ''ExpertDTO
 

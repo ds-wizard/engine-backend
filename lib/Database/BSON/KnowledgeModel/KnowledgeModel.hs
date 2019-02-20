@@ -60,44 +60,130 @@ instance FromBSON Chapter where
 -- QUESTION ----------------
 -- -------------------------
 instance ToBSON Question where
+  toBSON (OptionsQuestion' event) = toBSON event
+  toBSON (ListQuestion' event) = toBSON event
+  toBSON (ValueQuestion' event) = toBSON event
+
+instance FromBSON Question where
+  fromBSON doc = do
+    questionType <- BSON.lookup "questionType" doc
+    case questionType of
+      "OptionsQuestion" -> OptionsQuestion' <$> (fromBSON doc :: Maybe OptionsQuestion)
+      "ListQuestion" -> ListQuestion' <$> (fromBSON doc :: Maybe ListQuestion)
+      "ValueQuestion" -> ValueQuestion' <$> (fromBSON doc :: Maybe ValueQuestion)
+
+-- ------------------------------------------------
+instance ToBSON OptionsQuestion where
   toBSON model =
-    [ "uuid" BSON.=: serializeUUID (model ^. uuid)
-    , "type" BSON.=: show (model ^. qType)
+    [ "questionType" BSON.=: "OptionsQuestion"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
     , "title" BSON.=: (model ^. title)
     , "text" BSON.=: (model ^. text)
     , "requiredLevel" BSON.=: (model ^. requiredLevel)
     , "tagUuids" BSON.=: serializeUUIDList (model ^. tagUuids)
-    , "answers" BSON.=: (model ^. answers)
-    , "answerItemTemplate" BSON.=: (model ^. answerItemTemplate)
     , "references" BSON.=: (model ^. references)
     , "experts" BSON.=: (model ^. experts)
+    , "answers" BSON.=: (model ^. answers)
     ]
 
-instance FromBSON Question where
+instance FromBSON OptionsQuestion where
   fromBSON doc = do
     qUuidS <- BSON.lookup "uuid" doc
     qUuid <- fromString qUuidS
-    qQType <- deserializeQuestionType $ BSON.lookup "type" doc
     qTitle <- BSON.lookup "title" doc
     qText <- BSON.lookup "text" doc
     qRequiredLevel <- BSON.lookup "requiredLevel" doc
     qTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
-    qAnswers <- BSON.lookup "answers" doc
-    qAnswerItemTemplate <- BSON.lookup "answerItemTemplate" doc
     qReferences <- BSON.lookup "references" doc
     qExperts <- BSON.lookup "experts" doc
+    qAnswers <- BSON.lookup "answers" doc
     return
-      Question
-      { _questionUuid = qUuid
-      , _questionQType = qQType
-      , _questionTitle = qTitle
-      , _questionText = qText
-      , _questionRequiredLevel = qRequiredLevel
-      , _questionTagUuids = qTagUuids
-      , _questionAnswers = qAnswers
-      , _questionAnswerItemTemplate = qAnswerItemTemplate
-      , _questionReferences = qReferences
-      , _questionExperts = qExperts
+      OptionsQuestion
+      { _optionsQuestionUuid = qUuid
+      , _optionsQuestionTitle = qTitle
+      , _optionsQuestionText = qText
+      , _optionsQuestionRequiredLevel = qRequiredLevel
+      , _optionsQuestionTagUuids = qTagUuids
+      , _optionsQuestionReferences = qReferences
+      , _optionsQuestionExperts = qExperts
+      , _optionsQuestionAnswers = qAnswers
+      }
+
+-- ------------------------------------------------
+instance ToBSON ListQuestion where
+  toBSON model =
+    [ "questionType" BSON.=: "ListQuestion"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "title" BSON.=: (model ^. title)
+    , "text" BSON.=: (model ^. text)
+    , "requiredLevel" BSON.=: (model ^. requiredLevel)
+    , "tagUuids" BSON.=: serializeUUIDList (model ^. tagUuids)
+    , "references" BSON.=: (model ^. references)
+    , "experts" BSON.=: (model ^. experts)
+    , "itemTemplateTitle" BSON.=: (model ^. itemTemplateTitle)
+    , "itemTemplateQuestions" BSON.=: (model ^. itemTemplateQuestions)
+    ]
+
+instance FromBSON ListQuestion where
+  fromBSON doc = do
+    qUuidS <- BSON.lookup "uuid" doc
+    qUuid <- fromString qUuidS
+    qTitle <- BSON.lookup "title" doc
+    qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
+    qTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
+    qReferences <- BSON.lookup "references" doc
+    qExperts <- BSON.lookup "experts" doc
+    qItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
+    qItemTemplateQuestions <- BSON.lookup "itemTemplateQuestions" doc
+    return
+      ListQuestion
+      { _listQuestionUuid = qUuid
+      , _listQuestionTitle = qTitle
+      , _listQuestionText = qText
+      , _listQuestionRequiredLevel = qRequiredLevel
+      , _listQuestionTagUuids = qTagUuids
+      , _listQuestionReferences = qReferences
+      , _listQuestionExperts = qExperts
+      , _listQuestionItemTemplateTitle = qItemTemplateTitle
+      , _listQuestionItemTemplateQuestions = qItemTemplateQuestions
+      }
+
+-- ------------------------------------------------
+instance ToBSON ValueQuestion where
+  toBSON model =
+    [ "questionType" BSON.=: "ValueQuestion"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "title" BSON.=: (model ^. title)
+    , "text" BSON.=: (model ^. text)
+    , "requiredLevel" BSON.=: (model ^. requiredLevel)
+    , "tagUuids" BSON.=: serializeUUIDList (model ^. tagUuids)
+    , "references" BSON.=: (model ^. references)
+    , "experts" BSON.=: (model ^. experts)
+    , "valueType" BSON.=: serializeQuestionValueType (model ^. valueType)
+    ]
+
+instance FromBSON ValueQuestion where
+  fromBSON doc = do
+    qUuidS <- BSON.lookup "uuid" doc
+    qUuid <- fromString qUuidS
+    qTitle <- BSON.lookup "title" doc
+    qText <- BSON.lookup "text" doc
+    qRequiredLevel <- BSON.lookup "requiredLevel" doc
+    qTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
+    qReferences <- BSON.lookup "references" doc
+    qExperts <- BSON.lookup "experts" doc
+    qValueType <- deserializeQuestionValueType $ BSON.lookup "valueType" doc
+    return
+      ValueQuestion
+      { _valueQuestionUuid = qUuid
+      , _valueQuestionTitle = qTitle
+      , _valueQuestionText = qText
+      , _valueQuestionRequiredLevel = qRequiredLevel
+      , _valueQuestionTagUuids = qTagUuids
+      , _valueQuestionReferences = qReferences
+      , _valueQuestionExperts = qExperts
+      , _valueQuestionValueType = qValueType
       }
 
 -- -------------------------
@@ -127,39 +213,6 @@ instance FromBSON Answer where
       , _answerAdvice = ansAdvice
       , _answerFollowUps = ansFollowUps
       , _answerMetricMeasures = ansMetricMeasures
-      }
-
--- -------------------------
--- ANSWER ITEM TEMPLATE ----
--- -------------------------
-instance ToBSON AnswerItemTemplate where
-  toBSON model = ["title" BSON.=: model ^. title, "questions" BSON.=: (model ^. questions)]
-
-instance FromBSON AnswerItemTemplate where
-  fromBSON doc = do
-    aitTitle <- BSON.lookup "title" doc
-    aitQuestions <- BSON.lookup "questions" doc
-    return AnswerItemTemplate {_answerItemTemplateTitle = aitTitle, _answerItemTemplateQuestions = aitQuestions}
-
-instance ToBSON AnswerItemTemplatePlain where
-  toBSON model = ["title" BSON.=: model ^. title]
-
-instance FromBSON AnswerItemTemplatePlain where
-  fromBSON doc = do
-    aitTitle <- BSON.lookup "title" doc
-    return AnswerItemTemplatePlain {_answerItemTemplatePlainTitle = aitTitle}
-
-instance ToBSON AnswerItemTemplatePlainWithUuids where
-  toBSON model = ["title" BSON.=: model ^. title, "questionsUuids" BSON.=: serializeUUIDList (model ^. questionUuids)]
-
-instance FromBSON AnswerItemTemplatePlainWithUuids where
-  fromBSON doc = do
-    aitTitle <- BSON.lookup "title" doc
-    aitQuestionUuids <- deserializeMaybeUUIDList $ BSON.lookup "questions" doc
-    return
-      AnswerItemTemplatePlainWithUuids
-      { _answerItemTemplatePlainWithUuidsTitle = aitTitle
-      , _answerItemTemplatePlainWithUuidsQuestionUuids = aitQuestionUuids
       }
 
 -- -------------------------

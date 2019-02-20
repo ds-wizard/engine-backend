@@ -16,7 +16,7 @@ chapter1 =
   , _chapterTitle = "Design of experiment"
   , _chapterText =
       "Before you decide to embark on any new study, it is nowadays good practice to consider all options to keep the data generation part of your study as limited as possible. It is not because we can generate massive amounts of data that we always need to do so. Creating data with public money is bringing with it the responsibility to treat those data well and (if potentially useful) make them available for re-use by others."
-  , _chapterQuestions = [FQ.question1, FQ.question2]
+  , _chapterQuestions = [FQ.question1', FQ.question2']
   }
 
 chapter1WithChangeProperties :: Chapter
@@ -25,7 +25,7 @@ chapter1WithChangeProperties =
   { _chapterUuid = chapter1 ^. uuid
   , _chapterTitle = "EDITED: " ++ (chapter1 ^. title)
   , _chapterText = "EDITED: " ++ (chapter1 ^. text)
-  , _chapterQuestions = [FQ.question2, FQ.question1]
+  , _chapterQuestions = [FQ.question2', FQ.question1']
   }
 
 chapter1WithChangedQuestion2 :: Chapter
@@ -34,7 +34,7 @@ chapter1WithChangedQuestion2 =
   { _chapterUuid = chapter1 ^. uuid
   , _chapterTitle = chapter1 ^. title
   , _chapterText = chapter1 ^. text
-  , _chapterQuestions = [FQ.question1, FQ.question2WithChangeProperties]
+  , _chapterQuestions = [FQ.question1', FQ.question2WithChangeProperties']
   }
 
 chapter1WithoutQuestions :: Chapter
@@ -52,7 +52,7 @@ chapter1WithAddedQuestion3 =
   { _chapterUuid = chapter1 ^. uuid
   , _chapterTitle = chapter1 ^. title
   , _chapterText = chapter1 ^. text
-  , _chapterQuestions = chapter1 ^. questions ++ [FQ.question3Plain]
+  , _chapterQuestions = chapter1 ^. questions ++ [FQ.question3Plain']
   }
 
 chapter2 :: Chapter
@@ -62,7 +62,7 @@ chapter2 =
   , _chapterTitle = "Data design and planning"
   , _chapterText =
       "In the data design and planning phase, we will make sure that we know what data comes when, that we have enough storage space and compute power to deal with it, and that all the responsibilities have been taken care of."
-  , _chapterQuestions = [FQ.question3]
+  , _chapterQuestions = [FQ.question3']
   }
 
 chapter2WithoutQuestions :: Chapter
@@ -80,7 +80,7 @@ chapter2WithQ4Plain =
   { _chapterUuid = chapter2 ^. uuid
   , _chapterTitle = chapter2 ^. title
   , _chapterText = chapter2 ^. text
-  , _chapterQuestions = [FQ.question3, FQ.question4Plain]
+  , _chapterQuestions = [FQ.question3', FQ.question4Plain']
   }
 
 chapter2WithQ4 :: Chapter
@@ -89,7 +89,7 @@ chapter2WithQ4 =
   { _chapterUuid = chapter2 ^. uuid
   , _chapterTitle = chapter2 ^. title
   , _chapterText = chapter2 ^. text
-  , _chapterQuestions = [FQ.question3, FQ.question4]
+  , _chapterQuestions = [FQ.question3', FQ.question4']
   }
 
 chapter3WithoutQuestions :: Chapter

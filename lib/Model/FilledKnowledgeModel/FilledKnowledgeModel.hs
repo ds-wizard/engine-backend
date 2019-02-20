@@ -12,6 +12,7 @@ data FilledKnowledgeModel = FilledKnowledgeModel
   , _filledKnowledgeModelTags :: [Tag]
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data FilledChapter = FilledChapter
   { _filledChapterUuid :: U.UUID
   , _filledChapterTitle :: String
@@ -19,22 +20,51 @@ data FilledChapter = FilledChapter
   , _filledChapterQuestions :: [FilledQuestion]
   } deriving (Show, Eq, Generic)
 
-data FilledQuestion = FilledQuestion
-  { _filledQuestionUuid :: U.UUID
-  , _filledQuestionQType :: QuestionType
-  , _filledQuestionTitle :: String
-  , _filledQuestionText :: Maybe String
-  , _filledQuestionRequiredLevel :: Maybe Int
-  , _filledQuestionTagUuids :: [U.UUID]
-  , _filledQuestionAnswerItemTemplate :: Maybe AnswerItemTemplate
-  , _filledQuestionAnswers :: Maybe [Answer]
-  , _filledQuestionAnswerValue :: Maybe String
-  , _filledQuestionAnswerOption :: Maybe FilledAnswer
-  , _filledQuestionAnswerItems :: Maybe [FilledAnswerItem]
-  , _filledQuestionExperts :: [Expert]
-  , _filledQuestionReferences :: [Reference]
+-- ------------------------------------------------
+data FilledQuestion
+  = FilledOptionsQuestion' FilledOptionsQuestion
+  | FilledListQuestion' FilledListQuestion
+  | FilledValueQuestion' FilledValueQuestion
+  deriving (Show, Eq, Generic)
+
+data FilledOptionsQuestion = FilledOptionsQuestion
+  { _filledOptionsQuestionUuid :: U.UUID
+  , _filledOptionsQuestionTitle :: String
+  , _filledOptionsQuestionText :: Maybe String
+  , _filledOptionsQuestionRequiredLevel :: Maybe Int
+  , _filledOptionsQuestionTagUuids :: [U.UUID]
+  , _filledOptionsQuestionExperts :: [Expert]
+  , _filledOptionsQuestionReferences :: [Reference]
+  , _filledOptionsQuestionAnswers :: [Answer]
+  , _filledOptionsQuestionAnswerOption :: Maybe FilledAnswer
   } deriving (Show, Eq, Generic)
 
+data FilledListQuestion = FilledListQuestion
+  { _filledListQuestionUuid :: U.UUID
+  , _filledListQuestionTitle :: String
+  , _filledListQuestionText :: Maybe String
+  , _filledListQuestionRequiredLevel :: Maybe Int
+  , _filledListQuestionTagUuids :: [U.UUID]
+  , _filledListQuestionExperts :: [Expert]
+  , _filledListQuestionReferences :: [Reference]
+  , _filledListQuestionItemTemplateTitle :: String
+  , _filledListQuestionItemTemplateQuestions :: [Question]
+  , _filledListQuestionItems :: Maybe [FilledAnswerItem]
+  } deriving (Show, Eq, Generic)
+
+data FilledValueQuestion = FilledValueQuestion
+  { _filledValueQuestionUuid :: U.UUID
+  , _filledValueQuestionTitle :: String
+  , _filledValueQuestionText :: Maybe String
+  , _filledValueQuestionRequiredLevel :: Maybe Int
+  , _filledValueQuestionTagUuids :: [U.UUID]
+  , _filledValueQuestionExperts :: [Expert]
+  , _filledValueQuestionReferences :: [Reference]
+  , _filledValueQuestionValueType :: QuestionValueType
+  , _filledValueQuestionAnswerValue :: Maybe String
+  } deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
 data FilledAnswer = FilledAnswer
   { _filledAnswerUuid :: U.UUID
   , _filledAnswerLabel :: String
@@ -43,6 +73,7 @@ data FilledAnswer = FilledAnswer
   , _filledAnswerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data FilledAnswerItem = FilledAnswerItem
   { _filledAnswerItemTitle :: String
   , _filledAnswerItemValue :: Maybe String

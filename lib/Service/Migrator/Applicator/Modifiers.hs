@@ -71,90 +71,111 @@ addQuestion :: Chapter -> Question -> Chapter
 addQuestion ch q = ch & questions .~ (ch ^. questions ++ [q])
 
 deleteQuestion :: Chapter -> U.UUID -> Chapter
-deleteQuestion ch qUuid = ch & questions .~ (filter (\q -> q ^. uuid /= qUuid) (ch ^. questions))
+deleteQuestion ch qUuid = ch & questions .~ (filter (\q -> getQuestionUuid q /= qUuid) (ch ^. questions))
 
 -- -------------------
 -- QUESTIONS----------
 -- -------------------
-createQuestion :: AddQuestionEvent -> Maybe AnswerItemTemplate -> Maybe [Answer] -> Question
-createQuestion e maybeAit maybeAnswers =
-  Question
-  { _questionUuid = e ^. questionUuid
-  , _questionQType = e ^. qType
-  , _questionTitle = e ^. title
-  , _questionText = e ^. text
-  , _questionRequiredLevel = e ^. requiredLevel
-  , _questionTagUuids = e ^. tagUuids
-  , _questionAnswerItemTemplate = maybeAit
-  , _questionAnswers = maybeAnswers
-  , _questionReferences = []
-  , _questionExperts = []
+createQuestion :: AddQuestionEvent -> Question
+createQuestion (AddOptionsQuestionEvent' e) =
+  OptionsQuestion' $
+  OptionsQuestion
+  { _optionsQuestionUuid = e ^. questionUuid
+  , _optionsQuestionTitle = e ^. title
+  , _optionsQuestionText = e ^. text
+  , _optionsQuestionRequiredLevel = e ^. requiredLevel
+  , _optionsQuestionTagUuids = e ^. tagUuids
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
+  }
+createQuestion (AddListQuestionEvent' e) =
+  ListQuestion' $
+  ListQuestion
+  { _listQuestionUuid = e ^. questionUuid
+  , _listQuestionTitle = e ^. title
+  , _listQuestionText = e ^. text
+  , _listQuestionRequiredLevel = e ^. requiredLevel
+  , _listQuestionTagUuids = e ^. tagUuids
+  , _listQuestionReferences = []
+  , _listQuestionExperts = []
+  , _listQuestionItemTemplateTitle = e ^. itemTemplateTitle
+  , _listQuestionItemTemplateQuestions = []
+  }
+createQuestion (AddValueQuestionEvent' e) =
+  ValueQuestion' $
+  ValueQuestion
+  { _valueQuestionUuid = e ^. questionUuid
+  , _valueQuestionTitle = e ^. title
+  , _valueQuestionText = e ^. text
+  , _valueQuestionRequiredLevel = e ^. requiredLevel
+  , _valueQuestionTagUuids = e ^. tagUuids
+  , _valueQuestionReferences = []
+  , _valueQuestionExperts = []
+  , _valueQuestionValueType = e ^. valueType
   }
 
 editQuestion :: EditQuestionEvent -> Question -> Question
-editQuestion e =
-  applyReferenceUuids .
-  applyExpertUuids .
-  applyAnwerUuids . applyAnswerItemTemplate . applyTagUuids . applyRequiredLevel . applyText . applyTitle . applyType
+editQuestion e' q =
+  case e' of
+    (EditOptionsQuestionEvent' e) ->
+      applyAnwerUuids e .
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
+      q
+    (EditListQuestionEvent' e) ->
+      applyItemTemplateQuestions e .
+      applyItemTemplateTitle e .
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
+      q
+    (EditValueQuestionEvent' e) ->
+      applyValueType e .
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
+      q
   where
-    applyType q = applyValue (e ^. qType) q qType
-    applyTitle q = applyValue (e ^. title) q title
-    applyText q = applyValue (e ^. text) q text
-    applyRequiredLevel q = applyValue (e ^. requiredLevel) q requiredLevel
-    applyTagUuids q = applyValue (e ^. tagUuids) q tagUuids
-    applyAnswerItemTemplate q = applyValue (e ^. answerItemTemplatePlainWithUuids) q aitAnswerItemTemplatePlainWithUuids
-    applyAnwerUuids q = applyValue (e ^. answerUuids) q qChangeAnwerUuidsOrder
-    applyExpertUuids q = applyValue (e ^. expertUuids) q qChangeExpertUuidsOrder
-    applyReferenceUuids q = applyValue (e ^. referenceUuids) q qChangeReferenceUuidsOrder
+    applyTitle e q = applyValue (e ^. title) q qChangeTitle
+    applyText e q = applyValue (e ^. text) q qChangeText
+    applyRequiredLevel e q = applyValue (e ^. requiredLevel) q qChangeRequiredLevel
+    applyTagUuids e q = applyValue (e ^. tagUuids) q qChangeTagUuids
+    applyExpertUuids e q = applyValue (e ^. expertUuids) q qChangeExpertUuidsOrder
+    applyReferenceUuids e q = applyValue (e ^. referenceUuids) q qChangeReferenceUuidsOrder
+    applyAnwerUuids e q = applyValue (e ^. answerUuids) q qChangeAnwerUuidsOrder
+    applyItemTemplateTitle e q = applyValue (e ^. itemTemplateTitle) q qChangeItemTemplateTitle
+    applyItemTemplateQuestions e q = applyValue (e ^. itemTemplateQuestionUuids) q qChangeItemTemplateQuestionUuidsOrder
+    applyValueType e q = applyValue (e ^. valueType) q qChangeValueType
 
 -- -------------------
-addAitQuestion :: Question -> Question -> Question
-addAitQuestion q aitQ = q & answerItemTemplate .~ modifiedAit
+addItemTemplateQuestion :: Question -> Question -> Question
+addItemTemplateQuestion q itQ = q & qChangeItemTemplateQuestions .~ modifiedItemTemplateQuestions
   where
-    modifiedAit =
-      case q ^. answerItemTemplate of
-        Just ait ->
-          let mQuestions = (ait ^. questions) ++ [aitQ]
-          in Just $ ait & questions .~ mQuestions
-        Nothing -> Nothing
+    modifiedItemTemplateQuestions = (getItemTemplateQuestions q) ++ [itQ]
 
-deleteAitQuestion :: Question -> U.UUID -> Question
-deleteAitQuestion q aitQUuid = q & answerItemTemplate .~ modifiedAit
+deleteItemTemplateQuestion :: Question -> U.UUID -> Question
+deleteItemTemplateQuestion q itQUuid = q & qChangeItemTemplateQuestions .~ modifiedItemTemplateQuestions
   where
-    modifiedAit =
-      case q ^. answerItemTemplate of
-        Just ait ->
-          let mQuestions = filter (\q -> q ^. uuid /= aitQUuid) (ait ^. questions)
-          in Just $ ait & questions .~ mQuestions
-        Nothing -> Nothing
+    modifiedItemTemplateQuestions = filter (\q -> getQuestionUuid q /= itQUuid) (getItemTemplateQuestions q)
 
 addAnswer :: Question -> Answer -> Question
-addAnswer q ans = q & answers .~ (Just modifiedAnswers)
+addAnswer q ans = q & qChangeAnswers .~ modifiedAnswers
   where
-    modifiedAnswers =
-      case q ^. answers of
-        Just as -> as ++ [ans]
-        Nothing -> [ans]
+    modifiedAnswers = getAnswers q ++ [ans]
 
 deleteAnswer :: Question -> U.UUID -> Question
-deleteAnswer q ansUuid = q & answers .~ modifiedAnswers
+deleteAnswer q ansUuid = q & qChangeAnswers .~ modifiedAnswers
   where
-    modifiedAnswers =
-      case q ^. answers of
-        Just as -> Just (filter (\ans -> ans ^. uuid /= ansUuid) as)
-        Nothing -> Nothing
+    modifiedAnswers = filter (\ans -> ans ^. uuid /= ansUuid) (getAnswers q)
 
 addExpert :: Question -> Expert -> Question
-addExpert q exp = q & experts .~ (q ^. experts ++ [exp])
+addExpert q exp = q & qChangeExperts .~ (getExperts q ++ [exp])
 
 deleteExpert :: Question -> U.UUID -> Question
-deleteExpert q expUuid = q & experts .~ (filter (\exp -> exp ^. uuid /= expUuid) (q ^. experts))
+deleteExpert q expUuid = q & qChangeExperts .~ (filter (\exp -> exp ^. uuid /= expUuid) (getExperts q))
 
 addReference :: Question -> Reference -> Question
-addReference q ref = q & references .~ (q ^. references ++ [ref])
+addReference q ref = q & qChangeReferences .~ (getReferences q ++ [ref])
 
 deleteReference :: Question -> U.UUID -> Question
-deleteReference q refUuid = q & references .~ (filter (\ref -> (getReferenceUuid ref) /= refUuid) (q ^. references))
+deleteReference q refUuid =
+  q & qChangeReferences .~ (filter (\ref -> (getReferenceUuid ref) /= refUuid) (getReferences q))
 
 -- -------------------
 -- ANSWER ------------
@@ -182,7 +203,7 @@ addFuQuestion :: Answer -> Question -> Answer
 addFuQuestion ans q = ans & followUps .~ (ans ^. followUps ++ [q])
 
 deleteFuQuestion :: Answer -> U.UUID -> Answer
-deleteFuQuestion ans qUuid = ans & followUps .~ (filter (\q -> q ^. uuid /= qUuid) (ans ^. followUps))
+deleteFuQuestion ans qUuid = ans & followUps .~ (filter (\q -> getQuestionUuid q /= qUuid) (ans ^. followUps))
 
 -- -------------------
 -- EXPERT ------------

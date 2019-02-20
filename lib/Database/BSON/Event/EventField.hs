@@ -73,68 +73,29 @@ instance FromBSON (EventField (Maybe [String])) where
         return $ ChangedValue efValue
       else return NothingChanged
 
-instance ToBSON (EventField (Maybe AnswerItemTemplate)) where
-  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
+instance ToBSON (EventField QuestionValueType) where
+  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: serializeQuestionValueType value]
   toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
 
-instance FromBSON (EventField (Maybe AnswerItemTemplate)) where
+instance FromBSON (EventField QuestionValueType) where
   fromBSON doc = do
     efChanged <- BSON.lookup "changed" doc
     if efChanged
       then do
-        efValue <- BSON.lookup "value" doc
+        efValue <- deserializeQuestionValueType $ BSON.lookup "value" doc
         return $ ChangedValue efValue
       else return NothingChanged
 
-instance ToBSON (EventField (Maybe AnswerItemTemplatePlain)) where
-  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
+instance ToBSON (EventField (Maybe QuestionValueType)) where
+  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: serializeMaybeQuestionValueType value]
   toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
 
-instance FromBSON (EventField (Maybe AnswerItemTemplatePlain)) where
+instance FromBSON (EventField (Maybe QuestionValueType)) where
   fromBSON doc = do
     efChanged <- BSON.lookup "changed" doc
     if efChanged
       then do
-        efValue <- BSON.lookup "value" doc
-        return $ ChangedValue efValue
-      else return NothingChanged
-
-instance ToBSON (EventField (Maybe AnswerItemTemplatePlainWithUuids)) where
-  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: value]
-  toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
-
-instance FromBSON (EventField (Maybe AnswerItemTemplatePlainWithUuids)) where
-  fromBSON doc = do
-    efChanged <- BSON.lookup "changed" doc
-    if efChanged
-      then do
-        efValue <- BSON.lookup "value" doc
-        return $ ChangedValue efValue
-      else return NothingChanged
-
-instance ToBSON (EventField QuestionType) where
-  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: serializeQuestionType value]
-  toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
-
-instance FromBSON (EventField QuestionType) where
-  fromBSON doc = do
-    efChanged <- BSON.lookup "changed" doc
-    if efChanged
-      then do
-        efValue <- deserializeQuestionType $ BSON.lookup "value" doc
-        return $ ChangedValue efValue
-      else return NothingChanged
-
-instance ToBSON (EventField (Maybe QuestionType)) where
-  toBSON (ChangedValue value) = ["changed" BSON.=: True, "value" BSON.=: serializeMaybeQuestionType value]
-  toBSON NothingChanged = ["changed" BSON.=: BSON.Bool False]
-
-instance FromBSON (EventField (Maybe QuestionType)) where
-  fromBSON doc = do
-    efChanged <- BSON.lookup "changed" doc
-    if efChanged
-      then do
-        efValue <- deserializeMaybeQuestionType $ BSON.lookup "value" doc
+        efValue <- deserializeMaybeQuestionValueType $ BSON.lookup "value" doc
         return $ ChangedValue efValue
       else return NothingChanged
 

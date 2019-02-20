@@ -15,6 +15,7 @@ data FilledKnowledgeModelDTO = FilledKnowledgeModelDTO
   , _filledKnowledgeModelDTOTags :: [TagDTO]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
 data FilledChapterDTO = FilledChapterDTO
   { _filledChapterDTOUuid :: U.UUID
   , _filledChapterDTOTitle :: String
@@ -22,22 +23,51 @@ data FilledChapterDTO = FilledChapterDTO
   , _filledChapterDTOQuestions :: [FilledQuestionDTO]
   } deriving (Show, Eq)
 
-data FilledQuestionDTO = FilledQuestionDTO
-  { _filledQuestionDTOUuid :: U.UUID
-  , _filledQuestionDTOQType :: QuestionType
-  , _filledQuestionDTOTitle :: String
-  , _filledQuestionDTOText :: Maybe String
-  , _filledQuestionDTORequiredLevel :: Maybe Int
-  , _filledQuestionDTOTagUuids :: [U.UUID]
-  , _filledQuestionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
-  , _filledQuestionDTOAnswers :: Maybe [AnswerDTO]
-  , _filledQuestionDTOAnswerValue :: Maybe String
-  , _filledQuestionDTOAnswerOption :: Maybe FilledAnswerDTO
-  , _filledQuestionDTOAnswerItems :: Maybe [FilledAnswerItemDTO]
-  , _filledQuestionDTOExperts :: [ExpertDTO]
-  , _filledQuestionDTOReferences :: [ReferenceDTO]
+-- --------------------------------------------------------------------
+data FilledQuestionDTO
+  = FilledOptionsQuestionDTO' FilledOptionsQuestionDTO
+  | FilledListQuestionDTO' FilledListQuestionDTO
+  | FilledValueQuestionDTO' FilledValueQuestionDTO
+  deriving (Show, Eq)
+
+data FilledOptionsQuestionDTO = FilledOptionsQuestionDTO
+  { _filledOptionsQuestionDTOUuid :: U.UUID
+  , _filledOptionsQuestionDTOTitle :: String
+  , _filledOptionsQuestionDTOText :: Maybe String
+  , _filledOptionsQuestionDTORequiredLevel :: Maybe Int
+  , _filledOptionsQuestionDTOTagUuids :: [U.UUID]
+  , _filledOptionsQuestionDTOExperts :: [ExpertDTO]
+  , _filledOptionsQuestionDTOReferences :: [ReferenceDTO]
+  , _filledOptionsQuestionDTOAnswers :: [AnswerDTO]
+  , _filledOptionsQuestionDTOAnswerOption :: Maybe FilledAnswerDTO
   } deriving (Show, Eq)
 
+data FilledListQuestionDTO = FilledListQuestionDTO
+  { _filledListQuestionDTOUuid :: U.UUID
+  , _filledListQuestionDTOTitle :: String
+  , _filledListQuestionDTOText :: Maybe String
+  , _filledListQuestionDTORequiredLevel :: Maybe Int
+  , _filledListQuestionDTOTagUuids :: [U.UUID]
+  , _filledListQuestionDTOExperts :: [ExpertDTO]
+  , _filledListQuestionDTOReferences :: [ReferenceDTO]
+  , _filledListQuestionDTOItemTemplateTitle :: String
+  , _filledListQuestionDTOItemTemplateQuestions :: [QuestionDTO]
+  , _filledListQuestionDTOItems :: Maybe [FilledAnswerItemDTO]
+  } deriving (Show, Eq)
+
+data FilledValueQuestionDTO = FilledValueQuestionDTO
+  { _filledValueQuestionDTOUuid :: U.UUID
+  , _filledValueQuestionDTOTitle :: String
+  , _filledValueQuestionDTOText :: Maybe String
+  , _filledValueQuestionDTORequiredLevel :: Maybe Int
+  , _filledValueQuestionDTOTagUuids :: [U.UUID]
+  , _filledValueQuestionDTOExperts :: [ExpertDTO]
+  , _filledValueQuestionDTOReferences :: [ReferenceDTO]
+  , _filledValueQuestionDTOValueType :: QuestionValueType
+  , _filledValueQuestionDTOAnswerValue :: Maybe String
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
 data FilledAnswerDTO = FilledAnswerDTO
   { _filledAnswerDTOUuid :: U.UUID
   , _filledAnswerDTOLabel :: String
@@ -52,6 +82,8 @@ data FilledAnswerItemDTO = FilledAnswerItemDTO
   , _filledAnswerItemDTOQuestions :: [FilledQuestionDTO]
   } deriving (Show, Eq)
 
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance ToJSON FilledKnowledgeModelDTO where
   toJSON FilledKnowledgeModelDTO {..} =
     object
@@ -61,6 +93,7 @@ instance ToJSON FilledKnowledgeModelDTO where
       , "tags" .= _filledKnowledgeModelDTOTags
       ]
 
+-- --------------------------------------------------------------------
 instance ToJSON FilledChapterDTO where
   toJSON FilledChapterDTO {..} =
     object
@@ -70,24 +103,59 @@ instance ToJSON FilledChapterDTO where
       , "questions" .= _filledChapterDTOQuestions
       ]
 
+-- --------------------------------------------------------------------
 instance ToJSON FilledQuestionDTO where
-  toJSON FilledQuestionDTO {..} =
+  toJSON (FilledOptionsQuestionDTO' event) = toJSON event
+  toJSON (FilledListQuestionDTO' event) = toJSON event
+  toJSON (FilledValueQuestionDTO' event) = toJSON event
+
+instance ToJSON FilledOptionsQuestionDTO where
+  toJSON FilledOptionsQuestionDTO {..} =
     object
-      [ "uuid" .= _filledQuestionDTOUuid
-      , "type" .= serializeQuestionType _filledQuestionDTOQType
-      , "title" .= _filledQuestionDTOTitle
-      , "text" .= _filledQuestionDTOText
-      , "requiredLevel" .= _filledQuestionDTORequiredLevel
-      , "tagUuids" .= _filledQuestionDTOTagUuids
-      , "answerItemTemplate" .= _filledQuestionDTOAnswerItemTemplate
-      , "answers" .= _filledQuestionDTOAnswers
-      , "answerValue" .= _filledQuestionDTOAnswerValue
-      , "answerOption" .= _filledQuestionDTOAnswerOption
-      , "answerItems" .= _filledQuestionDTOAnswerItems
-      , "references" .= _filledQuestionDTOReferences
-      , "experts" .= _filledQuestionDTOExperts
+      [ "questionType" .= "OptionsQuestion"
+      , "uuid" .= _filledOptionsQuestionDTOUuid
+      , "title" .= _filledOptionsQuestionDTOTitle
+      , "text" .= _filledOptionsQuestionDTOText
+      , "requiredLevel" .= _filledOptionsQuestionDTORequiredLevel
+      , "tagUuids" .= _filledOptionsQuestionDTOTagUuids
+      , "references" .= _filledOptionsQuestionDTOReferences
+      , "experts" .= _filledOptionsQuestionDTOExperts
+      , "answers" .= _filledOptionsQuestionDTOAnswers
+      , "answerOption" .= _filledOptionsQuestionDTOAnswerOption
       ]
 
+instance ToJSON FilledListQuestionDTO where
+  toJSON FilledListQuestionDTO {..} =
+    object
+      [ "questionType" .= "ListQuestion"
+      , "uuid" .= _filledListQuestionDTOUuid
+      , "title" .= _filledListQuestionDTOTitle
+      , "text" .= _filledListQuestionDTOText
+      , "requiredLevel" .= _filledListQuestionDTORequiredLevel
+      , "tagUuids" .= _filledListQuestionDTOTagUuids
+      , "experts" .= _filledListQuestionDTOExperts
+      , "references" .= _filledListQuestionDTOReferences
+      , "itemTemplateTitle" .= _filledListQuestionDTOItemTemplateTitle
+      , "itemTemplateQuestions" .= _filledListQuestionDTOItemTemplateQuestions
+      , "items" .= _filledListQuestionDTOItems
+      ]
+
+instance ToJSON FilledValueQuestionDTO where
+  toJSON FilledValueQuestionDTO {..} =
+    object
+      [ "questionType" .= "ValueQuestion"
+      , "uuid" .= _filledValueQuestionDTOUuid
+      , "title" .= _filledValueQuestionDTOTitle
+      , "text" .= _filledValueQuestionDTOText
+      , "requiredLevel" .= _filledValueQuestionDTORequiredLevel
+      , "tagUuids" .= _filledValueQuestionDTOTagUuids
+      , "references" .= _filledValueQuestionDTOReferences
+      , "experts" .= _filledValueQuestionDTOExperts
+      , "valueType" .= serializeQuestionValueType _filledValueQuestionDTOValueType
+      , "answerValue" .= _filledValueQuestionDTOAnswerValue
+      ]
+
+-- --------------------------------------------------------------------
 instance ToJSON FilledAnswerDTO where
   toJSON FilledAnswerDTO {..} =
     object
@@ -106,6 +174,8 @@ instance ToJSON FilledAnswerItemDTO where
       , "questions" .= _filledAnswerItemDTOQuestions
       ]
 
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance FromJSON FilledKnowledgeModelDTO where
   parseJSON (Object o) = do
     _filledKnowledgeModelDTOUuid <- o .: "uuid"
@@ -115,6 +185,7 @@ instance FromJSON FilledKnowledgeModelDTO where
     return FilledKnowledgeModelDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON FilledChapterDTO where
   parseJSON (Object o) = do
     _filledChapterDTOUuid <- o .: "uuid"
@@ -124,26 +195,63 @@ instance FromJSON FilledChapterDTO where
     return FilledChapterDTO {..}
   parseJSON _ = mzero
 
+-- --------------------------------------------------------------------
 instance FromJSON FilledQuestionDTO where
   parseJSON (Object o) = do
-    _filledQuestionDTOUuid <- o .: "uuid"
-    _filledQuestionDTOTitle <- o .: "title"
-    _filledQuestionDTOText <- o .: "text"
-    _filledQuestionDTORequiredLevel <- o .: "requiredLevel"
-    _filledQuestionDTOTagUuids <- o .: "tagUuids"
-    _filledQuestionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
-    _filledQuestionDTOAnswers <- o .: "answers"
-    _filledQuestionDTOAnswerValue <- o .: "answerValue"
-    _filledQuestionDTOAnswerOption <- o .: "answerOption"
-    _filledQuestionDTOAnswerItems <- o .: "answerItems"
-    _filledQuestionDTOExperts <- o .: "experts"
-    _filledQuestionDTOReferences <- o .: "answers"
-    questionType <- o .: "type"
-    case deserializeQuestionType questionType of
-      (Just _filledQuestionDTOQType) -> return FilledQuestionDTO {..}
-      Nothing -> fail "Unsupported question type"
+    questionType <- o .: "questionType"
+    case questionType of
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (FilledOptionsQuestionDTO' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (FilledListQuestionDTO' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (FilledValueQuestionDTO' event)
+      _ -> fail "One of the questions has unsupported questionType"
   parseJSON _ = mzero
 
+instance FromJSON FilledOptionsQuestionDTO where
+  parseJSON (Object o) = do
+    _filledOptionsQuestionDTOUuid <- o .: "uuid"
+    _filledOptionsQuestionDTOTitle <- o .: "title"
+    _filledOptionsQuestionDTOText <- o .: "text"
+    _filledOptionsQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _filledOptionsQuestionDTOTagUuids <- o .: "tagUuids"
+    _filledOptionsQuestionDTOExperts <- o .: "experts"
+    _filledOptionsQuestionDTOReferences <- o .: "references"
+    _filledOptionsQuestionDTOAnswers <- o .: "answers"
+    _filledOptionsQuestionDTOAnswerOption <- o .: "answerOption"
+    return FilledOptionsQuestionDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON FilledListQuestionDTO where
+  parseJSON (Object o) = do
+    _filledListQuestionDTOUuid <- o .: "uuid"
+    _filledListQuestionDTOTitle <- o .: "title"
+    _filledListQuestionDTOText <- o .: "text"
+    _filledListQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _filledListQuestionDTOTagUuids <- o .: "tagUuids"
+    _filledListQuestionDTOExperts <- o .: "experts"
+    _filledListQuestionDTOReferences <- o .: "references"
+    _filledListQuestionDTOItemTemplateTitle <- o .: "itemTemplateTitle"
+    _filledListQuestionDTOItemTemplateQuestions <- o .: "itemTemplateQuestions"
+    _filledListQuestionDTOItems <- o .: "items"
+    return FilledListQuestionDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON FilledValueQuestionDTO where
+  parseJSON (Object o) = do
+    _filledValueQuestionDTOUuid <- o .: "uuid"
+    _filledValueQuestionDTOTitle <- o .: "title"
+    _filledValueQuestionDTOText <- o .: "text"
+    _filledValueQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _filledValueQuestionDTOTagUuids <- o .: "tagUuids"
+    _filledValueQuestionDTOExperts <- o .: "experts"
+    _filledValueQuestionDTOReferences <- o .: "references"
+    _filledValueQuestionDTOAnswerValue <- o .: "answerValue"
+    valueType <- o .: "valueType"
+    case deserializeQuestionValueType valueType of
+      (Just _filledValueQuestionDTOValueType) -> return FilledValueQuestionDTO {..}
+      Nothing -> fail "Unsupported question value type"
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
 instance FromJSON FilledAnswerDTO where
   parseJSON (Object o) = do
     _filledAnswerDTOUuid <- o .: "uuid"

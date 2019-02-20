@@ -4,15 +4,6 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-data QuestionType
-  = QuestionTypeOptions
-  | QuestionTypeList
-  | QuestionTypeString
-  | QuestionTypeNumber
-  | QuestionTypeDate
-  | QuestionTypeText
-  deriving (Show, Eq, Generic)
-
 data KnowledgeModel = KnowledgeModel
   { _knowledgeModelUuid :: U.UUID
   , _knowledgeModelName :: String
@@ -20,6 +11,7 @@ data KnowledgeModel = KnowledgeModel
   , _knowledgeModelTags :: [Tag]
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data Chapter = Chapter
   { _chapterUuid :: U.UUID
   , _chapterTitle :: String
@@ -27,19 +19,55 @@ data Chapter = Chapter
   , _chapterQuestions :: [Question]
   } deriving (Show, Eq, Generic)
 
-data Question = Question
-  { _questionUuid :: U.UUID
-  , _questionQType :: QuestionType
-  , _questionTitle :: String
-  , _questionText :: Maybe String
-  , _questionRequiredLevel :: Maybe Int
-  , _questionTagUuids :: [U.UUID]
-  , _questionAnswerItemTemplate :: Maybe AnswerItemTemplate
-  , _questionAnswers :: Maybe [Answer]
-  , _questionExperts :: [Expert]
-  , _questionReferences :: [Reference]
+-- ------------------------------------------------
+data QuestionValueType
+  = StringQuestionValueType
+  | NumberQuestionValueType
+  | DateQuestionValueType
+  | TextQuestionValueType
+  deriving (Show, Eq, Generic)
+
+data Question
+  = OptionsQuestion' OptionsQuestion
+  | ListQuestion' ListQuestion
+  | ValueQuestion' ValueQuestion
+  deriving (Show, Eq, Generic)
+
+data OptionsQuestion = OptionsQuestion
+  { _optionsQuestionUuid :: U.UUID
+  , _optionsQuestionTitle :: String
+  , _optionsQuestionText :: Maybe String
+  , _optionsQuestionRequiredLevel :: Maybe Int
+  , _optionsQuestionTagUuids :: [U.UUID]
+  , _optionsQuestionExperts :: [Expert]
+  , _optionsQuestionReferences :: [Reference]
+  , _optionsQuestionAnswers :: [Answer]
   } deriving (Show, Eq, Generic)
 
+data ListQuestion = ListQuestion
+  { _listQuestionUuid :: U.UUID
+  , _listQuestionTitle :: String
+  , _listQuestionText :: Maybe String
+  , _listQuestionRequiredLevel :: Maybe Int
+  , _listQuestionTagUuids :: [U.UUID]
+  , _listQuestionExperts :: [Expert]
+  , _listQuestionReferences :: [Reference]
+  , _listQuestionItemTemplateTitle :: String
+  , _listQuestionItemTemplateQuestions :: [Question]
+  } deriving (Show, Eq, Generic)
+
+data ValueQuestion = ValueQuestion
+  { _valueQuestionUuid :: U.UUID
+  , _valueQuestionTitle :: String
+  , _valueQuestionText :: Maybe String
+  , _valueQuestionRequiredLevel :: Maybe Int
+  , _valueQuestionTagUuids :: [U.UUID]
+  , _valueQuestionExperts :: [Expert]
+  , _valueQuestionReferences :: [Reference]
+  , _valueQuestionValueType :: QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
 data Answer = Answer
   { _answerUuid :: U.UUID
   , _answerLabel :: String
@@ -48,26 +76,14 @@ data Answer = Answer
   , _answerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 
-data AnswerItemTemplate = AnswerItemTemplate
-  { _answerItemTemplateTitle :: String
-  , _answerItemTemplateQuestions :: [Question]
-  } deriving (Show, Eq, Generic)
-
-data AnswerItemTemplatePlain = AnswerItemTemplatePlain
-  { _answerItemTemplatePlainTitle :: String
-  } deriving (Show, Eq, Generic)
-
-data AnswerItemTemplatePlainWithUuids = AnswerItemTemplatePlainWithUuids
-  { _answerItemTemplatePlainWithUuidsTitle :: String
-  , _answerItemTemplatePlainWithUuidsQuestionUuids :: [U.UUID]
-  } deriving (Show, Eq, Generic)
-
+-- ------------------------------------------------
 data Expert = Expert
   { _expertUuid :: U.UUID
   , _expertName :: String
   , _expertEmail :: String
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data Reference
   = ResourcePageReference' ResourcePageReference
   | URLReference' URLReference
@@ -91,6 +107,7 @@ data CrossReference = CrossReference
   , _crossReferenceDescription :: String
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data Metric = Metric
   { _metricUuid :: U.UUID
   , _metricTitle :: String
@@ -114,6 +131,7 @@ data MetricMeasure = MetricMeasure
   , _metricMeasureWeight :: Double
   } deriving (Show, Eq, Generic)
 
+-- ------------------------------------------------
 data Tag = Tag
   { _tagUuid :: U.UUID
   , _tagName :: String

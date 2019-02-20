@@ -33,8 +33,8 @@ q3_answerNo =
   , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
   }
 
-q4_ait1_q6_answerNo :: Answer
-q4_ait1_q6_answerNo =
+q4_it1_q6_answerNo :: Answer
+q4_it1_q6_answerNo =
   Answer
   { _answerUuid = fromJust $ U.fromString "a093c2c3-123c-42ee-9667-13af14b6249e"
   , _answerLabel = "No"
@@ -71,7 +71,7 @@ q2_answerYes =
   , _answerAdvice =
       Just
         "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-  , _answerFollowUps = [q2_aYes_fuQuestion1]
+  , _answerFollowUps = [q2_aYes_fuQuestion1']
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }
 
@@ -101,7 +101,7 @@ q2_aYes_fuq1_answerYes =
   { _answerUuid = fromJust $ U.fromString "4d164317-d900-460c-8582-8c80e6d66dcd"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = [q2_aYes_fuq1_aYes_fuQuestion2]
+  , _answerFollowUps = [q2_aYes_fuq1_aYes_fuQuestion2']
   , _answerMetricMeasures = []
   }
 
@@ -115,13 +115,13 @@ q2_aYes_fuq1_aYes_fuq2_answerYes =
   , _answerMetricMeasures = []
   }
 
-q4_ait1_q6_answerYes :: Answer
-q4_ait1_q6_answerYes =
+q4_it1_q6_answerYes :: Answer
+q4_it1_q6_answerYes =
   Answer
   { _answerUuid = fromJust $ U.fromString "16f20d73-b335-47d8-8d35-157e8c3cd009"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = [q4_ait1_q6_aYes_followUpQuestion4]
+  , _answerFollowUps = [q4_it1_q6_aYes_followUpQuestion4']
   , _answerMetricMeasures = []
   }
 
@@ -138,152 +138,151 @@ q2_answerMaybe =
 -- -----------------------------------------------------------------
 -- FOLLOW-UP QUESTIONS
 -- -----------------------------------------------------------------
-q2_aYes_fuQuestion1 :: Question
+q2_aYes_fuQuestion1' :: Question
+q2_aYes_fuQuestion1' = OptionsQuestion' q2_aYes_fuQuestion1
+
+q2_aYes_fuQuestion1 :: OptionsQuestion
 q2_aYes_fuQuestion1 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "First Follow-Up Question"
-  , _questionText = Just "Maybe there will be some description"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = [FT.tagDataScience ^. uuid]
-  , _questionAnswers = Just [q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  OptionsQuestion
+  { _optionsQuestionUuid = fromJust $ U.fromString "f9b380eb-bc18-4445-a9bf-14d9a1512d3f"
+  , _optionsQuestionTitle = "First Follow-Up Question"
+  , _optionsQuestionText = Just "Maybe there will be some description"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = [FT.tagDataScience ^. uuid]
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = [q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
   }
 
-q2_aYes_fuQuestion1Plain :: Question
+q2_aYes_fuQuestion1Plain' :: Question
+q2_aYes_fuQuestion1Plain' = OptionsQuestion' q2_aYes_fuQuestion1Plain
+
+q2_aYes_fuQuestion1Plain :: OptionsQuestion
 q2_aYes_fuQuestion1Plain =
-  Question
-  { _questionUuid = q2_aYes_fuQuestion1 ^. uuid
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Fourth Question"
-  , _questionText = Just "Just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Just []
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  OptionsQuestion
+  { _optionsQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
+  , _optionsQuestionTitle = "Fourth Question"
+  , _optionsQuestionText = Just "Just follow"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
   }
 
 -- -----------------------------------------------------------------------------
-q2_aYes_fuq1_aYes_fuQuestion2 :: Question
+q2_aYes_fuq1_aYes_fuQuestion2' :: Question
+q2_aYes_fuq1_aYes_fuQuestion2' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2
+
+q2_aYes_fuq1_aYes_fuQuestion2 :: OptionsQuestion
 q2_aYes_fuq1_aYes_fuQuestion2 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Second Follow-Up Question"
-  , _questionText = Just "Again just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Just [q2_aYes_fuq1_aYes_fuq2_answerNo, q2_aYes_fuq1_aYes_fuq2_answerYes]
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  OptionsQuestion
+  { _optionsQuestionUuid = fromJust $ U.fromString "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
+  , _optionsQuestionTitle = "Second Follow-Up Question"
+  , _optionsQuestionText = Just "Again just follow"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = [q2_aYes_fuq1_aYes_fuq2_answerNo, q2_aYes_fuq1_aYes_fuq2_answerYes]
   }
 
-q2_aYes_fuq1_aYes_fuQuestion2Changed :: Question
+q2_aYes_fuq1_aYes_fuQuestion2Changed' :: Question
+q2_aYes_fuq1_aYes_fuQuestion2Changed' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2Changed
+
+q2_aYes_fuq1_aYes_fuQuestion2Changed :: OptionsQuestion
 q2_aYes_fuq1_aYes_fuQuestion2Changed =
-  Question
-  { _questionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "EDITED: Second Follow-Up Question"
-  , _questionText = Just "EDITED: Again just follow"
-  , _questionRequiredLevel = Just 1
-  , _questionTagUuids = []
-  , _questionAnswers = Just [q2_aYes_fuq1_aYes_fuq2_answerYes, q2_aYes_fuq1_aYes_fuq2_answerNo]
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  OptionsQuestion
+  { _optionsQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
+  , _optionsQuestionTitle = "EDITED: Second Follow-Up Question"
+  , _optionsQuestionText = Just "EDITED: Again just follow"
+  , _optionsQuestionRequiredLevel = Just 1
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = [q2_aYes_fuq1_aYes_fuq2_answerYes, q2_aYes_fuq1_aYes_fuq2_answerNo]
   }
 
 -- -----------------------------------------------------------------------------
-q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 :: Question
+q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3' :: Question
+q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3' = OptionsQuestion' q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3
+
+q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 :: OptionsQuestion
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Third Follow-Up Question"
-  , _questionText = Just "Again and again just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Just []
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+  OptionsQuestion
+  { _optionsQuestionUuid = fromJust $ U.fromString "70b6a446-bd35-4d5e-8995-78a94a69da83"
+  , _optionsQuestionTitle = "Third Follow-Up Question"
+  , _optionsQuestionText = Just "Again and again just follow"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
   }
 
 -- -----------------------------------------------------------------------------
-q4_ait1_q6_aYes_followUpQuestion4 :: Question
-q4_ait1_q6_aYes_followUpQuestion4 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
-  , _questionQType = QuestionTypeList
-  , _questionTitle = "Fourth Follow-Up Question"
-  , _questionText = Just "Again and again just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate = Just q4_ait1_q6_aYes_fuq4_ait
-  , _questionReferences = []
-  , _questionExperts = []
+q4_it1_q6_aYes_followUpQuestion4' :: Question
+q4_it1_q6_aYes_followUpQuestion4' = ListQuestion' q4_it1_q6_aYes_followUpQuestion4
+
+q4_it1_q6_aYes_followUpQuestion4 :: ListQuestion
+q4_it1_q6_aYes_followUpQuestion4 =
+  ListQuestion
+  { _listQuestionUuid = fromJust $ U.fromString "cd98f76a-a430-4bd6-ba63-eb4c3c5c8c7e"
+  , _listQuestionTitle = "Fourth Follow-Up Question"
+  , _listQuestionText = Just "Again and again just follow"
+  , _listQuestionRequiredLevel = Just 2
+  , _listQuestionTagUuids = []
+  , _listQuestionReferences = []
+  , _listQuestionExperts = []
+  , _listQuestionItemTemplateTitle = "fup 4 template title"
+  , _listQuestionItemTemplateQuestions = [q4_it1_q6_aYes_fuq4_it_question1', q4_it1_q6_aYes_fuq4_it_question2']
   }
 
-q4_ait1_q6_aYes_fuq4_ait :: AnswerItemTemplate
-q4_ait1_q6_aYes_fuq4_ait =
-  AnswerItemTemplate
-  { _answerItemTemplateTitle = "fup 4 template title"
-  , _answerItemTemplateQuestions = [q4_ait1_q6_aYes_fuq4_ait_question1, q4_ait1_q6_aYes_fuq4_ait_question2]
+q4_it1_q6_aYes_followUpQuestion4Changed' :: Question
+q4_it1_q6_aYes_followUpQuestion4Changed' = ListQuestion' q4_it1_q6_aYes_followUpQuestion4Changed
+
+q4_it1_q6_aYes_followUpQuestion4Changed :: ListQuestion
+q4_it1_q6_aYes_followUpQuestion4Changed =
+  ListQuestion
+  { _listQuestionUuid = q4_it1_q6_aYes_followUpQuestion4 ^. uuid
+  , _listQuestionTitle = "EDITED: Third Follow-Up Question"
+  , _listQuestionText = Just "EDITED: Again and again just follow"
+  , _listQuestionRequiredLevel = Just 1
+  , _listQuestionTagUuids = []
+  , _listQuestionReferences = []
+  , _listQuestionExperts = []
+  , _listQuestionItemTemplateTitle = "EDITED: fup 4 template title"
+  , _listQuestionItemTemplateQuestions = [q4_it1_q6_aYes_fuq4_it_question2', q4_it1_q6_aYes_fuq4_it_question1']
   }
 
-q4_ait1_q6_aYes_followUpQuestion4Changed :: Question
-q4_ait1_q6_aYes_followUpQuestion4Changed =
-  Question
-  { _questionUuid = q4_ait1_q6_aYes_followUpQuestion4 ^. uuid
-  , _questionQType = QuestionTypeList
-  , _questionTitle = "EDITED: Third Follow-Up Question"
-  , _questionText = Just "EDITED: Again and again just follow"
-  , _questionRequiredLevel = Just 1
-  , _questionTagUuids = []
-  , _questionAnswers = Nothing
-  , _questionAnswerItemTemplate =
-      Just
-        AnswerItemTemplate
-        { _answerItemTemplateTitle = "EDITED: fup 4 template title"
-        , _answerItemTemplateQuestions = [q4_ait1_q6_aYes_fuq4_ait_question2, q4_ait1_q6_aYes_fuq4_ait_question1]
-        }
-  , _questionReferences = []
-  , _questionExperts = []
+q4_it1_q6_aYes_fuq4_it_question1' :: Question
+q4_it1_q6_aYes_fuq4_it_question1' = OptionsQuestion' q4_it1_q6_aYes_fuq4_it_question1
+
+q4_it1_q6_aYes_fuq4_it_question1 :: OptionsQuestion
+q4_it1_q6_aYes_fuq4_it_question1 =
+  OptionsQuestion
+  { _optionsQuestionUuid = fromJust $ U.fromString "e5a3e1b2-077a-405f-b35c-3bffded63140"
+  , _optionsQuestionTitle = "Sub question 1 of Follow-Up Question 4"
+  , _optionsQuestionText = Just "Again and again just follow"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
   }
 
-q4_ait1_q6_aYes_fuq4_ait_question1 :: Question
-q4_ait1_q6_aYes_fuq4_ait_question1 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "e5a3e1b2-077a-405f-b35c-3bffded63140"
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Sub question 1 of Follow-Up Question 4"
-  , _questionText = Just "Again and again just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Just []
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
-  }
+q4_it1_q6_aYes_fuq4_it_question2' :: Question
+q4_it1_q6_aYes_fuq4_it_question2' = OptionsQuestion' q4_it1_q6_aYes_fuq4_it_question2
 
-q4_ait1_q6_aYes_fuq4_ait_question2 :: Question
-q4_ait1_q6_aYes_fuq4_ait_question2 =
-  Question
-  { _questionUuid = fromJust $ U.fromString "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
-  , _questionQType = QuestionTypeOptions
-  , _questionTitle = "Sub question 2 of Follow-Up Question 4"
-  , _questionText = Just "Again and again just follow"
-  , _questionRequiredLevel = Just 2
-  , _questionTagUuids = []
-  , _questionAnswers = Just []
-  , _questionAnswerItemTemplate = Nothing
-  , _questionReferences = []
-  , _questionExperts = []
+q4_it1_q6_aYes_fuq4_it_question2 :: OptionsQuestion
+q4_it1_q6_aYes_fuq4_it_question2 =
+  OptionsQuestion
+  { _optionsQuestionUuid = fromJust $ U.fromString "7f2e3fe5-b8b6-4b5a-812d-c5c1c704b3d9"
+  , _optionsQuestionTitle = "Sub question 2 of Follow-Up Question 4"
+  , _optionsQuestionText = Just "Again and again just follow"
+  , _optionsQuestionRequiredLevel = Just 2
+  , _optionsQuestionTagUuids = []
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
   }
