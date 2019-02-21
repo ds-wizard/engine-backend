@@ -73,8 +73,8 @@ elixirCzPackage2Dto =
     , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
     , AddExpertEvent' a_km1_ch1_q2_eAlbert
     , AddExpertEvent' a_km1_ch1_q2_eNikola
-    , AddReferenceEvent' a_km1_ch1_q2_rCh1
-    , AddReferenceEvent' a_km1_ch1_q2_rCh2
+    , AddReferenceEvent' a_km1_ch1_q2_rCh1'
+    , AddReferenceEvent' a_km1_ch1_q2_rCh2'
     , AddChapterEvent' a_km1_ch2
     , AddQuestionEvent' a_km1_ch2_q3'
     , AddAnswerEvent' a_km1_ch2_q3_aNo2
@@ -91,6 +91,6 @@ elixirCzPackage2Dto =
     , AddQuestionEvent' a_km1_ch2_q4_it1_q6_fuq4_q2'
     , AddExpertEvent' a_km1_ch2_q6_eAlbert
     , AddExpertEvent' a_km1_ch2_q6_eNikola
-    , AddReferenceEvent' a_km1_ch2_q6_rCh1
-    , AddReferenceEvent' a_km1_ch2_q6_rCh2
+    , AddReferenceEvent' a_km1_ch2_q6_rCh1'
+    , AddReferenceEvent' a_km1_ch2_q6_rCh2'
     ]

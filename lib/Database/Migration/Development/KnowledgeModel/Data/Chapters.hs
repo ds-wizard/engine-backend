@@ -1,4 +1,15 @@
-module Database.Migration.Development.KnowledgeModel.Data.Chapters where
+module Database.Migration.Development.KnowledgeModel.Data.Chapters
+  ( chapter1
+  , chapter1WithChangeProperties
+  , chapter1WithChangedQuestion2
+  , chapter1WithoutQuestions
+  , chapter1WithAddedQuestion3
+  , chapter2
+  , chapter2WithoutQuestions
+  , chapter2WithQ4Plain
+  , chapter2WithQ4
+  , chapter3WithoutQuestions
+  ) where
 
 import Control.Lens
 import Data.Maybe

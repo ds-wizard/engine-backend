@@ -13,7 +13,7 @@ import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 
 applyValue (ChangedValue val) ch setter = ch & setter .~ val
 applyValue NothingChanged ch setter = ch
@@ -158,8 +158,8 @@ convertToOptionsQuestion q' =
       , _optionsQuestionText = q ^. text
       , _optionsQuestionRequiredLevel = q ^. requiredLevel
       , _optionsQuestionTagUuids = q ^. tagUuids
-      , _optionsQuestionReferences = []
-      , _optionsQuestionExperts = []
+      , _optionsQuestionReferences = q ^. references
+      , _optionsQuestionExperts = q ^. experts
       , _optionsQuestionAnswers = []
       }
 
@@ -178,8 +178,8 @@ convertToListQuestion q' =
       , _listQuestionText = q ^. text
       , _listQuestionRequiredLevel = q ^. requiredLevel
       , _listQuestionTagUuids = q ^. tagUuids
-      , _listQuestionReferences = []
-      , _listQuestionExperts = []
+      , _listQuestionReferences = q ^. references
+      , _listQuestionExperts = q ^. experts
       , _listQuestionItemTemplateTitle = ""
       , _listQuestionItemTemplateQuestions = []
       }
@@ -199,8 +199,8 @@ convertToValueQuestion q' =
       , _valueQuestionText = q ^. text
       , _valueQuestionRequiredLevel = q ^. requiredLevel
       , _valueQuestionTagUuids = q ^. tagUuids
-      , _valueQuestionReferences = []
-      , _valueQuestionExperts = []
+      , _valueQuestionReferences = q ^. references
+      , _valueQuestionExperts = q ^. experts
       , _valueQuestionValueType = StringQuestionValueType
       }
 
@@ -344,7 +344,7 @@ convertToCrossReference ref' =
       {_crossReferenceUuid = ref ^. uuid, _crossReferenceTargetUuid = U.nil, _crossReferenceDescription = ""}
 
 -- -------------------
--- TAG ------------
+-- TAG ---------------
 -- -------------------
 createTag :: AddTagEvent -> Tag
 createTag e =

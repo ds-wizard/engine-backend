@@ -34,7 +34,8 @@ import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
-import Specs.Service.Migrator.ApplicatorSpec
+import Specs.Service.Migrator.Applicator.ApplicatorSpec
+import Specs.Service.Migrator.Applicator.ModifiersSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
@@ -86,7 +87,9 @@ main =
              describe "DataManagementPlan" $ dataManagementPlanSpec
              describe "KnowledgeModel" $ knowledgeModelFilterSpec
              describe "Migrator" $ do
-               applicatorSpec
+               describe "Applicator" $ do
+                 applicatorSpec
+                 modifiersSpec
                migratorSpec
                sanitizatorSpec
              describe "Organization" $ organizationValidationSpec

@@ -14,6 +14,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Model.Migrator.MigratorState
 import Util.List
 import Util.Uuid
@@ -83,7 +84,8 @@ instance Sanitizator EditQuestionEvent where
               NothingChanged -> return . EditListQuestionEvent' $ event
               ChangedValue itqUuids -> callback itqUuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]
-          childUuidsFromKM km = getQuestionUuid <$> getAllItQuestionsForParentQuestionUuid km (event ^. questionUuid)
+          childUuidsFromKM km =
+            getQuestionUuid <$> getAllItemTemplateQuestionsForQuestionUuid km (event ^. questionUuid)
           isInChildUuids :: KnowledgeModel -> U.UUID -> Bool
           isInChildUuids km uuid = isJust $ find (== uuid) (childUuidsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]

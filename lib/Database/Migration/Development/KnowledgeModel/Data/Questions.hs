@@ -31,6 +31,39 @@ question1 =
   , _valueQuestionValueType = StringQuestionValueType
   }
 
+question1WithChangeProperties' :: Question
+question1WithChangeProperties' = ValueQuestion' question1WithChangeProperties
+
+question1WithChangeProperties :: ValueQuestion
+question1WithChangeProperties =
+  ValueQuestion
+  { _valueQuestionUuid = question1 ^. uuid
+  , _valueQuestionTitle = "EDITED: " ++ question1 ^. title
+  , _valueQuestionText = question1 ^. text
+  , _valueQuestionRequiredLevel = question1 ^. requiredLevel
+  , _valueQuestionTagUuids = question1 ^. tagUuids
+  , _valueQuestionReferences = question1 ^. references
+  , _valueQuestionExperts = question1 ^. experts
+  , _valueQuestionValueType = question1 ^. valueType
+  }
+
+question1WithNewType' :: Question
+question1WithNewType' = ListQuestion' question1WithNewType
+
+question1WithNewType :: ListQuestion
+question1WithNewType =
+  ListQuestion
+  { _listQuestionUuid = question1 ^. uuid
+  , _listQuestionTitle = "EDITED: " ++ question1 ^. title
+  , _listQuestionText = question1 ^. text
+  , _listQuestionRequiredLevel = question1 ^. requiredLevel
+  , _listQuestionTagUuids = question1 ^. tagUuids
+  , _listQuestionReferences = question1 ^. references
+  , _listQuestionExperts = question1 ^. experts
+  , _listQuestionItemTemplateTitle = "Some Item Template Title"
+  , _listQuestionItemTemplateQuestions = []
+  }
+
 -- -----------------------------------
 question2' :: Question
 question2' = OptionsQuestion' question2
@@ -63,6 +96,38 @@ question2WithChangeProperties =
   , _optionsQuestionReferences = [FR.referenceCh2', FR.referenceCh1']
   , _optionsQuestionExperts = [FE.expertNikola, FE.expertAlbert]
   , _optionsQuestionAnswers = [FA.q2_answerYes, FA.q2_answerNo]
+  }
+
+question2WithNewType' :: Question
+question2WithNewType' = ValueQuestion' question2WithNewType
+
+question2WithNewType :: ValueQuestion
+question2WithNewType =
+  ValueQuestion
+  { _valueQuestionUuid = question2 ^. uuid
+  , _valueQuestionTitle = "EDITED: Second Question"
+  , _valueQuestionText = question2 ^. text
+  , _valueQuestionRequiredLevel = question2 ^. requiredLevel
+  , _valueQuestionTagUuids = question2 ^. tagUuids
+  , _valueQuestionReferences = question2 ^. references
+  , _valueQuestionExperts = question2 ^. experts
+  , _valueQuestionValueType = DateQuestionValueType
+  }
+
+question2Plain' :: Question
+question2Plain' = OptionsQuestion' question2Plain
+
+question2Plain :: OptionsQuestion
+question2Plain =
+  OptionsQuestion
+  { _optionsQuestionUuid = question2 ^. uuid
+  , _optionsQuestionTitle = question2 ^. title
+  , _optionsQuestionText = question2 ^. text
+  , _optionsQuestionRequiredLevel = question2 ^. requiredLevel
+  , _optionsQuestionTagUuids = question2 ^. tagUuids
+  , _optionsQuestionReferences = []
+  , _optionsQuestionExperts = []
+  , _optionsQuestionAnswers = []
   }
 
 question3' :: Question
@@ -129,6 +194,22 @@ question4WithChangeProperties =
   , _listQuestionExperts = question4 ^. experts
   , _listQuestionItemTemplateTitle = "EDITED: Template Title"
   , _listQuestionItemTemplateQuestions = [q4_it1_question6', q4_it1_question5']
+  }
+
+question4WithNewType' :: Question
+question4WithNewType' = OptionsQuestion' question4WithNewType
+
+question4WithNewType :: OptionsQuestion
+question4WithNewType =
+  OptionsQuestion
+  { _optionsQuestionUuid = question4 ^. uuid
+  , _optionsQuestionTitle = "EDITED: Third Question"
+  , _optionsQuestionText = question4 ^. text
+  , _optionsQuestionRequiredLevel = question4 ^. requiredLevel
+  , _optionsQuestionTagUuids = question4 ^. tagUuids
+  , _optionsQuestionReferences = question4 ^. references
+  , _optionsQuestionExperts = question4 ^. experts
+  , _optionsQuestionAnswers = []
   }
 
 question4Plain' :: Question

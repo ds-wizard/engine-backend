@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 
 filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
 filterKnowledgeModel [] km = km

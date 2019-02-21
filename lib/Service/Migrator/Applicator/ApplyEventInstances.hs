@@ -14,7 +14,7 @@ import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Service.Migrator.Applicator.ApplyEvent
 import Service.Migrator.Applicator.Errors
 import Service.Migrator.Applicator.Modifiers

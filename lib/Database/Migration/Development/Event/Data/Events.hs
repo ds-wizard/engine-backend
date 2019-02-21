@@ -21,7 +21,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.Event.Tag.TagEvent
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 
 a_km1 :: AddKnowledgeModelEvent
 a_km1 =
@@ -39,7 +39,7 @@ e_km1 =
   , _editKnowledgeModelEventPath = []
   , _editKnowledgeModelEventKmUuid = km1 ^. uuid
   , _editKnowledgeModelEventName = ChangedValue $ km1WithChangeProperties ^. name
-  , _editKnowledgeModelEventChapterUuids = ChangedValue $ getChapterUuids km1WithChangeProperties
+  , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1WithChangeProperties ^.. chapters . traverse . uuid
   , _editKnowledgeModelEventTagUuids = ChangedValue $ km1WithChangeProperties ^.. tags . traverse . uuid
   }
 
@@ -87,7 +87,7 @@ e_km1_ch1 =
   , _editChapterEventChapterUuid = chapter1 ^. uuid
   , _editChapterEventTitle = ChangedValue $ chapter1WithChangeProperties ^. title
   , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuids chapter1WithChangeProperties
+  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1WithChangeProperties ^. questions
   }
 
 e_km1_ch1_2 :: EditChapterEvent
@@ -99,7 +99,7 @@ e_km1_ch1_2 =
   , _editChapterEventChapterUuid = chapter1 ^. uuid
   , _editChapterEventTitle = ChangedValue $ "TWICE: " ++ chapter1WithChangeProperties ^. title
   , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuids chapter1WithChangeProperties
+  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1WithChangeProperties ^. questions
   }
 
 d_km1_ch1 :: DeleteChapterEvent
@@ -205,25 +205,47 @@ a_km1_ch2_q4 =
   , _addListQuestionEventItemTemplateTitle = question4 ^. itemTemplateTitle
   }
 
-e_km1_ch1_q1_title' :: EditQuestionEvent
-e_km1_ch1_q1_title' = EditValueQuestionEvent' e_km1_ch1_q1_title
+e_km1_ch1_q1' :: EditQuestionEvent
+e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
-e_km1_ch1_q1_title :: EditValueQuestionEvent
-e_km1_ch1_q1_title =
+e_km1_ch1_q1 :: EditValueQuestionEvent
+e_km1_ch1_q1 =
   EditValueQuestionEvent
   { _editValueQuestionEventUuid = fromJust $ U.fromString "de86f82b-aaaf-482e-97c7-c7e93d834cd9"
   , _editValueQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editValueQuestionEventQuestionUuid = question1 ^. uuid
-  , _editValueQuestionEventTitle = ChangedValue $ "EDITED: " ++ question2WithChangeProperties ^. title
+  , _editValueQuestionEventQuestionUuid = question1WithChangeProperties ^. uuid
+  , _editValueQuestionEventTitle = ChangedValue $ question1WithChangeProperties ^. title
   , _editValueQuestionEventText = NothingChanged
   , _editValueQuestionEventRequiredLevel = NothingChanged
   , _editValueQuestionEventTagUuids = NothingChanged
   , _editValueQuestionEventExpertUuids = NothingChanged
   , _editValueQuestionEventReferenceUuids = NothingChanged
   , _editValueQuestionEventValueType = NothingChanged
+  }
+
+e_km1_ch1_q1_type' :: EditQuestionEvent
+e_km1_ch1_q1_type' = EditListQuestionEvent' e_km1_ch1_q1_type
+
+e_km1_ch1_q1_type :: EditListQuestionEvent
+e_km1_ch1_q1_type =
+  EditListQuestionEvent
+  { _editListQuestionEventUuid = fromJust $ U.fromString "e59475d7-5566-4f88-b961-2749ccd8070f"
+  , _editListQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _editListQuestionEventQuestionUuid = question1WithNewType ^. uuid
+  , _editListQuestionEventTitle = ChangedValue $ question1WithNewType ^. title
+  , _editListQuestionEventText = NothingChanged
+  , _editListQuestionEventRequiredLevel = NothingChanged
+  , _editListQuestionEventTagUuids = NothingChanged
+  , _editListQuestionEventExpertUuids = NothingChanged
+  , _editListQuestionEventReferenceUuids = NothingChanged
+  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question1WithNewType ^. itemTemplateTitle
+  , _editListQuestionEventItemTemplateQuestionUuids = NothingChanged
   }
 
 e_km1_ch1_q2' :: EditQuestionEvent
@@ -268,6 +290,27 @@ e_km1_ch1_q2_second_edit =
   , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question2WithChangeProperties
   }
 
+e_km1_ch1_q2_type' :: EditQuestionEvent
+e_km1_ch1_q2_type' = EditValueQuestionEvent' e_km1_ch1_q2_type
+
+e_km1_ch1_q2_type :: EditValueQuestionEvent
+e_km1_ch1_q2_type =
+  EditValueQuestionEvent
+  { _editValueQuestionEventUuid = fromJust $ U.fromString "f6766fae-cfc0-462e-9816-982abd2b009e"
+  , _editValueQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _editValueQuestionEventQuestionUuid = question2 ^. uuid
+  , _editValueQuestionEventTitle = ChangedValue $ question2WithNewType ^. title
+  , _editValueQuestionEventText = NothingChanged
+  , _editValueQuestionEventRequiredLevel = NothingChanged
+  , _editValueQuestionEventTagUuids = NothingChanged
+  , _editValueQuestionEventExpertUuids = NothingChanged
+  , _editValueQuestionEventReferenceUuids = NothingChanged
+  , _editValueQuestionEventValueType = ChangedValue $ question2WithNewType ^. valueType
+  }
+
 e_km1_ch2_q4' :: EditQuestionEvent
 e_km1_ch2_q4' = EditListQuestionEvent' e_km1_ch2_q4
 
@@ -289,6 +332,27 @@ e_km1_ch2_q4 =
   , _editListQuestionEventItemTemplateTitle = ChangedValue $ question4WithChangeProperties ^. itemTemplateTitle
   , _editListQuestionEventItemTemplateQuestionUuids =
       ChangedValue $ getQuestionUuid <$> (question4WithChangeProperties ^. itemTemplateQuestions)
+  }
+
+e_km1_ch2_q4_type' :: EditQuestionEvent
+e_km1_ch2_q4_type' = EditOptionsQuestionEvent' e_km1_ch2_q4_type
+
+e_km1_ch2_q4_type :: EditOptionsQuestionEvent
+e_km1_ch2_q4_type =
+  EditOptionsQuestionEvent
+  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
+  , _editOptionsQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _editOptionsQuestionEventQuestionUuid = question4 ^. uuid
+  , _editOptionsQuestionEventTitle = ChangedValue $ question4WithNewType ^. title
+  , _editOptionsQuestionEventText = NothingChanged
+  , _editOptionsQuestionEventRequiredLevel = NothingChanged
+  , _editOptionsQuestionEventTagUuids = NothingChanged
+  , _editOptionsQuestionEventExpertUuids = NothingChanged
+  , _editOptionsQuestionEventReferenceUuids = NothingChanged
+  , _editOptionsQuestionEventAnswerUuids = NothingChanged
   }
 
 d_km1_ch1_q1' :: DeleteQuestionEvent
@@ -548,7 +612,7 @@ e_km1_ch1_q2_aYes1 =
   , _editAnswerEventAnswerUuid = q2_answerYes ^. uuid
   , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
   , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
-  , _editAnswerEventFollowUpUuids = ChangedValue $ getFollowUpUuids q2_answerYesChanged
+  , _editAnswerEventFollowUpUuids = ChangedValue $ getQuestionUuid <$> (q2_answerYesChanged ^. followUps)
   , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYesChanged ^. metricMeasures
   }
 
@@ -564,7 +628,7 @@ e_km1_ch1_q2_aYes1_2 =
   , _editAnswerEventAnswerUuid = q2_answerYes ^. uuid
   , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
   , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
-  , _editAnswerEventFollowUpUuids = ChangedValue $ getFollowUpUuids q2_answerYes
+  , _editAnswerEventFollowUpUuids = ChangedValue $ getQuestionUuid <$> (q2_answerYes ^. followUps)
   , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYes ^. metricMeasures
   }
 
@@ -1080,9 +1144,11 @@ d_km1_ch1_q2_eNikola =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
-a_km1_ch1_q2_rCh1 :: AddReferenceEvent
+a_km1_ch1_q2_rCh1' :: AddReferenceEvent
+a_km1_ch1_q2_rCh1' = AddResourcePageReferenceEvent' a_km1_ch1_q2_rCh1
+
+a_km1_ch1_q2_rCh1 :: AddResourcePageReferenceEvent
 a_km1_ch1_q2_rCh1 =
-  AddResourcePageReferenceEvent' $
   AddResourcePageReferenceEvent
   { _addResourcePageReferenceEventUuid = fromJust $ U.fromString "1177d72f-b7d8-466d-ad33-d5f82d0f192a"
   , _addResourcePageReferenceEventPath =
@@ -1094,9 +1160,11 @@ a_km1_ch1_q2_rCh1 =
   , _addResourcePageReferenceEventShortUuid = referenceCh1 ^. shortUuid
   }
 
-a_km1_ch2_q6_rCh1 :: AddReferenceEvent
+a_km1_ch2_q6_rCh1' :: AddReferenceEvent
+a_km1_ch2_q6_rCh1' = AddResourcePageReferenceEvent' a_km1_ch2_q6_rCh1
+
+a_km1_ch2_q6_rCh1 :: AddResourcePageReferenceEvent
 a_km1_ch2_q6_rCh1 =
-  AddResourcePageReferenceEvent' $
   AddResourcePageReferenceEvent
   { _addResourcePageReferenceEventUuid = fromJust $ U.fromString "a3f6ee9a-803f-4911-9566-734a6358913a"
   , _addResourcePageReferenceEventPath =
@@ -1109,9 +1177,11 @@ a_km1_ch2_q6_rCh1 =
   , _addResourcePageReferenceEventShortUuid = referenceCh1 ^. shortUuid
   }
 
-a_km1_ch1_q2_rCh2 :: AddReferenceEvent
+a_km1_ch1_q2_rCh2' :: AddReferenceEvent
+a_km1_ch1_q2_rCh2' = AddURLReferenceEvent' a_km1_ch1_q2_rCh2
+
+a_km1_ch1_q2_rCh2 :: AddURLReferenceEvent
 a_km1_ch1_q2_rCh2 =
-  AddURLReferenceEvent' $
   AddURLReferenceEvent
   { _addURLReferenceEventUuid = fromJust $ U.fromString "4814f50f-8838-4b53-8b18-c0f8c568220e"
   , _addURLReferenceEventPath =
@@ -1124,9 +1194,11 @@ a_km1_ch1_q2_rCh2 =
   , _addURLReferenceEventLabel = referenceCh2 ^. label
   }
 
-a_km1_ch2_q6_rCh2 :: AddReferenceEvent
+a_km1_ch2_q6_rCh2' :: AddReferenceEvent
+a_km1_ch2_q6_rCh2' = AddURLReferenceEvent' a_km1_ch2_q6_rCh2
+
+a_km1_ch2_q6_rCh2 :: AddURLReferenceEvent
 a_km1_ch2_q6_rCh2 =
-  AddURLReferenceEvent' $
   AddURLReferenceEvent
   { _addURLReferenceEventUuid = fromJust $ U.fromString "a4ae3400-dd3c-41ab-b796-4bf9d0bdafe7"
   , _addURLReferenceEventPath =
@@ -1140,9 +1212,11 @@ a_km1_ch2_q6_rCh2 =
   , _addURLReferenceEventLabel = referenceCh2 ^. label
   }
 
-a_km1_ch1_q2_rCh3 :: AddReferenceEvent
+a_km1_ch1_q2_rCh3' :: AddReferenceEvent
+a_km1_ch1_q2_rCh3' = AddCrossReferenceEvent' a_km1_ch1_q2_rCh3
+
+a_km1_ch1_q2_rCh3 :: AddCrossReferenceEvent
 a_km1_ch1_q2_rCh3 =
-  AddCrossReferenceEvent' $
   AddCrossReferenceEvent
   { _addCrossReferenceEventUuid = fromJust $ U.fromString "45d8ec86-34bc-4e8f-b42a-48a567a77d8b"
   , _addCrossReferenceEventPath =
@@ -1155,9 +1229,11 @@ a_km1_ch1_q2_rCh3 =
   , _addCrossReferenceEventDescription = referenceCh3 ^. description
   }
 
-e_km1_ch1_q2_rCh1 :: EditReferenceEvent
+e_km1_ch1_q2_rCh1' :: EditReferenceEvent
+e_km1_ch1_q2_rCh1' = EditResourcePageReferenceEvent' e_km1_ch1_q2_rCh1
+
+e_km1_ch1_q2_rCh1 :: EditResourcePageReferenceEvent
 e_km1_ch1_q2_rCh1 =
-  EditResourcePageReferenceEvent' $
   EditResourcePageReferenceEvent
   { _editResourcePageReferenceEventUuid = fromJust $ U.fromString "08cd9afc-d416-48ab-8669-17e87ceb15dc"
   , _editResourcePageReferenceEventPath =
@@ -1169,9 +1245,95 @@ e_km1_ch1_q2_rCh1 =
   , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh1Changed ^. shortUuid
   }
 
-d_km1_ch1_q2_rCh2 :: DeleteReferenceEvent
+e_km1_ch1_q2_rCh1_type' :: EditReferenceEvent
+e_km1_ch1_q2_rCh1_type' = EditURLReferenceEvent' e_km1_ch1_q2_rCh1_type
+
+e_km1_ch1_q2_rCh1_type :: EditURLReferenceEvent
+e_km1_ch1_q2_rCh1_type =
+  EditURLReferenceEvent
+  { _editURLReferenceEventUuid = fromJust $ U.fromString "4e1058cf-9044-42a0-901c-816bd6847b17"
+  , _editURLReferenceEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      ]
+  , _editURLReferenceEventReferenceUuid = referenceCh1WithNewType ^. uuid
+  , _editURLReferenceEventUrl = ChangedValue $ referenceCh1WithNewType ^. url
+  , _editURLReferenceEventLabel = ChangedValue $ referenceCh1WithNewType ^. label
+  }
+
+e_km1_ch1_q2_rCh2' :: EditReferenceEvent
+e_km1_ch1_q2_rCh2' = EditURLReferenceEvent' e_km1_ch1_q2_rCh2
+
+e_km1_ch1_q2_rCh2 :: EditURLReferenceEvent
+e_km1_ch1_q2_rCh2 =
+  EditURLReferenceEvent
+  { _editURLReferenceEventUuid = fromJust $ U.fromString "f96588ae-1657-406e-9810-1d00f5e24a96"
+  , _editURLReferenceEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      ]
+  , _editURLReferenceEventReferenceUuid = referenceCh2Changed ^. uuid
+  , _editURLReferenceEventUrl = ChangedValue $ referenceCh2Changed ^. url
+  , _editURLReferenceEventLabel = ChangedValue $ referenceCh2Changed ^. label
+  }
+
+e_km1_ch1_q2_rCh2_type' :: EditReferenceEvent
+e_km1_ch1_q2_rCh2_type' = EditCrossReferenceEvent' e_km1_ch1_q2_rCh2_type
+
+e_km1_ch1_q2_rCh2_type :: EditCrossReferenceEvent
+e_km1_ch1_q2_rCh2_type =
+  EditCrossReferenceEvent
+  { _editCrossReferenceEventUuid = fromJust $ U.fromString "e0a19e9d-fb36-47b3-bc23-f752f7403937"
+  , _editCrossReferenceEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      ]
+  , _editCrossReferenceEventReferenceUuid = referenceCh2WithNewType ^. uuid
+  , _editCrossReferenceEventTargetUuid = ChangedValue $ referenceCh2WithNewType ^. targetUuid
+  , _editCrossReferenceEventDescription = ChangedValue $ referenceCh2WithNewType ^. description
+  }
+
+e_km1_ch1_q2_rCh3' :: EditReferenceEvent
+e_km1_ch1_q2_rCh3' = EditCrossReferenceEvent' e_km1_ch1_q2_rCh3
+
+e_km1_ch1_q2_rCh3 :: EditCrossReferenceEvent
+e_km1_ch1_q2_rCh3 =
+  EditCrossReferenceEvent
+  { _editCrossReferenceEventUuid = fromJust $ U.fromString "d3a7b6a6-9e87-4308-a103-88245537c26e"
+  , _editCrossReferenceEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      ]
+  , _editCrossReferenceEventReferenceUuid = referenceCh3Changed ^. uuid
+  , _editCrossReferenceEventTargetUuid = ChangedValue $ referenceCh3Changed ^. targetUuid
+  , _editCrossReferenceEventDescription = ChangedValue $ referenceCh3Changed ^. description
+  }
+
+e_km1_ch1_q2_rCh3_type' :: EditReferenceEvent
+e_km1_ch1_q2_rCh3_type' = EditResourcePageReferenceEvent' e_km1_ch1_q2_rCh3_type
+
+e_km1_ch1_q2_rCh3_type :: EditResourcePageReferenceEvent
+e_km1_ch1_q2_rCh3_type =
+  EditResourcePageReferenceEvent
+  { _editResourcePageReferenceEventUuid = fromJust $ U.fromString "f8528e3b-4904-4ad8-87b8-809d7e40c087"
+  , _editResourcePageReferenceEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      ]
+  , _editResourcePageReferenceEventReferenceUuid = referenceCh3WithNewType ^. uuid
+  , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh3WithNewType ^. shortUuid
+  }
+
+d_km1_ch1_q2_rCh2' :: DeleteReferenceEvent
+d_km1_ch1_q2_rCh2' = DeleteURLReferenceEvent' d_km1_ch1_q2_rCh2
+
+d_km1_ch1_q2_rCh2 :: DeleteURLReferenceEvent
 d_km1_ch1_q2_rCh2 =
-  DeleteURLReferenceEvent' $
   DeleteURLReferenceEvent
   { _deleteURLReferenceEventUuid = fromJust $ U.fromString "3cc15f31-4801-404f-ba48-6b91f77d1abe"
   , _deleteURLReferenceEventPath =

@@ -41,8 +41,8 @@ eventAPI appContext = do
         , AddAnswerEvent' a_km1_ch1_q2_aYesFu2
         , AddExpertEvent' a_km1_ch1_q2_eAlbert
         , AddExpertEvent' a_km1_ch1_q2_eNikola
-        , AddReferenceEvent' a_km1_ch1_q2_rCh1
-        , AddReferenceEvent' a_km1_ch1_q2_rCh2
+        , AddReferenceEvent' a_km1_ch1_q2_rCh1'
+        , AddReferenceEvent' a_km1_ch1_q2_rCh2'
         , AddChapterEvent' a_km1_ch2
         , AddQuestionEvent' a_km1_ch2_q3'
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
