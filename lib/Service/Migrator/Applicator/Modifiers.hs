@@ -118,20 +118,20 @@ createQuestion (AddValueQuestionEvent' e) =
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e' q =
   case e' of
-    (EditOptionsQuestionEvent' e) ->
+    (EditOptionsQuestionEvent' e) -> applyToOptionsQuestion e . convertToOptionsQuestion $ q
+    (EditListQuestionEvent' e) -> applyToListQuestion e . convertToListQuestion $ q
+    (EditValueQuestionEvent' e) -> applyToValueQuestion e . convertToValueQuestion $ q
+  where
+    applyToOptionsQuestion e =
       applyAnwerUuids e .
-      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
-      q
-    (EditListQuestionEvent' e) ->
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
+    applyToListQuestion e =
       applyItemTemplateQuestions e .
       applyItemTemplateTitle e .
-      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
-      q
-    (EditValueQuestionEvent' e) ->
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
+    applyToValueQuestion e =
       applyValueType e .
-      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e $
-      q
-  where
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
     applyTitle e q = applyValue (e ^. title) q qChangeTitle
     applyText e q = applyValue (e ^. text) q qChangeText
     applyRequiredLevel e q = applyValue (e ^. requiredLevel) q qChangeRequiredLevel
@@ -142,6 +142,67 @@ editQuestion e' q =
     applyItemTemplateTitle e q = applyValue (e ^. itemTemplateTitle) q qChangeItemTemplateTitle
     applyItemTemplateQuestions e q = applyValue (e ^. itemTemplateQuestionUuids) q qChangeItemTemplateQuestionUuidsOrder
     applyValueType e q = applyValue (e ^. valueType) q qChangeValueType
+
+convertToOptionsQuestion :: Question -> Question
+convertToOptionsQuestion (OptionsQuestion' q) = OptionsQuestion' q
+convertToOptionsQuestion q' =
+  case q' of
+    (ListQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> createQuestion q
+  where
+    createQuestion q =
+      OptionsQuestion' $
+      OptionsQuestion
+      { _optionsQuestionUuid = q ^. uuid
+      , _optionsQuestionTitle = q ^. title
+      , _optionsQuestionText = q ^. text
+      , _optionsQuestionRequiredLevel = q ^. requiredLevel
+      , _optionsQuestionTagUuids = q ^. tagUuids
+      , _optionsQuestionReferences = []
+      , _optionsQuestionExperts = []
+      , _optionsQuestionAnswers = []
+      }
+
+convertToListQuestion :: Question -> Question
+convertToListQuestion (ListQuestion' q) = ListQuestion' q
+convertToListQuestion q' =
+  case q' of
+    (OptionsQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> createQuestion q
+  where
+    createQuestion q =
+      ListQuestion' $
+      ListQuestion
+      { _listQuestionUuid = q ^. uuid
+      , _listQuestionTitle = q ^. title
+      , _listQuestionText = q ^. text
+      , _listQuestionRequiredLevel = q ^. requiredLevel
+      , _listQuestionTagUuids = q ^. tagUuids
+      , _listQuestionReferences = []
+      , _listQuestionExperts = []
+      , _listQuestionItemTemplateTitle = ""
+      , _listQuestionItemTemplateQuestions = []
+      }
+
+convertToValueQuestion :: Question -> Question
+convertToValueQuestion (ValueQuestion' q) = ValueQuestion' q
+convertToValueQuestion q' =
+  case q' of
+    (OptionsQuestion' q) -> createQuestion q
+    (ListQuestion' q) -> createQuestion q
+  where
+    createQuestion q =
+      ValueQuestion' $
+      ValueQuestion
+      { _valueQuestionUuid = q ^. uuid
+      , _valueQuestionTitle = q ^. title
+      , _valueQuestionText = q ^. text
+      , _valueQuestionRequiredLevel = q ^. requiredLevel
+      , _valueQuestionTagUuids = q ^. tagUuids
+      , _valueQuestionReferences = []
+      , _valueQuestionExperts = []
+      , _valueQuestionValueType = StringQuestionValueType
+      }
 
 -- -------------------
 addItemTemplateQuestion :: Question -> Question -> Question
@@ -236,20 +297,51 @@ createReference (AddCrossReferenceEvent' e) =
   , _crossReferenceDescription = e ^. description
   }
 
-editReference :: EditReferenceEvent -> Reference -> Reference
-editReference (EditResourcePageReferenceEvent' e) (ResourcePageReference' ref) =
-  ResourcePageReference' . applyShortUuid $ ref
+editReference e' ref =
+  case e' of
+    (EditResourcePageReferenceEvent' e) ->
+      ResourcePageReference' . applyToResourcePageReference e . convertToResourcePageReference $ ref
+    (EditURLReferenceEvent' e) -> URLReference' . applyToURLReference e . convertToURLReference $ ref
+    (EditCrossReferenceEvent' e) -> CrossReference' . applyToCrossReference e . convertToCrossReference $ ref
   where
-    applyShortUuid ref = applyValue (e ^. shortUuid) ref shortUuid
-editReference (EditURLReferenceEvent' e) (URLReference' ref) = URLReference' . applyAnchor . applyUrl $ ref
+    applyToResourcePageReference e = applyShortUuid e
+    applyToURLReference e = applyAnchor e . applyUrl e
+    applyToCrossReference e = applyDescription e . applyTarget e
+    applyShortUuid e ref = applyValue (e ^. shortUuid) ref shortUuid
+    applyUrl e ref = applyValue (e ^. url) ref url
+    applyAnchor e ref = applyValue (e ^. label) ref label
+    applyTarget e ref = applyValue (e ^. targetUuid) ref targetUuid
+    applyDescription e ref = applyValue (e ^. description) ref description
+
+convertToResourcePageReference :: Reference -> ResourcePageReference
+convertToResourcePageReference (ResourcePageReference' ref) = ref
+convertToResourcePageReference ref' =
+  case ref' of
+    (URLReference' ref) -> createQuestion ref
+    (CrossReference' ref) -> createQuestion ref
   where
-    applyUrl ref = applyValue (e ^. url) ref url
-    applyAnchor ref = applyValue (e ^. label) ref label
-editReference (EditCrossReferenceEvent' e) (CrossReference' ref) =
-  CrossReference' . applyDescription . applyTarget $ ref
+    createQuestion ref =
+      ResourcePageReference {_resourcePageReferenceUuid = ref ^. uuid, _resourcePageReferenceShortUuid = ""}
+
+convertToURLReference :: Reference -> URLReference
+convertToURLReference (URLReference' ref) = ref
+convertToURLReference ref' =
+  case ref' of
+    (ResourcePageReference' ref) -> createQuestion ref
+    (CrossReference' ref) -> createQuestion ref
   where
-    applyTarget ref = applyValue (e ^. targetUuid) ref targetUuid
-    applyDescription ref = applyValue (e ^. description) ref description
+    createQuestion ref = URLReference {_uRLReferenceUuid = ref ^. uuid, _uRLReferenceUrl = "", _uRLReferenceLabel = ""}
+
+convertToCrossReference :: Reference -> CrossReference
+convertToCrossReference (CrossReference' ref) = ref
+convertToCrossReference ref' =
+  case ref' of
+    (ResourcePageReference' ref) -> createQuestion ref
+    (URLReference' ref) -> createQuestion ref
+  where
+    createQuestion ref =
+      CrossReference
+      {_crossReferenceUuid = ref ^. uuid, _crossReferenceTargetUuid = U.nil, _crossReferenceDescription = ""}
 
 -- -------------------
 -- TAG ------------
