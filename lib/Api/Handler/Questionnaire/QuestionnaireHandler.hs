@@ -9,8 +9,9 @@ import Web.Scotty.Trans (addHeader, json, param, raw, status)
 import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
 import Api.Resource.Questionnaire.QuestionnaireChangeJM ()
-import Api.Resource.Questionnaire.QuestionnaireCreateDTO ()
-import Api.Resource.Questionnaire.QuestionnaireDTO ()
+import Api.Resource.Questionnaire.QuestionnaireCreateJM ()
+import Api.Resource.Questionnaire.QuestionnaireDetailJM ()
+import Api.Resource.Questionnaire.QuestionnaireJM ()
 import Api.Resource.Report.ReportJM ()
 import Localization
 import Model.DataManagementPlan.DataManagementPlan

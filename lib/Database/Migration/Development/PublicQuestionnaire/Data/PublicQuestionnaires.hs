@@ -14,6 +14,7 @@ publicQuestionnaire =
   , _questionnaireLevel = 2
   , _questionnairePrivate = False
   , _questionnairePackageId = "elixir.nl:core-nl:2.0.0"
+  , _questionnaireSelectedTagUuids = []
   , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies = []
   , _questionnaireOwnerUuid = Nothing

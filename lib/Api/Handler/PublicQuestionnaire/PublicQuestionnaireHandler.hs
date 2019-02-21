@@ -4,7 +4,7 @@ import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
-import Api.Resource.Questionnaire.QuestionnaireDTO ()
+import Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Service.PublicQuestionnaire.PublicQuestionnaireService
 
 getQuestionnairePublicA :: Endpoint

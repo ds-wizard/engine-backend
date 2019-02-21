@@ -21,6 +21,7 @@ questionnaire1 =
   , _questionnaireLevel = 2
   , _questionnairePrivate = True
   , _questionnairePackageId = "elixir.nl:core-nl:2.0.0"
+  , _questionnaireSelectedTagUuids = []
   , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies =
       [ fQ1
@@ -50,6 +51,7 @@ questionnaire1Changed =
   , _questionnaireLevel = 3
   , _questionnairePrivate = questionnaire1 ^. private
   , _questionnairePackageId = questionnaire1 ^. packageId
+  , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
   , _questionnaireKnowledgeModel = questionnaire1 ^. knowledgeModel
   , _questionnaireReplies = [fQ1, fQ2]
   , _questionnaireOwnerUuid = questionnaire1 ^. ownerUuid
