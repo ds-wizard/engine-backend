@@ -5,8 +5,9 @@ import Control.Lens (makeFields)
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.BookReference.BookReferenceDTO
 import Api.Resource.Branch.BranchChangeDTO
+import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
-import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -315,9 +316,11 @@ makeFields ''BookReferenceDTO
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
 
+makeFields ''BranchCreateDTO
+
 makeFields ''BranchDTO
 
-makeFields ''BranchWithStateDTO
+makeFields ''BranchDetailDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO

@@ -12,7 +12,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Branch.BranchChangeDTO
+import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
@@ -232,10 +232,10 @@ migratorAPI appContext = do
           runInContextIO PKG.runMigration appContext
           let branchUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
           let branch =
-                BranchChangeDTO
-                { _branchChangeDTOName = "Amsterdam KM"
-                , _branchChangeDTOKmId = "amsterdam-km"
-                , _branchChangeDTOParentPackageId = Nothing
+                BranchCreateDTO
+                { _branchCreateDTOName = "Amsterdam KM"
+                , _branchCreateDTOKmId = "amsterdam-km"
+                , _branchCreateDTOParentPackageId = Nothing
                 }
           runInContextIO
             (createBranchWithParams branchUuid timestamp (fromJust $ appContext ^. currentUser) branch)

@@ -1,6 +1,7 @@
 module Api.Resource.Common where
 
 import Api.Resource.Event.EventFieldDTO
+import Model.Branch.BranchState
 import Model.KnowledgeModel.KnowledgeModel
 
 serializeQuestionValueType :: QuestionValueType -> String
@@ -24,3 +25,18 @@ deserializeEventFieldQuestionValueType (ChangedValueDTO "NumberValue") = Changed
 deserializeEventFieldQuestionValueType (ChangedValueDTO "DateValue") = ChangedValueDTO DateQuestionValueType
 deserializeEventFieldQuestionValueType (ChangedValueDTO "TextValue") = ChangedValueDTO TextQuestionValueType
 deserializeEventFieldQuestionValueType _ = NothingChangedDTO
+
+serializeBranchState :: BranchState -> String
+serializeBranchState BSDefault = "Default"
+serializeBranchState BSEdited = "Edited"
+serializeBranchState BSOutdated = "Outdated"
+serializeBranchState BSMigrating = "Migrating"
+serializeBranchState BSMigrated = "Migrated"
+
+deserializeBranchState :: String -> Maybe BranchState
+deserializeBranchState "Default" = Just BSDefault
+deserializeBranchState "Edited" = Just BSEdited
+deserializeBranchState "Outdated" = Just BSOutdated
+deserializeBranchState "Migrating" = Just BSMigrating
+deserializeBranchState "Migrated" = Just BSMigrated
+deserializeBranchState _ = Nothing

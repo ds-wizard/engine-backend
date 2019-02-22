@@ -31,11 +31,18 @@ recompileKnowledgeModel branchUuid =
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM (Either AppError KnowledgeModelDTO)
 createKnowledgeModelPreview reqDto =
-  heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \eventsFromPackage -> do
-    let allEvents = eventsFromPackage ++ (fromDTOs $ reqDto ^. events)
-    heCompileKnowledgeModelFromScratch allEvents $ \km -> do
+  heGetEvents $ \events ->
+    heCompileKnowledgeModelFromScratch events $ \km -> do
       let filteredKm = filterKnowledgeModel (reqDto ^. tagUuids) km
       return . Right . toKnowledgeModelDTO $ km
+  where
+    requestEvents = fromDTOs $ reqDto ^. events
+    heGetEvents callback =
+      case reqDto ^. packageId of
+        Just packageId ->
+          heGetAllPreviousEventsSincePackageId packageId $ \packageEvents -> do
+            callback $ packageEvents ++ requestEvents
+        Nothing -> callback requestEvents
 
 -- --------------------------------
 -- HELPERS

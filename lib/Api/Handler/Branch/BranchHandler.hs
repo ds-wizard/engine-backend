@@ -5,8 +5,9 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Branch.BranchChangeJM ()
+import Api.Resource.Branch.BranchCreateJM ()
+import Api.Resource.Branch.BranchDetailJM ()
 import Api.Resource.Branch.BranchJM ()
-import Api.Resource.Branch.BranchWithStateJM ()
 import Service.Branch.BranchService
 
 getBranchesA :: Endpoint

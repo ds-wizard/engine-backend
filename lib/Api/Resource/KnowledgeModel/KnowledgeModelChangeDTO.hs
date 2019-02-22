@@ -5,7 +5,7 @@ import qualified Data.UUID as U
 import Api.Resource.Event.EventDTO
 
 data KnowledgeModelChangeDTO = KnowledgeModelChangeDTO
-  { _knowledgeModelChangeDTOPackageId :: String
+  { _knowledgeModelChangeDTOPackageId :: Maybe String
   , _knowledgeModelChangeDTOEvents :: [EventDTO]
   , _knowledgeModelChangeDTOTagUuids :: [U.UUID]
   } deriving (Show, Eq)

@@ -45,7 +45,7 @@ reqHeaders = [reqAuthHeader]
 
 reqDto =
   KnowledgeModelChangeDTO
-  { _knowledgeModelChangeDTOPackageId = elixirCzPackage2Dto ^. pId
+  { _knowledgeModelChangeDTOPackageId = Just $ elixirCzPackage2Dto ^. pId
   , _knowledgeModelChangeDTOEvents = []
   , _knowledgeModelChangeDTOTagUuids = []
   }

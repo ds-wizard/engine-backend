@@ -57,7 +57,7 @@ test_204 appContext = do
          (amsterdamBranch ^. uuid)
          (amsterdamBranch ^. createdAt)
          (fromJust $ appContext ^. currentUser)
-         amsterdamBranchChange)
+         amsterdamBranchCreate)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

@@ -4,6 +4,7 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Branch.BranchDTO
+import Api.Resource.Common
 
 instance FromJSON BranchDTO where
   parseJSON (Object o) = do
@@ -16,7 +17,10 @@ instance FromJSON BranchDTO where
     _branchDTOOwnerUuid <- o .: "ownerUuid"
     _branchDTOCreatedAt <- o .: "createdAt"
     _branchDTOUpdatedAt <- o .: "updatedAt"
-    return BranchDTO {..}
+    stateType <- o .: "stateType"
+    case deserializeBranchState stateType of
+      (Just _branchDTOState) -> return BranchDTO {..}
+      Nothing -> fail "Unsupported state"
   parseJSON _ = mzero
 
 instance ToJSON BranchDTO where
@@ -26,6 +30,7 @@ instance ToJSON BranchDTO where
       , "name" .= _branchDTOName
       , "organizationId" .= _branchDTOOrganizationId
       , "kmId" .= _branchDTOKmId
+      , "stateType" .= serializeBranchState _branchDTOState
       , "parentPackageId" .= _branchDTOParentPackageId
       , "lastAppliedParentPackageId" .= _branchDTOLastAppliedParentPackageId
       , "ownerUuid" .= _branchDTOOwnerUuid

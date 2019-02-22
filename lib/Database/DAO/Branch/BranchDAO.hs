@@ -23,6 +23,12 @@ findBranches = do
   branchesS <- runDB action
   return . deserializeEntities $ branchesS
 
+findBranchesWithEvents :: AppContextM (Either AppError [BranchWithEvents])
+findBranchesWithEvents = do
+  let action = rest =<< find (select [] branchCollection)
+  branchesS <- runDB action
+  return . deserializeEntities $ branchesS
+
 findBranchById :: String -> AppContextM (Either AppError Branch)
 findBranchById branchUuid = do
   let action = findOne $ select ["uuid" =: branchUuid] branchCollection
@@ -34,6 +40,12 @@ findBranchByKmId kmId = do
   let action = findOne $ select ["kmId" =: kmId] branchCollection
   maybeBranchS <- runDB action
   return . deserializeMaybeEntity $ maybeBranchS
+
+findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)
+findBranchWithEventsById branchUuid = do
+  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
+  maybeBranchWithEventsS <- runDB action
+  return . deserializeMaybeEntity $ maybeBranchWithEventsS
 
 findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId ::
      String -> AppContextM (Either AppError [Branch])
@@ -57,7 +69,7 @@ insertBranch branch = do
   let action = insert branchCollection (toBSON branch)
   runDB action
 
-updateBranchById :: Branch -> AppContextM ()
+updateBranchById :: BranchWithEvents -> AppContextM ()
 updateBranchById branch = do
   let action =
         fetch (select ["uuid" =: (branch ^. uuid)] branchCollection) >>= save branchCollection . merge (toBSON branch)
@@ -101,6 +113,13 @@ heFindBranches callback = do
     Left error -> return . Left $ error
 
 -- -----------------------------------------------------
+heFindBranchesWithEvents callback = do
+  eitherBranches <- findBranchesWithEvents
+  case eitherBranches of
+    Right branches -> callback branches
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
 heFindBranchById branchUuid callback = do
   eitherBranch <- findBranchById branchUuid
   case eitherBranch of
@@ -112,3 +131,10 @@ hmFindBranchById branchUuid callback = do
   case eitherBranch of
     Right branch -> callback branch
     Left error -> return . Just $ error
+
+-- -----------------------------------------------------
+heFindBranchWithEventsById branchUuid callback = do
+  eitherBranch <- findBranchWithEventsById branchUuid
+  case eitherBranch of
+    Right branch -> callback branch
+    Left error -> return . Left $ error

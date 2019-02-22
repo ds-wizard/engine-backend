@@ -3,6 +3,7 @@ module Specs.Service.Branch.BranchServiceSpec where
 import Control.Lens
 import Control.Monad.Reader
 import Data.Either
+import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -12,6 +13,7 @@ import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import qualified
        Database.Migration.Development.Branch.BranchMigration as B
+import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.Event.Data.Events
 import Database.Migration.Development.Package.Data.Packages
 import qualified
@@ -26,19 +28,20 @@ import Specs.Common
 
 branchServiceIntegrationSpec appContext =
   describe "Branch Service Integration" $ do
-    let branchUuid = "6474b24b-262b-42b1-9451-008e8363f2b6"
+    let branchUuid = U.toString $ amsterdamBranchWithEvents ^. uuid
     describe "getBranchState" $ do
       it "BSDefault - no edit events, no new parent package version" $
         -- GIVEN: Prepare database
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (deleteEventsAtBranch branchUuid) appContext
         runInContext (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -48,10 +51,12 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -62,10 +67,12 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         runInContext (insertPackage elixirNlPackage2Dto) appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -76,11 +83,12 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         runInContext (insertPackage elixirNlPackage2Dto) appContext
-        runInContext (deleteEventsAtBranch branchUuid) appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
         let expState = BSOutdated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -95,10 +103,12 @@ branchServiceIntegrationSpec appContext =
         let migratorCreateDto =
               MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents
         -- AND: Prepare expectations
         let expState = BSMigrating
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -108,7 +118,6 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (deleteEventsAtBranch branchUuid) appContext
         let migratorCreateDto =
               MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
@@ -119,10 +128,12 @@ branchServiceIntegrationSpec appContext =
               , _migratorConflictDTOEvent = Nothing
               }
         runInContext (solveConflictAndMigrate branchUuid reqDto) appContext
+        -- AND: Prepare branch
+        let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
         let expState = BSMigrated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branchUuid) appContext
+        eitherResState <- runInContext (getBranchState branch) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
