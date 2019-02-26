@@ -119,15 +119,9 @@ instance EventAccesors EditQuestionEvent where
   getPath (EditValueQuestionEvent' e) = e ^. path
 
 instance EventAccesors DeleteQuestionEvent where
-  getEventUuid (DeleteOptionsQuestionEvent' event) = event ^. uuid
-  getEventUuid (DeleteListQuestionEvent' event) = event ^. uuid
-  getEventUuid (DeleteValueQuestionEvent' event) = event ^. uuid
-  getEventNodeUuid (DeleteOptionsQuestionEvent' event) = event ^. questionUuid
-  getEventNodeUuid (DeleteListQuestionEvent' event) = event ^. questionUuid
-  getEventNodeUuid (DeleteValueQuestionEvent' event) = event ^. questionUuid
-  getPath (DeleteOptionsQuestionEvent' e) = e ^. path
-  getPath (DeleteListQuestionEvent' e) = e ^. path
-  getPath (DeleteValueQuestionEvent' e) = e ^. path
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. questionUuid
+  getPath e = e ^. path
 
 instance EventAccesors AddAnswerEvent where
   getEventUuid event = event ^. uuid
@@ -182,15 +176,9 @@ instance EventAccesors EditReferenceEvent where
   getPath (EditCrossReferenceEvent' e) = e ^. path
 
 instance EventAccesors DeleteReferenceEvent where
-  getEventUuid (DeleteResourcePageReferenceEvent' event) = event ^. uuid
-  getEventUuid (DeleteURLReferenceEvent' event) = event ^. uuid
-  getEventUuid (DeleteCrossReferenceEvent' event) = event ^. uuid
-  getEventNodeUuid (DeleteResourcePageReferenceEvent' event) = event ^. referenceUuid
-  getEventNodeUuid (DeleteURLReferenceEvent' event) = event ^. referenceUuid
-  getEventNodeUuid (DeleteCrossReferenceEvent' event) = event ^. referenceUuid
-  getPath (DeleteResourcePageReferenceEvent' e) = e ^. path
-  getPath (DeleteURLReferenceEvent' e) = e ^. path
-  getPath (DeleteCrossReferenceEvent' e) = e ^. path
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. referenceUuid
+  getPath e = e ^. path
 
 instance EventAccesors AddTagEvent where
   getEventUuid event = event ^. uuid
@@ -231,9 +219,7 @@ instance QuestionEventAccessors EditQuestionEvent where
   getEventExpertUuids (EditValueQuestionEvent' e) = e ^. expertUuids
 
 instance QuestionEventAccessors DeleteQuestionEvent where
-  getEventQuestionUuid (DeleteOptionsQuestionEvent' e) = e ^. questionUuid
-  getEventQuestionUuid (DeleteListQuestionEvent' e) = e ^. questionUuid
-  getEventQuestionUuid (DeleteValueQuestionEvent' e) = e ^. questionUuid
+  getEventQuestionUuid e = e ^. questionUuid
   getEventExpertUuids _ = NothingChanged
   getEventReferenceUuids _ = NothingChanged
 

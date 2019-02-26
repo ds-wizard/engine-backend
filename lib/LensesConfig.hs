@@ -141,27 +141,21 @@ makeFields ''DeleteChapterEvent
 
 makeFields ''AddQuestionEvent
 
-makeFields ''EditQuestionEvent
-
-makeFields ''DeleteQuestionEvent
-
 makeFields ''AddOptionsQuestionEvent
-
-makeFields ''EditOptionsQuestionEvent
-
-makeFields ''DeleteOptionsQuestionEvent
 
 makeFields ''AddListQuestionEvent
 
-makeFields ''EditListQuestionEvent
-
-makeFields ''DeleteListQuestionEvent
-
 makeFields ''AddValueQuestionEvent
+
+makeFields ''EditQuestionEvent
+
+makeFields ''EditOptionsQuestionEvent
+
+makeFields ''EditListQuestionEvent
 
 makeFields ''EditValueQuestionEvent
 
-makeFields ''DeleteValueQuestionEvent
+makeFields ''DeleteQuestionEvent
 
 makeFields ''AddAnswerEvent
 
@@ -177,27 +171,21 @@ makeFields ''DeleteExpertEvent
 
 makeFields ''AddReferenceEvent
 
-makeFields ''EditReferenceEvent
-
-makeFields ''DeleteReferenceEvent
-
 makeFields ''AddResourcePageReferenceEvent
-
-makeFields ''EditResourcePageReferenceEvent
-
-makeFields ''DeleteResourcePageReferenceEvent
 
 makeFields ''AddURLReferenceEvent
 
-makeFields ''EditURLReferenceEvent
-
-makeFields ''DeleteURLReferenceEvent
-
 makeFields ''AddCrossReferenceEvent
+
+makeFields ''EditReferenceEvent
+
+makeFields ''EditResourcePageReferenceEvent
+
+makeFields ''EditURLReferenceEvent
 
 makeFields ''EditCrossReferenceEvent
 
-makeFields ''DeleteCrossReferenceEvent
+makeFields ''DeleteReferenceEvent
 
 makeFields ''AddTagEvent
 
@@ -340,27 +328,21 @@ makeFields ''DeleteChapterEventDTO
 
 makeFields ''AddQuestionEventDTO
 
-makeFields ''EditQuestionEventDTO
-
-makeFields ''DeleteQuestionEventDTO
-
 makeFields ''AddOptionsQuestionEventDTO
-
-makeFields ''EditOptionsQuestionEventDTO
-
-makeFields ''DeleteOptionsQuestionEventDTO
 
 makeFields ''AddListQuestionEventDTO
 
-makeFields ''EditListQuestionEventDTO
-
-makeFields ''DeleteListQuestionEventDTO
-
 makeFields ''AddValueQuestionEventDTO
+
+makeFields ''EditQuestionEventDTO
+
+makeFields ''EditOptionsQuestionEventDTO
+
+makeFields ''EditListQuestionEventDTO
 
 makeFields ''EditValueQuestionEventDTO
 
-makeFields ''DeleteValueQuestionEventDTO
+makeFields ''DeleteQuestionEventDTO
 
 makeFields ''AddAnswerEventDTO
 
@@ -376,27 +358,21 @@ makeFields ''DeleteExpertEventDTO
 
 makeFields ''AddReferenceEventDTO
 
-makeFields ''EditReferenceEventDTO
-
-makeFields ''DeleteReferenceEventDTO
-
 makeFields ''AddResourcePageReferenceEventDTO
-
-makeFields ''EditResourcePageReferenceEventDTO
-
-makeFields ''DeleteResourcePageReferenceEventDTO
 
 makeFields ''AddURLReferenceEventDTO
 
-makeFields ''EditURLReferenceEventDTO
-
-makeFields ''DeleteURLReferenceEventDTO
-
 makeFields ''AddCrossReferenceEventDTO
+
+makeFields ''EditReferenceEventDTO
+
+makeFields ''EditResourcePageReferenceEventDTO
+
+makeFields ''EditURLReferenceEventDTO
 
 makeFields ''EditCrossReferenceEventDTO
 
-makeFields ''DeleteCrossReferenceEventDTO
+makeFields ''DeleteReferenceEventDTO
 
 makeFields ''AddTagEventDTO
 

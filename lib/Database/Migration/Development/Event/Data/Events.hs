@@ -355,60 +355,48 @@ e_km1_ch2_q4_type =
   , _editOptionsQuestionEventAnswerUuids = NothingChanged
   }
 
-d_km1_ch1_q1' :: DeleteQuestionEvent
-d_km1_ch1_q1' = DeleteValueQuestionEvent' d_km1_ch1_q1
-
-d_km1_ch1_q1 :: DeleteValueQuestionEvent
+d_km1_ch1_q1 :: DeleteQuestionEvent
 d_km1_ch1_q1 =
-  DeleteValueQuestionEvent
-  { _deleteValueQuestionEventUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
-  , _deleteValueQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _deleteValueQuestionEventQuestionUuid = question1 ^. uuid
+  , _deleteQuestionEventQuestionUuid = question1 ^. uuid
   }
 
-d_km1_ch1_q1_2' :: DeleteQuestionEvent
-d_km1_ch1_q1_2' = DeleteValueQuestionEvent' d_km1_ch1_q1_2
-
-d_km1_ch1_q1_2 :: DeleteValueQuestionEvent
+d_km1_ch1_q1_2 :: DeleteQuestionEvent
 d_km1_ch1_q1_2 =
-  DeleteValueQuestionEvent
-  { _deleteValueQuestionEventUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
-  , _deleteValueQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "aed9cf13-c81a-481f-bd8a-2689c4a74369"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _deleteValueQuestionEventQuestionUuid = question1 ^. uuid
+  , _deleteQuestionEventQuestionUuid = question1 ^. uuid
   }
 
-d_km1_ch1_q2' :: DeleteQuestionEvent
-d_km1_ch1_q2' = DeleteOptionsQuestionEvent' d_km1_ch1_q2
-
-d_km1_ch1_q2 :: DeleteOptionsQuestionEvent
+d_km1_ch1_q2 :: DeleteQuestionEvent
 d_km1_ch1_q2 =
-  DeleteOptionsQuestionEvent
-  { _deleteOptionsQuestionEventUuid = fromJust $ U.fromString "52a7a6ae-be37-4075-ac5c-a20858707a75"
-  , _deleteOptionsQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "52a7a6ae-be37-4075-ac5c-a20858707a75"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _deleteOptionsQuestionEventQuestionUuid = question2 ^. uuid
+  , _deleteQuestionEventQuestionUuid = question2 ^. uuid
   }
 
-d_km1_ch1_q3' :: DeleteQuestionEvent
-d_km1_ch1_q3' = DeleteOptionsQuestionEvent' d_km1_ch1_q3
-
-d_km1_ch1_q3 :: DeleteOptionsQuestionEvent
+d_km1_ch1_q3 :: DeleteQuestionEvent
 d_km1_ch1_q3 =
-  DeleteOptionsQuestionEvent
-  { _deleteOptionsQuestionEventUuid = fromJust $ U.fromString "e46d208f-eb7d-48bc-8187-13a72b17ddb2"
-  , _deleteOptionsQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "e46d208f-eb7d-48bc-8187-13a72b17ddb2"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _deleteOptionsQuestionEventQuestionUuid = question3 ^. uuid
+  , _deleteQuestionEventQuestionUuid = question3 ^. uuid
   }
 
 -- ----------------------------------------------------------------------------
@@ -826,19 +814,16 @@ e_km1_ch2_q4_it1_q6 =
   , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids q4_it1_question6Changed
   }
 
-d_km1_ch2_q4_it1_q5' :: DeleteQuestionEvent
-d_km1_ch2_q4_it1_q5' = DeleteListQuestionEvent' d_km1_ch2_q4_it1_q5
-
-d_km1_ch2_q4_it1_q5 :: DeleteListQuestionEvent
+d_km1_ch2_q4_it1_q5 :: DeleteQuestionEvent
 d_km1_ch2_q4_it1_q5 =
-  DeleteListQuestionEvent
-  { _deleteListQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
-  , _deleteListQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _deleteListQuestionEventQuestionUuid = q4_it1_question5 ^. uuid
+  , _deleteQuestionEventQuestionUuid = q4_it1_question5 ^. uuid
   }
 
 -- ----------------------------------------------------------------------------
@@ -1022,14 +1007,11 @@ e_km1_ch2_ansMaybe6_fuq4 =
       ChangedValue $ [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
   }
 
-d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2' :: DeleteQuestionEvent
-d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2' = DeleteOptionsQuestionEvent' d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
-
-d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteOptionsQuestionEvent
+d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteQuestionEvent
 d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
-  DeleteOptionsQuestionEvent
-  { _deleteOptionsQuestionEventUuid = fromJust $ U.fromString "db69d694-cfb6-4461-8a13-81c01638f348"
-  , _deleteOptionsQuestionEventPath =
+  DeleteQuestionEvent
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "db69d694-cfb6-4461-8a13-81c01638f348"
+  , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
@@ -1039,7 +1021,7 @@ d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
       , EventPathItem
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
-  , _deleteOptionsQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
+  , _deleteQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
   }
 
 -- ----------------------------------------------------------------------------
@@ -1329,19 +1311,16 @@ e_km1_ch1_q2_rCh3_type =
   , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh3WithNewType ^. shortUuid
   }
 
-d_km1_ch1_q2_rCh2' :: DeleteReferenceEvent
-d_km1_ch1_q2_rCh2' = DeleteURLReferenceEvent' d_km1_ch1_q2_rCh2
-
-d_km1_ch1_q2_rCh2 :: DeleteURLReferenceEvent
+d_km1_ch1_q2_rCh2 :: DeleteReferenceEvent
 d_km1_ch1_q2_rCh2 =
-  DeleteURLReferenceEvent
-  { _deleteURLReferenceEventUuid = fromJust $ U.fromString "3cc15f31-4801-404f-ba48-6b91f77d1abe"
-  , _deleteURLReferenceEventPath =
+  DeleteReferenceEvent
+  { _deleteReferenceEventUuid = fromJust $ U.fromString "3cc15f31-4801-404f-ba48-6b91f77d1abe"
+  , _deleteReferenceEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _deleteURLReferenceEventReferenceUuid = referenceCh2 ^. uuid
+  , _deleteReferenceEventReferenceUuid = referenceCh2 ^. uuid
   }
 
 -- ----------------------------------------------------------------------------

@@ -74,7 +74,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  DeleteQuestionEvent" $ do
         let initKM = km1 & chapters .~ [chapter1WithAddedQuestion3, chapter2]
-        let (Right computed) = runApplicator (Just initKM) [DeleteQuestionEvent' d_km1_ch1_q3']
+        let (Right computed) = runApplicator (Just initKM) [DeleteQuestionEvent' d_km1_ch1_q3]
         let expected = km1
         computed `shouldBe` expected
    -- ---------------
@@ -128,7 +128,7 @@ applicatorSpec =
         let expected = km1 & chapters .~ [expChapter1, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteFollowUpQuestionEvent" $ do
-        let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2'
+        let event = d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2
         let (Right computed) = runApplicator (Just km1) [DeleteQuestionEvent' event]
         let expq2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ []
         let expFUQ1 = q2_aYes_fuQuestion1 & answers .~ [q2_aYes_fuq1_answerNo, expq2_aYes_fuq1_answerYes]
@@ -154,7 +154,7 @@ applicatorSpec =
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteAnswerItemTemplateQuestionEvent" $ do
-        let event = d_km1_ch2_q4_it1_q5'
+        let event = d_km1_ch2_q4_it1_q5
         let (Right computed) = runApplicator (Just km1WithQ4) [DeleteQuestionEvent' event]
         let expQuestion4 = question4 & itemTemplateQuestions .~ [OptionsQuestion' q4_it1_question6]
         let expChapter2 = chapter2 & questions .~ [question3', ListQuestion' expQuestion4]
@@ -199,7 +199,7 @@ applicatorSpec =
         let expected = km1 & chapters .~ [chapter1WithChangedReference, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteReferenceEvent" $ do
-        let (Right computed) = runApplicator (Just km1) [DeleteReferenceEvent' d_km1_ch1_q2_rCh2']
+        let (Right computed) = runApplicator (Just km1) [DeleteReferenceEvent' d_km1_ch1_q2_rCh2]
         let question2WithDeletedReference = question2 & references .~ [referenceCh1']
         let chapter1WithDeletedReference =
               chapter1 & questions .~ [question1', OptionsQuestion' question2WithDeletedReference]

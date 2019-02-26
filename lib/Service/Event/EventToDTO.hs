@@ -186,30 +186,13 @@ instance EventToDTO EditQuestionEvent where
     }
 
 instance EventToDTO DeleteQuestionEvent where
-  toDTO (DeleteOptionsQuestionEvent' event) =
-    DeleteQuestionEventDTO' $
-    DeleteOptionsQuestionEventDTO' $
-    DeleteOptionsQuestionEventDTO
-    { _deleteOptionsQuestionEventDTOUuid = event ^. uuid
-    , _deleteOptionsQuestionEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteOptionsQuestionEventDTOQuestionUuid = event ^. questionUuid
-    }
-  toDTO (DeleteListQuestionEvent' event) =
-    DeleteQuestionEventDTO' $
-    DeleteListQuestionEventDTO' $
-    DeleteListQuestionEventDTO
-    { _deleteListQuestionEventDTOUuid = event ^. uuid
-    , _deleteListQuestionEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteListQuestionEventDTOQuestionUuid = event ^. questionUuid
-    }
-  toDTO (DeleteValueQuestionEvent' event) =
-    DeleteQuestionEventDTO' $
-    DeleteValueQuestionEventDTO' $
-    DeleteValueQuestionEventDTO
-    { _deleteValueQuestionEventDTOUuid = event ^. uuid
-    , _deleteValueQuestionEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteValueQuestionEventDTOQuestionUuid = event ^. questionUuid
-    }
+  toDTO event =
+    DeleteQuestionEventDTO'
+      DeleteQuestionEventDTO
+      { _deleteQuestionEventDTOUuid = event ^. uuid
+      , _deleteQuestionEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteQuestionEventDTOQuestionUuid = event ^. questionUuid
+      }
 
 -- -------------------------
 -- Answer ------------------
@@ -351,30 +334,13 @@ instance EventToDTO EditReferenceEvent where
     }
 
 instance EventToDTO DeleteReferenceEvent where
-  toDTO (DeleteResourcePageReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteResourcePageReferenceEventDTO' $
-    DeleteResourcePageReferenceEventDTO
-    { _deleteResourcePageReferenceEventDTOUuid = event ^. uuid
-    , _deleteResourcePageReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteResourcePageReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
-  toDTO (DeleteURLReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteURLReferenceEventDTO' $
-    DeleteURLReferenceEventDTO
-    { _deleteURLReferenceEventDTOUuid = event ^. uuid
-    , _deleteURLReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteURLReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
-  toDTO (DeleteCrossReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteCrossReferenceEventDTO' $
-    DeleteCrossReferenceEventDTO
-    { _deleteCrossReferenceEventDTOUuid = event ^. uuid
-    , _deleteCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
+  toDTO event =
+    DeleteReferenceEventDTO'
+      DeleteReferenceEventDTO
+      { _deleteReferenceEventDTOUuid = event ^. uuid
+      , _deleteReferenceEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteReferenceEventDTOReferenceUuid = event ^. referenceUuid
+      }
 
 -------------------------
 -- Tag ------------------

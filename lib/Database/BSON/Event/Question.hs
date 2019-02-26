@@ -287,80 +287,21 @@ instance FromBSON EditValueQuestionEvent where
 -- DELETE QUESTION EVENT ---
 -- -------------------------
 instance ToBSON DeleteQuestionEvent where
-  toBSON (DeleteOptionsQuestionEvent' event) = toBSON event
-  toBSON (DeleteListQuestionEvent' event) = toBSON event
-  toBSON (DeleteValueQuestionEvent' event) = toBSON event
+  toBSON event =
+    [ "eventType" BSON.=: "DeleteQuestionEvent"
+    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "path" BSON.=: (event ^. path)
+    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
+    ]
 
 instance FromBSON DeleteQuestionEvent where
   fromBSON doc = do
-    questionType <- BSON.lookup "questionType" doc
-    case questionType of
-      "OptionsQuestion" -> DeleteOptionsQuestionEvent' <$> (fromBSON doc :: Maybe DeleteOptionsQuestionEvent)
-      "ListQuestion" -> DeleteListQuestionEvent' <$> (fromBSON doc :: Maybe DeleteListQuestionEvent)
-      "ValueQuestion" -> DeleteValueQuestionEvent' <$> (fromBSON doc :: Maybe DeleteValueQuestionEvent)
-
--- ------------------------------------------------
-instance ToBSON DeleteOptionsQuestionEvent where
-  toBSON event =
-    [ "eventType" BSON.=: "DeleteQuestionEvent"
-    , "questionType" BSON.=: "OptionsQuestion"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    ]
-
-instance FromBSON DeleteOptionsQuestionEvent where
-  fromBSON doc = do
     qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     qPath <- BSON.lookup "path" doc
     qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
     return
-      DeleteOptionsQuestionEvent
-      { _deleteOptionsQuestionEventUuid = qUuid
-      , _deleteOptionsQuestionEventPath = qPath
-      , _deleteOptionsQuestionEventQuestionUuid = qQuestionUuid
-      }
-
--- ------------------------------------------------
-instance ToBSON DeleteListQuestionEvent where
-  toBSON event =
-    [ "eventType" BSON.=: "DeleteQuestionEvent"
-    , "questionType" BSON.=: "ListQuestion"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    ]
-
-instance FromBSON DeleteListQuestionEvent where
-  fromBSON doc = do
-    qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    return
-      DeleteListQuestionEvent
-      { _deleteListQuestionEventUuid = qUuid
-      , _deleteListQuestionEventPath = qPath
-      , _deleteListQuestionEventQuestionUuid = qQuestionUuid
-      }
-
--- ------------------------------------------------
-instance ToBSON DeleteValueQuestionEvent where
-  toBSON event =
-    [ "eventType" BSON.=: "DeleteQuestionEvent"
-    , "questionType" BSON.=: "ValueQuestion"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: serializeUUID (event ^. questionUuid)
-    ]
-
-instance FromBSON DeleteValueQuestionEvent where
-  fromBSON doc = do
-    qUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
-    return
-      DeleteValueQuestionEvent
-      { _deleteValueQuestionEventUuid = qUuid
-      , _deleteValueQuestionEventPath = qPath
-      , _deleteValueQuestionEventQuestionUuid = qQuestionUuid
+      DeleteQuestionEvent
+      { _deleteQuestionEventUuid = qUuid
+      , _deleteQuestionEventPath = qPath
+      , _deleteQuestionEventQuestionUuid = qQuestionUuid
       }

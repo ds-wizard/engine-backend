@@ -67,7 +67,7 @@ migratorSpec =
        do
         let branchEvents = [EditChapterEvent' e_km1_ch1]
         -- And: Prepare target parent package events
-        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
         let (Right km) = runApplicator Nothing (kmEvents ++ branchEvents)
@@ -192,7 +192,7 @@ migratorSpec =
       it "Situation n.9: Edit > Delete (Corrector)" $
         -- Given: Prepare current branch events
        do
-        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
         -- And: Prepare target parent package events
         let msTargetPackageEvents = [EditChapterEvent' e_km1_ch1]
         -- And: Prepare current Knowledge Model
@@ -220,7 +220,7 @@ migratorSpec =
       it "Situation n.10: Delete > Delete (Corrector)" $
         -- Given: Prepare current branch events
        do
-        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
       -- And: Prepare target parent package events
         let msTargetPackageEvents = [DeleteChapterEvent' d_km1_ch1]
         -- And: Prepare current Knowledge Model
@@ -279,7 +279,7 @@ migratorSpec =
        do
         let branchEvents = [DeleteChapterEvent' d_km1_ch1]
       -- And: Prepare target parent package events
-        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
         let (Right km) = runApplicator Nothing (kmEvents ++ branchEvents)
@@ -334,9 +334,9 @@ migratorSpec =
       it "Situation n.16: Delete = Delete (Cleaner)" $
         -- Given: Prepare current branch events
        do
-        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
       -- And: Prepare target parent package events
-        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1_2']
+        let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1_2]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
         let (Right km) = runApplicator Nothing (kmEvents ++ branchEvents)
@@ -353,7 +353,7 @@ migratorSpec =
       it "Situation n.17: Edit = Delete (Cleaner)" $
         -- Given: Prepare current branch events
        do
-        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1']
+        let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
       -- And: Prepare target parent package events
         let msTargetPackageEvents = [EditQuestionEvent' e_km1_ch1_q1']
         -- And: Prepare current Knowledge Model

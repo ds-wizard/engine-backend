@@ -13,19 +13,6 @@ data AddQuestionEvent
   | AddValueQuestionEvent' AddValueQuestionEvent
   deriving (Show, Eq, Generic)
 
-data EditQuestionEvent
-  = EditOptionsQuestionEvent' EditOptionsQuestionEvent
-  | EditListQuestionEvent' EditListQuestionEvent
-  | EditValueQuestionEvent' EditValueQuestionEvent
-  deriving (Show, Eq, Generic)
-
-data DeleteQuestionEvent
-  = DeleteOptionsQuestionEvent' DeleteOptionsQuestionEvent
-  | DeleteListQuestionEvent' DeleteListQuestionEvent
-  | DeleteValueQuestionEvent' DeleteValueQuestionEvent
-  deriving (Show, Eq, Generic)
-
--- --------------------------------------------
 data AddOptionsQuestionEvent = AddOptionsQuestionEvent
   { _addOptionsQuestionEventUuid :: U.UUID
   , _addOptionsQuestionEventPath :: EventPath
@@ -35,6 +22,35 @@ data AddOptionsQuestionEvent = AddOptionsQuestionEvent
   , _addOptionsQuestionEventRequiredLevel :: Maybe Int
   , _addOptionsQuestionEventTagUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
+
+data AddListQuestionEvent = AddListQuestionEvent
+  { _addListQuestionEventUuid :: U.UUID
+  , _addListQuestionEventPath :: EventPath
+  , _addListQuestionEventQuestionUuid :: U.UUID
+  , _addListQuestionEventTitle :: String
+  , _addListQuestionEventText :: Maybe String
+  , _addListQuestionEventRequiredLevel :: Maybe Int
+  , _addListQuestionEventTagUuids :: [U.UUID]
+  , _addListQuestionEventItemTemplateTitle :: String
+  } deriving (Show, Eq, Generic)
+
+data AddValueQuestionEvent = AddValueQuestionEvent
+  { _addValueQuestionEventUuid :: U.UUID
+  , _addValueQuestionEventPath :: EventPath
+  , _addValueQuestionEventQuestionUuid :: U.UUID
+  , _addValueQuestionEventTitle :: String
+  , _addValueQuestionEventText :: Maybe String
+  , _addValueQuestionEventRequiredLevel :: Maybe Int
+  , _addValueQuestionEventTagUuids :: [U.UUID]
+  , _addValueQuestionEventValueType :: QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+-- --------------------------------------------
+data EditQuestionEvent
+  = EditOptionsQuestionEvent' EditOptionsQuestionEvent
+  | EditListQuestionEvent' EditListQuestionEvent
+  | EditValueQuestionEvent' EditValueQuestionEvent
+  deriving (Show, Eq, Generic)
 
 data EditOptionsQuestionEvent = EditOptionsQuestionEvent
   { _editOptionsQuestionEventUuid :: U.UUID
@@ -47,24 +63,6 @@ data EditOptionsQuestionEvent = EditOptionsQuestionEvent
   , _editOptionsQuestionEventExpertUuids :: EventField [U.UUID]
   , _editOptionsQuestionEventReferenceUuids :: EventField [U.UUID]
   , _editOptionsQuestionEventAnswerUuids :: EventField [U.UUID]
-  } deriving (Show, Eq, Generic)
-
-data DeleteOptionsQuestionEvent = DeleteOptionsQuestionEvent
-  { _deleteOptionsQuestionEventUuid :: U.UUID
-  , _deleteOptionsQuestionEventPath :: EventPath
-  , _deleteOptionsQuestionEventQuestionUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
-
--- --------------------------------------------
-data AddListQuestionEvent = AddListQuestionEvent
-  { _addListQuestionEventUuid :: U.UUID
-  , _addListQuestionEventPath :: EventPath
-  , _addListQuestionEventQuestionUuid :: U.UUID
-  , _addListQuestionEventTitle :: String
-  , _addListQuestionEventText :: Maybe String
-  , _addListQuestionEventRequiredLevel :: Maybe Int
-  , _addListQuestionEventTagUuids :: [U.UUID]
-  , _addListQuestionEventItemTemplateTitle :: String
   } deriving (Show, Eq, Generic)
 
 data EditListQuestionEvent = EditListQuestionEvent
@@ -81,24 +79,6 @@ data EditListQuestionEvent = EditListQuestionEvent
   , _editListQuestionEventItemTemplateQuestionUuids :: EventField [U.UUID]
   } deriving (Show, Eq, Generic)
 
-data DeleteListQuestionEvent = DeleteListQuestionEvent
-  { _deleteListQuestionEventUuid :: U.UUID
-  , _deleteListQuestionEventPath :: EventPath
-  , _deleteListQuestionEventQuestionUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
-
--- --------------------------------------------
-data AddValueQuestionEvent = AddValueQuestionEvent
-  { _addValueQuestionEventUuid :: U.UUID
-  , _addValueQuestionEventPath :: EventPath
-  , _addValueQuestionEventQuestionUuid :: U.UUID
-  , _addValueQuestionEventTitle :: String
-  , _addValueQuestionEventText :: Maybe String
-  , _addValueQuestionEventRequiredLevel :: Maybe Int
-  , _addValueQuestionEventTagUuids :: [U.UUID]
-  , _addValueQuestionEventValueType :: QuestionValueType
-  } deriving (Show, Eq, Generic)
-
 data EditValueQuestionEvent = EditValueQuestionEvent
   { _editValueQuestionEventUuid :: U.UUID
   , _editValueQuestionEventPath :: EventPath
@@ -112,8 +92,9 @@ data EditValueQuestionEvent = EditValueQuestionEvent
   , _editValueQuestionEventValueType :: EventField QuestionValueType
   } deriving (Show, Eq, Generic)
 
-data DeleteValueQuestionEvent = DeleteValueQuestionEvent
-  { _deleteValueQuestionEventUuid :: U.UUID
-  , _deleteValueQuestionEventPath :: EventPath
-  , _deleteValueQuestionEventQuestionUuid :: U.UUID
+-- --------------------------------------------
+data DeleteQuestionEvent = DeleteQuestionEvent
+  { _deleteQuestionEventUuid :: U.UUID
+  , _deleteQuestionEventPath :: EventPath
+  , _deleteQuestionEventQuestionUuid :: U.UUID
   } deriving (Show, Eq, Generic)
