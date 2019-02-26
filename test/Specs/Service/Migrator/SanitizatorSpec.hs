@@ -13,6 +13,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Experts
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
+import Database.Migration.Development.KnowledgeModel.Data.Tags
 import LensesConfig
 import Model.Event.Event
 import Model.Event.EventField
@@ -39,11 +40,13 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
         let kmChapterUuids = _chapterUuid <$> [chapter2]
-        let edited_e_km1 = e_km1 & chapterUuids .~ ChangedValue kmChapterUuids
+        let kmTagUuids = _tagUuid <$> [tagBioInformatic]
+        let edited_e_km1 = (e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids
         let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
         -- When:
         resState <- migrate reqState
@@ -51,13 +54,17 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
         let kmChapterUuids =
               [chapter2 ^. uuid] ++
               [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [chapter1 ^. uuid]
-        let edited_e_km1 = e_km1 & chapterUuids .~ ChangedValue kmChapterUuids
+        let kmTagUuids =
+              [tagBioInformatic ^. uuid] ++
+              [fromJust . U.fromString $ "b28d289b-e373-49a2-9c91-b153cb62d894"] ++ [tagDataScience ^. uuid]
+        let edited_e_km1 = (e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids
         let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
         -- When:
         resState <- migrate reqState
@@ -65,6 +72,7 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditChapterEvent" $ do

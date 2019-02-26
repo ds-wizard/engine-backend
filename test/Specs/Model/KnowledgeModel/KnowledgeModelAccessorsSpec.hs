@@ -20,6 +20,8 @@ import qualified
        Database.Migration.Development.KnowledgeModel.Data.Questions as FQ
 import qualified
        Database.Migration.Development.KnowledgeModel.Data.References as FR
+import qualified
+       Database.Migration.Development.KnowledgeModel.Data.Tags as FT
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModelAccessors
 
@@ -34,6 +36,18 @@ knowledgeModelAccessorsSpec =
         it "Returns True if exists" $ isThereAnyChapterWithGivenUuid FKM.km1 (FCH.chapter2 ^. uuid) `shouldBe` True
         it "Returns False if not exists" $
           isThereAnyChapterWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
+          False
+    ---------------------------------------------
+    describe "Tag" $ do
+      describe "getAllTags" $
+        it "Successfully listed" $ getAllTags FKM.km1 `shouldBe` [FT.tagDataScience, FT.tagBioInformatic]
+      describe "getTagByUuid" $
+        it "Successfully listed" $
+        getTagByUuid FKM.km1 (FT.tagBioInformatic ^. uuid) `shouldBe` Just FT.tagBioInformatic
+      describe "isThereAnyTagWithGivenUuid" $ do
+        it "Returns True if exists" $ isThereAnyTagWithGivenUuid FKM.km1 (FT.tagBioInformatic ^. uuid) `shouldBe` True
+        it "Returns False if not exists" $
+          isThereAnyTagWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
           False
     ---------------------------------------------
     describe "Question" $ do

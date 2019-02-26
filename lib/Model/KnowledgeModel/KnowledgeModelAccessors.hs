@@ -3,6 +3,10 @@ module Model.KnowledgeModel.KnowledgeModelAccessors
   ( getAllChapters
   , getChapterByUuid
   , isThereAnyChapterWithGivenUuid
+  -- Tag
+  , getAllTags
+  , getTagByUuid
+  , isThereAnyTagWithGivenUuid
   -- Question
   , getAllQuestions
   , getQuestionByUuid
@@ -49,6 +53,20 @@ isThereAnyChapterWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyChapterWithGivenUuid km chUuid = chUuid `elem` (getChapterUuid <$> getAllChapters km)
   where
     getChapterUuid chapter = chapter ^. uuid
+
+-- -------------------
+-- CHAPTERS ----------
+-- -------------------
+getAllTags :: KnowledgeModel -> [Tag]
+getAllTags km = km ^. tags
+
+getTagByUuid :: KnowledgeModel -> UUID -> Maybe Tag
+getTagByUuid km tagUuid = find (\t -> t ^. uuid == tagUuid) (getAllTags km)
+
+isThereAnyTagWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyTagWithGivenUuid km tagUuid = tagUuid `elem` (getTagByUuid <$> getAllTags km)
+  where
+    getTagByUuid tag = tag ^. uuid
 
 -- -------------------
 -- QUESTIONS----------

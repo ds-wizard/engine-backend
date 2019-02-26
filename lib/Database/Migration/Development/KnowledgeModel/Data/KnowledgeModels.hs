@@ -24,7 +24,7 @@ km1WithChangeProperties =
   { _knowledgeModelUuid = km1 ^. uuid
   , _knowledgeModelName = "EDITED: " ++ (km1 ^. name)
   , _knowledgeModelChapters = [chapter2, chapter1]
-  , _knowledgeModelTags = [tagDataScience, tagBioInformatic]
+  , _knowledgeModelTags = [tagBioInformatic, tagDataScience]
   }
 
 km1WithoutChaptersAndTags :: KnowledgeModel
