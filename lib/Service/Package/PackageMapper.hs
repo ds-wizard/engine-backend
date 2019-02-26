@@ -18,6 +18,7 @@ packageToDTO package =
   , _packageDTOOrganizationId = package ^. organizationId
   , _packageDTOKmId = package ^. kmId
   , _packageDTOVersion = package ^. version
+  , _packageDTOMetamodelVersion = package ^. metamodelVersion
   , _packageDTODescription = package ^. description
   , _packageDTOParentPackageId = package ^. parentPackageId
   }
@@ -39,6 +40,7 @@ packageWithEventsToDTO package =
   , _packageDTOOrganizationId = package ^. organizationId
   , _packageDTOKmId = package ^. kmId
   , _packageDTOVersion = package ^. version
+  , _packageDTOMetamodelVersion = package ^. metamodelVersion
   , _packageDTODescription = package ^. description
   , _packageDTOParentPackageId = package ^. parentPackageId
   }
@@ -60,6 +62,7 @@ packageWithEventsToDTOWithEvents package =
   , _packageWithEventsDTOOrganizationId = package ^. organizationId
   , _packageWithEventsDTOKmId = package ^. kmId
   , _packageWithEventsDTOVersion = package ^. version
+  , _packageWithEventsDTOMetamodelVersion = package ^. metamodelVersion
   , _packageWithEventsDTODescription = package ^. description
   , _packageWithEventsDTOParentPackageId = package ^. parentPackageId
   , _packageWithEventsDTOEvents = toDTOs (package ^. events)
@@ -73,6 +76,7 @@ fromDTO dto =
   , _packageOrganizationId = dto ^. organizationId
   , _packageKmId = dto ^. kmId
   , _packageVersion = dto ^. version
+  , _packageMetamodelVersion = dto ^. metamodelVersion
   , _packageDescription = dto ^. description
   , _packageParentPackageId = dto ^. parentPackageId
   }
@@ -85,6 +89,7 @@ fromDTOWithEvents dto =
   , _packageWithEventsOrganizationId = dto ^. organizationId
   , _packageWithEventsKmId = dto ^. kmId
   , _packageWithEventsVersion = dto ^. version
+  , _packageWithEventsMetamodelVersion = dto ^. metamodelVersion
   , _packageWithEventsDescription = dto ^. description
   , _packageWithEventsParentPackageId = dto ^. parentPackageId
   , _packageWithEventsEvents = fromDTOs (dto ^. events)
@@ -93,14 +98,15 @@ fromDTOWithEvents dto =
 buildPackageId :: String -> String -> String -> String
 buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
 
-buildPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> PackageWithEvents
-buildPackage pkgName pkgOrganizationId pkgKmId pkgVersion pkgDescription pkgMaybeParentPackageId pkgEvents =
+buildPackage :: String -> String -> String -> String -> Int -> String -> Maybe String -> [Event] -> PackageWithEvents
+buildPackage pkgName pkgOrganizationId pkgKmId pkgVersion pkgMetamodelVersion pkgDescription pkgMaybeParentPackageId pkgEvents =
   PackageWithEvents
   { _packageWithEventsPId = buildPackageId pkgOrganizationId pkgKmId pkgVersion
   , _packageWithEventsName = pkgName
   , _packageWithEventsOrganizationId = pkgOrganizationId
   , _packageWithEventsKmId = pkgKmId
   , _packageWithEventsVersion = pkgVersion
+  , _packageWithEventsMetamodelVersion = pkgMetamodelVersion
   , _packageWithEventsDescription = pkgDescription
   , _packageWithEventsParentPackageId = pkgMaybeParentPackageId
   , _packageWithEventsEvents = pkgEvents

@@ -14,5 +14,6 @@ netherlandsPackageV2KMBudle =
   , _knowledgeModelBundleOrganizationId = netherlandsPackageV2 ^. organizationId
   , _knowledgeModelBundleKmId = netherlandsPackageV2 ^. kmId
   , _knowledgeModelBundleVersion = netherlandsPackageV2 ^. version
+  , _knowledgeModelBundleMetamodelVersion = netherlandsPackageV2 ^. metamodelVersion
   , _knowledgeModelBundlePackages = [globalPackage, netherlandsPackage, netherlandsPackageV2]
   }

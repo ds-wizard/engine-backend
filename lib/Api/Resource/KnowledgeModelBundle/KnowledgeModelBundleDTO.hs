@@ -8,5 +8,6 @@ data KnowledgeModelBundleDTO = KnowledgeModelBundleDTO
   , _knowledgeModelBundleDTOOrganizationId :: String
   , _knowledgeModelBundleDTOKmId :: String
   , _knowledgeModelBundleDTOVersion :: String
+  , _knowledgeModelBundleDTOMetamodelVersion :: Int
   , _knowledgeModelBundleDTOPackages :: [PackageWithEventsDTO]
   } deriving (Show, Eq)

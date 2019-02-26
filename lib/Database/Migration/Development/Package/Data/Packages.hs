@@ -2,6 +2,7 @@ module Database.Migration.Development.Package.Data.Packages where
 
 import Control.Lens ((^.))
 
+import Constant.KnowledgeModel
 import Database.Migration.Development.Event.Data.Events
 import LensesConfig
 import Model.Event.Event
@@ -9,7 +10,8 @@ import Model.Package.Package
 import Service.Package.PackageMapper
 
 globalPackageEmpty :: PackageWithEvents
-globalPackageEmpty = buildPackage "DSW Global Knowledge Model" "dsw.global" "core" "0.0.1" "Empty package" Nothing []
+globalPackageEmpty =
+  buildPackage "DSW Global Knowledge Model" "dsw.global" "core" "0.0.1" kmMetamodelVersion "Empty package" Nothing []
 
 globalPackage :: PackageWithEvents
 globalPackage =
@@ -18,6 +20,7 @@ globalPackage =
     "dsw.global"
     "core"
     "1.0.0"
+    kmMetamodelVersion
     "First Release"
     Nothing
     [AddKnowledgeModelEvent' a_km1, AddTagEvent' a_km1_tds, AddTagEvent' a_km1_tbi]
@@ -29,6 +32,7 @@ netherlandsPackage =
     "dsw.nl"
     "core-nl"
     "1.0.0"
+    kmMetamodelVersion
     "First Release"
     (Just $ globalPackage ^. pId)
     [AddChapterEvent' a_km1_ch1]
@@ -40,6 +44,7 @@ netherlandsPackageV2 =
     "dsw.nl"
     "core-nl"
     "2.0.0"
+    kmMetamodelVersion
     "Second Release"
     (Just $ netherlandsPackage ^. pId)
     [AddChapterEvent' a_km1_ch3]
@@ -51,6 +56,7 @@ amsterdamPackage =
     "dsw.nl.amsterdam"
     "core-amsterdam"
     "1.0.0"
+    kmMetamodelVersion
     "First Release"
     (Just $ netherlandsPackage ^. pId)
     []
@@ -62,6 +68,7 @@ germanyPackage =
     "dsw.de"
     "core-de"
     "1.0.0"
+    kmMetamodelVersion
     "First Release"
     (Just $ globalPackageEmpty ^. pId)
     [ AddKnowledgeModelEvent' a_km1

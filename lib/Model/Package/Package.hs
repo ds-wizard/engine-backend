@@ -10,6 +10,7 @@ data Package = Package
   , _packageOrganizationId :: String
   , _packageKmId :: String
   , _packageVersion :: String
+  , _packageMetamodelVersion :: Int
   , _packageDescription :: String
   , _packageParentPackageId :: Maybe String
   } deriving (Show, Eq, Generic)
@@ -20,6 +21,7 @@ data PackageWithEvents = PackageWithEvents
   , _packageWithEventsOrganizationId :: String
   , _packageWithEventsKmId :: String
   , _packageWithEventsVersion :: String
+  , _packageWithEventsMetamodelVersion :: Int
   , _packageWithEventsDescription :: String
   , _packageWithEventsParentPackageId :: Maybe String
   , _packageWithEventsEvents :: [Event]

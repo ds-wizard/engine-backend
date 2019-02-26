@@ -13,6 +13,7 @@ instance FromJSON KnowledgeModelBundleDTO where
     _knowledgeModelBundleDTOOrganizationId <- o .: "organizationId"
     _knowledgeModelBundleDTOKmId <- o .: "kmId"
     _knowledgeModelBundleDTOVersion <- o .: "version"
+    _knowledgeModelBundleDTOMetamodelVersion <- o .: "metamodelVersion"
     packagesSerialized <- o .: "packages"
     _knowledgeModelBundleDTOPackages <- parseJSON packagesSerialized
     return KnowledgeModelBundleDTO {..}
@@ -26,5 +27,6 @@ instance ToJSON KnowledgeModelBundleDTO where
       , "organizationId" .= _knowledgeModelBundleDTOOrganizationId
       , "kmId" .= _knowledgeModelBundleDTOKmId
       , "version" .= _knowledgeModelBundleDTOVersion
+      , "metamodelVersion" .= _knowledgeModelBundleDTOMetamodelVersion
       , "packages" .= toJSON _knowledgeModelBundleDTOPackages
       ]

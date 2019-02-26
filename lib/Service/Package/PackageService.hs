@@ -33,6 +33,7 @@ import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.Version.VersionDTO
+import Constant.KnowledgeModel
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -157,7 +158,7 @@ getNewerPackages currentPkgId =
 
 createPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> AppContextM PackageDTO
 createPackage name organizationId kmId version description maybeParentPackageId events = do
-  let package = buildPackage name organizationId kmId version description maybeParentPackageId events
+  let package = buildPackage name organizationId kmId version kmMetamodelVersion description maybeParentPackageId events
   insertPackage package
   return $ packageWithEventsToDTO package
 
