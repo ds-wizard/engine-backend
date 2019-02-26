@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 
 import Model.User.User
 
+userAlbert :: User
 userAlbert =
   User
   { _userUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
@@ -30,6 +31,7 @@ userAlbert =
   , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 
+userNikola :: User
 userNikola =
   User
   { _userUuid = fromJust . U.fromString $ "30d48cf4-8c8a-496f-bafe-585bd238f798"
@@ -44,6 +46,7 @@ userNikola =
   , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 
+userIsaac :: User
 userIsaac =
   User
   { _userUuid = fromJust . U.fromString $ "e1c58e52-0824-4526-8ebe-ec38eec67030"

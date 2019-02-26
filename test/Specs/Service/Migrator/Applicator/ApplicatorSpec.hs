@@ -33,7 +33,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  EditKnowledgeEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditKnowledgeModelEvent' e_km1]
-        let expected = km1WithChangeProperties
+        let expected = km1Edited
         computed `shouldBe` expected
    -- ---------------
     describe "Apply:  Chapter Events" $ do
@@ -43,7 +43,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  EditChapterEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditChapterEvent' e_km1_ch1]
-        let expected = km1 & chapters .~ [chapter1WithChangeProperties, chapter2]
+        let expected = km1 & chapters .~ [chapter1Edited, chapter2]
         computed `shouldBe` expected
       it "Apply:  DeleteChapterEvent" $ do
         let (Right computed) = runApplicator (Just km1) [DeleteChapterEvent' d_km1_ch1]
@@ -62,13 +62,13 @@ applicatorSpec =
       it "Apply:  EditQuestionEvent 2" $ do
         let event = e_km1_ch2_q4'
         let (Right computed) = runApplicator (Just km1WithQ4) [EditQuestionEvent' event]
-        let expChapter2 = chapter2 & questions .~ [question3', question4WithChangeProperties']
+        let expChapter2 = chapter2 & questions .~ [question3', question4Edited']
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
       it "Apply:  EditQuestionEvent 3" $ do
         let event = e_km1_ch2_q4'
         let (Right computed) = runApplicator (Just km1WithQ4Plain) [EditQuestionEvent' event]
-        let expQuestion4 = question4WithChangeProperties & itemTemplateQuestions .~ []
+        let expQuestion4 = question4Edited & itemTemplateQuestions .~ []
         let expChapter2 = chapter2 & questions .~ [question3', ListQuestion' expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
@@ -87,7 +87,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  EditAnswerEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditAnswerEvent' e_km1_ch1_q2_aYes1]
-        let question2WithChangedAnswer = question2 & answers .~ [q2_answerNo, q2_answerYesChanged]
+        let question2WithChangedAnswer = question2 & answers .~ [q2_answerNo, q2_answerYesEdited]
         let chapter1WithChangedAnswer =
               chapter1 & questions .~ [question1', OptionsQuestion' question2WithChangedAnswer]
         let expected = km1 & chapters .~ [chapter1WithChangedAnswer, chapter2]
@@ -119,7 +119,7 @@ applicatorSpec =
       it "Apply:  EditFollowUpQuestionEvent" $ do
         let event = e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2'
         let (Right computed) = runApplicator (Just km1) [EditQuestionEvent' event]
-        let expFUQ2 = q2_aYes_fuq1_aYes_fuQuestion2Changed'
+        let expFUQ2 = q2_aYes_fuq1_aYes_fuQuestion2Edited'
         let expq2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ [expFUQ2]
         let expFUQ1 = q2_aYes_fuQuestion1 & answers .~ [q2_aYes_fuq1_answerNo, expq2_aYes_fuq1_answerYes]
         let expQ2_AnswerYes = q2_answerYes & followUps .~ [OptionsQuestion' expFUQ1]
@@ -149,7 +149,7 @@ applicatorSpec =
       it "Apply:  EditAnswerItemTemplateQuestionEvent" $ do
         let event = e_km1_ch2_q4_it1_q5'
         let (Right computed) = runApplicator (Just km1WithQ4) [EditQuestionEvent' event]
-        let expQuestion4 = question4 & itemTemplateQuestions .~ [q4_it1_question5Changed', q4_it1_question6']
+        let expQuestion4 = question4 & itemTemplateQuestions .~ [q4_it1_question5Edited', q4_it1_question6']
         let expChapter2 = chapter2 & questions .~ [question3', ListQuestion' expQuestion4]
         let expected = km1 & chapters .~ [chapter1, expChapter2]
         computed `shouldBe` expected
@@ -170,7 +170,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  EditExpertEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditExpertEvent' e_km1_ch1_q2_eAlbert]
-        let question2WithChangedExpert = question2 & experts .~ [expertAlbertChanged, expertNikola]
+        let question2WithChangedExpert = question2 & experts .~ [expertAlbertEdited, expertNikola]
         let chapter1WithChangedExpert =
               chapter1 & questions .~ [question1', OptionsQuestion' question2WithChangedExpert]
         let expected = km1 & chapters .~ [chapter1WithChangedExpert, chapter2]
@@ -193,7 +193,7 @@ applicatorSpec =
         computed `shouldBe` expected
       it "Apply:  EditReferenceEvent" $ do
         let (Right computed) = runApplicator (Just km1) [EditReferenceEvent' e_km1_ch1_q2_rCh1']
-        let question2WithChangedReference = question2 & references .~ [referenceCh1Changed', referenceCh2']
+        let question2WithChangedReference = question2 & references .~ [referenceCh1Edited', referenceCh2']
         let chapter1WithChangedReference =
               chapter1 & questions .~ [question1', OptionsQuestion' question2WithChangedReference]
         let expected = km1 & chapters .~ [chapter1WithChangedReference, chapter2]

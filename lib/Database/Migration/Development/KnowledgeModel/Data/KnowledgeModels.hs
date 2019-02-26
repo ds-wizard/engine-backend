@@ -18,8 +18,8 @@ km1 =
   , _knowledgeModelTags = [tagDataScience, tagBioInformatic]
   }
 
-km1WithChangeProperties :: KnowledgeModel
-km1WithChangeProperties =
+km1Edited :: KnowledgeModel
+km1Edited =
   KnowledgeModel
   { _knowledgeModelUuid = km1 ^. uuid
   , _knowledgeModelName = "EDITED: " ++ (km1 ^. name)

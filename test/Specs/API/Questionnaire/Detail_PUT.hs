@@ -63,7 +63,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Changed elixirNlPackage2Dto
+    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Edited netherlandsPackageV2
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

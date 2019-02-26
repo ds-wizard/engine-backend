@@ -41,7 +41,7 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 reqDto =
   FeedbackCreateDTO
   { _feedbackCreateDTOQuestionUuid = question1 ^. uuid
-  , _feedbackCreateDTOPackageId = elixirCzPackage2Dto ^. pId
+  , _feedbackCreateDTOPackageId = germanyPackage ^. pId
   , _feedbackCreateDTOTitle = "New feedback"
   , _feedbackCreateDTOContent = "Some new feedback description"
   }

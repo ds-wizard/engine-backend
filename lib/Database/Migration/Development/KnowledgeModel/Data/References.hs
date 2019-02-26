@@ -17,11 +17,11 @@ referenceCh1 =
   , _resourcePageReferenceShortUuid = "bvq"
   }
 
-referenceCh1Changed' :: Reference
-referenceCh1Changed' = ResourcePageReference' referenceCh1Changed
+referenceCh1Edited' :: Reference
+referenceCh1Edited' = ResourcePageReference' referenceCh1Edited
 
-referenceCh1Changed :: ResourcePageReference
-referenceCh1Changed =
+referenceCh1Edited :: ResourcePageReference
+referenceCh1Edited =
   ResourcePageReference {_resourcePageReferenceUuid = referenceCh1 ^. uuid, _resourcePageReferenceShortUuid = "bbb"}
 
 referenceCh1WithNewType' :: Reference
@@ -47,11 +47,11 @@ referenceCh2 =
   , _uRLReferenceLabel = "F.A.I.R Principles"
   }
 
-referenceCh2Changed' :: Reference
-referenceCh2Changed' = URLReference' referenceCh2Changed
+referenceCh2Edited' :: Reference
+referenceCh2Edited' = URLReference' referenceCh2Edited
 
-referenceCh2Changed :: URLReference
-referenceCh2Changed =
+referenceCh2Edited :: URLReference
+referenceCh2Edited =
   URLReference
   { _uRLReferenceUuid = referenceCh2 ^. uuid
   , _uRLReferenceUrl = "EDITED: " ++ referenceCh2 ^. url
@@ -81,11 +81,11 @@ referenceCh3 =
   , _crossReferenceDescription = "Some description"
   }
 
-referenceCh3Changed' :: Reference
-referenceCh3Changed' = CrossReference' referenceCh3Changed
+referenceCh3Edited' :: Reference
+referenceCh3Edited' = CrossReference' referenceCh3Edited
 
-referenceCh3Changed :: CrossReference
-referenceCh3Changed =
+referenceCh3Edited :: CrossReference
+referenceCh3Edited =
   CrossReference
   { _crossReferenceUuid = referenceCh3 ^. uuid
   , _crossReferenceTargetUuid = fromJust $ U.fromString "7c24a6f4-72ba-4744-94c4-30f699d6edbf"

@@ -36,7 +36,7 @@ modifiersSpec =
          do
           let event = e_km1
           -- AND: Expectations
-          let expected = km1WithChangeProperties
+          let expected = km1Edited
           -- WHEN:
           let computed = editKM event km1
           -- THEN:
@@ -103,7 +103,7 @@ modifiersSpec =
          do
           let event = e_km1_ch1
           -- AND: Expectations
-          let expected = chapter1WithChangeProperties
+          let expected = chapter1Edited
           -- WHEN:
           let computed = editChapter event chapter1
           -- THEN:
@@ -173,7 +173,7 @@ modifiersSpec =
              do
               let event = e_km1_ch1_q2'
               -- AND: Expectations
-              let expected = question2WithChangeProperties'
+              let expected = question2Edited'
               -- WHEN:
               let computed = editQuestion event question2'
               -- THEN:
@@ -196,7 +196,7 @@ modifiersSpec =
              do
               let event = e_km1_ch2_q4'
               -- AND: Expectations
-              let expected = question4WithChangeProperties'
+              let expected = question4Edited'
               -- WHEN:
               let computed = editQuestion event question4'
               -- THEN:
@@ -219,7 +219,7 @@ modifiersSpec =
              do
               let event = e_km1_ch1_q1'
               -- AND: Expectations
-              let expected = question1WithChangeProperties'
+              let expected = question1Edited'
               -- WHEN:
               let computed = editQuestion event question1'
               -- THEN:
@@ -341,7 +341,7 @@ modifiersSpec =
          do
           let event = e_km1_ch1_q2_aYes1
           -- AND: Expectations
-          let expected = q2_answerYesChanged
+          let expected = q2_answerYesEdited
           -- WHEN:
           let computed = editAnswer event q2_answerYes
           -- THEN:
@@ -386,7 +386,7 @@ modifiersSpec =
          do
           let event = e_km1_ch1_q2_eAlbert
           -- AND: Expectations
-          let expected = expertAlbertChanged
+          let expected = expertAlbertEdited
           -- WHEN:
           let computed = editExpert event expertAlbert
           -- THEN:
@@ -434,7 +434,7 @@ modifiersSpec =
              do
               let event = e_km1_ch1_q2_rCh1'
               -- AND: Expectations
-              let expected = referenceCh1Changed'
+              let expected = referenceCh1Edited'
               -- WHEN:
               let computed = editReference event referenceCh1'
               -- THEN:
@@ -457,7 +457,7 @@ modifiersSpec =
              do
               let event = e_km1_ch1_q2_rCh2'
               -- AND: Expectations
-              let expected = referenceCh2Changed'
+              let expected = referenceCh2Edited'
               -- WHEN:
               let computed = editReference event referenceCh2'
               -- THEN:
@@ -480,7 +480,7 @@ modifiersSpec =
              do
               let event = e_km1_ch1_q2_rCh3'
               -- AND: Expectations
-              let expected = referenceCh3Changed'
+              let expected = referenceCh3Edited'
               -- WHEN:
               let computed = editReference event referenceCh3'
               -- THEN:

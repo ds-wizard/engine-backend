@@ -82,10 +82,10 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire elixirNlPackage2Dto
+    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire netherlandsPackageV2
     let expBody = encode expDto
      -- AND: Run migrations
-    runInContextIO (insertPackage elixirCzPackage2Dto) appContext
+    runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO (insertQuestionnaire (questionnaire1 & replies .~ [])) appContext
     runInContextIO MTR.runMigration appContext
      -- WHEN: Call API

@@ -4,6 +4,7 @@ module Specs.API.Package.Detail_GET
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -37,7 +38,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/packages/elixir.base:core:1.0.0"
+reqUrl = BS.pack $ "/packages/" ++ (globalPackage ^. pId)
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -52,7 +53,7 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO baseElixirPackageDto
+    let expDto = packageWithEventsToDTO globalPackage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
@@ -76,4 +77,4 @@ test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody
+test_404 appContext = createNotFoundTest reqMethod "/packages/dsw.global:non-existing-package:1.0.0" reqHeaders reqBody

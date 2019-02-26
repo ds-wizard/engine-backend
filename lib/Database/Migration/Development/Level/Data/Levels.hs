@@ -5,6 +5,7 @@ import Data.Time
 
 import Model.Level.Level
 
+level1 :: Level
 level1 =
   Level
   { _levelLevel = 1
@@ -14,6 +15,7 @@ level1 =
   , _levelUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
   }
 
+level2 :: Level
 level2 =
   Level
   { _levelLevel = 2
@@ -23,6 +25,7 @@ level2 =
   , _levelUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
   }
 
+level3 :: Level
 level3 =
   Level
   { _levelLevel = 3

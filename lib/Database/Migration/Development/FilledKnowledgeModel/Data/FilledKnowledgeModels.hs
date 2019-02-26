@@ -7,6 +7,7 @@ import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 
+fKm1WithQ4 :: FilledKnowledgeModel
 fKm1WithQ4 =
   FilledKnowledgeModel
   { _filledKnowledgeModelUuid = km1 ^. uuid

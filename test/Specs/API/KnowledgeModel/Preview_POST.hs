@@ -45,7 +45,7 @@ reqHeaders = [reqAuthHeader]
 
 reqDto =
   KnowledgeModelChangeDTO
-  { _knowledgeModelChangeDTOPackageId = Just $ elixirCzPackage2Dto ^. pId
+  { _knowledgeModelChangeDTOPackageId = Just $ germanyPackage ^. pId
   , _knowledgeModelChangeDTOEvents = []
   , _knowledgeModelChangeDTOTagUuids = []
   }
@@ -65,7 +65,7 @@ test_200 appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
-    runInContextIO (insertPackage elixirCzPackage2Dto) appContext
+    runInContextIO (insertPackage germanyPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

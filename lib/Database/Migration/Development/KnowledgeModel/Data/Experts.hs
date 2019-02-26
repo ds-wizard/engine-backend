@@ -15,8 +15,8 @@ expertAlbert =
   , _expertEmail = "albert.einstein@example.com"
   }
 
-expertAlbertChanged :: Expert
-expertAlbertChanged =
+expertAlbertEdited :: Expert
+expertAlbertEdited =
   Expert
   { _expertUuid = expertAlbert ^. uuid
   , _expertName = "EDITED: Albert Einstein"

@@ -38,9 +38,9 @@ e_km1 =
   { _editKnowledgeModelEventUuid = fromJust $ U.fromString "8294a55d-642d-416c-879b-5a42a4430c24"
   , _editKnowledgeModelEventPath = []
   , _editKnowledgeModelEventKmUuid = km1 ^. uuid
-  , _editKnowledgeModelEventName = ChangedValue $ km1WithChangeProperties ^. name
-  , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1WithChangeProperties ^.. chapters . traverse . uuid
-  , _editKnowledgeModelEventTagUuids = ChangedValue $ km1WithChangeProperties ^.. tags . traverse . uuid
+  , _editKnowledgeModelEventName = ChangedValue $ km1Edited ^. name
+  , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1Edited ^.. chapters . traverse . uuid
+  , _editKnowledgeModelEventTagUuids = ChangedValue $ km1Edited ^.. tags . traverse . uuid
   }
 
 -- ----------------------------------------------------------------------------
@@ -85,9 +85,9 @@ e_km1_ch1 =
   , _editChapterEventPath =
       [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
   , _editChapterEventChapterUuid = chapter1 ^. uuid
-  , _editChapterEventTitle = ChangedValue $ chapter1WithChangeProperties ^. title
-  , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1WithChangeProperties ^. questions
+  , _editChapterEventTitle = ChangedValue $ chapter1Edited ^. title
+  , _editChapterEventText = ChangedValue $ chapter1Edited ^. text
+  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1Edited ^. questions
   }
 
 e_km1_ch1_2 :: EditChapterEvent
@@ -97,9 +97,9 @@ e_km1_ch1_2 =
   , _editChapterEventPath =
       [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
   , _editChapterEventChapterUuid = chapter1 ^. uuid
-  , _editChapterEventTitle = ChangedValue $ "TWICE: " ++ chapter1WithChangeProperties ^. title
-  , _editChapterEventText = ChangedValue $ chapter1WithChangeProperties ^. text
-  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1WithChangeProperties ^. questions
+  , _editChapterEventTitle = ChangedValue $ "TWICE: " ++ chapter1Edited ^. title
+  , _editChapterEventText = ChangedValue $ chapter1Edited ^. text
+  , _editChapterEventQuestionUuids = ChangedValue $ getQuestionUuid <$> chapter1Edited ^. questions
   }
 
 d_km1_ch1 :: DeleteChapterEvent
@@ -216,8 +216,8 @@ e_km1_ch1_q1 =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editValueQuestionEventQuestionUuid = question1WithChangeProperties ^. uuid
-  , _editValueQuestionEventTitle = ChangedValue $ question1WithChangeProperties ^. title
+  , _editValueQuestionEventQuestionUuid = question1Edited ^. uuid
+  , _editValueQuestionEventTitle = ChangedValue $ question1Edited ^. title
   , _editValueQuestionEventText = NothingChanged
   , _editValueQuestionEventRequiredLevel = NothingChanged
   , _editValueQuestionEventTagUuids = NothingChanged
@@ -260,13 +260,13 @@ e_km1_ch1_q2 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
   , _editOptionsQuestionEventQuestionUuid = question2 ^. uuid
-  , _editOptionsQuestionEventTitle = ChangedValue $ question2WithChangeProperties ^. title
-  , _editOptionsQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
-  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
-  , _editOptionsQuestionEventTagUuids = ChangedValue $ question2WithChangeProperties ^. tagUuids
-  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids question2WithChangeProperties'
-  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question2WithChangeProperties'
-  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question2WithChangeProperties
+  , _editOptionsQuestionEventTitle = ChangedValue $ question2Edited ^. title
+  , _editOptionsQuestionEventText = ChangedValue $ question2Edited ^. text
+  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2Edited ^. requiredLevel
+  , _editOptionsQuestionEventTagUuids = ChangedValue $ question2Edited ^. tagUuids
+  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids question2Edited'
+  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question2Edited'
+  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question2Edited
   }
 
 e_km1_ch1_q2_second_edit' :: EditQuestionEvent
@@ -282,12 +282,12 @@ e_km1_ch1_q2_second_edit =
       ]
   , _editOptionsQuestionEventQuestionUuid = question2 ^. uuid
   , _editOptionsQuestionEventTitle = ChangedValue "New title"
-  , _editOptionsQuestionEventText = ChangedValue $ question2WithChangeProperties ^. text
-  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2WithChangeProperties ^. requiredLevel
-  , _editOptionsQuestionEventTagUuids = ChangedValue $ question2WithChangeProperties ^. tagUuids
-  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids question2WithChangeProperties'
-  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question2WithChangeProperties'
-  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question2WithChangeProperties
+  , _editOptionsQuestionEventText = ChangedValue $ question2Edited ^. text
+  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2Edited ^. requiredLevel
+  , _editOptionsQuestionEventTagUuids = ChangedValue $ question2Edited ^. tagUuids
+  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids question2Edited'
+  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question2Edited'
+  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question2Edited
   }
 
 e_km1_ch1_q2_type' :: EditQuestionEvent
@@ -322,16 +322,16 @@ e_km1_ch2_q4 =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editListQuestionEventQuestionUuid = question4WithChangeProperties ^. uuid
-  , _editListQuestionEventTitle = ChangedValue $ question4WithChangeProperties ^. title
-  , _editListQuestionEventText = ChangedValue $ question4WithChangeProperties ^. text
-  , _editListQuestionEventRequiredLevel = ChangedValue $ question4WithChangeProperties ^. requiredLevel
-  , _editListQuestionEventTagUuids = ChangedValue $ question4WithChangeProperties ^. tagUuids
-  , _editListQuestionEventExpertUuids = ChangedValue $ getExpertUuids question4WithChangeProperties'
-  , _editListQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question4WithChangeProperties'
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question4WithChangeProperties ^. itemTemplateTitle
+  , _editListQuestionEventQuestionUuid = question4Edited ^. uuid
+  , _editListQuestionEventTitle = ChangedValue $ question4Edited ^. title
+  , _editListQuestionEventText = ChangedValue $ question4Edited ^. text
+  , _editListQuestionEventRequiredLevel = ChangedValue $ question4Edited ^. requiredLevel
+  , _editListQuestionEventTagUuids = ChangedValue $ question4Edited ^. tagUuids
+  , _editListQuestionEventExpertUuids = ChangedValue $ getExpertUuids question4Edited'
+  , _editListQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question4Edited'
+  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question4Edited ^. itemTemplateTitle
   , _editListQuestionEventItemTemplateQuestionUuids =
-      ChangedValue $ getQuestionUuid <$> (question4WithChangeProperties ^. itemTemplateQuestions)
+      ChangedValue $ getQuestionUuid <$> (question4Edited ^. itemTemplateQuestions)
   }
 
 e_km1_ch2_q4_type' :: EditQuestionEvent
@@ -598,10 +598,10 @@ e_km1_ch1_q2_aYes1 =
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editAnswerEventAnswerUuid = q2_answerYes ^. uuid
-  , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
-  , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
-  , _editAnswerEventFollowUpUuids = ChangedValue $ getQuestionUuid <$> (q2_answerYesChanged ^. followUps)
-  , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYesChanged ^. metricMeasures
+  , _editAnswerEventLabel = ChangedValue $ q2_answerYesEdited ^. label
+  , _editAnswerEventAdvice = ChangedValue $ q2_answerYesEdited ^. advice
+  , _editAnswerEventFollowUpUuids = ChangedValue $ getQuestionUuid <$> (q2_answerYesEdited ^. followUps)
+  , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYesEdited ^. metricMeasures
   }
 
 e_km1_ch1_q2_aYes1_2 :: EditAnswerEvent
@@ -614,8 +614,8 @@ e_km1_ch1_q2_aYes1_2 =
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editAnswerEventAnswerUuid = q2_answerYes ^. uuid
-  , _editAnswerEventLabel = ChangedValue $ q2_answerYesChanged ^. label
-  , _editAnswerEventAdvice = ChangedValue $ q2_answerYesChanged ^. advice
+  , _editAnswerEventLabel = ChangedValue $ q2_answerYesEdited ^. label
+  , _editAnswerEventAdvice = ChangedValue $ q2_answerYesEdited ^. advice
   , _editAnswerEventFollowUpUuids = ChangedValue $ getQuestionUuid <$> (q2_answerYes ^. followUps)
   , _editAnswerEventMetricMeasures = ChangedValue $ q2_answerYes ^. metricMeasures
   }
@@ -780,11 +780,11 @@ e_km1_ch2_q4_it1_q5 =
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _editListQuestionEventQuestionUuid = q4_it1_question5Changed ^. uuid
-  , _editListQuestionEventTitle = ChangedValue $ q4_it1_question5Changed ^. title
-  , _editListQuestionEventText = ChangedValue $ q4_it1_question5Changed ^. text
-  , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_question5Changed ^. requiredLevel
-  , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_question5Changed ^. tagUuids
+  , _editListQuestionEventQuestionUuid = q4_it1_question5Edited ^. uuid
+  , _editListQuestionEventTitle = ChangedValue $ q4_it1_question5Edited ^. title
+  , _editListQuestionEventText = ChangedValue $ q4_it1_question5Edited ^. text
+  , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_question5Edited ^. requiredLevel
+  , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_question5Edited ^. tagUuids
   , _editListQuestionEventExpertUuids = NothingChanged
   , _editListQuestionEventReferenceUuids = NothingChanged
   , _editListQuestionEventItemTemplateTitle = ChangedValue $ "EDITED: Template Title 2"
@@ -804,14 +804,14 @@ e_km1_ch2_q4_it1_q6 =
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _editOptionsQuestionEventQuestionUuid = q4_it1_question6Changed ^. uuid
-  , _editOptionsQuestionEventTitle = ChangedValue $ q4_it1_question6Changed ^. title
-  , _editOptionsQuestionEventText = ChangedValue $ q4_it1_question6Changed ^. text
-  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q4_it1_question6Changed ^. requiredLevel
-  , _editOptionsQuestionEventTagUuids = ChangedValue $ q4_it1_question6Changed ^. tagUuids
-  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids q4_it1_question6Changed'
-  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids q4_it1_question6Changed'
-  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids q4_it1_question6Changed
+  , _editOptionsQuestionEventQuestionUuid = q4_it1_question6Edited ^. uuid
+  , _editOptionsQuestionEventTitle = ChangedValue $ q4_it1_question6Edited ^. title
+  , _editOptionsQuestionEventText = ChangedValue $ q4_it1_question6Edited ^. text
+  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q4_it1_question6Edited ^. requiredLevel
+  , _editOptionsQuestionEventTagUuids = ChangedValue $ q4_it1_question6Edited ^. tagUuids
+  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids q4_it1_question6Edited'
+  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids q4_it1_question6Edited'
+  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids q4_it1_question6Edited
   }
 
 d_km1_ch2_q4_it1_q5 :: DeleteQuestionEvent
@@ -944,13 +944,13 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _editOptionsQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
-  , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
-  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
-  , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. tagUuids
-  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids q2_aYes_fuq1_aYes_fuQuestion2Changed'
-  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids q2_aYes_fuq1_aYes_fuQuestion2Changed'
-  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids q2_aYes_fuq1_aYes_fuQuestion2Changed
+  , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. title
+  , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. text
+  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredLevel
+  , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. tagUuids
+  , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids q2_aYes_fuq1_aYes_fuQuestion2Edited'
+  , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids q2_aYes_fuq1_aYes_fuQuestion2Edited'
+  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids q2_aYes_fuq1_aYes_fuQuestion2Edited
   }
 
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2' :: EditQuestionEvent
@@ -971,10 +971,10 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
         {_eventPathItemUuid = q2_aYes_fuq1_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
   , _editOptionsQuestionEventQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-  , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. title
-  , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. text
-  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. requiredLevel
-  , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Changed ^. tagUuids
+  , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. title
+  , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. text
+  , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredLevel
+  , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. tagUuids
   , _editOptionsQuestionEventExpertUuids = ChangedValue $ getExpertUuids q2_aYes_fuq1_aYes_fuQuestion2'
   , _editOptionsQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids q2_aYes_fuq1_aYes_fuQuestion2'
   , _editOptionsQuestionEventAnswerUuids =
@@ -995,11 +995,11 @@ e_km1_ch2_ansMaybe6_fuq4 =
       , EventPathItem {_eventPathItemUuid = q4_it1_question6 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       , EventPathItem {_eventPathItemUuid = q4_it1_q6_answerNo ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
       ]
-  , _editListQuestionEventQuestionUuid = q4_it1_q6_aYes_followUpQuestion4Changed ^. uuid
-  , _editListQuestionEventTitle = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Changed ^. title
-  , _editListQuestionEventText = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Changed ^. text
-  , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Changed ^. requiredLevel
-  , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Changed ^. tagUuids
+  , _editListQuestionEventQuestionUuid = q4_it1_q6_aYes_followUpQuestion4Edited ^. uuid
+  , _editListQuestionEventTitle = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. title
+  , _editListQuestionEventText = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. text
+  , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. requiredLevel
+  , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. tagUuids
   , _editListQuestionEventExpertUuids = NothingChanged
   , _editListQuestionEventReferenceUuids = NothingChanged
   , _editListQuestionEventItemTemplateTitle = ChangedValue $ "EDITED: fup 4 template title"
@@ -1108,8 +1108,8 @@ e_km1_ch1_q2_eAlbert =
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editExpertEventExpertUuid = expertAlbert ^. uuid
-  , _editExpertEventName = ChangedValue $ expertAlbertChanged ^. name
-  , _editExpertEventEmail = ChangedValue $ expertAlbertChanged ^. email
+  , _editExpertEventName = ChangedValue $ expertAlbertEdited ^. name
+  , _editExpertEventEmail = ChangedValue $ expertAlbertEdited ^. email
   }
 
 d_km1_ch1_q2_eNikola :: DeleteExpertEvent
@@ -1224,7 +1224,7 @@ e_km1_ch1_q2_rCh1 =
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
   , _editResourcePageReferenceEventReferenceUuid = referenceCh1 ^. uuid
-  , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh1Changed ^. shortUuid
+  , _editResourcePageReferenceEventShortUuid = ChangedValue $ referenceCh1Edited ^. shortUuid
   }
 
 e_km1_ch1_q2_rCh1_type' :: EditReferenceEvent
@@ -1256,9 +1256,9 @@ e_km1_ch1_q2_rCh2 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _editURLReferenceEventReferenceUuid = referenceCh2Changed ^. uuid
-  , _editURLReferenceEventUrl = ChangedValue $ referenceCh2Changed ^. url
-  , _editURLReferenceEventLabel = ChangedValue $ referenceCh2Changed ^. label
+  , _editURLReferenceEventReferenceUuid = referenceCh2Edited ^. uuid
+  , _editURLReferenceEventUrl = ChangedValue $ referenceCh2Edited ^. url
+  , _editURLReferenceEventLabel = ChangedValue $ referenceCh2Edited ^. label
   }
 
 e_km1_ch1_q2_rCh2_type' :: EditReferenceEvent
@@ -1290,9 +1290,9 @@ e_km1_ch1_q2_rCh3 =
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       , EventPathItem {_eventPathItemUuid = question2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
       ]
-  , _editCrossReferenceEventReferenceUuid = referenceCh3Changed ^. uuid
-  , _editCrossReferenceEventTargetUuid = ChangedValue $ referenceCh3Changed ^. targetUuid
-  , _editCrossReferenceEventDescription = ChangedValue $ referenceCh3Changed ^. description
+  , _editCrossReferenceEventReferenceUuid = referenceCh3Edited ^. uuid
+  , _editCrossReferenceEventTargetUuid = ChangedValue $ referenceCh3Edited ^. targetUuid
+  , _editCrossReferenceEventDescription = ChangedValue $ referenceCh3Edited ^. description
   }
 
 e_km1_ch1_q2_rCh3_type' :: EditReferenceEvent

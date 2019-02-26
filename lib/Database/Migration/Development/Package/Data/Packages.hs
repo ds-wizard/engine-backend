@@ -5,58 +5,65 @@ import Control.Lens ((^.))
 import Database.Migration.Development.Event.Data.Events
 import LensesConfig
 import Model.Event.Event
+import Model.Package.Package
 import Service.Package.PackageMapper
 
-baseElixir0PackageDto = buildPackage "Elixir Base Package" "elixir.base" "core" "0.0.1" "Beta version" Nothing []
+globalPackageEmpty :: PackageWithEvents
+globalPackageEmpty = buildPackage "DSW Global Knowledge Model" "dsw.global" "core" "0.0.1" "Empty package" Nothing []
 
-baseElixirPackageDto =
+globalPackage :: PackageWithEvents
+globalPackage =
   buildPackage
-    "Elixir Base Package"
-    "elixir.base"
+    "DSW Global Knowledge Model"
+    "dsw.global"
     "core"
     "1.0.0"
     "First Release"
     Nothing
     [AddKnowledgeModelEvent' a_km1, AddTagEvent' a_km1_tds, AddTagEvent' a_km1_tbi]
 
-elixirNlPackageDto =
+netherlandsPackage :: PackageWithEvents
+netherlandsPackage =
   buildPackage
-    "Elixir Netherlands"
-    "elixir.nl"
+    "DSW Netherlands Knowledge Model"
+    "dsw.nl"
     "core-nl"
     "1.0.0"
     "First Release"
-    (Just $ baseElixirPackageDto ^. pId)
+    (Just $ globalPackage ^. pId)
     [AddChapterEvent' a_km1_ch1]
 
-elixirNlPackage2Dto =
+netherlandsPackageV2 :: PackageWithEvents
+netherlandsPackageV2 =
   buildPackage
-    "Elixir Netherlands"
-    "elixir.nl"
+    "DSW Netherlands Knowledge Model"
+    "dsw.nl"
     "core-nl"
     "2.0.0"
     "Second Release"
-    (Just $ elixirNlPackageDto ^. pId)
+    (Just $ netherlandsPackage ^. pId)
     [AddChapterEvent' a_km1_ch3]
 
-amsterdamPackage1Dto =
+amsterdamPackage :: PackageWithEvents
+amsterdamPackage =
   buildPackage
-    "Amsterdam KM"
-    "elixir.nl.amsterdam"
-    "amsterdam-km"
+    "DSW Amsterdam Knowledge Model"
+    "dsw.nl.amsterdam"
+    "core-amsterdam"
     "1.0.0"
     "First Release"
-    (Just $ elixirNlPackageDto ^. pId)
+    (Just $ netherlandsPackage ^. pId)
     []
 
-elixirCzPackage2Dto =
+germanyPackage :: PackageWithEvents
+germanyPackage =
   buildPackage
-    "Elixir Czech Republic"
-    "elixir.cz"
-    "core-cz"
+    "DSW Germany"
+    "dsw.de"
+    "core-de"
     "1.0.0"
     "First Release"
-    (Just $ baseElixir0PackageDto ^. pId)
+    (Just $ globalPackageEmpty ^. pId)
     [ AddKnowledgeModelEvent' a_km1
     , AddTagEvent' a_km1_tds
     , AddTagEvent' a_km1_tbi

@@ -27,8 +27,8 @@ resetDB appContext = do
   runInContext (deleteFeedbacks) appContext
   runInContext (deleteQuestionnaires) appContext
   runInContext (deletePackages) appContext
-  runInContext (insertPackage baseElixir0PackageDto) appContext
-  runInContext (insertPackage baseElixirPackageDto) appContext
-  runInContext (insertPackage elixirNlPackageDto) appContext
-  runInContext (insertPackage elixirNlPackage2Dto) appContext
+  runInContext (insertPackage globalPackageEmpty) appContext
+  runInContext (insertPackage globalPackage) appContext
+  runInContext (insertPackage netherlandsPackage) appContext
+  runInContext (insertPackage netherlandsPackageV2) appContext
   return ()

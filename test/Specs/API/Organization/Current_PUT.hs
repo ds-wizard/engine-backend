@@ -80,7 +80,7 @@ test_400_invalid_organizationId appContext =
   it "HTTP 400 BAD REQUEST when organizationId is not in valid format" $
      -- GIVEN: Prepare request
    do
-    let reqDto = editedOrg1Change & organizationId .~ "elixir-nl"
+    let reqDto = editedOrg1Change & organizationId .~ "dsw-nl"
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400

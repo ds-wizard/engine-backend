@@ -35,7 +35,7 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
+        runInContext (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
@@ -66,7 +66,7 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage elixirNlPackage2Dto) appContext
+        runInContext (insertPackage netherlandsPackageV2) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents
         -- AND: Prepare expectations
@@ -82,7 +82,7 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage elixirNlPackage2Dto) appContext
+        runInContext (insertPackage netherlandsPackageV2) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
@@ -98,10 +98,10 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage elixirNlPackage2Dto) appContext
+        runInContext (insertPackage netherlandsPackageV2) appContext
         runInContext (deleteEventsAtBranch branchUuid) appContext
         let migratorCreateDto =
-              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
+              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents
@@ -119,7 +119,7 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         let migratorCreateDto =
-              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = elixirNlPackage2Dto ^. pId}
+              MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         let reqDto =
               MigratorConflictDTO

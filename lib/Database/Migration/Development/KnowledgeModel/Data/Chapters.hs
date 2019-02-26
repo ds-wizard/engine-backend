@@ -1,6 +1,6 @@
 module Database.Migration.Development.KnowledgeModel.Data.Chapters
   ( chapter1
-  , chapter1WithChangeProperties
+  , chapter1Edited
   , chapter1WithChangedQuestion2
   , chapter1WithoutQuestions
   , chapter1WithAddedQuestion3
@@ -30,8 +30,8 @@ chapter1 =
   , _chapterQuestions = [FQ.question1', FQ.question2']
   }
 
-chapter1WithChangeProperties :: Chapter
-chapter1WithChangeProperties =
+chapter1Edited :: Chapter
+chapter1Edited =
   Chapter
   { _chapterUuid = chapter1 ^. uuid
   , _chapterTitle = "EDITED: " ++ (chapter1 ^. title)
@@ -45,7 +45,7 @@ chapter1WithChangedQuestion2 =
   { _chapterUuid = chapter1 ^. uuid
   , _chapterTitle = chapter1 ^. title
   , _chapterText = chapter1 ^. text
-  , _chapterQuestions = [FQ.question1', FQ.question2WithChangeProperties']
+  , _chapterQuestions = [FQ.question1', FQ.question2Edited']
   }
 
 chapter1WithoutQuestions :: Chapter

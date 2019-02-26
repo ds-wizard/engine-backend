@@ -7,6 +7,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Questions
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 
+fQ2_answerYes :: FilledAnswer
 fQ2_answerYes =
   FilledAnswer
   { _filledAnswerUuid = q2_answerYes ^. uuid
@@ -19,6 +20,7 @@ fQ2_answerYes =
 fQ2_aYes_fuQuestion1' :: FilledQuestion
 fQ2_aYes_fuQuestion1' = FilledOptionsQuestion' fQ2_aYes_fuQuestion1
 
+fQ2_aYes_fuQuestion1 :: FilledOptionsQuestion
 fQ2_aYes_fuQuestion1 =
   FilledOptionsQuestion
   { _filledOptionsQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
@@ -32,6 +34,7 @@ fQ2_aYes_fuQuestion1 =
   , _filledOptionsQuestionAnswerOption = Just fQ2_aYes_fuq1_answerNo
   }
 
+fQ2_aYes_fuq1_answerNo :: FilledAnswer
 fQ2_aYes_fuq1_answerNo =
   FilledAnswer
   { _filledAnswerUuid = q2_aYes_fuq1_answerNo ^. uuid

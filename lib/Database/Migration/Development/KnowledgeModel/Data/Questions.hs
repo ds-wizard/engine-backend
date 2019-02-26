@@ -31,11 +31,11 @@ question1 =
   , _valueQuestionValueType = StringQuestionValueType
   }
 
-question1WithChangeProperties' :: Question
-question1WithChangeProperties' = ValueQuestion' question1WithChangeProperties
+question1Edited' :: Question
+question1Edited' = ValueQuestion' question1Edited
 
-question1WithChangeProperties :: ValueQuestion
-question1WithChangeProperties =
+question1Edited :: ValueQuestion
+question1Edited =
   ValueQuestion
   { _valueQuestionUuid = question1 ^. uuid
   , _valueQuestionTitle = "EDITED: " ++ question1 ^. title
@@ -82,11 +82,11 @@ question2 =
   , _optionsQuestionAnswers = [FA.q2_answerNo, FA.q2_answerYes]
   }
 
-question2WithChangeProperties' :: Question
-question2WithChangeProperties' = OptionsQuestion' question2WithChangeProperties
+question2Edited' :: Question
+question2Edited' = OptionsQuestion' question2Edited
 
-question2WithChangeProperties :: OptionsQuestion
-question2WithChangeProperties =
+question2Edited :: OptionsQuestion
+question2Edited =
   OptionsQuestion
   { _optionsQuestionUuid = question2 ^. uuid
   , _optionsQuestionTitle = "EDITED: Second Question"
@@ -179,11 +179,11 @@ question4 =
   , _listQuestionItemTemplateQuestions = [q4_it1_question5', q4_it1_question6']
   }
 
-question4WithChangeProperties' :: Question
-question4WithChangeProperties' = ListQuestion' question4WithChangeProperties
+question4Edited' :: Question
+question4Edited' = ListQuestion' question4Edited
 
-question4WithChangeProperties :: ListQuestion
-question4WithChangeProperties =
+question4Edited :: ListQuestion
+question4Edited =
   ListQuestion
   { _listQuestionUuid = question4 ^. uuid
   , _listQuestionTitle = "EDITED: " ++ question4 ^. title
@@ -263,11 +263,11 @@ q4_it1_question5Plain =
   , _listQuestionItemTemplateQuestions = []
   }
 
-q4_it1_question5Changed' :: Question
-q4_it1_question5Changed' = ListQuestion' q4_it1_question5Changed
+q4_it1_question5Edited' :: Question
+q4_it1_question5Edited' = ListQuestion' q4_it1_question5Edited
 
-q4_it1_question5Changed :: ListQuestion
-q4_it1_question5Changed =
+q4_it1_question5Edited :: ListQuestion
+q4_it1_question5Edited =
   ListQuestion
   { _listQuestionUuid = q4_it1_question5 ^. uuid
   , _listQuestionTitle = "EDITED: Fifth Question"
@@ -296,11 +296,11 @@ q4_it1_question6 =
   , _optionsQuestionAnswers = [q4_it1_q6_answerNo, q4_it1_q6_answerYes]
   }
 
-q4_it1_question6Changed' :: Question
-q4_it1_question6Changed' = OptionsQuestion' q4_it1_question6Changed
+q4_it1_question6Edited' :: Question
+q4_it1_question6Edited' = OptionsQuestion' q4_it1_question6Edited
 
-q4_it1_question6Changed :: OptionsQuestion
-q4_it1_question6Changed =
+q4_it1_question6Edited :: OptionsQuestion
+q4_it1_question6Edited =
   OptionsQuestion
   { _optionsQuestionUuid = q4_it1_question6 ^. uuid
   , _optionsQuestionTitle = "Sixth Question"

@@ -10,17 +10,19 @@ import Database.Migration.Development.FilledKnowledgeModel.Data.FilledAnswersAnd
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledChapters
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledQuestions
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
 
+questionnaire1 :: Questionnaire
 questionnaire1 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
   , _questionnaireName = "My Questionnaire"
   , _questionnaireLevel = 2
   , _questionnairePrivate = True
-  , _questionnairePackageId = "elixir.nl:core-nl:2.0.0"
+  , _questionnairePackageId = netherlandsPackageV2 ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies =
@@ -44,7 +46,8 @@ questionnaire1 =
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 
-questionnaire1Changed =
+questionnaire1Edited :: Questionnaire
+questionnaire1Edited =
   Questionnaire
   { _questionnaireUuid = questionnaire1 ^. uuid
   , _questionnaireName = questionnaire1 ^. name
@@ -62,18 +65,21 @@ questionnaire1Changed =
 createReplyKey :: [String] -> String
 createReplyKey uuids = intercalate "." uuids
 
+fQ1 :: Reply
 fQ1 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion1 ^. uuid]
   , _replyValue = StringReply . fromJust $ fQuestion1 ^. answerValue
   }
 
+fQ2 :: Reply
 fQ2 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion2 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQuestion2 ^. answerOption) ^. uuid
   }
 
+rQ2_aYes_fuQ1 :: Reply
 rQ2_aYes_fuQ1 =
   Reply
   { _replyPath =
@@ -86,6 +92,7 @@ rQ2_aYes_fuQ1 =
   , _replyValue = AnswerReply $ (fromJust $ fQ2_aYes_fuQuestion1 ^. answerOption) ^. uuid
   }
 
+fQ3 :: Reply
 fQ3 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion3 ^. uuid]
@@ -93,18 +100,21 @@ fQ3 =
   }
 
 -- ------------------------------------------------------------
+rQ4 :: Reply
 rQ4 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid]
   , _replyValue = ItemListReply 2
   }
 
+rQ4_it1_itemName :: Reply
 rQ4_it1_itemName =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "0", "itemName"]
   , _replyValue = StringReply . fromJust $ fQ4_ai1 ^. value
   }
 
+rQ4_it1_q5 :: Reply
 rQ4_it1_q5 =
   Reply
   { _replyPath =
@@ -113,6 +123,7 @@ rQ4_it1_q5 =
   , _replyValue = ItemListReply 1
   }
 
+rQ4_it1_q5_it1_itemName :: Reply
 rQ4_it1_q5_it1_itemName =
   Reply
   { _replyPath =
@@ -127,6 +138,7 @@ rQ4_it1_q5_it1_itemName =
   , _replyValue = StringReply . fromJust $ fQ4_it1_q5_ai1 ^. value
   }
 
+rQ4_it1_q5_it1_question7 :: Reply
 rQ4_it1_q5_it1_question7 =
   Reply
   { _replyPath =
@@ -141,6 +153,7 @@ rQ4_it1_q5_it1_question7 =
   , _replyValue = StringReply . fromJust $ fQ4_it1_q5_it1_question7 ^. answerValue
   }
 
+rQ4_it1_q5_it1_question8 :: Reply
 rQ4_it1_q5_it1_question8 =
   Reply
   { _replyPath =
@@ -155,6 +168,7 @@ rQ4_it1_q5_it1_question8 =
   , _replyValue = StringReply . fromJust $ fQ4_it1_q5_it1_question8 ^. answerValue
   }
 
+rQ4_it1_q6 :: Reply
 rQ4_it1_q6 =
   Reply
   { _replyPath =
@@ -164,12 +178,14 @@ rQ4_it1_q6 =
   }
 
 -- ------------------------------------------------------------
+rQ4_it2_itemName :: Reply
 rQ4_it2_itemName =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "1", "itemName"]
   , _replyValue = StringReply . fromJust $ fQ4_ai2 ^. value
   }
 
+rQ4_it2_q5 :: Reply
 rQ4_it2_q5 =
   Reply
   { _replyPath =
@@ -178,6 +194,7 @@ rQ4_it2_q5 =
   , _replyValue = ItemListReply 0
   }
 
+rQ4_it2_q6 :: Reply
 rQ4_it2_q6 =
   Reply
   { _replyPath =

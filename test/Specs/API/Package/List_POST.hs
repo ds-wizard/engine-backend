@@ -53,7 +53,7 @@ reqUrl = "/packages"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = toDTO elixirNlPackage2DtoKMBudle
+reqDto = toDTO netherlandsPackageV2KMBudle
 
 reqBody = encode reqDto
 
@@ -66,12 +66,12 @@ test_201_req_all_db_all appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO <$> [elixirNlPackage2Dto]
+    let expDto = packageWithEventsToDTO <$> [netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
-    runInContextIO (insertPackage elixirNlPackageDto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
+    runInContextIO (insertPackage netherlandsPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -93,7 +93,7 @@ test_201_req_all_db_no appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO <$> [baseElixirPackageDto, elixirNlPackageDto, elixirNlPackage2Dto]
+    let expDto = packageWithEventsToDTO <$> [globalPackage, netherlandsPackage, netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -105,9 +105,9 @@ test_201_req_all_db_no appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (baseElixirPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackage2Dto)
+    assertExistenceOfPackageInDB appContext (globalPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -116,17 +116,17 @@ test_201_req_no_db_all appContext = do
   it "HTTP 201 CREATED - In request: no parent packages, in DB: all parent packages" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (elixirNlPackage2DtoKMBudle & packages .~ [elixirNlPackage2Dto])
+    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO <$> [elixirNlPackage2Dto]
+    let expDto = packageWithEventsToDTO <$> [netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
-    runInContextIO (insertPackage elixirNlPackageDto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
+    runInContextIO (insertPackage netherlandsPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -135,9 +135,9 @@ test_201_req_no_db_all appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (baseElixirPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackage2Dto)
+    assertExistenceOfPackageInDB appContext (globalPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -146,16 +146,16 @@ test_201_req_one_db_rest appContext = do
   it "HTTP 201 CREATED - In request: one parent package, in DB: rest of parent packages" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (elixirNlPackage2DtoKMBudle & packages .~ [elixirNlPackageDto, elixirNlPackage2Dto])
+    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackage, netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO <$> [elixirNlPackageDto, elixirNlPackage2Dto]
+    let expDto = packageWithEventsToDTO <$> [netherlandsPackage, netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -164,9 +164,9 @@ test_201_req_one_db_rest appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (baseElixirPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackageDto)
-    assertExistenceOfPackageInDB appContext (elixirNlPackage2Dto)
+    assertExistenceOfPackageInDB appContext (globalPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackage)
+    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -182,13 +182,13 @@ test_400_main_package_duplication appContext = do
    do
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (elixirNlPackage2Dto ^. pId)
+    let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
-    runInContextIO (insertPackage elixirNlPackageDto) appContext
-    runInContextIO (insertPackage elixirNlPackage2Dto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
+    runInContextIO (insertPackage netherlandsPackage) appContext
+    runInContextIO (insertPackage netherlandsPackageV2) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -202,18 +202,18 @@ test_400_missing_parent_package appContext = do
   it "HTTP 400 BAD REQUEST when main package already exists" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (elixirNlPackage2DtoKMBudle & packages .~ [elixirNlPackage2Dto])
+    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
           createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST (elixirNlPackageDto ^. pId) (elixirNlPackage2Dto ^. pId)
+          _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -222,23 +222,23 @@ test_400_missing_parent_package appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 1
-    assertExistenceOfPackageInDB appContext (baseElixirPackageDto)
+    assertExistenceOfPackageInDB appContext (globalPackage)
 
 test_400_bad_package_coordinates appContext =
   it "HTTP 400 BAD REQUEST when package ID doesn't match with package coordinates" $
      -- GIVEN: Prepare request
    do
-    let editedElixirNlPackageDto = elixirNlPackageDto & kmId .~ ((elixirNlPackageDto ^. kmId) ++ "-2")
-    let reqDto = toDTO (elixirNlPackage2DtoKMBudle & packages .~ [editedElixirNlPackageDto, elixirNlPackage2Dto])
+    let editedElixirNlPackageDto = netherlandsPackage & kmId .~ ((netherlandsPackage ^. kmId) ++ "-2")
+    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [editedElixirNlPackageDto, netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (elixirNlPackageDto ^. pId)
+    let expDto = createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (netherlandsPackage ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
-    runInContextIO (insertPackage baseElixirPackageDto) appContext
+    runInContextIO (insertPackage globalPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

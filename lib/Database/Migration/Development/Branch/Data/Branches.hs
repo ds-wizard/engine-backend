@@ -11,26 +11,30 @@ import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
 import Database.Migration.Development.Event.Data.Events
 import Database.Migration.Development.Organization.Data.Organizations
+import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Event.Event
 import Service.Event.EventMapper
 
+amsterdamBranch :: BranchDTO
 amsterdamBranch =
   BranchDTO
   { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
-  , _branchDTOName = "Amsterdam KM"
+  , _branchDTOName = amsterdamPackage ^. name
   , _branchDTOOrganizationId = org1 ^. organizationId
-  , _branchDTOKmId = "amsterdam-km"
-  , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-  , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+  , _branchDTOKmId = amsterdamPackage ^. kmId
+  , _branchDTOParentPackageId = amsterdamPackage ^. parentPackageId
+  , _branchDTOLastAppliedParentPackageId = amsterdamPackage ^. parentPackageId
   , _branchDTOState = BSEdited
-  , _branchDTOOwnerUuid = Just $ fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66")
+  , _branchDTOOwnerUuid = Just $ userAlbert ^. uuid
   , _branchDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   , _branchDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 
+amsterdamBranchWithEvents :: BranchWithEvents
 amsterdamBranchWithEvents =
   BranchWithEvents
   { _branchWithEventsUuid = amsterdamBranch ^. uuid
@@ -64,6 +68,7 @@ amsterdamBranchWithEvents =
   , _branchWithEventsUpdatedAt = amsterdamBranch ^. updatedAt
   }
 
+amsterdamBranchCreate :: BranchCreateDTO
 amsterdamBranchCreate =
   BranchCreateDTO
   { _branchCreateDTOName = amsterdamBranch ^. name
@@ -71,6 +76,7 @@ amsterdamBranchCreate =
   , _branchCreateDTOParentPackageId = amsterdamBranch ^. parentPackageId
   }
 
+amsterdamBranchChange :: BranchChangeDTO
 amsterdamBranchChange =
   BranchChangeDTO
   { _branchChangeDTOName = "EDITED: " ++ amsterdamBranch ^. name
@@ -78,6 +84,7 @@ amsterdamBranchChange =
   , _branchChangeDTOEvents = []
   }
 
+amsterdamBranchDetail :: BranchDetailDTO
 amsterdamBranchDetail =
   BranchDetailDTO
   { _branchDetailDTOUuid = amsterdamBranch ^. uuid
@@ -93,6 +100,7 @@ amsterdamBranchDetail =
   , _branchDetailDTOUpdatedAt = amsterdamBranch ^. updatedAt
   }
 
+leidenBranch :: BranchDTO
 leidenBranch =
   BranchDTO
   { _branchDTOUuid = fromJust (U.fromString "47421955-ba30-48d4-8c49-9ec47eda2cad")
@@ -100,13 +108,14 @@ leidenBranch =
   , _branchDTOOrganizationId = org1 ^. organizationId
   , _branchDTOKmId = "leiden-km"
   , _branchDTOState = BSDefault
-  , _branchDTOParentPackageId = Just "elixir.nl:core-nl:1.0.0"
-  , _branchDTOLastAppliedParentPackageId = Just "elixir.nl:core-nl:1.0.0"
+  , _branchDTOParentPackageId = Just $ netherlandsPackage ^. pId
+  , _branchDTOLastAppliedParentPackageId = Just $ netherlandsPackage ^. pId
   , _branchDTOOwnerUuid = Just $ fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66")
   , _branchDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   , _branchDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
 
+leidenBranchCreate :: BranchCreateDTO
 leidenBranchCreate =
   BranchCreateDTO
   { _branchCreateDTOName = leidenBranch ^. name

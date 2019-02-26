@@ -51,7 +51,7 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToSimpleDTO <$> [baseElixirPackageDto, elixirNlPackage2Dto]
+    let expDto = packageWithEventsToSimpleDTO <$> [globalPackage, netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

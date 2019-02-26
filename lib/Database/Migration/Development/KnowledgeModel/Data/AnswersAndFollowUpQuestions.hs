@@ -75,8 +75,8 @@ q2_answerYes =
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }
 
-q2_answerYesChanged :: Answer
-q2_answerYesChanged =
+q2_answerYesEdited :: Answer
+q2_answerYesEdited =
   Answer
   { _answerUuid = q2_answerYes ^. uuid
   , _answerLabel = "EDITED: Yes"
@@ -199,11 +199,11 @@ q2_aYes_fuq1_aYes_fuQuestion2 =
   , _optionsQuestionAnswers = [q2_aYes_fuq1_aYes_fuq2_answerNo, q2_aYes_fuq1_aYes_fuq2_answerYes]
   }
 
-q2_aYes_fuq1_aYes_fuQuestion2Changed' :: Question
-q2_aYes_fuq1_aYes_fuQuestion2Changed' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2Changed
+q2_aYes_fuq1_aYes_fuQuestion2Edited' :: Question
+q2_aYes_fuq1_aYes_fuQuestion2Edited' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2Edited
 
-q2_aYes_fuq1_aYes_fuQuestion2Changed :: OptionsQuestion
-q2_aYes_fuq1_aYes_fuQuestion2Changed =
+q2_aYes_fuq1_aYes_fuQuestion2Edited :: OptionsQuestion
+q2_aYes_fuq1_aYes_fuQuestion2Edited =
   OptionsQuestion
   { _optionsQuestionUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
   , _optionsQuestionTitle = "EDITED: Second Follow-Up Question"
@@ -250,11 +250,11 @@ q4_it1_q6_aYes_followUpQuestion4 =
   , _listQuestionItemTemplateQuestions = [q4_it1_q6_aYes_fuq4_it_question1', q4_it1_q6_aYes_fuq4_it_question2']
   }
 
-q4_it1_q6_aYes_followUpQuestion4Changed' :: Question
-q4_it1_q6_aYes_followUpQuestion4Changed' = ListQuestion' q4_it1_q6_aYes_followUpQuestion4Changed
+q4_it1_q6_aYes_followUpQuestion4Edited' :: Question
+q4_it1_q6_aYes_followUpQuestion4Edited' = ListQuestion' q4_it1_q6_aYes_followUpQuestion4Edited
 
-q4_it1_q6_aYes_followUpQuestion4Changed :: ListQuestion
-q4_it1_q6_aYes_followUpQuestion4Changed =
+q4_it1_q6_aYes_followUpQuestion4Edited :: ListQuestion
+q4_it1_q6_aYes_followUpQuestion4Edited =
   ListQuestion
   { _listQuestionUuid = q4_it1_q6_aYes_followUpQuestion4 ^. uuid
   , _listQuestionTitle = "EDITED: Third Follow-Up Question"

@@ -6,12 +6,13 @@ import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.KnowledgeModelBundle.KnowledgeModelBundle
 
-elixirNlPackage2DtoKMBudle =
+netherlandsPackageV2KMBudle :: KnowledgeModelBundle
+netherlandsPackageV2KMBudle =
   KnowledgeModelBundle
-  { _knowledgeModelBundleBundleId = elixirNlPackage2Dto ^. pId
-  , _knowledgeModelBundleName = elixirNlPackage2Dto ^. name
-  , _knowledgeModelBundleOrganizationId = elixirNlPackage2Dto ^. organizationId
-  , _knowledgeModelBundleKmId = elixirNlPackage2Dto ^. kmId
-  , _knowledgeModelBundleVersion = elixirNlPackage2Dto ^. version
-  , _knowledgeModelBundlePackages = [baseElixirPackageDto, elixirNlPackageDto, elixirNlPackage2Dto]
+  { _knowledgeModelBundleBundleId = netherlandsPackageV2 ^. pId
+  , _knowledgeModelBundleName = netherlandsPackageV2 ^. name
+  , _knowledgeModelBundleOrganizationId = netherlandsPackageV2 ^. organizationId
+  , _knowledgeModelBundleKmId = netherlandsPackageV2 ^. kmId
+  , _knowledgeModelBundleVersion = netherlandsPackageV2 ^. version
+  , _knowledgeModelBundlePackages = [globalPackage, netherlandsPackage, netherlandsPackageV2]
   }

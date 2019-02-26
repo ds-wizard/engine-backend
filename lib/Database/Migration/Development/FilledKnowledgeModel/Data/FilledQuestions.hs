@@ -10,6 +10,7 @@ import Model.FilledKnowledgeModel.FilledKnowledgeModel
 fQuestion1' :: FilledQuestion
 fQuestion1' = FilledValueQuestion' fQuestion1
 
+fQuestion1 :: FilledValueQuestion
 fQuestion1 =
   FilledValueQuestion
   { _filledValueQuestionUuid = question1 ^. uuid
@@ -26,6 +27,7 @@ fQuestion1 =
 fQuestion2' :: FilledQuestion
 fQuestion2' = FilledOptionsQuestion' fQuestion2
 
+fQuestion2 :: FilledOptionsQuestion
 fQuestion2 =
   FilledOptionsQuestion
   { _filledOptionsQuestionUuid = question2 ^. uuid
@@ -42,6 +44,7 @@ fQuestion2 =
 fQuestion3' :: FilledQuestion
 fQuestion3' = FilledOptionsQuestion' fQuestion3
 
+fQuestion3 :: FilledOptionsQuestion
 fQuestion3 =
   FilledOptionsQuestion
   { _filledOptionsQuestionUuid = question3 ^. uuid
@@ -58,6 +61,7 @@ fQuestion3 =
 fQuestion4' :: FilledQuestion
 fQuestion4' = FilledListQuestion' fQuestion4
 
+fQuestion4 :: FilledListQuestion
 fQuestion4 =
   FilledListQuestion
   { _filledListQuestionUuid = question4 ^. uuid

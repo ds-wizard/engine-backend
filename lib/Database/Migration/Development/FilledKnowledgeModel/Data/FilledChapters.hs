@@ -7,6 +7,7 @@ import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 
+fChapter1 :: FilledChapter
 fChapter1 =
   FilledChapter
   { _filledChapterUuid = chapter1 ^. uuid
@@ -15,6 +16,7 @@ fChapter1 =
   , _filledChapterQuestions = [fQuestion1', fQuestion2']
   }
 
+fChapter2 :: FilledChapter
 fChapter2 =
   FilledChapter
   { _filledChapterUuid = chapter2 ^. uuid

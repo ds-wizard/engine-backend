@@ -143,7 +143,7 @@ test_400_not_existing_parentPackageId appContext = do
   it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $
      -- GIVEN: Prepare request
    do
-    let reqDto = amsterdamBranchCreate & parentPackageId .~ (Just "elixir.nl:core-nl:9.9.9")
+    let reqDto = amsterdamBranchCreate & parentPackageId .~ (Just "dsw.nl:core-nl:9.9.9")
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400

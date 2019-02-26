@@ -55,7 +55,7 @@ test_200 appContext = do
     let expDto = [amsterdamBranch]
     let expBody = encode expDto
      -- AND: Run migrations
-    runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
+    runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
     runInContextIO B.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
