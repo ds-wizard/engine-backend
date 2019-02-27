@@ -74,11 +74,9 @@ createBranchWithParams bUuid now currentUser reqDto =
   validateKmId reqDto $
   validatePackageId (reqDto ^. parentPackageId) $
   heGetOrganization $ \organization -> do
-    let branch = fromCreateDTO reqDto bUuid (reqDto ^. parentPackageId) (Just $ currentUser ^. uuid) now now
+    let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
     insertBranch branch
-    updateEventsInBranch (U.toString $ branch ^. uuid) []
     updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
-    updateMigrationInfoIfParentPackageIdPresent branch
     createDefaultEventIfParentPackageIsNotPresent branch
     heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km ->
       return . Right $ toDTO branch BSDefault organization
@@ -101,12 +99,6 @@ createBranchWithParams bUuid now currentUser reqDto =
             Left error ->
               return . Left $ createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
         Nothing -> callback
-    updateMigrationInfoIfParentPackageIdPresent branch = do
-      let branchUuid = U.toString $ branch ^. uuid
-      let maybeParentPackageId = branch ^. parentPackageId
-      case maybeParentPackageId of
-        Just parentPackageId -> updateBranchWithMigrationInfo branchUuid parentPackageId parentPackageId
-        Nothing -> return ()
     createDefaultEventIfParentPackageIsNotPresent branch = do
       let branchUuid = U.toString $ branch ^. uuid
       let maybeParentPackageId = branch ^. parentPackageId
@@ -141,7 +133,8 @@ modifyBranch branchUuid reqDto =
                 reqDto
                 (branchFromDB ^. uuid)
                 (branchFromDB ^. parentPackageId)
-                (branchFromDB ^. parentPackageId)
+                (branchFromDB ^. lastAppliedParentPackageId)
+                (branchFromDB ^. lastMergeCheckpointPackageId)
                 (branchFromDB ^. ownerUuid)
                 (branchFromDB ^. createdAt)
                 now

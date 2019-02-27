@@ -64,7 +64,7 @@ findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPack
   branchesS <- runDB action
   return . deserializeEntities $ branchesS
 
-insertBranch :: Branch -> AppContextM Value
+insertBranch :: BranchWithEvents -> AppContextM Value
 insertBranch branch = do
   let action = insert branchCollection (toBSON branch)
   runDB action

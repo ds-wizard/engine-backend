@@ -48,6 +48,9 @@ doIsCleanerMethod km (AddReferenceEvent' event) =
     else False
 doIsCleanerMethod km (EditReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (getEventNodeUuid event)
 doIsCleanerMethod km (DeleteReferenceEvent' event) = not $ isThereAnyReferenceWithGivenUuid km (getEventNodeUuid event)
+doIsCleanerMethod km (AddTagEvent' event) = False
+doIsCleanerMethod km (EditTagEvent' event) = not $ isThereAnyTagWithGivenUuid km (event ^. tagUuid)
+doIsCleanerMethod km (DeleteTagEvent' event) = not $ isThereAnyTagWithGivenUuid km (event ^. tagUuid)
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =

@@ -14,6 +14,7 @@ import Model.Branch.Branch
 import Model.Branch.BranchState
 import Service.Event.EventMapper
 
+toDTO :: BranchWithEvents -> BranchState -> OrganizationDTO -> BranchDTO
 toDTO branch state organization =
   BranchDTO
   { _branchDTOUuid = branch ^. uuid
@@ -44,32 +45,32 @@ toDetailDTO branch state organization =
   , _branchDetailDTOUpdatedAt = branch ^. updatedAt
   }
 
-fromChangeDTO ::
-     BranchChangeDTO -> U.UUID -> Maybe String -> Maybe String -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
-fromChangeDTO dto bUuid bParentPackageId bLastAppliedParentPackageId mOwnerUuid bCreatedAt bUpdatedAt =
+fromChangeDTO :: BranchChangeDTO -> U.UUID -> Maybe String -> Maybe String -> Maybe String -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromChangeDTO dto bUuid bParentPackageId bLastAppliedParentPackageId bLastMergeCheckpointPackageId mOwnerUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
   { _branchWithEventsUuid = bUuid
   , _branchWithEventsName = dto ^. name
   , _branchWithEventsKmId = dto ^. kmId
   , _branchWithEventsParentPackageId = bParentPackageId
   , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
-  , _branchWithEventsLastMergeCheckpointPackageId = Nothing
+  , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
   , _branchWithEventsOwnerUuid = mOwnerUuid
   , _branchWithEventsEvents = fromDTOs $ dto ^. events
   , _branchWithEventsCreatedAt = bCreatedAt
   , _branchWithEventsUpdatedAt = bUpdatedAt
   }
 
-fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe String -> Maybe U.UUID -> UTCTime -> UTCTime -> Branch
-fromCreateDTO dto bUuid bLastAppliedParentPackageId mOwnerUuid bCreatedAt bUpdatedAt =
-  Branch
-  { _branchUuid = bUuid
-  , _branchName = dto ^. name
-  , _branchKmId = dto ^. kmId
-  , _branchParentPackageId = dto ^. parentPackageId
-  , _branchLastAppliedParentPackageId = bLastAppliedParentPackageId
-  , _branchLastMergeCheckpointPackageId = Nothing
-  , _branchOwnerUuid = mOwnerUuid
-  , _branchCreatedAt = bCreatedAt
-  , _branchUpdatedAt = bUpdatedAt
+fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromCreateDTO dto bUuid mOwnerUuid bCreatedAt bUpdatedAt =
+  BranchWithEvents
+  { _branchWithEventsUuid = bUuid
+  , _branchWithEventsName = dto ^. name
+  , _branchWithEventsKmId = dto ^. kmId
+  , _branchWithEventsParentPackageId = dto ^. parentPackageId
+  , _branchWithEventsLastAppliedParentPackageId = dto ^. parentPackageId
+  , _branchWithEventsLastMergeCheckpointPackageId = dto ^. parentPackageId
+  , _branchWithEventsOwnerUuid = mOwnerUuid
+  , _branchWithEventsEvents = []
+  , _branchWithEventsCreatedAt = bCreatedAt
+  , _branchWithEventsUpdatedAt = bUpdatedAt
   }
