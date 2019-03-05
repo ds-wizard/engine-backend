@@ -15,8 +15,18 @@ tested-with: GHC==7.6.* GHC==7.8.*
 data-files:
   - config/app-config.cfg
   - config/build-info.cfg
-  - template/root.css
-  - template/root.html.jinja
+  - templates/dmp/root.css
+  - templates/dmp/root.html.j2
+  - templates/mail/_common/attachments/logo.png
+  - templates/mail/_common/footer.txt.j2
+  - templates/mail/_common/layout.html.j2
+  - templates/mail/_common/style.css
+  - templates/mail/registrationConfirmation/message.html.j2
+  - templates/mail/registrationConfirmation/message.txt.j2
+  - templates/mail/registrationCreatedAnalytics/message.html.j2
+  - templates/mail/registrationCreatedAnalytics/message.txt.j2
+  - templates/mail/resetPassword/message.html.j2
+  - templates/mail/resetPassword/message.txt.j2
 library:
   source-dirs: lib
   when:
@@ -36,7 +46,9 @@ library:
   - ConfigFile
   - containers
   - data-default
+  - directory
   - exceptions
+  - filepath
   - fromhtml
   - ginger
   - github
@@ -48,6 +60,7 @@ library:
   - jwt
   - lens
   - mime-mail
+  - mime-types
   - MissingH
   - mtl
   - monad-control

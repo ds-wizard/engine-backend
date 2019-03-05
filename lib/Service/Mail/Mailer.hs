@@ -4,12 +4,18 @@ module Service.Mail.Mailer
   , sendResetPasswordMail
   ) where
 
-import Control.Exception (SomeException, catch)
+import Control.Exception (SomeException, catch, handle)
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
+import qualified Data.Aeson as Aeson
+import Data.Aeson.Types (emptyObject)
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
+import Data.Either (rights)
+import Data.HashMap.Strict (HashMap, fromList)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as E
 import qualified Data.Text.Lazy as TL
 import qualified Data.UUID as U
 import qualified Network.HaskellNet.Auth as Auth
@@ -17,51 +23,112 @@ import qualified Network.HaskellNet.SMTP as SMTP
 import qualified Network.HaskellNet.SMTP.SSL as SMTPSSL
 import qualified Network.Mail.Mime as MIME
 import qualified Network.Mail.SMTP as SMTPMail
+import qualified Network.Mime as MIME
+import System.Directory (listDirectory)
+import System.FilePath (takeFileName)
 
+import Api.Resource.User.UserDTO
 import Constant.Component
+import Constant.Mailer
 import LensesConfig
 import Localization
 import Model.Context.AppContext
-import Model.User.User
 import Util.Logger
+import Util.Template (loadAndRender)
 
-sendRegistrationConfirmationMail :: Email -> U.UUID -> String -> AppContextM ()
-sendRegistrationConfirmationMail email userId hash = do
+sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM ()
+sendRegistrationConfirmationMail user hash = do
   dswConfig <- asks _appContextConfig
   let clientAddress = dswConfig ^. clientConfig . address
-      clientLink = clientAddress ++ "/signup-confirmation/" ++ U.toString userId ++ "/" ++ hash
-      link = "<a href=\"" ++ clientLink ++ "\">here</a>"
+      activationLink = clientAddress ++ "/signup-confirmation/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
-      body = TL.pack $ "Hi! For account activation you have to click " ++ link ++ "! " ++ mailName ++ " Team"
-  sendEmail [email] subject [SMTPMail.htmlPart body]
+      additionals = [("activationLink", (Aeson.String $ T.pack activationLink))]
+      context = makeMailContext mailName clientAddress user additionals
+  parts <- loadMailTemplateParts _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
+  sendEmail [user ^. email] subject parts
 
-sendRegistrationCreatedAnalyticsMail :: String -> String -> Email -> AppContextM ()
-sendRegistrationCreatedAnalyticsMail uName uSurname uEmail = do
-  dswConfig <- asks _appContextConfig
-  let analyticsAddress = dswConfig ^. analytics . email
-      mailName = dswConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": New user"
-      body =
-        TL.pack $ "Hi! We have a new user (" ++ uName ++ " " ++ uSurname ++ ", " ++ uEmail ++ ") in our Wizard! " ++
-        mailName ++
-        " Team"
-  sendEmail [analyticsAddress] subject [SMTPMail.htmlPart body]
-
-sendResetPasswordMail :: Email -> U.UUID -> String -> AppContextM ()
-sendResetPasswordMail email userId hash = do
+sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
+sendRegistrationCreatedAnalyticsMail user = do
   dswConfig <- asks _appContextConfig
   let clientAddress = dswConfig ^. clientConfig . address
-      clientLink = clientAddress ++ "/forgotten-password/" ++ U.toString userId ++ "/" ++ hash
-      link = "<a href=\"" ++ clientLink ++ "\">here</a>"
+      analyticsAddress = dswConfig ^. analytics . email
+      mailName = dswConfig ^. mail . name
+      subject = TL.pack $ mailName ++ ": New user"
+      context = makeMailContext mailName clientAddress user []
+  parts <- loadMailTemplateParts _MAIL_REGISTRATION_CREATED_ANALYTICS context
+  sendEmail [analyticsAddress] subject parts
+
+sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
+sendResetPasswordMail user hash = do
+  dswConfig <- asks _appContextConfig
+  let clientAddress = dswConfig ^. clientConfig . address
+      resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset Password"
-      body = TL.pack $ "Hi! You can set up a new password " ++ link ++ "! " ++ mailName ++ " Team"
-  sendEmail [email] subject [SMTPMail.htmlPart body]
+      additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
+      context = makeMailContext mailName clientAddress user additionals
+  parts <- loadMailTemplateParts _MAIL_RESET_PASSWORD context
+  sendEmail [user ^. email] subject parts
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
+type MailContext = HashMap T.Text Aeson.Value
+
+makeHTMLPart fn context =
+  liftIO $ do
+    template <- loadAndRender fn context
+    return $ (SMTPMail.htmlPart . TL.fromStrict) <$> template
+
+makePlainTextPart fn context =
+  liftIO $ do
+    template <- loadAndRender fn context
+    return $ (SMTPMail.plainTextPart . TL.fromStrict) <$> template
+
+makeMailContext :: String -> String -> UserDTO -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext mailName clientAddress user others =
+  fromList $
+  [ ("mailName", Aeson.String $ T.pack mailName)
+  , ("clientAddress", Aeson.String $ T.pack clientAddress)
+  , ("user", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ user)
+  ] ++
+  others
+
+loadMailTemplateParts :: String -> MailContext -> AppContextM [MIME.Part]
+loadMailTemplateParts mailName context = do
+  let root = _MAIL_TEMPLATE_ROOT ++ mailName ++ "/"
+      commonRoot = _MAIL_TEMPLATE_ROOT ++ _MAIL_TEMPLATE_COMMON_FOLDER ++ "/"
+  plainTextPart <- makePlainTextPart (root ++ _MAIL_TEMPLATE_PLAIN_NAME) context
+  htmlPart <- makeHTMLPart (root ++ _MAIL_TEMPLATE_HTML_NAME) context
+  let mainParts = rights [plainTextPart, htmlPart]
+  case (htmlPart, plainTextPart) of
+    (Left _, Right _) -> logWarn $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML mailName)
+    (Right _, Left _) -> logWarn $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_PLAIN mailName)
+    (Left _, Left _) -> logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName)
+    (_, _) -> return ()
+  if length mainParts > 0
+    then do
+      templateFileParts <- loadFileParts $ root ++ _MAIL_TEMPLATE_ATTACHMENTS_FOLDER
+      globalFileParts <- loadFileParts $ commonRoot ++ _MAIL_TEMPLATE_ATTACHMENTS_FOLDER
+      return $ mainParts ++ templateFileParts ++ globalFileParts
+    else return []
+
+loadFileParts :: String -> AppContextM [MIME.Part]
+loadFileParts root =
+  liftIO $ handle (\(_ :: SomeException) -> return []) $ do
+    files <- listDirectory root
+    fileParts <- mapM loadFilePart $ map (\fn -> root ++ "/" ++ fn) files
+    return $ rights fileParts
+
+loadFilePart :: String -> IO (Either String MIME.Part)
+loadFilePart filename =
+  handle (\(e :: SomeException) -> return . Left . show $ e) $ do
+    let contentType = E.decodeUtf8 $ MIME.defaultMimeLookup (T.pack filename)
+        cidHeader = ("Content-ID", T.pack $ "<" ++ takeFileName filename ++ ">")
+    filePart <- SMTPMail.filePart contentType filename
+    return . Right $ filePart {MIME.partHeaders = (MIME.partHeaders filePart) ++ [cidHeader]}
+
 makeConnection :: Integral i => Bool -> String -> Maybe i -> ((SMTP.SMTPConnection -> IO a) -> IO a)
 makeConnection False host Nothing = SMTP.doSMTP host
 makeConnection False host (Just port) = SMTP.doSMTPPort host (fromIntegral port)
@@ -70,7 +137,8 @@ makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settin
   where
     settings = SMTPSSL.defaultSettingsSMTPSSL {SMTPSSL.sslPort = fromIntegral port}
 
-sendEmail :: [Email] -> TL.Text -> [MIME.Part] -> AppContextM ()
+sendEmail :: [String] -> TL.Text -> [MIME.Part] -> AppContextM ()
+sendEmail to subject [] = return () -- empty mail won't be sent
 sendEmail to subject parts = do
   dswConfig <- asks _appContextConfig
   let mailConfig = dswConfig ^. mail

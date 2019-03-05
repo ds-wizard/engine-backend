@@ -1,12 +1,23 @@
-module Service.Template.TemplateUtils where
+module Util.Template where
 
 import qualified Data.HashMap.Strict as HashMap
 import Data.Hashable
 import System.IO (IOMode(ReadMode), hGetContents, openFile)
 import System.IO.Error (tryIOError)
-import Text.Ginger (makeContextHtml, runGinger, toGVal)
+import Text.Ginger
+       (formatParserError, makeContextHtml, parseGingerFile, runGinger,
+        toGVal)
 import Text.Ginger.GVal (GVal, ToGVal)
 import Text.Ginger.Html (htmlSource)
+
+-- Load a template from file and render it using HashMap context
+-- It will return Right Text if OK or Left String in case of error
+loadAndRender fn contextMap = do
+  eTemplate <- parseGingerFile mLoadFile fn
+  return $
+    case eTemplate of
+      Right template -> Right $ render template contextMap
+      Left err -> Left . formatParserError Nothing $ err
 
 -- Given a Template and a HashMap of context, render the template to Text
 render template contextMap =

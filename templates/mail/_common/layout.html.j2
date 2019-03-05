@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style type="text/css">
+    {% include 'style.css' %}
+  </style>
+</head>
+<body>
+  <header>
+    <img src="cid:logo.png" alt="DSW logo">
+    <h1>Data Stewardship Wizard</h1>
+  </header>
+  <main>
+    {% block body %}{% endblock %}
+  </main>
+  <footer>
+    <small>This email was generated from <a href="{{ clientAddress }}" target="_blank">{{ mailName }}</a>.</small>
+  </footer>
+</body>
+</html>
