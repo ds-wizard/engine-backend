@@ -172,7 +172,10 @@
       "question {{ (question.requiredLevel != null && question.requiredLevel <= dmp.level) ? "required" : "optional"}} {{ question.requiredLevel != null ? concat("phase-", question.requiredLevel) : "phase-none"}}"
   {%- endmacro -%}
   <div class={{questionClasses(question)}} id="{{question.uuid}}">
-    <h4 class="title">{{question.humanIdentifier}} {{question.title}}</h4>
+    <h4 class="title">
+      <strong class="human-identifier">{{question.humanIdentifier}}</strong>
+      <br>{{question.title}}
+    </h4>
     <p class="text text-light">{{question.text}}</p>
     <div class="extra-data">
       {{renderTags(question.tagUuids)}}
