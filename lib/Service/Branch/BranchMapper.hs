@@ -45,7 +45,16 @@ toDetailDTO branch state organization =
   , _branchDetailDTOUpdatedAt = branch ^. updatedAt
   }
 
-fromChangeDTO :: BranchChangeDTO -> U.UUID -> Maybe String -> Maybe String -> Maybe String -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromChangeDTO ::
+     BranchChangeDTO
+  -> U.UUID
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe U.UUID
+  -> UTCTime
+  -> UTCTime
+  -> BranchWithEvents
 fromChangeDTO dto bUuid bParentPackageId bLastAppliedParentPackageId bLastMergeCheckpointPackageId mOwnerUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
   { _branchWithEventsUuid = bUuid
