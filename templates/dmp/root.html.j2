@@ -149,7 +149,7 @@
 
 {% macro renderChapter(chapter) -%}
   <section class="chapter" id="{{chapter.uuid}}">
-    <h2 class="title">{{chapter.title}}</h2>
+    <h2 class="title">{{chapter.humanIdentifier}}. {{chapter.title}}</h2>
     <p class="text-light">{{chapter.text}}</p>
     {{renderReport(chapter)}}
     {{renderQuestions(questions)}}
@@ -172,7 +172,7 @@
       "question {{ (question.requiredLevel != null && question.requiredLevel <= dmp.level) ? "required" : "optional"}} {{ question.requiredLevel != null ? concat("phase-", question.requiredLevel) : "phase-none"}}"
   {%- endmacro -%}
   <div class={{questionClasses(question)}} id="{{question.uuid}}">
-    <h4 class="title">{{question.title}}</h4>
+    <h4 class="title">{{question.humanIdentifier}} {{question.title}}</h4>
     <p class="text text-light">{{question.text}}</p>
     <div class="extra-data">
       {{renderTags(question.tagUuids)}}
@@ -307,7 +307,7 @@
   <div class="answer-block answer-option" id="{{question.answerOption.uuid}}">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-      <span>{{answerOption.label}}</span>
+      <span>{{answerOption.humanIdentifier}}. {{answerOption.label}}</span>
     </p>
     {% if question.answerOption.advice %}
       <p class="text-muted"><i>{{answerOption.advice}}</i></p>
@@ -327,7 +327,7 @@
       <div class="answer-item">
         <p class="answer">
           <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-          <span class="title">{{answerItem.title}}</span>
+          <span class="title">{{answerItem.humanIdentifier}} {{answerItem.title}}</span>
           <span class="value">{{answerItem.value}}</span>
         </p>
         <div class="followups">

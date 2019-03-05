@@ -18,6 +18,7 @@ data FilledKnowledgeModelDTO = FilledKnowledgeModelDTO
 -- --------------------------------------------------------------------
 data FilledChapterDTO = FilledChapterDTO
   { _filledChapterDTOUuid :: U.UUID
+  , _filledChapterDTOHumanIdentifier :: String
   , _filledChapterDTOTitle :: String
   , _filledChapterDTOText :: String
   , _filledChapterDTOQuestions :: [FilledQuestionDTO]
@@ -32,6 +33,7 @@ data FilledQuestionDTO
 
 data FilledOptionsQuestionDTO = FilledOptionsQuestionDTO
   { _filledOptionsQuestionDTOUuid :: U.UUID
+  , _filledOptionsQuestionDTOHumanIdentifier :: String
   , _filledOptionsQuestionDTOTitle :: String
   , _filledOptionsQuestionDTOText :: Maybe String
   , _filledOptionsQuestionDTORequiredLevel :: Maybe Int
@@ -44,6 +46,7 @@ data FilledOptionsQuestionDTO = FilledOptionsQuestionDTO
 
 data FilledListQuestionDTO = FilledListQuestionDTO
   { _filledListQuestionDTOUuid :: U.UUID
+  , _filledListQuestionDTOHumanIdentifier :: String
   , _filledListQuestionDTOTitle :: String
   , _filledListQuestionDTOText :: Maybe String
   , _filledListQuestionDTORequiredLevel :: Maybe Int
@@ -57,6 +60,7 @@ data FilledListQuestionDTO = FilledListQuestionDTO
 
 data FilledValueQuestionDTO = FilledValueQuestionDTO
   { _filledValueQuestionDTOUuid :: U.UUID
+  , _filledValueQuestionDTOHumanIdentifier :: String
   , _filledValueQuestionDTOTitle :: String
   , _filledValueQuestionDTOText :: Maybe String
   , _filledValueQuestionDTORequiredLevel :: Maybe Int
@@ -70,6 +74,7 @@ data FilledValueQuestionDTO = FilledValueQuestionDTO
 -- --------------------------------------------------------------------
 data FilledAnswerDTO = FilledAnswerDTO
   { _filledAnswerDTOUuid :: U.UUID
+  , _filledAnswerDTOHumanIdentifier :: String
   , _filledAnswerDTOLabel :: String
   , _filledAnswerDTOAdvice :: Maybe String
   , _filledAnswerDTOFollowUps :: [FilledQuestionDTO]
@@ -78,6 +83,7 @@ data FilledAnswerDTO = FilledAnswerDTO
 
 data FilledAnswerItemDTO = FilledAnswerItemDTO
   { _filledAnswerItemDTOTitle :: String
+  , _filledAnswerItemDTOHumanIdentifier :: String
   , _filledAnswerItemDTOValue :: Maybe String
   , _filledAnswerItemDTOQuestions :: [FilledQuestionDTO]
   } deriving (Show, Eq)
@@ -98,6 +104,7 @@ instance ToJSON FilledChapterDTO where
   toJSON FilledChapterDTO {..} =
     object
       [ "uuid" .= _filledChapterDTOUuid
+      , "humanIdentifier" .= _filledChapterDTOHumanIdentifier
       , "title" .= _filledChapterDTOTitle
       , "text" .= _filledChapterDTOText
       , "questions" .= _filledChapterDTOQuestions
@@ -114,6 +121,7 @@ instance ToJSON FilledOptionsQuestionDTO where
     object
       [ "questionType" .= "OptionsQuestion"
       , "uuid" .= _filledOptionsQuestionDTOUuid
+      , "humanIdentifier" .= _filledOptionsQuestionDTOHumanIdentifier
       , "title" .= _filledOptionsQuestionDTOTitle
       , "text" .= _filledOptionsQuestionDTOText
       , "requiredLevel" .= _filledOptionsQuestionDTORequiredLevel
@@ -129,6 +137,7 @@ instance ToJSON FilledListQuestionDTO where
     object
       [ "questionType" .= "ListQuestion"
       , "uuid" .= _filledListQuestionDTOUuid
+      , "humanIdentifier" .= _filledListQuestionDTOHumanIdentifier
       , "title" .= _filledListQuestionDTOTitle
       , "text" .= _filledListQuestionDTOText
       , "requiredLevel" .= _filledListQuestionDTORequiredLevel
@@ -145,6 +154,7 @@ instance ToJSON FilledValueQuestionDTO where
     object
       [ "questionType" .= "ValueQuestion"
       , "uuid" .= _filledValueQuestionDTOUuid
+      , "humanIdentifier" .= _filledValueQuestionDTOHumanIdentifier
       , "title" .= _filledValueQuestionDTOTitle
       , "text" .= _filledValueQuestionDTOText
       , "requiredLevel" .= _filledValueQuestionDTORequiredLevel
@@ -160,6 +170,7 @@ instance ToJSON FilledAnswerDTO where
   toJSON FilledAnswerDTO {..} =
     object
       [ "uuid" .= _filledAnswerDTOUuid
+      , "humanIdentifier" .= _filledAnswerDTOHumanIdentifier
       , "label" .= _filledAnswerDTOLabel
       , "advice" .= _filledAnswerDTOAdvice
       , "followUps" .= _filledAnswerDTOFollowUps
@@ -169,7 +180,8 @@ instance ToJSON FilledAnswerDTO where
 instance ToJSON FilledAnswerItemDTO where
   toJSON FilledAnswerItemDTO {..} =
     object
-      [ "title" .= _filledAnswerItemDTOTitle
+      [ "humanIdentifier" .= _filledAnswerItemDTOHumanIdentifier
+      , "title" .= _filledAnswerItemDTOTitle
       , "value" .= _filledAnswerItemDTOValue
       , "questions" .= _filledAnswerItemDTOQuestions
       ]
@@ -189,6 +201,7 @@ instance FromJSON FilledKnowledgeModelDTO where
 instance FromJSON FilledChapterDTO where
   parseJSON (Object o) = do
     _filledChapterDTOUuid <- o .: "uuid"
+    _filledChapterDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledChapterDTOTitle <- o .: "title"
     _filledChapterDTOText <- o .: "text"
     _filledChapterDTOQuestions <- o .: "questions"
@@ -209,6 +222,7 @@ instance FromJSON FilledQuestionDTO where
 instance FromJSON FilledOptionsQuestionDTO where
   parseJSON (Object o) = do
     _filledOptionsQuestionDTOUuid <- o .: "uuid"
+    _filledOptionsQuestionDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledOptionsQuestionDTOTitle <- o .: "title"
     _filledOptionsQuestionDTOText <- o .: "text"
     _filledOptionsQuestionDTORequiredLevel <- o .: "requiredLevel"
@@ -223,6 +237,7 @@ instance FromJSON FilledOptionsQuestionDTO where
 instance FromJSON FilledListQuestionDTO where
   parseJSON (Object o) = do
     _filledListQuestionDTOUuid <- o .: "uuid"
+    _filledListQuestionDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledListQuestionDTOTitle <- o .: "title"
     _filledListQuestionDTOText <- o .: "text"
     _filledListQuestionDTORequiredLevel <- o .: "requiredLevel"
@@ -238,6 +253,7 @@ instance FromJSON FilledListQuestionDTO where
 instance FromJSON FilledValueQuestionDTO where
   parseJSON (Object o) = do
     _filledValueQuestionDTOUuid <- o .: "uuid"
+    _filledValueQuestionDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledValueQuestionDTOTitle <- o .: "title"
     _filledValueQuestionDTOText <- o .: "text"
     _filledValueQuestionDTORequiredLevel <- o .: "requiredLevel"
@@ -255,6 +271,7 @@ instance FromJSON FilledValueQuestionDTO where
 instance FromJSON FilledAnswerDTO where
   parseJSON (Object o) = do
     _filledAnswerDTOUuid <- o .: "uuid"
+    _filledAnswerDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledAnswerDTOLabel <- o .: "label"
     _filledAnswerDTOAdvice <- o .: "advice"
     _filledAnswerDTOFollowUps <- o .: "followUps"
@@ -264,6 +281,7 @@ instance FromJSON FilledAnswerDTO where
 
 instance FromJSON FilledAnswerItemDTO where
   parseJSON (Object o) = do
+    _filledAnswerItemDTOHumanIdentifier <- o .: "humanIdentifier"
     _filledAnswerItemDTOTitle <- o .: "title"
     _filledAnswerItemDTOValue <- o .: "value"
     _filledAnswerItemDTOQuestions <- o .: "questions"

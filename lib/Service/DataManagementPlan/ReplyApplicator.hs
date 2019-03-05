@@ -93,7 +93,7 @@ createFilledAnswerOption :: FilledOptionsQuestion -> Reply -> FilledOptionsQuest
 createFilledAnswerOption fQuestion reply = fQuestion & answerOption .~ mFilledAnswer
   where
     mFilledAnswer :: Maybe FilledAnswer
-    mFilledAnswer = toFilledAnswer <$> getAnswerByUuid fQuestion (getReplyValue $ reply ^. value)
+    mFilledAnswer = toFilledAnswer fQuestion <$> getAnswerByUuid fQuestion (getReplyValue $ reply ^. value)
     getAnswerByUuid :: FilledOptionsQuestion -> U.UUID -> Maybe Answer
     getAnswerByUuid fQuestion ansUuid = find (\ans -> ans ^. uuid == ansUuid) (fQuestion ^. answers)
     getReplyValue :: ReplyValue -> U.UUID
@@ -101,7 +101,7 @@ createFilledAnswerOption fQuestion reply = fQuestion & answerOption .~ mFilledAn
 
 createFilledAnswerItem :: FilledListQuestion -> Reply -> FilledListQuestion
 createFilledAnswerItem fQuestion reply =
-  let mAis = Just $ (\_ -> toFilledAnswerItem fQuestion) <$> generateList (getReplyValue $ reply ^. value)
+  let mAis = Just $ (\number -> toFilledAnswerItem number fQuestion) <$> generateList (getReplyValue $ reply ^. value)
   in fQuestion & items .~ mAis
   where
     getReplyValue :: ReplyValue -> Int
