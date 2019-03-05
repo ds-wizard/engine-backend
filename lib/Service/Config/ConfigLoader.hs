@@ -12,6 +12,9 @@ getOptional configParser section option
   | has_option configParser section option = get configParser section option >>= return . Just
   | otherwise = return Nothing
 
+doIf True action _ = action
+doIf False _ dummyValue = return dummyValue
+
 loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError AppConfig)
 loadDSWConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
@@ -102,13 +105,13 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         }
     loadAppConfigMail configParser = do
       mailEnabled <- get configParser "Mail" "enabled"
-      mailName <- get configParser "Mail" "name"
-      mailEmail <- get configParser "Mail" "email"
-      mailHost <- get configParser "Mail" "host"
-      mailPort <- getOptional configParser "Mail" "port"
-      mailSSL <- getOptional configParser "Mail" "ssl"
-      mailUsername <- get configParser "Mail" "username"
-      mailPassword <- get configParser "Mail" "password"
+      mailName <- doIf mailEnabled (get configParser "Mail" "name") ""
+      mailEmail <- doIf mailEnabled (get configParser "Mail" "email") ""
+      mailHost <- doIf mailEnabled (get configParser "Mail" "host") ""
+      mailPort <- doIf mailEnabled (getOptional configParser "Mail" "port") Nothing
+      mailSSL <- doIf mailEnabled (getOptional configParser "Mail" "ssl") Nothing
+      mailUsername <- doIf mailEnabled (get configParser "Mail" "username") ""
+      mailPassword <- doIf mailEnabled (get configParser "Mail" "password") ""
       return
         AppConfigMail
         { _appConfigMailEnabled = mailEnabled
@@ -122,7 +125,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         }
     loadAppConfigAnalytics configParser = do
       analyticsEnabled <- get configParser "Analytics" "enabled"
-      analyticsEmail <- get configParser "Analytics" "email"
+      analyticsEmail <- doIf analyticsEnabled (get configParser "Analytics" "email") ""
       return
         AppConfigAnalytics {_appConfigAnalyticsEnabled = analyticsEnabled, _appConfigAnalyticsEmail = analyticsEmail}
     loadAppConfigFeedback configParser = do
