@@ -287,8 +287,8 @@
     {{renderAnswerValue(question.answerValue)}}
   {% elif question.answerOption %}
     {{renderAnswerOption(question.answerOption)}}
-  {% elif question.answerItems %}
-    {{renderAnswerItems(question.answerItems)}}
+  {% elif question.items %}
+    {{renderAnswerItems(question.items)}}
   {% else %}
     {{renderNotAnswered()}}
   {% endif %}
