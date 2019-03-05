@@ -77,6 +77,7 @@ library:
   - random
   - regex-compat
   - retry
+  - roman-numerals
   - scotty
   - smtp-mail
   - text
@@ -158,6 +159,7 @@ tests:
     - pwstore-fast
     - random
     - regex-compat
+    - roman-numerals
     - scotty
     - text
     - time
