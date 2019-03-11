@@ -15,18 +15,13 @@ import Util.Math
 import Util.Uuid
 
 isQuestionAnswered :: FilledQuestion -> Bool
-isQuestionAnswered fq =
-  case fq ^. qType of
-    QuestionTypeOptions -> isJust $ fq ^. answerOption
-    QuestionTypeList ->
-      case fq ^. answerItems of
-        Nothing -> False
-        Just [] -> False
-        Just (x:xs) -> True
-    QuestionTypeString -> isJust $ fq ^. answerValue
-    QuestionTypeNumber -> isJust $ fq ^. answerValue
-    QuestionTypeDate -> isJust $ fq ^. answerValue
-    QuestionTypeText -> isJust $ fq ^. answerValue
+isQuestionAnswered (FilledOptionsQuestion' fq) = isJust $ fq ^. answerOption
+isQuestionAnswered (FilledListQuestion' fq) =
+  case fq ^. items of
+    Nothing -> False
+    Just [] -> False
+    Just (x:xs) -> True
+isQuestionAnswered (FilledValueQuestion' fq) = isJust $ fq ^. answerValue
 
 isAIAnswered :: FilledAnswerItem -> Bool
 isAIAnswered fai = isJust $ fai ^. value
@@ -42,20 +37,22 @@ computeAnsweredIndication currentLevel fChapter =
   }
   where
     getQuestionCount :: (FilledQuestion -> Bool) -> (FilledAnswerItem -> Bool) -> FilledQuestion -> Int
-    getQuestionCount conditionQ conditionAI fq = currentQuestion + childrens
+    getQuestionCount conditionQ conditionAI fq = currentQuestion + (childrens fq)
       where
         currentQuestion =
           if conditionQ fq && isRequiredNow
             then 1
             else 0
         isRequiredNow =
-          case fq ^. requiredLevel of
+          case getRequiredLevel fq of
             Just rl -> rl <= currentLevel
             Nothing -> True
-        childrens = (walkOverAnswerOption $ fq ^. answerOption) + (walkOverAnswerItems $ fq ^. answerItems)
+        childrens (FilledOptionsQuestion' fq) = walkOverAnswerOption $ fq ^. answerOption
           where
             walkOverAnswerOption mAo =
               sum $ maybe [] (\ao -> (getQuestionCount conditionQ conditionAI) <$> ao ^. followUps) mAo
+        childrens (FilledListQuestion' fq) = walkOverAnswerItems $ fq ^. items
+          where
             walkOverAnswerItems mAis = sum $ maybe [] (\ais -> walkOverAnswerItem <$> ais) mAis
             walkOverAnswerItem ai =
               let itemName =
@@ -64,6 +61,7 @@ computeAnsweredIndication currentLevel fChapter =
                       else 0
                   questionsCount = (sum $ (getQuestionCount conditionQ conditionAI) <$> ai ^. questions)
               in itemName + questionsCount
+        childrens (FilledValueQuestion' fq) = 0
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -75,12 +73,15 @@ computeMetricSummary fChapter m =
     msMeasure =
       weightAverage .
       mapToTouple .
-      filterAccordingCurrentMetric . mapToMetricMeasures . filterOptionsType . getAllFilledQuestionsForChapter $
+      filterAccordingCurrentMetric .
+      mapToMetricMeasures . catMaybes . map mapOptionQuestion . getAllFilledQuestionsForChapter $
       fChapter
-    filterOptionsType :: [FilledQuestion] -> [FilledQuestion]
-    filterOptionsType = filter (\fq -> fq ^. qType == QuestionTypeOptions)
-    mapToMetricMeasures :: [FilledQuestion] -> [MetricMeasure]
-    mapToMetricMeasures = concat . (map _filledAnswerMetricMeasures) . catMaybes . (map _filledQuestionAnswerOption)
+    mapOptionQuestion :: FilledQuestion -> Maybe FilledOptionsQuestion
+    mapOptionQuestion (FilledOptionsQuestion' q) = Just q
+    mapOptionQuestion _ = Nothing
+    mapToMetricMeasures :: [FilledOptionsQuestion] -> [MetricMeasure]
+    mapToMetricMeasures =
+      concat . (map _filledAnswerMetricMeasures) . catMaybes . (map _filledOptionsQuestionAnswerOption)
     filterAccordingCurrentMetric :: [MetricMeasure] -> [MetricMeasure]
     filterAccordingCurrentMetric = filter (\mm -> mm ^. metricUuid == m ^. uuid)
     mapToTouple :: [MetricMeasure] -> [(Double, Double)]

@@ -13,6 +13,7 @@ data Questionnaire = Questionnaire
   , _questionnaireLevel :: Int
   , _questionnairePrivate :: Bool
   , _questionnairePackageId :: String
+  , _questionnaireSelectedTagUuids :: [U.UUID]
   , _questionnaireKnowledgeModel :: KnowledgeModel
   , _questionnaireOwnerUuid :: Maybe U.UUID
   , _questionnaireReplies :: [Reply]

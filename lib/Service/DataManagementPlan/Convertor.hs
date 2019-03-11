@@ -12,6 +12,7 @@ toFilledKM km =
   { _filledKnowledgeModelUuid = km ^. uuid
   , _filledKnowledgeModelName = km ^. name
   , _filledKnowledgeModelChapters = toFilledChapter <$> km ^. chapters
+  , _filledKnowledgeModelTags = km ^. tags
   }
 
 toFilledChapter :: Chapter -> FilledChapter
@@ -24,20 +25,45 @@ toFilledChapter ch =
   }
 
 toFilledQuestion :: Question -> FilledQuestion
-toFilledQuestion q =
-  FilledQuestion
-  { _filledQuestionUuid = q ^. uuid
-  , _filledQuestionQType = q ^. qType
-  , _filledQuestionTitle = q ^. title
-  , _filledQuestionText = q ^. text
-  , _filledQuestionRequiredLevel = q ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q ^. answerItemTemplate
-  , _filledQuestionAnswers = q ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Nothing
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q ^. experts
-  , _filledQuestionReferences = q ^. references
+toFilledQuestion (OptionsQuestion' q) =
+  FilledOptionsQuestion' $
+  FilledOptionsQuestion
+  { _filledOptionsQuestionUuid = q ^. uuid
+  , _filledOptionsQuestionTitle = q ^. title
+  , _filledOptionsQuestionText = q ^. text
+  , _filledOptionsQuestionRequiredLevel = q ^. requiredLevel
+  , _filledOptionsQuestionTagUuids = q ^. tagUuids
+  , _filledOptionsQuestionExperts = q ^. experts
+  , _filledOptionsQuestionReferences = q ^. references
+  , _filledOptionsQuestionAnswers = q ^. answers
+  , _filledOptionsQuestionAnswerOption = Nothing
+  }
+toFilledQuestion (ListQuestion' q) =
+  FilledListQuestion' $
+  FilledListQuestion
+  { _filledListQuestionUuid = q ^. uuid
+  , _filledListQuestionTitle = q ^. title
+  , _filledListQuestionText = q ^. text
+  , _filledListQuestionRequiredLevel = q ^. requiredLevel
+  , _filledListQuestionTagUuids = q ^. tagUuids
+  , _filledListQuestionExperts = q ^. experts
+  , _filledListQuestionReferences = q ^. references
+  , _filledListQuestionItemTemplateTitle = q ^. itemTemplateTitle
+  , _filledListQuestionItemTemplateQuestions = q ^. itemTemplateQuestions
+  , _filledListQuestionItems = Nothing
+  }
+toFilledQuestion (ValueQuestion' q) =
+  FilledValueQuestion' $
+  FilledValueQuestion
+  { _filledValueQuestionUuid = q ^. uuid
+  , _filledValueQuestionTitle = q ^. title
+  , _filledValueQuestionText = q ^. text
+  , _filledValueQuestionRequiredLevel = q ^. requiredLevel
+  , _filledValueQuestionTagUuids = q ^. tagUuids
+  , _filledValueQuestionExperts = q ^. experts
+  , _filledValueQuestionReferences = q ^. references
+  , _filledValueQuestionValueType = q ^. valueType
+  , _filledValueQuestionAnswerValue = Nothing
   }
 
 toFilledAnswer :: Answer -> FilledAnswer
@@ -50,10 +76,10 @@ toFilledAnswer ans =
   , _filledAnswerMetricMeasures = ans ^. metricMeasures
   }
 
-toFilledAnswerItem :: AnswerItemTemplate -> FilledAnswerItem
-toFilledAnswerItem ait =
+toFilledAnswerItem :: FilledListQuestion -> FilledAnswerItem
+toFilledAnswerItem fQ =
   FilledAnswerItem
-  { _filledAnswerItemTitle = ait ^. title
+  { _filledAnswerItemTitle = fQ ^. itemTemplateTitle
   , _filledAnswerItemValue = Nothing
-  , _filledAnswerItemQuestions = toFilledQuestion <$> ait ^. questions
+  , _filledAnswerItemQuestions = toFilledQuestion <$> fQ ^. itemTemplateQuestions
   }

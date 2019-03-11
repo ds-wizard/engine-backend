@@ -50,7 +50,7 @@ instance ToBSON EditChapterEvent where
     , "chapterUuid" BSON.=: serializeUUID (event ^. chapterUuid)
     , "title" BSON.=: (event ^. title)
     , "text" BSON.=: (event ^. text)
-    , "questionIds" BSON.=: serializeEventFieldUUIDList (event ^. questionIds)
+    , "questionUuids" BSON.=: serializeEventFieldUUIDList (event ^. questionUuids)
     ]
 
 instance FromBSON EditChapterEvent where
@@ -60,7 +60,7 @@ instance FromBSON EditChapterEvent where
     chChapterUuid <- deserializeMaybeUUID $ BSON.lookup "chapterUuid" doc
     chTitle <- BSON.lookup "title" doc
     chText <- BSON.lookup "text" doc
-    let chQuestionIds = deserializeEventFieldUUIDList $ BSON.lookup "questionIds" doc
+    let chQuestionUuids = deserializeEventFieldUUIDList $ BSON.lookup "questionUuids" doc
     return
       EditChapterEvent
       { _editChapterEventUuid = chUuid
@@ -68,7 +68,7 @@ instance FromBSON EditChapterEvent where
       , _editChapterEventChapterUuid = chChapterUuid
       , _editChapterEventTitle = chTitle
       , _editChapterEventText = chText
-      , _editChapterEventQuestionIds = chQuestionIds
+      , _editChapterEventQuestionUuids = chQuestionUuids
       }
 
 -- -------------------------

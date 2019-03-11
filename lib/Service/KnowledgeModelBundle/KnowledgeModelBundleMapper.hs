@@ -15,5 +15,6 @@ toDTO kmb =
   , _knowledgeModelBundleDTOOrganizationId = kmb ^. organizationId
   , _knowledgeModelBundleDTOKmId = kmb ^. kmId
   , _knowledgeModelBundleDTOVersion = kmb ^. version
+  , _knowledgeModelBundleDTOMetamodelVersion = kmb ^. metamodelVersion
   , _knowledgeModelBundleDTOPackages = packageWithEventsToDTOWithEvents <$> kmb ^. packages
   }

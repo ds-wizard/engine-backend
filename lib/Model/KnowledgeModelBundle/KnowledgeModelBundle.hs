@@ -10,5 +10,6 @@ data KnowledgeModelBundle = KnowledgeModelBundle
   , _knowledgeModelBundleOrganizationId :: String
   , _knowledgeModelBundleKmId :: String
   , _knowledgeModelBundleVersion :: String
+  , _knowledgeModelBundleMetamodelVersion :: Int
   , _knowledgeModelBundlePackages :: [PackageWithEvents]
   } deriving (Show, Eq, Generic)

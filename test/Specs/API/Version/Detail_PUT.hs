@@ -52,7 +52,7 @@ reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = VersionDTO {_versionDTODescription = amsterdamPackage1Dto ^. description}
+reqDto = VersionDTO {_versionDTODescription = amsterdamPackage ^. description}
 
 reqBody = encode reqDto
 
@@ -65,7 +65,7 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO amsterdamPackage1Dto
+    let expDto = packageWithEventsToDTO amsterdamPackage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

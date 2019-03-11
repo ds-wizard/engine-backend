@@ -13,6 +13,7 @@ toFilledKMDTO fKM =
   { _filledKnowledgeModelDTOUuid = fKM ^. uuid
   , _filledKnowledgeModelDTOName = fKM ^. name
   , _filledKnowledgeModelDTOChapters = toFilledChapterDTO <$> fKM ^. chapters
+  , _filledKnowledgeModelDTOTags = toTagDTO <$> fKM ^. tags
   }
 
 toFilledChapterDTO :: FilledChapter -> FilledChapterDTO
@@ -25,21 +26,46 @@ toFilledChapterDTO fCh =
   }
 
 toFilledQuestionDTO :: FilledQuestion -> FilledQuestionDTO
-toFilledQuestionDTO fQ =
-  FilledQuestionDTO
-  { _filledQuestionDTOUuid = fQ ^. uuid
-  , _filledQuestionDTOQType = fQ ^. qType
-  , _filledQuestionDTOTitle = fQ ^. title
-  , _filledQuestionDTOText = fQ ^. text
-  , _filledQuestionDTORequiredLevel = fQ ^. requiredLevel
-  , _filledQuestionDTOAnswerItemTemplate = toAnswerItemTemplateDTO <$> fQ ^. answerItemTemplate
-  , _filledQuestionDTOAnswers = (fmap toAnswerDTO) <$> fQ ^. answers
-  , _filledQuestionDTOAnswerValue = fQ ^. answerValue
-  , _filledQuestionDTOAnswerOption = toFilledAnswerDTO <$> fQ ^. answerOption
-  , _filledQuestionDTOAnswerItems = (fmap toFilledAnswerItemDTO) <$> fQ ^. answerItems
-  , _filledQuestionDTOExperts = toExpertDTO <$> fQ ^. experts
-  , _filledQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
-  }
+toFilledQuestionDTO (FilledOptionsQuestion' fQ) =
+  FilledOptionsQuestionDTO'
+    FilledOptionsQuestionDTO
+    { _filledOptionsQuestionDTOUuid = fQ ^. uuid
+    , _filledOptionsQuestionDTOTitle = fQ ^. title
+    , _filledOptionsQuestionDTOText = fQ ^. text
+    , _filledOptionsQuestionDTORequiredLevel = fQ ^. requiredLevel
+    , _filledOptionsQuestionDTOTagUuids = fQ ^. tagUuids
+    , _filledOptionsQuestionDTOExperts = toExpertDTO <$> fQ ^. experts
+    , _filledOptionsQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
+    , _filledOptionsQuestionDTOAnswers = toAnswerDTO <$> fQ ^. answers
+    , _filledOptionsQuestionDTOAnswerOption = toFilledAnswerDTO <$> fQ ^. answerOption
+    }
+toFilledQuestionDTO (FilledListQuestion' fQ) =
+  FilledListQuestionDTO'
+    FilledListQuestionDTO
+    { _filledListQuestionDTOUuid = fQ ^. uuid
+    , _filledListQuestionDTOTitle = fQ ^. title
+    , _filledListQuestionDTOText = fQ ^. text
+    , _filledListQuestionDTORequiredLevel = fQ ^. requiredLevel
+    , _filledListQuestionDTOTagUuids = fQ ^. tagUuids
+    , _filledListQuestionDTOExperts = toExpertDTO <$> fQ ^. experts
+    , _filledListQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
+    , _filledListQuestionDTOItemTemplateTitle = fQ ^. itemTemplateTitle
+    , _filledListQuestionDTOItemTemplateQuestions = toQuestionDTO <$> fQ ^. itemTemplateQuestions
+    , _filledListQuestionDTOItems = (fmap toFilledAnswerItemDTO) <$> fQ ^. items
+    }
+toFilledQuestionDTO (FilledValueQuestion' fQ) =
+  FilledValueQuestionDTO'
+    FilledValueQuestionDTO
+    { _filledValueQuestionDTOUuid = fQ ^. uuid
+    , _filledValueQuestionDTOTitle = fQ ^. title
+    , _filledValueQuestionDTOText = fQ ^. text
+    , _filledValueQuestionDTORequiredLevel = fQ ^. requiredLevel
+    , _filledValueQuestionDTOTagUuids = fQ ^. tagUuids
+    , _filledValueQuestionDTOExperts = toExpertDTO <$> fQ ^. experts
+    , _filledValueQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
+    , _filledValueQuestionDTOValueType = fQ ^. valueType
+    , _filledValueQuestionDTOAnswerValue = fQ ^. answerValue
+    }
 
 toFilledAnswerDTO :: FilledAnswer -> FilledAnswerDTO
 toFilledAnswerDTO fAns =

@@ -210,81 +210,21 @@ instance FromBSON EditCrossReferenceEvent where
 -- DELETE REFERNCE EVENT ---
 -- -------------------------
 instance ToBSON DeleteReferenceEvent where
-  toBSON (DeleteResourcePageReferenceEvent' event) = toBSON event
-  toBSON (DeleteURLReferenceEvent' event) = toBSON event
-  toBSON (DeleteCrossReferenceEvent' event) = toBSON event
+  toBSON model =
+    [ "eventType" BSON.=: "DeleteReferenceEvent"
+    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "path" BSON.=: (model ^. path)
+    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    ]
 
 instance FromBSON DeleteReferenceEvent where
   fromBSON doc = do
-    referenceType <- BSON.lookup "referenceType" doc
-    case referenceType of
-      "ResourcePageReference" ->
-        DeleteResourcePageReferenceEvent' <$> (fromBSON doc :: Maybe DeleteResourcePageReferenceEvent)
-      "URLReference" -> DeleteURLReferenceEvent' <$> (fromBSON doc :: Maybe DeleteURLReferenceEvent)
-      "CrossReference" -> DeleteCrossReferenceEvent' <$> (fromBSON doc :: Maybe DeleteCrossReferenceEvent)
-
--- ------------------------------------------------
-instance ToBSON DeleteResourcePageReferenceEvent where
-  toBSON model =
-    [ "eventType" BSON.=: "DeleteReferenceEvent"
-    , "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
-    ]
-
-instance FromBSON DeleteResourcePageReferenceEvent where
-  fromBSON doc = do
     refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
     refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
     return
-      DeleteResourcePageReferenceEvent
-      { _deleteResourcePageReferenceEventUuid = refUuid
-      , _deleteResourcePageReferenceEventPath = refPath
-      , _deleteResourcePageReferenceEventReferenceUuid = refReferenceUuid
-      }
-
--- ------------------------------------------------
-instance ToBSON DeleteURLReferenceEvent where
-  toBSON model =
-    [ "eventType" BSON.=: "DeleteReferenceEvent"
-    , "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
-    ]
-
-instance FromBSON DeleteURLReferenceEvent where
-  fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
-    return
-      DeleteURLReferenceEvent
-      { _deleteURLReferenceEventUuid = refUuid
-      , _deleteURLReferenceEventPath = refPath
-      , _deleteURLReferenceEventReferenceUuid = refReferenceUuid
-      }
-
--- ------------------------------------------------
-instance ToBSON DeleteCrossReferenceEvent where
-  toBSON model =
-    [ "eventType" BSON.=: "DeleteReferenceEvent"
-    , "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
-    ]
-
-instance FromBSON DeleteCrossReferenceEvent where
-  fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
-    return
-      DeleteCrossReferenceEvent
-      { _deleteCrossReferenceEventUuid = refUuid
-      , _deleteCrossReferenceEventPath = refPath
-      , _deleteCrossReferenceEventReferenceUuid = refReferenceUuid
+      DeleteReferenceEvent
+      { _deleteReferenceEventUuid = refUuid
+      , _deleteReferenceEventPath = refPath
+      , _deleteReferenceEventReferenceUuid = refReferenceUuid
       }

@@ -12,6 +12,7 @@ data KnowledgeModelDTO = KnowledgeModelDTO
   { _knowledgeModelDTOUuid :: U.UUID
   , _knowledgeModelDTOName :: String
   , _knowledgeModelDTOChapters :: [ChapterDTO]
+  , _knowledgeModelDTOTags :: [TagDTO]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -23,16 +24,44 @@ data ChapterDTO = ChapterDTO
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
-data QuestionDTO = QuestionDTO
-  { _questionDTOUuid :: U.UUID
-  , _questionDTOQType :: QuestionType
-  , _questionDTOTitle :: String
-  , _questionDTOText :: Maybe String
-  , _questionDTORequiredLevel :: Maybe Int
-  , _questionDTOAnswers :: Maybe [AnswerDTO]
-  , _questionDTOAnswerItemTemplate :: Maybe AnswerItemTemplateDTO
-  , _questionDTOReferences :: [ReferenceDTO]
-  , _questionDTOExperts :: [ExpertDTO]
+data QuestionDTO
+  = OptionsQuestionDTO' OptionsQuestionDTO
+  | ListQuestionDTO' ListQuestionDTO
+  | ValueQuestionDTO' ValueQuestionDTO
+  deriving (Show, Eq)
+
+data OptionsQuestionDTO = OptionsQuestionDTO
+  { _optionsQuestionDTOUuid :: U.UUID
+  , _optionsQuestionDTOTitle :: String
+  , _optionsQuestionDTOText :: Maybe String
+  , _optionsQuestionDTORequiredLevel :: Maybe Int
+  , _optionsQuestionDTOTagUuids :: [U.UUID]
+  , _optionsQuestionDTOExperts :: [ExpertDTO]
+  , _optionsQuestionDTOReferences :: [ReferenceDTO]
+  , _optionsQuestionDTOAnswers :: [AnswerDTO]
+  } deriving (Show, Eq)
+
+data ListQuestionDTO = ListQuestionDTO
+  { _listQuestionDTOUuid :: U.UUID
+  , _listQuestionDTOTitle :: String
+  , _listQuestionDTOText :: Maybe String
+  , _listQuestionDTORequiredLevel :: Maybe Int
+  , _listQuestionDTOTagUuids :: [U.UUID]
+  , _listQuestionDTOExperts :: [ExpertDTO]
+  , _listQuestionDTOReferences :: [ReferenceDTO]
+  , _listQuestionDTOItemTemplateTitle :: String
+  , _listQuestionDTOItemTemplateQuestions :: [QuestionDTO]
+  } deriving (Show, Eq)
+
+data ValueQuestionDTO = ValueQuestionDTO
+  { _valueQuestionDTOUuid :: U.UUID
+  , _valueQuestionDTOTitle :: String
+  , _valueQuestionDTOText :: Maybe String
+  , _valueQuestionDTORequiredLevel :: Maybe Int
+  , _valueQuestionDTOTagUuids :: [U.UUID]
+  , _valueQuestionDTOExperts :: [ExpertDTO]
+  , _valueQuestionDTOReferences :: [ReferenceDTO]
+  , _valueQuestionDTOValueType :: QuestionValueType
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -42,20 +71,6 @@ data AnswerDTO = AnswerDTO
   , _answerDTOAdvice :: Maybe String
   , _answerDTOFollowUps :: [QuestionDTO]
   , _answerDTOMetricMeasures :: [MetricMeasureDTO]
-  } deriving (Show, Eq)
-
-data AnswerItemTemplateDTO = AnswerItemTemplateDTO
-  { _answerItemTemplateDTOTitle :: String
-  , _answerItemTemplateDTOQuestions :: [QuestionDTO]
-  } deriving (Show, Eq)
-
-data AnswerItemTemplatePlainDTO = AnswerItemTemplatePlainDTO
-  { _answerItemTemplatePlainDTOTitle :: String
-  } deriving (Show, Eq)
-
-data AnswerItemTemplatePlainWithIdsDTO = AnswerItemTemplatePlainWithIdsDTO
-  { _answerItemTemplatePlainWithIdsDTOTitle :: String
-  , _answerItemTemplatePlainWithIdsDTOQuestionIds :: [U.UUID]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -114,11 +129,23 @@ data MetricMeasureDTO = MetricMeasureDTO
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
+data TagDTO = TagDTO
+  { _tagDTOUuid :: U.UUID
+  , _tagDTOName :: String
+  , _tagDTODescription :: Maybe String
+  , _tagDTOColor :: String
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON KnowledgeModelDTO where
   toJSON KnowledgeModelDTO {..} =
     object
-      ["uuid" .= _knowledgeModelDTOUuid, "name" .= _knowledgeModelDTOName, "chapters" .= _knowledgeModelDTOChapters]
+      [ "uuid" .= _knowledgeModelDTOUuid
+      , "name" .= _knowledgeModelDTOName
+      , "chapters" .= _knowledgeModelDTOChapters
+      , "tags" .= _knowledgeModelDTOTags
+      ]
 
 -- --------------------------------------------------------------------
 instance ToJSON ChapterDTO where
@@ -132,17 +159,51 @@ instance ToJSON ChapterDTO where
 
 -- --------------------------------------------------------------------
 instance ToJSON QuestionDTO where
-  toJSON QuestionDTO {..} =
+  toJSON (OptionsQuestionDTO' event) = toJSON event
+  toJSON (ListQuestionDTO' event) = toJSON event
+  toJSON (ValueQuestionDTO' event) = toJSON event
+
+instance ToJSON OptionsQuestionDTO where
+  toJSON OptionsQuestionDTO {..} =
     object
-      [ "uuid" .= _questionDTOUuid
-      , "type" .= serializeQuestionType _questionDTOQType
-      , "title" .= _questionDTOTitle
-      , "text" .= _questionDTOText
-      , "requiredLevel" .= _questionDTORequiredLevel
-      , "answers" .= _questionDTOAnswers
-      , "answerItemTemplate" .= _questionDTOAnswerItemTemplate
-      , "references" .= _questionDTOReferences
-      , "experts" .= _questionDTOExperts
+      [ "questionType" .= "OptionsQuestion"
+      , "uuid" .= _optionsQuestionDTOUuid
+      , "title" .= _optionsQuestionDTOTitle
+      , "text" .= _optionsQuestionDTOText
+      , "requiredLevel" .= _optionsQuestionDTORequiredLevel
+      , "tagUuids" .= _optionsQuestionDTOTagUuids
+      , "references" .= _optionsQuestionDTOReferences
+      , "experts" .= _optionsQuestionDTOExperts
+      , "answers" .= _optionsQuestionDTOAnswers
+      ]
+
+instance ToJSON ListQuestionDTO where
+  toJSON ListQuestionDTO {..} =
+    object
+      [ "questionType" .= "ListQuestion"
+      , "uuid" .= _listQuestionDTOUuid
+      , "title" .= _listQuestionDTOTitle
+      , "text" .= _listQuestionDTOText
+      , "requiredLevel" .= _listQuestionDTORequiredLevel
+      , "tagUuids" .= _listQuestionDTOTagUuids
+      , "references" .= _listQuestionDTOReferences
+      , "experts" .= _listQuestionDTOExperts
+      , "itemTemplateTitle" .= _listQuestionDTOItemTemplateTitle
+      , "itemTemplateQuestions" .= _listQuestionDTOItemTemplateQuestions
+      ]
+
+instance ToJSON ValueQuestionDTO where
+  toJSON ValueQuestionDTO {..} =
+    object
+      [ "questionType" .= "ValueQuestion"
+      , "uuid" .= _valueQuestionDTOUuid
+      , "title" .= _valueQuestionDTOTitle
+      , "text" .= _valueQuestionDTOText
+      , "requiredLevel" .= _valueQuestionDTORequiredLevel
+      , "tagUuids" .= _valueQuestionDTOTagUuids
+      , "references" .= _valueQuestionDTOReferences
+      , "experts" .= _valueQuestionDTOExperts
+      , "valueType" .= serializeQuestionValueType _valueQuestionDTOValueType
       ]
 
 -- --------------------------------------------------------------------
@@ -154,20 +215,6 @@ instance ToJSON AnswerDTO where
       , "advice" .= _answerDTOAdvice
       , "followUps" .= _answerDTOFollowUps
       , "metricMeasures" .= _answerDTOMetricMeasures
-      ]
-
-instance ToJSON AnswerItemTemplateDTO where
-  toJSON AnswerItemTemplateDTO {..} =
-    object ["title" .= _answerItemTemplateDTOTitle, "questions" .= _answerItemTemplateDTOQuestions]
-
-instance ToJSON AnswerItemTemplatePlainDTO where
-  toJSON AnswerItemTemplatePlainDTO {..} = object ["title" .= _answerItemTemplatePlainDTOTitle]
-
-instance ToJSON AnswerItemTemplatePlainWithIdsDTO where
-  toJSON AnswerItemTemplatePlainWithIdsDTO {..} =
-    object
-      [ "title" .= _answerItemTemplatePlainWithIdsDTOTitle
-      , "questionIds" .= _answerItemTemplatePlainWithIdsDTOQuestionIds
       ]
 
 -- --------------------------------------------------------------------
@@ -228,12 +275,18 @@ instance ToJSON MetricMeasureDTO where
       ]
 
 -- --------------------------------------------------------------------
+instance ToJSON TagDTO where
+  toJSON TagDTO {..} =
+    object ["uuid" .= _tagDTOUuid, "name" .= _tagDTOName, "description" .= _tagDTODescription, "color" .= _tagDTOColor]
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
     _knowledgeModelDTOUuid <- o .: "uuid"
     _knowledgeModelDTOName <- o .: "name"
     _knowledgeModelDTOChapters <- o .: "chapters"
+    _knowledgeModelDTOTags <- o .: "tags"
     return KnowledgeModelDTO {..}
   parseJSON _ = mzero
 
@@ -250,18 +303,54 @@ instance FromJSON ChapterDTO where
 -- --------------------------------------------------------------------
 instance FromJSON QuestionDTO where
   parseJSON (Object o) = do
-    _questionDTOUuid <- o .: "uuid"
-    _questionDTOTitle <- o .: "title"
-    _questionDTOText <- o .: "text"
-    _questionDTORequiredLevel <- o .: "requiredLevel"
-    _questionDTOAnswers <- o .: "answers"
-    _questionDTOAnswerItemTemplate <- o .: "answerItemTemplate"
-    _questionDTOExperts <- o .: "experts"
-    _questionDTOReferences <- o .: "answers"
-    questionType <- o .: "type"
-    case deserializeQuestionType questionType of
-      (Just _questionDTOQType) -> return QuestionDTO {..}
-      Nothing -> fail "Unsupported question type"
+    questionType <- o .: "questionType"
+    case questionType of
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (OptionsQuestionDTO' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (ListQuestionDTO' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (ValueQuestionDTO' event)
+      _ -> fail "One of the questions has unsupported questionType"
+  parseJSON _ = mzero
+
+instance FromJSON OptionsQuestionDTO where
+  parseJSON (Object o) = do
+    _optionsQuestionDTOUuid <- o .: "uuid"
+    _optionsQuestionDTOTitle <- o .: "title"
+    _optionsQuestionDTOText <- o .: "text"
+    _optionsQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _optionsQuestionDTOTagUuids <- o .: "tagUuids"
+    _optionsQuestionDTOExperts <- o .: "experts"
+    _optionsQuestionDTOReferences <- o .: "references"
+    _optionsQuestionDTOAnswers <- o .: "answers"
+    return OptionsQuestionDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ListQuestionDTO where
+  parseJSON (Object o) = do
+    _listQuestionDTOUuid <- o .: "uuid"
+    _listQuestionDTOTitle <- o .: "title"
+    _listQuestionDTOText <- o .: "text"
+    _listQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _listQuestionDTOTagUuids <- o .: "tagUuids"
+    _listQuestionDTOExperts <- o .: "experts"
+    _listQuestionDTOReferences <- o .: "references"
+    _listQuestionDTOItemTemplateTitle <- o .: "itemTemplateTitle"
+    _listQuestionDTOItemTemplateQuestions <- o .: "itemTemplateQuestions"
+    return ListQuestionDTO {..}
+  parseJSON _ = mzero
+
+instance FromJSON ValueQuestionDTO where
+  parseJSON (Object o) = do
+    _valueQuestionDTOUuid <- o .: "uuid"
+    _valueQuestionDTOTitle <- o .: "title"
+    _valueQuestionDTOText <- o .: "text"
+    _valueQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _valueQuestionDTOTagUuids <- o .: "tagUuids"
+    _valueQuestionDTOExperts <- o .: "experts"
+    _valueQuestionDTOReferences <- o .: "references"
+    valueType <- o .: "valueType"
+    case deserializeQuestionValueType valueType of
+      (Just _valueQuestionDTOValueType) -> return ValueQuestionDTO {..}
+      Nothing -> fail "Unsupported question value type"
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
@@ -273,26 +362,6 @@ instance FromJSON AnswerDTO where
     _answerDTOFollowUps <- o .: "followUps"
     _answerDTOMetricMeasures <- o .: "metricMeasures"
     return AnswerDTO {..}
-  parseJSON _ = mzero
-
-instance FromJSON AnswerItemTemplateDTO where
-  parseJSON (Object o) = do
-    _answerItemTemplateDTOTitle <- o .: "title"
-    _answerItemTemplateDTOQuestions <- o .: "questions"
-    return AnswerItemTemplateDTO {..}
-  parseJSON _ = mzero
-
-instance FromJSON AnswerItemTemplatePlainDTO where
-  parseJSON (Object o) = do
-    _answerItemTemplatePlainDTOTitle <- o .: "title"
-    return AnswerItemTemplatePlainDTO {..}
-  parseJSON _ = mzero
-
-instance FromJSON AnswerItemTemplatePlainWithIdsDTO where
-  parseJSON (Object o) = do
-    _answerItemTemplatePlainWithIdsDTOTitle <- o .: "title"
-    _answerItemTemplatePlainWithIdsDTOQuestionIds <- o .: "questionIds"
-    return AnswerItemTemplatePlainWithIdsDTO {..}
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
@@ -357,4 +426,14 @@ instance FromJSON MetricMeasureDTO where
     _metricMeasureDTOMeasure <- o .: "measure"
     _metricMeasureDTOWeight <- o .: "weight"
     return MetricMeasureDTO {..}
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance FromJSON TagDTO where
+  parseJSON (Object o) = do
+    _tagDTOUuid <- o .: "uuid"
+    _tagDTOName <- o .: "name"
+    _tagDTODescription <- o .: "description"
+    _tagDTOColor <- o .: "color"
+    return TagDTO {..}
   parseJSON _ = mzero

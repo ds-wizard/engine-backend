@@ -5,6 +5,7 @@ import Data.Time
 
 import Model.BookReference.BookReference
 
+bookReferenceBvq :: BookReference
 bookReferenceBvq =
   BookReference
   { _bookReferenceShortUuid = "bvq"

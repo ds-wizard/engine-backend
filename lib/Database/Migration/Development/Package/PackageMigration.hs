@@ -8,8 +8,8 @@ import Util.Logger
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "(Package/Package) started"
   deletePackages
-  insertPackage baseElixir0PackageDto
-  insertPackage baseElixirPackageDto
-  insertPackage elixirNlPackageDto
-  insertPackage elixirNlPackage2Dto
+  insertPackage globalPackageEmpty
+  insertPackage globalPackage
+  insertPackage netherlandsPackage
+  insertPackage netherlandsPackageV2
   logInfo $ msg _CMP_MIGRATION "(Package/Package) ended"

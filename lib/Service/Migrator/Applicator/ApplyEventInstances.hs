@@ -12,8 +12,9 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Service.Migrator.Applicator.ApplyEvent
 import Service.Migrator.Applicator.Errors
 import Service.Migrator.Applicator.Modifiers
@@ -24,21 +25,42 @@ import Service.Migrator.Applicator.Utils
 -- APPLY TO KNOWLEDGE MODEL
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyEventToChapters e path km chUuid =
+applyEventToChapters e path km mChUuid =
   hFoldl foldOneChapter (Right []) (km ^. chapters) $ \mChapters -> Right . Just $ km & chapters .~ mChapters
   where
     foldOneChapter :: Either AppError [Chapter] -> Chapter -> Either AppError [Chapter]
     foldOneChapter (Left error) _ = Left error
     foldOneChapter (Right chs) chapter =
-      if chapter ^. uuid == chUuid
-        then heApplyEventToChapter e path (Right chapter) $ \appliedChapter -> Right $ chs ++ [appliedChapter]
-        else Right $ chs ++ [chapter]
+      case mChUuid of
+        Just chUuid ->
+          if chapter ^. uuid == chUuid
+            then applyToOneChapter chs chapter
+            else Right $ chs ++ [chapter]
+        Nothing -> applyToOneChapter chs chapter
+    applyToOneChapter :: [Chapter] -> Chapter -> Either AppError [Chapter]
+    applyToOneChapter chs chapter =
+      heApplyEventToChapter e path (Right chapter) $ \appliedChapter -> Right $ chs ++ [appliedChapter]
 
 passToChapters _ _ (Left error) = Left error
 passToChapters e _ (Right Nothing) = errorEditNonExistingThing e
 passToChapters e (_:pChUuid:restOfPath) (Right (Just km)) =
-  applyEventToChapters e (pChUuid : restOfPath) km (pChUuid ^. uuid)
+  applyEventToChapters e (pChUuid : restOfPath) km (Just $ pChUuid ^. uuid)
 passToChapters e _ _ = errorEmptyPath e
+
+broadcastToChapters _ _ (Left error) = Left error
+broadcastToChapters e _ (Right Nothing) = errorEditNonExistingThing e
+broadcastToChapters e path (Right (Just km)) = applyEventToChapters e path km Nothing
+
+-- --------------------------------------------
+applyEventToTags e path km tUuid =
+  hFoldl foldOneTag (Right []) (km ^. tags) $ \mTags -> Right . Just $ km & tags .~ mTags
+  where
+    foldOneTag :: Either AppError [Tag] -> Tag -> Either AppError [Tag]
+    foldOneTag (Left error) _ = Left error
+    foldOneTag (Right ts) tag =
+      if tag ^. uuid == tUuid
+        then heApplyEventToTag e path (Right tag) $ \appliedTag -> Right $ ts ++ [appliedTag]
+        else Right $ ts ++ [tag]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -66,7 +88,7 @@ instance ApplyEventToKM AddChapterEvent where
 instance ApplyEventToKM EditChapterEvent where
   applyEventToKM _ _ (Left error) = Left error
   applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
-  applyEventToKM e (_:restOfPath) (Right (Just km)) = applyEventToChapters e restOfPath km (e ^. chapterUuid)
+  applyEventToKM e (_:restOfPath) (Right (Just km)) = applyEventToChapters e restOfPath km (Just $ e ^. chapterUuid)
   applyEventToKM e [] _ = errorEmptyPath e
 
 instance ApplyEventToKM DeleteChapterEvent where
@@ -122,24 +144,56 @@ instance ApplyEventToKM EditReferenceEvent where
 instance ApplyEventToKM DeleteReferenceEvent where
   applyEventToKM = passToChapters
 
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToKM AddTagEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e _ (Right (Just km)) = Right . Just $ addTag km (createTag e)
+
+instance ApplyEventToKM EditTagEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e (_:restOfPath) (Right (Just km)) = applyEventToTags e restOfPath km (e ^. tagUuid)
+  applyEventToKM e [] _ = errorEmptyPath e
+
+instance ApplyEventToKM DeleteTagEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e path (Right (Just km)) = removeAllTagReferencesFromKM removeTagFromKM
+    where
+      removeTagFromKM = Right . Just $ deleteTag km (e ^. tagUuid)
+      removeAllTagReferencesFromKM = broadcastToChapters e path
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO CHAPTER
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyEventToQuestions e path ch qUuid =
+applyEventToQuestions e path ch mQUuid =
   hFoldl foldOneQuestion (Right []) (ch ^. questions) $ \mQuestions -> Right $ ch & questions .~ mQuestions
   where
     foldOneQuestion :: Either AppError [Question] -> Question -> Either AppError [Question]
     foldOneQuestion (Left error) _ = Left error
     foldOneQuestion (Right qs) question =
-      if question ^. uuid == qUuid
-        then heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
-        else Right $ qs ++ [question]
+      case mQUuid of
+        Just qUuid ->
+          if getQuestionUuid question == qUuid
+            then applyToOneQuestion qs question
+            else Right $ qs ++ [question]
+        Nothing -> applyToOneQuestion qs question
+    applyToOneQuestion :: [Question] -> Question -> Either AppError [Question]
+    applyToOneQuestion qs question =
+      heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
 
 passToQuestions _ _ (Left error) = Left error
-passToQuestions e (_:pQUuid:restOfPath) (Right ch) = applyEventToQuestions e (pQUuid : restOfPath) ch (pQUuid ^. uuid)
+passToQuestions e (_:pQUuid:restOfPath) (Right ch) =
+  applyEventToQuestions e (pQUuid : restOfPath) ch (Just $ pQUuid ^. uuid)
 passToQuestions e _ _ = errorEmptyPath e
+
+broadcastToQuestions _ _ (Left error) = Left error
+broadcastToQuestions e path (Right ch) = applyEventToQuestions e path ch Nothing
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -169,17 +223,17 @@ instance ApplyEventToChapter DeleteChapterEvent where
 -- -------------------
 instance ApplyEventToChapter AddQuestionEvent where
   applyEventToChapter _ _ (Left error) = Left error
-  applyEventToChapter e (pChUuid:[]) (Right ch) = heCreateQuestion e $ \question -> Right $ addQuestion ch question
+  applyEventToChapter e (pChUuid:[]) (Right ch) = Right $ addQuestion ch (createQuestion e)
   applyEventToChapter e path (Right ch) = passToQuestions e path (Right ch)
 
 instance ApplyEventToChapter EditQuestionEvent where
   applyEventToChapter _ _ (Left error) = Left error
-  applyEventToChapter e (_:[]) (Right ch) = applyEventToQuestions e [] ch (e ^. questionUuid)
+  applyEventToChapter e (_:[]) (Right ch) = applyEventToQuestions e [] ch (Just $ getEventQuestionUuid e)
   applyEventToChapter e path (Right ch) = passToQuestions e path (Right ch)
 
 instance ApplyEventToChapter DeleteQuestionEvent where
   applyEventToChapter _ _ (Left error) = Left error
-  applyEventToChapter e (pChUuid:[]) (Right ch) = Right $ deleteQuestion ch (e ^. questionUuid)
+  applyEventToChapter e (pChUuid:[]) (Right ch) = Right $ deleteQuestion ch (getEventQuestionUuid e)
   applyEventToChapter e path (Right ch) = passToQuestions e path (Right ch)
 
 -- -------------------
@@ -218,55 +272,86 @@ instance ApplyEventToChapter EditReferenceEvent where
 instance ApplyEventToChapter DeleteReferenceEvent where
   applyEventToChapter = passToQuestions
 
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToChapter AddTagEvent where
+  applyEventToChapter e _ _ = errorIllegalState e "AddTagEvent" "Chapter"
+
+instance ApplyEventToChapter EditTagEvent where
+  applyEventToChapter e _ _ = errorIllegalState e "EditTagEvent" "Chapter"
+
+instance ApplyEventToChapter DeleteTagEvent where
+  applyEventToChapter = broadcastToQuestions
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO QUESTION
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-passToAnswersAndAnswerItemTemplate e path eQ = passToAnswerItemTemplate e path $ passToAnswers e path eQ
+passToAnswersAndItemTemplateQuestions e path eQ = passToItemTemplateQuestions e path $ passToAnswers e path eQ
 
-applyEventToAnswers e path q ansUuid =
-  case q ^. answers of
-    Just as -> hFoldl foldOneAnswer (Right []) as $ \mAnswers -> Right $ q & answers .~ (Just mAnswers)
-    Nothing -> Right q
+broadcastToAnswersAndItemTemplateQuestions e path eQ =
+  broadcastToItemTemplateQuestions e path $ broadcastToAnswers e path eQ
+
+-- --------------------------------------------
+applyEventToAnswers e path q mAnsUuid =
+  hFoldl foldOneAnswer (Right []) (q ^. answers) $ \as -> Right . OptionsQuestion' $ q & answers .~ as
   where
     foldOneAnswer :: Either AppError [Answer] -> Answer -> Either AppError [Answer]
     foldOneAnswer (Left error) _ = Left error
     foldOneAnswer (Right as) answer =
-      if answer ^. uuid == ansUuid
-        then heApplyEventToAnswer e path (Right answer) $ \appliedAnswer -> Right $ as ++ [appliedAnswer]
-        else Right $ as ++ [answer]
+      case mAnsUuid of
+        Just ansUuid ->
+          if answer ^. uuid == ansUuid
+            then applyToOneAnswer as answer
+            else Right $ as ++ [answer]
+        Nothing -> applyToOneAnswer as answer
+    applyToOneAnswer :: [Answer] -> Answer -> Either AppError [Answer]
+    applyToOneAnswer as answer =
+      heApplyEventToAnswer e path (Right answer) $ \appliedAnswer -> Right $ as ++ [appliedAnswer]
 
 passToAnswers _ _ (Left error) = Left error
-passToAnswers e (_:pAnsUuid:restOfPath) (Right q) = applyEventToAnswers e (pAnsUuid : restOfPath) q (pAnsUuid ^. uuid)
+passToAnswers e (_:pAnsUuid:restOfPath) (Right (OptionsQuestion' q)) =
+  applyEventToAnswers e (pAnsUuid : restOfPath) q (Just $ pAnsUuid ^. uuid)
+passToAnswers e (_:pAnsUuid:restOfPath) (Right q) = Right q
 passToAnswers e _ _ = errorEmptyPath e
 
+broadcastToAnswers _ _ (Left error) = Left error
+broadcastToAnswers e path (Right (OptionsQuestion' q)) = applyEventToAnswers e path q Nothing
+broadcastToAnswers e path eQ = eQ
+
 -- --------------------------------------------
-applyEventToAit e path ait qUuid =
-  hFoldl foldOneQuestion (Right []) (ait ^. questions) $ \mQuestions -> Right $ ait & questions .~ mQuestions
+applyEventToItemTemplateQuestions e path q mQUuid =
+  hFoldl foldOneQuestion (Right []) (q ^. itemTemplateQuestions) $ \mQuestions ->
+    Right . ListQuestion' $ q & itemTemplateQuestions .~ mQuestions
   where
     foldOneQuestion :: Either AppError [Question] -> Question -> Either AppError [Question]
     foldOneQuestion (Left error) _ = Left error
     foldOneQuestion (Right qs) question =
-      if question ^. uuid == qUuid
-        then heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
-        else Right $ qs ++ [question]
+      case mQUuid of
+        Just qUuid ->
+          if getQuestionUuid question == qUuid
+            then applyToOneQuestion qs question
+            else Right $ qs ++ [question]
+        Nothing -> applyToOneQuestion qs question
+    applyToOneQuestion :: [Question] -> Question -> Either AppError [Question]
+    applyToOneQuestion qs question =
+      heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
 
-passToAnswerItemTemplate _ _ (Left error) = Left error
-passToAnswerItemTemplate e (_:pQUuid:restOfPath) (Right q) =
-  case q ^. answerItemTemplate of
-    Just ait ->
-      case modifyAit ait of
-        Left error -> Left error
-        Right modifiedAit -> Right $ q & answerItemTemplate .~ (Just modifiedAit)
-    Nothing -> Right q
-  where
-    modifyAit :: AnswerItemTemplate -> Either AppError AnswerItemTemplate
-    modifyAit ait = applyEventToAit e (pQUuid : restOfPath) ait (pQUuid ^. uuid)
+passToItemTemplateQuestions _ _ (Left error) = Left error
+passToItemTemplateQuestions e (_:pQUuid:restOfPath) (Right (ListQuestion' q)) =
+  applyEventToItemTemplateQuestions e (pQUuid : restOfPath) q (Just $ pQUuid ^. uuid)
+passToItemTemplateQuestions e (_:pQUuid:restOfPath) (Right q) = Right q
+passToItemTemplateQuestions e _ _ = errorEmptyPath e
+
+broadcastToItemTemplateQuestions _ _ (Left error) = Left error
+broadcastToItemTemplateQuestions e path (Right (ListQuestion' q)) = applyEventToItemTemplateQuestions e path q Nothing
+broadcastToItemTemplateQuestions e path (Right q) = Right q
 
 -- --------------------------------------------
 applyEventToExperts e path q expUuid =
-  hFoldl foldOneExpert (Right []) (q ^. experts) $ \mExperts -> Right $ q & experts .~ mExperts
+  hFoldl foldOneExpert (Right []) (getExperts q) $ \es -> Right $ q & qChangeExperts .~ es
   where
     foldOneExpert :: Either AppError [Expert] -> Expert -> Either AppError [Expert]
     foldOneExpert (Left error) _ = Left error
@@ -277,7 +362,7 @@ applyEventToExperts e path q expUuid =
 
 -- --------------------------------------------
 applyEventToReferences e path q refUuid =
-  hFoldl foldOneReference (Right []) (q ^. references) $ \mReferences -> Right $ q & references .~ mReferences
+  hFoldl foldOneReference (Right []) (getReferences q) $ \rs -> Right $ q & qChangeReferences .~ rs
   where
     foldOneReference :: Either AppError [Reference] -> Reference -> Either AppError [Reference]
     foldOneReference (Left error) _ = Left error
@@ -312,29 +397,20 @@ instance ApplyEventToQuestion DeleteChapterEvent where
 -- -------------------
 instance ApplyEventToQuestion AddQuestionEvent where
   applyEventToQuestion _ _ (Left error) = Left error
-  applyEventToQuestion e (pQUuid:[]) (Right q) =
-    heCreateQuestion e $ \aitQuestion -> Right $ addAitQuestion q aitQuestion
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ addItemTemplateQuestion q (createQuestion e)
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion EditQuestionEvent where
   applyEventToQuestion _ _ (Left error) = Left error
   applyEventToQuestion e [] (Right q) = Right $ editQuestion e q
-  applyEventToQuestion e (pQUuid:[]) (Right q) =
-    case q ^. answerItemTemplate of
-      Just ait ->
-        case modifyAit ait of
-          Left error -> Left error
-          Right modifiedAit -> Right $ q & answerItemTemplate .~ (Just modifiedAit)
-      Nothing -> Right q
-    where
-      modifyAit :: AnswerItemTemplate -> Either AppError AnswerItemTemplate
-      modifyAit ait = applyEventToAit e [] ait (e ^. questionUuid)
-  applyEventToQuestion e path (Right q) = passToAnswersAndAnswerItemTemplate e path (Right q)
+  applyEventToQuestion e (pQUuid:[]) (Right (ListQuestion' q)) =
+    applyEventToItemTemplateQuestions e [] q (Just $ getEventQuestionUuid e)
+  applyEventToQuestion e path (Right q) = passToAnswersAndItemTemplateQuestions e path (Right q)
 
 instance ApplyEventToQuestion DeleteQuestionEvent where
   applyEventToQuestion _ _ (Left error) = Left error
-  applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteAitQuestion q (e ^. questionUuid)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteItemTemplateQuestion q (getEventQuestionUuid e)
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 -- -------------------
 -- ANSWERS -----------
@@ -342,17 +418,17 @@ instance ApplyEventToQuestion DeleteQuestionEvent where
 instance ApplyEventToQuestion AddAnswerEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ addAnswer q (createAnswer e)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion EditAnswerEvent where
   applyEventToQuestion e _ (Left error) = Left error
-  applyEventToQuestion e (pQUuid:[]) (Right q) = applyEventToAnswers e [] q (e ^. answerUuid)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e (pQUuid:[]) (Right (OptionsQuestion' q)) = applyEventToAnswers e [] q (Just $ e ^. answerUuid)
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion DeleteAnswerEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteAnswer q (e ^. answerUuid)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 -- -------------------
 -- EXPERTS -----------
@@ -360,17 +436,17 @@ instance ApplyEventToQuestion DeleteAnswerEvent where
 instance ApplyEventToQuestion AddExpertEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ addExpert q (createExpert e)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion EditExpertEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = applyEventToExperts e [] q (e ^. expertUuid)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion DeleteExpertEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteExpert q (e ^. expertUuid)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 -- -------------------
 -- REFERENCES---------
@@ -378,37 +454,62 @@ instance ApplyEventToQuestion DeleteExpertEvent where
 instance ApplyEventToQuestion AddReferenceEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ addReference q (createReference e)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion EditReferenceEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = applyEventToReferences e [] q (getEventNodeUuid e)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
 
 instance ApplyEventToQuestion DeleteReferenceEvent where
   applyEventToQuestion e _ (Left error) = Left error
   applyEventToQuestion e (pQUuid:[]) (Right q) = Right $ deleteReference q (getEventNodeUuid e)
-  applyEventToQuestion e path eQ = passToAnswersAndAnswerItemTemplate e path eQ
+  applyEventToQuestion e path eQ = passToAnswersAndItemTemplateQuestions e path eQ
+
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToQuestion AddTagEvent where
+  applyEventToQuestion e _ _ = errorIllegalState e "AddTagEvent" "Question"
+
+instance ApplyEventToQuestion EditTagEvent where
+  applyEventToQuestion e _ _ = errorIllegalState e "EditTagEvent" "Question"
+
+instance ApplyEventToQuestion DeleteTagEvent where
+  applyEventToQuestion _ _ (Left error) = Left error
+  applyEventToQuestion e path (Right q) = removeFromAllItsChildren removeTagsFromQuestion
+    where
+      removeTagsFromQuestion = Right $ q & qChangeTagUuids .~ (filter (\tUuid -> tUuid /= e ^. tagUuid) (getTagUuids q))
+      removeFromAllItsChildren = broadcastToAnswersAndItemTemplateQuestions e path
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO ANSWER
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-applyEventToFollowUps e path answer qUuid =
+applyEventToFollowUps e path answer mQUuid =
   hFoldl foldOneFollowUps (Right []) (answer ^. followUps) $ \mFollowUps -> Right $ answer & followUps .~ mFollowUps
   where
     foldOneFollowUps :: Either AppError [Question] -> Question -> Either AppError [Question]
     foldOneFollowUps (Left error) _ = Left error
     foldOneFollowUps (Right qs) question =
-      if question ^. uuid == qUuid
-        then heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
-        else Right $ qs ++ [question]
+      case mQUuid of
+        Just qUuid ->
+          if getQuestionUuid question == qUuid
+            then applyEventToFollowUp qs question
+            else Right $ qs ++ [question]
+        Nothing -> applyEventToFollowUp qs question
+    applyEventToFollowUp :: [Question] -> Question -> Either AppError [Question]
+    applyEventToFollowUp qs question =
+      heApplyEventToQuestion e path (Right question) $ \appliedQuestion -> Right $ qs ++ [appliedQuestion]
 
 passToFollowUps _ _ (Left error) = Left error
 passToFollowUps e (_:pQUuid:restOfPath) (Right answer) =
-  applyEventToFollowUps e (pQUuid : restOfPath) answer (pQUuid ^. uuid)
+  applyEventToFollowUps e (pQUuid : restOfPath) answer (Just $ pQUuid ^. uuid)
 passToFollowUps e _ _ = errorEmptyPath e
+
+broadcastToFollowUps _ _ (Left error) = Left error
+broadcastToFollowUps e path (Right answer) = applyEventToFollowUps e path answer Nothing
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -436,17 +537,17 @@ instance ApplyEventToAnswer DeleteChapterEvent where
 -- -------------------
 instance ApplyEventToAnswer AddQuestionEvent where
   applyEventToAnswer _ _ (Left error) = Left error
-  applyEventToAnswer e (ansUuid:[]) (Right ans) = heCreateQuestion e $ \question -> Right $ addFuQuestion ans question
+  applyEventToAnswer e (ansUuid:[]) (Right ans) = Right $ addFuQuestion ans (createQuestion e)
   applyEventToAnswer e path eAns = passToFollowUps e path eAns
 
 instance ApplyEventToAnswer EditQuestionEvent where
   applyEventToAnswer _ _ (Left error) = Left error
-  applyEventToAnswer e (ansUuid:[]) (Right ans) = applyEventToFollowUps e [] ans (e ^. questionUuid)
+  applyEventToAnswer e (ansUuid:[]) (Right ans) = applyEventToFollowUps e [] ans (Just $ getEventQuestionUuid e)
   applyEventToAnswer e path eAns = passToFollowUps e path eAns
 
 instance ApplyEventToAnswer DeleteQuestionEvent where
   applyEventToAnswer _ _ (Left error) = Left error
-  applyEventToAnswer e (ansUuid:[]) (Right ans) = Right $ deleteFuQuestion ans (e ^. questionUuid)
+  applyEventToAnswer e (ansUuid:[]) (Right ans) = Right $ deleteFuQuestion ans (getEventQuestionUuid e)
   applyEventToAnswer e path eAns = passToFollowUps e path eAns
 
 -- -------------------
@@ -486,6 +587,18 @@ instance ApplyEventToAnswer EditReferenceEvent where
 
 instance ApplyEventToAnswer DeleteReferenceEvent where
   applyEventToAnswer = passToFollowUps
+
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToAnswer AddTagEvent where
+  applyEventToAnswer e _ _ = errorIllegalState e "AddTagEvent" "Answer"
+
+instance ApplyEventToAnswer EditTagEvent where
+  applyEventToAnswer e _ _ = errorIllegalState e "EditTagEvent" "Answer"
+
+instance ApplyEventToAnswer DeleteTagEvent where
+  applyEventToAnswer = broadcastToFollowUps
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -563,6 +676,18 @@ instance ApplyEventToExpert EditReferenceEvent where
 instance ApplyEventToExpert DeleteReferenceEvent where
   applyEventToExpert e _ _ = errorIllegalState e "DeleteReferenceEvent" "Expert"
 
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToExpert AddTagEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "AddTagEvent" "Expert"
+
+instance ApplyEventToExpert EditTagEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "EditTagEvent" "Expert"
+
+instance ApplyEventToExpert DeleteTagEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "DeleteTagEvent" "Expert"
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO REFERENCE
@@ -639,24 +764,102 @@ instance ApplyEventToReference EditReferenceEvent where
 instance ApplyEventToReference DeleteReferenceEvent where
   applyEventToReference e _ _ = errorIllegalState e "DeleteReferenceEvent" "Reference"
 
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToReference AddTagEvent where
+  applyEventToReference e _ _ = errorIllegalState e "AddTagEvent" "Reference"
+
+instance ApplyEventToReference EditTagEvent where
+  applyEventToReference e _ _ = errorIllegalState e "EditTagEvent" "Reference"
+
+instance ApplyEventToReference DeleteTagEvent where
+  applyEventToReference e _ _ = errorIllegalState e "DeleteTagEvent" "Reference"
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
--- HELPERS
+-- APPLY TO TAGS
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
-heCreateQuestion e callback =
-  getAnswerItemTemplate $ \maybeAit -> getAnswers $ \maybeAns -> callback $ createQuestion e maybeAit maybeAns
-  where
-    getAnswerItemTemplate callback =
-      case e ^. qType of
-        QuestionTypeList ->
-          case e ^. answerItemTemplatePlain of
-            Just ait ->
-              callback . Just $
-              AnswerItemTemplate {_answerItemTemplateTitle = ait ^. title, _answerItemTemplateQuestions = []}
-            Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT
-        _ -> callback Nothing
-    getAnswers callback =
-      case e ^. qType of
-        QuestionTypeOptions -> callback . Just $ []
-        _ -> callback Nothing
+-- -------------------------
+-- KNOWLEDGE MODEL ---------
+-- -------------------------
+instance ApplyEventToTag AddKnowledgeModelEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddKnowledgeModelEvent" "Tag"
+
+instance ApplyEventToTag EditKnowledgeModelEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditKnowledgeModelEvent" "Tag"
+
+-- -------------------
+-- CHAPTERS ----------
+-- -------------------
+instance ApplyEventToTag AddChapterEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddChapterEvent" "Tag"
+
+instance ApplyEventToTag EditChapterEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditChapterEvent" "Tag"
+
+instance ApplyEventToTag DeleteChapterEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteChapterEvent" "Tag"
+
+-- -------------------
+-- QUESTIONS----------
+-- -------------------
+instance ApplyEventToTag AddQuestionEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddQuestionEvent" "Tag"
+
+instance ApplyEventToTag EditQuestionEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditQuestionEvent" "Tag"
+
+instance ApplyEventToTag DeleteQuestionEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteQuestionEvent" "Tag"
+
+-- -------------------
+-- ANSWERS -----------
+-- -------------------
+instance ApplyEventToTag AddAnswerEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddAnswerEvent" "Tag"
+
+instance ApplyEventToTag EditAnswerEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditAnswerEvent" "Tag"
+
+instance ApplyEventToTag DeleteAnswerEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteAnswerEvent" "Tag"
+
+-- -------------------
+-- EXPERTS -----------
+-- -------------------
+instance ApplyEventToTag AddExpertEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddExpertEvent" "Tag"
+
+instance ApplyEventToTag EditExpertEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditExpertEvent" "Tag"
+
+instance ApplyEventToTag DeleteExpertEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteExpertEvent" "Tag"
+
+-- -------------------
+-- REFERENCES---------
+-- -------------------
+instance ApplyEventToTag AddReferenceEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddReferenceEvent" "Tag"
+
+instance ApplyEventToTag EditReferenceEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditReferenceEvent" "Tag"
+
+instance ApplyEventToTag DeleteReferenceEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteReferenceEvent" "Tag"
+
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToTag AddTagEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddTagEvent" "Expert"
+
+instance ApplyEventToTag EditTagEvent where
+  applyEventToTag _ _ (Left error) = Left error
+  applyEventToTag e [] (Right tag) = Right $ editTag e tag
+  applyEventToTag e path _ = errorPathShouldBeEmpty e path
+
+instance ApplyEventToTag DeleteTagEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteTagEvent" "Expert"

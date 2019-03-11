@@ -1,12 +1,28 @@
 module Database.BSON.Branch.BranchWithEvents where
 
+import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
 import Database.BSON.Common
 import Database.BSON.Event.Common
+import LensesConfig
 import Model.Branch.Branch
+
+instance ToBSON BranchWithEvents where
+  toBSON branch =
+    [ "uuid" BSON.=: serializeUUID (branch ^. uuid)
+    , "name" BSON.=: (branch ^. name)
+    , "kmId" BSON.=: (branch ^. kmId)
+    , "parentPackageId" BSON.=: (branch ^. parentPackageId)
+    , "lastAppliedParentPackageId" BSON.=: (branch ^. lastAppliedParentPackageId)
+    , "lastMergeCheckpointPackageId" BSON.=: (branch ^. lastMergeCheckpointPackageId)
+    , "ownerUuid" BSON.=: serializeMaybeUUID (branch ^. ownerUuid)
+    , "events" BSON.=: convertEventToBSON <$> branch ^. events
+    , "createdAt" BSON.=: (branch ^. createdAt)
+    , "updatedAt" BSON.=: (branch ^. updatedAt)
+    ]
 
 instance FromBSON BranchWithEvents where
   fromBSON doc = do

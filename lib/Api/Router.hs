@@ -11,7 +11,6 @@ import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.BookReference.BookReferenceHandler
 import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
-import Api.Handler.Event.EventHandler
 import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
@@ -87,20 +86,21 @@ createEndpoints context
   --  --------------------
   --  -- KNOWLEDGE MODEL
   --  --------------------
+  -- Branch
   get "/branches" getBranchesA
   post "/branches" postBranchesA
   get "/branches/:branchUuid" getBranchA
   put "/branches/:branchUuid" putBranchA
   delete "/branches/:branchUuid" deleteBranchA
-  get "/branches/:branchUuid/km" getKnowledgeModelA
-  get "/branches/:branchUuid/events" getEventsA
-  post "/branches/:branchUuid/events/_bulk" postEventsA
-  delete "/branches/:branchUuid/events" deleteEventsA
-  put "/branches/:branchUuid/versions/:version" putVersionA
+  -- Migrations
   get "/branches/:branchUuid/migrations/current" getMigrationsCurrentA
   post "/branches/:branchUuid/migrations/current" postMigrationsCurrentA
   delete "/branches/:branchUuid/migrations/current" deleteMigrationsCurrentA
   post "/branches/:branchUuid/migrations/current/conflict" postMigrationsCurrentConflictA
+  -- Version
+  put "/branches/:branchUuid/versions/:version" putVersionA
+  -- Knowledge Model
+  post "/knowledge-models/preview" postKnowledgeModelPreviewA
    --------------------
    -- PACKAGE
    --------------------

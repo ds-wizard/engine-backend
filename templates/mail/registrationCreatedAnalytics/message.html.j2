@@ -1,0 +1,15 @@
+{% extends '../_common/layout.html.j2' %}
+{% block body %}
+Hello!
+<br>
+Good news - we have a new user in our Wizard ({{ mailName}}):
+<dl>
+  <dt>Name<dt>
+  <dd>{{ user.name }} {{ user.surname }}</dd>
+  <dt>Email<dt>
+  <dd>{{ user.email }}</dd>
+</dl>
+<br>
+Best regards,<br>
+{{ mailName }} Team
+{% endblock %}

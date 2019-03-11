@@ -11,6 +11,7 @@ data PackageWithEventsDTO = PackageWithEventsDTO
   , _packageWithEventsDTOOrganizationId :: String
   , _packageWithEventsDTOKmId :: String
   , _packageWithEventsDTOVersion :: String
+  , _packageWithEventsDTOMetamodelVersion :: Int
   , _packageWithEventsDTODescription :: String
   , _packageWithEventsDTOParentPackageId :: Maybe String
   , _packageWithEventsDTOEvents :: [EventDTO]
@@ -23,6 +24,7 @@ instance FromJSON PackageWithEventsDTO where
     _packageWithEventsDTOOrganizationId <- o .: "organizationId"
     _packageWithEventsDTOKmId <- o .: "kmId"
     _packageWithEventsDTOVersion <- o .: "version"
+    _packageWithEventsDTOMetamodelVersion <- o .: "metamodelVersion"
     _packageWithEventsDTODescription <- o .: "description"
     _packageWithEventsDTOParentPackageId <- o .: "parentPackageId"
     eventSerialized <- o .: "events"
@@ -38,6 +40,7 @@ instance ToJSON PackageWithEventsDTO where
       , "organizationId" .= _packageWithEventsDTOOrganizationId
       , "kmId" .= _packageWithEventsDTOKmId
       , "version" .= _packageWithEventsDTOVersion
+      , "metamodelVersion" .= _packageWithEventsDTOMetamodelVersion
       , "description" .= _packageWithEventsDTODescription
       , "parentPackageId" .= _packageWithEventsDTOParentPackageId
       , "events" .= toJSON _packageWithEventsDTOEvents

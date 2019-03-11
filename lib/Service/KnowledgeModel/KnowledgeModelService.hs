@@ -2,6 +2,7 @@ module Service.KnowledgeModel.KnowledgeModelService where
 
 import Control.Lens ((^.))
 
+import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import LensesConfig
@@ -9,7 +10,9 @@ import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
+import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelApplicator
+import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageService
 
@@ -25,6 +28,21 @@ recompileKnowledgeModel :: String -> AppContextM (Either AppError KnowledgeModel
 recompileKnowledgeModel branchUuid =
   heGetEventsForBranchUuid branchUuid $ \eventsForBranchUuid ->
     recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid
+
+createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM (Either AppError KnowledgeModelDTO)
+createKnowledgeModelPreview reqDto =
+  heGetEvents $ \events ->
+    heCompileKnowledgeModelFromScratch events $ \km -> do
+      let filteredKm = filterKnowledgeModel (reqDto ^. tagUuids) km
+      return . Right . toKnowledgeModelDTO $ km
+  where
+    requestEvents = fromDTOs $ reqDto ^. events
+    heGetEvents callback =
+      case reqDto ^. packageId of
+        Just packageId ->
+          heGetAllPreviousEventsSincePackageId packageId $ \packageEvents -> do
+            callback $ packageEvents ++ requestEvents
+        Nothing -> callback requestEvents
 
 -- --------------------------------
 -- HELPERS

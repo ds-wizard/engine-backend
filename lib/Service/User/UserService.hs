@@ -64,14 +64,14 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
     insertUser user
     heCreateActionKey uUuid RegistrationActionKey $ \actionKey -> do
       publishToUserCreatedTopic user
-      sendRegistrationConfirmationMail (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
+      sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash)
       sendAnalyticsEmailIfEnabled user
       return . Right $ toDTO user
   where
     sendAnalyticsEmailIfEnabled user = do
       dswConfig <- asks _appContextConfig
       if dswConfig ^. analytics . enabled
-        then sendRegistrationCreatedAnalyticsMail (user ^. name) (user ^. surname) (user ^. email)
+        then sendRegistrationCreatedAnalyticsMail (toDTO user)
         else return ()
 
 getUserById :: String -> AppContextM (Either AppError UserDTO)
@@ -136,7 +136,7 @@ resetUserPassword :: ActionKeyDTO -> AppContextM (Maybe AppError)
 resetUserPassword reqDto =
   hmFindUserByEmail (reqDto ^. email) $ \user ->
     hmCreateActionKey (user ^. uuid) ForgottenPasswordActionKey $ \actionKey -> do
-      sendResetPasswordMail (user ^. email) (actionKey ^. userId) (actionKey ^. hash)
+      sendResetPasswordMail (toDTO user) (actionKey ^. hash)
       return Nothing
 
 createForgottenUserPassword :: String -> UserPasswordDTO -> AppContextM (Maybe AppError)

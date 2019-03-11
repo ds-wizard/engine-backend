@@ -4,6 +4,7 @@ module Specs.API.Branch.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -49,7 +50,7 @@ reqUrl = "/branches"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = amsterdamBranchChange
+reqDto = amsterdamBranchCreate
 
 reqBody = encode reqDto
 
@@ -62,17 +63,22 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = amsterdamBranchWithState
+    let expDto = amsterdamBranchDetail
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareBranchDtos resBody reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
+    compareBranchDtos resBody reqDto (reqDto ^. parentPackageId) (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findBranches appContext 1
-    assertExistenceOfBranchInDB appContext reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
+    assertExistenceOfBranchInDB
+      appContext
+      reqDto
+      (reqDto ^. parentPackageId)
+      (reqDto ^. parentPackageId)
+      (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -86,7 +92,7 @@ test_400_not_valid_kmId appContext = do
   it "HTTP 400 BAD REQUEST when kmId is not in valid format" $
      -- GIVEN: Prepare request
    do
-    let reqDto = amsterdamBranchChange & kmId .~ "amsterdam.km-"
+    let reqDto = amsterdamBranchCreate & kmId .~ "amsterdam.km-"
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
@@ -115,7 +121,11 @@ test_400_already_taken_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchCreate)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -133,7 +143,7 @@ test_400_not_existing_parentPackageId appContext = do
   it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $
      -- GIVEN: Prepare request
    do
-    let reqDto = amsterdamBranchChange & parentPackageId .~ (Just "elixir.nl:core-nl:9.9.9")
+    let reqDto = amsterdamBranchCreate & parentPackageId .~ (Just "dsw.nl:core-nl:9.9.9")
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400

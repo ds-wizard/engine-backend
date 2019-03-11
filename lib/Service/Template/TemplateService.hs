@@ -2,13 +2,13 @@ module Service.Template.TemplateService where
 
 import Control.Monad.Reader (liftIO)
 import Data.Aeson (Value, decode, encode)
+import Data.Aeson.Types (emptyObject)
 import qualified Data.ByteString.Lazy as BS
 import Data.HashMap.Strict (HashMap, fromList)
-import Data.Maybe (fromJust)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.Text.Encoding as E
 import qualified Text.FromHTML as FromHTML
-import Text.Ginger (formatParserError, parseGingerFile)
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Localization
@@ -16,12 +16,12 @@ import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error
 import Service.Template.TemplateMapper (heFormatToToHTMLType)
-import Service.Template.TemplateUtils (mLoadFile, render)
+import Util.Template (loadAndRender)
 
-templateFile = "template/root.html.jinja"
+templateFile = "templates/dmp/root.html.j2"
 
-sampleContext :: DataManagementPlanDTO -> HashMap T.Text (HashMap T.Text Value)
-sampleContext dmp = fromList [("dmp", fromJust . decode . encode $ dmp)]
+sampleContext :: DataManagementPlanDTO -> HashMap T.Text Value
+sampleContext dmp = fromList [("dmp", fromMaybe emptyObject . decode . encode $ dmp)]
 
 generateTemplateInFormat ::
      DataManagementPlanFormat -> DataManagementPlanDTO -> AppContextM (Either AppError BS.ByteString)
@@ -37,12 +37,10 @@ generateTemplateInFormat format dmp =
 
 generateTemplate :: DataManagementPlanDTO -> AppContextM (Either AppError T.Text)
 generateTemplate dmp = do
-  eTemplate <- liftIO $ parseGingerFile mLoadFile templateFile
+  eTemplate <- liftIO $ loadAndRender templateFile (sampleContext dmp)
   case eTemplate of
-    Right template -> return . Right $ render template (sampleContext dmp)
-    Left error ->
-      return . Left . GeneralServerError $
-      _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED (formatParserError Nothing error)
+    Right template -> return . Right $ template
+    Left err -> return . Left . GeneralServerError $ _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED err
 
 -- --------------------------------
 -- HELPERS

@@ -22,7 +22,7 @@ data EditAnswerEvent = EditAnswerEvent
   , _editAnswerEventAnswerUuid :: UUID
   , _editAnswerEventLabel :: EventField String
   , _editAnswerEventAdvice :: EventField (Maybe String)
-  , _editAnswerEventFollowUpIds :: EventField [UUID]
+  , _editAnswerEventFollowUpUuids :: EventField [UUID]
   , _editAnswerEventMetricMeasures :: EventField [MetricMeasure]
   } deriving (Show, Eq, Generic)
 

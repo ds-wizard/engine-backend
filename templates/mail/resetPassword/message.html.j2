@@ -1,0 +1,9 @@
+{% extends '../_common/layout.html.j2' %}
+{% block body %}
+Dear {{ user.name }},
+<br>
+You can set up a new password for your account <a href="{{ resetLink }}" target="_blank">here</a>.
+<br><br>
+Best regards,<br>
+{{ mailName }} Team
+{% endblock %}

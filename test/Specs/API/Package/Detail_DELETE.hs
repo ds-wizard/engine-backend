@@ -4,6 +4,7 @@ module Specs.API.Package.Detail_DELETE
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Data.Either
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -44,7 +45,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/packages/elixir.nl:core-nl:2.0.0"
+reqUrl = BS.pack $ "/packages/" ++ (netherlandsPackageV2 ^. pId)
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -65,7 +66,7 @@ test_204 appContext =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Find a result
-    eitherPackage <- runInContextIO (getPackageById "elixir.nl:core-nl:2.0.0") appContext
+    eitherPackage <- runInContextIO (getPackageById $ netherlandsPackageV2 ^. pId) appContext
      -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
@@ -83,14 +84,14 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST when package can't be deleted" $
     -- GIVEN: Prepare request
    do
-    let reqUrl = "/packages/elixir.nl:core-nl:1.0.0"
+    let reqUrl = BS.pack $ "/packages/" ++ (netherlandsPackage ^. pId)
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
     let expDto =
           createErrorWithErrorMessage $
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
-            "elixir.nl:core-nl:1.0.0"
+            (netherlandsPackage ^. pId)
             "knowledge model"
     let expBody = encode expDto
     -- AND: Prepare DB
@@ -107,7 +108,7 @@ test_400 appContext = do
     -- AND: Compare state in DB with expectation
     liftIO $ (isRight eitherPackages) `shouldBe` True
     let (Right packages) = eitherPackages
-    liftIO $ packages `shouldBe` [baseElixir0PackageDto, baseElixirPackageDto, elixirNlPackageDto, elixirNlPackage2Dto]
+    liftIO $ packages `shouldBe` [globalPackageEmpty, globalPackage, netherlandsPackage, netherlandsPackageV2]
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -122,4 +123,4 @@ test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/packages/elixir.nonexist:nopackage:2.0.0" reqHeaders reqBody
+test_404 appContext = createNotFoundTest reqMethod "/packages/dsw.global:non-existing-package:1.0.0" reqHeaders reqBody

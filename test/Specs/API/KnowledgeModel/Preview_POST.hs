@@ -1,5 +1,5 @@
-module Specs.API.KnowledgeModel.Detail_GET
-  ( detail_get
+module Specs.API.KnowledgeModel.Preview_POST
+  ( preview_post
   ) where
 
 import Control.Lens ((^.))
@@ -11,9 +11,10 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
-import qualified
-       Database.Migration.Development.Branch.BranchMigration as B
+import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
@@ -24,26 +25,32 @@ import Specs.API.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /branches/{branchId}/km
+-- POST /knowledge-models/preview
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
-detail_get appContext =
-  describe "GET /branches/{branchId}/km" $ do
+preview_post :: AppContext -> SpecWith Application
+preview_post appContext =
+  describe "POST /knowledge-models/preview" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodGet
+reqMethod = methodPost
 
-reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/km"
+reqUrl = "/knowledge-models/preview"
 
 reqHeaders = [reqAuthHeader]
 
-reqBody = ""
+reqDto =
+  KnowledgeModelChangeDTO
+  { _knowledgeModelChangeDTOPackageId = Just $ germanyPackage ^. pId
+  , _knowledgeModelChangeDTOEvents = []
+  , _knowledgeModelChangeDTOTagUuids = []
+  }
+
+reqBody = encode reqDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -54,11 +61,11 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toKnowledgeModelDTO km1
+    let expDto = toKnowledgeModelDTO km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
-    runInContextIO B.runMigration appContext
+    runInContextIO (insertPackage germanyPackage) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -74,10 +81,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "KM_PERM"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext =
-  createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/km" reqHeaders reqBody
+test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "QTN_PERM"

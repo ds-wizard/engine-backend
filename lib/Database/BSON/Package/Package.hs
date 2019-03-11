@@ -14,6 +14,7 @@ instance ToBSON Package where
     , "organizationId" BSON.=: (package ^. organizationId)
     , "kmId" BSON.=: (package ^. kmId)
     , "version" BSON.=: (package ^. version)
+    , "metamodelVersion" BSON.=: (package ^. metamodelVersion)
     , "description" BSON.=: (package ^. description)
     , "parentPackageId" BSON.=: (package ^. parentPackageId)
     ]
@@ -25,6 +26,7 @@ instance FromBSON Package where
     pkgOrganizationId <- BSON.lookup "organizationId" doc
     pkgKmId <- BSON.lookup "kmId" doc
     pkgVersion <- BSON.lookup "version" doc
+    pkgMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     pkgDescription <- BSON.lookup "description" doc
     pkgParentPackageId <- BSON.lookup "parentPackageId" doc
     return
@@ -34,6 +36,7 @@ instance FromBSON Package where
       , _packageOrganizationId = pkgOrganizationId
       , _packageKmId = pkgKmId
       , _packageVersion = pkgVersion
+      , _packageMetamodelVersion = pkgMetamodelVersion
       , _packageDescription = pkgDescription
       , _packageParentPackageId = pkgParentPackageId
       }

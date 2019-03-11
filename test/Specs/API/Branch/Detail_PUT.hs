@@ -4,6 +4,7 @@ module Specs.API.Branch.Detail_PUT
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -35,7 +36,6 @@ detail_put appContext =
     test_400_invalid_json appContext
     test_400_not_valid_kmId appContext
     test_400_already_taken_kmId appContext
-    test_400_not_existing_parentPackageId appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -49,7 +49,7 @@ reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = editedAmsterdamBranchChange
+reqDto = amsterdamBranchChange
 
 reqBody = encode reqDto
 
@@ -62,10 +62,14 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = amsterdamBranchWithState
+    let expDto = amsterdamBranchDetail
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchCreate)
       appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -73,9 +77,19 @@ test_200 appContext = do
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareBranchDtos resBody reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
+    compareBranchDtos
+      resBody
+      reqDto
+      (resBody ^. parentPackageId)
+      (resBody ^. parentPackageId)
+      (Just $ userAlbert ^. uuid)
      -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfBranchInDB appContext reqDto (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
+    assertExistenceOfBranchInDB
+      appContext
+      reqDto
+      (resBody ^. parentPackageId)
+      (resBody ^. parentPackageId)
+      (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -98,7 +112,11 @@ test_400_not_valid_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchCreate)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -110,6 +128,7 @@ test_400_not_valid_kmId appContext = do
     assertExistenceOfBranchInDB
       appContext
       amsterdamBranch
+      (amsterdamBranch ^. parentPackageId)
       (amsterdamBranch ^. parentPackageId)
       (Just $ userAlbert ^. uuid)
 
@@ -129,10 +148,18 @@ test_400_already_taken_kmId appContext = do
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
+      (createBranchWithParams
+         (amsterdamBranch ^. uuid)
+         (amsterdamBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         amsterdamBranchCreate)
       appContext
     runInContextIO
-      (createBranchWithParams (leidenBranch ^. uuid) (leidenBranch ^. createdAt) leidenBranchChange)
+      (createBranchWithParams
+         (leidenBranch ^. uuid)
+         (leidenBranch ^. createdAt)
+         (fromJust $ appContext ^. currentUser)
+         leidenBranchCreate)
       appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -145,36 +172,6 @@ test_400_already_taken_kmId appContext = do
       appContext
       amsterdamBranch
       (amsterdamBranch ^. parentPackageId)
-      (Just $ userAlbert ^. uuid)
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_400_not_existing_parentPackageId appContext = do
-  it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $
-     -- GIVEN: Prepare request
-   do
-    let reqDto = amsterdamBranchChange & parentPackageId .~ (Just "elixir.nl:core-nl:9.9.9")
-    let reqBody = encode reqDto
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
-      appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfBranchInDB
-      appContext
-      amsterdamBranch
       (amsterdamBranch ^. parentPackageId)
       (Just $ userAlbert ^. uuid)
 

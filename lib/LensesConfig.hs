@@ -5,8 +5,9 @@ import Control.Lens (makeFields)
 import Api.Resource.ActionKey.ActionKeyDTO
 import Api.Resource.BookReference.BookReferenceDTO
 import Api.Resource.Branch.BranchChangeDTO
+import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
-import Api.Resource.Branch.BranchWithStateDTO
+import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -14,6 +15,7 @@ import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
@@ -56,6 +58,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
+import Model.Event.Tag.TagEvent
 import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
@@ -138,7 +141,19 @@ makeFields ''DeleteChapterEvent
 
 makeFields ''AddQuestionEvent
 
+makeFields ''AddOptionsQuestionEvent
+
+makeFields ''AddListQuestionEvent
+
+makeFields ''AddValueQuestionEvent
+
 makeFields ''EditQuestionEvent
+
+makeFields ''EditOptionsQuestionEvent
+
+makeFields ''EditListQuestionEvent
+
+makeFields ''EditValueQuestionEvent
 
 makeFields ''DeleteQuestionEvent
 
@@ -156,27 +171,27 @@ makeFields ''DeleteExpertEvent
 
 makeFields ''AddReferenceEvent
 
-makeFields ''EditReferenceEvent
-
-makeFields ''DeleteReferenceEvent
-
 makeFields ''AddResourcePageReferenceEvent
-
-makeFields ''EditResourcePageReferenceEvent
-
-makeFields ''DeleteResourcePageReferenceEvent
 
 makeFields ''AddURLReferenceEvent
 
-makeFields ''EditURLReferenceEvent
-
-makeFields ''DeleteURLReferenceEvent
-
 makeFields ''AddCrossReferenceEvent
+
+makeFields ''EditReferenceEvent
+
+makeFields ''EditResourcePageReferenceEvent
+
+makeFields ''EditURLReferenceEvent
 
 makeFields ''EditCrossReferenceEvent
 
-makeFields ''DeleteCrossReferenceEvent
+makeFields ''DeleteReferenceEvent
+
+makeFields ''AddTagEvent
+
+makeFields ''EditTagEvent
+
+makeFields ''DeleteTagEvent
 
 -- Model / Feedback
 makeFields ''Feedback
@@ -190,6 +205,12 @@ makeFields ''FilledChapter
 
 makeFields ''FilledQuestion
 
+makeFields ''FilledOptionsQuestion
+
+makeFields ''FilledListQuestion
+
+makeFields ''FilledValueQuestion
+
 makeFields ''FilledAnswer
 
 makeFields ''FilledAnswerItem
@@ -201,13 +222,13 @@ makeFields ''Chapter
 
 makeFields ''Question
 
+makeFields ''OptionsQuestion
+
+makeFields ''ListQuestion
+
+makeFields ''ValueQuestion
+
 makeFields ''Answer
-
-makeFields ''AnswerItemTemplate
-
-makeFields ''AnswerItemTemplatePlain
-
-makeFields ''AnswerItemTemplatePlainWithIds
 
 makeFields ''Expert
 
@@ -222,6 +243,8 @@ makeFields ''CrossReference
 makeFields ''Metric
 
 makeFields ''MetricMeasure
+
+makeFields ''Tag
 
 -- Model / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundle
@@ -281,9 +304,11 @@ makeFields ''BookReferenceDTO
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
 
+makeFields ''BranchCreateDTO
+
 makeFields ''BranchDTO
 
-makeFields ''BranchWithStateDTO
+makeFields ''BranchDetailDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO
@@ -303,7 +328,19 @@ makeFields ''DeleteChapterEventDTO
 
 makeFields ''AddQuestionEventDTO
 
+makeFields ''AddOptionsQuestionEventDTO
+
+makeFields ''AddListQuestionEventDTO
+
+makeFields ''AddValueQuestionEventDTO
+
 makeFields ''EditQuestionEventDTO
+
+makeFields ''EditOptionsQuestionEventDTO
+
+makeFields ''EditListQuestionEventDTO
+
+makeFields ''EditValueQuestionEventDTO
 
 makeFields ''DeleteQuestionEventDTO
 
@@ -321,27 +358,27 @@ makeFields ''DeleteExpertEventDTO
 
 makeFields ''AddReferenceEventDTO
 
-makeFields ''EditReferenceEventDTO
-
-makeFields ''DeleteReferenceEventDTO
-
 makeFields ''AddResourcePageReferenceEventDTO
-
-makeFields ''EditResourcePageReferenceEventDTO
-
-makeFields ''DeleteResourcePageReferenceEventDTO
 
 makeFields ''AddURLReferenceEventDTO
 
-makeFields ''EditURLReferenceEventDTO
-
-makeFields ''DeleteURLReferenceEventDTO
-
 makeFields ''AddCrossReferenceEventDTO
+
+makeFields ''EditReferenceEventDTO
+
+makeFields ''EditResourcePageReferenceEventDTO
+
+makeFields ''EditURLReferenceEventDTO
 
 makeFields ''EditCrossReferenceEventDTO
 
-makeFields ''DeleteCrossReferenceEventDTO
+makeFields ''DeleteReferenceEventDTO
+
+makeFields ''AddTagEventDTO
+
+makeFields ''EditTagEventDTO
+
+makeFields ''DeleteTagEventDTO
 
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
@@ -355,6 +392,12 @@ makeFields ''FilledChapterDTO
 
 makeFields ''FilledQuestionDTO
 
+makeFields ''FilledOptionsQuestionDTO
+
+makeFields ''FilledListQuestionDTO
+
+makeFields ''FilledValueQuestionDTO
+
 makeFields ''FilledAnswerDTO
 
 makeFields ''FilledAnswerItemDTO
@@ -363,19 +406,21 @@ makeFields ''FilledAnswerItemDTO
 makeFields ''InfoDTO
 
 -- Api / Resource / KnowledgeModel
+makeFields ''KnowledgeModelChangeDTO
+
 makeFields ''KnowledgeModelDTO
 
 makeFields ''ChapterDTO
 
 makeFields ''QuestionDTO
 
+makeFields ''OptionsQuestionDTO
+
+makeFields ''ListQuestionDTO
+
+makeFields ''ValueQuestionDTO
+
 makeFields ''AnswerDTO
-
-makeFields ''AnswerItemTemplateDTO
-
-makeFields ''AnswerItemTemplatePlainDTO
-
-makeFields ''AnswerItemTemplatePlainWithIdsDTO
 
 makeFields ''ExpertDTO
 
@@ -390,6 +435,8 @@ makeFields ''CrossReferenceDTO
 makeFields ''MetricDTO
 
 makeFields ''MetricMeasureDTO
+
+makeFields ''TagDTO
 
 -- Api / Resource / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundleDTO

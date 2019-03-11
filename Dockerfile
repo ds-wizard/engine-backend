@@ -13,8 +13,7 @@ ADD .stack-work/install/x86_64-linux/lts-12.0/8.4.3/bin/dsw-server /dsw/dsw-serv
 # Add configs
 ADD config/app-config.cfg.example /dsw/config/app-config.cfg
 ADD config/build-info.cfg /dsw/config/build-info.cfg
-ADD template/root.css /dsw/template/root.css
-ADD template/root.html.jinja /dsw/template/root.html.jinja
+ADD templates /dsw/templates
 
 HEALTHCHECK --interval=5m --timeout=10s \
   CMD curl -f http://localhost:3000/ || exit 1

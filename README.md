@@ -89,6 +89,14 @@ $ stack build
 $ stack test --jobs=1 --fast --coverage --ghc-options "-fforce-recomp"`
 ```
 
+### Build an app version and built date
+
+Run these comands from the `scripts` folder
+
+```bash
+$ ./build-info.sh
+```
+
 ### Naming conventions
 - **Handler** - a module containing handler functions
 - **DTO** - a module containing structures which represents request/response in API

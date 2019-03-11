@@ -19,12 +19,12 @@ filledKnowledgeModelAccessorsSpec =
     describe "getAllFilledQuestionsForChapter" $
       it "Successfully listed" $
       getAllFilledQuestionsForChapter FCH.fChapter2 `shouldBe`
-      [ FQ.fQuestion3
-      , FQ.fQuestion4
-      , FA.fQ4_ait1_question5
-      , FA.fQ4_ait1_question6
-      , FA.fQ4_ait2_question5
-      , FA.fQ4_ait2_question6
-      , FA.fQ4_ait1_q5_ait1_question7
-      , FA.fQ4_ait1_q5_ait1_question8
+      [ FQ.fQuestion3'
+      , FQ.fQuestion4'
+      , FA.fQ4_it1_question5'
+      , FA.fQ4_it1_question6'
+      , FA.fQ4_it2_question5'
+      , FA.fQ4_it2_question6'
+      , FA.fQ4_it1_q5_it1_question7'
+      , FA.fQ4_it1_q5_it1_question8'
       ]

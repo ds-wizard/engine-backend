@@ -22,6 +22,7 @@ instance ToBSON PackageWithEvents where
     , "organizationId" BSON.=: (package ^. organizationId)
     , "kmId" BSON.=: (package ^. kmId)
     , "version" BSON.=: (package ^. version)
+    , "metamodelVersion" BSON.=: (package ^. metamodelVersion)
     , "description" BSON.=: (package ^. description)
     , "parentPackageId" BSON.=: (package ^. parentPackageId)
     , "events" BSON.=: convertEventToBSON <$> (package ^. events)
@@ -34,6 +35,7 @@ instance FromBSON PackageWithEvents where
     pkgOrganizationId <- BSON.lookup "organizationId" doc
     pkgKmId <- BSON.lookup "kmId" doc
     pkgVersion <- BSON.lookup "version" doc
+    pkgMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     pkgDescription <- BSON.lookup "description" doc
     pkgParentPackageId <- BSON.lookup "parentPackageId" doc
     pkgEventsSerialized <- BSON.lookup "events" doc
@@ -45,6 +47,7 @@ instance FromBSON PackageWithEvents where
       , _packageWithEventsOrganizationId = pkgOrganizationId
       , _packageWithEventsKmId = pkgKmId
       , _packageWithEventsVersion = pkgVersion
+      , _packageWithEventsMetamodelVersion = pkgMetamodelVersion
       , _packageWithEventsDescription = pkgDescription
       , _packageWithEventsParentPackageId = pkgParentPackageId
       , _packageWithEventsEvents = pkgEvents

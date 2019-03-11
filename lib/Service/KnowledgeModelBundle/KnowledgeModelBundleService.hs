@@ -13,6 +13,7 @@ import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleJM ()
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Constant.KnowledgeModel
 import Database.DAO.Package.PackageDAO
 import LensesConfig
 import Localization
@@ -38,6 +39,7 @@ exportKnowledgeModelBundle kmbId =
           , _knowledgeModelBundleOrganizationId = newestPackage ^. organizationId
           , _knowledgeModelBundleKmId = newestPackage ^. kmId
           , _knowledgeModelBundleVersion = newestPackage ^. version
+          , _knowledgeModelBundleMetamodelVersion = kmMetamodelVersion
           , _knowledgeModelBundlePackages = packages
           }
     return . Right . toDTO $ kmb

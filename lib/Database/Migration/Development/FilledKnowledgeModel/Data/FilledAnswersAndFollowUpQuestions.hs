@@ -7,31 +7,34 @@ import Database.Migration.Development.KnowledgeModel.Data.Questions
 import LensesConfig
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 
+fQ2_answerYes :: FilledAnswer
 fQ2_answerYes =
   FilledAnswer
   { _filledAnswerUuid = q2_answerYes ^. uuid
   , _filledAnswerLabel = q2_answerYes ^. label
   , _filledAnswerAdvice = q2_answerYes ^. advice
-  , _filledAnswerFollowUps = [fQ2_aYes_fuQuestion1]
+  , _filledAnswerFollowUps = [fQ2_aYes_fuQuestion1']
   , _filledAnswerMetricMeasures = q2_answerYes ^. metricMeasures
   }
 
+fQ2_aYes_fuQuestion1' :: FilledQuestion
+fQ2_aYes_fuQuestion1' = FilledOptionsQuestion' fQ2_aYes_fuQuestion1
+
+fQ2_aYes_fuQuestion1 :: FilledOptionsQuestion
 fQ2_aYes_fuQuestion1 =
-  FilledQuestion
-  { _filledQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
-  , _filledQuestionQType = q2_aYes_fuQuestion1 ^. qType
-  , _filledQuestionTitle = q2_aYes_fuQuestion1 ^. title
-  , _filledQuestionText = q2_aYes_fuQuestion1 ^. text
-  , _filledQuestionRequiredLevel = q2_aYes_fuQuestion1 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q2_aYes_fuQuestion1 ^. answerItemTemplate
-  , _filledQuestionAnswers = q2_aYes_fuQuestion1 ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Just fQ2_aYes_fuq1_answerNo
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q2_aYes_fuQuestion1 ^. experts
-  , _filledQuestionReferences = q2_aYes_fuQuestion1 ^. references
+  FilledOptionsQuestion
+  { _filledOptionsQuestionUuid = q2_aYes_fuQuestion1 ^. uuid
+  , _filledOptionsQuestionTitle = q2_aYes_fuQuestion1 ^. title
+  , _filledOptionsQuestionText = q2_aYes_fuQuestion1 ^. text
+  , _filledOptionsQuestionRequiredLevel = q2_aYes_fuQuestion1 ^. requiredLevel
+  , _filledOptionsQuestionTagUuids = q2_aYes_fuQuestion1 ^. tagUuids
+  , _filledOptionsQuestionExperts = q2_aYes_fuQuestion1 ^. experts
+  , _filledOptionsQuestionReferences = q2_aYes_fuQuestion1 ^. references
+  , _filledOptionsQuestionAnswers = q2_aYes_fuQuestion1 ^. answers
+  , _filledOptionsQuestionAnswerOption = Just fQ2_aYes_fuq1_answerNo
   }
 
+fQ2_aYes_fuq1_answerNo :: FilledAnswer
 fQ2_aYes_fuq1_answerNo =
   FilledAnswer
   { _filledAnswerUuid = q2_aYes_fuq1_answerNo ^. uuid
@@ -54,143 +57,145 @@ fQ3_answerNo =
 
 -- -------------------------------------------------------
 -- -------------------------------------------------------
-fQ4_ait1 =
+fQ4_ai1 =
   FilledAnswerItem
-  { _filledAnswerItemTitle = q4_ait ^. title
-  , _filledAnswerItemValue = Just "Ait1: First item"
-  , _filledAnswerItemQuestions = [fQ4_ait1_question5, fQ4_ait1_question6]
+  { _filledAnswerItemTitle = question4 ^. itemTemplateTitle
+  , _filledAnswerItemValue = Just "Ai1: First item"
+  , _filledAnswerItemQuestions = [fQ4_it1_question5', fQ4_it1_question6']
   }
 
 -- -------------------------------------------------------
-fQ4_ait1_question5 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_question5 ^. uuid
-  , _filledQuestionQType = q4_ait1_question5 ^. qType
-  , _filledQuestionTitle = q4_ait1_question5 ^. title
-  , _filledQuestionText = q4_ait1_question5 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_question5 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_question5 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_question5 ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Nothing
-  , _filledQuestionAnswerItems = Just [fQ4_ait1_q5_ait1]
-  , _filledQuestionExperts = q4_ait1_question5 ^. experts
-  , _filledQuestionReferences = q4_ait1_question5 ^. references
+fQ4_it1_question5' :: FilledQuestion
+fQ4_it1_question5' = FilledListQuestion' fQ4_it1_question5
+
+fQ4_it1_question5 =
+  FilledListQuestion
+  { _filledListQuestionUuid = q4_it1_question5 ^. uuid
+  , _filledListQuestionTitle = q4_it1_question5 ^. title
+  , _filledListQuestionText = q4_it1_question5 ^. text
+  , _filledListQuestionRequiredLevel = q4_it1_question5 ^. requiredLevel
+  , _filledListQuestionTagUuids = q4_it1_question5 ^. tagUuids
+  , _filledListQuestionExperts = q4_it1_question5 ^. experts
+  , _filledListQuestionReferences = q4_it1_question5 ^. references
+  , _filledListQuestionItemTemplateTitle = q4_it1_question5 ^. itemTemplateTitle
+  , _filledListQuestionItemTemplateQuestions = q4_it1_question5 ^. itemTemplateQuestions
+  , _filledListQuestionItems = Just [fQ4_it1_q5_ai1]
   }
 
-fQ4_ait1_q5_ait1 =
+fQ4_it1_q5_ai1 =
   FilledAnswerItem
-  { _filledAnswerItemTitle = q4_ait_q5_ait ^. title
-  , _filledAnswerItemValue = Just "Ait1: q5: Ait1: First item"
-  , _filledAnswerItemQuestions = [fQ4_ait1_q5_ait1_question7, fQ4_ait1_q5_ait1_question8]
+  { _filledAnswerItemTitle = q4_it1_question5 ^. itemTemplateTitle
+  , _filledAnswerItemValue = Just "Ai1: q5: Ai1: First item"
+  , _filledAnswerItemQuestions = [fQ4_it1_q5_it1_question7', fQ4_it1_q5_it1_question8']
   }
 
-fQ4_ait1_q5_ait1_question7 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_q5_ait2_question7 ^. uuid
-  , _filledQuestionQType = q4_ait1_q5_ait2_question7 ^. qType
-  , _filledQuestionTitle = q4_ait1_q5_ait2_question7 ^. title
-  , _filledQuestionText = q4_ait1_q5_ait2_question7 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_q5_ait2_question7 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_q5_ait2_question7 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_q5_ait2_question7 ^. answers
-  , _filledQuestionAnswerValue = Just "Ait1: q5: Ait1: Reply to 7th question"
-  , _filledQuestionAnswerOption = Nothing
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q4_ait1_q5_ait2_question7 ^. experts
-  , _filledQuestionReferences = q4_ait1_q5_ait2_question7 ^. references
+fQ4_it1_q5_it1_question7' :: FilledQuestion
+fQ4_it1_q5_it1_question7' = FilledValueQuestion' fQ4_it1_q5_it1_question7
+
+fQ4_it1_q5_it1_question7 =
+  FilledValueQuestion
+  { _filledValueQuestionUuid = q4_it1_q5_it2_question7 ^. uuid
+  , _filledValueQuestionTitle = q4_it1_q5_it2_question7 ^. title
+  , _filledValueQuestionText = q4_it1_q5_it2_question7 ^. text
+  , _filledValueQuestionRequiredLevel = q4_it1_q5_it2_question7 ^. requiredLevel
+  , _filledValueQuestionTagUuids = q4_it1_q5_it2_question7 ^. tagUuids
+  , _filledValueQuestionExperts = q4_it1_q5_it2_question7 ^. experts
+  , _filledValueQuestionReferences = q4_it1_q5_it2_question7 ^. references
+  , _filledValueQuestionValueType = q4_it1_q5_it2_question7 ^. valueType
+  , _filledValueQuestionAnswerValue = Just "Ai1: q5: Ai1: Reply to 7th question"
   }
 
-fQ4_ait1_q5_ait1_question8 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_q5_ait2_question8 ^. uuid
-  , _filledQuestionQType = q4_ait1_q5_ait2_question8 ^. qType
-  , _filledQuestionTitle = q4_ait1_q5_ait2_question8 ^. title
-  , _filledQuestionText = q4_ait1_q5_ait2_question8 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_q5_ait2_question8 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_q5_ait2_question8 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_q5_ait2_question8 ^. answers
-  , _filledQuestionAnswerValue = Just "Ait1: q5: Ait1: Reply to 8th question"
-  , _filledQuestionAnswerOption = Nothing
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q4_ait1_q5_ait2_question8 ^. experts
-  , _filledQuestionReferences = q4_ait1_q5_ait2_question8 ^. references
+fQ4_it1_q5_it1_question8' :: FilledQuestion
+fQ4_it1_q5_it1_question8' = FilledValueQuestion' fQ4_it1_q5_it1_question8
+
+fQ4_it1_q5_it1_question8 =
+  FilledValueQuestion
+  { _filledValueQuestionUuid = q4_it1_q5_it2_question8 ^. uuid
+  , _filledValueQuestionTitle = q4_it1_q5_it2_question8 ^. title
+  , _filledValueQuestionText = q4_it1_q5_it2_question8 ^. text
+  , _filledValueQuestionRequiredLevel = q4_it1_q5_it2_question8 ^. requiredLevel
+  , _filledValueQuestionTagUuids = q4_it1_q5_it2_question8 ^. tagUuids
+  , _filledValueQuestionExperts = q4_it1_q5_it2_question8 ^. experts
+  , _filledValueQuestionReferences = q4_it1_q5_it2_question8 ^. references
+  , _filledValueQuestionValueType = q4_it1_q5_it2_question8 ^. valueType
+  , _filledValueQuestionAnswerValue = Just "Ai1: q5: Ai1: Reply to 8th question"
   }
 
 -- -------------------------------------------------------
-fQ4_ait1_question6 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_question6 ^. uuid
-  , _filledQuestionQType = q4_ait1_question6 ^. qType
-  , _filledQuestionTitle = q4_ait1_question6 ^. title
-  , _filledQuestionText = q4_ait1_question6 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_question6 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_question6 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_question6 ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Just fQ4_ait1_q6_answerNo
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q4_ait1_question6 ^. experts
-  , _filledQuestionReferences = q4_ait1_question6 ^. references
+fQ4_it1_question6' :: FilledQuestion
+fQ4_it1_question6' = FilledOptionsQuestion' fQ4_it1_question6
+
+fQ4_it1_question6 =
+  FilledOptionsQuestion
+  { _filledOptionsQuestionUuid = q4_it1_question6 ^. uuid
+  , _filledOptionsQuestionTitle = q4_it1_question6 ^. title
+  , _filledOptionsQuestionText = q4_it1_question6 ^. text
+  , _filledOptionsQuestionRequiredLevel = q4_it1_question6 ^. requiredLevel
+  , _filledOptionsQuestionTagUuids = q4_it1_question6 ^. tagUuids
+  , _filledOptionsQuestionExperts = q4_it1_question6 ^. experts
+  , _filledOptionsQuestionReferences = q4_it1_question6 ^. references
+  , _filledOptionsQuestionAnswers = q4_it1_question6 ^. answers
+  , _filledOptionsQuestionAnswerOption = Just fQ4_it1_q6_answerNo
   }
 
-fQ4_ait1_q6_answerNo =
+fQ4_it1_q6_answerNo =
   FilledAnswer
-  { _filledAnswerUuid = q4_ait1_q6_answerNo ^. uuid
-  , _filledAnswerLabel = q4_ait1_q6_answerNo ^. label
-  , _filledAnswerAdvice = q4_ait1_q6_answerNo ^. advice
+  { _filledAnswerUuid = q4_it1_q6_answerNo ^. uuid
+  , _filledAnswerLabel = q4_it1_q6_answerNo ^. label
+  , _filledAnswerAdvice = q4_it1_q6_answerNo ^. advice
   , _filledAnswerFollowUps = []
-  , _filledAnswerMetricMeasures = q4_ait1_q6_answerNo ^. metricMeasures
+  , _filledAnswerMetricMeasures = q4_it1_q6_answerNo ^. metricMeasures
   }
 
 -- -------------------------------------------------------
 -- -------------------------------------------------------
-fQ4_ait2 =
+fQ4_ai2 =
   FilledAnswerItem
-  { _filledAnswerItemTitle = q4_ait ^. title
-  , _filledAnswerItemValue = Just "Ait 2: Second item"
-  , _filledAnswerItemQuestions = [fQ4_ait2_question5, fQ4_ait2_question6]
+  { _filledAnswerItemTitle = question4 ^. itemTemplateTitle
+  , _filledAnswerItemValue = Just "Ai 2: Second item"
+  , _filledAnswerItemQuestions = [fQ4_it2_question5', fQ4_it2_question6']
   }
 
 -- -------------------------------------------------------
-fQ4_ait2_question5 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_question5 ^. uuid
-  , _filledQuestionQType = q4_ait1_question5 ^. qType
-  , _filledQuestionTitle = q4_ait1_question5 ^. title
-  , _filledQuestionText = q4_ait1_question5 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_question5 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_question5 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_question5 ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Nothing
-  , _filledQuestionAnswerItems = Just []
-  , _filledQuestionExperts = q4_ait1_question5 ^. experts
-  , _filledQuestionReferences = q4_ait1_question5 ^. references
+fQ4_it2_question5' :: FilledQuestion
+fQ4_it2_question5' = FilledListQuestion' fQ4_it2_question5
+
+fQ4_it2_question5 =
+  FilledListQuestion
+  { _filledListQuestionUuid = q4_it1_question5 ^. uuid
+  , _filledListQuestionTitle = q4_it1_question5 ^. title
+  , _filledListQuestionText = q4_it1_question5 ^. text
+  , _filledListQuestionRequiredLevel = q4_it1_question5 ^. requiredLevel
+  , _filledListQuestionTagUuids = q4_it1_question5 ^. tagUuids
+  , _filledListQuestionExperts = q4_it1_question5 ^. experts
+  , _filledListQuestionReferences = q4_it1_question5 ^. references
+  , _filledListQuestionItemTemplateTitle = q4_it1_question5 ^. itemTemplateTitle
+  , _filledListQuestionItemTemplateQuestions = q4_it1_question5 ^. itemTemplateQuestions
+  , _filledListQuestionItems = Just []
   }
 
 -- -------------------------------------------------------
-fQ4_ait2_question6 =
-  FilledQuestion
-  { _filledQuestionUuid = q4_ait1_question6 ^. uuid
-  , _filledQuestionQType = q4_ait1_question6 ^. qType
-  , _filledQuestionTitle = q4_ait1_question6 ^. title
-  , _filledQuestionText = q4_ait1_question6 ^. text
-  , _filledQuestionRequiredLevel = q4_ait1_question6 ^. requiredLevel
-  , _filledQuestionAnswerItemTemplate = q4_ait1_question6 ^. answerItemTemplate
-  , _filledQuestionAnswers = q4_ait1_question6 ^. answers
-  , _filledQuestionAnswerValue = Nothing
-  , _filledQuestionAnswerOption = Just fQ4_ait1_q6_answerNo
-  , _filledQuestionAnswerItems = Nothing
-  , _filledQuestionExperts = q4_ait1_question6 ^. experts
-  , _filledQuestionReferences = q4_ait1_question6 ^. references
+fQ4_it2_question6' :: FilledQuestion
+fQ4_it2_question6' = FilledOptionsQuestion' fQ4_it2_question6
+
+fQ4_it2_question6 =
+  FilledOptionsQuestion
+  { _filledOptionsQuestionUuid = q4_it1_question6 ^. uuid
+  , _filledOptionsQuestionTitle = q4_it1_question6 ^. title
+  , _filledOptionsQuestionText = q4_it1_question6 ^. text
+  , _filledOptionsQuestionRequiredLevel = q4_it1_question6 ^. requiredLevel
+  , _filledOptionsQuestionTagUuids = q4_it1_question6 ^. tagUuids
+  , _filledOptionsQuestionExperts = q4_it1_question6 ^. experts
+  , _filledOptionsQuestionReferences = q4_it1_question6 ^. references
+  , _filledOptionsQuestionAnswers = q4_it1_question6 ^. answers
+  , _filledOptionsQuestionAnswerOption = Just fQ4_it1_q6_answerNo
   }
 
-fQ4_ait2_q6_answerNo =
+fQ4_it2_q6_answerNo =
   FilledAnswer
-  { _filledAnswerUuid = q4_ait1_q6_answerNo ^. uuid
-  , _filledAnswerLabel = q4_ait1_q6_answerNo ^. label
-  , _filledAnswerAdvice = q4_ait1_q6_answerNo ^. advice
+  { _filledAnswerUuid = q4_it1_q6_answerNo ^. uuid
+  , _filledAnswerLabel = q4_it1_q6_answerNo ^. label
+  , _filledAnswerAdvice = q4_it1_q6_answerNo ^. advice
   , _filledAnswerFollowUps = []
-  , _filledAnswerMetricMeasures = q4_ait1_q6_answerNo ^. metricMeasures
+  , _filledAnswerMetricMeasures = q4_it1_q6_answerNo ^. metricMeasures
   }

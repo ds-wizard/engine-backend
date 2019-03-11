@@ -22,6 +22,9 @@ class ApplyEventToExpert e where
 class ApplyEventToReference e where
   applyEventToReference :: e -> EventPath -> Either AppError Reference -> Either AppError Reference
 
+class ApplyEventToTag e where
+  applyEventToTag :: e -> EventPath -> Either AppError Tag -> Either AppError Tag
+
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
@@ -53,4 +56,9 @@ heApplyEventToExpert e path eExpert callback =
 heApplyEventToReference e path eReference callback =
   case applyEventToReference e path eReference of
     Right reference -> callback reference
+    Left e -> Left e
+
+heApplyEventToTag e path eTag callback =
+  case applyEventToTag e path eTag of
+    Right tag -> callback tag
     Left e -> Left e

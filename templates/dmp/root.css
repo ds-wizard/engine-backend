@@ -158,17 +158,17 @@ footer {
 
 /**************************/
 
-.experts, .references {
+.tags, .experts, .references {
   color: #868e96;
   line-height: 1.5;
 }
 
-.experts b, .reference b,
-.experts a, .reference a {
+.tags b, .experts b, .reference b,
+.tags i, .experts a, .reference a {
   vertical-align: middle;
 }
 
-.experts svg, .references svg {
+.tags svg, .experts svg, .references svg {
   width: 13px;
   height: 14px;
   margin-right: 7px;
@@ -176,11 +176,11 @@ footer {
   color: #495057;
 }
 
-.expert::after, .reference::after {
+.tag::after, .expert::after, .reference::after {
   content: ",";
 }
 
-.expert:last-of-type::after, .reference:last-of-type::after {
+.tag:last-of-type::after, .expert:last-of-type::after, .reference:last-of-type::after {
   content: " ";
 }
 

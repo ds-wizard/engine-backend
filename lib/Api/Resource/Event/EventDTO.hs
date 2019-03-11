@@ -29,6 +29,9 @@ data EventDTO
   | AddReferenceEventDTO' AddReferenceEventDTO
   | EditReferenceEventDTO' EditReferenceEventDTO
   | DeleteReferenceEventDTO' DeleteReferenceEventDTO
+  | AddTagEventDTO' AddTagEventDTO
+  | EditTagEventDTO' EditTagEventDTO
+  | DeleteTagEventDTO' DeleteTagEventDTO
   deriving (Show, Eq)
 
 instance ToJSON EventDTO where
@@ -49,6 +52,9 @@ instance ToJSON EventDTO where
   toJSON (AddReferenceEventDTO' event) = toJSON event
   toJSON (EditReferenceEventDTO' event) = toJSON event
   toJSON (DeleteReferenceEventDTO' event) = toJSON event
+  toJSON (AddTagEventDTO' event) = toJSON event
+  toJSON (EditTagEventDTO' event) = toJSON event
+  toJSON (DeleteTagEventDTO' event) = toJSON event
 
 instance FromJSON EventDTO where
   parseJSON (Object o) = do
@@ -71,6 +77,9 @@ instance FromJSON EventDTO where
       "AddReferenceEvent" -> parseJSON (Object o) >>= \event -> return (AddReferenceEventDTO' event)
       "EditReferenceEvent" -> parseJSON (Object o) >>= \event -> return (EditReferenceEventDTO' event)
       "DeleteReferenceEvent" -> parseJSON (Object o) >>= \event -> return (DeleteReferenceEventDTO' event)
+      "AddTagEvent" -> parseJSON (Object o) >>= \event -> return (AddTagEventDTO' event)
+      "EditTagEvent" -> parseJSON (Object o) >>= \event -> return (EditTagEventDTO' event)
+      "DeleteTagEvent" -> parseJSON (Object o) >>= \event -> return (DeleteTagEventDTO' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero
 
@@ -89,7 +98,8 @@ data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
   , _editKnowledgeModelEventDTOPath :: EventPathDTO
   , _editKnowledgeModelEventDTOKmUuid :: U.UUID
   , _editKnowledgeModelEventDTOName :: EventFieldDTO String
-  , _editKnowledgeModelEventDTOChapterIds :: EventFieldDTO [U.UUID]
+  , _editKnowledgeModelEventDTOChapterUuids :: EventFieldDTO [U.UUID]
+  , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
@@ -109,7 +119,7 @@ data EditChapterEventDTO = EditChapterEventDTO
   , _editChapterEventDTOChapterUuid :: U.UUID
   , _editChapterEventDTOTitle :: EventFieldDTO String
   , _editChapterEventDTOText :: EventFieldDTO String
-  , _editChapterEventDTOQuestionIds :: EventFieldDTO [U.UUID]
+  , _editChapterEventDTOQuestionUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data DeleteChapterEventDTO = DeleteChapterEventDTO
@@ -121,31 +131,92 @@ data DeleteChapterEventDTO = DeleteChapterEventDTO
 -- -------------------------
 -- Question ----------------
 -- -------------------------
-data AddQuestionEventDTO = AddQuestionEventDTO
-  { _addQuestionEventDTOUuid :: U.UUID
-  , _addQuestionEventDTOPath :: EventPathDTO
-  , _addQuestionEventDTOQuestionUuid :: U.UUID
-  , _addQuestionEventDTOQType :: QuestionType
-  , _addQuestionEventDTOTitle :: String
-  , _addQuestionEventDTOText :: Maybe String
-  , _addQuestionEventDTORequiredLevel :: Maybe Int
-  , _addQuestionEventDTOAnswerItemTemplatePlain :: Maybe AnswerItemTemplatePlainDTO
+data AddQuestionEventDTO
+  = AddOptionsQuestionEventDTO' AddOptionsQuestionEventDTO
+  | AddListQuestionEventDTO' AddListQuestionEventDTO
+  | AddValueQuestionEventDTO' AddValueQuestionEventDTO
+  deriving (Show, Eq, Generic)
+
+data AddOptionsQuestionEventDTO = AddOptionsQuestionEventDTO
+  { _addOptionsQuestionEventDTOUuid :: U.UUID
+  , _addOptionsQuestionEventDTOPath :: EventPathDTO
+  , _addOptionsQuestionEventDTOQuestionUuid :: U.UUID
+  , _addOptionsQuestionEventDTOTitle :: String
+  , _addOptionsQuestionEventDTOText :: Maybe String
+  , _addOptionsQuestionEventDTORequiredLevel :: Maybe Int
+  , _addOptionsQuestionEventDTOTagUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
-data EditQuestionEventDTO = EditQuestionEventDTO
-  { _editQuestionEventDTOUuid :: U.UUID
-  , _editQuestionEventDTOPath :: EventPathDTO
-  , _editQuestionEventDTOQuestionUuid :: U.UUID
-  , _editQuestionEventDTOQType :: EventFieldDTO QuestionType
-  , _editQuestionEventDTOTitle :: EventFieldDTO String
-  , _editQuestionEventDTOText :: EventFieldDTO (Maybe String)
-  , _editQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
-  , _editQuestionEventDTOAnswerItemTemplatePlainWithIds :: EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
-  , _editQuestionEventDTOAnswerIds :: EventFieldDTO (Maybe [U.UUID])
-  , _editQuestionEventDTOExpertIds :: EventFieldDTO [U.UUID]
-  , _editQuestionEventDTOReferenceIds :: EventFieldDTO [U.UUID]
+data AddListQuestionEventDTO = AddListQuestionEventDTO
+  { _addListQuestionEventDTOUuid :: U.UUID
+  , _addListQuestionEventDTOPath :: EventPathDTO
+  , _addListQuestionEventDTOQuestionUuid :: U.UUID
+  , _addListQuestionEventDTOTitle :: String
+  , _addListQuestionEventDTOText :: Maybe String
+  , _addListQuestionEventDTORequiredLevel :: Maybe Int
+  , _addListQuestionEventDTOTagUuids :: [U.UUID]
+  , _addListQuestionEventDTOItemTemplateTitle :: String
   } deriving (Show, Eq, Generic)
 
+data AddValueQuestionEventDTO = AddValueQuestionEventDTO
+  { _addValueQuestionEventDTOUuid :: U.UUID
+  , _addValueQuestionEventDTOPath :: EventPathDTO
+  , _addValueQuestionEventDTOQuestionUuid :: U.UUID
+  , _addValueQuestionEventDTOTitle :: String
+  , _addValueQuestionEventDTOText :: Maybe String
+  , _addValueQuestionEventDTORequiredLevel :: Maybe Int
+  , _addValueQuestionEventDTOTagUuids :: [U.UUID]
+  , _addValueQuestionEventDTOValueType :: QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+-- --------------------------------------------
+data EditQuestionEventDTO
+  = EditOptionsQuestionEventDTO' EditOptionsQuestionEventDTO
+  | EditListQuestionEventDTO' EditListQuestionEventDTO
+  | EditValueQuestionEventDTO' EditValueQuestionEventDTO
+  deriving (Show, Eq, Generic)
+
+data EditOptionsQuestionEventDTO = EditOptionsQuestionEventDTO
+  { _editOptionsQuestionEventDTOUuid :: U.UUID
+  , _editOptionsQuestionEventDTOPath :: EventPathDTO
+  , _editOptionsQuestionEventDTOQuestionUuid :: U.UUID
+  , _editOptionsQuestionEventDTOTitle :: EventFieldDTO String
+  , _editOptionsQuestionEventDTOText :: EventFieldDTO (Maybe String)
+  , _editOptionsQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+  , _editOptionsQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+  , _editOptionsQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+  , _editOptionsQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+  , _editOptionsQuestionEventDTOAnswerUuids :: EventFieldDTO [U.UUID]
+  } deriving (Show, Eq, Generic)
+
+data EditListQuestionEventDTO = EditListQuestionEventDTO
+  { _editListQuestionEventDTOUuid :: U.UUID
+  , _editListQuestionEventDTOPath :: EventPathDTO
+  , _editListQuestionEventDTOQuestionUuid :: U.UUID
+  , _editListQuestionEventDTOTitle :: EventFieldDTO String
+  , _editListQuestionEventDTOText :: EventFieldDTO (Maybe String)
+  , _editListQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+  , _editListQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+  , _editListQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+  , _editListQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+  , _editListQuestionEventDTOItemTemplateTitle :: EventFieldDTO String
+  , _editListQuestionEventDTOItemTemplateQuestionUuids :: EventFieldDTO [U.UUID]
+  } deriving (Show, Eq, Generic)
+
+data EditValueQuestionEventDTO = EditValueQuestionEventDTO
+  { _editValueQuestionEventDTOUuid :: U.UUID
+  , _editValueQuestionEventDTOPath :: EventPathDTO
+  , _editValueQuestionEventDTOQuestionUuid :: U.UUID
+  , _editValueQuestionEventDTOTitle :: EventFieldDTO String
+  , _editValueQuestionEventDTOText :: EventFieldDTO (Maybe String)
+  , _editValueQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+  , _editValueQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+  , _editValueQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+  , _editValueQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+  , _editValueQuestionEventDTOValueType :: EventFieldDTO QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+-- --------------------------------------------
 data DeleteQuestionEventDTO = DeleteQuestionEventDTO
   { _deleteQuestionEventDTOUuid :: U.UUID
   , _deleteQuestionEventDTOPath :: EventPathDTO
@@ -170,7 +241,7 @@ data EditAnswerEventDTO = EditAnswerEventDTO
   , _editAnswerEventDTOAnswerUuid :: U.UUID
   , _editAnswerEventDTOLabel :: EventFieldDTO String
   , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
-  , _editAnswerEventDTOFollowUpIds :: EventFieldDTO [U.UUID]
+  , _editAnswerEventDTOFollowUpUuids :: EventFieldDTO [U.UUID]
   , _editAnswerEventDTOMetricMeasures :: EventFieldDTO [MetricMeasureDTO]
   } deriving (Show, Eq, Generic)
 
@@ -214,19 +285,6 @@ data AddReferenceEventDTO
   | AddCrossReferenceEventDTO' AddCrossReferenceEventDTO
   deriving (Show, Eq, Generic)
 
-data EditReferenceEventDTO
-  = EditResourcePageReferenceEventDTO' EditResourcePageReferenceEventDTO
-  | EditURLReferenceEventDTO' EditURLReferenceEventDTO
-  | EditCrossReferenceEventDTO' EditCrossReferenceEventDTO
-  deriving (Show, Eq, Generic)
-
-data DeleteReferenceEventDTO
-  = DeleteResourcePageReferenceEventDTO' DeleteResourcePageReferenceEventDTO
-  | DeleteURLReferenceEventDTO' DeleteURLReferenceEventDTO
-  | DeleteCrossReferenceEventDTO' DeleteCrossReferenceEventDTO
-  deriving (Show, Eq, Generic)
-
--- --------------------------------------------
 data AddResourcePageReferenceEventDTO = AddResourcePageReferenceEventDTO
   { _addResourcePageReferenceEventDTOUuid :: U.UUID
   , _addResourcePageReferenceEventDTOPath :: EventPathDTO
@@ -234,26 +292,34 @@ data AddResourcePageReferenceEventDTO = AddResourcePageReferenceEventDTO
   , _addResourcePageReferenceEventDTOShortUuid :: String
   } deriving (Show, Eq, Generic)
 
-data EditResourcePageReferenceEventDTO = EditResourcePageReferenceEventDTO
-  { _editResourcePageReferenceEventDTOUuid :: U.UUID
-  , _editResourcePageReferenceEventDTOPath :: EventPathDTO
-  , _editResourcePageReferenceEventDTOReferenceUuid :: U.UUID
-  , _editResourcePageReferenceEventDTOShortUuid :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
-
-data DeleteResourcePageReferenceEventDTO = DeleteResourcePageReferenceEventDTO
-  { _deleteResourcePageReferenceEventDTOUuid :: U.UUID
-  , _deleteResourcePageReferenceEventDTOPath :: EventPathDTO
-  , _deleteResourcePageReferenceEventDTOReferenceUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
-
--- --------------------------------------------
 data AddURLReferenceEventDTO = AddURLReferenceEventDTO
   { _addURLReferenceEventDTOUuid :: U.UUID
   , _addURLReferenceEventDTOPath :: EventPathDTO
   , _addURLReferenceEventDTOReferenceUuid :: U.UUID
   , _addURLReferenceEventDTOUrl :: String
   , _addURLReferenceEventDTOLabel :: String
+  } deriving (Show, Eq, Generic)
+
+data AddCrossReferenceEventDTO = AddCrossReferenceEventDTO
+  { _addCrossReferenceEventDTOUuid :: U.UUID
+  , _addCrossReferenceEventDTOPath :: EventPathDTO
+  , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
+  , _addCrossReferenceEventDTOTargetUuid :: U.UUID
+  , _addCrossReferenceEventDTODescription :: String
+  } deriving (Show, Eq, Generic)
+
+-- --------------------------------------------
+data EditReferenceEventDTO
+  = EditResourcePageReferenceEventDTO' EditResourcePageReferenceEventDTO
+  | EditURLReferenceEventDTO' EditURLReferenceEventDTO
+  | EditCrossReferenceEventDTO' EditCrossReferenceEventDTO
+  deriving (Show, Eq, Generic)
+
+data EditResourcePageReferenceEventDTO = EditResourcePageReferenceEventDTO
+  { _editResourcePageReferenceEventDTOUuid :: U.UUID
+  , _editResourcePageReferenceEventDTOPath :: EventPathDTO
+  , _editResourcePageReferenceEventDTOReferenceUuid :: U.UUID
+  , _editResourcePageReferenceEventDTOShortUuid :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data EditURLReferenceEventDTO = EditURLReferenceEventDTO
@@ -264,21 +330,6 @@ data EditURLReferenceEventDTO = EditURLReferenceEventDTO
   , _editURLReferenceEventDTOLabel :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
-data DeleteURLReferenceEventDTO = DeleteURLReferenceEventDTO
-  { _deleteURLReferenceEventDTOUuid :: U.UUID
-  , _deleteURLReferenceEventDTOPath :: EventPathDTO
-  , _deleteURLReferenceEventDTOReferenceUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
-
--- --------------------------------------------
-data AddCrossReferenceEventDTO = AddCrossReferenceEventDTO
-  { _addCrossReferenceEventDTOUuid :: U.UUID
-  , _addCrossReferenceEventDTOPath :: EventPathDTO
-  , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
-  , _addCrossReferenceEventDTOTargetUuid :: U.UUID
-  , _addCrossReferenceEventDTODescription :: String
-  } deriving (Show, Eq, Generic)
-
 data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
   { _editCrossReferenceEventDTOUuid :: U.UUID
   , _editCrossReferenceEventDTOPath :: EventPathDTO
@@ -287,10 +338,38 @@ data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
   , _editCrossReferenceEventDTODescription :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
-data DeleteCrossReferenceEventDTO = DeleteCrossReferenceEventDTO
-  { _deleteCrossReferenceEventDTOUuid :: U.UUID
-  , _deleteCrossReferenceEventDTOPath :: EventPathDTO
-  , _deleteCrossReferenceEventDTOReferenceUuid :: U.UUID
+-- --------------------------------------------
+data DeleteReferenceEventDTO = DeleteReferenceEventDTO
+  { _deleteReferenceEventDTOUuid :: U.UUID
+  , _deleteReferenceEventDTOPath :: EventPathDTO
+  , _deleteReferenceEventDTOReferenceUuid :: U.UUID
+  } deriving (Show, Eq, Generic)
+
+-- -------------------------
+-- Tag ---------------------
+-- -------------------------
+data AddTagEventDTO = AddTagEventDTO
+  { _addTagEventDTOUuid :: U.UUID
+  , _addTagEventDTOPath :: EventPathDTO
+  , _addTagEventDTOTagUuid :: U.UUID
+  , _addTagEventDTOName :: String
+  , _addTagEventDTODescription :: Maybe String
+  , _addTagEventDTOColor :: String
+  } deriving (Show, Eq, Generic)
+
+data EditTagEventDTO = EditTagEventDTO
+  { _editTagEventDTOUuid :: U.UUID
+  , _editTagEventDTOPath :: EventPathDTO
+  , _editTagEventDTOTagUuid :: U.UUID
+  , _editTagEventDTOName :: EventFieldDTO String
+  , _editTagEventDTODescription :: EventFieldDTO (Maybe String)
+  , _editTagEventDTOColor :: EventFieldDTO String
+  } deriving (Show, Eq, Generic)
+
+data DeleteTagEventDTO = DeleteTagEventDTO
+  { _deleteTagEventDTOUuid :: U.UUID
+  , _deleteTagEventDTOPath :: EventPathDTO
+  , _deleteTagEventDTOTagUuid :: U.UUID
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
@@ -321,7 +400,8 @@ instance FromJSON EditKnowledgeModelEventDTO where
     _editKnowledgeModelEventDTOPath <- o .: "path"
     _editKnowledgeModelEventDTOKmUuid <- o .: "kmUuid"
     _editKnowledgeModelEventDTOName <- o .: "name"
-    _editKnowledgeModelEventDTOChapterIds <- o .: "chapterIds"
+    _editKnowledgeModelEventDTOChapterUuids <- o .: "chapterUuids"
+    _editKnowledgeModelEventDTOTagUuids <- o .: "tagUuids"
     return EditKnowledgeModelEventDTO {..}
   parseJSON _ = mzero
 
@@ -333,7 +413,8 @@ instance ToJSON EditKnowledgeModelEventDTO where
       , "path" .= _editKnowledgeModelEventDTOPath
       , "kmUuid" .= _editKnowledgeModelEventDTOKmUuid
       , "name" .= _editKnowledgeModelEventDTOName
-      , "chapterIds" .= _editKnowledgeModelEventDTOChapterIds
+      , "chapterUuids" .= _editKnowledgeModelEventDTOChapterUuids
+      , "tagUuids" .= _editKnowledgeModelEventDTOTagUuids
       ]
 
 -------------------------
@@ -367,7 +448,7 @@ instance FromJSON EditChapterEventDTO where
     _editChapterEventDTOChapterUuid <- o .: "chapterUuid"
     _editChapterEventDTOTitle <- o .: "title"
     _editChapterEventDTOText <- o .: "text"
-    _editChapterEventDTOQuestionIds <- o .: "questionIds"
+    _editChapterEventDTOQuestionUuids <- o .: "questionUuids"
     return EditChapterEventDTO {..}
   parseJSON _ = mzero
 
@@ -380,7 +461,7 @@ instance ToJSON EditChapterEventDTO where
       , "chapterUuid" .= _editChapterEventDTOChapterUuid
       , "title" .= _editChapterEventDTOTitle
       , "text" .= _editChapterEventDTOText
-      , "questionIds" .= _editChapterEventDTOQuestionIds
+      , "questionUuids" .= _editChapterEventDTOQuestionUuids
       ]
 
 instance FromJSON DeleteChapterEventDTO where
@@ -403,70 +484,230 @@ instance ToJSON DeleteChapterEventDTO where
 -- -------------------------
 -- Question ----------------
 -- -------------------------
+instance ToJSON AddQuestionEventDTO where
+  toJSON (AddOptionsQuestionEventDTO' event) = toJSON event
+  toJSON (AddListQuestionEventDTO' event) = toJSON event
+  toJSON (AddValueQuestionEventDTO' event) = toJSON event
+
 instance FromJSON AddQuestionEventDTO where
   parseJSON (Object o) = do
-    _addQuestionEventDTOUuid <- o .: "uuid"
-    _addQuestionEventDTOPath <- o .: "path"
-    _addQuestionEventDTOQuestionUuid <- o .: "questionUuid"
-    _addQuestionEventDTOTitle <- o .: "title"
-    _addQuestionEventDTOText <- o .: "text"
-    _addQuestionEventDTORequiredLevel <- o .: "requiredLevel"
-    _addQuestionEventDTOAnswerItemTemplatePlain <- o .: "answerItemTemplate"
-    questionType <- o .: "type"
-    case deserializeQuestionType questionType of
-      (Just _addQuestionEventDTOQType) -> return AddQuestionEventDTO {..}
-      Nothing -> fail "Unsupported question type"
+    referenceType <- o .: "questionType"
+    case referenceType of
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (AddOptionsQuestionEventDTO' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEventDTO' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEventDTO' event)
+      _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
-instance ToJSON AddQuestionEventDTO where
-  toJSON AddQuestionEventDTO {..} =
+-- --------------------------------------------
+instance FromJSON AddOptionsQuestionEventDTO where
+  parseJSON (Object o) = do
+    _addOptionsQuestionEventDTOUuid <- o .: "uuid"
+    _addOptionsQuestionEventDTOPath <- o .: "path"
+    _addOptionsQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addOptionsQuestionEventDTOTitle <- o .: "title"
+    _addOptionsQuestionEventDTOText <- o .: "text"
+    _addOptionsQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _addOptionsQuestionEventDTOTagUuids <- o .: "tagUuids"
+    return AddOptionsQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddOptionsQuestionEventDTO where
+  toJSON AddOptionsQuestionEventDTO {..} =
     object
       [ "eventType" .= "AddQuestionEvent"
-      , "uuid" .= _addQuestionEventDTOUuid
-      , "path" .= _addQuestionEventDTOPath
-      , "questionUuid" .= _addQuestionEventDTOQuestionUuid
-      , "type" .= serializeQuestionType _addQuestionEventDTOQType
-      , "title" .= _addQuestionEventDTOTitle
-      , "text" .= _addQuestionEventDTOText
-      , "requiredLevel" .= _addQuestionEventDTORequiredLevel
-      , "answerItemTemplate" .= _addQuestionEventDTOAnswerItemTemplatePlain
+      , "questionType" .= "OptionsQuestion"
+      , "uuid" .= _addOptionsQuestionEventDTOUuid
+      , "path" .= _addOptionsQuestionEventDTOPath
+      , "questionUuid" .= _addOptionsQuestionEventDTOQuestionUuid
+      , "title" .= _addOptionsQuestionEventDTOTitle
+      , "text" .= _addOptionsQuestionEventDTOText
+      , "requiredLevel" .= _addOptionsQuestionEventDTORequiredLevel
+      , "tagUuids" .= _addOptionsQuestionEventDTOTagUuids
       ]
+
+-- --------------------------------------------
+instance FromJSON AddListQuestionEventDTO where
+  parseJSON (Object o) = do
+    _addListQuestionEventDTOUuid <- o .: "uuid"
+    _addListQuestionEventDTOPath <- o .: "path"
+    _addListQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addListQuestionEventDTOTitle <- o .: "title"
+    _addListQuestionEventDTOText <- o .: "text"
+    _addListQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _addListQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _addListQuestionEventDTOItemTemplateTitle <- o .: "itemTemplateTitle"
+    return AddListQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddListQuestionEventDTO where
+  toJSON AddListQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "AddQuestionEvent"
+      , "questionType" .= "ListQuestion"
+      , "uuid" .= _addListQuestionEventDTOUuid
+      , "path" .= _addListQuestionEventDTOPath
+      , "questionUuid" .= _addListQuestionEventDTOQuestionUuid
+      , "title" .= _addListQuestionEventDTOTitle
+      , "text" .= _addListQuestionEventDTOText
+      , "requiredLevel" .= _addListQuestionEventDTORequiredLevel
+      , "tagUuids" .= _addListQuestionEventDTOTagUuids
+      , "itemTemplateTitle" .= _addListQuestionEventDTOItemTemplateTitle
+      ]
+
+-- --------------------------------------------
+instance FromJSON AddValueQuestionEventDTO where
+  parseJSON (Object o) = do
+    _addValueQuestionEventDTOUuid <- o .: "uuid"
+    _addValueQuestionEventDTOPath <- o .: "path"
+    _addValueQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addValueQuestionEventDTOTitle <- o .: "title"
+    _addValueQuestionEventDTOText <- o .: "text"
+    _addValueQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _addValueQuestionEventDTOTagUuids <- o .: "tagUuids"
+    valueType <- o .: "valueType"
+    case deserializeQuestionValueType valueType of
+      (Just _addValueQuestionEventDTOValueType) -> return AddValueQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question value type"
+  parseJSON _ = mzero
+
+instance ToJSON AddValueQuestionEventDTO where
+  toJSON AddValueQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "AddQuestionEvent"
+      , "questionType" .= "ValueQuestion"
+      , "uuid" .= _addValueQuestionEventDTOUuid
+      , "path" .= _addValueQuestionEventDTOPath
+      , "questionUuid" .= _addValueQuestionEventDTOQuestionUuid
+      , "title" .= _addValueQuestionEventDTOTitle
+      , "text" .= _addValueQuestionEventDTOText
+      , "requiredLevel" .= _addValueQuestionEventDTORequiredLevel
+      , "tagUuids" .= _addValueQuestionEventDTOTagUuids
+      , "valueType" .= serializeQuestionValueType _addValueQuestionEventDTOValueType
+      ]
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance ToJSON EditQuestionEventDTO where
+  toJSON (EditOptionsQuestionEventDTO' event) = toJSON event
+  toJSON (EditListQuestionEventDTO' event) = toJSON event
+  toJSON (EditValueQuestionEventDTO' event) = toJSON event
 
 instance FromJSON EditQuestionEventDTO where
   parseJSON (Object o) = do
-    _editQuestionEventDTOUuid <- o .: "uuid"
-    _editQuestionEventDTOPath <- o .: "path"
-    _editQuestionEventDTOQuestionUuid <- o .: "questionUuid"
-    _editQuestionEventDTOTitle <- o .: "title"
-    _editQuestionEventDTOText <- o .: "text"
-    _editQuestionEventDTORequiredLevel <- o .: "requiredLevel"
-    _editQuestionEventDTOAnswerItemTemplatePlainWithIds <- o .: "answerItemTemplate"
-    _editQuestionEventDTOAnswerIds <- o .: "answerIds"
-    _editQuestionEventDTOExpertIds <- o .: "expertIds"
-    _editQuestionEventDTOReferenceIds <- o .: "referenceIds"
-    questionType <- o .: "type"
-    case deserializeEventFieldQuestionType <$> questionType of
-      (Just _editQuestionEventDTOQType) -> return EditQuestionEventDTO {..}
-      Nothing -> fail "Unsupported question type"
+    questionType <- o .: "questionType"
+    case questionType of
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (EditOptionsQuestionEventDTO' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEventDTO' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEventDTO' event)
+      _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
-instance ToJSON EditQuestionEventDTO where
-  toJSON EditQuestionEventDTO {..} =
+-- --------------------------------------------
+instance FromJSON EditOptionsQuestionEventDTO where
+  parseJSON (Object o) = do
+    _editOptionsQuestionEventDTOUuid <- o .: "uuid"
+    _editOptionsQuestionEventDTOPath <- o .: "path"
+    _editOptionsQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editOptionsQuestionEventDTOTitle <- o .: "title"
+    _editOptionsQuestionEventDTOText <- o .: "text"
+    _editOptionsQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _editOptionsQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _editOptionsQuestionEventDTOExpertUuids <- o .: "expertUuids"
+    _editOptionsQuestionEventDTOReferenceUuids <- o .: "referenceUuids"
+    _editOptionsQuestionEventDTOAnswerUuids <- o .: "answerUuids"
+    return EditOptionsQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditOptionsQuestionEventDTO where
+  toJSON EditOptionsQuestionEventDTO {..} =
     object
       [ "eventType" .= "EditQuestionEvent"
-      , "uuid" .= _editQuestionEventDTOUuid
-      , "path" .= _editQuestionEventDTOPath
-      , "questionUuid" .= _editQuestionEventDTOQuestionUuid
-      , "type" .= (serializeQuestionType <$> _editQuestionEventDTOQType)
-      , "title" .= _editQuestionEventDTOTitle
-      , "text" .= _editQuestionEventDTOText
-      , "requiredLevel" .= _editQuestionEventDTORequiredLevel
-      , "answerItemTemplate" .= _editQuestionEventDTOAnswerItemTemplatePlainWithIds
-      , "answerIds" .= _editQuestionEventDTOAnswerIds
-      , "expertIds" .= _editQuestionEventDTOExpertIds
-      , "referenceIds" .= _editQuestionEventDTOReferenceIds
+      , "questionType" .= "OptionsQuestion"
+      , "uuid" .= _editOptionsQuestionEventDTOUuid
+      , "path" .= _editOptionsQuestionEventDTOPath
+      , "questionUuid" .= _editOptionsQuestionEventDTOQuestionUuid
+      , "title" .= _editOptionsQuestionEventDTOTitle
+      , "text" .= _editOptionsQuestionEventDTOText
+      , "requiredLevel" .= _editOptionsQuestionEventDTORequiredLevel
+      , "tagUuids" .= _editOptionsQuestionEventDTOTagUuids
+      , "expertUuids" .= _editOptionsQuestionEventDTOExpertUuids
+      , "referenceUuids" .= _editOptionsQuestionEventDTOReferenceUuids
+      , "answerUuids" .= _editOptionsQuestionEventDTOAnswerUuids
       ]
 
+-- --------------------------------------------
+instance FromJSON EditListQuestionEventDTO where
+  parseJSON (Object o) = do
+    _editListQuestionEventDTOUuid <- o .: "uuid"
+    _editListQuestionEventDTOPath <- o .: "path"
+    _editListQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editListQuestionEventDTOTitle <- o .: "title"
+    _editListQuestionEventDTOText <- o .: "text"
+    _editListQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _editListQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _editListQuestionEventDTOExpertUuids <- o .: "expertUuids"
+    _editListQuestionEventDTOReferenceUuids <- o .: "referenceUuids"
+    _editListQuestionEventDTOItemTemplateTitle <- o .: "itemTemplateTitle"
+    _editListQuestionEventDTOItemTemplateQuestionUuids <- o .: "itemTemplateQuestionUuids"
+    return EditListQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditListQuestionEventDTO where
+  toJSON EditListQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "EditQuestionEvent"
+      , "questionType" .= "ListQuestion"
+      , "uuid" .= _editListQuestionEventDTOUuid
+      , "path" .= _editListQuestionEventDTOPath
+      , "questionUuid" .= _editListQuestionEventDTOQuestionUuid
+      , "title" .= _editListQuestionEventDTOTitle
+      , "text" .= _editListQuestionEventDTOText
+      , "requiredLevel" .= _editListQuestionEventDTORequiredLevel
+      , "tagUuids" .= _editListQuestionEventDTOTagUuids
+      , "expertUuids" .= _editListQuestionEventDTOExpertUuids
+      , "referenceUuids" .= _editListQuestionEventDTOReferenceUuids
+      , "itemTemplateTitle" .= _editListQuestionEventDTOItemTemplateTitle
+      , "itemTemplateQuestionUuids" .= _editListQuestionEventDTOItemTemplateQuestionUuids
+      ]
+
+-- --------------------------------------------
+instance FromJSON EditValueQuestionEventDTO where
+  parseJSON (Object o) = do
+    _editValueQuestionEventDTOUuid <- o .: "uuid"
+    _editValueQuestionEventDTOPath <- o .: "path"
+    _editValueQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editValueQuestionEventDTOTitle <- o .: "title"
+    _editValueQuestionEventDTOText <- o .: "text"
+    _editValueQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _editValueQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _editValueQuestionEventDTOExpertUuids <- o .: "expertUuids"
+    _editValueQuestionEventDTOReferenceUuids <- o .: "referenceUuids"
+    valueType <- o .: "valueType"
+    case deserializeEventFieldQuestionValueType <$> valueType of
+      (Just _editValueQuestionEventDTOValueType) -> return EditValueQuestionEventDTO {..}
+      Nothing -> fail "Unsupported question value type"
+  parseJSON _ = mzero
+
+instance ToJSON EditValueQuestionEventDTO where
+  toJSON EditValueQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "EditQuestionEvent"
+      , "questionType" .= "ValueQuestion"
+      , "uuid" .= _editValueQuestionEventDTOUuid
+      , "path" .= _editValueQuestionEventDTOPath
+      , "questionUuid" .= _editValueQuestionEventDTOQuestionUuid
+      , "title" .= _editValueQuestionEventDTOTitle
+      , "text" .= _editValueQuestionEventDTOText
+      , "requiredLevel" .= _editValueQuestionEventDTORequiredLevel
+      , "tagUuids" .= _editValueQuestionEventDTOTagUuids
+      , "expertUuids" .= _editValueQuestionEventDTOExpertUuids
+      , "referenceUuids" .= _editValueQuestionEventDTOReferenceUuids
+      , "valueType" .= (serializeQuestionValueType <$> _editValueQuestionEventDTOValueType)
+      ]
+
+-- --------------------------------------------
+-- --------------------------------------------
 instance FromJSON DeleteQuestionEventDTO where
   parseJSON (Object o) = do
     _deleteQuestionEventDTOUuid <- o .: "uuid"
@@ -517,7 +758,7 @@ instance FromJSON EditAnswerEventDTO where
     _editAnswerEventDTOAnswerUuid <- o .: "answerUuid"
     _editAnswerEventDTOLabel <- o .: "label"
     _editAnswerEventDTOAdvice <- o .: "advice"
-    _editAnswerEventDTOFollowUpIds <- o .: "followUpIds"
+    _editAnswerEventDTOFollowUpUuids <- o .: "followUpUuids"
     _editAnswerEventDTOMetricMeasures <- o .: "metricMeasures"
     return EditAnswerEventDTO {..}
   parseJSON _ = mzero
@@ -531,7 +772,7 @@ instance ToJSON EditAnswerEventDTO where
       , "answerUuid" .= _editAnswerEventDTOAnswerUuid
       , "label" .= _editAnswerEventDTOLabel
       , "advice" .= _editAnswerEventDTOAdvice
-      , "followUpIds" .= _editAnswerEventDTOFollowUpIds
+      , "followUpUuids" .= _editAnswerEventDTOFollowUpUuids
       , "metricMeasures" .= _editAnswerEventDTOMetricMeasures
       ]
 
@@ -633,39 +874,6 @@ instance FromJSON AddReferenceEventDTO where
   parseJSON _ = mzero
 
 -- --------------------------------------------
-instance ToJSON EditReferenceEventDTO where
-  toJSON (EditResourcePageReferenceEventDTO' event) = toJSON event
-  toJSON (EditURLReferenceEventDTO' event) = toJSON event
-  toJSON (EditCrossReferenceEventDTO' event) = toJSON event
-
-instance FromJSON EditReferenceEventDTO where
-  parseJSON (Object o) = do
-    referenceType <- o .: "referenceType"
-    case referenceType of
-      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (EditResourcePageReferenceEventDTO' event)
-      "URLReference" -> parseJSON (Object o) >>= \event -> return (EditURLReferenceEventDTO' event)
-      "CrossReference" -> parseJSON (Object o) >>= \event -> return (EditCrossReferenceEventDTO' event)
-      _ -> fail "One of the events has unsupported referenceType"
-  parseJSON _ = mzero
-
--- --------------------------------------------
-instance ToJSON DeleteReferenceEventDTO where
-  toJSON (DeleteResourcePageReferenceEventDTO' event) = toJSON event
-  toJSON (DeleteURLReferenceEventDTO' event) = toJSON event
-  toJSON (DeleteCrossReferenceEventDTO' event) = toJSON event
-
-instance FromJSON DeleteReferenceEventDTO where
-  parseJSON (Object o) = do
-    referenceType <- o .: "referenceType"
-    case referenceType of
-      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (DeleteResourcePageReferenceEventDTO' event)
-      "URLReference" -> parseJSON (Object o) >>= \event -> return (DeleteURLReferenceEventDTO' event)
-      "CrossReference" -> parseJSON (Object o) >>= \event -> return (DeleteCrossReferenceEventDTO' event)
-      _ -> fail "One of the events has unsupported referenceType"
-  parseJSON _ = mzero
-
--- --------------------------------------------
--- --------------------------------------------
 instance FromJSON AddResourcePageReferenceEventDTO where
   parseJSON (Object o) = do
     _addResourcePageReferenceEventDTOUuid <- o .: "uuid"
@@ -687,47 +895,6 @@ instance ToJSON AddResourcePageReferenceEventDTO where
       ]
 
 -- --------------------------------------------
-instance FromJSON EditResourcePageReferenceEventDTO where
-  parseJSON (Object o) = do
-    _editResourcePageReferenceEventDTOUuid <- o .: "uuid"
-    _editResourcePageReferenceEventDTOPath <- o .: "path"
-    _editResourcePageReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
-    _editResourcePageReferenceEventDTOShortUuid <- o .: "shortUuid"
-    return EditResourcePageReferenceEventDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON EditResourcePageReferenceEventDTO where
-  toJSON EditResourcePageReferenceEventDTO {..} =
-    object
-      [ "eventType" .= "EditReferenceEvent"
-      , "referenceType" .= "ResourcePageReference"
-      , "uuid" .= _editResourcePageReferenceEventDTOUuid
-      , "path" .= _editResourcePageReferenceEventDTOPath
-      , "referenceUuid" .= _editResourcePageReferenceEventDTOReferenceUuid
-      , "shortUuid" .= _editResourcePageReferenceEventDTOShortUuid
-      ]
-
--- --------------------------------------------
-instance FromJSON DeleteResourcePageReferenceEventDTO where
-  parseJSON (Object o) = do
-    _deleteResourcePageReferenceEventDTOUuid <- o .: "uuid"
-    _deleteResourcePageReferenceEventDTOPath <- o .: "path"
-    _deleteResourcePageReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
-    return DeleteResourcePageReferenceEventDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON DeleteResourcePageReferenceEventDTO where
-  toJSON DeleteResourcePageReferenceEventDTO {..} =
-    object
-      [ "eventType" .= "DeleteReferenceEvent"
-      , "referenceType" .= "ResourcePageReference"
-      , "uuid" .= _deleteResourcePageReferenceEventDTOUuid
-      , "path" .= _deleteResourcePageReferenceEventDTOPath
-      , "referenceUuid" .= _deleteResourcePageReferenceEventDTOReferenceUuid
-      ]
-
--- --------------------------------------------
--- --------------------------------------------
 instance FromJSON AddURLReferenceEventDTO where
   parseJSON (Object o) = do
     _addURLReferenceEventDTOUuid <- o .: "uuid"
@@ -748,6 +915,67 @@ instance ToJSON AddURLReferenceEventDTO where
       , "referenceUuid" .= _addURLReferenceEventDTOReferenceUuid
       , "url" .= _addURLReferenceEventDTOUrl
       , "label" .= _addURLReferenceEventDTOLabel
+      ]
+
+-- --------------------------------------------
+instance FromJSON AddCrossReferenceEventDTO where
+  parseJSON (Object o) = do
+    _addCrossReferenceEventDTOUuid <- o .: "uuid"
+    _addCrossReferenceEventDTOPath <- o .: "path"
+    _addCrossReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
+    _addCrossReferenceEventDTOTargetUuid <- o .: "targetUuid"
+    _addCrossReferenceEventDTODescription <- o .: "description"
+    return AddCrossReferenceEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddCrossReferenceEventDTO where
+  toJSON AddCrossReferenceEventDTO {..} =
+    object
+      [ "eventType" .= "AddReferenceEvent"
+      , "referenceType" .= "CrossReference"
+      , "uuid" .= _addCrossReferenceEventDTOUuid
+      , "path" .= _addCrossReferenceEventDTOPath
+      , "referenceUuid" .= _addCrossReferenceEventDTOReferenceUuid
+      , "targetUuid" .= _addCrossReferenceEventDTOTargetUuid
+      , "description" .= _addCrossReferenceEventDTODescription
+      ]
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance ToJSON EditReferenceEventDTO where
+  toJSON (EditResourcePageReferenceEventDTO' event) = toJSON event
+  toJSON (EditURLReferenceEventDTO' event) = toJSON event
+  toJSON (EditCrossReferenceEventDTO' event) = toJSON event
+
+instance FromJSON EditReferenceEventDTO where
+  parseJSON (Object o) = do
+    referenceType <- o .: "referenceType"
+    case referenceType of
+      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (EditResourcePageReferenceEventDTO' event)
+      "URLReference" -> parseJSON (Object o) >>= \event -> return (EditURLReferenceEventDTO' event)
+      "CrossReference" -> parseJSON (Object o) >>= \event -> return (EditCrossReferenceEventDTO' event)
+      _ -> fail "One of the events has unsupported referenceType"
+  parseJSON _ = mzero
+
+-- --------------------------------------------
+instance FromJSON EditResourcePageReferenceEventDTO where
+  parseJSON (Object o) = do
+    _editResourcePageReferenceEventDTOUuid <- o .: "uuid"
+    _editResourcePageReferenceEventDTOPath <- o .: "path"
+    _editResourcePageReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
+    _editResourcePageReferenceEventDTOShortUuid <- o .: "shortUuid"
+    return EditResourcePageReferenceEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditResourcePageReferenceEventDTO where
+  toJSON EditResourcePageReferenceEventDTO {..} =
+    object
+      [ "eventType" .= "EditReferenceEvent"
+      , "referenceType" .= "ResourcePageReference"
+      , "uuid" .= _editResourcePageReferenceEventDTOUuid
+      , "path" .= _editResourcePageReferenceEventDTOPath
+      , "referenceUuid" .= _editResourcePageReferenceEventDTOReferenceUuid
+      , "shortUuid" .= _editResourcePageReferenceEventDTOShortUuid
       ]
 
 -- --------------------------------------------
@@ -774,49 +1002,6 @@ instance ToJSON EditURLReferenceEventDTO where
       ]
 
 -- --------------------------------------------
-instance FromJSON DeleteURLReferenceEventDTO where
-  parseJSON (Object o) = do
-    _deleteURLReferenceEventDTOUuid <- o .: "uuid"
-    _deleteURLReferenceEventDTOPath <- o .: "path"
-    _deleteURLReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
-    return DeleteURLReferenceEventDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON DeleteURLReferenceEventDTO where
-  toJSON DeleteURLReferenceEventDTO {..} =
-    object
-      [ "eventType" .= "DeleteReferenceEvent"
-      , "referenceType" .= "URLReference"
-      , "uuid" .= _deleteURLReferenceEventDTOUuid
-      , "path" .= _deleteURLReferenceEventDTOPath
-      , "referenceUuid" .= _deleteURLReferenceEventDTOReferenceUuid
-      ]
-
--- --------------------------------------------
--- --------------------------------------------
-instance FromJSON AddCrossReferenceEventDTO where
-  parseJSON (Object o) = do
-    _addCrossReferenceEventDTOUuid <- o .: "uuid"
-    _addCrossReferenceEventDTOPath <- o .: "path"
-    _addCrossReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
-    _addCrossReferenceEventDTOTargetUuid <- o .: "targetUuid"
-    _addCrossReferenceEventDTODescription <- o .: "description"
-    return AddCrossReferenceEventDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON AddCrossReferenceEventDTO where
-  toJSON AddCrossReferenceEventDTO {..} =
-    object
-      [ "eventType" .= "AddReferenceEvent"
-      , "referenceType" .= "CrossReference"
-      , "uuid" .= _addCrossReferenceEventDTOUuid
-      , "path" .= _addCrossReferenceEventDTOPath
-      , "referenceUuid" .= _addCrossReferenceEventDTOReferenceUuid
-      , "targetUuid" .= _addCrossReferenceEventDTOTargetUuid
-      , "description" .= _addCrossReferenceEventDTODescription
-      ]
-
--- --------------------------------------------
 instance FromJSON EditCrossReferenceEventDTO where
   parseJSON (Object o) = do
     _editCrossReferenceEventDTOUuid <- o .: "uuid"
@@ -840,20 +1025,88 @@ instance ToJSON EditCrossReferenceEventDTO where
       ]
 
 -- --------------------------------------------
-instance FromJSON DeleteCrossReferenceEventDTO where
+-- --------------------------------------------
+instance FromJSON DeleteReferenceEventDTO where
   parseJSON (Object o) = do
-    _deleteCrossReferenceEventDTOUuid <- o .: "uuid"
-    _deleteCrossReferenceEventDTOPath <- o .: "path"
-    _deleteCrossReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
-    return DeleteCrossReferenceEventDTO {..}
+    _deleteReferenceEventDTOUuid <- o .: "uuid"
+    _deleteReferenceEventDTOPath <- o .: "path"
+    _deleteReferenceEventDTOReferenceUuid <- o .: "referenceUuid"
+    return DeleteReferenceEventDTO {..}
   parseJSON _ = mzero
 
-instance ToJSON DeleteCrossReferenceEventDTO where
-  toJSON DeleteCrossReferenceEventDTO {..} =
+instance ToJSON DeleteReferenceEventDTO where
+  toJSON DeleteReferenceEventDTO {..} =
     object
       [ "eventType" .= "DeleteReferenceEvent"
-      , "referenceType" .= "CrossReference"
-      , "uuid" .= _deleteCrossReferenceEventDTOUuid
-      , "path" .= _deleteCrossReferenceEventDTOPath
-      , "referenceUuid" .= _deleteCrossReferenceEventDTOReferenceUuid
+      , "uuid" .= _deleteReferenceEventDTOUuid
+      , "path" .= _deleteReferenceEventDTOPath
+      , "referenceUuid" .= _deleteReferenceEventDTOReferenceUuid
+      ]
+
+-- -------------------------
+-- Tag ---------------------
+-- -------------------------
+instance FromJSON AddTagEventDTO where
+  parseJSON (Object o) = do
+    _addTagEventDTOUuid <- o .: "uuid"
+    _addTagEventDTOPath <- o .: "path"
+    _addTagEventDTOTagUuid <- o .: "tagUuid"
+    _addTagEventDTOName <- o .: "name"
+    _addTagEventDTODescription <- o .: "description"
+    _addTagEventDTOColor <- o .: "color"
+    return AddTagEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddTagEventDTO where
+  toJSON AddTagEventDTO {..} =
+    object
+      [ "eventType" .= "AddTagEvent"
+      , "uuid" .= _addTagEventDTOUuid
+      , "path" .= _addTagEventDTOPath
+      , "tagUuid" .= _addTagEventDTOTagUuid
+      , "name" .= _addTagEventDTOName
+      , "description" .= _addTagEventDTODescription
+      , "color" .= _addTagEventDTOColor
+      ]
+
+-- --------------------------------------------
+instance FromJSON EditTagEventDTO where
+  parseJSON (Object o) = do
+    _editTagEventDTOUuid <- o .: "uuid"
+    _editTagEventDTOPath <- o .: "path"
+    _editTagEventDTOTagUuid <- o .: "tagUuid"
+    _editTagEventDTOName <- o .: "name"
+    _editTagEventDTODescription <- o .: "description"
+    _editTagEventDTOColor <- o .: "color"
+    return EditTagEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditTagEventDTO where
+  toJSON EditTagEventDTO {..} =
+    object
+      [ "eventType" .= "EditTagEvent"
+      , "uuid" .= _editTagEventDTOUuid
+      , "path" .= _editTagEventDTOPath
+      , "tagUuid" .= _editTagEventDTOTagUuid
+      , "name" .= _editTagEventDTOName
+      , "description" .= _editTagEventDTODescription
+      , "color" .= _editTagEventDTOColor
+      ]
+
+-- --------------------------------------------
+instance FromJSON DeleteTagEventDTO where
+  parseJSON (Object o) = do
+    _deleteTagEventDTOUuid <- o .: "uuid"
+    _deleteTagEventDTOPath <- o .: "path"
+    _deleteTagEventDTOTagUuid <- o .: "tagUuid"
+    return DeleteTagEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON DeleteTagEventDTO where
+  toJSON DeleteTagEventDTO {..} =
+    object
+      [ "eventType" .= "DeleteTagEvent"
+      , "uuid" .= _deleteTagEventDTOUuid
+      , "path" .= _deleteTagEventDTOPath
+      , "tagUuid" .= _deleteTagEventDTOTagUuid
       ]

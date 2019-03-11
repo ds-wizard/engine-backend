@@ -5,7 +5,6 @@ import Control.Lens ((^.))
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventFieldDTO
 import Api.Resource.Event.EventPathDTO
-import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
@@ -15,7 +14,7 @@ import Model.Event.Expert.ExpertEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
-import Model.KnowledgeModel.KnowledgeModel
+import Model.Event.Tag.TagEvent
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 -- ------------------------------------------------------------------------
@@ -34,27 +33,6 @@ toEventPathItemDTO dto = EventPathItemDTO {_eventPathItemDTOPType = dto ^. pType
 
 toEventPathDTO :: EventPath -> EventPathDTO
 toEventPathDTO dto = toEventPathItemDTO <$> dto
-
-toEventFieldAndAnswerItemTemplate ::
-     EventField (Maybe AnswerItemTemplate) -> EventFieldDTO (Maybe AnswerItemTemplateDTO)
-toEventFieldAndAnswerItemTemplate efMaybeAit =
-  case efMaybeAit of
-    ChangedValue maybeAit -> ChangedValueDTO $ toAnswerItemTemplateDTO <$> maybeAit
-    NothingChanged -> NothingChangedDTO
-
-toEventFieldAndAnswerItemTemplatePlain ::
-     EventField (Maybe AnswerItemTemplatePlain) -> EventFieldDTO (Maybe AnswerItemTemplatePlainDTO)
-toEventFieldAndAnswerItemTemplatePlain efMaybeAit =
-  case efMaybeAit of
-    ChangedValue maybeAit -> ChangedValueDTO $ toAnswerItemTemplatePlainDTO <$> maybeAit
-    NothingChanged -> NothingChangedDTO
-
-toEventFieldAndAnswerItemTemplatePlainWithIds ::
-     EventField (Maybe AnswerItemTemplatePlainWithIds) -> EventFieldDTO (Maybe AnswerItemTemplatePlainWithIdsDTO)
-toEventFieldAndAnswerItemTemplatePlainWithIds efMaybeAit =
-  case efMaybeAit of
-    ChangedValue maybeAit -> ChangedValueDTO $ toAnswerItemTemplatePlainWithIdsDTO <$> maybeAit
-    NothingChanged -> NothingChangedDTO
 
 -- -------------------------
 -- Knowledge Model ---------
@@ -77,11 +55,12 @@ instance EventToDTO EditKnowledgeModelEvent where
       , _editKnowledgeModelEventDTOPath = toEventPathDTO $ event ^. path
       , _editKnowledgeModelEventDTOKmUuid = event ^. kmUuid
       , _editKnowledgeModelEventDTOName = toEventFieldDTO $ event ^. name
-      , _editKnowledgeModelEventDTOChapterIds = toEventFieldDTO $ event ^. chapterIds
+      , _editKnowledgeModelEventDTOChapterUuids = toEventFieldDTO $ event ^. chapterUuids
+      , _editKnowledgeModelEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
       }
 
 -------------------------
--- Chapter -----------------
+-- Chapter --------------
 -------------------------
 instance EventToDTO AddChapterEvent where
   toDTO event =
@@ -103,7 +82,7 @@ instance EventToDTO EditChapterEvent where
       , _editChapterEventDTOChapterUuid = event ^. chapterUuid
       , _editChapterEventDTOTitle = toEventFieldDTO $ event ^. title
       , _editChapterEventDTOText = toEventFieldDTO $ event ^. text
-      , _editChapterEventDTOQuestionIds = toEventFieldDTO $ event ^. questionIds
+      , _editChapterEventDTOQuestionUuids = toEventFieldDTO $ event ^. questionUuids
       }
 
 instance EventToDTO DeleteChapterEvent where
@@ -119,36 +98,92 @@ instance EventToDTO DeleteChapterEvent where
 -- Question ----------------
 -- -------------------------
 instance EventToDTO AddQuestionEvent where
-  toDTO event =
-    AddQuestionEventDTO'
-      AddQuestionEventDTO
-      { _addQuestionEventDTOUuid = event ^. uuid
-      , _addQuestionEventDTOPath = toEventPathDTO $ event ^. path
-      , _addQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _addQuestionEventDTOQType = event ^. qType
-      , _addQuestionEventDTOTitle = event ^. title
-      , _addQuestionEventDTOText = event ^. text
-      , _addQuestionEventDTORequiredLevel = event ^. requiredLevel
-      , _addQuestionEventDTOAnswerItemTemplatePlain = toAnswerItemTemplatePlainDTO <$> event ^. answerItemTemplatePlain
-      }
+  toDTO (AddOptionsQuestionEvent' event) =
+    AddQuestionEventDTO' $
+    AddOptionsQuestionEventDTO' $
+    AddOptionsQuestionEventDTO
+    { _addOptionsQuestionEventDTOUuid = event ^. uuid
+    , _addOptionsQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _addOptionsQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _addOptionsQuestionEventDTOTitle = event ^. title
+    , _addOptionsQuestionEventDTOText = event ^. text
+    , _addOptionsQuestionEventDTORequiredLevel = event ^. requiredLevel
+    , _addOptionsQuestionEventDTOTagUuids = event ^. tagUuids
+    }
+  toDTO (AddListQuestionEvent' event) =
+    AddQuestionEventDTO' $
+    AddListQuestionEventDTO' $
+    AddListQuestionEventDTO
+    { _addListQuestionEventDTOUuid = event ^. uuid
+    , _addListQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _addListQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _addListQuestionEventDTOTitle = event ^. title
+    , _addListQuestionEventDTOText = event ^. text
+    , _addListQuestionEventDTORequiredLevel = event ^. requiredLevel
+    , _addListQuestionEventDTOTagUuids = event ^. tagUuids
+    , _addListQuestionEventDTOItemTemplateTitle = event ^. itemTemplateTitle
+    }
+  toDTO (AddValueQuestionEvent' event) =
+    AddQuestionEventDTO' $
+    AddValueQuestionEventDTO' $
+    AddValueQuestionEventDTO
+    { _addValueQuestionEventDTOUuid = event ^. uuid
+    , _addValueQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _addValueQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _addValueQuestionEventDTOTitle = event ^. title
+    , _addValueQuestionEventDTOText = event ^. text
+    , _addValueQuestionEventDTORequiredLevel = event ^. requiredLevel
+    , _addValueQuestionEventDTOTagUuids = event ^. tagUuids
+    , _addValueQuestionEventDTOValueType = event ^. valueType
+    }
 
 instance EventToDTO EditQuestionEvent where
-  toDTO event =
-    EditQuestionEventDTO'
-      EditQuestionEventDTO
-      { _editQuestionEventDTOUuid = event ^. uuid
-      , _editQuestionEventDTOPath = toEventPathDTO $ event ^. path
-      , _editQuestionEventDTOQuestionUuid = event ^. questionUuid
-      , _editQuestionEventDTOQType = toEventFieldDTO $ event ^. qType
-      , _editQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
-      , _editQuestionEventDTOText = toEventFieldDTO $ event ^. text
-      , _editQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
-      , _editQuestionEventDTOAnswerItemTemplatePlainWithIds =
-          toEventFieldAndAnswerItemTemplatePlainWithIds $ event ^. answerItemTemplatePlainWithIds
-      , _editQuestionEventDTOAnswerIds = toEventFieldDTO $ event ^. answerIds
-      , _editQuestionEventDTOExpertIds = toEventFieldDTO $ event ^. expertIds
-      , _editQuestionEventDTOReferenceIds = toEventFieldDTO $ event ^. referenceIds
-      }
+  toDTO (EditOptionsQuestionEvent' event) =
+    EditQuestionEventDTO' $
+    EditOptionsQuestionEventDTO' $
+    EditOptionsQuestionEventDTO
+    { _editOptionsQuestionEventDTOUuid = event ^. uuid
+    , _editOptionsQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _editOptionsQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _editOptionsQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+    , _editOptionsQuestionEventDTOText = toEventFieldDTO $ event ^. text
+    , _editOptionsQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
+    , _editOptionsQuestionEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
+    , _editOptionsQuestionEventDTOExpertUuids = toEventFieldDTO $ event ^. expertUuids
+    , _editOptionsQuestionEventDTOReferenceUuids = toEventFieldDTO $ event ^. referenceUuids
+    , _editOptionsQuestionEventDTOAnswerUuids = toEventFieldDTO $ event ^. answerUuids
+    }
+  toDTO (EditListQuestionEvent' event) =
+    EditQuestionEventDTO' $
+    EditListQuestionEventDTO' $
+    EditListQuestionEventDTO
+    { _editListQuestionEventDTOUuid = event ^. uuid
+    , _editListQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _editListQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _editListQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+    , _editListQuestionEventDTOText = toEventFieldDTO $ event ^. text
+    , _editListQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
+    , _editListQuestionEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
+    , _editListQuestionEventDTOExpertUuids = toEventFieldDTO $ event ^. expertUuids
+    , _editListQuestionEventDTOReferenceUuids = toEventFieldDTO $ event ^. referenceUuids
+    , _editListQuestionEventDTOItemTemplateTitle = toEventFieldDTO $ event ^. itemTemplateTitle
+    , _editListQuestionEventDTOItemTemplateQuestionUuids = toEventFieldDTO $ event ^. itemTemplateQuestionUuids
+    }
+  toDTO (EditValueQuestionEvent' event) =
+    EditQuestionEventDTO' $
+    EditValueQuestionEventDTO' $
+    EditValueQuestionEventDTO
+    { _editValueQuestionEventDTOUuid = event ^. uuid
+    , _editValueQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _editValueQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _editValueQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+    , _editValueQuestionEventDTOText = toEventFieldDTO $ event ^. text
+    , _editValueQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
+    , _editValueQuestionEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
+    , _editValueQuestionEventDTOExpertUuids = toEventFieldDTO $ event ^. expertUuids
+    , _editValueQuestionEventDTOReferenceUuids = toEventFieldDTO $ event ^. referenceUuids
+    , _editValueQuestionEventDTOValueType = toEventFieldDTO $ event ^. valueType
+    }
 
 instance EventToDTO DeleteQuestionEvent where
   toDTO event =
@@ -183,7 +218,7 @@ instance EventToDTO EditAnswerEvent where
       , _editAnswerEventDTOAnswerUuid = event ^. answerUuid
       , _editAnswerEventDTOLabel = toEventFieldDTO $ event ^. label
       , _editAnswerEventDTOAdvice = toEventFieldDTO $ event ^. advice
-      , _editAnswerEventDTOFollowUpIds = toEventFieldDTO $ event ^. followUpIds
+      , _editAnswerEventDTOFollowUpUuids = toEventFieldDTO $ event ^. followUpUuids
       , _editAnswerEventDTOMetricMeasures =
           case event ^. metricMeasures of
             ChangedValue mms -> ChangedValueDTO $ toMetricMeasureDTO <$> mms
@@ -299,27 +334,46 @@ instance EventToDTO EditReferenceEvent where
     }
 
 instance EventToDTO DeleteReferenceEvent where
-  toDTO (DeleteResourcePageReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteResourcePageReferenceEventDTO' $
-    DeleteResourcePageReferenceEventDTO
-    { _deleteResourcePageReferenceEventDTOUuid = event ^. uuid
-    , _deleteResourcePageReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteResourcePageReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
-  toDTO (DeleteURLReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteURLReferenceEventDTO' $
-    DeleteURLReferenceEventDTO
-    { _deleteURLReferenceEventDTOUuid = event ^. uuid
-    , _deleteURLReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteURLReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
-  toDTO (DeleteCrossReferenceEvent' event) =
-    DeleteReferenceEventDTO' $
-    DeleteCrossReferenceEventDTO' $
-    DeleteCrossReferenceEventDTO
-    { _deleteCrossReferenceEventDTOUuid = event ^. uuid
-    , _deleteCrossReferenceEventDTOPath = toEventPathDTO $ event ^. path
-    , _deleteCrossReferenceEventDTOReferenceUuid = event ^. referenceUuid
-    }
+  toDTO event =
+    DeleteReferenceEventDTO'
+      DeleteReferenceEventDTO
+      { _deleteReferenceEventDTOUuid = event ^. uuid
+      , _deleteReferenceEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteReferenceEventDTOReferenceUuid = event ^. referenceUuid
+      }
+
+-------------------------
+-- Tag ------------------
+-------------------------
+instance EventToDTO AddTagEvent where
+  toDTO event =
+    AddTagEventDTO'
+      AddTagEventDTO
+      { _addTagEventDTOUuid = event ^. uuid
+      , _addTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _addTagEventDTOTagUuid = event ^. tagUuid
+      , _addTagEventDTOName = event ^. name
+      , _addTagEventDTODescription = event ^. description
+      , _addTagEventDTOColor = event ^. color
+      }
+
+instance EventToDTO EditTagEvent where
+  toDTO event =
+    EditTagEventDTO'
+      EditTagEventDTO
+      { _editTagEventDTOUuid = event ^. uuid
+      , _editTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _editTagEventDTOTagUuid = event ^. tagUuid
+      , _editTagEventDTOName = toEventFieldDTO $ event ^. name
+      , _editTagEventDTODescription = toEventFieldDTO $ event ^. description
+      , _editTagEventDTOColor = toEventFieldDTO $ event ^. color
+      }
+
+instance EventToDTO DeleteTagEvent where
+  toDTO event =
+    DeleteTagEventDTO'
+      DeleteTagEventDTO
+      { _deleteTagEventDTOUuid = event ^. uuid
+      , _deleteTagEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteTagEventDTOTagUuid = event ^. tagUuid
+      }

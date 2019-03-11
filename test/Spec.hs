@@ -15,7 +15,6 @@ import Service.User.UserMapper
 
 import Specs.API.BookReference.APISpec
 import Specs.API.Branch.APISpec
-import Specs.API.EventAPISpec
 import Specs.API.Feedback.APISpec
 import Specs.API.Info.APISpec
 import Specs.API.KnowledgeModel.APISpec
@@ -33,7 +32,9 @@ import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
-import Specs.Service.Migrator.ApplicatorSpec
+import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
+import Specs.Service.Migrator.Applicator.ApplicatorSpec
+import Specs.Service.Migrator.Applicator.ModifiersSpec
 import Specs.Service.Migrator.MigratorSpec
 import Specs.Service.Migrator.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
@@ -83,8 +84,11 @@ main =
            describe "SERVICE" $ do
              describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
+             describe "KnowledgeModel" $ knowledgeModelFilterSpec
              describe "Migrator" $ do
-               applicatorSpec
+               describe "Applicator" $ do
+                 applicatorSpec
+                 modifiersSpec
                migratorSpec
                sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
@@ -98,7 +102,6 @@ main =
            describe "API" $ do
              bookReferenceAPI baseContext
              branchAPI baseContext
-             eventAPI baseContext
              feedbackAPI baseContext
              infoAPI baseContext
              knowledgeModelAPI baseContext

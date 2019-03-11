@@ -12,11 +12,12 @@ import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
 import Database.DAO.Package.PackageDAO
+import qualified
+       Database.Migration.Development.Branch.BranchMigration as B
 import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Context.AppContext
-import Service.Branch.BranchService
 
 import Specs.API.Common
 import Specs.Common
@@ -52,13 +53,11 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = amsterdamBranchWithState
+    let expDto = amsterdamBranchDetail
     let expBody = encode expDto
      -- AND: Run migrations
-    runInContextIO (deletePackageById (elixirNlPackage2Dto ^. pId)) appContext
-    runInContextIO
-      (createBranchWithParams (amsterdamBranch ^. uuid) (amsterdamBranch ^. createdAt) amsterdamBranchChange)
-      appContext
+    runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
+    runInContextIO B.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

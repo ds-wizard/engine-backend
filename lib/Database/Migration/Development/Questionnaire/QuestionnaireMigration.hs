@@ -10,6 +10,6 @@ import Util.Logger
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "(Questionnaire/Questionnaire) started"
   deleteQuestionnaires
-  insertPackage elixirCzPackage2Dto
+  insertPackage germanyPackage
   insertQuestionnaire questionnaire1
   logInfo $ msg _CMP_MIGRATION "(Questionnaire/Questionnaire) ended"

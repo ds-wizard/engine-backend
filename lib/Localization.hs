@@ -49,6 +49,12 @@ _ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients = "Email has been sent to: " ++ un
 
 _ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL errorMessage = "Failed to send email: " ++ errorMessage
 
+_ERROR_SERVICE_MAIL__MISSING_HTML mailName = "Could not load HTML template for: " ++ mailName
+
+_ERROR_SERVICE_MAIL__MISSING_PLAIN mailName = "Could not load plain text template for: " ++ mailName
+
+_ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName = "Could not load HTML nor plain text template for: " ++ mailName
+
 -- Package
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
   "The parent ('" ++
@@ -118,11 +124,6 @@ _ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model
 
 _ERROR_MT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
   "Failed Event (" ++ (U.toString eUuid) ++ "): You can't apply " ++ eventName ++ " to " ++ entityName
-
-_ERROR_MT_APPLICATOR__Q_TYPE_LIST_REQUIRES_AIT = "Event question type 'list' should have answerItemTemplate filled"
-
-_ERROR_MT_APPLICATOR__YOU_CANT_ADD_QUESTION_TO_NON_EXISTING_AIT =
-  "You can't add question into a non-existing AnswerItemTemplate"
 
 _ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
   "Failed Event (" ++ (U.toString eUuid) ++ "): Try to edit non-existing thing."

@@ -9,6 +9,7 @@ data PackageDTO = PackageDTO
   , _packageDTOOrganizationId :: String
   , _packageDTOKmId :: String
   , _packageDTOVersion :: String
+  , _packageDTOMetamodelVersion :: Int
   , _packageDTODescription :: String
   , _packageDTOParentPackageId :: Maybe String
   } deriving (Show, Eq)
@@ -21,6 +22,7 @@ instance ToJSON PackageDTO where
       , "organizationId" .= _packageDTOOrganizationId
       , "kmId" .= _packageDTOKmId
       , "version" .= _packageDTOVersion
+      , "metamodelVersion" .= _packageDTOMetamodelVersion
       , "description" .= _packageDTODescription
       , "parentPackageId" .= _packageDTOParentPackageId
       ]
@@ -32,6 +34,7 @@ instance FromJSON PackageDTO where
     _packageDTOOrganizationId <- o .: "organizationId"
     _packageDTOKmId <- o .: "kmId"
     _packageDTOVersion <- o .: "version"
+    _packageDTOMetamodelVersion <- o .: "metamodelVersion"
     _packageDTODescription <- o .: "description"
     _packageDTOParentPackageId <- o .: "parentPackageId"
     return PackageDTO {..}
