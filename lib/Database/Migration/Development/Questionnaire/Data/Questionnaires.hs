@@ -50,9 +50,9 @@ questionnaire1Edited :: Questionnaire
 questionnaire1Edited =
   Questionnaire
   { _questionnaireUuid = questionnaire1 ^. uuid
-  , _questionnaireName = questionnaire1 ^. name
+  , _questionnaireName = "EDITED" ++ (questionnaire1 ^. name)
   , _questionnaireLevel = 3
-  , _questionnairePrivate = questionnaire1 ^. private
+  , _questionnairePrivate = False
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
   , _questionnaireKnowledgeModel = questionnaire1 ^. knowledgeModel

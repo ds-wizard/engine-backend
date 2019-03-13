@@ -122,9 +122,9 @@ fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UTCTime -> 
 fromChangeDTO qtn dto now =
   Questionnaire
   { _questionnaireUuid = qtn ^. uuid
-  , _questionnaireName = qtn ^. name
+  , _questionnaireName = dto ^. name
   , _questionnaireLevel = dto ^. level
-  , _questionnairePrivate = qtn ^. private
+  , _questionnairePrivate = dto ^. private
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireKnowledgeModel = fromKnowledgeModelDTO $ qtn ^. knowledgeModel
