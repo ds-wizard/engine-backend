@@ -2,9 +2,9 @@ module Database.Connection where
 
 import Control.Lens ((^.))
 import Data.Text
-import Database.MongoDB (allCollections)
+import Database.MongoDB hiding (host)
 import Database.Persist.MongoDB
-import Network
+import Network.Socket
 
 import LensesConfig
 

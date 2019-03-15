@@ -32,9 +32,9 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -fwarn-unused-imports
+      ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -116,9 +116,9 @@ executables:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports
+        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - dsw-server
@@ -129,9 +129,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports
+        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson

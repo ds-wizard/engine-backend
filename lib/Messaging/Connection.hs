@@ -2,7 +2,7 @@ module Messaging.Connection where
 
 import Control.Lens ((^.))
 import qualified Data.Text as T
-import Network
+import Network.Socket
 import Network.AMQP (Channel, openChannel, openConnection')
 
 import LensesConfig
