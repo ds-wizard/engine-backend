@@ -25,7 +25,6 @@ import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.User.UserDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
@@ -41,7 +40,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
 import Service.Branch.BranchValidation
-import Service.KnowledgeModel.KnowledgeModelService
+import Service.Migrator.MigratorService
 import Service.Organization.OrganizationService
 import Service.Package.PackageService
 import Util.Uuid
@@ -76,10 +75,8 @@ createBranchWithParams bUuid now currentUser reqDto =
   heGetOrganization $ \organization -> do
     let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
     insertBranch branch
-    updateKnowledgeModelByBranchId (U.toString $ branch ^. uuid) Nothing
     createDefaultEventIfParentPackageIsNotPresent branch
-    heRecompileKnowledgeModel (U.toString $ branch ^. uuid) $ \km ->
-      return . Right $ toDTO branch BSDefault organization
+    return . Right $ toDTO branch BSDefault organization
   where
     validateKmId reqDto callback = do
       let bKmId = reqDto ^. kmId
@@ -186,7 +183,7 @@ getBranchState branch =
                                else return . Right $ BSDefault
   where
     getIsMigrating callback = do
-      eitherMs <- findMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
+      eitherMs <- getCurrentMigration (U.toString $ branch ^. uuid)
       case eitherMs of
         Right ms ->
           if ms ^. migrationState == CompletedState
@@ -201,7 +198,7 @@ getBranchState branch =
           heGetNewerPackages lastAppliedParentPackageId $ \newerPackages -> callback $ Prelude.length newerPackages > 0
         Nothing -> callback False
     getIsMigrated callback = do
-      eitherMs <- findMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
+      eitherMs <- getCurrentMigration (U.toString $ branch ^. uuid)
       case eitherMs of
         Right ms ->
           if ms ^. migrationState == CompletedState

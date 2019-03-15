@@ -39,18 +39,17 @@ solveConflict :: MigratorState -> MigratorConflictDTO -> MigratorState
 solveConflict state mcDto =
   case mcDto ^. action of
     MCAApply ->
-      let events = tail . getModifiedEvents $ state
+      let events = tail $ state ^. targetPackageEvents
           targetEvent = head $ state ^. targetPackageEvents
       in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
-      let events = tail . getModifiedEvents $ state
+      let events = tail $ state ^. targetPackageEvents
           targetEvent = fromDTOFn . fromJust $ mcDto ^. event
       in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAReject ->
-      let events = tail . getModifiedEvents $ state
+      let events = tail $ state ^. targetPackageEvents
       in toRunningState . updateEvents events $ state
   where
-    getModifiedEvents newState = newState ^. targetPackageEvents
     toRunningState newState = newState & migrationState .~ RunningState
     updateEvents events newState = newState & targetPackageEvents .~ events
     addToResultEvent event newState = newState & resultEvents .~ ((newState ^. resultEvents) ++ [event])

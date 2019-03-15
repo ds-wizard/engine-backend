@@ -32,8 +32,6 @@ _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId = "KmId '" ++ kmId ++ "' is already tak
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already exists"
 
 -- Absence
-_ERROR_VALIDATION__KM_ABSENCE = "Knowledge Model does not exist"
-
 _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 
 -- --------------------------------------

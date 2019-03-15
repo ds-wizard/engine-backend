@@ -53,3 +53,21 @@ km1WithQ4 =
   , _knowledgeModelChapters = [chapter1, chapter2WithQ4]
   , _knowledgeModelTags = [tagDataScience, tagBioInformatic]
   }
+
+km1Netherlands :: KnowledgeModel
+km1Netherlands =
+  KnowledgeModel
+  { _knowledgeModelUuid = km1 ^. uuid
+  , _knowledgeModelName = km1 ^. name
+  , _knowledgeModelChapters = [chapter1WithoutQuestions]
+  , _knowledgeModelTags = [tagDataScience, tagBioInformatic]
+  }
+
+km1NetherlandsV2 :: KnowledgeModel
+km1NetherlandsV2 =
+  KnowledgeModel
+  { _knowledgeModelUuid = km1 ^. uuid
+  , _knowledgeModelName = km1 ^. name
+  , _knowledgeModelChapters = [chapter1WithoutQuestions, chapter3WithoutQuestions]
+  , _knowledgeModelTags = [tagDataScience, tagBioInformatic]
+  }

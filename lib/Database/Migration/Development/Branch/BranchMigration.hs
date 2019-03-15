@@ -10,7 +10,6 @@ import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Service.Branch.BranchService
-import Service.KnowledgeModel.KnowledgeModelService
 import Service.User.UserMapper
 import Util.Logger
 
@@ -23,5 +22,4 @@ runMigration = do
     (toDTO userAlbert)
     amsterdamBranchCreate
   updateEventsInBranch (U.toString $ amsterdamBranch ^. uuid) (amsterdamBranchWithEvents ^. events)
-  recompileKnowledgeModel (U.toString $ amsterdamBranch ^. uuid)
   logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

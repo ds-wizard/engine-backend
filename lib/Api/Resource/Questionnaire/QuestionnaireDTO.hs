@@ -14,4 +14,13 @@ data QuestionnaireDTO = QuestionnaireDTO
   , _questionnaireDTOOwnerUuid :: Maybe U.UUID
   , _questionnaireDTOCreatedAt :: UTCTime
   , _questionnaireDTOUpdatedAt :: UTCTime
-  } deriving (Show, Eq)
+  } deriving (Show)
+
+instance Eq QuestionnaireDTO where
+  a == b =
+    _questionnaireDTOUuid a == _questionnaireDTOUuid b &&
+    _questionnaireDTOName a == _questionnaireDTOName b &&
+    _questionnaireDTOLevel a == _questionnaireDTOLevel b &&
+    _questionnaireDTOPrivate a == _questionnaireDTOPrivate b &&
+    _questionnaireDTOPackage a == _questionnaireDTOPackage b &&
+    _questionnaireDTOOwnerUuid a == _questionnaireDTOOwnerUuid b

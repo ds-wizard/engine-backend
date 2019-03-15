@@ -14,7 +14,7 @@ getMigrationsCurrentA =
   checkPermission "KM_UPGRADE_PERM" $
   getAuthServiceExecutor $ \runInAuthService -> do
     branchUuid <- param "branchUuid"
-    eitherDto <- runInAuthService $ getCurrentMigration branchUuid
+    eitherDto <- runInAuthService $ getCurrentMigrationDto branchUuid
     case eitherDto of
       Right resDto -> json resDto
       Left error -> sendError error

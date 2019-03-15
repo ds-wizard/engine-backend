@@ -43,7 +43,6 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Event.Event
 import Model.Package.Package
-import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 import Service.Package.PackageUtils
@@ -179,7 +178,7 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
         updateBranchWithParentPackageId branchUuid (createdPackage ^. pId)
         updateBranchIfMigrationIsCompleted branchUuid
         deleteMigratorStateByBranchUuid branchUuid
-        recompileKnowledgeModel branch $ return . Right $ createdPackage
+        return . Right $ createdPackage
   where
     validateVersion pkgVersion branch organization callback = do
       let pkgOrganizationId = organization ^. organizationId
@@ -207,11 +206,6 @@ createPackageFromKMC branchUuid pkgVersion versionDto =
         Right migrationState -> callback $ migrationState ^. resultEvents
         Left (NotExistsError _) -> callback $ branch ^. events
         Left error -> return . Left $ error
-    recompileKnowledgeModel branch callback = do
-      let branchUuid = U.toString $ branch ^. uuid
-      heGetEventsForBranchUuid branchUuid $ \eventsForBranchUuid -> do
-        recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid
-        callback
 
 deletePackagesByQueryParams :: [(Text, Text)] -> AppContextM (Maybe AppError)
 deletePackagesByQueryParams queryParams =

@@ -16,11 +16,11 @@ import Api.Resource.Report.ReportJM ()
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Metric.Data.Metrics
 import qualified
        Database.Migration.Development.Metric.MetricMigration as MTR
 import Database.Migration.Development.Package.Data.Packages
-import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import LensesConfig
 import Model.Context.AppContext
@@ -51,7 +51,7 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
   QuestionnaireChangeDTO
-  { _questionnaireChangeDTOName = "EDITED" ++ (publicQuestionnaire ^. name)
+  { _questionnaireChangeDTOName = questionnaire1Edited ^. name
   , _questionnaireChangeDTOPrivate = False
   , _questionnaireChangeDTOLevel = 3
   , _questionnaireChangeDTOReplies =
@@ -84,7 +84,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire netherlandsPackageV2
+    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Edited netherlandsPackageV2 km1NetherlandsV2
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext

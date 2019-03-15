@@ -22,8 +22,8 @@ import qualified
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import qualified
-       Database.Migration.Development.PublicQuestionnaire.PublicQuestionnaireMigration
-       as PUBQTN
+       Database.Migration.Development.PublicPackage.PublicPackageMigration
+       as PUBPKG
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
        as QTN
@@ -39,7 +39,7 @@ runMigration = do
   B.runMigration
   MIG.runMigration
   QTN.runMigration
-  PUBQTN.runMigration
+  PUBPKG.runMigration
   BR.runMigration
   F.runMigration
   MTR.runMigration

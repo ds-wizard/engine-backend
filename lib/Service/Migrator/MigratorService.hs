@@ -1,6 +1,6 @@
 module Service.Migrator.MigratorService where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe
 import qualified Data.Text as T
@@ -8,7 +8,7 @@ import qualified Data.Text as T
 import Api.Resource.Migrator.MigratorConflictDTO
 import Api.Resource.Migrator.MigratorStateCreateDTO
 import Api.Resource.Migrator.MigratorStateDTO
-import Database.DAO.KnowledgeModel.KnowledgeModelDAO
+import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migrator.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
@@ -17,14 +17,22 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Event.EventAccessors
 import Model.Migrator.MigratorState
+import Service.KnowledgeModel.KnowledgeModelService
 import Service.Migrator.Migrator
 import Service.Migrator.MigratorMapper
 import Service.Package.PackageService
 import Service.Package.PackageUtils
 import Service.Package.PackageValidation
 
-getCurrentMigration :: String -> AppContextM (Either AppError MigratorStateDTO)
-getCurrentMigration branchUuid = heFindMigratorStateByBranchUuid branchUuid $ \ms -> return . Right . toDTO $ ms
+getCurrentMigrationDto :: String -> AppContextM (Either AppError MigratorStateDTO)
+getCurrentMigrationDto branchUuid = heGetCurrentMigration branchUuid $ \ms -> return . Right . toDTO $ ms
+
+getCurrentMigration :: String -> AppContextM (Either AppError MigratorState)
+getCurrentMigration branchUuid =
+  heFindMigratorStateByBranchUuid branchUuid $ \ms ->
+    heCompileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchParentId) [] $ \knowledgeModel -> do
+      let msWithKnowledgeModel = ms & currentKnowledgeModel .~ Just knowledgeModel
+      return . Right $ msWithKnowledgeModel
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM (Either AppError MigratorStateDTO)
 createMigration branchUuid mscDto = do
@@ -35,30 +43,31 @@ createMigration branchUuid mscDto = do
       validateIfTargetPackageVersionIsHigher branch msTargetPackageId $
       getTargetParentPackage msTargetPackageId $ \targetParentPackage ->
         getBranchEvents branch $ \branchEvents ->
-          getTargetParentEvents msTargetPackageId branch $ \targetPackageEvents -> do
-            let ms =
-                  MigratorState
-                  { _migratorStateBranchUuid = branch ^. uuid
-                  , _migratorStateMigrationState = RunningState
-                  , _migratorStateBranchParentId = branchParentId
-                  , _migratorStateTargetPackageId = msTargetPackageId
-                  , _migratorStateBranchEvents = branchEvents
-                  , _migratorStateTargetPackageEvents = targetPackageEvents
-                  , _migratorStateResultEvents = []
-                  , _migratorStateCurrentKnowledgeModel = branch ^. knowledgeModel
-                  }
-            insertMigratorState ms
-            migratedMs <- migrateState ms
-            return . Right . toDTO $ migratedMs
+          getTargetParentEvents msTargetPackageId branch $ \targetPackageEvents ->
+            heCompileKnowledgeModel (branch ^. events) (branch ^. parentPackageId) [] $ \knowledgeModel -> do
+              let ms =
+                    MigratorState
+                    { _migratorStateBranchUuid = branch ^. uuid
+                    , _migratorStateMigrationState = RunningState
+                    , _migratorStateBranchParentId = branchParentId
+                    , _migratorStateTargetPackageId = msTargetPackageId
+                    , _migratorStateBranchEvents = branchEvents
+                    , _migratorStateTargetPackageEvents = targetPackageEvents
+                    , _migratorStateResultEvents = []
+                    , _migratorStateCurrentKnowledgeModel = Just knowledgeModel
+                    }
+              insertMigratorState ms
+              migratedMs <- migrateState ms
+              return . Right . toDTO $ migratedMs
   where
     getBranch branchUuid callback = do
-      eitherBranch <- findBranchWithKMByBranchId branchUuid
+      eitherBranch <- findBranchWithEventsById branchUuid
       case eitherBranch of
         Right branch -> callback branch
         Left (NotExistsError _) -> return . Left . MigratorError $ _ERROR_MT_VALIDATION_MIGRATOR__SOURCE_BRANCH_ABSENCE
         Left error -> return . Left $ error
     validateIfMigrationAlreadyExist callback = do
-      eitherMigratorState <- findMigratorStateByBranchUuid branchUuid
+      eitherMigratorState <- getCurrentMigration branchUuid
       case eitherMigratorState of
         Right migrationState -> return . Left . MigratorError $ _ERROR_MT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS
         Left (NotExistsError _) -> callback
@@ -104,13 +113,13 @@ createMigration branchUuid mscDto = do
 
 deleteCurrentMigration :: String -> AppContextM (Maybe AppError)
 deleteCurrentMigration branchUuid =
-  hmFindMigratorStateByBranchUuid branchUuid $ \_ -> do
+  hmGetCurrentMigration branchUuid $ \_ -> do
     deleteMigratorStateByBranchUuid branchUuid
     return Nothing
 
 solveConflictAndMigrate :: String -> MigratorConflictDTO -> AppContextM (Maybe AppError)
 solveConflictAndMigrate branchUuid reqDto =
-  hmFindMigratorStateByBranchUuid branchUuid $ \ms ->
+  hmGetCurrentMigration branchUuid $ \ms ->
     validateMigrationState ms $
     validateTargetPackageEvent ms $
     validateReqDto (ms ^. migrationState) reqDto $ do
@@ -139,3 +148,18 @@ migrateState ms = do
   migratedMs <- liftIO $ migrate ms
   updateMigratorState migratedMs
   return migratedMs
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+heGetCurrentMigration branchUuid callback = do
+  eitherMigratorState <- getCurrentMigration branchUuid
+  case eitherMigratorState of
+    Right migratorState -> callback migratorState
+    Left error -> return . Left $ error
+
+hmGetCurrentMigration branchUuid callback = do
+  eitherMigratorState <- getCurrentMigration branchUuid
+  case eitherMigratorState of
+    Right migratorState -> callback migratorState
+    Left error -> return . Just $ error

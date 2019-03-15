@@ -9,7 +9,6 @@ import qualified Data.UUID as U
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledAnswersAndFollowUpQuestions
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledChapters
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledQuestions
-import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Questionnaire.Questionnaire
@@ -22,9 +21,8 @@ questionnaire1 =
   , _questionnaireName = "My Questionnaire"
   , _questionnaireLevel = 2
   , _questionnairePrivate = True
-  , _questionnairePackageId = netherlandsPackageV2 ^. pId
+  , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
-  , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies =
       [ fQ1
       , fQ2
@@ -55,7 +53,6 @@ questionnaire1Edited =
   , _questionnairePrivate = False
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
-  , _questionnaireKnowledgeModel = questionnaire1 ^. knowledgeModel
   , _questionnaireReplies = [fQ1, fQ2]
   , _questionnaireOwnerUuid = questionnaire1 ^. ownerUuid
   , _questionnaireCreatedAt = questionnaire1 ^. createdAt

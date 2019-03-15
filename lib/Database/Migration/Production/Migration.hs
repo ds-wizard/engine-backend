@@ -45,6 +45,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0014_purge_database.Migration
        as M_0014
+import qualified
+       Database.Migration.Production.Migration_0015_remove_cached_km.Migration
+       as M_0015
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -69,4 +72,5 @@ migrationDefinitions =
   , M_0012.definition
   , M_0013.definition
   , M_0014.definition
+  , M_0015.definition
   ]

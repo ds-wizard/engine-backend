@@ -69,7 +69,7 @@ migratorAPI appContext = do
                     ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
                 , _migratorStateDTOBranchParentId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-                , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
+                , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
                 }
           let expBody = encode expDto
           -- AND: Prepare database
@@ -131,7 +131,7 @@ migratorAPI appContext = do
                     ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
                 , _migratorStateDTOBranchParentId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-                , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1
+                , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
                 }
           let expBody = encode expDto
           -- AND: Prepare database
@@ -278,7 +278,7 @@ migratorAPI appContext = do
            -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
            -- THEN: Find a result
-          eitherMS <- runInContextIO (findMigratorStateByBranchUuid branchUuid) appContext
+          eitherMS <- runInContextIO (getCurrentMigration branchUuid) appContext
            -- AND: Compare response with expectation
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}

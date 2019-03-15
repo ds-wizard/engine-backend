@@ -5,7 +5,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.Event.Event
-import Model.KnowledgeModel.KnowledgeModel
 
 data Branch = Branch
   { _branchUuid :: U.UUID
@@ -31,16 +30,3 @@ data BranchWithEvents = BranchWithEvents
   , _branchWithEventsCreatedAt :: UTCTime
   , _branchWithEventsUpdatedAt :: UTCTime
   } deriving (Generic)
-
-data BranchWithKM = BranchWithKM
-  { _branchWithKMUuid :: U.UUID
-  , _branchWithKMName :: String
-  , _branchWithKMKmId :: String
-  , _branchWithKMParentPackageId :: Maybe String
-  , _branchWithKMLastAppliedParentPackageId :: Maybe String
-  , _branchWithKMLastMergeCheckpointPackageId :: Maybe String
-  , _branchWithKMKnowledgeModel :: Maybe KnowledgeModel
-  , _branchWithKMOwnerUuid :: Maybe U.UUID
-  , _branchWithKMCreatedAt :: UTCTime
-  , _branchWithKMUpdatedAt :: UTCTime
-  } deriving (Show, Eq, Generic)

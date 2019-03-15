@@ -87,8 +87,6 @@ makeFields ''Branch
 
 makeFields ''BranchWithEvents
 
-makeFields ''BranchWithKM
-
 -- Model / Config
 makeFields ''AppConfigEnvironment
 

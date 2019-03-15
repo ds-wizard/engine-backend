@@ -19,18 +19,20 @@ import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
-import Model.Questionnaire.Questionnaire
+import Model.KnowledgeModel.KnowledgeModel
+import Model.Questionnaire.QuestionnaireReply
 import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
 import Service.DataManagementPlan.ReplyApplicator
+import Service.KnowledgeModel.KnowledgeModelService
 import Service.Report.ReportGenerator
 import Service.Template.TemplateService
 import Util.Uuid
 
-createFilledKM :: Questionnaire -> FilledKnowledgeModel
-createFilledKM questionnaire =
-  let plainFilledKM = toFilledKM (questionnaire ^. knowledgeModel)
-  in runReplyApplicator plainFilledKM (questionnaire ^. replies)
+createFilledKM :: KnowledgeModel -> [Reply] -> FilledKnowledgeModel
+createFilledKM knowledgeModel replies =
+  let plainFilledKM = toFilledKM knowledgeModel
+  in runReplyApplicator plainFilledKM replies
 
 createDataManagementPlan :: String -> AppContextM (Either AppError DataManagementPlanDTO)
 createDataManagementPlan qtnUuid =
@@ -39,27 +41,28 @@ createDataManagementPlan qtnUuid =
       heFindMetrics $ \dmpMetrics ->
         heFindLevels $ \dmpLevels ->
           heFindOrganization $ \organization ->
-            heCreatedBy (qtn ^. ownerUuid) $ \mCreatedBy -> do
-              dmpUuid <- liftIO generateUuid
-              let filledKM = createFilledKM $ qtn
-              now <- liftIO getCurrentTime
-              dmpReport <- generateReport (qtn ^. level) dmpMetrics filledKM
-              let dmp =
-                    DataManagementPlan
-                    { _dataManagementPlanUuid = dmpUuid
-                    , _dataManagementPlanQuestionnaireUuid = qtnUuid
-                    , _dataManagementPlanLevel = qtn ^. level
-                    , _dataManagementPlanFilledKnowledgeModel = filledKM
-                    , _dataManagementPlanMetrics = dmpMetrics
-                    , _dataManagementPlanLevels = dmpLevels
-                    , _dataManagementPlanReport = dmpReport
-                    , _dataManagementPlanPackage = package
-                    , _dataManagementPlanOrganization = organization
-                    , _dataManagementPlanCreatedBy = mCreatedBy
-                    , _dataManagementPlanCreatedAt = now
-                    , _dataManagementPlanUpdatedAt = now
-                    }
-              return . Right . toDTO $ dmp
+            heCompileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids) $ \knowledgeModel ->
+              heCreatedBy (qtn ^. ownerUuid) $ \mCreatedBy -> do
+                dmpUuid <- liftIO generateUuid
+                let filledKM = createFilledKM knowledgeModel (qtn ^. replies)
+                now <- liftIO getCurrentTime
+                dmpReport <- generateReport (qtn ^. level) dmpMetrics filledKM
+                let dmp =
+                      DataManagementPlan
+                      { _dataManagementPlanUuid = dmpUuid
+                      , _dataManagementPlanQuestionnaireUuid = qtnUuid
+                      , _dataManagementPlanLevel = qtn ^. level
+                      , _dataManagementPlanFilledKnowledgeModel = filledKM
+                      , _dataManagementPlanMetrics = dmpMetrics
+                      , _dataManagementPlanLevels = dmpLevels
+                      , _dataManagementPlanReport = dmpReport
+                      , _dataManagementPlanPackage = package
+                      , _dataManagementPlanOrganization = organization
+                      , _dataManagementPlanCreatedBy = mCreatedBy
+                      , _dataManagementPlanCreatedAt = now
+                      , _dataManagementPlanUpdatedAt = now
+                      }
+                return . Right . toDTO $ dmp
   where
     heCreatedBy mOwnerUuid callback =
       case mOwnerUuid of
