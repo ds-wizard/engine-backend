@@ -11,7 +11,7 @@ license-file: LICENSE.md
 homepage: https://github.com/DataStewardshipWizard/dsw-server
 git: git@github.com:DataStewardshipWizard/dsw-server.git
 bug-reports: https://github.com/DataStewardshipWizard/dsw-common/issues
-tested-with: GHC==7.6.* GHC==7.8.*
+tested-with: GHC==8.6.*
 data-files:
   - config/app-config.cfg
   - config/build-info.cfg

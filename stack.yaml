@@ -15,7 +15,7 @@
 # resolver:
 #  name: custom-snapshot
 #  location: "./custom-snapshot.yaml"
-resolver: lts-12.0
+resolver: lts-13.12
 
 # User packages to be built.
 # Various formats can be used as shown in the example below.
@@ -49,6 +49,10 @@ extra-deps:
   - pretty-terminal-0.1.0.0
   - ginger-0.8.1.0
   - roman-numerals-0.5.1.5
+  - HaskellNet-SSL-0.3.4.1
+  - github-0.21
+  - http-api-data-0.3.10
+  - jwt-0.9.0
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

@@ -84,20 +84,21 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
     fromInteger = fromString . show
     fromString :: String -> Value
     fromString = String . T.pack
+    createPayload :: Value -> Value -> Value -> JWT.ClaimsMap
     createPayload uUuid uPermissions jwtVersion =
-      M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty
+      JWT.ClaimsMap { unClaimsMap = M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty }
 
 signToken :: String -> JWT.JWTClaimsSet -> Token
 signToken jwtSecret cs =
-  let key = JWT.secret $ T.pack jwtSecret
-  in T.unpack $ JWT.encodeSigned JWT.HS256 key cs
+  let key = JWT.hmacSecret $ T.pack jwtSecret
+  in T.unpack $ JWT.encodeSigned key cs
 
 verifyToken :: T.Text -> String -> Integer -> UTCTime -> Maybe String
 verifyToken jwtToken jwtSecret currentJwtVersion now =
   verifySignature $ \token -> verifyJwtVersion $ \() -> verifyExpiration token $ \() -> Nothing
   where
     verifySignature callback =
-      case JWT.decodeAndVerifySignature (JWT.secret (T.pack jwtSecret)) jwtToken of
+      case JWT.decodeAndVerifySignature (JWT.hmacSecret (T.pack jwtSecret)) jwtToken of
         Just token -> callback token
         Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
     verifyJwtVersion callback =
@@ -147,5 +148,5 @@ getValueFromToken :: T.Text -> T.Text -> Maybe Value
 getValueFromToken token paramName = do
   decodedToken <- JWT.decode token
   let cs = JWT.claims decodedToken
-  let payload = JWT.unregisteredClaims cs
+  let payload = JWT.unClaimsMap . JWT.unregisteredClaims $ cs
   M.lookup paramName payload
