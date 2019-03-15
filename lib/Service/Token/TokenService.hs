@@ -86,7 +86,10 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
     fromString = String . T.pack
     createPayload :: Value -> Value -> Value -> JWT.ClaimsMap
     createPayload uUuid uPermissions jwtVersion =
-      JWT.ClaimsMap { unClaimsMap = M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty }
+      JWT.ClaimsMap
+      { unClaimsMap =
+          M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty
+      }
 
 signToken :: String -> JWT.JWTClaimsSet -> Token
 signToken jwtSecret cs =

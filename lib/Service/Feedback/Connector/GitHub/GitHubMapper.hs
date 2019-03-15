@@ -2,8 +2,8 @@ module Service.Feedback.Connector.GitHub.GitHubMapper where
 
 import Data.Maybe
 import qualified Data.Text as T
-import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Definitions as GD
+import qualified GitHub.Data.Issues as GI
 
 import Model.Feedback.SimpleIssue
 
