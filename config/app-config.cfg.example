@@ -18,6 +18,7 @@ username =
 password =
 
 [Messaging]
+enabled = false
 host = rabbitmq
 port = 5672
 username = guest

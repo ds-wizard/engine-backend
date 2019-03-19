@@ -14,7 +14,7 @@ import Model.Config.AppConfig
 data AppContext = AppContext
   { _appContextConfig :: AppConfig
   , _appContextPool :: ConnectionPool
-  , _appContextMsgChannel :: Channel
+  , _appContextMsgChannel :: Maybe Channel
   , _appContextTraceUuid :: U.UUID
   , _appContextCurrentUser :: Maybe UserDTO
   }

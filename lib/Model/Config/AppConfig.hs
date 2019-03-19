@@ -26,7 +26,8 @@ data AppConfigDatabase = AppConfigDatabase
   }
 
 data AppConfigMessaging = AppConfigMessaging
-  { _appConfigMessagingHost :: String
+  { _appConfigMessagingEnabled :: Bool
+  , _appConfigMessagingHost :: String
   , _appConfigMessagingPort :: Integer
   , _appConfigMessagingUsername :: String
   , _appConfigMessagingPassword :: String
