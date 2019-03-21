@@ -19,9 +19,9 @@ import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
-import Api.Resource.Migrator.MigratorConflictDTO
-import Api.Resource.Migrator.MigratorStateCreateDTO
-import Api.Resource.Migrator.MigratorStateDTO
+import Api.Resource.Migration.MigratorConflictDTO
+import Api.Resource.Migration.MigratorStateCreateDTO
+import Api.Resource.Migration.MigratorStateDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO

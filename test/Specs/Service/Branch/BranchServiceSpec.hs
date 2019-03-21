@@ -7,8 +7,8 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Api.Resource.Migrator.MigratorConflictDTO
-import Api.Resource.Migrator.MigratorStateCreateDTO
+import Api.Resource.Migration.MigratorConflictDTO
+import Api.Resource.Migration.MigratorStateCreateDTO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Package.PackageDAO
 import qualified
@@ -22,7 +22,7 @@ import LensesConfig
 import Model.Branch.BranchState
 import Model.Migrator.MigratorState
 import Service.Branch.BranchService
-import Service.Migrator.MigratorService
+import Service.Migration.KnowledgeModel.MigratorService
 
 import Specs.Common
 

@@ -17,7 +17,7 @@ import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.Level.LevelHandler
 import Api.Handler.Metric.MetricHandler
-import Api.Handler.Migrator.MigratorHandler
+import Api.Handler.Migration.MigrationHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.PublicQuestionnaire.PublicQuestionnaireHandler

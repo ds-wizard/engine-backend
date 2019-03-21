@@ -40,7 +40,7 @@ import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Migrator.MigratorState
 import Service.Branch.BranchMapper
 import Service.Branch.BranchValidation
-import Service.Migrator.MigratorService
+import Service.Migration.KnowledgeModel.MigratorService
 import Service.Organization.OrganizationService
 import Service.Package.PackageService
 import Util.Uuid

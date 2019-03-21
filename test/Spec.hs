@@ -20,7 +20,7 @@ import Specs.API.Info.APISpec
 import Specs.API.KnowledgeModel.APISpec
 import Specs.API.Level.APISpec
 import Specs.API.Metric.APISpec
-import Specs.API.MigratorAPISpec
+import Specs.API.MigrationAPISpec
 import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
@@ -33,10 +33,10 @@ import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
-import Specs.Service.Migrator.Applicator.ApplicatorSpec
-import Specs.Service.Migrator.Applicator.ModifiersSpec
-import Specs.Service.Migrator.MigratorSpec
-import Specs.Service.Migrator.SanitizatorSpec
+import Specs.Service.Migration.KnowledgeModel.Applicator.ApplicatorSpec
+import Specs.Service.Migration.KnowledgeModel.Applicator.ModifiersSpec
+import Specs.Service.Migration.KnowledgeModel.MigrationSpec
+import Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
 import Specs.Service.Token.TokenServiceSpec
@@ -85,12 +85,13 @@ main =
              describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
              describe "KnowledgeModel" $ knowledgeModelFilterSpec
-             describe "Migrator" $ do
-               describe "Applicator" $ do
-                 applicatorSpec
-                 modifiersSpec
-               migratorSpec
-               sanitizatorSpec
+             describe "Migration" $
+               describe "KnowledgeModel" $ do
+                 describe "Applicator" $ do
+                   applicatorSpec
+                   modifiersSpec
+                 migratorSpec
+                 sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
              describe "Package" $ packageValidationSpec
              describe "Token" $ tokenServiceSpec

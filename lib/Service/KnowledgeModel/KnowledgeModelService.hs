@@ -13,7 +13,7 @@ import Model.KnowledgeModel.KnowledgeModel
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.Migrator.Applicator.Applicator
+import Service.Migration.KnowledgeModel.Applicator.Applicator
 import Service.Package.PackageService
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM (Either AppError KnowledgeModelDTO)
