@@ -47,6 +47,7 @@ library:
   - containers
   - data-default
   - directory
+  - dsw-metamodel-migrator
   - exceptions
   - filepath
   - fromhtml

@@ -41,6 +41,7 @@ packages:
 # (e.g., acme-missiles-0.3)
 extra-deps:
   - vendor/bson-generic
+  - vendor/dsw-metamodel-migrator
   - vendor/mongoDB-migration
   - fromhtml-1.0.1
   - persistent-mongoDB-2.8.0
