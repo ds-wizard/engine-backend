@@ -14,6 +14,7 @@ env:
   - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server" IMAGE="datastewardshipwizard/server" IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest"
 
 cache:
+  timeout: 600
   directories:
   - $HOME/.stack
   - $HOME/.stack-work
