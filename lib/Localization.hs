@@ -55,6 +55,8 @@ _ERROR_SERVICE_MAIL__MISSING_PLAIN mailName = "Could not load plain text templat
 
 _ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName = "Could not load HTML nor plain text template for: " ++ mailName
 
+_ERROR_SERVICE_MAIL__TRIED_SEND_EMPTY_MAIL = "Tried to send empty email (without any parts)"
+
 -- Package
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
   "The parent ('" ++
@@ -105,6 +107,10 @@ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
 _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS = "A hash query param has to be provided"
 
 _ERROR_SERVICE_USER__MISSING_USER = "You have to be log in to run."
+
+_ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT = "The activation email could not be sent. Please contact administrator."
+
+_ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT = "The recovery email could not be sent. Please contact administrator."
 
 -- --------------------------------------
 -- HTTP CLIENT
