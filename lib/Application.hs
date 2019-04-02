@@ -23,6 +23,7 @@ import Model.Config.Environment
 import Model.Context.AppContextHelpers
 import Model.Context.BaseContext
 import Service.Config.ConfigLoader
+import qualified Service.Migration.Metamodel.MigratorService as MM
 import Util.Logger
 
 applicationConfigFile = "config/app-config.cfg"
@@ -67,6 +68,7 @@ runServer =
               BaseContext
               {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
         liftIO $ runDBMigrations baseContext
+        liftIO $ runMetamodelMigrations baseContext
         liftIO $ runApplication baseContext
 
 -- --------------------------------
@@ -121,6 +123,8 @@ runDBMigrations context =
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context
     _ -> return ()
+
+runMetamodelMigrations context = runStdoutLoggingT $ runAppContextWithBaseContext MM.migrateCompleteDatabase context
 
 runApplication :: BaseContext -> IO ()
 runApplication context = do

@@ -9,6 +9,7 @@ import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
+import Constant.KnowledgeModel
 import Database.Migration.Development.Event.Data.Events
 import Database.Migration.Development.Organization.Data.Organizations
 import Database.Migration.Development.Package.Data.Packages
@@ -40,6 +41,7 @@ amsterdamBranchWithEvents =
   { _branchWithEventsUuid = amsterdamBranch ^. uuid
   , _branchWithEventsName = amsterdamBranch ^. name
   , _branchWithEventsKmId = amsterdamBranch ^. kmId
+  , _branchWithEventsMetamodelVersion = kmMetamodelVersion
   , _branchWithEventsParentPackageId = amsterdamBranch ^. parentPackageId
   , _branchWithEventsLastAppliedParentPackageId = amsterdamBranch ^. lastAppliedParentPackageId
   , _branchWithEventsLastMergeCheckpointPackageId = amsterdamBranch ^. parentPackageId -- TODO maybe change

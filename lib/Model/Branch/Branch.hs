@@ -10,6 +10,7 @@ data Branch = Branch
   { _branchUuid :: U.UUID
   , _branchName :: String
   , _branchKmId :: String
+  , _branchMetamodelVersion :: Int
   , _branchParentPackageId :: Maybe String
   , _branchLastAppliedParentPackageId :: Maybe String
   , _branchLastMergeCheckpointPackageId :: Maybe String
@@ -22,6 +23,7 @@ data BranchWithEvents = BranchWithEvents
   { _branchWithEventsUuid :: U.UUID
   , _branchWithEventsName :: String
   , _branchWithEventsKmId :: String
+  , _branchWithEventsMetamodelVersion :: Int
   , _branchWithEventsParentPackageId :: Maybe String
   , _branchWithEventsLastAppliedParentPackageId :: Maybe String
   , _branchWithEventsLastMergeCheckpointPackageId :: Maybe String

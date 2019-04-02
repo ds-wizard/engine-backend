@@ -15,7 +15,7 @@ runApplicator :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeMod
 runApplicator mKM events =
   case foldl foldEvent (Right mKM) events of
     Left error -> Left error
-    Right Nothing -> Left . MigratorError $ _ERROR_MT_APPLICATOR__UNSPECIFIED_ERROR
+    Right Nothing -> Left . MigratorError $ _ERROR_KMMT_APPLICATOR__UNSPECIFIED_ERROR
     Right (Just km) -> Right km
   where
     foldEvent :: Either AppError (Maybe KnowledgeModel) -> Event -> Either AppError (Maybe KnowledgeModel)

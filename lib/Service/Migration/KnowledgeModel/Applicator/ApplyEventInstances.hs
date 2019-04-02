@@ -67,7 +67,7 @@ applyEventToTags e path km tUuid =
 -- -------------------------
 instance ApplyEventToKM AddKnowledgeModelEvent where
   applyEventToKM _ _ (Left error) = Left error
-  applyEventToKM e _ (Right (Just _)) = Left . MigratorError $ _ERROR_MT_VALIDATION_APPLICATOR__KM_UNIQUENESS
+  applyEventToKM e _ (Right (Just _)) = Left . MigratorError $ _ERROR_KMMT_VALIDATION_APPLICATOR__KM_UNIQUENESS
   applyEventToKM e [] (Right Nothing) = Right . Just . createKM $ e
   applyEventToKM e path _ = errorPathShouldBeEmpty e path
 

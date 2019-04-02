@@ -23,6 +23,7 @@ import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.User.UserDTO
+import Constant.KnowledgeModel
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migrator.MigratorDAO
@@ -73,7 +74,7 @@ createBranchWithParams bUuid now currentUser reqDto =
   validateKmId reqDto $
   validatePackageId (reqDto ^. parentPackageId) $
   heGetOrganization $ \organization -> do
-    let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
+    let branch = fromCreateDTO reqDto bUuid kmMetamodelVersion (Just $ currentUser ^. uuid) now now
     insertBranch branch
     createDefaultEventIfParentPackageIsNotPresent branch
     return . Right $ toDTO branch BSDefault organization
@@ -129,6 +130,7 @@ modifyBranch branchUuid reqDto =
               fromChangeDTO
                 reqDto
                 (branchFromDB ^. uuid)
+                (branchFromDB ^. metamodelVersion)
                 (branchFromDB ^. parentPackageId)
                 (branchFromDB ^. lastAppliedParentPackageId)
                 (branchFromDB ^. lastMergeCheckpointPackageId)

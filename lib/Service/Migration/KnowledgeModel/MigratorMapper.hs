@@ -3,8 +3,10 @@ module Service.Migration.KnowledgeModel.MigratorMapper where
 import Control.Lens ((^.))
 
 import Api.Resource.Migration.MigratorStateDTO
+import Api.Resource.Migration.MigratorStateDetailDTO
 import LensesConfig
 import Model.Migrator.MigratorState
+import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
 
 toDTO :: MigratorState -> MigratorStateDTO
@@ -15,4 +17,18 @@ toDTO ms =
   , _migratorStateDTOBranchParentId = ms ^. branchParentId
   , _migratorStateDTOTargetPackageId = ms ^. targetPackageId
   , _migratorStateDTOCurrentKnowledgeModel = toKnowledgeModelDTO <$> ms ^. currentKnowledgeModel
+  }
+
+fromDetailDTO :: MigratorStateDetailDTO -> MigratorState
+fromDetailDTO dto =
+  MigratorState
+  { _migratorStateBranchUuid = dto ^. branchUuid
+  , _migratorStateMetamodelVersion = dto ^. metamodelVersion
+  , _migratorStateMigrationState = dto ^. migrationState
+  , _migratorStateBranchParentId = dto ^. branchParentId
+  , _migratorStateTargetPackageId = dto ^. targetPackageId
+  , _migratorStateBranchEvents = fromDTOs (dto ^. branchEvents)
+  , _migratorStateTargetPackageEvents = fromDTOs (dto ^. targetPackageEvents)
+  , _migratorStateResultEvents = fromDTOs (dto ^. resultEvents)
+  , _migratorStateCurrentKnowledgeModel = fromKnowledgeModelDTO <$> dto ^. currentKnowledgeModel
   }

@@ -85,7 +85,7 @@ main =
              describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
              describe "KnowledgeModel" $ knowledgeModelFilterSpec
-             describe "Migration" $
+             describe "Migration" $ do
                describe "KnowledgeModel" $ do
                  describe "Applicator" $ do
                    applicatorSpec

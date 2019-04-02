@@ -8,6 +8,7 @@ import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
+import Api.Resource.Branch.BranchWithEventsDTO
 import Api.Resource.Organization.OrganizationDTO
 import LensesConfig
 import Model.Branch.Branch
@@ -45,9 +46,42 @@ toDetailDTO branch state organization =
   , _branchDetailDTOUpdatedAt = branch ^. updatedAt
   }
 
+toWithEventsDTO :: BranchWithEvents -> BranchWithEventsDTO
+toWithEventsDTO branch =
+  BranchWithEventsDTO
+  { _branchWithEventsDTOUuid = branch ^. uuid
+  , _branchWithEventsDTOName = branch ^. name
+  , _branchWithEventsDTOKmId = branch ^. kmId
+  , _branchWithEventsDTOMetamodelVersion = branch ^. metamodelVersion
+  , _branchWithEventsDTOParentPackageId = branch ^. parentPackageId
+  , _branchWithEventsDTOLastAppliedParentPackageId = branch ^. lastAppliedParentPackageId
+  , _branchWithEventsDTOLastMergeCheckpointPackageId = branch ^. lastMergeCheckpointPackageId
+  , _branchWithEventsDTOEvents = toDTOs $ branch ^. events
+  , _branchWithEventsDTOOwnerUuid = branch ^. ownerUuid
+  , _branchWithEventsDTOCreatedAt = branch ^. createdAt
+  , _branchWithEventsDTOUpdatedAt = branch ^. updatedAt
+  }
+
+fromWithEventsDTO :: BranchWithEventsDTO -> BranchWithEvents
+fromWithEventsDTO dto =
+  BranchWithEvents
+  { _branchWithEventsUuid = dto ^. uuid
+  , _branchWithEventsName = dto ^. name
+  , _branchWithEventsKmId = dto ^. kmId
+  , _branchWithEventsMetamodelVersion = dto ^. metamodelVersion
+  , _branchWithEventsParentPackageId = dto ^. parentPackageId
+  , _branchWithEventsLastAppliedParentPackageId = dto ^. lastAppliedParentPackageId
+  , _branchWithEventsLastMergeCheckpointPackageId = dto ^. lastMergeCheckpointPackageId
+  , _branchWithEventsEvents = fromDTOs $ dto ^. events
+  , _branchWithEventsOwnerUuid = dto ^. ownerUuid
+  , _branchWithEventsCreatedAt = dto ^. createdAt
+  , _branchWithEventsUpdatedAt = dto ^. updatedAt
+  }
+
 fromChangeDTO ::
      BranchChangeDTO
   -> U.UUID
+  -> Int
   -> Maybe String
   -> Maybe String
   -> Maybe String
@@ -55,11 +89,12 @@ fromChangeDTO ::
   -> UTCTime
   -> UTCTime
   -> BranchWithEvents
-fromChangeDTO dto bUuid bParentPackageId bLastAppliedParentPackageId bLastMergeCheckpointPackageId mOwnerUuid bCreatedAt bUpdatedAt =
+fromChangeDTO dto bUuid bMetamodelVersion bParentPackageId bLastAppliedParentPackageId bLastMergeCheckpointPackageId mOwnerUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
   { _branchWithEventsUuid = bUuid
   , _branchWithEventsName = dto ^. name
   , _branchWithEventsKmId = dto ^. kmId
+  , _branchWithEventsMetamodelVersion = bMetamodelVersion
   , _branchWithEventsParentPackageId = bParentPackageId
   , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
   , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
@@ -69,12 +104,13 @@ fromChangeDTO dto bUuid bParentPackageId bLastAppliedParentPackageId bLastMergeC
   , _branchWithEventsUpdatedAt = bUpdatedAt
   }
 
-fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
-fromCreateDTO dto bUuid mOwnerUuid bCreatedAt bUpdatedAt =
+fromCreateDTO :: BranchCreateDTO -> U.UUID -> Int -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromCreateDTO dto bUuid bMetamodelVersion mOwnerUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
   { _branchWithEventsUuid = bUuid
   , _branchWithEventsName = dto ^. name
   , _branchWithEventsKmId = dto ^. kmId
+  , _branchWithEventsMetamodelVersion = bMetamodelVersion
   , _branchWithEventsParentPackageId = dto ^. parentPackageId
   , _branchWithEventsLastAppliedParentPackageId = dto ^. parentPackageId
   , _branchWithEventsLastMergeCheckpointPackageId = dto ^. parentPackageId

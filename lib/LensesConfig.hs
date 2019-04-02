@@ -8,6 +8,7 @@ import Api.Resource.Branch.BranchChangeDTO
 import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
+import Api.Resource.Branch.BranchWithEventsDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -22,6 +23,7 @@ import Api.Resource.Level.LevelDTO
 import Api.Resource.Migration.MigratorConflictDTO
 import Api.Resource.Migration.MigratorStateCreateDTO
 import Api.Resource.Migration.MigratorStateDTO
+import Api.Resource.Migration.MigratorStateDetailDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
@@ -255,6 +257,8 @@ makeFields ''MigratorConflictDTO
 
 makeFields ''MigratorStateCreateDTO
 
+makeFields ''MigratorStateDetailDTO
+
 makeFields ''MigratorStateDTO
 
 -- Model / Organization
@@ -307,6 +311,8 @@ makeFields ''BranchCreateDTO
 makeFields ''BranchDTO
 
 makeFields ''BranchDetailDTO
+
+makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO

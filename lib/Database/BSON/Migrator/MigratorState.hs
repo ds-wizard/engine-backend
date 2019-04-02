@@ -40,6 +40,7 @@ instance FromBSON MigrationState where
 instance ToBSON MigratorState where
   toBSON ms =
     [ "branchUuid" BSON.=: serializeUUID (ms ^. branchUuid)
+    , "metamodelVersion" BSON.=: (ms ^. metamodelVersion)
     , "migrationState" BSON.=: (ms ^. migrationState)
     , "branchParentId" BSON.=: (ms ^. branchParentId)
     , "targetPackageId" BSON.=: (ms ^. targetPackageId)
@@ -52,6 +53,7 @@ instance ToBSON MigratorState where
 instance FromBSON MigratorState where
   fromBSON doc = do
     msBranchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
+    msMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     msMigrationState <- BSON.lookup "migrationState" doc
     msBranchParentId <- BSON.lookup "branchParentId" doc
     msTargetPackageId <- BSON.lookup "targetPackageId" doc
@@ -64,6 +66,7 @@ instance FromBSON MigratorState where
     return
       MigratorState
       { _migratorStateBranchUuid = msBranchUuid
+      , _migratorStateMetamodelVersion = msMetamodelVersion
       , _migratorStateMigrationState = msMigrationState
       , _migratorStateBranchParentId = msBranchParentId
       , _migratorStateTargetPackageId = msTargetPackageId

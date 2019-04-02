@@ -15,6 +15,7 @@ instance ToBSON BranchWithEvents where
     [ "uuid" BSON.=: serializeUUID (branch ^. uuid)
     , "name" BSON.=: (branch ^. name)
     , "kmId" BSON.=: (branch ^. kmId)
+    , "metamodelVersion" BSON.=: (branch ^. metamodelVersion)
     , "parentPackageId" BSON.=: (branch ^. parentPackageId)
     , "lastAppliedParentPackageId" BSON.=: (branch ^. lastAppliedParentPackageId)
     , "lastMergeCheckpointPackageId" BSON.=: (branch ^. lastMergeCheckpointPackageId)
@@ -29,6 +30,7 @@ instance FromBSON BranchWithEvents where
     bUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
     bName <- BSON.lookup "name" doc
     bKmId <- BSON.lookup "kmId" doc
+    bMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     bParentPackageId <- BSON.lookup "parentPackageId" doc
     bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
     bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
@@ -42,6 +44,7 @@ instance FromBSON BranchWithEvents where
       { _branchWithEventsUuid = bUuid
       , _branchWithEventsName = bName
       , _branchWithEventsKmId = bKmId
+      , _branchWithEventsMetamodelVersion = bMetamodelVersion
       , _branchWithEventsParentPackageId = bParentPackageId
       , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
       , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId

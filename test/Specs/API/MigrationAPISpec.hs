@@ -207,7 +207,7 @@ migratorAPI appContext = do
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_MT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
+          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -342,7 +342,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_MT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
+          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited =
                 reqDto & originalEventUuid .~ (fromJust . U.fromString $ "30ac5193-5685-41b1-86d7-ab0b356c516a")
@@ -367,7 +367,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_MT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
+          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited = reqDto & event .~ Nothing
           let reqBodyEdited = encode reqDtoEdited
@@ -391,7 +391,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
+          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext

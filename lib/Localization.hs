@@ -55,6 +55,12 @@ _ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName = "Could not load HTML nor plai
 
 _ERROR_SERVICE_MAIL__TRIED_SEND_EMPTY_MAIL = "Tried to send empty email (without any parts)"
 
+-- Migration / Metamodel
+_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "Failed to migrate '" ++ collection ++ "'"
+
+_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
+  "Failed to convert entity ('" ++ entityName ++ "') to BSON"
+
 -- Package
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
   "The parent ('" ++
@@ -117,61 +123,75 @@ _ERROR_HTTP_CLIENT__REQUEST_FAILED serviceName endpoint =
   "Request to external API failed (service: '" ++ serviceName ++ "', endpoint: '" ++ endpoint ++ "')"
 
 -- --------------------------------------
--- MIGRATION TOOL
+-- UTIL
+-- --------------------------------------
+-- JSON
+_ERROR_UTIL_JSON__VALUE_IS_NOT_OBJECT = "Provided value is not an object"
+
+_ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT fieldName = "Missing '" ++ fieldName ++ "' key in provided object"
+
+_ERROR_UTIL_JSON__BAD_FIELD_TYPE fieldName fieldType =
+  "Type of '" ++ fieldName ++ "' in provided object is not '" ++ fieldType ++ "'"
+
+_ERROR_UTIL_JSON__CANT_DESERIALIZE_FIELD fieldName error =
+  "Problem with deserialization of a field '" ++ fieldName ++ "' (error: " ++ error ++ ")"
+
+-- --------------------------------------
+-- KNOWLEDGE MODEL MIGRATION TOOL
 -- --------------------------------------
 -- --------------
 -- 1. Applicator
 -- --------------
-_ERROR_MT_APPLICATOR__UNSPECIFIED_ERROR = "Unspecified problem in building Knowledge Model happened"
+_ERROR_KMMT_APPLICATOR__UNSPECIFIED_ERROR = "Unspecified problem in building Knowledge Model happened"
 
-_ERROR_MT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model first"
+_ERROR_KMMT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model first"
 
-_ERROR_MT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
+_ERROR_KMMT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
   "Failed Event (" ++ (U.toString eUuid) ++ "): You can't apply " ++ eventName ++ " to " ++ entityName
 
-_ERROR_MT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
+_ERROR_KMMT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
   "Failed Event (" ++ (U.toString eUuid) ++ "): Try to edit non-existing thing."
 
-_ERROR_MT_APPLICATOR__EMPTY_PATH eUuid =
+_ERROR_KMMT_APPLICATOR__EMPTY_PATH eUuid =
   "Failed Event (" ++ (U.toString eUuid) ++ "): Applicator ends with empty path but the event wasn't applied yet."
 
-_ERROR_MT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
+_ERROR_KMMT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
   "Failed Event (" ++
   (U.toString eUuid) ++
   "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showEventPathShort path) ++ ")"
 
-_ERROR_MT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
+_ERROR_KMMT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
   "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showEventPathShort path) ++ ")"
 
 -- Uniqueness
-_ERROR_MT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"
+_ERROR_KMMT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"
 
 -- ------------
 -- 2. Migrator
 -- ------------
-_ERROR_MT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER = "Target Package is not higher than the current one"
+_ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER = "Target Package is not higher than the current one"
 
-_ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a merge checkpoint"
+_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a merge checkpoint"
 
-_ERROR_MT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG =
+_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG =
   "Branch has to have a checkpoint being the last parent package that was merged into"
 
-_ERROR_MT_MIGRATOR__NO_CONFLICTS_TO_SOLVE =
+_ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE =
   "You can't solve conflicts because Migration state isn't in a conflict state"
 
-_ERROR_MT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE = "No events in target package event queue"
+_ERROR_KMMT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE = "No events in target package event queue"
 
-_ERROR_MT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT = "Edit migration action has to provide a target event"
+_ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT = "Edit migration action has to provide a target event"
 
-_ERROR_MT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT =
+_ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT =
   "OriginalEventUuid doesn't match with the current target event"
 
 -- Absence
-_ERROR_MT_VALIDATION_MIGRATOR__SOURCE_BRANCH_ABSENCE = "Source branch does not exist"
+_ERROR_KMMT_VALIDATION_MIGRATOR__SOURCE_BRANCH_ABSENCE = "Source branch does not exist"
 
-_ERROR_MT_VALIDATION_MIGRATOR__BRANCH_PARENT_ABSENCE = "Branch has to have a parent"
+_ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PARENT_ABSENCE = "Branch has to have a parent"
 
-_ERROR_MT_VALIDATION_MIGRATOR__TARGET_PARENT_PKG_ABSENCE = "Target parent package doesn’t exist"
+_ERROR_KMMT_VALIDATION_MIGRATOR__TARGET_PARENT_PKG_ABSENCE = "Target parent package doesn’t exist"
 
 -- Uniqueness
-_ERROR_MT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS = "Migration is already created"
+_ERROR_KMMT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS = "Migration is already created"
