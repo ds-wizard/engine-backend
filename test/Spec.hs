@@ -24,6 +24,7 @@ import Specs.API.MigrationAPISpec
 import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
+import Specs.API.Template.APISpec
 import Specs.API.Token.APISpec
 import Specs.API.UserAPISpec
 import Specs.API.Version.APISpec
@@ -112,6 +113,7 @@ main =
              organizationAPI baseContext
              packageAPI baseContext
              questionnaireAPI baseContext
+             templateAPI baseContext
              tokenAPI baseContext
              userAPI baseContext
              versionAPI baseContext

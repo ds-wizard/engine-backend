@@ -34,9 +34,20 @@ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already 
 -- Absence
 _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 
+_ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
+-- Document
+_ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
+
+_ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT = "Unprocessable DMP format"
+
+-- File
+_ERROR_SERVICE_FILE__CANT_READ_JSON filename =
+  "Server was unable to decode a file ('" ++ filename ++ "') to a JSON object"
+
 -- Knowledge Model Bundle
 _ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE = "Knowledge Model Bundle doesn't contain main package"
 
@@ -77,11 +88,9 @@ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn'
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
 
 -- Template
-_ERROR_SERVICE_TEMPLATE__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
-
-_ERROR_SERVICE_TEMPLATE__UKNOWN_FORMAT = "Unprocessable DMP format"
-
 _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
+
+_ERROR_SERVICE_TEMPLATE__NO_TEMPLATES_IN_SYSTEM = "There are no specified templates in the system."
 
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD = "Incorrect email or password"

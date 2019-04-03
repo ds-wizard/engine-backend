@@ -1,0 +1,5 @@
+{
+  "uuid": "43a3fdd1-8535-42e0-81a7-5edbff296e65",
+  "name": "Common DSW Template",
+  "rootFile": "root.html.j2"
+}

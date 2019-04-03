@@ -35,6 +35,7 @@ import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Report.ReportDTO
+import Api.Resource.Template.TemplateDTO
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Api.Resource.User.UserChangeDTO
@@ -490,6 +491,9 @@ makeFields ''MetricSummaryDTO
 makeFields ''ChapterReportDTO
 
 makeFields ''ReportDTO
+
+-- Api / Resource / Template
+makeFields ''TemplateDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO

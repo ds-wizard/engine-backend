@@ -69,3 +69,18 @@ foldMaybesInContext = Prelude.foldl foldOne (return . Right $ [])
                 Nothing -> return . Right $ list
             Left error -> return . Left $ error
         Left error -> return . Left $ error
+
+-- Take first error which appears
+foldEithersInContext :: [AppContextM (Either AppError a)] -> AppContextM (Either AppError [a])
+foldEithersInContext = Prelude.foldl foldOne (return . Right $ [])
+  where
+    foldOne :: AppContextM (Either AppError [a]) -> AppContextM (Either AppError a) -> AppContextM (Either AppError [a])
+    foldOne eitherListIO eitherEntityIO = do
+      eitherList <- eitherListIO
+      eitherEntityIO <- eitherEntityIO
+      case eitherList of
+        Right list ->
+          case eitherEntityIO of
+            Right entity -> return . Right $ list ++ [entity]
+            Left error -> return . Left $ error
+        Left error -> return . Left $ error

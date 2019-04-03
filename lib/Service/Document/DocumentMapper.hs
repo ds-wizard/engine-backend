@@ -1,4 +1,4 @@
-module Service.Template.TemplateMapper where
+module Service.Document.DocumentMapper where
 
 import qualified Text.FromHTML as FromHTML
 
@@ -28,4 +28,4 @@ formatToToHTMLType _ = Nothing
 heFormatToToHTMLType format callback =
   case formatToToHTMLType format of
     Just toHTMLType -> callback toHTMLType
-    Nothing -> return $ Left . GeneralServerError $ _ERROR_SERVICE_TEMPLATE__UKNOWN_FORMAT
+    Nothing -> return $ Left . GeneralServerError $ _ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT

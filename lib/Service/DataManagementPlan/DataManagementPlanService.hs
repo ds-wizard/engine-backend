@@ -24,6 +24,7 @@ import Model.Questionnaire.QuestionnaireReply
 import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
 import Service.DataManagementPlan.ReplyApplicator
+import Service.Document.DocumentService
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Report.ReportGenerator
 import Service.Template.TemplateService
@@ -69,14 +70,14 @@ createDataManagementPlan qtnUuid =
         Just ownerUuid -> heFindUserById (U.toString ownerUuid) $ \createdBy -> callback . Just $ createdBy
         Nothing -> callback Nothing
 
-exportDataManagementPlan :: String -> DataManagementPlanFormat -> AppContextM (Either AppError BS.ByteString)
-exportDataManagementPlan qtnUuid format = do
+exportDataManagementPlan ::
+     String -> Maybe String -> DataManagementPlanFormat -> AppContextM (Either AppError BS.ByteString)
+exportDataManagementPlan qtnUuid mTemplateUuid format = do
   heCreateDataManagementPlan qtnUuid $ \dmp ->
     case format of
       JSON -> return . Right . encode $ dmp
-      otherFormat -> do
-        result <- generateTemplateInFormat otherFormat dmp
-        return result
+      otherFormat ->
+        heGetTemplateByUuidOrFirst mTemplateUuid $ \template -> generateDocumentInFormat otherFormat template dmp
 
 -- --------------------------------
 -- HELPERS

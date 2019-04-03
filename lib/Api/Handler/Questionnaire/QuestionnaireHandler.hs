@@ -67,6 +67,7 @@ getQuestionnaireDmpA :: Endpoint
 getQuestionnaireDmpA = do
   qtnUuid <- param "qtnUuid"
   mFormatS <- getQueryParam "format"
+  mTemplateUuid <- getQueryParam "templateUuid"
   case mFormatS of
     Nothing -> do
       eitherDto <- runInUnauthService $ createDataManagementPlan qtnUuid
@@ -74,7 +75,7 @@ getQuestionnaireDmpA = do
         Right dto -> json dto
         Left error -> sendError error
     Just "html-preview" -> do
-      eitherHTMLto <- runInUnauthService $ exportDataManagementPlan qtnUuid HTML
+      eitherHTMLto <- runInUnauthService $ exportDataManagementPlan qtnUuid (T.unpack <$> mTemplateUuid) HTML
       case eitherHTMLto of
         Right html -> do
           addHeader "Content-Type" (LT.pack "text/html; charset=utf-8")
@@ -82,7 +83,7 @@ getQuestionnaireDmpA = do
         Left error -> sendError error
     Just formatS ->
       heGetFormat formatS $ \format -> do
-        eitherBody <- runInUnauthService $ exportDataManagementPlan qtnUuid format
+        eitherBody <- runInUnauthService $ exportDataManagementPlan qtnUuid (T.unpack <$> mTemplateUuid) format
         case eitherBody of
           Right body -> sendFile (getFilename qtnUuid format) body
           Left error -> sendError error
