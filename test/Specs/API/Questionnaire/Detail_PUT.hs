@@ -50,7 +50,12 @@ reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a"
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
-  QuestionnaireChangeDTO {_questionnaireChangeDTOLevel = 3, _questionnaireChangeDTOReplies = toReplyDTO <$> [fQ1, fQ2]}
+  QuestionnaireChangeDTO
+  { _questionnaireChangeDTOName = questionnaire1Edited ^. name
+  , _questionnaireChangeDTOPrivate = questionnaire1Edited ^. private
+  , _questionnaireChangeDTOLevel = questionnaire1Edited ^. level
+  , _questionnaireChangeDTOReplies = toReplyDTO <$> (questionnaire1Edited ^. replies)
+  }
 
 reqBody = encode reqDto
 
@@ -85,6 +90,8 @@ test_200 appContext =
     liftIO $ (isRight eitherQtnFromDb) `shouldBe` True
     let (Right qtnFromDb) = eitherQtnFromDb
     -- AND: Compare state in DB with expectation
+    liftIO $ (qtnFromDb ^. name) `shouldBe` (reqDto ^. name)
+    liftIO $ (qtnFromDb ^. private) `shouldBe` (reqDto ^. private)
     liftIO $ (qtnFromDb ^. level) `shouldBe` (reqDto ^. level)
     liftIO $ (toReplyDTO <$> (qtnFromDb ^. replies)) `shouldBe` (reqDto ^. replies)
 

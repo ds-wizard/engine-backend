@@ -18,6 +18,7 @@ username =
 password =
 
 [Messaging]
+enabled = true
 host = localhost
 port = 5672
 username = guest

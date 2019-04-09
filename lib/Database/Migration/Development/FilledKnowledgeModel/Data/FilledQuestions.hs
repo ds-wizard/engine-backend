@@ -14,6 +14,7 @@ fQuestion1 :: FilledValueQuestion
 fQuestion1 =
   FilledValueQuestion
   { _filledValueQuestionUuid = question1 ^. uuid
+  , _filledValueQuestionHumanIdentifier = "1"
   , _filledValueQuestionTitle = question1 ^. title
   , _filledValueQuestionText = question1 ^. text
   , _filledValueQuestionRequiredLevel = question1 ^. requiredLevel
@@ -31,6 +32,7 @@ fQuestion2 :: FilledOptionsQuestion
 fQuestion2 =
   FilledOptionsQuestion
   { _filledOptionsQuestionUuid = question2 ^. uuid
+  , _filledOptionsQuestionHumanIdentifier = "2"
   , _filledOptionsQuestionTitle = question2 ^. title
   , _filledOptionsQuestionText = question2 ^. text
   , _filledOptionsQuestionRequiredLevel = question2 ^. requiredLevel
@@ -48,6 +50,7 @@ fQuestion3 :: FilledOptionsQuestion
 fQuestion3 =
   FilledOptionsQuestion
   { _filledOptionsQuestionUuid = question3 ^. uuid
+  , _filledOptionsQuestionHumanIdentifier = "1"
   , _filledOptionsQuestionTitle = question3 ^. title
   , _filledOptionsQuestionText = question3 ^. text
   , _filledOptionsQuestionRequiredLevel = question3 ^. requiredLevel
@@ -65,6 +68,7 @@ fQuestion4 :: FilledListQuestion
 fQuestion4 =
   FilledListQuestion
   { _filledListQuestionUuid = question4 ^. uuid
+  , _filledListQuestionHumanIdentifier = "2"
   , _filledListQuestionTitle = question4 ^. title
   , _filledListQuestionText = question4 ^. text
   , _filledListQuestionRequiredLevel = question4 ^. requiredLevel

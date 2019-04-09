@@ -15,6 +15,7 @@ data FilledKnowledgeModel = FilledKnowledgeModel
 -- ------------------------------------------------
 data FilledChapter = FilledChapter
   { _filledChapterUuid :: U.UUID
+  , _filledChapterHumanIdentifier :: String
   , _filledChapterTitle :: String
   , _filledChapterText :: String
   , _filledChapterQuestions :: [FilledQuestion]
@@ -29,6 +30,7 @@ data FilledQuestion
 
 data FilledOptionsQuestion = FilledOptionsQuestion
   { _filledOptionsQuestionUuid :: U.UUID
+  , _filledOptionsQuestionHumanIdentifier :: String
   , _filledOptionsQuestionTitle :: String
   , _filledOptionsQuestionText :: Maybe String
   , _filledOptionsQuestionRequiredLevel :: Maybe Int
@@ -41,6 +43,7 @@ data FilledOptionsQuestion = FilledOptionsQuestion
 
 data FilledListQuestion = FilledListQuestion
   { _filledListQuestionUuid :: U.UUID
+  , _filledListQuestionHumanIdentifier :: String
   , _filledListQuestionTitle :: String
   , _filledListQuestionText :: Maybe String
   , _filledListQuestionRequiredLevel :: Maybe Int
@@ -54,6 +57,7 @@ data FilledListQuestion = FilledListQuestion
 
 data FilledValueQuestion = FilledValueQuestion
   { _filledValueQuestionUuid :: U.UUID
+  , _filledValueQuestionHumanIdentifier :: String
   , _filledValueQuestionTitle :: String
   , _filledValueQuestionText :: Maybe String
   , _filledValueQuestionRequiredLevel :: Maybe Int
@@ -67,6 +71,7 @@ data FilledValueQuestion = FilledValueQuestion
 -- ------------------------------------------------
 data FilledAnswer = FilledAnswer
   { _filledAnswerUuid :: U.UUID
+  , _filledAnswerHumanIdentifier :: String
   , _filledAnswerLabel :: String
   , _filledAnswerAdvice :: Maybe String
   , _filledAnswerFollowUps :: [FilledQuestion]
@@ -76,6 +81,7 @@ data FilledAnswer = FilledAnswer
 -- ------------------------------------------------
 data FilledAnswerItem = FilledAnswerItem
   { _filledAnswerItemTitle :: String
+  , _filledAnswerItemHumanIdentifier :: String
   , _filledAnswerItemValue :: Maybe String
   , _filledAnswerItemQuestions :: [FilledQuestion]
   } deriving (Show, Eq, Generic)

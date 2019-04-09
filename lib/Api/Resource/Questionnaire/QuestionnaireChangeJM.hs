@@ -8,6 +8,8 @@ import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 
 instance FromJSON QuestionnaireChangeDTO where
   parseJSON (Object o) = do
+    _questionnaireChangeDTOName <- o .: "name"
+    _questionnaireChangeDTOPrivate <- o .: "private"
     _questionnaireChangeDTOLevel <- o .: "level"
     _questionnaireChangeDTOReplies <- o .: "replies"
     return QuestionnaireChangeDTO {..}
@@ -15,4 +17,9 @@ instance FromJSON QuestionnaireChangeDTO where
 
 instance ToJSON QuestionnaireChangeDTO where
   toJSON QuestionnaireChangeDTO {..} =
-    object ["level" .= _questionnaireChangeDTOLevel, "replies" .= _questionnaireChangeDTOReplies]
+    object
+      [ "name" .= _questionnaireChangeDTOName
+      , "private" .= _questionnaireChangeDTOPrivate
+      , "level" .= _questionnaireChangeDTOLevel
+      , "replies" .= _questionnaireChangeDTOReplies
+      ]

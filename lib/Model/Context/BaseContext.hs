@@ -12,7 +12,7 @@ import Model.Config.AppConfig
 data BaseContext = BaseContext
   { _baseContextConfig :: AppConfig
   , _baseContextPool :: ConnectionPool
-  , _baseContextMsgChannel :: Channel
+  , _baseContextMsgChannel :: Maybe Channel
   }
 
 newtype BaseContextM a = BaseContextM

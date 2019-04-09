@@ -64,15 +64,18 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
     insertUser user
     heCreateActionKey uUuid RegistrationActionKey $ \actionKey -> do
       publishToUserCreatedTopic user
-      sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash)
-      sendAnalyticsEmailIfEnabled user
-      return . Right $ toDTO user
+      emailResult <- sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash)
+      case emailResult of
+        Left errMessage -> return . Left $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT
+        _ -> do
+          sendAnalyticsEmailIfEnabled user
+          return . Right $ toDTO user
   where
     sendAnalyticsEmailIfEnabled user = do
       dswConfig <- asks _appContextConfig
       if dswConfig ^. analytics . enabled
         then sendRegistrationCreatedAnalyticsMail (toDTO user)
-        else return ()
+        else return $ Right ()
 
 getUserById :: String -> AppContextM (Either AppError UserDTO)
 getUserById userUuid = heFindUserById userUuid $ \user -> return . Right $ toDTO user
@@ -136,8 +139,10 @@ resetUserPassword :: ActionKeyDTO -> AppContextM (Maybe AppError)
 resetUserPassword reqDto =
   hmFindUserByEmail (reqDto ^. email) $ \user ->
     hmCreateActionKey (user ^. uuid) ForgottenPasswordActionKey $ \actionKey -> do
-      sendResetPasswordMail (toDTO user) (actionKey ^. hash)
-      return Nothing
+      emailResult <- sendResetPasswordMail (toDTO user) (actionKey ^. hash)
+      case emailResult of
+        Left errMessage -> return . Just $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT
+        _ -> return Nothing
 
 createForgottenUserPassword :: String -> UserPasswordDTO -> AppContextM (Maybe AppError)
 createForgottenUserPassword userUuid userPasswordDto =

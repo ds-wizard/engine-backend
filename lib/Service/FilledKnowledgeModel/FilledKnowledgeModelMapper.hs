@@ -20,6 +20,7 @@ toFilledChapterDTO :: FilledChapter -> FilledChapterDTO
 toFilledChapterDTO fCh =
   FilledChapterDTO
   { _filledChapterDTOUuid = fCh ^. uuid
+  , _filledChapterDTOHumanIdentifier = fCh ^. humanIdentifier
   , _filledChapterDTOTitle = fCh ^. title
   , _filledChapterDTOText = fCh ^. text
   , _filledChapterDTOQuestions = toFilledQuestionDTO <$> fCh ^. questions
@@ -30,6 +31,7 @@ toFilledQuestionDTO (FilledOptionsQuestion' fQ) =
   FilledOptionsQuestionDTO'
     FilledOptionsQuestionDTO
     { _filledOptionsQuestionDTOUuid = fQ ^. uuid
+    , _filledOptionsQuestionDTOHumanIdentifier = fQ ^. humanIdentifier
     , _filledOptionsQuestionDTOTitle = fQ ^. title
     , _filledOptionsQuestionDTOText = fQ ^. text
     , _filledOptionsQuestionDTORequiredLevel = fQ ^. requiredLevel
@@ -43,6 +45,7 @@ toFilledQuestionDTO (FilledListQuestion' fQ) =
   FilledListQuestionDTO'
     FilledListQuestionDTO
     { _filledListQuestionDTOUuid = fQ ^. uuid
+    , _filledListQuestionDTOHumanIdentifier = fQ ^. humanIdentifier
     , _filledListQuestionDTOTitle = fQ ^. title
     , _filledListQuestionDTOText = fQ ^. text
     , _filledListQuestionDTORequiredLevel = fQ ^. requiredLevel
@@ -57,6 +60,7 @@ toFilledQuestionDTO (FilledValueQuestion' fQ) =
   FilledValueQuestionDTO'
     FilledValueQuestionDTO
     { _filledValueQuestionDTOUuid = fQ ^. uuid
+    , _filledValueQuestionDTOHumanIdentifier = fQ ^. humanIdentifier
     , _filledValueQuestionDTOTitle = fQ ^. title
     , _filledValueQuestionDTOText = fQ ^. text
     , _filledValueQuestionDTORequiredLevel = fQ ^. requiredLevel
@@ -71,6 +75,7 @@ toFilledAnswerDTO :: FilledAnswer -> FilledAnswerDTO
 toFilledAnswerDTO fAns =
   FilledAnswerDTO
   { _filledAnswerDTOUuid = fAns ^. uuid
+  , _filledAnswerDTOHumanIdentifier = fAns ^. humanIdentifier
   , _filledAnswerDTOLabel = fAns ^. label
   , _filledAnswerDTOAdvice = fAns ^. advice
   , _filledAnswerDTOFollowUps = toFilledQuestionDTO <$> fAns ^. followUps
@@ -80,7 +85,8 @@ toFilledAnswerDTO fAns =
 toFilledAnswerItemDTO :: FilledAnswerItem -> FilledAnswerItemDTO
 toFilledAnswerItemDTO fAi =
   FilledAnswerItemDTO
-  { _filledAnswerItemDTOTitle = fAi ^. title
+  { _filledAnswerItemDTOHumanIdentifier = fAi ^. title
+  , _filledAnswerItemDTOTitle = fAi ^. humanIdentifier
   , _filledAnswerItemDTOValue = fAi ^. value
   , _filledAnswerItemDTOQuestions = toFilledQuestionDTO <$> fAi ^. questions
   }

@@ -1,4 +1,6 @@
-module Application where
+module Application
+  ( runServer
+  ) where
 
 import Control.Lens ((^.))
 import Control.Monad.Catch
@@ -58,24 +60,8 @@ runServer =
       Right dswConfig -> do
         logInfo $ msg _CMP_CONFIG "loaded"
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
-        logInfo $ msg _CMP_DATABASE "connecting to the database"
-        dbPool <-
-          liftIO $
-          withRetry
-            retryBackoff
-            _CMP_DATABASE
-            "failed to connect to the database"
-            (createDatabaseConnectionPool dswConfig)
-        logInfo $ msg _CMP_DATABASE "connected"
-        logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
-        msgChannel <-
-          liftIO $
-          withRetry
-            retryBackoff
-            _CMP_MESSAGING
-            "failed to connect to the message broker"
-            (createMessagingChannel dswConfig)
-        logInfo $ msg _CMP_MESSAGING "connected"
+        dbPool <- connectDB dswConfig
+        msgChannel <- connectMQ dswConfig
         let serverPort = dswConfig ^. webConfig ^. port
         let baseContext =
               BaseContext
@@ -83,6 +69,9 @@ runServer =
         liftIO $ runDBMigrations baseContext
         liftIO $ runApplication baseContext
 
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
 withRetry :: RetryPolicyM IO -> String -> String -> IO a -> IO a
 withRetry backoff _CMP description action = recovering backoff handlers wrappedAction
   where
@@ -100,6 +89,31 @@ withRetry backoff _CMP description action = recovering backoff handlers wrappedA
           runStdoutLoggingT $ logWarn $ msg _CMP (description ++ " - " ++ retryInfo)
         else runStdoutLoggingT $ logError $ msg _CMP description
       return True
+
+connectDB dswConfig = do
+  logInfo $ msg _CMP_DATABASE "connecting to the database"
+  dbPool <-
+    liftIO $
+    withRetry retryBackoff _CMP_DATABASE "failed to connect to the database" (createDatabaseConnectionPool dswConfig)
+  logInfo $ msg _CMP_DATABASE "connected"
+  return dbPool
+
+connectMQ dswConfig =
+  if (dswConfig ^. messagingConfig ^. enabled)
+    then do
+      logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
+      msgChannel <-
+        liftIO $
+        withRetry
+          retryBackoff
+          _CMP_MESSAGING
+          "failed to connect to the message broker"
+          (createMessagingChannel dswConfig)
+      logInfo $ msg _CMP_MESSAGING "connected"
+      return msgChannel
+    else do
+      logInfo $ msg _CMP_MESSAGING "not enabled - skipping"
+      return Nothing
 
 runDBMigrations context =
   case context ^. config . environment . env of

@@ -1,5 +1,5 @@
 name: dsw-server
-version: '1.4.0'
+version: '1.5.0'
 synopsis: DSW Server
 description: DSW Server
 category: Web
@@ -11,7 +11,7 @@ license-file: LICENSE.md
 homepage: https://github.com/DataStewardshipWizard/dsw-server
 git: git@github.com:DataStewardshipWizard/dsw-server.git
 bug-reports: https://github.com/DataStewardshipWizard/dsw-common/issues
-tested-with: GHC==7.6.* GHC==7.8.*
+tested-with: GHC==8.6.*
 data-files:
   - config/app-config.cfg
   - config/build-info.cfg
@@ -32,9 +32,9 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -fwarn-unused-imports
+      ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -47,6 +47,7 @@ library:
   - containers
   - data-default
   - directory
+  - dsw-metamodel-migrator
   - exceptions
   - filepath
   - fromhtml
@@ -77,6 +78,7 @@ library:
   - random
   - regex-compat
   - retry
+  - roman-numerals
   - scotty
   - smtp-mail
   - text
@@ -115,9 +117,9 @@ executables:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports
+        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - dsw-server
@@ -128,9 +130,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports
+        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson
@@ -158,6 +160,7 @@ tests:
     - pwstore-fast
     - random
     - regex-compat
+    - roman-numerals
     - scotty
     - text
     - time

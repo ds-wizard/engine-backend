@@ -11,7 +11,7 @@ import qualified Data.Aeson as Aeson
 import Data.Aeson.Types (emptyObject)
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
-import Data.Either (rights)
+import Data.Either (fromRight, rights)
 import Data.HashMap.Strict (HashMap, fromList)
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
@@ -36,7 +36,7 @@ import Model.Context.AppContext
 import Util.Logger
 import Util.Template (loadAndRender)
 
-sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM ()
+sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM (Either String ())
 sendRegistrationConfirmationMail user hash = do
   dswConfig <- asks _appContextConfig
   let clientAddress = dswConfig ^. clientConfig . address
@@ -46,9 +46,9 @@ sendRegistrationConfirmationMail user hash = do
       additionals = [("activationLink", (Aeson.String $ T.pack activationLink))]
       context = makeMailContext mailName clientAddress user additionals
   parts <- loadMailTemplateParts _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
-  sendEmail [user ^. email] subject parts
+  sendEmail [user ^. email] subject (fromRight [] parts)
 
-sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
+sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM (Either String ())
 sendRegistrationCreatedAnalyticsMail user = do
   dswConfig <- asks _appContextConfig
   let clientAddress = dswConfig ^. clientConfig . address
@@ -57,9 +57,9 @@ sendRegistrationCreatedAnalyticsMail user = do
       subject = TL.pack $ mailName ++ ": New user"
       context = makeMailContext mailName clientAddress user []
   parts <- loadMailTemplateParts _MAIL_REGISTRATION_CREATED_ANALYTICS context
-  sendEmail [analyticsAddress] subject parts
+  sendEmail [analyticsAddress] subject (fromRight [] parts)
 
-sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
+sendResetPasswordMail :: UserDTO -> String -> AppContextM (Either String ())
 sendResetPasswordMail user hash = do
   dswConfig <- asks _appContextConfig
   let clientAddress = dswConfig ^. clientConfig . address
@@ -69,7 +69,7 @@ sendResetPasswordMail user hash = do
       additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
       context = makeMailContext mailName clientAddress user additionals
   parts <- loadMailTemplateParts _MAIL_RESET_PASSWORD context
-  sendEmail [user ^. email] subject parts
+  sendEmail [user ^. email] subject (fromRight [] parts)
 
 -- --------------------------------
 -- PRIVATE
@@ -95,7 +95,7 @@ makeMailContext mailName clientAddress user others =
   ] ++
   others
 
-loadMailTemplateParts :: String -> MailContext -> AppContextM [MIME.Part]
+loadMailTemplateParts :: String -> MailContext -> AppContextM (Either String [MIME.Part])
 loadMailTemplateParts mailName context = do
   let root = _MAIL_TEMPLATE_ROOT ++ mailName ++ "/"
       commonRoot = _MAIL_TEMPLATE_ROOT ++ _MAIL_TEMPLATE_COMMON_FOLDER ++ "/"
@@ -111,15 +111,15 @@ loadMailTemplateParts mailName context = do
     then do
       templateFileParts <- loadFileParts $ root ++ _MAIL_TEMPLATE_ATTACHMENTS_FOLDER
       globalFileParts <- loadFileParts $ commonRoot ++ _MAIL_TEMPLATE_ATTACHMENTS_FOLDER
-      return $ mainParts ++ templateFileParts ++ globalFileParts
-    else return []
+      return . Right $ mainParts ++ fromRight [] templateFileParts ++ fromRight [] globalFileParts
+    else return . Left $ _ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName
 
-loadFileParts :: String -> AppContextM [MIME.Part]
+loadFileParts :: String -> AppContextM (Either String [MIME.Part])
 loadFileParts root =
-  liftIO $ handle (\(_ :: SomeException) -> return []) $ do
+  liftIO $ handle (\(e :: SomeException) -> return . Left . show $ e) $ do
     files <- listDirectory root
     fileParts <- mapM loadFilePart $ map (\fn -> root ++ "/" ++ fn) files
-    return $ rights fileParts
+    return . Right $ rights fileParts
 
 loadFilePart :: String -> IO (Either String MIME.Part)
 loadFilePart filename =
@@ -137,8 +137,8 @@ makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settin
   where
     settings = SMTPSSL.defaultSettingsSMTPSSL {SMTPSSL.sslPort = fromIntegral port}
 
-sendEmail :: [String] -> TL.Text -> [MIME.Part] -> AppContextM ()
-sendEmail to subject [] = return () -- empty mail won't be sent
+sendEmail :: [String] -> TL.Text -> [MIME.Part] -> AppContextM (Either String ())
+sendEmail to subject [] = return $ Left _ERROR_SERVICE_MAIL__TRIED_SEND_EMPTY_MAIL
 sendEmail to subject parts = do
   dswConfig <- asks _appContextConfig
   let mailConfig = dswConfig ^. mail
@@ -168,6 +168,10 @@ sendEmail to subject parts = do
     then do
       result <- liftIO $ catch runMailer errorCallback
       case result of
-        Right recipients -> logInfo $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
-        Left excMsg -> logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
-    else return ()
+        Right recipients -> do
+          logInfo $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
+          return $ Right ()
+        Left excMsg -> do
+          logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
+          return $ Left excMsg
+    else return $ Right ()

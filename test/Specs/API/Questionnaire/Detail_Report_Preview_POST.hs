@@ -51,7 +51,9 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
   QuestionnaireChangeDTO
-  { _questionnaireChangeDTOLevel = 3
+  { _questionnaireChangeDTOName = "EDITED" ++ (publicQuestionnaire ^. name)
+  , _questionnaireChangeDTOPrivate = False
+  , _questionnaireChangeDTOLevel = 3
   , _questionnaireChangeDTOReplies =
       toReplyDTO <$>
       [ fQ1
