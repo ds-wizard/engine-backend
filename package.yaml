@@ -17,7 +17,7 @@ data-files:
   - config/build-info.cfg
   - templates/dmp/root.css
   - templates/dmp/root.html.j2
-  - templates/mail/_common/attachments/logo.png
+  - templates/mail/_common/images/logo.png
   - templates/mail/_common/footer.txt.j2
   - templates/mail/_common/layout.html.j2
   - templates/mail/_common/style.css
@@ -80,7 +80,6 @@ library:
   - retry
   - roman-numerals
   - scotty
-  - smtp-mail
   - text
   - time
   - transformers

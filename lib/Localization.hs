@@ -58,13 +58,15 @@ _ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients = "Email has been sent to: " ++ un
 
 _ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL errorMessage = "Failed to send email: " ++ errorMessage
 
+_ERROR_SERVICE_MAIL__FILE_LOAD_FAIL errorMessage = "Error occured while loading file: " ++ errorMessage
+
 _ERROR_SERVICE_MAIL__MISSING_HTML mailName = "Could not load HTML template for: " ++ mailName
 
 _ERROR_SERVICE_MAIL__MISSING_PLAIN mailName = "Could not load plain text template for: " ++ mailName
 
 _ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName = "Could not load HTML nor plain text template for: " ++ mailName
 
-_ERROR_SERVICE_MAIL__TRIED_SEND_EMPTY_MAIL = "Tried to send empty email (without any parts)"
+_ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE = "Tried to send email to no recipients"
 
 -- Migration / Metamodel
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "Failed to migrate '" ++ collection ++ "'"
