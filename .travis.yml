@@ -16,7 +16,11 @@ stages:
   - tag
 
 env:
-  - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server" IMAGE="datastewardshipwizard/server" IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" IMAGE_TAG_DEVELOP="$IMAGE:develop" IMAGE_TAG_LATEST="$IMAGE:latest"
+  - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server" \
+    IMAGE="datastewardshipwizard/server" \
+    IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" \
+    IMAGE_TAG_DEVELOP="$IMAGE:develop" \
+    IMAGE_TAG_LATEST="$IMAGE:latest"
 
 cache:
   timeout: 600
@@ -26,42 +30,44 @@ cache:
   - .stack-work
 
 install:
-  # 1. Download and unpack the stack executable
+  # 1. Download, unpack, and check the stack executable
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-  # 2. Configure stack to use the system GHC installation
-  - stack config set system-ghc --global true
-  - export PATH=/opt/ghc/ghc-8.6.4/bin:$PATH
-  # 3. Init Application Config
+  # 2. Init Application Config
   - cp config/app-config.cfg.example config/app-config.cfg
   - cp config/app-config-test.cfg.example config/app-config-test.cfg
 
 before_script:
-  # 1. Log to both public and our private Docker Registry
+  # 1. Log to public Docker Hub
   - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  # 2. Log to private Docker Registry
   - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" "$REGISTRY"
 
 jobs:
   include:
     - stage: build
       script:
-        # 1. Init testing Mongo Database
+        # 1. Init and check testing Mongo Database
         - mongo dsw-server-test --eval 'db.collection.find()'
         # 2. Create build info inside application
         - cd scripts
         - ./build-info.sh
         - cd ..
         # 3. Build and Test Application
-        - stack --no-terminal --skip-ghc-check test
+        - stack build --no-terminal --skip-ghc-check --test
         # 4. Build Docker Image
-        - docker pull $IMAGE_TAG_LATEST
-        - docker build --pull --cache-from $IMAGE_TAG_LATEST -t $IMAGE_TAG .
+        - docker pull $IMAGE_TAG_DEVELOP
+        - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
         - docker push $IMAGE_TAG
 
     - stage: tag
       if: (branch = develop) AND (NOT (type IN (pull_request)))
+      addons: false
+      services: false
+      cache: false
       before_install: false
+      install: false
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP
@@ -69,7 +75,11 @@ jobs:
 
     - stage: tag
       if: (branch = master) AND (NOT (type IN (pull_request)))
+      addons: false
+      services: false
+      cache: false
       before_install: false
+      install: false
       script:
         - docker pull $IMAGE_TAG
         - docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST
@@ -77,7 +87,11 @@ jobs:
 
     - stage: tag
       if: tag =~ ^v
+      addons: false
+      services: false
+      cache: false
       before_install: false
+      install: false
       env:
         - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server"
         - IMAGE="datastewardshipwizard/server"
