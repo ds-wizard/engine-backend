@@ -1,4 +1,6 @@
-module Service.Config.ConfigLoader where
+module Service.Config.ApplicationConfigService
+  ( loadConfig
+  ) where
 
 import Control.Monad.Except
 import Data.ConfigFile
@@ -8,15 +10,8 @@ import System.Environment (lookupEnv)
 
 import Model.Config.AppConfig
 
-getOptional configParser section option
-  | has_option configParser section option = get configParser section option >>= return . Just
-  | otherwise = return Nothing
-
-doIf True action _ = action
-doIf False _ dummyValue = return dummyValue
-
-loadDSWConfig :: FilePath -> FilePath -> IO (Either CPError AppConfig)
-loadDSWConfig applicationConfigFile buildInfoFile = do
+loadConfig :: FilePath -> FilePath -> IO (Either CPError AppConfig)
+loadConfig applicationConfigFile buildInfoFile = do
   runExceptT $ do
     appConfigParser <- join $ liftIO $ readfile emptyCP applicationConfigFile
     buildInfoConfigParser <- join $ liftIO $ readfile emptyCP buildInfoFile
@@ -30,6 +25,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
     appMail <- loadAppConfigMail appConfigParser
     appAnalytics <- loadAppConfigAnalytics appConfigParser
     appFeedback <- loadAppConfigFeedback appConfigParser
+    appIntegration <- loadAppConfigIntegration appConfigParser
     buildInfo <- loadBuildInfo buildInfoConfigParser
     return
       AppConfig
@@ -43,6 +39,7 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
       , _appConfigMail = appMail
       , _appConfigAnalytics = appAnalytics
       , _appConfigFeedback = appFeedback
+      , _appConfigIntegration = appIntegration
       , _appConfigBuildInfo = buildInfo
       }
   where
@@ -145,6 +142,9 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         , _appConfigFeedbackRepo = feedbackRepo
         , _appConfigFeedbackIssueUrl = feedbackIssueUrl
         }
+    loadAppConfigIntegration configParser = do
+      config <- get configParser "Integration" "config"
+      return AppConfigIntegration {_appConfigIntegrationConfig = config}
     loadBuildInfo configParser = do
       appName <- get configParser "DEFAULT" "name"
       appVersion <- get configParser "DEFAULT" "version"
@@ -153,3 +153,13 @@ loadDSWConfig applicationConfigFile buildInfoFile = do
         BuildInfo {_buildInfoAppName = appName, _buildInfoAppVersion = appVersion, _buildInfoBuiltAt = buildTimestamp}
     parseList :: String -> [String]
     parseList listString = T.unpack <$> (T.splitOn ", " (T.pack listString))
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+getOptional configParser section option
+  | has_option configParser section option = get configParser section option >>= return . Just
+  | otherwise = return Nothing
+
+doIf True action _ = action
+doIf False _ dummyValue = return dummyValue

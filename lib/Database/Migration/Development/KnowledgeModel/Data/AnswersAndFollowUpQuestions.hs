@@ -1,9 +1,12 @@
 module Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions where
 
 import Control.Lens
+import qualified Data.Map as Map
 import Data.Maybe
 import qualified Data.UUID as U
 
+import Database.Migration.Development.KnowledgeModel.Data.Integrations
+       as FI
 import Database.Migration.Development.KnowledgeModel.Data.MetricMeasures
 import Database.Migration.Development.KnowledgeModel.Data.Tags
        as FT
@@ -133,7 +136,7 @@ q4_it1_q6_answerYes =
   { _answerUuid = fromJust $ U.fromString "16f20d73-b335-47d8-8d35-157e8c3cd009"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = [q4_it1_q6_aYes_followUpQuestion4']
+  , _answerFollowUps = [q4_it1_q6_aYes_followUpQuestion4', q4_it1_q6_aYes_followUpQuestion5']
   , _answerMetricMeasures = []
   }
 
@@ -297,4 +300,54 @@ q4_it1_q6_aYes_fuq4_it_question2 =
   , _optionsQuestionReferences = []
   , _optionsQuestionExperts = []
   , _optionsQuestionAnswers = []
+  }
+
+q4_it1_q6_aYes_followUpQuestion5' :: Question
+q4_it1_q6_aYes_followUpQuestion5' = IntegrationQuestion' q4_it1_q6_aYes_followUpQuestion5
+
+q4_it1_q6_aYes_followUpQuestion5 :: IntegrationQuestion
+q4_it1_q6_aYes_followUpQuestion5 =
+  IntegrationQuestion
+  { _integrationQuestionUuid = fromJust $ U.fromString "82f9a83a-88c8-439b-8cf8-8a028d5cce7d"
+  , _integrationQuestionTitle = "Fifth Follow-Up Question"
+  , _integrationQuestionText = Just "Some non-funny description"
+  , _integrationQuestionRequiredLevel = Just 2
+  , _integrationQuestionTagUuids = []
+  , _integrationQuestionReferences = []
+  , _integrationQuestionExperts = []
+  , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "be")]
+  }
+
+q4_it1_q6_aYes_fuq5PropsEdited' :: Question
+q4_it1_q6_aYes_fuq5PropsEdited' = IntegrationQuestion' q4_it1_q6_aYes_fuq5PropsEdited
+
+q4_it1_q6_aYes_fuq5PropsEdited :: IntegrationQuestion
+q4_it1_q6_aYes_fuq5PropsEdited =
+  IntegrationQuestion
+  { _integrationQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
+  , _integrationQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
+  , _integrationQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
+  , _integrationQuestionRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
+  , _integrationQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
+  , _integrationQuestionReferences = q4_it1_q6_aYes_followUpQuestion5 ^. references
+  , _integrationQuestionExperts = q4_it1_q6_aYes_followUpQuestion5 ^. experts
+  , _integrationQuestionIntegrationUuid = q4_it1_q6_aYes_followUpQuestion5 ^. integrationUuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("language", "")]
+  }
+
+q4_it1_q6_aYes_fuq5ConvertedToValue' :: Question
+q4_it1_q6_aYes_fuq5ConvertedToValue' = ValueQuestion' q4_it1_q6_aYes_fuq5ConvertedToValue
+
+q4_it1_q6_aYes_fuq5ConvertedToValue :: ValueQuestion
+q4_it1_q6_aYes_fuq5ConvertedToValue =
+  ValueQuestion
+  { _valueQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
+  , _valueQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
+  , _valueQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
+  , _valueQuestionRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
+  , _valueQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
+  , _valueQuestionReferences = q4_it1_q6_aYes_followUpQuestion5 ^. references
+  , _valueQuestionExperts = q4_it1_q6_aYes_followUpQuestion5 ^. experts
+  , _valueQuestionValueType = StringQuestionValueType
   }

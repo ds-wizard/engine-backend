@@ -8,6 +8,7 @@ import Database.Migration.Development.Event.Data.Events
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.KnowledgeModel.Data.Experts
+import Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
@@ -25,7 +26,7 @@ modifiersSpec =
          do
           let event = a_km1
           -- AND: Expectations
-          let expected = km1WithoutChaptersAndTags
+          let expected = km1WithoutChaptersAndTagsAndIntegrations
           -- WHEN:
           let computed = createKM event
           -- THEN:
@@ -47,9 +48,9 @@ modifiersSpec =
          do
           let chapter = chapter1
           -- AND: Expectations
-          let expected = km1WithoutChaptersAndTags & chapters .~ [chapter1]
+          let expected = km1WithoutChaptersAndTagsAndIntegrations & chapters .~ [chapter1]
           -- WHEN:
-          let computed = addChapter km1WithoutChaptersAndTags chapter
+          let computed = addChapter km1WithoutChaptersAndTagsAndIntegrations chapter
           -- THEN:
           computed `shouldBe` expected
       describe "deleteChapter" $
@@ -58,7 +59,7 @@ modifiersSpec =
          do
           let chapterUuid = chapter2 ^. uuid
           -- AND: Expectations
-          let expected = km1 & chapters .~ [chapter1]
+          let expected = km1 & chapters .~ [chapter1, chapter3]
           -- WHEN:
           let computed = deleteChapter km1 chapterUuid
           -- THEN:
@@ -69,9 +70,9 @@ modifiersSpec =
          do
           let tag = tagDataScience
           -- AND: Expectations
-          let expected = km1WithoutChaptersAndTags & tags .~ [tagDataScience]
+          let expected = km1WithoutChaptersAndTagsAndIntegrations & tags .~ [tagDataScience]
           -- WHEN:
-          let computed = addTag km1WithoutChaptersAndTags tag
+          let computed = addTag km1WithoutChaptersAndTagsAndIntegrations tag
           -- THEN:
           computed `shouldBe` expected
       describe "deleteTag" $
@@ -83,6 +84,28 @@ modifiersSpec =
           let expected = km1 & tags .~ [tagDataScience]
           -- WHEN:
           let computed = deleteTag km1 tagUuid
+          -- THEN:
+          computed `shouldBe` expected
+      describe "addIntegration" $
+        it "Successfully added" $
+          -- GIVEN: Inputs
+         do
+          let integration = ontologyPortal
+          -- AND: Expectations
+          let expected = km1WithoutChaptersAndTagsAndIntegrations & integrations .~ [ontologyPortal]
+          -- WHEN:
+          let computed = addIntegration km1WithoutChaptersAndTagsAndIntegrations integration
+          -- THEN:
+          computed `shouldBe` expected
+      describe "deleteIntegration" $
+        it "Successfully deleted" $
+          -- GIVEN: Inputs
+         do
+          let integrationUuid = ontologyPortal ^. uuid
+          -- AND: Expectations
+          let expected = km1 & integrations .~ [bioPortal]
+          -- WHEN:
+          let computed = deleteIntegration km1 integrationUuid
           -- THEN:
           computed `shouldBe` expected
     describe "Chapter level" $ do
@@ -235,6 +258,74 @@ modifiersSpec =
               let computed = editQuestion event question1'
               -- THEN:
               computed `shouldBe` expected
+        describe "IntegrationQuestion" $ do
+          describe "Without changing question type" $
+            it "Successfully created" $
+              -- GIVEN: Inputs
+             do
+              let event = e_km1_ch3_q9'
+              -- AND: Expectations
+              let expected = question9Edited'
+              -- WHEN:
+              let computed = editQuestion event question9'
+              -- THEN:
+              computed `shouldBe` expected
+          describe "With changing question type" $
+            it "Successfully created" $
+              -- GIVEN: Inputs
+             do
+              let event = e_km1_ch3_q9_type'
+              -- AND: Expectations
+              let expected = question9WithNewType'
+              -- WHEN:
+              let computed = editQuestion event question9'
+              -- THEN:
+              computed `shouldBe` expected
+      describe "updateIntegrationProps" $ do
+        describe "OptionsQuestion" $ do
+          it "Do nothing with the question" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iop
+            -- AND: Expectations
+            let expected = question2'
+            -- WHEN:
+            let computed = updateIntegrationProps event question2'
+            -- THEN:
+            computed `shouldBe` expected
+        describe "ListQuestion" $ do
+          it "Do nothing with the question" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iop
+            -- AND: Expectations
+            let expected = question4'
+            -- WHEN:
+            let computed = updateIntegrationProps event question4'
+            -- THEN:
+            computed `shouldBe` expected
+        describe "ValueQuestion" $ do
+          it "Do nothing with the question" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iop
+            -- AND: Expectations
+            let expected = question1'
+            -- WHEN:
+            let computed = updateIntegrationProps event question1'
+            -- THEN:
+            computed `shouldBe` expected
+        describe "IntegrationQuestion" $ do
+          it "Update the props" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iop
+            -- AND: Expectations
+            let expected = question9PropsEdited'
+            -- WHEN:
+            let computed = updateIntegrationProps event question9'
+            -- THEN:
+            computed `shouldBe` expected
       describe "addItemTemplateQuestion" $
         it "Successfully added" $
         -- GIVEN: Inputs
@@ -517,5 +608,28 @@ modifiersSpec =
           let expected = tagDataScienceEdited
           -- WHEN:
           let computed = editTag event tagDataScience
+          -- THEN:
+          computed `shouldBe` expected
+    describe "Integration level" $ do
+      describe "createIntegration" $
+        it "Successfully created" $
+          -- GIVEN: Inputs
+         do
+          let event = a_km1_iop
+          -- AND: Expectations
+          let expected = ontologyPortal
+          -- WHEN:
+          let computed = createIntegration event
+          -- THEN:
+          computed `shouldBe` expected
+      describe "editIntegration" $
+        it "Successfully edited" $
+          -- GIVEN: Inputs
+         do
+          let event = e_km1_iop
+          -- AND: Expectations
+          let expected = ontologyPortalEdited
+          -- WHEN:
+          let computed = editIntegration event ontologyPortal
           -- THEN:
           computed `shouldBe` expected

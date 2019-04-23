@@ -13,27 +13,22 @@ import Model.KnowledgeModel.KnowledgeModel
 -- KNOWLEDGE MODEL ---------
 -- -------------------------
 instance ToBSON KnowledgeModel where
-  toBSON km =
-    [ "uuid" BSON.=: serializeUUID (km ^. uuid)
-    , "name" BSON.=: (km ^. name)
-    , "chapters" BSON.=: (km ^. chapters)
-    , "tags" BSON.=: (km ^. tags)
+  toBSON KnowledgeModel {..} =
+    [ "uuid" BSON.=: serializeUUID _knowledgeModelUuid
+    , "name" BSON.=: _knowledgeModelName
+    , "chapters" BSON.=: _knowledgeModelChapters
+    , "tags" BSON.=: _knowledgeModelTags
+    , "integrations" BSON.=: _knowledgeModelIntegrations
     ]
 
 instance FromBSON KnowledgeModel where
   fromBSON doc = do
-    kmUuidS <- BSON.lookup "uuid" doc
-    kmUuid <- fromString kmUuidS
-    kmName <- BSON.lookup "name" doc
-    kmChapters <- BSON.lookup "chapters" doc
-    kmTags <- BSON.lookup "tags" doc
-    return
-      KnowledgeModel
-      { _knowledgeModelUuid = kmUuid
-      , _knowledgeModelName = kmName
-      , _knowledgeModelChapters = kmChapters
-      , _knowledgeModelTags = kmTags
-      }
+    _knowledgeModelUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _knowledgeModelName <- BSON.lookup "name" doc
+    _knowledgeModelChapters <- BSON.lookup "chapters" doc
+    _knowledgeModelTags <- BSON.lookup "tags" doc
+    _knowledgeModelIntegrations <- BSON.lookup "integrations" doc
+    return KnowledgeModel {..}
 
 -- -------------------------
 -- CHAPTER -----------------
@@ -185,6 +180,34 @@ instance FromBSON ValueQuestion where
       , _valueQuestionExperts = qExperts
       , _valueQuestionValueType = qValueType
       }
+
+-- ------------------------------------------------
+instance ToBSON IntegrationQuestion where
+  toBSON IntegrationQuestion {..} =
+    [ "questionType" BSON.=: "IntegrationQuestion"
+    , "uuid" BSON.=: serializeUUID _integrationQuestionUuid
+    , "title" BSON.=: _integrationQuestionTitle
+    , "text" BSON.=: _integrationQuestionText
+    , "requiredLevel" BSON.=: _integrationQuestionRequiredLevel
+    , "tagUuids" BSON.=: serializeUUIDList _integrationQuestionTagUuids
+    , "references" BSON.=: _integrationQuestionReferences
+    , "experts" BSON.=: _integrationQuestionExperts
+    , "integrationUuid" BSON.=: serializeUUID _integrationQuestionIntegrationUuid
+    , "props" BSON.=: _integrationQuestionProps
+    ]
+
+instance FromBSON IntegrationQuestion where
+  fromBSON doc = do
+    _integrationQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _integrationQuestionTitle <- BSON.lookup "title" doc
+    _integrationQuestionText <- BSON.lookup "text" doc
+    _integrationQuestionRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _integrationQuestionTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
+    _integrationQuestionReferences <- BSON.lookup "references" doc
+    _integrationQuestionExperts <- BSON.lookup "experts" doc
+    _integrationQuestionIntegrationUuid <- deserializeMaybeUUID $ BSON.lookup "integrationUuid" doc
+    _integrationQuestionProps <- BSON.lookup "valueType" doc
+    return IntegrationQuestion {..}
 
 -- -------------------------
 -- ANSWER ------------------
@@ -365,3 +388,40 @@ instance FromBSON Tag where
     tDescription <- BSON.lookup "description" doc
     tColor <- BSON.lookup "color" doc
     return Tag {_tagUuid = tUuid, _tagName = tName, _tagDescription = tDescription, _tagColor = tColor}
+
+-- -------------------------
+-- INTEGRATION -------------
+-- -------------------------
+instance ToBSON Integration where
+  toBSON Integration {..} =
+    [ "uuid" BSON.=: serializeUUID _integrationUuid
+    , "id" BSON.=: _integrationIId
+    , "name" BSON.=: _integrationName
+    , "props" BSON.=: _integrationProps
+    , "logo" BSON.=: _integrationLogo
+    , "requestMethod" BSON.=: _integrationRequestMethod
+    , "requestUrl" BSON.=: _integrationRequestUrl
+    , "requestHeaders" BSON.=: _integrationRequestHeaders
+    , "requestBody" BSON.=: _integrationRequestBody
+    , "responseListField" BSON.=: _integrationResponseListField
+    , "responseIdField" BSON.=: _integrationResponseIdField
+    , "responseNameField" BSON.=: _integrationResponseNameField
+    , "itemUrl" BSON.=: _integrationItemUrl
+    ]
+
+instance FromBSON Integration where
+  fromBSON doc = do
+    _integrationUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _integrationIId <- BSON.lookup "id" doc
+    _integrationName <- BSON.lookup "name" doc
+    _integrationProps <- BSON.lookup "props" doc
+    _integrationLogo <- BSON.lookup "logo" doc
+    _integrationRequestMethod <- BSON.lookup "requestMethod" doc
+    _integrationRequestUrl <- BSON.lookup "requestUrl" doc
+    _integrationRequestHeaders <- BSON.lookup "requestHeaders" doc
+    _integrationRequestBody <- BSON.lookup "requestBody" doc
+    _integrationResponseListField <- BSON.lookup "responseListField" doc
+    _integrationResponseIdField <- BSON.lookup "responseIdField" doc
+    _integrationResponseNameField <- BSON.lookup "responseNameField" doc
+    _integrationItemUrl <- BSON.lookup "itemUrl" doc
+    return Integration {..}

@@ -8,13 +8,6 @@ import Model.Error.Error
 tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)
 
-switchMaybeAndList :: [Maybe a] -> Maybe [a]
-switchMaybeAndList = foldl go (Just [])
-  where
-    go (Just l) (Just u) = Just $ l ++ [u]
-    go _ Nothing = Nothing
-    go Nothing _ = Nothing
-
 removeDuplicates :: Eq a => [a] -> [a]
 removeDuplicates = rdHelper []
   where
@@ -35,6 +28,13 @@ foldEither eitherList =
   case partitionEithers eitherList of
     ((l:_), rs) -> Left l
     (_, rs) -> Right rs
+
+foldMaybe :: [Maybe a] -> Maybe [a]
+foldMaybe = foldl go (Just [])
+  where
+    go (Just l) (Just u) = Just $ l ++ [u]
+    go _ Nothing = Nothing
+    go Nothing _ = Nothing
 
 foldInContext :: [AppContextM (Either AppError a)] -> AppContextM (Either AppError [a])
 foldInContext = Prelude.foldl foldOne (return . Right $ [])

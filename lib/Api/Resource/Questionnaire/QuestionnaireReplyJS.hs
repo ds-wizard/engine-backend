@@ -33,17 +33,15 @@ instance FromJSON ReplyValueDTO where
 
 instance FromJSON IntegrationReplyValueDTO where
   parseJSON (Object o) = do
-    iType <- o .: "type"
-    case iType of
-      "Fairsharing" -> parseJSON (Object o) >>= \iValue -> return (FairsharingIntegrationReplyDTO' iValue)
-      _ -> fail "One of the replies has unsupported integration reply type"
-  parseJSON _ = mzero
-
-instance FromJSON FairsharingIntegrationReplyDTO where
-  parseJSON (Object o) = do
-    _fairsharingIntegrationReplyDTOIntId <- o .: "id"
-    _fairsharingIntegrationReplyDTOName <- o .: "name"
-    return FairsharingIntegrationReplyDTO {..}
+    intType <- o .: "type"
+    case intType of
+      "PlainValue" -> do
+        value <- o .: "value"
+        return $ PlainValueDTO value
+      "IntegrationValue" -> do
+        _integrationValueDTOIntId <- o .: "id"
+        _integrationValueDTOIntValue <- o .: "value"
+        return IntegrationValueDTO {..}
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
@@ -57,12 +55,6 @@ instance ToJSON ReplyValueDTO where
   toJSON IntegrationReplyDTO {..} = object ["type" .= "IntegrationReply", "value" .= _integrationReplyDTOValue]
 
 instance ToJSON IntegrationReplyValueDTO where
-  toJSON (FairsharingIntegrationReplyDTO' iValue) = toJSON iValue
-
-instance ToJSON FairsharingIntegrationReplyDTO where
-  toJSON FairsharingIntegrationReplyDTO {..} =
-    object
-      [ "type" .= "Fairsharing"
-      , "id" .= _fairsharingIntegrationReplyDTOIntId
-      , "name" .= _fairsharingIntegrationReplyDTOName
-      ]
+  toJSON (PlainValueDTO value) = object ["type" .= "PlainValue", "value" .= value]
+  toJSON IntegrationValueDTO {..} =
+    object ["type" .= "IntegrationValue", "id" .= _integrationValueDTOIntId, "value" .= _integrationValueDTOIntValue]

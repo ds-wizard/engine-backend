@@ -57,9 +57,11 @@ library:
   - HaskellNet
   - HaskellNet-SSL
   - http-client
+  - http-client-tls
   - http-types
   - jwt
   - lens
+  - lens-aeson
   - mime-mail
   - mime-types
   - MissingH
@@ -81,15 +83,18 @@ library:
   - roman-numerals
   - scotty
   - text
+  - text-replace
   - time
   - transformers
   - unordered-containers
+  - uri-encode
   - uuid
   - vector
   - wai
   - wai-extra
   - wai-cors
   - warp
+  - wreq
   default-extensions:
     - TemplateHaskell
     - QuasiQuotes
@@ -144,6 +149,7 @@ tests:
     - containers
     - data-default
     - ginger
+    - http-client
     - http-types
     - lens
     - jwt
@@ -164,6 +170,7 @@ tests:
     - text
     - time
     - transformers
+    - unordered-containers
     - uuid
     - vector
     - wai

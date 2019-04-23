@@ -14,6 +14,9 @@ import qualified
 import qualified
        Database.Migration.Development.KnowledgeModel.Data.Experts as FE
 import qualified
+       Database.Migration.Development.KnowledgeModel.Data.Integrations
+       as FI
+import qualified
        Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
        as FKM
 import qualified
@@ -29,7 +32,7 @@ knowledgeModelAccessorsSpec =
   describe "Knowledge Model Accessors" $ do
     describe "Chapter" $ do
       describe "getAllChapters" $
-        it "Successfully listed" $ getAllChapters FKM.km1 `shouldBe` [FCH.chapter1, FCH.chapter2]
+        it "Successfully listed" $ getAllChapters FKM.km1 `shouldBe` [FCH.chapter1, FCH.chapter2, FCH.chapter3]
       describe "getChapterByUuid" $
         it "Successfully listed" $ getChapterByUuid FKM.km1 (FCH.chapter2 ^. uuid) `shouldBe` Just FCH.chapter2
       describe "isThereAnyChapterWithGivenUuid" $ do
@@ -50,11 +53,29 @@ knowledgeModelAccessorsSpec =
           isThereAnyTagWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
           False
     ---------------------------------------------
+    describe "Integration" $ do
+      describe "getAllIntegrations" $
+        it "Successfully listed" $ getAllIntegrations FKM.km1 `shouldBe` [FI.ontologyPortal, FI.bioPortal]
+      describe "getIntegrationByUuid" $
+        it "Successfully listed" $ getIntegrationByUuid FKM.km1 (FI.bioPortal ^. uuid) `shouldBe` Just FI.bioPortal
+      describe "isThereAnyIntegrationWithGivenUuid" $ do
+        it "Returns True if exists" $ isThereAnyIntegrationWithGivenUuid FKM.km1 (FI.bioPortal ^. uuid) `shouldBe` True
+        it "Returns False if not exists" $
+          isThereAnyTagWithGivenUuid FKM.km1 (fromJust . U.fromString $ "c2dec208-3e58-473c-8cc3-a3964658e540") `shouldBe`
+          False
+    ---------------------------------------------
     describe "Question" $ do
       describe "getAllQuestions" $
         it "Successfully listed" $
         getAllQuestions FKM.km1 `shouldBe`
-        [FQ.question1', FQ.question2', FQ.question3', FA.q2_aYes_fuQuestion1', FA.q2_aYes_fuq1_aYes_fuQuestion2']
+        [ FQ.question1'
+        , FQ.question2'
+        , FQ.question3'
+        , FQ.question9'
+        , FQ.question10'
+        , FA.q2_aYes_fuQuestion1'
+        , FA.q2_aYes_fuq1_aYes_fuQuestion2'
+        ]
       describe "getQuestionByUuid" $
         it "Successfully listed" $ getQuestionByUuid FKM.km1 (FQ.question2 ^. uuid) `shouldBe` Just FQ.question2'
       describe "getAllQuestionsForChapterUuid" $

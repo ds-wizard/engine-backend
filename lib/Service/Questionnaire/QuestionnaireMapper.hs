@@ -55,15 +55,10 @@ toReplyValueDTO IntegrationReply {..} =
   IntegrationReplyDTO {_integrationReplyDTOValue = toIntegrationReplyValueDTO _integrationReplyValue}
 
 toIntegrationReplyValueDTO :: IntegrationReplyValue -> IntegrationReplyValueDTO
-toIntegrationReplyValueDTO (FairsharingIntegrationReply' reply) =
-  FairsharingIntegrationReplyDTO' . toFairsharingIntegrationReplyDTO $ reply
-
-toFairsharingIntegrationReplyDTO :: FairsharingIntegrationReply -> FairsharingIntegrationReplyDTO
-toFairsharingIntegrationReplyDTO FairsharingIntegrationReply {..} =
-  FairsharingIntegrationReplyDTO
-  { _fairsharingIntegrationReplyDTOIntId = _fairsharingIntegrationReplyIntId
-  , _fairsharingIntegrationReplyDTOName = _fairsharingIntegrationReplyName
-  }
+toIntegrationReplyValueDTO (PlainValue reply) = PlainValueDTO reply
+toIntegrationReplyValueDTO IntegrationValue {..} =
+  IntegrationValueDTO
+  {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOIntValue = _integrationValueIntValue}
 
 toDetailWithPackageWithEventsDTO :: Questionnaire -> PackageWithEvents -> KnowledgeModel -> QuestionnaireDetailDTO
 toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
@@ -108,15 +103,10 @@ fromReplyValueDTO IntegrationReplyDTO {..} =
   IntegrationReply {_integrationReplyValue = fromIntegrationReplyValueDTO _integrationReplyDTOValue}
 
 fromIntegrationReplyValueDTO :: IntegrationReplyValueDTO -> IntegrationReplyValue
-fromIntegrationReplyValueDTO (FairsharingIntegrationReplyDTO' reply) =
-  FairsharingIntegrationReply' . fromFairsharingIntegrationReplyDTO $ reply
-
-fromFairsharingIntegrationReplyDTO :: FairsharingIntegrationReplyDTO -> FairsharingIntegrationReply
-fromFairsharingIntegrationReplyDTO FairsharingIntegrationReplyDTO {..} =
-  FairsharingIntegrationReply
-  { _fairsharingIntegrationReplyIntId = _fairsharingIntegrationReplyDTOIntId
-  , _fairsharingIntegrationReplyName = _fairsharingIntegrationReplyDTOName
-  }
+fromIntegrationReplyValueDTO (PlainValueDTO reply) = PlainValue reply
+fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
+  IntegrationValue
+  {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
 
 fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UTCTime -> Questionnaire
 fromChangeDTO qtn dto now =

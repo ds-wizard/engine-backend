@@ -37,6 +37,25 @@ _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 _ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
 
 -- --------------------------------------
+-- INTEGRATION
+-- --------------------------------------
+-- Common
+_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR = "Integration Service returned an error"
+
+-- Response Mappers (Response deserialization problem = RDF)
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY =
+  "Problem with a response deserialization (unable to get a response body)"
+
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS =
+  "Problem with a response deserialization (unable to extract nested field)"
+
+_ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response deserialization (field is not an array)"
+
+-- Typehint
+_ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME =
+  "Problem with a response deserialization (unable to map 'id' and 'name')"
+
+-- --------------------------------------
 -- SERVICE
 -- --------------------------------------
 -- Document
@@ -114,6 +133,13 @@ _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
 
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
+
+-- Template
+_ERROR_SERVICE_TYPEHINT__NON_EXISTING_QUESTION = "Desired question doesn't exist"
+
+_ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION = "Desired question has to be Integration question"
+
+_ERROR_SERVICE_TYPEHINT__NON_EXISTING_INTEGRATION = "Desired integrations doesn't exist"
 
 -- User
 _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =

@@ -51,6 +51,11 @@ doIsCleanerMethod km (DeleteReferenceEvent' event) = not $ isThereAnyReferenceWi
 doIsCleanerMethod km (AddTagEvent' event) = False
 doIsCleanerMethod km (EditTagEvent' event) = not $ isThereAnyTagWithGivenUuid km (event ^. tagUuid)
 doIsCleanerMethod km (DeleteTagEvent' event) = not $ isThereAnyTagWithGivenUuid km (event ^. tagUuid)
+doIsCleanerMethod km (AddIntegrationEvent' event) = False
+doIsCleanerMethod km (EditIntegrationEvent' event) =
+  not $ isThereAnyIntegrationWithGivenUuid km (event ^. integrationUuid)
+doIsCleanerMethod km (DeleteIntegrationEvent' event) =
+  not $ isThereAnyIntegrationWithGivenUuid km (event ^. integrationUuid)
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =

@@ -74,6 +74,8 @@ replyOnQuestion reply (FilledOptionsQuestion' fQuestion) =
   FilledOptionsQuestion' $ createFilledAnswerOption fQuestion reply
 replyOnQuestion reply (FilledListQuestion' fQuestion) = FilledListQuestion' $ createFilledAnswerItem fQuestion reply
 replyOnQuestion reply (FilledValueQuestion' fQuestion) = FilledValueQuestion' $ createFilledAnswerValue fQuestion reply
+replyOnQuestion reply (FilledIntegrationQuestion' fQuestion) =
+  FilledIntegrationQuestion' $ createFilledAnswerIntegration fQuestion reply
 
 -- -------------------------
 -- CREATE REPLY ------------
@@ -83,11 +85,6 @@ createFilledAnswerValue fQuestion reply = fQuestion & answerValue .~ Just (getRe
   where
     getReplyValue :: ReplyValue -> String
     getReplyValue StringReply {..} = _stringReplyValue
-    getReplyValue IntegrationReply {..} = getIntReplyValue _integrationReplyValue
-      where
-        getIntReplyValue :: IntegrationReplyValue -> String
-        getIntReplyValue (FairsharingIntegrationReply' FairsharingIntegrationReply {..}) =
-          _fairsharingIntegrationReplyName
 
 createFilledAnswerOption :: FilledOptionsQuestion -> Reply -> FilledOptionsQuestion
 createFilledAnswerOption fQuestion reply = fQuestion & answerOption .~ mFilledAnswer
@@ -106,6 +103,28 @@ createFilledAnswerItem fQuestion reply =
   where
     getReplyValue :: ReplyValue -> Int
     getReplyValue ItemListReply {..} = _itemListReplyValue
+
+createFilledAnswerIntegration :: FilledIntegrationQuestion -> Reply -> FilledIntegrationQuestion
+createFilledAnswerIntegration fQuestion reply = applyReplyValue . applyReplyIntId $ fQuestion
+  where
+    applyReplyIntId :: FilledIntegrationQuestion -> FilledIntegrationQuestion
+    applyReplyIntId q = q & answerIntId .~ (getReplyIntId $ reply ^. value)
+      where
+        getReplyIntId :: ReplyValue -> Maybe String
+        getReplyIntId IntegrationReply {..} = getIntReplyIntId _integrationReplyValue
+          where
+            getIntReplyIntId :: IntegrationReplyValue -> Maybe String
+            getIntReplyIntId (PlainValue value) = Nothing
+            getIntReplyIntId IntegrationValue {..} = Just _integrationValueIntId
+    applyReplyValue :: FilledIntegrationQuestion -> FilledIntegrationQuestion
+    applyReplyValue q = q & answerValue .~ Just (getReplyValue $ reply ^. value)
+      where
+        getReplyValue :: ReplyValue -> String
+        getReplyValue IntegrationReply {..} = getIntReplyValue _integrationReplyValue
+          where
+            getIntReplyValue :: IntegrationReplyValue -> String
+            getIntReplyValue (PlainValue value) = value
+            getIntReplyValue IntegrationValue {..} = _integrationValueIntValue
 
 -- -------------------------
 -- PASS TO ANSWER ITEMS ----

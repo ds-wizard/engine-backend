@@ -1,13 +1,17 @@
 module Service.Migration.KnowledgeModel.Applicator.Modifiers where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Map (empty, fromList, lookup)
+import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
+import Prelude hiding (lookup)
 
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -28,14 +32,16 @@ createKM e =
   , _knowledgeModelName = e ^. name
   , _knowledgeModelChapters = []
   , _knowledgeModelTags = []
+  , _knowledgeModelIntegrations = []
   }
 
 editKM :: EditKnowledgeModelEvent -> KnowledgeModel -> KnowledgeModel
-editKM e = applyTagUuids . applyChapterUuids . applyName
+editKM e = applyIntegrationUuids . applyTagUuids . applyChapterUuids . applyName
   where
     applyName km = applyValue (e ^. name) km name
     applyChapterUuids km = applyValue (e ^. chapterUuids) km kmChangeChapterUuidsOrder
     applyTagUuids km = applyValue (e ^. tagUuids) km kmChangeTagUuidsOrder
+    applyIntegrationUuids km = applyValue (e ^. integrationUuids) km kmChangeIntegrationUuidsOrder
 
 -- -------------------
 addChapter :: KnowledgeModel -> Chapter -> KnowledgeModel
@@ -50,6 +56,13 @@ addTag km t = km & tags .~ (km ^. tags ++ [t])
 
 deleteTag :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteTag km tUuid = km & tags .~ (filter (\t -> t ^. uuid /= tUuid) (km ^. tags))
+
+-- -------------------
+addIntegration :: KnowledgeModel -> Integration -> KnowledgeModel
+addIntegration km i = km & integrations .~ (km ^. integrations ++ [i])
+
+deleteIntegration :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteIntegration km iUuid = km & integrations .~ (filter (\i -> i ^. uuid /= iUuid) (km ^. integrations))
 
 -- -------------------
 -- CHAPTERS ----------
@@ -114,6 +127,19 @@ createQuestion (AddValueQuestionEvent' e) =
   , _valueQuestionExperts = []
   , _valueQuestionValueType = e ^. valueType
   }
+createQuestion (AddIntegrationQuestionEvent' e) =
+  IntegrationQuestion' $
+  IntegrationQuestion
+  { _integrationQuestionUuid = e ^. questionUuid
+  , _integrationQuestionTitle = e ^. title
+  , _integrationQuestionText = e ^. text
+  , _integrationQuestionRequiredLevel = e ^. requiredLevel
+  , _integrationQuestionTagUuids = e ^. tagUuids
+  , _integrationQuestionReferences = []
+  , _integrationQuestionExperts = []
+  , _integrationQuestionIntegrationUuid = e ^. integrationUuid
+  , _integrationQuestionProps = e ^. props
+  }
 
 editQuestion :: EditQuestionEvent -> Question -> Question
 editQuestion e' q =
@@ -121,6 +147,7 @@ editQuestion e' q =
     (EditOptionsQuestionEvent' e) -> applyToOptionsQuestion e . convertToOptionsQuestion $ q
     (EditListQuestionEvent' e) -> applyToListQuestion e . convertToListQuestion $ q
     (EditValueQuestionEvent' e) -> applyToValueQuestion e . convertToValueQuestion $ q
+    (EditIntegrationQuestionEvent' e) -> applyToIntegrationQuestion e . convertToIntegrationQuestion $ q
   where
     applyToOptionsQuestion e =
       applyAnwerUuids e .
@@ -132,6 +159,10 @@ editQuestion e' q =
     applyToValueQuestion e =
       applyValueType e .
       applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
+    applyToIntegrationQuestion e =
+      applyProps e .
+      applyIntegrationUuid e .
+      applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
     applyTitle e q = applyValue (e ^. title) q qChangeTitle
     applyText e q = applyValue (e ^. text) q qChangeText
     applyRequiredLevel e q = applyValue (e ^. requiredLevel) q qChangeRequiredLevel
@@ -142,6 +173,8 @@ editQuestion e' q =
     applyItemTemplateTitle e q = applyValue (e ^. itemTemplateTitle) q qChangeItemTemplateTitle
     applyItemTemplateQuestions e q = applyValue (e ^. itemTemplateQuestionUuids) q qChangeItemTemplateQuestionUuidsOrder
     applyValueType e q = applyValue (e ^. valueType) q qChangeValueType
+    applyIntegrationUuid e q = applyValue (e ^. integrationUuid) q qChangeIntegrationUuid
+    applyProps e q = applyValue (e ^. props) q qChangeProps
 
 convertToOptionsQuestion :: Question -> Question
 convertToOptionsQuestion (OptionsQuestion' q) = OptionsQuestion' q
@@ -149,6 +182,7 @@ convertToOptionsQuestion q' =
   case q' of
     (ListQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> createQuestion q
   where
     createQuestion q =
       OptionsQuestion' $
@@ -169,6 +203,7 @@ convertToListQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (ValueQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ListQuestion' $
@@ -190,6 +225,7 @@ convertToValueQuestion q' =
   case q' of
     (OptionsQuestion' q) -> createQuestion q
     (ListQuestion' q) -> createQuestion q
+    (IntegrationQuestion' q) -> createQuestion q
   where
     createQuestion q =
       ValueQuestion' $
@@ -203,6 +239,39 @@ convertToValueQuestion q' =
       , _valueQuestionExperts = q ^. experts
       , _valueQuestionValueType = StringQuestionValueType
       }
+
+convertToIntegrationQuestion :: Question -> Question
+convertToIntegrationQuestion (IntegrationQuestion' q) = IntegrationQuestion' q
+convertToIntegrationQuestion q' =
+  case q' of
+    (OptionsQuestion' q) -> createQuestion q
+    (ListQuestion' q) -> createQuestion q
+    (ValueQuestion' q) -> createQuestion q
+  where
+    createQuestion q =
+      IntegrationQuestion' $
+      IntegrationQuestion
+      { _integrationQuestionUuid = q ^. uuid
+      , _integrationQuestionTitle = q ^. title
+      , _integrationQuestionText = q ^. text
+      , _integrationQuestionRequiredLevel = q ^. requiredLevel
+      , _integrationQuestionTagUuids = q ^. tagUuids
+      , _integrationQuestionReferences = q ^. references
+      , _integrationQuestionExperts = q ^. experts
+      , _integrationQuestionIntegrationUuid = U.nil
+      , _integrationQuestionProps = empty
+      }
+
+updateIntegrationProps :: EditIntegrationEvent -> Question -> Question
+updateIntegrationProps e (IntegrationQuestion' q) = IntegrationQuestion' $ q & props .~ updatedProps
+  where
+    updatedProps =
+      if q ^. integrationUuid == e ^. integrationUuid
+        then case e ^. props of
+               ChangedValue ps -> fromList . fmap (\p -> (p, fromMaybe "" (lookup p (q ^. props)))) $ ps
+               NothingChanged -> q ^. props
+        else q ^. props
+updateIntegrationProps _ q' = q'
 
 -- -------------------
 addItemTemplateQuestion :: Question -> Question -> Question
@@ -356,3 +425,48 @@ editTag e = applyColor . applyDescription . applyName
     applyName tag = applyValue (e ^. name) tag name
     applyDescription tag = applyValue (e ^. description) tag description
     applyColor tag = applyValue (e ^. color) tag color
+
+-- -------------------
+-- INTEGRATION -------
+-- -------------------
+createIntegration :: AddIntegrationEvent -> Integration
+createIntegration e =
+  Integration
+  { _integrationUuid = e ^. integrationUuid
+  , _integrationIId = e ^. iId
+  , _integrationName = e ^. name
+  , _integrationProps = e ^. props
+  , _integrationLogo = e ^. logo
+  , _integrationRequestMethod = e ^. requestMethod
+  , _integrationRequestUrl = e ^. requestUrl
+  , _integrationRequestHeaders = e ^. requestHeaders
+  , _integrationRequestBody = e ^. requestBody
+  , _integrationResponseListField = e ^. responseListField
+  , _integrationResponseIdField = e ^. responseIdField
+  , _integrationResponseNameField = e ^. responseNameField
+  , _integrationItemUrl = e ^. itemUrl
+  }
+
+editIntegration :: EditIntegrationEvent -> Integration -> Integration
+editIntegration e =
+  applyIId .
+  applyName .
+  applyProps .
+  applyLogo .
+  applyRequestMethod .
+  applyRequestUrl .
+  applyRequestHeaders .
+  applyRequestBody . applyResponseListField . applyResponseIdField . applyResponseNameField . applyItemUrl
+  where
+    applyIId integration = applyValue (e ^. iId) integration iId
+    applyName integration = applyValue (e ^. name) integration name
+    applyProps integration = applyValue (e ^. props) integration props
+    applyLogo integration = applyValue (e ^. logo) integration logo
+    applyRequestMethod integration = applyValue (e ^. requestMethod) integration requestMethod
+    applyRequestUrl integration = applyValue (e ^. requestUrl) integration requestUrl
+    applyRequestHeaders integration = applyValue (e ^. requestHeaders) integration requestHeaders
+    applyRequestBody integration = applyValue (e ^. requestBody) integration requestBody
+    applyResponseListField integration = applyValue (e ^. responseListField) integration responseListField
+    applyResponseIdField integration = applyValue (e ^. responseIdField) integration responseIdField
+    applyResponseNameField integration = applyValue (e ^. responseNameField) integration responseNameField
+    applyItemUrl integration = applyValue (e ^. itemUrl) integration itemUrl

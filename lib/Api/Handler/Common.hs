@@ -23,7 +23,7 @@ import Api.Resource.Error.ErrorDTO ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import Constant.Component
-import LensesConfig
+import LensesConfig hiding (requestMethod)
 import Localization
 import Model.Context.AppContext
 import Model.Context.BaseContext
@@ -43,11 +43,13 @@ runInUnauthService function = do
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
+  httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
+        , _appContextHttpClientManager = httpClientManager
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Nothing
         }
@@ -59,11 +61,13 @@ runInAuthService user function = do
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
+  httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
+        , _appContextHttpClientManager = httpClientManager
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Just user
         }

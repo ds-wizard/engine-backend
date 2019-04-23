@@ -1,6 +1,7 @@
 module Database.Migration.Development.KnowledgeModel.Data.Questions where
 
 import Control.Lens
+import qualified Data.Map as Map
 import Data.Maybe
 import qualified Data.UUID as U
 
@@ -8,6 +9,8 @@ import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQues
        as FA
 import Database.Migration.Development.KnowledgeModel.Data.Experts
        as FE
+import Database.Migration.Development.KnowledgeModel.Data.Integrations
+       as FI
 import Database.Migration.Development.KnowledgeModel.Data.References
        as FR
 import Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -48,20 +51,19 @@ question1Edited =
   }
 
 question1WithNewType' :: Question
-question1WithNewType' = ListQuestion' question1WithNewType
+question1WithNewType' = OptionsQuestion' question1WithNewType
 
-question1WithNewType :: ListQuestion
+question1WithNewType :: OptionsQuestion
 question1WithNewType =
-  ListQuestion
-  { _listQuestionUuid = question1 ^. uuid
-  , _listQuestionTitle = "EDITED: " ++ question1 ^. title
-  , _listQuestionText = question1 ^. text
-  , _listQuestionRequiredLevel = question1 ^. requiredLevel
-  , _listQuestionTagUuids = question1 ^. tagUuids
-  , _listQuestionReferences = question1 ^. references
-  , _listQuestionExperts = question1 ^. experts
-  , _listQuestionItemTemplateTitle = "Some Item Template Title"
-  , _listQuestionItemTemplateQuestions = []
+  OptionsQuestion
+  { _optionsQuestionUuid = question1 ^. uuid
+  , _optionsQuestionTitle = "EDITED: " ++ question1 ^. title
+  , _optionsQuestionText = question1 ^. text
+  , _optionsQuestionRequiredLevel = question1 ^. requiredLevel
+  , _optionsQuestionTagUuids = question1 ^. tagUuids
+  , _optionsQuestionReferences = question1 ^. references
+  , _optionsQuestionExperts = question1 ^. experts
+  , _optionsQuestionAnswers = []
   }
 
 -- -----------------------------------
@@ -99,19 +101,20 @@ question2Edited =
   }
 
 question2WithNewType' :: Question
-question2WithNewType' = ValueQuestion' question2WithNewType
+question2WithNewType' = ListQuestion' question2WithNewType
 
-question2WithNewType :: ValueQuestion
+question2WithNewType :: ListQuestion
 question2WithNewType =
-  ValueQuestion
-  { _valueQuestionUuid = question2 ^. uuid
-  , _valueQuestionTitle = "EDITED: Second Question"
-  , _valueQuestionText = question2 ^. text
-  , _valueQuestionRequiredLevel = question2 ^. requiredLevel
-  , _valueQuestionTagUuids = question2 ^. tagUuids
-  , _valueQuestionReferences = question2 ^. references
-  , _valueQuestionExperts = question2 ^. experts
-  , _valueQuestionValueType = DateQuestionValueType
+  ListQuestion
+  { _listQuestionUuid = question2 ^. uuid
+  , _listQuestionTitle = "EDITED: " ++ question2 ^. title
+  , _listQuestionText = question2 ^. text
+  , _listQuestionRequiredLevel = question2 ^. requiredLevel
+  , _listQuestionTagUuids = question2 ^. tagUuids
+  , _listQuestionReferences = question2 ^. references
+  , _listQuestionExperts = question2 ^. experts
+  , _listQuestionItemTemplateTitle = "EDITED: Template Title"
+  , _listQuestionItemTemplateQuestions = []
   }
 
 question2Plain' :: Question
@@ -197,19 +200,20 @@ question4Edited =
   }
 
 question4WithNewType' :: Question
-question4WithNewType' = OptionsQuestion' question4WithNewType
+question4WithNewType' = IntegrationQuestion' question4WithNewType
 
-question4WithNewType :: OptionsQuestion
+question4WithNewType :: IntegrationQuestion
 question4WithNewType =
-  OptionsQuestion
-  { _optionsQuestionUuid = question4 ^. uuid
-  , _optionsQuestionTitle = "EDITED: Third Question"
-  , _optionsQuestionText = question4 ^. text
-  , _optionsQuestionRequiredLevel = question4 ^. requiredLevel
-  , _optionsQuestionTagUuids = question4 ^. tagUuids
-  , _optionsQuestionReferences = question4 ^. references
-  , _optionsQuestionExperts = question4 ^. experts
-  , _optionsQuestionAnswers = []
+  IntegrationQuestion
+  { _integrationQuestionUuid = question4 ^. uuid
+  , _integrationQuestionTitle = question4 ^. title
+  , _integrationQuestionText = question4 ^. text
+  , _integrationQuestionRequiredLevel = question4 ^. requiredLevel
+  , _integrationQuestionTagUuids = question4 ^. tagUuids
+  , _integrationQuestionReferences = question4 ^. references
+  , _integrationQuestionExperts = question4 ^. experts
+  , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "nl")]
   }
 
 question4Plain' :: Question
@@ -341,5 +345,121 @@ q4_it1_q5_it2_question8 =
   , _valueQuestionTagUuids = []
   , _valueQuestionReferences = []
   , _valueQuestionExperts = []
+  , _valueQuestionValueType = StringQuestionValueType
+  }
+
+question9' :: Question
+question9' = IntegrationQuestion' question9
+
+question9 :: IntegrationQuestion
+question9 =
+  IntegrationQuestion
+  { _integrationQuestionUuid = fromJust $ U.fromString "ebadd964-4605-4550-998c-30b1f4e51239"
+  , _integrationQuestionTitle = "Ninth Question"
+  , _integrationQuestionText = Just "Some nice description"
+  , _integrationQuestionRequiredLevel = Nothing
+  , _integrationQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
+  , _integrationQuestionReferences = []
+  , _integrationQuestionExperts = []
+  , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "nl")]
+  }
+
+question9Edited' :: Question
+question9Edited' = IntegrationQuestion' question9Edited
+
+question9Edited :: IntegrationQuestion
+question9Edited =
+  IntegrationQuestion
+  { _integrationQuestionUuid = question9 ^. uuid
+  , _integrationQuestionTitle = "EDITED: " ++ (question9 ^. title)
+  , _integrationQuestionText = Just $ "EDITED: " ++ (fromJust $ question9 ^. text)
+  , _integrationQuestionRequiredLevel = Just 4
+  , _integrationQuestionTagUuids = [FT.tagDataScience ^. uuid]
+  , _integrationQuestionReferences = question9 ^. references
+  , _integrationQuestionExperts = question9 ^. experts
+  , _integrationQuestionIntegrationUuid = question9 ^. integrationUuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "de")]
+  }
+
+question9PropsEdited' :: Question
+question9PropsEdited' = IntegrationQuestion' question9PropsEdited
+
+question9PropsEdited :: IntegrationQuestion
+question9PropsEdited =
+  IntegrationQuestion
+  { _integrationQuestionUuid = question9 ^. uuid
+  , _integrationQuestionTitle = question9 ^. title
+  , _integrationQuestionText = question9 ^. text
+  , _integrationQuestionRequiredLevel = question9 ^. requiredLevel
+  , _integrationQuestionTagUuids = question9 ^. tagUuids
+  , _integrationQuestionReferences = question9 ^. references
+  , _integrationQuestionExperts = question9 ^. experts
+  , _integrationQuestionIntegrationUuid = question9 ^. integrationUuid
+  , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("language", "")]
+  }
+
+question9WithNewType' :: Question
+question9WithNewType' = ValueQuestion' question9WithNewType
+
+question9WithNewType :: ValueQuestion
+question9WithNewType =
+  ValueQuestion
+  { _valueQuestionUuid = question9 ^. uuid
+  , _valueQuestionTitle = "EDITED: " ++ question9 ^. title
+  , _valueQuestionText = question9 ^. text
+  , _valueQuestionRequiredLevel = question9 ^. requiredLevel
+  , _valueQuestionTagUuids = question9 ^. tagUuids
+  , _valueQuestionReferences = question9 ^. references
+  , _valueQuestionExperts = question9 ^. experts
+  , _valueQuestionValueType = DateQuestionValueType
+  }
+
+question9ConvertedToValue' :: Question
+question9ConvertedToValue' = ValueQuestion' question9ConvertedToValue
+
+question9ConvertedToValue :: ValueQuestion
+question9ConvertedToValue =
+  ValueQuestion
+  { _valueQuestionUuid = question9 ^. uuid
+  , _valueQuestionTitle = question9 ^. title
+  , _valueQuestionText = question9 ^. text
+  , _valueQuestionRequiredLevel = question9 ^. requiredLevel
+  , _valueQuestionTagUuids = question9 ^. tagUuids
+  , _valueQuestionReferences = question9 ^. references
+  , _valueQuestionExperts = question9 ^. experts
+  , _valueQuestionValueType = StringQuestionValueType
+  }
+
+question10' :: Question
+question10' = IntegrationQuestion' question10
+
+question10 :: IntegrationQuestion
+question10 =
+  IntegrationQuestion
+  { _integrationQuestionUuid = fromJust $ U.fromString "5f65baf2-4103-4417-a47a-73d622ec4e44"
+  , _integrationQuestionTitle = "Tenth Question"
+  , _integrationQuestionText = Just "Some nice description"
+  , _integrationQuestionRequiredLevel = Nothing
+  , _integrationQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
+  , _integrationQuestionReferences = []
+  , _integrationQuestionExperts = []
+  , _integrationQuestionIntegrationUuid = FI.bioPortal ^. uuid
+  , _integrationQuestionProps = Map.fromList [("domain", "legal"), ("branch", "mammal")]
+  }
+
+question10ConvertedToValue' :: Question
+question10ConvertedToValue' = ValueQuestion' question10ConvertedToValue
+
+question10ConvertedToValue :: ValueQuestion
+question10ConvertedToValue =
+  ValueQuestion
+  { _valueQuestionUuid = question10 ^. uuid
+  , _valueQuestionTitle = question10 ^. title
+  , _valueQuestionText = question10 ^. text
+  , _valueQuestionRequiredLevel = question10 ^. requiredLevel
+  , _valueQuestionTagUuids = question10 ^. tagUuids
+  , _valueQuestionReferences = question10 ^. references
+  , _valueQuestionExperts = question10 ^. experts
   , _valueQuestionValueType = StringQuestionValueType
   }

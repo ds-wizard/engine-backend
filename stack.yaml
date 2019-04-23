@@ -57,6 +57,7 @@ extra-deps:
   - mime-mail-0.5.0
   - github: jtdaugherty/HaskellNet
     commit: "2c3da32"
+  - text-replace-0.0.0.4
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

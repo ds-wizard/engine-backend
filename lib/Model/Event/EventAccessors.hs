@@ -10,6 +10,7 @@ import Model.Event.Event
 import Model.Event.EventField
 import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -23,6 +24,7 @@ isAddAction (AddAnswerEvent' _) = True
 isAddAction (AddExpertEvent' _) = True
 isAddAction (AddReferenceEvent' _) = True
 isAddAction (AddTagEvent' _) = True
+isAddAction (AddIntegrationEvent' _) = True
 isAddAction _ = False
 
 isEditAction :: Event -> Bool
@@ -33,6 +35,7 @@ isEditAction (EditAnswerEvent' _) = True
 isEditAction (EditExpertEvent' _) = True
 isEditAction (EditReferenceEvent' _) = True
 isEditAction (EditTagEvent' _) = True
+isEditAction (EditIntegrationEvent' _) = True
 isEditAction _ = False
 
 isDeleteAction :: Event -> Bool
@@ -42,6 +45,7 @@ isDeleteAction (DeleteAnswerEvent' _) = True
 isDeleteAction (DeleteExpertEvent' _) = True
 isDeleteAction (DeleteReferenceEvent' _) = True
 isDeleteAction (DeleteTagEvent' _) = True
+isDeleteAction (DeleteIntegrationEvent' _) = True
 isDeleteAction _ = False
 
 getEventUuid' :: Event -> U.UUID
@@ -65,6 +69,9 @@ getEventUuid' (DeleteReferenceEvent' event) = getEventUuid event
 getEventUuid' (AddTagEvent' event) = getEventUuid event
 getEventUuid' (EditTagEvent' event) = getEventUuid event
 getEventUuid' (DeleteTagEvent' event) = getEventUuid event
+getEventUuid' (AddIntegrationEvent' event) = getEventUuid event
+getEventUuid' (EditIntegrationEvent' event) = getEventUuid event
+getEventUuid' (DeleteIntegrationEvent' event) = getEventUuid event
 
 class EventAccesors a where
   getEventUuid :: a -> U.UUID
@@ -100,23 +107,29 @@ instance EventAccesors AddQuestionEvent where
   getEventUuid (AddOptionsQuestionEvent' event) = event ^. uuid
   getEventUuid (AddListQuestionEvent' event) = event ^. uuid
   getEventUuid (AddValueQuestionEvent' event) = event ^. uuid
+  getEventUuid (AddIntegrationQuestionEvent' event) = event ^. uuid
   getEventNodeUuid (AddOptionsQuestionEvent' event) = event ^. questionUuid
   getEventNodeUuid (AddListQuestionEvent' event) = event ^. questionUuid
   getEventNodeUuid (AddValueQuestionEvent' event) = event ^. questionUuid
+  getEventNodeUuid (AddIntegrationQuestionEvent' event) = event ^. questionUuid
   getPath (AddOptionsQuestionEvent' e) = e ^. path
   getPath (AddListQuestionEvent' e) = e ^. path
   getPath (AddValueQuestionEvent' e) = e ^. path
+  getPath (AddIntegrationQuestionEvent' e) = e ^. path
 
 instance EventAccesors EditQuestionEvent where
   getEventUuid (EditOptionsQuestionEvent' event) = event ^. uuid
   getEventUuid (EditListQuestionEvent' event) = event ^. uuid
   getEventUuid (EditValueQuestionEvent' event) = event ^. uuid
+  getEventUuid (EditIntegrationQuestionEvent' event) = event ^. uuid
   getEventNodeUuid (EditOptionsQuestionEvent' event) = event ^. questionUuid
   getEventNodeUuid (EditListQuestionEvent' event) = event ^. questionUuid
   getEventNodeUuid (EditValueQuestionEvent' event) = event ^. questionUuid
+  getEventNodeUuid (EditIntegrationQuestionEvent' event) = event ^. questionUuid
   getPath (EditOptionsQuestionEvent' e) = e ^. path
   getPath (EditListQuestionEvent' e) = e ^. path
   getPath (EditValueQuestionEvent' e) = e ^. path
+  getPath (EditIntegrationQuestionEvent' e) = e ^. path
 
 instance EventAccesors DeleteQuestionEvent where
   getEventUuid event = event ^. uuid
@@ -195,6 +208,21 @@ instance EventAccesors DeleteTagEvent where
   getEventNodeUuid event = event ^. tagUuid
   getPath event = event ^. path
 
+instance EventAccesors AddIntegrationEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. integrationUuid
+  getPath event = event ^. path
+
+instance EventAccesors EditIntegrationEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. integrationUuid
+  getPath event = event ^. path
+
+instance EventAccesors DeleteIntegrationEvent where
+  getEventUuid event = event ^. uuid
+  getEventNodeUuid event = event ^. integrationUuid
+  getPath event = event ^. path
+
 class QuestionEventAccessors a where
   getEventQuestionUuid :: a -> U.UUID
   getEventExpertUuids :: a -> EventField [U.UUID]
@@ -204,6 +232,7 @@ instance QuestionEventAccessors AddQuestionEvent where
   getEventQuestionUuid (AddOptionsQuestionEvent' e) = e ^. questionUuid
   getEventQuestionUuid (AddListQuestionEvent' e) = e ^. questionUuid
   getEventQuestionUuid (AddValueQuestionEvent' e) = e ^. questionUuid
+  getEventQuestionUuid (AddIntegrationQuestionEvent' e) = e ^. questionUuid
   getEventExpertUuids _ = NothingChanged
   getEventReferenceUuids _ = NothingChanged
 
@@ -211,12 +240,15 @@ instance QuestionEventAccessors EditQuestionEvent where
   getEventQuestionUuid (EditOptionsQuestionEvent' e) = e ^. questionUuid
   getEventQuestionUuid (EditListQuestionEvent' e) = e ^. questionUuid
   getEventQuestionUuid (EditValueQuestionEvent' e) = e ^. questionUuid
+  getEventQuestionUuid (EditIntegrationQuestionEvent' e) = e ^. questionUuid
   getEventReferenceUuids (EditOptionsQuestionEvent' e) = e ^. referenceUuids
   getEventReferenceUuids (EditListQuestionEvent' e) = e ^. referenceUuids
   getEventReferenceUuids (EditValueQuestionEvent' e) = e ^. referenceUuids
+  getEventReferenceUuids (EditIntegrationQuestionEvent' e) = e ^. referenceUuids
   getEventExpertUuids (EditOptionsQuestionEvent' e) = e ^. expertUuids
   getEventExpertUuids (EditListQuestionEvent' e) = e ^. expertUuids
   getEventExpertUuids (EditValueQuestionEvent' e) = e ^. expertUuids
+  getEventExpertUuids (EditIntegrationQuestionEvent' e) = e ^. expertUuids
 
 instance QuestionEventAccessors DeleteQuestionEvent where
   getEventQuestionUuid e = e ^. questionUuid
@@ -232,6 +264,7 @@ eqChangeEventUuid convert e = Identity . updateEvent $ e
     updateEvent (EditOptionsQuestionEvent' e) = EditOptionsQuestionEvent' $ e & uuid .~ newValue
     updateEvent (EditListQuestionEvent' e) = EditListQuestionEvent' $ e & uuid .~ newValue
     updateEvent (EditValueQuestionEvent' e) = EditValueQuestionEvent' $ e & uuid .~ newValue
+    updateEvent (EditIntegrationQuestionEvent' e) = EditIntegrationQuestionEvent' $ e & uuid .~ newValue
 
 eqChangeExpertUuids ::
      (EventField [U.UUID] -> Identity (EventField [U.UUID])) -> EditQuestionEvent -> Identity EditQuestionEvent
@@ -243,6 +276,7 @@ eqChangeExpertUuids convert e = Identity . updateEvent $ e
     updateEvent (EditOptionsQuestionEvent' e) = EditOptionsQuestionEvent' $ e & expertUuids .~ newValue
     updateEvent (EditListQuestionEvent' e) = EditListQuestionEvent' $ e & expertUuids .~ newValue
     updateEvent (EditValueQuestionEvent' e) = EditValueQuestionEvent' $ e & expertUuids .~ newValue
+    updateEvent (EditIntegrationQuestionEvent' e) = EditIntegrationQuestionEvent' $ e & expertUuids .~ newValue
 
 eqChangeReferenceUuids ::
      (EventField [U.UUID] -> Identity (EventField [U.UUID])) -> EditQuestionEvent -> Identity EditQuestionEvent
@@ -254,3 +288,4 @@ eqChangeReferenceUuids convert e = Identity . updateEvent $ e
     updateEvent (EditOptionsQuestionEvent' e) = EditOptionsQuestionEvent' $ e & referenceUuids .~ newValue
     updateEvent (EditListQuestionEvent' e) = EditListQuestionEvent' $ e & referenceUuids .~ newValue
     updateEvent (EditValueQuestionEvent' e) = EditValueQuestionEvent' $ e & referenceUuids .~ newValue
+    updateEvent (EditIntegrationQuestionEvent' e) = EditIntegrationQuestionEvent' $ e & referenceUuids .~ newValue

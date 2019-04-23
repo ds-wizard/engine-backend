@@ -38,6 +38,8 @@ import Api.Resource.Report.ReportDTO
 import Api.Resource.Template.TemplateDTO
 import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
+import Api.Resource.Typehint.TypehintDTO
+import Api.Resource.Typehint.TypehintRequestDTO
 import Api.Resource.User.UserChangeDTO
 import Api.Resource.User.UserCreateDTO
 import Api.Resource.User.UserDTO
@@ -45,6 +47,7 @@ import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Api.Resource.Version.VersionDTO
+import Integration.Resource.Typehint.TypehintIDTO
 import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
 import Model.Branch.Branch
@@ -58,6 +61,7 @@ import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -65,6 +69,7 @@ import Model.Event.Tag.TagEvent
 import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
+import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModelBundle.KnowledgeModelBundle
 import Model.Level.Level
@@ -111,6 +116,8 @@ makeFields ''AppConfigAnalytics
 
 makeFields ''AppConfigFeedback
 
+makeFields ''AppConfigIntegration
+
 makeFields ''BuildInfo
 
 makeFields ''AppConfig
@@ -148,6 +155,8 @@ makeFields ''AddListQuestionEvent
 
 makeFields ''AddValueQuestionEvent
 
+makeFields ''AddIntegrationQuestionEvent
+
 makeFields ''EditQuestionEvent
 
 makeFields ''EditOptionsQuestionEvent
@@ -155,6 +164,8 @@ makeFields ''EditOptionsQuestionEvent
 makeFields ''EditListQuestionEvent
 
 makeFields ''EditValueQuestionEvent
+
+makeFields ''EditIntegrationQuestionEvent
 
 makeFields ''DeleteQuestionEvent
 
@@ -194,6 +205,12 @@ makeFields ''EditTagEvent
 
 makeFields ''DeleteTagEvent
 
+makeFields ''AddIntegrationEvent
+
+makeFields ''EditIntegrationEvent
+
+makeFields ''DeleteIntegrationEvent
+
 -- Model / Feedback
 makeFields ''Feedback
 
@@ -212,9 +229,14 @@ makeFields ''FilledListQuestion
 
 makeFields ''FilledValueQuestion
 
+makeFields ''FilledIntegrationQuestion
+
 makeFields ''FilledAnswer
 
 makeFields ''FilledAnswerItem
+
+-- Model / Http
+makeFields ''HttpRequest
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
@@ -228,6 +250,8 @@ makeFields ''OptionsQuestion
 makeFields ''ListQuestion
 
 makeFields ''ValueQuestion
+
+makeFields ''IntegrationQuestion
 
 makeFields ''Answer
 
@@ -246,6 +270,8 @@ makeFields ''Metric
 makeFields ''MetricMeasure
 
 makeFields ''Tag
+
+makeFields ''Integration
 
 -- Model / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundle
@@ -278,8 +304,6 @@ makeFields ''Reply
 makeFields ''ReplyValue
 
 makeFields ''IntegrationReplyValue
-
-makeFields ''FairsharingIntegrationReply
 
 -- Model / Report
 makeFields ''Indication
@@ -339,6 +363,8 @@ makeFields ''AddListQuestionEventDTO
 
 makeFields ''AddValueQuestionEventDTO
 
+makeFields ''AddIntegrationQuestionEventDTO
+
 makeFields ''EditQuestionEventDTO
 
 makeFields ''EditOptionsQuestionEventDTO
@@ -346,6 +372,8 @@ makeFields ''EditOptionsQuestionEventDTO
 makeFields ''EditListQuestionEventDTO
 
 makeFields ''EditValueQuestionEventDTO
+
+makeFields ''EditIntegrationQuestionEventDTO
 
 makeFields ''DeleteQuestionEventDTO
 
@@ -385,6 +413,12 @@ makeFields ''EditTagEventDTO
 
 makeFields ''DeleteTagEventDTO
 
+makeFields ''AddIntegrationEventDTO
+
+makeFields ''EditIntegrationEventDTO
+
+makeFields ''DeleteIntegrationEventDTO
+
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
 
@@ -402,6 +436,8 @@ makeFields ''FilledOptionsQuestionDTO
 makeFields ''FilledListQuestionDTO
 
 makeFields ''FilledValueQuestionDTO
+
+makeFields ''FilledIntegrationQuestionDTO
 
 makeFields ''FilledAnswerDTO
 
@@ -425,6 +461,8 @@ makeFields ''ListQuestionDTO
 
 makeFields ''ValueQuestionDTO
 
+makeFields ''IntegrationQuestionDTO
+
 makeFields ''AnswerDTO
 
 makeFields ''ExpertDTO
@@ -442,6 +480,8 @@ makeFields ''MetricDTO
 makeFields ''MetricMeasureDTO
 
 makeFields ''TagDTO
+
+makeFields ''IntegrationDTO
 
 -- Api / Resource / KnowledgeModelBundle
 makeFields ''KnowledgeModelBundleDTO
@@ -479,8 +519,6 @@ makeFields ''ReplyValueDTO
 
 makeFields ''IntegrationReplyValueDTO
 
-makeFields ''FairsharingIntegrationReplyDTO
-
 -- Api / Resource / Report
 makeFields ''IndicationDTO
 
@@ -500,6 +538,11 @@ makeFields ''TokenDTO
 
 makeFields ''TokenCreateDTO
 
+-- Api / Resource / Typehint
+makeFields ''TypehintDTO
+
+makeFields ''TypehintRequestDTO
+
 -- Api / Resource / User
 makeFields ''UserChangeDTO
 
@@ -515,3 +558,9 @@ makeFields ''UserStateDTO
 
 -- Api / Resource / Version
 makeFields ''VersionDTO
+
+-- -------------------------------------
+-- Integration
+-- -------------------------------------
+-- Integration / Resource / Typehint
+makeFields ''TypehintIDTO

@@ -1,5 +1,6 @@
 module Model.KnowledgeModel.KnowledgeModel where
 
+import Data.Map
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -9,6 +10,7 @@ data KnowledgeModel = KnowledgeModel
   , _knowledgeModelName :: String
   , _knowledgeModelChapters :: [Chapter]
   , _knowledgeModelTags :: [Tag]
+  , _knowledgeModelIntegrations :: [Integration]
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
@@ -31,6 +33,7 @@ data Question
   = OptionsQuestion' OptionsQuestion
   | ListQuestion' ListQuestion
   | ValueQuestion' ValueQuestion
+  | IntegrationQuestion' IntegrationQuestion
   deriving (Show, Eq, Generic)
 
 data OptionsQuestion = OptionsQuestion
@@ -65,6 +68,18 @@ data ValueQuestion = ValueQuestion
   , _valueQuestionExperts :: [Expert]
   , _valueQuestionReferences :: [Reference]
   , _valueQuestionValueType :: QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+data IntegrationQuestion = IntegrationQuestion
+  { _integrationQuestionUuid :: U.UUID
+  , _integrationQuestionTitle :: String
+  , _integrationQuestionText :: Maybe String
+  , _integrationQuestionRequiredLevel :: Maybe Int
+  , _integrationQuestionTagUuids :: [U.UUID]
+  , _integrationQuestionExperts :: [Expert]
+  , _integrationQuestionReferences :: [Reference]
+  , _integrationQuestionIntegrationUuid :: U.UUID
+  , _integrationQuestionProps :: Map String String
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
@@ -137,4 +152,21 @@ data Tag = Tag
   , _tagName :: String
   , _tagDescription :: Maybe String
   , _tagColor :: String
+  } deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
+data Integration = Integration
+  { _integrationUuid :: U.UUID
+  , _integrationIId :: String
+  , _integrationName :: String
+  , _integrationProps :: [String]
+  , _integrationLogo :: String
+  , _integrationRequestMethod :: String
+  , _integrationRequestUrl :: String
+  , _integrationRequestHeaders :: Map String String
+  , _integrationRequestBody :: String
+  , _integrationResponseListField :: String
+  , _integrationResponseIdField :: String
+  , _integrationResponseNameField :: String
+  , _integrationItemUrl :: String
   } deriving (Show, Eq, Generic)

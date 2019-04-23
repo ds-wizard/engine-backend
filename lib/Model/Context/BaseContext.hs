@@ -6,6 +6,7 @@ import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
+import Network.HTTP.Client (Manager)
 
 import Model.Config.AppConfig
 
@@ -13,6 +14,7 @@ data BaseContext = BaseContext
   { _baseContextConfig :: AppConfig
   , _baseContextPool :: ConnectionPool
   , _baseContextMsgChannel :: Maybe Channel
+  , _baseContextHttpClientManager :: Manager
   }
 
 newtype BaseContextM a = BaseContextM

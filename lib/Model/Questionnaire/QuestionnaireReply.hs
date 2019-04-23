@@ -6,20 +6,17 @@ import GHC.Generics
 data Reply = Reply
   { _replyPath :: String
   , _replyValue :: ReplyValue
-  } deriving (Show, Eq)
+  } deriving (Show, Eq, Generic)
 
 data ReplyValue
   = StringReply { _stringReplyValue :: String }
   | AnswerReply { _answerReplyValue :: U.UUID }
   | ItemListReply { _itemListReplyValue :: Int }
   | IntegrationReply { _integrationReplyValue :: IntegrationReplyValue }
-  deriving (Generic, Show, Eq)
+  deriving (Show, Eq, Generic)
 
-data IntegrationReplyValue =
-  FairsharingIntegrationReply' FairsharingIntegrationReply
-  deriving (Show, Eq)
-
-data FairsharingIntegrationReply = FairsharingIntegrationReply
-  { _fairsharingIntegrationReplyIntId :: String
-  , _fairsharingIntegrationReplyName :: String
-  } deriving (Show, Eq)
+data IntegrationReplyValue
+  = PlainValue String
+  | IntegrationValue { _integrationValueIntId :: String
+                     , _integrationValueIntValue :: String }
+  deriving (Show, Eq, Generic)

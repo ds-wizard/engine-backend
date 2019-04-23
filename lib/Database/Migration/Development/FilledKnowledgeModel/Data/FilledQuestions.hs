@@ -79,3 +79,43 @@ fQuestion4 =
   , _filledListQuestionItemTemplateQuestions = question4 ^. itemTemplateQuestions
   , _filledListQuestionItems = Just [fQ4_ai1, fQ4_ai2]
   }
+
+fQuestion9' :: FilledQuestion
+fQuestion9' = FilledIntegrationQuestion' fQuestion9
+
+fQuestion9 :: FilledIntegrationQuestion
+fQuestion9 =
+  FilledIntegrationQuestion
+  { _filledIntegrationQuestionUuid = question9 ^. uuid
+  , _filledIntegrationQuestionHumanIdentifier = "1"
+  , _filledIntegrationQuestionTitle = question9 ^. title
+  , _filledIntegrationQuestionText = question9 ^. text
+  , _filledIntegrationQuestionRequiredLevel = question9 ^. requiredLevel
+  , _filledIntegrationQuestionTagUuids = question9 ^. tagUuids
+  , _filledIntegrationQuestionExperts = question9 ^. experts
+  , _filledIntegrationQuestionReferences = question9 ^. references
+  , _filledIntegrationQuestionIntegrationUuid = question9 ^. integrationUuid
+  , _filledIntegrationQuestionProps = question9 ^. props
+  , _filledIntegrationQuestionAnswerIntId = Nothing
+  , _filledIntegrationQuestionAnswerValue = Just "Plain reply to 9st question"
+  }
+
+fQuestion10' :: FilledQuestion
+fQuestion10' = FilledIntegrationQuestion' fQuestion10
+
+fQuestion10 :: FilledIntegrationQuestion
+fQuestion10 =
+  FilledIntegrationQuestion
+  { _filledIntegrationQuestionUuid = question10 ^. uuid
+  , _filledIntegrationQuestionHumanIdentifier = "2"
+  , _filledIntegrationQuestionTitle = question10 ^. title
+  , _filledIntegrationQuestionText = question10 ^. text
+  , _filledIntegrationQuestionRequiredLevel = question10 ^. requiredLevel
+  , _filledIntegrationQuestionTagUuids = question10 ^. tagUuids
+  , _filledIntegrationQuestionExperts = question10 ^. experts
+  , _filledIntegrationQuestionReferences = question10 ^. references
+  , _filledIntegrationQuestionIntegrationUuid = question10 ^. integrationUuid
+  , _filledIntegrationQuestionProps = question10 ^. props
+  , _filledIntegrationQuestionAnswerIntId = Just "bsg-p000007"
+  , _filledIntegrationQuestionAnswerValue = Just "Integration reply to 9st question"
+  }

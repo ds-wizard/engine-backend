@@ -49,6 +49,7 @@ instance ToBSON EditKnowledgeModelEvent where
     , "name" BSON.=: (event ^. name)
     , "chapterUuids" BSON.=: serializeEventFieldUUIDList (event ^. chapterUuids)
     , "tagUuids" BSON.=: serializeEventFieldUUIDList (event ^. tagUuids)
+    , "integrationUuids" BSON.=: serializeEventFieldUUIDList (event ^. integrationUuids)
     ]
 
 instance FromBSON EditKnowledgeModelEvent where
@@ -59,6 +60,7 @@ instance FromBSON EditKnowledgeModelEvent where
     kmName <- BSON.lookup "name" doc
     let kmChapterUuids = deserializeEventFieldUUIDList $ BSON.lookup "chapterUuids" doc
     let kmTagsUuids = deserializeEventFieldUUIDList $ BSON.lookup "tagUuids" doc
+    let kmIntegrationUuids = deserializeEventFieldUUIDList $ BSON.lookup "integrationUuids" doc
     return
       EditKnowledgeModelEvent
       { _editKnowledgeModelEventUuid = kmUuid
@@ -67,4 +69,5 @@ instance FromBSON EditKnowledgeModelEvent where
       , _editKnowledgeModelEventName = kmName
       , _editKnowledgeModelEventChapterUuids = kmChapterUuids
       , _editKnowledgeModelEventTagUuids = kmTagsUuids
+      , _editKnowledgeModelEventIntegrationUuids = kmIntegrationUuids
       }

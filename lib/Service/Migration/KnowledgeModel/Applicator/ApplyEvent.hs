@@ -25,6 +25,9 @@ class ApplyEventToReference e where
 class ApplyEventToTag e where
   applyEventToTag :: e -> EventPath -> Either AppError Tag -> Either AppError Tag
 
+class ApplyEventToIntegration e where
+  applyEventToIntegration :: e -> EventPath -> Either AppError Integration -> Either AppError Integration
+
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
@@ -61,4 +64,9 @@ heApplyEventToReference e path eReference callback =
 heApplyEventToTag e path eTag callback =
   case applyEventToTag e path eTag of
     Right tag -> callback tag
+    Left e -> Left e
+
+heApplyEventToIntegration e path eIntegration callback =
+  case applyEventToIntegration e path eIntegration of
+    Right integration -> callback integration
     Left e -> Left e

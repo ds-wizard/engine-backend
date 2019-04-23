@@ -37,6 +37,8 @@ install:
   # 2. Init Application Config
   - cp config/app-config.cfg.example config/app-config.cfg
   - cp config/app-config-test.cfg.example config/app-config-test.cfg
+  - cp config/integration-config.cfg.example config/integration-config.cfg
+  - cp config/integration-config-test.cfg.example config/integration-config-test.cfg
 
 before_script:
   # 1. Log to public Docker Hub

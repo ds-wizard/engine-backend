@@ -54,3 +54,6 @@ token =
 owner =
 repo =
 issueurl = https://github.com/:owner/:dsw-staging/issues/:issueId
+
+[Integration]
+config = integration-config.cfg

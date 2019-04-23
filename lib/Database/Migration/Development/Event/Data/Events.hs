@@ -7,6 +7,7 @@ import qualified Data.UUID as U
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.KnowledgeModel.Data.Experts
+import Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
@@ -17,6 +18,7 @@ import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -28,8 +30,8 @@ a_km1 =
   AddKnowledgeModelEvent
   { _addKnowledgeModelEventUuid = fromJust $ U.fromString "b0edbc0b-2d7d-4ee7-bf2f-bc3a22d7494f"
   , _addKnowledgeModelEventPath = []
-  , _addKnowledgeModelEventKmUuid = km1WithoutChaptersAndTags ^. uuid
-  , _addKnowledgeModelEventName = km1WithoutChaptersAndTags ^. name
+  , _addKnowledgeModelEventKmUuid = km1WithoutChaptersAndTagsAndIntegrations ^. uuid
+  , _addKnowledgeModelEventName = km1WithoutChaptersAndTagsAndIntegrations ^. name
   }
 
 e_km1 :: EditKnowledgeModelEvent
@@ -41,6 +43,7 @@ e_km1 =
   , _editKnowledgeModelEventName = ChangedValue $ km1Edited ^. name
   , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1Edited ^.. chapters . traverse . uuid
   , _editKnowledgeModelEventTagUuids = ChangedValue $ km1Edited ^.. tags . traverse . uuid
+  , _editKnowledgeModelEventIntegrationUuids = ChangedValue $ km1Edited ^.. integrations . traverse . uuid
   }
 
 -- ----------------------------------------------------------------------------
@@ -70,12 +73,23 @@ a_km1_ch2 =
 a_km1_ch3 :: AddChapterEvent
 a_km1_ch3 =
   AddChapterEvent
+  { _addChapterEventUuid = fromJust $ U.fromString "6eaa2b47-711d-4187-98f8-fccdce94db9b"
+  , _addChapterEventPath =
+      [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _addChapterEventChapterUuid = chapter3 ^. uuid
+  , _addChapterEventTitle = chapter3 ^. title
+  , _addChapterEventText = chapter3 ^. text
+  }
+
+a_km1_ch4 :: AddChapterEvent
+a_km1_ch4 =
+  AddChapterEvent
   { _addChapterEventUuid = fromJust $ U.fromString "6585a64d-c75b-47fc-a86e-e0c8e773528f"
   , _addChapterEventPath =
       [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
-  , _addChapterEventChapterUuid = chapter3WithoutQuestions ^. uuid
-  , _addChapterEventTitle = chapter3WithoutQuestions ^. title
-  , _addChapterEventText = chapter3WithoutQuestions ^. text
+  , _addChapterEventChapterUuid = chapter4WithoutQuestions ^. uuid
+  , _addChapterEventTitle = chapter4WithoutQuestions ^. title
+  , _addChapterEventText = chapter4WithoutQuestions ^. text
   }
 
 e_km1_ch1 :: EditChapterEvent
@@ -205,6 +219,46 @@ a_km1_ch2_q4 =
   , _addListQuestionEventItemTemplateTitle = question4 ^. itemTemplateTitle
   }
 
+a_km1_ch3_q9' :: AddQuestionEvent
+a_km1_ch3_q9' = AddIntegrationQuestionEvent' a_km1_ch3_q9
+
+a_km1_ch3_q9 :: AddIntegrationQuestionEvent
+a_km1_ch3_q9 =
+  AddIntegrationQuestionEvent
+  { _addIntegrationQuestionEventUuid = fromJust $ U.fromString "51526318-2727-4113-993d-bae5d4abafcd"
+  , _addIntegrationQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter3 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _addIntegrationQuestionEventQuestionUuid = question9 ^. uuid
+  , _addIntegrationQuestionEventTitle = question9 ^. title
+  , _addIntegrationQuestionEventText = question9 ^. text
+  , _addIntegrationQuestionEventRequiredLevel = question9 ^. requiredLevel
+  , _addIntegrationQuestionEventTagUuids = question9 ^. tagUuids
+  , _addIntegrationQuestionEventIntegrationUuid = question9 ^. integrationUuid
+  , _addIntegrationQuestionEventProps = question9 ^. props
+  }
+
+a_km1_ch3_q10' :: AddQuestionEvent
+a_km1_ch3_q10' = AddIntegrationQuestionEvent' a_km1_ch3_q10
+
+a_km1_ch3_q10 :: AddIntegrationQuestionEvent
+a_km1_ch3_q10 =
+  AddIntegrationQuestionEvent
+  { _addIntegrationQuestionEventUuid = fromJust $ U.fromString "e8531168-946d-4d95-a3b5-f092d32dee1a"
+  , _addIntegrationQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter3 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _addIntegrationQuestionEventQuestionUuid = question10 ^. uuid
+  , _addIntegrationQuestionEventTitle = question10 ^. title
+  , _addIntegrationQuestionEventText = question10 ^. text
+  , _addIntegrationQuestionEventRequiredLevel = question10 ^. requiredLevel
+  , _addIntegrationQuestionEventTagUuids = question10 ^. tagUuids
+  , _addIntegrationQuestionEventIntegrationUuid = question10 ^. integrationUuid
+  , _addIntegrationQuestionEventProps = question10 ^. props
+  }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
@@ -227,25 +281,24 @@ e_km1_ch1_q1 =
   }
 
 e_km1_ch1_q1_type' :: EditQuestionEvent
-e_km1_ch1_q1_type' = EditListQuestionEvent' e_km1_ch1_q1_type
+e_km1_ch1_q1_type' = EditOptionsQuestionEvent' e_km1_ch1_q1_type
 
-e_km1_ch1_q1_type :: EditListQuestionEvent
+e_km1_ch1_q1_type :: EditOptionsQuestionEvent
 e_km1_ch1_q1_type =
-  EditListQuestionEvent
-  { _editListQuestionEventUuid = fromJust $ U.fromString "e59475d7-5566-4f88-b961-2749ccd8070f"
-  , _editListQuestionEventPath =
+  EditOptionsQuestionEvent
+  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "f56b1435-ec9f-4d79-88b3-04c39b73724d"
+  , _editOptionsQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
-      , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editListQuestionEventQuestionUuid = question1WithNewType ^. uuid
-  , _editListQuestionEventTitle = ChangedValue $ question1WithNewType ^. title
-  , _editListQuestionEventText = NothingChanged
-  , _editListQuestionEventRequiredLevel = NothingChanged
-  , _editListQuestionEventTagUuids = NothingChanged
-  , _editListQuestionEventExpertUuids = NothingChanged
-  , _editListQuestionEventReferenceUuids = NothingChanged
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question1WithNewType ^. itemTemplateTitle
-  , _editListQuestionEventItemTemplateQuestionUuids = NothingChanged
+  , _editOptionsQuestionEventQuestionUuid = question1WithNewType ^. uuid
+  , _editOptionsQuestionEventTitle = ChangedValue $ question1WithNewType ^. title
+  , _editOptionsQuestionEventText = NothingChanged
+  , _editOptionsQuestionEventRequiredLevel = NothingChanged
+  , _editOptionsQuestionEventTagUuids = NothingChanged
+  , _editOptionsQuestionEventExpertUuids = NothingChanged
+  , _editOptionsQuestionEventReferenceUuids = NothingChanged
+  , _editOptionsQuestionEventAnswerUuids = ChangedValue $ getAnwerUuids question1WithNewType
   }
 
 e_km1_ch1_q2' :: EditQuestionEvent
@@ -254,7 +307,7 @@ e_km1_ch1_q2' = EditOptionsQuestionEvent' e_km1_ch1_q2
 e_km1_ch1_q2 :: EditOptionsQuestionEvent
 e_km1_ch1_q2 =
   EditOptionsQuestionEvent
-  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "f56b1435-ec9f-4d79-88b3-04c39b73724d"
+  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "1a01665b-e896-450d-b606-afc1dcca586b"
   , _editOptionsQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -291,24 +344,26 @@ e_km1_ch1_q2_second_edit =
   }
 
 e_km1_ch1_q2_type' :: EditQuestionEvent
-e_km1_ch1_q2_type' = EditValueQuestionEvent' e_km1_ch1_q2_type
+e_km1_ch1_q2_type' = EditListQuestionEvent' e_km1_ch1_q2_type
 
-e_km1_ch1_q2_type :: EditValueQuestionEvent
+e_km1_ch1_q2_type :: EditListQuestionEvent
 e_km1_ch1_q2_type =
-  EditValueQuestionEvent
-  { _editValueQuestionEventUuid = fromJust $ U.fromString "f6766fae-cfc0-462e-9816-982abd2b009e"
-  , _editValueQuestionEventPath =
+  EditListQuestionEvent
+  { _editListQuestionEventUuid = fromJust $ U.fromString "2727c225-78e5-4d5f-a093-cfaadb6ea663"
+  , _editListQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editValueQuestionEventQuestionUuid = question2 ^. uuid
-  , _editValueQuestionEventTitle = ChangedValue $ question2WithNewType ^. title
-  , _editValueQuestionEventText = NothingChanged
-  , _editValueQuestionEventRequiredLevel = NothingChanged
-  , _editValueQuestionEventTagUuids = NothingChanged
-  , _editValueQuestionEventExpertUuids = NothingChanged
-  , _editValueQuestionEventReferenceUuids = NothingChanged
-  , _editValueQuestionEventValueType = ChangedValue $ question2WithNewType ^. valueType
+  , _editListQuestionEventQuestionUuid = question2WithNewType ^. uuid
+  , _editListQuestionEventTitle = ChangedValue $ question2WithNewType ^. title
+  , _editListQuestionEventText = NothingChanged
+  , _editListQuestionEventRequiredLevel = NothingChanged
+  , _editListQuestionEventTagUuids = NothingChanged
+  , _editListQuestionEventExpertUuids = NothingChanged
+  , _editListQuestionEventReferenceUuids = NothingChanged
+  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question2WithNewType ^. itemTemplateTitle
+  , _editListQuestionEventItemTemplateQuestionUuids =
+      ChangedValue $ getQuestionUuid <$> (question4Edited ^. itemTemplateQuestions)
   }
 
 e_km1_ch2_q4' :: EditQuestionEvent
@@ -317,7 +372,7 @@ e_km1_ch2_q4' = EditListQuestionEvent' e_km1_ch2_q4
 e_km1_ch2_q4 :: EditListQuestionEvent
 e_km1_ch2_q4 =
   EditListQuestionEvent
-  { _editListQuestionEventUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
+  { _editListQuestionEventUuid = fromJust $ U.fromString "7014c6de-a1c0-4c09-881a-c83c68a29de1"
   , _editListQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -335,24 +390,68 @@ e_km1_ch2_q4 =
   }
 
 e_km1_ch2_q4_type' :: EditQuestionEvent
-e_km1_ch2_q4_type' = EditOptionsQuestionEvent' e_km1_ch2_q4_type
+e_km1_ch2_q4_type' = EditIntegrationQuestionEvent' e_km1_ch2_q4_type
 
-e_km1_ch2_q4_type :: EditOptionsQuestionEvent
+e_km1_ch2_q4_type :: EditIntegrationQuestionEvent
 e_km1_ch2_q4_type =
-  EditOptionsQuestionEvent
-  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "bf888b95-921d-4caa-88af-3309393d44c3"
-  , _editOptionsQuestionEventPath =
+  EditIntegrationQuestionEvent
+  { _editIntegrationQuestionEventUuid = fromJust $ U.fromString "0f6f536c-aa1c-4d47-8cd7-46d611b43a56"
+  , _editIntegrationQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
-      , EventPathItem {_eventPathItemUuid = chapter1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
       ]
-  , _editOptionsQuestionEventQuestionUuid = question4 ^. uuid
-  , _editOptionsQuestionEventTitle = ChangedValue $ question4WithNewType ^. title
-  , _editOptionsQuestionEventText = NothingChanged
-  , _editOptionsQuestionEventRequiredLevel = NothingChanged
-  , _editOptionsQuestionEventTagUuids = NothingChanged
-  , _editOptionsQuestionEventExpertUuids = NothingChanged
-  , _editOptionsQuestionEventReferenceUuids = NothingChanged
-  , _editOptionsQuestionEventAnswerUuids = NothingChanged
+  , _editIntegrationQuestionEventQuestionUuid = question4WithNewType ^. uuid
+  , _editIntegrationQuestionEventTitle = ChangedValue $ question4WithNewType ^. title
+  , _editIntegrationQuestionEventText = NothingChanged
+  , _editIntegrationQuestionEventRequiredLevel = NothingChanged
+  , _editIntegrationQuestionEventTagUuids = NothingChanged
+  , _editIntegrationQuestionEventExpertUuids = NothingChanged
+  , _editIntegrationQuestionEventReferenceUuids = NothingChanged
+  , _editIntegrationQuestionEventIntegrationUuid = ChangedValue $ question4WithNewType ^. integrationUuid
+  , _editIntegrationQuestionEventProps = ChangedValue $ question4WithNewType ^. props
+  }
+
+e_km1_ch3_q9' :: EditQuestionEvent
+e_km1_ch3_q9' = EditIntegrationQuestionEvent' e_km1_ch3_q9
+
+e_km1_ch3_q9 :: EditIntegrationQuestionEvent
+e_km1_ch3_q9 =
+  EditIntegrationQuestionEvent
+  { _editIntegrationQuestionEventUuid = fromJust $ U.fromString "43779823-507b-41f1-8dce-7c5e0660db8f"
+  , _editIntegrationQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter3 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _editIntegrationQuestionEventQuestionUuid = question9Edited ^. uuid
+  , _editIntegrationQuestionEventTitle = ChangedValue $ question9Edited ^. title
+  , _editIntegrationQuestionEventText = ChangedValue $ question9Edited ^. text
+  , _editIntegrationQuestionEventRequiredLevel = ChangedValue $ question9Edited ^. requiredLevel
+  , _editIntegrationQuestionEventTagUuids = ChangedValue $ question9Edited ^. tagUuids
+  , _editIntegrationQuestionEventExpertUuids = ChangedValue $ getExpertUuids question9Edited'
+  , _editIntegrationQuestionEventReferenceUuids = ChangedValue $ getReferenceUuids question9Edited'
+  , _editIntegrationQuestionEventIntegrationUuid = ChangedValue $ question9Edited ^. integrationUuid
+  , _editIntegrationQuestionEventProps = ChangedValue $ question9Edited ^. props
+  }
+
+e_km1_ch3_q9_type' :: EditQuestionEvent
+e_km1_ch3_q9_type' = EditValueQuestionEvent' e_km1_ch3_q9_type
+
+e_km1_ch3_q9_type :: EditValueQuestionEvent
+e_km1_ch3_q9_type =
+  EditValueQuestionEvent
+  { _editValueQuestionEventUuid = fromJust $ U.fromString "91514dc3-29b1-469a-b0d9-5fc211df1c47"
+  , _editValueQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter3 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      ]
+  , _editValueQuestionEventQuestionUuid = question9WithNewType ^. uuid
+  , _editValueQuestionEventTitle = ChangedValue $ question9WithNewType ^. title
+  , _editValueQuestionEventText = NothingChanged
+  , _editValueQuestionEventRequiredLevel = NothingChanged
+  , _editValueQuestionEventTagUuids = NothingChanged
+  , _editValueQuestionEventExpertUuids = NothingChanged
+  , _editValueQuestionEventReferenceUuids = NothingChanged
+  , _editValueQuestionEventValueType = ChangedValue $ question9WithNewType ^. valueType
   }
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
@@ -643,7 +742,7 @@ a_km1_ch2_q4_it1_q5' = AddListQuestionEvent' a_km1_ch2_q4_it1_q5
 a_km1_ch2_q4_it1_q5 :: AddListQuestionEvent
 a_km1_ch2_q4_it1_q5 =
   AddListQuestionEvent
-  { _addListQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _addListQuestionEventUuid = fromJust $ U.fromString "5619d036-0130-47fa-9553-b73094eecd7e"
   , _addListQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -663,7 +762,7 @@ a_km1_ch2_q4_it1_q6' = AddOptionsQuestionEvent' a_km1_ch2_q4_it1_q6
 a_km1_ch2_q4_it1_q6 :: AddOptionsQuestionEvent
 a_km1_ch2_q4_it1_q6 =
   AddOptionsQuestionEvent
-  { _addOptionsQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _addOptionsQuestionEventUuid = fromJust $ U.fromString "5ac56741-b93a-42f5-9beb-f22100e4342d"
   , _addOptionsQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -732,7 +831,7 @@ a_km1_ch2_q4_it1_q7' = AddValueQuestionEvent' a_km1_ch2_q4_it1_q7
 a_km1_ch2_q4_it1_q7 :: AddValueQuestionEvent
 a_km1_ch2_q4_it1_q7 =
   AddValueQuestionEvent
-  { _addValueQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _addValueQuestionEventUuid = fromJust $ U.fromString "cf839365-91d0-427a-bb99-89de1a125929"
   , _addValueQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -753,7 +852,7 @@ a_km1_ch2_q4_it1_q8' = AddValueQuestionEvent' a_km1_ch2_q4_it1_q8
 a_km1_ch2_q4_it1_q8 :: AddValueQuestionEvent
 a_km1_ch2_q4_it1_q8 =
   AddValueQuestionEvent
-  { _addValueQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _addValueQuestionEventUuid = fromJust $ U.fromString "3536a56f-d19c-4aff-ada1-ef7b3a60389d"
   , _addValueQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -774,7 +873,7 @@ e_km1_ch2_q4_it1_q5' = EditListQuestionEvent' e_km1_ch2_q4_it1_q5
 e_km1_ch2_q4_it1_q5 :: EditListQuestionEvent
 e_km1_ch2_q4_it1_q5 =
   EditListQuestionEvent
-  { _editListQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _editListQuestionEventUuid = fromJust $ U.fromString "17f8e9d4-7299-4c88-aba1-0a7b133aa8f3"
   , _editListQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -798,7 +897,7 @@ e_km1_ch2_q4_it1_q6' = EditOptionsQuestionEvent' e_km1_ch2_q4_it1_q6
 e_km1_ch2_q4_it1_q6 :: EditOptionsQuestionEvent
 e_km1_ch2_q4_it1_q6 =
   EditOptionsQuestionEvent
-  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _editOptionsQuestionEventUuid = fromJust $ U.fromString "f5c5ccfd-619b-4110-807a-39ede6d31cae"
   , _editOptionsQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -817,7 +916,7 @@ e_km1_ch2_q4_it1_q6 =
 d_km1_ch2_q4_it1_q5 :: DeleteQuestionEvent
 d_km1_ch2_q4_it1_q5 =
   DeleteQuestionEvent
-  { _deleteQuestionEventUuid = fromJust $ U.fromString "263bc255-4289-4ca8-9734-8b254ab45f6b"
+  { _deleteQuestionEventUuid = fromJust $ U.fromString "424d19cb-a79f-4da0-b7f6-33363c32b7fd"
   , _deleteQuestionEventPath =
       [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
       , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
@@ -924,6 +1023,29 @@ a_km1_ch2_ansYes6_fuq4 =
   , _addListQuestionEventRequiredLevel = q4_it1_q6_aYes_followUpQuestion4 ^. requiredLevel
   , _addListQuestionEventTagUuids = q4_it1_q6_aYes_followUpQuestion4 ^. tagUuids
   , _addListQuestionEventItemTemplateTitle = q4_it1_q6_aYes_followUpQuestion4 ^. itemTemplateTitle
+  }
+
+a_km1_ch2_ansYes6_fuq5' :: AddQuestionEvent
+a_km1_ch2_ansYes6_fuq5' = AddIntegrationQuestionEvent' a_km1_ch2_ansYes6_fuq5
+
+a_km1_ch2_ansYes6_fuq5 :: AddIntegrationQuestionEvent
+a_km1_ch2_ansYes6_fuq5 =
+  AddIntegrationQuestionEvent
+  { _addIntegrationQuestionEventUuid = fromJust $ U.fromString "11872ad2-0d3d-4ab6-b81c-17d234bab6ba"
+  , _addIntegrationQuestionEventPath =
+      [ EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}
+      , EventPathItem {_eventPathItemUuid = chapter2 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__CHAPTER}
+      , EventPathItem {_eventPathItemUuid = question4 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      , EventPathItem {_eventPathItemUuid = q4_it1_question6 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__QUESTION}
+      , EventPathItem {_eventPathItemUuid = q4_it1_q6_answerYes ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__ANSWER}
+      ]
+  , _addIntegrationQuestionEventQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
+  , _addIntegrationQuestionEventTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
+  , _addIntegrationQuestionEventText = q4_it1_q6_aYes_followUpQuestion5 ^. text
+  , _addIntegrationQuestionEventRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
+  , _addIntegrationQuestionEventTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
+  , _addIntegrationQuestionEventIntegrationUuid = q4_it1_q6_aYes_followUpQuestion5 ^. integrationUuid
+  , _addIntegrationQuestionEventProps = q4_it1_q6_aYes_followUpQuestion5 ^. props
   }
 
 e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2' :: EditQuestionEvent
@@ -1364,4 +1486,78 @@ d_km1_tds =
   { _deleteTagEventUuid = fromJust $ U.fromString "969d00c2-062d-4763-a372-536d486c532f"
   , _deleteTagEventPath = [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
   , _deleteTagEventTagUuid = tagDataScience ^. uuid
+  }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_iop :: AddIntegrationEvent
+a_km1_iop =
+  AddIntegrationEvent
+  { _addIntegrationEventUuid = fromJust $ U.fromString "3f94cb01-6f92-4eb6-975b-385c02b831bc"
+  , _addIntegrationEventPath =
+      [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _addIntegrationEventIntegrationUuid = ontologyPortal ^. uuid
+  , _addIntegrationEventIId = ontologyPortal ^. iId
+  , _addIntegrationEventName = ontologyPortal ^. name
+  , _addIntegrationEventProps = ontologyPortal ^. props
+  , _addIntegrationEventLogo = ontologyPortal ^. logo
+  , _addIntegrationEventRequestMethod = ontologyPortal ^. requestMethod
+  , _addIntegrationEventRequestUrl = ontologyPortal ^. requestUrl
+  , _addIntegrationEventRequestHeaders = ontologyPortal ^. requestHeaders
+  , _addIntegrationEventRequestBody = ontologyPortal ^. requestBody
+  , _addIntegrationEventResponseListField = ontologyPortal ^. responseListField
+  , _addIntegrationEventResponseIdField = ontologyPortal ^. responseIdField
+  , _addIntegrationEventResponseNameField = ontologyPortal ^. responseNameField
+  , _addIntegrationEventItemUrl = ontologyPortal ^. itemUrl
+  }
+
+a_km1_ibp :: AddIntegrationEvent
+a_km1_ibp =
+  AddIntegrationEvent
+  { _addIntegrationEventUuid = fromJust $ U.fromString "5c47b31c-84d0-4792-99ce-09154642105d"
+  , _addIntegrationEventPath =
+      [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _addIntegrationEventIntegrationUuid = bioPortal ^. uuid
+  , _addIntegrationEventIId = bioPortal ^. iId
+  , _addIntegrationEventName = bioPortal ^. name
+  , _addIntegrationEventProps = bioPortal ^. props
+  , _addIntegrationEventLogo = bioPortal ^. logo
+  , _addIntegrationEventRequestMethod = bioPortal ^. requestMethod
+  , _addIntegrationEventRequestUrl = bioPortal ^. requestUrl
+  , _addIntegrationEventRequestHeaders = bioPortal ^. requestHeaders
+  , _addIntegrationEventRequestBody = bioPortal ^. requestBody
+  , _addIntegrationEventResponseListField = bioPortal ^. responseListField
+  , _addIntegrationEventResponseIdField = bioPortal ^. responseIdField
+  , _addIntegrationEventResponseNameField = bioPortal ^. responseNameField
+  , _addIntegrationEventItemUrl = bioPortal ^. itemUrl
+  }
+
+e_km1_iop :: EditIntegrationEvent
+e_km1_iop =
+  EditIntegrationEvent
+  { _editIntegrationEventUuid = fromJust $ U.fromString "3456a254-c5bc-4c0e-8ff9-f5e080765a71"
+  , _editIntegrationEventPath =
+      [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _editIntegrationEventIntegrationUuid = ontologyPortalEdited ^. uuid
+  , _editIntegrationEventIId = ChangedValue $ ontologyPortalEdited ^. iId
+  , _editIntegrationEventName = ChangedValue $ ontologyPortalEdited ^. name
+  , _editIntegrationEventProps = ChangedValue $ ontologyPortalEdited ^. props
+  , _editIntegrationEventLogo = ChangedValue $ ontologyPortalEdited ^. logo
+  , _editIntegrationEventRequestMethod = ChangedValue $ ontologyPortalEdited ^. requestMethod
+  , _editIntegrationEventRequestUrl = ChangedValue $ ontologyPortalEdited ^. requestUrl
+  , _editIntegrationEventRequestHeaders = ChangedValue $ ontologyPortalEdited ^. requestHeaders
+  , _editIntegrationEventRequestBody = ChangedValue $ ontologyPortalEdited ^. requestBody
+  , _editIntegrationEventResponseListField = ChangedValue $ ontologyPortalEdited ^. responseListField
+  , _editIntegrationEventResponseIdField = ChangedValue $ ontologyPortalEdited ^. responseIdField
+  , _editIntegrationEventResponseNameField = ChangedValue $ ontologyPortalEdited ^. responseNameField
+  , _editIntegrationEventItemUrl = ChangedValue $ ontologyPortalEdited ^. itemUrl
+  }
+
+d_km1_iop :: DeleteIntegrationEvent
+d_km1_iop =
+  DeleteIntegrationEvent
+  { _deleteIntegrationEventUuid = fromJust $ U.fromString "d211d46f-5358-497a-92a0-e0bde08ce3d3"
+  , _deleteIntegrationEventPath =
+      [EventPathItem {_eventPathItemUuid = km1 ^. uuid, _eventPathItemPType = _EVENT_PATH_ITEM__KM}]
+  , _deleteIntegrationEventIntegrationUuid = ontologyPortal ^. uuid
   }

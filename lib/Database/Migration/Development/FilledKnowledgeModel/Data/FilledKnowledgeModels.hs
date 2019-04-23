@@ -12,6 +12,7 @@ fKm1WithQ4 =
   FilledKnowledgeModel
   { _filledKnowledgeModelUuid = km1 ^. uuid
   , _filledKnowledgeModelName = km1 ^. name
-  , _filledKnowledgeModelChapters = [fChapter1, fChapter2]
+  , _filledKnowledgeModelChapters = [fChapter1, fChapter2, fChapter3]
   , _filledKnowledgeModelTags = km1 ^. tags
+  , _filledKnowledgeModelIntegrations = km1 ^. integrations
   }

@@ -18,6 +18,7 @@ instance ToBSON AddQuestionEvent where
   toBSON (AddOptionsQuestionEvent' event) = toBSON event
   toBSON (AddListQuestionEvent' event) = toBSON event
   toBSON (AddValueQuestionEvent' event) = toBSON event
+  toBSON (AddIntegrationQuestionEvent' event) = toBSON event
 
 instance FromBSON AddQuestionEvent where
   fromBSON doc = do
@@ -26,6 +27,7 @@ instance FromBSON AddQuestionEvent where
       "OptionsQuestion" -> AddOptionsQuestionEvent' <$> (fromBSON doc :: Maybe AddOptionsQuestionEvent)
       "ListQuestion" -> AddListQuestionEvent' <$> (fromBSON doc :: Maybe AddListQuestionEvent)
       "ValueQuestion" -> AddValueQuestionEvent' <$> (fromBSON doc :: Maybe AddValueQuestionEvent)
+      "IntegrationQuestion" -> AddIntegrationQuestionEvent' <$> (fromBSON doc :: Maybe AddIntegrationQuestionEvent)
 
 -- ------------------------------------------------
 instance ToBSON AddOptionsQuestionEvent where
@@ -135,6 +137,35 @@ instance FromBSON AddValueQuestionEvent where
       , _addValueQuestionEventValueType = qValueType
       }
 
+-- ------------------------------------------------
+instance ToBSON AddIntegrationQuestionEvent where
+  toBSON AddIntegrationQuestionEvent {..} =
+    [ "eventType" BSON.=: "AddQuestionEvent"
+    , "questionType" BSON.=: "IntegrationQuestion"
+    , "uuid" BSON.=: serializeUUID _addIntegrationQuestionEventUuid
+    , "path" BSON.=: _addIntegrationQuestionEventPath
+    , "questionUuid" BSON.=: serializeUUID _addIntegrationQuestionEventQuestionUuid
+    , "title" BSON.=: _addIntegrationQuestionEventTitle
+    , "text" BSON.=: _addIntegrationQuestionEventText
+    , "requiredLevel" BSON.=: _addIntegrationQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: serializeUUIDList _addIntegrationQuestionEventTagUuids
+    , "integrationUuid" BSON.=: serializeUUID _addIntegrationQuestionEventIntegrationUuid
+    , "props" BSON.=: _addIntegrationQuestionEventProps
+    ]
+
+instance FromBSON AddIntegrationQuestionEvent where
+  fromBSON doc = do
+    _addIntegrationQuestionEventUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _addIntegrationQuestionEventPath <- BSON.lookup "path" doc
+    _addIntegrationQuestionEventQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
+    _addIntegrationQuestionEventTitle <- BSON.lookup "title" doc
+    _addIntegrationQuestionEventText <- BSON.lookup "text" doc
+    _addIntegrationQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _addIntegrationQuestionEventTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "tagUuids" doc
+    _addIntegrationQuestionEventIntegrationUuid <- deserializeMaybeUUID $ BSON.lookup "integrationUuid" doc
+    _addIntegrationQuestionEventProps <- BSON.lookup "props" doc
+    return AddIntegrationQuestionEvent {..}
+
 -- -------------------------
 -- EDIT QUESTION EVENT -----
 -- -------------------------
@@ -142,6 +173,7 @@ instance ToBSON EditQuestionEvent where
   toBSON (EditOptionsQuestionEvent' event) = toBSON event
   toBSON (EditListQuestionEvent' event) = toBSON event
   toBSON (EditValueQuestionEvent' event) = toBSON event
+  toBSON (EditIntegrationQuestionEvent' event) = toBSON event
 
 instance FromBSON EditQuestionEvent where
   fromBSON doc = do
@@ -150,6 +182,7 @@ instance FromBSON EditQuestionEvent where
       "OptionsQuestion" -> EditOptionsQuestionEvent' <$> (fromBSON doc :: Maybe EditOptionsQuestionEvent)
       "ListQuestion" -> EditListQuestionEvent' <$> (fromBSON doc :: Maybe EditListQuestionEvent)
       "ValueQuestion" -> EditValueQuestionEvent' <$> (fromBSON doc :: Maybe EditValueQuestionEvent)
+      "IntegrationQuestion" -> EditIntegrationQuestionEvent' <$> (fromBSON doc :: Maybe EditIntegrationQuestionEvent)
 
 -- ------------------------------------------------
 instance ToBSON EditOptionsQuestionEvent where
@@ -282,6 +315,39 @@ instance FromBSON EditValueQuestionEvent where
       , _editValueQuestionEventReferenceUuids = qReferenceUuids
       , _editValueQuestionEventValueType = qValueType
       }
+
+-- ------------------------------------------------
+instance ToBSON EditIntegrationQuestionEvent where
+  toBSON EditIntegrationQuestionEvent {..} =
+    [ "eventType" BSON.=: "EditQuestionEvent"
+    , "questionType" BSON.=: "ValueQuestion"
+    , "uuid" BSON.=: serializeUUID _editIntegrationQuestionEventUuid
+    , "path" BSON.=: _editIntegrationQuestionEventPath
+    , "questionUuid" BSON.=: serializeUUID _editIntegrationQuestionEventQuestionUuid
+    , "title" BSON.=: _editIntegrationQuestionEventTitle
+    , "text" BSON.=: _editIntegrationQuestionEventText
+    , "requiredLevel" BSON.=: _editIntegrationQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: serializeEventFieldUUIDList _editIntegrationQuestionEventTagUuids
+    , "expertUuids" BSON.=: serializeEventFieldUUIDList _editIntegrationQuestionEventExpertUuids
+    , "referenceUuids" BSON.=: serializeEventFieldUUIDList _editIntegrationQuestionEventReferenceUuids
+    , "integrationUuid" BSON.=: serializeEventFieldUUID _editIntegrationQuestionEventIntegrationUuid
+    , "props" BSON.=: _editIntegrationQuestionEventProps
+    ]
+
+instance FromBSON EditIntegrationQuestionEvent where
+  fromBSON doc = do
+    _editIntegrationQuestionEventUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _editIntegrationQuestionEventPath <- BSON.lookup "path" doc
+    _editIntegrationQuestionEventQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
+    _editIntegrationQuestionEventTitle <- BSON.lookup "title" doc
+    _editIntegrationQuestionEventText <- BSON.lookup "text" doc
+    _editIntegrationQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    let _editIntegrationQuestionEventTagUuids = deserializeEventFieldUUIDList $ BSON.lookup "tagUuids" doc
+    let _editIntegrationQuestionEventExpertUuids = deserializeEventFieldUUIDList $ BSON.lookup "expertUuids" doc
+    let _editIntegrationQuestionEventReferenceUuids = deserializeEventFieldUUIDList $ BSON.lookup "referenceUuids" doc
+    _editIntegrationQuestionEventIntegrationUuid <- deserializeMaybeEventFieldUUID $ BSON.lookup "integrationUuid" doc
+    _editIntegrationQuestionEventProps <- BSON.lookup "props" doc
+    return EditIntegrationQuestionEvent {..}
 
 -- -------------------------
 -- DELETE QUESTION EVENT ---

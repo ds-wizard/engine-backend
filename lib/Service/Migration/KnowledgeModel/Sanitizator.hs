@@ -29,7 +29,8 @@ instance Sanitizator EditKnowledgeModelEvent where
     unwrapKM state event $ \km -> do
       event1 <- applyChapterChange km event
       event2 <- applyTagChange km event1
-      changeEventUuid uuid event2
+      event3 <- applyIntegrationChange km event2
+      changeEventUuid uuid event3
       -- ------------------------
       -- Chapter
       -- ------------------------
@@ -62,6 +63,24 @@ instance Sanitizator EditKnowledgeModelEvent where
               ChangedValue uuids -> callback uuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]
           childUuidsFromKM km = _tagUuid <$> getAllTags km
+          isInChildUuids :: KnowledgeModel -> U.UUID -> Bool
+          isInChildUuids km uuid = isJust $ find (== uuid) (childUuidsFromKM km)
+          resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
+          resultUuids km childUuidsFromEvent =
+            filter (isInChildUuids km) $ removeDuplicates $ childUuidsFromEvent ++ childUuidsFromKM km
+      -- ------------------------
+      -- Integration
+      -- ------------------------
+      applyIntegrationChange km event =
+        unwrapEventChildUuids $ \childUuidsFromEvent ->
+          return $ event & integrationUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+        where
+          unwrapEventChildUuids callback =
+            case event ^. integrationUuids of
+              NothingChanged -> return event
+              ChangedValue uuids -> callback uuids
+          childUuidsFromKM :: KnowledgeModel -> [U.UUID]
+          childUuidsFromKM km = _integrationUuid <$> getAllIntegrations km
           isInChildUuids :: KnowledgeModel -> U.UUID -> Bool
           isInChildUuids km uuid = isJust $ find (== uuid) (childUuidsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]

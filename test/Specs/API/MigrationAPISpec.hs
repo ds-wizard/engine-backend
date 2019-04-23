@@ -300,7 +300,7 @@ migratorAPI appContext = do
         let reqHeaders = [reqAuthHeader, reqCtHeader]
         let reqDto =
               MigratorConflictDTO
-              { _migratorConflictDTOOriginalEventUuid = a_km1_ch3 ^. uuid
+              { _migratorConflictDTOOriginalEventUuid = a_km1_ch4 ^. uuid
               , _migratorConflictDTOAction = MCAEdited
               , _migratorConflictDTOEvent = Just . toDTOFn . Prelude.head $ netherlandsPackageV2 ^. events
               }

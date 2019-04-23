@@ -54,12 +54,12 @@ deserializeMaybeUUID mUuidS = do
   fromString uuidS
 
 deserializeUUIDList :: [String] -> Maybe [UUID]
-deserializeUUIDList uuidsS = switchMaybeAndList $ fmap fromString uuidsS
+deserializeUUIDList uuidsS = foldMaybe $ fmap fromString uuidsS
 
 deserializeMaybeUUIDList :: Maybe [String] -> Maybe [UUID]
 deserializeMaybeUUIDList mUuidsS = do
   uuidsS <- mUuidsS
-  switchMaybeAndList $ fmap fromString uuidsS
+  foldMaybe $ fmap fromString uuidsS
 
 deserializeMaybeEventFieldUUID :: Maybe (EventField String) -> Maybe (EventField UUID)
 deserializeMaybeEventFieldUUID maybeEfUuidS =

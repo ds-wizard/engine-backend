@@ -123,7 +123,7 @@ branchServiceIntegrationSpec appContext =
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         let reqDto =
               MigratorConflictDTO
-              { _migratorConflictDTOOriginalEventUuid = a_km1_ch3 ^. uuid
+              { _migratorConflictDTOOriginalEventUuid = a_km1_ch4 ^. uuid
               , _migratorConflictDTOAction = MCAReject
               , _migratorConflictDTOEvent = Nothing
               }

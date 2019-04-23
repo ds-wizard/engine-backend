@@ -7,6 +7,7 @@ import Data.Maybe
 import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Expert ()
+import Database.BSON.Event.Integration ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
@@ -15,6 +16,7 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -46,6 +48,10 @@ chooseEventDeserializator doc = do
     "AddTagEvent" -> Just . AddTagEvent' . fromJust $ (fromBSON doc :: Maybe AddTagEvent)
     "EditTagEvent" -> Just . EditTagEvent' . fromJust $ (fromBSON doc :: Maybe EditTagEvent)
     "DeleteTagEvent" -> Just . DeleteTagEvent' . fromJust $ (fromBSON doc :: Maybe DeleteTagEvent)
+    "AddIntegrationEvent" -> Just . AddIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe AddIntegrationEvent)
+    "EditIntegrationEvent" -> Just . EditIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe EditIntegrationEvent)
+    "DeleteIntegrationEvent" ->
+      Just . DeleteIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe DeleteIntegrationEvent)
 
 convertEventToBSON :: Event -> BSON.Document
 convertEventToBSON (AddKnowledgeModelEvent' event) = toBSON event
@@ -68,3 +74,6 @@ convertEventToBSON (DeleteReferenceEvent' event) = toBSON event
 convertEventToBSON (AddTagEvent' event) = toBSON event
 convertEventToBSON (EditTagEvent' event) = toBSON event
 convertEventToBSON (DeleteTagEvent' event) = toBSON event
+convertEventToBSON (AddIntegrationEvent' event) = toBSON event
+convertEventToBSON (EditIntegrationEvent' event) = toBSON event
+convertEventToBSON (DeleteIntegrationEvent' event) = toBSON event

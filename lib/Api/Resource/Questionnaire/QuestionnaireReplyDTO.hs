@@ -14,11 +14,8 @@ data ReplyValueDTO
   | IntegrationReplyDTO { _integrationReplyDTOValue :: IntegrationReplyValueDTO }
   deriving (Show, Eq)
 
-data IntegrationReplyValueDTO =
-  FairsharingIntegrationReplyDTO' FairsharingIntegrationReplyDTO
+data IntegrationReplyValueDTO
+  = PlainValueDTO String
+  | IntegrationValueDTO { _integrationValueDTOIntId :: String
+                        , _integrationValueDTOIntValue :: String }
   deriving (Show, Eq)
-
-data FairsharingIntegrationReplyDTO = FairsharingIntegrationReplyDTO
-  { _fairsharingIntegrationReplyDTOIntId :: String
-  , _fairsharingIntegrationReplyDTOName :: String
-  } deriving (Show, Eq)

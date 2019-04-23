@@ -9,6 +9,7 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventAccessors
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -61,6 +62,19 @@ applyEventToTags e path km tUuid =
       if tag ^. uuid == tUuid
         then heApplyEventToTag e path (Right tag) $ \appliedTag -> Right $ ts ++ [appliedTag]
         else Right $ ts ++ [tag]
+
+-- --------------------------------------------
+applyEventToIntegrations e path km iUuid =
+  hFoldl foldOneIntegration (Right []) (km ^. integrations) $ \mIntegrations ->
+    Right . Just $ km & integrations .~ mIntegrations
+  where
+    foldOneIntegration :: Either AppError [Integration] -> Integration -> Either AppError [Integration]
+    foldOneIntegration (Left error) _ = Left error
+    foldOneIntegration (Right is) integration =
+      if integration ^. uuid == iUuid
+        then heApplyEventToIntegration e path (Right integration) $ \appliedIntegration ->
+               Right $ is ++ [appliedIntegration]
+        else Right $ is ++ [integration]
 
 -- -------------------------
 -- KNOWLEDGE MODEL ---------
@@ -165,6 +179,31 @@ instance ApplyEventToKM DeleteTagEvent where
     where
       removeTagFromKM = Right . Just $ deleteTag km (e ^. tagUuid)
       removeAllTagReferencesFromKM = broadcastToChapters e path
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToKM AddIntegrationEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e _ (Right (Just km)) = Right . Just $ addIntegration km (createIntegration e)
+
+instance ApplyEventToKM EditIntegrationEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e (_:restOfPath) (Right (Just km)) = applyToAllItsChildren applyToIntegrations
+    where
+      applyToAllItsChildren = broadcastToChapters e restOfPath
+      applyToIntegrations = applyEventToIntegrations e restOfPath km (e ^. integrationUuid)
+  applyEventToKM e [] _ = errorEmptyPath e
+
+instance ApplyEventToKM DeleteIntegrationEvent where
+  applyEventToKM _ _ (Left error) = Left error
+  applyEventToKM e _ (Right Nothing) = errorEditNonExistingThing e
+  applyEventToKM e path (Right (Just km)) = changeAllIntegrationQuestionsToValueQuetions removeIntegrationFromKM
+    where
+      removeIntegrationFromKM = Right . Just $ deleteIntegration km (e ^. integrationUuid)
+      changeAllIntegrationQuestionsToValueQuetions = broadcastToChapters e path
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -282,6 +321,18 @@ instance ApplyEventToChapter EditTagEvent where
   applyEventToChapter e _ _ = errorIllegalState e "EditTagEvent" "Chapter"
 
 instance ApplyEventToChapter DeleteTagEvent where
+  applyEventToChapter = broadcastToQuestions
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToChapter AddIntegrationEvent where
+  applyEventToChapter e _ _ = errorIllegalState e "AddIntegrationEvent" "Chapter"
+
+instance ApplyEventToChapter EditIntegrationEvent where
+  applyEventToChapter = broadcastToQuestions
+
+instance ApplyEventToChapter DeleteIntegrationEvent where
   applyEventToChapter = broadcastToQuestions
 
 -- ------------------------------------------------------------------------
@@ -482,6 +533,28 @@ instance ApplyEventToQuestion DeleteTagEvent where
       removeTagsFromQuestion = Right $ q & qChangeTagUuids .~ (filter (\tUuid -> tUuid /= e ^. tagUuid) (getTagUuids q))
       removeFromAllItsChildren = broadcastToAnswersAndItemTemplateQuestions e path
 
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToQuestion AddIntegrationEvent where
+  applyEventToQuestion e _ _ = errorIllegalState e "AddIntegrationEvent" "Question"
+
+instance ApplyEventToQuestion EditIntegrationEvent where
+  applyEventToQuestion _ _ (Left error) = Left error
+  applyEventToQuestion e path (Right q) = applyToAllItsChildren updateProps
+    where
+      updateProps = Right . updateIntegrationProps e $ q
+      applyToAllItsChildren = broadcastToAnswersAndItemTemplateQuestions e path
+
+instance ApplyEventToQuestion DeleteIntegrationEvent where
+  applyEventToQuestion _ _ (Left error) = Left error
+  applyEventToQuestion e path (Right q) = applyToAllItsChildren . changeIntegrationQuestionToValueQuetion $ q
+    where
+      changeIntegrationQuestionToValueQuetion (IntegrationQuestion' iq) =
+        Right . convertToValueQuestion . IntegrationQuestion' $ iq
+      changeIntegrationQuestionToValueQuetion q' = Right q'
+      applyToAllItsChildren = broadcastToAnswersAndItemTemplateQuestions e path
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO ANSWER
@@ -600,6 +673,18 @@ instance ApplyEventToAnswer EditTagEvent where
 instance ApplyEventToAnswer DeleteTagEvent where
   applyEventToAnswer = broadcastToFollowUps
 
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToAnswer AddIntegrationEvent where
+  applyEventToAnswer e _ _ = errorIllegalState e "AddIntegrationEvent" "Answer"
+
+instance ApplyEventToAnswer EditIntegrationEvent where
+  applyEventToAnswer = broadcastToFollowUps
+
+instance ApplyEventToAnswer DeleteIntegrationEvent where
+  applyEventToAnswer = broadcastToFollowUps
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO EXPERT
@@ -687,6 +772,18 @@ instance ApplyEventToExpert EditTagEvent where
 
 instance ApplyEventToExpert DeleteTagEvent where
   applyEventToExpert e _ _ = errorIllegalState e "DeleteTagEvent" "Expert"
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToExpert AddIntegrationEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "AddIntegrationEvent" "Expert"
+
+instance ApplyEventToExpert EditIntegrationEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "EditIntegrationEvent" "Expert"
+
+instance ApplyEventToExpert DeleteIntegrationEvent where
+  applyEventToExpert e _ _ = errorIllegalState e "DeleteIntegrationEvent" "Expert"
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -776,6 +873,18 @@ instance ApplyEventToReference EditTagEvent where
 instance ApplyEventToReference DeleteTagEvent where
   applyEventToReference e _ _ = errorIllegalState e "DeleteTagEvent" "Reference"
 
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToReference AddIntegrationEvent where
+  applyEventToReference e _ _ = errorIllegalState e "AddIntegrationEvent" "Reference"
+
+instance ApplyEventToReference EditIntegrationEvent where
+  applyEventToReference e _ _ = errorIllegalState e "EditIntegrationEvent" "Reference"
+
+instance ApplyEventToReference DeleteIntegrationEvent where
+  applyEventToReference e _ _ = errorIllegalState e "DeleteIntegrationEvent" "Reference"
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 -- APPLY TO TAGS
@@ -863,3 +972,115 @@ instance ApplyEventToTag EditTagEvent where
 
 instance ApplyEventToTag DeleteTagEvent where
   applyEventToTag e _ _ = errorIllegalState e "DeleteTagEvent" "Expert"
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToTag AddIntegrationEvent where
+  applyEventToTag e _ _ = errorIllegalState e "AddIntegrationEvent" "Tag"
+
+instance ApplyEventToTag EditIntegrationEvent where
+  applyEventToTag e _ _ = errorIllegalState e "EditIntegrationEvent" "Tag"
+
+instance ApplyEventToTag DeleteIntegrationEvent where
+  applyEventToTag e _ _ = errorIllegalState e "DeleteIntegrationEvent" "Tag"
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+-- APPLY TO INTEGRATIONS
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+-- -------------------------
+-- KNOWLEDGE MODEL ---------
+-- -------------------------
+instance ApplyEventToIntegration AddKnowledgeModelEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddKnowledgeModelEvent" "Integration"
+
+instance ApplyEventToIntegration EditKnowledgeModelEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditKnowledgeModelEvent" "Integration"
+
+-- -------------------
+-- CHAPTERS ----------
+-- -------------------
+instance ApplyEventToIntegration AddChapterEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddChapterEvent" "Integration"
+
+instance ApplyEventToIntegration EditChapterEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditChapterEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteChapterEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteChapterEvent" "Integration"
+
+-- -------------------
+-- QUESTIONS----------
+-- -------------------
+instance ApplyEventToIntegration AddQuestionEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddQuestionEvent" "Integration"
+
+instance ApplyEventToIntegration EditQuestionEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditQuestionEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteQuestionEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteQuestionEvent" "Integration"
+
+-- -------------------
+-- ANSWERS -----------
+-- -------------------
+instance ApplyEventToIntegration AddAnswerEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddAnswerEvent" "Integration"
+
+instance ApplyEventToIntegration EditAnswerEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditAnswerEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteAnswerEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteAnswerEvent" "Integration"
+
+-- -------------------
+-- EXPERTS -----------
+-- -------------------
+instance ApplyEventToIntegration AddExpertEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddExpertEvent" "Integration"
+
+instance ApplyEventToIntegration EditExpertEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditExpertEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteExpertEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteExpertEvent" "Integration"
+
+-- -------------------
+-- REFERENCES---------
+-- -------------------
+instance ApplyEventToIntegration AddReferenceEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddReferenceEvent" "Integration"
+
+instance ApplyEventToIntegration EditReferenceEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditReferenceEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteReferenceEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteReferenceEvent" "Integration"
+
+-- -------------------
+-- TAGS --------------
+-- -------------------
+instance ApplyEventToIntegration AddTagEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddTagEvent" "Integration"
+
+instance ApplyEventToIntegration EditTagEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "EditTagEvent" "Integration"
+
+instance ApplyEventToIntegration DeleteTagEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteTagEvent" "Integration"
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+instance ApplyEventToIntegration AddIntegrationEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "AddIntegrationEvent" "Expert"
+
+instance ApplyEventToIntegration EditIntegrationEvent where
+  applyEventToIntegration _ _ (Left error) = Left error
+  applyEventToIntegration e [] (Right integration) = Right $ editIntegration e integration
+  applyEventToIntegration e path _ = errorPathShouldBeEmpty e path
+
+instance ApplyEventToIntegration DeleteIntegrationEvent where
+  applyEventToIntegration e _ _ = errorIllegalState e "DeleteIntegrationEvent" "Expert"

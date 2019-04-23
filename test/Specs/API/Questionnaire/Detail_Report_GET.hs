@@ -76,7 +76,7 @@ test_200 appContext =
     -- AND: Compare body
     let (Right resBody) = eitherDecode body :: Either String ReportDTO
     let rs = resBody ^. chapterReports
-    liftIO $ (length rs) `shouldBe` 2
+    liftIO $ (length rs) `shouldBe` 3
     -- Chapter report 1
     let r1 = rs !! 0
     liftIO $ (r1 ^. chapterUuid) `shouldBe` (chapter1 ^. uuid)
@@ -95,6 +95,15 @@ test_200 appContext =
     let m2 = (r2 ^. metrics) !! 0
     liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
     liftIO $ (m2 ^. measure) `shouldBe` 1
+    -- Chapter report 3
+    let r3 = rs !! 2
+    liftIO $ (r3 ^. chapterUuid) `shouldBe` (chapter3 ^. uuid)
+    let (AnsweredIndicationDTO' i3) = (r3 ^. indications) !! 0
+    liftIO $ (i3 ^. answeredQuestions) `shouldBe` 2
+    liftIO $ (i3 ^. unansweredQuestions) `shouldBe` 0
+    let m3 = (r3 ^. metrics) !! 0
+    liftIO $ (m3 ^. metricUuid) `shouldBe` metricF ^. uuid
+    liftIO $ (m3 ^. measure) `shouldBe` 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -39,3 +39,6 @@ runApplicator mKM events =
     foldEvent emKM (AddTagEvent' e) = applyEventToKM e (getPath e) emKM
     foldEvent emKM (EditTagEvent' e) = applyEventToKM e (getPath e) emKM
     foldEvent emKM (DeleteTagEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (AddIntegrationEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (EditIntegrationEvent' e) = applyEventToKM e (getPath e) emKM
+    foldEvent emKM (DeleteIntegrationEvent' e) = applyEventToKM e (getPath e) emKM

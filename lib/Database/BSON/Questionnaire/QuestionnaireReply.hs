@@ -34,15 +34,15 @@ instance FromBSON ReplyValue where
 
 instance FromBSON IntegrationReplyValue where
   fromBSON doc = do
-    itType <- BSON.lookup "type" doc
-    case itType of
-      "Fairsharing" -> FairsharingIntegrationReply' <$> (fromBSON doc :: Maybe FairsharingIntegrationReply)
-
-instance FromBSON FairsharingIntegrationReply where
-  fromBSON doc = do
-    _fairsharingIntegrationReplyIntId <- BSON.lookup "id" doc
-    _fairsharingIntegrationReplyName <- BSON.lookup "name" doc
-    return FairsharingIntegrationReply {..}
+    intType <- BSON.lookup "type" doc
+    case intType of
+      "PlainValue" -> do
+        value <- BSON.lookup "value" doc
+        return $ PlainValue value
+      "IntegrationValue" -> do
+        _integrationValueIntId <- BSON.lookup "id" doc
+        _integrationValueIntValue <- BSON.lookup "value" doc
+        return IntegrationValue {..}
 
 -- --------------------------------------------------------------------
 instance ToBSON Reply where
@@ -55,11 +55,6 @@ instance ToBSON ReplyValue where
   toBSON IntegrationReply {..} = ["type" BSON.=: "IntegrationReply", "value" BSON.=: _integrationReplyValue]
 
 instance ToBSON IntegrationReplyValue where
-  toBSON (FairsharingIntegrationReply' iValue) = toBSON iValue
-
-instance ToBSON FairsharingIntegrationReply where
-  toBSON FairsharingIntegrationReply {..} =
-    [ "type" BSON.=: "Fairsharing"
-    , "id" BSON.=: _fairsharingIntegrationReplyIntId
-    , "name" BSON.=: _fairsharingIntegrationReplyName
-    ]
+  toBSON (PlainValue value) = ["type" BSON.=: "PlainValue", "value" BSON.=: value]
+  toBSON IntegrationValue {..} =
+    ["type" BSON.=: "IntegrationValue", "id" BSON.=: _integrationValueIntId, "value" BSON.=: _integrationValueIntValue]

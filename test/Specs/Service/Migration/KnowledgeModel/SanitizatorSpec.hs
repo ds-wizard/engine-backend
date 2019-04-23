@@ -10,6 +10,7 @@ import Database.Migration.Development.Event.Data.Events
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.KnowledgeModel.Data.Experts
+import Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.KnowledgeModel.Data.References
@@ -39,40 +40,54 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
-        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
+        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
-        let kmChapterUuids = _chapterUuid <$> [chapter2]
+        let kmChapterUuids = _chapterUuid <$> [chapter3, chapter2]
         let kmTagUuids = _tagUuid <$> [tagBioInformatic]
-        let edited_e_km1 = (e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids
+        let kmIntegrationUuids = _integrationUuid <$> [bioPortal]
+        let edited_e_km1 =
+              ((e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids) &
+              integrationUuids .~
+              ChangedValue kmIntegrationUuids
         let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
         -- When:
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
-        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
+        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
         let kmChapterUuids =
+              [chapter3 ^. uuid] ++
               [chapter2 ^. uuid] ++
               [fromJust . U.fromString $ "54992efb-4738-4f00-9c69-979d28cee5ff"] ++ [chapter1 ^. uuid]
         let kmTagUuids =
               [tagBioInformatic ^. uuid] ++
               [fromJust . U.fromString $ "b28d289b-e373-49a2-9c91-b153cb62d894"] ++ [tagDataScience ^. uuid]
-        let edited_e_km1 = (e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids
+        let kmIntegrationUuids =
+              [bioPortal ^. uuid] ++
+              [fromJust . U.fromString $ "eb75a1a7-2760-446a-9a44-17b8f38679bf"] ++ [ontologyPortal ^. uuid]
+        let edited_e_km1 =
+              ((e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids) &
+              integrationUuids .~
+              ChangedValue kmIntegrationUuids
         let reqState = createTestMigratorStateWithEvents [] [EditKnowledgeModelEvent' edited_e_km1] (Just km1)
         -- When:
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
-        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter2 ^. uuid, chapter1 ^. uuid]
+        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
+        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditChapterEvent" $ do

@@ -18,6 +18,7 @@ ADD templates /dsw/templates
 
 # Add configs
 ADD config/app-config.cfg /dsw/config/app-config.cfg
+ADD config/integration-config.cfg /dsw/config/integration-config.cfg
 ADD config/build-info.cfg /dsw/config/build-info.cfg
 
 CMD ["./dsw-server"]

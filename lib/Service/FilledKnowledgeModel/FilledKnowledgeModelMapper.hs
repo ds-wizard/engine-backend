@@ -14,6 +14,7 @@ toFilledKMDTO fKM =
   , _filledKnowledgeModelDTOName = fKM ^. name
   , _filledKnowledgeModelDTOChapters = toFilledChapterDTO <$> fKM ^. chapters
   , _filledKnowledgeModelDTOTags = toTagDTO <$> fKM ^. tags
+  , _filledKnowledgeModelDTOIntegrations = toIntegrationDTO <$> fKM ^. integrations
   }
 
 toFilledChapterDTO :: FilledChapter -> FilledChapterDTO
@@ -69,6 +70,22 @@ toFilledQuestionDTO (FilledValueQuestion' fQ) =
     , _filledValueQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
     , _filledValueQuestionDTOValueType = fQ ^. valueType
     , _filledValueQuestionDTOAnswerValue = fQ ^. answerValue
+    }
+toFilledQuestionDTO (FilledIntegrationQuestion' fQ) =
+  FilledIntegrationQuestionDTO'
+    FilledIntegrationQuestionDTO
+    { _filledIntegrationQuestionDTOUuid = fQ ^. uuid
+    , _filledIntegrationQuestionDTOHumanIdentifier = fQ ^. humanIdentifier
+    , _filledIntegrationQuestionDTOTitle = fQ ^. title
+    , _filledIntegrationQuestionDTOText = fQ ^. text
+    , _filledIntegrationQuestionDTORequiredLevel = fQ ^. requiredLevel
+    , _filledIntegrationQuestionDTOTagUuids = fQ ^. tagUuids
+    , _filledIntegrationQuestionDTOExperts = toExpertDTO <$> fQ ^. experts
+    , _filledIntegrationQuestionDTOReferences = toReferenceDTO <$> fQ ^. references
+    , _filledIntegrationQuestionDTOIntegrationUuid = fQ ^. integrationUuid
+    , _filledIntegrationQuestionDTOProps = fQ ^. props
+    , _filledIntegrationQuestionDTOAnswerIntId = fQ ^. answerIntId
+    , _filledIntegrationQuestionDTOAnswerValue = fQ ^. answerValue
     }
 
 toFilledAnswerDTO :: FilledAnswer -> FilledAnswerDTO

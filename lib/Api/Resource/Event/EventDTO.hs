@@ -2,6 +2,7 @@ module Api.Resource.Event.EventDTO where
 
 import Control.Monad
 import Data.Aeson
+import Data.Map
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -32,6 +33,9 @@ data EventDTO
   | AddTagEventDTO' AddTagEventDTO
   | EditTagEventDTO' EditTagEventDTO
   | DeleteTagEventDTO' DeleteTagEventDTO
+  | AddIntegrationEventDTO' AddIntegrationEventDTO
+  | EditIntegrationEventDTO' EditIntegrationEventDTO
+  | DeleteIntegrationEventDTO' DeleteIntegrationEventDTO
   deriving (Show, Eq)
 
 instance ToJSON EventDTO where
@@ -55,6 +59,9 @@ instance ToJSON EventDTO where
   toJSON (AddTagEventDTO' event) = toJSON event
   toJSON (EditTagEventDTO' event) = toJSON event
   toJSON (DeleteTagEventDTO' event) = toJSON event
+  toJSON (AddIntegrationEventDTO' event) = toJSON event
+  toJSON (EditIntegrationEventDTO' event) = toJSON event
+  toJSON (DeleteIntegrationEventDTO' event) = toJSON event
 
 instance FromJSON EventDTO where
   parseJSON (Object o) = do
@@ -80,6 +87,9 @@ instance FromJSON EventDTO where
       "AddTagEvent" -> parseJSON (Object o) >>= \event -> return (AddTagEventDTO' event)
       "EditTagEvent" -> parseJSON (Object o) >>= \event -> return (EditTagEventDTO' event)
       "DeleteTagEvent" -> parseJSON (Object o) >>= \event -> return (DeleteTagEventDTO' event)
+      "AddIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (AddIntegrationEventDTO' event)
+      "EditIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (EditIntegrationEventDTO' event)
+      "DeleteIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (DeleteIntegrationEventDTO' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero
 
@@ -100,6 +110,7 @@ data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
   , _editKnowledgeModelEventDTOName :: EventFieldDTO String
   , _editKnowledgeModelEventDTOChapterUuids :: EventFieldDTO [U.UUID]
   , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
+  , _editKnowledgeModelEventDTOIntegrationUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
@@ -135,6 +146,7 @@ data AddQuestionEventDTO
   = AddOptionsQuestionEventDTO' AddOptionsQuestionEventDTO
   | AddListQuestionEventDTO' AddListQuestionEventDTO
   | AddValueQuestionEventDTO' AddValueQuestionEventDTO
+  | AddIntegrationQuestionEventDTO' AddIntegrationQuestionEventDTO
   deriving (Show, Eq, Generic)
 
 data AddOptionsQuestionEventDTO = AddOptionsQuestionEventDTO
@@ -169,11 +181,24 @@ data AddValueQuestionEventDTO = AddValueQuestionEventDTO
   , _addValueQuestionEventDTOValueType :: QuestionValueType
   } deriving (Show, Eq, Generic)
 
+data AddIntegrationQuestionEventDTO = AddIntegrationQuestionEventDTO
+  { _addIntegrationQuestionEventDTOUuid :: U.UUID
+  , _addIntegrationQuestionEventDTOPath :: EventPathDTO
+  , _addIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+  , _addIntegrationQuestionEventDTOTitle :: String
+  , _addIntegrationQuestionEventDTOText :: Maybe String
+  , _addIntegrationQuestionEventDTORequiredLevel :: Maybe Int
+  , _addIntegrationQuestionEventDTOTagUuids :: [U.UUID]
+  , _addIntegrationQuestionEventDTOIntegrationUuid :: U.UUID
+  , _addIntegrationQuestionEventDTOProps :: Map String String
+  } deriving (Show, Eq, Generic)
+
 -- --------------------------------------------
 data EditQuestionEventDTO
   = EditOptionsQuestionEventDTO' EditOptionsQuestionEventDTO
   | EditListQuestionEventDTO' EditListQuestionEventDTO
   | EditValueQuestionEventDTO' EditValueQuestionEventDTO
+  | EditIntegrationQuestionEventDTO' EditIntegrationQuestionEventDTO
   deriving (Show, Eq, Generic)
 
 data EditOptionsQuestionEventDTO = EditOptionsQuestionEventDTO
@@ -214,6 +239,20 @@ data EditValueQuestionEventDTO = EditValueQuestionEventDTO
   , _editValueQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
   , _editValueQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
   , _editValueQuestionEventDTOValueType :: EventFieldDTO QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+data EditIntegrationQuestionEventDTO = EditIntegrationQuestionEventDTO
+  { _editIntegrationQuestionEventDTOUuid :: U.UUID
+  , _editIntegrationQuestionEventDTOPath :: EventPathDTO
+  , _editIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+  , _editIntegrationQuestionEventDTOTitle :: EventFieldDTO String
+  , _editIntegrationQuestionEventDTOText :: EventFieldDTO (Maybe String)
+  , _editIntegrationQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+  , _editIntegrationQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+  , _editIntegrationQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+  , _editIntegrationQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+  , _editIntegrationQuestionEventDTOIntegrationUuid :: EventFieldDTO U.UUID
+  , _editIntegrationQuestionEventDTOProps :: EventFieldDTO (Map String String)
   } deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
@@ -373,6 +412,51 @@ data DeleteTagEventDTO = DeleteTagEventDTO
   } deriving (Show, Eq, Generic)
 
 -- -------------------------
+-- Integration -------------
+-- -------------------------
+data AddIntegrationEventDTO = AddIntegrationEventDTO
+  { _addIntegrationEventDTOUuid :: U.UUID
+  , _addIntegrationEventDTOPath :: EventPathDTO
+  , _addIntegrationEventDTOIntegrationUuid :: U.UUID
+  , _addIntegrationEventDTOIId :: String
+  , _addIntegrationEventDTOName :: String
+  , _addIntegrationEventDTOProps :: [String]
+  , _addIntegrationEventDTOLogo :: String
+  , _addIntegrationEventDTORequestMethod :: String
+  , _addIntegrationEventDTORequestUrl :: String
+  , _addIntegrationEventDTORequestHeaders :: Map String String
+  , _addIntegrationEventDTORequestBody :: String
+  , _addIntegrationEventDTOResponseListField :: String
+  , _addIntegrationEventDTOResponseIdField :: String
+  , _addIntegrationEventDTOResponseNameField :: String
+  , _addIntegrationEventDTOItemUrl :: String
+  } deriving (Show, Eq, Generic)
+
+data EditIntegrationEventDTO = EditIntegrationEventDTO
+  { _editIntegrationEventDTOUuid :: U.UUID
+  , _editIntegrationEventDTOPath :: EventPathDTO
+  , _editIntegrationEventDTOIntegrationUuid :: U.UUID
+  , _editIntegrationEventDTOIId :: EventFieldDTO String
+  , _editIntegrationEventDTOName :: EventFieldDTO String
+  , _editIntegrationEventDTOProps :: EventFieldDTO [String]
+  , _editIntegrationEventDTOLogo :: EventFieldDTO String
+  , _editIntegrationEventDTORequestMethod :: EventFieldDTO String
+  , _editIntegrationEventDTORequestUrl :: EventFieldDTO String
+  , _editIntegrationEventDTORequestHeaders :: EventFieldDTO (Map String String)
+  , _editIntegrationEventDTORequestBody :: EventFieldDTO String
+  , _editIntegrationEventDTOResponseListField :: EventFieldDTO String
+  , _editIntegrationEventDTOResponseIdField :: EventFieldDTO String
+  , _editIntegrationEventDTOResponseNameField :: EventFieldDTO String
+  , _editIntegrationEventDTOItemUrl :: EventFieldDTO String
+  } deriving (Show, Eq, Generic)
+
+data DeleteIntegrationEventDTO = DeleteIntegrationEventDTO
+  { _deleteIntegrationEventDTOUuid :: U.UUID
+  , _deleteIntegrationEventDTOPath :: EventPathDTO
+  , _deleteIntegrationEventDTOIntegrationUuid :: U.UUID
+  } deriving (Show, Eq, Generic)
+
+-- -------------------------
 -- Knowledge Model ---------
 -- -------------------------
 instance FromJSON AddKnowledgeModelEventDTO where
@@ -402,6 +486,7 @@ instance FromJSON EditKnowledgeModelEventDTO where
     _editKnowledgeModelEventDTOName <- o .: "name"
     _editKnowledgeModelEventDTOChapterUuids <- o .: "chapterUuids"
     _editKnowledgeModelEventDTOTagUuids <- o .: "tagUuids"
+    _editKnowledgeModelEventDTOIntegrationUuids <- o .: "integrationUuids"
     return EditKnowledgeModelEventDTO {..}
   parseJSON _ = mzero
 
@@ -415,6 +500,7 @@ instance ToJSON EditKnowledgeModelEventDTO where
       , "name" .= _editKnowledgeModelEventDTOName
       , "chapterUuids" .= _editKnowledgeModelEventDTOChapterUuids
       , "tagUuids" .= _editKnowledgeModelEventDTOTagUuids
+      , "integrationUuids" .= _editKnowledgeModelEventDTOIntegrationUuids
       ]
 
 -------------------------
@@ -488,6 +574,7 @@ instance ToJSON AddQuestionEventDTO where
   toJSON (AddOptionsQuestionEventDTO' event) = toJSON event
   toJSON (AddListQuestionEventDTO' event) = toJSON event
   toJSON (AddValueQuestionEventDTO' event) = toJSON event
+  toJSON (AddIntegrationQuestionEventDTO' event) = toJSON event
 
 instance FromJSON AddQuestionEventDTO where
   parseJSON (Object o) = do
@@ -496,6 +583,7 @@ instance FromJSON AddQuestionEventDTO where
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (AddOptionsQuestionEventDTO' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEventDTO' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEventDTO' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEventDTO' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -587,11 +675,43 @@ instance ToJSON AddValueQuestionEventDTO where
       ]
 
 -- --------------------------------------------
+instance FromJSON AddIntegrationQuestionEventDTO where
+  parseJSON (Object o) = do
+    _addIntegrationQuestionEventDTOUuid <- o .: "uuid"
+    _addIntegrationQuestionEventDTOPath <- o .: "path"
+    _addIntegrationQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _addIntegrationQuestionEventDTOTitle <- o .: "title"
+    _addIntegrationQuestionEventDTOText <- o .: "text"
+    _addIntegrationQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _addIntegrationQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _addIntegrationQuestionEventDTOIntegrationUuid <- o .: "integrationUuid"
+    _addIntegrationQuestionEventDTOProps <- o .: "props"
+    return AddIntegrationQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddIntegrationQuestionEventDTO where
+  toJSON AddIntegrationQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "AddQuestionEvent"
+      , "questionType" .= "IntegrationQuestion"
+      , "uuid" .= _addIntegrationQuestionEventDTOUuid
+      , "path" .= _addIntegrationQuestionEventDTOPath
+      , "questionUuid" .= _addIntegrationQuestionEventDTOQuestionUuid
+      , "title" .= _addIntegrationQuestionEventDTOTitle
+      , "text" .= _addIntegrationQuestionEventDTOText
+      , "requiredLevel" .= _addIntegrationQuestionEventDTORequiredLevel
+      , "tagUuids" .= _addIntegrationQuestionEventDTOTagUuids
+      , "integrationUuid" .= _addIntegrationQuestionEventDTOIntegrationUuid
+      , "props" .= _addIntegrationQuestionEventDTOProps
+      ]
+
+-- --------------------------------------------
 -- --------------------------------------------
 instance ToJSON EditQuestionEventDTO where
   toJSON (EditOptionsQuestionEventDTO' event) = toJSON event
   toJSON (EditListQuestionEventDTO' event) = toJSON event
   toJSON (EditValueQuestionEventDTO' event) = toJSON event
+  toJSON (EditIntegrationQuestionEventDTO' event) = toJSON event
 
 instance FromJSON EditQuestionEventDTO where
   parseJSON (Object o) = do
@@ -600,6 +720,7 @@ instance FromJSON EditQuestionEventDTO where
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (EditOptionsQuestionEventDTO' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEventDTO' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEventDTO' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEventDTO' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
@@ -704,6 +825,41 @@ instance ToJSON EditValueQuestionEventDTO where
       , "expertUuids" .= _editValueQuestionEventDTOExpertUuids
       , "referenceUuids" .= _editValueQuestionEventDTOReferenceUuids
       , "valueType" .= (serializeQuestionValueType <$> _editValueQuestionEventDTOValueType)
+      ]
+
+-- --------------------------------------------
+instance FromJSON EditIntegrationQuestionEventDTO where
+  parseJSON (Object o) = do
+    _editIntegrationQuestionEventDTOUuid <- o .: "uuid"
+    _editIntegrationQuestionEventDTOPath <- o .: "path"
+    _editIntegrationQuestionEventDTOQuestionUuid <- o .: "questionUuid"
+    _editIntegrationQuestionEventDTOTitle <- o .: "title"
+    _editIntegrationQuestionEventDTOText <- o .: "text"
+    _editIntegrationQuestionEventDTORequiredLevel <- o .: "requiredLevel"
+    _editIntegrationQuestionEventDTOTagUuids <- o .: "tagUuids"
+    _editIntegrationQuestionEventDTOExpertUuids <- o .: "expertUuids"
+    _editIntegrationQuestionEventDTOReferenceUuids <- o .: "referenceUuids"
+    _editIntegrationQuestionEventDTOIntegrationUuid <- o .: "integrationUuid"
+    _editIntegrationQuestionEventDTOProps <- o .: "props"
+    return EditIntegrationQuestionEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditIntegrationQuestionEventDTO where
+  toJSON EditIntegrationQuestionEventDTO {..} =
+    object
+      [ "eventType" .= "EditQuestionEvent"
+      , "questionType" .= "ValueQuestion"
+      , "uuid" .= _editIntegrationQuestionEventDTOUuid
+      , "path" .= _editIntegrationQuestionEventDTOPath
+      , "questionUuid" .= _editIntegrationQuestionEventDTOQuestionUuid
+      , "title" .= _editIntegrationQuestionEventDTOTitle
+      , "text" .= _editIntegrationQuestionEventDTOText
+      , "requiredLevel" .= _editIntegrationQuestionEventDTORequiredLevel
+      , "tagUuids" .= _editIntegrationQuestionEventDTOTagUuids
+      , "expertUuids" .= _editIntegrationQuestionEventDTOExpertUuids
+      , "referenceUuids" .= _editIntegrationQuestionEventDTOReferenceUuids
+      , "integrationUuid" .= _editIntegrationQuestionEventDTOIntegrationUuid
+      , "props" .= _editIntegrationQuestionEventDTOProps
       ]
 
 -- --------------------------------------------
@@ -1109,4 +1265,108 @@ instance ToJSON DeleteTagEventDTO where
       , "uuid" .= _deleteTagEventDTOUuid
       , "path" .= _deleteTagEventDTOPath
       , "tagUuid" .= _deleteTagEventDTOTagUuid
+      ]
+
+-- -------------------------
+-- Integration -------------
+-- -------------------------
+instance FromJSON AddIntegrationEventDTO where
+  parseJSON (Object o) = do
+    _addIntegrationEventDTOUuid <- o .: "uuid"
+    _addIntegrationEventDTOPath <- o .: "path"
+    _addIntegrationEventDTOIntegrationUuid <- o .: "integrationUuid"
+    _addIntegrationEventDTOIId <- o .: "id"
+    _addIntegrationEventDTOName <- o .: "name"
+    _addIntegrationEventDTOProps <- o .: "props"
+    _addIntegrationEventDTOLogo <- o .: "logo"
+    _addIntegrationEventDTORequestMethod <- o .: "requestMethod"
+    _addIntegrationEventDTORequestUrl <- o .: "requestUrl"
+    _addIntegrationEventDTORequestHeaders <- o .: "requestHeaders"
+    _addIntegrationEventDTORequestBody <- o .: "requestBody"
+    _addIntegrationEventDTOResponseListField <- o .: "responseListField"
+    _addIntegrationEventDTOResponseIdField <- o .: "responseIdField"
+    _addIntegrationEventDTOResponseNameField <- o .: "responseNameField"
+    _addIntegrationEventDTOItemUrl <- o .: "itemUrl"
+    return AddIntegrationEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON AddIntegrationEventDTO where
+  toJSON AddIntegrationEventDTO {..} =
+    object
+      [ "eventType" .= "AddIntegrationEvent"
+      , "uuid" .= _addIntegrationEventDTOUuid
+      , "path" .= _addIntegrationEventDTOPath
+      , "integrationUuid" .= _addIntegrationEventDTOIntegrationUuid
+      , "id" .= _addIntegrationEventDTOIId
+      , "name" .= _addIntegrationEventDTOName
+      , "props" .= _addIntegrationEventDTOProps
+      , "logo" .= _addIntegrationEventDTOLogo
+      , "requestMethod" .= _addIntegrationEventDTORequestMethod
+      , "requestUrl" .= _addIntegrationEventDTORequestUrl
+      , "requestHeaders" .= _addIntegrationEventDTORequestHeaders
+      , "requestBody" .= _addIntegrationEventDTORequestBody
+      , "responseListField" .= _addIntegrationEventDTOResponseListField
+      , "responseIdField" .= _addIntegrationEventDTOResponseIdField
+      , "responseNameField" .= _addIntegrationEventDTOResponseNameField
+      , "itemUrl" .= _addIntegrationEventDTOItemUrl
+      ]
+
+-- --------------------------------------------
+instance FromJSON EditIntegrationEventDTO where
+  parseJSON (Object o) = do
+    _editIntegrationEventDTOUuid <- o .: "uuid"
+    _editIntegrationEventDTOPath <- o .: "path"
+    _editIntegrationEventDTOIntegrationUuid <- o .: "integrationUuid"
+    _editIntegrationEventDTOIId <- o .: "id"
+    _editIntegrationEventDTOName <- o .: "name"
+    _editIntegrationEventDTOProps <- o .: "props"
+    _editIntegrationEventDTOLogo <- o .: "logo"
+    _editIntegrationEventDTORequestMethod <- o .: "requestMethod"
+    _editIntegrationEventDTORequestUrl <- o .: "requestUrl"
+    _editIntegrationEventDTORequestHeaders <- o .: "requestHeaders"
+    _editIntegrationEventDTORequestBody <- o .: "requestBody"
+    _editIntegrationEventDTOResponseListField <- o .: "responseListField"
+    _editIntegrationEventDTOResponseIdField <- o .: "responseIdField"
+    _editIntegrationEventDTOResponseNameField <- o .: "responseNameField"
+    _editIntegrationEventDTOItemUrl <- o .: "itemUrl"
+    return EditIntegrationEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON EditIntegrationEventDTO where
+  toJSON EditIntegrationEventDTO {..} =
+    object
+      [ "eventType" .= "EditIntegrationEvent"
+      , "uuid" .= _editIntegrationEventDTOUuid
+      , "path" .= _editIntegrationEventDTOPath
+      , "integrationUuid" .= _editIntegrationEventDTOIntegrationUuid
+      , "id" .= _editIntegrationEventDTOIId
+      , "name" .= _editIntegrationEventDTOName
+      , "props" .= _editIntegrationEventDTOProps
+      , "logo" .= _editIntegrationEventDTOLogo
+      , "requestMethod" .= _editIntegrationEventDTORequestMethod
+      , "requestUrl" .= _editIntegrationEventDTORequestUrl
+      , "requestHeaders" .= _editIntegrationEventDTORequestHeaders
+      , "requestBody" .= _editIntegrationEventDTORequestBody
+      , "responseListField" .= _editIntegrationEventDTOResponseListField
+      , "responseIdField" .= _editIntegrationEventDTOResponseIdField
+      , "responseNameField" .= _editIntegrationEventDTOResponseNameField
+      , "itemUrl" .= _editIntegrationEventDTOItemUrl
+      ]
+
+-- --------------------------------------------
+instance FromJSON DeleteIntegrationEventDTO where
+  parseJSON (Object o) = do
+    _deleteIntegrationEventDTOUuid <- o .: "uuid"
+    _deleteIntegrationEventDTOPath <- o .: "path"
+    _deleteIntegrationEventDTOIntegrationUuid <- o .: "integrationUuid"
+    return DeleteIntegrationEventDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON DeleteIntegrationEventDTO where
+  toJSON DeleteIntegrationEventDTO {..} =
+    object
+      [ "eventType" .= "DeleteIntegrationEvent"
+      , "uuid" .= _deleteIntegrationEventDTOUuid
+      , "path" .= _deleteIntegrationEventDTOPath
+      , "integrationUuid" .= _deleteIntegrationEventDTOIntegrationUuid
       ]

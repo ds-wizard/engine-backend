@@ -27,8 +27,10 @@ getFilledQuestionUuid :: FilledQuestion -> U.UUID
 getFilledQuestionUuid (FilledOptionsQuestion' q) = q ^. uuid
 getFilledQuestionUuid (FilledListQuestion' q) = q ^. uuid
 getFilledQuestionUuid (FilledValueQuestion' q) = q ^. uuid
+getFilledQuestionUuid (FilledIntegrationQuestion' q) = q ^. uuid
 
 getRequiredLevel :: FilledQuestion -> Maybe Int
 getRequiredLevel (FilledOptionsQuestion' q) = q ^. requiredLevel
 getRequiredLevel (FilledListQuestion' q) = q ^. requiredLevel
 getRequiredLevel (FilledValueQuestion' q) = q ^. requiredLevel
+getRequiredLevel (FilledIntegrationQuestion' q) = q ^. requiredLevel

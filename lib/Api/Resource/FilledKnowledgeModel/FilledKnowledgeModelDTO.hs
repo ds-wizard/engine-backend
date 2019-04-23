@@ -2,6 +2,7 @@ module Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO where
 
 import Control.Monad
 import Data.Aeson
+import Data.Map
 import qualified Data.UUID as U
 
 import Api.Resource.Common
@@ -13,6 +14,7 @@ data FilledKnowledgeModelDTO = FilledKnowledgeModelDTO
   , _filledKnowledgeModelDTOName :: String
   , _filledKnowledgeModelDTOChapters :: [FilledChapterDTO]
   , _filledKnowledgeModelDTOTags :: [TagDTO]
+  , _filledKnowledgeModelDTOIntegrations :: [IntegrationDTO]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -29,6 +31,7 @@ data FilledQuestionDTO
   = FilledOptionsQuestionDTO' FilledOptionsQuestionDTO
   | FilledListQuestionDTO' FilledListQuestionDTO
   | FilledValueQuestionDTO' FilledValueQuestionDTO
+  | FilledIntegrationQuestionDTO' FilledIntegrationQuestionDTO
   deriving (Show, Eq)
 
 data FilledOptionsQuestionDTO = FilledOptionsQuestionDTO
@@ -71,6 +74,21 @@ data FilledValueQuestionDTO = FilledValueQuestionDTO
   , _filledValueQuestionDTOAnswerValue :: Maybe String
   } deriving (Show, Eq)
 
+data FilledIntegrationQuestionDTO = FilledIntegrationQuestionDTO
+  { _filledIntegrationQuestionDTOUuid :: U.UUID
+  , _filledIntegrationQuestionDTOHumanIdentifier :: String
+  , _filledIntegrationQuestionDTOTitle :: String
+  , _filledIntegrationQuestionDTOText :: Maybe String
+  , _filledIntegrationQuestionDTORequiredLevel :: Maybe Int
+  , _filledIntegrationQuestionDTOTagUuids :: [U.UUID]
+  , _filledIntegrationQuestionDTOExperts :: [ExpertDTO]
+  , _filledIntegrationQuestionDTOReferences :: [ReferenceDTO]
+  , _filledIntegrationQuestionDTOIntegrationUuid :: U.UUID
+  , _filledIntegrationQuestionDTOProps :: Map String String
+  , _filledIntegrationQuestionDTOAnswerIntId :: Maybe String
+  , _filledIntegrationQuestionDTOAnswerValue :: Maybe String
+  } deriving (Show, Eq)
+
 -- --------------------------------------------------------------------
 data FilledAnswerDTO = FilledAnswerDTO
   { _filledAnswerDTOUuid :: U.UUID
@@ -97,6 +115,7 @@ instance ToJSON FilledKnowledgeModelDTO where
       , "name" .= _filledKnowledgeModelDTOName
       , "chapters" .= _filledKnowledgeModelDTOChapters
       , "tags" .= _filledKnowledgeModelDTOTags
+      , "integrations" .= _filledKnowledgeModelDTOIntegrations
       ]
 
 -- --------------------------------------------------------------------
@@ -115,6 +134,7 @@ instance ToJSON FilledQuestionDTO where
   toJSON (FilledOptionsQuestionDTO' event) = toJSON event
   toJSON (FilledListQuestionDTO' event) = toJSON event
   toJSON (FilledValueQuestionDTO' event) = toJSON event
+  toJSON (FilledIntegrationQuestionDTO' event) = toJSON event
 
 instance ToJSON FilledOptionsQuestionDTO where
   toJSON FilledOptionsQuestionDTO {..} =
@@ -165,6 +185,24 @@ instance ToJSON FilledValueQuestionDTO where
       , "answerValue" .= _filledValueQuestionDTOAnswerValue
       ]
 
+instance ToJSON FilledIntegrationQuestionDTO where
+  toJSON FilledIntegrationQuestionDTO {..} =
+    object
+      [ "questionType" .= "IntegrationQuestion"
+      , "uuid" .= _filledIntegrationQuestionDTOUuid
+      , "humanIdentifier" .= _filledIntegrationQuestionDTOHumanIdentifier
+      , "title" .= _filledIntegrationQuestionDTOTitle
+      , "text" .= _filledIntegrationQuestionDTOText
+      , "requiredLevel" .= _filledIntegrationQuestionDTORequiredLevel
+      , "tagUuids" .= _filledIntegrationQuestionDTOTagUuids
+      , "references" .= _filledIntegrationQuestionDTOReferences
+      , "experts" .= _filledIntegrationQuestionDTOExperts
+      , "integrationUuid" .= _filledIntegrationQuestionDTOIntegrationUuid
+      , "props" .= _filledIntegrationQuestionDTOProps
+      , "answerIntId" .= _filledIntegrationQuestionDTOAnswerIntId
+      , "answerValue" .= _filledIntegrationQuestionDTOAnswerValue
+      ]
+
 -- --------------------------------------------------------------------
 instance ToJSON FilledAnswerDTO where
   toJSON FilledAnswerDTO {..} =
@@ -194,6 +232,7 @@ instance FromJSON FilledKnowledgeModelDTO where
     _filledKnowledgeModelDTOName <- o .: "name"
     _filledKnowledgeModelDTOChapters <- o .: "chapters"
     _filledKnowledgeModelDTOTags <- o .: "tags"
+    _filledKnowledgeModelDTOIntegrations <- o .: "integrations"
     return FilledKnowledgeModelDTO {..}
   parseJSON _ = mzero
 
@@ -216,6 +255,7 @@ instance FromJSON FilledQuestionDTO where
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (FilledOptionsQuestionDTO' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (FilledListQuestionDTO' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (FilledValueQuestionDTO' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (FilledIntegrationQuestionDTO' event)
       _ -> fail "One of the questions has unsupported questionType"
   parseJSON _ = mzero
 
@@ -265,6 +305,23 @@ instance FromJSON FilledValueQuestionDTO where
     case deserializeQuestionValueType valueType of
       (Just _filledValueQuestionDTOValueType) -> return FilledValueQuestionDTO {..}
       Nothing -> fail "Unsupported question value type"
+  parseJSON _ = mzero
+
+instance FromJSON FilledIntegrationQuestionDTO where
+  parseJSON (Object o) = do
+    _filledIntegrationQuestionDTOUuid <- o .: "uuid"
+    _filledIntegrationQuestionDTOHumanIdentifier <- o .: "humanIdentifier"
+    _filledIntegrationQuestionDTOTitle <- o .: "title"
+    _filledIntegrationQuestionDTOText <- o .: "text"
+    _filledIntegrationQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _filledIntegrationQuestionDTOTagUuids <- o .: "tagUuids"
+    _filledIntegrationQuestionDTOExperts <- o .: "experts"
+    _filledIntegrationQuestionDTOReferences <- o .: "references"
+    _filledIntegrationQuestionDTOIntegrationUuid <- o .: "integrationUuid"
+    _filledIntegrationQuestionDTOProps <- o .: "props"
+    _filledIntegrationQuestionDTOAnswerIntId <- o .: "answerIntId"
+    _filledIntegrationQuestionDTOAnswerValue <- o .: "answerValue"
+    return FilledIntegrationQuestionDTO {..}
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
