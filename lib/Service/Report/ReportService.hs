@@ -10,6 +10,7 @@ import Database.DAO.Metric.MetricDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
+import Model.Context.AppContextHelpers
 import Model.Error.Error
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.KnowledgeModel.KnowledgeModelService
@@ -31,9 +32,10 @@ getPreviewOfReportByQuestionnaireUuid :: String -> QuestionnaireChangeDTO -> App
 getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto =
   heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
     heCompileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids) $ \knowledgeModel ->
-      heFindMetrics $ \metrics -> do
-        now <- liftIO getCurrentTime
-        let updatedQtn = fromChangeDTO qtnDto reqDto now
-        let filledKM = createFilledKM knowledgeModel (updatedQtn ^. replies)
-        report <- generateReport (reqDto ^. level) metrics filledKM
-        return . Right . toReportDTO $ report
+      heGetCurrentUser $ \currentUser ->
+        heFindMetrics $ \metrics -> do
+          now <- liftIO getCurrentTime
+          let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
+          let filledKM = createFilledKM knowledgeModel (updatedQtn ^. replies)
+          report <- generateReport (reqDto ^. level) metrics filledKM
+          return . Right . toReportDTO $ report

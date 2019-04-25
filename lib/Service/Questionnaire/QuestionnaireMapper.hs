@@ -108,8 +108,8 @@ fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
   IntegrationValue
   {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
 
-fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UTCTime -> Questionnaire
-fromChangeDTO qtn dto now =
+fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UUID -> UTCTime -> Questionnaire
+fromChangeDTO qtn dto currentUserUuid now =
   Questionnaire
   { _questionnaireUuid = qtn ^. uuid
   , _questionnaireName = dto ^. name
@@ -118,7 +118,10 @@ fromChangeDTO qtn dto now =
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
-  , _questionnaireOwnerUuid = qtn ^. ownerUuid
+  , _questionnaireOwnerUuid =
+      if dto ^. private
+        then Just currentUserUuid
+        else Nothing
   , _questionnaireCreatedAt = qtn ^. createdAt
   , _questionnaireUpdatedAt = now
   }

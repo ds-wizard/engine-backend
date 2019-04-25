@@ -86,12 +86,13 @@ getQuestionnaireDetailById qtnUuid =
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
 modifyQuestionnaire qtnUuid reqDto =
-  heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
-    now <- liftIO getCurrentTime
-    let updatedQtn = fromChangeDTO qtnDto reqDto now
-    updateQuestionnaireById updatedQtn
-    heCompileKnowledgeModel [] (Just $ updatedQtn ^. packageId) (updatedQtn ^. selectedTagUuids) $ \knowledgeModel ->
-      return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
+    heGetCurrentUser $ \currentUser -> do
+      now <- liftIO getCurrentTime
+      let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
+      updateQuestionnaireById updatedQtn
+      heCompileKnowledgeModel [] (Just $ updatedQtn ^. packageId) (updatedQtn ^. selectedTagUuids) $ \knowledgeModel ->
+        return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel
 
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid =
