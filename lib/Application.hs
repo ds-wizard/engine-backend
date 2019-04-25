@@ -27,6 +27,9 @@ import Service.Config.ApplicationConfigService
 import qualified Service.Migration.Metamodel.MigratorService as MM
 import Util.Logger
 
+import System.IO
+
+
 applicationConfigFile = "config/app-config.cfg"
 
 buildInfoFile = "config/build-info.cfg"
@@ -38,7 +41,8 @@ retryBaseWait = 2000000
 retryBackoff = exponentialBackoff retryBaseWait <> limitRetries retryCount
 
 runServer :: IO ()
-runServer =
+runServer = do
+  hSetBuffering stdout LineBuffering
   runStdoutLoggingT $ do
     liftIO $
       putStrLn
