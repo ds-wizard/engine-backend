@@ -320,7 +320,7 @@ instance FromBSON EditValueQuestionEvent where
 instance ToBSON EditIntegrationQuestionEvent where
   toBSON EditIntegrationQuestionEvent {..} =
     [ "eventType" BSON.=: "EditQuestionEvent"
-    , "questionType" BSON.=: "ValueQuestion"
+    , "questionType" BSON.=: "IntegrationQuestion"
     , "uuid" BSON.=: serializeUUID _editIntegrationQuestionEventUuid
     , "path" BSON.=: _editIntegrationQuestionEventPath
     , "questionUuid" BSON.=: serializeUUID _editIntegrationQuestionEventQuestionUuid

@@ -848,7 +848,7 @@ instance ToJSON EditIntegrationQuestionEventDTO where
   toJSON EditIntegrationQuestionEventDTO {..} =
     object
       [ "eventType" .= "EditQuestionEvent"
-      , "questionType" .= "ValueQuestion"
+      , "questionType" .= "IntegrationQuestion"
       , "uuid" .= _editIntegrationQuestionEventDTOUuid
       , "path" .= _editIntegrationQuestionEventDTOPath
       , "questionUuid" .= _editIntegrationQuestionEventDTOQuestionUuid
