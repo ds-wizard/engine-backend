@@ -1,6 +1,7 @@
 module Service.Report.ReportMapper where
 
 import Control.Lens ((^.))
+import Data.Maybe (catMaybes)
 
 import Api.Resource.Report.ReportDTO
 import LensesConfig
@@ -16,16 +17,19 @@ toAnsweredIndicationDTO ai =
   , _answeredIndicationDTOUnansweredQuestions = ai ^. unansweredQuestions
   }
 
-toMetricSummaryDTO :: MetricSummary -> MetricSummaryDTO
+toMetricSummaryDTO :: MetricSummary -> Maybe MetricSummaryDTO
 toMetricSummaryDTO ms =
-  MetricSummaryDTO {_metricSummaryDTOMetricUuid = ms ^. metricUuid, _metricSummaryDTOMeasure = ms ^. measure}
+  case ms ^. measure of
+    Just msMeasure ->
+      Just MetricSummaryDTO {_metricSummaryDTOMetricUuid = ms ^. metricUuid, _metricSummaryDTOMeasure = msMeasure}
+    Nothing -> Nothing
 
 toChapterReportDTO :: ChapterReport -> ChapterReportDTO
 toChapterReportDTO chr =
   ChapterReportDTO
   { _chapterReportDTOChapterUuid = chr ^. chapterUuid
   , _chapterReportDTOIndications = toIndicationDTO <$> chr ^. indications
-  , _chapterReportDTOMetrics = toMetricSummaryDTO <$> chr ^. metrics
+  , _chapterReportDTOMetrics = catMaybes . fmap toMetricSummaryDTO $ chr ^. metrics
   }
 
 toReportDTO :: Report -> ReportDTO

@@ -14,7 +14,7 @@ data AnsweredIndication = AnsweredIndication
 
 data MetricSummary = MetricSummary
   { _metricSummaryMetricUuid :: U.UUID
-  , _metricSummaryMeasure :: Double
+  , _metricSummaryMeasure :: Maybe Double
   } deriving (Show, Eq)
 
 data ChapterReport = ChapterReport

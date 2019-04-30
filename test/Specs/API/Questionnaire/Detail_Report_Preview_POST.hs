@@ -107,27 +107,33 @@ test_200 appContext =
     let (AnsweredIndicationDTO' i1) = (r1 ^. indications) !! 0
     liftIO $ (i1 ^. answeredQuestions) `shouldBe` 3
     liftIO $ (i1 ^. unansweredQuestions) `shouldBe` 0
-    let m1 = (r1 ^. metrics) !! 0
-    liftIO $ (m1 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m1 ^. measure) `shouldBe` 0
+    liftIO $ (length $ r1 ^. metrics) `shouldBe` 2
+    let m11 = (r1 ^. metrics) !! 0
+    liftIO $ (m11 ^. metricUuid) `shouldBe` metricI ^. uuid
+    liftIO $ (m11 ^. measure) `shouldBe` 1
+    let m12 = (r1 ^. metrics) !! 1
+    liftIO $ (m12 ^. metricUuid) `shouldBe` metricR ^. uuid
+    liftIO $ (m12 ^. measure) `shouldBe` 1
     -- Chapter report 2
     let r2 = rs !! 1
     liftIO $ (r2 ^. chapterUuid) `shouldBe` (chapter2 ^. uuid)
     let (AnsweredIndicationDTO' i2) = (r2 ^. indications) !! 0
     liftIO $ (i2 ^. answeredQuestions) `shouldBe` 10
     liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 1
-    let m2 = (r2 ^. metrics) !! 0
-    liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m2 ^. measure) `shouldBe` 1
+    liftIO $ (length $ r2 ^. metrics) `shouldBe` 2
+    let m21 = (r2 ^. metrics) !! 0
+    liftIO $ (m21 ^. metricUuid) `shouldBe` metricF ^. uuid
+    liftIO $ (m21 ^. measure) `shouldBe` 1
+    let m22 = (r2 ^. metrics) !! 1
+    liftIO $ (m22 ^. metricUuid) `shouldBe` metricA ^. uuid
+    liftIO $ (m22 ^. measure) `shouldBe` 1
     -- Chapter report 3
     let r3 = rs !! 2
     liftIO $ (r3 ^. chapterUuid) `shouldBe` (chapter3 ^. uuid)
     let (AnsweredIndicationDTO' i3) = (r3 ^. indications) !! 0
     liftIO $ (i3 ^. answeredQuestions) `shouldBe` 2
     liftIO $ (i3 ^. unansweredQuestions) `shouldBe` 0
-    let m3 = (r3 ^. metrics) !! 0
-    liftIO $ (m3 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m3 ^. measure) `shouldBe` 0
+    liftIO $ (length $ r3 ^. metrics) `shouldBe` 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
