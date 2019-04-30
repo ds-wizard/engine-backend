@@ -1,6 +1,6 @@
 name:                dsw-metamodel-migrator
 version:             1.5.0
-license:             Apache2
+license:             Apache-2.0
 author:              "Marek Suchánek"
 maintainer:          "suchama4@fit.cvut.cz"
 copyright:           "2019 Marek Suchánek"
@@ -17,6 +17,20 @@ description: Library for migrating DSW KMs when the DSW Metamodel changes
 dependencies:
 - base >= 4.7 && < 5
 - aeson
+- containers
+- time
+- uuid
 
 library:
   source-dirs: src
+  default-extensions:
+    - TemplateHaskell
+    - OverloadedStrings
+    - DeriveGeneric
+    - ExtendedDefaultRules
+    - RecordWildCards
+    - ExistentialQuantification
+    - TypeSynonymInstances
+    - FlexibleInstances
+    - ScopedTypeVariables
+    - MultiParamTypeClasses
