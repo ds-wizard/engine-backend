@@ -24,15 +24,15 @@ import Model.Config.Environment
 import Model.Context.AppContextHelpers
 import Model.Context.BaseContext
 import Service.Config.ApplicationConfigService
+import Service.Config.BuildInfoConfigService
 import qualified Service.Migration.Metamodel.MigratorService as MM
 import Util.Logger
 
 import System.IO
 
+applicationConfigFile = "config/application.yml"
 
-applicationConfigFile = "config/app-config.cfg"
-
-buildInfoFile = "config/build-info.cfg"
+buildInfoFile = "config/build-info.yml"
 
 retryCount = 5
 
@@ -56,23 +56,16 @@ runServer = do
         \|                                                              |\n\
         \\\--------------------------------------------------------------/"
     logInfo $ msg _CMP_SERVER "started"
-    eitherDspConfig <- liftIO $ loadConfig applicationConfigFile buildInfoFile
-    case eitherDspConfig of
-      Left (errorDate, reason) -> do
-        logError $ msg _CMP_CONFIG "load failed"
-        logError $
-          msg _CMP_CONFIG "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-        logError $ msg _CMP_CONFIG (show errorDate)
-      Right dswConfig -> do
-        logInfo $ msg _CMP_CONFIG "loaded"
-        logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
-        dbPool <- connectDB dswConfig
-        msgChannel <- connectMQ dswConfig
-        httpClientManager <- setupHttpClientManager dswConfig
-        let serverPort = dswConfig ^. webConfig ^. port
+    hLoadConfig applicationConfigFile getApplicationConfig $ \appConfig ->
+      hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
+        logInfo $ "ENVIRONMENT: set to " ++ (show $ appConfig ^. general . environment)
+        dbPool <- connectDB appConfig
+        msgChannel <- connectMQ appConfig
+        httpClientManager <- setupHttpClientManager appConfig
         let baseContext =
               BaseContext
-              { _baseContextConfig = dswConfig
+              { _baseContextAppConfig = appConfig
+              , _baseContextBuildInfoConfig = buildInfoConfig
               , _baseContextPool = dbPool
               , _baseContextMsgChannel = msgChannel
               , _baseContextHttpClientManager = httpClientManager
@@ -84,6 +77,17 @@ runServer = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
+hLoadConfig fileName loadFn callback = do
+  eitherConfig <- liftIO (loadFn fileName)
+  case eitherConfig of
+    Right config -> do
+      logInfo $ msg _CMP_CONFIG ("'" ++ fileName ++ "' loaded")
+      callback config
+    Left error -> do
+      logError $ msg _CMP_CONFIG "load failed"
+      logError $ msg _CMP_CONFIG ("can't load '" ++ fileName ++ "'. Maybe the file is missing or not well-formatted")
+      logError $ msg _CMP_CONFIG (show error)
+
 withRetry :: RetryPolicyM IO -> String -> String -> IO a -> IO a
 withRetry backoff _CMP description action = recovering backoff handlers wrappedAction
   where
@@ -102,16 +106,16 @@ withRetry backoff _CMP description action = recovering backoff handlers wrappedA
         else runStdoutLoggingT $ logError $ msg _CMP description
       return True
 
-connectDB dswConfig = do
+connectDB appConfig = do
   logInfo $ msg _CMP_DATABASE "connecting to the database"
   dbPool <-
     liftIO $
-    withRetry retryBackoff _CMP_DATABASE "failed to connect to the database" (createDatabaseConnectionPool dswConfig)
+    withRetry retryBackoff _CMP_DATABASE "failed to connect to the database" (createDatabaseConnectionPool appConfig)
   logInfo $ msg _CMP_DATABASE "connected"
   return dbPool
 
-connectMQ dswConfig =
-  if (dswConfig ^. messagingConfig ^. enabled)
+connectMQ appConfig =
+  if (appConfig ^. messaging ^. enabled)
     then do
       logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
       msgChannel <-
@@ -120,21 +124,21 @@ connectMQ dswConfig =
           retryBackoff
           _CMP_MESSAGING
           "failed to connect to the message broker"
-          (createMessagingChannel dswConfig)
+          (createMessagingChannel appConfig)
       logInfo $ msg _CMP_MESSAGING "connected"
       return msgChannel
     else do
       logInfo $ msg _CMP_MESSAGING "not enabled - skipping"
       return Nothing
 
-setupHttpClientManager dswConfig = do
+setupHttpClientManager appConfig = do
   logInfo $ msg _CMP_INTEGRATION "creating http client manager"
-  httpClientManager <- liftIO $ createHttpClientManager dswConfig
+  httpClientManager <- liftIO $ createHttpClientManager appConfig
   logInfo $ msg _CMP_INTEGRATION "http client manager successfully created"
   return httpClientManager
 
 runDBMigrations context =
-  case context ^. config . environment . env of
+  case context ^. appConfig . general . environment of
     Development -> runStdoutLoggingT $ runAppContextWithBaseContext DM.runMigration context
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context
@@ -153,7 +157,7 @@ getOptions context =
   def
   { settings = getSettings context
   , verbose =
-      case context ^. config . environment . env of
+      case context ^. appConfig . general . environment of
         Production -> 0
         Staging -> 1
         Development -> 1
@@ -162,5 +166,5 @@ getOptions context =
 
 getSettings :: BaseContext -> Settings
 getSettings context =
-  let webPort = context ^. config . webConfig . port
+  let webPort = context ^. appConfig . general . serverPort
   in setPort webPort defaultSettings

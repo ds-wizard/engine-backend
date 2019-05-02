@@ -12,10 +12,10 @@ import Model.Context.BaseContext
 
 getInfoA :: Endpoint
 getInfoA = do
-  dswConfig <- lift $ asks _baseContextConfig
+  buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   json
     InfoDTO
-    { _idtoName = dswConfig ^. buildInfo ^. appName
-    , _idtoVersion = dswConfig ^. buildInfo ^. appVersion
-    , _idtoBuiltAt = dswConfig ^. buildInfo ^. builtAt
+    { _idtoName = buildInfoConfig ^. name
+    , _idtoVersion = buildInfoConfig ^. version
+    , _idtoBuiltAt = buildInfoConfig ^. builtAt
     }

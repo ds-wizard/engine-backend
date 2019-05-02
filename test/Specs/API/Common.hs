@@ -40,7 +40,8 @@ startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
   let baseContext =
         BaseContext
-        { _baseContextConfig = appContext ^. config
+        { _baseContextAppConfig = appContext ^. appConfig
+        , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
         , _baseContextPool = appContext ^. pool
         , _baseContextMsgChannel = appContext ^. msgChannel
         , _baseContextHttpClientManager = appContext ^. httpClientManager
@@ -76,12 +77,7 @@ reqAuthHeaderWithoutPerms dswConfig perm =
         }
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token =
-        createToken
-          user
-          now
-          (dswConfig ^. jwtConfig ^. secret)
-          (dswConfig ^. jwtConfig ^. version)
-          (dswConfig ^. jwtConfig ^. expiration)
+        createToken user now (dswConfig ^. jwt ^. secret) (dswConfig ^. jwt ^. version) (dswConfig ^. jwt ^. expiration)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
@@ -91,6 +87,8 @@ resCtHeaderPlain :: Header
 resCtHeaderPlain = ("Content-Type", "application/json; charset=utf-8")
 
 resCtHeader = "Content-Type" <:> "application/json; charset=utf-8"
+
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript; charset=utf-8"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =

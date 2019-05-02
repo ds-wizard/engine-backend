@@ -9,9 +9,11 @@ import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
 
 import Model.Config.AppConfig
+import Model.Config.BuildInfoConfig
 
 data BaseContext = BaseContext
-  { _baseContextConfig :: AppConfig
+  { _baseContextAppConfig :: AppConfig
+  , _baseContextBuildInfoConfig :: BuildInfoConfig
   , _baseContextPool :: ConnectionPool
   , _baseContextMsgChannel :: Maybe Channel
   , _baseContextHttpClientManager :: Manager

@@ -43,7 +43,7 @@ timestamp = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
 
 migratorAPI appContext = do
   with (startWebApp appContext) $ do
-    let dswConfig = appContext ^. config
+    let dswConfig = appContext ^. appConfig
     describe "MIGRATOR API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}/migrations/current

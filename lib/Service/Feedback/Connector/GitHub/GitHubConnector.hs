@@ -3,6 +3,7 @@ module Service.Feedback.Connector.GitHub.GitHubConnector where
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import qualified Data.Vector as V
@@ -22,10 +23,10 @@ import Util.Logger
 
 instance Connector AppContextM where
   getIssues = do
-    dswConfig <- asks _appContextConfig
-    let fToken = dswConfig ^. feedback . token
-    let fOwner = dswConfig ^. feedback . owner
-    let fRepo = dswConfig ^. feedback . repo
+    dswConfig <- asks _appContextAppConfig
+    let fToken = fromMaybe "" $ dswConfig ^. feedback . token
+    let fOwner = fromMaybe "" $ dswConfig ^. feedback . owner
+    let fRepo = fromMaybe "" $ dswConfig ^. feedback . repo
     let request = GH.issuesForRepoR (packToName fOwner) (packToName fRepo) (mempty) GD.FetchAll
     eIssues <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
     case eIssues of
@@ -34,10 +35,10 @@ instance Connector AppContextM where
         logError . show $ error
         return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Get issues"
   createIssue packageId questionUuid title content = do
-    dswConfig <- asks _appContextConfig
-    let fToken = dswConfig ^. feedback . token
-    let fOwner = dswConfig ^. feedback . owner
-    let fRepo = dswConfig ^. feedback . repo
+    dswConfig <- asks _appContextAppConfig
+    let fToken = fromMaybe "" $ dswConfig ^. feedback . token
+    let fOwner = fromMaybe "" $ dswConfig ^. feedback . owner
+    let fRepo = fromMaybe "" $ dswConfig ^. feedback . repo
     let newIssue =
           GI.NewIssue
           { newIssueTitle = T.pack title

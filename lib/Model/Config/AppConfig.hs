@@ -1,95 +1,88 @@
 module Model.Config.AppConfig where
 
+import GHC.Generics
 import Model.Config.Environment
 import Model.User.User
 
-data AppConfigEnvironment = AppConfigEnvironment
-  { _appConfigEnvironmentEnv :: Environment
-  }
+data AppConfig = AppConfig
+  { _appConfigGeneral :: AppConfigGeneral
+  , _appConfigClient :: AppConfigClient
+  , _appConfigDatabase :: AppConfigDatabase
+  , _appConfigMessaging :: AppConfigMessaging
+  , _appConfigJwt :: AppConfigJwt
+  , _appConfigRoles :: AppConfigRoles
+  , _appConfigMail :: AppConfigMail
+  , _appConfigAnalytics :: AppConfigAnalytics
+  , _appConfigFeedback :: AppConfigFeedback
+  } deriving (Generic, Show)
+
+data AppConfigGeneral = AppConfigGeneral
+  { _appConfigGeneralEnvironment :: Environment
+  , _appConfigGeneralClientUrl :: String
+  , _appConfigGeneralServerPort :: Int
+  , _appConfigGeneralServiceToken :: String
+  , _appConfigGeneralIntegrationConfig :: String
+  , _appConfigGeneralRegistrationEnabled :: Bool
+  , _appConfigGeneralPublicQuestionnaireEnabled :: Bool
+  } deriving (Generic, Show)
 
 data AppConfigClient = AppConfigClient
-  { _appConfigClientAddress :: String
-  }
-
-data AppConfigWeb = AppConfigWeb
-  { _appConfigWebPort :: Int
-  , _appConfigWebServiceToken :: String
-  }
+  { _appConfigClientAppTitle :: Maybe String
+  , _appConfigClientAppTitleShort :: Maybe String
+  , _appConfigClientWelcomeWarning :: Maybe String
+  , _appConfigClientWelcomeInfo :: Maybe String
+  } deriving (Generic, Show)
 
 data AppConfigDatabase = AppConfigDatabase
   { _appConfigDatabaseHost :: String
   , _appConfigDatabaseDatabaseName :: String
   , _appConfigDatabasePort :: Integer
   , _appConfigDatabaseAuthEnabled :: Bool
-  , _appConfigDatabaseUsername :: String
-  , _appConfigDatabasePassword :: String
-  }
+  , _appConfigDatabaseUsername :: Maybe String
+  , _appConfigDatabasePassword :: Maybe String
+  } deriving (Generic, Show)
 
 data AppConfigMessaging = AppConfigMessaging
   { _appConfigMessagingEnabled :: Bool
-  , _appConfigMessagingHost :: String
-  , _appConfigMessagingPort :: Integer
-  , _appConfigMessagingUsername :: String
-  , _appConfigMessagingPassword :: String
-  }
+  , _appConfigMessagingHost :: Maybe String
+  , _appConfigMessagingPort :: Maybe Integer
+  , _appConfigMessagingUsername :: Maybe String
+  , _appConfigMessagingPassword :: Maybe String
+  } deriving (Generic, Show)
 
 data AppConfigJwt = AppConfigJwt
   { _appConfigJwtSecret :: String
   , _appConfigJwtVersion :: Integer
   , _appConfigJwtExpiration :: Integer
-  }
+  } deriving (Generic, Show)
 
 data AppConfigRoles = AppConfigRoles
   { _appConfigRolesDefaultRole :: Role
   , _appConfigRolesAdmin :: [Permission]
   , _appConfigRolesDataSteward :: [Permission]
   , _appConfigRolesResearcher :: [Permission]
-  }
+  } deriving (Generic, Show)
 
 data AppConfigMail = AppConfigMail
   { _appConfigMailEnabled :: Bool
-  , _appConfigMailName :: String
-  , _appConfigMailEmail :: String
-  , _appConfigMailHost :: String
+  , _appConfigMailName :: Maybe String
+  , _appConfigMailEmail :: Maybe String
+  , _appConfigMailHost :: Maybe String
   , _appConfigMailPort :: Maybe Int
-  , _appConfigMailSsl :: Bool
-  , _appConfigMailUsername :: String
-  , _appConfigMailPassword :: String
-  }
+  , _appConfigMailSsl :: Maybe Bool
+  , _appConfigMailUsername :: Maybe String
+  , _appConfigMailPassword :: Maybe String
+  } deriving (Generic, Show)
 
 data AppConfigAnalytics = AppConfigAnalytics
   { _appConfigAnalyticsEnabled :: Bool
-  , _appConfigAnalyticsEmail :: String
-  }
+  , _appConfigAnalyticsEmail :: Maybe String
+  } deriving (Generic, Show)
 
 data AppConfigFeedback = AppConfigFeedback
-  { _appConfigFeedbackToken :: String
-  , _appConfigFeedbackOwner :: String
-  , _appConfigFeedbackRepo :: String
-  , _appConfigFeedbackIssueUrl :: String
-  }
-
-data AppConfigIntegration = AppConfigIntegration
-  { _appConfigIntegrationConfig :: String
-  }
-
-data BuildInfo = BuildInfo
-  { _buildInfoAppName :: String
-  , _buildInfoAppVersion :: String
-  , _buildInfoBuiltAt :: String
-  }
-
-data AppConfig = AppConfig
-  { _appConfigEnvironment :: AppConfigEnvironment
-  , _appConfigClientConfig :: AppConfigClient
-  , _appConfigWebConfig :: AppConfigWeb
-  , _appConfigDatabaseConfig :: AppConfigDatabase
-  , _appConfigMessagingConfig :: AppConfigMessaging
-  , _appConfigJwtConfig :: AppConfigJwt
-  , _appConfigRoles :: AppConfigRoles
-  , _appConfigMail :: AppConfigMail
-  , _appConfigAnalytics :: AppConfigAnalytics
-  , _appConfigFeedback :: AppConfigFeedback
-  , _appConfigIntegration :: AppConfigIntegration
-  , _appConfigBuildInfo :: BuildInfo
-  }
+  { _appConfigFeedbackEnabled :: Bool
+  , _appConfigFeedbackToken :: Maybe String
+  , _appConfigFeedbackOwner :: Maybe String
+  , _appConfigFeedbackRepo :: Maybe String
+  , _appConfigFeedbackIssueUrl :: Maybe String
+  } deriving (Generic, Show)

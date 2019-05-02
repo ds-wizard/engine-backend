@@ -1,0 +1,59 @@
+general:
+  environment: Test
+  serverPort: 3000
+  clientUrl: http://localhost:3001
+  serviceToken: my-token
+  integrationConfig: integration-test.yml
+  registrationEnabled: true
+  publicQuestionnaireEnabled: true
+
+client:
+  appTitle:
+  appTitleShort:
+  welcomeWarning:
+  welcomeInfo:
+
+database:
+  host: localhost
+  databaseName: dsw-server-test
+  port: 27017
+  authEnabled: false
+  username:
+  password:
+
+messaging:
+  enabled: false
+  host:
+  port:
+  username:
+  password:
+
+jwt:
+  secret: secret-key
+  version: 1
+  expiration: 9999
+
+roles:
+  defaultRole: DATASTEWARD
+  admin: [UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM]
+  dataSteward: [KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM]
+  researcher: [PM_READ_PERM, QTN_PERM, DMP_PERM]
+
+mail:
+  enabled: false
+  name:
+  email:
+  host:
+  username:
+  password:
+
+analytics:
+  enabled: false
+  email:
+
+feedback:
+  enabled: true
+  token:
+  owner: DSWGlobal
+  repo: dsw-test
+  issueurl: https://github.com/:owner/:repo/issues/:issueId

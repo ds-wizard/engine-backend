@@ -2,6 +2,7 @@ module Util.JSON
   ( convertValueToOject
   , getField
   , getArrayField
+  , simpleParseJSON
   ) where
 
 import Data.Aeson
@@ -10,6 +11,7 @@ import qualified Data.Text as T
 
 import Localization
 import Model.Error.ErrorHelpers
+import Util.String (lowerFirst)
 
 convertValueToOject value callback =
   case value of
@@ -28,3 +30,7 @@ getArrayField fieldName object callback = getField fieldName object parseArray
   where
     parseArray (Array field) = callback field
     parseArray _ = Left . createErrorWithErrorMessage $ _ERROR_UTIL_JSON__BAD_FIELD_TYPE fieldName "Array"
+
+simpleParseJSON fieldPrefix = genericParseJSON opts
+  where
+    opts = defaultOptions {fieldLabelModifier = lowerFirst . drop (T.length fieldPrefix)}

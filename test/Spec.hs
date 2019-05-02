@@ -12,10 +12,12 @@ import LensesConfig
 import Messaging.Connection
 import Model.Context.AppContext
 import Service.Config.ApplicationConfigService
+import Service.Config.BuildInfoConfigService
 import Service.User.UserMapper
 
 import Specs.API.BookReference.APISpec
 import Specs.API.Branch.APISpec
+import Specs.API.Config.APISpec
 import Specs.API.Feedback.APISpec
 import Specs.API.Info.APISpec
 import Specs.API.KnowledgeModel.APISpec
@@ -37,6 +39,7 @@ import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
+import Specs.Service.Feedback.FeedbackServiceSpec
 import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
 import Specs.Service.Migration.KnowledgeModel.Applicator.ApplicatorSpec
 import Specs.Service.Migration.KnowledgeModel.Applicator.ModifiersSpec
@@ -44,35 +47,43 @@ import Specs.Service.Migration.KnowledgeModel.MigrationSpec
 import Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
+import Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Specs.Service.Token.TokenServiceSpec
+import Specs.Service.User.UserServiceSpec
 import Specs.Util.ListSpec
 import Specs.Util.MathSpec
 import Specs.Util.TokenSpec
 import TestMigration
 
-testApplicationConfigFile = "config/app-config-test.cfg"
+testApplicationConfigFile = "config/application-test.yml"
 
-testBuildInfoFile = "config/build-info-test.cfg"
+testBuildInfoConfigFile = "config/build-info-test.yml"
+
+hLoadConfig fileName loadFn callback = do
+  eitherConfig <- loadFn fileName
+  case eitherConfig of
+    Left error -> do
+      putStrLn $ "CONFIG: load failed (" ++ fileName ++ ")"
+      putStrLn $ "CONFIG: can't load " ++ fileName ++ ". Maybe the file is missing or not well-formatted"
+      putStrLn $ "CONFIG: " ++ show error
+    Right config -> do
+      putStrLn $ "CONFIG: '" ++ fileName ++ "' loaded"
+      callback config
 
 prepareWebApp runCallback = do
-  eitherDspConfig <- loadConfig testApplicationConfigFile testBuildInfoFile
-  case eitherDspConfig of
-    Left (errorDate, reason) -> do
-      putStrLn "CONFIG: load failed"
-      putStrLn "Can't load app-config.cfg or build-info.cfg. Maybe the file is missing or not well-formatted"
-      print errorDate
-    Right dswConfig -> do
-      putStrLn "CONFIG: loaded"
-      putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ dswConfig ^. environment . env)
-      dbPool <- createDatabaseConnectionPool dswConfig
+  hLoadConfig testApplicationConfigFile getApplicationConfig $ \appConfig ->
+    hLoadConfig testBuildInfoConfigFile getBuildInfoConfig $ \buildInfoConfig -> do
+      putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ appConfig ^. general . environment)
+      dbPool <- createDatabaseConnectionPool appConfig
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel dswConfig
+      msgChannel <- createMessagingChannel appConfig
       putStrLn "MESSAGING: connected"
-      httpClientManager <- createHttpClientManager dswConfig
+      httpClientManager <- createHttpClientManager appConfig
       putStrLn "HTTP_CLIENT: created"
       let appContext =
             AppContext
-            { _appContextConfig = dswConfig
+            { _appContextAppConfig = appConfig
+            , _appContextBuildInfoConfig = buildInfoConfig
             , _appContextPool = dbPool
             , _appContextMsgChannel = msgChannel
             , _appContextHttpClientManager = httpClientManager
@@ -84,7 +95,7 @@ prepareWebApp runCallback = do
 main :: IO ()
 main =
   prepareWebApp
-    (\baseContext ->
+    (\appContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
            describe "INTEGRATION" $ do
@@ -112,22 +123,27 @@ main =
              listSpec
              mathSpec
              tokenSpec
-         before (resetDB baseContext) $ describe "INTEGRATION TESTING" $ do
+         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
-             bookReferenceAPI baseContext
-             branchAPI baseContext
-             feedbackAPI baseContext
-             infoAPI baseContext
-             knowledgeModelAPI baseContext
-             levelAPI baseContext
-             metricAPI baseContext
-             migratorAPI baseContext
-             organizationAPI baseContext
-             packageAPI baseContext
-             questionnaireAPI baseContext
-             templateAPI baseContext
-             typehintAPI baseContext
-             tokenAPI baseContext
-             userAPI baseContext
-             versionAPI baseContext
-           describe "SERVICE" $ branchServiceIntegrationSpec baseContext)
+             bookReferenceAPI appContext
+             branchAPI appContext
+             configAPI appContext
+             feedbackAPI appContext
+             infoAPI appContext
+             knowledgeModelAPI appContext
+             levelAPI appContext
+             metricAPI appContext
+             migratorAPI appContext
+             organizationAPI appContext
+             packageAPI appContext
+             questionnaireAPI appContext
+             templateAPI appContext
+             typehintAPI appContext
+             tokenAPI appContext
+             userAPI appContext
+             versionAPI appContext
+           describe "SERVICE" $ do
+             branchServiceIntegrationSpec appContext
+             feedbackServiceIntegrationSpec appContext
+             publicQuestionnaireServiceIntegrationSpec appContext
+             userServiceIntegrationSpec appContext)

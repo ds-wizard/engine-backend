@@ -46,7 +46,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    dswConfig <- runInContextIO (asks _appContextConfig) appContext
+    dswConfig <- runInContextIO (asks _appContextAppConfig) appContext
     let iUrl1 = createIssueUrl dswConfig feedback1
     let iUrl2 = createIssueUrl dswConfig feedback2
     let expDto = [toDTO feedback1 iUrl1, toDTO feedback2 iUrl2]

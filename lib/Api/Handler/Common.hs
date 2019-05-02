@@ -40,13 +40,15 @@ type Endpoint = ActionT LT.Text BaseContextM ()
 runInUnauthService function = do
   traceUuid <- liftIO generateUuid
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
-  dswConfig <- lift $ asks _baseContextConfig
+  appConfig <- lift $ asks _baseContextAppConfig
+  buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
   httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
-        { _appContextConfig = dswConfig
+        { _appContextAppConfig = appConfig
+        , _appContextBuildInfoConfig = buildInfoConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
         , _appContextHttpClientManager = httpClientManager
@@ -58,13 +60,15 @@ runInUnauthService function = do
 runInAuthService user function = do
   traceUuid <- liftIO generateUuid
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
-  dswConfig <- lift $ asks _baseContextConfig
+  appConfig <- lift $ asks _baseContextAppConfig
+  buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
   httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
-        { _appContextConfig = dswConfig
+        { _appContextAppConfig = appConfig
+        , _appContextBuildInfoConfig = buildInfoConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
         , _appContextHttpClientManager = httpClientManager
@@ -129,7 +133,7 @@ checkPermission perm callback = do
 
 checkServiceToken callback = do
   tokenHeader <- header (LT.pack authorizationHeaderName)
-  dswConfig <- lift $ asks _baseContextConfig
+  dswConfig <- lift $ asks _baseContextAppConfig
   let mToken =
         tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= validateServiceToken dswConfig
   case mToken of
@@ -137,7 +141,7 @@ checkServiceToken callback = do
     Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN
   where
     validateServiceToken dswConfig token = do
-      if token == (T.pack $ dswConfig ^. webConfig . serviceToken)
+      if token == (T.pack $ dswConfig ^. general . serviceToken)
         then Just token
         else Nothing
 

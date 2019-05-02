@@ -37,10 +37,10 @@ import Util.Template (loadAndRender)
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM (Either String ())
 sendRegistrationConfirmationMail user hash = do
-  dswConfig <- asks _appContextConfig
-  let clientAddress = dswConfig ^. clientConfig . address
+  dswConfig <- asks _appContextAppConfig
+  let clientAddress = dswConfig ^. general . clientUrl
       activationLink = clientAddress ++ "/signup-confirmation/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = dswConfig ^. mail . name
+      mailName = fromMaybe "" $ dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
       context = makeMailContext mailName clientAddress user additionals
@@ -49,10 +49,10 @@ sendRegistrationConfirmationMail user hash = do
 
 sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM (Either String ())
 sendRegistrationCreatedAnalyticsMail user = do
-  dswConfig <- asks _appContextConfig
-  let clientAddress = dswConfig ^. clientConfig . address
-      analyticsAddress = dswConfig ^. analytics . email
-      mailName = dswConfig ^. mail . name
+  dswConfig <- asks _appContextAppConfig
+  let clientAddress = dswConfig ^. general . clientUrl
+      analyticsAddress = fromMaybe "" $ dswConfig ^. analytics . email
+      mailName = fromMaybe "" $ dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New user"
       context = makeMailContext mailName clientAddress user []
       to = [analyticsAddress]
@@ -60,10 +60,10 @@ sendRegistrationCreatedAnalyticsMail user = do
 
 sendResetPasswordMail :: UserDTO -> String -> AppContextM (Either String ())
 sendResetPasswordMail user hash = do
-  dswConfig <- asks _appContextConfig
-  let clientAddress = dswConfig ^. clientConfig . address
+  dswConfig <- asks _appContextAppConfig
+  let clientAddress = dswConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = dswConfig ^. mail . name
+      mailName = fromMaybe "" $ dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset Password"
       additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
       context = makeMailContext mailName clientAddress user additionals
@@ -84,9 +84,9 @@ composeAndSendEmail to subject mailName context = do
 
 composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String MIME.Mail)
 composeMail to subject mailName context = do
-  dswConfig <- asks _appContextConfig
+  dswConfig <- asks _appContextAppConfig
   let mailConfig = dswConfig ^. mail
-      addrFrom = MIME.Address (Just . T.pack $ mailConfig ^. name) (T.pack $ mailConfig ^. email)
+      addrFrom = MIME.Address (T.pack <$> mailConfig ^. name) (T.pack . fromMaybe "" $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
       emptyMail = MIME.Mail addrFrom addrsTo [] [] [("Subject", TL.toStrict subject)] []
       root = _MAIL_TEMPLATE_ROOT </> mailName
@@ -191,14 +191,14 @@ makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settin
 sendEmail :: [String] -> MIME.Mail -> AppContextM (Either String ())
 sendEmail [] mailMessage = return $ Left _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
 sendEmail to mailMessage = do
-  dswConfig <- asks _appContextConfig
+  dswConfig <- asks _appContextAppConfig
   let mailConfig = dswConfig ^. mail
-      from = mailConfig ^. email
-      mailHost = mailConfig ^. host
+      from = fromMaybe "" $ mailConfig ^. email
+      mailHost = fromMaybe "" $ mailConfig ^. host
       mailPort = mailConfig ^. port
-      mailSSL = mailConfig ^. ssl
-      mailUsername = mailConfig ^. username
-      mailPassword = mailConfig ^. password
+      mailSSL = fromMaybe False $ mailConfig ^. ssl
+      mailUsername = fromMaybe "" $ mailConfig ^. username
+      mailPassword = fromMaybe "" $ mailConfig ^. password
       callback connection = do
         authSuccess <- SMTP.authenticate Auth.LOGIN mailUsername mailPassword connection
         renderedMail <- MIME.renderMail' mailMessage

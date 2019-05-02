@@ -39,7 +39,7 @@ import Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do
-    let dswConfig = appContext ^. config
+    let dswConfig = appContext ^. appConfig
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -77,14 +77,7 @@ userAPI appContext =
           runInContextIO deleteActionKeys appContext
           -- AND: Prepare request
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto =
-                UserCreateDTO
-                { _userCreateDTOName = "John"
-                , _userCreateDTOSurname = "Doe"
-                , _userCreateDTOEmail = "john.doe@example.com"
-                , _userCreateDTORole = Just "ADMIN"
-                , _userCreateDTOPassword = "password"
-                }
+          let reqDto = userJohnCreate
           let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 201

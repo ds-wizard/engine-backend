@@ -17,8 +17,8 @@ ADD .stack-work/install/x86_64-linux/lts-13.12/8.6.4/bin/dsw-server /dsw/dsw-ser
 ADD templates /dsw/templates
 
 # Add configs
-ADD config/app-config.cfg /dsw/config/app-config.cfg
-ADD config/integration-config.cfg /dsw/config/integration-config.cfg
-ADD config/build-info.cfg /dsw/config/build-info.cfg
+ADD config/application.yml /dsw/config/application.yml
+ADD config/integration.yml /dsw/config/integration.yml
+ADD config/build-info.yml /dsw/config/build-info.yml
 
 CMD ["./dsw-server"]

@@ -13,8 +13,8 @@ git: git@github.com:DataStewardshipWizard/dsw-server.git
 bug-reports: https://github.com/DataStewardshipWizard/dsw-common/issues
 tested-with: GHC==8.6.*
 data-files:
-  - config/app-config.cfg
-  - config/build-info.cfg
+  - config/application.yml
+  - config/build-info.yml
   - templates/dmp/root.css
   - templates/dmp/root.html.j2
   - templates/mail/_common/images/logo.png
@@ -43,7 +43,6 @@ library:
   - bson-generic
   - bytestring
   - case-insensitive
-  - ConfigFile
   - containers
   - data-default
   - directory
@@ -95,6 +94,7 @@ library:
   - wai-cors
   - warp
   - wreq
+  - yaml
   default-extensions:
     - TemplateHaskell
     - QuasiQuotes
@@ -113,6 +113,7 @@ library:
     - TypeSynonymInstances
     - FlexibleInstances
     - ScopedTypeVariables
+    - RankNTypes
 
 executables:
   dsw-server:
@@ -145,7 +146,6 @@ tests:
     - bson-generic
     - bytestring
     - case-insensitive
-    - ConfigFile
     - containers
     - data-default
     - ginger
@@ -177,6 +177,7 @@ tests:
     - wai-extra
     - wai-cors
     - warp
+    - yaml
     - dsw-server
     - hspec
     - hspec-expectations-pretty-diff

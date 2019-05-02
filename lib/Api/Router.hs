@@ -12,6 +12,7 @@ import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.BookReference.BookReferenceHandler
 import Api.Handler.Branch.BranchHandler
 import Api.Handler.Common
+import Api.Handler.Config.ClientConfigHandler
 import Api.Handler.Feedback.FeedbackHandler
 import Api.Handler.IO.IOHandler
 import Api.Handler.Info.InfoHandler
@@ -36,6 +37,7 @@ import Model.Context.BaseContext
 
 unauthorizedEndpoints =
   [ (methodGet, mkRegex "^$")
+  , (methodGet, mkRegex "^configuration$")
   , (methodPost, mkRegex "^tokens$")
   , (methodGet, mkRegex "^export/.*$")
   , (methodPost, mkRegex "^users")
@@ -57,9 +59,9 @@ createEndpoints context
    -- MIDDLEWARES
    --------------------
  = do
-  middleware (loggingMiddleware (context ^. config . environment . env))
+  middleware (loggingMiddleware (context ^. appConfig . general . environment))
   middleware corsMiddleware
-  middleware (authMiddleware (context ^. config) unauthorizedEndpoints)
+  middleware (authMiddleware (context ^. appConfig) unauthorizedEndpoints)
    -- ------------------
    -- ERROR HANDLING
    -- ------------------
@@ -165,6 +167,10 @@ createEndpoints context
    -- LEVEL
    --------------------
   get "/levels" getLevelsA
+   --------------------
+   -- LEVEL
+   --------------------
+  get "/configuration" getClientConfigA
    --------------------
    -- ERROR
    --------------------

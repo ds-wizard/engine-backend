@@ -58,6 +58,9 @@ _ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME =
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
+-- Common
+_ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName = "'" ++ featureName ++ "' feature is disabled"
+
 -- Document
 _ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
 

@@ -52,6 +52,7 @@ import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
 import Model.Branch.Branch
 import Model.Config.AppConfig
+import Model.Config.BuildInfoConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
 import Model.DataManagementPlan.DataManagementPlan
@@ -96,11 +97,11 @@ makeFields ''Branch
 makeFields ''BranchWithEvents
 
 -- Model / Config
-makeFields ''AppConfigEnvironment
+makeFields ''AppConfig
+
+makeFields ''AppConfigGeneral
 
 makeFields ''AppConfigClient
-
-makeFields ''AppConfigWeb
 
 makeFields ''AppConfigDatabase
 
@@ -116,11 +117,7 @@ makeFields ''AppConfigAnalytics
 
 makeFields ''AppConfigFeedback
 
-makeFields ''AppConfigIntegration
-
-makeFields ''BuildInfo
-
-makeFields ''AppConfig
+makeFields ''BuildInfoConfig
 
 -- Model / Context
 makeFields ''BaseContext

@@ -11,9 +11,11 @@ import Network.HTTP.Client (Manager)
 
 import Api.Resource.User.UserDTO
 import Model.Config.AppConfig
+import Model.Config.BuildInfoConfig
 
 data AppContext = AppContext
-  { _appContextConfig :: AppConfig
+  { _appContextAppConfig :: AppConfig
+  , _appContextBuildInfoConfig :: BuildInfoConfig
   , _appContextPool :: ConnectionPool
   , _appContextMsgChannel :: Maybe Channel
   , _appContextHttpClientManager :: Manager
