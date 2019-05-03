@@ -145,5 +145,6 @@ main =
            describe "SERVICE" $ do
              branchServiceIntegrationSpec appContext
              feedbackServiceIntegrationSpec appContext
+             dataManagementPlanIntegrationSpec appContext
              publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)

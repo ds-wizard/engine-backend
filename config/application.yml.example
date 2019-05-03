@@ -6,6 +6,7 @@ general:
   integrationConfig: integration.yml
   registrationEnabled: true
   publicQuestionnaireEnabled: true
+  levelsEnabled: true
 
 client:
   appTitle:

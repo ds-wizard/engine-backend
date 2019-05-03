@@ -68,6 +68,19 @@ packageWithEventsToDTOWithEvents package =
   , _packageWithEventsDTOEvents = toDTOs (package ^. events)
   }
 
+packageWithEventsToPackage :: PackageWithEvents -> Package
+packageWithEventsToPackage package =
+  Package
+  { _packagePId = package ^. pId
+  , _packageName = package ^. name
+  , _packageOrganizationId = package ^. organizationId
+  , _packageKmId = package ^. kmId
+  , _packageVersion = package ^. version
+  , _packageMetamodelVersion = package ^. metamodelVersion
+  , _packageDescription = package ^. description
+  , _packageParentPackageId = package ^. parentPackageId
+  }
+
 fromDTO :: PackageDTO -> Package
 fromDTO dto =
   Package

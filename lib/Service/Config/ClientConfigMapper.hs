@@ -19,4 +19,5 @@ toDTO appConfig =
   , _clientConfigDTOFeedbackEnabled = appConfig ^. feedback . enabled
   , _clientConfigDTORegistrationEnabled = appConfig ^. general . registrationEnabled
   , _clientConfigDTOPublicQuestionnaireEnabled = appConfig ^. general . publicQuestionnaireEnabled
+  , _clientConfigDTOLevelsEnabled = appConfig ^. general . levelsEnabled
   }
