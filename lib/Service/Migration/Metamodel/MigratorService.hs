@@ -40,7 +40,7 @@ import qualified
 import qualified Service.Package.PackageMapper as PackageMapper
 import Util.BSONtoJSON (mapBSONDocumentToJSONObject)
 import Util.List (foldEither)
-import Util.Logger (logError, msg)
+import Util.Logger (logError, logInfo, msg)
 
 migrateKnowledgeModelBundle :: Value -> AppContextM (Either AppError Value)
 migrateKnowledgeModelBundle = return . KMBMigrator.migrate
@@ -50,7 +50,7 @@ migrateCompleteDatabase = do
   migratePackages
   migrateBranches
   migrateKnowledgeModelMigrations
-  migratePublicQuestionnaire
+  migratePublicPackages
 
 -- ---------------------------
 -- PRIVATE
@@ -65,27 +65,37 @@ migrateKnowledgeModelMigrations :: AppContextM ()
 migrateKnowledgeModelMigrations =
   migrateOutdatedModels "kmMigrations" KMMigratorMapper.fromDetailDTO KMMMigrator.migrate
 
-migratePublicQuestionnaire :: AppContextM ()
-migratePublicQuestionnaire = do
+migratePublicPackages :: AppContextM ()
+migratePublicPackages = do
+  logMigrationStarted "publicPackages"
   mPackage <- runDB $ findOne (select [] "publicPackages")
   case mPackage of
     Just package ->
       case PackageMigrator.migrate . Object . mapBSONDocumentToJSONObject $ package of
         Right upgradedEntity -> do
-          runDB . delete $ select [] "publicPackages"
+          logMigrationMigrationApplied "publicPackages"
           case eitherDecode . encode $ upgradedEntity of
             Right object -> do
-              let document = toBSON . PackageMapper.fromDTOWithEvents $ object
+              document <- convertToBSON object
+              runDB . delete $ select [] "publicPackages"
               runDB $ insert "publicPackages" document
+              logMigrationCompleted "publicPackages"
               return ()
             Left error -> do
-              logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON "publicPackages"
+              logMigrationFailedToConvertToBson "publicPackages" error
               return ()
         Left error -> do
-          logError . msg _CMP_SERVICE $
-            _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION "PublicQuestionnaire"
+          logMigrationFailedToMigrateCollection "publicPackages" error
           return ()
-    Nothing -> return ()
+    Nothing -> do
+      logMigrationNotApplied "publicPackages"
+      return ()
+  where
+    convertToBSON object = do
+      logMigrationStartConvertingToBson "publicPackages"
+      let documents = toBSON . PackageMapper.fromDTOWithEvents $ object
+      logMigrationConvertedToBson "publicPackages"
+      return documents
 
 findOutdatedModels collection =
   runDB $ rest =<< find (select ["metamodelVersion" =: ["$ne" =: kmMetamodelVersion]] (T.pack collection))
@@ -96,21 +106,30 @@ removeOutdatedModels collection =
 insertUpdatedModels collection models = runDB $ insertMany (T.pack collection) models
 
 migrateOutdatedModels collection dtoMapper migrateFn = do
+  logMigrationStarted collection
   entities <- findOutdatedModels collection
   case foldEither $ migrateFn . Object . mapBSONDocumentToJSONObject <$> entities of
     Right upgradedEntities -> do
-      removeOutdatedModels collection
+      logMigrationMigrationApplied collection
       case eitherDecode . encode $ upgradedEntities of
         Right objects -> do
-          let documents = toBSON <$> (dtoMapper <$> objects)
+          documents <- convertToBSON objects
+          removeOutdatedModels collection
           insertUpdatedModels collection documents
+          logMigrationCompleted collection
           return ()
         Left error -> do
-          logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON collection
+          logMigrationFailedToConvertToBson collection error
           return ()
     Left error -> do
-      logError $ msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection
+      logMigrationFailedToMigrateCollection collection error
       return ()
+  where
+    convertToBSON objects = do
+      logMigrationStartConvertingToBson collection
+      let documents = toBSON <$> (dtoMapper <$> objects)
+      logMigrationConvertedToBson collection
+      return documents
 
 -- ---------------------------
 -- HELPERS
@@ -120,3 +139,32 @@ heMigrateKnowledgeModelBundle encodedKmb callback = do
   case eitherResult of
     Right result -> callback result
     Left error -> return . Left $ error
+
+-- --------------------------------
+-- LOGGER
+-- --------------------------------
+logMigrationStarted collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): started"
+
+logMigrationMigrationApplied collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): migration applied"
+
+logMigrationStartConvertingToBson collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): start converting to BSON"
+
+logMigrationConvertedToBson collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): converted to BSON"
+
+logMigrationCompleted collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): completed"
+
+logMigrationNotApplied collection =
+  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): nothing to convert"
+
+logMigrationFailedToConvertToBson collection error = do
+  logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON collection
+  logError . msg _CMP_SERVICE . show $ error
+
+logMigrationFailedToMigrateCollection collection error = do
+  logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection
+  logError . msg _CMP_SERVICE . show $ error
