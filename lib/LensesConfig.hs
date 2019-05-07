@@ -130,6 +130,8 @@ makeFields ''AppContext
 -- Model / DataManagementPlan
 makeFields ''DataManagementPlan
 
+makeFields ''DataManagementPlanConfig
+
 makeFields ''DataManagementPlanTemplateContext
 
 -- Model / Event
@@ -348,6 +350,8 @@ makeFields ''ClientConfigClientDashboardDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO
+
+makeFields ''DataManagementPlanConfigDTO
 
 -- Api / Resource / Event
 makeFields ''EventPathItemDTO

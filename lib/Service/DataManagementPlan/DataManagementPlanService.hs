@@ -56,6 +56,11 @@ createDataManagementPlan qtnUuid =
                 let dmp =
                       DataManagementPlan
                       { _dataManagementPlanUuid = dmpUuid
+                      , _dataManagementPlanConfig =
+                          DataManagementPlanConfig
+                          { _dataManagementPlanConfigLevelsEnabled = dswConfig ^. general . levelsEnabled
+                          , _dataManagementPlanConfigItemTitleEnabled = dswConfig ^. general . itemTitleEnabled
+                          }
                       , _dataManagementPlanQuestionnaireUuid = qtnUuid
                       , _dataManagementPlanLevel = dmpLevel
                       , _dataManagementPlanFilledKnowledgeModel = filledKM
@@ -68,7 +73,7 @@ createDataManagementPlan qtnUuid =
                       , _dataManagementPlanCreatedAt = now
                       , _dataManagementPlanUpdatedAt = now
                       }
-                return . Right . toDTO $ dmp
+                return . Right . toDataManagementPlanDTO $ dmp
   where
     heCreatedBy mOwnerUuid callback =
       case mOwnerUuid of

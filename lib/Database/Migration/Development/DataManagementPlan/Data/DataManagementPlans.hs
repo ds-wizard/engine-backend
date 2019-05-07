@@ -21,6 +21,9 @@ dmp1 :: DataManagementPlan
 dmp1 =
   DataManagementPlan
   { _dataManagementPlanUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
+  , _dataManagementPlanConfig =
+      DataManagementPlanConfig
+      {_dataManagementPlanConfigLevelsEnabled = True, _dataManagementPlanConfigItemTitleEnabled = True}
   , _dataManagementPlanQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
   , _dataManagementPlanLevel = questionnaire1 ^. level
   , _dataManagementPlanFilledKnowledgeModel = fKm1WithQ4

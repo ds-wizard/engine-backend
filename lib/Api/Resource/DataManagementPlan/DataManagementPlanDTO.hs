@@ -19,6 +19,7 @@ import Api.Resource.User.UserDTO
 
 data DataManagementPlanDTO = DataManagementPlanDTO
   { _dataManagementPlanDTOUuid :: U.UUID
+  , _dataManagementPlanDTOConfig :: DataManagementPlanConfigDTO
   , _dataManagementPlanDTOQuestionnaireUuid :: String
   , _dataManagementPlanDTOLevel :: Int
   , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
@@ -35,6 +36,7 @@ data DataManagementPlanDTO = DataManagementPlanDTO
 instance Eq DataManagementPlanDTO where
   a == b =
     _dataManagementPlanDTOUuid a == _dataManagementPlanDTOUuid b &&
+    _dataManagementPlanDTOConfig a == _dataManagementPlanDTOConfig b &&
     _dataManagementPlanDTOQuestionnaireUuid a == _dataManagementPlanDTOQuestionnaireUuid b &&
     _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
     _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
@@ -45,9 +47,15 @@ instance Eq DataManagementPlanDTO where
     _dataManagementPlanDTOOrganization a == _dataManagementPlanDTOOrganization b &&
     _dataManagementPlanDTOCreatedBy a == _dataManagementPlanDTOCreatedBy b
 
+data DataManagementPlanConfigDTO = DataManagementPlanConfigDTO
+  { _dataManagementPlanConfigDTOLevelsEnabled :: Bool
+  , _dataManagementPlanConfigDTOItemTitleEnabled :: Bool
+  } deriving (Show, Eq, Generic)
+
 instance FromJSON DataManagementPlanDTO where
   parseJSON (Object o) = do
     _dataManagementPlanDTOUuid <- o .: "uuid"
+    _dataManagementPlanDTOConfig <- o .: "config"
     _dataManagementPlanDTOQuestionnaireUuid <- o .: "questionnaireUuid"
     _dataManagementPlanDTOLevel <- o .: "level"
     _dataManagementPlanDTOFilledKnowledgeModel <- o .: "filledKnowledgeModel"
@@ -66,6 +74,7 @@ instance ToJSON DataManagementPlanDTO where
   toJSON DataManagementPlanDTO {..} =
     object
       [ "uuid" .= _dataManagementPlanDTOUuid
+      , "config" .= _dataManagementPlanDTOConfig
       , "questionnaireUuid" .= _dataManagementPlanDTOQuestionnaireUuid
       , "level" .= _dataManagementPlanDTOLevel
       , "filledKnowledgeModel" .= _dataManagementPlanDTOFilledKnowledgeModel
@@ -77,4 +86,18 @@ instance ToJSON DataManagementPlanDTO where
       , "createdBy" .= _dataManagementPlanDTOCreatedBy
       , "createdAt" .= _dataManagementPlanDTOCreatedAt
       , "updatedAt" .= _dataManagementPlanDTOUpdatedAt
+      ]
+
+instance FromJSON DataManagementPlanConfigDTO where
+  parseJSON (Object o) = do
+    _dataManagementPlanConfigDTOLevelsEnabled <- o .: "levelsEnabled"
+    _dataManagementPlanConfigDTOItemTitleEnabled <- o .: "itemTitleEnabled"
+    return DataManagementPlanConfigDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON DataManagementPlanConfigDTO where
+  toJSON DataManagementPlanConfigDTO {..} =
+    object
+      [ "levelsEnabled" .= _dataManagementPlanConfigDTOLevelsEnabled
+      , "itemTitleEnabled" .= _dataManagementPlanConfigDTOItemTitleEnabled
       ]

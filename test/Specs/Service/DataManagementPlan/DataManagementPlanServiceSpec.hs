@@ -33,7 +33,7 @@ dataManagementPlanIntegrationSpec appContext =
     it "Successfully created" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDTO dmp1
+      let expectation = toDataManagementPlanDTO dmp1
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
@@ -45,7 +45,7 @@ dataManagementPlanIntegrationSpec appContext =
     it "Successfully created (when levels are disabled)" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDTO (dmp1 & level .~ 9999)
+      let expectation = toDataManagementPlanDTO (dmp1 & level .~ 9999)
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
