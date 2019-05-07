@@ -26,3 +26,13 @@ fChapter2 =
   , _filledChapterText = chapter2 ^. text
   , _filledChapterQuestions = [fQuestion3', fQuestion4']
   }
+
+fChapter3 :: FilledChapter
+fChapter3 =
+  FilledChapter
+  { _filledChapterUuid = chapter3 ^. uuid
+  , _filledChapterHumanIdentifier = "III"
+  , _filledChapterTitle = chapter3 ^. title
+  , _filledChapterText = chapter3 ^. text
+  , _filledChapterQuestions = [fQuestion9', fQuestion10']
+  }

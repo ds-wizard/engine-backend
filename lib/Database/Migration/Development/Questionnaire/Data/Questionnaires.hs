@@ -9,7 +9,6 @@ import qualified Data.UUID as U
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledAnswersAndFollowUpQuestions
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledChapters
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledQuestions
-import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
 import Model.Questionnaire.Questionnaire
@@ -22,9 +21,8 @@ questionnaire1 =
   , _questionnaireName = "My Questionnaire"
   , _questionnaireLevel = 2
   , _questionnairePrivate = True
-  , _questionnairePackageId = netherlandsPackageV2 ^. pId
+  , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
-  , _questionnaireKnowledgeModel = km1WithQ4
   , _questionnaireReplies =
       [ fQ1
       , fQ2
@@ -40,6 +38,8 @@ questionnaire1 =
       , rQ4_it2_itemName
       , rQ4_it2_q5
       , rQ4_it2_q6
+      , rQ9
+      , rQ10
       ]
   , _questionnaireOwnerUuid = Just $ fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66")
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -55,7 +55,6 @@ questionnaire1Edited =
   , _questionnairePrivate = False
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
-  , _questionnaireKnowledgeModel = questionnaire1 ^. knowledgeModel
   , _questionnaireReplies = [fQ1, fQ2]
   , _questionnaireOwnerUuid = questionnaire1 ^. ownerUuid
   , _questionnaireCreatedAt = questionnaire1 ^. createdAt
@@ -201,4 +200,26 @@ rQ4_it2_q6 =
       createReplyKey
         [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "1", U.toString $ fQ4_it2_question6 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQ4_it2_question6 ^. answerOption) ^. uuid
+  }
+
+-- ------------------------------------------------------------
+rQ9 :: Reply
+rQ9 =
+  Reply
+  { _replyPath = createReplyKey [U.toString $ fChapter3 ^. uuid, U.toString $ fQuestion9 ^. uuid]
+  , _replyValue = IntegrationReply {_integrationReplyValue = PlainValue (fromJust $ fQuestion9 ^. answerValue)}
+  }
+
+rQ10 :: Reply
+rQ10 =
+  Reply
+  { _replyPath = createReplyKey [U.toString $ fChapter3 ^. uuid, U.toString $ fQuestion10 ^. uuid]
+  , _replyValue =
+      IntegrationReply
+      { _integrationReplyValue =
+          IntegrationValue
+          { _integrationValueIntId = fromJust $ fQuestion10 ^. answerIntId
+          , _integrationValueIntValue = fromJust $ fQuestion10 ^. answerValue
+          }
+      }
   }

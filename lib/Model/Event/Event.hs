@@ -5,6 +5,7 @@ import GHC.Generics
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -31,4 +32,7 @@ data Event
   | AddTagEvent' AddTagEvent
   | EditTagEvent' EditTagEvent
   | DeleteTagEvent' DeleteTagEvent
+  | AddIntegrationEvent' AddIntegrationEvent
+  | EditIntegrationEvent' EditIntegrationEvent
+  | DeleteIntegrationEvent' DeleteIntegrationEvent
   deriving (Show, Eq, Generic)

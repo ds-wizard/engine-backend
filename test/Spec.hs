@@ -7,10 +7,11 @@ import Test.Hspec
 
 import Database.Connection
 import Database.Migration.Development.User.Data.Users
+import Integration.Http.Common.HttpClientFactory
 import LensesConfig
 import Messaging.Connection
 import Model.Context.AppContext
-import Service.Config.ConfigLoader
+import Service.Config.ApplicationConfigService
 import Service.User.UserMapper
 
 import Specs.API.BookReference.APISpec
@@ -20,23 +21,27 @@ import Specs.API.Info.APISpec
 import Specs.API.KnowledgeModel.APISpec
 import Specs.API.Level.APISpec
 import Specs.API.Metric.APISpec
-import Specs.API.MigratorAPISpec
+import Specs.API.MigrationAPISpec
 import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
+import Specs.API.Template.APISpec
 import Specs.API.Token.APISpec
+import Specs.API.Typehint.APISpec
 import Specs.API.UserAPISpec
 import Specs.API.Version.APISpec
+import Specs.Integration.Http.Common.ResponseMapperSpec
+import Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Specs.Model.FilledKnowledgeModel.FilledKnowledgeModelAccessorsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
-import Specs.Service.Migrator.Applicator.ApplicatorSpec
-import Specs.Service.Migrator.Applicator.ModifiersSpec
-import Specs.Service.Migrator.MigratorSpec
-import Specs.Service.Migrator.SanitizatorSpec
+import Specs.Service.Migration.KnowledgeModel.Applicator.ApplicatorSpec
+import Specs.Service.Migration.KnowledgeModel.Applicator.ModifiersSpec
+import Specs.Service.Migration.KnowledgeModel.MigrationSpec
+import Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
 import Specs.Service.Token.TokenServiceSpec
@@ -50,7 +55,7 @@ testApplicationConfigFile = "config/app-config-test.cfg"
 testBuildInfoFile = "config/build-info-test.cfg"
 
 prepareWebApp runCallback = do
-  eitherDspConfig <- loadDSWConfig testApplicationConfigFile testBuildInfoFile
+  eitherDspConfig <- loadConfig testApplicationConfigFile testBuildInfoFile
   case eitherDspConfig of
     Left (errorDate, reason) -> do
       putStrLn "CONFIG: load failed"
@@ -62,11 +67,15 @@ prepareWebApp runCallback = do
       dbPool <- createDatabaseConnectionPool dswConfig
       putStrLn "DATABASE: connected"
       msgChannel <- createMessagingChannel dswConfig
+      putStrLn "MESSAGING: connected"
+      httpClientManager <- createHttpClientManager dswConfig
+      putStrLn "HTTP_CLIENT: created"
       let appContext =
             AppContext
             { _appContextConfig = dswConfig
             , _appContextPool = dbPool
             , _appContextMsgChannel = msgChannel
+            , _appContextHttpClientManager = httpClientManager
             , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
             , _appContextCurrentUser = Just . toDTO $ userAlbert
             }
@@ -78,6 +87,10 @@ main =
     (\baseContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
+           describe "INTEGRATION" $ do
+             describe "Http" $ do
+               describe "Common" $ commonResponseMapperSpec
+               describe "Typehint" $ typehintResponseMapperSpec
            describe "MODEL" $ do
              filledKnowledgeModelAccessorsSpec
              knowledgeModelAccessorsSpec
@@ -85,12 +98,13 @@ main =
              describe "Branch" $ do branchValidationSpec
              describe "DataManagementPlan" $ dataManagementPlanSpec
              describe "KnowledgeModel" $ knowledgeModelFilterSpec
-             describe "Migrator" $ do
-               describe "Applicator" $ do
-                 applicatorSpec
-                 modifiersSpec
-               migratorSpec
-               sanitizatorSpec
+             describe "Migration" $ do
+               describe "KnowledgeModel" $ do
+                 describe "Applicator" $ do
+                   applicatorSpec
+                   modifiersSpec
+                 migratorSpec
+                 sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
              describe "Package" $ packageValidationSpec
              describe "Token" $ tokenServiceSpec
@@ -111,6 +125,8 @@ main =
              organizationAPI baseContext
              packageAPI baseContext
              questionnaireAPI baseContext
+             templateAPI baseContext
+             typehintAPI baseContext
              tokenAPI baseContext
              userAPI baseContext
              versionAPI baseContext

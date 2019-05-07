@@ -22,6 +22,7 @@ isQuestionAnswered (FilledListQuestion' fq) =
     Just [] -> False
     Just (x:xs) -> True
 isQuestionAnswered (FilledValueQuestion' fq) = isJust $ fq ^. answerValue
+isQuestionAnswered (FilledIntegrationQuestion' fq) = isJust $ fq ^. answerValue
 
 isAIAnswered :: FilledAnswerItem -> Bool
 isAIAnswered fai = isJust $ fai ^. value
@@ -62,6 +63,7 @@ computeAnsweredIndication currentLevel fChapter =
                   questionsCount = (sum $ (getQuestionCount conditionQ conditionAI) <$> ai ^. questions)
               in itemName + questionsCount
         childrens (FilledValueQuestion' fq) = 0
+        childrens (FilledIntegrationQuestion' fq) = 0
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

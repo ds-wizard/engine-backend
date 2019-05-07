@@ -69,6 +69,10 @@ data AppConfigFeedback = AppConfigFeedback
   , _appConfigFeedbackIssueUrl :: String
   }
 
+data AppConfigIntegration = AppConfigIntegration
+  { _appConfigIntegrationConfig :: String
+  }
+
 data BuildInfo = BuildInfo
   { _buildInfoAppName :: String
   , _buildInfoAppVersion :: String
@@ -86,5 +90,6 @@ data AppConfig = AppConfig
   , _appConfigMail :: AppConfigMail
   , _appConfigAnalytics :: AppConfigAnalytics
   , _appConfigFeedback :: AppConfigFeedback
+  , _appConfigIntegration :: AppConfigIntegration
   , _appConfigBuildInfo :: BuildInfo
   }

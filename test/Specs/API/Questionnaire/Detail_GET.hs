@@ -11,6 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
@@ -58,7 +59,7 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO questionnaire1 netherlandsPackageV2
+    let expDto = toDetailWithPackageWithEventsDTO questionnaire1 germanyPackage km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

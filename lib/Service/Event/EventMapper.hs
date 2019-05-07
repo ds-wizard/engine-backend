@@ -26,6 +26,9 @@ toDTOFn (DeleteReferenceEvent' event) = toDTO event
 toDTOFn (AddTagEvent' event) = toDTO event
 toDTOFn (EditTagEvent' event) = toDTO event
 toDTOFn (DeleteTagEvent' event) = toDTO event
+toDTOFn (AddIntegrationEvent' event) = toDTO event
+toDTOFn (EditIntegrationEvent' event) = toDTO event
+toDTOFn (DeleteIntegrationEvent' event) = toDTO event
 
 toDTOs :: [Event] -> [EventDTO]
 toDTOs = fmap toDTOFn
@@ -51,6 +54,9 @@ fromDTOFn (DeleteReferenceEventDTO' event) = fromDTO event
 fromDTOFn (AddTagEventDTO' event) = fromDTO event
 fromDTOFn (EditTagEventDTO' event) = fromDTO event
 fromDTOFn (DeleteTagEventDTO' event) = fromDTO event
+fromDTOFn (AddIntegrationEventDTO' event) = fromDTO event
+fromDTOFn (EditIntegrationEventDTO' event) = fromDTO event
+fromDTOFn (DeleteIntegrationEventDTO' event) = fromDTO event
 
 fromDTOs :: [EventDTO] -> [Event]
 fromDTOs = fmap fromDTOFn

@@ -18,9 +18,7 @@ import Model.Context.AppContextHelpers
 import Model.Error.Error
 import Model.Package.Package
 import Model.Questionnaire.Questionnaire
-import Service.KnowledgeModel.KnowledgeModelApplicator
-import Service.KnowledgeModel.KnowledgeModelFilter
-import Service.Package.PackageService
+import Service.KnowledgeModel.KnowledgeModelService
 import Service.Questionnaire.QuestionnaireMapper
 import Util.Uuid
 
@@ -67,14 +65,11 @@ createQuestionnaire questionnaireCreateDto = do
 createQuestionnaireWithGivenUuid :: U.UUID -> QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaireWithGivenUuid qtnUuid reqDto =
   heGetCurrentUser $ \currentUser ->
-    heFindPackageWithEventsById (reqDto ^. packageId) $ \package ->
-      heGetAllPreviousEventsSincePackageId (reqDto ^. packageId) $ \events ->
-        heCreateKnowledgeModel events $ \knowledgeModel -> do
-          let filteredKm = filterKnowledgeModel (reqDto ^. tagUuids) knowledgeModel
-          now <- liftIO getCurrentTime
-          let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid filteredKm (currentUser ^. uuid) now now
-          insertQuestionnaire qtn
-          return . Right $ toSimpleDTO qtn package
+    heFindPackageWithEventsById (reqDto ^. packageId) $ \package -> do
+      now <- liftIO getCurrentTime
+      let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid (currentUser ^. uuid) now now
+      insertQuestionnaire qtn
+      return . Right $ toSimpleDTO qtn package
 
 getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
 getQuestionnaireById qtnUuid =
@@ -86,15 +81,18 @@ getQuestionnaireDetailById qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
     checkPermissionToQtn qtn $ do
       heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
-        return . Right $ toDetailWithPackageWithEventsDTO qtn package
+        heCompileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids) $ \knowledgeModel ->
+          return . Right $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
 modifyQuestionnaire qtnUuid reqDto =
-  heGetQuestionnaireDetailById qtnUuid $ \qtnDto -> do
-    now <- liftIO getCurrentTime
-    let updatedQtn = fromChangeDTO qtnDto reqDto now
-    updateQuestionnaireById updatedQtn
-    return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package)
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
+    heGetCurrentUser $ \currentUser -> do
+      now <- liftIO getCurrentTime
+      let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
+      updateQuestionnaireById updatedQtn
+      heCompileKnowledgeModel [] (Just $ updatedQtn ^. packageId) (updatedQtn ^. selectedTagUuids) $ \knowledgeModel ->
+        return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel
 
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid =

@@ -1,5 +1,6 @@
 module Model.FilledKnowledgeModel.FilledKnowledgeModel where
 
+import Data.Map
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -10,6 +11,7 @@ data FilledKnowledgeModel = FilledKnowledgeModel
   , _filledKnowledgeModelName :: String
   , _filledKnowledgeModelChapters :: [FilledChapter]
   , _filledKnowledgeModelTags :: [Tag]
+  , _filledKnowledgeModelIntegrations :: [Integration]
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
@@ -26,6 +28,7 @@ data FilledQuestion
   = FilledOptionsQuestion' FilledOptionsQuestion
   | FilledListQuestion' FilledListQuestion
   | FilledValueQuestion' FilledValueQuestion
+  | FilledIntegrationQuestion' FilledIntegrationQuestion
   deriving (Show, Eq, Generic)
 
 data FilledOptionsQuestion = FilledOptionsQuestion
@@ -66,6 +69,21 @@ data FilledValueQuestion = FilledValueQuestion
   , _filledValueQuestionReferences :: [Reference]
   , _filledValueQuestionValueType :: QuestionValueType
   , _filledValueQuestionAnswerValue :: Maybe String
+  } deriving (Show, Eq, Generic)
+
+data FilledIntegrationQuestion = FilledIntegrationQuestion
+  { _filledIntegrationQuestionUuid :: U.UUID
+  , _filledIntegrationQuestionHumanIdentifier :: String
+  , _filledIntegrationQuestionTitle :: String
+  , _filledIntegrationQuestionText :: Maybe String
+  , _filledIntegrationQuestionRequiredLevel :: Maybe Int
+  , _filledIntegrationQuestionTagUuids :: [U.UUID]
+  , _filledIntegrationQuestionExperts :: [Expert]
+  , _filledIntegrationQuestionReferences :: [Reference]
+  , _filledIntegrationQuestionIntegrationUuid :: U.UUID
+  , _filledIntegrationQuestionProps :: Map String String
+  , _filledIntegrationQuestionAnswerIntId :: Maybe String
+  , _filledIntegrationQuestionAnswerValue :: Maybe String
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------

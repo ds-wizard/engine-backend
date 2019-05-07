@@ -7,6 +7,10 @@ module Model.KnowledgeModel.KnowledgeModelAccessors
   , getAllTags
   , getTagByUuid
   , isThereAnyTagWithGivenUuid
+  -- Integration
+  , getAllIntegrations
+  , getIntegrationByUuid
+  , isThereAnyIntegrationWithGivenUuid
   -- Question
   , getAllQuestions
   , getQuestionByUuid
@@ -55,7 +59,7 @@ isThereAnyChapterWithGivenUuid km chUuid = chUuid `elem` (getChapterUuid <$> get
     getChapterUuid chapter = chapter ^. uuid
 
 -- -------------------
--- CHAPTERS ----------
+-- TAGS --------------
 -- -------------------
 getAllTags :: KnowledgeModel -> [Tag]
 getAllTags km = km ^. tags
@@ -67,6 +71,21 @@ isThereAnyTagWithGivenUuid :: KnowledgeModel -> UUID -> Bool
 isThereAnyTagWithGivenUuid km tagUuid = tagUuid `elem` (getTagByUuid <$> getAllTags km)
   where
     getTagByUuid tag = tag ^. uuid
+
+-- -------------------
+-- INTEGRATIONS ------
+-- -------------------
+getAllIntegrations :: KnowledgeModel -> [Integration]
+getAllIntegrations km = km ^. integrations
+
+getIntegrationByUuid :: KnowledgeModel -> UUID -> Maybe Integration
+getIntegrationByUuid km integrationUuid = find (\i -> i ^. uuid == integrationUuid) (getAllIntegrations km)
+
+isThereAnyIntegrationWithGivenUuid :: KnowledgeModel -> UUID -> Bool
+isThereAnyIntegrationWithGivenUuid km integrationUuid =
+  integrationUuid `elem` (getIntegrationByUuid <$> getAllIntegrations km)
+  where
+    getIntegrationByUuid integration = integration ^. uuid
 
 -- -------------------
 -- QUESTIONS----------

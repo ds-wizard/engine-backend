@@ -16,6 +16,7 @@ runAppContextWithBaseContext function baseContext = do
         { _appContextConfig = baseContext ^. config
         , _appContextPool = baseContext ^. pool
         , _appContextMsgChannel = baseContext ^. msgChannel
+        , _appContextHttpClientManager = baseContext ^. httpClientManager
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Nothing
         }

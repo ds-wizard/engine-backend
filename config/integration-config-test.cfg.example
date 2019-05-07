@@ -1,0 +1,7 @@
+[ontologyPortal]
+baseurl = https://mockserver.ds-wizard.org
+apikey = 123456
+
+[bioPortal]
+baseurl = https://mockserver.ds-wizard.org
+apikey = 123456

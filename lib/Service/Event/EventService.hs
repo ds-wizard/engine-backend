@@ -6,18 +6,16 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Service.Branch.BranchService
 import Service.Event.EventMapper
-import Service.KnowledgeModel.KnowledgeModelService
 
 updateEvents :: String -> [EventDTO] -> AppContextM (Either AppError [EventDTO])
 updateEvents branchUuid eventsCreateDto =
   heGetBranchById branchUuid $ \_ -> do
     let events = fromDTOs eventsCreateDto
     updateEventsInBranch branchUuid events
-    result <- recompileKnowledgeModel branchUuid
-    heRecompileKnowledgeModel branchUuid $ \_ -> return . Right . toDTOs $ events
+    return . Right . toDTOs $ events
 
 deleteEvents :: String -> AppContextM (Maybe AppError)
 deleteEvents branchUuid =
   hmGetBranchById branchUuid $ \_ -> do
     deleteEventsAtBranch branchUuid
-    hmRecompileKnowledgeModel branchUuid $ \_ -> return Nothing
+    return Nothing

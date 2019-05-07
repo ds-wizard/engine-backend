@@ -43,6 +43,7 @@ startWebApp appContext = do
         { _baseContextConfig = appContext ^. config
         , _baseContextPool = appContext ^. pool
         , _baseContextMsgChannel = appContext ^. msgChannel
+        , _baseContextHttpClientManager = appContext ^. httpClientManager
         }
       t m = runStdoutLoggingT $ runReaderT (runBaseContextM m) baseContext
   scottyAppT t (createEndpoints baseContext)

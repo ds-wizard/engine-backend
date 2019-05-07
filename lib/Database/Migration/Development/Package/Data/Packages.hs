@@ -23,7 +23,12 @@ globalPackage =
     kmMetamodelVersion
     "First Release"
     Nothing
-    [AddKnowledgeModelEvent' a_km1, AddTagEvent' a_km1_tds, AddTagEvent' a_km1_tbi]
+    [ AddKnowledgeModelEvent' a_km1
+    , AddTagEvent' a_km1_tds
+    , AddTagEvent' a_km1_tbi
+    , AddIntegrationEvent' a_km1_iop
+    , AddIntegrationEvent' a_km1_ibp
+    ]
 
 netherlandsPackage :: PackageWithEvents
 netherlandsPackage =
@@ -47,7 +52,7 @@ netherlandsPackageV2 =
     kmMetamodelVersion
     "Second Release"
     (Just $ netherlandsPackage ^. pId)
-    [AddChapterEvent' a_km1_ch3]
+    [AddChapterEvent' a_km1_ch4]
 
 amsterdamPackage :: PackageWithEvents
 amsterdamPackage =
@@ -74,6 +79,8 @@ germanyPackage =
     [ AddKnowledgeModelEvent' a_km1
     , AddTagEvent' a_km1_tds
     , AddTagEvent' a_km1_tbi
+    , AddIntegrationEvent' a_km1_iop
+    , AddIntegrationEvent' a_km1_ibp
     , AddChapterEvent' a_km1_ch1
     , AddQuestionEvent' a_km1_ch1_q1'
     , AddQuestionEvent' a_km1_ch1_q2'
@@ -101,10 +108,14 @@ germanyPackage =
     , AddAnswerEvent' a_km1_ch2_q4_it_q6_aNo
     , AddAnswerEvent' a_km1_ch2_q4_it_q6_aYes
     , AddQuestionEvent' a_km1_ch2_ansYes6_fuq4'
+    , AddQuestionEvent' a_km1_ch2_ansYes6_fuq5'
     , AddQuestionEvent' a_km1_ch2_q4_it1_q6_fuq4_q1'
     , AddQuestionEvent' a_km1_ch2_q4_it1_q6_fuq4_q2'
     , AddExpertEvent' a_km1_ch2_q6_eAlbert
     , AddExpertEvent' a_km1_ch2_q6_eNikola
     , AddReferenceEvent' a_km1_ch2_q6_rCh1'
     , AddReferenceEvent' a_km1_ch2_q6_rCh2'
+    , AddChapterEvent' a_km1_ch3
+    , AddQuestionEvent' a_km1_ch3_q9'
+    , AddQuestionEvent' a_km1_ch3_q10'
     ]

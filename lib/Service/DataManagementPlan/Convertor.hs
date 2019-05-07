@@ -17,6 +17,7 @@ toFilledKM km =
   , _filledKnowledgeModelName = km ^. name
   , _filledKnowledgeModelChapters = toFilledChapter <$> (zip humanIdentifiers (km ^. chapters))
   , _filledKnowledgeModelTags = km ^. tags
+  , _filledKnowledgeModelIntegrations = km ^. integrations
   }
   where
     humanIdentifiers :: [String]
@@ -81,6 +82,22 @@ toFilledQuestion humanIdentifier (ValueQuestion' q) =
   , _filledValueQuestionReferences = q ^. references
   , _filledValueQuestionValueType = q ^. valueType
   , _filledValueQuestionAnswerValue = Nothing
+  }
+toFilledQuestion humanIdentifier (IntegrationQuestion' q) =
+  FilledIntegrationQuestion' $
+  FilledIntegrationQuestion
+  { _filledIntegrationQuestionUuid = q ^. uuid
+  , _filledIntegrationQuestionHumanIdentifier = humanIdentifier
+  , _filledIntegrationQuestionTitle = q ^. title
+  , _filledIntegrationQuestionText = q ^. text
+  , _filledIntegrationQuestionRequiredLevel = q ^. requiredLevel
+  , _filledIntegrationQuestionTagUuids = q ^. tagUuids
+  , _filledIntegrationQuestionExperts = q ^. experts
+  , _filledIntegrationQuestionReferences = q ^. references
+  , _filledIntegrationQuestionIntegrationUuid = q ^. integrationUuid
+  , _filledIntegrationQuestionProps = q ^. props
+  , _filledIntegrationQuestionAnswerIntId = Nothing
+  , _filledIntegrationQuestionAnswerValue = Nothing
   }
 
 toFilledAnswer :: FilledOptionsQuestion -> Answer -> FilledAnswer

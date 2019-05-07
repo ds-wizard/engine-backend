@@ -13,8 +13,8 @@ import Database.BSON.Event.Expert ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
-import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import LensesConfig
+import Model.KnowledgeModel.KnowledgeModel
 import Model.Migrator.MigratorState
 
 instance ToBSON MigrationState where
@@ -40,18 +40,20 @@ instance FromBSON MigrationState where
 instance ToBSON MigratorState where
   toBSON ms =
     [ "branchUuid" BSON.=: serializeUUID (ms ^. branchUuid)
+    , "metamodelVersion" BSON.=: (ms ^. metamodelVersion)
     , "migrationState" BSON.=: (ms ^. migrationState)
     , "branchParentId" BSON.=: (ms ^. branchParentId)
     , "targetPackageId" BSON.=: (ms ^. targetPackageId)
     , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. branchEvents)
     , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. targetPackageEvents)
     , "resultEvents" BSON.=: convertEventToBSON <$> (ms ^. resultEvents)
-    , "currentKnowledgeModel" BSON.=: (ms ^. currentKnowledgeModel)
+    , "currentKnowledgeModel" BSON.=: (Nothing :: Maybe KnowledgeModel)
     ]
 
 instance FromBSON MigratorState where
   fromBSON doc = do
     msBranchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
+    msMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     msMigrationState <- BSON.lookup "migrationState" doc
     msBranchParentId <- BSON.lookup "branchParentId" doc
     msTargetPackageId <- BSON.lookup "targetPackageId" doc
@@ -61,15 +63,15 @@ instance FromBSON MigratorState where
     let msTargetPackageEvents = fmap (fromJust . chooseEventDeserializator) msTargetPackageEventsSerialized
     msResultEventsSerialized <- BSON.lookup "resultEvents" doc
     let msResultEvents = fmap (fromJust . chooseEventDeserializator) msResultEventsSerialized
-    msCurrentKnowledgeModel <- BSON.lookup "currentKnowledgeModel" doc
     return
       MigratorState
       { _migratorStateBranchUuid = msBranchUuid
+      , _migratorStateMetamodelVersion = msMetamodelVersion
       , _migratorStateMigrationState = msMigrationState
       , _migratorStateBranchParentId = msBranchParentId
       , _migratorStateTargetPackageId = msTargetPackageId
       , _migratorStateBranchEvents = msBranchEvents
       , _migratorStateTargetPackageEvents = msTargetPackageEvents
       , _migratorStateResultEvents = msResultEvents
-      , _migratorStateCurrentKnowledgeModel = msCurrentKnowledgeModel
+      , _migratorStateCurrentKnowledgeModel = Nothing
       }

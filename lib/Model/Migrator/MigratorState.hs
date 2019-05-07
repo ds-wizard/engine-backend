@@ -26,6 +26,7 @@ data MigrationConflictAction
 
 data MigratorState = MigratorState
   { _migratorStateBranchUuid :: U.UUID
+  , _migratorStateMetamodelVersion :: Int
   , _migratorStateMigrationState :: MigrationState
   , _migratorStateBranchParentId :: String
   , _migratorStateTargetPackageId :: String

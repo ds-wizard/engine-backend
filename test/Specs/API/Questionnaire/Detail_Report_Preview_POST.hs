@@ -16,11 +16,11 @@ import Api.Resource.Report.ReportJM ()
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Metric.Data.Metrics
 import qualified
        Database.Migration.Development.Metric.MetricMigration as MTR
 import Database.Migration.Development.Package.Data.Packages
-import Database.Migration.Development.PublicQuestionnaire.Data.PublicQuestionnaires
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import LensesConfig
 import Model.Context.AppContext
@@ -51,7 +51,7 @@ reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
   QuestionnaireChangeDTO
-  { _questionnaireChangeDTOName = "EDITED" ++ (publicQuestionnaire ^. name)
+  { _questionnaireChangeDTOName = questionnaire1Edited ^. name
   , _questionnaireChangeDTOPrivate = False
   , _questionnaireChangeDTOLevel = 3
   , _questionnaireChangeDTOReplies =
@@ -70,6 +70,8 @@ reqDto =
       , rQ4_it2_itemName
       , rQ4_it2_q5
       , rQ4_it2_q6
+      , rQ9
+      , rQ10
       ]
   }
 
@@ -84,7 +86,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO publicQuestionnaire netherlandsPackageV2
+    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Edited netherlandsPackageV2 km1NetherlandsV2
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
@@ -98,7 +100,7 @@ test_200 appContext =
     assertResHeaders headers expHeaders
     -- AND: Compare body
     let rs = resBody ^. chapterReports
-    liftIO $ (length rs) `shouldBe` 2
+    liftIO $ (length rs) `shouldBe` 3
     -- Chapter report 1
     let r1 = rs !! 0
     liftIO $ (r1 ^. chapterUuid) `shouldBe` (chapter1 ^. uuid)
@@ -117,6 +119,15 @@ test_200 appContext =
     let m2 = (r2 ^. metrics) !! 0
     liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
     liftIO $ (m2 ^. measure) `shouldBe` 1
+    -- Chapter report 3
+    let r3 = rs !! 2
+    liftIO $ (r3 ^. chapterUuid) `shouldBe` (chapter3 ^. uuid)
+    let (AnsweredIndicationDTO' i3) = (r3 ^. indications) !! 0
+    liftIO $ (i3 ^. answeredQuestions) `shouldBe` 2
+    liftIO $ (i3 ^. unansweredQuestions) `shouldBe` 0
+    let m3 = (r3 ^. metrics) !! 0
+    liftIO $ (m3 ^. metricUuid) `shouldBe` metricF ^. uuid
+    liftIO $ (m3 ^. measure) `shouldBe` 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

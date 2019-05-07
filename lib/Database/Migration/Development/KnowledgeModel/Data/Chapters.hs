@@ -8,7 +8,8 @@ module Database.Migration.Development.KnowledgeModel.Data.Chapters
   , chapter2WithoutQuestions
   , chapter2WithQ4Plain
   , chapter2WithQ4
-  , chapter3WithoutQuestions
+  , chapter3
+  , chapter4WithoutQuestions
   ) where
 
 import Control.Lens
@@ -103,11 +104,20 @@ chapter2WithQ4 =
   , _chapterQuestions = [FQ.question3', FQ.question4']
   }
 
-chapter3WithoutQuestions :: Chapter
-chapter3WithoutQuestions =
+chapter3 :: Chapter
+chapter3 =
   Chapter
   { _chapterUuid = fromJust $ U.fromString "ca46cd40-3999-4f0d-a8ba-15d57682dfeb"
   , _chapterTitle = "Data Capture/Measurement"
+  , _chapterText = ""
+  , _chapterQuestions = [FQ.question9', FQ.question10']
+  }
+
+chapter4WithoutQuestions :: Chapter
+chapter4WithoutQuestions =
+  Chapter
+  { _chapterUuid = fromJust $ U.fromString "c0958799-16bb-41c2-a0ef-182d6709f0bb"
+  , _chapterTitle = "Data processing and curation"
   , _chapterText = ""
   , _chapterQuestions = []
   }

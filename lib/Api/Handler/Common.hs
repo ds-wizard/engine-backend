@@ -1,7 +1,7 @@
 module Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Monad.Logger (MonadLogger, runStdoutLoggingT)
 import Control.Monad.Reader (asks, lift, liftIO, runReaderT)
 import Data.Aeson ((.=), eitherDecode, encode, object)
 import qualified Data.ByteString.Lazy as BSL
@@ -16,14 +16,14 @@ import Network.HTTP.Types.Status
         unauthorized401)
 import Network.Wai
 import Web.Scotty.Trans
-       (ActionT, addHeader, body, header, json, params, raw, request,
-        status)
+       (ActionT, ScottyError, addHeader, body, header, json,
+        liftAndCatchIO, params, raw, request, showError, status)
 
 import Api.Resource.Error.ErrorDTO ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import Constant.Component
-import LensesConfig
+import LensesConfig hiding (requestMethod)
 import Localization
 import Model.Context.AppContext
 import Model.Context.BaseContext
@@ -43,15 +43,17 @@ runInUnauthService function = do
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
+  httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
+        , _appContextHttpClientManager = httpClientManager
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Nothing
         }
-  lift . BaseContextM . lift . lift $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  liftAndCatchIO $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
 
 runInAuthService user function = do
   traceUuid <- liftIO generateUuid
@@ -59,15 +61,17 @@ runInAuthService user function = do
   dswConfig <- lift $ asks _baseContextConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
+  httpClientManager <- lift $ asks _baseContextHttpClientManager
   let appContext =
         AppContext
         { _appContextConfig = dswConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
+        , _appContextHttpClientManager = httpClientManager
         , _appContextTraceUuid = traceUuid
         , _appContextCurrentUser = Just user
         }
-  lift . BaseContextM . lift . lift $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  liftAndCatchIO $ runStdoutLoggingT $ runReaderT (runAppContextM $ function) appContext
 
 getAuthServiceExecutor callback = getCurrentUser $ \user -> callback $ runInAuthService user
 
@@ -202,3 +206,10 @@ notFoundA = do
       lift . logInfo $ msg _CMP_API "Request does not match any route"
       status notFound404
       json $ object ["status" .= 404, "error" .= "Not Found"]
+
+internalServerErrorA :: (ScottyError e, Monad m, MonadLogger m) => e -> ActionT e m ()
+internalServerErrorA e = do
+  let message = LT.unpack . showError $ e
+  lift . logError $ message
+  status internalServerError500
+  json . GeneralServerError $ message

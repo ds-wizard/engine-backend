@@ -174,7 +174,7 @@
   <div class={{questionClasses(question)}} id="{{question.uuid}}">
     <h4 class="title">
       <strong class="human-identifier">{{question.humanIdentifier}}</strong>
-      <br>{{question.title}}
+      {{question.title}}
     </h4>
     <p class="text text-light">{{question.text}}</p>
     <div class="extra-data">
@@ -287,7 +287,7 @@
 
 {% macro renderAnswer(question) -%}
   {% if question.answerValue %}
-    {{renderAnswerValue(question.answerValue)}}
+    {{renderAnswerValue(question)}}
   {% elif question.answerOption %}
     {{renderAnswerOption(question.answerOption)}}
   {% elif question.items %}
@@ -297,13 +297,29 @@
   {% endif %}
 {%- endmacro -%}
 
-{% macro renderAnswerValue(answerValue) -%}
+{% macro renderAnswerValue(question) -%}
   <div class="answer-block answer-simple">
     <p class="answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="check" class="svg-inline--fa fa-check fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z"></path></svg>
-      <span>{{answerValue}}</span>
+      <span>{{question.answerValue}}</span>
+      {% if question.questionType == "IntegrationQuestion" && question.answerIntId %}
+        {{ renderIntegrationLink(question.integrationUuid, question.answerIntId) }}
+      {% endif %}
     </p>
   </div>
+{%- endmacro -%}
+
+{% macro renderIntegrationLink(integrationUuid, answerIntId) -%}
+  {% for integration in km.integrations %}
+    {% if integrationUuid == integration.uuid %}
+      <div class="integration-link">
+        <img src="{{ integration.logo }}" alt="{{ integration.name }}">
+        <a href="{{ integration.itemUrl|replace("${id}", answerIntId) }}">
+          {{ integration.itemUrl|replace("${id}", answerIntId) }}
+        </a>
+      </div>
+    {% endif %}
+  {% endfor %}
 {%- endmacro -%}
 
 {% macro renderAnswerOption(answerOption) -%}
@@ -349,7 +365,6 @@
 
 {% macro renderNotAnswered() -%}
   <div class="answer-block not-answered">
-    <h4>Answer</h4>
     <p class="no-answer">
       <svg aria-hidden="true" data-prefix="fas" data-icon="times" class="svg-inline--fa fa-times fa-w-11" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 352 512"><path fill="currentColor" d="M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z"></path></svg>
       <span>This question has not been answered yet!</span>

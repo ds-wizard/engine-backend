@@ -17,13 +17,18 @@ import Constant.Component
 import Database.Connection
 import qualified Database.Migration.Development.Migration as DM
 import qualified Database.Migration.Production.Migration as PM
+import Integration.Http.Common.HttpClientFactory
 import LensesConfig
 import Messaging.Connection
 import Model.Config.Environment
 import Model.Context.AppContextHelpers
 import Model.Context.BaseContext
-import Service.Config.ConfigLoader
+import Service.Config.ApplicationConfigService
+import qualified Service.Migration.Metamodel.MigratorService as MM
 import Util.Logger
+
+import System.IO
+
 
 applicationConfigFile = "config/app-config.cfg"
 
@@ -36,7 +41,8 @@ retryBaseWait = 2000000
 retryBackoff = exponentialBackoff retryBaseWait <> limitRetries retryCount
 
 runServer :: IO ()
-runServer =
+runServer = do
+  hSetBuffering stdout LineBuffering
   runStdoutLoggingT $ do
     liftIO $
       putStrLn
@@ -50,7 +56,7 @@ runServer =
         \|                                                              |\n\
         \\\--------------------------------------------------------------/"
     logInfo $ msg _CMP_SERVER "started"
-    eitherDspConfig <- liftIO $ loadDSWConfig applicationConfigFile buildInfoFile
+    eitherDspConfig <- liftIO $ loadConfig applicationConfigFile buildInfoFile
     case eitherDspConfig of
       Left (errorDate, reason) -> do
         logError $ msg _CMP_CONFIG "load failed"
@@ -62,11 +68,17 @@ runServer =
         logInfo $ "ENVIRONMENT: set to " ++ (show $ dswConfig ^. environment . env)
         dbPool <- connectDB dswConfig
         msgChannel <- connectMQ dswConfig
+        httpClientManager <- setupHttpClientManager dswConfig
         let serverPort = dswConfig ^. webConfig ^. port
         let baseContext =
               BaseContext
-              {_baseContextConfig = dswConfig, _baseContextPool = dbPool, _baseContextMsgChannel = msgChannel}
+              { _baseContextConfig = dswConfig
+              , _baseContextPool = dbPool
+              , _baseContextMsgChannel = msgChannel
+              , _baseContextHttpClientManager = httpClientManager
+              }
         liftIO $ runDBMigrations baseContext
+        liftIO $ runMetamodelMigrations baseContext
         liftIO $ runApplication baseContext
 
 -- --------------------------------
@@ -115,12 +127,20 @@ connectMQ dswConfig =
       logInfo $ msg _CMP_MESSAGING "not enabled - skipping"
       return Nothing
 
+setupHttpClientManager dswConfig = do
+  logInfo $ msg _CMP_INTEGRATION "creating http client manager"
+  httpClientManager <- liftIO $ createHttpClientManager dswConfig
+  logInfo $ msg _CMP_INTEGRATION "http client manager successfully created"
+  return httpClientManager
+
 runDBMigrations context =
   case context ^. config . environment . env of
     Development -> runStdoutLoggingT $ runAppContextWithBaseContext DM.runMigration context
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context
     _ -> return ()
+
+runMetamodelMigrations context = runStdoutLoggingT $ runAppContextWithBaseContext MM.migrateCompleteDatabase context
 
 runApplication :: BaseContext -> IO ()
 runApplication context = do

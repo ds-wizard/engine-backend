@@ -1,5 +1,6 @@
 module Model.Event.Question.QuestionEvent where
 
+import Data.Map
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -11,6 +12,7 @@ data AddQuestionEvent
   = AddOptionsQuestionEvent' AddOptionsQuestionEvent
   | AddListQuestionEvent' AddListQuestionEvent
   | AddValueQuestionEvent' AddValueQuestionEvent
+  | AddIntegrationQuestionEvent' AddIntegrationQuestionEvent
   deriving (Show, Eq, Generic)
 
 data AddOptionsQuestionEvent = AddOptionsQuestionEvent
@@ -45,11 +47,24 @@ data AddValueQuestionEvent = AddValueQuestionEvent
   , _addValueQuestionEventValueType :: QuestionValueType
   } deriving (Show, Eq, Generic)
 
+data AddIntegrationQuestionEvent = AddIntegrationQuestionEvent
+  { _addIntegrationQuestionEventUuid :: U.UUID
+  , _addIntegrationQuestionEventPath :: EventPath
+  , _addIntegrationQuestionEventQuestionUuid :: U.UUID
+  , _addIntegrationQuestionEventTitle :: String
+  , _addIntegrationQuestionEventText :: Maybe String
+  , _addIntegrationQuestionEventRequiredLevel :: Maybe Int
+  , _addIntegrationQuestionEventTagUuids :: [U.UUID]
+  , _addIntegrationQuestionEventIntegrationUuid :: U.UUID
+  , _addIntegrationQuestionEventProps :: Map String String
+  } deriving (Show, Eq, Generic)
+
 -- --------------------------------------------
 data EditQuestionEvent
   = EditOptionsQuestionEvent' EditOptionsQuestionEvent
   | EditListQuestionEvent' EditListQuestionEvent
   | EditValueQuestionEvent' EditValueQuestionEvent
+  | EditIntegrationQuestionEvent' EditIntegrationQuestionEvent
   deriving (Show, Eq, Generic)
 
 data EditOptionsQuestionEvent = EditOptionsQuestionEvent
@@ -90,6 +105,20 @@ data EditValueQuestionEvent = EditValueQuestionEvent
   , _editValueQuestionEventExpertUuids :: EventField [U.UUID]
   , _editValueQuestionEventReferenceUuids :: EventField [U.UUID]
   , _editValueQuestionEventValueType :: EventField QuestionValueType
+  } deriving (Show, Eq, Generic)
+
+data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
+  { _editIntegrationQuestionEventUuid :: U.UUID
+  , _editIntegrationQuestionEventPath :: EventPath
+  , _editIntegrationQuestionEventQuestionUuid :: U.UUID
+  , _editIntegrationQuestionEventTitle :: EventField String
+  , _editIntegrationQuestionEventText :: EventField (Maybe String)
+  , _editIntegrationQuestionEventRequiredLevel :: EventField (Maybe Int)
+  , _editIntegrationQuestionEventTagUuids :: EventField [U.UUID]
+  , _editIntegrationQuestionEventExpertUuids :: EventField [U.UUID]
+  , _editIntegrationQuestionEventReferenceUuids :: EventField [U.UUID]
+  , _editIntegrationQuestionEventIntegrationUuid :: EventField U.UUID
+  , _editIntegrationQuestionEventProps :: EventField (Map String String)
   } deriving (Show, Eq, Generic)
 
 -- --------------------------------------------

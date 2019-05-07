@@ -5,7 +5,8 @@ import Data.Text.Lazy (Text)
 import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Text.Regex
 import Web.Scotty.Trans
-       (ScottyT, delete, get, middleware, notFound, post, put)
+       (ScottyT, defaultHandler, delete, get, middleware, notFound, post,
+        put)
 
 import Api.Handler.ActionKey.ActionKeyHandler
 import Api.Handler.BookReference.BookReferenceHandler
@@ -17,12 +18,14 @@ import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.Level.LevelHandler
 import Api.Handler.Metric.MetricHandler
-import Api.Handler.Migrator.MigratorHandler
+import Api.Handler.Migration.MigrationHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.PublicQuestionnaire.PublicQuestionnaireHandler
 import Api.Handler.Questionnaire.QuestionnaireHandler
+import Api.Handler.Template.TemplateHandler
 import Api.Handler.Token.TokenHandler
+import Api.Handler.Typehint.TypehintHandler
 import Api.Handler.User.UserHandler
 import Api.Handler.Version.VersionHandler
 import Api.Middleware.AuthMiddleware
@@ -57,6 +60,10 @@ createEndpoints context
   middleware (loggingMiddleware (context ^. config . environment . env))
   middleware corsMiddleware
   middleware (authMiddleware (context ^. config) unauthorizedEndpoints)
+   -- ------------------
+   -- ERROR HANDLING
+   -- ------------------
+  defaultHandler internalServerErrorA
    -- ------------------
    -- INFO
    -- ------------------
@@ -131,6 +138,14 @@ createEndpoints context
   post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
   get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
+   --------------------
+   -- TYPEHINTS
+   --------------------
+  post "/typehints" postTypehintsA
+   --------------------
+   -- TEMPLATE
+   --------------------
+  get "/templates" getTemplatesA
    --------------------
    -- BOOK REFERENCE
    --------------------

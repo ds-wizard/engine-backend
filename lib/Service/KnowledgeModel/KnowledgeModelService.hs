@@ -1,60 +1,45 @@
 module Service.KnowledgeModel.KnowledgeModelService where
 
 import Control.Lens ((^.))
+import qualified Data.UUID as U
 
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Database.DAO.KnowledgeModel.KnowledgeModelDAO
 import LensesConfig
-import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Event.EventMapper
-import Service.KnowledgeModel.KnowledgeModelApplicator
 import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.KnowledgeModel.KnowledgeModelMapper
+import Service.Migration.KnowledgeModel.Applicator.Applicator
 import Service.Package.PackageService
 
-getKnowledgeModelByBranchId :: String -> AppContextM (Either AppError KnowledgeModelDTO)
-getKnowledgeModelByBranchId branchUuid =
-  heFindBranchWithKMByBranchId branchUuid $ \branchWithKm -> do
-    let mKm = branchWithKm ^. knowledgeModel
-    case mKm of
-      Just km -> return . Right $ toKnowledgeModelDTO km
-      Nothing -> return . Left . NotExistsError $ _ERROR_VALIDATION__KM_ABSENCE
-
-recompileKnowledgeModel :: String -> AppContextM (Either AppError KnowledgeModel)
-recompileKnowledgeModel branchUuid =
-  heGetEventsForBranchUuid branchUuid $ \eventsForBranchUuid ->
-    recompileKnowledgeModelWithEvents branchUuid eventsForBranchUuid
-
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM (Either AppError KnowledgeModelDTO)
-createKnowledgeModelPreview reqDto =
-  heGetEvents $ \events ->
-    heCompileKnowledgeModelFromScratch events $ \km -> do
-      let filteredKm = filterKnowledgeModel (reqDto ^. tagUuids) km
-      return . Right . toKnowledgeModelDTO $ km
+createKnowledgeModelPreview reqDto = do
+  km <- compileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
+  return . fmap toKnowledgeModelDTO $ km
+
+compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM (Either AppError KnowledgeModel)
+compileKnowledgeModel events mPackageId tagUuids =
+  getEvents mPackageId $ \allEvents -> return . fmap (filterKnowledgeModel tagUuids) . runApplicator Nothing $ allEvents
   where
-    requestEvents = fromDTOs $ reqDto ^. events
-    heGetEvents callback =
-      case reqDto ^. packageId of
-        Just packageId ->
-          heGetAllPreviousEventsSincePackageId packageId $ \packageEvents -> do
-            callback $ packageEvents ++ requestEvents
-        Nothing -> callback requestEvents
+    getEvents Nothing callback = callback events
+    getEvents (Just packageId) callback =
+      heGetAllPreviousEventsSincePackageId packageId $ \eventsFromPackage -> callback $ eventsFromPackage ++ events
 
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heRecompileKnowledgeModel branchUuid callback = do
-  eitherKM <- recompileKnowledgeModel branchUuid
-  case eitherKM of
-    Right km -> callback km
+heCompileKnowledgeModel events mPackageId tagUuids callback = do
+  eitherResult <- compileKnowledgeModel events mPackageId tagUuids
+  case eitherResult of
+    Right result -> callback result
     Left error -> return . Left $ error
 
-hmRecompileKnowledgeModel branchUuid callback = do
-  eitherKM <- recompileKnowledgeModel branchUuid
-  case eitherKM of
-    Right km -> callback km
+hmCompileKnowledgeModel events mPackageId tagUuids callback = do
+  eitherResult <- compileKnowledgeModel events mPackageId tagUuids
+  case eitherResult of
+    Right result -> callback result
     Left error -> return . Just $ error

@@ -11,6 +11,7 @@ import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
 import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
+import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
@@ -57,6 +58,7 @@ instance EventToDTO EditKnowledgeModelEvent where
       , _editKnowledgeModelEventDTOName = toEventFieldDTO $ event ^. name
       , _editKnowledgeModelEventDTOChapterUuids = toEventFieldDTO $ event ^. chapterUuids
       , _editKnowledgeModelEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
+      , _editKnowledgeModelEventDTOIntegrationUuids = toEventFieldDTO $ event ^. integrationUuids
       }
 
 -------------------------
@@ -136,6 +138,20 @@ instance EventToDTO AddQuestionEvent where
     , _addValueQuestionEventDTOTagUuids = event ^. tagUuids
     , _addValueQuestionEventDTOValueType = event ^. valueType
     }
+  toDTO (AddIntegrationQuestionEvent' event) =
+    AddQuestionEventDTO' $
+    AddIntegrationQuestionEventDTO' $
+    AddIntegrationQuestionEventDTO
+    { _addIntegrationQuestionEventDTOUuid = event ^. uuid
+    , _addIntegrationQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _addIntegrationQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _addIntegrationQuestionEventDTOTitle = event ^. title
+    , _addIntegrationQuestionEventDTOText = event ^. text
+    , _addIntegrationQuestionEventDTORequiredLevel = event ^. requiredLevel
+    , _addIntegrationQuestionEventDTOTagUuids = event ^. tagUuids
+    , _addIntegrationQuestionEventDTOIntegrationUuid = event ^. integrationUuid
+    , _addIntegrationQuestionEventDTOProps = event ^. props
+    }
 
 instance EventToDTO EditQuestionEvent where
   toDTO (EditOptionsQuestionEvent' event) =
@@ -183,6 +199,22 @@ instance EventToDTO EditQuestionEvent where
     , _editValueQuestionEventDTOExpertUuids = toEventFieldDTO $ event ^. expertUuids
     , _editValueQuestionEventDTOReferenceUuids = toEventFieldDTO $ event ^. referenceUuids
     , _editValueQuestionEventDTOValueType = toEventFieldDTO $ event ^. valueType
+    }
+  toDTO (EditIntegrationQuestionEvent' event) =
+    EditQuestionEventDTO' $
+    EditIntegrationQuestionEventDTO' $
+    EditIntegrationQuestionEventDTO
+    { _editIntegrationQuestionEventDTOUuid = event ^. uuid
+    , _editIntegrationQuestionEventDTOPath = toEventPathDTO $ event ^. path
+    , _editIntegrationQuestionEventDTOQuestionUuid = event ^. questionUuid
+    , _editIntegrationQuestionEventDTOTitle = toEventFieldDTO $ event ^. title
+    , _editIntegrationQuestionEventDTOText = toEventFieldDTO $ event ^. text
+    , _editIntegrationQuestionEventDTORequiredLevel = toEventFieldDTO $ event ^. requiredLevel
+    , _editIntegrationQuestionEventDTOTagUuids = toEventFieldDTO $ event ^. tagUuids
+    , _editIntegrationQuestionEventDTOExpertUuids = toEventFieldDTO $ event ^. expertUuids
+    , _editIntegrationQuestionEventDTOReferenceUuids = toEventFieldDTO $ event ^. referenceUuids
+    , _editIntegrationQuestionEventDTOIntegrationUuid = toEventFieldDTO $ event ^. integrationUuid
+    , _editIntegrationQuestionEventDTOProps = toEventFieldDTO $ event ^. props
     }
 
 instance EventToDTO DeleteQuestionEvent where
@@ -376,4 +408,58 @@ instance EventToDTO DeleteTagEvent where
       { _deleteTagEventDTOUuid = event ^. uuid
       , _deleteTagEventDTOPath = toEventPathDTO $ event ^. path
       , _deleteTagEventDTOTagUuid = event ^. tagUuid
+      }
+
+-- -------------------------
+-- Integration -------------
+-- -------------------------
+instance EventToDTO AddIntegrationEvent where
+  toDTO event =
+    AddIntegrationEventDTO'
+      AddIntegrationEventDTO
+      { _addIntegrationEventDTOUuid = event ^. uuid
+      , _addIntegrationEventDTOPath = toEventPathDTO $ event ^. path
+      , _addIntegrationEventDTOIntegrationUuid = event ^. integrationUuid
+      , _addIntegrationEventDTOIId = event ^. iId
+      , _addIntegrationEventDTOName = event ^. name
+      , _addIntegrationEventDTOProps = event ^. props
+      , _addIntegrationEventDTOLogo = event ^. logo
+      , _addIntegrationEventDTORequestMethod = event ^. requestMethod
+      , _addIntegrationEventDTORequestUrl = event ^. requestUrl
+      , _addIntegrationEventDTORequestHeaders = event ^. requestHeaders
+      , _addIntegrationEventDTORequestBody = event ^. requestBody
+      , _addIntegrationEventDTOResponseListField = event ^. responseListField
+      , _addIntegrationEventDTOResponseIdField = event ^. responseIdField
+      , _addIntegrationEventDTOResponseNameField = event ^. responseNameField
+      , _addIntegrationEventDTOItemUrl = event ^. itemUrl
+      }
+
+instance EventToDTO EditIntegrationEvent where
+  toDTO event =
+    EditIntegrationEventDTO'
+      EditIntegrationEventDTO
+      { _editIntegrationEventDTOUuid = event ^. uuid
+      , _editIntegrationEventDTOPath = toEventPathDTO $ event ^. path
+      , _editIntegrationEventDTOIntegrationUuid = event ^. integrationUuid
+      , _editIntegrationEventDTOIId = toEventFieldDTO $ event ^. iId
+      , _editIntegrationEventDTOName = toEventFieldDTO $ event ^. name
+      , _editIntegrationEventDTOProps = toEventFieldDTO $ event ^. props
+      , _editIntegrationEventDTOLogo = toEventFieldDTO $ event ^. logo
+      , _editIntegrationEventDTORequestMethod = toEventFieldDTO $ event ^. requestMethod
+      , _editIntegrationEventDTORequestUrl = toEventFieldDTO $ event ^. requestUrl
+      , _editIntegrationEventDTORequestHeaders = toEventFieldDTO $ event ^. requestHeaders
+      , _editIntegrationEventDTORequestBody = toEventFieldDTO $ event ^. requestBody
+      , _editIntegrationEventDTOResponseListField = toEventFieldDTO $ event ^. responseListField
+      , _editIntegrationEventDTOResponseIdField = toEventFieldDTO $ event ^. responseIdField
+      , _editIntegrationEventDTOResponseNameField = toEventFieldDTO $ event ^. responseNameField
+      , _editIntegrationEventDTOItemUrl = toEventFieldDTO $ event ^. itemUrl
+      }
+
+instance EventToDTO DeleteIntegrationEvent where
+  toDTO event =
+    DeleteIntegrationEventDTO'
+      DeleteIntegrationEventDTO
+      { _deleteIntegrationEventDTOUuid = event ^. uuid
+      , _deleteIntegrationEventDTOPath = toEventPathDTO $ event ^. path
+      , _deleteIntegrationEventDTOIntegrationUuid = event ^. integrationUuid
       }

@@ -11,8 +11,9 @@ toKnowledgeModelDTO km =
   KnowledgeModelDTO
   { _knowledgeModelDTOUuid = km ^. uuid
   , _knowledgeModelDTOName = km ^. name
-  , _knowledgeModelDTOTags = toTagDTO <$> (km ^. tags)
   , _knowledgeModelDTOChapters = toChapterDTO <$> (km ^. chapters)
+  , _knowledgeModelDTOTags = toTagDTO <$> (km ^. tags)
+  , _knowledgeModelDTOIntegrations = toIntegrationDTO <$> (km ^. integrations)
   }
 
 toChapterDTO :: Chapter -> ChapterDTO
@@ -61,6 +62,19 @@ toQuestionDTO (ValueQuestion' question) =
     , _valueQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
     , _valueQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
     , _valueQuestionDTOValueType = question ^. valueType
+    }
+toQuestionDTO (IntegrationQuestion' question) =
+  IntegrationQuestionDTO'
+    IntegrationQuestionDTO
+    { _integrationQuestionDTOUuid = question ^. uuid
+    , _integrationQuestionDTOTitle = question ^. title
+    , _integrationQuestionDTOText = question ^. text
+    , _integrationQuestionDTORequiredLevel = question ^. requiredLevel
+    , _integrationQuestionDTOTagUuids = question ^. tagUuids
+    , _integrationQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
+    , _integrationQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _integrationQuestionDTOIntegrationUuid = question ^. integrationUuid
+    , _integrationQuestionDTOProps = question ^. props
     }
 
 toAnswerDTO :: Answer -> AnswerDTO
@@ -114,6 +128,24 @@ toTagDTO tag =
   , _tagDTOColor = tag ^. color
   }
 
+toIntegrationDTO :: Integration -> IntegrationDTO
+toIntegrationDTO integration =
+  IntegrationDTO
+  { _integrationDTOUuid = integration ^. uuid
+  , _integrationDTOIId = integration ^. iId
+  , _integrationDTOName = integration ^. name
+  , _integrationDTOLogo = integration ^. logo
+  , _integrationDTOProps = integration ^. props
+  , _integrationDTORequestMethod = integration ^. requestMethod
+  , _integrationDTORequestUrl = integration ^. requestUrl
+  , _integrationDTORequestHeaders = integration ^. requestHeaders
+  , _integrationDTORequestBody = integration ^. requestBody
+  , _integrationDTOResponseListField = integration ^. responseListField
+  , _integrationDTOResponseIdField = integration ^. responseIdField
+  , _integrationDTOResponseNameField = integration ^. responseNameField
+  , _integrationDTOItemUrl = integration ^. itemUrl
+  }
+
 -- ----------------------------------------
 -- ----------------------------------------
 fromKnowledgeModelDTO :: KnowledgeModelDTO -> KnowledgeModel
@@ -121,8 +153,9 @@ fromKnowledgeModelDTO km =
   KnowledgeModel
   { _knowledgeModelUuid = km ^. uuid
   , _knowledgeModelName = km ^. name
-  , _knowledgeModelTags = fromTagDTO <$> (km ^. tags)
   , _knowledgeModelChapters = fromChapterDTO <$> (km ^. chapters)
+  , _knowledgeModelTags = fromTagDTO <$> (km ^. tags)
+  , _knowledgeModelIntegrations = fromIntegrationDTO <$> (km ^. integrations)
   }
 
 fromChapterDTO :: ChapterDTO -> Chapter
@@ -172,6 +205,19 @@ fromQuestionDTO (ValueQuestionDTO' question) =
     , _valueQuestionReferences = fromReferenceDTO <$> (question ^. references)
     , _valueQuestionValueType = question ^. valueType
     }
+fromQuestionDTO (IntegrationQuestionDTO' question) =
+  IntegrationQuestion'
+    IntegrationQuestion
+    { _integrationQuestionUuid = question ^. uuid
+    , _integrationQuestionTitle = question ^. title
+    , _integrationQuestionText = question ^. text
+    , _integrationQuestionRequiredLevel = question ^. requiredLevel
+    , _integrationQuestionTagUuids = question ^. tagUuids
+    , _integrationQuestionExperts = fromExpertDTO <$> (question ^. experts)
+    , _integrationQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _integrationQuestionIntegrationUuid = question ^. integrationUuid
+    , _integrationQuestionProps = question ^. props
+    }
 
 fromAnswerDTO :: AnswerDTO -> Answer
 fromAnswerDTO answer =
@@ -215,3 +261,21 @@ fromMetricMeasureDTO m =
 fromTagDTO :: TagDTO -> Tag
 fromTagDTO tag =
   Tag {_tagUuid = tag ^. uuid, _tagName = tag ^. name, _tagDescription = tag ^. description, _tagColor = tag ^. color}
+
+fromIntegrationDTO :: IntegrationDTO -> Integration
+fromIntegrationDTO integration =
+  Integration
+  { _integrationUuid = integration ^. uuid
+  , _integrationIId = integration ^. iId
+  , _integrationName = integration ^. name
+  , _integrationProps = integration ^. props
+  , _integrationLogo = integration ^. logo
+  , _integrationRequestMethod = integration ^. requestMethod
+  , _integrationRequestUrl = integration ^. requestUrl
+  , _integrationRequestHeaders = integration ^. requestHeaders
+  , _integrationRequestBody = integration ^. requestBody
+  , _integrationResponseListField = integration ^. responseListField
+  , _integrationResponseIdField = integration ^. responseIdField
+  , _integrationResponseNameField = integration ^. responseNameField
+  , _integrationItemUrl = integration ^. itemUrl
+  }

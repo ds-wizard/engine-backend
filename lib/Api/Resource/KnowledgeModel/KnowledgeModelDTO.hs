@@ -2,6 +2,7 @@ module Api.Resource.KnowledgeModel.KnowledgeModelDTO where
 
 import Control.Monad
 import Data.Aeson
+import Data.Map
 import Data.Time
 import qualified Data.UUID as U
 
@@ -13,6 +14,7 @@ data KnowledgeModelDTO = KnowledgeModelDTO
   , _knowledgeModelDTOName :: String
   , _knowledgeModelDTOChapters :: [ChapterDTO]
   , _knowledgeModelDTOTags :: [TagDTO]
+  , _knowledgeModelDTOIntegrations :: [IntegrationDTO]
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -28,6 +30,7 @@ data QuestionDTO
   = OptionsQuestionDTO' OptionsQuestionDTO
   | ListQuestionDTO' ListQuestionDTO
   | ValueQuestionDTO' ValueQuestionDTO
+  | IntegrationQuestionDTO' IntegrationQuestionDTO
   deriving (Show, Eq)
 
 data OptionsQuestionDTO = OptionsQuestionDTO
@@ -62,6 +65,18 @@ data ValueQuestionDTO = ValueQuestionDTO
   , _valueQuestionDTOExperts :: [ExpertDTO]
   , _valueQuestionDTOReferences :: [ReferenceDTO]
   , _valueQuestionDTOValueType :: QuestionValueType
+  } deriving (Show, Eq)
+
+data IntegrationQuestionDTO = IntegrationQuestionDTO
+  { _integrationQuestionDTOUuid :: U.UUID
+  , _integrationQuestionDTOTitle :: String
+  , _integrationQuestionDTOText :: Maybe String
+  , _integrationQuestionDTORequiredLevel :: Maybe Int
+  , _integrationQuestionDTOTagUuids :: [U.UUID]
+  , _integrationQuestionDTOExperts :: [ExpertDTO]
+  , _integrationQuestionDTOReferences :: [ReferenceDTO]
+  , _integrationQuestionDTOIntegrationUuid :: U.UUID
+  , _integrationQuestionDTOProps :: Map String String
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
@@ -137,6 +152,23 @@ data TagDTO = TagDTO
   } deriving (Show, Eq)
 
 -- --------------------------------------------------------------------
+data IntegrationDTO = IntegrationDTO
+  { _integrationDTOUuid :: U.UUID
+  , _integrationDTOIId :: String
+  , _integrationDTOName :: String
+  , _integrationDTOProps :: [String]
+  , _integrationDTOLogo :: String
+  , _integrationDTORequestMethod :: String
+  , _integrationDTORequestUrl :: String
+  , _integrationDTORequestHeaders :: Map String String
+  , _integrationDTORequestBody :: String
+  , _integrationDTOResponseListField :: String
+  , _integrationDTOResponseIdField :: String
+  , _integrationDTOResponseNameField :: String
+  , _integrationDTOItemUrl :: String
+  } deriving (Show, Eq)
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON KnowledgeModelDTO where
   toJSON KnowledgeModelDTO {..} =
@@ -145,6 +177,7 @@ instance ToJSON KnowledgeModelDTO where
       , "name" .= _knowledgeModelDTOName
       , "chapters" .= _knowledgeModelDTOChapters
       , "tags" .= _knowledgeModelDTOTags
+      , "integrations" .= _knowledgeModelDTOIntegrations
       ]
 
 -- --------------------------------------------------------------------
@@ -162,6 +195,7 @@ instance ToJSON QuestionDTO where
   toJSON (OptionsQuestionDTO' event) = toJSON event
   toJSON (ListQuestionDTO' event) = toJSON event
   toJSON (ValueQuestionDTO' event) = toJSON event
+  toJSON (IntegrationQuestionDTO' event) = toJSON event
 
 instance ToJSON OptionsQuestionDTO where
   toJSON OptionsQuestionDTO {..} =
@@ -204,6 +238,21 @@ instance ToJSON ValueQuestionDTO where
       , "references" .= _valueQuestionDTOReferences
       , "experts" .= _valueQuestionDTOExperts
       , "valueType" .= serializeQuestionValueType _valueQuestionDTOValueType
+      ]
+
+instance ToJSON IntegrationQuestionDTO where
+  toJSON IntegrationQuestionDTO {..} =
+    object
+      [ "questionType" .= "IntegrationQuestion"
+      , "uuid" .= _integrationQuestionDTOUuid
+      , "title" .= _integrationQuestionDTOTitle
+      , "text" .= _integrationQuestionDTOText
+      , "requiredLevel" .= _integrationQuestionDTORequiredLevel
+      , "tagUuids" .= _integrationQuestionDTOTagUuids
+      , "references" .= _integrationQuestionDTOReferences
+      , "experts" .= _integrationQuestionDTOExperts
+      , "integrationUuid" .= _integrationQuestionDTOIntegrationUuid
+      , "props" .= _integrationQuestionDTOProps
       ]
 
 -- --------------------------------------------------------------------
@@ -280,6 +329,25 @@ instance ToJSON TagDTO where
     object ["uuid" .= _tagDTOUuid, "name" .= _tagDTOName, "description" .= _tagDTODescription, "color" .= _tagDTOColor]
 
 -- --------------------------------------------------------------------
+instance ToJSON IntegrationDTO where
+  toJSON IntegrationDTO {..} =
+    object
+      [ "uuid" .= _integrationDTOUuid
+      , "id" .= _integrationDTOIId
+      , "name" .= _integrationDTOName
+      , "props" .= _integrationDTOProps
+      , "logo" .= _integrationDTOLogo
+      , "requestMethod" .= _integrationDTORequestMethod
+      , "requestUrl" .= _integrationDTORequestUrl
+      , "requestHeaders" .= _integrationDTORequestHeaders
+      , "requestBody" .= _integrationDTORequestBody
+      , "responseListField" .= _integrationDTOResponseListField
+      , "responseIdField" .= _integrationDTOResponseIdField
+      , "responseNameField" .= _integrationDTOResponseNameField
+      , "itemUrl" .= _integrationDTOItemUrl
+      ]
+
+-- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance FromJSON KnowledgeModelDTO where
   parseJSON (Object o) = do
@@ -287,6 +355,7 @@ instance FromJSON KnowledgeModelDTO where
     _knowledgeModelDTOName <- o .: "name"
     _knowledgeModelDTOChapters <- o .: "chapters"
     _knowledgeModelDTOTags <- o .: "tags"
+    _knowledgeModelDTOIntegrations <- o .: "integrations"
     return KnowledgeModelDTO {..}
   parseJSON _ = mzero
 
@@ -308,6 +377,7 @@ instance FromJSON QuestionDTO where
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (OptionsQuestionDTO' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (ListQuestionDTO' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (ValueQuestionDTO' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (IntegrationQuestionDTO' event)
       _ -> fail "One of the questions has unsupported questionType"
   parseJSON _ = mzero
 
@@ -351,6 +421,20 @@ instance FromJSON ValueQuestionDTO where
     case deserializeQuestionValueType valueType of
       (Just _valueQuestionDTOValueType) -> return ValueQuestionDTO {..}
       Nothing -> fail "Unsupported question value type"
+  parseJSON _ = mzero
+
+instance FromJSON IntegrationQuestionDTO where
+  parseJSON (Object o) = do
+    _integrationQuestionDTOUuid <- o .: "uuid"
+    _integrationQuestionDTOTitle <- o .: "title"
+    _integrationQuestionDTOText <- o .: "text"
+    _integrationQuestionDTORequiredLevel <- o .: "requiredLevel"
+    _integrationQuestionDTOTagUuids <- o .: "tagUuids"
+    _integrationQuestionDTOExperts <- o .: "experts"
+    _integrationQuestionDTOReferences <- o .: "references"
+    _integrationQuestionDTOIntegrationUuid <- o .: "integrationUuid"
+    _integrationQuestionDTOProps <- o .: "props"
+    return IntegrationQuestionDTO {..}
   parseJSON _ = mzero
 
 -- --------------------------------------------------------------------
@@ -436,4 +520,23 @@ instance FromJSON TagDTO where
     _tagDTODescription <- o .: "description"
     _tagDTOColor <- o .: "color"
     return TagDTO {..}
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance FromJSON IntegrationDTO where
+  parseJSON (Object o) = do
+    _integrationDTOUuid <- o .: "uuid"
+    _integrationDTOIId <- o .: "id"
+    _integrationDTOName <- o .: "name"
+    _integrationDTOProps <- o .: "props"
+    _integrationDTOLogo <- o .: "logo"
+    _integrationDTORequestMethod <- o .: "requestMethod"
+    _integrationDTORequestUrl <- o .: "requestUrl"
+    _integrationDTORequestHeaders <- o .: "requestHeaders"
+    _integrationDTORequestBody <- o .: "requestBody"
+    _integrationDTOResponseListField <- o .: "responseListField"
+    _integrationDTOResponseIdField <- o .: "responseIdField"
+    _integrationDTOResponseNameField <- o .: "responseNameField"
+    _integrationDTOItemUrl <- o .: "itemUrl"
+    return IntegrationDTO {..}
   parseJSON _ = mzero

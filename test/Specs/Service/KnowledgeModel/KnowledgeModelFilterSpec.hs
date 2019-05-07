@@ -56,7 +56,7 @@ knowledgeModelFilterSpec =
       let expQuestion4 = question4 & itemTemplateQuestions .~ [ListQuestion' expQ4_it1_question5]
       let expChapter2 = chapter2 & questions .~ [ListQuestion' expQuestion4]
         -- Knowledge Model
-      let expectedKm = km1WithQ4 & chapters .~ [expChapter1, expChapter2]
+      let expectedKm = km1WithQ4 & chapters .~ [expChapter1, expChapter2, chapter3]
         -- WHEN:
       let computedKm = filterKnowledgeModel inTags inKm
         -- THEN:

@@ -5,7 +5,6 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import Database.BSON.Common
-import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Database.BSON.Questionnaire.QuestionnaireReply ()
 import LensesConfig
 import Model.Questionnaire.Questionnaire
@@ -18,7 +17,6 @@ instance ToBSON Questionnaire where
     , "private" BSON.=: (questionnaire ^. private)
     , "packageId" BSON.=: (questionnaire ^. packageId)
     , "selectedTagUuids" BSON.=: serializeUUIDList (questionnaire ^. selectedTagUuids)
-    , "knowledgeModel" BSON.=: (questionnaire ^. knowledgeModel)
     , "replies" BSON.=: (questionnaire ^. replies)
     , "ownerUuid" BSON.=: serializeMaybeUUID (questionnaire ^. ownerUuid)
     , "createdAt" BSON.=: (questionnaire ^. createdAt)
@@ -33,7 +31,6 @@ instance FromBSON Questionnaire where
     private <- BSON.lookup "private" doc
     packageId <- BSON.lookup "packageId" doc
     selectedTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "selectedTagUuids" doc
-    knowledgeModel <- BSON.lookup "knowledgeModel" doc
     replies <- BSON.lookup "replies" doc
     let ownerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
     createdAt <- BSON.lookup "createdAt" doc
@@ -46,7 +43,6 @@ instance FromBSON Questionnaire where
       , _questionnairePrivate = private
       , _questionnairePackageId = packageId
       , _questionnaireSelectedTagUuids = selectedTagUuids
-      , _questionnaireKnowledgeModel = knowledgeModel
       , _questionnaireReplies = replies
       , _questionnaireOwnerUuid = ownerUuid
       , _questionnaireCreatedAt = createdAt

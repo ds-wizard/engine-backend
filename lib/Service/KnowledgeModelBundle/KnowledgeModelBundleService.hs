@@ -24,6 +24,7 @@ import Model.KnowledgeModelBundle.KnowledgeModelBundle
 import qualified Service.Event.EventMapper as EM
 import Service.KnowledgeModel.KnowledgeModelValidation
 import Service.KnowledgeModelBundle.KnowledgeModelBundleMapper
+import Service.Migration.Metamodel.MigratorService
 import Service.Package.PackageService
 import Service.Package.PackageValidation
 import Util.List (foldMaybesInContext)
@@ -48,7 +49,11 @@ importKnowledgeModelBundleFromFile :: BS.ByteString -> AppContextM (Either AppEr
 importKnowledgeModelBundleFromFile fileContent =
   let eitherDeserializedFile = eitherDecode fileContent
   in case eitherDeserializedFile of
-       Right deserializedFile -> importKnowledgeModelBundle deserializedFile
+       Right deserializedFile ->
+         heMigrateKnowledgeModelBundle deserializedFile $ \encodedKmb ->
+           case eitherDecode . encode $ encodedKmb of
+             Right kmb -> importKnowledgeModelBundle kmb
+             Left error -> return . Left . createErrorWithErrorMessage $ error
        Left error -> return . Left . createErrorWithErrorMessage $ error
 
 importKnowledgeModelBundle :: KnowledgeModelBundleDTO -> AppContextM (Either AppError [PackageDTO])
@@ -63,6 +68,9 @@ importKnowledgeModelBundle kmb =
         Just pkg -> callback pkg
         Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE
 
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
 importPackage :: PackageWithEventsDTO -> AppContextM (Either AppError (Maybe PackageDTO))
 importPackage pkg = do
   let ppId = pkg ^. pId
