@@ -8,4 +8,4 @@ import Model.Error.Error
 import Service.Migration.Metamodel.Migrator.Common
 
 migrate :: Value -> Either AppError Value
-migrate value = migrateMetamodelVersionField value >>= migrateEventsField "events"
+migrate value = migrateEventsField "events" value >>= migrateMetamodelVersionField

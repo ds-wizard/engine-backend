@@ -15,7 +15,7 @@ import Util.JSON (convertValueToOject, getArrayField)
 import Util.List (foldEither)
 
 migrate :: Value -> Either AppError Value
-migrate value = migrateMetamodelVersionField value >>= migratePackagesField
+migrate value = migratePackagesField value >>= migrateMetamodelVersionField
 
 -- --------------------------------
 -- PRIVATE
