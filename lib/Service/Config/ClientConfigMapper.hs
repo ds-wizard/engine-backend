@@ -14,6 +14,7 @@ toClientConfigDTO appConfig =
   , _clientConfigDTORegistrationEnabled = appConfig ^. general . registrationEnabled
   , _clientConfigDTOPublicQuestionnaireEnabled = appConfig ^. general . publicQuestionnaireEnabled
   , _clientConfigDTOLevelsEnabled = appConfig ^. general . levelsEnabled
+  , _clientConfigDTOItemTitleEnabled = appConfig ^. general . itemTitleEnabled
   }
 
 toClientConfigClientDTO :: AppConfigClient -> ClientConfigClientDTO

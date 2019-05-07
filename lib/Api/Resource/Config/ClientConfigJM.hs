@@ -12,6 +12,7 @@ instance FromJSON ClientConfigDTO where
     _clientConfigDTORegistrationEnabled <- o .: "registrationEnabled"
     _clientConfigDTOPublicQuestionnaireEnabled <- o .: "publicQuestionnaireEnabled"
     _clientConfigDTOLevelsEnabled <- o .: "levelsEnabled"
+    _clientConfigDTOItemTitleEnabled <- o .: "itemTitleEnabled"
     return ClientConfigDTO {..}
   parseJSON _ = mzero
 
@@ -23,6 +24,7 @@ instance ToJSON ClientConfigDTO where
       , "registrationEnabled" .= _clientConfigDTORegistrationEnabled
       , "publicQuestionnaireEnabled" .= _clientConfigDTOPublicQuestionnaireEnabled
       , "levelsEnabled" .= _clientConfigDTOLevelsEnabled
+      , "itemTitleEnabled" .= _clientConfigDTOItemTitleEnabled
       ]
 
 instance FromJSON ClientConfigClientDTO where

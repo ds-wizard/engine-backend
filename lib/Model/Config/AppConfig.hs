@@ -25,6 +25,7 @@ data AppConfigGeneral = AppConfigGeneral
   , _appConfigGeneralRegistrationEnabled :: Bool
   , _appConfigGeneralPublicQuestionnaireEnabled :: Bool
   , _appConfigGeneralLevelsEnabled :: Bool
+  , _appConfigGeneralItemTitleEnabled :: Bool
   } deriving (Generic, Show)
 
 data AppConfigClient = AppConfigClient

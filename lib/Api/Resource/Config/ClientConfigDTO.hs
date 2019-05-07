@@ -6,6 +6,7 @@ data ClientConfigDTO = ClientConfigDTO
   , _clientConfigDTORegistrationEnabled :: Bool
   , _clientConfigDTOPublicQuestionnaireEnabled :: Bool
   , _clientConfigDTOLevelsEnabled :: Bool
+  , _clientConfigDTOItemTitleEnabled :: Bool
   } deriving (Show, Eq)
 
 data ClientConfigClientDTO = ClientConfigClientDTO
