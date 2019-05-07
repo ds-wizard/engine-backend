@@ -32,6 +32,13 @@ data AppConfigClient = AppConfigClient
   , _appConfigClientAppTitleShort :: Maybe String
   , _appConfigClientWelcomeWarning :: Maybe String
   , _appConfigClientWelcomeInfo :: Maybe String
+  , _appConfigClientDashboard :: Maybe AppConfigClientDashboard
+  } deriving (Generic, Show)
+
+data AppConfigClientDashboard = AppConfigClientDashboard
+  { _appConfigClientDashboardAdmin :: Maybe [String]
+  , _appConfigClientDashboardDataSteward :: Maybe [String]
+  , _appConfigClientDashboardResearcher :: Maybe [String]
   } deriving (Generic, Show)
 
 data AppConfigDatabase = AppConfigDatabase

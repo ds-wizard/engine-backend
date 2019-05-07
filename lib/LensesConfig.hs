@@ -9,6 +9,7 @@ import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Branch.BranchWithEventsDTO
+import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -102,6 +103,8 @@ makeFields ''AppConfig
 makeFields ''AppConfigGeneral
 
 makeFields ''AppConfigClient
+
+makeFields ''AppConfigClientDashboard
 
 makeFields ''AppConfigDatabase
 
@@ -335,6 +338,13 @@ makeFields ''BranchDTO
 makeFields ''BranchDetailDTO
 
 makeFields ''BranchWithEventsDTO
+
+-- Api / Resource / Config
+makeFields ''ClientConfigDTO
+
+makeFields ''ClientConfigClientDTO
+
+makeFields ''ClientConfigClientDashboardDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO

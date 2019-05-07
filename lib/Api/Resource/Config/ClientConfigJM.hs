@@ -31,6 +31,7 @@ instance FromJSON ClientConfigClientDTO where
     _clientConfigAppTitleShort <- o .: "appTitleShort"
     _clientConfigWelcomeWarning <- o .: "welcomeWarning"
     _clientConfigWelcomeInfo <- o .: "welcomeInfo"
+    _clientConfigDashboard <- o .: "dashboard"
     return ClientConfigClientDTO {..}
   parseJSON _ = mzero
 
@@ -41,4 +42,21 @@ instance ToJSON ClientConfigClientDTO where
       , "appTitleShort" .= _clientConfigAppTitleShort
       , "welcomeWarning" .= _clientConfigWelcomeWarning
       , "welcomeInfo" .= _clientConfigWelcomeInfo
+      , "dashboard" .= _clientConfigDashboard
+      ]
+
+instance FromJSON ClientConfigClientDashboardDTO where
+  parseJSON (Object o) = do
+    _clientConfigClientDashboardAdmin <- o .: "ADMIN"
+    _clientConfigClientDashboardDataSteward <- o .: "DATASTEWARD"
+    _clientConfigClientDashboardResearcher <- o .: "RESEARCHER"
+    return ClientConfigClientDashboardDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON ClientConfigClientDashboardDTO where
+  toJSON ClientConfigClientDashboardDTO {..} =
+    object
+      [ "ADMIN" .= _clientConfigClientDashboardAdmin
+      , "DATASTEWARD" .= _clientConfigClientDashboardDataSteward
+      , "RESEARCHER" .= _clientConfigClientDashboardResearcher
       ]

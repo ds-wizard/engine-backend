@@ -15,6 +15,9 @@ instance FromJSON AppConfigGeneral where
 instance FromJSON AppConfigClient where
   parseJSON = simpleParseJSON "_appConfigClient"
 
+instance FromJSON AppConfigClientDashboard where
+  parseJSON = simpleParseJSON "_appConfigClientDashboard"
+
 instance FromJSON AppConfigDatabase where
   parseJSON = simpleParseJSON "_appConfigDatabase"
 

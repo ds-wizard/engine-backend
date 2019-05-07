@@ -10,7 +10,7 @@ import Service.Config.ClientConfigMapper
 getClientConfig :: AppContextM (Either AppError ClientConfigDTO)
 getClientConfig = do
   appConfig <- asks _appContextAppConfig
-  return . Right $ toDTO appConfig
+  return . Right $ toClientConfigDTO appConfig
 
 -- --------------------------------
 -- HELPERS

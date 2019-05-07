@@ -13,4 +13,11 @@ data ClientConfigClientDTO = ClientConfigClientDTO
   , _clientConfigAppTitleShort :: Maybe String
   , _clientConfigWelcomeWarning :: Maybe String
   , _clientConfigWelcomeInfo :: Maybe String
+  , _clientConfigDashboard :: Maybe ClientConfigClientDashboardDTO
+  } deriving (Show, Eq)
+
+data ClientConfigClientDashboardDTO = ClientConfigClientDashboardDTO
+  { _clientConfigClientDashboardAdmin :: Maybe [String]
+  , _clientConfigClientDashboardDataSteward :: Maybe [String]
+  , _clientConfigClientDashboardResearcher :: Maybe [String]
   } deriving (Show, Eq)

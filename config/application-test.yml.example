@@ -13,6 +13,10 @@ client:
   appTitleShort:
   welcomeWarning:
   welcomeInfo:
+  dashboard:
+    admin: [Welcome]
+    dataSteward: [Welcome]
+    researcher: [Welcome]
 
 database:
   host: localhost

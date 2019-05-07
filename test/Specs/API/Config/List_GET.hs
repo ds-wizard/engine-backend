@@ -47,7 +47,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeaderJavascript] ++ resCorsHeaders
-    let expDto = toDTO (appContext ^. appConfig)
+    let expDto = toClientConfigDTO (appContext ^. appConfig)
     let expBody = encodeUtf8 $ LT.concat ["callback", "(", decodeUtf8 . encode $ expDto, ")"]
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -66,7 +66,7 @@ test_200_with_query appContext =
     let reqUrl = "/configuration?callback=myFunction"
     let expStatus = 200
     let expHeaders = [resCtHeaderJavascript] ++ resCorsHeaders
-    let expDto = toDTO (appContext ^. appConfig)
+    let expDto = toClientConfigDTO (appContext ^. appConfig)
     let expBody = encodeUtf8 $ LT.concat ["myFunction(", decodeUtf8 . encode $ expDto, ")"]
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
