@@ -11,6 +11,7 @@ import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Level.LevelJS ()
 import Api.Resource.Organization.OrganizationDTO
+import Api.Resource.Organization.OrganizationJM ()
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageDTO ()
 import Api.Resource.Report.ReportDTO

@@ -3,7 +3,8 @@ module Api.Handler.Organization.OrganizationHandler where
 import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
-import Api.Resource.Organization.OrganizationDTO ()
+import Api.Resource.Organization.OrganizationChangeJM ()
+import Api.Resource.Organization.OrganizationJM ()
 import Service.Organization.OrganizationService
 
 getOrganizationCurrentA :: Endpoint
