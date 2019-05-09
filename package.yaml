@@ -5,12 +5,12 @@ description: DSW Server
 category: Web
 author: Vojtech Knaisl <vknaisl@gmail.com>
 maintainer: Vojtech Knaisl <vknaisl@gmail.com>
-copyright: 2018 Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2019 Vojtech Knaisl <vknaisl@gmail.com>
 license: Apache
 license-file: LICENSE.md
-homepage: https://github.com/DataStewardshipWizard/dsw-server
-git: git@github.com:DataStewardshipWizard/dsw-server.git
-bug-reports: https://github.com/DataStewardshipWizard/dsw-common/issues
+homepage: https://github.com/ds-wizard/dsw-server
+git: git@github.com:ds-wizard/dsw-server.git
+bug-reports: https://github.com/ds-wizard/ds-wizard/issues
 tested-with: GHC==8.6.*
 data-files:
   - config/application.yml
