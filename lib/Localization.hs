@@ -19,7 +19,7 @@ _ERROR_VALIDATION__INVALID_KM_ID_FORMAT = "KmId is not in the valid format"
 
 _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT = "Version is not in the valid format"
 
-_ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "OrganizationId is not in the valid format"
+_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT = "OrganizationId is not in the valid format"
 
 _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
   "This Data Management Plan format (" ++ format ++ ") is not currently supported"
