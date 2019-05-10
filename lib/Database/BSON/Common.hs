@@ -6,6 +6,7 @@ import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
 import Data.UUID
 
+import Model.ActionKey.ActionKey
 import Model.Error.Error
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
@@ -38,6 +39,10 @@ serializeEventFieldMaybeUUIDList efMaybeUuids =
   case efMaybeUuids of
     ChangedValue maybeUuids -> ChangedValue $ serializeUUIDList <$> maybeUuids
     NothingChanged -> NothingChanged
+
+serializeActionType :: ActionKeyType -> String
+serializeActionType RegistrationActionKey = "RegistrationActionKey"
+serializeActionType ForgottenPasswordActionKey = "ForgottenPasswordActionKey"
 
 serializeQuestionValueType :: QuestionValueType -> String
 serializeQuestionValueType StringQuestionValueType = "StringValue"
@@ -97,6 +102,13 @@ deserializeEventFieldMaybeUUIDList maybeEfMaybeUuidsS =
             Nothing -> NothingChanged
         NothingChanged -> NothingChanged
     Nothing -> NothingChanged
+
+deserializeActionType :: Maybe String -> Maybe ActionKeyType
+deserializeActionType mActionTypeS = do
+  actionType <- mActionTypeS
+  case actionType of
+    "RegistrationActionKey" -> Just RegistrationActionKey
+    "ForgottenPasswordActionKey" -> Just ForgottenPasswordActionKey
 
 deserializeQuestionValueType :: Maybe String -> Maybe QuestionValueType
 deserializeQuestionValueType mQuestionValueTypeS = do
