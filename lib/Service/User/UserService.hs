@@ -146,14 +146,6 @@ resetUserPassword reqDto =
         Left errMessage -> return . Just $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT
         _ -> return Nothing
 
-createForgottenUserPassword :: String -> UserPasswordDTO -> AppContextM (Maybe AppError)
-createForgottenUserPassword userUuid userPasswordDto =
-  hmFindUserById userUuid $ \user -> do
-    passwordHash <- generatePasswordHash (userPasswordDto ^. password)
-    now <- liftIO getCurrentTime
-    updateUserPasswordById userUuid passwordHash now
-    return Nothing
-
 changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM (Maybe AppError)
 changeUserState userUuid maybeHash userStateDto =
   validateHash maybeHash $ \akHash ->
