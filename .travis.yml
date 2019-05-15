@@ -16,7 +16,7 @@ stages:
   - tag
 
 env:
-  - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server" \
+  - PRIVATE_IMAGE="$REGISTRY/dsw-server" \
     IMAGE="datastewardshipwizard/server" \
     IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" \
     IMAGE_TAG_DEVELOP="$IMAGE:develop" \
@@ -88,14 +88,10 @@ jobs:
         - docker push $IMAGE_TAG_LATEST
 
     - stage: tag
-      if: tag =~ ^v
-      addons: false
-      services: false
-      cache: false
-      before_install: false
+      if: (tag =~ ^v\d+\.\d+\.\d+$)
       install: false
       env:
-        - PRIVATE_IMAGE="$REGISTRY/elixir/dsw-server"
+        - PRIVATE_IMAGE="$REGISTRY/dsw-server"
         - IMAGE="datastewardshipwizard/server"
         - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
@@ -109,3 +105,16 @@ jobs:
         - docker push $IMAGE_TAG_MINOR
         - docker image tag $IMAGE_TAG $IMAGE_TAG_PATCH
         - docker push $IMAGE_TAG_PATCH
+
+    - stage: tag
+      if: (tag =~ ^v\d+\.\d+\.\d+-rc\.\d+$)
+      install: false
+      env:
+        - PRIVATE_IMAGE="$REGISTRY/dsw-server"
+        - IMAGE="datastewardshipwizard/server"
+        - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
+        - IMAGE_TAG_RC="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_RC
+        - docker push $IMAGE_TAG_RC
