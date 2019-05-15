@@ -9,7 +9,8 @@ import Model.Event.EventPath
 -- --------------------------------------
 _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entity from database"
 
-_ERROR_DATABASE__ENTITY_NOT_FOUND = "Entity does not exist"
+_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
+  "Entity does not exist (" ++ entityName ++ ": " ++ identificator ++ ")"
 
 -- --------------------------------------
 -- VALIDATION

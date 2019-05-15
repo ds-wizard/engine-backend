@@ -178,7 +178,13 @@ userAPI appContext =
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
+          "user"
+          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
       -- ------------------------------------------------------------------------
       -- PUT /users/current
       -- ------------------------------------------------------------------------
@@ -333,7 +339,13 @@ userAPI appContext =
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
+          "user"
+          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
       -- ------------------------------------------------------------------------
       -- PUT /users/current/password
       -- ------------------------------------------------------------------------
@@ -410,7 +422,13 @@ userAPI appContext =
           liftIO $ (userFromDb ^. active) `shouldBe` True
           liftIO $ Prelude.length actionKeys `shouldBe` 0
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "active"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/state?hash=" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/state?hash="
+          reqHeaders
+          reqBody
+          "user"
+          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
       -- ------------------------------------------------------------------------
       -- DELETE /users/{userId}
       -- ------------------------------------------------------------------------
@@ -438,4 +456,10 @@ userAPI appContext =
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+        createNotFoundTest
+          reqMethod
+          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+          reqHeaders
+          reqBody
+          "user"
+          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

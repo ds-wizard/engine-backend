@@ -62,4 +62,11 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/book-references/nonExistingShortUuid" reqHeaders reqBody
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/book-references/nonExistingShortUuid"
+    reqHeaders
+    reqBody
+    "bookReference"
+    "nonExistingShortUuid"

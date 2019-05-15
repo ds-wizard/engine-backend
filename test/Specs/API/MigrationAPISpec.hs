@@ -93,7 +93,7 @@ migratorAPI appContext = do
          do
           let expStatus = 404
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = NotExistsError "Entity does not exist"
+          let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6")
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -287,7 +287,7 @@ migratorAPI appContext = do
           liftIO $ (isRight eitherMS) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
-        createNotFoundTest reqMethod reqUrl reqHeaders reqBody
+        createNotFoundTest reqMethod reqUrl reqHeaders reqBody "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6"
        ------------------------------------------------------------------------
        -- POST /branches/{branchId}/migrations/current/conflict
        ------------------------------------------------------------------------

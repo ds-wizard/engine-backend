@@ -15,6 +15,8 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Feedback.Feedback
 
+entityName = "feedback"
+
 feedbackCollection = "feedbacks"
 
 findFeedbacks :: AppContextM (Either AppError [Feedback])
@@ -31,10 +33,10 @@ findFeedbacksFiltered queryParams = do
   return . deserializeEntities $ feedbacksS
 
 findFeedbackById :: String -> AppContextM (Either AppError Feedback)
-findFeedbackById fUuid = do
-  let action = findOne $ select ["uuid" =: fUuid] feedbackCollection
+findFeedbackById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] feedbackCollection
   maybeFeedbackS <- runDB action
-  return . deserializeMaybeEntity $ maybeFeedbackS
+  return . deserializeMaybeEntity entityName uuid $ maybeFeedbackS
 
 insertFeedback :: Feedback -> AppContextM Value
 insertFeedback feedback = do

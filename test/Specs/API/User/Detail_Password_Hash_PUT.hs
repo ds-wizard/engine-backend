@@ -128,3 +128,5 @@ test_404 appContext =
     "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=e565b3da-70bf-4991-ad47-4209514b3a67"
     reqHeaders
     reqBody
+    "actionKey"
+    "e565b3da-70bf-4991-ad47-4209514b3a67"

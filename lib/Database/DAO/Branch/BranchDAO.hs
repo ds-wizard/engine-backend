@@ -15,6 +15,8 @@ import Model.Branch.Branch
 import Model.Context.AppContext
 import Model.Error.Error
 
+entityName = "branch"
+
 branchCollection = "branches"
 
 findBranches :: AppContextM (Either AppError [Branch])
@@ -30,22 +32,22 @@ findBranchesWithEvents = do
   return . deserializeEntities $ branchesS
 
 findBranchById :: String -> AppContextM (Either AppError Branch)
-findBranchById branchUuid = do
-  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
+findBranchById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] branchCollection
   maybeBranchS <- runDB action
-  return . deserializeMaybeEntity $ maybeBranchS
+  return . deserializeMaybeEntity entityName uuid $ maybeBranchS
 
 findBranchByKmId :: String -> AppContextM (Either AppError Branch)
 findBranchByKmId kmId = do
   let action = findOne $ select ["kmId" =: kmId] branchCollection
   maybeBranchS <- runDB action
-  return . deserializeMaybeEntity $ maybeBranchS
+  return . deserializeMaybeEntity entityName kmId $ maybeBranchS
 
 findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)
-findBranchWithEventsById branchUuid = do
-  let action = findOne $ select ["uuid" =: branchUuid] branchCollection
+findBranchWithEventsById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] branchCollection
   maybeBranchWithEventsS <- runDB action
-  return . deserializeMaybeEntity $ maybeBranchWithEventsS
+  return . deserializeMaybeEntity entityName uuid $ maybeBranchWithEventsS
 
 findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId ::
      String -> AppContextM (Either AppError [Branch])

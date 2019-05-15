@@ -24,6 +24,7 @@ import Web.Scotty.Trans (scottyAppT)
 import Api.Resource.Error.ErrorDTO ()
 import Api.Router
 import LensesConfig
+import Localization
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
@@ -182,13 +183,13 @@ createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPe
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
+createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator =
   it "HTTP 404 NOT FOUND - entity doesn't exist" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity does not exist"
+    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody

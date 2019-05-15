@@ -13,13 +13,15 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Migrator.MigratorState
 
+entityName = "kmMigration"
+
 msCollection = "kmMigrations"
 
 findMigratorStateByBranchUuid :: String -> AppContextM (Either AppError MigratorState)
-findMigratorStateByBranchUuid branchUuid = do
-  let action = findOne $ select ["branchUuid" =: branchUuid] msCollection
+findMigratorStateByBranchUuid uuid = do
+  let action = findOne $ select ["branchUuid" =: uuid] msCollection
   maybeMigratorState <- runDB action
-  return . deserializeMaybeEntity $ maybeMigratorState
+  return . deserializeMaybeEntity entityName uuid $ maybeMigratorState
 
 insertMigratorState :: MigratorState -> AppContextM Value
 insertMigratorState ms = do

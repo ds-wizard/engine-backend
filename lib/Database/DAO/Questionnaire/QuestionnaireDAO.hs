@@ -14,6 +14,8 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Questionnaire.Questionnaire
 
+entityName = "questionnaire"
+
 qtnCollection = "questionnaires"
 
 findQuestionnaires :: AppContextM (Either AppError [Questionnaire])
@@ -29,16 +31,17 @@ findQuestionnaireByPackageId pkgId = do
   return . deserializeEntities $ questionnairesS
 
 findQuestionnaireById :: String -> AppContextM (Either AppError Questionnaire)
-findQuestionnaireById qtnUuid = do
-  let action = findOne $ select ["uuid" =: qtnUuid] qtnCollection
+findQuestionnaireById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] qtnCollection
   maybeQuestionnaireS <- runDB action
-  return . deserializeMaybeEntity $ maybeQuestionnaireS
+  return . deserializeMaybeEntity entityName uuid $ maybeQuestionnaireS
 
 findQuestionnaireByIdAndOwnerUuid :: String -> String -> AppContextM (Either AppError Questionnaire)
-findQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid = do
-  let action = findOne $ select ["uuid" =: qtnUuid, "ownerUuid" =: ownerUuid] qtnCollection
+findQuestionnaireByIdAndOwnerUuid uuid ownerUuid = do
+  let action = findOne $ select ["uuid" =: uuid, "ownerUuid" =: ownerUuid] qtnCollection
   maybeQuestionnaireS <- runDB action
-  return . deserializeMaybeEntity $ maybeQuestionnaireS
+  return . deserializeMaybeEntity entityName ("(uuid: " ++ uuid ++ ", ownerUuid: " ++ ownerUuid ++ ")") $
+    maybeQuestionnaireS
 
 insertQuestionnaire :: Questionnaire -> AppContextM Value
 insertQuestionnaire questionnaire = do

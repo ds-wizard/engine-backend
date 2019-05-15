@@ -11,13 +11,15 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Organization.Organization
 
+entityName = "organization"
+
 orgCollection = "organizations"
 
 findOrganization :: AppContextM (Either AppError Organization)
 findOrganization = do
   let action = findOne $ select [] orgCollection
   maybeOrganization <- runDB action
-  return . deserializeMaybeEntity $ maybeOrganization
+  return . deserializeMaybeEntity entityName "nothing" $ maybeOrganization
 
 insertOrganization :: Organization -> AppContextM Value
 insertOrganization organization = do

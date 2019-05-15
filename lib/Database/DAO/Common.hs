@@ -24,15 +24,15 @@ deserializeEntities entitiesS = do
     then Right entities
     else Left . DatabaseError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
 
-deserializeMaybeEntity :: (FromBSON a) => Maybe Document -> Either AppError a
-deserializeMaybeEntity mEntityS =
+deserializeMaybeEntity :: (FromBSON a) => String -> String -> Maybe Document -> Either AppError a
+deserializeMaybeEntity entityName identificator mEntityS =
   case mEntityS of
     Just entityS -> do
       let mEntity = fromBSON entityS
       case mEntity of
         Just entity -> Right entity
         Nothing -> Left . DatabaseError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
-    Nothing -> Left . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND
+    Nothing -> Left . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator
 
 instance Val LT.Text where
   val = String . LT.toStrict

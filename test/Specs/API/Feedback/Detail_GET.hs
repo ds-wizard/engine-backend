@@ -65,4 +65,5 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/feedbacks/nonExistingShortUuid" reqHeaders reqBody
+test_404 appContext =
+  createNotFoundTest reqMethod "/feedbacks/nonExistingShortUuid" reqHeaders reqBody "feedback" "nonExistingShortUuid"

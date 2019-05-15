@@ -11,6 +11,8 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.KnowledgeModel.KnowledgeModel
 
+entityName = "metric"
+
 metricCollection = "metrics"
 
 findMetrics :: AppContextM (Either AppError [Metric])
@@ -23,7 +25,7 @@ findMetricByShortUuid :: String -> AppContextM (Either AppError Metric)
 findMetricByShortUuid uuid = do
   let action = findOne $ select ["uuid" =: uuid] metricCollection
   maybeMetricS <- runDB action
-  return . deserializeMaybeEntity $ maybeMetricS
+  return . deserializeMaybeEntity entityName uuid $ maybeMetricS
 
 insertMetric :: Metric -> AppContextM Value
 insertMetric metric = do

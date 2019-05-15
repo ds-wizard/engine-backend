@@ -11,6 +11,8 @@ import Model.BookReference.BookReference
 import Model.Context.AppContext
 import Model.Error.Error
 
+entityName = "bookReference"
+
 bookReferenceCollection = "bookReferences"
 
 findBookReferences :: AppContextM (Either AppError [BookReference])
@@ -23,7 +25,7 @@ findBookReferenceByShortUuid :: String -> AppContextM (Either AppError BookRefer
 findBookReferenceByShortUuid shortUuid = do
   let action = findOne $ select ["shortUuid" =: shortUuid] bookReferenceCollection
   maybeBookReferenceS <- runDB action
-  return . deserializeMaybeEntity $ maybeBookReferenceS
+  return . deserializeMaybeEntity entityName shortUuid $ maybeBookReferenceS
 
 insertBookReference :: BookReference -> AppContextM Value
 insertBookReference bookReference = do

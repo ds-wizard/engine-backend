@@ -11,13 +11,15 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Package.Package
 
+entityName = "publicPackage"
+
 pubPkgCollection = "publicPackages"
 
 findPublicPackage :: AppContextM (Either AppError PackageWithEvents)
 findPublicPackage = do
   let action = findOne $ select [] pubPkgCollection
   maybePublicPackage <- runDB action
-  return . deserializeMaybeEntity $ maybePublicPackage
+  return . deserializeMaybeEntity entityName "nothing" $ maybePublicPackage
 
 insertPublicPackage :: PackageWithEvents -> AppContextM Value
 insertPublicPackage pubPkg = do

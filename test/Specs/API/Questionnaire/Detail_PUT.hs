@@ -110,4 +110,10 @@ test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a" reqHeaders reqBody
+  createNotFoundTest
+    reqMethod
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
+    (reqHeadersT reqAuthHeader)
+    (reqBodyT questionnaire1)
+    "questionnaire"
+    "f08ead5f-746d-411b-aee6-77ea3d24016a"

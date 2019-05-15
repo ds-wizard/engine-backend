@@ -140,4 +140,10 @@ test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/versions/1.0.0" reqHeaders reqBody
+  createNotFoundTest
+    reqMethod
+    "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0/versions/1.0.0"
+    reqHeaders
+    reqBody
+    "branch"
+    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

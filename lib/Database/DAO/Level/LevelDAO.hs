@@ -11,6 +11,8 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Level.Level
 
+entityName = "level"
+
 levelCollection = "levels"
 
 findLevels :: AppContextM (Either AppError [Level])
@@ -23,7 +25,7 @@ findLevelByShortUuid :: String -> AppContextM (Either AppError Level)
 findLevelByShortUuid uuid = do
   let action = findOne $ select ["uuid" =: uuid] levelCollection
   maybeLevelS <- runDB action
-  return . deserializeMaybeEntity $ maybeLevelS
+  return . deserializeMaybeEntity entityName uuid $ maybeLevelS
 
 insertLevel :: Level -> AppContextM Value
 insertLevel level = do
