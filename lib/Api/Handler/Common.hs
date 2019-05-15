@@ -174,6 +174,9 @@ sendError (HttpClientError errorMessage) = do
   lift $ logError errorMessage
   status internalServerError500
   json $ HttpClientError errorMessage
+sendError (ForbiddenError errorMessage) = do
+  status forbidden403
+  json $ ForbiddenError errorMessage
 sendError (GeneralServerError errorMessage) = do
   lift $ logError errorMessage
   status internalServerError500

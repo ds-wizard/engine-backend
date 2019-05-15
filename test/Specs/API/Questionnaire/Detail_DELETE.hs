@@ -1,5 +1,5 @@
-module Specs.API.Questionnaire.Detail_GET
-  ( detail_get
+module Specs.API.Questionnaire.Detail_DELETE
+  ( detail_delete
   ) where
 
 import Control.Lens ((^.))
@@ -13,8 +13,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
-import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
@@ -25,18 +23,17 @@ import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
-import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}
+-- DELETE /questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
-detail_get appContext =
-  describe "GET /questionnaires/{qtnUuid}" $ do
-    test_200 appContext
+detail_delete :: AppContext -> SpecWith Application
+detail_delete appContext =
+  describe "DELETE /questionnaires/{qtnUuid}" $ do
+    test_204 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -44,7 +41,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodGet
+reqMethod = methodDelete
 
 reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
 
@@ -55,10 +52,10 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 reqAuthHeader
-  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 reqNonAdminAuthHeader
-  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
+test_204 appContext = do
+  create_test_200 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 reqAuthHeader
+  create_test_200 "HTTP 204 NO CONTENT (Owner, PublicReadOnly)" appContext questionnaire2 reqAuthHeader
+  create_test_200 "HTTP 204 NO CONTENT (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
 
 create_test_200 title appContext qtn authHeader =
   it title $
@@ -67,10 +64,9 @@ create_test_200 title appContext qtn authHeader =
     let reqUrl = reqUrlT (qtn ^. uuid)
     let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
-    let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4
-    let expBody = encode expDto
+    let expStatus = 204
+    let expHeaders = resCorsHeaders
+    let expBody = ""
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
@@ -91,7 +87,11 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)
 -- ----------------------------------------------------
 test_403 appContext = do
   createNoPermissionTest (appContext ^. appConfig) reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
-  it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
+  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1
+  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)" appContext questionnaire1
+
+create_test_403 title appContext qtn =
+  it title $
      -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT (questionnaire1 ^. uuid)

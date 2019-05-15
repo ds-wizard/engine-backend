@@ -55,7 +55,9 @@ getQuestionnairesForCurrentUser =
         else return . Right $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
   where
     justOwnersAndPublicQuestionnaires currentUser questionnaire =
-      questionnaire ^. private == False || questionnaire ^. ownerUuid == (Just $ currentUser ^. uuid)
+      questionnaire ^. accessibility == PublicQuestionnaire ||
+      questionnaire ^. accessibility == PublicReadOnlyQuestionnaire ||
+      questionnaire ^. ownerUuid == (Just $ currentUser ^. uuid)
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaire questionnaireCreateDto = do
@@ -74,12 +76,12 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
 getQuestionnaireById :: String -> AppContextM (Either AppError QuestionnaireDTO)
 getQuestionnaireById qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
-    checkPermissionToQtn qtn $ heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
+    heCheckPermissionToQtn qtn $ heFindPackageById (qtn ^. packageId) $ \package -> return . Right $ toDTO qtn package
 
 getQuestionnaireDetailById :: String -> AppContextM (Either AppError QuestionnaireDetailDTO)
 getQuestionnaireDetailById qtnUuid =
   heFindQuestionnaireById qtnUuid $ \qtn ->
-    checkPermissionToQtn qtn $ do
+    heCheckPermissionToQtn qtn $ do
       heFindPackageWithEventsById (qtn ^. packageId) $ \package ->
         heCompileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids) $ \knowledgeModel ->
           return . Right $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel
@@ -87,6 +89,7 @@ getQuestionnaireDetailById qtnUuid =
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
 modifyQuestionnaire qtnUuid reqDto =
   heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
+    heCheckEditPermissionToQtn qtnDto $
     heGetCurrentUser $ \currentUser -> do
       now <- liftIO getCurrentTime
       let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
@@ -96,18 +99,35 @@ modifyQuestionnaire qtnUuid reqDto =
 
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid =
-  hmGetQuestionnaireById qtnUuid $ \questionnaire -> do
-    deleteQuestionnaireById qtnUuid
-    return Nothing
+  hmGetQuestionnaireById qtnUuid $ \qtn ->
+    hmCheckEditPermissionToQtn qtn $ do
+      deleteQuestionnaireById qtnUuid
+      return Nothing
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkPermissionToQtn qtn callback =
+heCheckPermissionToQtn qtn callback =
   heGetCurrentUser $ \currentUser ->
-    if currentUser ^. role == "ADMIN" || qtn ^. private == False || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+    if currentUser ^. role == "ADMIN" ||
+       qtn ^. accessibility == PublicQuestionnaire ||
+       qtn ^. accessibility == PublicReadOnlyQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
       then callback
-      else return . Left . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND
+      else return . Left . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+
+heCheckEditPermissionToQtn qtn callback =
+  heGetCurrentUser $ \currentUser ->
+    if currentUser ^. role == "ADMIN" ||
+       qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+      then callback
+      else return . Left . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
+
+hmCheckEditPermissionToQtn qtn callback =
+  hmGetCurrentUser $ \currentUser ->
+    if currentUser ^. role == "ADMIN" ||
+       qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+      then callback
+      else return . Just . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 
 -- --------------------------------
 -- HELPERS

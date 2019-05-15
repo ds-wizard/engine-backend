@@ -24,7 +24,7 @@ toDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
-  , _questionnaireDTOPrivate = questionnaire ^. private
+  , _questionnaireDTOAccessibility = questionnaire ^. accessibility
   , _questionnaireDTOPackage = packageToDTO package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
@@ -37,7 +37,7 @@ toSimpleDTO questionnaire package =
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
-  , _questionnaireDTOPrivate = questionnaire ^. private
+  , _questionnaireDTOAccessibility = questionnaire ^. accessibility
   , _questionnaireDTOPackage = packageWithEventsToDTO package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
@@ -66,7 +66,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
-  , _questionnaireDetailDTOPrivate = questionnaire ^. private
+  , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
   , _questionnaireDetailDTOPackage = packageWithEventsToDTO package
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
@@ -82,7 +82,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel =
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
-  , _questionnaireDetailDTOPrivate = questionnaire ^. private
+  , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
   , _questionnaireDetailDTOPackage = package
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
@@ -114,12 +114,12 @@ fromChangeDTO qtn dto currentUserUuid now =
   { _questionnaireUuid = qtn ^. uuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = dto ^. level
-  , _questionnairePrivate = dto ^. private
+  , _questionnaireAccessibility = dto ^. accessibility
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
   , _questionnaireOwnerUuid =
-      if dto ^. private
+      if dto ^. accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtn ^. createdAt
@@ -132,12 +132,12 @@ fromQuestionnaireCreateDTO dto qtnUuid currentUserUuid qtnCreatedAt qtnUpdatedAt
   { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = 1
-  , _questionnairePrivate = dto ^. private
+  , _questionnaireAccessibility = dto ^. accessibility
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireSelectedTagUuids = dto ^. tagUuids
   , _questionnaireReplies = []
   , _questionnaireOwnerUuid =
-      if dto ^. private
+      if dto ^. accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtnCreatedAt

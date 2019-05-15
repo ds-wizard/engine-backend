@@ -12,6 +12,7 @@ import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Questionnaire.Questionnaire
 import Service.Common
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.KnowledgeModel.KnowledgeModelService
@@ -30,7 +31,7 @@ getPublicQuestionnaire =
             { _questionnaireDetailDTOUuid = fromJust . U.fromString $ "a870d5c7-0e0a-4110-95ae-932cb65c6a6a"
             , _questionnaireDetailDTOName = "Public Questionnaire"
             , _questionnaireDetailDTOLevel = 2
-            , _questionnaireDetailDTOPrivate = False
+            , _questionnaireDetailDTOAccessibility = PublicQuestionnaire
             , _questionnaireDetailDTOPackage = packageWithEventsToDTO package
             , _questionnaireDetailDTOSelectedTagUuids = []
             , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel

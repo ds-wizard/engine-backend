@@ -3,6 +3,7 @@ module Api.Resource.Questionnaire.QuestionnaireDetailJM where
 import Control.Monad
 import Data.Aeson
 
+import Api.Resource.Questionnaire.Common
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 
@@ -11,7 +12,6 @@ instance FromJSON QuestionnaireDetailDTO where
     _questionnaireDetailDTOUuid <- o .: "uuid"
     _questionnaireDetailDTOName <- o .: "name"
     _questionnaireDetailDTOLevel <- o .: "level"
-    _questionnaireDetailDTOPrivate <- o .: "private"
     _questionnaireDetailDTOPackage <- o .: "package"
     _questionnaireDetailDTOSelectedTagUuids <- o .: "selectedTagUuids"
     _questionnaireDetailDTOKnowledgeModel <- o .: "knowledgeModel"
@@ -19,7 +19,8 @@ instance FromJSON QuestionnaireDetailDTO where
     _questionnaireDetailDTOOwnerUuid <- o .: "ownerUuid"
     _questionnaireDetailDTOCreatedAt <- o .: "createdAt"
     _questionnaireDetailDTOUpdatedAt <- o .: "updatedAt"
-    return QuestionnaireDetailDTO {..}
+    hDeserializeQuestionnaireAccessibility o $ \_questionnaireDetailDTOAccessibility ->
+      return QuestionnaireDetailDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON QuestionnaireDetailDTO where
@@ -28,7 +29,7 @@ instance ToJSON QuestionnaireDetailDTO where
       [ "uuid" .= _questionnaireDetailDTOUuid
       , "name" .= _questionnaireDetailDTOName
       , "level" .= _questionnaireDetailDTOLevel
-      , "private" .= _questionnaireDetailDTOPrivate
+      , "accessibility" .= serializeQuestionnaireAccessibility _questionnaireDetailDTOAccessibility
       , "package" .= _questionnaireDetailDTOPackage
       , "selectedTagUuids" .= _questionnaireDetailDTOSelectedTagUuids
       , "knowledgeModel" .= _questionnaireDetailDTOKnowledgeModel

@@ -10,6 +10,7 @@ import Model.ActionKey.ActionKey
 import Model.Error.Error
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Questionnaire.Questionnaire
 import Util.List
 
 serializeUUID :: UUID -> String
@@ -49,6 +50,11 @@ serializeQuestionValueType StringQuestionValueType = "StringValue"
 serializeQuestionValueType NumberQuestionValueType = "NumberValue"
 serializeQuestionValueType DateQuestionValueType = "DateValue"
 serializeQuestionValueType TextQuestionValueType = "TextValue"
+
+serializeQuestionnaireAccessibility :: QuestionnaireAccessibility -> String
+serializeQuestionnaireAccessibility PublicQuestionnaire = "PublicQuestionnaire"
+serializeQuestionnaireAccessibility PrivateQuestionnaire = "PrivateQuestionnaire"
+serializeQuestionnaireAccessibility PublicReadOnlyQuestionnaire = "PublicReadOnlyQuestionnaire"
 
 serializeMaybeQuestionValueType :: Maybe QuestionValueType -> Maybe String
 serializeMaybeQuestionValueType mQuestionValueType = serializeQuestionValueType <$> mQuestionValueType
@@ -109,6 +115,16 @@ deserializeActionType mActionTypeS = do
   case actionType of
     "RegistrationActionKey" -> Just RegistrationActionKey
     "ForgottenPasswordActionKey" -> Just ForgottenPasswordActionKey
+    _ -> Nothing
+
+deserializeQuestionnaireAccessibility :: Maybe String -> Maybe QuestionnaireAccessibility
+deserializeQuestionnaireAccessibility mAccessibilityS = do
+  accessibility <- mAccessibilityS
+  case accessibility of
+    "PublicQuestionnaire" -> Just PublicQuestionnaire
+    "PrivateQuestionnaire" -> Just PrivateQuestionnaire
+    "PublicReadOnlyQuestionnaire" -> Just PublicReadOnlyQuestionnaire
+    _ -> Nothing
 
 deserializeQuestionValueType :: Maybe String -> Maybe QuestionValueType
 deserializeQuestionValueType mQuestionValueTypeS = do

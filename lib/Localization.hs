@@ -37,6 +37,9 @@ _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 
 _ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
 
+-- Security
+_ERROR_VALIDATION__FORBIDDEN action = "Forbidden to perform '" ++ action ++ "'"
+
 -- --------------------------------------
 -- INTEGRATION
 -- --------------------------------------

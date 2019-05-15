@@ -14,5 +14,6 @@ data AppError
   | DatabaseError ErrorMessage
   | MigratorError ErrorMessage
   | HttpClientError ErrorMessage
+  | ForbiddenError ErrorMessage
   | GeneralServerError ErrorMessage
   deriving (Show, Eq)

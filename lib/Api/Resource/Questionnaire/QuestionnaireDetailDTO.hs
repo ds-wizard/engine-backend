@@ -7,12 +7,13 @@ import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
+import Model.Questionnaire.Questionnaire
 
 data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid :: U.UUID
   , _questionnaireDetailDTOName :: String
   , _questionnaireDetailDTOLevel :: Int
-  , _questionnaireDetailDTOPrivate :: Bool
+  , _questionnaireDetailDTOAccessibility :: QuestionnaireAccessibility
   , _questionnaireDetailDTOPackage :: PackageDTO
   , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
   , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
@@ -27,7 +28,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOUuid a == _questionnaireDetailDTOUuid b &&
     _questionnaireDetailDTOName a == _questionnaireDetailDTOName b &&
     _questionnaireDetailDTOLevel a == _questionnaireDetailDTOLevel b &&
-    _questionnaireDetailDTOPrivate a == _questionnaireDetailDTOPrivate b &&
+    _questionnaireDetailDTOAccessibility a == _questionnaireDetailDTOAccessibility b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
     _questionnaireDetailDTOSelectedTagUuids a == _questionnaireDetailDTOSelectedTagUuids b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&

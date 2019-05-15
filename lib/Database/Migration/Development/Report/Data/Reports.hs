@@ -13,7 +13,7 @@ import Model.Report.Report
 report1 :: Report
 report1 =
   Report
-  { _reportUuid = fromJust (U.fromString "a92637os-8200-2p99-w3l2-90shhj982829")
+  { _reportUuid = fromJust (U.fromString "921bcb7e-e15f-49e4-b176-dbbe2f573af0")
   , _reportChapterReports =
       [ ChapterReport
         { _chapterReportChapterUuid = chapter1 ^. uuid

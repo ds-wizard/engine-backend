@@ -3,6 +3,7 @@ module Api.Resource.Questionnaire.QuestionnaireJM where
 import Control.Monad
 import Data.Aeson
 
+import Api.Resource.Questionnaire.Common
 import Api.Resource.Questionnaire.QuestionnaireDTO
 
 instance FromJSON QuestionnaireDTO where
@@ -10,12 +11,11 @@ instance FromJSON QuestionnaireDTO where
     _questionnaireDTOUuid <- o .: "uuid"
     _questionnaireDTOName <- o .: "name"
     _questionnaireDTOLevel <- o .: "level"
-    _questionnaireDTOPrivate <- o .: "private"
     _questionnaireDTOPackage <- o .: "package"
     _questionnaireDTOOwnerUuid <- o .: "ownerUuid"
     _questionnaireDTOCreatedAt <- o .: "createdAt"
     _questionnaireDTOUpdatedAt <- o .: "updatedAt"
-    return QuestionnaireDTO {..}
+    hDeserializeQuestionnaireAccessibility o $ \_questionnaireDTOAccessibility -> return QuestionnaireDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON QuestionnaireDTO where
@@ -24,7 +24,7 @@ instance ToJSON QuestionnaireDTO where
       [ "uuid" .= _questionnaireDTOUuid
       , "name" .= _questionnaireDTOName
       , "level" .= _questionnaireDTOLevel
-      , "private" .= _questionnaireDTOPrivate
+      , "accessibility" .= serializeQuestionnaireAccessibility _questionnaireDTOAccessibility
       , "package" .= _questionnaireDTOPackage
       , "ownerUuid" .= _questionnaireDTOOwnerUuid
       , "createdAt" .= _questionnaireDTOCreatedAt
