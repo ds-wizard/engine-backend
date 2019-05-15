@@ -24,7 +24,7 @@ getTypehints reqDto =
   heCompileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) [] $ \km ->
     heGetQuestion km (reqDto ^. questionUuid) $ \question ->
       heGetIntegration km (question ^. integrationUuid) $ \integration ->
-        heLoadConfig (integration ^. iId) $ \fileConfig -> do
+        heGetIntegrationConfig (integration ^. iId) $ \fileConfig -> do
           let kmQuestionConfig = question ^. props
           let userRequest = (M.singleton "q" (encode $ reqDto ^. q))
           let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig

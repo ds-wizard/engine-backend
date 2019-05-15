@@ -1,6 +1,7 @@
 module Database.Connection where
 
 import Control.Lens ((^.))
+import Data.Maybe (fromMaybe)
 import Data.Text
 import Database.MongoDB hiding (host)
 import Database.Persist.MongoDB
@@ -13,13 +14,16 @@ createDatabaseConnectionPool dswConfig = do
   verifyDatabaseConnectionPool dbPool
   return dbPool
   where
-    appConfigDatabase = dswConfig ^. databaseConfig
+    appConfigDatabase = dswConfig ^. database
     dbHost = appConfigDatabase ^. host
     dbPort = PortNumber (fromInteger (appConfigDatabase ^. port) :: PortNumber) :: PortID
     dbName = pack (appConfigDatabase ^. databaseName)
     dbCred =
       if appConfigDatabase ^. authEnabled
-        then Just $ MongoAuth (pack $ appConfigDatabase ^. username) (pack $ appConfigDatabase ^. password)
+        then Just $
+             MongoAuth
+               (pack . fromMaybe "" $ appConfigDatabase ^. username)
+               (pack . fromMaybe "" $ appConfigDatabase ^. password)
         else Nothing
 
 verifyDatabaseConnectionPool dbPool = do

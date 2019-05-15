@@ -4,6 +4,8 @@ module Specs.API.Questionnaire.Detail_GET
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -44,9 +46,9 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
 
-reqHeaders = [reqAuthHeader]
+reqHeadersT authHeader = [authHeader]
 
 reqBody = ""
 
@@ -54,45 +56,20 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  it "HTTP 200 OK (Admin)" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO questionnaire1 germanyPackage km1WithQ4
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 reqAuthHeader
+  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 reqNonAdminAuthHeader
+  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
 
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "QTN_PERM"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext = do
-  createNotFoundTest reqMethod "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a" reqHeaders reqBody
-  it "HTTP 404 OK (User which isn't admin and owner)" $
+create_test_200 title appContext qtn authHeader =
+  it title $
      -- GIVEN: Prepare request
    do
-    let reqHeaders = [reqNonAdminAuthHeader]
-    -- AND: Prepare expectation
-    let expStatus = 404
+    let reqUrl = reqUrlT (qtn ^. uuid)
+    let reqHeaders = reqHeadersT authHeader
+     -- AND: Prepare expectation
+    let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError _ERROR_DATABASE__ENTITY_NOT_FOUND
+    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -103,3 +80,45 @@ test_404 appContext = do
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] reqBody
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_403 appContext = do
+  createNoPermissionTest (appContext ^. appConfig) reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
+  it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = reqUrlT (questionnaire1 ^. uuid)
+    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
+     -- AND: Prepare expectation
+    let expStatus = 403
+    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO U.runMigration appContext
+    runInContextIO QTN.runMigration appContext
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
+    (reqHeadersT reqAuthHeader)
+    reqBody
+    "questionnaire"
+    "f08ead5f-746d-411b-aee6-77ea3d24016a"

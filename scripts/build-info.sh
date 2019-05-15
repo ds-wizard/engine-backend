@@ -2,13 +2,13 @@
 
 set -e
 
-BUILD_INFO_FILE=../config/build-info.cfg
+BUILD_INFO_FILE=../config/build-info.yml
 
 # ---------------------------------------------------------------
 # 1. Set a name
 # ---------------------------------------------------------------
 appName="Data Stewardship Wizard Server"
-echo "name=$appName" > $BUILD_INFO_FILE
+echo "name: $appName" > $BUILD_INFO_FILE
 
 # ---------------------------------------------------------------
 # 2. Create app version
@@ -25,10 +25,10 @@ then
     appVersion="$gittag~$commit"
 fi
 
-echo "version=$appVersion" >> $BUILD_INFO_FILE
+echo "version: $appVersion" >> $BUILD_INFO_FILE
 
 # ---------------------------------------------------------------
 # 3. Create build timestamp
 # ---------------------------------------------------------------
 builtAtTimestamp=`date +"%Y/%m/%d %TZ"`
-echo "builtat=$builtAtTimestamp" >> $BUILD_INFO_FILE
+echo "builtAt: $builtAtTimestamp" >> $BUILD_INFO_FILE

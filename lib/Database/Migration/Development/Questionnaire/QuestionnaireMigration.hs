@@ -12,4 +12,6 @@ runMigration = do
   deleteQuestionnaires
   insertPackage germanyPackage
   insertQuestionnaire questionnaire1
+  insertQuestionnaire questionnaire2
+  insertQuestionnaire questionnaire3
   logInfo $ msg _CMP_MIGRATION "(Questionnaire/Questionnaire) ended"

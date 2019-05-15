@@ -10,6 +10,7 @@ import Database.Migration.Development.FilledKnowledgeModel.Data.FilledAnswersAnd
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledChapters
 import Database.Migration.Development.FilledKnowledgeModel.Data.FilledQuestions
 import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
@@ -18,30 +19,13 @@ questionnaire1 :: Questionnaire
 questionnaire1 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
-  , _questionnaireName = "My Questionnaire"
+  , _questionnaireName = "My Private Questionnaire"
   , _questionnaireLevel = 2
-  , _questionnairePrivate = True
+  , _questionnaireAccessibility = PrivateQuestionnaire
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
-  , _questionnaireReplies =
-      [ fQ1
-      , fQ2
-      , rQ2_aYes_fuQ1
-      , fQ3
-      , rQ4
-      , rQ4_it1_itemName
-      , rQ4_it1_q5
-      , rQ4_it1_q5_it1_itemName
-      , rQ4_it1_q5_it1_question7
-      , rQ4_it1_q5_it1_question8
-      , rQ4_it1_q6
-      , rQ4_it2_itemName
-      , rQ4_it2_q5
-      , rQ4_it2_q6
-      , rQ9
-      , rQ10
-      ]
-  , _questionnaireOwnerUuid = Just $ fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66")
+  , _questionnaireReplies = fReplies
+  , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
@@ -52,14 +36,94 @@ questionnaire1Edited =
   { _questionnaireUuid = questionnaire1 ^. uuid
   , _questionnaireName = "EDITED" ++ (questionnaire1 ^. name)
   , _questionnaireLevel = 3
-  , _questionnairePrivate = False
+  , _questionnaireAccessibility = PublicQuestionnaire
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
-  , _questionnaireReplies = [fQ1, fQ2]
-  , _questionnaireOwnerUuid = questionnaire1 ^. ownerUuid
+  , _questionnaireReplies = questionnaire1 ^. replies
+  , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = questionnaire1 ^. createdAt
+  , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
+  }
+
+questionnaire2 :: Questionnaire
+questionnaire2 =
+  Questionnaire
+  { _questionnaireUuid = fromJust (U.fromString "d57520b4-5a70-4d40-8623-af2bfbbdfdfe")
+  , _questionnaireName = "My PublicReadOnly Questionnaire"
+  , _questionnaireLevel = 2
+  , _questionnaireAccessibility = PublicReadOnlyQuestionnaire
+  , _questionnairePackageId = germanyPackage ^. pId
+  , _questionnaireSelectedTagUuids = []
+  , _questionnaireReplies = fReplies
+  , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
+  , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
   }
+
+questionnaire2Edited :: Questionnaire
+questionnaire2Edited =
+  Questionnaire
+  { _questionnaireUuid = questionnaire2 ^. uuid
+  , _questionnaireName = "EDITED" ++ (questionnaire2 ^. name)
+  , _questionnaireLevel = 3
+  , _questionnaireAccessibility = PublicQuestionnaire
+  , _questionnairePackageId = questionnaire2 ^. packageId
+  , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
+  , _questionnaireReplies = questionnaire2 ^. replies
+  , _questionnaireOwnerUuid = Nothing
+  , _questionnaireCreatedAt = questionnaire2 ^. createdAt
+  , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
+  }
+
+questionnaire3 :: Questionnaire
+questionnaire3 =
+  Questionnaire
+  { _questionnaireUuid = fromJust (U.fromString "16530a07-e673-4ff3-ac1f-57250f2c1bfe")
+  , _questionnaireName = "My Public Questionnaire"
+  , _questionnaireLevel = 2
+  , _questionnaireAccessibility = PublicQuestionnaire
+  , _questionnairePackageId = germanyPackage ^. pId
+  , _questionnaireSelectedTagUuids = []
+  , _questionnaireReplies = fReplies
+  , _questionnaireOwnerUuid = Nothing
+  , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+  , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  }
+
+questionnaire3Edited :: Questionnaire
+questionnaire3Edited =
+  Questionnaire
+  { _questionnaireUuid = questionnaire3 ^. uuid
+  , _questionnaireName = "EDITED" ++ (questionnaire3 ^. name)
+  , _questionnaireLevel = 3
+  , _questionnaireAccessibility = PrivateQuestionnaire
+  , _questionnairePackageId = questionnaire3 ^. packageId
+  , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
+  , _questionnaireReplies = questionnaire3 ^. replies
+  , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
+  , _questionnaireCreatedAt = questionnaire3 ^. createdAt
+  , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
+  }
+
+fReplies :: [Reply]
+fReplies =
+  [ fQ1
+  , fQ2
+  , rQ2_aYes_fuQ1
+  , fQ3
+  , rQ4
+  , rQ4_it1_itemName
+  , rQ4_it1_q5
+  , rQ4_it1_q5_it1_itemName
+  , rQ4_it1_q5_it1_question7
+  , rQ4_it1_q5_it1_question8
+  , rQ4_it1_q6
+  , rQ4_it2_itemName
+  , rQ4_it2_q5
+  , rQ4_it2_q6
+  , rQ9
+  , rQ10
+  ]
 
 createReplyKey :: [String] -> String
 createReplyKey uuids = intercalate "." uuids

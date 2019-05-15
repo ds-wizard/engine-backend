@@ -13,6 +13,8 @@ import Database.DAO.Common
 import Model.Context.AppContext
 import Model.Package.Package
 
+entityName = "package"
+
 pkgCollection = "packages"
 
 findPackages :: AppContextM (Either AppError [Package])
@@ -56,13 +58,13 @@ findPackageById :: String -> AppContextM (Either AppError Package)
 findPackageById pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackageS <- runDB action
-  return . deserializeMaybeEntity $ maybePackageS
+  return . deserializeMaybeEntity entityName pkgId $ maybePackageS
 
 findPackageWithEventsById :: String -> AppContextM (Either AppError PackageWithEvents)
 findPackageWithEventsById pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackageS <- runDB action
-  return . deserializeMaybeEntity $ maybePackageS
+  return . deserializeMaybeEntity entityName pkgId $ maybePackageS
 
 insertPackage :: PackageWithEvents -> AppContextM Value
 insertPackage package = do

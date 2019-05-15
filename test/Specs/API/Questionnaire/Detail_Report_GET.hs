@@ -3,32 +3,35 @@ module Specs.API.Questionnaire.Detail_Report_GET
   ) where
 
 import Control.Lens ((^.))
-import Data.Aeson (eitherDecode, encode)
+import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
-import Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Database.Migration.Development.Metric.Data.Metrics
 import qualified
        Database.Migration.Development.Metric.MetricMigration as MTR
-import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
        as QTN
+import Database.Migration.Development.Report.Data.Reports
+import qualified Database.Migration.Development.User.UserMigration
+       as U
 import LensesConfig
+import Localization
 import Model.Context.AppContext
-import Service.Questionnaire.QuestionnaireMapper
-import Util.List (elems)
+import Model.Error.Error
+import Service.Report.ReportMapper
 
 import Specs.API.Common
+import Specs.API.Questionnaire.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -47,76 +50,82 @@ detail_report_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/report"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/report"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = [authHeader, reqCtHeader]
 
 reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 reqAuthHeader
+  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 reqNonAdminAuthHeader
+  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
+
+create_test_200 title appContext qtn authHeader =
+  it title $
+     -- GIVEN: Prepare request
    do
+    let reqUrl = reqUrlT $ qtn ^. uuid
+    let reqHeaders = reqHeadersT authHeader
+     -- GIVEN: Prepare expectation
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO questionnaire1Edited netherlandsPackageV2 km1NetherlandsV2
+    let expDto = toReportDTO report1
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let (SResponse (Status status _) headers body) = response
-    liftIO $ status `shouldBe` expStatus
-    liftIO $ (expHeaders `elems` headers) `shouldBe` True
-    -- AND: Compare body
-    let (Right resBody) = eitherDecode body :: Either String ReportDTO
-    let rs = resBody ^. chapterReports
-    liftIO $ (length rs) `shouldBe` 3
-    -- Chapter report 1
-    let r1 = rs !! 0
-    liftIO $ (r1 ^. chapterUuid) `shouldBe` (chapter1 ^. uuid)
-    let (AnsweredIndicationDTO' i1) = (r1 ^. indications) !! 0
-    liftIO $ (i1 ^. answeredQuestions) `shouldBe` 3
-    liftIO $ (i1 ^. unansweredQuestions) `shouldBe` 0
-    let m1 = (r1 ^. metrics) !! 0
-    liftIO $ (m1 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m1 ^. measure) `shouldBe` 0
-    -- Chapter report 2
-    let r2 = rs !! 1
-    liftIO $ (r2 ^. chapterUuid) `shouldBe` (chapter2 ^. uuid)
-    let (AnsweredIndicationDTO' i2) = (r2 ^. indications) !! 0
-    liftIO $ (i2 ^. answeredQuestions) `shouldBe` 10
-    liftIO $ (i2 ^. unansweredQuestions) `shouldBe` 1
-    let m2 = (r2 ^. metrics) !! 0
-    liftIO $ (m2 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m2 ^. measure) `shouldBe` 1
-    -- Chapter report 3
-    let r3 = rs !! 2
-    liftIO $ (r3 ^. chapterUuid) `shouldBe` (chapter3 ^. uuid)
-    let (AnsweredIndicationDTO' i3) = (r3 ^. indications) !! 0
-    liftIO $ (i3 ^. answeredQuestions) `shouldBe` 2
-    liftIO $ (i3 ^. unansweredQuestions) `shouldBe` 0
-    let m3 = (r3 ^. metrics) !! 0
-    liftIO $ (m3 ^. metricUuid) `shouldBe` metricF ^. uuid
-    liftIO $ (m3 ^. measure) `shouldBe` 0
+     -- THEN: Compare response with expectation
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ReportDTO)
+    assertResStatus status expStatus
+    assertResHeaders headers expHeaders
+    compareReportDtos resBody expDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext = do
+  createNoPermissionTest (appContext ^. appConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
+  it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = reqUrlT (questionnaire1 ^. uuid)
+    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
+     -- AND: Prepare expectation
+    let expStatus = 403
+    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO U.runMigration appContext
+    runInContextIO QTN.runMigration appContext
+    runInContextIO MTR.runMigration appContext
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/report" reqHeaders reqBody
+  createNotFoundTest
+    reqMethod
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/report"
+    (reqHeadersT reqAuthHeader)
+    reqBody
+    "questionnaire"
+    "f08ead5f-746d-411b-aee6-77ea3d24016a"

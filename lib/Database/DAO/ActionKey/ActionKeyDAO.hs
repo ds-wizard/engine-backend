@@ -11,6 +11,8 @@ import Model.ActionKey.ActionKey
 import Model.Context.AppContext
 import Model.Error.Error
 
+entityName = "actionKey"
+
 actionKeyCollection = "actionKeys"
 
 findActionKeys :: AppContextM (Either AppError [ActionKey])
@@ -20,16 +22,16 @@ findActionKeys = do
   return . deserializeEntities $ actionKeysS
 
 findActionKeyById :: String -> AppContextM (Either AppError ActionKey)
-findActionKeyById actionKeyUuid = do
-  let action = findOne $ select ["uuid" =: actionKeyUuid] actionKeyCollection
+findActionKeyById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] actionKeyCollection
   maybeActionKeyS <- runDB action
-  return . deserializeMaybeEntity $ maybeActionKeyS
+  return . deserializeMaybeEntity entityName uuid $ maybeActionKeyS
 
 findActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
 findActionKeyByHash hash = do
   let action = findOne $ select ["hash" =: hash] actionKeyCollection
   maybeActionKeyS <- runDB action
-  return . deserializeMaybeEntity $ maybeActionKeyS
+  return . deserializeMaybeEntity entityName hash $ maybeActionKeyS
 
 insertActionKey :: ActionKey -> AppContextM Value
 insertActionKey actionKey = do

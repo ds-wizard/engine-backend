@@ -6,9 +6,11 @@ import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
 import Data.UUID
 
+import Model.ActionKey.ActionKey
 import Model.Error.Error
 import Model.Event.EventField
 import Model.KnowledgeModel.KnowledgeModel
+import Model.Questionnaire.Questionnaire
 import Util.List
 
 serializeUUID :: UUID -> String
@@ -39,11 +41,20 @@ serializeEventFieldMaybeUUIDList efMaybeUuids =
     ChangedValue maybeUuids -> ChangedValue $ serializeUUIDList <$> maybeUuids
     NothingChanged -> NothingChanged
 
+serializeActionType :: ActionKeyType -> String
+serializeActionType RegistrationActionKey = "RegistrationActionKey"
+serializeActionType ForgottenPasswordActionKey = "ForgottenPasswordActionKey"
+
 serializeQuestionValueType :: QuestionValueType -> String
 serializeQuestionValueType StringQuestionValueType = "StringValue"
 serializeQuestionValueType NumberQuestionValueType = "NumberValue"
 serializeQuestionValueType DateQuestionValueType = "DateValue"
 serializeQuestionValueType TextQuestionValueType = "TextValue"
+
+serializeQuestionnaireAccessibility :: QuestionnaireAccessibility -> String
+serializeQuestionnaireAccessibility PublicQuestionnaire = "PublicQuestionnaire"
+serializeQuestionnaireAccessibility PrivateQuestionnaire = "PrivateQuestionnaire"
+serializeQuestionnaireAccessibility PublicReadOnlyQuestionnaire = "PublicReadOnlyQuestionnaire"
 
 serializeMaybeQuestionValueType :: Maybe QuestionValueType -> Maybe String
 serializeMaybeQuestionValueType mQuestionValueType = serializeQuestionValueType <$> mQuestionValueType
@@ -97,6 +108,23 @@ deserializeEventFieldMaybeUUIDList maybeEfMaybeUuidsS =
             Nothing -> NothingChanged
         NothingChanged -> NothingChanged
     Nothing -> NothingChanged
+
+deserializeActionType :: Maybe String -> Maybe ActionKeyType
+deserializeActionType mActionTypeS = do
+  actionType <- mActionTypeS
+  case actionType of
+    "RegistrationActionKey" -> Just RegistrationActionKey
+    "ForgottenPasswordActionKey" -> Just ForgottenPasswordActionKey
+    _ -> Nothing
+
+deserializeQuestionnaireAccessibility :: Maybe String -> Maybe QuestionnaireAccessibility
+deserializeQuestionnaireAccessibility mAccessibilityS = do
+  accessibility <- mAccessibilityS
+  case accessibility of
+    "PublicQuestionnaire" -> Just PublicQuestionnaire
+    "PrivateQuestionnaire" -> Just PrivateQuestionnaire
+    "PublicReadOnlyQuestionnaire" -> Just PublicReadOnlyQuestionnaire
+    _ -> Nothing
 
 deserializeQuestionValueType :: Maybe String -> Maybe QuestionValueType
 deserializeQuestionValueType mQuestionValueTypeS = do

@@ -4,6 +4,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import Api.Resource.User.UserCreateDTO
 import Model.User.User
 
 userAlbert :: User
@@ -59,4 +60,14 @@ userIsaac =
   , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
   , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  }
+
+userJohnCreate :: UserCreateDTO
+userJohnCreate =
+  UserCreateDTO
+  { _userCreateDTOName = "John"
+  , _userCreateDTOSurname = "Doe"
+  , _userCreateDTOEmail = "john.doe@example.com"
+  , _userCreateDTORole = Just "ADMIN"
+  , _userCreateDTOPassword = "password"
   }

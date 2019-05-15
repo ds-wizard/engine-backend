@@ -24,6 +24,7 @@ import Web.Scotty.Trans (scottyAppT)
 import Api.Resource.Error.ErrorDTO ()
 import Api.Router
 import LensesConfig
+import Localization
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
@@ -40,7 +41,8 @@ startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
   let baseContext =
         BaseContext
-        { _baseContextConfig = appContext ^. config
+        { _baseContextAppConfig = appContext ^. appConfig
+        , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
         , _baseContextPool = appContext ^. pool
         , _baseContextMsgChannel = appContext ^. msgChannel
         , _baseContextHttpClientManager = appContext ^. httpClientManager
@@ -76,12 +78,7 @@ reqAuthHeaderWithoutPerms dswConfig perm =
         }
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token =
-        createToken
-          user
-          now
-          (dswConfig ^. jwtConfig ^. secret)
-          (dswConfig ^. jwtConfig ^. version)
-          (dswConfig ^. jwtConfig ^. expiration)
+        createToken user now (dswConfig ^. jwt ^. secret) (dswConfig ^. jwt ^. version) (dswConfig ^. jwt ^. expiration)
   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqCtHeader :: Header
@@ -91,6 +88,8 @@ resCtHeaderPlain :: Header
 resCtHeaderPlain = ("Content-Type", "application/json; charset=utf-8")
 
 resCtHeader = "Content-Type" <:> "application/json; charset=utf-8"
+
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript; charset=utf-8"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =
@@ -184,13 +183,13 @@ createNoPermissionTest dswConfig reqMethod reqUrl otherHeaders reqBody missingPe
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNotFoundTest reqMethod reqUrl reqHeaders reqBody =
+createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator =
   it "HTTP 404 NOT FOUND - entity doesn't exist" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError "Entity does not exist"
+    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody

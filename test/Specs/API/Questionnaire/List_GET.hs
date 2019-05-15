@@ -56,7 +56,11 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = [toSimpleDTO questionnaire1 germanyPackage]
+    let expDto =
+          [ toSimpleDTO questionnaire1 germanyPackage
+          , toSimpleDTO questionnaire2 germanyPackage
+          , toSimpleDTO questionnaire3 germanyPackage
+          ]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
@@ -66,14 +70,15 @@ test_200 appContext = do
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-  it "HTTP 200 OK (User which isn't admin and owner)" $
+  it "HTTP 200 OK (Non-Admin)" $
      -- GIVEN: Prepare request
    do
     let reqHeaders = [reqNonAdminAuthHeader]
     -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = [] :: [QuestionnaireDTO]
+    let expDto =
+          [toSimpleDTO questionnaire2 germanyPackage, toSimpleDTO questionnaire3 germanyPackage] :: [QuestionnaireDTO]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -93,4 +98,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] "" "QTN_PERM"

@@ -3,7 +3,6 @@ module Service.Migration.KnowledgeModel.MigratorService where
 import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe
-import qualified Data.Text as T
 
 import Api.Resource.Migration.MigratorConflictDTO
 import Api.Resource.Migration.MigratorStateCreateDTO
@@ -77,8 +76,8 @@ createMigration branchUuid mscDto = do
         Left error -> return . Left $ error
     validateIfTargetPackageVersionIsHigher branch msTargetPackageId callback =
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
-        let targetPackageVersion = T.unpack $ splitPackageId msTargetPackageId !! 2
-        let lastAppliedParentPackageVersion = T.unpack $ splitPackageId lastAppliedParentPackageId !! 2
+        let targetPackageVersion = getVersionFromPackageId msTargetPackageId
+        let lastAppliedParentPackageVersion = getVersionFromPackageId lastAppliedParentPackageId
         if isNothing $ validateIsVersionHigher targetPackageVersion lastAppliedParentPackageVersion
           then callback
           else return . Left . MigratorError $ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER

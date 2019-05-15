@@ -9,7 +9,8 @@ import Model.Event.EventPath
 -- --------------------------------------
 _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entity from database"
 
-_ERROR_DATABASE__ENTITY_NOT_FOUND = "Entity does not exist"
+_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
+  "Entity does not exist (" ++ entityName ++ ": " ++ identificator ++ ")"
 
 -- --------------------------------------
 -- VALIDATION
@@ -19,7 +20,7 @@ _ERROR_VALIDATION__INVALID_KM_ID_FORMAT = "KmId is not in the valid format"
 
 _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT = "Version is not in the valid format"
 
-_ERROR_VALIDATION__INVALID_GROUPID_FORMAT = "OrganizationId is not in the valid format"
+_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT = "OrganizationId is not in the valid format"
 
 _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
   "This Data Management Plan format (" ++ format ++ ") is not currently supported"
@@ -35,6 +36,9 @@ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already 
 _ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
 
 _ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
+
+-- Security
+_ERROR_VALIDATION__FORBIDDEN action = "Forbidden to perform '" ++ action ++ "'"
 
 -- --------------------------------------
 -- INTEGRATION
@@ -58,6 +62,9 @@ _ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME =
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
+-- Common
+_ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName = "'" ++ featureName ++ "' feature is disabled"
+
 -- Document
 _ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
 

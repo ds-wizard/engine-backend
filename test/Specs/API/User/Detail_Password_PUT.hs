@@ -105,4 +105,10 @@ test_403_no_hash appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password" reqHeaders reqBody
+  createNotFoundTest
+    reqMethod
+    "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password"
+    reqHeaders
+    reqBody
+    "user"
+    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

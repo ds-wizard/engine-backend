@@ -23,6 +23,7 @@ import qualified
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Questionnaire.Questionnaire
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageMapper
 
@@ -64,7 +65,7 @@ test_200 appContext =
           { _questionnaireDetailDTOUuid = fromJust . U.fromString $ "a870d5c7-0e0a-4110-95ae-932cb65c6a6a"
           , _questionnaireDetailDTOName = "Public Questionnaire"
           , _questionnaireDetailDTOLevel = 2
-          , _questionnaireDetailDTOPrivate = False
+          , _questionnaireDetailDTOAccessibility = PublicQuestionnaire
           , _questionnaireDetailDTOPackage = packageWithEventsToDTO publicPackage
           , _questionnaireDetailDTOSelectedTagUuids = []
           , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO km1WithQ4

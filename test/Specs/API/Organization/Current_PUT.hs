@@ -85,7 +85,7 @@ test_400_invalid_organizationId appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("organizationId", _ERROR_VALIDATION__INVALID_GROUPID_FORMAT)
+    let expDto = createErrorWithFieldError ("organizationId", _ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT)
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -104,4 +104,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "ORG_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] "" "ORG_PERM"

@@ -7,7 +7,6 @@ import Data.Time
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Report.ReportDTO
 import Database.DAO.Metric.MetricDAO
-import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
 import Model.Context.AppContext
 import Model.Context.AppContextHelpers
@@ -21,11 +20,11 @@ import Service.Report.ReportMapper
 
 getReportByQuestionnaireUuid :: String -> AppContextM (Either AppError ReportDTO)
 getReportByQuestionnaireUuid qtnUuid =
-  heFindQuestionnaireById qtnUuid $ \qtn ->
-    heCompileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids) $ \knowledgeModel ->
+  heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
+    heCompileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids) $ \knowledgeModel ->
       heFindMetrics $ \metrics -> do
-        let filledKM = createFilledKM knowledgeModel (qtn ^. replies)
-        report <- generateReport (qtn ^. level) metrics filledKM
+        let filledKM = createFilledKM knowledgeModel (fromReplyDTO <$> qtnDto ^. replies)
+        report <- generateReport (qtnDto ^. level) metrics filledKM
         return . Right . toReportDTO $ report
 
 getPreviewOfReportByQuestionnaireUuid :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError ReportDTO)

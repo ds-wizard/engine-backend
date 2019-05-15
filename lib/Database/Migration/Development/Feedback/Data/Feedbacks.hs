@@ -5,6 +5,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import Api.Resource.Feedback.FeedbackCreateDTO
 import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
@@ -21,6 +22,15 @@ feedback1 =
   , _feedbackContent = "I'm not very satisfied with a description of this question"
   , _feedbackCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _feedbackUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+  }
+
+feedback1Create :: FeedbackCreateDTO
+feedback1Create =
+  FeedbackCreateDTO
+  { _feedbackCreateDTOQuestionUuid = feedback1 ^. questionUuid
+  , _feedbackCreateDTOPackageId = feedback1 ^. packageId
+  , _feedbackCreateDTOTitle = feedback1 ^. title
+  , _feedbackCreateDTOContent = feedback1 ^. content
   }
 
 feedback2 :: Feedback

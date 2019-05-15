@@ -15,6 +15,8 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.User.User
 
+entityName = "user"
+
 userCollection = "users"
 
 findUsers :: AppContextM (Either AppError [User])
@@ -24,16 +26,16 @@ findUsers = do
   return . deserializeEntities $ usersS
 
 findUserById :: String -> AppContextM (Either AppError User)
-findUserById userUuid = do
-  let action = findOne $ select ["uuid" =: userUuid] userCollection
+findUserById uuid = do
+  let action = findOne $ select ["uuid" =: uuid] userCollection
   maybeUserS <- runDB action
-  return . deserializeMaybeEntity $ maybeUserS
+  return . deserializeMaybeEntity entityName uuid $ maybeUserS
 
 findUserByEmail :: Email -> AppContextM (Either AppError User)
-findUserByEmail userEmail = do
-  let action = findOne $ select ["email" =: userEmail] userCollection
+findUserByEmail email = do
+  let action = findOne $ select ["email" =: email] userCollection
   maybeUserS <- runDB action
-  return . deserializeMaybeEntity $ maybeUserS
+  return . deserializeMaybeEntity entityName email $ maybeUserS
 
 insertUser :: User -> AppContextM Value
 insertUser user = do

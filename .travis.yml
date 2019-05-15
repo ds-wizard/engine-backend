@@ -35,10 +35,10 @@ install:
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v1.9.3/stack-1.9.3-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
   # 2. Init Application Config
-  - cp config/app-config.cfg.example config/app-config.cfg
-  - cp config/app-config-test.cfg.example config/app-config-test.cfg
-  - cp config/integration-config.cfg.example config/integration-config.cfg
-  - cp config/integration-config-test.cfg.example config/integration-config-test.cfg
+  - cp config/application.yml.example config/application.yml
+  - cp config/application-test.yml.example config/application-test.yml
+  - cp config/integration.yml.example config/integration.yml
+  - cp config/integration-test.yml.example config/integration-test.yml
 
 before_script:
   # 1. Log to public Docker Hub

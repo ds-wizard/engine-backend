@@ -26,7 +26,6 @@ import Control.Lens ((&), (.~), (^.))
 import Data.List
 import Data.Maybe
 import Data.Text (Text)
-import qualified Data.Text as T
 import Data.UUID as U
 
 import Api.Resource.Package.PackageDTO
@@ -151,9 +150,9 @@ getNewerPackages currentPkgId =
           filter (\pkg -> isNothing $ validateIsVersionHigher (pkg ^. version) pkgVersion) packages
     return . Right . sortPackagesByVersion $ packagesWithHigherVersion
   where
-    pkgOrganizationId = T.unpack $ splitPackageId currentPkgId !! 0
-    pkgKmId = T.unpack $ splitPackageId currentPkgId !! 1
-    pkgVersion = T.unpack $ splitPackageId currentPkgId !! 2
+    pkgOrganizationId = getOrganizationIdFromPackageId currentPkgId
+    pkgKmId = getKmIdFromPackageId currentPkgId
+    pkgVersion = getVersionFromPackageId currentPkgId
 
 createPackage :: String -> String -> String -> String -> String -> Maybe String -> [Event] -> AppContextM PackageDTO
 createPackage name organizationId kmId version description maybeParentPackageId events = do

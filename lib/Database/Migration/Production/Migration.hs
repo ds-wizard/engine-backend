@@ -4,6 +4,9 @@ module Database.Migration.Production.Migration
 
 import Control.Lens ((^.))
 import qualified
+       Database.Migration.Production.Migration_00017_questionnaire_accessibility.Migration
+       as M_0017
+import qualified
        Database.Migration.Production.Migration_0001_organization_init.Migration
        as M_0001
 import qualified
@@ -77,4 +80,5 @@ migrationDefinitions =
   , M_0014.definition
   , M_0015.definition
   , M_0016.definition
+  , M_0017.definition
   ]

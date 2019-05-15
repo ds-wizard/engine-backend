@@ -118,9 +118,16 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/packages/dsw.global:non-existing-package:1.0.0" reqHeaders reqBody
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/packages/dsw.global:non-existing-package:1.0.0"
+    reqHeaders
+    reqBody
+    "package"
+    "dsw.global:non-existing-package:1.0.0"

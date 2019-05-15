@@ -71,10 +71,9 @@ computeMetricSummary :: FilledChapter -> Metric -> MetricSummary
 computeMetricSummary fChapter m =
   MetricSummary {_metricSummaryMetricUuid = m ^. uuid, _metricSummaryMeasure = msMeasure}
   where
-    msMeasure :: Double
+    msMeasure :: Maybe Double
     msMeasure =
-      weightAverage .
-      mapToTouple .
+      computeWeightAverage .
       filterAccordingCurrentMetric .
       mapToMetricMeasures . catMaybes . map mapOptionQuestion . getAllFilledQuestionsForChapter $
       fChapter
@@ -86,8 +85,9 @@ computeMetricSummary fChapter m =
       concat . (map _filledAnswerMetricMeasures) . catMaybes . (map _filledOptionsQuestionAnswerOption)
     filterAccordingCurrentMetric :: [MetricMeasure] -> [MetricMeasure]
     filterAccordingCurrentMetric = filter (\mm -> mm ^. metricUuid == m ^. uuid)
-    mapToTouple :: [MetricMeasure] -> [(Double, Double)]
-    mapToTouple = map (\mm -> (mm ^. measure, mm ^. weight))
+    computeWeightAverage :: [MetricMeasure] -> Maybe Double
+    computeWeightAverage [] = Nothing
+    computeWeightAverage mms = Just . weightAverage . fmap (\mm -> (mm ^. measure, mm ^. weight)) $ mms
 
 computeMetrics :: [Metric] -> FilledChapter -> [MetricSummary]
 computeMetrics metrics fChapter = (computeMetricSummary fChapter) <$> metrics

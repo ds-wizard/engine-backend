@@ -1,7 +1,7 @@
 .stack-work
 src.iml
-config/app-config.cfg
-config/app-config-test.cfg
-config/integration-config.cfg
-config/integration-config-test.cfg
+config/application.yml
+config/application-test.yml
+config/integration.yml
+config/integration-test.yml
 dsw-server.cabal

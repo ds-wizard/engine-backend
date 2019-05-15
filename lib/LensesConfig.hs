@@ -9,6 +9,7 @@ import Api.Resource.Branch.BranchCreateDTO
 import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Branch.BranchWithEventsDTO
+import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventPathDTO
@@ -52,6 +53,7 @@ import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
 import Model.Branch.Branch
 import Model.Config.AppConfig
+import Model.Config.BuildInfoConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
 import Model.DataManagementPlan.DataManagementPlan
@@ -96,11 +98,13 @@ makeFields ''Branch
 makeFields ''BranchWithEvents
 
 -- Model / Config
-makeFields ''AppConfigEnvironment
+makeFields ''AppConfig
+
+makeFields ''AppConfigGeneral
 
 makeFields ''AppConfigClient
 
-makeFields ''AppConfigWeb
+makeFields ''AppConfigClientDashboard
 
 makeFields ''AppConfigDatabase
 
@@ -116,11 +120,7 @@ makeFields ''AppConfigAnalytics
 
 makeFields ''AppConfigFeedback
 
-makeFields ''AppConfigIntegration
-
-makeFields ''BuildInfo
-
-makeFields ''AppConfig
+makeFields ''BuildInfoConfig
 
 -- Model / Context
 makeFields ''BaseContext
@@ -129,6 +129,8 @@ makeFields ''AppContext
 
 -- Model / DataManagementPlan
 makeFields ''DataManagementPlan
+
+makeFields ''DataManagementPlanConfig
 
 makeFields ''DataManagementPlanTemplateContext
 
@@ -339,8 +341,17 @@ makeFields ''BranchDetailDTO
 
 makeFields ''BranchWithEventsDTO
 
+-- Api / Resource / Config
+makeFields ''ClientConfigDTO
+
+makeFields ''ClientConfigClientDTO
+
+makeFields ''ClientConfigClientDashboardDTO
+
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO
+
+makeFields ''DataManagementPlanConfigDTO
 
 -- Api / Resource / Event
 makeFields ''EventPathItemDTO

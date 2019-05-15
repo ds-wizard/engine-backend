@@ -31,6 +31,7 @@ data DataManagementPlanFormat
 
 data DataManagementPlan = DataManagementPlan
   { _dataManagementPlanUuid :: U.UUID
+  , _dataManagementPlanConfig :: DataManagementPlanConfig
   , _dataManagementPlanQuestionnaireUuid :: String
   , _dataManagementPlanLevel :: Int
   , _dataManagementPlanFilledKnowledgeModel :: FilledKnowledgeModel
@@ -47,6 +48,7 @@ data DataManagementPlan = DataManagementPlan
 instance Eq DataManagementPlan where
   a == b =
     _dataManagementPlanUuid a == _dataManagementPlanUuid b &&
+    _dataManagementPlanConfig a == _dataManagementPlanConfig b &&
     _dataManagementPlanQuestionnaireUuid a == _dataManagementPlanQuestionnaireUuid b &&
     _dataManagementPlanLevel a == _dataManagementPlanLevel b &&
     _dataManagementPlanFilledKnowledgeModel a == _dataManagementPlanFilledKnowledgeModel b &&
@@ -56,3 +58,8 @@ instance Eq DataManagementPlan where
     _dataManagementPlanPackage a == _dataManagementPlanPackage b &&
     _dataManagementPlanOrganization a == _dataManagementPlanOrganization b &&
     _dataManagementPlanCreatedBy a == _dataManagementPlanCreatedBy b
+
+data DataManagementPlanConfig = DataManagementPlanConfig
+  { _dataManagementPlanConfigLevelsEnabled :: Bool
+  , _dataManagementPlanConfigItemTitleEnabled :: Bool
+  } deriving (Show, Eq, Generic)

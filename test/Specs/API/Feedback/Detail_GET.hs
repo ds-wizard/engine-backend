@@ -49,7 +49,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    dswConfig <- runInContextIO (asks _appContextConfig) appContext
+    dswConfig <- runInContextIO (asks _appContextAppConfig) appContext
     let iUrl = createIssueUrl dswConfig feedback1
     let expDto = toDTO feedback1 iUrl
     let expBody = encode expDto
@@ -65,4 +65,5 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/feedbacks/nonExistingShortUuid" reqHeaders reqBody
+test_404 appContext =
+  createNotFoundTest reqMethod "/feedbacks/nonExistingShortUuid" reqHeaders reqBody "feedback" "nonExistingShortUuid"

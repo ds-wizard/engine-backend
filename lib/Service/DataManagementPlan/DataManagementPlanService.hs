@@ -1,7 +1,7 @@
 module Service.DataManagementPlan.DataManagementPlanService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Lazy as BS
 import Data.Time
@@ -44,15 +44,25 @@ createDataManagementPlan qtnUuid =
           heFindOrganization $ \organization ->
             heCompileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids) $ \knowledgeModel ->
               heCreatedBy (qtn ^. ownerUuid) $ \mCreatedBy -> do
+                dswConfig <- asks _appContextAppConfig
                 dmpUuid <- liftIO generateUuid
                 let filledKM = createFilledKM knowledgeModel (qtn ^. replies)
                 now <- liftIO getCurrentTime
-                dmpReport <- generateReport (qtn ^. level) dmpMetrics filledKM
+                let dmpLevel =
+                      if dswConfig ^. general . levelsEnabled
+                        then qtn ^. level
+                        else 9999
+                dmpReport <- generateReport dmpLevel dmpMetrics filledKM
                 let dmp =
                       DataManagementPlan
                       { _dataManagementPlanUuid = dmpUuid
+                      , _dataManagementPlanConfig =
+                          DataManagementPlanConfig
+                          { _dataManagementPlanConfigLevelsEnabled = dswConfig ^. general . levelsEnabled
+                          , _dataManagementPlanConfigItemTitleEnabled = dswConfig ^. general . itemTitleEnabled
+                          }
                       , _dataManagementPlanQuestionnaireUuid = qtnUuid
-                      , _dataManagementPlanLevel = qtn ^. level
+                      , _dataManagementPlanLevel = dmpLevel
                       , _dataManagementPlanFilledKnowledgeModel = filledKM
                       , _dataManagementPlanMetrics = dmpMetrics
                       , _dataManagementPlanLevels = dmpLevels
@@ -63,7 +73,7 @@ createDataManagementPlan qtnUuid =
                       , _dataManagementPlanCreatedAt = now
                       , _dataManagementPlanUpdatedAt = now
                       }
-                return . Right . toDTO $ dmp
+                return . Right . toDataManagementPlanDTO $ dmp
   where
     heCreatedBy mOwnerUuid callback =
       case mOwnerUuid of

@@ -76,9 +76,16 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. config) reqMethod reqUrl [] "" "KM_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] "" "KM_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = createNotFoundTest reqMethod "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0" reqHeaders reqBody
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/branches/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    reqHeaders
+    reqBody
+    "branch"
+    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

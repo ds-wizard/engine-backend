@@ -51,9 +51,9 @@ authMiddleware dswConfig unauthorizedEndpoints app request sendResponse =
     else authorize
   where
     jwtSecret :: String
-    jwtSecret = dswConfig ^. jwtConfig ^. secret
+    jwtSecret = dswConfig ^. jwt ^. secret
     jwtVersion :: Integer
-    jwtVersion = dswConfig ^. jwtConfig ^. version
+    jwtVersion = dswConfig ^. jwt ^. version
     authorize :: IO ResponseReceived
     authorize =
       case getTokenFromHeader request of

@@ -6,11 +6,17 @@ import GHC.Generics
 
 import Model.Questionnaire.QuestionnaireReply
 
+data QuestionnaireAccessibility
+  = PublicQuestionnaire
+  | PrivateQuestionnaire
+  | PublicReadOnlyQuestionnaire
+  deriving (Show, Eq, Generic)
+
 data Questionnaire = Questionnaire
   { _questionnaireUuid :: U.UUID
   , _questionnaireName :: String
   , _questionnaireLevel :: Int
-  , _questionnairePrivate :: Bool
+  , _questionnaireAccessibility :: QuestionnaireAccessibility
   , _questionnairePackageId :: String
   , _questionnaireSelectedTagUuids :: [U.UUID]
   , _questionnaireOwnerUuid :: Maybe U.UUID
@@ -24,7 +30,7 @@ instance Eq Questionnaire where
     _questionnaireUuid a == _questionnaireUuid b &&
     _questionnaireName a == _questionnaireName b &&
     _questionnaireLevel a == _questionnaireLevel b &&
-    _questionnairePrivate a == _questionnairePrivate b &&
+    _questionnaireAccessibility a == _questionnaireAccessibility b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
     _questionnaireOwnerUuid a == _questionnaireOwnerUuid b && _questionnaireReplies a == _questionnaireReplies b

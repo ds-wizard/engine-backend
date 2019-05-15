@@ -1,43 +1,33 @@
 module Service.Config.IntegrationConfigService
-  ( loadConfig
+  ( getIntegrationConfig
   -- Helpers
-  , heLoadConfig
+  , heGetIntegrationConfig
   ) where
 
 import Control.Lens ((^.))
-import Control.Monad.Except (join, runExceptT)
 import Control.Monad.Reader (asks, liftIO)
-import Data.ConfigFile
-       (CPError, emptyCP, has_section, items, readfile)
 import Data.Map.Strict as M
+import Data.Maybe (fromMaybe)
+import Data.Yaml (decodeFileEither)
 
 import LensesConfig hiding (items)
-import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
 
-loadConfig :: String -> AppContextM (Either AppError (M.Map String String))
-loadConfig sectionName = do
-  appConfig <- asks _appContextConfig
-  loadIntConfig appConfig sectionName >>= either (return . Left . GeneralServerError . show) (return . Right)
-
--- --------------------------------
--- PRIVATE
--- --------------------------------
-loadIntConfig :: AppConfig -> String -> AppContextM (Either CPError (M.Map String String))
-loadIntConfig appConfig sectionName =
-  liftIO . runExceptT $ do
-    let integrationConfigFileName = appConfig ^. integration . config
-    configParser <- join . liftIO $ readfile emptyCP ("config/" ++ integrationConfigFileName)
-    if has_section configParser sectionName
-      then items configParser sectionName >>= return . M.fromList
-      else return M.empty
+getIntegrationConfig :: String -> AppContextM (Either AppError (M.Map String String))
+getIntegrationConfig sectionName = do
+  appConfig <- asks _appContextAppConfig
+  let integrationConfigFileName = appConfig ^. general . integrationConfig
+  eIntConfig <- liftIO $ decodeFileEither ("config/" ++ integrationConfigFileName)
+  case eIntConfig of
+    Right intConfig -> return . Right . fromMaybe M.empty . M.lookup sectionName $ intConfig
+    Left error -> return . Left . GeneralServerError . show $ error
 
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heLoadConfig sectionName callback = do
-  eitherResult <- loadConfig sectionName
+heGetIntegrationConfig sectionName callback = do
+  eitherResult <- getIntegrationConfig sectionName
   case eitherResult of
     Right result -> callback result
     Left error -> return . Left $ error

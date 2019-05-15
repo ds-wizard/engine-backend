@@ -26,6 +26,7 @@ import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.ActionKey.ActionKeyService
+import Service.Common
 import Service.Mail.Mailer
 import Service.User.UserMapper
 import Service.User.UserValidation
@@ -42,19 +43,20 @@ createUserByAdmin reqDto = do
 createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> AppContextM (Either AppError UserDTO)
 createUserByAdminWithUuid reqDto uUuid = do
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  dswConfig <- asks _appContextConfig
+  dswConfig <- asks _appContextAppConfig
   let uRole = fromMaybe (dswConfig ^. roles . defaultRole) (reqDto ^. role)
   let uPermissions = getPermissionForRole dswConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
 registrateUser :: UserCreateDTO -> AppContextM (Either AppError UserDTO)
-registrateUser reqDto = do
-  uUuid <- liftIO generateUuid
-  uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  dswConfig <- asks _appContextConfig
-  let uRole = dswConfig ^. roles . defaultRole
-  let uPermissions = getPermissionForRole dswConfig uRole
-  createUser reqDto uUuid uPasswordHash uRole uPermissions
+registrateUser reqDto =
+  heCheckIfRegistrationIsEnabled $ do
+    uUuid <- liftIO generateUuid
+    uPasswordHash <- generatePasswordHash (reqDto ^. password)
+    dswConfig <- asks _appContextAppConfig
+    let uRole = dswConfig ^. roles . defaultRole
+    let uPermissions = getPermissionForRole dswConfig uRole
+    createUser reqDto uUuid uPasswordHash uRole uPermissions
 
 createUser :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> AppContextM (Either AppError UserDTO)
 createUser reqDto uUuid uPasswordHash uRole uPermissions =
@@ -72,7 +74,7 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
           return . Right $ toDTO user
   where
     sendAnalyticsEmailIfEnabled user = do
-      dswConfig <- asks _appContextConfig
+      dswConfig <- asks _appContextAppConfig
       if dswConfig ^. analytics . enabled
         then sendRegistrationCreatedAnalyticsMail (toDTO user)
         else return $ Right ()
@@ -84,7 +86,7 @@ modifyUser :: String -> UserChangeDTO -> AppContextM (Either AppError UserDTO)
 modifyUser userUuid reqDto =
   heFindUserById userUuid $ \user ->
     heValidateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email) $ do
-      dswConfig <- asks _appContextConfig
+      dswConfig <- asks _appContextAppConfig
       updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions dswConfig reqDto user)
       updateUserById updatedUser
       return . Right . toDTO $ updatedUser
@@ -144,14 +146,6 @@ resetUserPassword reqDto =
         Left errMessage -> return . Just $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT
         _ -> return Nothing
 
-createForgottenUserPassword :: String -> UserPasswordDTO -> AppContextM (Maybe AppError)
-createForgottenUserPassword userUuid userPasswordDto =
-  hmFindUserById userUuid $ \user -> do
-    passwordHash <- generatePasswordHash (userPasswordDto ^. password)
-    now <- liftIO getCurrentTime
-    updateUserPasswordById userUuid passwordHash now
-    return Nothing
-
 changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM (Maybe AppError)
 changeUserState userUuid maybeHash userStateDto =
   validateHash maybeHash $ \akHash ->
@@ -190,3 +184,5 @@ updateUserTimestamp :: User -> AppContextM User
 updateUserTimestamp user = do
   now <- liftIO getCurrentTime
   return $ user & updatedAt .~ Just now
+
+heCheckIfRegistrationIsEnabled = heCheckIfFeatureIsEnabled "Registration" (general . registrationEnabled)

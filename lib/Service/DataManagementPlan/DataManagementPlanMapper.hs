@@ -13,10 +13,11 @@ import Service.Package.PackageMapper
 import Service.Report.ReportMapper
 import qualified Service.User.UserMapper as UM
 
-toDTO :: DataManagementPlan -> DataManagementPlanDTO
-toDTO dmp =
+toDataManagementPlanDTO :: DataManagementPlan -> DataManagementPlanDTO
+toDataManagementPlanDTO dmp =
   DataManagementPlanDTO
   { _dataManagementPlanDTOUuid = dmp ^. uuid
+  , _dataManagementPlanDTOConfig = toDataManagementPlanConfigDTO $ dmp ^. config
   , _dataManagementPlanDTOQuestionnaireUuid = dmp ^. questionnaireUuid
   , _dataManagementPlanDTOLevel = dmp ^. level
   , _dataManagementPlanDTOFilledKnowledgeModel = toFilledKMDTO $ dmp ^. filledKnowledgeModel
@@ -28,4 +29,11 @@ toDTO dmp =
   , _dataManagementPlanDTOCreatedBy = UM.toDTO <$> dmp ^. createdBy
   , _dataManagementPlanDTOCreatedAt = dmp ^. createdAt
   , _dataManagementPlanDTOUpdatedAt = dmp ^. updatedAt
+  }
+
+toDataManagementPlanConfigDTO :: DataManagementPlanConfig -> DataManagementPlanConfigDTO
+toDataManagementPlanConfigDTO config =
+  DataManagementPlanConfigDTO
+  { _dataManagementPlanConfigDTOLevelsEnabled = config ^. levelsEnabled
+  , _dataManagementPlanConfigDTOItemTitleEnabled = config ^. itemTitleEnabled
   }

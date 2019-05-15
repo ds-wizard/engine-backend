@@ -143,8 +143,7 @@ heMigrateKnowledgeModelBundle encodedKmb callback = do
 -- --------------------------------
 -- LOGGER
 -- --------------------------------
-logMigrationStarted collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): started"
+logMigrationStarted collection = logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): started"
 
 logMigrationMigrationApplied collection =
   logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): migration applied"

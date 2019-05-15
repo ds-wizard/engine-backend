@@ -21,6 +21,7 @@ instance ToJSON AppError where
     object ["status" .= 400, "error" .= "Bad Request", "type" .= "MigratorError", "message" .= errorMessage]
   toJSON (HttpClientError errorMessage) =
     object ["status" .= 500, "error" .= "Internal Server Error", "type" .= "HttpClientError", "message" .= errorMessage]
+  toJSON (ForbiddenError errorMessage) = object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
   toJSON (GeneralServerError errorMessage) =
     object
       ["status" .= 500, "error" .= "Internal Server Error", "type" .= "GeneralServerError", "message" .= errorMessage]
@@ -46,6 +47,9 @@ instance FromJSON AppError where
       "HttpClientError" -> do
         message <- o .: "message"
         return $ HttpClientError message
+      "ForbiddenError" -> do
+        message <- o .: "message"
+        return $ ForbiddenError message
       "GeneralServerError" -> do
         message <- o .: "message"
         return $ GeneralServerError message
