@@ -70,8 +70,6 @@ getSimplePackagesFiltered queryParams = do
       find
         (\pkg -> equalSameKmId (newPackage ^. kmId) pkg && equalSameOrganizationId (newPackage ^. organizationId) pkg)
         packageDtos
-    hasSameKmId :: Package -> Package -> Bool
-    hasSameKmId pkg1 pkg2 = pkg1 ^. kmId == pkg2 ^. kmId
     equalSameKmId :: String -> PackageSimpleDTO -> Bool
     equalSameKmId pkgKmId pkg = pkgKmId == pkg ^. kmId
     equalSameOrganizationId :: String -> PackageSimpleDTO -> Bool
