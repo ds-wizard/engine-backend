@@ -1,4 +1,4 @@
-module Database.Migration.Production.Migration_00017_questionnaire_accessibility.Migration
+module Database.Migration.Production.Migration_0017_questionnaire_accessibility.Migration
   ( definition
   ) where
 

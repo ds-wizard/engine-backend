@@ -4,9 +4,6 @@ module Database.Migration.Production.Migration
 
 import Control.Lens ((^.))
 import qualified
-       Database.Migration.Production.Migration_00017_questionnaire_accessibility.Migration
-       as M_0017
-import qualified
        Database.Migration.Production.Migration_0001_organization_init.Migration
        as M_0001
 import qualified
@@ -54,6 +51,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0016_metamodel_version.Migration
        as M_0016
+import qualified
+       Database.Migration.Production.Migration_0017_questionnaire_accessibility.Migration
+       as M_0017
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
