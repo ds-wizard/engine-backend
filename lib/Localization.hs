@@ -74,9 +74,6 @@ _ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT = "Unprocessable DMP format"
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
   "Server was unable to decode a file ('" ++ filename ++ "') to a JSON object"
 
--- Knowledge Model Bundle
-_ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE = "Knowledge Model Bundle doesn't contain main package"
-
 -- Mail
 _ERROR_SERVICE_MAIL__AUTH_ERROR_MESSAGE = "Could not authenticate with SMTP server"
 
@@ -111,6 +108,9 @@ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY 
   "Package '" ++ pkgId ++ "' can't be deleted. It's used by some " ++ target ++ "."
 
 _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn't correspond with Package Coordinates"
+
+-- Package Bundle
+_ERROR_SERVICE_PB__MAIN_PKG_ABSENCE = "Package Bundle doesn't contain main package"
 
 -- Public Questionnaire
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"

@@ -12,16 +12,16 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
-import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleJM ()
+import Api.Resource.PackageBundle.PackageBundleJM ()
 import Database.DAO.Package.PackageDAO
-import Database.Migration.Development.KnowledgeModelBundle.Data.KnowledgeModelBundles
 import Database.Migration.Development.Package.Data.Packages
+import Database.Migration.Development.PackageBundle.Data.PackageBundles
 import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.ErrorHelpers
-import Service.KnowledgeModelBundle.KnowledgeModelBundleMapper
 import Service.Package.PackageMapper
+import Service.PackageBundle.PackageBundleMapper
 
 import Specs.API.Common
 import Specs.API.Package.Common
@@ -53,7 +53,7 @@ reqUrl = "/packages"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = toDTO netherlandsPackageV2KMBudle
+reqDto = toDTO netherlandsPackageV2Budle
 
 reqBody = encode reqDto
 
@@ -116,7 +116,7 @@ test_201_req_no_db_all appContext = do
   it "HTTP 201 CREATED - In request: no parent packages, in DB: all parent packages" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackageV2])
+    let reqDto = toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
@@ -146,7 +146,7 @@ test_201_req_one_db_rest appContext = do
   it "HTTP 201 CREATED - In request: one parent package, in DB: rest of parent packages" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackage, netherlandsPackageV2])
+    let reqDto = toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackage, netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
@@ -202,7 +202,7 @@ test_400_missing_parent_package appContext = do
   it "HTTP 400 BAD REQUEST when main package already exists" $
      -- GIVEN: Prepare request
    do
-    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [netherlandsPackageV2])
+    let reqDto = toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
@@ -229,7 +229,7 @@ test_400_bad_package_coordinates appContext =
      -- GIVEN: Prepare request
    do
     let editedElixirNlPackageDto = netherlandsPackage & kmId .~ ((netherlandsPackage ^. kmId) ++ "-2")
-    let reqDto = toDTO (netherlandsPackageV2KMBudle & packages .~ [editedElixirNlPackageDto, netherlandsPackageV2])
+    let reqDto = toDTO (netherlandsPackageV2Budle & packages .~ [editedElixirNlPackageDto, netherlandsPackageV2])
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400

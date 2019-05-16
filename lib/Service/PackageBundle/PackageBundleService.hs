@@ -1,7 +1,7 @@
-module Service.KnowledgeModelBundle.KnowledgeModelBundleService
-  ( exportKnowledgeModelBundle
-  , importKnowledgeModelBundleFromFile
-  , importKnowledgeModelBundle
+module Service.PackageBundle.PackageBundleService
+  ( exportPackageBundle
+  , importPackageBundleFromFile
+  , importPackageBundle
   ) where
 
 import Control.Lens ((^.))
@@ -9,10 +9,10 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List (find)
 
-import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
-import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleJM ()
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.PackageBundle.PackageBundleDTO
+import Api.Resource.PackageBundle.PackageBundleJM ()
 import Constant.KnowledgeModel
 import Database.DAO.Package.PackageDAO
 import LensesConfig
@@ -20,53 +20,53 @@ import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
-import Model.KnowledgeModelBundle.KnowledgeModelBundle
+import Model.PackageBundle.PackageBundle
 import qualified Service.Event.EventMapper as EM
 import Service.KnowledgeModel.KnowledgeModelValidation
-import Service.KnowledgeModelBundle.KnowledgeModelBundleMapper
 import Service.Migration.Metamodel.MigratorService
 import Service.Package.PackageService
 import Service.Package.PackageValidation
+import Service.PackageBundle.PackageBundleMapper
 import Util.List (foldMaybesInContext)
 
-exportKnowledgeModelBundle :: String -> AppContextM (Either AppError KnowledgeModelBundleDTO)
-exportKnowledgeModelBundle kmbId =
-  heGetSeriesOfPackages kmbId $ \packages -> do
+exportPackageBundle :: String -> AppContextM (Either AppError PackageBundleDTO)
+exportPackageBundle pbId =
+  heGetSeriesOfPackages pbId $ \packages -> do
     let newestPackage = last packages
-    let kmb =
-          KnowledgeModelBundle
-          { _knowledgeModelBundleBundleId = newestPackage ^. pId
-          , _knowledgeModelBundleName = newestPackage ^. name
-          , _knowledgeModelBundleOrganizationId = newestPackage ^. organizationId
-          , _knowledgeModelBundleKmId = newestPackage ^. kmId
-          , _knowledgeModelBundleVersion = newestPackage ^. version
-          , _knowledgeModelBundleMetamodelVersion = kmMetamodelVersion
-          , _knowledgeModelBundlePackages = packages
+    let pb =
+          PackageBundle
+          { _packageBundleBundleId = newestPackage ^. pId
+          , _packageBundleName = newestPackage ^. name
+          , _packageBundleOrganizationId = newestPackage ^. organizationId
+          , _packageBundleKmId = newestPackage ^. kmId
+          , _packageBundleVersion = newestPackage ^. version
+          , _packageBundleMetamodelVersion = kmMetamodelVersion
+          , _packageBundlePackages = packages
           }
-    return . Right . toDTO $ kmb
+    return . Right . toDTO $ pb
 
-importKnowledgeModelBundleFromFile :: BS.ByteString -> AppContextM (Either AppError [PackageDTO])
-importKnowledgeModelBundleFromFile fileContent =
+importPackageBundleFromFile :: BS.ByteString -> AppContextM (Either AppError [PackageDTO])
+importPackageBundleFromFile fileContent =
   let eitherDeserializedFile = eitherDecode fileContent
   in case eitherDeserializedFile of
        Right deserializedFile ->
-         heMigrateKnowledgeModelBundle deserializedFile $ \encodedKmb ->
-           case eitherDecode . encode $ encodedKmb of
-             Right kmb -> importKnowledgeModelBundle kmb
+         heMigratePackageBundle deserializedFile $ \encodedPb ->
+           case eitherDecode . encode $ encodedPb of
+             Right pb -> importPackageBundle pb
              Left error -> return . Left . createErrorWithErrorMessage $ error
        Left error -> return . Left . createErrorWithErrorMessage $ error
 
-importKnowledgeModelBundle :: KnowledgeModelBundleDTO -> AppContextM (Either AppError [PackageDTO])
-importKnowledgeModelBundle kmb =
-  heExtractMainPackage kmb $ \pkg ->
+importPackageBundle :: PackageBundleDTO -> AppContextM (Either AppError [PackageDTO])
+importPackageBundle pb =
+  heExtractMainPackage pb $ \pkg ->
     heValidatePackageIdUniqueness (pkg ^. pId) $ do
-      let importedPackages = importPackage <$> (kmb ^. packages)
+      let importedPackages = importPackage <$> (pb ^. packages)
       foldMaybesInContext importedPackages
   where
-    heExtractMainPackage kmb callback =
-      case find (\p -> p ^. pId == kmb ^. bundleId) (kmb ^. packages) of
+    heExtractMainPackage pb callback =
+      case find (\p -> p ^. pId == pb ^. bundleId) (pb ^. packages) of
         Just pkg -> callback pkg
-        Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE
+        Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_PB__MAIN_PKG_ABSENCE
 
 -- --------------------------------
 -- PRIVATE

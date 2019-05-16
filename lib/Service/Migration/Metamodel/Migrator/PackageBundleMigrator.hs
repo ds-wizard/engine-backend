@@ -1,4 +1,4 @@
-module Service.Migration.Metamodel.Migrator.KnowledgeModelBundleMigrator
+module Service.Migration.Metamodel.Migrator.PackageBundleMigrator
   ( migrate
   ) where
 

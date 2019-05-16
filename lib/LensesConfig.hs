@@ -19,7 +19,6 @@ import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Migration.MigratorConflictDTO
 import Api.Resource.Migration.MigratorStateCreateDTO
@@ -30,6 +29,7 @@ import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.PackageBundle.PackageBundleDTO
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
@@ -73,11 +73,11 @@ import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelBundle.KnowledgeModelBundle
 import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
+import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
@@ -275,9 +275,6 @@ makeFields ''Tag
 
 makeFields ''Integration
 
--- Model / KnowledgeModelBundle
-makeFields ''KnowledgeModelBundle
-
 -- Model / Level
 makeFields ''Level
 
@@ -297,6 +294,9 @@ makeFields ''Organization
 makeFields ''Package
 
 makeFields ''PackageWithEvents
+
+-- Model / PackageBundle
+makeFields ''PackageBundle
 
 -- Model / Questionnaire
 makeFields ''Questionnaire
@@ -494,9 +494,6 @@ makeFields ''TagDTO
 
 makeFields ''IntegrationDTO
 
--- Api / Resource / KnowledgeModelBundle
-makeFields ''KnowledgeModelBundleDTO
-
 -- Model / Level
 makeFields ''LevelDTO
 
@@ -514,6 +511,9 @@ makeFields ''PackageDTO
 makeFields ''PackageSimpleDTO
 
 makeFields ''PackageWithEventsDTO
+
+-- Api / Resource / PackageBundle
+makeFields ''PackageBundleDTO
 
 -- Api / Resource / Questionnaire
 makeFields ''QuestionnaireCreateDTO

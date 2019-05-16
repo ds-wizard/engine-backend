@@ -1,8 +1,8 @@
 module Service.Migration.Metamodel.MigratorService
-  ( migrateKnowledgeModelBundle
+  ( migratePackageBundle
   , migrateCompleteDatabase
   -- Helpers
-  , heMigrateKnowledgeModelBundle
+  , heMigratePackageBundle
   ) where
 
 import Data.Aeson
@@ -29,11 +29,11 @@ import qualified
        Service.Migration.Metamodel.Migrator.BranchMigrator
        as BranchMigrator
 import qualified
-       Service.Migration.Metamodel.Migrator.KnowledgeModelBundleMigrator
-       as KMBMigrator
-import qualified
        Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrator
        as KMMMigrator
+import qualified
+       Service.Migration.Metamodel.Migrator.PackageBundleMigrator
+       as PBMigrator
 import qualified
        Service.Migration.Metamodel.Migrator.PackageMigrator
        as PackageMigrator
@@ -42,8 +42,8 @@ import Util.BSONtoJSON (mapBSONDocumentToJSONObject)
 import Util.List (foldEither)
 import Util.Logger (logError, logInfo, msg)
 
-migrateKnowledgeModelBundle :: Value -> AppContextM (Either AppError Value)
-migrateKnowledgeModelBundle = return . KMBMigrator.migrate
+migratePackageBundle :: Value -> AppContextM (Either AppError Value)
+migratePackageBundle = return . PBMigrator.migrate
 
 migrateCompleteDatabase :: AppContextM ()
 migrateCompleteDatabase = do
@@ -134,8 +134,8 @@ migrateOutdatedModels collection dtoMapper migrateFn = do
 -- ---------------------------
 -- HELPERS
 -- ---------------------------
-heMigrateKnowledgeModelBundle encodedKmb callback = do
-  eitherResult <- migrateKnowledgeModelBundle encodedKmb
+heMigratePackageBundle encodedPb callback = do
+  eitherResult <- migratePackageBundle encodedPb
   case eitherResult of
     Right result -> callback result
     Left error -> return . Left $ error
