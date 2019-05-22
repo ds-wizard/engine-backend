@@ -3,7 +3,7 @@ module Api.Resource.Questionnaire.QuestionnaireDTO where
 import Data.Time
 import qualified Data.UUID as U
 
-import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
 import Model.Questionnaire.Questionnaire
 
 data QuestionnaireDTO = QuestionnaireDTO
@@ -11,7 +11,7 @@ data QuestionnaireDTO = QuestionnaireDTO
   , _questionnaireDTOName :: String
   , _questionnaireDTOLevel :: Int
   , _questionnaireDTOAccessibility :: QuestionnaireAccessibility
-  , _questionnaireDTOPackage :: PackageDTO
+  , _questionnaireDTOPackage :: PackageSimpleDTO
   , _questionnaireDTOOwnerUuid :: Maybe U.UUID
   , _questionnaireDTOCreatedAt :: UTCTime
   , _questionnaireDTOUpdatedAt :: UTCTime

@@ -1,6 +1,6 @@
 module Api.Resource.PackageBundle.PackageBundleDTO where
 
-import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.Package.PackageDTO
 
 data PackageBundleDTO = PackageBundleDTO
   { _packageBundleDTOBundleId :: String
@@ -9,5 +9,5 @@ data PackageBundleDTO = PackageBundleDTO
   , _packageBundleDTOKmId :: String
   , _packageBundleDTOVersion :: String
   , _packageBundleDTOMetamodelVersion :: Int
-  , _packageBundleDTOPackages :: [PackageWithEventsDTO]
+  , _packageBundleDTOPackages :: [PackageDTO]
   } deriving (Show, Eq)

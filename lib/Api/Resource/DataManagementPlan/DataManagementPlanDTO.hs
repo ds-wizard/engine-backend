@@ -12,8 +12,8 @@ import Api.Resource.Level.LevelDTO
 import Api.Resource.Level.LevelJS ()
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Organization.OrganizationJM ()
-import Api.Resource.Package.PackageDTO
-import Api.Resource.Package.PackageDTO ()
+import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
 import Api.Resource.User.UserDTO
@@ -27,7 +27,7 @@ data DataManagementPlanDTO = DataManagementPlanDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
   , _dataManagementPlanDTOLevels :: [LevelDTO]
   , _dataManagementPlanDTOReport :: ReportDTO
-  , _dataManagementPlanDTOPackage :: PackageDTO
+  , _dataManagementPlanDTOPackage :: PackageSimpleDTO
   , _dataManagementPlanDTOOrganization :: OrganizationDTO
   , _dataManagementPlanDTOCreatedBy :: Maybe UserDTO
   , _dataManagementPlanDTOCreatedAt :: UTCTime

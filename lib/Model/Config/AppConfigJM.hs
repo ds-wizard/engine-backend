@@ -33,6 +33,9 @@ instance FromJSON AppConfigRoles where
 instance FromJSON AppConfigMail where
   parseJSON = simpleParseJSON "_appConfigMail"
 
+instance FromJSON AppConfigRegistry where
+  parseJSON = simpleParseJSON "_appConfigRegistry"
+
 instance FromJSON AppConfigAnalytics where
   parseJSON = simpleParseJSON "_appConfigAnalytics"
 

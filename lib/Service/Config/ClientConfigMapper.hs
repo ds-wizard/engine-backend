@@ -15,16 +15,22 @@ toClientConfigDTO appConfig =
   , _clientConfigDTOPublicQuestionnaireEnabled = appConfig ^. general . publicQuestionnaireEnabled
   , _clientConfigDTOLevelsEnabled = appConfig ^. general . levelsEnabled
   , _clientConfigDTOItemTitleEnabled = appConfig ^. general . itemTitleEnabled
+  , _clientConfigDTORegistry = toClientConfigRegistryDTO (appConfig ^. registry)
   }
+
+toClientConfigRegistryDTO :: AppConfigRegistry -> ClientConfigRegistryDTO
+toClientConfigRegistryDTO registryConfig =
+  ClientConfigRegistryDTO
+  {_clientConfigRegistryEnabled = registryConfig ^. enabled, _clientConfigRegistryUrl = registryConfig ^. clientUrl}
 
 toClientConfigClientDTO :: AppConfigClient -> ClientConfigClientDTO
 toClientConfigClientDTO clientConfig =
   ClientConfigClientDTO
-  { _clientConfigAppTitle = clientConfig ^. appTitle
-  , _clientConfigAppTitleShort = clientConfig ^. appTitleShort
-  , _clientConfigWelcomeWarning = clientConfig ^. welcomeInfo
-  , _clientConfigWelcomeInfo = clientConfig ^. welcomeWarning
-  , _clientConfigDashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
+  { _clientConfigClientAppTitle = clientConfig ^. appTitle
+  , _clientConfigClientAppTitleShort = clientConfig ^. appTitleShort
+  , _clientConfigClientWelcomeWarning = clientConfig ^. welcomeInfo
+  , _clientConfigClientWelcomeInfo = clientConfig ^. welcomeWarning
+  , _clientConfigClientDashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
   }
 
 toClientConfigClientDashboardDTO :: AppConfigClientDashboard -> ClientConfigClientDashboardDTO

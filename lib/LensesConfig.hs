@@ -27,8 +27,8 @@ import Api.Resource.Migration.MigratorStateDetailDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageDetailDTO
 import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Package.PackageWithEventsDTO
 import Api.Resource.PackageBundle.PackageBundleDTO
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -48,6 +48,9 @@ import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Api.Resource.Version.VersionDTO
+import Integration.Resource.Organization.OrganizationSimpleIDTO
+import Integration.Resource.Package.PackageDetailIDTO
+import Integration.Resource.Package.PackageSimpleIDTO
 import Integration.Resource.Typehint.TypehintIDTO
 import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
@@ -77,6 +80,7 @@ import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
+import Model.Package.PackageWithEvents
 import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
@@ -115,6 +119,8 @@ makeFields ''AppConfigJwt
 makeFields ''AppConfigRoles
 
 makeFields ''AppConfigMail
+
+makeFields ''AppConfigRegistry
 
 makeFields ''AppConfigAnalytics
 
@@ -344,6 +350,8 @@ makeFields ''BranchWithEventsDTO
 -- Api / Resource / Config
 makeFields ''ClientConfigDTO
 
+makeFields ''ClientConfigRegistryDTO
+
 makeFields ''ClientConfigClientDTO
 
 makeFields ''ClientConfigClientDashboardDTO
@@ -510,7 +518,7 @@ makeFields ''PackageDTO
 
 makeFields ''PackageSimpleDTO
 
-makeFields ''PackageWithEventsDTO
+makeFields ''PackageDetailDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
@@ -573,5 +581,13 @@ makeFields ''VersionDTO
 -- -------------------------------------
 -- Integration
 -- -------------------------------------
+-- Integration / Resource / Organization
+makeFields ''OrganizationSimpleIDTO
+
+-- Integration / Resource / Package
+makeFields ''PackageDetailIDTO
+
+makeFields ''PackageSimpleIDTO
+
 -- Integration / Resource / Typehint
 makeFields ''TypehintIDTO

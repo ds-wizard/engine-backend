@@ -12,6 +12,7 @@ data AppConfig = AppConfig
   , _appConfigJwt :: AppConfigJwt
   , _appConfigRoles :: AppConfigRoles
   , _appConfigMail :: AppConfigMail
+  , _appConfigRegistry :: AppConfigRegistry
   , _appConfigAnalytics :: AppConfigAnalytics
   , _appConfigFeedback :: AppConfigFeedback
   } deriving (Generic, Show)
@@ -81,6 +82,13 @@ data AppConfigMail = AppConfigMail
   , _appConfigMailSsl :: Maybe Bool
   , _appConfigMailUsername :: Maybe String
   , _appConfigMailPassword :: Maybe String
+  } deriving (Generic, Show)
+
+data AppConfigRegistry = AppConfigRegistry
+  { _appConfigRegistryEnabled :: Bool
+  , _appConfigRegistryUrl :: String
+  , _appConfigRegistryToken :: String
+  , _appConfigRegistryClientUrl :: Maybe String
   } deriving (Generic, Show)
 
 data AppConfigAnalytics = AppConfigAnalytics

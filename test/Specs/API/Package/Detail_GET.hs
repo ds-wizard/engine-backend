@@ -53,7 +53,12 @@ test_200 appContext = do
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO globalPackage
+    let expDto =
+          toDetailDTO
+            (toPackage globalPackage)
+            [globalRemotePackage]
+            ["0.0.1", "1.0.0"]
+            ("https://registry-test.ds-wizard.org/knowledge-models/" ++ (globalPackage ^. pId))
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

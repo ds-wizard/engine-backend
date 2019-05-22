@@ -55,6 +55,12 @@ mail:
   username:
   password:
 
+registry:
+  enabled: true
+  url: https://api.registry.ds-wizard.org
+  token:
+  clientUrl: https://registry.ds-wizard.org
+
 analytics:
   enabled: false
   email:

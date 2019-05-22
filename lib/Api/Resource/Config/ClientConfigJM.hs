@@ -13,6 +13,7 @@ instance FromJSON ClientConfigDTO where
     _clientConfigDTOPublicQuestionnaireEnabled <- o .: "publicQuestionnaireEnabled"
     _clientConfigDTOLevelsEnabled <- o .: "levelsEnabled"
     _clientConfigDTOItemTitleEnabled <- o .: "itemTitleEnabled"
+    _clientConfigDTORegistry <- o .: "registry"
     return ClientConfigDTO {..}
   parseJSON _ = mzero
 
@@ -25,26 +26,38 @@ instance ToJSON ClientConfigDTO where
       , "publicQuestionnaireEnabled" .= _clientConfigDTOPublicQuestionnaireEnabled
       , "levelsEnabled" .= _clientConfigDTOLevelsEnabled
       , "itemTitleEnabled" .= _clientConfigDTOItemTitleEnabled
+      , "registry" .= _clientConfigDTORegistry
       ]
+
+instance FromJSON ClientConfigRegistryDTO where
+  parseJSON (Object o) = do
+    _clientConfigRegistryEnabled <- o .: "enabled"
+    _clientConfigRegistryUrl <- o .: "url"
+    return ClientConfigRegistryDTO {..}
+  parseJSON _ = mzero
+
+instance ToJSON ClientConfigRegistryDTO where
+  toJSON ClientConfigRegistryDTO {..} =
+    object ["enabled" .= _clientConfigRegistryEnabled, "url" .= _clientConfigRegistryUrl]
 
 instance FromJSON ClientConfigClientDTO where
   parseJSON (Object o) = do
-    _clientConfigAppTitle <- o .: "appTitle"
-    _clientConfigAppTitleShort <- o .: "appTitleShort"
-    _clientConfigWelcomeWarning <- o .: "welcomeWarning"
-    _clientConfigWelcomeInfo <- o .: "welcomeInfo"
-    _clientConfigDashboard <- o .: "dashboard"
+    _clientConfigClientAppTitle <- o .: "appTitle"
+    _clientConfigClientAppTitleShort <- o .: "appTitleShort"
+    _clientConfigClientWelcomeWarning <- o .: "welcomeWarning"
+    _clientConfigClientWelcomeInfo <- o .: "welcomeInfo"
+    _clientConfigClientDashboard <- o .: "dashboard"
     return ClientConfigClientDTO {..}
   parseJSON _ = mzero
 
 instance ToJSON ClientConfigClientDTO where
   toJSON ClientConfigClientDTO {..} =
     object
-      [ "appTitle" .= _clientConfigAppTitle
-      , "appTitleShort" .= _clientConfigAppTitleShort
-      , "welcomeWarning" .= _clientConfigWelcomeWarning
-      , "welcomeInfo" .= _clientConfigWelcomeInfo
-      , "dashboard" .= _clientConfigDashboard
+      [ "appTitle" .= _clientConfigClientAppTitle
+      , "appTitleShort" .= _clientConfigClientAppTitleShort
+      , "welcomeWarning" .= _clientConfigClientWelcomeWarning
+      , "welcomeInfo" .= _clientConfigClientWelcomeInfo
+      , "dashboard" .= _clientConfigClientDashboard
       ]
 
 instance FromJSON ClientConfigClientDashboardDTO where

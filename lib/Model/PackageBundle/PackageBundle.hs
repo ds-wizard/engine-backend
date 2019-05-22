@@ -2,7 +2,7 @@ module Model.PackageBundle.PackageBundle where
 
 import GHC.Generics
 
-import Model.Package.Package
+import Model.Package.PackageWithEvents
 
 data PackageBundle = PackageBundle
   { _packageBundleBundleId :: String

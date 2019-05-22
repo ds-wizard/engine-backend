@@ -3,8 +3,10 @@ module Service.Package.PackageUtils where
 import Control.Lens ((^.))
 import Data.List
 
+import Integration.Resource.Package.PackageSimpleIDTO
 import LensesConfig
 import Model.Package.Package
+import Model.Package.PackageState
 import Util.String (splitOn)
 
 compareVersionNeg :: String -> String -> Ordering
@@ -40,14 +42,27 @@ sortPackagesByVersion = sortBy (\p1 p2 -> compareVersionNeg (p1 ^. version) (p2 
 splitPackageId :: String -> [String]
 splitPackageId packageId = splitOn ":" packageId
 
-getOrganizationIdFromPackageId :: String -> String
-getOrganizationIdFromPackageId pkgId = splitPackageId pkgId !! 0
+getOrgIdFromPkgId :: String -> String
+getOrgIdFromPkgId pkgId = splitPackageId pkgId !! 0
 
-getKmIdFromPackageId :: String -> String
-getKmIdFromPackageId pkgId = splitPackageId pkgId !! 1
+getKmIdFromPkgId :: String -> String
+getKmIdFromPkgId pkgId = splitPackageId pkgId !! 1
 
-getVersionFromPackageId :: String -> String
-getVersionFromPackageId pkgId = splitPackageId pkgId !! 2
+getVersionFromPkgId :: String -> String
+getVersionFromPkgId pkgId = splitPackageId pkgId !! 2
 
 splitVersion :: String -> [String]
 splitVersion pkgVersion = splitOn "." pkgVersion
+
+selectPackageByOrgIdAndKmId pkg =
+  find (\p -> (p ^. organizationId) == (pkg ^. organizationId) && (p ^. kmId) == (pkg ^. kmId))
+
+computePackageState :: [PackageSimpleIDTO] -> Package -> PackageState
+computePackageState pkgsFromRegistry pkg =
+  case selectPackageByOrgIdAndKmId pkg pkgsFromRegistry of
+    Just pkgFromRegistry ->
+      case compareVersion (pkgFromRegistry ^. version) (pkg ^. version) of
+        LT -> UnpublishedPackageState
+        EQ -> UpToDatePackageState
+        GT -> OutdatedPackageState
+    Nothing -> UnknownPackageState

@@ -52,7 +52,9 @@ test_200 appContext = do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
-          packageWithEventsToDTO <$> [globalPackageEmpty, globalPackage, netherlandsPackage, netherlandsPackageV2]
+          [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage]
+          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage]
+          ]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

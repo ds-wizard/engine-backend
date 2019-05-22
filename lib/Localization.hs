@@ -44,9 +44,13 @@ _ERROR_VALIDATION__FORBIDDEN action = "Forbidden to perform '" ++ action ++ "'"
 -- INTEGRATION
 -- --------------------------------------
 -- Common
-_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR = "Integration Service returned an error"
+_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR statusCode =
+  "Integration Service returned an error (statusCode: " ++ (show statusCode) ++ ")"
 
 -- Response Mappers (Response deserialization problem = RDF)
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY a =
+  "Problem with a response deserialization (unable to deserialize a response body: " ++ a ++ ")"
+
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY =
   "Problem with a response deserialization (unable to get a response body)"
 

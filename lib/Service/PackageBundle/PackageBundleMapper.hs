@@ -5,7 +5,7 @@ import Control.Lens ((^.))
 import Api.Resource.PackageBundle.PackageBundleDTO
 import LensesConfig
 import Model.PackageBundle.PackageBundle
-import Service.Package.PackageMapper
+import qualified Service.Package.PackageMapper as PM
 
 toDTO :: PackageBundle -> PackageBundleDTO
 toDTO pb =
@@ -16,5 +16,5 @@ toDTO pb =
   , _packageBundleDTOKmId = pb ^. kmId
   , _packageBundleDTOVersion = pb ^. version
   , _packageBundleDTOMetamodelVersion = pb ^. metamodelVersion
-  , _packageBundleDTOPackages = packageWithEventsToDTOWithEvents <$> pb ^. packages
+  , _packageBundleDTOPackages = PM.toDTO <$> pb ^. packages
   }

@@ -13,6 +13,7 @@ import Database.MongoDB
 
 import Api.Resource.Branch.BranchWithEventsJM ()
 import Api.Resource.Migration.MigratorStateDetailJM ()
+import Api.Resource.Package.PackageJM ()
 import Constant.Component
 import Constant.KnowledgeModel
 import Database.BSON.Branch.BranchWithEvents ()
@@ -56,7 +57,7 @@ migrateCompleteDatabase = do
 -- PRIVATE
 -- ---------------------------
 migratePackages :: AppContextM ()
-migratePackages = migrateOutdatedModels "packages" PackageMapper.fromDTOWithEvents PackageMigrator.migrate
+migratePackages = migrateOutdatedModels "packages" PackageMapper.fromDTO PackageMigrator.migrate
 
 migrateBranches :: AppContextM ()
 migrateBranches = migrateOutdatedModels "branches" BranchMapper.fromWithEventsDTO BranchMigrator.migrate
@@ -93,7 +94,7 @@ migratePublicPackages = do
   where
     convertToBSON object = do
       logMigrationStartConvertingToBson "publicPackages"
-      let documents = toBSON . PackageMapper.fromDTOWithEvents $ object
+      let documents = toBSON . PackageMapper.fromDTO $ object
       logMigrationConvertedToBson "publicPackages"
       return documents
 

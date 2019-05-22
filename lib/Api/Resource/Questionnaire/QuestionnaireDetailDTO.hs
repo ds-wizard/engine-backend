@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 import Model.Questionnaire.Questionnaire
@@ -14,7 +14,7 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , _questionnaireDetailDTOName :: String
   , _questionnaireDetailDTOLevel :: Int
   , _questionnaireDetailDTOAccessibility :: QuestionnaireAccessibility
-  , _questionnaireDetailDTOPackage :: PackageDTO
+  , _questionnaireDetailDTOPackage :: PackageSimpleDTO
   , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
   , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
   , _questionnaireDetailDTOReplies :: [ReplyDTO]

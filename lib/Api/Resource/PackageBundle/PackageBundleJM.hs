@@ -3,7 +3,7 @@ module Api.Resource.PackageBundle.PackageBundleJM where
 import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Package.PackageWithEventsDTO ()
+import Api.Resource.Package.PackageJM ()
 import Api.Resource.PackageBundle.PackageBundleDTO
 
 instance FromJSON PackageBundleDTO where

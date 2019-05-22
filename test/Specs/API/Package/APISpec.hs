@@ -6,10 +6,10 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Specs.API.Common
 import Specs.API.Package.Detail_DELETE
 import Specs.API.Package.Detail_GET
+import Specs.API.Package.Detail_Pull_POST
 import Specs.API.Package.List_DELETE
 import Specs.API.Package.List_GET
 import Specs.API.Package.List_POST
-import Specs.API.Package.List_Unique_GET
 
 packageAPI appContext =
   with (startWebApp appContext) $
@@ -17,6 +17,6 @@ packageAPI appContext =
     list_get appContext
     list_post appContext
     list_delete appContext
-    list_unique_get appContext
     detail_get appContext
     detail_delete appContext
+    detail_pull_post appContext

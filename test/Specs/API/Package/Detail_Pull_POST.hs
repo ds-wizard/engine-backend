@@ -1,9 +1,9 @@
-module Specs.API.Package.List_Unique_GET
-  ( list_unique_get
+module Specs.API.Package.Detail_Pull_POST
+  ( detail_pull_post
   ) where
 
 import Control.Lens ((^.))
-import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -11,32 +11,32 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
+import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.Package.Data.Packages
-import qualified
-       Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
 import Model.Context.AppContext
-import Service.Package.PackageMapper
 
 import Specs.API.Common
+import Specs.API.Package.Common
 import Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /packages
+-- GET /packages/{pkgId}
 -- ------------------------------------------------------------------------
-list_unique_get :: AppContext -> SpecWith Application
-list_unique_get appContext =
-  describe "GET /packages/unique" $ do
+detail_pull_post :: AppContext -> SpecWith Application
+detail_pull_post appContext =
+  describe "POST /packages/{pkgId}/pull" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodGet
+reqMethod = methodPost
 
-reqUrl = "/packages/unique"
+reqUrl = BS.pack $ "/packages/" ++ (globalPackage ^. pId) ++ "/pull"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -49,18 +49,20 @@ test_200 appContext = do
   it "HTTP 200 OK" $
      -- GIVEN: Prepare expectation
    do
-    let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToSimpleDTO <$> [globalPackage, netherlandsPackageV2]
-    let expBody = encode expDto
+    let expStatus = 204
+    let expHeaders = resCorsHeaders
+    let expBody = ""
      -- AND: Run migrations
-    runInContextIO PKG.runMigration appContext
+    runInContextIO deletePackages appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findPackages appContext 1
+    assertExistenceOfPackageInDB appContext globalPackage
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -70,4 +72,16 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] "" "PM_READ_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod reqUrl [] "" "PM_WRITE_PERM"
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/packages/dsw.global:non-existing-package:1.0.0/pull"
+    reqHeaders
+    reqBody
+    "package"
+    "dsw.global:non-existing-package:1.0.0"

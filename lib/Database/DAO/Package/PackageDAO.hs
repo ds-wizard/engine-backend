@@ -12,6 +12,7 @@ import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
 import Model.Context.AppContext
 import Model.Package.Package
+import Model.Package.PackageWithEvents
 
 entityName = "package"
 

@@ -39,7 +39,7 @@ sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM (Either Str
 sendRegistrationConfirmationMail user hash = do
   dswConfig <- asks _appContextAppConfig
   let clientAddress = dswConfig ^. general . clientUrl
-      activationLink = clientAddress ++ "/signup-confirmation/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
+      activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = fromMaybe "" $ dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]

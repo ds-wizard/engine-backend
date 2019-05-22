@@ -1,5 +1,6 @@
 module Util.String
   ( lowerFirst
+  , replace
   , splitOn
   ) where
 
@@ -10,6 +11,9 @@ lowerFirst :: String -> String
 lowerFirst [] = []
 lowerFirst [c] = [toLower c]
 lowerFirst (s:str) = toLower s : str
+
+replace :: String -> String -> String -> String
+replace name value string = T.unpack $ T.replace (T.pack name) (T.pack value) (T.pack string)
 
 splitOn :: String -> String -> [String]
 splitOn separator string =
