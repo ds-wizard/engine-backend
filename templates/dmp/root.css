@@ -57,7 +57,8 @@ header > h1 > svg {
   margin: 0.5rem;
 }
 
-header h1::after {
+header h1::after,
+header::after {
   content: "";
   display: block;
   clear: both;
