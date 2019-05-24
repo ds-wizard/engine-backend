@@ -11,8 +11,15 @@ import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Branch.BranchWithEventsDTO
 import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Api.Resource.Event.EventDTO
+import Api.Resource.Event.AnswerEventDTO
+import Api.Resource.Event.ChapterEventDTO
 import Api.Resource.Event.EventPathDTO
+import Api.Resource.Event.ExpertEventDTO
+import Api.Resource.Event.IntegrationEventDTO
+import Api.Resource.Event.KnowledgeModelEventDTO
+import Api.Resource.Event.QuestionEventDTO
+import Api.Resource.Event.ReferenceEventDTO
+import Api.Resource.Event.TagEventDTO
 import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO

@@ -2,9 +2,17 @@ module Service.Event.EventToDTO where
 
 import Control.Lens ((^.))
 
+import Api.Resource.Event.AnswerEventDTO
+import Api.Resource.Event.ChapterEventDTO
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventFieldDTO
 import Api.Resource.Event.EventPathDTO
+import Api.Resource.Event.ExpertEventDTO
+import Api.Resource.Event.IntegrationEventDTO
+import Api.Resource.Event.KnowledgeModelEventDTO
+import Api.Resource.Event.QuestionEventDTO
+import Api.Resource.Event.ReferenceEventDTO
+import Api.Resource.Event.TagEventDTO
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent

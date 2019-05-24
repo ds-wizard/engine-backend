@@ -5,8 +5,8 @@ import Data.Aeson
 import Data.Map
 import qualified Data.UUID as U
 
-import Api.Resource.Common
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Model.KnowledgeModel.KnowledgeModel
 
 data FilledKnowledgeModelDTO = FilledKnowledgeModelDTO
@@ -181,7 +181,7 @@ instance ToJSON FilledValueQuestionDTO where
       , "tagUuids" .= _filledValueQuestionDTOTagUuids
       , "references" .= _filledValueQuestionDTOReferences
       , "experts" .= _filledValueQuestionDTOExperts
-      , "valueType" .= serializeQuestionValueType _filledValueQuestionDTOValueType
+      , "valueType" .= _filledValueQuestionDTOValueType
       , "answerValue" .= _filledValueQuestionDTOAnswerValue
       ]
 
@@ -301,10 +301,8 @@ instance FromJSON FilledValueQuestionDTO where
     _filledValueQuestionDTOExperts <- o .: "experts"
     _filledValueQuestionDTOReferences <- o .: "references"
     _filledValueQuestionDTOAnswerValue <- o .: "answerValue"
-    valueType <- o .: "valueType"
-    case deserializeQuestionValueType valueType of
-      (Just _filledValueQuestionDTOValueType) -> return FilledValueQuestionDTO {..}
-      Nothing -> fail "Unsupported question value type"
+    _filledValueQuestionDTOValueType <- o .: "valueType"
+    return FilledValueQuestionDTO {..}
   parseJSON _ = mzero
 
 instance FromJSON FilledIntegrationQuestionDTO where

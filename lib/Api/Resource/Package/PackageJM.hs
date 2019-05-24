@@ -5,7 +5,7 @@ import Data.Aeson
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Api.Resource.Event.EventDTO ()
+import Api.Resource.Event.EventJM ()
 import Api.Resource.Package.PackageDTO
 
 instance FromJSON PackageDTO where

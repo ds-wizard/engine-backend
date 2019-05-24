@@ -3,6 +3,7 @@ module Api.Resource.Typehint.TypehintRequestJM where
 import Control.Monad
 import Data.Aeson
 
+import Api.Resource.Event.EventJM ()
 import Api.Resource.Typehint.TypehintRequestDTO
 
 instance FromJSON TypehintRequestDTO where

@@ -5,7 +5,7 @@ import Data.Aeson
 
 import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Common
-import Api.Resource.Event.EventDTO ()
+import Api.Resource.Event.EventJM ()
 
 instance FromJSON BranchDetailDTO where
   parseJSON (Object o) = do

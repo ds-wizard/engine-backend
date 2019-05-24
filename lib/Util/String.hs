@@ -2,6 +2,7 @@ module Util.String
   ( lowerFirst
   , replace
   , splitOn
+  , stripSuffix
   ) where
 
 import Data.Char (toLower)
@@ -20,3 +21,6 @@ splitOn separator string =
   case T.splitOn (T.pack separator) (T.pack string) of
     [""] -> []
     xs -> T.unpack <$> xs
+
+stripSuffix :: String -> String -> Maybe String
+stripSuffix suffix string = T.unpack <$> (T.stripSuffix (T.pack suffix) (T.pack string))
