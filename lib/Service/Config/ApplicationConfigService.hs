@@ -1,7 +1,7 @@
 module Service.Config.ApplicationConfigService where
 
 import Control.Lens (Lens', (&), (.~), (^.))
-import Control.Monad (msum)
+import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
 import System.Environment (lookupEnv)
 
@@ -17,8 +17,8 @@ getApplicationConfig fileName = do
     Right config -> return config >>= applyEnvVariable "FEEDBACK_TOKEN" (feedback . token) >>= (return . Right)
     Left error -> return . Left . GeneralServerError . show $ error
   where
-    applyEnvVariable :: String -> Lens' AppConfig (Maybe String) -> AppConfig -> IO AppConfig
+    applyEnvVariable :: String -> Lens' AppConfig String -> AppConfig -> IO AppConfig
     applyEnvVariable envVariableName accessor config = do
       envVariable <- lookupEnv envVariableName
-      let newValue = msum [envVariable, config ^. accessor]
+      let newValue = fromMaybe (config ^. accessor) envVariable
       return $ config & accessor .~ newValue

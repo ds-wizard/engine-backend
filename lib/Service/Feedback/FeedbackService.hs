@@ -11,7 +11,6 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.List as L
 import Data.List.Utils as DLU
-import Data.Maybe (fromMaybe)
 import Data.Text (Text)
 import Data.Time
 import qualified Data.UUID as U
@@ -75,9 +74,9 @@ synchronizeFeedbacks =
 
 createIssueUrl :: AppConfig -> Feedback -> String
 createIssueUrl dswConfig f =
-  let fIssueUrlTemplate = fromMaybe "" $ dswConfig ^. feedback . issueUrl
-      fOwner = fromMaybe "" $ dswConfig ^. feedback . owner
-      fRepo = fromMaybe "" $ dswConfig ^. feedback . repo
+  let fIssueUrlTemplate = dswConfig ^. feedback . issueUrl
+      fOwner = dswConfig ^. feedback . owner
+      fRepo = dswConfig ^. feedback . repo
       fIssueId = show $ f ^. issueId
   in replace ":owner" fOwner . replace ":repo" fRepo . replace ":issueId" fIssueId $ fIssueUrlTemplate
 

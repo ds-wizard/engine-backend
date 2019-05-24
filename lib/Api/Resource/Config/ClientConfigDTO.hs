@@ -12,7 +12,7 @@ data ClientConfigDTO = ClientConfigDTO
 
 data ClientConfigRegistryDTO = ClientConfigRegistryDTO
   { _clientConfigRegistryEnabled :: Bool
-  , _clientConfigRegistryUrl :: Maybe String
+  , _clientConfigRegistryUrl :: String
   } deriving (Show, Eq)
 
 data ClientConfigClientDTO = ClientConfigClientDTO
@@ -24,7 +24,7 @@ data ClientConfigClientDTO = ClientConfigClientDTO
   } deriving (Show, Eq)
 
 data ClientConfigClientDashboardDTO = ClientConfigClientDashboardDTO
-  { _clientConfigClientDashboardAdmin :: Maybe [String]
-  , _clientConfigClientDashboardDataSteward :: Maybe [String]
-  , _clientConfigClientDashboardResearcher :: Maybe [String]
+  { _clientConfigClientDashboardAdmin :: [String]
+  , _clientConfigClientDashboardDataSteward :: [String]
+  , _clientConfigClientDashboardResearcher :: [String]
   } deriving (Show, Eq)

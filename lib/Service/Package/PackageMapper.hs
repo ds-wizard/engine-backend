@@ -1,7 +1,6 @@
 module Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
-import Data.Maybe (fromMaybe)
 import Data.Time
 
 import Api.Resource.Organization.OrganizationDTO
@@ -136,5 +135,5 @@ fromBranchAndVersion branch versionDto organization version events now =
 buildPackageId :: String -> String -> String -> String
 buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
 
-buildPackageUrl :: Maybe String -> String -> String
-buildPackageUrl registryUrl pkgId = (fromMaybe "" registryUrl) ++ "/knowledge-models/" ++ pkgId
+buildPackageUrl :: String -> String -> String
+buildPackageUrl clientRegistryUrl pkgId = clientRegistryUrl ++ "/knowledge-models/" ++ pkgId

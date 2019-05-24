@@ -40,7 +40,7 @@ sendRegistrationConfirmationMail user hash = do
   dswConfig <- asks _appContextAppConfig
   let clientAddress = dswConfig ^. general . clientUrl
       activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = fromMaybe "" $ dswConfig ^. mail . name
+      mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
       context = makeMailContext mailName clientAddress user additionals
@@ -51,8 +51,8 @@ sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM (Either String ()
 sendRegistrationCreatedAnalyticsMail user = do
   dswConfig <- asks _appContextAppConfig
   let clientAddress = dswConfig ^. general . clientUrl
-      analyticsAddress = fromMaybe "" $ dswConfig ^. analytics . email
-      mailName = fromMaybe "" $ dswConfig ^. mail . name
+      analyticsAddress = dswConfig ^. analytics . email
+      mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New user"
       context = makeMailContext mailName clientAddress user []
       to = [analyticsAddress]
@@ -63,7 +63,7 @@ sendResetPasswordMail user hash = do
   dswConfig <- asks _appContextAppConfig
   let clientAddress = dswConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = fromMaybe "" $ dswConfig ^. mail . name
+      mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset Password"
       additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
       context = makeMailContext mailName clientAddress user additionals
@@ -86,7 +86,7 @@ composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Eith
 composeMail to subject mailName context = do
   dswConfig <- asks _appContextAppConfig
   let mailConfig = dswConfig ^. mail
-      addrFrom = MIME.Address (T.pack <$> mailConfig ^. name) (T.pack . fromMaybe "" $ mailConfig ^. email)
+      addrFrom = MIME.Address (Just . T.pack $ mailConfig ^. name) (T.pack $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
       emptyMail = MIME.Mail addrFrom addrsTo [] [] [("Subject", TL.toStrict subject)] []
       root = _MAIL_TEMPLATE_ROOT </> mailName
@@ -180,11 +180,9 @@ makeMailContext mailName clientAddress user others =
   ] ++
   others
 
-makeConnection :: Integral i => Bool -> String -> Maybe i -> ((SMTP.SMTPConnection -> IO a) -> IO a)
-makeConnection False host Nothing = SMTP.doSMTP host
-makeConnection False host (Just port) = SMTP.doSMTPPort host (fromIntegral port)
-makeConnection True host Nothing = SMTPSSL.doSMTPSSL host
-makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settings
+makeConnection :: Integral i => Bool -> String -> i -> ((SMTP.SMTPConnection -> IO a) -> IO a)
+makeConnection False host port = SMTP.doSMTPPort host (fromIntegral port)
+makeConnection True host port = SMTPSSL.doSMTPSSLWithSettings host settings
   where
     settings = SMTPSSL.defaultSettingsSMTPSSL {SMTPSSL.sslPort = fromIntegral port}
 
@@ -193,12 +191,12 @@ sendEmail [] mailMessage = return $ Left _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOON
 sendEmail to mailMessage = do
   dswConfig <- asks _appContextAppConfig
   let mailConfig = dswConfig ^. mail
-      from = fromMaybe "" $ mailConfig ^. email
-      mailHost = fromMaybe "" $ mailConfig ^. host
+      from = mailConfig ^. email
+      mailHost = mailConfig ^. host
       mailPort = mailConfig ^. port
-      mailSSL = fromMaybe False $ mailConfig ^. ssl
-      mailUsername = fromMaybe "" $ mailConfig ^. username
-      mailPassword = fromMaybe "" $ mailConfig ^. password
+      mailSSL = mailConfig ^. ssl
+      mailUsername = mailConfig ^. username
+      mailPassword = mailConfig ^. password
       callback connection = do
         authSuccess <- SMTP.authenticate Auth.LOGIN mailUsername mailPassword connection
         renderedMail <- MIME.renderMail' mailMessage
