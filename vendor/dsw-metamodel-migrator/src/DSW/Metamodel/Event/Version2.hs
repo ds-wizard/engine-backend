@@ -14,7 +14,6 @@ import GHC.Generics
 -- * Api.Resource.Event.EventPathDTO
 -- * Api.Resource.KnowledgeModel.KnowledgeModelDTO
 -- * Model.KnowledgeModel.KnowledgeModel
-
 -- EventDTO
 data EventDTO
   = AddKnowledgeModelEventDTO' AddKnowledgeModelEventDTO
