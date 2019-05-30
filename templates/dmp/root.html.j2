@@ -166,7 +166,7 @@
 {% macro renderChapter(chapter) -%}
   <section class="chapter" id="{{chapter.uuid}}">
     <h2 class="title">{{chapter.humanIdentifier}}. {{chapter.title}}</h2>
-    <p class="text-light">{{chapter.text}}</p>
+    <p class="text-light">{{chapter.text|markdown}}</p>
     {{renderReport(chapter)}}
     {{renderQuestions(questions)}}
   </section>
@@ -195,7 +195,7 @@
       <strong class="human-identifier">{{question.humanIdentifier}}</strong>
       {{question.title}}
     </h4>
-    <p class="text text-light">{{question.text}}</p>
+    <p class="text text-light">{{question.text|markdown}}</p>
     <div class="extra-data">
       {{renderTags(question.tagUuids)}}
       {{renderReferences(question.references)}}
@@ -348,7 +348,7 @@
       <span>{{answerOption.humanIdentifier}}. {{answerOption.label}}</span>
     </p>
     {% if question.answerOption.advice %}
-      <p class="text-muted"><i>{{answerOption.advice}}</i></p>
+      <p class="text-muted"><i>{{answerOption.advice|markdown}}</i></p>
     {% endif %}
     <div class="followups">
       {% for followUp in answerOption.followUps %}
