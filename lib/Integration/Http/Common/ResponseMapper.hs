@@ -3,6 +3,7 @@ module Integration.Http.Common.ResponseMapper
   , deserializeResponseBody
   , extractResponseBody
   , extractNestedField
+  , extractNestedStringField
   , extractStringField
   , convertToArray
   ) where
@@ -38,10 +39,20 @@ extractNestedField [] response = Right response
 extractNestedField (k:ks) response =
   case response ^? key (T.pack k) of
     Just field -> extractNestedField ks field
-    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS
+    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS (k : ks)
 
-extractStringField :: String -> Value -> Maybe String
-extractStringField fieldName record = T.unpack <$> (record ^? key (T.pack fieldName) . _String)
+extractNestedStringField :: [String] -> Value -> Either AppError String
+extractNestedStringField (k:[]) response = extractStringField k response
+extractNestedStringField (k:ks) response =
+  case response ^? key (T.pack k) of
+    Just field -> extractNestedStringField ks field
+    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS (k : ks)
+
+extractStringField :: String -> Value -> Either AppError String
+extractStringField fieldName record =
+  case T.unpack <$> (record ^? key (T.pack fieldName) . _String) of
+    Just val -> Right val
+    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName
 
 convertToArray :: Value -> Either AppError [Value]
 convertToArray response =

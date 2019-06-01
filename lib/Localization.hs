@@ -54,14 +54,13 @@ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY a =
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY =
   "Problem with a response deserialization (unable to get a response body)"
 
-_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS =
-  "Problem with a response deserialization (unable to extract nested field)"
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS fieldNames =
+  "Problem with a response deserialization (unable to extract nested field '" ++ show fieldNames ++ "')"
+
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName =
+  "Problem with a response deserialization (unable to extract string field: '" ++ fieldName ++ "')"
 
 _ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response deserialization (field is not an array)"
-
--- Typehint
-_ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME =
-  "Problem with a response deserialization (unable to map 'id' and 'name')"
 
 -- --------------------------------------
 -- SERVICE
