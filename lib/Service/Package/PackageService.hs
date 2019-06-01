@@ -44,13 +44,15 @@ import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 import Service.Package.PackageUtils
 import Service.Package.PackageValidation
+import Service.Statistics.StatisticsService
 
 getSimplePackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageSimpleDTO])
 getSimplePackagesFiltered queryParams = do
   dswConfig <- asks _appContextAppConfig
   heFindPackagesFiltered queryParams $ \pkgs ->
-    heRetrievePackages (dswConfig ^. registry) $ \pkgsFromRegistry ->
-      return . Right . toSimpleDTOs pkgsFromRegistry . chooseTheNewest . groupPkgs $ pkgs
+    heGetInstanceStatistics $ \iStat ->
+      heRetrievePackages (dswConfig ^. registry) iStat $ \pkgRs ->
+        return . Right . toSimpleDTOs pkgRs . chooseTheNewest . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
@@ -64,8 +66,9 @@ getPackageById pkgId = do
   dswConfig <- asks _appContextAppConfig
   heFindPackageById pkgId $ \pkg ->
     heGetPackageVersions pkg $ \versions ->
-      heRetrievePackages (dswConfig ^. registry) $ \pkgRs ->
-        return . Right $ toDetailDTO pkg pkgRs versions (buildPackageUrl (dswConfig ^. registry . clientUrl) pkgId)
+      heGetInstanceStatistics $ \iStat ->
+        heRetrievePackages (dswConfig ^. registry) iStat $ \pkgRs ->
+          return . Right $ toDetailDTO pkg pkgRs versions (buildPackageUrl (dswConfig ^. registry . clientUrl) pkgId)
 
 getSeriesOfPackages :: String -> AppContextM (Either AppError [PackageWithEvents])
 getSeriesOfPackages pkgId =

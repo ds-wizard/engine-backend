@@ -92,6 +92,7 @@ import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
+import Model.Statistics.InstanceStatistics
 import Model.User.User
 
 -- -------------------------------------
@@ -330,6 +331,9 @@ makeFields ''MetricSummary
 makeFields ''ChapterReport
 
 makeFields ''Report
+
+-- Model / Statistic
+makeFields ''InstanceStatistics
 
 -- Model / User
 makeFields ''User

@@ -5,8 +5,8 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Time
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        modify, rest, save, select)
+       ((=:), count, delete, deleteOne, fetch, find, findOne, insert,
+        merge, modify, rest, save, select)
 
 import Database.BSON.User.User ()
 import Database.DAO.Common
@@ -36,6 +36,12 @@ findUserByEmail email = do
   let action = findOne $ select ["email" =: email] userCollection
   maybeUserS <- runDB action
   return . deserializeMaybeEntity entityName email $ maybeUserS
+
+countUsers :: AppContextM (Either AppError Int)
+countUsers = do
+  let action = count $ select [] userCollection
+  count <- runDB action
+  return . Right $ count
 
 insertUser :: User -> AppContextM Value
 insertUser user = do
@@ -99,3 +105,10 @@ hmFindUserByEmail userEmail callback = do
   case eitherUser of
     Right user -> callback user
     Left error -> return . Just $ error
+
+-- -----------------------------------------------------
+heCountUsers callback = do
+  eitherResult <- countUsers
+  case eitherResult of
+    Right result -> callback result
+    Left error -> return . Left $ error

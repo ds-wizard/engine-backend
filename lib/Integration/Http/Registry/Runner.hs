@@ -18,11 +18,12 @@ import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
+import Model.Statistics.InstanceStatistics
 
-retrievePackages :: AppConfigRegistry -> AppContextM (Either AppError [PackageSimpleIDTO])
-retrievePackages registryConfig =
+retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM (Either AppError [PackageSimpleIDTO])
+retrievePackages registryConfig iStat =
   if registryConfig ^. enabled
-    then runRequest (toRetrievePackagesRequest registryConfig) toRetrievePackagesResponse
+    then runRequest (toRetrievePackagesRequest registryConfig iStat) toRetrievePackagesResponse
     else return . Right $ []
 
 retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM (Either AppError BSL.ByteString)
@@ -34,8 +35,8 @@ retrievePackageBundleById registryConfig pkgId =
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heRetrievePackages registryConfig callback = do
-  eitherResult <- retrievePackages registryConfig
+heRetrievePackages registryConfig iStat callback = do
+  eitherResult <- retrievePackages registryConfig iStat
   case eitherResult of
     Right result -> callback result
     Left error -> return . Left $ error

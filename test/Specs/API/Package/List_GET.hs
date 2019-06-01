@@ -14,6 +14,9 @@ import Api.Resource.Error.ErrorDTO ()
 import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
+import qualified
+       Database.Migration.Development.Questionnaire.QuestionnaireMigration
+       as QTN
 import LensesConfig
 import Model.Context.AppContext
 import Service.Package.PackageMapper
@@ -54,10 +57,12 @@ test_200 appContext = do
     let expDto =
           [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage]
           , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage]
+          , toSimpleDTO' (toPackage germanyPackage) []
           ]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
+    runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
