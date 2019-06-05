@@ -115,6 +115,8 @@ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn'
 -- Package Bundle
 _ERROR_SERVICE_PB__MAIN_PKG_ABSENCE = "Package Bundle doesn't contain main package"
 
+_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId = "Desired knowledge model '" ++ pkgId ++ "' wasn't found in Registry"
+
 -- Public Questionnaire
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
 

@@ -3,6 +3,7 @@ module Specs.API.Package.Detail_Pull_POST
   ) where
 
 import Control.Lens ((^.))
+import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -14,7 +15,9 @@ import Api.Resource.Error.ErrorDTO ()
 import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
+import Localization
 import Model.Context.AppContext
+import Model.Error.Error
 
 import Specs.API.Common
 import Specs.API.Package.Common
@@ -78,10 +81,18 @@ test_403 appContext = createNoPermissionTest (appContext ^. appConfig) reqMethod
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
-    reqMethod
-    "/packages/dsw.global:non-existing-package:1.0.0/pull"
-    reqHeaders
-    reqBody
-    "package"
-    "dsw.global:non-existing-package:1.0.0"
+  it "HTTP 404 NOT FOUND - Package was not found in Registry" $
+      -- GIVEN: Prepare request
+   do
+    let reqUrl = "/packages/dsw.global:non-existing-package:1.0.0/pull"
+     -- AND: Prepare expectation
+    let expStatus = 404
+    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expDto = NotExistsError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "dsw.global:non-existing-package:1.0.0")
+    let expBody = encode expDto
+      -- WHEN: Call APIA
+    response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher

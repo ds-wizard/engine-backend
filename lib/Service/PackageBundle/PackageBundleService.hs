@@ -62,7 +62,7 @@ pullPackageBundleFromRegistry pkgId = do
         Left error -> return . Just $ error
     Left error ->
       if error == GeneralServerError (_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR 404)
-        then return . Just . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "package" pkgId
+        then return . Just . NotExistsError $ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId
         else return . Just $ error
 
 importPackageBundleFromFile :: BS.ByteString -> AppContextM (Either AppError [PackageSimpleDTO])
