@@ -15,6 +15,7 @@ toClientConfigDTO appConfig =
   , _clientConfigDTOPublicQuestionnaireEnabled = appConfig ^. general . publicQuestionnaireEnabled
   , _clientConfigDTOLevelsEnabled = appConfig ^. general . levelsEnabled
   , _clientConfigDTOItemTitleEnabled = appConfig ^. general . itemTitleEnabled
+  , _clientConfigDTOQuestionnaireAccessibilityEnabled = appConfig ^. general . questionnaireAccessibilityEnabled
   , _clientConfigDTORegistry = toClientConfigRegistryDTO (appConfig ^. registry)
   }
 

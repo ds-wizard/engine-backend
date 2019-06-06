@@ -36,6 +36,8 @@ instance FromJSON AppConfigGeneral where
       o .:? "publicQuestionnaireEnabled" .!= (defaultGeneral ^. publicQuestionnaireEnabled)
     _appConfigGeneralLevelsEnabled <- o .:? "levelsEnabled" .!= (defaultGeneral ^. levelsEnabled)
     _appConfigGeneralItemTitleEnabled <- o .:? "itemTitleEnabled" .!= (defaultGeneral ^. itemTitleEnabled)
+    _appConfigGeneralQuestionnaireAccessibilityEnabled <-
+      o .:? "questionnaireAccessibilityEnabled" .!= (defaultGeneral ^. questionnaireAccessibilityEnabled)
     return AppConfigGeneral {..}
   parseJSON _ = mzero
 

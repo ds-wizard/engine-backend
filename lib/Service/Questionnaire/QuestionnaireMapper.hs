@@ -109,36 +109,38 @@ fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
   IntegrationValue
   {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
 
-fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UUID -> UTCTime -> Questionnaire
-fromChangeDTO qtn dto currentUserUuid now =
+fromChangeDTO ::
+     QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> QuestionnaireAccessibility -> UUID -> UTCTime -> Questionnaire
+fromChangeDTO qtn dto accessibility currentUserUuid now =
   Questionnaire
   { _questionnaireUuid = qtn ^. uuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = dto ^. level
-  , _questionnaireAccessibility = dto ^. accessibility
+  , _questionnaireAccessibility = accessibility
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
   , _questionnaireOwnerUuid =
-      if dto ^. accessibility /= PublicQuestionnaire
+      if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtn ^. createdAt
   , _questionnaireUpdatedAt = now
   }
 
-fromQuestionnaireCreateDTO :: QuestionnaireCreateDTO -> UUID -> UUID -> UTCTime -> UTCTime -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid currentUserUuid qtnCreatedAt qtnUpdatedAt =
+fromQuestionnaireCreateDTO ::
+     QuestionnaireCreateDTO -> UUID -> QuestionnaireAccessibility -> UUID -> UTCTime -> UTCTime -> Questionnaire
+fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedAt qtnUpdatedAt =
   Questionnaire
   { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = 1
-  , _questionnaireAccessibility = dto ^. accessibility
+  , _questionnaireAccessibility = accessibility
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireSelectedTagUuids = dto ^. tagUuids
   , _questionnaireReplies = []
   , _questionnaireOwnerUuid =
-      if dto ^. accessibility /= PublicQuestionnaire
+      if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtnCreatedAt

@@ -15,6 +15,7 @@ defaultGeneral =
   , _appConfigGeneralPublicQuestionnaireEnabled = False
   , _appConfigGeneralLevelsEnabled = True
   , _appConfigGeneralItemTitleEnabled = False
+  , _appConfigGeneralQuestionnaireAccessibilityEnabled = True
   }
 
 defaultClient :: AppConfigClient
