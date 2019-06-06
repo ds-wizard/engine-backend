@@ -21,7 +21,8 @@ defaultGeneral =
 defaultClient :: AppConfigClient
 defaultClient =
   AppConfigClient
-  { _appConfigClientAppTitle = Nothing
+  { _appConfigClientPrivacyUrl = "https://ds-wizard.org/privacy.html"
+  , _appConfigClientAppTitle = Nothing
   , _appConfigClientAppTitleShort = Nothing
   , _appConfigClientWelcomeWarning = Nothing
   , _appConfigClientWelcomeInfo = Nothing

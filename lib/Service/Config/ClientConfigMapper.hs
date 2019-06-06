@@ -27,7 +27,8 @@ toClientConfigRegistryDTO registryConfig =
 toClientConfigClientDTO :: AppConfigClient -> ClientConfigClientDTO
 toClientConfigClientDTO clientConfig =
   ClientConfigClientDTO
-  { _clientConfigClientAppTitle = clientConfig ^. appTitle
+  { _clientConfigClientPrivacyUrl = clientConfig ^. privacyUrl
+  , _clientConfigClientAppTitle = clientConfig ^. appTitle
   , _clientConfigClientAppTitleShort = clientConfig ^. appTitleShort
   , _clientConfigClientWelcomeWarning = clientConfig ^. welcomeInfo
   , _clientConfigClientWelcomeInfo = clientConfig ^. welcomeWarning

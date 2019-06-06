@@ -43,6 +43,7 @@ instance FromJSON AppConfigGeneral where
 
 instance FromJSON AppConfigClient where
   parseJSON (Object o) = do
+    _appConfigClientPrivacyUrl <- o .:? "privacyUrl" .!= (defaultClient ^. privacyUrl)
     _appConfigClientAppTitle <- o .:? "appTitle" .!= (defaultClient ^. appTitle)
     _appConfigClientAppTitleShort <- o .:? "appTitleShort" .!= (defaultClient ^. appTitleShort)
     _appConfigClientWelcomeWarning <- o .:? "welcomeWarning" .!= (defaultClient ^. welcomeWarning)

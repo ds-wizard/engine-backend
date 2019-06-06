@@ -17,7 +17,8 @@ data ClientConfigRegistryDTO = ClientConfigRegistryDTO
   } deriving (Show, Eq)
 
 data ClientConfigClientDTO = ClientConfigClientDTO
-  { _clientConfigClientAppTitle :: Maybe String
+  { _clientConfigClientPrivacyUrl :: String
+  , _clientConfigClientAppTitle :: Maybe String
   , _clientConfigClientAppTitleShort :: Maybe String
   , _clientConfigClientWelcomeWarning :: Maybe String
   , _clientConfigClientWelcomeInfo :: Maybe String

@@ -31,7 +31,8 @@ data AppConfigGeneral = AppConfigGeneral
   } deriving (Generic, Show)
 
 data AppConfigClient = AppConfigClient
-  { _appConfigClientAppTitle :: Maybe String
+  { _appConfigClientPrivacyUrl :: String
+  , _appConfigClientAppTitle :: Maybe String
   , _appConfigClientAppTitleShort :: Maybe String
   , _appConfigClientWelcomeWarning :: Maybe String
   , _appConfigClientWelcomeInfo :: Maybe String

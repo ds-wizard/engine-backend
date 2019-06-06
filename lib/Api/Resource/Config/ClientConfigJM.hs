@@ -44,6 +44,7 @@ instance ToJSON ClientConfigRegistryDTO where
 
 instance FromJSON ClientConfigClientDTO where
   parseJSON (Object o) = do
+    _clientConfigClientPrivacyUrl <- o .: "privacyUrl"
     _clientConfigClientAppTitle <- o .: "appTitle"
     _clientConfigClientAppTitleShort <- o .: "appTitleShort"
     _clientConfigClientWelcomeWarning <- o .: "welcomeWarning"
@@ -55,7 +56,8 @@ instance FromJSON ClientConfigClientDTO where
 instance ToJSON ClientConfigClientDTO where
   toJSON ClientConfigClientDTO {..} =
     object
-      [ "appTitle" .= _clientConfigClientAppTitle
+      [ "privacyUrl" .= _clientConfigClientPrivacyUrl
+      , "appTitle" .= _clientConfigClientAppTitle
       , "appTitleShort" .= _clientConfigClientAppTitleShort
       , "welcomeWarning" .= _clientConfigClientWelcomeWarning
       , "welcomeInfo" .= _clientConfigClientWelcomeInfo
