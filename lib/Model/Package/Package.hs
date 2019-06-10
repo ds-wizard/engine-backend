@@ -15,3 +15,8 @@ data Package = Package
   , _packageParentPackageId :: Maybe String
   , _packageCreatedAt :: UTCTime
   } deriving (Show, Eq, Generic)
+
+instance Ord Package where
+  compare a b =
+    (compare (_packageOrganizationId a) (_packageOrganizationId b)) <> (compare (_packageKmId a) (_packageKmId b)) <>
+    (compare (_packageVersion a) (_packageVersion b))

@@ -19,7 +19,7 @@ module Service.Package.PackageService
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
-import Data.List
+import Data.List (maximumBy)
 import Data.Maybe
 import Data.Text (Text)
 import Data.Time
@@ -45,6 +45,7 @@ import Service.Package.PackageMapper
 import Service.Package.PackageUtils
 import Service.Package.PackageValidation
 import Service.Statistics.StatisticsService
+import Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(Text, Text)] -> AppContextM (Either AppError [PackageSimpleDTO])
 getSimplePackagesFiltered queryParams = do

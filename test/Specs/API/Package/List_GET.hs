@@ -56,8 +56,8 @@ test_200 appContext = do
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
           [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage]
-          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage]
           , toSimpleDTO' (toPackage germanyPackage) []
+          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage]
           ]
     let expBody = encode expDto
      -- AND: Run migrations
