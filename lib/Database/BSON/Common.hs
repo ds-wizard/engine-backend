@@ -4,6 +4,7 @@ import Control.Lens
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
+import qualified Data.Text as T
 import Data.UUID
 
 import Model.ActionKey.ActionKey
@@ -46,10 +47,10 @@ serializeActionType RegistrationActionKey = "RegistrationActionKey"
 serializeActionType ForgottenPasswordActionKey = "ForgottenPasswordActionKey"
 
 serializeQuestionValueType :: QuestionValueType -> String
-serializeQuestionValueType StringQuestionValueType = "StringValue"
-serializeQuestionValueType NumberQuestionValueType = "NumberValue"
-serializeQuestionValueType DateQuestionValueType = "DateValue"
-serializeQuestionValueType TextQuestionValueType = "TextValue"
+serializeQuestionValueType StringQuestionValueType = "StringQuestionValueType"
+serializeQuestionValueType NumberQuestionValueType = "NumberQuestionValueType"
+serializeQuestionValueType DateQuestionValueType = "DateQuestionValueType"
+serializeQuestionValueType TextQuestionValueType = "TextQuestionValueType"
 
 serializeQuestionnaireAccessibility :: QuestionnaireAccessibility -> String
 serializeQuestionnaireAccessibility PublicQuestionnaire = "PublicQuestionnaire"
@@ -130,20 +131,20 @@ deserializeQuestionValueType :: Maybe String -> Maybe QuestionValueType
 deserializeQuestionValueType mQuestionValueTypeS = do
   questionValueTypeS <- mQuestionValueTypeS
   case questionValueTypeS of
-    "StringValue" -> Just StringQuestionValueType
-    "NumberValue" -> Just NumberQuestionValueType
-    "DateValue" -> Just DateQuestionValueType
-    "TextValue" -> Just TextQuestionValueType
+    "StringQuestionValueType" -> Just StringQuestionValueType
+    "NumberQuestionValueType" -> Just NumberQuestionValueType
+    "DateQuestionValueType" -> Just DateQuestionValueType
+    "TextQuestionValueType" -> Just TextQuestionValueType
     _ -> Nothing
 
 deserializeMaybeQuestionValueType :: Maybe String -> Maybe (Maybe QuestionValueType)
 deserializeMaybeQuestionValueType mQuestionValueTypeS = do
   questionValueType <- mQuestionValueTypeS
   case questionValueType of
-    "StringValue" -> Just . Just $ StringQuestionValueType
-    "NumberValue" -> Just . Just $ NumberQuestionValueType
-    "DateValue" -> Just . Just $ DateQuestionValueType
-    "TextValue" -> Just . Just $ TextQuestionValueType
+    "StringQuestionValueType" -> Just . Just $ StringQuestionValueType
+    "NumberQuestionValueType" -> Just . Just $ NumberQuestionValueType
+    "DateQuestionValueType" -> Just . Just $ DateQuestionValueType
+    "TextQuestionValueType" -> Just . Just $ TextQuestionValueType
     _ -> Just Nothing
 
 deserializeEventFieldQuestionValueType :: Maybe String -> EventField QuestionValueType
@@ -151,10 +152,10 @@ deserializeEventFieldQuestionValueType mQuestionValueTypeS =
   case mQuestionValueTypeS of
     Just questionValueType ->
       case questionValueType of
-        "StringValue" -> ChangedValue StringQuestionValueType
-        "NumberValue" -> ChangedValue NumberQuestionValueType
-        "DateValue" -> ChangedValue DateQuestionValueType
-        "TextValue" -> ChangedValue TextQuestionValueType
+        "StringQuestionValueType" -> ChangedValue StringQuestionValueType
+        "NumberQuestionValueType" -> ChangedValue NumberQuestionValueType
+        "DateQuestionValueType" -> ChangedValue DateQuestionValueType
+        "TextQuestionValueType" -> ChangedValue TextQuestionValueType
         _ -> NothingChanged
     Nothing -> NothingChanged
 
@@ -198,9 +199,7 @@ instance FromBSON (String, String) where
     return (key, value)
 
 instance ToBSON (Map String String) where
-  toBSON m = ["map" BSON.=: toList m]
+  toBSON m = fmap (\(k, v) -> (T.pack k) BSON.=: v) (toList m)
 
 instance FromBSON (Map String String) where
-  fromBSON doc = do
-    mList <- BSON.lookup "map" doc
-    return $ fromList mList
+  fromBSON doc = Just . fromList . fmap (\f -> (T.unpack . BSON.label $ f, BSON.typed . BSON.value $ f)) $ doc
