@@ -1,6 +1,5 @@
 module Database.BSON.Package.PackageWithEvents where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
@@ -12,43 +11,35 @@ import Database.BSON.Event.Expert ()
 import Database.BSON.Event.KnowledgeModel ()
 import Database.BSON.Event.Question ()
 import Database.BSON.Event.Reference ()
-import LensesConfig
-import Model.Package.Package
+import Model.Package.PackageWithEvents
 
 instance ToBSON PackageWithEvents where
-  toBSON package =
-    [ "id" BSON.=: package ^. pId
-    , "name" BSON.=: (package ^. name)
-    , "organizationId" BSON.=: (package ^. organizationId)
-    , "kmId" BSON.=: (package ^. kmId)
-    , "version" BSON.=: (package ^. version)
-    , "metamodelVersion" BSON.=: (package ^. metamodelVersion)
-    , "description" BSON.=: (package ^. description)
-    , "parentPackageId" BSON.=: (package ^. parentPackageId)
-    , "events" BSON.=: convertEventToBSON <$> (package ^. events)
+  toBSON PackageWithEvents {..} =
+    [ "id" BSON.=: _packageWithEventsPId
+    , "name" BSON.=: _packageWithEventsName
+    , "organizationId" BSON.=: _packageWithEventsOrganizationId
+    , "kmId" BSON.=: _packageWithEventsKmId
+    , "version" BSON.=: _packageWithEventsVersion
+    , "metamodelVersion" BSON.=: _packageWithEventsMetamodelVersion
+    , "description" BSON.=: _packageWithEventsDescription
+    , "readme" BSON.=: _packageWithEventsReadme
+    , "parentPackageId" BSON.=: _packageWithEventsParentPackageId
+    , "events" BSON.=: convertEventToBSON <$> _packageWithEventsEvents
+    , "createdAt" BSON.=: _packageWithEventsCreatedAt
     ]
 
 instance FromBSON PackageWithEvents where
   fromBSON doc = do
-    pkgPId <- BSON.lookup "id" doc
-    pkgName <- BSON.lookup "name" doc
-    pkgOrganizationId <- BSON.lookup "organizationId" doc
-    pkgKmId <- BSON.lookup "kmId" doc
-    pkgVersion <- BSON.lookup "version" doc
-    pkgMetamodelVersion <- BSON.lookup "metamodelVersion" doc
-    pkgDescription <- BSON.lookup "description" doc
-    pkgParentPackageId <- BSON.lookup "parentPackageId" doc
+    _packageWithEventsPId <- BSON.lookup "id" doc
+    _packageWithEventsName <- BSON.lookup "name" doc
+    _packageWithEventsOrganizationId <- BSON.lookup "organizationId" doc
+    _packageWithEventsKmId <- BSON.lookup "kmId" doc
+    _packageWithEventsVersion <- BSON.lookup "version" doc
+    _packageWithEventsMetamodelVersion <- BSON.lookup "metamodelVersion" doc
+    _packageWithEventsDescription <- BSON.lookup "description" doc
+    _packageWithEventsReadme <- BSON.lookup "readme" doc
+    _packageWithEventsParentPackageId <- BSON.lookup "parentPackageId" doc
     pkgEventsSerialized <- BSON.lookup "events" doc
-    let pkgEvents = (fromJust . chooseEventDeserializator) <$> pkgEventsSerialized
-    return
-      PackageWithEvents
-      { _packageWithEventsPId = pkgPId
-      , _packageWithEventsName = pkgName
-      , _packageWithEventsOrganizationId = pkgOrganizationId
-      , _packageWithEventsKmId = pkgKmId
-      , _packageWithEventsVersion = pkgVersion
-      , _packageWithEventsMetamodelVersion = pkgMetamodelVersion
-      , _packageWithEventsDescription = pkgDescription
-      , _packageWithEventsParentPackageId = pkgParentPackageId
-      , _packageWithEventsEvents = pkgEvents
-      }
+    let _packageWithEventsEvents = (fromJust . chooseEventDeserializator) <$> pkgEventsSerialized
+    _packageWithEventsCreatedAt <- BSON.lookup "createdAt" doc
+    return PackageWithEvents {..}

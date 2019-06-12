@@ -4,7 +4,7 @@ import Data.Bson
 import Data.Bson.Generic
 import Data.Text (Text)
 import Database.MongoDB
-       ((=:), delete, find, findOne, insert, rest, select)
+       ((=:), count, delete, find, findOne, insert, rest, select)
 import Model.Error.Error
 
 import Database.BSON.Package.Package ()
@@ -12,6 +12,7 @@ import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
 import Model.Context.AppContext
 import Model.Package.Package
+import Model.Package.PackageWithEvents
 
 entityName = "package"
 
@@ -65,6 +66,12 @@ findPackageWithEventsById pkgId = do
   let action = findOne $ select ["id" =: pkgId] pkgCollection
   maybePackageS <- runDB action
   return . deserializeMaybeEntity entityName pkgId $ maybePackageS
+
+countPackages :: AppContextM (Either AppError Int)
+countPackages = do
+  let action = count $ select [] pkgCollection
+  count <- runDB action
+  return . Right $ count
 
 insertPackage :: PackageWithEvents -> AppContextM Value
 insertPackage package = do
@@ -134,4 +141,11 @@ heFindPackageWithEventsById pkgId callback = do
   eitherPackage <- findPackageWithEventsById pkgId
   case eitherPackage of
     Right package -> callback package
+    Left error -> return . Left $ error
+
+-- -----------------------------------------------------
+heCountPackages callback = do
+  eitherResult <- countPackages
+  case eitherResult of
+    Right result -> callback result
     Left error -> return . Left $ error

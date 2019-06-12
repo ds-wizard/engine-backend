@@ -76,8 +76,8 @@ createMigration branchUuid mscDto = do
         Left error -> return . Left $ error
     validateIfTargetPackageVersionIsHigher branch msTargetPackageId callback =
       getLastAppliedParentPackageId branch $ \lastAppliedParentPackageId -> do
-        let targetPackageVersion = getVersionFromPackageId msTargetPackageId
-        let lastAppliedParentPackageVersion = getVersionFromPackageId lastAppliedParentPackageId
+        let targetPackageVersion = getVersionFromPkgId msTargetPackageId
+        let lastAppliedParentPackageVersion = getVersionFromPkgId lastAppliedParentPackageId
         if isNothing $ validateIsVersionHigher targetPackageVersion lastAppliedParentPackageVersion
           then callback
           else return . Left . MigratorError $ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER

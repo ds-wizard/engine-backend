@@ -3,6 +3,8 @@ module Api.Resource.Questionnaire.QuestionnaireDetailJM where
 import Control.Monad
 import Data.Aeson
 
+import Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Questionnaire.Common
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyJS ()

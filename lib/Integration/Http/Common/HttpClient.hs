@@ -3,16 +3,15 @@ module Integration.Http.Common.HttpClient
   , runSimpleRequest
   ) where
 
-import Control.Lens ((^.))
-import Control.Lens ((&), (.~))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
 import Network.Wreq
-       (Response, customPayloadMethodWith, defaults, headers, manager,
-        responseStatus, statusCode)
+       (Response, checkResponse, customPayloadMethodWith, defaults,
+        headers, manager, responseStatus, statusCode)
 
 import Constant.Component
 import LensesConfig hiding (headers)
@@ -27,17 +26,20 @@ runRequest req responseMapper = do
   logRequest req
   response <- runSimpleRequest req
   logResponse response
-  if (response ^. responseStatus . statusCode) <= 399
+  let sc = response ^. responseStatus . statusCode
+  if sc <= 399
     then do
       let eResDto = responseMapper response
       logResponseBody eResDto
       return eResDto
-    else return . Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR
+    else return . Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
 
 runSimpleRequest :: HttpRequest -> AppContextM (Response BSL.ByteString)
 runSimpleRequest req = do
   httpClientManager <- asks _appContextHttpClientManager
-  let opts = defaults & manager .~ Right httpClientManager & headers .~ reqHeaders
+  let opts =
+        defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & checkResponse .~
+        (Just $ \_ _ -> return ())
   liftIO $ customPayloadMethodWith reqMethod opts reqUrl reqBody
   where
     reqMethod = req ^. requestMethod

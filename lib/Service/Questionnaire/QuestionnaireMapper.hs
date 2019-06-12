@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Time
 import Data.UUID (UUID)
 
-import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
@@ -13,10 +13,11 @@ import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Package.Package
+import Model.Package.PackageWithEvents
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.Package.PackageMapper
+import qualified Service.Package.PackageMapper as PM
 
 toDTO :: Questionnaire -> Package -> QuestionnaireDTO
 toDTO questionnaire package =
@@ -25,7 +26,7 @@ toDTO questionnaire package =
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
   , _questionnaireDTOAccessibility = questionnaire ^. accessibility
-  , _questionnaireDTOPackage = packageToDTO package
+  , _questionnaireDTOPackage = PM.toSimpleDTO package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
@@ -38,7 +39,7 @@ toSimpleDTO questionnaire package =
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
   , _questionnaireDTOAccessibility = questionnaire ^. accessibility
-  , _questionnaireDTOPackage = packageWithEventsToDTO package
+  , _questionnaireDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
@@ -67,7 +68,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
   , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
-  , _questionnaireDetailDTOPackage = packageWithEventsToDTO package
+  , _questionnaireDetailDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
   , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
@@ -76,7 +77,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-toDetailWithPackageDTO :: Questionnaire -> PackageDTO -> KnowledgeModel -> QuestionnaireDetailDTO
+toDetailWithPackageDTO :: Questionnaire -> PackageSimpleDTO -> KnowledgeModel -> QuestionnaireDetailDTO
 toDetailWithPackageDTO questionnaire package knowledgeModel =
   QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
@@ -108,36 +109,38 @@ fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
   IntegrationValue
   {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
 
-fromChangeDTO :: QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> UUID -> UTCTime -> Questionnaire
-fromChangeDTO qtn dto currentUserUuid now =
+fromChangeDTO ::
+     QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> QuestionnaireAccessibility -> UUID -> UTCTime -> Questionnaire
+fromChangeDTO qtn dto accessibility currentUserUuid now =
   Questionnaire
   { _questionnaireUuid = qtn ^. uuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = dto ^. level
-  , _questionnaireAccessibility = dto ^. accessibility
+  , _questionnaireAccessibility = accessibility
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
   , _questionnaireOwnerUuid =
-      if dto ^. accessibility /= PublicQuestionnaire
+      if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtn ^. createdAt
   , _questionnaireUpdatedAt = now
   }
 
-fromQuestionnaireCreateDTO :: QuestionnaireCreateDTO -> UUID -> UUID -> UTCTime -> UTCTime -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid currentUserUuid qtnCreatedAt qtnUpdatedAt =
+fromQuestionnaireCreateDTO ::
+     QuestionnaireCreateDTO -> UUID -> QuestionnaireAccessibility -> UUID -> UTCTime -> UTCTime -> Questionnaire
+fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedAt qtnUpdatedAt =
   Questionnaire
   { _questionnaireUuid = qtnUuid
   , _questionnaireName = dto ^. name
   , _questionnaireLevel = 1
-  , _questionnaireAccessibility = dto ^. accessibility
+  , _questionnaireAccessibility = accessibility
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireSelectedTagUuids = dto ^. tagUuids
   , _questionnaireReplies = []
   , _questionnaireOwnerUuid =
-      if dto ^. accessibility /= PublicQuestionnaire
+      if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
         else Nothing
   , _questionnaireCreatedAt = qtnCreatedAt

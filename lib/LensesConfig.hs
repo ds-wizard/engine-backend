@@ -11,15 +11,21 @@ import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Branch.BranchWithEventsDTO
 import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Api.Resource.Event.EventDTO
+import Api.Resource.Event.AnswerEventDTO
+import Api.Resource.Event.ChapterEventDTO
 import Api.Resource.Event.EventPathDTO
+import Api.Resource.Event.ExpertEventDTO
+import Api.Resource.Event.IntegrationEventDTO
+import Api.Resource.Event.KnowledgeModelEventDTO
+import Api.Resource.Event.QuestionEventDTO
+import Api.Resource.Event.ReferenceEventDTO
+import Api.Resource.Event.TagEventDTO
 import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Api.Resource.KnowledgeModelBundle.KnowledgeModelBundleDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Migration.MigratorConflictDTO
 import Api.Resource.Migration.MigratorStateCreateDTO
@@ -28,8 +34,9 @@ import Api.Resource.Migration.MigratorStateDetailDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
+import Api.Resource.Package.PackageDetailDTO
 import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Package.PackageWithEventsDTO
+import Api.Resource.PackageBundle.PackageBundleDTO
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
@@ -48,6 +55,9 @@ import Api.Resource.User.UserPasswordDTO
 import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Api.Resource.Version.VersionDTO
+import Integration.Resource.Organization.OrganizationSimpleIDTO
+import Integration.Resource.Package.PackageDetailIDTO
+import Integration.Resource.Package.PackageSimpleIDTO
 import Integration.Resource.Typehint.TypehintIDTO
 import Model.ActionKey.ActionKey
 import Model.BookReference.BookReference
@@ -73,14 +83,16 @@ import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModelBundle.KnowledgeModelBundle
 import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
+import Model.Package.PackageWithEvents
+import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
+import Model.Statistics.InstanceStatistics
 import Model.User.User
 
 -- -------------------------------------
@@ -115,6 +127,8 @@ makeFields ''AppConfigJwt
 makeFields ''AppConfigRoles
 
 makeFields ''AppConfigMail
+
+makeFields ''AppConfigRegistry
 
 makeFields ''AppConfigAnalytics
 
@@ -275,9 +289,6 @@ makeFields ''Tag
 
 makeFields ''Integration
 
--- Model / KnowledgeModelBundle
-makeFields ''KnowledgeModelBundle
-
 -- Model / Level
 makeFields ''Level
 
@@ -298,6 +309,9 @@ makeFields ''Package
 
 makeFields ''PackageWithEvents
 
+-- Model / PackageBundle
+makeFields ''PackageBundle
+
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
@@ -317,6 +331,9 @@ makeFields ''MetricSummary
 makeFields ''ChapterReport
 
 makeFields ''Report
+
+-- Model / Statistic
+makeFields ''InstanceStatistics
 
 -- Model / User
 makeFields ''User
@@ -343,6 +360,8 @@ makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / Config
 makeFields ''ClientConfigDTO
+
+makeFields ''ClientConfigRegistryDTO
 
 makeFields ''ClientConfigClientDTO
 
@@ -494,9 +513,6 @@ makeFields ''TagDTO
 
 makeFields ''IntegrationDTO
 
--- Api / Resource / KnowledgeModelBundle
-makeFields ''KnowledgeModelBundleDTO
-
 -- Model / Level
 makeFields ''LevelDTO
 
@@ -513,7 +529,10 @@ makeFields ''PackageDTO
 
 makeFields ''PackageSimpleDTO
 
-makeFields ''PackageWithEventsDTO
+makeFields ''PackageDetailDTO
+
+-- Api / Resource / PackageBundle
+makeFields ''PackageBundleDTO
 
 -- Api / Resource / Questionnaire
 makeFields ''QuestionnaireCreateDTO
@@ -573,5 +592,13 @@ makeFields ''VersionDTO
 -- -------------------------------------
 -- Integration
 -- -------------------------------------
+-- Integration / Resource / Organization
+makeFields ''OrganizationSimpleIDTO
+
+-- Integration / Resource / Package
+makeFields ''PackageDetailIDTO
+
+makeFields ''PackageSimpleIDTO
+
 -- Integration / Resource / Typehint
 makeFields ''TypehintIDTO

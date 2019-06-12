@@ -4,9 +4,6 @@ module Database.Migration.Production.Migration
 
 import Control.Lens ((^.))
 import qualified
-       Database.Migration.Production.Migration_00017_questionnaire_accessibility.Migration
-       as M_0017
-import qualified
        Database.Migration.Production.Migration_0001_organization_init.Migration
        as M_0001
 import qualified
@@ -54,6 +51,15 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0016_metamodel_version.Migration
        as M_0016
+import qualified
+       Database.Migration.Production.Migration_0017_questionnaire_accessibility.Migration
+       as M_0017
+import qualified
+       Database.Migration.Production.Migration_0018_package_readme_and_createdAt.Migration
+       as M_0018
+import qualified
+       Database.Migration.Production.Migration_0019_bson_hashmap.Migration
+       as M_0019
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -81,4 +87,6 @@ migrationDefinitions =
   , M_0015.definition
   , M_0016.definition
   , M_0017.definition
+  , M_0018.definition
+  , M_0019.definition
   ]

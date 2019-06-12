@@ -4,6 +4,7 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Event.EventJM ()
 import Model.Migrator.MigratorState
 import Service.Event.EventMapper
 

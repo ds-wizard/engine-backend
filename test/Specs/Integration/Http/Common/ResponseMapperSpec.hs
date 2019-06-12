@@ -41,7 +41,9 @@ commonResponseMapperSpec =
         let targetContent = obj [("targetProp", String "Target Content")]
         let response = obj [("firstProp", obj [("secondProp", targetContent)])]
         -- AND: Expectations
-        let expectation = Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS
+        let expectation =
+              Left . GeneralServerError $
+              _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS ["nonExistingField"]
         -- WHEN:
         let result = extractNestedField ["firstProp", "nonExistingField"] response
         -- THEN:
@@ -52,7 +54,7 @@ commonResponseMapperSpec =
        do
         let response = obj [("targetProp", String "Target Content")]
         -- AND: Expectations
-        let expectation = Just "Target Content"
+        let expectation = Right "Target Content"
         -- WHEN:
         let result = extractStringField "targetProp" response
         -- THEN:
@@ -62,7 +64,8 @@ commonResponseMapperSpec =
        do
         let response = obj [("targetProp", Number 123)]
         -- AND: Expectations
-        let expectation = Nothing
+        let expectation =
+              Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD "targetProp"
         -- WHEN:
         let result = extractStringField "targetProp" response
         -- THEN:
@@ -72,7 +75,9 @@ commonResponseMapperSpec =
        do
         let response = obj [("targetProp", String "Target Content")]
         -- AND: Expectations
-        let expectation = Nothing
+        let expectation =
+              Left . GeneralServerError $
+              _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD "nonExistingField"
         -- WHEN:
         let result = extractStringField "nonExistingField" response
         -- THEN:

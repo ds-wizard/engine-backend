@@ -68,7 +68,8 @@ typehintResponseMapperSpec =
                    ]
            let response = createResponse targetContent
         -- AND: Expectations
-           let expectation = Left . GeneralServerError $ _ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME
+           let expectation =
+                 Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD "id"
         -- WHEN:
            let result = toRetrieveTypehintsResponse bioPortal response
         -- THEN:

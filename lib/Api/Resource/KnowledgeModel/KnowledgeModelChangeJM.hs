@@ -3,7 +3,7 @@ module Api.Resource.KnowledgeModel.KnowledgeModelChangeJM where
 import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Event.EventDTO ()
+import Api.Resource.Event.EventJM ()
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 
 instance ToJSON KnowledgeModelChangeDTO where

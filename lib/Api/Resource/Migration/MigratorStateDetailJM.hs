@@ -3,7 +3,7 @@ module Api.Resource.Migration.MigratorStateDetailJM where
 import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Event.EventDTO ()
+import Api.Resource.Event.EventJM ()
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO ()
 import Api.Resource.Migration.Common ()
 import Api.Resource.Migration.MigratorStateDetailDTO

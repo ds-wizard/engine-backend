@@ -44,20 +44,23 @@ _ERROR_VALIDATION__FORBIDDEN action = "Forbidden to perform '" ++ action ++ "'"
 -- INTEGRATION
 -- --------------------------------------
 -- Common
-_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR = "Integration Service returned an error"
+_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR statusCode =
+  "Integration Service returned an error (statusCode: " ++ (show statusCode) ++ ")"
 
 -- Response Mappers (Response deserialization problem = RDF)
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY a =
+  "Problem with a response deserialization (unable to deserialize a response body: " ++ a ++ ")"
+
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY =
   "Problem with a response deserialization (unable to get a response body)"
 
-_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS =
-  "Problem with a response deserialization (unable to extract nested field)"
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS fieldNames =
+  "Problem with a response deserialization (unable to extract nested field '" ++ show fieldNames ++ "')"
+
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName =
+  "Problem with a response deserialization (unable to extract string field: '" ++ fieldName ++ "')"
 
 _ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response deserialization (field is not an array)"
-
--- Typehint
-_ERROR_INTEGRATION_TYPEHINT__RDF_UNABLE_TO_MAP_ID_AND_NAME =
-  "Problem with a response deserialization (unable to map 'id' and 'name')"
 
 -- --------------------------------------
 -- SERVICE
@@ -73,9 +76,6 @@ _ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT = "Unprocessable DMP format"
 -- File
 _ERROR_SERVICE_FILE__CANT_READ_JSON filename =
   "Server was unable to decode a file ('" ++ filename ++ "') to a JSON object"
-
--- Knowledge Model Bundle
-_ERROR_SERVICE_KMB__MAIN_PKG_ABSENCE = "Knowledge Model Bundle doesn't contain main package"
 
 -- Mail
 _ERROR_SERVICE_MAIL__AUTH_ERROR_MESSAGE = "Could not authenticate with SMTP server"
@@ -111,6 +111,11 @@ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY 
   "Package '" ++ pkgId ++ "' can't be deleted. It's used by some " ++ target ++ "."
 
 _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn't correspond with Package Coordinates"
+
+-- Package Bundle
+_ERROR_SERVICE_PB__MAIN_PKG_ABSENCE = "Package Bundle doesn't contain main package"
+
+_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId = "Desired knowledge model '" ++ pkgId ++ "' wasn't found in Registry"
 
 -- Public Questionnaire
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"

@@ -12,6 +12,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Version.VersionDTO
 import qualified
        Database.Migration.Development.Branch.BranchMigration as B
@@ -52,7 +53,8 @@ reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = VersionDTO {_versionDTODescription = amsterdamPackage ^. description}
+reqDto =
+  VersionDTO {_versionDTODescription = amsterdamPackage ^. description, _versionDTOReadme = amsterdamPackage ^. readme}
 
 reqBody = encode reqDto
 
@@ -64,8 +66,8 @@ test_201 appContext = do
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = packageWithEventsToDTO amsterdamPackage
+    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expDto = toSimpleDTO . toPackage $ amsterdamPackage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
@@ -73,9 +75,10 @@ test_201 appContext = do
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, PackageSimpleDTO)
+    assertResStatus status expStatus
+    assertResHeaders headers expHeaders
+    comparePackageDtos resBody expDto
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfPackageInDB appContext expDto
 

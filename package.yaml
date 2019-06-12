@@ -1,5 +1,5 @@
 name: dsw-server
-version: '1.7.0'
+version: '1.8.0'
 synopsis: DSW Server
 description: DSW Server
 category: Web
@@ -39,6 +39,7 @@ library:
   - base
   - aeson
   - amqp
+  - blaze-html
   - bson
   - bson-generic
   - bytestring
@@ -61,6 +62,7 @@ library:
   - jwt
   - lens
   - lens-aeson
+  - markdown
   - mime-mail
   - mime-types
   - MissingH

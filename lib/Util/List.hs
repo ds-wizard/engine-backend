@@ -1,9 +1,13 @@
 module Util.List where
 
 import Data.Either (partitionEithers)
+import qualified Data.List as L
 
 import Model.Context.AppContext
 import Model.Error.Error
+
+groupBy :: Ord a => (a -> a -> Bool) -> [a] -> [[a]]
+groupBy fn = L.groupBy fn . L.sort
 
 tuplify2 :: [a] -> (a, a)
 tuplify2 [x, y] = (x, y)

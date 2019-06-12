@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Data.Bson
 import Data.Bson.Generic
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        rest, save, select)
+       ((=:), count, delete, deleteOne, fetch, find, findOne, insert,
+        merge, rest, save, select)
 
 import Database.BSON.Questionnaire.Questionnaire ()
 import Database.DAO.Common
@@ -42,6 +42,12 @@ findQuestionnaireByIdAndOwnerUuid uuid ownerUuid = do
   maybeQuestionnaireS <- runDB action
   return . deserializeMaybeEntity entityName ("(uuid: " ++ uuid ++ ", ownerUuid: " ++ ownerUuid ++ ")") $
     maybeQuestionnaireS
+
+countQuestionnaires :: AppContextM (Either AppError Int)
+countQuestionnaires = do
+  let action = count $ select [] qtnCollection
+  count <- runDB action
+  return . Right $ count
 
 insertQuestionnaire :: Questionnaire -> AppContextM Value
 insertQuestionnaire questionnaire = do
@@ -99,3 +105,10 @@ hmFindQuestionnaireByIdAndOwnerUuid qtnUuid ownerUuid callback = do
   case eitherQuestionnaire of
     Right questionnaire -> callback questionnaire
     Left error -> return . Just $ error
+
+-- -----------------------------------------------------
+heCountQuestionnaires callback = do
+  eitherResult <- countQuestionnaires
+  case eitherResult of
+    Right result -> callback result
+    Left error -> return . Left $ error

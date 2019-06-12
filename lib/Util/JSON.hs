@@ -3,15 +3,18 @@ module Util.JSON
   , getField
   , getArrayField
   , simpleParseJSON
+  , simpleToJSON
+  , simpleToJSON'
   ) where
 
 import Data.Aeson
 import qualified Data.HashMap.Strict as HashMap
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 
 import Localization
 import Model.Error.ErrorHelpers
-import Util.String (lowerFirst)
+import Util.String (lowerFirst, stripSuffix)
 
 convertValueToOject value callback =
   case value of
@@ -31,6 +34,31 @@ getArrayField fieldName object callback = getField fieldName object parseArray
     parseArray (Array field) = callback field
     parseArray _ = Left . createErrorWithErrorMessage $ _ERROR_UTIL_JSON__BAD_FIELD_TYPE fieldName "Array"
 
+jsonSpecialFields :: String -> String
+jsonSpecialFields "aType" = "type"
+jsonSpecialFields "pType" = "type"
+jsonSpecialFields "bundleId" = "id"
+jsonSpecialFields "iId" = "id"
+jsonSpecialFields "pId" = "id"
+jsonSpecialFields field = field
+
+stripDTOSuffix :: String -> String
+stripDTOSuffix field = fromMaybe field (stripSuffix "DTO" field)
+
 simpleParseJSON fieldPrefix = genericParseJSON opts
   where
-    opts = defaultOptions {fieldLabelModifier = lowerFirst . drop (T.length fieldPrefix)}
+    opts = defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)}
+
+simpleToJSON fieldPrefix = genericToJSON opts
+  where
+    opts = defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)}
+
+simpleToJSON' typeFieldName fieldPrefix = genericToJSON opts
+  where
+    opts =
+      defaultOptions
+      { fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)
+      , tagSingleConstructors = True
+      , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
+      , constructorTagModifier = stripDTOSuffix
+      }

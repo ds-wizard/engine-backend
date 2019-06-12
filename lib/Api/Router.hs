@@ -115,10 +115,10 @@ createEndpoints context
    --------------------
   get "/packages" getPackagesA
   post "/packages" postPackagesA
-  get "/packages/unique" getUniquePackagesA
   get "/packages/:pkgId" getPackageA
   delete "/packages" deletePackagesA
   delete "/packages/:pkgId" deletePackageA
+  post "/packages/:pkgId/pull" postPackagePullA
    --------------------
    -- ACTION KEY
    --------------------
@@ -127,7 +127,7 @@ createEndpoints context
    -- IMPORT/EXPORT
    --------------------
   post "/import" importA
-  get "/export/:kmbId" exportA
+  get "/export/:pId" exportA
    --------------------
    -- QUESTIONNAIRE
    --------------------

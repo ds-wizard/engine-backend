@@ -4,6 +4,7 @@ import Network.HTTP.Types.Status (created201)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
+import Api.Resource.Package.PackageSimpleDTO ()
 import Service.Package.PackageService
 
 putVersionA :: Endpoint

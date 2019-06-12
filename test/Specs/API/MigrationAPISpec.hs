@@ -93,7 +93,8 @@ migratorAPI appContext = do
          do
           let expStatus = 404
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6")
+          let expDto =
+                NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6")
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext

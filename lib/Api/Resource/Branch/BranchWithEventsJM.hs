@@ -4,7 +4,7 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Branch.BranchWithEventsDTO
-import Api.Resource.Event.EventDTO ()
+import Api.Resource.Event.EventJM ()
 
 instance FromJSON BranchWithEventsDTO where
   parseJSON (Object o) = do

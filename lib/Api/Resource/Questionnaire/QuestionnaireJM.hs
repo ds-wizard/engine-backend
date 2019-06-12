@@ -3,6 +3,7 @@ module Api.Resource.Questionnaire.QuestionnaireJM where
 import Control.Monad
 import Data.Aeson
 
+import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Questionnaire.Common
 import Api.Resource.Questionnaire.QuestionnaireDTO
 

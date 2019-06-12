@@ -1,8 +1,8 @@
 module Service.Migration.Metamodel.MigratorService
-  ( migrateKnowledgeModelBundle
+  ( migratePackageBundle
   , migrateCompleteDatabase
   -- Helpers
-  , heMigrateKnowledgeModelBundle
+  , heMigratePackageBundle
   ) where
 
 import Data.Aeson
@@ -13,6 +13,7 @@ import Database.MongoDB
 
 import Api.Resource.Branch.BranchWithEventsJM ()
 import Api.Resource.Migration.MigratorStateDetailJM ()
+import Api.Resource.Package.PackageJM ()
 import Constant.Component
 import Constant.KnowledgeModel
 import Database.BSON.Branch.BranchWithEvents ()
@@ -29,11 +30,11 @@ import qualified
        Service.Migration.Metamodel.Migrator.BranchMigrator
        as BranchMigrator
 import qualified
-       Service.Migration.Metamodel.Migrator.KnowledgeModelBundleMigrator
-       as KMBMigrator
-import qualified
        Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrator
        as KMMMigrator
+import qualified
+       Service.Migration.Metamodel.Migrator.PackageBundleMigrator
+       as PBMigrator
 import qualified
        Service.Migration.Metamodel.Migrator.PackageMigrator
        as PackageMigrator
@@ -42,8 +43,8 @@ import Util.BSONtoJSON (mapBSONDocumentToJSONObject)
 import Util.List (foldEither)
 import Util.Logger (logError, logInfo, msg)
 
-migrateKnowledgeModelBundle :: Value -> AppContextM (Either AppError Value)
-migrateKnowledgeModelBundle = return . KMBMigrator.migrate
+migratePackageBundle :: Value -> AppContextM (Either AppError Value)
+migratePackageBundle = return . PBMigrator.migrate
 
 migrateCompleteDatabase :: AppContextM ()
 migrateCompleteDatabase = do
@@ -56,7 +57,7 @@ migrateCompleteDatabase = do
 -- PRIVATE
 -- ---------------------------
 migratePackages :: AppContextM ()
-migratePackages = migrateOutdatedModels "packages" PackageMapper.fromDTOWithEvents PackageMigrator.migrate
+migratePackages = migrateOutdatedModels "packages" PackageMapper.fromDTO PackageMigrator.migrate
 
 migrateBranches :: AppContextM ()
 migrateBranches = migrateOutdatedModels "branches" BranchMapper.fromWithEventsDTO BranchMigrator.migrate
@@ -93,7 +94,7 @@ migratePublicPackages = do
   where
     convertToBSON object = do
       logMigrationStartConvertingToBson "publicPackages"
-      let documents = toBSON . PackageMapper.fromDTOWithEvents $ object
+      let documents = toBSON . PackageMapper.fromDTO $ object
       logMigrationConvertedToBson "publicPackages"
       return documents
 
@@ -134,8 +135,8 @@ migrateOutdatedModels collection dtoMapper migrateFn = do
 -- ---------------------------
 -- HELPERS
 -- ---------------------------
-heMigrateKnowledgeModelBundle encodedKmb callback = do
-  eitherResult <- migrateKnowledgeModelBundle encodedKmb
+heMigratePackageBundle encodedPb callback = do
+  eitherResult <- migratePackageBundle encodedPb
   case eitherResult of
     Right result -> callback result
     Left error -> return . Left $ error

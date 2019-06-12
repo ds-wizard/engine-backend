@@ -1,7 +1,7 @@
 module Service.Questionnaire.QuestionnaireService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -55,9 +55,11 @@ getQuestionnairesForCurrentUser =
         else return . Right $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
   where
     justOwnersAndPublicQuestionnaires currentUser questionnaire =
-      questionnaire ^. accessibility == PublicQuestionnaire ||
-      questionnaire ^. accessibility == PublicReadOnlyQuestionnaire ||
-      questionnaire ^. ownerUuid == (Just $ currentUser ^. uuid)
+      questionnaire ^. accessibility == PublicQuestionnaire || questionnaire ^. accessibility ==
+      PublicReadOnlyQuestionnaire ||
+      questionnaire ^.
+      ownerUuid ==
+      (Just $ currentUser ^. uuid)
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM (Either AppError QuestionnaireDTO)
 createQuestionnaire questionnaireCreateDto = do
@@ -69,7 +71,8 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto =
   heGetCurrentUser $ \currentUser ->
     heFindPackageWithEventsById (reqDto ^. packageId) $ \package -> do
       now <- liftIO getCurrentTime
-      let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid (currentUser ^. uuid) now now
+      accessibility <- extractAccessibility reqDto
+      let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid accessibility (currentUser ^. uuid) now now
       insertQuestionnaire qtn
       return . Right $ toSimpleDTO qtn package
 
@@ -89,10 +92,10 @@ getQuestionnaireDetailById qtnUuid =
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM (Either AppError QuestionnaireDetailDTO)
 modifyQuestionnaire qtnUuid reqDto =
   heGetQuestionnaireDetailById qtnUuid $ \qtnDto ->
-    heCheckEditPermissionToQtn qtnDto $
-    heGetCurrentUser $ \currentUser -> do
+    heCheckEditPermissionToQtn qtnDto $ heGetCurrentUser $ \currentUser -> do
       now <- liftIO getCurrentTime
-      let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
+      accessibility <- extractAccessibility reqDto
+      let updatedQtn = fromChangeDTO qtnDto reqDto accessibility (currentUser ^. uuid) now
       updateQuestionnaireById updatedQtn
       heCompileKnowledgeModel [] (Just $ updatedQtn ^. packageId) (updatedQtn ^. selectedTagUuids) $ \knowledgeModel ->
         return . Right $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel
@@ -107,25 +110,33 @@ deleteQuestionnaire qtnUuid =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
+extractAccessibility dto = do
+  dswConfig <- asks _appContextAppConfig
+  if dswConfig ^. general . questionnaireAccessibilityEnabled
+    then return (dto ^. accessibility)
+    else return PrivateQuestionnaire
+
 heCheckPermissionToQtn qtn callback =
   heGetCurrentUser $ \currentUser ->
-    if currentUser ^. role == "ADMIN" ||
-       qtn ^. accessibility == PublicQuestionnaire ||
-       qtn ^. accessibility == PublicReadOnlyQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+    if currentUser ^. role == "ADMIN" || qtn ^. accessibility == PublicQuestionnaire || qtn ^. accessibility ==
+       PublicReadOnlyQuestionnaire ||
+       qtn ^.
+       ownerUuid ==
+       (Just $ currentUser ^. uuid)
       then callback
       else return . Left . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
 
 heCheckEditPermissionToQtn qtn callback =
   heGetCurrentUser $ \currentUser ->
-    if currentUser ^. role == "ADMIN" ||
-       qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+    if currentUser ^. role == "ADMIN" || qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid ==
+       (Just $ currentUser ^. uuid)
       then callback
       else return . Left . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 
 hmCheckEditPermissionToQtn qtn callback =
   hmGetCurrentUser $ \currentUser ->
-    if currentUser ^. role == "ADMIN" ||
-       qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid == (Just $ currentUser ^. uuid)
+    if currentUser ^. role == "ADMIN" || qtn ^. accessibility == PublicQuestionnaire || qtn ^. ownerUuid ==
+       (Just $ currentUser ^. uuid)
       then callback
       else return . Just . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 

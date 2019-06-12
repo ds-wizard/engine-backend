@@ -53,6 +53,12 @@ mail:
   username:
   password:
 
+registry:
+  enabled: true
+  url: https://api.registry-test.ds-wizard.org
+  token: DswToken
+  clientUrl: https://registry-test.ds-wizard.org
+
 analytics:
   enabled: false
   email:

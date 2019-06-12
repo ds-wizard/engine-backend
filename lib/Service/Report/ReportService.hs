@@ -34,7 +34,8 @@ getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto =
       heGetCurrentUser $ \currentUser ->
         heFindMetrics $ \metrics -> do
           now <- liftIO getCurrentTime
-          let updatedQtn = fromChangeDTO qtnDto reqDto (currentUser ^. uuid) now
+          accessibility <- extractAccessibility reqDto
+          let updatedQtn = fromChangeDTO qtnDto reqDto accessibility (currentUser ^. uuid) now
           let filledKM = createFilledKM knowledgeModel (updatedQtn ^. replies)
           report <- generateReport (reqDto ^. level) metrics filledKM
           return . Right . toReportDTO $ report

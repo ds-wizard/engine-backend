@@ -7,18 +7,26 @@ data ClientConfigDTO = ClientConfigDTO
   , _clientConfigDTOPublicQuestionnaireEnabled :: Bool
   , _clientConfigDTOLevelsEnabled :: Bool
   , _clientConfigDTOItemTitleEnabled :: Bool
+  , _clientConfigDTOQuestionnaireAccessibilityEnabled :: Bool
+  , _clientConfigDTORegistry :: ClientConfigRegistryDTO
+  } deriving (Show, Eq)
+
+data ClientConfigRegistryDTO = ClientConfigRegistryDTO
+  { _clientConfigRegistryEnabled :: Bool
+  , _clientConfigRegistryUrl :: String
   } deriving (Show, Eq)
 
 data ClientConfigClientDTO = ClientConfigClientDTO
-  { _clientConfigAppTitle :: Maybe String
-  , _clientConfigAppTitleShort :: Maybe String
-  , _clientConfigWelcomeWarning :: Maybe String
-  , _clientConfigWelcomeInfo :: Maybe String
-  , _clientConfigDashboard :: Maybe ClientConfigClientDashboardDTO
+  { _clientConfigClientPrivacyUrl :: String
+  , _clientConfigClientAppTitle :: Maybe String
+  , _clientConfigClientAppTitleShort :: Maybe String
+  , _clientConfigClientWelcomeWarning :: Maybe String
+  , _clientConfigClientWelcomeInfo :: Maybe String
+  , _clientConfigClientDashboard :: Maybe ClientConfigClientDashboardDTO
   } deriving (Show, Eq)
 
 data ClientConfigClientDashboardDTO = ClientConfigClientDashboardDTO
-  { _clientConfigClientDashboardAdmin :: Maybe [String]
-  , _clientConfigClientDashboardDataSteward :: Maybe [String]
-  , _clientConfigClientDashboardResearcher :: Maybe [String]
+  { _clientConfigClientDashboardAdmin :: [String]
+  , _clientConfigClientDashboardDataSteward :: [String]
+  , _clientConfigClientDashboardResearcher :: [String]
   } deriving (Show, Eq)

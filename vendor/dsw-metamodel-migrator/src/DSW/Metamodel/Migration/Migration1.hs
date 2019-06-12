@@ -10,7 +10,7 @@ result2Either :: Result a -> Either String a
 result2Either (Error msg) = Left msg
 result2Either (Success x) = Right x
 
-class (ToJSON f, FromJSON t) => Upgradeable f t where
+class Upgradeable f t where
   upgrade :: f -> Either String t
 
 instance Upgradeable V1.EventPathDTO V2.EventPathDTO where
