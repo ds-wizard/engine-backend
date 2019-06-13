@@ -8,13 +8,13 @@ import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.Event
 import Model.Event.EventField
-import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
 import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Event.Question.QuestionEvent
 import Model.Event.Reference.ReferenceEvent
 import Model.Event.Tag.TagEvent
+import Model.KnowledgeModel.Path
 
 isAddAction :: Event -> Bool
 isAddAction (AddKnowledgeModelEvent' _) = True
@@ -76,7 +76,7 @@ getEventUuid' (DeleteIntegrationEvent' event) = getEventUuid event
 class EventAccesors a where
   getEventUuid :: a -> U.UUID
   getEventNodeUuid :: a -> U.UUID
-  getPath :: a -> EventPath
+  getPath :: a -> Path
 
 instance EventAccesors AddKnowledgeModelEvent where
   getEventUuid event = event ^. uuid

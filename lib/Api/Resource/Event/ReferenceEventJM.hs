@@ -4,8 +4,8 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Event.EventFieldJM ()
-import Api.Resource.Event.EventPathJM ()
 import Api.Resource.Event.ReferenceEventDTO
+import Api.Resource.KnowledgeModel.PathJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddReferenceEventDTO where

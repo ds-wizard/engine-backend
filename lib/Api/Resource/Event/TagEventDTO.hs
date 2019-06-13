@@ -4,11 +4,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.Event.EventFieldDTO
-import Api.Resource.Event.EventPathDTO
+import Api.Resource.KnowledgeModel.PathDTO
 
 data AddTagEventDTO = AddTagEventDTO
   { _addTagEventDTOUuid :: U.UUID
-  , _addTagEventDTOPath :: EventPathDTO
+  , _addTagEventDTOPath :: PathDTO
   , _addTagEventDTOTagUuid :: U.UUID
   , _addTagEventDTOName :: String
   , _addTagEventDTODescription :: Maybe String
@@ -17,7 +17,7 @@ data AddTagEventDTO = AddTagEventDTO
 
 data EditTagEventDTO = EditTagEventDTO
   { _editTagEventDTOUuid :: U.UUID
-  , _editTagEventDTOPath :: EventPathDTO
+  , _editTagEventDTOPath :: PathDTO
   , _editTagEventDTOTagUuid :: U.UUID
   , _editTagEventDTOName :: EventFieldDTO String
   , _editTagEventDTODescription :: EventFieldDTO (Maybe String)
@@ -26,6 +26,6 @@ data EditTagEventDTO = EditTagEventDTO
 
 data DeleteTagEventDTO = DeleteTagEventDTO
   { _deleteTagEventDTOUuid :: U.UUID
-  , _deleteTagEventDTOPath :: EventPathDTO
+  , _deleteTagEventDTOPath :: PathDTO
   , _deleteTagEventDTOTagUuid :: U.UUID
   } deriving (Show, Eq, Generic)

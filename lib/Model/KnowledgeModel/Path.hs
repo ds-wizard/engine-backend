@@ -1,4 +1,4 @@
-module Model.Event.EventPath where
+module Model.KnowledgeModel.Path where
 
 import qualified Data.UUID as U
 import GHC.Generics
@@ -15,14 +15,13 @@ _EVENT_PATH_ITEM__EXPERT = "expert"
 
 _EVENT_PATH_ITEM__REFERENCE = "reference"
 
-data EventPathItem = EventPathItem
-  { _eventPathItemPType :: String
-  , _eventPathItemUuid :: U.UUID
+data PathItem = PathItem
+  { _pathItemPType :: String
+  , _pathItemUuid :: U.UUID
   } deriving (Show, Eq, Generic)
 
-type EventPath = [EventPathItem]
+type Path = [PathItem]
 
-showEventPathShort path =
+showPathShort path =
   unwords $
-  (\pathItem -> "[" ++ (_eventPathItemPType pathItem) ++ ": " ++ U.toString (_eventPathItemUuid pathItem) ++ "]") <$>
-  path
+  (\pathItem -> "[" ++ (_pathItemPType pathItem) ++ ": " ++ U.toString (_pathItemUuid pathItem) ++ "]") <$> path

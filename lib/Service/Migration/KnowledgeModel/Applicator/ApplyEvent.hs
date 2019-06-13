@@ -1,32 +1,32 @@
 module Service.Migration.KnowledgeModel.Applicator.ApplyEvent where
 
 import Model.Error.Error
-import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.Path
 
 class ApplyEventToKM e where
-  applyEventToKM :: e -> EventPath -> Either AppError (Maybe KnowledgeModel) -> Either AppError (Maybe KnowledgeModel)
+  applyEventToKM :: e -> Path -> Either AppError (Maybe KnowledgeModel) -> Either AppError (Maybe KnowledgeModel)
 
 class ApplyEventToChapter e where
-  applyEventToChapter :: e -> EventPath -> Either AppError Chapter -> Either AppError Chapter
+  applyEventToChapter :: e -> Path -> Either AppError Chapter -> Either AppError Chapter
 
 class ApplyEventToQuestion e where
-  applyEventToQuestion :: e -> EventPath -> Either AppError Question -> Either AppError Question
+  applyEventToQuestion :: e -> Path -> Either AppError Question -> Either AppError Question
 
 class ApplyEventToAnswer e where
-  applyEventToAnswer :: e -> EventPath -> Either AppError Answer -> Either AppError Answer
+  applyEventToAnswer :: e -> Path -> Either AppError Answer -> Either AppError Answer
 
 class ApplyEventToExpert e where
-  applyEventToExpert :: e -> EventPath -> Either AppError Expert -> Either AppError Expert
+  applyEventToExpert :: e -> Path -> Either AppError Expert -> Either AppError Expert
 
 class ApplyEventToReference e where
-  applyEventToReference :: e -> EventPath -> Either AppError Reference -> Either AppError Reference
+  applyEventToReference :: e -> Path -> Either AppError Reference -> Either AppError Reference
 
 class ApplyEventToTag e where
-  applyEventToTag :: e -> EventPath -> Either AppError Tag -> Either AppError Tag
+  applyEventToTag :: e -> Path -> Either AppError Tag -> Either AppError Tag
 
 class ApplyEventToIntegration e where
-  applyEventToIntegration :: e -> EventPath -> Either AppError Integration -> Either AppError Integration
+  applyEventToIntegration :: e -> Path -> Either AppError Integration -> Either AppError Integration
 
 -- --------------------------------
 -- HELPERS

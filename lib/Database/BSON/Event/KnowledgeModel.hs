@@ -6,8 +6,8 @@ import Data.Bson.Generic
 
 import Database.BSON.Common
 import Database.BSON.Event.EventField ()
-import Database.BSON.Event.EventPath ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
+import Database.BSON.KnowledgeModel.Path ()
 import LensesConfig
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 

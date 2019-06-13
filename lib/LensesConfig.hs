@@ -13,7 +13,6 @@ import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.AnswerEventDTO
 import Api.Resource.Event.ChapterEventDTO
-import Api.Resource.Event.EventPathDTO
 import Api.Resource.Event.ExpertEventDTO
 import Api.Resource.Event.IntegrationEventDTO
 import Api.Resource.Event.KnowledgeModelEventDTO
@@ -26,6 +25,7 @@ import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModel.PathDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Migration.MigratorConflictDTO
 import Api.Resource.Migration.MigratorStateCreateDTO
@@ -71,7 +71,6 @@ import Model.DataManagementPlan.DataManagementPlanTemplateContext
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
-import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
 import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -83,6 +82,7 @@ import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.Path
 import Model.Level.Level
 import Model.Migrator.MigratorState
 import Model.Organization.Organization
@@ -150,8 +150,6 @@ makeFields ''DataManagementPlanTemplateContext
 
 -- Model / Event
 makeFields ''EventField
-
-makeFields ''EventPathItem
 
 makeFields ''AddKnowledgeModelEvent
 
@@ -289,6 +287,8 @@ makeFields ''Tag
 
 makeFields ''Integration
 
+makeFields ''PathItem
+
 -- Model / Level
 makeFields ''Level
 
@@ -373,8 +373,6 @@ makeFields ''DataManagementPlanDTO
 makeFields ''DataManagementPlanConfigDTO
 
 -- Api / Resource / Event
-makeFields ''EventPathItemDTO
-
 makeFields ''AddKnowledgeModelEventDTO
 
 makeFields ''EditKnowledgeModelEventDTO
@@ -512,6 +510,8 @@ makeFields ''MetricMeasureDTO
 makeFields ''TagDTO
 
 makeFields ''IntegrationDTO
+
+makeFields ''PathItemDTO
 
 -- Model / Level
 makeFields ''LevelDTO

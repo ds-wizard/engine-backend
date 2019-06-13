@@ -5,8 +5,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.Event.EventField
-import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.Path
 
 data AddQuestionEvent
   = AddOptionsQuestionEvent' AddOptionsQuestionEvent
@@ -17,7 +17,7 @@ data AddQuestionEvent
 
 data AddOptionsQuestionEvent = AddOptionsQuestionEvent
   { _addOptionsQuestionEventUuid :: U.UUID
-  , _addOptionsQuestionEventPath :: EventPath
+  , _addOptionsQuestionEventPath :: Path
   , _addOptionsQuestionEventQuestionUuid :: U.UUID
   , _addOptionsQuestionEventTitle :: String
   , _addOptionsQuestionEventText :: Maybe String
@@ -27,7 +27,7 @@ data AddOptionsQuestionEvent = AddOptionsQuestionEvent
 
 data AddListQuestionEvent = AddListQuestionEvent
   { _addListQuestionEventUuid :: U.UUID
-  , _addListQuestionEventPath :: EventPath
+  , _addListQuestionEventPath :: Path
   , _addListQuestionEventQuestionUuid :: U.UUID
   , _addListQuestionEventTitle :: String
   , _addListQuestionEventText :: Maybe String
@@ -38,7 +38,7 @@ data AddListQuestionEvent = AddListQuestionEvent
 
 data AddValueQuestionEvent = AddValueQuestionEvent
   { _addValueQuestionEventUuid :: U.UUID
-  , _addValueQuestionEventPath :: EventPath
+  , _addValueQuestionEventPath :: Path
   , _addValueQuestionEventQuestionUuid :: U.UUID
   , _addValueQuestionEventTitle :: String
   , _addValueQuestionEventText :: Maybe String
@@ -49,7 +49,7 @@ data AddValueQuestionEvent = AddValueQuestionEvent
 
 data AddIntegrationQuestionEvent = AddIntegrationQuestionEvent
   { _addIntegrationQuestionEventUuid :: U.UUID
-  , _addIntegrationQuestionEventPath :: EventPath
+  , _addIntegrationQuestionEventPath :: Path
   , _addIntegrationQuestionEventQuestionUuid :: U.UUID
   , _addIntegrationQuestionEventTitle :: String
   , _addIntegrationQuestionEventText :: Maybe String
@@ -69,7 +69,7 @@ data EditQuestionEvent
 
 data EditOptionsQuestionEvent = EditOptionsQuestionEvent
   { _editOptionsQuestionEventUuid :: U.UUID
-  , _editOptionsQuestionEventPath :: EventPath
+  , _editOptionsQuestionEventPath :: Path
   , _editOptionsQuestionEventQuestionUuid :: U.UUID
   , _editOptionsQuestionEventTitle :: EventField String
   , _editOptionsQuestionEventText :: EventField (Maybe String)
@@ -82,7 +82,7 @@ data EditOptionsQuestionEvent = EditOptionsQuestionEvent
 
 data EditListQuestionEvent = EditListQuestionEvent
   { _editListQuestionEventUuid :: U.UUID
-  , _editListQuestionEventPath :: EventPath
+  , _editListQuestionEventPath :: Path
   , _editListQuestionEventQuestionUuid :: U.UUID
   , _editListQuestionEventTitle :: EventField String
   , _editListQuestionEventText :: EventField (Maybe String)
@@ -96,7 +96,7 @@ data EditListQuestionEvent = EditListQuestionEvent
 
 data EditValueQuestionEvent = EditValueQuestionEvent
   { _editValueQuestionEventUuid :: U.UUID
-  , _editValueQuestionEventPath :: EventPath
+  , _editValueQuestionEventPath :: Path
   , _editValueQuestionEventQuestionUuid :: U.UUID
   , _editValueQuestionEventTitle :: EventField String
   , _editValueQuestionEventText :: EventField (Maybe String)
@@ -109,7 +109,7 @@ data EditValueQuestionEvent = EditValueQuestionEvent
 
 data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
   { _editIntegrationQuestionEventUuid :: U.UUID
-  , _editIntegrationQuestionEventPath :: EventPath
+  , _editIntegrationQuestionEventPath :: Path
   , _editIntegrationQuestionEventQuestionUuid :: U.UUID
   , _editIntegrationQuestionEventTitle :: EventField String
   , _editIntegrationQuestionEventText :: EventField (Maybe String)
@@ -124,6 +124,6 @@ data EditIntegrationQuestionEvent = EditIntegrationQuestionEvent
 -- --------------------------------------------
 data DeleteQuestionEvent = DeleteQuestionEvent
   { _deleteQuestionEventUuid :: U.UUID
-  , _deleteQuestionEventPath :: EventPath
+  , _deleteQuestionEventPath :: Path
   , _deleteQuestionEventQuestionUuid :: U.UUID
   } deriving (Show, Eq, Generic)

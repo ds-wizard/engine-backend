@@ -4,11 +4,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.Event.EventFieldDTO
-import Api.Resource.Event.EventPathDTO
+import Api.Resource.KnowledgeModel.PathDTO
 
 data AddChapterEventDTO = AddChapterEventDTO
   { _addChapterEventDTOUuid :: U.UUID
-  , _addChapterEventDTOPath :: EventPathDTO
+  , _addChapterEventDTOPath :: PathDTO
   , _addChapterEventDTOChapterUuid :: U.UUID
   , _addChapterEventDTOTitle :: String
   , _addChapterEventDTOText :: String
@@ -16,7 +16,7 @@ data AddChapterEventDTO = AddChapterEventDTO
 
 data EditChapterEventDTO = EditChapterEventDTO
   { _editChapterEventDTOUuid :: U.UUID
-  , _editChapterEventDTOPath :: EventPathDTO
+  , _editChapterEventDTOPath :: PathDTO
   , _editChapterEventDTOChapterUuid :: U.UUID
   , _editChapterEventDTOTitle :: EventFieldDTO String
   , _editChapterEventDTOText :: EventFieldDTO String
@@ -25,6 +25,6 @@ data EditChapterEventDTO = EditChapterEventDTO
 
 data DeleteChapterEventDTO = DeleteChapterEventDTO
   { _deleteChapterEventDTOUuid :: U.UUID
-  , _deleteChapterEventDTOPath :: EventPathDTO
+  , _deleteChapterEventDTOPath :: PathDTO
   , _deleteChapterEventDTOChapterUuid :: U.UUID
   } deriving (Show, Eq, Generic)

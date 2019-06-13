@@ -7,7 +7,6 @@ import Api.Resource.Event.AnswerEventJM ()
 import Api.Resource.Event.ChapterEventJM ()
 import Api.Resource.Event.EventDTO
 import Api.Resource.Event.EventFieldJM ()
-import Api.Resource.Event.EventPathJM ()
 import Api.Resource.Event.ExpertEventJM ()
 import Api.Resource.Event.IntegrationEventJM ()
 import Api.Resource.Event.KnowledgeModelEventJM ()
@@ -15,6 +14,7 @@ import Api.Resource.Event.KnowledgeModelEventJM ()
 import Api.Resource.Event.QuestionEventJM ()
 import Api.Resource.Event.ReferenceEventJM ()
 import Api.Resource.Event.TagEventJM ()
+import Api.Resource.KnowledgeModel.PathJM ()
 
 instance ToJSON EventDTO where
   toJSON (AddKnowledgeModelEventDTO' event) = toJSON event

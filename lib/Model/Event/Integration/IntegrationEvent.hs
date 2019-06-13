@@ -5,11 +5,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Model.Event.EventField
-import Model.Event.EventPath
+import Model.KnowledgeModel.Path
 
 data AddIntegrationEvent = AddIntegrationEvent
   { _addIntegrationEventUuid :: U.UUID
-  , _addIntegrationEventPath :: EventPath
+  , _addIntegrationEventPath :: Path
   , _addIntegrationEventIntegrationUuid :: U.UUID
   , _addIntegrationEventIId :: String
   , _addIntegrationEventName :: String
@@ -27,7 +27,7 @@ data AddIntegrationEvent = AddIntegrationEvent
 
 data EditIntegrationEvent = EditIntegrationEvent
   { _editIntegrationEventUuid :: U.UUID
-  , _editIntegrationEventPath :: EventPath
+  , _editIntegrationEventPath :: Path
   , _editIntegrationEventIntegrationUuid :: U.UUID
   , _editIntegrationEventIId :: EventField String
   , _editIntegrationEventName :: EventField String
@@ -45,6 +45,6 @@ data EditIntegrationEvent = EditIntegrationEvent
 
 data DeleteIntegrationEvent = DeleteIntegrationEvent
   { _deleteIntegrationEventUuid :: U.UUID
-  , _deleteIntegrationEventPath :: EventPath
+  , _deleteIntegrationEventPath :: Path
   , _deleteIntegrationEventIntegrationUuid :: U.UUID
   } deriving (Show, Eq, Generic)

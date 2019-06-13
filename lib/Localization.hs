@@ -2,7 +2,7 @@ module Localization where
 
 import qualified Data.UUID as U
 
-import Model.Event.EventPath
+import Model.KnowledgeModel.Path
 
 -- --------------------------------------
 -- DATABASE
@@ -207,10 +207,10 @@ _ERROR_KMMT_APPLICATOR__EMPTY_PATH eUuid =
 _ERROR_KMMT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
   "Failed Event (" ++
   (U.toString eUuid) ++
-  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showEventPathShort path) ++ ")"
+  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showPathShort path) ++ ")"
 
 _ERROR_KMMT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showEventPathShort path) ++ ")"
+  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showPathShort path) ++ ")"
 
 -- Uniqueness
 _ERROR_KMMT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"
