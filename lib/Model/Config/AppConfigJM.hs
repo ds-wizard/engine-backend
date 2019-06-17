@@ -12,9 +12,9 @@ import Model.Config.EnvironmentJM ()
 instance FromJSON AppConfig where
   parseJSON (Object o) = do
     _appConfigGeneral <- o .: "general"
-    _appConfigClient <- o .: "client" .!= defaultClient
-    _appConfigDatabase <- o .: "database" .!= defaultDatabase
-    _appConfigMessaging <- o .: "messaging" .!= defaultMessaging
+    _appConfigClient <- o .:? "client" .!= defaultClient
+    _appConfigDatabase <- o .:? "database" .!= defaultDatabase
+    _appConfigMessaging <- o .:? "messaging" .!= defaultMessaging
     _appConfigJwt <- o .: "jwt"
     _appConfigRoles <- o .:? "roles" .!= defaultRoles
     _appConfigMail <- o .:? "mail" .!= defaultMail
