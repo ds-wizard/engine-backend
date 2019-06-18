@@ -30,8 +30,8 @@ toClientConfigClientDTO clientConfig =
   { _clientConfigClientPrivacyUrl = clientConfig ^. privacyUrl
   , _clientConfigClientAppTitle = clientConfig ^. appTitle
   , _clientConfigClientAppTitleShort = clientConfig ^. appTitleShort
-  , _clientConfigClientWelcomeWarning = clientConfig ^. welcomeInfo
-  , _clientConfigClientWelcomeInfo = clientConfig ^. welcomeWarning
+  , _clientConfigClientWelcomeWarning = clientConfig ^. welcomeWarning
+  , _clientConfigClientWelcomeInfo = clientConfig ^. welcomeInfo
   , _clientConfigClientDashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
   }
 
