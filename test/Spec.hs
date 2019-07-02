@@ -27,6 +27,7 @@ import Specs.API.MigrationAPISpec
 import Specs.API.Organization.APISpec
 import Specs.API.Package.APISpec
 import Specs.API.Questionnaire.APISpec
+import Specs.API.Questionnaire.Migration.APISpec
 import Specs.API.Template.APISpec
 import Specs.API.Token.APISpec
 import Specs.API.Typehint.APISpec
@@ -44,7 +45,12 @@ import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
 import Specs.Service.Migration.KnowledgeModel.Applicator.ApplicatorSpec
 import Specs.Service.Migration.KnowledgeModel.Applicator.ModifiersSpec
 import Specs.Service.Migration.KnowledgeModel.MigrationSpec
-import Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
+import qualified
+       Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
+       as KM_SanitizatorSpec
+import qualified
+       Specs.Service.Migration.Questionnaire.SanitizatorSpec
+       as QTN_SanitizatorSpec
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
 import Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
@@ -115,7 +121,8 @@ main =
                    applicatorSpec
                    modifiersSpec
                  migratorSpec
-                 sanitizatorSpec
+                 KM_SanitizatorSpec.sanitizatorSpec
+               describe "Questionnaire" $ QTN_SanitizatorSpec.sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
              describe "Package" $ packageValidationSpec
              describe "Token" $ tokenServiceSpec
@@ -137,6 +144,7 @@ main =
              organizationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
+             questionnaireMigrationAPI appContext
              templateAPI appContext
              typehintAPI appContext
              tokenAPI appContext

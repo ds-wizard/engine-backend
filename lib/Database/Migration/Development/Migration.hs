@@ -15,7 +15,11 @@ import qualified
 import qualified
        Database.Migration.Development.Metric.MetricMigration as MTR
 import qualified
-       Database.Migration.Development.Migrator.MigratorMigration as MIG
+       Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration
+       as KM_MIG
+import qualified
+       Database.Migration.Development.Migration.Questionnaire.MigratorMigration
+       as QTN_MIG
 import qualified
        Database.Migration.Development.Organization.OrganizationMigration
        as ORG
@@ -37,7 +41,8 @@ runMigration = do
   U.runMigration
   PKG.runMigration
   B.runMigration
-  MIG.runMigration
+  KM_MIG.runMigration
+  QTN_MIG.runMigration
   QTN.runMigration
   PUBPKG.runMigration
   BR.runMigration

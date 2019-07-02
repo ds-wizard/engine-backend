@@ -8,12 +8,14 @@ import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Questionnaire.Common
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
+import Api.Resource.Questionnaire.QuestionnaireStateJM ()
 
 instance FromJSON QuestionnaireDetailDTO where
   parseJSON (Object o) = do
     _questionnaireDetailDTOUuid <- o .: "uuid"
     _questionnaireDetailDTOName <- o .: "name"
     _questionnaireDetailDTOLevel <- o .: "level"
+    _questionnaireDetailDTOState <- o .: "state"
     _questionnaireDetailDTOPackage <- o .: "package"
     _questionnaireDetailDTOSelectedTagUuids <- o .: "selectedTagUuids"
     _questionnaireDetailDTOKnowledgeModel <- o .: "knowledgeModel"
@@ -32,6 +34,7 @@ instance ToJSON QuestionnaireDetailDTO where
       , "name" .= _questionnaireDetailDTOName
       , "level" .= _questionnaireDetailDTOLevel
       , "accessibility" .= serializeQuestionnaireAccessibility _questionnaireDetailDTOAccessibility
+      , "state" .= _questionnaireDetailDTOState
       , "package" .= _questionnaireDetailDTOPackage
       , "selectedTagUuids" .= _questionnaireDetailDTOSelectedTagUuids
       , "knowledgeModel" .= _questionnaireDetailDTOKnowledgeModel

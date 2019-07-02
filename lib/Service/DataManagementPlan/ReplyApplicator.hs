@@ -5,7 +5,6 @@ module Service.DataManagementPlan.ReplyApplicator
 import Control.Lens ((&), (.~), (^.), element)
 import Data.List
 import Data.Maybe
-import qualified Data.Text as T
 import qualified Data.UUID as U
 import Text.Read
 
@@ -16,13 +15,14 @@ import Model.KnowledgeModel.KnowledgeModel
 import Model.Questionnaire.QuestionnaireReply
 import Service.DataManagementPlan.Convertor
 import Util.List
+import Util.String (splitOn)
 
 runReplyApplicator :: FilledKnowledgeModel -> [Reply] -> FilledKnowledgeModel
 runReplyApplicator = foldl foldReply
   where
     foldReply :: FilledKnowledgeModel -> Reply -> FilledKnowledgeModel
     foldReply fKM reply =
-      let pathParsed = getPathParsed (reply ^. path)
+      let pathParsed = splitOn "." (reply ^. path)
       in applyReplyToKM reply pathParsed fKM
 
 -- ------------------------------------------------------------------------
@@ -177,11 +177,3 @@ passToAnswerOption reply path (FilledOptionsQuestion' fQuestion) =
       in FilledOptionsQuestion' $ fQuestion & answerOption .~ Just mAnswer
     Nothing -> FilledOptionsQuestion' $ fQuestion
 passToAnswerOption reply path fQuestion = fQuestion
-
--- ------------------------------------------------------------------------
--- ------------------------------------------------------------------------
--- UTILS
--- ------------------------------------------------------------------------
--- ------------------------------------------------------------------------
-getPathParsed :: String -> [String]
-getPathParsed path = T.unpack <$> (T.splitOn "." (T.pack path))

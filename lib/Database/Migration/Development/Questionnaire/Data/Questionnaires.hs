@@ -45,6 +45,8 @@ questionnaire1Edited =
   , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 questionnaire2 :: Questionnaire
 questionnaire2 =
   Questionnaire
@@ -75,6 +77,8 @@ questionnaire2Edited =
   , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 questionnaire3 :: Questionnaire
 questionnaire3 =
   Questionnaire
@@ -105,12 +109,53 @@ questionnaire3Edited =
   , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaire4 :: Questionnaire
+questionnaire4 =
+  Questionnaire
+  { _questionnaireUuid = fromJust (U.fromString "57250a07-a663-4ff3-ac1f-16530f2c1bfe")
+  , _questionnaireName = "Outdated Questionnaire"
+  , _questionnaireLevel = 2
+  , _questionnaireAccessibility = PrivateQuestionnaire
+  , _questionnairePackageId = netherlandsPackage ^. pId
+  , _questionnaireSelectedTagUuids = []
+  , _questionnaireReplies = []
+  , _questionnaireOwnerUuid = Nothing
+  , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+  , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  }
+
+questionnaire4PublicReadOnly :: Questionnaire
+questionnaire4PublicReadOnly = questionnaire4 {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+
+questionnaire4Public :: Questionnaire
+questionnaire4Public =
+  questionnaire4 {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+
+questionnaire4Upgraded :: Questionnaire
+questionnaire4Upgraded =
+  questionnaire4
+  { _questionnaireUuid = fromJust (U.fromString "5deabef8-f526-421c-90e2-dd7aed1a25c5")
+  , _questionnairePackageId = netherlandsPackageV2 ^. pId
+  }
+
+questionnaire4PublicReadOnlyUpgraded :: Questionnaire
+questionnaire4PublicReadOnlyUpgraded =
+  questionnaire4Upgraded {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+
+questionnaire4PublicUpgraded :: Questionnaire
+questionnaire4PublicUpgraded =
+  questionnaire4Upgraded {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 fReplies :: [Reply]
 fReplies =
-  [ fQ1
-  , fQ2
+  [ rQ1
+  , rQ2
   , rQ2_aYes_fuQ1
-  , fQ3
+  , rQ3
   , rQ4
   , rQ4_it1_itemName
   , rQ4_it1_q5
@@ -128,15 +173,15 @@ fReplies =
 createReplyKey :: [String] -> String
 createReplyKey uuids = intercalate "." uuids
 
-fQ1 :: Reply
-fQ1 =
+rQ1 :: Reply
+rQ1 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion1 ^. uuid]
   , _replyValue = StringReply . fromJust $ fQuestion1 ^. answerValue
   }
 
-fQ2 :: Reply
-fQ2 =
+rQ2 :: Reply
+rQ2 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion2 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQuestion2 ^. answerOption) ^. uuid
@@ -155,8 +200,8 @@ rQ2_aYes_fuQ1 =
   , _replyValue = AnswerReply $ (fromJust $ fQ2_aYes_fuQuestion1 ^. answerOption) ^. uuid
   }
 
-fQ3 :: Reply
-fQ3 =
+rQ3 :: Reply
+rQ3 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion3 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQuestion3 ^. answerOption) ^. uuid

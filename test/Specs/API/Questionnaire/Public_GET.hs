@@ -24,6 +24,7 @@ import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageMapper
 
@@ -66,6 +67,7 @@ test_200 appContext =
           , _questionnaireDetailDTOName = "Public Questionnaire"
           , _questionnaireDetailDTOLevel = 2
           , _questionnaireDetailDTOAccessibility = PublicQuestionnaire
+          , _questionnaireDetailDTOState = QSDefault
           , _questionnaireDetailDTOPackage = toSimpleDTO . toPackage $ publicPackage
           , _questionnaireDetailDTOSelectedTagUuids = []
           , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO km1WithQ4

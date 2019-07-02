@@ -19,7 +19,8 @@ import Api.Handler.Info.InfoHandler
 import Api.Handler.KnowledgeModel.KnowledgeModelHandler
 import Api.Handler.Level.LevelHandler
 import Api.Handler.Metric.MetricHandler
-import Api.Handler.Migration.MigrationHandler
+import Api.Handler.Migration.KnowledgeModel.MigratorHandler
+import Api.Handler.Migration.Questionnaire.MigratorHandler
 import Api.Handler.Organization.OrganizationHandler
 import Api.Handler.Package.PackageHandler
 import Api.Handler.PublicQuestionnaire.PublicQuestionnaireHandler
@@ -140,6 +141,11 @@ createEndpoints context
   post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
   get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
+   -- Migrations
+  post "/questionnaires/:qtnUuid/migrations" postQuestionnaireMigrationsA
+  get "/questionnaires/:qtnUuid/migrations/current" getQuestionnaireMigrationsCurrentA
+  put "/questionnaires/:qtnUuid/migrations/current" putQuestionnaireMigrationsCurrentA
+  delete "/questionnaires/:qtnUuid/migrations/current" deleteQuestionnaireMigrationsCurrentA
    --------------------
    -- TYPEHINTS
    --------------------

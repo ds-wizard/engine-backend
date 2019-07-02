@@ -26,7 +26,7 @@ import Api.Resource.User.UserDTO
 import Constant.KnowledgeModel
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
 import Localization
@@ -38,7 +38,7 @@ import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.Event.Event
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Branch.BranchMapper
 import Service.Branch.BranchValidation
 import Service.Migration.KnowledgeModel.MigratorService

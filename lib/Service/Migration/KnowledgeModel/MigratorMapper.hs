@@ -2,10 +2,10 @@ module Service.Migration.KnowledgeModel.MigratorMapper where
 
 import Control.Lens ((^.))
 
-import Api.Resource.Migration.MigratorStateDTO
-import Api.Resource.Migration.MigratorStateDetailDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
 import LensesConfig
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
 

@@ -27,10 +27,27 @@ import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.KnowledgeModel.PathDTO
 import Api.Resource.Level.LevelDTO
-import Api.Resource.Migration.MigratorConflictDTO
-import Api.Resource.Migration.MigratorStateCreateDTO
-import Api.Resource.Migration.MigratorStateDTO
-import Api.Resource.Migration.MigratorStateDetailDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
+       as KM_MigratorConflictDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
+       as KM_MigratorStateCreateDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
+       as KM_MigratorStateDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
+       as KM_MigratorStateDetailDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
+       as QTN_MigratorStateChangeDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
+       as QTN_MigratorStateCreateDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateDTO
+       as QTN_MigratorStateDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
@@ -84,7 +101,10 @@ import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.Path
 import Model.Level.Level
-import Model.Migrator.MigratorState
+import qualified Model.Migration.KnowledgeModel.MigratorState
+       as KM_MigratorState
+import qualified Model.Migration.Questionnaire.MigratorState
+       as QTN_MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Package.PackageWithEvents
@@ -292,14 +312,11 @@ makeFields ''PathItem
 -- Model / Level
 makeFields ''Level
 
--- Model / Migrator
-makeFields ''MigratorConflictDTO
+-- Model / Migration / KnowledgeModel
+makeFields ''KM_MigratorState.MigratorState
 
-makeFields ''MigratorStateCreateDTO
-
-makeFields ''MigratorStateDetailDTO
-
-makeFields ''MigratorStateDTO
+-- Model / Migration / Questionnaire
+makeFields ''QTN_MigratorState.MigratorState
 
 -- Model / Organization
 makeFields ''Organization
@@ -516,8 +533,21 @@ makeFields ''PathItemDTO
 -- Model / Level
 makeFields ''LevelDTO
 
--- Api / Resource / Migrator
-makeFields ''MigratorState
+-- Api / Resource / Migration / KnowledgeModel
+makeFields ''KM_MigratorConflictDTO.MigratorConflictDTO
+
+makeFields ''KM_MigratorStateCreateDTO.MigratorStateCreateDTO
+
+makeFields ''KM_MigratorStateDetailDTO.MigratorStateDetailDTO
+
+makeFields ''KM_MigratorStateDTO.MigratorStateDTO
+
+-- Api / Resource / Migration / Questionnaire
+makeFields ''QTN_MigratorStateDTO.MigratorStateDTO
+
+makeFields ''QTN_MigratorStateCreateDTO.MigratorStateCreateDTO
+
+makeFields ''QTN_MigratorStateChangeDTO.MigratorStateChangeDTO
 
 -- Api / Resource / Organization
 makeFields ''OrganizationDTO

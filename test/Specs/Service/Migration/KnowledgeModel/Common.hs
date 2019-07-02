@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 import Constant.KnowledgeModel
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 
 createTestMigratorStateWithEvents :: [Event] -> [Event] -> Maybe KnowledgeModel -> MigratorState
 createTestMigratorStateWithEvents branchEvents targetPackageEvents mKm =

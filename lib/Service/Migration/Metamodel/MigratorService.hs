@@ -12,12 +12,13 @@ import Database.MongoDB
        ((=:), delete, find, findOne, insert, insertMany, rest, select)
 
 import Api.Resource.Branch.BranchWithEventsJM ()
-import Api.Resource.Migration.MigratorStateDetailJM ()
+import Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM
+       ()
 import Api.Resource.Package.PackageJM ()
 import Constant.Component
 import Constant.KnowledgeModel
 import Database.BSON.Branch.BranchWithEvents ()
-import Database.BSON.Migrator.MigratorState ()
+import Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
 import Localization

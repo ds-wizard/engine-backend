@@ -1,18 +1,18 @@
 module Service.PublicQuestionnaire.PublicQuestionnaireService where
 
+import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
-
-import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Database.DAO.PublicPackage.PublicPackageDAO
 import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireState
 import Service.Common
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.KnowledgeModel.KnowledgeModelService
@@ -32,6 +32,7 @@ getPublicQuestionnaire =
             , _questionnaireDetailDTOName = "Public Questionnaire"
             , _questionnaireDetailDTOLevel = 2
             , _questionnaireDetailDTOAccessibility = PublicQuestionnaire
+            , _questionnaireDetailDTOState = QSDefault
             , _questionnaireDetailDTOPackage = toSimpleDTO . toPackage $ package
             , _questionnaireDetailDTOSelectedTagUuids = []
             , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel

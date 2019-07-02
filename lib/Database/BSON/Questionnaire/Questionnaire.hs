@@ -2,6 +2,7 @@ module Database.BSON.Questionnaire.Questionnaire where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
+import Data.Maybe ()
 
 import Database.BSON.Common
 import Database.BSON.Questionnaire.QuestionnaireReply ()
@@ -15,8 +16,8 @@ instance ToBSON Questionnaire where
     , "accessibility" BSON.=: serializeQuestionnaireAccessibility _questionnaireAccessibility
     , "packageId" BSON.=: _questionnairePackageId
     , "selectedTagUuids" BSON.=: serializeUUIDList _questionnaireSelectedTagUuids
-    , "replies" BSON.=: _questionnaireReplies
     , "ownerUuid" BSON.=: serializeMaybeUUID _questionnaireOwnerUuid
+    , "replies" BSON.=: _questionnaireReplies
     , "createdAt" BSON.=: _questionnaireCreatedAt
     , "updatedAt" BSON.=: _questionnaireUpdatedAt
     ]
@@ -29,8 +30,8 @@ instance FromBSON Questionnaire where
     _questionnaireAccessibility <- deserializeQuestionnaireAccessibility $ BSON.lookup "accessibility" doc
     _questionnairePackageId <- BSON.lookup "packageId" doc
     _questionnaireSelectedTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "selectedTagUuids" doc
-    _questionnaireReplies <- BSON.lookup "replies" doc
     let _questionnaireOwnerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
+    _questionnaireReplies <- BSON.lookup "replies" doc
     _questionnaireCreatedAt <- BSON.lookup "createdAt" doc
     _questionnaireUpdatedAt <- BSON.lookup "updatedAt" doc
     return Questionnaire {..}

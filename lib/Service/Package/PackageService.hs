@@ -17,7 +17,7 @@ module Service.Package.PackageService
   , heGetNewerPackages
   ) where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^..), traverse)
 import Control.Monad.Reader (asks, liftIO)
 import Data.List (maximumBy)
 import Data.Maybe
@@ -30,7 +30,7 @@ import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.Version.VersionDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Integration.Http.Registry.Runner
 import Integration.Resource.Package.PackageSimpleIDTO
@@ -53,14 +53,14 @@ getSimplePackagesFiltered queryParams = do
   heFindPackagesFiltered queryParams $ \pkgs ->
     heGetInstanceStatistics $ \iStat ->
       heRetrievePackages (dswConfig ^. registry) iStat $ \pkgRs ->
-        return . Right . toSimpleDTOs pkgRs . chooseTheNewest . groupPkgs $ pkgs
+        return . Right . fmap (toSimpleDTOs pkgRs) . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
-    chooseTheNewest :: [[Package]] -> [Package]
-    chooseTheNewest = fmap (maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)))
-    toSimpleDTOs :: [PackageSimpleIDTO] -> [Package] -> [PackageSimpleDTO]
-    toSimpleDTOs pkgRs = fmap (\pkg -> toSimpleDTO' pkg pkgRs)
+    toSimpleDTOs :: [PackageSimpleIDTO] -> [Package] -> PackageSimpleDTO
+    toSimpleDTOs pkgRs pkgs = toSimpleDTO' newestPkg pkgRs (pkgs ^.. traverse . version)
+      where
+        newestPkg = maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) pkgs
 
 getPackageById :: String -> AppContextM (Either AppError PackageDetailDTO)
 getPackageById pkgId = do

@@ -20,6 +20,7 @@ import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import LensesConfig
 import Model.Context.AppContext
+import Model.Questionnaire.QuestionnaireState
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -65,7 +66,7 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage
+    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage QSDefault
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext

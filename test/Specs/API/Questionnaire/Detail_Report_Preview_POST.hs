@@ -68,10 +68,10 @@ reqDto =
   , _questionnaireChangeDTOLevel = 3
   , _questionnaireChangeDTOReplies =
       toReplyDTO <$>
-      [ fQ1
-      , fQ2
+      [ rQ1
+      , rQ2
       , rQ2_aYes_fuQ1
-      , fQ3
+      , rQ3
       , rQ4
       , rQ4_it1_itemName
       , rQ4_it1_q5

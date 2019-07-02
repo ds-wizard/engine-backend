@@ -16,29 +16,32 @@ import Model.Package.Package
 import Model.Package.PackageWithEvents
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireReply
+import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelMapper
 import qualified Service.Package.PackageMapper as PM
 
-toDTO :: Questionnaire -> Package -> QuestionnaireDTO
-toDTO questionnaire package =
+toDTO :: Questionnaire -> Package -> QuestionnaireState -> QuestionnaireDTO
+toDTO questionnaire package state =
   QuestionnaireDTO
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
   , _questionnaireDTOAccessibility = questionnaire ^. accessibility
+  , _questionnaireDTOState = state
   , _questionnaireDTOPackage = PM.toSimpleDTO package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireDTO
-toSimpleDTO questionnaire package =
+toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> QuestionnaireDTO
+toSimpleDTO questionnaire package state =
   QuestionnaireDTO
   { _questionnaireDTOUuid = questionnaire ^. uuid
   , _questionnaireDTOName = questionnaire ^. name
   , _questionnaireDTOLevel = questionnaire ^. level
   , _questionnaireDTOAccessibility = questionnaire ^. accessibility
+  , _questionnaireDTOState = state
   , _questionnaireDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
   , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
@@ -61,13 +64,15 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
   IntegrationValueDTO
   {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOIntValue = _integrationValueIntValue}
 
-toDetailWithPackageWithEventsDTO :: Questionnaire -> PackageWithEvents -> KnowledgeModel -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
+toDetailWithPackageWithEventsDTO ::
+     Questionnaire -> PackageWithEvents -> KnowledgeModel -> QuestionnaireState -> QuestionnaireDetailDTO
+toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
   QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
   , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
+  , _questionnaireDetailDTOState = state
   , _questionnaireDetailDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
@@ -77,13 +82,15 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel =
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
   }
 
-toDetailWithPackageDTO :: Questionnaire -> PackageSimpleDTO -> KnowledgeModel -> QuestionnaireDetailDTO
-toDetailWithPackageDTO questionnaire package knowledgeModel =
+toDetailWithPackageDTO ::
+     Questionnaire -> PackageSimpleDTO -> KnowledgeModel -> QuestionnaireState -> QuestionnaireDetailDTO
+toDetailWithPackageDTO questionnaire package knowledgeModel state =
   QuestionnaireDetailDTO
   { _questionnaireDetailDTOUuid = questionnaire ^. uuid
   , _questionnaireDetailDTOName = questionnaire ^. name
   , _questionnaireDetailDTOLevel = questionnaire ^. level
   , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
+  , _questionnaireDetailDTOState = state
   , _questionnaireDetailDTOPackage = package
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
@@ -145,4 +152,19 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
         else Nothing
   , _questionnaireCreatedAt = qtnCreatedAt
   , _questionnaireUpdatedAt = qtnUpdatedAt
+  }
+
+fromDetailDTO :: QuestionnaireDetailDTO -> Questionnaire
+fromDetailDTO dto =
+  Questionnaire
+  { _questionnaireUuid = dto ^. uuid
+  , _questionnaireName = dto ^. name
+  , _questionnaireLevel = dto ^. level
+  , _questionnaireAccessibility = dto ^. accessibility
+  , _questionnairePackageId = dto ^. package . pId
+  , _questionnaireSelectedTagUuids = dto ^. selectedTagUuids
+  , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
+  , _questionnaireOwnerUuid = dto ^. ownerUuid
+  , _questionnaireCreatedAt = dto ^. createdAt
+  , _questionnaireUpdatedAt = dto ^. updatedAt
   }

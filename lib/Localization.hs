@@ -100,6 +100,9 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "F
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
   "Failed to convert entity ('" ++ entityName ++ "') to BSON"
 
+-- Migration / Metamodel
+_ERROR_SERVICE_MIGRATION_QTN__MIGRATION_UNIQUENESS = "Migration is already created"
+
 -- Package
 _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
   "The parent ('" ++

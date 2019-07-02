@@ -10,7 +10,7 @@ import Model.Event.Event
 import Model.Event.EventAccessors
 import Model.Event.EventField
 import Model.Event.Question.QuestionEvent
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Migration.KnowledgeModel.Applicator.Applicator
 import Service.Migration.KnowledgeModel.Migrator
 

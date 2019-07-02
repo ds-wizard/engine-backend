@@ -21,6 +21,7 @@ import qualified Database.Migration.Development.User.UserMigration
        as U
 import LensesConfig
 import Model.Context.AppContext
+import Model.Questionnaire.QuestionnaireState
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -57,9 +58,9 @@ test_200 appContext = do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
-          [ toSimpleDTO questionnaire1 germanyPackage
-          , toSimpleDTO questionnaire2 germanyPackage
-          , toSimpleDTO questionnaire3 germanyPackage
+          [ toSimpleDTO questionnaire1 germanyPackage QSDefault
+          , toSimpleDTO questionnaire2 germanyPackage QSDefault
+          , toSimpleDTO questionnaire3 germanyPackage QSDefault
           ]
     let expBody = encode expDto
      -- AND: Run migrations
@@ -78,7 +79,7 @@ test_200 appContext = do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
-          [toSimpleDTO questionnaire2 germanyPackage, toSimpleDTO questionnaire3 germanyPackage] :: [QuestionnaireDTO]
+          [toSimpleDTO questionnaire2 germanyPackage QSDefault, toSimpleDTO questionnaire3 germanyPackage QSDefault] :: [QuestionnaireDTO]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

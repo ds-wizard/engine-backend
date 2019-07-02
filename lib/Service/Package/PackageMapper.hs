@@ -51,16 +51,17 @@ toDTO pkg =
   }
 
 toSimpleDTO :: Package -> PackageSimpleDTO
-toSimpleDTO pkg = toSimpleDTO' pkg []
+toSimpleDTO pkg = toSimpleDTO' pkg [] []
 
-toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> PackageSimpleDTO
-toSimpleDTO' pkg pkgRs =
+toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> [String] -> PackageSimpleDTO
+toSimpleDTO' pkg pkgRs localVersions =
   PackageSimpleDTO
   { _packageSimpleDTOPId = pkg ^. pId
   , _packageSimpleDTOName = pkg ^. name
   , _packageSimpleDTOOrganizationId = pkg ^. organizationId
   , _packageSimpleDTOKmId = pkg ^. kmId
   , _packageSimpleDTOVersion = pkg ^. version
+  , _packageSimpleDTOVersions = localVersions
   , _packageSimpleDTODescription = pkg ^. description
   , _packageSimpleDTOState = computePackageState pkgRs pkg
   , _packageSimpleDTOOrganization =

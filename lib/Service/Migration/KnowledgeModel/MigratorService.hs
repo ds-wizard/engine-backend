@@ -4,19 +4,19 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe
 
-import Api.Resource.Migration.MigratorConflictDTO
-import Api.Resource.Migration.MigratorStateCreateDTO
-import Api.Resource.Migration.MigratorStateDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Constant.KnowledgeModel
 import Database.DAO.Branch.BranchDAO
-import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Event.EventAccessors
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Migration.KnowledgeModel.Migrator
 import Service.Migration.KnowledgeModel.MigratorMapper
