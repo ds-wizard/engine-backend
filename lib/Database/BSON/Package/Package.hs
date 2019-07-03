@@ -15,6 +15,7 @@ instance ToBSON Package where
     , "metamodelVersion" BSON.=: _packageMetamodelVersion
     , "description" BSON.=: _packageDescription
     , "readme" BSON.=: _packageReadme
+    , "license" BSON.=: _packageLicense
     , "parentPackageId" BSON.=: _packageParentPackageId
     , "createdAt" BSON.=: _packageCreatedAt
     ]
@@ -29,6 +30,7 @@ instance FromBSON Package where
     _packageMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     _packageDescription <- BSON.lookup "description" doc
     _packageReadme <- BSON.lookup "readme" doc
+    _packageLicense <- BSON.lookup "license" doc
     _packageParentPackageId <- BSON.lookup "parentPackageId" doc
     _packageCreatedAt <- BSON.lookup "createdAt" doc
     return Package {..}

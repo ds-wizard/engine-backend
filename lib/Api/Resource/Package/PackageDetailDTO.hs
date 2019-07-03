@@ -13,6 +13,7 @@ data PackageDetailDTO = PackageDetailDTO
   , _packageDetailDTOVersion :: String
   , _packageDetailDTODescription :: String
   , _packageDetailDTOReadme :: String
+  , _packageDetailDTOLicense :: String
   , _packageDetailDTOMetamodelVersion :: Int
   , _packageDetailDTOParentPackageId :: Maybe String
   , _packageDetailDTOVersions :: [String]

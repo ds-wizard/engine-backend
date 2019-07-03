@@ -54,7 +54,11 @@ reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
-  VersionDTO {_versionDTODescription = amsterdamPackage ^. description, _versionDTOReadme = amsterdamPackage ^. readme}
+  VersionDTO
+  { _versionDTODescription = amsterdamPackage ^. description
+  , _versionDTOReadme = amsterdamPackage ^. readme
+  , _versionDTOLicense = amsterdamPackage ^. license
+  }
 
 reqBody = encode reqDto
 

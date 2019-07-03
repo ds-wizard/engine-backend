@@ -23,6 +23,7 @@ instance ToBSON PackageWithEvents where
     , "metamodelVersion" BSON.=: _packageWithEventsMetamodelVersion
     , "description" BSON.=: _packageWithEventsDescription
     , "readme" BSON.=: _packageWithEventsReadme
+    , "license" BSON.=: _packageWithEventsLicense
     , "parentPackageId" BSON.=: _packageWithEventsParentPackageId
     , "events" BSON.=: convertEventToBSON <$> _packageWithEventsEvents
     , "createdAt" BSON.=: _packageWithEventsCreatedAt
@@ -38,6 +39,7 @@ instance FromBSON PackageWithEvents where
     _packageWithEventsMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     _packageWithEventsDescription <- BSON.lookup "description" doc
     _packageWithEventsReadme <- BSON.lookup "readme" doc
+    _packageWithEventsLicense <- BSON.lookup "license" doc
     _packageWithEventsParentPackageId <- BSON.lookup "parentPackageId" doc
     pkgEventsSerialized <- BSON.lookup "events" doc
     let _packageWithEventsEvents = (fromJust . chooseEventDeserializator) <$> pkgEventsSerialized

@@ -60,6 +60,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0019_bson_hashmap.Migration
        as M_0019
+import qualified
+       Database.Migration.Production.Migration_0020_package_license.Migration
+       as M_0020
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -89,4 +92,5 @@ migrationDefinitions =
   , M_0017.definition
   , M_0018.definition
   , M_0019.definition
+  , M_0020.definition
   ]

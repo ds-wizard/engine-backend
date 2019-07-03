@@ -18,6 +18,7 @@ instance FromJSON PackageDTO where
     _packageDTOMetamodelVersion <- o .: "metamodelVersion"
     _packageDTODescription <- o .: "description"
     _packageDTOReadme <- o .:? "readme" .!= ""
+    _packageDTOLicense <- o .:? "license" .!= ""
     _packageDTOParentPackageId <- o .: "parentPackageId"
     eventSerialized <- o .: "events"
     _packageDTOEvents <- parseJSON eventSerialized
@@ -36,6 +37,7 @@ instance ToJSON PackageDTO where
       , "metamodelVersion" .= _packageDTOMetamodelVersion
       , "description" .= _packageDTODescription
       , "readme" .= _packageDTOReadme
+      , "license" .= _packageDTOLicense
       , "parentPackageId" .= _packageDTOParentPackageId
       , "events" .= toJSON _packageDTOEvents
       , "createdAt" .= _packageDTOCreatedAt

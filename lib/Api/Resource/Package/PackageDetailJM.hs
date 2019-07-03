@@ -18,6 +18,7 @@ instance ToJSON PackageDetailDTO where
       , "metamodelVersion" .= _packageDetailDTOMetamodelVersion
       , "description" .= _packageDetailDTODescription
       , "readme" .= _packageDetailDTOReadme
+      , "license" .= _packageDetailDTOLicense
       , "parentPackageId" .= _packageDetailDTOParentPackageId
       , "versions" .= _packageDetailDTOVersions
       , "remoteLatestVersion" .= _packageDetailDTORemoteLatestVersion
@@ -37,6 +38,7 @@ instance FromJSON PackageDetailDTO where
     _packageDetailDTOMetamodelVersion <- o .: "metamodelVersion"
     _packageDetailDTODescription <- o .: "description"
     _packageDetailDTOReadme <- o .: "readme"
+    _packageDetailDTOLicense <- o .: "license"
     _packageDetailDTOParentPackageId <- o .: "parentPackageId"
     _packageDetailDTOVersions <- o .: "versions"
     _packageDetailDTORemoteLatestVersion <- o .: "remoteLatestVersion"

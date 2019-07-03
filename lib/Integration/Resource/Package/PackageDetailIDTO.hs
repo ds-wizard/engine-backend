@@ -12,6 +12,7 @@ data PackageDetailIDTO = PackageDetailIDTO
   , _packageDetailIDTOVersion :: String
   , _packageDetailIDTODescription :: String
   , _packageDetailIDTOReadme :: String
+  , _packageDetailIDTOLicense :: String
   , _packageDetailIDTOMetamodelVersion :: Int
   , _packageDetailIDTOParentPackageId :: Maybe String
   , _packageDetailIDTOVersions :: [String]

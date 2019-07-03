@@ -14,6 +14,7 @@ data PackageWithEvents = PackageWithEvents
   , _packageWithEventsMetamodelVersion :: Int
   , _packageWithEventsDescription :: String
   , _packageWithEventsReadme :: String
+  , _packageWithEventsLicense :: String
   , _packageWithEventsParentPackageId :: Maybe String
   , _packageWithEventsEvents :: [Event]
   , _packageWithEventsCreatedAt :: UTCTime

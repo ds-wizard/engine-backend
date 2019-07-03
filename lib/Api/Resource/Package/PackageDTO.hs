@@ -13,6 +13,7 @@ data PackageDTO = PackageDTO
   , _packageDTOMetamodelVersion :: Int
   , _packageDTODescription :: String
   , _packageDTOReadme :: String
+  , _packageDTOLicense :: String
   , _packageDTOParentPackageId :: Maybe String
   , _packageDTOEvents :: [EventDTO]
   , _packageDTOCreatedAt :: UTCTime

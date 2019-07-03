@@ -11,6 +11,7 @@ data Package = Package
   , _packageVersion :: String
   , _packageDescription :: String
   , _packageReadme :: String
+  , _packageLicense :: String
   , _packageMetamodelVersion :: Int
   , _packageParentPackageId :: Maybe String
   , _packageCreatedAt :: UTCTime
