@@ -146,6 +146,8 @@ _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical diffic
 
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
 
+_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid = "User (" ++ userUuid ++ ") doesn't exist"
+
 -- Template
 _ERROR_SERVICE_TYPEHINT__NON_EXISTING_QUESTION = "Desired question doesn't exist"
 
