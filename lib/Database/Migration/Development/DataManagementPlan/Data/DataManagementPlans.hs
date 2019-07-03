@@ -25,6 +25,7 @@ dmp1 =
       DataManagementPlanConfig
       {_dataManagementPlanConfigLevelsEnabled = True, _dataManagementPlanConfigItemTitleEnabled = True}
   , _dataManagementPlanQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
+  , _dataManagementPlanQuestionnaireName = questionnaire1 ^. name
   , _dataManagementPlanLevel = questionnaire1 ^. level
   , _dataManagementPlanFilledKnowledgeModel = fKm1WithQ4
   , _dataManagementPlanMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]

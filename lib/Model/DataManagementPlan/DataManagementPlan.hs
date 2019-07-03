@@ -33,6 +33,7 @@ data DataManagementPlan = DataManagementPlan
   { _dataManagementPlanUuid :: U.UUID
   , _dataManagementPlanConfig :: DataManagementPlanConfig
   , _dataManagementPlanQuestionnaireUuid :: String
+  , _dataManagementPlanQuestionnaireName :: String
   , _dataManagementPlanLevel :: Int
   , _dataManagementPlanFilledKnowledgeModel :: FilledKnowledgeModel
   , _dataManagementPlanMetrics :: [Metric]
@@ -50,6 +51,7 @@ instance Eq DataManagementPlan where
     _dataManagementPlanUuid a == _dataManagementPlanUuid b &&
     _dataManagementPlanConfig a == _dataManagementPlanConfig b &&
     _dataManagementPlanQuestionnaireUuid a == _dataManagementPlanQuestionnaireUuid b &&
+    _dataManagementPlanQuestionnaireName a == _dataManagementPlanQuestionnaireName b &&
     _dataManagementPlanLevel a == _dataManagementPlanLevel b &&
     _dataManagementPlanFilledKnowledgeModel a == _dataManagementPlanFilledKnowledgeModel b &&
     _dataManagementPlanMetrics a == _dataManagementPlanMetrics b &&

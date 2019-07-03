@@ -22,6 +22,7 @@ data DataManagementPlanDTO = DataManagementPlanDTO
   { _dataManagementPlanDTOUuid :: U.UUID
   , _dataManagementPlanDTOConfig :: DataManagementPlanConfigDTO
   , _dataManagementPlanDTOQuestionnaireUuid :: String
+  , _dataManagementPlanDTOQuestionnaireName :: String
   , _dataManagementPlanDTOLevel :: Int
   , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
@@ -39,6 +40,7 @@ instance Eq DataManagementPlanDTO where
     _dataManagementPlanDTOUuid a == _dataManagementPlanDTOUuid b &&
     _dataManagementPlanDTOConfig a == _dataManagementPlanDTOConfig b &&
     _dataManagementPlanDTOQuestionnaireUuid a == _dataManagementPlanDTOQuestionnaireUuid b &&
+    _dataManagementPlanDTOQuestionnaireName a == _dataManagementPlanDTOQuestionnaireName b &&
     _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
     _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
     _dataManagementPlanDTOMetrics a == _dataManagementPlanDTOMetrics b &&
@@ -58,6 +60,7 @@ instance FromJSON DataManagementPlanDTO where
     _dataManagementPlanDTOUuid <- o .: "uuid"
     _dataManagementPlanDTOConfig <- o .: "config"
     _dataManagementPlanDTOQuestionnaireUuid <- o .: "questionnaireUuid"
+    _dataManagementPlanDTOQuestionnaireName <- o .: "questionnaireName"
     _dataManagementPlanDTOLevel <- o .: "level"
     _dataManagementPlanDTOFilledKnowledgeModel <- o .: "filledKnowledgeModel"
     _dataManagementPlanDTOMetrics <- o .: "metrics"
@@ -76,7 +79,7 @@ instance ToJSON DataManagementPlanDTO where
     object
       [ "uuid" .= _dataManagementPlanDTOUuid
       , "config" .= _dataManagementPlanDTOConfig
-      , "questionnaireUuid" .= _dataManagementPlanDTOQuestionnaireUuid
+      , "questionnaireName" .= _dataManagementPlanDTOQuestionnaireName
       , "level" .= _dataManagementPlanDTOLevel
       , "filledKnowledgeModel" .= _dataManagementPlanDTOFilledKnowledgeModel
       , "metrics" .= _dataManagementPlanDTOMetrics
