@@ -49,6 +49,12 @@ header > h1 > div.headline {
   margin-left: 1rem;
 }
 
+header > h1 > div.headline > span.km-name {
+  color: #868e96;
+  font-size: 75%;
+  font-style: italic;
+}
+
 header > h1 > svg {
   float: left;
   height: 40px;
