@@ -28,7 +28,7 @@
         <dd>{{dmp.createdBy.name}} {{dmp.createdBy.surname}} (<a href="mailto:{{dmp.user.email}}">{{dmp.createdBy.email}}</a>)</dd>
       {% endif %}
       <dt>Based on</dt>
-      <dd>{{dmp.package.name}}, {{dmp.package.version}}</dd>
+      <dd>{{dmp.package.name}}, {{dmp.package.version}} (<span class="package-id"><span class="organization-id">{{dmp.package.organizationId}}</span>:<span class="km-id">{{dmp.package.kmId}}</span>:<span class="version">{{dmp.package.version}}</span></span>)</dd>
       {% if dmp.config.levelsEnabled %}
       <dt>Project Phase</dt>
       <dd>{{renderCurrentLevel()}}</dd>

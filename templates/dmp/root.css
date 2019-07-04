@@ -96,6 +96,11 @@ dl dd {
   font-style: italic;
 }
 
+dl dt > span.package-id {
+  font-family: monospace;
+  font-style: normal;
+}
+
 /**************************/
 
 table {
