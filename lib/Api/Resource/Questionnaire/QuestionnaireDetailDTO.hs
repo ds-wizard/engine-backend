@@ -2,11 +2,12 @@ module Api.Resource.Questionnaire.QuestionnaireDetailDTO where
 
 import Data.Time
 import qualified Data.UUID as U
+import GHC.Generics
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
-import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireState
 
@@ -20,10 +21,11 @@ data QuestionnaireDetailDTO = QuestionnaireDetailDTO
   , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
   , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
   , _questionnaireDetailDTOReplies :: [ReplyDTO]
+  , _questionnaireDetailDTOLabels :: [LabelDTO]
   , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
   , _questionnaireDetailDTOCreatedAt :: UTCTime
   , _questionnaireDetailDTOUpdatedAt :: UTCTime
-  } deriving (Show)
+  } deriving (Show, Generic)
 
 instance Eq QuestionnaireDetailDTO where
   a == b =

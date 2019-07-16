@@ -5,6 +5,7 @@ import Data.Bson.Generic
 import Data.Maybe ()
 
 import Database.BSON.Common
+import Database.BSON.Questionnaire.QuestionnaireLabel ()
 import Database.BSON.Questionnaire.QuestionnaireReply ()
 import Model.Questionnaire.Questionnaire
 
@@ -18,6 +19,7 @@ instance ToBSON Questionnaire where
     , "selectedTagUuids" BSON.=: serializeUUIDList _questionnaireSelectedTagUuids
     , "ownerUuid" BSON.=: serializeMaybeUUID _questionnaireOwnerUuid
     , "replies" BSON.=: _questionnaireReplies
+    , "labels" BSON.=: _questionnaireLabels
     , "createdAt" BSON.=: _questionnaireCreatedAt
     , "updatedAt" BSON.=: _questionnaireUpdatedAt
     ]
@@ -32,6 +34,7 @@ instance FromBSON Questionnaire where
     _questionnaireSelectedTagUuids <- deserializeMaybeUUIDList $ BSON.lookup "selectedTagUuids" doc
     let _questionnaireOwnerUuid = deserializeMaybeUUID $ BSON.lookup "ownerUuid" doc
     _questionnaireReplies <- BSON.lookup "replies" doc
+    _questionnaireLabels <- BSON.lookup "labels" doc
     _questionnaireCreatedAt <- BSON.lookup "createdAt" doc
     _questionnaireUpdatedAt <- BSON.lookup "updatedAt" doc
     return Questionnaire {..}

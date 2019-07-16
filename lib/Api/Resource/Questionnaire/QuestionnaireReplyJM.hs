@@ -1,4 +1,4 @@
-module Api.Resource.Questionnaire.QuestionnaireReplyJS where
+module Api.Resource.Questionnaire.QuestionnaireReplyJM where
 
 import Control.Monad
 import Data.Aeson

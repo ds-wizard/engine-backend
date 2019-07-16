@@ -72,6 +72,7 @@ test_200 appContext =
           , _questionnaireDetailDTOSelectedTagUuids = []
           , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO km1WithQ4
           , _questionnaireDetailDTOReplies = []
+          , _questionnaireDetailDTOLabels = []
           , _questionnaireDetailDTOOwnerUuid = Nothing
           , _questionnaireDetailDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
           , _questionnaireDetailDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

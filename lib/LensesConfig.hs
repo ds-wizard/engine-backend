@@ -58,6 +58,7 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Template.TemplateDTO
@@ -110,6 +111,7 @@ import Model.Package.Package
 import Model.Package.PackageWithEvents
 import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
 import Model.Statistics.InstanceStatistics
@@ -339,6 +341,8 @@ makeFields ''Reply
 makeFields ''ReplyValue
 
 makeFields ''IntegrationReplyValue
+
+makeFields ''Label
 
 -- Model / Report
 makeFields ''Indication
@@ -582,6 +586,8 @@ makeFields ''ReplyDTO
 makeFields ''ReplyValueDTO
 
 makeFields ''IntegrationReplyValueDTO
+
+makeFields ''LabelDTO
 
 -- Api / Resource / Report
 makeFields ''IndicationDTO

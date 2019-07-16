@@ -4,6 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 
 data QuestionnaireAccessibility
@@ -21,6 +22,7 @@ data Questionnaire = Questionnaire
   , _questionnaireSelectedTagUuids :: [U.UUID]
   , _questionnaireOwnerUuid :: Maybe U.UUID
   , _questionnaireReplies :: [Reply]
+  , _questionnaireLabels :: [Label]
   , _questionnaireCreatedAt :: UTCTime
   , _questionnaireUpdatedAt :: UTCTime
   } deriving (Generic, Show)
@@ -33,4 +35,5 @@ instance Eq Questionnaire where
     _questionnaireAccessibility a == _questionnaireAccessibility b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
-    _questionnaireOwnerUuid a == _questionnaireOwnerUuid b && _questionnaireReplies a == _questionnaireReplies b
+    _questionnaireOwnerUuid a == _questionnaireOwnerUuid b &&
+    _questionnaireReplies a == _questionnaireReplies b && _questionnaireLabels a == _questionnaireLabels b

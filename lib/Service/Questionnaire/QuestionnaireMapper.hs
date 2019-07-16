@@ -9,12 +9,14 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Package.Package
 import Model.Package.PackageWithEvents
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelMapper
@@ -64,6 +66,9 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
   IntegrationValueDTO
   {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOIntValue = _integrationValueIntValue}
 
+toLabelDTO :: Label -> LabelDTO
+toLabelDTO label = LabelDTO {_labelDTOPath = label ^. path, _labelDTOValue = label ^. value}
+
 toDetailWithPackageWithEventsDTO ::
      Questionnaire -> PackageWithEvents -> KnowledgeModel -> QuestionnaireState -> QuestionnaireDetailDTO
 toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
@@ -77,6 +82,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
   , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
+  , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
   , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
@@ -95,6 +101,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
   , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
   , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
   , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
+  , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
   , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
   , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
   , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
@@ -116,6 +123,9 @@ fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
   IntegrationValue
   {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
 
+fromLabelDTO :: LabelDTO -> Label
+fromLabelDTO label = Label {_labelPath = label ^. path, _labelValue = label ^. value}
+
 fromChangeDTO ::
      QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> QuestionnaireAccessibility -> UUID -> UTCTime -> Questionnaire
 fromChangeDTO qtn dto accessibility currentUserUuid now =
@@ -127,6 +137,7 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
   , _questionnairePackageId = qtn ^. package . pId
   , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
+  , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
   , _questionnaireOwnerUuid =
       if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
@@ -146,6 +157,7 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
   , _questionnairePackageId = dto ^. packageId
   , _questionnaireSelectedTagUuids = dto ^. tagUuids
   , _questionnaireReplies = []
+  , _questionnaireLabels = []
   , _questionnaireOwnerUuid =
       if accessibility /= PublicQuestionnaire
         then Just currentUserUuid
@@ -164,6 +176,7 @@ fromDetailDTO dto =
   , _questionnairePackageId = dto ^. package . pId
   , _questionnaireSelectedTagUuids = dto ^. selectedTagUuids
   , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
+  , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
   , _questionnaireOwnerUuid = dto ^. ownerUuid
   , _questionnaireCreatedAt = dto ^. createdAt
   , _questionnaireUpdatedAt = dto ^. updatedAt

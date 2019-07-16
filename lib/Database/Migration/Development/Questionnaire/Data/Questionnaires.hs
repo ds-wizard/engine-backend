@@ -13,6 +13,7 @@ import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 
 questionnaire1 :: Questionnaire
@@ -25,6 +26,7 @@ questionnaire1 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -40,6 +42,7 @@ questionnaire1Edited =
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire1 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = questionnaire1 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
@@ -57,6 +60,7 @@ questionnaire2 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -72,6 +76,7 @@ questionnaire2Edited =
   , _questionnairePackageId = questionnaire2 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire2 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = questionnaire2 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
@@ -89,6 +94,7 @@ questionnaire3 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -104,6 +110,7 @@ questionnaire3Edited =
   , _questionnairePackageId = questionnaire3 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire3 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = questionnaire3 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
@@ -121,6 +128,7 @@ questionnaire4 =
   , _questionnairePackageId = netherlandsPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = []
+  , _questionnaireLabels = []
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -332,3 +340,15 @@ rQ10 =
           }
       }
   }
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+fLabels :: [Label]
+fLabels =
+  [Label {_labelPath = rQ1 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}]
+
+fLabelsEdited :: [Label]
+fLabelsEdited =
+  [ Label {_labelPath = rQ1 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}
+  , Label {_labelPath = rQ2 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}
+  ]

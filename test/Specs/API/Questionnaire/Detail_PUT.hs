@@ -62,6 +62,7 @@ reqDtoT qtn =
   , _questionnaireChangeDTOAccessibility = qtn ^. accessibility
   , _questionnaireChangeDTOLevel = qtn ^. level
   , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
+  , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
   }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -106,7 +107,7 @@ test_400 appContext =
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [HJ.json| { name: "Common Questionnaire" } |]
-    "level"
+    "accessibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

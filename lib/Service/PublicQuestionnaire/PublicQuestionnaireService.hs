@@ -37,6 +37,7 @@ getPublicQuestionnaire =
             , _questionnaireDetailDTOSelectedTagUuids = []
             , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
             , _questionnaireDetailDTOReplies = []
+            , _questionnaireDetailDTOLabels = []
             , _questionnaireDetailDTOOwnerUuid = Nothing
             , _questionnaireDetailDTOCreatedAt = now
             , _questionnaireDetailDTOUpdatedAt = now
