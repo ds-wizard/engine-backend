@@ -27,6 +27,7 @@ defaultClient =
   , _appConfigClientWelcomeWarning = Nothing
   , _appConfigClientWelcomeInfo = Nothing
   , _appConfigClientDashboard = Just defaultClientDashboard
+  , _appConfigClientCustomMenuLinks = []
   }
 
 defaultClientDashboard :: AppConfigClientDashboard

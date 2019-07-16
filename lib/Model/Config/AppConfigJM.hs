@@ -49,6 +49,7 @@ instance FromJSON AppConfigClient where
     _appConfigClientWelcomeWarning <- o .:? "welcomeWarning" .!= (defaultClient ^. welcomeWarning)
     _appConfigClientWelcomeInfo <- o .:? "welcomeInfo" .!= (defaultClient ^. welcomeInfo)
     _appConfigClientDashboard <- o .:? "dashboard" .!= (defaultClient ^. dashboard)
+    _appConfigClientCustomMenuLinks <- o .:? "customMenuLinks" .!= (defaultClient ^. customMenuLinks)
     return AppConfigClient {..}
   parseJSON _ = mzero
 
@@ -58,6 +59,15 @@ instance FromJSON AppConfigClientDashboard where
     _appConfigClientDashboardDataSteward <- o .:? "dataSteward" .!= (defaultClientDashboard ^. dataSteward)
     _appConfigClientDashboardResearcher <- o .:? "researcher" .!= (defaultClientDashboard ^. researcher)
     return AppConfigClientDashboard {..}
+  parseJSON _ = mzero
+
+instance FromJSON AppConfigClientCustomMenuLink where
+  parseJSON (Object o) = do
+    _appConfigClientCustomMenuLinkIcon <- o .: "icon"
+    _appConfigClientCustomMenuLinkTitle <- o .: "title"
+    _appConfigClientCustomMenuLinkUrl <- o .: "url"
+    _appConfigClientCustomMenuLinkNewWindow <- o .: "newWindow"
+    return AppConfigClientCustomMenuLink {..}
   parseJSON _ = mzero
 
 instance FromJSON AppConfigDatabase where

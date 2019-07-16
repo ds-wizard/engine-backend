@@ -35,6 +35,7 @@ toClientConfigClientDTO clientConfig =
   , _clientConfigClientDTOWelcomeWarning = clientConfig ^. welcomeWarning
   , _clientConfigClientDTOWelcomeInfo = clientConfig ^. welcomeInfo
   , _clientConfigClientDTODashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
+  , _clientConfigClientDTOCustomMenuLinks = toClientConfigClientCustomMenuLinksDTO <$> clientConfig ^. customMenuLinks
   }
 
 toClientConfigClientDashboardDTO :: AppConfigClientDashboard -> ClientConfigClientDashboardDTO
@@ -43,4 +44,13 @@ toClientConfigClientDashboardDTO dashboardConfig =
   { _clientConfigClientDashboardDTOAdmin = dashboardConfig ^. admin
   , _clientConfigClientDashboardDTODataSteward = dashboardConfig ^. dataSteward
   , _clientConfigClientDashboardDTOResearcher = dashboardConfig ^. researcher
+  }
+
+toClientConfigClientCustomMenuLinksDTO :: AppConfigClientCustomMenuLink -> ClientConfigClientCustomMenuLinkDTO
+toClientConfigClientCustomMenuLinksDTO customMenuLinkConfig =
+  ClientConfigClientCustomMenuLinkDTO
+  { _clientConfigClientCustomMenuLinkDTOIcon = customMenuLinkConfig ^. icon
+  , _clientConfigClientCustomMenuLinkDTOTitle = customMenuLinkConfig ^. title
+  , _clientConfigClientCustomMenuLinkDTOUrl = customMenuLinkConfig ^. url
+  , _clientConfigClientCustomMenuLinkDTONewWindow = customMenuLinkConfig ^. newWindow
   }

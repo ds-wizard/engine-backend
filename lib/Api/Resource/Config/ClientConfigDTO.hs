@@ -25,10 +25,18 @@ data ClientConfigClientDTO = ClientConfigClientDTO
   , _clientConfigClientDTOWelcomeWarning :: Maybe String
   , _clientConfigClientDTOWelcomeInfo :: Maybe String
   , _clientConfigClientDTODashboard :: Maybe ClientConfigClientDashboardDTO
+  , _clientConfigClientDTOCustomMenuLinks :: [ClientConfigClientCustomMenuLinkDTO]
   } deriving (Show, Eq, Generic)
 
 data ClientConfigClientDashboardDTO = ClientConfigClientDashboardDTO
   { _clientConfigClientDashboardDTOAdmin :: [String]
   , _clientConfigClientDashboardDTODataSteward :: [String]
   , _clientConfigClientDashboardDTOResearcher :: [String]
+  } deriving (Show, Eq, Generic)
+
+data ClientConfigClientCustomMenuLinkDTO = ClientConfigClientCustomMenuLinkDTO
+  { _clientConfigClientCustomMenuLinkDTOIcon :: String
+  , _clientConfigClientCustomMenuLinkDTOTitle :: String
+  , _clientConfigClientCustomMenuLinkDTOUrl :: String
+  , _clientConfigClientCustomMenuLinkDTONewWindow :: Bool
   } deriving (Show, Eq, Generic)

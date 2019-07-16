@@ -29,3 +29,9 @@ instance FromJSON ClientConfigClientDashboardDTO where
 
 instance ToJSON ClientConfigClientDashboardDTO where
   toJSON = simpleToJSON "_clientConfigClientDashboardDTO"
+
+instance FromJSON ClientConfigClientCustomMenuLinkDTO where
+  parseJSON = simpleParseJSON "_clientConfigClientCustomMenuLinkDTO"
+
+instance ToJSON ClientConfigClientCustomMenuLinkDTO where
+  toJSON = simpleToJSON "_clientConfigClientCustomMenuLinkDTO"

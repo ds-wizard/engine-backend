@@ -138,6 +138,8 @@ makeFields ''AppConfigClient
 
 makeFields ''AppConfigClientDashboard
 
+makeFields ''AppConfigClientCustomMenuLink
+
 makeFields ''AppConfigDatabase
 
 makeFields ''AppConfigMessaging
@@ -383,6 +385,8 @@ makeFields ''ClientConfigRegistryDTO
 makeFields ''ClientConfigClientDTO
 
 makeFields ''ClientConfigClientDashboardDTO
+
+makeFields ''ClientConfigClientCustomMenuLinkDTO
 
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO
