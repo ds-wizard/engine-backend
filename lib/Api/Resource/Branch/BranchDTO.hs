@@ -2,6 +2,7 @@ module Api.Resource.Branch.BranchDTO where
 
 import Data.Time
 import qualified Data.UUID as U
+import GHC.Generics
 
 import Model.Branch.BranchState
 
@@ -16,4 +17,4 @@ data BranchDTO = BranchDTO
   , _branchDTOOwnerUuid :: Maybe U.UUID
   , _branchDTOCreatedAt :: UTCTime
   , _branchDTOUpdatedAt :: UTCTime
-  } deriving (Show)
+  } deriving (Show, Generic)

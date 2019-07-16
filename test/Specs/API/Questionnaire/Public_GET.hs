@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Database.DAO.PublicPackage.PublicPackageDAO
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels

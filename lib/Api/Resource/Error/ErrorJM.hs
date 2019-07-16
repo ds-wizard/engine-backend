@@ -1,4 +1,4 @@
-module Api.Resource.Error.ErrorDTO where
+module Api.Resource.Error.ErrorJM where
 
 import Control.Monad
 import Data.Aeson

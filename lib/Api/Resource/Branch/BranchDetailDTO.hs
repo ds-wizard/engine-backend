@@ -2,6 +2,7 @@ module Api.Resource.Branch.BranchDetailDTO where
 
 import Data.Time
 import qualified Data.UUID as U
+import GHC.Generics
 
 import Api.Resource.Event.EventDTO
 import Model.Branch.BranchState
@@ -18,4 +19,4 @@ data BranchDetailDTO = BranchDetailDTO
   , _branchDetailDTOEvents :: [EventDTO]
   , _branchDetailDTOCreatedAt :: UTCTime
   , _branchDetailDTOUpdatedAt :: UTCTime
-  }
+  } deriving (Generic)

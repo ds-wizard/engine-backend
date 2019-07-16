@@ -22,23 +22,25 @@ toClientConfigDTO appConfig =
 toClientConfigRegistryDTO :: AppConfigRegistry -> ClientConfigRegistryDTO
 toClientConfigRegistryDTO registryConfig =
   ClientConfigRegistryDTO
-  {_clientConfigRegistryEnabled = registryConfig ^. enabled, _clientConfigRegistryUrl = registryConfig ^. clientUrl}
+  { _clientConfigRegistryDTOEnabled = registryConfig ^. enabled
+  , _clientConfigRegistryDTOUrl = registryConfig ^. clientUrl
+  }
 
 toClientConfigClientDTO :: AppConfigClient -> ClientConfigClientDTO
 toClientConfigClientDTO clientConfig =
   ClientConfigClientDTO
-  { _clientConfigClientPrivacyUrl = clientConfig ^. privacyUrl
-  , _clientConfigClientAppTitle = clientConfig ^. appTitle
-  , _clientConfigClientAppTitleShort = clientConfig ^. appTitleShort
-  , _clientConfigClientWelcomeWarning = clientConfig ^. welcomeWarning
-  , _clientConfigClientWelcomeInfo = clientConfig ^. welcomeInfo
-  , _clientConfigClientDashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
+  { _clientConfigClientDTOPrivacyUrl = clientConfig ^. privacyUrl
+  , _clientConfigClientDTOAppTitle = clientConfig ^. appTitle
+  , _clientConfigClientDTOAppTitleShort = clientConfig ^. appTitleShort
+  , _clientConfigClientDTOWelcomeWarning = clientConfig ^. welcomeWarning
+  , _clientConfigClientDTOWelcomeInfo = clientConfig ^. welcomeInfo
+  , _clientConfigClientDTODashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
   }
 
 toClientConfigClientDashboardDTO :: AppConfigClientDashboard -> ClientConfigClientDashboardDTO
 toClientConfigClientDashboardDTO dashboardConfig =
   ClientConfigClientDashboardDTO
-  { _clientConfigClientDashboardAdmin = dashboardConfig ^. admin
-  , _clientConfigClientDashboardDataSteward = dashboardConfig ^. dataSteward
-  , _clientConfigClientDashboardResearcher = dashboardConfig ^. researcher
+  { _clientConfigClientDashboardDTOAdmin = dashboardConfig ^. admin
+  , _clientConfigClientDashboardDTODataSteward = dashboardConfig ^. dataSteward
+  , _clientConfigClientDashboardDTOResearcher = dashboardConfig ^. researcher
   }

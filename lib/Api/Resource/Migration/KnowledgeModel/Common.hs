@@ -3,7 +3,7 @@ module Api.Resource.Migration.KnowledgeModel.Common where
 import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Event.EventJM ()
 import Model.Migration.KnowledgeModel.MigratorState
 import Service.Event.EventMapper

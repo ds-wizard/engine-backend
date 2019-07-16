@@ -4,7 +4,7 @@ import Data.Either (isRight)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Organization.OrganizationDAO
 
 import Specs.Common

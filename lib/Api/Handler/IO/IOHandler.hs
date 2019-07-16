@@ -7,6 +7,7 @@ import Network.Wai.Parse
 import Web.Scotty.Trans (addHeader, files, json, param, raw)
 
 import Api.Handler.Common
+import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.PackageBundle.PackageBundleJM ()
 import Service.PackageBundle.PackageBundleService
 

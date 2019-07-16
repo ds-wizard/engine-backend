@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
 import qualified

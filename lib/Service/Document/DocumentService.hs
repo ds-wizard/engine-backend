@@ -17,6 +17,7 @@ import qualified Data.Text.Encoding as E
 import qualified Text.FromHTML as FromHTML
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
+import Api.Resource.DataManagementPlan.DataManagementPlanJM ()
 import Api.Resource.Template.TemplateDTO
 import LensesConfig
 import Localization

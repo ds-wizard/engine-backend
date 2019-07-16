@@ -3,6 +3,7 @@ module Api.Handler.BookReference.BookReferenceHandler where
 import Web.Scotty.Trans (json, param)
 
 import Api.Handler.Common
+import Api.Resource.BookReference.BookReferenceJM ()
 import Service.BookReference.BookReferenceService
 
 getBookReferenceA :: Endpoint

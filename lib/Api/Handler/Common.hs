@@ -19,7 +19,7 @@ import Web.Scotty.Trans
        (ActionT, ScottyError, addHeader, body, header, json,
         liftAndCatchIO, params, raw, request, showError, status)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import Constant.Component

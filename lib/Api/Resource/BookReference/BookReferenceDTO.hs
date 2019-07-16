@@ -1,8 +1,7 @@
 module Api.Resource.BookReference.BookReferenceDTO where
 
-import Control.Monad
-import Data.Aeson
 import Data.Time
+import GHC.Generics
 
 data BookReferenceDTO = BookReferenceDTO
   { _bookReferenceDTOShortUuid :: String
@@ -10,29 +9,9 @@ data BookReferenceDTO = BookReferenceDTO
   , _bookReferenceDTOContent :: String
   , _bookReferenceDTOCreatedAt :: UTCTime
   , _bookReferenceDTOUpdatedAt :: UTCTime
-  } deriving (Show)
+  } deriving (Show, Generic)
 
 instance Eq BookReferenceDTO where
   a == b =
     _bookReferenceDTOShortUuid a == _bookReferenceDTOShortUuid b &&
     _bookReferenceDTOContent a == _bookReferenceDTOContent b
-
-instance FromJSON BookReferenceDTO where
-  parseJSON (Object o) = do
-    _bookReferenceDTOShortUuid <- o .: "shortUuid"
-    _bookReferenceDTOBookChapter <- o .: "bookChapter"
-    _bookReferenceDTOContent <- o .: "content"
-    _bookReferenceDTOCreatedAt <- o .: "createdAt"
-    _bookReferenceDTOUpdatedAt <- o .: "updatedAt"
-    return BookReferenceDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON BookReferenceDTO where
-  toJSON BookReferenceDTO {..} =
-    object
-      [ "shortUuid" .= _bookReferenceDTOShortUuid
-      , "bookChapter" .= _bookReferenceDTOBookChapter
-      , "content" .= _bookReferenceDTOContent
-      , "createdAt" .= _bookReferenceDTOCreatedAt
-      , "updatedAt" .= _bookReferenceDTOUpdatedAt
-      ]

@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires

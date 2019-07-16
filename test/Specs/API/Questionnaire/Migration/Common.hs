@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Migration.Questionnaire.MigratorDAO
 import LensesConfig
 

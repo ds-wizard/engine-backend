@@ -4,6 +4,7 @@ import Network.HTTP.Types.Status (created201)
 import Web.Scotty.Trans (status)
 
 import Api.Handler.Common
+import Api.Resource.ActionKey.ActionKeyJM ()
 import Service.User.UserService
 
 postActionKeysA :: Endpoint

@@ -13,7 +13,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchDTO
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Branch.BranchDAO
 import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.User.Data.Users
