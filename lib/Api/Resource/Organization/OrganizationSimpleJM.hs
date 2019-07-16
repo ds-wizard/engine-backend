@@ -1,22 +1,12 @@
 module Api.Resource.Organization.OrganizationSimpleJM where
 
-import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Organization.OrganizationSimpleDTO
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON OrganizationSimpleDTO where
-  parseJSON (Object o) = do
-    _organizationSimpleDTOName <- o .: "name"
-    _organizationSimpleDTOOrganizationId <- o .: "organizationId"
-    _organizationSimpleDTOLogo <- o .: "logo"
-    return OrganizationSimpleDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_organizationSimpleDTO"
 
 instance ToJSON OrganizationSimpleDTO where
-  toJSON OrganizationSimpleDTO {..} =
-    object
-      [ "name" .= _organizationSimpleDTOName
-      , "organizationId" .= _organizationSimpleDTOOrganizationId
-      , "logo" .= _organizationSimpleDTOLogo
-      ]
+  toJSON = simpleToJSON "_organizationSimpleDTO"

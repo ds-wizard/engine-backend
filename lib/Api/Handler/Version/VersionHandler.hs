@@ -5,6 +5,7 @@ import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
 import Api.Resource.Package.PackageSimpleJM ()
+import Api.Resource.Version.VersionJM ()
 import Service.Package.PackageService
 
 putVersionA :: Endpoint

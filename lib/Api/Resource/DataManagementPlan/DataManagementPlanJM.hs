@@ -3,11 +3,12 @@ module Api.Resource.DataManagementPlan.DataManagementPlanJM where
 import Data.Aeson
 
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
-import Api.Resource.Level.LevelJS ()
+import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelJM ()
+import Api.Resource.Level.LevelJM ()
 import Api.Resource.Organization.OrganizationJM ()
 import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Report.ReportJM ()
-
+import Api.Resource.User.UserJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON DataManagementPlanDTO where

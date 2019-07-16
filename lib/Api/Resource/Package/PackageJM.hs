@@ -7,6 +7,10 @@ import Data.Time
 
 import Api.Resource.Event.EventJM ()
 import Api.Resource.Package.PackageDTO
+import Util.JSON (simpleToJSON)
+
+instance ToJSON PackageDTO where
+  toJSON = simpleToJSON "_packageDTO"
 
 instance FromJSON PackageDTO where
   parseJSON (Object o) = do
@@ -25,20 +29,3 @@ instance FromJSON PackageDTO where
     _packageDTOCreatedAt <- o .:? "createdAt" .!= (UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0)
     return PackageDTO {..}
   parseJSON _ = mzero
-
-instance ToJSON PackageDTO where
-  toJSON PackageDTO {..} =
-    object
-      [ "id" .= _packageDTOPId
-      , "name" .= _packageDTOName
-      , "organizationId" .= _packageDTOOrganizationId
-      , "kmId" .= _packageDTOKmId
-      , "version" .= _packageDTOVersion
-      , "metamodelVersion" .= _packageDTOMetamodelVersion
-      , "description" .= _packageDTODescription
-      , "readme" .= _packageDTOReadme
-      , "license" .= _packageDTOLicense
-      , "parentPackageId" .= _packageDTOParentPackageId
-      , "events" .= toJSON _packageDTOEvents
-      , "createdAt" .= _packageDTOCreatedAt
-      ]

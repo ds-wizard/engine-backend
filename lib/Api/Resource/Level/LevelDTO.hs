@@ -1,6 +1,7 @@
 module Api.Resource.Level.LevelDTO where
 
 import Data.Time
+import GHC.Generics
 
 data LevelDTO = LevelDTO
   { _levelDTOLevel :: Int
@@ -8,7 +9,7 @@ data LevelDTO = LevelDTO
   , _levelDTODescription :: Maybe String
   , _levelDTOCreatedAt :: UTCTime
   , _levelDTOUpdatedAt :: UTCTime
-  } deriving (Show)
+  } deriving (Show, Generic)
 
 instance Eq LevelDTO where
   a == b =

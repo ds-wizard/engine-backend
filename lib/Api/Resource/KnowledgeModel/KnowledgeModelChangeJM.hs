@@ -1,23 +1,13 @@
 module Api.Resource.KnowledgeModel.KnowledgeModelChangeJM where
 
-import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Event.EventJM ()
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-
-instance ToJSON KnowledgeModelChangeDTO where
-  toJSON KnowledgeModelChangeDTO {..} =
-    object
-      [ "packageId" .= _knowledgeModelChangeDTOPackageId
-      , "events" .= _knowledgeModelChangeDTOEvents
-      , "tagUuids" .= _knowledgeModelChangeDTOTagUuids
-      ]
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON KnowledgeModelChangeDTO where
-  parseJSON (Object o) = do
-    _knowledgeModelChangeDTOPackageId <- o .: "packageId"
-    _knowledgeModelChangeDTOEvents <- o .: "events"
-    _knowledgeModelChangeDTOTagUuids <- o .: "tagUuids"
-    return KnowledgeModelChangeDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_knowledgeModelChangeDTO"
+
+instance ToJSON KnowledgeModelChangeDTO where
+  toJSON = simpleToJSON "_knowledgeModelChangeDTO"

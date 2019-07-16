@@ -3,7 +3,7 @@ module Api.Resource.Branch.BranchJM where
 import Data.Aeson
 
 import Api.Resource.Branch.BranchDTO
-import Api.Resource.Branch.Common ()
+import Api.Resource.Branch.BranchStateJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON BranchDTO where

@@ -1,4 +1,4 @@
-module Api.Resource.Migration.KnowledgeModel.Common where
+module Api.Resource.Migration.KnowledgeModel.MigrationStateJM where
 
 import Control.Monad
 import Data.Aeson

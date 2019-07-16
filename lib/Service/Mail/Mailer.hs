@@ -27,6 +27,7 @@ import System.Directory (listDirectory)
 import System.FilePath ((</>))
 
 import Api.Resource.User.UserDTO
+import Api.Resource.User.UserJM ()
 import Constant.Component
 import Constant.Mailer
 import LensesConfig

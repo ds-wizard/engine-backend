@@ -1,6 +1,7 @@
 module Api.Resource.Package.PackageDTO where
 
 import Data.Time
+import GHC.Generics
 
 import Api.Resource.Event.EventDTO
 
@@ -17,4 +18,4 @@ data PackageDTO = PackageDTO
   , _packageDTOParentPackageId :: Maybe String
   , _packageDTOEvents :: [EventDTO]
   , _packageDTOCreatedAt :: UTCTime
-  } deriving (Show, Eq)
+  } deriving (Show, Eq, Generic)

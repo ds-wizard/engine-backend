@@ -1,15 +1,12 @@
 module Api.Resource.Migration.KnowledgeModel.MigratorStateCreateJM where
 
-import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON MigratorStateCreateDTO where
-  parseJSON (Object o) = do
-    _migratorStateCreateDTOTargetPackageId <- o .: "targetPackageId"
-    return MigratorStateCreateDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_migratorStateCreateDTO"
 
 instance ToJSON MigratorStateCreateDTO where
-  toJSON MigratorStateCreateDTO {..} = object ["targetPackageId" .= _migratorStateCreateDTOTargetPackageId]
+  toJSON = simpleToJSON "_migratorStateCreateDTO"

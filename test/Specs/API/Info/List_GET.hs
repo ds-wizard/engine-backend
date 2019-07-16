@@ -42,7 +42,10 @@ test_200 appContext =
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
           InfoDTO
-          {_idtoName = "Data Stewardship Wizard Server", _idtoVersion = "1.0.0", _idtoBuiltAt = "2017/10/25 19:50:20Z"}
+          { _infoDTOName = "Data Stewardship Wizard Server"
+          , _infoDTOVersion = "1.0.0"
+          , _infoDTOBuiltAt = "2017/10/25 19:50:20Z"
+          }
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

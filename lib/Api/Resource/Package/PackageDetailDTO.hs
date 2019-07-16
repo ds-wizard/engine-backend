@@ -1,6 +1,7 @@
 module Api.Resource.Package.PackageDetailDTO where
 
 import Data.Time
+import GHC.Generics
 
 import Api.Resource.Organization.OrganizationSimpleDTO
 import Model.Package.PackageState
@@ -22,4 +23,4 @@ data PackageDetailDTO = PackageDetailDTO
   , _packageDetailDTORegistryLink :: Maybe String
   , _packageDetailDTOState :: PackageState
   , _packageDetailDTOCreatedAt :: UTCTime
-  } deriving (Show, Eq)
+  } deriving (Show, Eq, Generic)

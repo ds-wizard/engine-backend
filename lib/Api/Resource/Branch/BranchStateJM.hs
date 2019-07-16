@@ -1,4 +1,4 @@
-module Api.Resource.Branch.Common where
+module Api.Resource.Branch.BranchStateJM where
 
 import Data.Aeson
 
