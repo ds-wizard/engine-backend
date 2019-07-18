@@ -8,7 +8,7 @@ import Api.Resource.Package.PackageStateJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON PackageDetailDTO where
-  parseJSON = simpleParseJSON "_packageDetail"
+  parseJSON = simpleParseJSON "_packageDetailDTO"
 
 instance ToJSON PackageDetailDTO where
-  toJSON = simpleToJSON "_packageDetail"
+  toJSON = simpleToJSON "_packageDetailDTO"
