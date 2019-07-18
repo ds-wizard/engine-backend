@@ -121,30 +121,8 @@ create_test_201 title appContext oldQtn newQtn state stateDto authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
+test_400 appContext =
   createInvalidJsonTest reqMethod (reqUrlT $ questionnaire4 ^. uuid) [HJ.json| { } |] "targetPackageId"
-  it "HTTP 400 BAD REQUEST when migration was already created" $
-    -- GIVEN: Prepare request
-   do
-    let reqUrl = reqUrlT $ questionnaire4 ^. uuid
-    let reqHeaders = reqHeadersT reqAuthHeader
-     -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = MigratorError _ERROR_SERVICE_MIGRATION_QTN__MIGRATION_UNIQUENESS
-    let expBody = encode expDto
-    -- AND: Prepare database
-    runInContextIO (insertQuestionnaire questionnaire4) appContext
-    runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
-    runInContextIO (createMigratorState nlQtnMigrationState) appContext
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findMigratorStates appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

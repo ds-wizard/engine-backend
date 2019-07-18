@@ -15,7 +15,6 @@ import Model.Error.Error
 import Model.Questionnaire.Questionnaire
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Migration.Questionnaire.MigratorMapper
-import Service.Migration.Questionnaire.MigratorValidation
 import Service.Migration.Questionnaire.Sanitizator
 import qualified Service.Questionnaire.QuestionnaireMapper as QM
 import Service.Questionnaire.QuestionnaireService
@@ -24,7 +23,7 @@ import Util.Uuid
 
 createQuestionnaireMigration :: String -> MigratorStateCreateDTO -> AppContextM (Either AppError MigratorStateDTO)
 createQuestionnaireMigration oldQtnUuid reqDto =
-  heValidateQuestionnaireMigrationNotExist oldQtnUuid $ heGetQuestionnaireDetailById oldQtnUuid $ \oldQtn ->
+  heGetQuestionnaireDetailById oldQtnUuid $ \oldQtn ->
     heCheckMigrationPermissionToQtn oldQtn $ heUpgradeQuestionnaire reqDto (QM.fromDetailDTO oldQtn) $ \newQtn -> do
       insertQuestionnaire newQtn
       let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid)
