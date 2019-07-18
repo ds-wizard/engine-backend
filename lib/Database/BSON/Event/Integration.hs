@@ -3,7 +3,7 @@ module Database.BSON.Event.Integration where
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
 import Database.BSON.KnowledgeModel.Path ()
 import Model.Event.Integration.IntegrationEvent
@@ -14,9 +14,9 @@ import Model.Event.Integration.IntegrationEvent
 instance ToBSON AddIntegrationEvent where
   toBSON AddIntegrationEvent {..} =
     [ "eventType" BSON.=: "AddIntegrationEvent"
-    , "uuid" BSON.=: serializeUUID _addIntegrationEventUuid
+    , "uuid" BSON.=: _addIntegrationEventUuid
     , "path" BSON.=: _addIntegrationEventPath
-    , "integrationUuid" BSON.=: serializeUUID _addIntegrationEventIntegrationUuid
+    , "integrationUuid" BSON.=: _addIntegrationEventIntegrationUuid
     , "id" BSON.=: _addIntegrationEventIId
     , "name" BSON.=: _addIntegrationEventName
     , "props" BSON.=: _addIntegrationEventProps
@@ -33,9 +33,9 @@ instance ToBSON AddIntegrationEvent where
 
 instance FromBSON AddIntegrationEvent where
   fromBSON doc = do
-    _addIntegrationEventUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _addIntegrationEventUuid <- BSON.lookup "uuid" doc
     _addIntegrationEventPath <- BSON.lookup "path" doc
-    _addIntegrationEventIntegrationUuid <- deserializeMaybeUUID $ BSON.lookup "integrationUuid" doc
+    _addIntegrationEventIntegrationUuid <- BSON.lookup "integrationUuid" doc
     _addIntegrationEventIId <- BSON.lookup "id" doc
     _addIntegrationEventName <- BSON.lookup "name" doc
     _addIntegrationEventProps <- BSON.lookup "props" doc
@@ -56,9 +56,9 @@ instance FromBSON AddIntegrationEvent where
 instance ToBSON EditIntegrationEvent where
   toBSON EditIntegrationEvent {..} =
     [ "eventType" BSON.=: "EditIntegrationEvent"
-    , "uuid" BSON.=: serializeUUID _editIntegrationEventUuid
+    , "uuid" BSON.=: _editIntegrationEventUuid
     , "path" BSON.=: _editIntegrationEventPath
-    , "integrationUuid" BSON.=: serializeUUID _editIntegrationEventIntegrationUuid
+    , "integrationUuid" BSON.=: _editIntegrationEventIntegrationUuid
     , "id" BSON.=: _editIntegrationEventIId
     , "name" BSON.=: _editIntegrationEventName
     , "props" BSON.=: _editIntegrationEventProps
@@ -75,9 +75,9 @@ instance ToBSON EditIntegrationEvent where
 
 instance FromBSON EditIntegrationEvent where
   fromBSON doc = do
-    _editIntegrationEventUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _editIntegrationEventUuid <- BSON.lookup "uuid" doc
     _editIntegrationEventPath <- BSON.lookup "path" doc
-    _editIntegrationEventIntegrationUuid <- deserializeMaybeUUID $ BSON.lookup "integrationUuid" doc
+    _editIntegrationEventIntegrationUuid <- BSON.lookup "integrationUuid" doc
     _editIntegrationEventIId <- BSON.lookup "id" doc
     _editIntegrationEventName <- BSON.lookup "name" doc
     _editIntegrationEventProps <- BSON.lookup "props" doc
@@ -98,14 +98,14 @@ instance FromBSON EditIntegrationEvent where
 instance ToBSON DeleteIntegrationEvent where
   toBSON DeleteIntegrationEvent {..} =
     [ "eventType" BSON.=: "DeleteIntegrationEvent"
-    , "uuid" BSON.=: serializeUUID _deleteIntegrationEventUuid
+    , "uuid" BSON.=: _deleteIntegrationEventUuid
     , "path" BSON.=: _deleteIntegrationEventPath
-    , "integrationUuid" BSON.=: serializeUUID _deleteIntegrationEventIntegrationUuid
+    , "integrationUuid" BSON.=: _deleteIntegrationEventIntegrationUuid
     ]
 
 instance FromBSON DeleteIntegrationEvent where
   fromBSON doc = do
-    _deleteIntegrationEventUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    _deleteIntegrationEventUuid <- BSON.lookup "uuid" doc
     _deleteIntegrationEventPath <- BSON.lookup "path" doc
-    _deleteIntegrationEventIntegrationUuid <- deserializeMaybeUUID $ BSON.lookup "integrationUuid" doc
+    _deleteIntegrationEventIntegrationUuid <- BSON.lookup "integrationUuid" doc
     return DeleteIntegrationEvent {..}

@@ -5,7 +5,8 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
-import Database.BSON.Common
+import Database.BSON.Common ()
+import Database.BSON.Error.Error ()
 import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Common
@@ -39,7 +40,7 @@ instance FromBSON MigrationState where
 
 instance ToBSON MigratorState where
   toBSON ms =
-    [ "branchUuid" BSON.=: serializeUUID (ms ^. branchUuid)
+    [ "branchUuid" BSON.=: (ms ^. branchUuid)
     , "metamodelVersion" BSON.=: (ms ^. metamodelVersion)
     , "migrationState" BSON.=: (ms ^. migrationState)
     , "branchParentId" BSON.=: (ms ^. branchParentId)
@@ -52,7 +53,7 @@ instance ToBSON MigratorState where
 
 instance FromBSON MigratorState where
   fromBSON doc = do
-    msBranchUuid <- deserializeMaybeUUID $ BSON.lookup "branchUuid" doc
+    msBranchUuid <- BSON.lookup "branchUuid" doc
     msMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     msMigrationState <- BSON.lookup "migrationState" doc
     msBranchParentId <- BSON.lookup "branchParentId" doc

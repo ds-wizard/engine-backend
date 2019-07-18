@@ -4,15 +4,15 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import LensesConfig
 import Model.Feedback.Feedback
 
 instance ToBSON Feedback where
   toBSON feedback =
-    [ "uuid" BSON.=: serializeUUID (feedback ^. uuid)
+    [ "uuid" BSON.=: (feedback ^. uuid)
     , "issueId" BSON.=: (feedback ^. issueId)
-    , "questionUuid" BSON.=: serializeUUID (feedback ^. questionUuid)
+    , "questionUuid" BSON.=: (feedback ^. questionUuid)
     , "packageId" BSON.=: (feedback ^. packageId)
     , "title" BSON.=: (feedback ^. title)
     , "content" BSON.=: (feedback ^. content)
@@ -22,9 +22,9 @@ instance ToBSON Feedback where
 
 instance FromBSON Feedback where
   fromBSON doc = do
-    fUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    fUuid <- BSON.lookup "uuid" doc
     fIssueId <- BSON.lookup "issueId" doc
-    fQuestionUuid <- deserializeMaybeUUID $ BSON.lookup "questionUuid" doc
+    fQuestionUuid <- BSON.lookup "questionUuid" doc
     fPackageId <- BSON.lookup "packageId" doc
     fTitle <- BSON.lookup "title" doc
     fContent <- BSON.lookup "content" doc

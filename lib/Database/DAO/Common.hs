@@ -6,7 +6,6 @@ import Data.Bson.Generic
 import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
-import qualified Data.UUID as U
 import Database.MongoDB
        ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
         modify, rest, save, select)
@@ -89,10 +88,4 @@ instance Val LT.Text where
   val = String . LT.toStrict
   cast' (String x) = Just . LT.fromStrict $ x
   cast' (Sym (Symbol x)) = Just . LT.fromStrict $ x
-  cast' _ = Nothing
-
-instance Val U.UUID where
-  val = String . U.toText
-  cast' (String x) = U.fromText x
-  cast' (Sym (Symbol x)) = U.fromText x
   cast' _ = Nothing
