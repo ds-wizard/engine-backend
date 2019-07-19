@@ -7,8 +7,8 @@ import Data.Maybe
 import Data.Text (Text)
 import qualified Data.Text.Lazy as LT
 import Database.MongoDB
-       ((=:), delete, deleteOne, fetch, find, findOne, insert, merge,
-        modify, rest, save, select)
+       ((=:), count, delete, deleteOne, fetch, find, findOne, insert,
+        merge, modify, rest, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Localization
@@ -47,6 +47,11 @@ createFindEntitiesByFn collection queryParams = do
   entitiesS <- runDB action
   return . deserializeEntities $ entitiesS
 
+createFindEntityFn collection entityName = do
+  let action = findOne $ select [] collection
+  maybeEntityS <- runDB action
+  return . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+
 createFindEntityByFn collection entityName paramName paramValue = do
   let action = findOne $ select [paramName =: paramValue] collection
   maybeEntityS <- runDB action
@@ -54,6 +59,10 @@ createFindEntityByFn collection entityName paramName paramValue = do
 
 createInsertFn collection entity = do
   let action = insert collection (toBSON entity)
+  runDB action
+
+createUpdateFn collection entity = do
+  let action = fetch (select [] collection) >>= save collection . merge (toBSON entity)
   runDB action
 
 createUpdateByFn collection paramName paramValue entity = do
@@ -78,6 +87,11 @@ createDeleteEntitiesByFn collection queryParams = do
 createDeleteEntityByFn collection paramName paramValue = do
   let action = deleteOne $ select [paramName =: paramValue] collection
   runDB action
+
+createCountFn collection = do
+  let action = count $ select [] collection
+  count <- runDB action
+  return . Right $ count
 
 mapToDBQueryParams queryParams = fmap go queryParams
   where

@@ -94,7 +94,7 @@ create_test_200 title appContext oldQtn newQtn state stateDto authHeader =
     -- AND: Prepare database
     runInContextIO (insertQuestionnaire oldQtn) appContext
     runInContextIO (insertQuestionnaire newQtn) appContext
-    runInContextIO (createMigratorState state) appContext
+    runInContextIO (insertMigratorState state) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -130,7 +130,7 @@ create_test_403 title appContext qtn reason =
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
     let ms = (nlQtnMigrationState & oldQuestionnaireUuid .~ (qtn ^. uuid)) & newQuestionnaireUuid .~ (qtn ^. uuid)
-    runInContextIO (createMigratorState ms) appContext
+    runInContextIO (insertMigratorState ms) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

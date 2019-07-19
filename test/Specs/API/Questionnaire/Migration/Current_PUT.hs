@@ -75,7 +75,7 @@ test_204 appContext =
     -- AND: Prepare database
     runInContextIO (insertQuestionnaire questionnaire4) appContext
     runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
-    runInContextIO (createMigratorState nlQtnMigrationState) appContext
+    runInContextIO (insertMigratorState nlQtnMigrationState) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -117,7 +117,7 @@ create_test_403 title appContext qtn reason =
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
     let ms = (nlQtnMigrationState & oldQuestionnaireUuid .~ (qtn ^. uuid)) & newQuestionnaireUuid .~ (qtn ^. uuid)
-    runInContextIO (createMigratorState ms) appContext
+    runInContextIO (insertMigratorState ms) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

@@ -27,7 +27,7 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     heCheckMigrationPermissionToQtn oldQtn $ heUpgradeQuestionnaire reqDto (QM.fromDetailDTO oldQtn) $ \newQtn -> do
       insertQuestionnaire newQtn
       let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid)
-      createMigratorState state
+      insertMigratorState state
       getQuestionnaireMigration (U.toString $ newQtn ^. uuid)
 
 getQuestionnaireMigration :: String -> AppContextM (Either AppError MigratorStateDTO)

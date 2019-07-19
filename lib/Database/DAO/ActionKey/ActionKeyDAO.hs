@@ -1,9 +1,6 @@
 module Database.DAO.ActionKey.ActionKeyDAO where
 
 import Data.Bson
-import Data.Bson.Generic
-import Database.MongoDB
-       ((=:), delete, deleteOne, find, findOne, insert, rest, select)
 
 import Database.BSON.ActionKey.ActionKey ()
 import Database.DAO.Common
@@ -13,42 +10,25 @@ import Model.Error.Error
 
 entityName = "actionKey"
 
-actionKeyCollection = "actionKeys"
+collection = "actionKeys"
 
 findActionKeys :: AppContextM (Either AppError [ActionKey])
-findActionKeys = do
-  let action = rest =<< find (select [] actionKeyCollection)
-  actionKeysS <- runDB action
-  return . deserializeEntities $ actionKeysS
+findActionKeys = createFindEntitiesFn collection
 
 findActionKeyById :: String -> AppContextM (Either AppError ActionKey)
-findActionKeyById uuid = do
-  let action = findOne $ select ["uuid" =: uuid] actionKeyCollection
-  maybeActionKeyS <- runDB action
-  return . deserializeMaybeEntity entityName uuid $ maybeActionKeyS
+findActionKeyById = createFindEntityByFn collection entityName "uuid"
 
 findActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
-findActionKeyByHash hash = do
-  let action = findOne $ select ["hash" =: hash] actionKeyCollection
-  maybeActionKeyS <- runDB action
-  return . deserializeMaybeEntity entityName hash $ maybeActionKeyS
+findActionKeyByHash = createFindEntityByFn collection entityName "hash"
 
 insertActionKey :: ActionKey -> AppContextM Value
-insertActionKey actionKey = do
-  let action = insert actionKeyCollection (toBSON actionKey)
-  runDB action
+insertActionKey = createInsertFn collection
 
 deleteActionKeys :: AppContextM ()
-deleteActionKeys = do
-  let action = delete $ select [] actionKeyCollection
-  runDB action
+deleteActionKeys = createDeleteEntitiesFn collection
 
 deleteActionKeyById :: String -> AppContextM ()
-deleteActionKeyById actionKeyUuid = do
-  let action = deleteOne $ select ["uuid" =: actionKeyUuid] actionKeyCollection
-  runDB action
+deleteActionKeyById = createDeleteEntityByFn collection "uuid"
 
 deleteActionKeyByHash :: String -> AppContextM ()
-deleteActionKeyByHash hash = do
-  let action = deleteOne $ select ["hash" =: hash] actionKeyCollection
-  runDB action
+deleteActionKeyByHash = createDeleteEntityByFn collection "hash"

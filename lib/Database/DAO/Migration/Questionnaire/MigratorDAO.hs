@@ -2,7 +2,7 @@ module Database.DAO.Migration.Questionnaire.MigratorDAO
   ( findMigratorStates
   , findMigratorStateByOldQuestionnaireId
   , findMigratorStateByNewQuestionnaireId
-  , createMigratorState
+  , insertMigratorState
   , updateMigratorStateByNewQuestionnaireId
   , deleteMigratorStates
   , deleteMigratorStateByNewQuestionnaireId
@@ -12,9 +12,6 @@ module Database.DAO.Migration.Questionnaire.MigratorDAO
 
 import Control.Lens ((^.))
 import Data.Bson
-import Data.Bson.Generic
-import Database.MongoDB
-       ((=:), delete, fetch, findOne, insert, merge, save, select)
 
 import Database.BSON.Migration.Questionnaire.MigratorState ()
 import Database.DAO.Common
@@ -32,38 +29,23 @@ findMigratorStates :: AppContextM (Either AppError [MigratorState])
 findMigratorStates = createFindEntitiesFn collection
 
 findMigratorStateByOldQuestionnaireId :: String -> AppContextM (Either AppError MigratorState)
-findMigratorStateByOldQuestionnaireId qtnUuid = do
-  let action = findOne $ select ["oldQuestionnaireUuid" =: qtnUuid] collection
-  maybeState <- runDB action
-  return . deserializeMaybeEntity entityName qtnUuid $ maybeState
+findMigratorStateByOldQuestionnaireId = createFindEntityByFn collection entityName "oldQuestionnaireUuid"
 
 findMigratorStateByNewQuestionnaireId :: String -> AppContextM (Either AppError MigratorState)
-findMigratorStateByNewQuestionnaireId qtnUuid = do
-  let action = findOne $ select ["newQuestionnaireUuid" =: qtnUuid] collection
-  maybeState <- runDB action
-  return . deserializeMaybeEntity entityName qtnUuid $ maybeState
+findMigratorStateByNewQuestionnaireId = createFindEntityByFn collection entityName "newQuestionnaireUuid"
 
-createMigratorState :: MigratorState -> AppContextM Value
-createMigratorState state = do
-  let action = insert collection (toBSON state)
-  runDB action
+insertMigratorState :: MigratorState -> AppContextM Value
+insertMigratorState = createInsertFn collection
 
 updateMigratorStateByNewQuestionnaireId :: MigratorState -> AppContextM ()
-updateMigratorStateByNewQuestionnaireId state = do
-  let action =
-        fetch (select ["newQuestionnaireUuid" =: (state ^. newQuestionnaireUuid)] collection) >>=
-        save collection . merge (toBSON state)
-  runDB action
+updateMigratorStateByNewQuestionnaireId state =
+  createUpdateByFn collection "newQuestionnaireUuid" (state ^. newQuestionnaireUuid) state
 
 deleteMigratorStates :: AppContextM ()
-deleteMigratorStates = do
-  let action = delete $ select [] collection
-  runDB action
+deleteMigratorStates = createDeleteEntitiesFn collection
 
 deleteMigratorStateByNewQuestionnaireId :: String -> AppContextM ()
-deleteMigratorStateByNewQuestionnaireId qtnUuid = do
-  let action = delete $ select ["newQuestionnaireUuid" =: qtnUuid] collection
-  runDB action
+deleteMigratorStateByNewQuestionnaireId = createDeleteEntityByFn collection "newQuestionnaireUuid"
 
 -- --------------------------------
 -- HELPERS
