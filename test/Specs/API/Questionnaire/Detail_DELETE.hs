@@ -13,6 +13,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Error.ErrorJM ()
+import Database.DAO.Migration.Questionnaire.MigratorDAO
+import Database.DAO.Questionnaire.QuestionnaireDAO
+import Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
@@ -23,6 +26,7 @@ import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 import Specs.Common
@@ -34,6 +38,7 @@ detail_delete :: AppContext -> SpecWith Application
 detail_delete appContext =
   describe "DELETE /questionnaires/{qtnUuid}" $ do
     test_204 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -53,11 +58,11 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_204 appContext = do
-  create_test_200 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 reqAuthHeader
-  create_test_200 "HTTP 204 NO CONTENT (Owner, PublicReadOnly)" appContext questionnaire2 reqAuthHeader
-  create_test_200 "HTTP 204 NO CONTENT (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
+  create_test_204 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 reqAuthHeader
+  create_test_204 "HTTP 204 NO CONTENT (Owner, PublicReadOnly)" appContext questionnaire2 reqAuthHeader
+  create_test_204 "HTTP 204 NO CONTENT (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
 
-create_test_200 title appContext qtn authHeader =
+create_test_204 title appContext qtn authHeader =
   it title $
      -- GIVEN: Prepare request
    do
@@ -76,6 +81,35 @@ create_test_200 title appContext qtn authHeader =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 2
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_400 appContext = do
+  it "HTTP 400 BAD REQUEST when package can't be deleted" $
+    -- GIVEN: Prepare request
+   do
+    let reqUrl = reqUrlT (questionnaire4 ^. uuid)
+    let reqHeaders = reqHeadersT reqAuthHeader
+    -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto = createErrorWithErrorMessage _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
+    let expBody = encode expDto
+    -- AND: Prepare DB
+    runInContextIO (insertQuestionnaire questionnaire4) appContext
+    runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
+    runInContextIO (insertMigratorState nlQtnMigrationState) appContext
+    -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+    -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+    -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -110,6 +144,8 @@ create_test_403 title appContext qtn =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 3
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

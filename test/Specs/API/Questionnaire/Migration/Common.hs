@@ -17,10 +17,12 @@ import Specs.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfMigrationStateInDB appContext entity = do
-  eEntityFromDb <-
-    runInContextIO (findMigratorStateByOldQuestionnaireId (U.toString $ entity ^. oldQuestionnaireUuid)) appContext
-  liftIO $ (isRight eEntityFromDb) `shouldBe` True
-  let (Right entityFromDb) = eEntityFromDb
+  eEntitiesFromDb <-
+    runInContextIO (findMigratorStatesByOldQuestionnaireId (U.toString $ entity ^. oldQuestionnaireUuid)) appContext
+  liftIO $ (isRight eEntitiesFromDb) `shouldBe` True
+  let (Right entitiesFromDb) = eEntitiesFromDb
+  liftIO $ (length entitiesFromDb) `shouldBe` 1
+  let entityFromDb = entitiesFromDb !! 0
   compareQtnMigrators entityFromDb entity
 
 -- --------------------------------

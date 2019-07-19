@@ -123,6 +123,10 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId = "Desired knowledge model '" ++ 
 -- Public Questionnaire
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
 
+-- Questionnaire
+_ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
+  "Questionnaire can't be deleted because it's used in some questionnaire migration"
+
 -- Template
 _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
 

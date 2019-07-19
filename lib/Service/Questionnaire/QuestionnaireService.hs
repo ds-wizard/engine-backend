@@ -23,6 +23,7 @@ import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Package.PackageService
 import Service.Questionnaire.QuestionnaireMapper
+import Service.Questionnaire.QuestionnaireValidation
 import Util.Helper
 import Util.Uuid
 
@@ -115,7 +116,7 @@ modifyQuestionnaire qtnUuid reqDto =
 deleteQuestionnaire :: String -> AppContextM (Maybe AppError)
 deleteQuestionnaire qtnUuid =
   hmGetQuestionnaireById qtnUuid $ \qtn ->
-    hmCheckEditPermissionToQtn qtn $ do
+    hmValidateQuestionnaireDeletation qtnUuid $ hmCheckEditPermissionToQtn qtn $ do
       deleteQuestionnaireById qtnUuid
       deleteMigratorStateByNewQuestionnaireId qtnUuid
       return Nothing

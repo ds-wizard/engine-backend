@@ -36,6 +36,7 @@ detail_delete :: AppContext -> SpecWith Application
 detail_delete appContext =
   describe "DELETE /packages/{pkgId}" $ do
     test_204 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext

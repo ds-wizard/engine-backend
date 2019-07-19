@@ -1,6 +1,6 @@
 module Database.DAO.Migration.Questionnaire.MigratorDAO
   ( findMigratorStates
-  , findMigratorStateByOldQuestionnaireId
+  , findMigratorStatesByOldQuestionnaireId
   , findMigratorStateByNewQuestionnaireId
   , insertMigratorState
   , updateMigratorStateByNewQuestionnaireId
@@ -28,8 +28,9 @@ collection = "questionnaireMigrations"
 findMigratorStates :: AppContextM (Either AppError [MigratorState])
 findMigratorStates = createFindEntitiesFn collection
 
-findMigratorStateByOldQuestionnaireId :: String -> AppContextM (Either AppError MigratorState)
-findMigratorStateByOldQuestionnaireId = createFindEntityByFn collection entityName "oldQuestionnaireUuid"
+findMigratorStatesByOldQuestionnaireId :: String -> AppContextM (Either AppError [MigratorState])
+findMigratorStatesByOldQuestionnaireId oldQtnUuid =
+  createFindEntitiesByFn collection ["oldQuestionnaireUuid" =: oldQtnUuid]
 
 findMigratorStateByNewQuestionnaireId :: String -> AppContextM (Either AppError MigratorState)
 findMigratorStateByNewQuestionnaireId = createFindEntityByFn collection entityName "newQuestionnaireUuid"
