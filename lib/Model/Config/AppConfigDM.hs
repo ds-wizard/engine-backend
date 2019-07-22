@@ -90,6 +90,7 @@ defaultMail =
   , _appConfigMailHost = ""
   , _appConfigMailPort = 465
   , _appConfigMailSsl = False
+  , _appConfigMailAuthEnabled = False
   , _appConfigMailUsername = ""
   , _appConfigMailPassword = ""
   }

@@ -90,6 +90,7 @@ data AppConfigMail = AppConfigMail
   , _appConfigMailHost :: String
   , _appConfigMailPort :: Int
   , _appConfigMailSsl :: Bool
+  , _appConfigMailAuthEnabled :: Bool
   , _appConfigMailUsername :: String
   , _appConfigMailPassword :: String
   } deriving (Generic, Show)

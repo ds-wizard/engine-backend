@@ -116,6 +116,7 @@ instance FromJSON AppConfigMail where
     _appConfigMailHost <- o .: "host" .!= (defaultMail ^. host)
     _appConfigMailPort <- o .:? "port" .!= (defaultMail ^. port)
     _appConfigMailSsl <- o .:? "ssl" .!= (defaultMail ^. ssl)
+    _appConfigMailAuthEnabled <- o .:? "authEnabled" .!= (defaultMail ^. authEnabled)
     _appConfigMailUsername <- o .:? "username" .!= (defaultMail ^. username)
     _appConfigMailPassword <- o .:? "password" .!= (defaultMail ^. password)
     return AppConfigMail {..}
