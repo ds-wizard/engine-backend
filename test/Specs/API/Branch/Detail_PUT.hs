@@ -80,15 +80,15 @@ test_200 appContext = do
     compareBranchDtos
       resBody
       reqDto
-      (resBody ^. parentPackageId)
-      (resBody ^. parentPackageId)
+      (resBody ^. previousPackageId)
+      (resBody ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfBranchInDB
       appContext
       reqDto
-      (resBody ^. parentPackageId)
-      (resBody ^. parentPackageId)
+      (resBody ^. previousPackageId)
+      (resBody ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -128,8 +128,8 @@ test_400_not_valid_kmId appContext = do
     assertExistenceOfBranchInDB
       appContext
       amsterdamBranch
-      (amsterdamBranch ^. parentPackageId)
-      (amsterdamBranch ^. parentPackageId)
+      (amsterdamBranch ^. previousPackageId)
+      (amsterdamBranch ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -171,8 +171,8 @@ test_400_already_taken_kmId appContext = do
     assertExistenceOfBranchInDB
       appContext
       amsterdamBranch
-      (amsterdamBranch ^. parentPackageId)
-      (amsterdamBranch ^. parentPackageId)
+      (amsterdamBranch ^. previousPackageId)
+      (amsterdamBranch ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------

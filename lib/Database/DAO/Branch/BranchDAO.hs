@@ -32,17 +32,17 @@ findBranchByKmId = createFindEntityByFn collection entityName "kmId"
 findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)
 findBranchWithEventsById = createFindEntityByFn collection entityName "uuid"
 
-findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId ::
+findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId ::
      String -> AppContextM (Either AppError [Branch])
-findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId packageId = do
+findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId packageId = do
   let action =
         rest =<<
         find
           (select
              [ "$or" =:
-               [ ["parentPackageId" =: packageId]
-               , ["lastAppliedParentPackageId" =: packageId]
-               , ["lastMergeCheckpointPackageId" =: packageId]
+               [ ["previousPackageId" =: packageId]
+               , ["forkOfPackageId" =: packageId]
+               , ["mergeCheckpointPackageId" =: packageId]
                ]
              ]
              collection)
@@ -56,17 +56,15 @@ updateBranchById :: BranchWithEvents -> AppContextM ()
 updateBranchById branch = createUpdateByFn collection "uuid" (branch ^. uuid) branch
 
 updateBranchWithMigrationInfo :: String -> String -> String -> AppContextM ()
-updateBranchWithMigrationInfo branchUuid lastAppliedParentPackageId lastMergeCheckpointPackageId =
+updateBranchWithMigrationInfo branchUuid forkOfPackageId mergeCheckpointPackageId =
   createPartialUpdateByFn
     collection
     ["uuid" =: branchUuid]
-    [ "lastAppliedParentPackageId" =: lastAppliedParentPackageId
-    , "lastMergeCheckpointPackageId" =: lastMergeCheckpointPackageId
-    ]
+    ["forkOfPackageId" =: forkOfPackageId, "mergeCheckpointPackageId" =: mergeCheckpointPackageId]
 
-updateBranchWithParentPackageId :: String -> String -> AppContextM ()
-updateBranchWithParentPackageId branchUuid parentPackageId =
-  createPartialUpdateByFn' collection "uuid" branchUuid "parentPackageId" parentPackageId
+updateBranchWithPreviousPackageId :: String -> String -> AppContextM ()
+updateBranchWithPreviousPackageId branchUuid previousPackageId =
+  createPartialUpdateByFn' collection "uuid" branchUuid "previousPackageId" previousPackageId
 
 deleteBranches :: AppContextM ()
 deleteBranches = createDeleteEntitiesFn collection

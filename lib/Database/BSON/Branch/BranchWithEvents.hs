@@ -1,55 +1,36 @@
 module Database.BSON.Branch.BranchWithEvents where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
 import Database.BSON.Common ()
 import Database.BSON.Event.Common
-import LensesConfig
 import Model.Branch.Branch
 
 instance ToBSON BranchWithEvents where
-  toBSON branch =
-    [ "uuid" BSON.=: (branch ^. uuid)
-    , "name" BSON.=: (branch ^. name)
-    , "kmId" BSON.=: (branch ^. kmId)
-    , "metamodelVersion" BSON.=: (branch ^. metamodelVersion)
-    , "parentPackageId" BSON.=: (branch ^. parentPackageId)
-    , "lastAppliedParentPackageId" BSON.=: (branch ^. lastAppliedParentPackageId)
-    , "lastMergeCheckpointPackageId" BSON.=: (branch ^. lastMergeCheckpointPackageId)
-    , "ownerUuid" BSON.=: (branch ^. ownerUuid)
-    , "events" BSON.=: convertEventToBSON <$> branch ^. events
-    , "createdAt" BSON.=: (branch ^. createdAt)
-    , "updatedAt" BSON.=: (branch ^. updatedAt)
+  toBSON BranchWithEvents {..} =
+    [ "uuid" BSON.=: _branchWithEventsUuid
+    , "name" BSON.=: _branchWithEventsName
+    , "kmId" BSON.=: _branchWithEventsKmId
+    , "metamodelVersion" BSON.=: _branchWithEventsMetamodelVersion
+    , "previousPackageId" BSON.=: _branchWithEventsPreviousPackageId
+    , "events" BSON.=: convertEventToBSON <$> _branchWithEventsEvents
+    , "ownerUuid" BSON.=: _branchWithEventsOwnerUuid
+    , "createdAt" BSON.=: _branchWithEventsCreatedAt
+    , "updatedAt" BSON.=: _branchWithEventsUpdatedAt
     ]
 
 instance FromBSON BranchWithEvents where
   fromBSON doc = do
-    bUuid <- BSON.lookup "uuid" doc
-    bName <- BSON.lookup "name" doc
-    bKmId <- BSON.lookup "kmId" doc
-    bMetamodelVersion <- BSON.lookup "metamodelVersion" doc
-    bParentPackageId <- BSON.lookup "parentPackageId" doc
-    bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
-    bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
-    bEventsSerialized <- BSON.lookup "events" doc
-    let bEvents = fmap (fromJust . chooseEventDeserializator) bEventsSerialized
-    let bOwnerUuid = BSON.lookup "ownerUuid" doc
-    bCreatedAt <- BSON.lookup "createdAt" doc
-    bUpdatedAt <- BSON.lookup "updatedAt" doc
-    return
-      BranchWithEvents
-      { _branchWithEventsUuid = bUuid
-      , _branchWithEventsName = bName
-      , _branchWithEventsKmId = bKmId
-      , _branchWithEventsMetamodelVersion = bMetamodelVersion
-      , _branchWithEventsParentPackageId = bParentPackageId
-      , _branchWithEventsLastAppliedParentPackageId = bLastAppliedParentPackageId
-      , _branchWithEventsLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
-      , _branchWithEventsEvents = bEvents
-      , _branchWithEventsOwnerUuid = bOwnerUuid
-      , _branchWithEventsCreatedAt = bCreatedAt
-      , _branchWithEventsUpdatedAt = bUpdatedAt
-      }
+    _branchWithEventsUuid <- BSON.lookup "uuid" doc
+    _branchWithEventsName <- BSON.lookup "name" doc
+    _branchWithEventsKmId <- BSON.lookup "kmId" doc
+    _branchWithEventsMetamodelVersion <- BSON.lookup "metamodelVersion" doc
+    _branchWithEventsPreviousPackageId <- BSON.lookup "previousPackageId" doc
+    eventsSerialized <- BSON.lookup "events" doc
+    let _branchWithEventsEvents = fmap (fromJust . chooseEventDeserializator) eventsSerialized
+    _branchWithEventsOwnerUuid <- BSON.lookup "ownerUuid" doc
+    _branchWithEventsCreatedAt <- BSON.lookup "createdAt" doc
+    _branchWithEventsUpdatedAt <- BSON.lookup "updatedAt" doc
+    return BranchWithEvents {..}

@@ -43,7 +43,7 @@ instance ToBSON MigratorState where
     [ "branchUuid" BSON.=: (ms ^. branchUuid)
     , "metamodelVersion" BSON.=: (ms ^. metamodelVersion)
     , "migrationState" BSON.=: (ms ^. migrationState)
-    , "branchParentId" BSON.=: (ms ^. branchParentId)
+    , "branchPreviousPackageId" BSON.=: (ms ^. branchPreviousPackageId)
     , "targetPackageId" BSON.=: (ms ^. targetPackageId)
     , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. branchEvents)
     , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. targetPackageEvents)
@@ -56,7 +56,7 @@ instance FromBSON MigratorState where
     msBranchUuid <- BSON.lookup "branchUuid" doc
     msMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     msMigrationState <- BSON.lookup "migrationState" doc
-    msBranchParentId <- BSON.lookup "branchParentId" doc
+    msBranchPreviousPackageId <- BSON.lookup "branchPreviousPackageId" doc
     msTargetPackageId <- BSON.lookup "targetPackageId" doc
     msBranchEventsSerialized <- BSON.lookup "branchEvents" doc
     let msBranchEvents = fmap (fromJust . chooseEventDeserializator) msBranchEventsSerialized
@@ -69,7 +69,7 @@ instance FromBSON MigratorState where
       { _migratorStateBranchUuid = msBranchUuid
       , _migratorStateMetamodelVersion = msMetamodelVersion
       , _migratorStateMigrationState = msMigrationState
-      , _migratorStateBranchParentId = msBranchParentId
+      , _migratorStateBranchPreviousPackageId = msBranchPreviousPackageId
       , _migratorStateTargetPackageId = msTargetPackageId
       , _migratorStateBranchEvents = msBranchEvents
       , _migratorStateTargetPackageEvents = msTargetPackageEvents

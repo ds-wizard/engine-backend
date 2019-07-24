@@ -37,7 +37,7 @@ list_post appContext =
     test_400_invalid_json appContext
     test_400_not_valid_kmId appContext
     test_400_already_taken_kmId appContext
-    test_400_not_existing_parentPackageId appContext
+    test_400_not_existing_previousPackageId appContext
     test_401 appContext
     test_403 appContext
 
@@ -70,14 +70,19 @@ test_201 appContext = do
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, BranchDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareBranchDtos resBody reqDto (reqDto ^. parentPackageId) (reqDto ^. parentPackageId) (Just $ userAlbert ^. uuid)
+    compareBranchDtos
+      resBody
+      reqDto
+      (reqDto ^. previousPackageId)
+      (reqDto ^. previousPackageId)
+      (Just $ userAlbert ^. uuid)
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findBranches appContext 1
     assertExistenceOfBranchInDB
       appContext
       reqDto
-      (reqDto ^. parentPackageId)
-      (reqDto ^. parentPackageId)
+      (reqDto ^. previousPackageId)
+      (reqDto ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -139,16 +144,16 @@ test_400_already_taken_kmId appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_not_existing_parentPackageId appContext = do
-  it "HTTP 400 BAD REQUEST when parentPackageId does not exist" $
+test_400_not_existing_previousPackageId appContext = do
+  it "HTTP 400 BAD REQUEST when previousPackageId does not exist" $
      -- GIVEN: Prepare request
    do
-    let reqDto = amsterdamBranchCreate & parentPackageId .~ (Just "dsw.nl:core-nl:9.9.9")
+    let reqDto = amsterdamBranchCreate & previousPackageId .~ (Just "dsw.nl:core-nl:9.9.9")
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("parentPackageId", _ERROR_VALIDATION__PARENT_PKG_ABSENCE)
+    let expDto = createErrorWithFieldError ("previousPackageId", _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE)
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

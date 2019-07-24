@@ -13,7 +13,9 @@ data Package = Package
   , _packageReadme :: String
   , _packageLicense :: String
   , _packageMetamodelVersion :: Int
-  , _packageParentPackageId :: Maybe String
+  , _packagePreviousPackageId :: Maybe String
+  , _packageForkOfPackageId :: Maybe String
+  , _packageMergeCheckpointPackageId :: Maybe String
   , _packageCreatedAt :: UTCTime
   } deriving (Show, Eq, Generic)
 

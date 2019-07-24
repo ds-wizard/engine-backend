@@ -18,7 +18,9 @@ instance ToJSON PackageDetailIDTO where
       , "description" .= _packageDetailIDTODescription
       , "readme" .= _packageDetailIDTOReadme
       , "license" .= _packageDetailIDTOLicense
-      , "parentPackageId" .= _packageDetailIDTOParentPackageId
+      , "previousPackageId" .= _packageDetailIDTOPreviousPackageId
+      , "forkOfPackageId" .= _packageDetailIDTOForkOfPackageId
+      , "mergeCheckpointPackageId" .= _packageDetailIDTOMergeCheckpointPackageId
       , "versions" .= _packageDetailIDTOVersions
       , "organization" .= _packageDetailIDTOOrganization
       , "createdAt" .= _packageDetailIDTOCreatedAt
@@ -35,7 +37,9 @@ instance FromJSON PackageDetailIDTO where
     _packageDetailIDTODescription <- o .: "description"
     _packageDetailIDTOReadme <- o .: "readme"
     _packageDetailIDTOLicense <- o .: "license"
-    _packageDetailIDTOParentPackageId <- o .: "parentPackageId"
+    _packageDetailIDTOPreviousPackageId <- o .: "previousPackageId"
+    _packageDetailIDTOForkOfPackageId <- o .: "forkOfPackageId"
+    _packageDetailIDTOMergeCheckpointPackageId <- o .: "mergeCheckpointPackageId"
     _packageDetailIDTOVersions <- o .: "versions"
     _packageDetailIDTOOrganization <- o .: "organization"
     _packageDetailIDTOCreatedAt <- o .: "createdAt"

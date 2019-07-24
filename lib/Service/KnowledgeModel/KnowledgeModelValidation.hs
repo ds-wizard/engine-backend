@@ -15,8 +15,8 @@ validateKmValidity events mPackageId = hmCompileKnowledgeModel events mPackageId
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heValidateKmValidity pkgEvents mParentPkgId callback = do
-  maybeError <- validateKmValidity pkgEvents mParentPkgId
+heValidateKmValidity pkgEvents mPreviousPkgId callback = do
+  maybeError <- validateKmValidity pkgEvents mPreviousPkgId
   case maybeError of
     Nothing -> callback
     Just error -> return . Left $ error

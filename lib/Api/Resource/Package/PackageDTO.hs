@@ -15,7 +15,9 @@ data PackageDTO = PackageDTO
   , _packageDTODescription :: String
   , _packageDTOReadme :: String
   , _packageDTOLicense :: String
-  , _packageDTOParentPackageId :: Maybe String
+  , _packageDTOPreviousPackageId :: Maybe String
+  , _packageDTOForkOfPackageId :: Maybe String
+  , _packageDTOMergeCheckpointPackageId :: Maybe String
   , _packageDTOEvents :: [EventDTO]
   , _packageDTOCreatedAt :: UTCTime
   } deriving (Show, Eq, Generic)

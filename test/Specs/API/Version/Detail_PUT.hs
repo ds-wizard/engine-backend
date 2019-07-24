@@ -24,7 +24,7 @@ import Localization
 import Model.Context.AppContext
 import Model.Error.ErrorHelpers
 import Service.Package.PackageMapper
-import Service.Package.PackageService
+import Service.Version.VersionService
 
 import Specs.API.Common
 import Specs.API.Package.Common
@@ -104,6 +104,8 @@ test_400_invalid_version_format appContext = do
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
     let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO B.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -125,7 +127,7 @@ test_400_not_higher_pkg_version appContext = do
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
     runInContextIO B.runMigration appContext
-    runInContextIO (createPackageFromKMC "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" reqDto) appContext
+    runInContextIO (publishPackage "6474b24b-262b-42b1-9451-008e8363f2b6" "1.0.0" reqDto) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

@@ -16,7 +16,9 @@ data PackageDetailDTO = PackageDetailDTO
   , _packageDetailDTOReadme :: String
   , _packageDetailDTOLicense :: String
   , _packageDetailDTOMetamodelVersion :: Int
-  , _packageDetailDTOParentPackageId :: Maybe String
+  , _packageDetailDTOPreviousPackageId :: Maybe String
+  , _packageDetailDTOForkOfPackageId :: Maybe String
+  , _packageDetailDTOMergeCheckpointPackageId :: Maybe String
   , _packageDetailDTOVersions :: [String]
   , _packageDetailDTORemoteLatestVersion :: Maybe String
   , _packageDetailDTOOrganization :: Maybe OrganizationSimpleDTO

@@ -6,7 +6,7 @@ import Web.Scotty.Trans (json, param, status)
 import Api.Handler.Common
 import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Version.VersionJM ()
-import Service.Package.PackageService
+import Service.Version.VersionService
 
 putVersionA :: Endpoint
 putVersionA =
@@ -15,7 +15,7 @@ putVersionA =
     getReqDto $ \reqDto -> do
       branchUuid <- param "branchUuid"
       version <- param "version"
-      eitherDto <- runInAuthService $ createPackageFromKMC branchUuid version reqDto
+      eitherDto <- runInAuthService $ publishPackage branchUuid version reqDto
       case eitherDto of
         Right dto -> do
           status created201

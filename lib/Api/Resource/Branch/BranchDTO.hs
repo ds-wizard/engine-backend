@@ -12,8 +12,8 @@ data BranchDTO = BranchDTO
   , _branchDTOOrganizationId :: String
   , _branchDTOKmId :: String
   , _branchDTOState :: BranchState
-  , _branchDTOParentPackageId :: Maybe String
-  , _branchDTOLastAppliedParentPackageId :: Maybe String
+  , _branchDTOPreviousPackageId :: Maybe String
+  , _branchDTOForkOfPackageId :: Maybe String
   , _branchDTOOwnerUuid :: Maybe U.UUID
   , _branchDTOCreatedAt :: UTCTime
   , _branchDTOUpdatedAt :: UTCTime

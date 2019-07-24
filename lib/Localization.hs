@@ -33,7 +33,7 @@ _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId = "KmId '" ++ kmId ++ "' is already tak
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already exists"
 
 -- Absence
-_ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
+_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE = "Previous package doesn't exist"
 
 _ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
 
@@ -104,9 +104,9 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
 _ERROR_SERVICE_MIGRATION_QTN__MIGRATION_UNIQUENESS = "Migration is already created"
 
 -- Package
-_ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
-  "The parent ('" ++
-  parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the parent first."
+_ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId =
+  "The previous ('" ++
+  previousPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the previous package first."
 
 _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION = "A new version has to be higher than the previous one"
 
@@ -231,8 +231,8 @@ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER = "Target Package is not higher t
 
 _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a merge checkpoint"
 
-_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG =
-  "Branch has to have a checkpoint being the last parent package that was merged into"
+_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_MERGED_PREVIOUS_PKG =
+  "Branch has to have a checkpoint being the last previous package that was merged into"
 
 _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE =
   "You can't solve conflicts because Migration state isn't in a conflict state"
@@ -245,11 +245,7 @@ _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVE
   "OriginalEventUuid doesn't match with the current target event"
 
 -- Absence
-_ERROR_KMMT_VALIDATION_MIGRATOR__SOURCE_BRANCH_ABSENCE = "Source branch does not exist"
-
-_ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PARENT_ABSENCE = "Branch has to have a parent"
-
-_ERROR_KMMT_VALIDATION_MIGRATOR__TARGET_PARENT_PKG_ABSENCE = "Target parent package doesn’t exist"
+_ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PREVIOUS_PKG_ABSENCE = "Branch has to have a previous package"
 
 -- Uniqueness
 _ERROR_KMMT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS = "Migration is already created"

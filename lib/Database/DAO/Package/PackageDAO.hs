@@ -30,8 +30,9 @@ findPackagesByOrganizationIdAndKmId :: String -> String -> AppContextM (Either A
 findPackagesByOrganizationIdAndKmId organizationId kmId =
   createFindEntitiesByFn collection ["organizationId" =: organizationId, "kmId" =: kmId]
 
-findPackagesByParentPackageId :: String -> AppContextM (Either AppError [Package])
-findPackagesByParentPackageId parentPackageId = createFindEntitiesByFn collection ["parentPackageId" =: parentPackageId]
+findPackagesByPreviousPackageId :: String -> AppContextM (Either AppError [Package])
+findPackagesByPreviousPackageId previousPackageId =
+  createFindEntitiesByFn collection ["previousPackageId" =: previousPackageId]
 
 findPackageById :: String -> AppContextM (Either AppError Package)
 findPackageById = createFindEntityByFn collection entityName "id"

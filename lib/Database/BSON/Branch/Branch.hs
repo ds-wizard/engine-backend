@@ -1,49 +1,31 @@
 module Database.BSON.Branch.Branch where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import Database.BSON.Common ()
-import LensesConfig
 import Model.Branch.Branch
 
 instance ToBSON Branch where
-  toBSON branch =
-    [ "uuid" BSON.=: (branch ^. uuid)
-    , "name" BSON.=: (branch ^. name)
-    , "kmId" BSON.=: (branch ^. kmId)
-    , "metamodelVersion" BSON.=: (branch ^. metamodelVersion)
-    , "parentPackageId" BSON.=: (branch ^. parentPackageId)
-    , "lastAppliedParentPackageId" BSON.=: (branch ^. lastAppliedParentPackageId)
-    , "lastMergeCheckpointPackageId" BSON.=: (branch ^. lastMergeCheckpointPackageId)
-    , "ownerUuid" BSON.=: (branch ^. ownerUuid)
-    , "createdAt" BSON.=: (branch ^. createdAt)
-    , "updatedAt" BSON.=: (branch ^. updatedAt)
+  toBSON Branch {..} =
+    [ "uuid" BSON.=: _branchUuid
+    , "name" BSON.=: _branchName
+    , "kmId" BSON.=: _branchKmId
+    , "metamodelVersion" BSON.=: _branchMetamodelVersion
+    , "previousPackageId" BSON.=: _branchPreviousPackageId
+    , "ownerUuid" BSON.=: _branchOwnerUuid
+    , "createdAt" BSON.=: _branchCreatedAt
+    , "updatedAt" BSON.=: _branchUpdatedAt
     ]
 
 instance FromBSON Branch where
   fromBSON doc = do
-    bUuid <- BSON.lookup "uuid" doc
-    bName <- BSON.lookup "name" doc
-    bKmId <- BSON.lookup "kmId" doc
-    bMetamodelVersion <- BSON.lookup "metamodelVersion" doc
-    bParentPackageId <- BSON.lookup "parentPackageId" doc
-    bLastAppliedParentPackageId <- BSON.lookup "lastAppliedParentPackageId" doc
-    bLastMergeCheckpointPackageId <- BSON.lookup "lastMergeCheckpointPackageId" doc
-    let bOwnerUuid = BSON.lookup "ownerUuid" doc
-    bCreatedAt <- BSON.lookup "createdAt" doc
-    bUpdatedAt <- BSON.lookup "updatedAt" doc
-    return
-      Branch
-      { _branchUuid = bUuid
-      , _branchName = bName
-      , _branchKmId = bKmId
-      , _branchMetamodelVersion = bMetamodelVersion
-      , _branchParentPackageId = bParentPackageId
-      , _branchLastAppliedParentPackageId = bLastAppliedParentPackageId
-      , _branchLastMergeCheckpointPackageId = bLastMergeCheckpointPackageId
-      , _branchOwnerUuid = bOwnerUuid
-      , _branchCreatedAt = bCreatedAt
-      , _branchUpdatedAt = bUpdatedAt
-      }
+    _branchUuid <- BSON.lookup "uuid" doc
+    _branchName <- BSON.lookup "name" doc
+    _branchKmId <- BSON.lookup "kmId" doc
+    _branchMetamodelVersion <- BSON.lookup "metamodelVersion" doc
+    _branchPreviousPackageId <- BSON.lookup "previousPackageId" doc
+    _branchOwnerUuid <- BSON.lookup "ownerUuid" doc
+    _branchCreatedAt <- BSON.lookup "createdAt" doc
+    _branchUpdatedAt <- BSON.lookup "updatedAt" doc
+    return Branch {..}

@@ -16,7 +16,9 @@ instance ToBSON Package where
     , "description" BSON.=: _packageDescription
     , "readme" BSON.=: _packageReadme
     , "license" BSON.=: _packageLicense
-    , "parentPackageId" BSON.=: _packageParentPackageId
+    , "previousPackageId" BSON.=: _packagePreviousPackageId
+    , "forkOfPackageId" BSON.=: _packageForkOfPackageId
+    , "mergeCheckpointPackageId" BSON.=: _packageMergeCheckpointPackageId
     , "createdAt" BSON.=: _packageCreatedAt
     ]
 
@@ -31,6 +33,8 @@ instance FromBSON Package where
     _packageDescription <- BSON.lookup "description" doc
     _packageReadme <- BSON.lookup "readme" doc
     _packageLicense <- BSON.lookup "license" doc
-    _packageParentPackageId <- BSON.lookup "parentPackageId" doc
+    _packagePreviousPackageId <- BSON.lookup "previousPackageId" doc
+    _packageForkOfPackageId <- BSON.lookup "forkOfPackageId" doc
+    _packageMergeCheckpointPackageId <- BSON.lookup "mergeCheckpointPackageId" doc
     _packageCreatedAt <- BSON.lookup "createdAt" doc
     return Package {..}

@@ -13,8 +13,8 @@ data BranchDetailDTO = BranchDetailDTO
   , _branchDetailDTOOrganizationId :: String
   , _branchDetailDTOKmId :: String
   , _branchDetailDTOState :: BranchState
-  , _branchDetailDTOParentPackageId :: Maybe String
-  , _branchDetailDTOLastAppliedParentPackageId :: Maybe String
+  , _branchDetailDTOPreviousPackageId :: Maybe String
+  , _branchDetailDTOForkOfPackageId :: Maybe String
   , _branchDetailDTOOwnerUuid :: Maybe U.UUID
   , _branchDetailDTOEvents :: [EventDTO]
   , _branchDetailDTOCreatedAt :: UTCTime

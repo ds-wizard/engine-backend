@@ -23,7 +23,10 @@ instance FromJSON PackageDTO where
     _packageDTODescription <- o .: "description"
     _packageDTOReadme <- o .:? "readme" .!= ""
     _packageDTOLicense <- o .:? "license" .!= ""
-    _packageDTOParentPackageId <- o .: "parentPackageId"
+    _packageDTOParentPackageId <- o .:? "parentPackageId"
+    _packageDTOPreviousPackageId <- o .:? "previousPackageId" .!= _packageDTOParentPackageId
+    _packageDTOForkOfPackageId <- o .:? "forkOfPackageId" .!= _packageDTOParentPackageId
+    _packageDTOMergeCheckpointPackageId <- o .:? "mergeCheckpointPackageId" .!= _packageDTOParentPackageId
     eventSerialized <- o .: "events"
     _packageDTOEvents <- parseJSON eventSerialized
     _packageDTOCreatedAt <- o .:? "createdAt" .!= (UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0)

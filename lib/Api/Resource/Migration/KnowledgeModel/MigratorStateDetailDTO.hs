@@ -11,7 +11,7 @@ data MigratorStateDetailDTO = MigratorStateDetailDTO
   { _migratorStateDetailDTOBranchUuid :: U.UUID
   , _migratorStateDetailDTOMetamodelVersion :: Int
   , _migratorStateDetailDTOMigrationState :: MigrationState
-  , _migratorStateDetailDTOBranchParentId :: String
+  , _migratorStateDetailDTOBranchPreviousPackageId :: String
   , _migratorStateDetailDTOTargetPackageId :: String
   , _migratorStateDetailDTOBranchEvents :: [EventDTO]
   , _migratorStateDetailDTOTargetPackageEvents :: [EventDTO]

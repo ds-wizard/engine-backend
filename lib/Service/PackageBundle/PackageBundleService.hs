@@ -99,8 +99,8 @@ importPackage dto = do
   let pkg = PM.fromDTO dto
   skipIfPackageIsAlreadyImported pkg $
     heValidatePackageIdWithCoordinates (pkg ^. pId) (pkg ^. organizationId) (pkg ^. kmId) (pkg ^. version) $
-    heValidateMaybeParentPackageIdExistence (pkg ^. pId) (pkg ^. parentPackageId) $
-    heValidateKmValidity (pkg ^. events) (pkg ^. parentPackageId) $ do
+    heValidateMaybePreviousPackageIdExistence (pkg ^. pId) (pkg ^. previousPackageId) $
+    heValidateKmValidity (pkg ^. events) (pkg ^. previousPackageId) $ do
       createdPkg <- createPackage pkg
       return . Right . Just $ createdPkg
   where

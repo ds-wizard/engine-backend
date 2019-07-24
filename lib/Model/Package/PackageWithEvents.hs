@@ -15,7 +15,9 @@ data PackageWithEvents = PackageWithEvents
   , _packageWithEventsDescription :: String
   , _packageWithEventsReadme :: String
   , _packageWithEventsLicense :: String
-  , _packageWithEventsParentPackageId :: Maybe String
+  , _packageWithEventsPreviousPackageId :: Maybe String
+  , _packageWithEventsForkOfPackageId :: Maybe String
+  , _packageWithEventsMergeCheckpointPackageId :: Maybe String
   , _packageWithEventsEvents :: [Event]
   , _packageWithEventsCreatedAt :: UTCTime
   } deriving (Show, Eq, Generic)

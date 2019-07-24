@@ -13,16 +13,15 @@ import Specs.API.Common
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertExistenceOfBranchInDB appContext branch bParentPackageId bLastAppliedParentPackageId bOwnerUuid = do
+assertExistenceOfBranchInDB appContext branch bPreviousPackageId bForkOfPackageId bOwnerUuid = do
   branchFromDb <- getFirstFromDB findBranches appContext
-  compareBranchDtos branchFromDb branch bParentPackageId bLastAppliedParentPackageId bOwnerUuid
+  compareBranchDtos branchFromDb branch bPreviousPackageId bForkOfPackageId bOwnerUuid
 
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareBranchDtos resDto expDto bParentPackageId bLastAppliedParentPackageId bOwnerUuid = do
+compareBranchDtos resDto expDto bPreviousPackageId bForkOfPackageId bOwnerUuid = do
   liftIO $ (resDto ^. name) `shouldBe` (expDto ^. name)
   liftIO $ (resDto ^. kmId) `shouldBe` (expDto ^. kmId)
-  liftIO $ (resDto ^. parentPackageId) `shouldBe` bParentPackageId
-  liftIO $ (resDto ^. lastAppliedParentPackageId) `shouldBe` bLastAppliedParentPackageId
+  liftIO $ (resDto ^. previousPackageId) `shouldBe` bPreviousPackageId
   liftIO $ (resDto ^. ownerUuid) `shouldBe` bOwnerUuid

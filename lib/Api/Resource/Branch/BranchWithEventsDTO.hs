@@ -11,9 +11,9 @@ data BranchWithEventsDTO = BranchWithEventsDTO
   , _branchWithEventsDTOName :: String
   , _branchWithEventsDTOKmId :: String
   , _branchWithEventsDTOMetamodelVersion :: Int
-  , _branchWithEventsDTOParentPackageId :: Maybe String
-  , _branchWithEventsDTOLastAppliedParentPackageId :: Maybe String
-  , _branchWithEventsDTOLastMergeCheckpointPackageId :: Maybe String
+  , _branchWithEventsDTOPreviousPackageId :: Maybe String
+  , _branchWithEventsDTOForkOfPackageId :: Maybe String
+  , _branchWithEventsDTOMergeCheckpointPackageId :: Maybe String
   , _branchWithEventsDTOEvents :: [EventDTO]
   , _branchWithEventsDTOOwnerUuid :: Maybe U.UUID
   , _branchWithEventsDTOCreatedAt :: UTCTime

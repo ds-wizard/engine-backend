@@ -23,7 +23,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditChapterEvent' e_km1_ch1]
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [AddQuestionEvent' a_km1_ch1_q1']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -42,7 +42,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditChapterEvent' e_km1_ch1]
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [EditQuestionEvent' e_km1_ch1_q1']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -66,7 +66,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditChapterEvent' e_km1_ch1]
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -86,7 +86,7 @@ migratorSpec =
        do
         let branchEvents =
               [EditChapterEvent' e_km1_ch1, AddQuestionEvent' a_km1_ch1_q1', AddQuestionEvent' a_km1_ch1_q2']
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [EditChapterEvent' e_km1_ch1_2]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -106,7 +106,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditChapterEvent' e_km1_ch1]
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteChapterEvent' d_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -125,7 +125,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [AddQuestionEvent' a_km1_ch1_q1']
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [AddQuestionEvent' a_km1_ch1_q2']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -144,7 +144,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [AddQuestionEvent' a_km1_ch1_q1', AddQuestionEvent' a_km1_ch1_q2']
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [EditChapterEvent' e_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -166,7 +166,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditQuestionEvent' e_km1_ch1_q1']
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [EditChapterEvent' e_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents =
@@ -193,7 +193,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
-        -- And: Prepare target parent package events
+        -- And: Prepare target package events
         let msTargetPackageEvents = [EditChapterEvent' e_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents =
@@ -221,7 +221,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteChapterEvent' d_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -240,7 +240,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [AddQuestionEvent' a_km1_ch1_q1']
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteChapterEvent' d_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1]
@@ -259,7 +259,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [EditQuestionEvent' e_km1_ch1_q1']
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteChapterEvent' d_km1_ch1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -278,7 +278,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteChapterEvent' d_km1_ch1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -297,7 +297,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteChapterEvent' d_km1_ch1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [AddQuestionEvent' a_km1_ch1_q2']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -316,7 +316,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteChapterEvent' d_km1_ch1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [EditQuestionEvent' e_km1_ch1_q1']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -335,7 +335,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [DeleteQuestionEvent' d_km1_ch1_q1_2]
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']
@@ -354,7 +354,7 @@ migratorSpec =
         -- Given: Prepare current branch events
        do
         let branchEvents = [DeleteQuestionEvent' d_km1_ch1_q1]
-      -- And: Prepare target parent package events
+      -- And: Prepare target package events
         let msTargetPackageEvents = [EditQuestionEvent' e_km1_ch1_q1']
         -- And: Prepare current Knowledge Model
         let kmEvents = [AddKnowledgeModelEvent' a_km1, AddChapterEvent' a_km1_ch1, AddQuestionEvent' a_km1_ch1_q1']

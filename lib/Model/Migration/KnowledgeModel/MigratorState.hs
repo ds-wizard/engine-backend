@@ -28,7 +28,7 @@ data MigratorState = MigratorState
   { _migratorStateBranchUuid :: U.UUID
   , _migratorStateMetamodelVersion :: Int
   , _migratorStateMigrationState :: MigrationState
-  , _migratorStateBranchParentId :: String
+  , _migratorStateBranchPreviousPackageId :: String
   , _migratorStateTargetPackageId :: String
   , _migratorStateBranchEvents :: [Event]
   , _migratorStateTargetPackageEvents :: [Event]

@@ -42,7 +42,7 @@ list_post appContext =
     test_201_without_readme_and_createdAt appContext
     test_400 appContext
     test_400_main_package_duplication appContext
-    test_400_missing_parent_package appContext
+    test_400_missing_previous_package appContext
     test_400_bad_package_coordinates appContext
     test_401 appContext
     test_403 appContext
@@ -64,7 +64,7 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_req_all_db_all appContext = do
-  it "HTTP 201 CREATED - In request: all parent packages, in DB: all parent packages" $
+  it "HTTP 201 CREATED - In request: all previous packages, in DB: all previous packages" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
@@ -91,7 +91,7 @@ test_201_req_all_db_all appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_req_all_db_no appContext = do
-  it "HTTP 201 CREATED - In request: all parent packages, in DB: no parent packages" $
+  it "HTTP 201 CREATED - In request: all previous packages, in DB: no previous packages" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
@@ -116,7 +116,7 @@ test_201_req_all_db_no appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_req_no_db_all appContext = do
-  it "HTTP 201 CREATED - In request: no parent packages, in DB: all parent packages" $
+  it "HTTP 201 CREATED - In request: no previous packages, in DB: all previous packages" $
      -- GIVEN: Prepare request
    do
     let reqDto = PBM.toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackageV2])
@@ -146,7 +146,7 @@ test_201_req_no_db_all appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201_req_one_db_rest appContext = do
-  it "HTTP 201 CREATED - In request: one parent package, in DB: rest of parent packages" $
+  it "HTTP 201 CREATED - In request: one previous package, in DB: rest of previous packages" $
      -- GIVEN: Prepare request
    do
     let reqDto = PBM.toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackage, netherlandsPackageV2])
@@ -196,7 +196,7 @@ test_201_without_readme_and_createdAt appContext = do
                   version: "1.0.0",
                   metamodelVersion: 2,
                   description: "First Release",
-                  parentPackageId: "dsw:core:1.0.0",
+                  previousPackageId: "dsw:core:1.0.0",
                   events: []
                  }
               ]
@@ -252,8 +252,8 @@ test_400_main_package_duplication appContext = do
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
 
-test_400_missing_parent_package appContext = do
-  it "HTTP 400 BAD REQUEST when main package already exists" $
+test_400_missing_previous_package appContext = do
+  it "HTTP 400 BAD REQUEST when missing previous package" $
      -- GIVEN: Prepare request
    do
     let reqDto = PBM.toDTO (netherlandsPackageV2Budle & packages .~ [netherlandsPackageV2])
@@ -263,7 +263,7 @@ test_400_missing_parent_package appContext = do
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
           createErrorWithErrorMessage $
-          _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
+          _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

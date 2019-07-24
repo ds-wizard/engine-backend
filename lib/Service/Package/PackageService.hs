@@ -4,9 +4,9 @@ module Service.Package.PackageService
   , getSeriesOfPackages
   , getAllPreviousEventsSincePackageId
   , getAllPreviousEventsSincePackageIdAndUntilPackageId
+  , getTheNewestPackageByOrganizationIdAndKmId
   , getNewerPackages
   , createPackage
-  , createPackageFromKMC
   , deletePackagesByQueryParams
   , deletePackage
   -- Helpers
@@ -18,19 +18,13 @@ module Service.Package.PackageService
   ) where
 
 import Control.Lens ((^.), (^..), traverse)
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Reader (asks)
 import Data.List (maximumBy)
 import Data.Maybe
 import Data.Text (Text)
-import Data.Time
-import Data.UUID as U
 
 import Api.Resource.Package.PackageDetailDTO
 import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Version.VersionDTO
-import Database.DAO.Branch.BranchDAO
-import Database.DAO.Event.EventDAO
-import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Integration.Http.Registry.Runner
 import Integration.Resource.Package.PackageSimpleIDTO
@@ -40,7 +34,6 @@ import Model.Error.Error
 import Model.Event.Event
 import Model.Package.Package
 import Model.Package.PackageWithEvents
-import Service.Organization.OrganizationService
 import Service.Package.PackageMapper
 import Service.Package.PackageUtils
 import Service.Package.PackageValidation
@@ -73,18 +66,18 @@ getPackageById pkgId = do
 
 getSeriesOfPackages :: String -> AppContextM (Either AppError [PackageWithEvents])
 getSeriesOfPackages pkgId =
-  heFindPackageWithEventsById pkgId $ \package ->
-    case package ^. parentPackageId of
-      Just parentPkgId ->
-        heGetSeriesOfPackages parentPkgId $ \parentPackages -> return . Right $ parentPackages ++ [package]
-      Nothing -> return . Right $ [package]
+  heFindPackageWithEventsById pkgId $ \pkg ->
+    case pkg ^. previousPackageId of
+      Just previousPkgId ->
+        heGetSeriesOfPackages previousPkgId $ \previousPkgs -> return . Right $ previousPkgs ++ [pkg]
+      Nothing -> return . Right $ [pkg]
 
 getAllPreviousEventsSincePackageId :: String -> AppContextM (Either AppError [Event])
 getAllPreviousEventsSincePackageId pkgId =
   heFindPackageWithEventsById pkgId $ \package ->
-    case package ^. parentPackageId of
-      Just parentPackageId ->
-        heGetAllPreviousEventsSincePackageId parentPackageId $ \pkgEvents ->
+    case package ^. previousPackageId of
+      Just previousPackageId ->
+        heGetAllPreviousEventsSincePackageId previousPackageId $ \pkgEvents ->
           return . Right $ pkgEvents ++ (package ^. events)
       Nothing -> return . Right $ package ^. events
 
@@ -95,13 +88,22 @@ getAllPreviousEventsSincePackageIdAndUntilPackageId sincePkgId untilPkgId = go s
       if pkgId == untilPkgId
         then return . Right $ []
         else heFindPackageWithEventsById pkgId $ \package ->
-               case package ^. parentPackageId of
-                 Just parentPackageId -> do
-                   eitherPkgEvents <- go parentPackageId
+               case package ^. previousPackageId of
+                 Just previousPackageId -> do
+                   eitherPkgEvents <- go previousPackageId
                    case eitherPkgEvents of
                      Right pkgEvents -> return . Right $ pkgEvents ++ (package ^. events)
                      Left error -> return . Left $ error
                  Nothing -> return . Right $ package ^. events
+
+getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError (Maybe Package))
+getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
+  heFindPackagesByOrganizationIdAndKmId organizationId kmId $ \packages -> do
+    if length packages == 0
+      then return . Right $ Nothing
+      else do
+        let sorted = sortPackagesByVersion packages
+        return . Right . Just . head $ sorted
 
 getNewerPackages :: String -> AppContextM (Either AppError [Package])
 getNewerPackages currentPkgId =
@@ -113,45 +115,6 @@ createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO
 createPackage pkg = do
   insertPackage pkg
   return . toSimpleDTO . toPackage $ pkg
-
-createPackageFromKMC :: String -> String -> VersionDTO -> AppContextM (Either AppError PackageSimpleDTO)
-createPackageFromKMC branchUuid pkgVersion versionDto =
-  heValidateVersionFormat pkgVersion $ heFindBranchWithEventsById branchUuid $ \branch ->
-    heGetOrganization $ \organization ->
-      validateVersion pkgVersion branch organization $ getEventsForPackage branch $ \events -> do
-        now <- liftIO getCurrentTime
-        let pkg = fromBranchAndVersion branch versionDto organization pkgVersion events now
-        createdPackage <- createPackage pkg
-        deleteEventsAtBranch branchUuid
-        updateBranchWithParentPackageId branchUuid (createdPackage ^. pId)
-        updateBranchIfMigrationIsCompleted branchUuid
-        deleteMigratorStateByBranchUuid branchUuid
-        return . Right $ createdPackage
-  where
-    validateVersion pkgVersion branch org callback = do
-      eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndKmId (org ^. organizationId) (branch ^. kmId)
-      case eitherMaybePackage of
-        Right (Just pkg) ->
-          case validateIsVersionHigher pkgVersion (pkg ^. version) of
-            Nothing -> callback
-            Just error -> return . Left $ error
-        Right Nothing -> callback
-        Left error -> return . Left $ error
-    updateBranchIfMigrationIsCompleted branchUuid = do
-      eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
-      case eitherMigrationState of
-        Right migrationState -> do
-          let msBranchParentId = migrationState ^. branchParentId
-          let msTargetPackageId = migrationState ^. targetPackageId
-          updateBranchWithMigrationInfo branchUuid msTargetPackageId msBranchParentId
-        Left _ -> return ()
-    getEventsForPackage branch callback = do
-      let branchUuid = U.toString $ branch ^. uuid
-      eitherMigrationState <- findMigratorStateByBranchUuid branchUuid
-      case eitherMigrationState of
-        Right migrationState -> callback $ migrationState ^. resultEvents
-        Left (NotExistsError _) -> callback $ branch ^. events
-        Left error -> return . Left $ error
 
 deletePackagesByQueryParams :: [(Text, Text)] -> AppContextM (Maybe AppError)
 deletePackagesByQueryParams queryParams =
@@ -176,15 +139,6 @@ deletePackage pkgId =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getTheNewestPackageByOrganizationIdAndKmId :: String -> String -> AppContextM (Either AppError (Maybe Package))
-getTheNewestPackageByOrganizationIdAndKmId organizationId kmId =
-  heFindPackagesByOrganizationIdAndKmId organizationId kmId $ \packages -> do
-    if length packages == 0
-      then return . Right $ Nothing
-      else do
-        let sorted = sortPackagesByVersion packages
-        return . Right . Just . head $ sorted
-
 getPackageVersions :: Package -> AppContextM (Either AppError [String])
 getPackageVersions pkg =
   heFindPackagesByOrganizationIdAndKmId (pkg ^. organizationId) (pkg ^. kmId) $ \allPkgs ->

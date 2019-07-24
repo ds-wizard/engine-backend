@@ -24,7 +24,9 @@ instance ToBSON PackageWithEvents where
     , "description" BSON.=: _packageWithEventsDescription
     , "readme" BSON.=: _packageWithEventsReadme
     , "license" BSON.=: _packageWithEventsLicense
-    , "parentPackageId" BSON.=: _packageWithEventsParentPackageId
+    , "previousPackageId" BSON.=: _packageWithEventsPreviousPackageId
+    , "forkOfPackageId" BSON.=: _packageWithEventsForkOfPackageId
+    , "mergeCheckpointPackageId" BSON.=: _packageWithEventsMergeCheckpointPackageId
     , "events" BSON.=: convertEventToBSON <$> _packageWithEventsEvents
     , "createdAt" BSON.=: _packageWithEventsCreatedAt
     ]
@@ -40,7 +42,9 @@ instance FromBSON PackageWithEvents where
     _packageWithEventsDescription <- BSON.lookup "description" doc
     _packageWithEventsReadme <- BSON.lookup "readme" doc
     _packageWithEventsLicense <- BSON.lookup "license" doc
-    _packageWithEventsParentPackageId <- BSON.lookup "parentPackageId" doc
+    _packageWithEventsPreviousPackageId <- BSON.lookup "previousPackageId" doc
+    _packageWithEventsForkOfPackageId <- BSON.lookup "forkOfPackageId" doc
+    _packageWithEventsMergeCheckpointPackageId <- BSON.lookup "mergeCheckpointPackageId" doc
     pkgEventsSerialized <- BSON.lookup "events" doc
     let _packageWithEventsEvents = (fromJust . chooseEventDeserializator) <$> pkgEventsSerialized
     _packageWithEventsCreatedAt <- BSON.lookup "createdAt" doc

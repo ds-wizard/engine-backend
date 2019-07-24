@@ -14,7 +14,9 @@ data PackageDetailIDTO = PackageDetailIDTO
   , _packageDetailIDTOReadme :: String
   , _packageDetailIDTOLicense :: String
   , _packageDetailIDTOMetamodelVersion :: Int
-  , _packageDetailIDTOParentPackageId :: Maybe String
+  , _packageDetailIDTOPreviousPackageId :: Maybe String
+  , _packageDetailIDTOForkOfPackageId :: Maybe String
+  , _packageDetailIDTOMergeCheckpointPackageId :: Maybe String
   , _packageDetailIDTOVersions :: [String]
   , _packageDetailIDTOOrganization :: OrganizationSimpleIDTO
   , _packageDetailIDTOCreatedAt :: UTCTime

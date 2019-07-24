@@ -3,17 +3,18 @@ module Service.Package.PackageValidation
   , validateIsVersionHigher
   , validatePackageIdWithCoordinates
   , validatePackageIdUniqueness
-  , validateParentPackageIdExistence
+  , validatePreviousPackageIdExistence
   , validatePackagesDeletation
   , validatePackageDeletation
   , validateUsageBySomeBranch
   , validateUsageBySomeQuestionnaire
   -- Helpers
   , heValidateVersionFormat
+  , heValidateIsVersionHigher
   , heValidatePackageIdWithCoordinates
   , heValidatePackageIdUniqueness
-  , heValidateParentPackageIdExistence
-  , heValidateMaybeParentPackageIdExistence
+  , heValidatePreviousPackageIdExistence
+  , heValidateMaybePreviousPackageIdExistence
   , hmValidateUsageBySomeBranch
   , hmValidateUsageBySomeQuestionnaire
   ) where
@@ -62,13 +63,13 @@ validatePackageIdUniqueness pkgId = do
     Right _ -> return . Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
     Left error -> return . Just $ error
 
-validateParentPackageIdExistence :: String -> String -> AppContextM (Maybe AppError)
-validateParentPackageIdExistence pkgId parentPkgId = do
-  eitherPackage <- findPackageById parentPkgId
+validatePreviousPackageIdExistence :: String -> String -> AppContextM (Maybe AppError)
+validatePreviousPackageIdExistence pkgId previousPkgId = do
+  eitherPackage <- findPackageById previousPkgId
   case eitherPackage of
     Right _ -> return Nothing
     Left (NotExistsError _) ->
-      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId
+      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId
     Left error -> return . Just $ error
 
 validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
@@ -85,7 +86,7 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
       hmValidateUsageBySomeBranch pkgId $ \() ->
         validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
     validateUsageBySomeOtherPackage pkgId callback = do
-      eitherPkgs <- findPackagesByParentPackageId pkgId
+      eitherPkgs <- findPackagesByPreviousPackageId pkgId
       case eitherPkgs of
         Right [] -> callback ()
         Right pkgs -> do
@@ -104,7 +105,7 @@ validatePackageDeletation pkgId =
     validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
   where
     validateUsageBySomeOtherPackage pkgId callback = do
-      eitherPkgs <- findPackagesByParentPackageId pkgId
+      eitherPkgs <- findPackagesByPreviousPackageId pkgId
       case eitherPkgs of
         Right [] -> callback ()
         Right _ ->
@@ -114,7 +115,7 @@ validatePackageDeletation pkgId =
 
 validateUsageBySomeBranch :: String -> AppContextM (Maybe AppError)
 validateUsageBySomeBranch pkgId = do
-  eitherBranches <- findBranchByParentPackageIdOrLastAppliedParentPackageIdOrLastMergeCheckpointPackageId pkgId
+  eitherBranches <- findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId pkgId
   case eitherBranches of
     Right [] -> return Nothing
     Right _ ->
@@ -141,6 +142,12 @@ heValidateVersionFormat pkgVersion callback =
     Just error -> return . Left $ error
 
 -- -----------------------------------------------------
+heValidateIsVersionHigher newVersion oldVersion callback =
+  case validateIsVersionHigher newVersion oldVersion of
+    Nothing -> callback
+    Just error -> return . Left $ error
+
+-- -----------------------------------------------------
 heValidatePackageIdWithCoordinates pkgId organizationId kmId version callback =
   case validatePackageIdWithCoordinates pkgId organizationId kmId version of
     Nothing -> callback
@@ -154,15 +161,15 @@ heValidatePackageIdUniqueness pkgId callback = do
     Just error -> return . Left $ error
 
 -- -----------------------------------------------------
-heValidateParentPackageIdExistence pkgId parentPkgId callback = do
-  maybeError <- validateParentPackageIdExistence pkgId parentPkgId
+heValidatePreviousPackageIdExistence pkgId previousPkgId callback = do
+  maybeError <- validatePreviousPackageIdExistence pkgId previousPkgId
   case maybeError of
     Nothing -> callback
     Just error -> return . Left $ error
 
-heValidateMaybeParentPackageIdExistence pkgId maybeParentPkgId callback =
-  case maybeParentPkgId of
-    Just parentPkgId -> heValidateParentPackageIdExistence pkgId parentPkgId $ callback
+heValidateMaybePreviousPackageIdExistence pkgId mPreviousPkgId callback =
+  case mPreviousPkgId of
+    Just previousPkgId -> heValidatePreviousPackageIdExistence pkgId previousPkgId $ callback
     Nothing -> callback
 
 -- -----------------------------------------------------
