@@ -54,6 +54,12 @@ getVersionFromPkgId pkgId = splitPackageId pkgId !! 2
 splitVersion :: String -> [String]
 splitVersion pkgVersion = splitOn "." pkgVersion
 
+buildPackageId :: String -> String -> String -> String
+buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
+
+upgradePackageVersion :: String -> String -> String
+upgradePackageVersion pkgId newVersion = buildPackageId (getOrgIdFromPkgId pkgId) (getKmIdFromPkgId pkgId) newVersion
+
 selectPackageByOrgIdAndKmId pkg =
   find (\p -> (p ^. organizationId) == (pkg ^. organizationId) && (p ^. kmId) == (pkg ^. kmId))
 

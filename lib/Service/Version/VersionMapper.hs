@@ -10,7 +10,7 @@ import LensesConfig
 import Model.Branch.Branch
 import Model.Event.Event
 import Model.Package.PackageWithEvents
-import Service.Package.PackageMapper
+import Service.Package.PackageUtils
 
 fromBranch :: BranchWithEvents -> PackageWithEvents -> BranchWithEvents
 fromBranch branch pkg = (branch & events .~ []) & previousPackageId .~ (Just $ pkg ^. pId)

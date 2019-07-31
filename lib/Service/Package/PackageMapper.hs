@@ -122,8 +122,5 @@ fromDTO dto =
   , _packageWithEventsCreatedAt = dto ^. createdAt
   }
 
-buildPackageId :: String -> String -> String -> String
-buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
-
 buildPackageUrl :: String -> String -> String
 buildPackageUrl clientRegistryUrl pkgId = clientRegistryUrl ++ "/knowledge-models/" ++ pkgId
