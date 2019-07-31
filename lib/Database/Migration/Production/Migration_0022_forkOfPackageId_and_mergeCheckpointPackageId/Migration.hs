@@ -42,7 +42,7 @@ migratePackages dbPool = do
         modify
           (select [] "packages")
           [ "$rename" =: ["parentPackageId" =: "previousPackageId"]
-          , "$set" =: ["forkOfPackageId" =: ([] :: [String]), "mergeCheckpointPackageId" =: ([] :: [String])]
+          , "$set" =: ["forkOfPackageId" =: (Nothing :: Maybe String), "mergeCheckpointPackageId" =: (Nothing :: Maybe String)]
           ]
   runMongoDBPoolDef action dbPool
   return Nothing
