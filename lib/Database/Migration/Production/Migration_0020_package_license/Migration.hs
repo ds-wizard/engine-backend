@@ -24,7 +24,7 @@ migratePackages dbPool = do
         modify
           (select [] "packages")
           [ "$set" =:
-            ["license" =: "## License\\n There should be some license. For changing it, publish a new version."]
+            ["license" =: "No License"]
           ]
   runMongoDBPoolDef action dbPool
   return Nothing
@@ -35,7 +35,7 @@ migratePublicPackages dbPool = do
         modify
           (select [] "publicPackages")
           [ "$set" =:
-            ["license" =: "## License\\n There should be some license. For changing it, publish a new version."]
+            ["license" =: "Apache-2.0"]
           ]
   runMongoDBPoolDef action dbPool
   return Nothing
