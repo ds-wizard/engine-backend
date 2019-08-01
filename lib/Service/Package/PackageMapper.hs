@@ -1,18 +1,12 @@
 module Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
-import Data.Time
 
-import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
 import Api.Resource.Package.PackageDetailDTO
 import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Version.VersionDTO
-import Constant.KnowledgeModel
 import Integration.Resource.Package.PackageSimpleIDTO
 import LensesConfig
-import Model.Branch.Branch
-import Model.Event.Event
 import Model.Package.Package
 import Model.Package.PackageWithEvents
 import Service.Event.EventMapper
@@ -30,7 +24,10 @@ toPackage pkg =
   , _packageMetamodelVersion = pkg ^. metamodelVersion
   , _packageDescription = pkg ^. description
   , _packageReadme = pkg ^. readme
-  , _packageParentPackageId = pkg ^. parentPackageId
+  , _packageLicense = pkg ^. license
+  , _packagePreviousPackageId = pkg ^. previousPackageId
+  , _packageForkOfPackageId = pkg ^. forkOfPackageId
+  , _packageMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
   , _packageCreatedAt = pkg ^. createdAt
   }
 
@@ -45,22 +42,26 @@ toDTO pkg =
   , _packageDTOMetamodelVersion = pkg ^. metamodelVersion
   , _packageDTODescription = pkg ^. description
   , _packageDTOReadme = pkg ^. readme
-  , _packageDTOParentPackageId = pkg ^. parentPackageId
+  , _packageDTOLicense = pkg ^. license
+  , _packageDTOPreviousPackageId = pkg ^. previousPackageId
+  , _packageDTOForkOfPackageId = pkg ^. forkOfPackageId
+  , _packageDTOMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
   , _packageDTOEvents = toDTOs (pkg ^. events)
   , _packageDTOCreatedAt = pkg ^. createdAt
   }
 
 toSimpleDTO :: Package -> PackageSimpleDTO
-toSimpleDTO pkg = toSimpleDTO' pkg []
+toSimpleDTO pkg = toSimpleDTO' pkg [] []
 
-toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> PackageSimpleDTO
-toSimpleDTO' pkg pkgRs =
+toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> [String] -> PackageSimpleDTO
+toSimpleDTO' pkg pkgRs localVersions =
   PackageSimpleDTO
   { _packageSimpleDTOPId = pkg ^. pId
   , _packageSimpleDTOName = pkg ^. name
   , _packageSimpleDTOOrganizationId = pkg ^. organizationId
   , _packageSimpleDTOKmId = pkg ^. kmId
   , _packageSimpleDTOVersion = pkg ^. version
+  , _packageSimpleDTOVersions = localVersions
   , _packageSimpleDTODescription = pkg ^. description
   , _packageSimpleDTOState = computePackageState pkgRs pkg
   , _packageSimpleDTOOrganization =
@@ -80,8 +81,11 @@ toDetailDTO pkg pkgRs versionLs registryLink =
   , _packageDetailDTOVersion = pkg ^. version
   , _packageDetailDTODescription = pkg ^. description
   , _packageDetailDTOReadme = pkg ^. readme
+  , _packageDetailDTOLicense = pkg ^. license
   , _packageDetailDTOMetamodelVersion = pkg ^. metamodelVersion
-  , _packageDetailDTOParentPackageId = pkg ^. parentPackageId
+  , _packageDetailDTOPreviousPackageId = pkg ^. previousPackageId
+  , _packageDetailDTOForkOfPackageId = pkg ^. forkOfPackageId
+  , _packageDetailDTOMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
   , _packageDetailDTOVersions = versionLs
   , _packageDetailDTORemoteLatestVersion =
       case selectPackageByOrgIdAndKmId pkg pkgRs of
@@ -110,30 +114,13 @@ fromDTO dto =
   , _packageWithEventsMetamodelVersion = dto ^. metamodelVersion
   , _packageWithEventsDescription = dto ^. description
   , _packageWithEventsReadme = dto ^. readme
-  , _packageWithEventsParentPackageId = dto ^. parentPackageId
+  , _packageWithEventsLicense = dto ^. license
+  , _packageWithEventsPreviousPackageId = dto ^. previousPackageId
+  , _packageWithEventsForkOfPackageId = dto ^. forkOfPackageId
+  , _packageWithEventsMergeCheckpointPackageId = dto ^. mergeCheckpointPackageId
   , _packageWithEventsEvents = fromDTOs (dto ^. events)
   , _packageWithEventsCreatedAt = dto ^. createdAt
   }
-
-fromBranchAndVersion ::
-     BranchWithEvents -> VersionDTO -> OrganizationDTO -> String -> [Event] -> UTCTime -> PackageWithEvents
-fromBranchAndVersion branch versionDto organization version events now =
-  PackageWithEvents
-  { _packageWithEventsPId = buildPackageId (organization ^. organizationId) (branch ^. kmId) version
-  , _packageWithEventsName = branch ^. name
-  , _packageWithEventsOrganizationId = organization ^. organizationId
-  , _packageWithEventsKmId = branch ^. kmId
-  , _packageWithEventsVersion = version
-  , _packageWithEventsMetamodelVersion = kmMetamodelVersion
-  , _packageWithEventsDescription = versionDto ^. description
-  , _packageWithEventsReadme = versionDto ^. readme
-  , _packageWithEventsParentPackageId = branch ^. parentPackageId
-  , _packageWithEventsEvents = events
-  , _packageWithEventsCreatedAt = now
-  }
-
-buildPackageId :: String -> String -> String -> String
-buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
 
 buildPackageUrl :: String -> String -> String
 buildPackageUrl clientRegistryUrl pkgId = clientRegistryUrl ++ "/knowledge-models/" ++ pkgId

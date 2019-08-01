@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -25,6 +25,7 @@ import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Questionnaire.QuestionnaireState
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -69,7 +70,7 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4
+    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4 QSDefault
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

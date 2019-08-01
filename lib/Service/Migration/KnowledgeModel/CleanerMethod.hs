@@ -7,7 +7,7 @@ import Model.Event.Event
 import Model.Event.EventAccessors
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 
 isCleanerMethod :: MigratorState -> Event -> Bool
 isCleanerMethod state event = getKM $ \km -> doIsCleanerMethod km event

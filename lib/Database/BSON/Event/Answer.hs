@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.Event.EventPath ()
+import Database.BSON.KnowledgeModel.Path ()
 import LensesConfig
 import Model.Event.Answer.AnswerEvent
 
@@ -16,9 +16,9 @@ import Model.Event.Answer.AnswerEvent
 instance ToBSON AddAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
+    , "answerUuid" BSON.=: (event ^. answerUuid)
     , "label" BSON.=: (event ^. label)
     , "advice" BSON.=: (event ^. advice)
     , "metricMeasures" BSON.=: (event ^. metricMeasures)
@@ -26,9 +26,9 @@ instance ToBSON AddAnswerEvent where
 
 instance FromBSON AddAnswerEvent where
   fromBSON doc = do
-    ansUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    ansUuid <- BSON.lookup "uuid" doc
     ansPath <- BSON.lookup "path" doc
-    ansAnswerUuid <- deserializeMaybeUUID $ BSON.lookup "answerUuid" doc
+    ansAnswerUuid <- BSON.lookup "answerUuid" doc
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
     ansMetricMeasures <- BSON.lookup "metricMeasures" doc
@@ -48,23 +48,23 @@ instance FromBSON AddAnswerEvent where
 instance ToBSON EditAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
+    , "answerUuid" BSON.=: (event ^. answerUuid)
     , "label" BSON.=: (event ^. label)
     , "advice" BSON.=: (event ^. advice)
-    , "followUpUuids" BSON.=: serializeEventFieldUUIDList (event ^. followUpUuids)
+    , "followUpUuids" BSON.=: (event ^. followUpUuids)
     , "metricMeasures" BSON.=: (event ^. metricMeasures)
     ]
 
 instance FromBSON EditAnswerEvent where
   fromBSON doc = do
-    ansUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    ansUuid <- BSON.lookup "uuid" doc
     ansPath <- BSON.lookup "path" doc
-    ansAnswerUuid <- deserializeMaybeUUID $ BSON.lookup "answerUuid" doc
+    ansAnswerUuid <- BSON.lookup "answerUuid" doc
     ansLabel <- BSON.lookup "label" doc
     ansAdvice <- BSON.lookup "advice" doc
-    let ansFollowUpUuids = deserializeEventFieldUUIDList $ BSON.lookup "followUpUuids" doc
+    ansFollowUpUuids <- BSON.lookup "followUpUuids" doc
     ansMetricMeasures <- BSON.lookup "metricMeasures" doc
     return
       EditAnswerEvent
@@ -83,16 +83,16 @@ instance FromBSON EditAnswerEvent where
 instance ToBSON DeleteAnswerEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteAnswerEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "answerUuid" BSON.=: serializeUUID (event ^. answerUuid)
+    , "answerUuid" BSON.=: (event ^. answerUuid)
     ]
 
 instance FromBSON DeleteAnswerEvent where
   fromBSON doc = do
-    ansUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    ansUuid <- BSON.lookup "uuid" doc
     ansPath <- BSON.lookup "path" doc
-    ansAnswerUuid <- deserializeMaybeUUID $ BSON.lookup "answerUuid" doc
+    ansAnswerUuid <- BSON.lookup "answerUuid" doc
     return
       DeleteAnswerEvent
       {_deleteAnswerEventUuid = ansUuid, _deleteAnswerEventPath = ansPath, _deleteAnswerEventAnswerUuid = ansAnswerUuid}

@@ -13,6 +13,7 @@ import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 
 questionnaire1 :: Questionnaire
@@ -25,6 +26,7 @@ questionnaire1 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -40,11 +42,14 @@ questionnaire1Edited =
   , _questionnairePackageId = questionnaire1 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire1 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = questionnaire1 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 questionnaire2 :: Questionnaire
 questionnaire2 =
   Questionnaire
@@ -55,6 +60,7 @@ questionnaire2 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -70,11 +76,14 @@ questionnaire2Edited =
   , _questionnairePackageId = questionnaire2 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire2 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = questionnaire2 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 questionnaire3 :: Questionnaire
 questionnaire3 =
   Questionnaire
@@ -85,6 +94,7 @@ questionnaire3 =
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
   , _questionnaireReplies = fReplies
+  , _questionnaireLabels = fLabels
   , _questionnaireOwnerUuid = Nothing
   , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
   , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
@@ -100,17 +110,60 @@ questionnaire3Edited =
   , _questionnairePackageId = questionnaire3 ^. packageId
   , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
   , _questionnaireReplies = questionnaire3 ^. replies
+  , _questionnaireLabels = fLabelsEdited
   , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
   , _questionnaireCreatedAt = questionnaire3 ^. createdAt
   , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
   }
 
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaire4 :: Questionnaire
+questionnaire4 =
+  Questionnaire
+  { _questionnaireUuid = fromJust (U.fromString "57250a07-a663-4ff3-ac1f-16530f2c1bfe")
+  , _questionnaireName = "Outdated Questionnaire"
+  , _questionnaireLevel = 2
+  , _questionnaireAccessibility = PrivateQuestionnaire
+  , _questionnairePackageId = netherlandsPackage ^. pId
+  , _questionnaireSelectedTagUuids = []
+  , _questionnaireReplies = []
+  , _questionnaireLabels = []
+  , _questionnaireOwnerUuid = Nothing
+  , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+  , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  }
+
+questionnaire4PublicReadOnly :: Questionnaire
+questionnaire4PublicReadOnly = questionnaire4 {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+
+questionnaire4Public :: Questionnaire
+questionnaire4Public =
+  questionnaire4 {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+
+questionnaire4Upgraded :: Questionnaire
+questionnaire4Upgraded =
+  questionnaire4
+  { _questionnaireUuid = fromJust (U.fromString "5deabef8-f526-421c-90e2-dd7aed1a25c5")
+  , _questionnairePackageId = netherlandsPackageV2 ^. pId
+  }
+
+questionnaire4PublicReadOnlyUpgraded :: Questionnaire
+questionnaire4PublicReadOnlyUpgraded =
+  questionnaire4Upgraded {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+
+questionnaire4PublicUpgraded :: Questionnaire
+questionnaire4PublicUpgraded =
+  questionnaire4Upgraded {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 fReplies :: [Reply]
 fReplies =
-  [ fQ1
-  , fQ2
+  [ rQ1
+  , rQ2
   , rQ2_aYes_fuQ1
-  , fQ3
+  , rQ3
   , rQ4
   , rQ4_it1_itemName
   , rQ4_it1_q5
@@ -128,15 +181,15 @@ fReplies =
 createReplyKey :: [String] -> String
 createReplyKey uuids = intercalate "." uuids
 
-fQ1 :: Reply
-fQ1 =
+rQ1 :: Reply
+rQ1 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion1 ^. uuid]
   , _replyValue = StringReply . fromJust $ fQuestion1 ^. answerValue
   }
 
-fQ2 :: Reply
-fQ2 =
+rQ2 :: Reply
+rQ2 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion2 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQuestion2 ^. answerOption) ^. uuid
@@ -155,8 +208,8 @@ rQ2_aYes_fuQ1 =
   , _replyValue = AnswerReply $ (fromJust $ fQ2_aYes_fuQuestion1 ^. answerOption) ^. uuid
   }
 
-fQ3 :: Reply
-fQ3 =
+rQ3 :: Reply
+rQ3 =
   Reply
   { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion3 ^. uuid]
   , _replyValue = AnswerReply $ (fromJust $ fQuestion3 ^. answerOption) ^. uuid
@@ -287,3 +340,15 @@ rQ10 =
           }
       }
   }
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+fLabels :: [Label]
+fLabels =
+  [Label {_labelPath = rQ1 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}]
+
+fLabelsEdited :: [Label]
+fLabelsEdited =
+  [ Label {_labelPath = rQ1 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}
+  , Label {_labelPath = rQ2 ^. path, _labelValue = [fromJust (U.fromString "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae")]}
+  ]

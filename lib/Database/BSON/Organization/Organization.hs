@@ -4,13 +4,13 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import LensesConfig
 import Model.Organization.Organization
 
 instance ToBSON Organization where
   toBSON organization =
-    [ "uuid" BSON.=: serializeUUID (organization ^. uuid)
+    [ "uuid" BSON.=: (organization ^. uuid)
     , "name" BSON.=: (organization ^. name)
     , "organizationId" BSON.=: (organization ^. organizationId)
     , "createdAt" BSON.=: (organization ^. createdAt)
@@ -19,7 +19,7 @@ instance ToBSON Organization where
 
 instance FromBSON Organization where
   fromBSON doc = do
-    orgUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    orgUuid <- BSON.lookup "uuid" doc
     orgName <- BSON.lookup "name" doc
     orgOrganizationId <- BSON.lookup "organizationId" doc
     orgCreatedAt <- BSON.lookup "createdAt" doc

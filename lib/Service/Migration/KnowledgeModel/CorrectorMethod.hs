@@ -6,7 +6,7 @@ import Control.Lens
 
 import LensesConfig
 import Model.Event.Event
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Migration.KnowledgeModel.Sanitizator
 
 runCorrectorMethod :: MigratorState -> Event -> IO MigratorState

@@ -1,12 +1,9 @@
 module Api.Resource.Info.InfoDTO where
 
-import Data.Aeson
+import GHC.Generics
 
 data InfoDTO = InfoDTO
-  { _idtoName :: String
-  , _idtoVersion :: String
-  , _idtoBuiltAt :: String
-  }
-
-instance ToJSON InfoDTO where
-  toJSON InfoDTO {..} = object ["name" .= _idtoName, "version" .= _idtoVersion, "builtAt" .= _idtoBuiltAt]
+  { _infoDTOName :: String
+  , _infoDTOVersion :: String
+  , _infoDTOBuiltAt :: String
+  } deriving (Show, Eq, Generic)

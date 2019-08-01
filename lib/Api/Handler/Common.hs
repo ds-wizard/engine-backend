@@ -19,7 +19,7 @@ import Web.Scotty.Trans
        (ActionT, ScottyError, addHeader, body, header, json,
         liftAndCatchIO, params, raw, request, showError, status)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import Constant.Component
@@ -99,7 +99,7 @@ getCurrentUser callback =
     eitherUser <- runInUnauthService $ getUserById userUuid
     case eitherUser of
       Right user -> callback user
-      Left error -> sendError error
+      Left error -> unauthorizedA (_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid)
 
 getQueryParam paramName = do
   reqParams <- params

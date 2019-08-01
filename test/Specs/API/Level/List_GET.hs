@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Level.LevelJS ()
+import Api.Resource.Level.LevelJM ()
 import Database.Migration.Development.Level.Data.Levels
 import qualified
        Database.Migration.Development.Level.LevelMigration as LVL

@@ -12,9 +12,9 @@ import Model.Config.EnvironmentJM ()
 instance FromJSON AppConfig where
   parseJSON (Object o) = do
     _appConfigGeneral <- o .: "general"
-    _appConfigClient <- o .: "client" .!= defaultClient
-    _appConfigDatabase <- o .: "database" .!= defaultDatabase
-    _appConfigMessaging <- o .: "messaging" .!= defaultMessaging
+    _appConfigClient <- o .:? "client" .!= defaultClient
+    _appConfigDatabase <- o .:? "database" .!= defaultDatabase
+    _appConfigMessaging <- o .:? "messaging" .!= defaultMessaging
     _appConfigJwt <- o .: "jwt"
     _appConfigRoles <- o .:? "roles" .!= defaultRoles
     _appConfigMail <- o .:? "mail" .!= defaultMail
@@ -49,6 +49,7 @@ instance FromJSON AppConfigClient where
     _appConfigClientWelcomeWarning <- o .:? "welcomeWarning" .!= (defaultClient ^. welcomeWarning)
     _appConfigClientWelcomeInfo <- o .:? "welcomeInfo" .!= (defaultClient ^. welcomeInfo)
     _appConfigClientDashboard <- o .:? "dashboard" .!= (defaultClient ^. dashboard)
+    _appConfigClientCustomMenuLinks <- o .:? "customMenuLinks" .!= (defaultClient ^. customMenuLinks)
     return AppConfigClient {..}
   parseJSON _ = mzero
 
@@ -58,6 +59,15 @@ instance FromJSON AppConfigClientDashboard where
     _appConfigClientDashboardDataSteward <- o .:? "dataSteward" .!= (defaultClientDashboard ^. dataSteward)
     _appConfigClientDashboardResearcher <- o .:? "researcher" .!= (defaultClientDashboard ^. researcher)
     return AppConfigClientDashboard {..}
+  parseJSON _ = mzero
+
+instance FromJSON AppConfigClientCustomMenuLink where
+  parseJSON (Object o) = do
+    _appConfigClientCustomMenuLinkIcon <- o .: "icon"
+    _appConfigClientCustomMenuLinkTitle <- o .: "title"
+    _appConfigClientCustomMenuLinkUrl <- o .: "url"
+    _appConfigClientCustomMenuLinkNewWindow <- o .: "newWindow"
+    return AppConfigClientCustomMenuLink {..}
   parseJSON _ = mzero
 
 instance FromJSON AppConfigDatabase where
@@ -106,6 +116,7 @@ instance FromJSON AppConfigMail where
     _appConfigMailHost <- o .: "host" .!= (defaultMail ^. host)
     _appConfigMailPort <- o .:? "port" .!= (defaultMail ^. port)
     _appConfigMailSsl <- o .:? "ssl" .!= (defaultMail ^. ssl)
+    _appConfigMailAuthEnabled <- o .:? "authEnabled" .!= (defaultMail ^. authEnabled)
     _appConfigMailUsername <- o .:? "username" .!= (defaultMail ^. username)
     _appConfigMailPassword <- o .:? "password" .!= (defaultMail ^. password)
     return AppConfigMail {..}

@@ -62,6 +62,7 @@ createDataManagementPlan qtnUuid =
                           , _dataManagementPlanConfigItemTitleEnabled = dswConfig ^. general . itemTitleEnabled
                           }
                       , _dataManagementPlanQuestionnaireUuid = qtnUuid
+                      , _dataManagementPlanQuestionnaireName = qtn ^. name
                       , _dataManagementPlanLevel = dmpLevel
                       , _dataManagementPlanFilledKnowledgeModel = filledKM
                       , _dataManagementPlanMetrics = dmpMetrics

@@ -37,6 +37,7 @@ data AppConfigClient = AppConfigClient
   , _appConfigClientWelcomeWarning :: Maybe String
   , _appConfigClientWelcomeInfo :: Maybe String
   , _appConfigClientDashboard :: Maybe AppConfigClientDashboard
+  , _appConfigClientCustomMenuLinks :: [AppConfigClientCustomMenuLink]
   } deriving (Generic, Show)
 
 data AppConfigClientDashboard = AppConfigClientDashboard
@@ -44,6 +45,13 @@ data AppConfigClientDashboard = AppConfigClientDashboard
   , _appConfigClientDashboardDataSteward :: [String]
   , _appConfigClientDashboardResearcher :: [String]
   } deriving (Generic, Show)
+
+data AppConfigClientCustomMenuLink = AppConfigClientCustomMenuLink
+  { _appConfigClientCustomMenuLinkIcon :: String
+  , _appConfigClientCustomMenuLinkTitle :: String
+  , _appConfigClientCustomMenuLinkUrl :: String
+  , _appConfigClientCustomMenuLinkNewWindow :: Bool
+  } deriving (Show, Eq, Generic)
 
 data AppConfigDatabase = AppConfigDatabase
   { _appConfigDatabaseHost :: String
@@ -82,6 +90,7 @@ data AppConfigMail = AppConfigMail
   , _appConfigMailHost :: String
   , _appConfigMailPort :: Int
   , _appConfigMailSsl :: Bool
+  , _appConfigMailAuthEnabled :: Bool
   , _appConfigMailUsername :: String
   , _appConfigMailPassword :: String
   } deriving (Generic, Show)

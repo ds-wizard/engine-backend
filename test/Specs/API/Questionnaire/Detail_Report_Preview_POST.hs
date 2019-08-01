@@ -13,7 +13,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Report.ReportJM ()
@@ -68,10 +68,10 @@ reqDto =
   , _questionnaireChangeDTOLevel = 3
   , _questionnaireChangeDTOReplies =
       toReplyDTO <$>
-      [ fQ1
-      , fQ2
+      [ rQ1
+      , rQ2
       , rQ2_aYes_fuQ1
-      , fQ3
+      , rQ3
       , rQ4
       , rQ4_it1_itemName
       , rQ4_it1_q5
@@ -85,6 +85,7 @@ reqDto =
       , rQ9
       , rQ10
       ]
+  , _questionnaireChangeDTOLabels = []
   }
 
 reqBody = encode reqDto
@@ -127,7 +128,7 @@ test_400 appContext =
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [HJ.json| { name: "Common Questionnaire" } |]
-    "level"
+    "accessibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

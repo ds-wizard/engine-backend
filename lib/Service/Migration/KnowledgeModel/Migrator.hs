@@ -4,10 +4,10 @@ import Control.Lens
 import Data.Either
 import Data.Maybe
 
-import Api.Resource.Migration.MigratorConflictDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import LensesConfig
 import Model.Event.Event
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Event.EventMapper
 import Service.Migration.KnowledgeModel.Applicator.Applicator
 import Service.Migration.KnowledgeModel.CleanerMethod

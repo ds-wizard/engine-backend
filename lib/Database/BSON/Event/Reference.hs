@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.Event.EventPath ()
+import Database.BSON.KnowledgeModel.Path ()
 import LensesConfig
 import Model.Event.Reference.ReferenceEvent
 
@@ -32,17 +32,17 @@ instance ToBSON AddResourcePageReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
     , "shortUuid" BSON.=: (model ^. shortUuid)
     ]
 
 instance FromBSON AddResourcePageReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
     refShortUuid <- BSON.lookup "shortUuid" doc
     return
       AddResourcePageReferenceEvent
@@ -57,18 +57,18 @@ instance ToBSON AddURLReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
     , "url" BSON.=: (model ^. url)
     , "label" BSON.=: (model ^. label)
     ]
 
 instance FromBSON AddURLReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
     refUrl <- BSON.lookup "url" doc
     refLabel <- BSON.lookup "label" doc
     return
@@ -85,19 +85,19 @@ instance ToBSON AddCrossReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
-    , "targetUuid" BSON.=: serializeUUID (model ^. targetUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
+    , "targetUuid" BSON.=: (model ^. targetUuid)
     , "description" BSON.=: (model ^. description)
     ]
 
 instance FromBSON AddCrossReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
-    refTargetUuid <- deserializeMaybeUUID $ BSON.lookup "targetUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
+    refTargetUuid <- BSON.lookup "targetUuid" doc
     refDescription <- BSON.lookup "description" doc
     return
       AddCrossReferenceEvent
@@ -130,17 +130,17 @@ instance ToBSON EditResourcePageReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
     , "shortUuid" BSON.=: (model ^. shortUuid)
     ]
 
 instance FromBSON EditResourcePageReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
     refShortUuid <- BSON.lookup "shortUuid" doc
     return
       EditResourcePageReferenceEvent
@@ -155,18 +155,18 @@ instance ToBSON EditURLReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
     , "url" BSON.=: (model ^. url)
     , "label" BSON.=: (model ^. label)
     ]
 
 instance FromBSON EditURLReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
     refUrl <- BSON.lookup "url" doc
     refLabel <- BSON.lookup "label" doc
     return
@@ -183,19 +183,19 @@ instance ToBSON EditCrossReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
-    , "targetUuid" BSON.=: serializeEventFieldUUID (model ^. targetUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
+    , "targetUuid" BSON.=: (model ^. targetUuid)
     , "description" BSON.=: (model ^. description)
     ]
 
 instance FromBSON EditCrossReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
-    refTargetUuid <- deserializeMaybeEventFieldUUID $ BSON.lookup "targetUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
+    refTargetUuid <- BSON.lookup "targetUuid" doc
     refDescription <- BSON.lookup "description" doc
     return
       EditCrossReferenceEvent
@@ -212,16 +212,16 @@ instance FromBSON EditCrossReferenceEvent where
 instance ToBSON DeleteReferenceEvent where
   toBSON model =
     [ "eventType" BSON.=: "DeleteReferenceEvent"
-    , "uuid" BSON.=: serializeUUID (model ^. uuid)
+    , "uuid" BSON.=: (model ^. uuid)
     , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: serializeUUID (model ^. referenceUuid)
+    , "referenceUuid" BSON.=: (model ^. referenceUuid)
     ]
 
 instance FromBSON DeleteReferenceEvent where
   fromBSON doc = do
-    refUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    refUuid <- BSON.lookup "uuid" doc
     refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- deserializeMaybeUUID $ BSON.lookup "referenceUuid" doc
+    refReferenceUuid <- BSON.lookup "referenceUuid" doc
     return
       DeleteReferenceEvent
       { _deleteReferenceEventUuid = refUuid

@@ -7,6 +7,7 @@ import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
 import Api.Resource.Info.InfoDTO
+import Api.Resource.Info.InfoJM ()
 import LensesConfig
 import Model.Context.BaseContext
 
@@ -15,7 +16,7 @@ getInfoA = do
   buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   json
     InfoDTO
-    { _idtoName = buildInfoConfig ^. name
-    , _idtoVersion = buildInfoConfig ^. version
-    , _idtoBuiltAt = buildInfoConfig ^. builtAt
+    { _infoDTOName = buildInfoConfig ^. name
+    , _infoDTOVersion = buildInfoConfig ^. version
+    , _infoDTOBuiltAt = buildInfoConfig ^. builtAt
     }

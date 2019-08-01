@@ -4,18 +4,18 @@ import Data.UUID
 import GHC.Generics
 
 import Model.Event.EventField
-import Model.Event.EventPath
+import Model.KnowledgeModel.Path
 
 data AddKnowledgeModelEvent = AddKnowledgeModelEvent
   { _addKnowledgeModelEventUuid :: UUID
-  , _addKnowledgeModelEventPath :: EventPath
+  , _addKnowledgeModelEventPath :: Path
   , _addKnowledgeModelEventKmUuid :: UUID
   , _addKnowledgeModelEventName :: String
   } deriving (Show, Eq, Generic)
 
 data EditKnowledgeModelEvent = EditKnowledgeModelEvent
   { _editKnowledgeModelEventUuid :: UUID
-  , _editKnowledgeModelEventPath :: EventPath
+  , _editKnowledgeModelEventPath :: Path
   , _editKnowledgeModelEventKmUuid :: UUID
   , _editKnowledgeModelEventName :: EventField String
   , _editKnowledgeModelEventChapterUuids :: EventField [UUID]

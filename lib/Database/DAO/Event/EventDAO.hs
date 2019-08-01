@@ -1,7 +1,5 @@
 module Database.DAO.Event.EventDAO where
 
-import Database.MongoDB ((=:), modify, select)
-
 import Database.BSON.Branch.BranchWithEvents ()
 import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
@@ -17,14 +15,8 @@ import Model.Event.Event
 
 updateEventsInBranch :: String -> [Event] -> AppContextM ()
 updateEventsInBranch branchUuid events = do
-  let action =
-        modify
-          (select ["uuid" =: branchUuid] branchCollection)
-          ["$set" =: ["events" =: (convertEventToBSON <$> events)]]
-  runDB action
+  createPartialUpdateByFn' collection "uuid" branchUuid "events" (convertEventToBSON <$> events)
 
 deleteEventsAtBranch :: String -> AppContextM ()
 deleteEventsAtBranch branchUuid = do
-  let emptyEvents = convertEventToBSON <$> []
-  let action = modify (select ["uuid" =: branchUuid] branchCollection) ["$set" =: ["events" =: emptyEvents]]
-  runDB action
+  createPartialUpdateByFn' collection "uuid" branchUuid "events" (convertEventToBSON <$> [])

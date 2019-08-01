@@ -2,11 +2,8 @@ module Database.DAO.User.UserDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
-import Data.Bson.Generic
 import Data.Time
-import Database.MongoDB
-       ((=:), count, delete, deleteOne, fetch, find, findOne, insert,
-        merge, modify, rest, save, select)
+import Database.MongoDB ((=:), modify, select)
 
 import Database.BSON.User.User ()
 import Database.DAO.Common
@@ -14,101 +11,56 @@ import LensesConfig
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.User.User
+import Util.Helper (createHeeHelper, createHemHelper)
 
 entityName = "user"
 
-userCollection = "users"
+collection = "users"
 
 findUsers :: AppContextM (Either AppError [User])
-findUsers = do
-  let action = rest =<< find (select [] userCollection)
-  usersS <- runDB action
-  return . deserializeEntities $ usersS
+findUsers = createFindEntitiesFn collection
 
 findUserById :: String -> AppContextM (Either AppError User)
-findUserById uuid = do
-  let action = findOne $ select ["uuid" =: uuid] userCollection
-  maybeUserS <- runDB action
-  return . deserializeMaybeEntity entityName uuid $ maybeUserS
+findUserById = createFindEntityByFn collection entityName "uuid"
 
 findUserByEmail :: Email -> AppContextM (Either AppError User)
-findUserByEmail email = do
-  let action = findOne $ select ["email" =: email] userCollection
-  maybeUserS <- runDB action
-  return . deserializeMaybeEntity entityName email $ maybeUserS
+findUserByEmail = createFindEntityByFn collection entityName "email"
 
 countUsers :: AppContextM (Either AppError Int)
-countUsers = do
-  let action = count $ select [] userCollection
-  count <- runDB action
-  return . Right $ count
+countUsers = createCountFn collection
 
 insertUser :: User -> AppContextM Value
-insertUser user = do
-  let action = insert userCollection (toBSON user)
-  runDB action
+insertUser = createInsertFn collection
 
 updateUserById :: User -> AppContextM ()
-updateUserById user = do
-  let action = fetch (select ["uuid" =: (user ^. uuid)] userCollection) >>= save userCollection . merge (toBSON user)
-  runDB action
+updateUserById user = createUpdateByFn collection "uuid" (user ^. uuid) user
 
 updateUserPasswordById :: String -> String -> UTCTime -> AppContextM ()
-updateUserPasswordById userUuid password uUpdatedAt = do
+updateUserPasswordById uUuid uPassword uUpdatedAt = do
   let action =
         modify
-          (select ["uuid" =: userUuid] userCollection)
-          ["$set" =: ["passwordHash" =: password, "updatedAt" =: uUpdatedAt]]
+          (select ["uuid" =: uUuid] collection)
+          ["$set" =: ["passwordHash" =: uPassword, "updatedAt" =: uUpdatedAt]]
   runDB action
 
 deleteUsers :: AppContextM ()
-deleteUsers = do
-  let action = delete $ select [] userCollection
-  runDB action
+deleteUsers = createDeleteEntitiesFn collection
 
 deleteUserById :: String -> AppContextM ()
-deleteUserById userUuid = do
-  let action = deleteOne $ select ["uuid" =: userUuid] userCollection
-  runDB action
+deleteUserById = createDeleteEntityByFn collection "uuid"
 
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
-heFindUsers callback = do
-  eitherUser <- findUsers
-  case eitherUser of
-    Right user -> callback user
-    Left error -> return . Left $ error
+heFindUsers callback = createHeeHelper findUsers callback
 
 -- -----------------------------------------------------
-heFindUserById userUuid callback = do
-  eitherUser <- findUserById userUuid
-  case eitherUser of
-    Right user -> callback user
-    Left error -> return . Left $ error
+heFindUserById userUuid callback = createHeeHelper (findUserById userUuid) callback
 
-hmFindUserById userUuid callback = do
-  eitherUser <- findUserById userUuid
-  case eitherUser of
-    Right user -> callback user
-    Left error -> return . Just $ error
+hmFindUserById userUuid callback = createHemHelper (findUserById userUuid) callback
 
 -- -----------------------------------------------------
-heFindUserByEmail userEmail callback = do
-  eitherUser <- findUserByEmail userEmail
-  case eitherUser of
-    Right user -> callback user
-    Left error -> return . Left $ error
-
-hmFindUserByEmail userEmail callback = do
-  eitherUser <- findUserByEmail userEmail
-  case eitherUser of
-    Right user -> callback user
-    Left error -> return . Just $ error
+hmFindUserByEmail userEmail callback = createHemHelper (findUserByEmail userEmail) callback
 
 -- -----------------------------------------------------
-heCountUsers callback = do
-  eitherResult <- countUsers
-  case eitherResult of
-    Right result -> callback result
-    Left error -> return . Left $ error
+heCountUsers callback = createHeeHelper countUsers callback

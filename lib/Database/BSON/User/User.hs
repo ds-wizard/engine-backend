@@ -4,13 +4,13 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import LensesConfig
 import Model.User.User
 
 instance ToBSON User where
   toBSON user =
-    [ "uuid" BSON.=: serializeUUID (user ^. uuid)
+    [ "uuid" BSON.=: (user ^. uuid)
     , "name" BSON.=: (user ^. name)
     , "surname" BSON.=: (user ^. surname)
     , "email" BSON.=: (user ^. email)
@@ -24,7 +24,7 @@ instance ToBSON User where
 
 instance FromBSON User where
   fromBSON doc = do
-    uUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    uUuid <- BSON.lookup "uuid" doc
     uName <- BSON.lookup "name" doc
     uSurname <- BSON.lookup "surname" doc
     uEmail <- BSON.lookup "email" doc

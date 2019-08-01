@@ -1,26 +1,15 @@
 module Api.Resource.Questionnaire.QuestionnaireChangeJM where
 
-import Control.Monad
 import Data.Aeson
 
-import Api.Resource.Questionnaire.Common
+import Api.Resource.Questionnaire.QuestionnaireAccessibilityJM ()
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
-import Api.Resource.Questionnaire.QuestionnaireReplyJS ()
+import Api.Resource.Questionnaire.QuestionnaireLabelJM ()
+import Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON QuestionnaireChangeDTO where
-  parseJSON (Object o) = do
-    _questionnaireChangeDTOName <- o .: "name"
-    _questionnaireChangeDTOLevel <- o .: "level"
-    _questionnaireChangeDTOReplies <- o .: "replies"
-    hDeserializeQuestionnaireAccessibility o $ \_questionnaireChangeDTOAccessibility ->
-      return QuestionnaireChangeDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_questionnaireChangeDTO"
 
 instance ToJSON QuestionnaireChangeDTO where
-  toJSON QuestionnaireChangeDTO {..} =
-    object
-      [ "name" .= _questionnaireChangeDTOName
-      , "accessibility" .= serializeQuestionnaireAccessibility _questionnaireChangeDTOAccessibility
-      , "level" .= _questionnaireChangeDTOLevel
-      , "replies" .= _questionnaireChangeDTOReplies
-      ]
+  toJSON = simpleToJSON "_questionnaireChangeDTO"

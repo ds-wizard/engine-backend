@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Database.DAO.PublicPackage.PublicPackageDAO
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -24,6 +24,7 @@ import Localization
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelMapper
 import Service.Package.PackageMapper
 
@@ -66,10 +67,12 @@ test_200 appContext =
           , _questionnaireDetailDTOName = "Public Questionnaire"
           , _questionnaireDetailDTOLevel = 2
           , _questionnaireDetailDTOAccessibility = PublicQuestionnaire
+          , _questionnaireDetailDTOState = QSDefault
           , _questionnaireDetailDTOPackage = toSimpleDTO . toPackage $ publicPackage
           , _questionnaireDetailDTOSelectedTagUuids = []
           , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO km1WithQ4
           , _questionnaireDetailDTOReplies = []
+          , _questionnaireDetailDTOLabels = []
           , _questionnaireDetailDTOOwnerUuid = Nothing
           , _questionnaireDetailDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
           , _questionnaireDetailDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

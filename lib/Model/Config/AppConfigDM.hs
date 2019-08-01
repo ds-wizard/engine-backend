@@ -27,6 +27,7 @@ defaultClient =
   , _appConfigClientWelcomeWarning = Nothing
   , _appConfigClientWelcomeInfo = Nothing
   , _appConfigClientDashboard = Just defaultClientDashboard
+  , _appConfigClientCustomMenuLinks = []
   }
 
 defaultClientDashboard :: AppConfigClientDashboard
@@ -89,6 +90,7 @@ defaultMail =
   , _appConfigMailHost = ""
   , _appConfigMailPort = 465
   , _appConfigMailSsl = False
+  , _appConfigMailAuthEnabled = False
   , _appConfigMailUsername = ""
   , _appConfigMailPassword = ""
   }

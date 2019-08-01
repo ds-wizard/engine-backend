@@ -2,7 +2,7 @@ module Localization where
 
 import qualified Data.UUID as U
 
-import Model.Event.EventPath
+import Model.KnowledgeModel.Path
 
 -- --------------------------------------
 -- DATABASE
@@ -33,7 +33,7 @@ _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId = "KmId '" ++ kmId ++ "' is already tak
 _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId = "Package '" ++ pkgId ++ "' already exists"
 
 -- Absence
-_ERROR_VALIDATION__PARENT_PKG_ABSENCE = "Parent package doesn't exist"
+_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE = "Previous package doesn't exist"
 
 _ERROR_VALIDATION__TEMPLATE_ABSENCE = "Template doesn't exist"
 
@@ -100,10 +100,13 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "F
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
   "Failed to convert entity ('" ++ entityName ++ "') to BSON"
 
+-- Migration / Metamodel
+_ERROR_SERVICE_MIGRATION_QTN__MIGRATION_UNIQUENESS = "Migration is already created"
+
 -- Package
-_ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
-  "The parent ('" ++
-  parentPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the parent first."
+_ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId =
+  "The previous ('" ++
+  previousPkgId ++ "') of imported package ('" ++ pkgId ++ "') is missing. Please import the previous package first."
 
 _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION = "A new version has to be higher than the previous one"
 
@@ -119,6 +122,10 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId = "Desired knowledge model '" ++ 
 
 -- Public Questionnaire
 _ERROR_SERVICE_PQ__NOT_SET_UP = "Public questionnaire is not set up"
+
+-- Questionnaire
+_ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
+  "Questionnaire can't be deleted because it's used in some questionnaire migration"
 
 -- Template
 _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
@@ -145,6 +152,8 @@ _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
 
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
+
+_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid = "User (" ++ userUuid ++ ") doesn't exist"
 
 -- Template
 _ERROR_SERVICE_TYPEHINT__NON_EXISTING_QUESTION = "Desired question doesn't exist"
@@ -207,10 +216,10 @@ _ERROR_KMMT_APPLICATOR__EMPTY_PATH eUuid =
 _ERROR_KMMT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
   "Failed Event (" ++
   (U.toString eUuid) ++
-  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showEventPathShort path) ++ ")"
+  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showPathShort path) ++ ")"
 
 _ERROR_KMMT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showEventPathShort path) ++ ")"
+  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showPathShort path) ++ ")"
 
 -- Uniqueness
 _ERROR_KMMT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"
@@ -222,8 +231,8 @@ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER = "Target Package is not higher t
 
 _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a merge checkpoint"
 
-_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_LAST_MERGED_PARENT_PKG =
-  "Branch has to have a checkpoint being the last parent package that was merged into"
+_ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_MERGED_PREVIOUS_PKG =
+  "Branch has to have a checkpoint being the last previous package that was merged into"
 
 _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE =
   "You can't solve conflicts because Migration state isn't in a conflict state"
@@ -236,11 +245,7 @@ _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVE
   "OriginalEventUuid doesn't match with the current target event"
 
 -- Absence
-_ERROR_KMMT_VALIDATION_MIGRATOR__SOURCE_BRANCH_ABSENCE = "Source branch does not exist"
-
-_ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PARENT_ABSENCE = "Branch has to have a parent"
-
-_ERROR_KMMT_VALIDATION_MIGRATOR__TARGET_PARENT_PKG_ABSENCE = "Target parent package doesn’t exist"
+_ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PREVIOUS_PKG_ABSENCE = "Branch has to have a previous package"
 
 -- Uniqueness
 _ERROR_KMMT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS = "Migration is already created"

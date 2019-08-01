@@ -7,6 +7,12 @@ import Network.HTTP.Types.Status (created201, noContent204)
 import Web.Scotty.Trans (json, param, status)
 
 import Api.Handler.Common
+import Api.Resource.User.UserChangeJM ()
+import Api.Resource.User.UserCreateJM ()
+import Api.Resource.User.UserJM ()
+import Api.Resource.User.UserPasswordJM ()
+import Api.Resource.User.UserProfileChangeJM ()
+import Api.Resource.User.UserStateJM ()
 import Service.User.UserService
 
 getUsersA :: Endpoint

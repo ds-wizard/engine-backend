@@ -13,12 +13,12 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchCreateDTO
-import Api.Resource.Migration.MigratorConflictDTO
-import Api.Resource.Migration.MigratorStateCreateDTO
-import Api.Resource.Migration.MigratorStateDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
+import Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
-import Database.DAO.Migrator.MigratorDAO
+import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import qualified
        Database.Migration.Development.Branch.BranchMigration as B
@@ -30,7 +30,7 @@ import qualified
 import LensesConfig
 import Localization
 import Model.Error.Error
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Branch.BranchService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelMapper
@@ -67,7 +67,7 @@ migratorAPI appContext = do
                 { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
                 , _migratorStateDTOMigrationState =
                     ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
-                , _migratorStateDTOBranchParentId = netherlandsPackage ^. pId
+                , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
                 , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
                 }
@@ -130,7 +130,7 @@ migratorAPI appContext = do
                 { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
                 , _migratorStateDTOMigrationState =
                     ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
-                , _migratorStateDTOBranchParentId = netherlandsPackage ^. pId
+                , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
                 , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
                 }
@@ -178,28 +178,6 @@ migratorAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        it "HTTP 400 BAD REQUEST when target parent package doesn’t exist" $
-          -- GIVEN: Prepare expectation
-         do
-          let expStatus = 400
-          let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "Target parent package doesn’t exist"
-          let expBody = encode expDto
-          -- AND: Prepare database
-          runInContextIO PKG.runMigration appContext
-          runInContextIO B.runMigration appContext
-          runInContextIO (deleteEventsAtBranch branchUuid) appContext
-          runInContextIO deleteMigratorStates appContext
-          runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
-          -- WHEN: Call API
-          response <- request reqMethod reqUrl reqHeaders reqBody
-          -- AND: Compare response with expectation
-          let responseMatcher =
-                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-          response `shouldRespondWith` responseMatcher
         it "HTTP 400 BAD REQUEST when target Package is not higher than current one" $
           -- GIVEN: Prepare request
          do
@@ -222,12 +200,12 @@ migratorAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        it "HTTP 400 BAD REQUEST when branch has to have a parent" $
+        it "HTTP 400 BAD REQUEST when branch has to have a previous package" $
           -- AND: Prepare expectation
          do
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "Branch has to have a parent"
+          let expDto = MigratorError _ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PREVIOUS_PKG_ABSENCE
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -236,7 +214,7 @@ migratorAPI appContext = do
                 BranchCreateDTO
                 { _branchCreateDTOName = amsterdamPackage ^. name
                 , _branchCreateDTOKmId = amsterdamPackage ^. kmId
-                , _branchCreateDTOParentPackageId = Nothing
+                , _branchCreateDTOPreviousPackageId = Nothing
                 }
           runInContextIO
             (createBranchWithParams branchUuid timestamp (fromJust $ appContext ^. currentUser) branch)
@@ -251,6 +229,28 @@ migratorAPI appContext = do
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
         createNoPermissionTest dswConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+        it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
+          -- GIVEN: Prepare expectation
+         do
+          let expStatus = 404
+          let expHeaders = [resCtHeader] ++ resCorsHeaders
+          let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "dsw.nl:core-nl:2.0.0")
+          let expBody = encode expDto
+          -- AND: Prepare database
+          runInContextIO PKG.runMigration appContext
+          runInContextIO B.runMigration appContext
+          runInContextIO (deleteEventsAtBranch branchUuid) appContext
+          runInContextIO deleteMigratorStates appContext
+          runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
+          let migratorCreateDto =
+                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
+          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          -- WHEN: Call API
+          response <- request reqMethod reqUrl reqHeaders reqBody
+          -- AND: Compare response with expectation
+          let responseMatcher =
+                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+          response `shouldRespondWith` responseMatcher
       -- ------------------------------------------------------------------------
       -- DELETE /users/{userId}
       -- ------------------------------------------------------------------------

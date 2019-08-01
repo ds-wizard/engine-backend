@@ -13,7 +13,6 @@ import Api.Resource.Config.ClientConfigDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.Event.AnswerEventDTO
 import Api.Resource.Event.ChapterEventDTO
-import Api.Resource.Event.EventPathDTO
 import Api.Resource.Event.ExpertEventDTO
 import Api.Resource.Event.IntegrationEventDTO
 import Api.Resource.Event.KnowledgeModelEventDTO
@@ -26,11 +25,29 @@ import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModel.PathDTO
 import Api.Resource.Level.LevelDTO
-import Api.Resource.Migration.MigratorConflictDTO
-import Api.Resource.Migration.MigratorStateCreateDTO
-import Api.Resource.Migration.MigratorStateDTO
-import Api.Resource.Migration.MigratorStateDetailDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
+       as KM_MigratorConflictDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
+       as KM_MigratorStateCreateDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
+       as KM_MigratorStateDTO
+import qualified
+       Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
+       as KM_MigratorStateDetailDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
+       as QTN_MigratorStateChangeDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
+       as QTN_MigratorStateCreateDTO
+import qualified
+       Api.Resource.Migration.Questionnaire.MigratorStateDTO
+       as QTN_MigratorStateDTO
 import Api.Resource.Organization.OrganizationChangeDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageDTO
@@ -41,6 +58,7 @@ import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.Template.TemplateDTO
@@ -71,7 +89,6 @@ import Model.DataManagementPlan.DataManagementPlanTemplateContext
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
-import Model.Event.EventPath
 import Model.Event.Expert.ExpertEvent
 import Model.Event.Integration.IntegrationEvent
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -83,13 +100,18 @@ import Model.Feedback.SimpleIssue
 import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.Path
 import Model.Level.Level
-import Model.Migrator.MigratorState
+import qualified Model.Migration.KnowledgeModel.MigratorState
+       as KM_MigratorState
+import qualified Model.Migration.Questionnaire.MigratorState
+       as QTN_MigratorState
 import Model.Organization.Organization
 import Model.Package.Package
 import Model.Package.PackageWithEvents
 import Model.PackageBundle.PackageBundle
 import Model.Questionnaire.Questionnaire
+import Model.Questionnaire.QuestionnaireLabel
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
 import Model.Statistics.InstanceStatistics
@@ -117,6 +139,8 @@ makeFields ''AppConfigGeneral
 makeFields ''AppConfigClient
 
 makeFields ''AppConfigClientDashboard
+
+makeFields ''AppConfigClientCustomMenuLink
 
 makeFields ''AppConfigDatabase
 
@@ -150,8 +174,6 @@ makeFields ''DataManagementPlanTemplateContext
 
 -- Model / Event
 makeFields ''EventField
-
-makeFields ''EventPathItem
 
 makeFields ''AddKnowledgeModelEvent
 
@@ -289,17 +311,16 @@ makeFields ''Tag
 
 makeFields ''Integration
 
+makeFields ''PathItem
+
 -- Model / Level
 makeFields ''Level
 
--- Model / Migrator
-makeFields ''MigratorConflictDTO
+-- Model / Migration / KnowledgeModel
+makeFields ''KM_MigratorState.MigratorState
 
-makeFields ''MigratorStateCreateDTO
-
-makeFields ''MigratorStateDetailDTO
-
-makeFields ''MigratorStateDTO
+-- Model / Migration / Questionnaire
+makeFields ''QTN_MigratorState.MigratorState
 
 -- Model / Organization
 makeFields ''Organization
@@ -320,6 +341,8 @@ makeFields ''Reply
 makeFields ''ReplyValue
 
 makeFields ''IntegrationReplyValue
+
+makeFields ''Label
 
 -- Model / Report
 makeFields ''Indication
@@ -367,14 +390,14 @@ makeFields ''ClientConfigClientDTO
 
 makeFields ''ClientConfigClientDashboardDTO
 
+makeFields ''ClientConfigClientCustomMenuLinkDTO
+
 -- Api / Resource / DataManagementPlan
 makeFields ''DataManagementPlanDTO
 
 makeFields ''DataManagementPlanConfigDTO
 
 -- Api / Resource / Event
-makeFields ''EventPathItemDTO
-
 makeFields ''AddKnowledgeModelEventDTO
 
 makeFields ''EditKnowledgeModelEventDTO
@@ -513,11 +536,26 @@ makeFields ''TagDTO
 
 makeFields ''IntegrationDTO
 
+makeFields ''PathItemDTO
+
 -- Model / Level
 makeFields ''LevelDTO
 
--- Api / Resource / Migrator
-makeFields ''MigratorState
+-- Api / Resource / Migration / KnowledgeModel
+makeFields ''KM_MigratorConflictDTO.MigratorConflictDTO
+
+makeFields ''KM_MigratorStateCreateDTO.MigratorStateCreateDTO
+
+makeFields ''KM_MigratorStateDetailDTO.MigratorStateDetailDTO
+
+makeFields ''KM_MigratorStateDTO.MigratorStateDTO
+
+-- Api / Resource / Migration / Questionnaire
+makeFields ''QTN_MigratorStateDTO.MigratorStateDTO
+
+makeFields ''QTN_MigratorStateCreateDTO.MigratorStateCreateDTO
+
+makeFields ''QTN_MigratorStateChangeDTO.MigratorStateChangeDTO
 
 -- Api / Resource / Organization
 makeFields ''OrganizationDTO
@@ -548,6 +586,8 @@ makeFields ''ReplyDTO
 makeFields ''ReplyValueDTO
 
 makeFields ''IntegrationReplyValueDTO
+
+makeFields ''LabelDTO
 
 -- Api / Resource / Report
 makeFields ''IndicationDTO

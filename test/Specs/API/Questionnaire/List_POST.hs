@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Api.Resource.Questionnaire.QuestionnaireDTO
@@ -20,6 +20,7 @@ import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import LensesConfig
 import Model.Context.AppContext
+import Model.Questionnaire.QuestionnaireState
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -65,7 +66,7 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage
+    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage QSDefault
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
@@ -80,7 +81,7 @@ test_201 appContext = do
     -- AND: Find a result in DB
     assertExistenceOfQuestionnaireInDB
       appContext
-      (((questionnaire1 & level .~ 1) & uuid .~ (resBody ^. uuid)) & replies .~ [])
+      ((((questionnaire1 & level .~ 1) & uuid .~ (resBody ^. uuid)) & replies .~ []) & labels .~ [])
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

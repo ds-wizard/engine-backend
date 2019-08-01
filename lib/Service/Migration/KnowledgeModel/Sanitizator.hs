@@ -15,7 +15,7 @@ import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.KnowledgeModel.KnowledgeModelLenses
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Util.List
 import Util.Uuid
 

@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
@@ -55,9 +55,9 @@ test_200 appContext = do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
-          [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage]
-          , toSimpleDTO' (toPackage germanyPackage) []
-          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage]
+          [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage] ["0.0.1", "1.0.0"]
+          , toSimpleDTO' (toPackage germanyPackage) [] ["1.0.0"]
+          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage] ["1.0.0", "2.0.0"]
           ]
     let expBody = encode expDto
      -- AND: Run migrations

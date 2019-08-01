@@ -1,6 +1,7 @@
 module Api.Resource.PackageBundle.PackageBundleDTO where
 
 import Api.Resource.Package.PackageDTO
+import GHC.Generics
 
 data PackageBundleDTO = PackageBundleDTO
   { _packageBundleDTOBundleId :: String
@@ -10,4 +11,4 @@ data PackageBundleDTO = PackageBundleDTO
   , _packageBundleDTOVersion :: String
   , _packageBundleDTOMetamodelVersion :: Int
   , _packageBundleDTOPackages :: [PackageDTO]
-  } deriving (Show, Eq)
+  } deriving (Show, Eq, Generic)

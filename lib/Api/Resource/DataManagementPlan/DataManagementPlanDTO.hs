@@ -1,7 +1,5 @@
 module Api.Resource.DataManagementPlan.DataManagementPlanDTO where
 
-import Control.Monad
-import Data.Aeson
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -9,19 +7,16 @@ import GHC.Generics
 import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Level.LevelDTO
-import Api.Resource.Level.LevelJS ()
 import Api.Resource.Organization.OrganizationDTO
-import Api.Resource.Organization.OrganizationJM ()
 import Api.Resource.Package.PackageSimpleDTO
-import Api.Resource.Package.PackageSimpleJM ()
 import Api.Resource.Report.ReportDTO
-import Api.Resource.Report.ReportJM ()
 import Api.Resource.User.UserDTO
 
 data DataManagementPlanDTO = DataManagementPlanDTO
   { _dataManagementPlanDTOUuid :: U.UUID
   , _dataManagementPlanDTOConfig :: DataManagementPlanConfigDTO
   , _dataManagementPlanDTOQuestionnaireUuid :: String
+  , _dataManagementPlanDTOQuestionnaireName :: String
   , _dataManagementPlanDTOLevel :: Int
   , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
@@ -39,6 +34,7 @@ instance Eq DataManagementPlanDTO where
     _dataManagementPlanDTOUuid a == _dataManagementPlanDTOUuid b &&
     _dataManagementPlanDTOConfig a == _dataManagementPlanDTOConfig b &&
     _dataManagementPlanDTOQuestionnaireUuid a == _dataManagementPlanDTOQuestionnaireUuid b &&
+    _dataManagementPlanDTOQuestionnaireName a == _dataManagementPlanDTOQuestionnaireName b &&
     _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
     _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
     _dataManagementPlanDTOMetrics a == _dataManagementPlanDTOMetrics b &&
@@ -52,53 +48,3 @@ data DataManagementPlanConfigDTO = DataManagementPlanConfigDTO
   { _dataManagementPlanConfigDTOLevelsEnabled :: Bool
   , _dataManagementPlanConfigDTOItemTitleEnabled :: Bool
   } deriving (Show, Eq, Generic)
-
-instance FromJSON DataManagementPlanDTO where
-  parseJSON (Object o) = do
-    _dataManagementPlanDTOUuid <- o .: "uuid"
-    _dataManagementPlanDTOConfig <- o .: "config"
-    _dataManagementPlanDTOQuestionnaireUuid <- o .: "questionnaireUuid"
-    _dataManagementPlanDTOLevel <- o .: "level"
-    _dataManagementPlanDTOFilledKnowledgeModel <- o .: "filledKnowledgeModel"
-    _dataManagementPlanDTOMetrics <- o .: "metrics"
-    _dataManagementPlanDTOLevels <- o .: "levels"
-    _dataManagementPlanDTOReport <- o .: "report"
-    _dataManagementPlanDTOPackage <- o .: "package"
-    _dataManagementPlanDTOOrganization <- o .: "organization"
-    _dataManagementPlanDTOCreatedBy <- o .: "createdBy"
-    _dataManagementPlanDTOCreatedAt <- o .: "createdAt"
-    _dataManagementPlanDTOUpdatedAt <- o .: "updatedAt"
-    return DataManagementPlanDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON DataManagementPlanDTO where
-  toJSON DataManagementPlanDTO {..} =
-    object
-      [ "uuid" .= _dataManagementPlanDTOUuid
-      , "config" .= _dataManagementPlanDTOConfig
-      , "questionnaireUuid" .= _dataManagementPlanDTOQuestionnaireUuid
-      , "level" .= _dataManagementPlanDTOLevel
-      , "filledKnowledgeModel" .= _dataManagementPlanDTOFilledKnowledgeModel
-      , "metrics" .= _dataManagementPlanDTOMetrics
-      , "levels" .= _dataManagementPlanDTOLevels
-      , "report" .= _dataManagementPlanDTOReport
-      , "package" .= _dataManagementPlanDTOPackage
-      , "organization" .= _dataManagementPlanDTOOrganization
-      , "createdBy" .= _dataManagementPlanDTOCreatedBy
-      , "createdAt" .= _dataManagementPlanDTOCreatedAt
-      , "updatedAt" .= _dataManagementPlanDTOUpdatedAt
-      ]
-
-instance FromJSON DataManagementPlanConfigDTO where
-  parseJSON (Object o) = do
-    _dataManagementPlanConfigDTOLevelsEnabled <- o .: "levelsEnabled"
-    _dataManagementPlanConfigDTOItemTitleEnabled <- o .: "itemTitleEnabled"
-    return DataManagementPlanConfigDTO {..}
-  parseJSON _ = mzero
-
-instance ToJSON DataManagementPlanConfigDTO where
-  toJSON DataManagementPlanConfigDTO {..} =
-    object
-      [ "levelsEnabled" .= _dataManagementPlanConfigDTOLevelsEnabled
-      , "itemTitleEnabled" .= _dataManagementPlanConfigDTOItemTitleEnabled
-      ]

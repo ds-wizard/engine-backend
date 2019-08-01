@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.Event.EventPath ()
+import Database.BSON.KnowledgeModel.Path ()
 import LensesConfig
 import Model.Event.Expert.ExpertEvent
 
@@ -16,18 +16,18 @@ import Model.Event.Expert.ExpertEvent
 instance ToBSON AddExpertEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddExpertEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: serializeUUID (event ^. expertUuid)
+    , "expertUuid" BSON.=: (event ^. expertUuid)
     , "name" BSON.=: (event ^. name)
     , "email" BSON.=: (event ^. email)
     ]
 
 instance FromBSON AddExpertEvent where
   fromBSON doc = do
-    expUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    expUuid <- BSON.lookup "uuid" doc
     expPath <- BSON.lookup "path" doc
-    expExpertUuid <- deserializeMaybeUUID $ BSON.lookup "expertUuid" doc
+    expExpertUuid <- BSON.lookup "expertUuid" doc
     expName <- BSON.lookup "name" doc
     expEmail <- BSON.lookup "email" doc
     return
@@ -45,18 +45,18 @@ instance FromBSON AddExpertEvent where
 instance ToBSON EditExpertEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditExpertEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: serializeUUID (event ^. expertUuid)
+    , "expertUuid" BSON.=: (event ^. expertUuid)
     , "name" BSON.=: (event ^. name)
     , "email" BSON.=: (event ^. email)
     ]
 
 instance FromBSON EditExpertEvent where
   fromBSON doc = do
-    expUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    expUuid <- BSON.lookup "uuid" doc
     expPath <- BSON.lookup "path" doc
-    expExpertUuid <- deserializeMaybeUUID $ BSON.lookup "expertUuid" doc
+    expExpertUuid <- BSON.lookup "expertUuid" doc
     expName <- BSON.lookup "name" doc
     expEmail <- BSON.lookup "email" doc
     return
@@ -74,16 +74,16 @@ instance FromBSON EditExpertEvent where
 instance ToBSON DeleteExpertEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteExpertEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: serializeUUID (event ^. expertUuid)
+    , "expertUuid" BSON.=: (event ^. expertUuid)
     ]
 
 instance FromBSON DeleteExpertEvent where
   fromBSON doc = do
-    expUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    expUuid <- BSON.lookup "uuid" doc
     expPath <- BSON.lookup "path" doc
-    expExpertUuid <- deserializeMaybeUUID $ BSON.lookup "expertUuid" doc
+    expExpertUuid <- BSON.lookup "expertUuid" doc
     return
       DeleteExpertEvent
       {_deleteExpertEventUuid = expUuid, _deleteExpertEventPath = expPath, _deleteExpertEventExpertUuid = expExpertUuid}

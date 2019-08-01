@@ -15,7 +15,10 @@ instance ToBSON Package where
     , "metamodelVersion" BSON.=: _packageMetamodelVersion
     , "description" BSON.=: _packageDescription
     , "readme" BSON.=: _packageReadme
-    , "parentPackageId" BSON.=: _packageParentPackageId
+    , "license" BSON.=: _packageLicense
+    , "previousPackageId" BSON.=: _packagePreviousPackageId
+    , "forkOfPackageId" BSON.=: _packageForkOfPackageId
+    , "mergeCheckpointPackageId" BSON.=: _packageMergeCheckpointPackageId
     , "createdAt" BSON.=: _packageCreatedAt
     ]
 
@@ -29,6 +32,9 @@ instance FromBSON Package where
     _packageMetamodelVersion <- BSON.lookup "metamodelVersion" doc
     _packageDescription <- BSON.lookup "description" doc
     _packageReadme <- BSON.lookup "readme" doc
-    _packageParentPackageId <- BSON.lookup "parentPackageId" doc
+    _packageLicense <- BSON.lookup "license" doc
+    _packagePreviousPackageId <- BSON.lookup "previousPackageId" doc
+    _packageForkOfPackageId <- BSON.lookup "forkOfPackageId" doc
+    _packageMergeCheckpointPackageId <- BSON.lookup "mergeCheckpointPackageId" doc
     _packageCreatedAt <- BSON.lookup "createdAt" doc
     return Package {..}

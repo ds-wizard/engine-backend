@@ -3,7 +3,7 @@ module Api.Handler.Level.LevelHandler where
 import Web.Scotty.Trans (json)
 
 import Api.Handler.Common
-import Api.Resource.Level.LevelJS ()
+import Api.Resource.Level.LevelJM ()
 import Service.Level.LevelService
 
 getLevelsA :: Endpoint

@@ -4,12 +4,12 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.Event.EventFieldDTO
-import Api.Resource.Event.EventPathDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Api.Resource.KnowledgeModel.PathDTO
 
 data AddAnswerEventDTO = AddAnswerEventDTO
   { _addAnswerEventDTOUuid :: U.UUID
-  , _addAnswerEventDTOPath :: EventPathDTO
+  , _addAnswerEventDTOPath :: PathDTO
   , _addAnswerEventDTOAnswerUuid :: U.UUID
   , _addAnswerEventDTOLabel :: String
   , _addAnswerEventDTOAdvice :: Maybe String
@@ -18,7 +18,7 @@ data AddAnswerEventDTO = AddAnswerEventDTO
 
 data EditAnswerEventDTO = EditAnswerEventDTO
   { _editAnswerEventDTOUuid :: U.UUID
-  , _editAnswerEventDTOPath :: EventPathDTO
+  , _editAnswerEventDTOPath :: PathDTO
   , _editAnswerEventDTOAnswerUuid :: U.UUID
   , _editAnswerEventDTOLabel :: EventFieldDTO String
   , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
@@ -28,6 +28,6 @@ data EditAnswerEventDTO = EditAnswerEventDTO
 
 data DeleteAnswerEventDTO = DeleteAnswerEventDTO
   { _deleteAnswerEventDTOUuid :: U.UUID
-  , _deleteAnswerEventDTOPath :: EventPathDTO
+  , _deleteAnswerEventDTOPath :: PathDTO
   , _deleteAnswerEventDTOAnswerUuid :: U.UUID
   } deriving (Show, Eq, Generic)

@@ -11,9 +11,7 @@ data Branch = Branch
   , _branchName :: String
   , _branchKmId :: String
   , _branchMetamodelVersion :: Int
-  , _branchParentPackageId :: Maybe String
-  , _branchLastAppliedParentPackageId :: Maybe String
-  , _branchLastMergeCheckpointPackageId :: Maybe String
+  , _branchPreviousPackageId :: Maybe String
   , _branchOwnerUuid :: Maybe U.UUID
   , _branchCreatedAt :: UTCTime
   , _branchUpdatedAt :: UTCTime
@@ -24,9 +22,7 @@ data BranchWithEvents = BranchWithEvents
   , _branchWithEventsName :: String
   , _branchWithEventsKmId :: String
   , _branchWithEventsMetamodelVersion :: Int
-  , _branchWithEventsParentPackageId :: Maybe String
-  , _branchWithEventsLastAppliedParentPackageId :: Maybe String
-  , _branchWithEventsLastMergeCheckpointPackageId :: Maybe String
+  , _branchWithEventsPreviousPackageId :: Maybe String
   , _branchWithEventsEvents :: [Event]
   , _branchWithEventsOwnerUuid :: Maybe U.UUID
   , _branchWithEventsCreatedAt :: UTCTime

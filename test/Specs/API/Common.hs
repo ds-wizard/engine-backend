@@ -21,7 +21,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import Web.Scotty.Trans (scottyAppT)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Router
 import LensesConfig
 import Localization

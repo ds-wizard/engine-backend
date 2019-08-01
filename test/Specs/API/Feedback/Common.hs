@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Feedback.FeedbackDAO
 import LensesConfig
 

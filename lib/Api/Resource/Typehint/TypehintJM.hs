@@ -1,17 +1,12 @@
 module Api.Resource.Typehint.TypehintJM where
 
-import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Typehint.TypehintDTO
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON TypehintDTO where
-  parseJSON (Object o) = do
-    _typehintDTOIntId <- o .: "id"
-    _typehintDTOName <- o .: "name"
-    _typehintDTOUrl <- o .: "url"
-    return TypehintDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_typehintDTO"
 
 instance ToJSON TypehintDTO where
-  toJSON TypehintDTO {..} = object ["id" .= _typehintDTOIntId, "name" .= _typehintDTOName, "url" .= _typehintDTOUrl]
+  toJSON = simpleToJSON "_typehintDTO"

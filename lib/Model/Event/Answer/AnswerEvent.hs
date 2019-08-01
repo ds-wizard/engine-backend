@@ -4,12 +4,12 @@ import Data.UUID
 import GHC.Generics
 
 import Model.Event.EventField
-import Model.Event.EventPath
 import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.Path
 
 data AddAnswerEvent = AddAnswerEvent
   { _addAnswerEventUuid :: UUID
-  , _addAnswerEventPath :: EventPath
+  , _addAnswerEventPath :: Path
   , _addAnswerEventAnswerUuid :: UUID
   , _addAnswerEventLabel :: String
   , _addAnswerEventAdvice :: Maybe String
@@ -18,7 +18,7 @@ data AddAnswerEvent = AddAnswerEvent
 
 data EditAnswerEvent = EditAnswerEvent
   { _editAnswerEventUuid :: UUID
-  , _editAnswerEventPath :: EventPath
+  , _editAnswerEventPath :: Path
   , _editAnswerEventAnswerUuid :: UUID
   , _editAnswerEventLabel :: EventField String
   , _editAnswerEventAdvice :: EventField (Maybe String)
@@ -28,6 +28,6 @@ data EditAnswerEvent = EditAnswerEvent
 
 data DeleteAnswerEvent = DeleteAnswerEvent
   { _deleteAnswerEventUuid :: UUID
-  , _deleteAnswerEventPath :: EventPath
+  , _deleteAnswerEventPath :: Path
   , _deleteAnswerEventAnswerUuid :: UUID
   } deriving (Show, Eq, Generic)

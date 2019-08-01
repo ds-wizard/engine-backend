@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
 import LensesConfig
 import Model.Questionnaire.QuestionnaireReply
@@ -23,7 +23,7 @@ instance FromBSON ReplyValue where
         _stringReplyValue <- BSON.lookup "value" doc
         return StringReply {..}
       "AnswerReply" -> do
-        _answerReplyValue <- deserializeMaybeUUID $ BSON.lookup "value" doc
+        _answerReplyValue <- BSON.lookup "value" doc
         return AnswerReply {..}
       "ItemListReply" -> do
         _itemListReplyValue <- BSON.lookup "value" doc
@@ -50,7 +50,7 @@ instance ToBSON Reply where
 
 instance ToBSON ReplyValue where
   toBSON StringReply {..} = ["type" BSON.=: "StringReply", "value" BSON.=: _stringReplyValue]
-  toBSON AnswerReply {..} = ["type" BSON.=: "AnswerReply", "value" BSON.=: (serializeUUID _answerReplyValue)]
+  toBSON AnswerReply {..} = ["type" BSON.=: "AnswerReply", "value" BSON.=: (_answerReplyValue)]
   toBSON ItemListReply {..} = ["type" BSON.=: "ItemListReply", "value" BSON.=: _itemListReplyValue]
   toBSON IntegrationReply {..} = ["type" BSON.=: "IntegrationReply", "value" BSON.=: _integrationReplyValue]
 

@@ -4,7 +4,30 @@ import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Report.ReportDTO
+import Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 
+-- --------------------------------------------------------------------
+instance FromJSON ReportDTO where
+  parseJSON = simpleParseJSON "_reportDTO"
+
+instance ToJSON ReportDTO where
+  toJSON = simpleToJSON "_reportDTO"
+
+-- --------------------------------------------------------------------
+instance FromJSON ChapterReportDTO where
+  parseJSON = simpleParseJSON "_chapterReportDTO"
+
+instance ToJSON ChapterReportDTO where
+  toJSON = simpleToJSON "_chapterReportDTO"
+
+-- --------------------------------------------------------------------
+instance FromJSON MetricSummaryDTO where
+  parseJSON = simpleParseJSON "_metricSummaryDTO"
+
+instance ToJSON MetricSummaryDTO where
+  toJSON = simpleToJSON "_metricSummaryDTO"
+
+-- --------------------------------------------------------------------
 instance ToJSON IndicationDTO where
   toJSON (AnsweredIndicationDTO' event) = toJSON event
 
@@ -16,65 +39,9 @@ instance FromJSON IndicationDTO where
       _ -> fail "One of the references has unsupported indicationType"
   parseJSON _ = mzero
 
-instance ToJSON AnsweredIndicationDTO where
-  toJSON AnsweredIndicationDTO {..} =
-    object
-      [ "indicationType" .= "AnsweredIndication"
-      , "answeredQuestions" .= _answeredIndicationDTOAnsweredQuestions
-      , "unansweredQuestions" .= _answeredIndicationDTOUnansweredQuestions
-      ]
-
+-- --------------------------------------------------------------------
 instance FromJSON AnsweredIndicationDTO where
-  parseJSON (Object o) = do
-    _answeredIndicationDTOAnsweredQuestions <- o .: "answeredQuestions"
-    _answeredIndicationDTOUnansweredQuestions <- o .: "unansweredQuestions"
-    return AnsweredIndicationDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_answeredIndicationDTO"
 
--- --------------------------------------------------------------------
-instance ToJSON MetricSummaryDTO where
-  toJSON MetricSummaryDTO {..} =
-    object ["metricUuid" .= _metricSummaryDTOMetricUuid, "measure" .= _metricSummaryDTOMeasure]
-
-instance FromJSON MetricSummaryDTO where
-  parseJSON (Object o) = do
-    _metricSummaryDTOMetricUuid <- o .: "metricUuid"
-    _metricSummaryDTOMeasure <- o .: "measure"
-    return MetricSummaryDTO {..}
-  parseJSON _ = mzero
-
--- --------------------------------------------------------------------
-instance ToJSON ChapterReportDTO where
-  toJSON ChapterReportDTO {..} =
-    object
-      [ "chapterUuid" .= _chapterReportDTOChapterUuid
-      , "indications" .= _chapterReportDTOIndications
-      , "metrics" .= _chapterReportDTOMetrics
-      ]
-
-instance FromJSON ChapterReportDTO where
-  parseJSON (Object o) = do
-    _chapterReportDTOChapterUuid <- o .: "chapterUuid"
-    _chapterReportDTOIndications <- o .: "indications"
-    _chapterReportDTOMetrics <- o .: "metrics"
-    return ChapterReportDTO {..}
-  parseJSON _ = mzero
-
--- --------------------------------------------------------------------
-instance ToJSON ReportDTO where
-  toJSON ReportDTO {..} =
-    object
-      [ "uuid" .= _reportDTOUuid
-      , "chapterReports" .= _reportDTOChapterReports
-      , "createdAt" .= _reportDTOCreatedAt
-      , "updatedAt" .= _reportDTOUpdatedAt
-      ]
-
-instance FromJSON ReportDTO where
-  parseJSON (Object o) = do
-    _reportDTOUuid <- o .: "uuid"
-    _reportDTOChapterReports <- o .: "chapterReports"
-    _reportDTOCreatedAt <- o .: "createdAt"
-    _reportDTOUpdatedAt <- o .: "updatedAt"
-    return ReportDTO {..}
-  parseJSON _ = mzero
+instance ToJSON AnsweredIndicationDTO where
+  toJSON = simpleToJSON' "indicationType" "_answeredIndicationDTO"

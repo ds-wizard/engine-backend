@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Database.BSON.Common
+import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.Event.EventPath ()
+import Database.BSON.KnowledgeModel.Path ()
 import LensesConfig
 import Model.Event.Tag.TagEvent
 
@@ -16,9 +16,9 @@ import Model.Event.Tag.TagEvent
 instance ToBSON AddTagEvent where
   toBSON event =
     [ "eventType" BSON.=: "AddTagEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "tagUuid" BSON.=: serializeUUID (event ^. tagUuid)
+    , "tagUuid" BSON.=: (event ^. tagUuid)
     , "name" BSON.=: (event ^. name)
     , "description" BSON.=: (event ^. description)
     , "color" BSON.=: (event ^. color)
@@ -26,9 +26,9 @@ instance ToBSON AddTagEvent where
 
 instance FromBSON AddTagEvent where
   fromBSON doc = do
-    tUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    tUuid <- BSON.lookup "uuid" doc
     tPath <- BSON.lookup "path" doc
-    tTagUuid <- deserializeMaybeUUID $ BSON.lookup "tagUuid" doc
+    tTagUuid <- BSON.lookup "tagUuid" doc
     tName <- BSON.lookup "name" doc
     tDescription <- BSON.lookup "description" doc
     tColor <- BSON.lookup "color" doc
@@ -48,9 +48,9 @@ instance FromBSON AddTagEvent where
 instance ToBSON EditTagEvent where
   toBSON event =
     [ "eventType" BSON.=: "EditTagEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "tagUuid" BSON.=: serializeUUID (event ^. tagUuid)
+    , "tagUuid" BSON.=: (event ^. tagUuid)
     , "name" BSON.=: (event ^. name)
     , "description" BSON.=: (event ^. description)
     , "color" BSON.=: (event ^. color)
@@ -58,9 +58,9 @@ instance ToBSON EditTagEvent where
 
 instance FromBSON EditTagEvent where
   fromBSON doc = do
-    tUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    tUuid <- BSON.lookup "uuid" doc
     tPath <- BSON.lookup "path" doc
-    tTagUuid <- deserializeMaybeUUID $ BSON.lookup "tagUuid" doc
+    tTagUuid <- BSON.lookup "tagUuid" doc
     tName <- BSON.lookup "name" doc
     tDescription <- BSON.lookup "description" doc
     tColor <- BSON.lookup "color" doc
@@ -80,14 +80,14 @@ instance FromBSON EditTagEvent where
 instance ToBSON DeleteTagEvent where
   toBSON event =
     [ "eventType" BSON.=: "DeleteTagEvent"
-    , "uuid" BSON.=: serializeUUID (event ^. uuid)
+    , "uuid" BSON.=: (event ^. uuid)
     , "path" BSON.=: (event ^. path)
-    , "tagUuid" BSON.=: serializeUUID (event ^. tagUuid)
+    , "tagUuid" BSON.=: (event ^. tagUuid)
     ]
 
 instance FromBSON DeleteTagEvent where
   fromBSON doc = do
-    tUuid <- deserializeMaybeUUID $ BSON.lookup "uuid" doc
+    tUuid <- BSON.lookup "uuid" doc
     tPath <- BSON.lookup "path" doc
-    tTagUuid <- deserializeMaybeUUID $ BSON.lookup "tagUuid" doc
+    tTagUuid <- BSON.lookup "tagUuid" doc
     return DeleteTagEvent {_deleteTagEventUuid = tUuid, _deleteTagEventPath = tPath, _deleteTagEventTagUuid = tTagUuid}

@@ -20,7 +20,7 @@ import Model.Event.Event
 import Model.Event.EventField
 import Model.Event.Question.QuestionEvent
 import Model.KnowledgeModel.KnowledgeModel
-import Model.Migrator.MigratorState
+import Model.Migration.KnowledgeModel.MigratorState
 import Service.Migration.KnowledgeModel.Migrator
 
 import Specs.Service.Migration.KnowledgeModel.Common

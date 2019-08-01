@@ -1,18 +1,12 @@
 module Api.Resource.Template.TemplateJM where
 
-import Control.Monad
 import Data.Aeson
 
 import Api.Resource.Template.TemplateDTO
+import Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON TemplateDTO where
-  parseJSON (Object o) = do
-    _templateDTOUuid <- o .: "uuid"
-    _templateDTOName <- o .: "name"
-    _templateDTORootFile <- o .: "rootFile"
-    return TemplateDTO {..}
-  parseJSON _ = mzero
+  parseJSON = simpleParseJSON "_templateDTO"
 
 instance ToJSON TemplateDTO where
-  toJSON TemplateDTO {..} =
-    object ["uuid" .= _templateDTOUuid, "name" .= _templateDTOName, "rootFile" .= _templateDTORootFile]
+  toJSON = simpleToJSON "_templateDTO"

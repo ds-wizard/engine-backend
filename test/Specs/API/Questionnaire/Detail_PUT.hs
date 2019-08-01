@@ -13,7 +13,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import Api.Resource.Error.ErrorDTO ()
+import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -28,6 +28,7 @@ import LensesConfig
 import Localization
 import Model.Context.AppContext
 import Model.Error.Error
+import Model.Questionnaire.QuestionnaireState
 import Service.Questionnaire.QuestionnaireMapper
 
 import Specs.API.Common
@@ -61,6 +62,7 @@ reqDtoT qtn =
   , _questionnaireChangeDTOAccessibility = qtn ^. accessibility
   , _questionnaireChangeDTOLevel = qtn ^. level
   , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
+  , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
   }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -80,10 +82,10 @@ create_test_200 title appContext qtn qtnEdited =
     let reqUrl = reqUrlT $ qtn ^. uuid
     let reqHeaders = reqHeadersT reqAuthHeader
     let reqBody = reqBodyT qtnEdited
-     -- GIVEN: Prepare expectation
+     -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4
+    let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
@@ -105,7 +107,7 @@ test_400 appContext =
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [HJ.json| { name: "Common Questionnaire" } |]
-    "level"
+    "accessibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -117,10 +119,20 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid
 -- ----------------------------------------------------
 test_403 appContext = do
   createNoPermissionTest (appContext ^. appConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
-  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1 questionnaire1Edited
-  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)" appContext questionnaire1 questionnaire1Edited
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private)"
+    appContext
+    questionnaire1
+    questionnaire1Edited
+    "Get Questionnaire"
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)"
+    appContext
+    questionnaire2
+    questionnaire2Edited
+    "Edit Questionnaire"
 
-create_test_403 title appContext qtn qtnEdited =
+create_test_403 title appContext qtn qtnEdited reason =
   it title $
      -- GIVEN: Prepare request
    do
@@ -130,7 +142,7 @@ create_test_403 title appContext qtn qtnEdited =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
