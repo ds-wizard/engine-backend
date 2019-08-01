@@ -19,6 +19,7 @@ import Model.Event.Event
 import Service.Branch.BranchUtils
 import Service.Organization.OrganizationService
 import Service.Package.PackageService
+import Service.Package.PackageUtils
 import Service.Version.VersionMapper
 import Service.Version.VersionValidation
 
@@ -29,23 +30,36 @@ publishPackage bUuid pkgVersion reqDto =
     case eMs of
       Right ms -> do
         deleteMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
-        doPublishPackage pkgVersion reqDto branch (ms ^. resultEvents)
-      Left (NotExistsError _) -> doPublishPackage pkgVersion reqDto branch (branch ^. events)
+        doPublishPackage
+          pkgVersion
+          reqDto
+          branch
+          (ms ^. resultEvents)
+          (Just $ ms ^. targetPackageId)
+          (Just $ upgradePackageVersion (ms ^. branchPreviousPackageId) pkgVersion)
+      Left (NotExistsError _) ->
+        heGetBranchForkOfPackageId branch $ \mMergeCheckpointPkgId ->
+          heGetBranchMergeCheckpointPackageId branch $ \mForkOfPkgId ->
+            doPublishPackage pkgVersion reqDto branch (branch ^. events) mForkOfPkgId mMergeCheckpointPkgId
       Left error -> return . Left $ error
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
 doPublishPackage ::
-     String -> VersionDTO -> BranchWithEvents -> [Event] -> AppContextM (Either AppError PackageSimpleDTO)
-doPublishPackage pkgVersion reqDto branch events =
-  heGetBranchForkOfPackageId branch $ \mMergeCheckpointPkgId ->
-    heGetBranchMergeCheckpointPackageId branch $ \mForkOfPkgId ->
-      heGetOrganization $ \org ->
-        heValidateNewPackageVersion pkgVersion branch org $ do
-          now <- liftIO getCurrentTime
-          let pkg = fromPackage branch reqDto mForkOfPkgId mMergeCheckpointPkgId org pkgVersion events now
-          createdPkg <- createPackage pkg
-          let updatedBranch = fromBranch branch pkg
-          updateBranchById updatedBranch
-          return . Right $ createdPkg
+     String
+  -> VersionDTO
+  -> BranchWithEvents
+  -> [Event]
+  -> Maybe String
+  -> Maybe String
+  -> AppContextM (Either AppError PackageSimpleDTO)
+doPublishPackage pkgVersion reqDto branch events mForkOfPkgId mMergeCheckpointPkgId =
+  heGetOrganization $ \org ->
+    heValidateNewPackageVersion pkgVersion branch org $ do
+      now <- liftIO getCurrentTime
+      let pkg = fromPackage branch reqDto mForkOfPkgId mMergeCheckpointPkgId org pkgVersion events now
+      createdPkg <- createPackage pkg
+      let updatedBranch = fromBranch branch pkg
+      updateBranchById updatedBranch
+      return . Right $ createdPkg

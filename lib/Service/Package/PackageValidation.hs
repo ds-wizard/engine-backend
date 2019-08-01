@@ -32,7 +32,6 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.Package.Package
-import Service.Package.PackageMapper
 import Service.Package.PackageUtils
 
 validateVersionFormat :: String -> Maybe AppError
