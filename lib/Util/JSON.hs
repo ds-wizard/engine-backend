@@ -40,6 +40,7 @@ jsonSpecialFields "pType" = "type"
 jsonSpecialFields "bundleId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
+jsonSpecialFields "intId" = "id"
 jsonSpecialFields field = field
 
 stripDTOSuffix :: String -> String
