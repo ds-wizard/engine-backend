@@ -6,7 +6,7 @@ import Data.Hashable
 import Data.String (IsString)
 import Data.Text as T
 import Data.Text.Lazy as TL
-import System.IO (IOMode(ReadMode), hGetContents, openFile)
+import System.IO (IOMode(ReadMode), hGetContents, openFile, hSetEncoding, utf8)
 import System.IO.Error (tryIOError)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Text.Ginger
@@ -47,7 +47,10 @@ mLoadFile fn =
       Left _ -> return Nothing
   where
     loadFile :: FilePath -> IO String
-    loadFile fn' = openFile fn' ReadMode >>= hGetContents
+    loadFile fn' = do
+      h <- openFile fn' ReadMode
+      hSetEncoding h utf8
+      hGetContents h
 
 customFilters :: (Eq a, Data.String.IsString a, ToGVal m a, Monad m) => [(a, GVal m)]
 customFilters = [("markdown", fromFunction gfnMarkdown)]
