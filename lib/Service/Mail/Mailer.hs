@@ -32,6 +32,7 @@ import Constant.Component
 import Constant.Mailer
 import LensesConfig
 import Localization
+import Model.Config.AppConfig
 import Model.Context.AppContext
 import Util.Logger
 import Util.Template (loadAndRender)
@@ -44,18 +45,17 @@ sendRegistrationConfirmationMail user hash = do
       mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-      context = makeMailContext mailName clientAddress user additionals
+      context = makeMailContext dswConfig user additionals
       to = [user ^. email]
   composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
 sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM (Either String ())
 sendRegistrationCreatedAnalyticsMail user = do
   dswConfig <- asks _appContextAppConfig
-  let clientAddress = dswConfig ^. general . clientUrl
-      analyticsAddress = dswConfig ^. analytics . email
+  let analyticsAddress = dswConfig ^. analytics . email
       mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New user"
-      context = makeMailContext mailName clientAddress user []
+      context = makeMailContext dswConfig user []
       to = [analyticsAddress]
   composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
@@ -67,7 +67,7 @@ sendResetPasswordMail user hash = do
       mailName = dswConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset Password"
       additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
-      context = makeMailContext mailName clientAddress user additionals
+      context = makeMailContext dswConfig user additionals
       to = [user ^. email]
   composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
@@ -172,11 +172,12 @@ makePlainTextPart fn context =
     template <- loadAndRender fn context
     return $ MIME.plainPart . TL.fromStrict <$> template
 
-makeMailContext :: String -> String -> UserDTO -> [(T.Text, Aeson.Value)] -> MailContext
-makeMailContext mailName clientAddress user others =
+makeMailContext :: AppConfig -> UserDTO -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext dswConfig user others =
   fromList $
-  [ ("mailName", Aeson.String $ T.pack mailName)
-  , ("clientAddress", Aeson.String $ T.pack clientAddress)
+  [ ("appTitle", Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ dswConfig ^. client . appTitle)
+  , ("mailName", Aeson.String . T.pack $ dswConfig ^. mail . name)
+  , ("clientAddress", Aeson.String . T.pack $ dswConfig ^. general . clientUrl)
   , ("user", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ user)
   ] ++
   others

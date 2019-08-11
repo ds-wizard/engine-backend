@@ -94,6 +94,8 @@ _ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName = "Could not load HTML nor plai
 
 _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE = "Tried to send email to no recipients"
 
+_MESSAGE_SERVICE_MAIL__APP_TITLE = "Data Stewardship Wizard"
+
 -- Migration / Metamodel
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "Failed to migrate '" ++ collection ++ "'"
 
