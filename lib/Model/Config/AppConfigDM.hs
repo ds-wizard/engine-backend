@@ -67,7 +67,8 @@ defaultRoles =
   AppConfigRoles
   { _appConfigRolesDefaultRole = "DATASTEWARD"
   , _appConfigRolesAdmin =
-      [ "UM_PERM, ORG_PERM"
+      [ "UM_PERM"
+      , "ORG_PERM"
       , "KM_PERM"
       , "KM_UPGRADE_PERM"
       , "KM_PUBLISH_PERM"
