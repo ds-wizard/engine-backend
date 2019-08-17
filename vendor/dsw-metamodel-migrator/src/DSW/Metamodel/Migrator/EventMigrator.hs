@@ -7,13 +7,14 @@ import Data.Maybe (fromJust, isJust)
 
 import qualified DSW.Metamodel.Migration.Migration1 as M1
 import qualified DSW.Metamodel.Migration.Migration2 as M2
+import qualified DSW.Metamodel.Migration.Migration3 as M3
 
 type Version = Int
 
 type ValueMigration = Value -> Either String Value
 
 migrations :: [(Int, ValueMigration)]
-migrations = [(1, M1.migrateEventValue), (2, M2.migrateEventValue)]
+migrations = [(1, M1.migrateEventValue), (2, M2.migrateEventValue), (3, M3.migrateEventValue)]
 
 migrate :: Version -> Version -> Value -> Either String Value
 migrate vSrc vDst input
