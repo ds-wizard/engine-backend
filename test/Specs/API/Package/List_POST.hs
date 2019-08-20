@@ -225,7 +225,21 @@ test_201_without_readme_and_createdAt appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common Package" } |] "id"
+test_400 appContext =
+  it "HTTP 400 BAD REQUEST when json is not valid" $ do
+    let reqBody = [HJ.json| { name: "Common Package" }|]
+    let reqHeaders = [reqAuthHeader, reqCtHeader]
+      -- GIVEN: Prepare expectation
+    let expStatus = 400
+    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expDto = createErrorWithErrorMessage . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
+    let expBody = encode expDto
+      -- WHEN: Call APIA
+    response <- request reqMethod reqUrl reqHeaders reqBody
+      -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

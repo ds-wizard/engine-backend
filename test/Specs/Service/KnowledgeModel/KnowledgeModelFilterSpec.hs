@@ -6,11 +6,13 @@ import Test.Hspec.Expectations.Pretty
 
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Database.Migration.Development.KnowledgeModel.Data.Experts
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.KnowledgeModel.Data.Questions
+import Database.Migration.Development.KnowledgeModel.Data.References
 import Database.Migration.Development.KnowledgeModel.Data.Tags
 import LensesConfig
-import Model.KnowledgeModel.KnowledgeModel
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Service.KnowledgeModel.KnowledgeModelFilter
 
 knowledgeModelFilterSpec =
@@ -33,8 +35,15 @@ knowledgeModelFilterSpec =
       let inTags = [tagDataScience ^. uuid]
       let inKm = km1WithQ4
         -- AND: Prepare expectations
-      let expChapter1 = chapter1 & questions .~ [question1']
-      let expectedKm = (km1WithQ4 & chapters .~ [expChapter1]) & tags .~ [tagDataScience]
+      let expectedKm =
+            (chaptersL .~
+             [ chapter1 & questionUuids .~ [question1 ^. uuid]
+             , chapter2 & questionUuids .~ []
+             , chapter3 & questionUuids .~ []
+             ]) .
+            (questionsL .~ [question1']) .
+            (answersL .~ []) . (referencesL .~ []) . (expertsL .~ []) . (tagsL .~ [tagDataScience]) $
+            km1WithQ4
         -- WHEN:
       let computedKm = filterKnowledgeModel inTags inKm
         -- THEN:
@@ -45,18 +54,20 @@ knowledgeModelFilterSpec =
       let inTags = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
       let inKm = km1WithQ4
         -- AND: Prepare expectations
-        -- Chapter 1
-      let expQ2_aYes_fuq1_answerYes = q2_aYes_fuq1_answerYes & followUps .~ []
-      let expQ2_aYes_fuQuestion1 = q2_aYes_fuQuestion1 & answers .~ [q2_aYes_fuq1_answerNo, expQ2_aYes_fuq1_answerYes]
-      let expQ2_answerYes = q2_answerYes & followUps .~ [OptionsQuestion' expQ2_aYes_fuQuestion1]
-      let expQuestion2 = question2 & answers .~ [q2_answerNo, expQ2_answerYes]
-      let expChapter1 = chapter1 & questions .~ [question1', OptionsQuestion' expQuestion2]
-        -- Chapter 2
-      let expQ4_it1_question5 = q4_it1_question5 & itemTemplateQuestions .~ []
-      let expQuestion4 = question4 & itemTemplateQuestions .~ [ListQuestion' expQ4_it1_question5]
-      let expChapter2 = chapter2 & questions .~ [ListQuestion' expQuestion4]
-        -- Knowledge Model
-      let expectedKm = km1WithQ4 & chapters .~ [expChapter1, expChapter2, chapter3]
+      let expectedKm =
+            (chaptersL .~ [chapter1, chapter2 & questionUuids .~ [question4 ^. uuid], chapter3]) .
+            (questionsL .~
+             [ question1'
+             , question2'
+             , q2_aYes_fuQuestion1'
+             , question4' & itemTemplateQuestionUuids' .~ [q4_it1_question5Plain ^. uuid]
+             , q4_it1_question5Plain'
+             , question9'
+             , question10'
+             ]) .
+            (answersL .~ [q2_answerNo, q2_answerYes, q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]) .
+            (referencesL .~ [km1_ch1_q2_r1', km1_ch1_q2_r2']) . (expertsL .~ [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]) $
+            km1WithQ4
         -- WHEN:
       let computedKm = filterKnowledgeModel inTags inKm
         -- THEN:

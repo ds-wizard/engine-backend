@@ -18,22 +18,12 @@ import LensesConfig
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error
-import Model.FilledKnowledgeModel.FilledKnowledgeModel
-import Model.KnowledgeModel.KnowledgeModel
-import Model.Questionnaire.QuestionnaireReply
-import Service.DataManagementPlan.Convertor
 import Service.DataManagementPlan.DataManagementPlanMapper
-import Service.DataManagementPlan.ReplyApplicator
 import Service.Document.DocumentService
 import Service.KnowledgeModel.KnowledgeModelService
 import Service.Report.ReportGenerator
 import Service.Template.TemplateService
 import Util.Uuid
-
-createFilledKM :: KnowledgeModel -> [Reply] -> FilledKnowledgeModel
-createFilledKM knowledgeModel replies =
-  let plainFilledKM = toFilledKM knowledgeModel
-  in runReplyApplicator plainFilledKM replies
 
 createDataManagementPlan :: String -> AppContextM (Either AppError DataManagementPlanDTO)
 createDataManagementPlan qtnUuid =
@@ -46,13 +36,12 @@ createDataManagementPlan qtnUuid =
               heCreatedBy (qtn ^. ownerUuid) $ \mCreatedBy -> do
                 dswConfig <- asks _appContextAppConfig
                 dmpUuid <- liftIO generateUuid
-                let filledKM = createFilledKM knowledgeModel (qtn ^. replies)
                 now <- liftIO getCurrentTime
                 let dmpLevel =
                       if dswConfig ^. general . levelsEnabled
                         then qtn ^. level
                         else 9999
-                dmpReport <- generateReport dmpLevel dmpMetrics filledKM
+                dmpReport <- generateReport dmpLevel dmpMetrics knowledgeModel (qtn ^. replies)
                 let dmp =
                       DataManagementPlan
                       { _dataManagementPlanUuid = dmpUuid
@@ -63,8 +52,9 @@ createDataManagementPlan qtnUuid =
                           }
                       , _dataManagementPlanQuestionnaireUuid = qtnUuid
                       , _dataManagementPlanQuestionnaireName = qtn ^. name
+                      , _dataManagementPlanQuestionnaireReplies = qtn ^. replies
                       , _dataManagementPlanLevel = dmpLevel
-                      , _dataManagementPlanFilledKnowledgeModel = filledKM
+                      , _dataManagementPlanKnowledgeModel = knowledgeModel
                       , _dataManagementPlanMetrics = dmpMetrics
                       , _dataManagementPlanLevels = dmpLevels
                       , _dataManagementPlanReport = dmpReport

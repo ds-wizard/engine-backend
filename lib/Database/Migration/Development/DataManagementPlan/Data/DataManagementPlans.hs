@@ -5,7 +5,7 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import Database.Migration.Development.FilledKnowledgeModel.Data.FilledKnowledgeModels
+import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Database.Migration.Development.Level.Data.Levels
 import Database.Migration.Development.Metric.Data.Metrics
 import Database.Migration.Development.Organization.Data.Organizations
@@ -26,8 +26,9 @@ dmp1 =
       {_dataManagementPlanConfigLevelsEnabled = True, _dataManagementPlanConfigItemTitleEnabled = True}
   , _dataManagementPlanQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
   , _dataManagementPlanQuestionnaireName = questionnaire1 ^. name
+  , _dataManagementPlanQuestionnaireReplies = questionnaire1 ^. replies
   , _dataManagementPlanLevel = questionnaire1 ^. level
-  , _dataManagementPlanFilledKnowledgeModel = fKm1WithQ4
+  , _dataManagementPlanKnowledgeModel = km1WithQ4
   , _dataManagementPlanMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
   , _dataManagementPlanLevels = [level1, level2, level3]
   , _dataManagementPlanReport = report1

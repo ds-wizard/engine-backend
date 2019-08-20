@@ -8,9 +8,20 @@ import GHC.Generics
 data KnowledgeModel = KnowledgeModel
   { _knowledgeModelUuid :: U.UUID
   , _knowledgeModelName :: String
-  , _knowledgeModelChapters :: [Chapter]
-  , _knowledgeModelTags :: [Tag]
-  , _knowledgeModelIntegrations :: [Integration]
+  , _knowledgeModelChapterUuids :: [U.UUID]
+  , _knowledgeModelTagUuids :: [U.UUID]
+  , _knowledgeModelIntegrationUuids :: [U.UUID]
+  , _knowledgeModelEntities :: KnowledgeModelEntities
+  } deriving (Show, Eq, Generic)
+
+data KnowledgeModelEntities = KnowledgeModelEntities
+  { _knowledgeModelEntitiesChapters :: Map U.UUID Chapter
+  , _knowledgeModelEntitiesQuestions :: Map U.UUID Question
+  , _knowledgeModelEntitiesAnswers :: Map U.UUID Answer
+  , _knowledgeModelEntitiesExperts :: Map U.UUID Expert
+  , _knowledgeModelEntitiesReferences :: Map U.UUID Reference
+  , _knowledgeModelEntitiesIntegrations :: Map U.UUID Integration
+  , _knowledgeModelEntitiesTags :: Map U.UUID Tag
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
@@ -18,7 +29,7 @@ data Chapter = Chapter
   { _chapterUuid :: U.UUID
   , _chapterTitle :: String
   , _chapterText :: String
-  , _chapterQuestions :: [Question]
+  , _chapterQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
@@ -42,9 +53,9 @@ data OptionsQuestion = OptionsQuestion
   , _optionsQuestionText :: Maybe String
   , _optionsQuestionRequiredLevel :: Maybe Int
   , _optionsQuestionTagUuids :: [U.UUID]
-  , _optionsQuestionExperts :: [Expert]
-  , _optionsQuestionReferences :: [Reference]
-  , _optionsQuestionAnswers :: [Answer]
+  , _optionsQuestionExpertUuids :: [U.UUID]
+  , _optionsQuestionReferenceUuids :: [U.UUID]
+  , _optionsQuestionAnswerUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data ListQuestion = ListQuestion
@@ -53,10 +64,10 @@ data ListQuestion = ListQuestion
   , _listQuestionText :: Maybe String
   , _listQuestionRequiredLevel :: Maybe Int
   , _listQuestionTagUuids :: [U.UUID]
-  , _listQuestionExperts :: [Expert]
-  , _listQuestionReferences :: [Reference]
+  , _listQuestionExpertUuids :: [U.UUID]
+  , _listQuestionReferenceUuids :: [U.UUID]
   , _listQuestionItemTemplateTitle :: String
-  , _listQuestionItemTemplateQuestions :: [Question]
+  , _listQuestionItemTemplateQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data ValueQuestion = ValueQuestion
@@ -65,8 +76,8 @@ data ValueQuestion = ValueQuestion
   , _valueQuestionText :: Maybe String
   , _valueQuestionRequiredLevel :: Maybe Int
   , _valueQuestionTagUuids :: [U.UUID]
-  , _valueQuestionExperts :: [Expert]
-  , _valueQuestionReferences :: [Reference]
+  , _valueQuestionExpertUuids :: [U.UUID]
+  , _valueQuestionReferenceUuids :: [U.UUID]
   , _valueQuestionValueType :: QuestionValueType
   } deriving (Show, Eq, Generic)
 
@@ -76,8 +87,8 @@ data IntegrationQuestion = IntegrationQuestion
   , _integrationQuestionText :: Maybe String
   , _integrationQuestionRequiredLevel :: Maybe Int
   , _integrationQuestionTagUuids :: [U.UUID]
-  , _integrationQuestionExperts :: [Expert]
-  , _integrationQuestionReferences :: [Reference]
+  , _integrationQuestionExpertUuids :: [U.UUID]
+  , _integrationQuestionReferenceUuids :: [U.UUID]
   , _integrationQuestionIntegrationUuid :: U.UUID
   , _integrationQuestionProps :: Map String String
   } deriving (Show, Eq, Generic)
@@ -87,7 +98,7 @@ data Answer = Answer
   { _answerUuid :: U.UUID
   , _answerLabel :: String
   , _answerAdvice :: Maybe String
-  , _answerFollowUps :: [Question]
+  , _answerFollowUpUuids :: [U.UUID]
   , _answerMetricMeasures :: [MetricMeasure]
   } deriving (Show, Eq, Generic)
 

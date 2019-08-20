@@ -4,11 +4,11 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Api.Resource.Level.LevelDTO
 import Api.Resource.Organization.OrganizationDTO
 import Api.Resource.Package.PackageSimpleDTO
+import Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Api.Resource.Report.ReportDTO
 import Api.Resource.User.UserDTO
 
@@ -17,8 +17,9 @@ data DataManagementPlanDTO = DataManagementPlanDTO
   , _dataManagementPlanDTOConfig :: DataManagementPlanConfigDTO
   , _dataManagementPlanDTOQuestionnaireUuid :: String
   , _dataManagementPlanDTOQuestionnaireName :: String
+  , _dataManagementPlanDTOQuestionnaireReplies :: [ReplyDTO]
   , _dataManagementPlanDTOLevel :: Int
-  , _dataManagementPlanDTOFilledKnowledgeModel :: FilledKnowledgeModelDTO
+  , _dataManagementPlanDTOKnowledgeModel :: KnowledgeModelDTO
   , _dataManagementPlanDTOMetrics :: [MetricDTO]
   , _dataManagementPlanDTOLevels :: [LevelDTO]
   , _dataManagementPlanDTOReport :: ReportDTO
@@ -35,8 +36,9 @@ instance Eq DataManagementPlanDTO where
     _dataManagementPlanDTOConfig a == _dataManagementPlanDTOConfig b &&
     _dataManagementPlanDTOQuestionnaireUuid a == _dataManagementPlanDTOQuestionnaireUuid b &&
     _dataManagementPlanDTOQuestionnaireName a == _dataManagementPlanDTOQuestionnaireName b &&
+    _dataManagementPlanDTOQuestionnaireReplies a == _dataManagementPlanDTOQuestionnaireReplies b &&
     _dataManagementPlanDTOLevel a == _dataManagementPlanDTOLevel b &&
-    _dataManagementPlanDTOFilledKnowledgeModel a == _dataManagementPlanDTOFilledKnowledgeModel b &&
+    _dataManagementPlanDTOKnowledgeModel a == _dataManagementPlanDTOKnowledgeModel b &&
     _dataManagementPlanDTOMetrics a == _dataManagementPlanDTOMetrics b &&
     _dataManagementPlanDTOLevels a == _dataManagementPlanDTOLevels b &&
     _dataManagementPlanDTOReport a == _dataManagementPlanDTOReport b &&

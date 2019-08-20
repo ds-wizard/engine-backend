@@ -6,9 +6,9 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import Database.Migration.Development.FilledKnowledgeModel.Data.FilledAnswersAndFollowUpQuestions
-import Database.Migration.Development.FilledKnowledgeModel.Data.FilledChapters
-import Database.Migration.Development.FilledKnowledgeModel.Data.FilledQuestions
+import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
@@ -165,13 +165,10 @@ fReplies =
   , rQ2_aYes_fuQ1
   , rQ3
   , rQ4
-  , rQ4_it1_itemName
   , rQ4_it1_q5
-  , rQ4_it1_q5_it1_itemName
   , rQ4_it1_q5_it1_question7
   , rQ4_it1_q5_it1_question8
   , rQ4_it1_q6
-  , rQ4_it2_itemName
   , rQ4_it2_q5
   , rQ4_it2_q6
   , rQ9
@@ -184,15 +181,15 @@ createReplyKey uuids = intercalate "." uuids
 rQ1 :: Reply
 rQ1 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion1 ^. uuid]
-  , _replyValue = StringReply . fromJust $ fQuestion1 ^. answerValue
+  { _replyPath = createReplyKey [U.toString $ chapter1 ^. uuid, U.toString $ question1 ^. uuid]
+  , _replyValue = StringReply "Reply to 1st question"
   }
 
 rQ2 :: Reply
 rQ2 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter1 ^. uuid, U.toString $ fQuestion2 ^. uuid]
-  , _replyValue = AnswerReply $ (fromJust $ fQuestion2 ^. answerOption) ^. uuid
+  { _replyPath = createReplyKey [U.toString $ chapter1 ^. uuid, U.toString $ question2 ^. uuid]
+  , _replyValue = AnswerReply $ q2_answerYes ^. uuid
   }
 
 rQ2_aYes_fuQ1 :: Reply
@@ -200,34 +197,34 @@ rQ2_aYes_fuQ1 =
   Reply
   { _replyPath =
       createReplyKey
-        [ U.toString $ fChapter1 ^. uuid
-        , U.toString $ fQuestion2 ^. uuid
-        , U.toString $ fQ2_answerYes ^. uuid
-        , U.toString $ fQ2_aYes_fuQuestion1 ^. uuid
+        [ U.toString $ chapter1 ^. uuid
+        , U.toString $ question2 ^. uuid
+        , U.toString $ q2_answerYes ^. uuid
+        , U.toString $ q2_aYes_fuQuestion1 ^. uuid
         ]
-  , _replyValue = AnswerReply $ (fromJust $ fQ2_aYes_fuQuestion1 ^. answerOption) ^. uuid
+  , _replyValue = AnswerReply $ q2_aYes_fuq1_answerNo ^. uuid
   }
 
 rQ3 :: Reply
 rQ3 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion3 ^. uuid]
-  , _replyValue = AnswerReply $ (fromJust $ fQuestion3 ^. answerOption) ^. uuid
+  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question3 ^. uuid]
+  , _replyValue = AnswerReply $ q3_answerNo ^. uuid
   }
 
 -- ------------------------------------------------------------
 rQ4 :: Reply
 rQ4 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid]
+  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid]
   , _replyValue = ItemListReply 2
   }
 
 rQ4_it1_itemName :: Reply
 rQ4_it1_itemName =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "0", "itemName"]
-  , _replyValue = StringReply . fromJust $ fQ4_ai1 ^. value
+  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "0", "itemName"]
+  , _replyValue = StringReply "Ai1: First item"
   }
 
 rQ4_it1_q5 :: Reply
@@ -235,7 +232,7 @@ rQ4_it1_q5 =
   Reply
   { _replyPath =
       createReplyKey
-        [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "0", U.toString $ fQ4_it1_question5 ^. uuid]
+        [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "0", U.toString $ q4_it1_question5 ^. uuid]
   , _replyValue = ItemListReply 1
   }
 
@@ -244,14 +241,14 @@ rQ4_it1_q5_it1_itemName =
   Reply
   { _replyPath =
       createReplyKey
-        [ U.toString $ fChapter2 ^. uuid
-        , U.toString $ fQuestion4 ^. uuid
+        [ U.toString $ chapter2 ^. uuid
+        , U.toString $ question4 ^. uuid
         , "0"
-        , U.toString $ fQ4_it1_question5 ^. uuid
+        , U.toString $ q4_it1_question5 ^. uuid
         , "0"
         , "itemName"
         ]
-  , _replyValue = StringReply . fromJust $ fQ4_it1_q5_ai1 ^. value
+  , _replyValue = StringReply "Ai1: q5: Ai1: First item"
   }
 
 rQ4_it1_q5_it1_question7 :: Reply
@@ -259,14 +256,14 @@ rQ4_it1_q5_it1_question7 =
   Reply
   { _replyPath =
       createReplyKey
-        [ U.toString $ fChapter2 ^. uuid
-        , U.toString $ fQuestion4 ^. uuid
+        [ U.toString $ chapter2 ^. uuid
+        , U.toString $ question4 ^. uuid
         , "0"
-        , U.toString $ fQ4_it1_question5 ^. uuid
+        , U.toString $ q4_it1_question5 ^. uuid
         , "0"
-        , U.toString $ fQ4_it1_q5_it1_question7 ^. uuid
+        , U.toString $ q4_it1_q5_it2_question7 ^. uuid
         ]
-  , _replyValue = StringReply . fromJust $ fQ4_it1_q5_it1_question7 ^. answerValue
+  , _replyValue = StringReply "Ai1: q5: Ai1: Reply to 7th question"
   }
 
 rQ4_it1_q5_it1_question8 :: Reply
@@ -274,14 +271,14 @@ rQ4_it1_q5_it1_question8 =
   Reply
   { _replyPath =
       createReplyKey
-        [ U.toString $ fChapter2 ^. uuid
-        , U.toString $ fQuestion4 ^. uuid
+        [ U.toString $ chapter2 ^. uuid
+        , U.toString $ question4 ^. uuid
         , "0"
-        , U.toString $ fQ4_it1_question5 ^. uuid
+        , U.toString $ q4_it1_question5 ^. uuid
         , "0"
-        , U.toString $ fQ4_it1_q5_it1_question8 ^. uuid
+        , U.toString $ q4_it1_q5_it2_question8 ^. uuid
         ]
-  , _replyValue = StringReply . fromJust $ fQ4_it1_q5_it1_question8 ^. answerValue
+  , _replyValue = StringReply "Ai1: q5: Ai1: Reply to 8th question"
   }
 
 rQ4_it1_q6 :: Reply
@@ -289,16 +286,16 @@ rQ4_it1_q6 =
   Reply
   { _replyPath =
       createReplyKey
-        [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "0", U.toString $ fQ4_it1_question6 ^. uuid]
-  , _replyValue = AnswerReply $ (fromJust (fQ4_it2_question6 ^. answerOption)) ^. uuid
+        [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "0", U.toString $ q4_it1_question6 ^. uuid]
+  , _replyValue = AnswerReply $ q4_it1_q6_answerNo ^. uuid
   }
 
 -- ------------------------------------------------------------
 rQ4_it2_itemName :: Reply
 rQ4_it2_itemName =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "1", "itemName"]
-  , _replyValue = StringReply . fromJust $ fQ4_ai2 ^. value
+  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "1", "itemName"]
+  , _replyValue = StringReply "Ai 2: Second item"
   }
 
 rQ4_it2_q5 :: Reply
@@ -306,7 +303,7 @@ rQ4_it2_q5 =
   Reply
   { _replyPath =
       createReplyKey
-        [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "1", U.toString $ fQ4_it2_question5 ^. uuid]
+        [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "1", U.toString $ q4_it1_question5 ^. uuid]
   , _replyValue = ItemListReply 0
   }
 
@@ -315,29 +312,27 @@ rQ4_it2_q6 =
   Reply
   { _replyPath =
       createReplyKey
-        [U.toString $ fChapter2 ^. uuid, U.toString $ fQuestion4 ^. uuid, "1", U.toString $ fQ4_it2_question6 ^. uuid]
-  , _replyValue = AnswerReply $ (fromJust $ fQ4_it2_question6 ^. answerOption) ^. uuid
+        [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "1", U.toString $ q4_it1_question6 ^. uuid]
+  , _replyValue = AnswerReply $ q4_it1_q6_answerNo ^. uuid
   }
 
 -- ------------------------------------------------------------
 rQ9 :: Reply
 rQ9 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter3 ^. uuid, U.toString $ fQuestion9 ^. uuid]
-  , _replyValue = IntegrationReply {_integrationReplyValue = PlainValue (fromJust $ fQuestion9 ^. answerValue)}
+  { _replyPath = createReplyKey [U.toString $ chapter3 ^. uuid, U.toString $ question9 ^. uuid]
+  , _replyValue = IntegrationReply {_integrationReplyValue = PlainValue "Plain reply to 9st question"}
   }
 
 rQ10 :: Reply
 rQ10 =
   Reply
-  { _replyPath = createReplyKey [U.toString $ fChapter3 ^. uuid, U.toString $ fQuestion10 ^. uuid]
+  { _replyPath = createReplyKey [U.toString $ chapter3 ^. uuid, U.toString $ question10 ^. uuid]
   , _replyValue =
       IntegrationReply
       { _integrationReplyValue =
           IntegrationValue
-          { _integrationValueIntId = fromJust $ fQuestion10 ^. answerIntId
-          , _integrationValueIntValue = fromJust $ fQuestion10 ^. answerValue
-          }
+          {_integrationValueIntId = "bsg-p000007", _integrationValueIntValue = "Integration reply to 9st question"}
       }
   }
 

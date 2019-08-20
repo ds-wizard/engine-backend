@@ -35,18 +35,17 @@ import Specs.API.UserAPISpec
 import Specs.API.Version.APISpec
 import Specs.Integration.Http.Common.ResponseMapperSpec
 import Specs.Integration.Http.Typehint.ResponseMapperSpec
-import Specs.Model.FilledKnowledgeModel.FilledKnowledgeModelAccessorsSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
 import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
 import Specs.Service.Feedback.FeedbackServiceSpec
+import Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
+import Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
 import Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
-import Specs.Service.Migration.KnowledgeModel.Applicator.ApplicatorSpec
-import Specs.Service.Migration.KnowledgeModel.Applicator.ModifiersSpec
-import Specs.Service.Migration.KnowledgeModel.MigrationSpec
+import Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified
-       Specs.Service.Migration.KnowledgeModel.SanitizatorSpec
+       Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec
        as KM_SanitizatorSpec
 import qualified
        Specs.Service.Migration.Questionnaire.SanitizatorSpec
@@ -54,6 +53,7 @@ import qualified
 import Specs.Service.Organization.OrganizationValidationSpec
 import Specs.Service.Package.PackageValidationSpec
 import Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
+import Specs.Service.Report.ReportGeneratorSpec
 import Specs.Service.Token.TokenServiceSpec
 import Specs.Service.User.UserServiceSpec
 import Specs.Util.ListSpec
@@ -108,23 +108,23 @@ main =
              describe "Http" $ do
                describe "Common" $ commonResponseMapperSpec
                describe "Typehint" $ typehintResponseMapperSpec
-           describe "MODEL" $ do
-             filledKnowledgeModelAccessorsSpec
-             knowledgeModelAccessorsSpec
+           describe "MODEL" $ do knowledgeModelAccessorsSpec
            describe "SERVICE" $ do
              describe "Branch" $ do branchValidationSpec
-             describe "DataManagementPlan" $ dataManagementPlanSpec
-             describe "KnowledgeModel" $ knowledgeModelFilterSpec
+             describe "KnowledgeModel" $ do
+               describe "Compilator" $ do
+                 describe "Modifier" $ do modifierSpec
+                 compilatorSpec
+               knowledgeModelFilterSpec
              describe "Migration" $ do
                describe "KnowledgeModel" $ do
-                 describe "Applicator" $ do
-                   applicatorSpec
-                   modifiersSpec
-                 migratorSpec
-                 KM_SanitizatorSpec.sanitizatorSpec
+                 describe "Migrator" $ do
+                   migratorSpec
+                   KM_SanitizatorSpec.sanitizatorSpec
                describe "Questionnaire" $ QTN_SanitizatorSpec.sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
              describe "Package" $ packageValidationSpec
+             describe "Report" $ reportGeneratorSpec
              describe "Token" $ tokenServiceSpec
            describe "UTIL" $ do
              listSpec

@@ -6,7 +6,6 @@ import Data.Aeson
 import Api.Resource.Event.EventFieldJM ()
 import Api.Resource.Event.QuestionEventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import Api.Resource.KnowledgeModel.PathJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddQuestionEventDTO where
@@ -36,8 +35,8 @@ instance ToJSON AddOptionsQuestionEventDTO where
       [ "eventType" .= "AddQuestionEvent"
       , "questionType" .= "OptionsQuestion"
       , "uuid" .= _addOptionsQuestionEventDTOUuid
-      , "path" .= _addOptionsQuestionEventDTOPath
-      , "questionUuid" .= _addOptionsQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _addOptionsQuestionEventDTOParentUuid
+      , "entityUuid" .= _addOptionsQuestionEventDTOEntityUuid
       , "title" .= _addOptionsQuestionEventDTOTitle
       , "text" .= _addOptionsQuestionEventDTOText
       , "requiredLevel" .= _addOptionsQuestionEventDTORequiredLevel
@@ -54,8 +53,8 @@ instance ToJSON AddListQuestionEventDTO where
       [ "eventType" .= "AddQuestionEvent"
       , "questionType" .= "ListQuestion"
       , "uuid" .= _addListQuestionEventDTOUuid
-      , "path" .= _addListQuestionEventDTOPath
-      , "questionUuid" .= _addListQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _addListQuestionEventDTOParentUuid
+      , "entityUuid" .= _addListQuestionEventDTOEntityUuid
       , "title" .= _addListQuestionEventDTOTitle
       , "text" .= _addListQuestionEventDTOText
       , "requiredLevel" .= _addListQuestionEventDTORequiredLevel
@@ -73,8 +72,8 @@ instance ToJSON AddValueQuestionEventDTO where
       [ "eventType" .= "AddQuestionEvent"
       , "questionType" .= "ValueQuestion"
       , "uuid" .= _addValueQuestionEventDTOUuid
-      , "path" .= _addValueQuestionEventDTOPath
-      , "questionUuid" .= _addValueQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _addValueQuestionEventDTOParentUuid
+      , "entityUuid" .= _addValueQuestionEventDTOEntityUuid
       , "title" .= _addValueQuestionEventDTOTitle
       , "text" .= _addValueQuestionEventDTOText
       , "requiredLevel" .= _addValueQuestionEventDTORequiredLevel
@@ -92,8 +91,8 @@ instance ToJSON AddIntegrationQuestionEventDTO where
       [ "eventType" .= "AddQuestionEvent"
       , "questionType" .= "IntegrationQuestion"
       , "uuid" .= _addIntegrationQuestionEventDTOUuid
-      , "path" .= _addIntegrationQuestionEventDTOPath
-      , "questionUuid" .= _addIntegrationQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _addIntegrationQuestionEventDTOParentUuid
+      , "entityUuid" .= _addIntegrationQuestionEventDTOEntityUuid
       , "title" .= _addIntegrationQuestionEventDTOTitle
       , "text" .= _addIntegrationQuestionEventDTOText
       , "requiredLevel" .= _addIntegrationQuestionEventDTORequiredLevel
@@ -131,8 +130,8 @@ instance ToJSON EditOptionsQuestionEventDTO where
       [ "eventType" .= "EditQuestionEvent"
       , "questionType" .= "OptionsQuestion"
       , "uuid" .= _editOptionsQuestionEventDTOUuid
-      , "path" .= _editOptionsQuestionEventDTOPath
-      , "questionUuid" .= _editOptionsQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _editOptionsQuestionEventDTOParentUuid
+      , "entityUuid" .= _editOptionsQuestionEventDTOEntityUuid
       , "title" .= _editOptionsQuestionEventDTOTitle
       , "text" .= _editOptionsQuestionEventDTOText
       , "requiredLevel" .= _editOptionsQuestionEventDTORequiredLevel
@@ -152,8 +151,8 @@ instance ToJSON EditListQuestionEventDTO where
       [ "eventType" .= "EditQuestionEvent"
       , "questionType" .= "ListQuestion"
       , "uuid" .= _editListQuestionEventDTOUuid
-      , "path" .= _editListQuestionEventDTOPath
-      , "questionUuid" .= _editListQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _editListQuestionEventDTOParentUuid
+      , "entityUuid" .= _editListQuestionEventDTOEntityUuid
       , "title" .= _editListQuestionEventDTOTitle
       , "text" .= _editListQuestionEventDTOText
       , "requiredLevel" .= _editListQuestionEventDTORequiredLevel
@@ -174,8 +173,8 @@ instance ToJSON EditValueQuestionEventDTO where
       [ "eventType" .= "EditQuestionEvent"
       , "questionType" .= "ValueQuestion"
       , "uuid" .= _editValueQuestionEventDTOUuid
-      , "path" .= _editValueQuestionEventDTOPath
-      , "questionUuid" .= _editValueQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _editValueQuestionEventDTOParentUuid
+      , "entityUuid" .= _editValueQuestionEventDTOEntityUuid
       , "title" .= _editValueQuestionEventDTOTitle
       , "text" .= _editValueQuestionEventDTOText
       , "requiredLevel" .= _editValueQuestionEventDTORequiredLevel
@@ -195,8 +194,8 @@ instance ToJSON EditIntegrationQuestionEventDTO where
       [ "eventType" .= "EditQuestionEvent"
       , "questionType" .= "IntegrationQuestion"
       , "uuid" .= _editIntegrationQuestionEventDTOUuid
-      , "path" .= _editIntegrationQuestionEventDTOPath
-      , "questionUuid" .= _editIntegrationQuestionEventDTOQuestionUuid
+      , "parentUuid" .= _editIntegrationQuestionEventDTOParentUuid
+      , "entityUuid" .= _editIntegrationQuestionEventDTOEntityUuid
       , "title" .= _editIntegrationQuestionEventDTOTitle
       , "text" .= _editIntegrationQuestionEventDTOText
       , "requiredLevel" .= _editIntegrationQuestionEventDTORequiredLevel

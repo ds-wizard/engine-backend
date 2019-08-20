@@ -1,89 +1,70 @@
 module Database.BSON.Event.Expert where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.KnowledgeModel.Path ()
-import LensesConfig
 import Model.Event.Expert.ExpertEvent
 
 -- -------------------------
 -- ADD EXPERT EVENT---------
 -- -------------------------
 instance ToBSON AddExpertEvent where
-  toBSON event =
+  toBSON AddExpertEvent {..} =
     [ "eventType" BSON.=: "AddExpertEvent"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: (event ^. expertUuid)
-    , "name" BSON.=: (event ^. name)
-    , "email" BSON.=: (event ^. email)
+    , "uuid" BSON.=: _addExpertEventUuid
+    , "parentUuid" BSON.=: _addExpertEventParentUuid
+    , "entityUuid" BSON.=: _addExpertEventEntityUuid
+    , "name" BSON.=: _addExpertEventName
+    , "email" BSON.=: _addExpertEventEmail
     ]
 
 instance FromBSON AddExpertEvent where
   fromBSON doc = do
-    expUuid <- BSON.lookup "uuid" doc
-    expPath <- BSON.lookup "path" doc
-    expExpertUuid <- BSON.lookup "expertUuid" doc
-    expName <- BSON.lookup "name" doc
-    expEmail <- BSON.lookup "email" doc
-    return
-      AddExpertEvent
-      { _addExpertEventUuid = expUuid
-      , _addExpertEventPath = expPath
-      , _addExpertEventExpertUuid = expExpertUuid
-      , _addExpertEventName = expName
-      , _addExpertEventEmail = expEmail
-      }
+    _addExpertEventUuid <- BSON.lookup "uuid" doc
+    _addExpertEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addExpertEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addExpertEventName <- BSON.lookup "name" doc
+    _addExpertEventEmail <- BSON.lookup "email" doc
+    return AddExpertEvent {..}
 
 -- -------------------------
 -- EDIT EXPERT EVENT--------
 -- -------------------------
 instance ToBSON EditExpertEvent where
-  toBSON event =
+  toBSON EditExpertEvent {..} =
     [ "eventType" BSON.=: "EditExpertEvent"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: (event ^. expertUuid)
-    , "name" BSON.=: (event ^. name)
-    , "email" BSON.=: (event ^. email)
+    , "uuid" BSON.=: _editExpertEventUuid
+    , "parentUuid" BSON.=: _editExpertEventParentUuid
+    , "entityUuid" BSON.=: _editExpertEventEntityUuid
+    , "name" BSON.=: _editExpertEventName
+    , "email" BSON.=: _editExpertEventEmail
     ]
 
 instance FromBSON EditExpertEvent where
   fromBSON doc = do
-    expUuid <- BSON.lookup "uuid" doc
-    expPath <- BSON.lookup "path" doc
-    expExpertUuid <- BSON.lookup "expertUuid" doc
-    expName <- BSON.lookup "name" doc
-    expEmail <- BSON.lookup "email" doc
-    return
-      EditExpertEvent
-      { _editExpertEventUuid = expUuid
-      , _editExpertEventPath = expPath
-      , _editExpertEventExpertUuid = expExpertUuid
-      , _editExpertEventName = expName
-      , _editExpertEventEmail = expEmail
-      }
+    _editExpertEventUuid <- BSON.lookup "uuid" doc
+    _editExpertEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editExpertEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editExpertEventName <- BSON.lookup "name" doc
+    _editExpertEventEmail <- BSON.lookup "email" doc
+    return EditExpertEvent {..}
 
 -- -------------------------
 -- DELETE EXPERT EVENT------
 -- -------------------------
 instance ToBSON DeleteExpertEvent where
-  toBSON event =
+  toBSON DeleteExpertEvent {..} =
     [ "eventType" BSON.=: "DeleteExpertEvent"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "expertUuid" BSON.=: (event ^. expertUuid)
+    , "uuid" BSON.=: _deleteExpertEventUuid
+    , "parentUuid" BSON.=: _deleteExpertEventParentUuid
+    , "entityUuid" BSON.=: _deleteExpertEventEntityUuid
     ]
 
 instance FromBSON DeleteExpertEvent where
   fromBSON doc = do
-    expUuid <- BSON.lookup "uuid" doc
-    expPath <- BSON.lookup "path" doc
-    expExpertUuid <- BSON.lookup "expertUuid" doc
-    return
-      DeleteExpertEvent
-      {_deleteExpertEventUuid = expUuid, _deleteExpertEventPath = expPath, _deleteExpertEventExpertUuid = expExpertUuid}
+    _deleteExpertEventUuid <- BSON.lookup "uuid" doc
+    _deleteExpertEventParentUuid <- BSON.lookup "parentUuid" doc
+    _deleteExpertEventEntityUuid <- BSON.lookup "entityUuid" doc
+    return DeleteExpertEvent {..}

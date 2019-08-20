@@ -15,6 +15,12 @@ instance ToJSON KnowledgeModelDTO where
 instance FromJSON KnowledgeModelDTO where
   parseJSON = simpleParseJSON "_knowledgeModelDTO"
 
+instance ToJSON KnowledgeModelEntitiesDTO where
+  toJSON = simpleToJSON "_knowledgeModelEntitiesDTO"
+
+instance FromJSON KnowledgeModelEntitiesDTO where
+  parseJSON = simpleParseJSON "_knowledgeModelEntitiesDTO"
+
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON ChapterDTO where

@@ -1,13 +1,10 @@
 module Database.BSON.Event.Reference where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
-import Database.BSON.KnowledgeModel.Path ()
-import LensesConfig
 import Model.Event.Reference.ReferenceEvent
 
 -- -------------------------
@@ -29,84 +26,64 @@ instance FromBSON AddReferenceEvent where
 
 -- ------------------------------------------------
 instance ToBSON AddResourcePageReferenceEvent where
-  toBSON model =
+  toBSON AddResourcePageReferenceEvent {..} =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "shortUuid" BSON.=: (model ^. shortUuid)
+    , "uuid" BSON.=: _addResourcePageReferenceEventUuid
+    , "parentUuid" BSON.=: _addResourcePageReferenceEventParentUuid
+    , "entityUuid" BSON.=: _addResourcePageReferenceEventEntityUuid
+    , "shortUuid" BSON.=: _addResourcePageReferenceEventShortUuid
     ]
 
 instance FromBSON AddResourcePageReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refShortUuid <- BSON.lookup "shortUuid" doc
-    return
-      AddResourcePageReferenceEvent
-      { _addResourcePageReferenceEventUuid = refUuid
-      , _addResourcePageReferenceEventPath = refPath
-      , _addResourcePageReferenceEventReferenceUuid = refReferenceUuid
-      , _addResourcePageReferenceEventShortUuid = refShortUuid
-      }
+    _addResourcePageReferenceEventUuid <- BSON.lookup "uuid" doc
+    _addResourcePageReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addResourcePageReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addResourcePageReferenceEventShortUuid <- BSON.lookup "shortUuid" doc
+    return AddResourcePageReferenceEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddURLReferenceEvent where
-  toBSON model =
+  toBSON AddURLReferenceEvent {..} =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "url" BSON.=: (model ^. url)
-    , "label" BSON.=: (model ^. label)
+    , "uuid" BSON.=: _addURLReferenceEventUuid
+    , "parentUuid" BSON.=: _addURLReferenceEventParentUuid
+    , "entityUuid" BSON.=: _addURLReferenceEventEntityUuid
+    , "url" BSON.=: _addURLReferenceEventUrl
+    , "label" BSON.=: _addURLReferenceEventLabel
     ]
 
 instance FromBSON AddURLReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refUrl <- BSON.lookup "url" doc
-    refLabel <- BSON.lookup "label" doc
-    return
-      AddURLReferenceEvent
-      { _addURLReferenceEventUuid = refUuid
-      , _addURLReferenceEventPath = refPath
-      , _addURLReferenceEventReferenceUuid = refReferenceUuid
-      , _addURLReferenceEventUrl = refUrl
-      , _addURLReferenceEventLabel = refLabel
-      }
+    _addURLReferenceEventUuid <- BSON.lookup "uuid" doc
+    _addURLReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addURLReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addURLReferenceEventUrl <- BSON.lookup "url" doc
+    _addURLReferenceEventLabel <- BSON.lookup "label" doc
+    return AddURLReferenceEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddCrossReferenceEvent where
-  toBSON model =
+  toBSON AddCrossReferenceEvent {..} =
     [ "eventType" BSON.=: "AddReferenceEvent"
     , "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "targetUuid" BSON.=: (model ^. targetUuid)
-    , "description" BSON.=: (model ^. description)
+    , "uuid" BSON.=: _addCrossReferenceEventUuid
+    , "parentUuid" BSON.=: _addCrossReferenceEventParentUuid
+    , "entityUuid" BSON.=: _addCrossReferenceEventEntityUuid
+    , "targetUuid" BSON.=: _addCrossReferenceEventTargetUuid
+    , "description" BSON.=: _addCrossReferenceEventDescription
     ]
 
 instance FromBSON AddCrossReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refTargetUuid <- BSON.lookup "targetUuid" doc
-    refDescription <- BSON.lookup "description" doc
-    return
-      AddCrossReferenceEvent
-      { _addCrossReferenceEventUuid = refUuid
-      , _addCrossReferenceEventPath = refPath
-      , _addCrossReferenceEventReferenceUuid = refReferenceUuid
-      , _addCrossReferenceEventTargetUuid = refTargetUuid
-      , _addCrossReferenceEventDescription = refDescription
-      }
+    _addCrossReferenceEventUuid <- BSON.lookup "uuid" doc
+    _addCrossReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addCrossReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addCrossReferenceEventTargetUuid <- BSON.lookup "targetUuid" doc
+    _addCrossReferenceEventDescription <- BSON.lookup "description" doc
+    return AddCrossReferenceEvent {..}
 
 -- -------------------------
 -- EDIT REFERNCE EVENT -----
@@ -127,104 +104,79 @@ instance FromBSON EditReferenceEvent where
 
 -- ------------------------------------------------
 instance ToBSON EditResourcePageReferenceEvent where
-  toBSON model =
+  toBSON EditResourcePageReferenceEvent {..} =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "shortUuid" BSON.=: (model ^. shortUuid)
+    , "uuid" BSON.=: _editResourcePageReferenceEventUuid
+    , "parentUuid" BSON.=: _editResourcePageReferenceEventParentUuid
+    , "entityUuid" BSON.=: _editResourcePageReferenceEventEntityUuid
+    , "shortUuid" BSON.=: _editResourcePageReferenceEventShortUuid
     ]
 
 instance FromBSON EditResourcePageReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refShortUuid <- BSON.lookup "shortUuid" doc
-    return
-      EditResourcePageReferenceEvent
-      { _editResourcePageReferenceEventUuid = refUuid
-      , _editResourcePageReferenceEventPath = refPath
-      , _editResourcePageReferenceEventReferenceUuid = refReferenceUuid
-      , _editResourcePageReferenceEventShortUuid = refShortUuid
-      }
+    _editResourcePageReferenceEventUuid <- BSON.lookup "uuid" doc
+    _editResourcePageReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editResourcePageReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editResourcePageReferenceEventShortUuid <- BSON.lookup "shortUuid" doc
+    return EditResourcePageReferenceEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditURLReferenceEvent where
-  toBSON model =
+  toBSON EditURLReferenceEvent {..} =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "url" BSON.=: (model ^. url)
-    , "label" BSON.=: (model ^. label)
+    , "uuid" BSON.=: _editURLReferenceEventUuid
+    , "parentUuid" BSON.=: _editURLReferenceEventParentUuid
+    , "entityUuid" BSON.=: _editURLReferenceEventEntityUuid
+    , "url" BSON.=: _editURLReferenceEventUrl
+    , "label" BSON.=: _editURLReferenceEventLabel
     ]
 
 instance FromBSON EditURLReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refUrl <- BSON.lookup "url" doc
-    refLabel <- BSON.lookup "label" doc
-    return
-      EditURLReferenceEvent
-      { _editURLReferenceEventUuid = refUuid
-      , _editURLReferenceEventPath = refPath
-      , _editURLReferenceEventReferenceUuid = refReferenceUuid
-      , _editURLReferenceEventUrl = refUrl
-      , _editURLReferenceEventLabel = refLabel
-      }
+    _editURLReferenceEventUuid <- BSON.lookup "uuid" doc
+    _editURLReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editURLReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editURLReferenceEventUrl <- BSON.lookup "url" doc
+    _editURLReferenceEventLabel <- BSON.lookup "label" doc
+    return EditURLReferenceEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditCrossReferenceEvent where
-  toBSON model =
+  toBSON EditCrossReferenceEvent {..} =
     [ "eventType" BSON.=: "EditReferenceEvent"
     , "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
-    , "targetUuid" BSON.=: (model ^. targetUuid)
-    , "description" BSON.=: (model ^. description)
+    , "uuid" BSON.=: _editCrossReferenceEventUuid
+    , "parentUuid" BSON.=: _editCrossReferenceEventParentUuid
+    , "entityUuid" BSON.=: _editCrossReferenceEventEntityUuid
+    , "targetUuid" BSON.=: _editCrossReferenceEventTargetUuid
+    , "description" BSON.=: _editCrossReferenceEventDescription
     ]
 
 instance FromBSON EditCrossReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    refTargetUuid <- BSON.lookup "targetUuid" doc
-    refDescription <- BSON.lookup "description" doc
-    return
-      EditCrossReferenceEvent
-      { _editCrossReferenceEventUuid = refUuid
-      , _editCrossReferenceEventPath = refPath
-      , _editCrossReferenceEventReferenceUuid = refReferenceUuid
-      , _editCrossReferenceEventTargetUuid = refTargetUuid
-      , _editCrossReferenceEventDescription = refDescription
-      }
+    _editCrossReferenceEventUuid <- BSON.lookup "uuid" doc
+    _editCrossReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editCrossReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editCrossReferenceEventTargetUuid <- BSON.lookup "targetUuid" doc
+    _editCrossReferenceEventDescription <- BSON.lookup "description" doc
+    return EditCrossReferenceEvent {..}
 
 -- -------------------------
 -- DELETE REFERNCE EVENT ---
 -- -------------------------
 instance ToBSON DeleteReferenceEvent where
-  toBSON model =
+  toBSON DeleteReferenceEvent {..} =
     [ "eventType" BSON.=: "DeleteReferenceEvent"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "path" BSON.=: (model ^. path)
-    , "referenceUuid" BSON.=: (model ^. referenceUuid)
+    , "uuid" BSON.=: _deleteReferenceEventUuid
+    , "parentUuid" BSON.=: _deleteReferenceEventParentUuid
+    , "entityUuid" BSON.=: _deleteReferenceEventEntityUuid
     ]
 
 instance FromBSON DeleteReferenceEvent where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refPath <- BSON.lookup "path" doc
-    refReferenceUuid <- BSON.lookup "referenceUuid" doc
-    return
-      DeleteReferenceEvent
-      { _deleteReferenceEventUuid = refUuid
-      , _deleteReferenceEventPath = refPath
-      , _deleteReferenceEventReferenceUuid = refReferenceUuid
-      }
+    _deleteReferenceEventUuid <- BSON.lookup "uuid" doc
+    _deleteReferenceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _deleteReferenceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    return DeleteReferenceEvent {..}

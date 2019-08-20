@@ -6,7 +6,8 @@ import Data.Hashable
 import Data.String (IsString)
 import Data.Text as T
 import Data.Text.Lazy as TL
-import System.IO (IOMode(ReadMode), hGetContents, openFile, hSetEncoding, utf8)
+import System.IO
+       (IOMode(ReadMode), hGetContents, hSetEncoding, openFile, utf8)
 import System.IO.Error (tryIOError)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
 import Text.Ginger

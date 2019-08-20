@@ -73,13 +73,10 @@ reqDto =
       , rQ2_aYes_fuQ1
       , rQ3
       , rQ4
-      , rQ4_it1_itemName
       , rQ4_it1_q5
-      , rQ4_it1_q5_it1_itemName
       , rQ4_it1_q5_it1_question7
       , rQ4_it1_q5_it1_question8
       , rQ4_it1_q6
-      , rQ4_it2_itemName
       , rQ4_it2_q5
       , rQ4_it2_q6
       , rQ9

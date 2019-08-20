@@ -5,7 +5,6 @@ import Data.Aeson
 import Api.Resource.Event.AnswerEventDTO
 import Api.Resource.Event.EventFieldJM ()
 import Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import Api.Resource.KnowledgeModel.PathJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON AddAnswerEventDTO where

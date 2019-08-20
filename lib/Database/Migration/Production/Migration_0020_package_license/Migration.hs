@@ -20,22 +20,12 @@ migrate dbPool = do
 
 migratePackages dbPool = do
   now <- liftIO getCurrentTime
-  let action =
-        modify
-          (select [] "packages")
-          [ "$set" =:
-            ["license" =: "No License"]
-          ]
+  let action = modify (select [] "packages") ["$set" =: ["license" =: "No License"]]
   runMongoDBPoolDef action dbPool
   return Nothing
 
 migratePublicPackages dbPool = do
   now <- liftIO getCurrentTime
-  let action =
-        modify
-          (select [] "publicPackages")
-          [ "$set" =:
-            ["license" =: "Apache-2.0"]
-          ]
+  let action = modify (select [] "publicPackages") ["$set" =: ["license" =: "Apache-2.0"]]
   runMongoDBPoolDef action dbPool
   return Nothing

@@ -1,12 +1,9 @@
 module Database.BSON.KnowledgeModel.KnowledgeModel where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.UUID
 
 import Database.BSON.Common ()
-import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------
@@ -16,40 +13,62 @@ instance ToBSON KnowledgeModel where
   toBSON KnowledgeModel {..} =
     [ "uuid" BSON.=: _knowledgeModelUuid
     , "name" BSON.=: _knowledgeModelName
-    , "chapters" BSON.=: _knowledgeModelChapters
-    , "tags" BSON.=: _knowledgeModelTags
-    , "integrations" BSON.=: _knowledgeModelIntegrations
+    , "chapterUuids" BSON.=: _knowledgeModelChapterUuids
+    , "tagUuids" BSON.=: _knowledgeModelTagUuids
+    , "integrationUuids" BSON.=: _knowledgeModelIntegrationUuids
+    , "entities" BSON.=: _knowledgeModelEntities
     ]
 
 instance FromBSON KnowledgeModel where
   fromBSON doc = do
     _knowledgeModelUuid <- BSON.lookup "uuid" doc
     _knowledgeModelName <- BSON.lookup "name" doc
-    _knowledgeModelChapters <- BSON.lookup "chapters" doc
-    _knowledgeModelTags <- BSON.lookup "tags" doc
-    _knowledgeModelIntegrations <- BSON.lookup "integrations" doc
+    _knowledgeModelChapterUuids <- BSON.lookup "chapterUuids" doc
+    _knowledgeModelTagUuids <- BSON.lookup "tagUuids" doc
+    _knowledgeModelIntegrationUuids <- BSON.lookup "integrationUuids" doc
+    _knowledgeModelEntities <- BSON.lookup "entities" doc
     return KnowledgeModel {..}
+
+instance ToBSON KnowledgeModelEntities where
+  toBSON KnowledgeModelEntities {..} =
+    [ "chapters" BSON.=: _knowledgeModelEntitiesChapters
+    , "questions" BSON.=: _knowledgeModelEntitiesQuestions
+    , "answers" BSON.=: _knowledgeModelEntitiesAnswers
+    , "experts" BSON.=: _knowledgeModelEntitiesExperts
+    , "references" BSON.=: _knowledgeModelEntitiesReferences
+    , "integrations" BSON.=: _knowledgeModelEntitiesIntegrations
+    , "tags" BSON.=: _knowledgeModelEntitiesTags
+    ]
+
+instance FromBSON KnowledgeModelEntities where
+  fromBSON doc = do
+    _knowledgeModelEntitiesChapters <- BSON.lookup "chapters" doc
+    _knowledgeModelEntitiesQuestions <- BSON.lookup "questions" doc
+    _knowledgeModelEntitiesAnswers <- BSON.lookup "answers" doc
+    _knowledgeModelEntitiesExperts <- BSON.lookup "experts" doc
+    _knowledgeModelEntitiesReferences <- BSON.lookup "references" doc
+    _knowledgeModelEntitiesIntegrations <- BSON.lookup "integrations" doc
+    _knowledgeModelEntitiesTags <- BSON.lookup "tags" doc
+    return KnowledgeModelEntities {..}
 
 -- -------------------------
 -- CHAPTER -----------------
 -- -------------------------
 instance ToBSON Chapter where
-  toBSON model =
-    [ "uuid" BSON.=: (model ^. uuid)
-    , "title" BSON.=: (model ^. title)
-    , "text" BSON.=: (model ^. text)
-    , "questions" BSON.=: (model ^. questions)
+  toBSON Chapter {..} =
+    [ "uuid" BSON.=: _chapterUuid
+    , "title" BSON.=: _chapterTitle
+    , "text" BSON.=: _chapterText
+    , "questionUuids" BSON.=: _chapterQuestionUuids
     ]
 
 instance FromBSON Chapter where
   fromBSON doc = do
-    chUuidS <- BSON.lookup "uuid" doc
-    chUuid <- fromString chUuidS
-    chTitle <- BSON.lookup "title" doc
-    chText <- BSON.lookup "text" doc
-    chQuestions <- BSON.lookup "questions" doc
-    return
-      Chapter {_chapterUuid = chUuid, _chapterTitle = chTitle, _chapterText = chText, _chapterQuestions = chQuestions}
+    _chapterUuid <- BSON.lookup "uuid" doc
+    _chapterTitle <- BSON.lookup "title" doc
+    _chapterText <- BSON.lookup "text" doc
+    _chapterQuestionUuids <- BSON.lookup "questionUuids" doc
+    return Chapter {..}
 
 -- -------------------------
 -- QUESTION ----------------
@@ -69,80 +88,57 @@ instance FromBSON Question where
 
 -- ------------------------------------------------
 instance ToBSON OptionsQuestion where
-  toBSON model =
+  toBSON OptionsQuestion {..} =
     [ "questionType" BSON.=: "OptionsQuestion"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "title" BSON.=: (model ^. title)
-    , "text" BSON.=: (model ^. text)
-    , "requiredLevel" BSON.=: (model ^. requiredLevel)
-    , "tagUuids" BSON.=: (model ^. tagUuids)
-    , "references" BSON.=: (model ^. references)
-    , "experts" BSON.=: (model ^. experts)
-    , "answers" BSON.=: (model ^. answers)
+    , "uuid" BSON.=: _optionsQuestionUuid
+    , "title" BSON.=: _optionsQuestionTitle
+    , "text" BSON.=: _optionsQuestionText
+    , "requiredLevel" BSON.=: _optionsQuestionRequiredLevel
+    , "tagUuids" BSON.=: _optionsQuestionTagUuids
+    , "expertUuids" BSON.=: _optionsQuestionExpertUuids
+    , "referenceUuids" BSON.=: _optionsQuestionReferenceUuids
+    , "answerUuids" BSON.=: _optionsQuestionAnswerUuids
     ]
 
 instance FromBSON OptionsQuestion where
   fromBSON doc = do
-    qUuidS <- BSON.lookup "uuid" doc
-    qUuid <- fromString qUuidS
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qReferences <- BSON.lookup "references" doc
-    qExperts <- BSON.lookup "experts" doc
-    qAnswers <- BSON.lookup "answers" doc
-    return
-      OptionsQuestion
-      { _optionsQuestionUuid = qUuid
-      , _optionsQuestionTitle = qTitle
-      , _optionsQuestionText = qText
-      , _optionsQuestionRequiredLevel = qRequiredLevel
-      , _optionsQuestionTagUuids = qTagUuids
-      , _optionsQuestionReferences = qReferences
-      , _optionsQuestionExperts = qExperts
-      , _optionsQuestionAnswers = qAnswers
-      }
+    _optionsQuestionUuid <- BSON.lookup "uuid" doc
+    _optionsQuestionTitle <- BSON.lookup "title" doc
+    _optionsQuestionText <- BSON.lookup "text" doc
+    _optionsQuestionRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _optionsQuestionTagUuids <- BSON.lookup "tagUuids" doc
+    _optionsQuestionExpertUuids <- BSON.lookup "expertUuids" doc
+    _optionsQuestionReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _optionsQuestionAnswerUuids <- BSON.lookup "answerUuids" doc
+    return OptionsQuestion {..}
 
 -- ------------------------------------------------
 instance ToBSON ListQuestion where
-  toBSON model =
+  toBSON ListQuestion {..} =
     [ "questionType" BSON.=: "ListQuestion"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "title" BSON.=: (model ^. title)
-    , "text" BSON.=: (model ^. text)
-    , "requiredLevel" BSON.=: (model ^. requiredLevel)
-    , "tagUuids" BSON.=: (model ^. tagUuids)
-    , "references" BSON.=: (model ^. references)
-    , "experts" BSON.=: (model ^. experts)
-    , "itemTemplateTitle" BSON.=: (model ^. itemTemplateTitle)
-    , "itemTemplateQuestions" BSON.=: (model ^. itemTemplateQuestions)
+    , "uuid" BSON.=: _listQuestionUuid
+    , "title" BSON.=: _listQuestionTitle
+    , "text" BSON.=: _listQuestionText
+    , "requiredLevel" BSON.=: _listQuestionRequiredLevel
+    , "tagUuids" BSON.=: _listQuestionTagUuids
+    , "expertUuids" BSON.=: _listQuestionExpertUuids
+    , "referenceUuids" BSON.=: _listQuestionReferenceUuids
+    , "itemTemplateTitle" BSON.=: _listQuestionItemTemplateTitle
+    , "itemTemplateQuestionUuids" BSON.=: _listQuestionItemTemplateQuestionUuids
     ]
 
 instance FromBSON ListQuestion where
   fromBSON doc = do
-    qUuidS <- BSON.lookup "uuid" doc
-    qUuid <- fromString qUuidS
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qReferences <- BSON.lookup "references" doc
-    qExperts <- BSON.lookup "experts" doc
-    qItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
-    qItemTemplateQuestions <- BSON.lookup "itemTemplateQuestions" doc
-    return
-      ListQuestion
-      { _listQuestionUuid = qUuid
-      , _listQuestionTitle = qTitle
-      , _listQuestionText = qText
-      , _listQuestionRequiredLevel = qRequiredLevel
-      , _listQuestionTagUuids = qTagUuids
-      , _listQuestionReferences = qReferences
-      , _listQuestionExperts = qExperts
-      , _listQuestionItemTemplateTitle = qItemTemplateTitle
-      , _listQuestionItemTemplateQuestions = qItemTemplateQuestions
-      }
+    _listQuestionUuid <- BSON.lookup "uuid" doc
+    _listQuestionTitle <- BSON.lookup "title" doc
+    _listQuestionText <- BSON.lookup "text" doc
+    _listQuestionRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _listQuestionTagUuids <- BSON.lookup "tagUuids" doc
+    _listQuestionExpertUuids <- BSON.lookup "expertUuids" doc
+    _listQuestionReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _listQuestionItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
+    _listQuestionItemTemplateQuestionUuids <- BSON.lookup "itemTemplateQuestionUuids" doc
+    return ListQuestion {..}
 
 -- ------------------------------------------------
 instance BSON.Val QuestionValueType where
@@ -157,40 +153,29 @@ instance BSON.Val QuestionValueType where
   cast' _ = Nothing
 
 instance ToBSON ValueQuestion where
-  toBSON model =
+  toBSON ValueQuestion {..} =
     [ "questionType" BSON.=: "ValueQuestion"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "title" BSON.=: (model ^. title)
-    , "text" BSON.=: (model ^. text)
-    , "requiredLevel" BSON.=: (model ^. requiredLevel)
-    , "tagUuids" BSON.=: (model ^. tagUuids)
-    , "references" BSON.=: (model ^. references)
-    , "experts" BSON.=: (model ^. experts)
-    , "valueType" BSON.=: (model ^. valueType)
+    , "uuid" BSON.=: _valueQuestionUuid
+    , "title" BSON.=: _valueQuestionTitle
+    , "text" BSON.=: _valueQuestionText
+    , "requiredLevel" BSON.=: _valueQuestionRequiredLevel
+    , "tagUuids" BSON.=: _valueQuestionTagUuids
+    , "expertUuids" BSON.=: _valueQuestionExpertUuids
+    , "referenceUuids" BSON.=: _valueQuestionReferenceUuids
+    , "valueType" BSON.=: _valueQuestionValueType
     ]
 
 instance FromBSON ValueQuestion where
   fromBSON doc = do
-    qUuidS <- BSON.lookup "uuid" doc
-    qUuid <- fromString qUuidS
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qReferences <- BSON.lookup "references" doc
-    qExperts <- BSON.lookup "experts" doc
-    qValueType <- BSON.lookup "valueType" doc
-    return
-      ValueQuestion
-      { _valueQuestionUuid = qUuid
-      , _valueQuestionTitle = qTitle
-      , _valueQuestionText = qText
-      , _valueQuestionRequiredLevel = qRequiredLevel
-      , _valueQuestionTagUuids = qTagUuids
-      , _valueQuestionReferences = qReferences
-      , _valueQuestionExperts = qExperts
-      , _valueQuestionValueType = qValueType
-      }
+    _valueQuestionUuid <- BSON.lookup "uuid" doc
+    _valueQuestionTitle <- BSON.lookup "title" doc
+    _valueQuestionText <- BSON.lookup "text" doc
+    _valueQuestionRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _valueQuestionTagUuids <- BSON.lookup "tagUuids" doc
+    _valueQuestionExpertUuids <- BSON.lookup "expertUuids" doc
+    _valueQuestionReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _valueQuestionValueType <- BSON.lookup "valueType" doc
+    return ValueQuestion {..}
 
 -- ------------------------------------------------
 instance ToBSON IntegrationQuestion where
@@ -201,8 +186,8 @@ instance ToBSON IntegrationQuestion where
     , "text" BSON.=: _integrationQuestionText
     , "requiredLevel" BSON.=: _integrationQuestionRequiredLevel
     , "tagUuids" BSON.=: _integrationQuestionTagUuids
-    , "references" BSON.=: _integrationQuestionReferences
-    , "experts" BSON.=: _integrationQuestionExperts
+    , "expertUuids" BSON.=: _integrationQuestionExpertUuids
+    , "referenceUuids" BSON.=: _integrationQuestionReferenceUuids
     , "integrationUuid" BSON.=: _integrationQuestionIntegrationUuid
     , "props" BSON.=: _integrationQuestionProps
     ]
@@ -214,8 +199,8 @@ instance FromBSON IntegrationQuestion where
     _integrationQuestionText <- BSON.lookup "text" doc
     _integrationQuestionRequiredLevel <- BSON.lookup "requiredLevel" doc
     _integrationQuestionTagUuids <- BSON.lookup "tagUuids" doc
-    _integrationQuestionReferences <- BSON.lookup "references" doc
-    _integrationQuestionExperts <- BSON.lookup "experts" doc
+    _integrationQuestionExpertUuids <- BSON.lookup "expertUuids" doc
+    _integrationQuestionReferenceUuids <- BSON.lookup "referenceUuids" doc
     _integrationQuestionIntegrationUuid <- BSON.lookup "integrationUuid" doc
     _integrationQuestionProps <- BSON.lookup "valueType" doc
     return IntegrationQuestion {..}
@@ -224,44 +209,35 @@ instance FromBSON IntegrationQuestion where
 -- ANSWER ------------------
 -- -------------------------
 instance ToBSON Answer where
-  toBSON model =
-    [ "uuid" BSON.=: (model ^. uuid)
-    , "label" BSON.=: (model ^. label)
-    , "advice" BSON.=: (model ^. advice)
-    , "followUps" BSON.=: (model ^. followUps)
-    , "metricMeasures" BSON.=: (model ^. metricMeasures)
+  toBSON Answer {..} =
+    [ "uuid" BSON.=: _answerUuid
+    , "label" BSON.=: _answerLabel
+    , "advice" BSON.=: _answerAdvice
+    , "followUpUuids" BSON.=: _answerFollowUpUuids
+    , "metricMeasures" BSON.=: _answerMetricMeasures
     ]
 
 instance FromBSON Answer where
   fromBSON doc = do
-    ansUuidS <- BSON.lookup "uuid" doc
-    ansUuid <- fromString ansUuidS
-    ansLabel <- BSON.lookup "label" doc
-    ansAdvice <- BSON.lookup "advice" doc
-    ansFollowUps <- BSON.lookup "followUps" doc
-    ansMetricMeasures <- BSON.lookup "metricMeasures" doc
-    return
-      Answer
-      { _answerUuid = ansUuid
-      , _answerLabel = ansLabel
-      , _answerAdvice = ansAdvice
-      , _answerFollowUps = ansFollowUps
-      , _answerMetricMeasures = ansMetricMeasures
-      }
+    _answerUuid <- BSON.lookup "uuid" doc
+    _answerLabel <- BSON.lookup "label" doc
+    _answerAdvice <- BSON.lookup "advice" doc
+    _answerFollowUpUuids <- BSON.lookup "followUpUuids" doc
+    _answerMetricMeasures <- BSON.lookup "metricMeasures" doc
+    return Answer {..}
 
 -- -------------------------
 -- EXPERT ------------------
 -- -------------------------
 instance ToBSON Expert where
-  toBSON model = ["uuid" BSON.=: (model ^. uuid), "name" BSON.=: (model ^. name), "email" BSON.=: (model ^. email)]
+  toBSON Expert {..} = ["uuid" BSON.=: _expertUuid, "name" BSON.=: _expertName, "email" BSON.=: _expertEmail]
 
 instance FromBSON Expert where
   fromBSON doc = do
-    expUuidS <- BSON.lookup "uuid" doc
-    expUuid <- fromString expUuidS
-    expName <- BSON.lookup "name" doc
-    expEmail <- BSON.lookup "email" doc
-    return Expert {_expertUuid = expUuid, _expertName = expName, _expertEmail = expEmail}
+    _expertUuid <- BSON.lookup "uuid" doc
+    _expertName <- BSON.lookup "name" doc
+    _expertEmail <- BSON.lookup "email" doc
+    return Expert {..}
 
 -- -------------------------
 -- REFERENCE ---------------
@@ -281,123 +257,103 @@ instance FromBSON Reference where
 
 -- ------------------------------------------------
 instance ToBSON ResourcePageReference where
-  toBSON model =
+  toBSON ResourcePageReference {..} =
     [ "referenceType" BSON.=: "ResourcePageReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "shortUuid" BSON.=: (model ^. shortUuid)
+    , "uuid" BSON.=: _resourcePageReferenceUuid
+    , "shortUuid" BSON.=: _resourcePageReferenceShortUuid
     ]
 
 instance FromBSON ResourcePageReference where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refShortUuid <- BSON.lookup "shortUuid" doc
-    return ResourcePageReference {_resourcePageReferenceUuid = refUuid, _resourcePageReferenceShortUuid = refShortUuid}
+    _resourcePageReferenceUuid <- BSON.lookup "uuid" doc
+    _resourcePageReferenceShortUuid <- BSON.lookup "shortUuid" doc
+    return ResourcePageReference {..}
 
 -- ------------------------------------------------
 instance ToBSON URLReference where
-  toBSON model =
+  toBSON URLReference {..} =
     [ "referenceType" BSON.=: "URLReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "url" BSON.=: (model ^. url)
-    , "label" BSON.=: (model ^. label)
+    , "uuid" BSON.=: _uRLReferenceUuid
+    , "url" BSON.=: _uRLReferenceUrl
+    , "label" BSON.=: _uRLReferenceLabel
     ]
 
 instance FromBSON URLReference where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refUrl <- BSON.lookup "url" doc
-    refLabel <- BSON.lookup "label" doc
-    return URLReference {_uRLReferenceUuid = refUuid, _uRLReferenceUrl = refUrl, _uRLReferenceLabel = refLabel}
+    _uRLReferenceUuid <- BSON.lookup "uuid" doc
+    _uRLReferenceUrl <- BSON.lookup "url" doc
+    _uRLReferenceLabel <- BSON.lookup "label" doc
+    return URLReference {..}
 
 -- ------------------------------------------------
 instance ToBSON CrossReference where
-  toBSON model =
+  toBSON CrossReference {..} =
     [ "referenceType" BSON.=: "CrossReference"
-    , "uuid" BSON.=: (model ^. uuid)
-    , "targetUuid" BSON.=: (model ^. targetUuid)
-    , "description" BSON.=: (model ^. description)
+    , "uuid" BSON.=: _crossReferenceUuid
+    , "targetUuid" BSON.=: _crossReferenceTargetUuid
+    , "description" BSON.=: _crossReferenceDescription
     ]
 
 instance FromBSON CrossReference where
   fromBSON doc = do
-    refUuid <- BSON.lookup "uuid" doc
-    refTargetUuid <- BSON.lookup "targetUuid" doc
-    refDescription <- BSON.lookup "description" doc
-    return
-      CrossReference
-      { _crossReferenceUuid = refUuid
-      , _crossReferenceTargetUuid = refTargetUuid
-      , _crossReferenceDescription = refDescription
-      }
+    _crossReferenceUuid <- BSON.lookup "uuid" doc
+    _crossReferenceTargetUuid <- BSON.lookup "targetUuid" doc
+    _crossReferenceDescription <- BSON.lookup "description" doc
+    return CrossReference {..}
 
 -- -------------------------
 -- METRIC ------------------
 -- -------------------------
 instance ToBSON Metric where
-  toBSON model =
-    [ "uuid" BSON.=: (model ^. uuid)
-    , "title" BSON.=: (model ^. title)
-    , "abbreviation" BSON.=: (model ^. abbreviation)
-    , "description" BSON.=: (model ^. description)
-    , "references" BSON.=: (model ^. references)
-    , "createdAt" BSON.=: (model ^. createdAt)
-    , "updatedAt" BSON.=: (model ^. updatedAt)
+  toBSON Metric {..} =
+    [ "uuid" BSON.=: _metricUuid
+    , "title" BSON.=: _metricTitle
+    , "abbreviation" BSON.=: _metricAbbreviation
+    , "description" BSON.=: _metricDescription
+    , "references" BSON.=: _metricReferences
+    , "createdAt" BSON.=: _metricCreatedAt
+    , "updatedAt" BSON.=: _metricUpdatedAt
     ]
 
 instance FromBSON Metric where
   fromBSON doc = do
-    mUuid <- BSON.lookup "uuid" doc
-    mTitle <- BSON.lookup "title" doc
-    mAbbreviation <- BSON.lookup "abbreviation" doc
-    mDescription <- BSON.lookup "description" doc
-    mReferences <- BSON.lookup "references" doc
-    mCreatedAt <- BSON.lookup "createdAt" doc
-    mUpdatedAt <- BSON.lookup "updatedAt" doc
-    return
-      Metric
-      { _metricUuid = mUuid
-      , _metricTitle = mTitle
-      , _metricAbbreviation = mAbbreviation
-      , _metricDescription = mDescription
-      , _metricReferences = mReferences
-      , _metricCreatedAt = mCreatedAt
-      , _metricUpdatedAt = mUpdatedAt
-      }
+    _metricUuid <- BSON.lookup "uuid" doc
+    _metricTitle <- BSON.lookup "title" doc
+    _metricAbbreviation <- BSON.lookup "abbreviation" doc
+    _metricDescription <- BSON.lookup "description" doc
+    _metricReferences <- BSON.lookup "references" doc
+    _metricCreatedAt <- BSON.lookup "createdAt" doc
+    _metricUpdatedAt <- BSON.lookup "updatedAt" doc
+    return Metric {..}
 
 instance ToBSON MetricMeasure where
-  toBSON model =
-    [ "metricUuid" BSON.=: (model ^. metricUuid)
-    , "measure" BSON.=: (model ^. measure)
-    , "weight" BSON.=: (model ^. weight)
+  toBSON MetricMeasure {..} =
+    [ "metricUuid" BSON.=: _metricMeasureMetricUuid
+    , "measure" BSON.=: _metricMeasureMeasure
+    , "weight" BSON.=: _metricMeasureWeight
     ]
 
 instance FromBSON MetricMeasure where
   fromBSON doc = do
-    mmMetricUuid <- BSON.lookup "metricUuid" doc
-    mmMeasure <- BSON.lookup "measure" doc
-    mmWeight <- BSON.lookup "weight" doc
-    return
-      MetricMeasure
-      {_metricMeasureMetricUuid = mmMetricUuid, _metricMeasureMeasure = mmMeasure, _metricMeasureWeight = mmWeight}
+    _metricMeasureMetricUuid <- BSON.lookup "metricUuid" doc
+    _metricMeasureMeasure <- BSON.lookup "measure" doc
+    _metricMeasureWeight <- BSON.lookup "weight" doc
+    return MetricMeasure {..}
 
 -- -------------------------
 -- TAG ---------------------
 -- -------------------------
 instance ToBSON Tag where
-  toBSON model =
-    [ "uuid" BSON.=: (model ^. uuid)
-    , "name" BSON.=: (model ^. name)
-    , "description" BSON.=: (model ^. description)
-    , "color" BSON.=: (model ^. color)
-    ]
+  toBSON Tag {..} =
+    ["uuid" BSON.=: _tagUuid, "name" BSON.=: _tagName, "description" BSON.=: _tagDescription, "color" BSON.=: _tagColor]
 
 instance FromBSON Tag where
   fromBSON doc = do
-    tUuid <- BSON.lookup "uuid" doc
-    tName <- BSON.lookup "name" doc
-    tDescription <- BSON.lookup "description" doc
-    tColor <- BSON.lookup "color" doc
-    return Tag {_tagUuid = tUuid, _tagName = tName, _tagDescription = tDescription, _tagColor = tColor}
+    _tagUuid <- BSON.lookup "uuid" doc
+    _tagName <- BSON.lookup "name" doc
+    _tagDescription <- BSON.lookup "description" doc
+    _tagColor <- BSON.lookup "color" doc
+    return Tag {..}
 
 -- -------------------------
 -- INTEGRATION -------------

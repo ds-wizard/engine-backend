@@ -91,8 +91,8 @@ createBranchWithParams bUuid now currentUser reqDto =
           let addKMEvent =
                 AddKnowledgeModelEvent
                 { _addKnowledgeModelEventUuid = uuid
-                , _addKnowledgeModelEventPath = []
-                , _addKnowledgeModelEventKmUuid = kmUuid
+                , _addKnowledgeModelEventParentUuid = U.nil
+                , _addKnowledgeModelEventEntityUuid = kmUuid
                 , _addKnowledgeModelEventName = "New knowledge model"
                 }
           updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]

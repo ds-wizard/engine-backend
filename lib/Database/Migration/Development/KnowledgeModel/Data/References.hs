@@ -7,94 +7,137 @@ import qualified Data.UUID as U
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
-referenceCh1' :: Reference
-referenceCh1' = ResourcePageReference' referenceCh1
+km1_ch1_q2_r1' :: Reference
+km1_ch1_q2_r1' = ResourcePageReference' km1_ch1_q2_r1
 
-referenceCh1 :: ResourcePageReference
-referenceCh1 =
+km1_ch1_q2_r1 :: ResourcePageReference
+km1_ch1_q2_r1 =
   ResourcePageReference
-  { _resourcePageReferenceUuid = fromJust $ U.fromString "a401b481-51b6-49ac-afca-ea957740e7ba"
+  { _resourcePageReferenceUuid = fromJust $ U.fromString "903d0f50-040c-420e-9a65-49ba20ec6493"
   , _resourcePageReferenceShortUuid = "bvq"
   }
 
-referenceCh1Edited' :: Reference
-referenceCh1Edited' = ResourcePageReference' referenceCh1Edited
+km1_ch1_q2_r1Edited' :: Reference
+km1_ch1_q2_r1Edited' = ResourcePageReference' km1_ch1_q2_r1Edited
 
-referenceCh1Edited :: ResourcePageReference
-referenceCh1Edited =
-  ResourcePageReference {_resourcePageReferenceUuid = referenceCh1 ^. uuid, _resourcePageReferenceShortUuid = "bbb"}
+km1_ch1_q2_r1Edited :: ResourcePageReference
+km1_ch1_q2_r1Edited =
+  ResourcePageReference {_resourcePageReferenceUuid = km1_ch1_q2_r1 ^. uuid, _resourcePageReferenceShortUuid = "bbb"}
 
-referenceCh1WithNewType' :: Reference
-referenceCh1WithNewType' = URLReference' referenceCh1WithNewType
+km1_ch1_q2_r1WithNewType' :: Reference
+km1_ch1_q2_r1WithNewType' = URLReference' km1_ch1_q2_r1WithNewType
 
-referenceCh1WithNewType :: URLReference
-referenceCh1WithNewType =
+km1_ch1_q2_r1WithNewType :: URLReference
+km1_ch1_q2_r1WithNewType =
   URLReference
-  { _uRLReferenceUuid = referenceCh1 ^. uuid
+  { _uRLReferenceUuid = km1_ch1_q2_r1 ^. uuid
   , _uRLReferenceUrl = "https://ds-wizard.org/dmp"
   , _uRLReferenceLabel = "DMP Guide"
   }
 
--- ---------------------------------------------------------------------------
-referenceCh2' :: Reference
-referenceCh2' = URLReference' referenceCh2
+km1_ch2_q6_r1' :: Reference
+km1_ch2_q6_r1' = ResourcePageReference' km1_ch2_q6_r1
 
-referenceCh2 :: URLReference
-referenceCh2 =
+km1_ch2_q6_r1 :: ResourcePageReference
+km1_ch2_q6_r1 =
+  ResourcePageReference
+  { _resourcePageReferenceUuid = fromJust $ U.fromString "832ed9f5-107c-46e4-a13b-bf68086fcba1"
+  , _resourcePageReferenceShortUuid = "bvq"
+  }
+
+-- ---------------------------------------------------------------------------
+km1_ch1_q2_r2' :: Reference
+km1_ch1_q2_r2' = URLReference' km1_ch1_q2_r2
+
+km1_ch1_q2_r2 :: URLReference
+km1_ch1_q2_r2 =
   URLReference
-  { _uRLReferenceUuid = fromJust $ U.fromString "5004803d-43f6-4932-ab04-5a7e608894a5"
+  { _uRLReferenceUuid = fromJust $ U.fromString "fc379161-540e-47fb-8547-0504d4a397bf"
   , _uRLReferenceUrl = "https://ds-wizard.org/fair"
   , _uRLReferenceLabel = "F.A.I.R Principles"
   }
 
-referenceCh2Edited' :: Reference
-referenceCh2Edited' = URLReference' referenceCh2Edited
+km1_ch1_q2_r2Edited' :: Reference
+km1_ch1_q2_r2Edited' = URLReference' km1_ch1_q2_r2Edited
 
-referenceCh2Edited :: URLReference
-referenceCh2Edited =
+km1_ch1_q2_r2Edited :: URLReference
+km1_ch1_q2_r2Edited =
   URLReference
-  { _uRLReferenceUuid = referenceCh2 ^. uuid
-  , _uRLReferenceUrl = "EDITED: " ++ referenceCh2 ^. url
-  , _uRLReferenceLabel = "EDITED: " ++ referenceCh2 ^. label
+  { _uRLReferenceUuid = km1_ch1_q2_r2 ^. uuid
+  , _uRLReferenceUrl = "EDITED: " ++ km1_ch1_q2_r2 ^. url
+  , _uRLReferenceLabel = "EDITED: " ++ km1_ch1_q2_r2 ^. label
   }
 
-referenceCh2WithNewType' :: Reference
-referenceCh2WithNewType' = CrossReference' referenceCh2WithNewType
+km1_ch1_q2_r2WithNewType' :: Reference
+km1_ch1_q2_r2WithNewType' = CrossReference' km1_ch1_q2_r2WithNewType
 
-referenceCh2WithNewType :: CrossReference
-referenceCh2WithNewType =
+km1_ch1_q2_r2WithNewType :: CrossReference
+km1_ch1_q2_r2WithNewType =
   CrossReference
-  { _crossReferenceUuid = referenceCh2 ^. uuid
-  , _crossReferenceTargetUuid = fromJust $ U.fromString "1b20169a-4a37-41d1-875c-f0ca507dc438"
+  { _crossReferenceUuid = km1_ch1_q2_r2 ^. uuid
+  , _crossReferenceTargetUuid = fromJust $ U.fromString "9d109b01-ca61-4a6b-9906-22ad4ffc057b"
   , _crossReferenceDescription = "Link to my target"
   }
 
--- ---------------------------------------------------------------------------
-referenceCh3' :: Reference
-referenceCh3' = CrossReference' referenceCh3
+km1_ch2_q6_r2' :: Reference
+km1_ch2_q6_r2' = URLReference' km1_ch2_q6_r2
 
-referenceCh3 :: CrossReference
-referenceCh3 =
+km1_ch2_q6_r2 :: URLReference
+km1_ch2_q6_r2 =
+  URLReference
+  { _uRLReferenceUuid = fromJust $ U.fromString "29f973c8-1ec0-474a-8be5-84814c001496"
+  , _uRLReferenceUrl = "https://ds-wizard.org/fair"
+  , _uRLReferenceLabel = "F.A.I.R Principles"
+  }
+
+-- ---------------------------------------------------------------------------
+km1_ch1_q2_r3' :: Reference
+km1_ch1_q2_r3' = CrossReference' km1_ch1_q2_r3
+
+km1_ch1_q2_r3 :: CrossReference
+km1_ch1_q2_r3 =
   CrossReference
-  { _crossReferenceUuid = fromJust $ U.fromString "14255506-6c88-438d-a1ad-eea2071ee9cb"
-  , _crossReferenceTargetUuid = fromJust $ U.fromString "2be1d749-9c72-4807-9309-d6c7bdbf13ba"
+  { _crossReferenceUuid = fromJust $ U.fromString "d032ac2e-f58b-4c4b-87a4-8fbd45f155fa"
+  , _crossReferenceTargetUuid = fromJust $ U.fromString "4ced8015-82ae-4cf9-952d-9730a84a825a"
   , _crossReferenceDescription = "Some description"
   }
 
-referenceCh3Edited' :: Reference
-referenceCh3Edited' = CrossReference' referenceCh3Edited
+km1_ch1_q2_r3Edited' :: Reference
+km1_ch1_q2_r3Edited' = CrossReference' km1_ch1_q2_r3Edited
 
-referenceCh3Edited :: CrossReference
-referenceCh3Edited =
+km1_ch1_q2_r3Edited :: CrossReference
+km1_ch1_q2_r3Edited =
   CrossReference
-  { _crossReferenceUuid = referenceCh3 ^. uuid
-  , _crossReferenceTargetUuid = fromJust $ U.fromString "7c24a6f4-72ba-4744-94c4-30f699d6edbf"
-  , _crossReferenceDescription = "EDITED: " ++ referenceCh3 ^. description
+  { _crossReferenceUuid = km1_ch1_q2_r3 ^. uuid
+  , _crossReferenceTargetUuid = fromJust $ U.fromString "bfe0a3bc-ee9f-45b7-98a7-7462cf0dd914"
+  , _crossReferenceDescription = "EDITED: " ++ km1_ch1_q2_r3 ^. description
   }
 
-referenceCh3WithNewType' :: Reference
-referenceCh3WithNewType' = ResourcePageReference' referenceCh3WithNewType
+km1_ch1_q2_r3WithNewType' :: Reference
+km1_ch1_q2_r3WithNewType' = ResourcePageReference' km1_ch1_q2_r3WithNewType
 
-referenceCh3WithNewType :: ResourcePageReference
-referenceCh3WithNewType =
-  ResourcePageReference {_resourcePageReferenceUuid = referenceCh3 ^. uuid, _resourcePageReferenceShortUuid = "awp"}
+km1_ch1_q2_r3WithNewType :: ResourcePageReference
+km1_ch1_q2_r3WithNewType =
+  ResourcePageReference {_resourcePageReferenceUuid = km1_ch1_q2_r3 ^. uuid, _resourcePageReferenceShortUuid = "awp"}
+
+-- ---------------------------------------------------------------------------
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1' :: Reference
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1' = ResourcePageReference' km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1
+
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1 :: ResourcePageReference
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r1 =
+  ResourcePageReference
+  { _resourcePageReferenceUuid = fromJust $ U.fromString "994c2c75-4305-49bf-b207-c0d6f8042eb2"
+  , _resourcePageReferenceShortUuid = "bvq"
+  }
+
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r2' :: Reference
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r2' = URLReference' km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r2
+
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r2 :: URLReference
+km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2_r2 =
+  URLReference
+  { _uRLReferenceUuid = fromJust $ U.fromString "931caf0b-a6ce-4183-8a02-7b02c2ff1e6c"
+  , _uRLReferenceUrl = "https://ds-wizard.org/fair"
+  , _uRLReferenceLabel = "F.A.I.R Principles"
+  }

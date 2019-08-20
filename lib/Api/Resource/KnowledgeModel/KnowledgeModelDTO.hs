@@ -10,9 +10,20 @@ import Model.KnowledgeModel.KnowledgeModel
 data KnowledgeModelDTO = KnowledgeModelDTO
   { _knowledgeModelDTOUuid :: U.UUID
   , _knowledgeModelDTOName :: String
-  , _knowledgeModelDTOChapters :: [ChapterDTO]
-  , _knowledgeModelDTOTags :: [TagDTO]
-  , _knowledgeModelDTOIntegrations :: [IntegrationDTO]
+  , _knowledgeModelDTOChapterUuids :: [U.UUID]
+  , _knowledgeModelDTOTagUuids :: [U.UUID]
+  , _knowledgeModelDTOIntegrationUuids :: [U.UUID]
+  , _knowledgeModelDTOEntities :: KnowledgeModelEntitiesDTO
+  } deriving (Show, Eq, Generic)
+
+data KnowledgeModelEntitiesDTO = KnowledgeModelEntitiesDTO
+  { _knowledgeModelEntitiesDTOChapters :: Map U.UUID ChapterDTO
+  , _knowledgeModelEntitiesDTOQuestions :: Map U.UUID QuestionDTO
+  , _knowledgeModelEntitiesDTOAnswers :: Map U.UUID AnswerDTO
+  , _knowledgeModelEntitiesDTOExperts :: Map U.UUID ExpertDTO
+  , _knowledgeModelEntitiesDTOReferences :: Map U.UUID ReferenceDTO
+  , _knowledgeModelEntitiesDTOIntegrations :: Map U.UUID IntegrationDTO
+  , _knowledgeModelEntitiesDTOTags :: Map U.UUID TagDTO
   } deriving (Show, Eq, Generic)
 
 -- --------------------------------------------------------------------
@@ -20,7 +31,7 @@ data ChapterDTO = ChapterDTO
   { _chapterDTOUuid :: U.UUID
   , _chapterDTOTitle :: String
   , _chapterDTOText :: String
-  , _chapterDTOQuestions :: [QuestionDTO]
+  , _chapterDTOQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 -- --------------------------------------------------------------------
@@ -37,9 +48,9 @@ data OptionsQuestionDTO = OptionsQuestionDTO
   , _optionsQuestionDTOText :: Maybe String
   , _optionsQuestionDTORequiredLevel :: Maybe Int
   , _optionsQuestionDTOTagUuids :: [U.UUID]
-  , _optionsQuestionDTOExperts :: [ExpertDTO]
-  , _optionsQuestionDTOReferences :: [ReferenceDTO]
-  , _optionsQuestionDTOAnswers :: [AnswerDTO]
+  , _optionsQuestionDTOExpertUuids :: [U.UUID]
+  , _optionsQuestionDTOReferenceUuids :: [U.UUID]
+  , _optionsQuestionDTOAnswerUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data ListQuestionDTO = ListQuestionDTO
@@ -48,10 +59,10 @@ data ListQuestionDTO = ListQuestionDTO
   , _listQuestionDTOText :: Maybe String
   , _listQuestionDTORequiredLevel :: Maybe Int
   , _listQuestionDTOTagUuids :: [U.UUID]
-  , _listQuestionDTOExperts :: [ExpertDTO]
-  , _listQuestionDTOReferences :: [ReferenceDTO]
+  , _listQuestionDTOExpertUuids :: [U.UUID]
+  , _listQuestionDTOReferenceUuids :: [U.UUID]
   , _listQuestionDTOItemTemplateTitle :: String
-  , _listQuestionDTOItemTemplateQuestions :: [QuestionDTO]
+  , _listQuestionDTOItemTemplateQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 
 data ValueQuestionDTO = ValueQuestionDTO
@@ -60,8 +71,8 @@ data ValueQuestionDTO = ValueQuestionDTO
   , _valueQuestionDTOText :: Maybe String
   , _valueQuestionDTORequiredLevel :: Maybe Int
   , _valueQuestionDTOTagUuids :: [U.UUID]
-  , _valueQuestionDTOExperts :: [ExpertDTO]
-  , _valueQuestionDTOReferences :: [ReferenceDTO]
+  , _valueQuestionDTOExpertUuids :: [U.UUID]
+  , _valueQuestionDTOReferenceUuids :: [U.UUID]
   , _valueQuestionDTOValueType :: QuestionValueType
   } deriving (Show, Eq, Generic)
 
@@ -71,8 +82,8 @@ data IntegrationQuestionDTO = IntegrationQuestionDTO
   , _integrationQuestionDTOText :: Maybe String
   , _integrationQuestionDTORequiredLevel :: Maybe Int
   , _integrationQuestionDTOTagUuids :: [U.UUID]
-  , _integrationQuestionDTOExperts :: [ExpertDTO]
-  , _integrationQuestionDTOReferences :: [ReferenceDTO]
+  , _integrationQuestionDTOExpertUuids :: [U.UUID]
+  , _integrationQuestionDTOReferenceUuids :: [U.UUID]
   , _integrationQuestionDTOIntegrationUuid :: U.UUID
   , _integrationQuestionDTOProps :: Map String String
   } deriving (Show, Eq, Generic)
@@ -82,7 +93,7 @@ data AnswerDTO = AnswerDTO
   { _answerDTOUuid :: U.UUID
   , _answerDTOLabel :: String
   , _answerDTOAdvice :: Maybe String
-  , _answerDTOFollowUps :: [QuestionDTO]
+  , _answerDTOFollowUpUuids :: [U.UUID]
   , _answerDTOMetricMeasures :: [MetricMeasureDTO]
   } deriving (Show, Eq, Generic)
 

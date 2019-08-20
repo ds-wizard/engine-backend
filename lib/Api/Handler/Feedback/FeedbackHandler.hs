@@ -6,7 +6,6 @@ import Web.Scotty.Trans (json, param, status)
 import Api.Handler.Common
 import Api.Resource.Feedback.FeedbackCreateJM ()
 import Api.Resource.Feedback.FeedbackJM ()
-import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
 import Service.Feedback.FeedbackService
 
 getFeedbacksA :: Endpoint

@@ -18,7 +18,7 @@ import Model.Event.EventAccessors
 import Model.Migration.KnowledgeModel.MigratorState
 import Service.Branch.BranchUtils
 import Service.KnowledgeModel.KnowledgeModelService
-import Service.Migration.KnowledgeModel.Migrator
+import Service.Migration.KnowledgeModel.Migrator.Migrator
 import Service.Migration.KnowledgeModel.MigratorMapper
 import Service.Migration.KnowledgeModel.MigratorValidation
 import Service.Package.PackageService

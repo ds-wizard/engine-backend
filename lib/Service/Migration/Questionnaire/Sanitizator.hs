@@ -1,12 +1,13 @@
 module Service.Migration.Questionnaire.Sanitizator where
 
-import Control.Lens ((&), (.~), (^.), (^..), traverse)
+import Control.Lens ((&), (.~), (^.))
+import qualified Data.Map.Strict as M
 import Data.Maybe (catMaybes)
 import qualified Data.UUID as U
 
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Model.Questionnaire.QuestionnaireReply
 import Util.Maybe (concatMaybe)
 import Util.String (splitOn)
@@ -26,7 +27,7 @@ sanitizeReply km reply =
 -- -------------------------------------------------------------
 sanitizeQuestion :: KnowledgeModel -> [String] -> ReplyValue -> Maybe ReplyValue
 sanitizeQuestion km (questionUuidS:_) replyValue =
-  case concatMaybe $ fmap (getQuestionByUuid km) . U.fromString $ questionUuidS of
+  case concatMaybe $ fmap (\qUuid -> M.lookup qUuid (km ^. questionsM)) . U.fromString $ questionUuidS of
     (Just (OptionsQuestion' q)) -> sanitizeOptionsQuestion km replyValue q
     (Just (ListQuestion' q)) -> sanitizeListQuestion km replyValue q
     (Just (ValueQuestion' q)) -> sanitizeValueQuestion km replyValue q
@@ -35,7 +36,7 @@ sanitizeQuestion km (questionUuidS:_) replyValue =
 
 sanitizeOptionsQuestion :: KnowledgeModel -> ReplyValue -> OptionsQuestion -> Maybe ReplyValue
 sanitizeOptionsQuestion km AnswerReply {..} q =
-  if _answerReplyValue `elem` (q ^.. answers . traverse . uuid)
+  if _answerReplyValue `elem` (q ^. answerUuids)
     then Just $ AnswerReply {..}
     else Nothing
 sanitizeOptionsQuestion _ _ _ = Nothing
@@ -63,7 +64,7 @@ sanitizeItemName :: KnowledgeModel -> Reply -> [String] -> Maybe Reply
 sanitizeItemName km reply ("itemName":(number:(questionUuidS:_))) =
   case U.fromString questionUuidS of
     Just questionUuid ->
-      case getQuestionByUuid km questionUuid of
+      case M.lookup questionUuid (km ^. questionsM) of
         Just (ListQuestion' q) -> Just reply
         _ -> Nothing
     Nothing -> Nothing

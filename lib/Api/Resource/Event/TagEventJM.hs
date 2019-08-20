@@ -4,7 +4,6 @@ import Data.Aeson
 
 import Api.Resource.Event.EventFieldJM ()
 import Api.Resource.Event.TagEventDTO
-import Api.Resource.KnowledgeModel.PathJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON AddTagEventDTO where

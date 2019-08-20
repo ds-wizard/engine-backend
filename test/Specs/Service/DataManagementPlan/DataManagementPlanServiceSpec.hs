@@ -3,11 +3,8 @@ module Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec where
 import Control.Lens ((&), (.~), (^.))
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
-import Test.Hspec.Expectations.Pretty
 
 import Database.Migration.Development.DataManagementPlan.Data.DataManagementPlans
-import Database.Migration.Development.FilledKnowledgeModel.Data.FilledKnowledgeModels
-import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import qualified
        Database.Migration.Development.Level.LevelMigration as LVL
 import qualified
@@ -22,10 +19,6 @@ import Service.DataManagementPlan.DataManagementPlanService
 
 import Specs.Common
 import Specs.Service.DataManagementPlan.Common
-
-dataManagementPlanSpec =
-  describe "DataManagementPlan Service" $
-  it "createFilledKM" $ createFilledKM km1WithQ4 (questionnaire1 ^. replies) `shouldBe` fKm1WithQ4
 
 dataManagementPlanIntegrationSpec appContext =
   describe "DataManagementPlan Service Integration" $

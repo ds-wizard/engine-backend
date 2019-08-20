@@ -1,14 +1,11 @@
 module Database.BSON.Event.Question where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import Database.BSON.Common ()
 import Database.BSON.Event.EventField ()
 import Database.BSON.KnowledgeModel.KnowledgeModel ()
-import Database.BSON.KnowledgeModel.Path ()
-import LensesConfig
 import Model.Event.Question.QuestionEvent
 
 -- -------------------------
@@ -31,111 +28,82 @@ instance FromBSON AddQuestionEvent where
 
 -- ------------------------------------------------
 instance ToBSON AddOptionsQuestionEvent where
-  toBSON event =
+  toBSON AddOptionsQuestionEvent {..} =
     [ "eventType" BSON.=: "AddQuestionEvent"
     , "questionType" BSON.=: "OptionsQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
+    , "uuid" BSON.=: _addOptionsQuestionEventUuid
+    , "parentUuid" BSON.=: _addOptionsQuestionEventParentUuid
+    , "entityUuid" BSON.=: _addOptionsQuestionEventEntityUuid
+    , "title" BSON.=: _addOptionsQuestionEventTitle
+    , "text" BSON.=: _addOptionsQuestionEventText
+    , "requiredLevel" BSON.=: _addOptionsQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _addOptionsQuestionEventTagUuids
     ]
 
 instance FromBSON AddOptionsQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    return
-      AddOptionsQuestionEvent
-      { _addOptionsQuestionEventUuid = qUuid
-      , _addOptionsQuestionEventPath = qPath
-      , _addOptionsQuestionEventQuestionUuid = qQuestionUuid
-      , _addOptionsQuestionEventTitle = qTitle
-      , _addOptionsQuestionEventText = qText
-      , _addOptionsQuestionEventRequiredLevel = qRequiredLevel
-      , _addOptionsQuestionEventTagUuids = qTagUuids
-      }
+    _addOptionsQuestionEventUuid <- BSON.lookup "uuid" doc
+    _addOptionsQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addOptionsQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addOptionsQuestionEventTitle <- BSON.lookup "title" doc
+    _addOptionsQuestionEventText <- BSON.lookup "text" doc
+    _addOptionsQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _addOptionsQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    return AddOptionsQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddListQuestionEvent where
-  toBSON event =
+  toBSON AddListQuestionEvent {..} =
     [ "eventType" BSON.=: "AddQuestionEvent"
     , "questionType" BSON.=: "ListQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
-    , "itemTemplateTitle" BSON.=: (event ^. itemTemplateTitle)
+    , "uuid" BSON.=: _addListQuestionEventUuid
+    , "parentUuid" BSON.=: _addListQuestionEventParentUuid
+    , "entityUuid" BSON.=: _addListQuestionEventEntityUuid
+    , "title" BSON.=: _addListQuestionEventTitle
+    , "text" BSON.=: _addListQuestionEventText
+    , "requiredLevel" BSON.=: _addListQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _addListQuestionEventTagUuids
+    , "itemTemplateTitle" BSON.=: _addListQuestionEventItemTemplateTitle
     ]
 
 instance FromBSON AddListQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
-    return
-      AddListQuestionEvent
-      { _addListQuestionEventUuid = qUuid
-      , _addListQuestionEventPath = qPath
-      , _addListQuestionEventQuestionUuid = qQuestionUuid
-      , _addListQuestionEventTitle = qTitle
-      , _addListQuestionEventText = qText
-      , _addListQuestionEventRequiredLevel = qRequiredLevel
-      , _addListQuestionEventTagUuids = qTagUuids
-      , _addListQuestionEventItemTemplateTitle = qItemTemplateTitle
-      }
+    _addListQuestionEventUuid <- BSON.lookup "uuid" doc
+    _addListQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addListQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addListQuestionEventTitle <- BSON.lookup "title" doc
+    _addListQuestionEventText <- BSON.lookup "text" doc
+    _addListQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _addListQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _addListQuestionEventItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
+    return AddListQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddValueQuestionEvent where
-  toBSON event =
+  toBSON AddValueQuestionEvent {..} =
     [ "eventType" BSON.=: "AddQuestionEvent"
     , "questionType" BSON.=: "ValueQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
-    , "valueType" BSON.=: (event ^. valueType)
+    , "uuid" BSON.=: _addValueQuestionEventUuid
+    , "parentUuid" BSON.=: _addValueQuestionEventParentUuid
+    , "entityUuid" BSON.=: _addValueQuestionEventEntityUuid
+    , "title" BSON.=: _addValueQuestionEventTitle
+    , "text" BSON.=: _addValueQuestionEventText
+    , "requiredLevel" BSON.=: _addValueQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _addValueQuestionEventTagUuids
+    , "valueType" BSON.=: _addValueQuestionEventValueType
     ]
 
 instance FromBSON AddValueQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qValueType <- BSON.lookup "valueType" doc
-    return
-      AddValueQuestionEvent
-      { _addValueQuestionEventUuid = qUuid
-      , _addValueQuestionEventPath = qPath
-      , _addValueQuestionEventQuestionUuid = qQuestionUuid
-      , _addValueQuestionEventTitle = qTitle
-      , _addValueQuestionEventText = qText
-      , _addValueQuestionEventRequiredLevel = qRequiredLevel
-      , _addValueQuestionEventTagUuids = qTagUuids
-      , _addValueQuestionEventValueType = qValueType
-      }
+    _addValueQuestionEventUuid <- BSON.lookup "uuid" doc
+    _addValueQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addValueQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addValueQuestionEventTitle <- BSON.lookup "title" doc
+    _addValueQuestionEventText <- BSON.lookup "text" doc
+    _addValueQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _addValueQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _addValueQuestionEventValueType <- BSON.lookup "valueType" doc
+    return AddValueQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddIntegrationQuestionEvent where
@@ -143,8 +111,8 @@ instance ToBSON AddIntegrationQuestionEvent where
     [ "eventType" BSON.=: "AddQuestionEvent"
     , "questionType" BSON.=: "IntegrationQuestion"
     , "uuid" BSON.=: _addIntegrationQuestionEventUuid
-    , "path" BSON.=: _addIntegrationQuestionEventPath
-    , "questionUuid" BSON.=: _addIntegrationQuestionEventQuestionUuid
+    , "parentUuid" BSON.=: _addIntegrationQuestionEventParentUuid
+    , "entityUuid" BSON.=: _addIntegrationQuestionEventEntityUuid
     , "title" BSON.=: _addIntegrationQuestionEventTitle
     , "text" BSON.=: _addIntegrationQuestionEventText
     , "requiredLevel" BSON.=: _addIntegrationQuestionEventRequiredLevel
@@ -156,8 +124,8 @@ instance ToBSON AddIntegrationQuestionEvent where
 instance FromBSON AddIntegrationQuestionEvent where
   fromBSON doc = do
     _addIntegrationQuestionEventUuid <- BSON.lookup "uuid" doc
-    _addIntegrationQuestionEventPath <- BSON.lookup "path" doc
-    _addIntegrationQuestionEventQuestionUuid <- BSON.lookup "questionUuid" doc
+    _addIntegrationQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addIntegrationQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
     _addIntegrationQuestionEventTitle <- BSON.lookup "title" doc
     _addIntegrationQuestionEventText <- BSON.lookup "text" doc
     _addIntegrationQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
@@ -186,135 +154,98 @@ instance FromBSON EditQuestionEvent where
 
 -- ------------------------------------------------
 instance ToBSON EditOptionsQuestionEvent where
-  toBSON event =
+  toBSON EditOptionsQuestionEvent {..} =
     [ "eventType" BSON.=: "EditQuestionEvent"
     , "questionType" BSON.=: "OptionsQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "expertUuids" BSON.=: (event ^. expertUuids)
-    , "referenceUuids" BSON.=: (event ^. referenceUuids)
-    , "answerUuids" BSON.=: (event ^. answerUuids)
+    , "uuid" BSON.=: _editOptionsQuestionEventUuid
+    , "parentUuid" BSON.=: _editOptionsQuestionEventParentUuid
+    , "entityUuid" BSON.=: _editOptionsQuestionEventEntityUuid
+    , "title" BSON.=: _editOptionsQuestionEventTitle
+    , "text" BSON.=: _editOptionsQuestionEventText
+    , "requiredLevel" BSON.=: _editOptionsQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _editOptionsQuestionEventTagUuids
+    , "expertUuids" BSON.=: _editOptionsQuestionEventExpertUuids
+    , "referenceUuids" BSON.=: _editOptionsQuestionEventReferenceUuids
+    , "answerUuids" BSON.=: _editOptionsQuestionEventAnswerUuids
     ]
 
 instance FromBSON EditOptionsQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qExpertUuids <- BSON.lookup "expertUuids" doc
-    qReferenceUuids <- BSON.lookup "referenceUuids" doc
-    qAnswerUuids <- BSON.lookup "answerUuids" doc
-    return
-      EditOptionsQuestionEvent
-      { _editOptionsQuestionEventUuid = qUuid
-      , _editOptionsQuestionEventPath = qPath
-      , _editOptionsQuestionEventQuestionUuid = qQuestionUuid
-      , _editOptionsQuestionEventTitle = qTitle
-      , _editOptionsQuestionEventText = qText
-      , _editOptionsQuestionEventRequiredLevel = qRequiredLevel
-      , _editOptionsQuestionEventTagUuids = qTagUuids
-      , _editOptionsQuestionEventExpertUuids = qExpertUuids
-      , _editOptionsQuestionEventReferenceUuids = qReferenceUuids
-      , _editOptionsQuestionEventAnswerUuids = qAnswerUuids
-      }
+    _editOptionsQuestionEventUuid <- BSON.lookup "uuid" doc
+    _editOptionsQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editOptionsQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editOptionsQuestionEventTitle <- BSON.lookup "title" doc
+    _editOptionsQuestionEventText <- BSON.lookup "text" doc
+    _editOptionsQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _editOptionsQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _editOptionsQuestionEventExpertUuids <- BSON.lookup "expertUuids" doc
+    _editOptionsQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _editOptionsQuestionEventAnswerUuids <- BSON.lookup "answerUuids" doc
+    return EditOptionsQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditListQuestionEvent where
-  toBSON event =
+  toBSON EditListQuestionEvent {..} =
     [ "eventType" BSON.=: "EditQuestionEvent"
     , "questionType" BSON.=: "ListQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "expertUuids" BSON.=: (event ^. expertUuids)
-    , "referenceUuids" BSON.=: (event ^. referenceUuids)
-    , "itemTemplateTitle" BSON.=: (event ^. itemTemplateTitle)
-    , "itemTemplateQuestionUuids" BSON.=: (event ^. itemTemplateQuestionUuids)
+    , "uuid" BSON.=: _editListQuestionEventUuid
+    , "parentUuid" BSON.=: _editListQuestionEventParentUuid
+    , "entityUuid" BSON.=: _editListQuestionEventEntityUuid
+    , "title" BSON.=: _editListQuestionEventTitle
+    , "text" BSON.=: _editListQuestionEventText
+    , "requiredLevel" BSON.=: _editListQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _editListQuestionEventTagUuids
+    , "expertUuids" BSON.=: _editListQuestionEventExpertUuids
+    , "referenceUuids" BSON.=: _editListQuestionEventReferenceUuids
+    , "itemTemplateTitle" BSON.=: _editListQuestionEventItemTemplateTitle
+    , "itemTemplateQuestionUuids" BSON.=: _editListQuestionEventItemTemplateQuestionUuids
     ]
 
 instance FromBSON EditListQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qExpertUuids <- BSON.lookup "expertUuids" doc
-    qReferenceUuids <- BSON.lookup "referenceUuids" doc
-    qItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
-    qItemTemplateQuestionUuids <- BSON.lookup "itemTemplateQuestionUuids" doc
-    return
-      EditListQuestionEvent
-      { _editListQuestionEventUuid = qUuid
-      , _editListQuestionEventPath = qPath
-      , _editListQuestionEventQuestionUuid = qQuestionUuid
-      , _editListQuestionEventTitle = qTitle
-      , _editListQuestionEventText = qText
-      , _editListQuestionEventRequiredLevel = qRequiredLevel
-      , _editListQuestionEventTagUuids = qTagUuids
-      , _editListQuestionEventExpertUuids = qExpertUuids
-      , _editListQuestionEventReferenceUuids = qReferenceUuids
-      , _editListQuestionEventItemTemplateTitle = qItemTemplateTitle
-      , _editListQuestionEventItemTemplateQuestionUuids = qItemTemplateQuestionUuids
-      }
+    _editListQuestionEventUuid <- BSON.lookup "uuid" doc
+    _editListQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editListQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editListQuestionEventTitle <- BSON.lookup "title" doc
+    _editListQuestionEventText <- BSON.lookup "text" doc
+    _editListQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _editListQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _editListQuestionEventExpertUuids <- BSON.lookup "expertUuids" doc
+    _editListQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _editListQuestionEventItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
+    _editListQuestionEventItemTemplateQuestionUuids <- BSON.lookup "itemTemplateQuestionUuids" doc
+    return EditListQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditValueQuestionEvent where
-  toBSON event =
+  toBSON EditValueQuestionEvent {..} =
     [ "eventType" BSON.=: "EditQuestionEvent"
     , "questionType" BSON.=: "ValueQuestion"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
-    , "title" BSON.=: (event ^. title)
-    , "text" BSON.=: (event ^. text)
-    , "requiredLevel" BSON.=: (event ^. requiredLevel)
-    , "tagUuids" BSON.=: (event ^. tagUuids)
-    , "expertUuids" BSON.=: (event ^. expertUuids)
-    , "referenceUuids" BSON.=: (event ^. referenceUuids)
-    , "valueType" BSON.=: event ^. valueType
+    , "uuid" BSON.=: _editValueQuestionEventUuid
+    , "parentUuid" BSON.=: _editValueQuestionEventParentUuid
+    , "entityUuid" BSON.=: _editValueQuestionEventEntityUuid
+    , "title" BSON.=: _editValueQuestionEventTitle
+    , "text" BSON.=: _editValueQuestionEventText
+    , "requiredLevel" BSON.=: _editValueQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _editValueQuestionEventTagUuids
+    , "expertUuids" BSON.=: _editValueQuestionEventExpertUuids
+    , "referenceUuids" BSON.=: _editValueQuestionEventReferenceUuids
+    , "valueType" BSON.=: _editValueQuestionEventValueType
     ]
 
 instance FromBSON EditValueQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    qTitle <- BSON.lookup "title" doc
-    qText <- BSON.lookup "text" doc
-    qRequiredLevel <- BSON.lookup "requiredLevel" doc
-    qTagUuids <- BSON.lookup "tagUuids" doc
-    qExpertUuids <- BSON.lookup "expertUuids" doc
-    qReferenceUuids <- BSON.lookup "referenceUuids" doc
-    qValueType <- BSON.lookup "valueType" doc
-    return
-      EditValueQuestionEvent
-      { _editValueQuestionEventUuid = qUuid
-      , _editValueQuestionEventPath = qPath
-      , _editValueQuestionEventQuestionUuid = qQuestionUuid
-      , _editValueQuestionEventTitle = qTitle
-      , _editValueQuestionEventText = qText
-      , _editValueQuestionEventRequiredLevel = qRequiredLevel
-      , _editValueQuestionEventTagUuids = qTagUuids
-      , _editValueQuestionEventExpertUuids = qExpertUuids
-      , _editValueQuestionEventReferenceUuids = qReferenceUuids
-      , _editValueQuestionEventValueType = qValueType
-      }
+    _editValueQuestionEventUuid <- BSON.lookup "uuid" doc
+    _editValueQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editValueQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editValueQuestionEventTitle <- BSON.lookup "title" doc
+    _editValueQuestionEventText <- BSON.lookup "text" doc
+    _editValueQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _editValueQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _editValueQuestionEventExpertUuids <- BSON.lookup "expertUuids" doc
+    _editValueQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _editValueQuestionEventValueType <- BSON.lookup "valueType" doc
+    return EditValueQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditIntegrationQuestionEvent where
@@ -322,8 +253,8 @@ instance ToBSON EditIntegrationQuestionEvent where
     [ "eventType" BSON.=: "EditQuestionEvent"
     , "questionType" BSON.=: "IntegrationQuestion"
     , "uuid" BSON.=: _editIntegrationQuestionEventUuid
-    , "path" BSON.=: _editIntegrationQuestionEventPath
-    , "questionUuid" BSON.=: _editIntegrationQuestionEventQuestionUuid
+    , "parentUuid" BSON.=: _editIntegrationQuestionEventParentUuid
+    , "entityUuid" BSON.=: _editIntegrationQuestionEventEntityUuid
     , "title" BSON.=: _editIntegrationQuestionEventTitle
     , "text" BSON.=: _editIntegrationQuestionEventText
     , "requiredLevel" BSON.=: _editIntegrationQuestionEventRequiredLevel
@@ -337,8 +268,8 @@ instance ToBSON EditIntegrationQuestionEvent where
 instance FromBSON EditIntegrationQuestionEvent where
   fromBSON doc = do
     _editIntegrationQuestionEventUuid <- BSON.lookup "uuid" doc
-    _editIntegrationQuestionEventPath <- BSON.lookup "path" doc
-    _editIntegrationQuestionEventQuestionUuid <- BSON.lookup "questionUuid" doc
+    _editIntegrationQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editIntegrationQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
     _editIntegrationQuestionEventTitle <- BSON.lookup "title" doc
     _editIntegrationQuestionEventText <- BSON.lookup "text" doc
     _editIntegrationQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
@@ -353,21 +284,16 @@ instance FromBSON EditIntegrationQuestionEvent where
 -- DELETE QUESTION EVENT ---
 -- -------------------------
 instance ToBSON DeleteQuestionEvent where
-  toBSON event =
+  toBSON DeleteQuestionEvent {..} =
     [ "eventType" BSON.=: "DeleteQuestionEvent"
-    , "uuid" BSON.=: (event ^. uuid)
-    , "path" BSON.=: (event ^. path)
-    , "questionUuid" BSON.=: (event ^. questionUuid)
+    , "uuid" BSON.=: _deleteQuestionEventUuid
+    , "parentUuid" BSON.=: _deleteQuestionEventParentUuid
+    , "entityUuid" BSON.=: _deleteQuestionEventEntityUuid
     ]
 
 instance FromBSON DeleteQuestionEvent where
   fromBSON doc = do
-    qUuid <- BSON.lookup "uuid" doc
-    qPath <- BSON.lookup "path" doc
-    qQuestionUuid <- BSON.lookup "questionUuid" doc
-    return
-      DeleteQuestionEvent
-      { _deleteQuestionEventUuid = qUuid
-      , _deleteQuestionEventPath = qPath
-      , _deleteQuestionEventQuestionUuid = qQuestionUuid
-      }
+    _deleteQuestionEventUuid <- BSON.lookup "uuid" doc
+    _deleteQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _deleteQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    return DeleteQuestionEvent {..}

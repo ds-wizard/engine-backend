@@ -4,11 +4,11 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.KnowledgeModel.KnowledgeModel
 import Model.Level.Level
 import Model.Organization.Organization
 import Model.Package.Package
+import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
 import Model.User.User
 
@@ -34,8 +34,9 @@ data DataManagementPlan = DataManagementPlan
   , _dataManagementPlanConfig :: DataManagementPlanConfig
   , _dataManagementPlanQuestionnaireUuid :: String
   , _dataManagementPlanQuestionnaireName :: String
+  , _dataManagementPlanQuestionnaireReplies :: [Reply]
   , _dataManagementPlanLevel :: Int
-  , _dataManagementPlanFilledKnowledgeModel :: FilledKnowledgeModel
+  , _dataManagementPlanKnowledgeModel :: KnowledgeModel
   , _dataManagementPlanMetrics :: [Metric]
   , _dataManagementPlanLevels :: [Level]
   , _dataManagementPlanReport :: Report
@@ -53,7 +54,7 @@ instance Eq DataManagementPlan where
     _dataManagementPlanQuestionnaireUuid a == _dataManagementPlanQuestionnaireUuid b &&
     _dataManagementPlanQuestionnaireName a == _dataManagementPlanQuestionnaireName b &&
     _dataManagementPlanLevel a == _dataManagementPlanLevel b &&
-    _dataManagementPlanFilledKnowledgeModel a == _dataManagementPlanFilledKnowledgeModel b &&
+    _dataManagementPlanKnowledgeModel a == _dataManagementPlanKnowledgeModel b &&
     _dataManagementPlanMetrics a == _dataManagementPlanMetrics b &&
     _dataManagementPlanLevels a == _dataManagementPlanLevels b &&
     _dataManagementPlanReport a == _dataManagementPlanReport b &&

@@ -1,191 +1,90 @@
-module Model.KnowledgeModel.KnowledgeModelAccessors
-  -- Chapter
-  ( getAllChapters
-  , getChapterByUuid
-  , isThereAnyChapterWithGivenUuid
-  -- Tag
-  , getAllTags
-  , getTagByUuid
-  , isThereAnyTagWithGivenUuid
-  -- Integration
-  , getAllIntegrations
-  , getIntegrationByUuid
-  , isThereAnyIntegrationWithGivenUuid
-  -- Question
-  , getAllQuestions
-  , getQuestionByUuid
-  , getAllQuestionsForChapterUuid
-  , getAllQuestionsForAnswerUuid
-  , isThereAnyQuestionWithGivenUuid
-  -- Expert
-  , getAllExperts
-  , getExpertByUuid
-  , getAllExpertsForQuestionUuid
-  , isThereAnyExpertWithGivenUuid
-  -- Reference
-  , getAllReferences
-  , getReferenceByUuid
-  , getAllReferencesForQuestionUuid
-  , isThereAnyReferenceWithGivenUuid
-  -- Answer
-  , getAllAnswers
-  , getAnswerByUuid
-  , getAllAnswersForQuestionUuid
-  , isThereAnyAnswerWithGivenUuid
-  -- ItemTemplateQuestion
-  , getAllItemTemplateQuestionsForQuestionUuid
-  ) where
+module Model.KnowledgeModel.KnowledgeModelAccessors where
 
 import Control.Lens
-import Data.List
-import Data.UUID
+import qualified Data.Map as M
+import qualified Data.UUID as U
 
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelLenses
 
 -- -------------------
--- CHAPTERS ----------
--- -------------------
-getAllChapters :: KnowledgeModel -> [Chapter]
-getAllChapters km = km ^. chapters
-
-getChapterByUuid :: KnowledgeModel -> UUID -> Maybe Chapter
-getChapterByUuid km chapterUuid = find (\ch -> ch ^. uuid == chapterUuid) (getAllChapters km)
-
-isThereAnyChapterWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyChapterWithGivenUuid km chUuid = chUuid `elem` (getChapterUuid <$> getAllChapters km)
-  where
-    getChapterUuid chapter = chapter ^. uuid
-
--- -------------------
--- TAGS --------------
--- -------------------
-getAllTags :: KnowledgeModel -> [Tag]
-getAllTags km = km ^. tags
-
-getTagByUuid :: KnowledgeModel -> UUID -> Maybe Tag
-getTagByUuid km tagUuid = find (\t -> t ^. uuid == tagUuid) (getAllTags km)
-
-isThereAnyTagWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyTagWithGivenUuid km tagUuid = tagUuid `elem` (getTagByUuid <$> getAllTags km)
-  where
-    getTagByUuid tag = tag ^. uuid
-
--- -------------------
--- INTEGRATIONS ------
--- -------------------
-getAllIntegrations :: KnowledgeModel -> [Integration]
-getAllIntegrations km = km ^. integrations
-
-getIntegrationByUuid :: KnowledgeModel -> UUID -> Maybe Integration
-getIntegrationByUuid km integrationUuid = find (\i -> i ^. uuid == integrationUuid) (getAllIntegrations km)
-
-isThereAnyIntegrationWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyIntegrationWithGivenUuid km integrationUuid =
-  integrationUuid `elem` (getIntegrationByUuid <$> getAllIntegrations km)
-  where
-    getIntegrationByUuid integration = integration ^. uuid
-
--- -------------------
 -- QUESTIONS----------
 -- -------------------
-getAllQuestions :: KnowledgeModel -> [Question]
-getAllQuestions km = go (km ^.. chapters . traverse . questions . traverse)
+getQuestionUuidsForChapterUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getQuestionUuidsForChapterUuid km chUuid =
+  case M.lookup chUuid (km ^. chaptersM) of
+    Just chapter -> chapter ^. questionUuids
+    Nothing -> []
+
+getQuestionsForChapterUuid :: KnowledgeModel -> U.UUID -> [Question]
+getQuestionsForChapterUuid km chUuid =
+  case M.lookup chUuid (km ^. chaptersM) of
+    Just ch -> foldl go [] (ch ^. questionUuids)
+    Nothing -> []
   where
-    go :: [Question] -> [Question]
-    go [] = []
-    go questions = questions ++ (go . concat $ getNestedQuestions <$> questions)
-    getNestedQuestions :: Question -> [Question]
-    getNestedQuestions (ListQuestion' q) = q ^. itemTemplateQuestions
-    getNestedQuestions (OptionsQuestion' q) = concat $ _answerFollowUps <$> (q ^. answers)
-    getNestedQuestions _ = []
+    go acc qUuid =
+      case M.lookup (qUuid) (km ^. questionsM) of
+        Just q -> acc ++ [q]
+        Nothing -> acc
 
-getQuestionByUuid :: KnowledgeModel -> UUID -> Maybe Question
-getQuestionByUuid km questionUuid = find (\q -> getQuestionUuid q == questionUuid) (getAllQuestions km)
-
-getAllQuestionsForChapterUuid :: KnowledgeModel -> UUID -> [Question]
-getAllQuestionsForChapterUuid km chapterUuid =
-  case getChapterByUuid km chapterUuid of
-    Just chapter -> chapter ^. questions
+getQuestionUuidsForAnswerUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getQuestionUuidsForAnswerUuid km ansUuid =
+  case M.lookup ansUuid (km ^. answersM) of
+    Just ans -> ans ^. followUpUuids
     Nothing -> []
 
-getAllQuestionsForAnswerUuid :: KnowledgeModel -> UUID -> [Question]
-getAllQuestionsForAnswerUuid km answerUuid =
-  case getAnswerByUuid km answerUuid of
-    Just answer -> answer ^. followUps
+getQuestionsForAnswerUuid :: KnowledgeModel -> U.UUID -> [Question]
+getQuestionsForAnswerUuid km ansUuid =
+  case M.lookup ansUuid (km ^. answersM) of
+    Just ans -> foldl go [] (ans ^. followUpUuids)
+    Nothing -> []
+  where
+    go acc qUuid =
+      case M.lookup (qUuid) (km ^. questionsM) of
+        Just q -> acc ++ [q]
+        Nothing -> acc
+
+getItemTemplateQuestionUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getItemTemplateQuestionUuidsForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just (ListQuestion' q) -> q ^. itemTemplateQuestionUuids
     Nothing -> []
 
-isThereAnyQuestionWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyQuestionWithGivenUuid km qUuid = qUuid `elem` (getQuestionUuid <$> getAllQuestions km)
+getItemTemplateQuestionsForQuestionUuid :: KnowledgeModel -> U.UUID -> [Question]
+getItemTemplateQuestionsForQuestionUuid km qUuid =
+  case M.lookup qUuid (km ^. questionsM) of
+    Just q -> foldl go [] (q ^. itemTemplateQuestionUuids')
+    Nothing -> []
+  where
+    go acc itqUuid =
+      case M.lookup (itqUuid) (km ^. questionsM) of
+        Just itq -> acc ++ [itq]
+        Nothing -> acc
 
 -- -------------------
 -- EXPERT ------------
 -- -------------------
-getAllExperts :: KnowledgeModel -> [Expert]
-getAllExperts km = concat $ getExperts <$> getAllQuestions km
-
-getExpertByUuid :: KnowledgeModel -> UUID -> Maybe Expert
-getExpertByUuid km expertUuid = find (\exp -> exp ^. uuid == expertUuid) (getAllExperts km)
-
-getAllExpertsForQuestionUuid :: KnowledgeModel -> UUID -> [Expert]
-getAllExpertsForQuestionUuid km questionUuid =
-  case getQuestionByUuid km questionUuid of
-    Just question -> getExperts question
+getExpertUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getExpertUuidsForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just question -> question ^. expertUuids'
     Nothing -> []
-
-isThereAnyExpertWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyExpertWithGivenUuid km expUuid = expUuid `elem` (getExpertUuid <$> getAllExperts km)
-  where
-    getExpertUuid expert = expert ^. uuid
 
 -- -------------------
 -- REFERENCE ---------
 -- -------------------
-getAllReferences :: KnowledgeModel -> [Reference]
-getAllReferences km = concat $ getReferences <$> getAllQuestions km
-
-getReferenceByUuid :: KnowledgeModel -> UUID -> Maybe Reference
-getReferenceByUuid km refUuid = find (\ref -> (getReferenceUuid ref) == refUuid) (getAllReferences km)
-
-getAllReferencesForQuestionUuid :: KnowledgeModel -> UUID -> [Reference]
-getAllReferencesForQuestionUuid km questionUuid =
-  case getQuestionByUuid km questionUuid of
-    Just question -> getReferences question
+getReferenceUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getReferenceUuidsForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just question -> question ^. referenceUuids'
     Nothing -> []
-
-isThereAnyReferenceWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyReferenceWithGivenUuid km refUuid = refUuid `elem` (getReferenceUuid <$> getAllReferences km)
 
 -- -------------------
 -- ANSWER ------------
 -- -------------------
-getAllAnswers :: KnowledgeModel -> [Answer]
-getAllAnswers km = concat $ getAnswer <$> getAllQuestions km
-  where
-    getAnswer :: Question -> [Answer]
-    getAnswer (OptionsQuestion' q) = q ^. answers
-    getAnswer _ = []
-
-getAnswerByUuid :: KnowledgeModel -> UUID -> Maybe Answer
-getAnswerByUuid km answerUuid = find (\ans -> ans ^. uuid == answerUuid) (getAllAnswers km)
-
-getAllAnswersForQuestionUuid :: KnowledgeModel -> UUID -> [Answer]
-getAllAnswersForQuestionUuid km questionUuid =
-  case getQuestionByUuid km questionUuid of
-    Just (OptionsQuestion' q) -> q ^. answers
-    _ -> []
-
-isThereAnyAnswerWithGivenUuid :: KnowledgeModel -> UUID -> Bool
-isThereAnyAnswerWithGivenUuid km ansUuid = ansUuid `elem` (getAnswerUuid <$> getAllAnswers km)
-  where
-    getAnswerUuid answer = answer ^. uuid
-
--- -------------------------------
--- ITEM TEMPLATE QUESTION --------
--------------------------------
-getAllItemTemplateQuestionsForQuestionUuid :: KnowledgeModel -> UUID -> [Question]
-getAllItemTemplateQuestionsForQuestionUuid km qUuid =
-  case getQuestionByUuid km qUuid of
-    Just (ListQuestion' q) -> q ^. itemTemplateQuestions
+getAnswerUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getAnswerUuidsForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just (OptionsQuestion' q) -> q ^. answerUuids
     _ -> []

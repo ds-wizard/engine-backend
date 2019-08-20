@@ -4,7 +4,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.Event.EventFieldDTO
-import Api.Resource.KnowledgeModel.PathDTO
 
 data AddReferenceEventDTO
   = AddResourcePageReferenceEventDTO' AddResourcePageReferenceEventDTO
@@ -14,23 +13,23 @@ data AddReferenceEventDTO
 
 data AddResourcePageReferenceEventDTO = AddResourcePageReferenceEventDTO
   { _addResourcePageReferenceEventDTOUuid :: U.UUID
-  , _addResourcePageReferenceEventDTOPath :: PathDTO
-  , _addResourcePageReferenceEventDTOReferenceUuid :: U.UUID
+  , _addResourcePageReferenceEventDTOParentUuid :: U.UUID
+  , _addResourcePageReferenceEventDTOEntityUuid :: U.UUID
   , _addResourcePageReferenceEventDTOShortUuid :: String
   } deriving (Show, Eq, Generic)
 
 data AddURLReferenceEventDTO = AddURLReferenceEventDTO
   { _addURLReferenceEventDTOUuid :: U.UUID
-  , _addURLReferenceEventDTOPath :: PathDTO
-  , _addURLReferenceEventDTOReferenceUuid :: U.UUID
+  , _addURLReferenceEventDTOParentUuid :: U.UUID
+  , _addURLReferenceEventDTOEntityUuid :: U.UUID
   , _addURLReferenceEventDTOUrl :: String
   , _addURLReferenceEventDTOLabel :: String
   } deriving (Show, Eq, Generic)
 
 data AddCrossReferenceEventDTO = AddCrossReferenceEventDTO
   { _addCrossReferenceEventDTOUuid :: U.UUID
-  , _addCrossReferenceEventDTOPath :: PathDTO
-  , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
+  , _addCrossReferenceEventDTOParentUuid :: U.UUID
+  , _addCrossReferenceEventDTOEntityUuid :: U.UUID
   , _addCrossReferenceEventDTOTargetUuid :: U.UUID
   , _addCrossReferenceEventDTODescription :: String
   } deriving (Show, Eq, Generic)
@@ -44,23 +43,23 @@ data EditReferenceEventDTO
 
 data EditResourcePageReferenceEventDTO = EditResourcePageReferenceEventDTO
   { _editResourcePageReferenceEventDTOUuid :: U.UUID
-  , _editResourcePageReferenceEventDTOPath :: PathDTO
-  , _editResourcePageReferenceEventDTOReferenceUuid :: U.UUID
+  , _editResourcePageReferenceEventDTOParentUuid :: U.UUID
+  , _editResourcePageReferenceEventDTOEntityUuid :: U.UUID
   , _editResourcePageReferenceEventDTOShortUuid :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data EditURLReferenceEventDTO = EditURLReferenceEventDTO
   { _editURLReferenceEventDTOUuid :: U.UUID
-  , _editURLReferenceEventDTOPath :: PathDTO
-  , _editURLReferenceEventDTOReferenceUuid :: U.UUID
+  , _editURLReferenceEventDTOParentUuid :: U.UUID
+  , _editURLReferenceEventDTOEntityUuid :: U.UUID
   , _editURLReferenceEventDTOUrl :: EventFieldDTO String
   , _editURLReferenceEventDTOLabel :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
 
 data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
   { _editCrossReferenceEventDTOUuid :: U.UUID
-  , _editCrossReferenceEventDTOPath :: PathDTO
-  , _editCrossReferenceEventDTOReferenceUuid :: U.UUID
+  , _editCrossReferenceEventDTOParentUuid :: U.UUID
+  , _editCrossReferenceEventDTOEntityUuid :: U.UUID
   , _editCrossReferenceEventDTOTargetUuid :: EventFieldDTO U.UUID
   , _editCrossReferenceEventDTODescription :: EventFieldDTO String
   } deriving (Show, Eq, Generic)
@@ -68,6 +67,6 @@ data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
 -- --------------------------------------------
 data DeleteReferenceEventDTO = DeleteReferenceEventDTO
   { _deleteReferenceEventDTOUuid :: U.UUID
-  , _deleteReferenceEventDTOPath :: PathDTO
-  , _deleteReferenceEventDTOReferenceUuid :: U.UUID
+  , _deleteReferenceEventDTOParentUuid :: U.UUID
+  , _deleteReferenceEventDTOEntityUuid :: U.UUID
   } deriving (Show, Eq, Generic)

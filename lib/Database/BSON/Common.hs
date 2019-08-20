@@ -3,6 +3,7 @@ module Database.BSON.Common where
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Map (Map, fromList, toList)
+import Data.Maybe (fromJust)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
@@ -26,3 +27,12 @@ instance ToBSON (Map String String) where
 
 instance FromBSON (Map String String) where
   fromBSON doc = Just . fromList . fmap (\f -> (T.unpack . BSON.label $ f, BSON.typed . BSON.value $ f)) $ doc
+
+instance ToBSON a => ToBSON (Map U.UUID a) where
+  toBSON m = fmap (\(k, v) -> (U.toText $ k) BSON.=: toBSON v) (toList m)
+
+instance FromBSON a => FromBSON (Map U.UUID a) where
+  fromBSON doc =
+    Just .
+    fromList . fmap (\f -> (fromJust . U.fromText . BSON.label $ f, fromJust . fromBSON . BSON.typed . BSON.value $ f)) $
+    doc

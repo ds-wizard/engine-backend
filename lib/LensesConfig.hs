@@ -21,7 +21,6 @@ import Api.Resource.Event.ReferenceEventDTO
 import Api.Resource.Event.TagEventDTO
 import Api.Resource.Feedback.FeedbackCreateDTO
 import Api.Resource.Feedback.FeedbackDTO
-import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
@@ -97,7 +96,6 @@ import Model.Event.Reference.ReferenceEvent
 import Model.Event.Tag.TagEvent
 import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
-import Model.FilledKnowledgeModel.FilledKnowledgeModel
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.Path
@@ -254,30 +252,13 @@ makeFields ''Feedback
 
 makeFields ''SimpleIssue
 
--- Model / FilledKnowledgeModel
-makeFields ''FilledKnowledgeModel
-
-makeFields ''FilledChapter
-
-makeFields ''FilledQuestion
-
-makeFields ''FilledOptionsQuestion
-
-makeFields ''FilledListQuestion
-
-makeFields ''FilledValueQuestion
-
-makeFields ''FilledIntegrationQuestion
-
-makeFields ''FilledAnswer
-
-makeFields ''FilledAnswerItem
-
 -- Model / Http
 makeFields ''HttpRequest
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
+
+makeFields ''KnowledgeModelEntities
 
 makeFields ''Chapter
 
@@ -477,25 +458,6 @@ makeFields ''FeedbackDTO
 
 makeFields ''FeedbackCreateDTO
 
--- Api / Resource / FilledKnowledgeModel
-makeFields ''FilledKnowledgeModelDTO
-
-makeFields ''FilledChapterDTO
-
-makeFields ''FilledQuestionDTO
-
-makeFields ''FilledOptionsQuestionDTO
-
-makeFields ''FilledListQuestionDTO
-
-makeFields ''FilledValueQuestionDTO
-
-makeFields ''FilledIntegrationQuestionDTO
-
-makeFields ''FilledAnswerDTO
-
-makeFields ''FilledAnswerItemDTO
-
 -- Api / Resource / Info
 makeFields ''InfoDTO
 
@@ -503,6 +465,8 @@ makeFields ''InfoDTO
 makeFields ''KnowledgeModelChangeDTO
 
 makeFields ''KnowledgeModelDTO
+
+makeFields ''KnowledgeModelEntitiesDTO
 
 makeFields ''ChapterDTO
 

@@ -6,15 +6,10 @@ import Data.Maybe
 import qualified Data.UUID as U
 
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-       as FA
 import Database.Migration.Development.KnowledgeModel.Data.Experts
-       as FE
 import Database.Migration.Development.KnowledgeModel.Data.Integrations
-       as FI
 import Database.Migration.Development.KnowledgeModel.Data.References
-       as FR
 import Database.Migration.Development.KnowledgeModel.Data.Tags
-       as FT
 import LensesConfig
 import Model.KnowledgeModel.KnowledgeModel
 
@@ -28,9 +23,9 @@ question1 =
   , _valueQuestionTitle = "First Question"
   , _valueQuestionText = Just "Here is a description of question"
   , _valueQuestionRequiredLevel = Just 1
-  , _valueQuestionTagUuids = [FT.tagDataScience ^. uuid]
-  , _valueQuestionReferences = []
-  , _valueQuestionExperts = []
+  , _valueQuestionTagUuids = [tagDataScience ^. uuid]
+  , _valueQuestionReferenceUuids = []
+  , _valueQuestionExpertUuids = []
   , _valueQuestionValueType = StringQuestionValueType
   }
 
@@ -45,8 +40,8 @@ question1Edited =
   , _valueQuestionText = question1 ^. text
   , _valueQuestionRequiredLevel = question1 ^. requiredLevel
   , _valueQuestionTagUuids = question1 ^. tagUuids
-  , _valueQuestionReferences = question1 ^. references
-  , _valueQuestionExperts = question1 ^. experts
+  , _valueQuestionReferenceUuids = question1 ^. referenceUuids
+  , _valueQuestionExpertUuids = question1 ^. expertUuids
   , _valueQuestionValueType = question1 ^. valueType
   }
 
@@ -61,9 +56,9 @@ question1WithNewType =
   , _optionsQuestionText = question1 ^. text
   , _optionsQuestionRequiredLevel = question1 ^. requiredLevel
   , _optionsQuestionTagUuids = question1 ^. tagUuids
-  , _optionsQuestionReferences = question1 ^. references
-  , _optionsQuestionExperts = question1 ^. experts
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = question1 ^. referenceUuids
+  , _optionsQuestionExpertUuids = question1 ^. expertUuids
+  , _optionsQuestionAnswerUuids = []
   }
 
 -- -----------------------------------
@@ -78,10 +73,10 @@ question2 =
   , _optionsQuestionText =
       Just "Are there any data sets available in the world that are relevant to your planned research?"
   , _optionsQuestionRequiredLevel = Just 2
-  , _optionsQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
-  , _optionsQuestionReferences = [FR.referenceCh1', FR.referenceCh2']
-  , _optionsQuestionExperts = [FE.expertAlbert, FE.expertNikola]
-  , _optionsQuestionAnswers = [FA.q2_answerNo, FA.q2_answerYes]
+  , _optionsQuestionTagUuids = [tagBioInformatic ^. uuid]
+  , _optionsQuestionReferenceUuids = [km1_ch1_q2_r1 ^. uuid, km1_ch1_q2_r2 ^. uuid]
+  , _optionsQuestionExpertUuids = [km1_ch1_q2_eAlbert ^. uuid, km1_ch1_q2_eNikola ^. uuid]
+  , _optionsQuestionAnswerUuids = [q2_answerNo ^. uuid, q2_answerYes ^. uuid]
   }
 
 question2Edited' :: Question
@@ -94,10 +89,10 @@ question2Edited =
   , _optionsQuestionTitle = "EDITED: Second Question"
   , _optionsQuestionText = Just "EDITED: Some long description"
   , _optionsQuestionRequiredLevel = Just 3
-  , _optionsQuestionTagUuids = [FT.tagDataScience ^. uuid, FT.tagBioInformatic ^. uuid]
-  , _optionsQuestionReferences = [FR.referenceCh2', FR.referenceCh1']
-  , _optionsQuestionExperts = [FE.expertNikola, FE.expertAlbert]
-  , _optionsQuestionAnswers = [FA.q2_answerYes, FA.q2_answerNo]
+  , _optionsQuestionTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
+  , _optionsQuestionReferenceUuids = [km1_ch1_q2_r2 ^. uuid, km1_ch1_q2_r1 ^. uuid]
+  , _optionsQuestionExpertUuids = [km1_ch1_q2_eNikola ^. uuid, km1_ch1_q2_eAlbert ^. uuid]
+  , _optionsQuestionAnswerUuids = [q2_answerYes ^. uuid, q2_answerNo ^. uuid]
   }
 
 question2WithNewType' :: Question
@@ -111,10 +106,10 @@ question2WithNewType =
   , _listQuestionText = question2 ^. text
   , _listQuestionRequiredLevel = question2 ^. requiredLevel
   , _listQuestionTagUuids = question2 ^. tagUuids
-  , _listQuestionReferences = question2 ^. references
-  , _listQuestionExperts = question2 ^. experts
+  , _listQuestionReferenceUuids = question2 ^. referenceUuids
+  , _listQuestionExpertUuids = question2 ^. expertUuids
   , _listQuestionItemTemplateTitle = "EDITED: Template Title"
-  , _listQuestionItemTemplateQuestions = []
+  , _listQuestionItemTemplateQuestionUuids = []
   }
 
 question2Plain' :: Question
@@ -128,9 +123,9 @@ question2Plain =
   , _optionsQuestionText = question2 ^. text
   , _optionsQuestionRequiredLevel = question2 ^. requiredLevel
   , _optionsQuestionTagUuids = question2 ^. tagUuids
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 question3' :: Question
@@ -144,9 +139,9 @@ question3 =
   , _optionsQuestionText = Just "Some long description"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = [FA.q3_answerNo, FA.q3_answerYes]
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = [q3_answerNo ^. uuid, q3_answerYes ^. uuid]
   }
 
 question3Plain' :: Question
@@ -160,9 +155,9 @@ question3Plain =
   , _optionsQuestionText = Just "Some long description"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 question4' :: Question
@@ -175,11 +170,11 @@ question4 =
   , _listQuestionTitle = "Fourth Question"
   , _listQuestionText = Just "Some nice description"
   , _listQuestionRequiredLevel = Nothing
-  , _listQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
-  , _listQuestionReferences = []
-  , _listQuestionExperts = []
+  , _listQuestionTagUuids = [tagBioInformatic ^. uuid]
+  , _listQuestionReferenceUuids = []
+  , _listQuestionExpertUuids = []
   , _listQuestionItemTemplateTitle = "Template Title"
-  , _listQuestionItemTemplateQuestions = [q4_it1_question5', q4_it1_question6']
+  , _listQuestionItemTemplateQuestionUuids = [q4_it1_question5 ^. uuid, q4_it1_question6 ^. uuid]
   }
 
 question4Edited' :: Question
@@ -193,10 +188,10 @@ question4Edited =
   , _listQuestionText = Just $ "EDITED: " ++ (fromJust $ question4 ^. text)
   , _listQuestionRequiredLevel = Just 2
   , _listQuestionTagUuids = question4 ^. tagUuids
-  , _listQuestionReferences = question4 ^. references
-  , _listQuestionExperts = question4 ^. experts
+  , _listQuestionReferenceUuids = question4 ^. referenceUuids
+  , _listQuestionExpertUuids = question4 ^. expertUuids
   , _listQuestionItemTemplateTitle = "EDITED: Template Title"
-  , _listQuestionItemTemplateQuestions = [q4_it1_question6', q4_it1_question5']
+  , _listQuestionItemTemplateQuestionUuids = [q4_it1_question6 ^. uuid, q4_it1_question5 ^. uuid]
   }
 
 question4WithNewType' :: Question
@@ -210,9 +205,9 @@ question4WithNewType =
   , _integrationQuestionText = question4 ^. text
   , _integrationQuestionRequiredLevel = question4 ^. requiredLevel
   , _integrationQuestionTagUuids = question4 ^. tagUuids
-  , _integrationQuestionReferences = question4 ^. references
-  , _integrationQuestionExperts = question4 ^. experts
-  , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
+  , _integrationQuestionReferenceUuids = question4 ^. referenceUuids
+  , _integrationQuestionExpertUuids = question4 ^. expertUuids
+  , _integrationQuestionIntegrationUuid = ontologyPortal ^. uuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "nl")]
   }
 
@@ -227,10 +222,10 @@ question4Plain =
   , _listQuestionText = question4 ^. text
   , _listQuestionRequiredLevel = question4 ^. requiredLevel
   , _listQuestionTagUuids = question4 ^. tagUuids
-  , _listQuestionReferences = question4 ^. references
-  , _listQuestionExperts = question4 ^. experts
+  , _listQuestionReferenceUuids = question4 ^. referenceUuids
+  , _listQuestionExpertUuids = question4 ^. expertUuids
   , _listQuestionItemTemplateTitle = "Template Title"
-  , _listQuestionItemTemplateQuestions = []
+  , _listQuestionItemTemplateQuestionUuids = []
   }
 
 q4_it1_question5' :: Question
@@ -243,11 +238,11 @@ q4_it1_question5 =
   , _listQuestionTitle = "Fifth Question"
   , _listQuestionText = Just "Some funny description"
   , _listQuestionRequiredLevel = Just 2
-  , _listQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
-  , _listQuestionReferences = []
-  , _listQuestionExperts = []
+  , _listQuestionTagUuids = [tagBioInformatic ^. uuid]
+  , _listQuestionReferenceUuids = []
+  , _listQuestionExpertUuids = []
   , _listQuestionItemTemplateTitle = "Template Title 2"
-  , _listQuestionItemTemplateQuestions = [q4_it1_q5_it2_question7', q4_it1_q5_it2_question8']
+  , _listQuestionItemTemplateQuestionUuids = [q4_it1_q5_it2_question7 ^. uuid, q4_it1_q5_it2_question8 ^. uuid]
   }
 
 q4_it1_question5Plain' :: Question
@@ -261,10 +256,10 @@ q4_it1_question5Plain =
   , _listQuestionText = q4_it1_question5 ^. text
   , _listQuestionRequiredLevel = Just 2
   , _listQuestionTagUuids = q4_it1_question5 ^. tagUuids
-  , _listQuestionReferences = q4_it1_question5 ^. references
-  , _listQuestionExperts = q4_it1_question5 ^. experts
+  , _listQuestionReferenceUuids = q4_it1_question5 ^. referenceUuids
+  , _listQuestionExpertUuids = q4_it1_question5 ^. expertUuids
   , _listQuestionItemTemplateTitle = q4_it1_question5 ^. itemTemplateTitle
-  , _listQuestionItemTemplateQuestions = []
+  , _listQuestionItemTemplateQuestionUuids = []
   }
 
 q4_it1_question5Edited' :: Question
@@ -278,10 +273,10 @@ q4_it1_question5Edited =
   , _listQuestionText = Just "EDITED: Some funny description"
   , _listQuestionRequiredLevel = Just 3
   , _listQuestionTagUuids = q4_it1_question5 ^. tagUuids
-  , _listQuestionReferences = q4_it1_question5 ^. references
-  , _listQuestionExperts = q4_it1_question5 ^. experts
+  , _listQuestionReferenceUuids = q4_it1_question5 ^. referenceUuids
+  , _listQuestionExpertUuids = q4_it1_question5 ^. expertUuids
   , _listQuestionItemTemplateTitle = "EDITED: Template Title 2"
-  , _listQuestionItemTemplateQuestions = [q4_it1_q5_it2_question8', q4_it1_q5_it2_question7']
+  , _listQuestionItemTemplateQuestionUuids = [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
   }
 
 q4_it1_question6' :: Question
@@ -295,9 +290,9 @@ q4_it1_question6 =
   , _optionsQuestionText = Just "Some non-funny description"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = [FR.referenceCh1', FR.referenceCh2']
-  , _optionsQuestionExperts = [FE.expertAlbert, FE.expertNikola]
-  , _optionsQuestionAnswers = [q4_it1_q6_answerNo, q4_it1_q6_answerYes]
+  , _optionsQuestionReferenceUuids = [km1_ch2_q6_r1 ^. uuid, km1_ch2_q6_r2 ^. uuid]
+  , _optionsQuestionExpertUuids = [km1_ch2_q6_eAlbert ^. uuid, km1_ch2_q6_eNikola ^. uuid]
+  , _optionsQuestionAnswerUuids = [q4_it1_q6_answerNo ^. uuid, q4_it1_q6_answerYes ^. uuid]
   }
 
 q4_it1_question6Edited' :: Question
@@ -311,9 +306,9 @@ q4_it1_question6Edited =
   , _optionsQuestionText = Just "Some non-funny description"
   , _optionsQuestionRequiredLevel = Nothing
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = [FR.referenceCh2', FR.referenceCh1']
-  , _optionsQuestionExperts = [FE.expertNikola, FE.expertAlbert]
-  , _optionsQuestionAnswers = [q4_it1_q6_answerYes, q4_it1_q6_answerNo]
+  , _optionsQuestionReferenceUuids = [km1_ch2_q6_r2 ^. uuid, km1_ch2_q6_r1 ^. uuid]
+  , _optionsQuestionExpertUuids = [km1_ch2_q6_eNikola ^. uuid, km1_ch2_q6_eAlbert ^. uuid]
+  , _optionsQuestionAnswerUuids = [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid]
   }
 
 q4_it1_q5_it2_question7' :: Question
@@ -327,8 +322,8 @@ q4_it1_q5_it2_question7 =
   , _valueQuestionText = Just "Some non-funny description"
   , _valueQuestionRequiredLevel = Just 2
   , _valueQuestionTagUuids = []
-  , _valueQuestionReferences = []
-  , _valueQuestionExperts = []
+  , _valueQuestionReferenceUuids = []
+  , _valueQuestionExpertUuids = []
   , _valueQuestionValueType = StringQuestionValueType
   }
 
@@ -343,8 +338,8 @@ q4_it1_q5_it2_question8 =
   , _valueQuestionText = Just "Some non-funny description"
   , _valueQuestionRequiredLevel = Just 2
   , _valueQuestionTagUuids = []
-  , _valueQuestionReferences = []
-  , _valueQuestionExperts = []
+  , _valueQuestionReferenceUuids = []
+  , _valueQuestionExpertUuids = []
   , _valueQuestionValueType = StringQuestionValueType
   }
 
@@ -358,10 +353,10 @@ question9 =
   , _integrationQuestionTitle = "Ninth Question"
   , _integrationQuestionText = Just "Some nice description"
   , _integrationQuestionRequiredLevel = Nothing
-  , _integrationQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
-  , _integrationQuestionReferences = []
-  , _integrationQuestionExperts = []
-  , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
+  , _integrationQuestionTagUuids = [tagBioInformatic ^. uuid]
+  , _integrationQuestionReferenceUuids = []
+  , _integrationQuestionExpertUuids = []
+  , _integrationQuestionIntegrationUuid = ontologyPortal ^. uuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "nl")]
   }
 
@@ -375,9 +370,9 @@ question9Edited =
   , _integrationQuestionTitle = "EDITED: " ++ (question9 ^. title)
   , _integrationQuestionText = Just $ "EDITED: " ++ (fromJust $ question9 ^. text)
   , _integrationQuestionRequiredLevel = Just 4
-  , _integrationQuestionTagUuids = [FT.tagDataScience ^. uuid]
-  , _integrationQuestionReferences = question9 ^. references
-  , _integrationQuestionExperts = question9 ^. experts
+  , _integrationQuestionTagUuids = [tagDataScience ^. uuid]
+  , _integrationQuestionReferenceUuids = question9 ^. referenceUuids
+  , _integrationQuestionExpertUuids = question9 ^. expertUuids
   , _integrationQuestionIntegrationUuid = question9 ^. integrationUuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "de")]
   }
@@ -393,8 +388,8 @@ question9PropsEdited =
   , _integrationQuestionText = question9 ^. text
   , _integrationQuestionRequiredLevel = question9 ^. requiredLevel
   , _integrationQuestionTagUuids = question9 ^. tagUuids
-  , _integrationQuestionReferences = question9 ^. references
-  , _integrationQuestionExperts = question9 ^. experts
+  , _integrationQuestionReferenceUuids = question9 ^. referenceUuids
+  , _integrationQuestionExpertUuids = question9 ^. expertUuids
   , _integrationQuestionIntegrationUuid = question9 ^. integrationUuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("language", "")]
   }
@@ -410,8 +405,8 @@ question9WithNewType =
   , _valueQuestionText = question9 ^. text
   , _valueQuestionRequiredLevel = question9 ^. requiredLevel
   , _valueQuestionTagUuids = question9 ^. tagUuids
-  , _valueQuestionReferences = question9 ^. references
-  , _valueQuestionExperts = question9 ^. experts
+  , _valueQuestionReferenceUuids = question9 ^. referenceUuids
+  , _valueQuestionExpertUuids = question9 ^. expertUuids
   , _valueQuestionValueType = DateQuestionValueType
   }
 
@@ -426,8 +421,8 @@ question9ConvertedToValue =
   , _valueQuestionText = question9 ^. text
   , _valueQuestionRequiredLevel = question9 ^. requiredLevel
   , _valueQuestionTagUuids = question9 ^. tagUuids
-  , _valueQuestionReferences = question9 ^. references
-  , _valueQuestionExperts = question9 ^. experts
+  , _valueQuestionReferenceUuids = question9 ^. referenceUuids
+  , _valueQuestionExpertUuids = question9 ^. expertUuids
   , _valueQuestionValueType = StringQuestionValueType
   }
 
@@ -441,10 +436,10 @@ question10 =
   , _integrationQuestionTitle = "Tenth Question"
   , _integrationQuestionText = Just "Some nice description"
   , _integrationQuestionRequiredLevel = Nothing
-  , _integrationQuestionTagUuids = [FT.tagBioInformatic ^. uuid]
-  , _integrationQuestionReferences = []
-  , _integrationQuestionExperts = []
-  , _integrationQuestionIntegrationUuid = FI.bioPortal ^. uuid
+  , _integrationQuestionTagUuids = [tagBioInformatic ^. uuid]
+  , _integrationQuestionReferenceUuids = []
+  , _integrationQuestionExpertUuids = []
+  , _integrationQuestionIntegrationUuid = bioPortal ^. uuid
   , _integrationQuestionProps = Map.fromList [("domain", "legal"), ("branch", "mammal")]
   }
 
@@ -459,7 +454,7 @@ question10ConvertedToValue =
   , _valueQuestionText = question10 ^. text
   , _valueQuestionRequiredLevel = question10 ^. requiredLevel
   , _valueQuestionTagUuids = question10 ^. tagUuids
-  , _valueQuestionReferences = question10 ^. references
-  , _valueQuestionExperts = question10 ^. experts
+  , _valueQuestionReferenceUuids = question10 ^. referenceUuids
+  , _valueQuestionExpertUuids = question10 ^. expertUuids
   , _valueQuestionValueType = StringQuestionValueType
   }

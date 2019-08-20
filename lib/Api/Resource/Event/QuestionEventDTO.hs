@@ -5,7 +5,6 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.Event.EventFieldDTO
-import Api.Resource.KnowledgeModel.PathDTO
 import Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEventDTO
@@ -17,8 +16,8 @@ data AddQuestionEventDTO
 
 data AddOptionsQuestionEventDTO = AddOptionsQuestionEventDTO
   { _addOptionsQuestionEventDTOUuid :: U.UUID
-  , _addOptionsQuestionEventDTOPath :: PathDTO
-  , _addOptionsQuestionEventDTOQuestionUuid :: U.UUID
+  , _addOptionsQuestionEventDTOParentUuid :: U.UUID
+  , _addOptionsQuestionEventDTOEntityUuid :: U.UUID
   , _addOptionsQuestionEventDTOTitle :: String
   , _addOptionsQuestionEventDTOText :: Maybe String
   , _addOptionsQuestionEventDTORequiredLevel :: Maybe Int
@@ -27,8 +26,8 @@ data AddOptionsQuestionEventDTO = AddOptionsQuestionEventDTO
 
 data AddListQuestionEventDTO = AddListQuestionEventDTO
   { _addListQuestionEventDTOUuid :: U.UUID
-  , _addListQuestionEventDTOPath :: PathDTO
-  , _addListQuestionEventDTOQuestionUuid :: U.UUID
+  , _addListQuestionEventDTOParentUuid :: U.UUID
+  , _addListQuestionEventDTOEntityUuid :: U.UUID
   , _addListQuestionEventDTOTitle :: String
   , _addListQuestionEventDTOText :: Maybe String
   , _addListQuestionEventDTORequiredLevel :: Maybe Int
@@ -38,8 +37,8 @@ data AddListQuestionEventDTO = AddListQuestionEventDTO
 
 data AddValueQuestionEventDTO = AddValueQuestionEventDTO
   { _addValueQuestionEventDTOUuid :: U.UUID
-  , _addValueQuestionEventDTOPath :: PathDTO
-  , _addValueQuestionEventDTOQuestionUuid :: U.UUID
+  , _addValueQuestionEventDTOParentUuid :: U.UUID
+  , _addValueQuestionEventDTOEntityUuid :: U.UUID
   , _addValueQuestionEventDTOTitle :: String
   , _addValueQuestionEventDTOText :: Maybe String
   , _addValueQuestionEventDTORequiredLevel :: Maybe Int
@@ -49,8 +48,8 @@ data AddValueQuestionEventDTO = AddValueQuestionEventDTO
 
 data AddIntegrationQuestionEventDTO = AddIntegrationQuestionEventDTO
   { _addIntegrationQuestionEventDTOUuid :: U.UUID
-  , _addIntegrationQuestionEventDTOPath :: PathDTO
-  , _addIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+  , _addIntegrationQuestionEventDTOParentUuid :: U.UUID
+  , _addIntegrationQuestionEventDTOEntityUuid :: U.UUID
   , _addIntegrationQuestionEventDTOTitle :: String
   , _addIntegrationQuestionEventDTOText :: Maybe String
   , _addIntegrationQuestionEventDTORequiredLevel :: Maybe Int
@@ -69,8 +68,8 @@ data EditQuestionEventDTO
 
 data EditOptionsQuestionEventDTO = EditOptionsQuestionEventDTO
   { _editOptionsQuestionEventDTOUuid :: U.UUID
-  , _editOptionsQuestionEventDTOPath :: PathDTO
-  , _editOptionsQuestionEventDTOQuestionUuid :: U.UUID
+  , _editOptionsQuestionEventDTOParentUuid :: U.UUID
+  , _editOptionsQuestionEventDTOEntityUuid :: U.UUID
   , _editOptionsQuestionEventDTOTitle :: EventFieldDTO String
   , _editOptionsQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editOptionsQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
@@ -82,8 +81,8 @@ data EditOptionsQuestionEventDTO = EditOptionsQuestionEventDTO
 
 data EditListQuestionEventDTO = EditListQuestionEventDTO
   { _editListQuestionEventDTOUuid :: U.UUID
-  , _editListQuestionEventDTOPath :: PathDTO
-  , _editListQuestionEventDTOQuestionUuid :: U.UUID
+  , _editListQuestionEventDTOParentUuid :: U.UUID
+  , _editListQuestionEventDTOEntityUuid :: U.UUID
   , _editListQuestionEventDTOTitle :: EventFieldDTO String
   , _editListQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editListQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
@@ -96,8 +95,8 @@ data EditListQuestionEventDTO = EditListQuestionEventDTO
 
 data EditValueQuestionEventDTO = EditValueQuestionEventDTO
   { _editValueQuestionEventDTOUuid :: U.UUID
-  , _editValueQuestionEventDTOPath :: PathDTO
-  , _editValueQuestionEventDTOQuestionUuid :: U.UUID
+  , _editValueQuestionEventDTOParentUuid :: U.UUID
+  , _editValueQuestionEventDTOEntityUuid :: U.UUID
   , _editValueQuestionEventDTOTitle :: EventFieldDTO String
   , _editValueQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editValueQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
@@ -109,8 +108,8 @@ data EditValueQuestionEventDTO = EditValueQuestionEventDTO
 
 data EditIntegrationQuestionEventDTO = EditIntegrationQuestionEventDTO
   { _editIntegrationQuestionEventDTOUuid :: U.UUID
-  , _editIntegrationQuestionEventDTOPath :: PathDTO
-  , _editIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+  , _editIntegrationQuestionEventDTOParentUuid :: U.UUID
+  , _editIntegrationQuestionEventDTOEntityUuid :: U.UUID
   , _editIntegrationQuestionEventDTOTitle :: EventFieldDTO String
   , _editIntegrationQuestionEventDTOText :: EventFieldDTO (Maybe String)
   , _editIntegrationQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
@@ -124,6 +123,6 @@ data EditIntegrationQuestionEventDTO = EditIntegrationQuestionEventDTO
 -- --------------------------------------------
 data DeleteQuestionEventDTO = DeleteQuestionEventDTO
   { _deleteQuestionEventDTOUuid :: U.UUID
-  , _deleteQuestionEventDTOPath :: PathDTO
-  , _deleteQuestionEventDTOQuestionUuid :: U.UUID
+  , _deleteQuestionEventDTOParentUuid :: U.UUID
+  , _deleteQuestionEventDTOEntityUuid :: U.UUID
   } deriving (Show, Eq, Generic)

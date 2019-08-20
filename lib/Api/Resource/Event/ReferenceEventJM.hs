@@ -5,7 +5,6 @@ import Data.Aeson
 
 import Api.Resource.Event.EventFieldJM ()
 import Api.Resource.Event.ReferenceEventDTO
-import Api.Resource.KnowledgeModel.PathJM ()
 import Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddReferenceEventDTO where
@@ -33,8 +32,8 @@ instance ToJSON AddResourcePageReferenceEventDTO where
       [ "eventType" .= "AddReferenceEvent"
       , "referenceType" .= "ResourcePageReference"
       , "uuid" .= _addResourcePageReferenceEventDTOUuid
-      , "path" .= _addResourcePageReferenceEventDTOPath
-      , "referenceUuid" .= _addResourcePageReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _addResourcePageReferenceEventDTOParentUuid
+      , "entityUuid" .= _addResourcePageReferenceEventDTOEntityUuid
       , "shortUuid" .= _addResourcePageReferenceEventDTOShortUuid
       ]
 
@@ -48,8 +47,8 @@ instance ToJSON AddURLReferenceEventDTO where
       [ "eventType" .= "AddReferenceEvent"
       , "referenceType" .= "URLReference"
       , "uuid" .= _addURLReferenceEventDTOUuid
-      , "path" .= _addURLReferenceEventDTOPath
-      , "referenceUuid" .= _addURLReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _addURLReferenceEventDTOParentUuid
+      , "entityUuid" .= _addURLReferenceEventDTOEntityUuid
       , "url" .= _addURLReferenceEventDTOUrl
       , "label" .= _addURLReferenceEventDTOLabel
       ]
@@ -64,8 +63,8 @@ instance ToJSON AddCrossReferenceEventDTO where
       [ "eventType" .= "AddReferenceEvent"
       , "referenceType" .= "CrossReference"
       , "uuid" .= _addCrossReferenceEventDTOUuid
-      , "path" .= _addCrossReferenceEventDTOPath
-      , "referenceUuid" .= _addCrossReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _addCrossReferenceEventDTOParentUuid
+      , "entityUuid" .= _addCrossReferenceEventDTOEntityUuid
       , "targetUuid" .= _addCrossReferenceEventDTOTargetUuid
       , "description" .= _addCrossReferenceEventDTODescription
       ]
@@ -97,8 +96,8 @@ instance ToJSON EditResourcePageReferenceEventDTO where
       [ "eventType" .= "EditReferenceEvent"
       , "referenceType" .= "ResourcePageReference"
       , "uuid" .= _editResourcePageReferenceEventDTOUuid
-      , "path" .= _editResourcePageReferenceEventDTOPath
-      , "referenceUuid" .= _editResourcePageReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _editResourcePageReferenceEventDTOParentUuid
+      , "entityUuid" .= _editResourcePageReferenceEventDTOEntityUuid
       , "shortUuid" .= _editResourcePageReferenceEventDTOShortUuid
       ]
 
@@ -112,8 +111,8 @@ instance ToJSON EditURLReferenceEventDTO where
       [ "eventType" .= "EditReferenceEvent"
       , "referenceType" .= "URLReference"
       , "uuid" .= _editURLReferenceEventDTOUuid
-      , "path" .= _editURLReferenceEventDTOPath
-      , "referenceUuid" .= _editURLReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _editURLReferenceEventDTOParentUuid
+      , "entityUuid" .= _editURLReferenceEventDTOEntityUuid
       , "url" .= _editURLReferenceEventDTOUrl
       , "label" .= _editURLReferenceEventDTOLabel
       ]
@@ -128,8 +127,8 @@ instance ToJSON EditCrossReferenceEventDTO where
       [ "eventType" .= "EditReferenceEvent"
       , "referenceType" .= "CrossReference"
       , "uuid" .= _editCrossReferenceEventDTOUuid
-      , "path" .= _editCrossReferenceEventDTOPath
-      , "referenceUuid" .= _editCrossReferenceEventDTOReferenceUuid
+      , "parentUuid" .= _editCrossReferenceEventDTOParentUuid
+      , "entityUuid" .= _editCrossReferenceEventDTOEntityUuid
       , "targetUuid" .= _editCrossReferenceEventDTOTargetUuid
       , "description" .= _editCrossReferenceEventDTODescription
       ]

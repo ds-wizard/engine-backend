@@ -13,7 +13,7 @@ import Model.Context.AppContext
 import Model.Error.Error
 import Model.Error.ErrorHelpers
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelAccessors
+import Model.KnowledgeModel.KnowledgeModelLenses
 import Service.Config.IntegrationConfigService
 import Service.Event.EventMapper
 import Service.KnowledgeModel.KnowledgeModelService
@@ -32,11 +32,11 @@ getTypehints reqDto =
           return $ fmap (fmap (toDTO (integration ^. itemUrl))) iDtos
   where
     heGetQuestion km questionUuid callback =
-      case getQuestionByUuid km questionUuid of
+      case M.lookup questionUuid (km ^. questionsM) of
         Just (IntegrationQuestion' question) -> callback question
         Just _ -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION
         Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__NON_EXISTING_QUESTION
     heGetIntegration km integrationUuid callback =
-      case getIntegrationByUuid km integrationUuid of
+      case M.lookup integrationUuid (km ^. integrationsM) of
         Just integration -> callback integration
         Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__NON_EXISTING_INTEGRATION

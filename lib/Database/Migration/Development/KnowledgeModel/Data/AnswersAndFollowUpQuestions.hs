@@ -22,7 +22,7 @@ q2_answerNo =
   { _answerUuid = fromJust $ U.fromString "33da0831-11dd-4faa-b754-41ed98dedcb5"
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
   }
 
@@ -32,7 +32,7 @@ q3_answerNo =
   { _answerUuid = fromJust $ U.fromString "12711c8c-193a-4baf-a071-53f2d3990083"
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
   }
 
@@ -42,7 +42,7 @@ q4_it1_q6_answerNo =
   { _answerUuid = fromJust $ U.fromString "a093c2c3-123c-42ee-9667-13af14b6249e"
   , _answerLabel = "No"
   , _answerAdvice = Just "Great advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -52,7 +52,7 @@ q2_aYes_fuq1_answerNo =
   { _answerUuid = fromJust $ U.fromString "8ebf2494-80c7-4dbb-a4a1-a14d3387abc0"
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -62,7 +62,7 @@ q2_aYes_fuq1_aYes_fuq2_answerNo =
   { _answerUuid = fromJust $ U.fromString "891ebfe2-27df-433c-af83-03bb26fa2764"
   , _answerLabel = "No"
   , _answerAdvice = Just "Super long advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -74,7 +74,7 @@ q2_answerYes =
   , _answerAdvice =
       Just
         "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-  , _answerFollowUps = [q2_aYes_fuQuestion1']
+  , _answerFollowUpUuids = [q2_aYes_fuQuestion1 ^. uuid]
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }
 
@@ -84,7 +84,7 @@ q2_answerYesEdited =
   { _answerUuid = q2_answerYes ^. uuid
   , _answerLabel = "EDITED: Yes"
   , _answerAdvice = Just "EDITED: Short advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1, metricMeasureG1]
   }
 
@@ -96,7 +96,7 @@ q2_answerYesPlain =
   , _answerAdvice =
       Just
         "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
   }
 
@@ -106,7 +106,7 @@ q3_answerYes =
   { _answerUuid = fromJust $ U.fromString "28d49dbe-4180-49c9-80b2-397e9ea27c77"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -116,7 +116,7 @@ q2_aYes_fuq1_answerYes =
   { _answerUuid = fromJust $ U.fromString "4d164317-d900-460c-8582-8c80e6d66dcd"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = [q2_aYes_fuq1_aYes_fuQuestion2']
+  , _answerFollowUpUuids = [q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid]
   , _answerMetricMeasures = []
   }
 
@@ -126,7 +126,7 @@ q2_aYes_fuq1_aYes_fuq2_answerYes =
   { _answerUuid = fromJust $ U.fromString "b6b40918-a9b7-4d2d-bacb-9f9aa5683efe"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -136,7 +136,7 @@ q4_it1_q6_answerYes =
   { _answerUuid = fromJust $ U.fromString "16f20d73-b335-47d8-8d35-157e8c3cd009"
   , _answerLabel = "Yes"
   , _answerAdvice = Just "Short advice"
-  , _answerFollowUps = [q4_it1_q6_aYes_followUpQuestion4', q4_it1_q6_aYes_followUpQuestion5']
+  , _answerFollowUpUuids = [q4_it1_q6_aYes_followUpQuestion4 ^. uuid, q4_it1_q6_aYes_followUpQuestion5 ^. uuid]
   , _answerMetricMeasures = []
   }
 
@@ -146,7 +146,7 @@ q2_answerMaybe =
   { _answerUuid = fromJust $ U.fromString "1f172f5e-3d66-4a1c-a785-85ba02fcf72a"
   , _answerLabel = "Maybe"
   , _answerAdvice = Just "Great advice"
-  , _answerFollowUps = []
+  , _answerFollowUpUuids = []
   , _answerMetricMeasures = []
   }
 
@@ -164,9 +164,9 @@ q2_aYes_fuQuestion1 =
   , _optionsQuestionText = Just "Maybe there will be some description"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = [FT.tagDataScience ^. uuid]
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = [q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_answerNo ^. uuid, q2_aYes_fuq1_answerYes ^. uuid]
   }
 
 q2_aYes_fuQuestion1Plain' :: Question
@@ -180,9 +180,9 @@ q2_aYes_fuQuestion1Plain =
   , _optionsQuestionText = Just "Just follow"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 -- -----------------------------------------------------------------------------
@@ -197,9 +197,9 @@ q2_aYes_fuq1_aYes_fuQuestion2 =
   , _optionsQuestionText = Just "Again just follow"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = [q2_aYes_fuq1_aYes_fuq2_answerNo, q2_aYes_fuq1_aYes_fuq2_answerYes]
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid]
   }
 
 q2_aYes_fuq1_aYes_fuQuestion2Edited' :: Question
@@ -213,9 +213,9 @@ q2_aYes_fuq1_aYes_fuQuestion2Edited =
   , _optionsQuestionText = Just "EDITED: Again just follow"
   , _optionsQuestionRequiredLevel = Just 1
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = [q2_aYes_fuq1_aYes_fuq2_answerYes, q2_aYes_fuq1_aYes_fuq2_answerNo]
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
   }
 
 -- -----------------------------------------------------------------------------
@@ -230,9 +230,9 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
   , _optionsQuestionText = Just "Again and again just follow"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 -- -----------------------------------------------------------------------------
@@ -247,10 +247,11 @@ q4_it1_q6_aYes_followUpQuestion4 =
   , _listQuestionText = Just "Again and again just follow"
   , _listQuestionRequiredLevel = Just 2
   , _listQuestionTagUuids = []
-  , _listQuestionReferences = []
-  , _listQuestionExperts = []
+  , _listQuestionReferenceUuids = []
+  , _listQuestionExpertUuids = []
   , _listQuestionItemTemplateTitle = "fup 4 template title"
-  , _listQuestionItemTemplateQuestions = [q4_it1_q6_aYes_fuq4_it_question1', q4_it1_q6_aYes_fuq4_it_question2']
+  , _listQuestionItemTemplateQuestionUuids =
+      [q4_it1_q6_aYes_fuq4_it_question1 ^. uuid, q4_it1_q6_aYes_fuq4_it_question2 ^. uuid]
   }
 
 q4_it1_q6_aYes_followUpQuestion4Edited' :: Question
@@ -264,10 +265,11 @@ q4_it1_q6_aYes_followUpQuestion4Edited =
   , _listQuestionText = Just "EDITED: Again and again just follow"
   , _listQuestionRequiredLevel = Just 1
   , _listQuestionTagUuids = []
-  , _listQuestionReferences = []
-  , _listQuestionExperts = []
+  , _listQuestionReferenceUuids = []
+  , _listQuestionExpertUuids = []
   , _listQuestionItemTemplateTitle = "EDITED: fup 4 template title"
-  , _listQuestionItemTemplateQuestions = [q4_it1_q6_aYes_fuq4_it_question2', q4_it1_q6_aYes_fuq4_it_question1']
+  , _listQuestionItemTemplateQuestionUuids =
+      [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
   }
 
 q4_it1_q6_aYes_fuq4_it_question1' :: Question
@@ -281,9 +283,9 @@ q4_it1_q6_aYes_fuq4_it_question1 =
   , _optionsQuestionText = Just "Again and again just follow"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 q4_it1_q6_aYes_fuq4_it_question2' :: Question
@@ -297,9 +299,9 @@ q4_it1_q6_aYes_fuq4_it_question2 =
   , _optionsQuestionText = Just "Again and again just follow"
   , _optionsQuestionRequiredLevel = Just 2
   , _optionsQuestionTagUuids = []
-  , _optionsQuestionReferences = []
-  , _optionsQuestionExperts = []
-  , _optionsQuestionAnswers = []
+  , _optionsQuestionReferenceUuids = []
+  , _optionsQuestionExpertUuids = []
+  , _optionsQuestionAnswerUuids = []
   }
 
 q4_it1_q6_aYes_followUpQuestion5' :: Question
@@ -313,8 +315,8 @@ q4_it1_q6_aYes_followUpQuestion5 =
   , _integrationQuestionText = Just "Some non-funny description"
   , _integrationQuestionRequiredLevel = Just 2
   , _integrationQuestionTagUuids = []
-  , _integrationQuestionReferences = []
-  , _integrationQuestionExperts = []
+  , _integrationQuestionReferenceUuids = []
+  , _integrationQuestionExpertUuids = []
   , _integrationQuestionIntegrationUuid = FI.ontologyPortal ^. uuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("country", "be")]
   }
@@ -330,8 +332,8 @@ q4_it1_q6_aYes_fuq5PropsEdited =
   , _integrationQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
   , _integrationQuestionRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
   , _integrationQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
-  , _integrationQuestionReferences = q4_it1_q6_aYes_followUpQuestion5 ^. references
-  , _integrationQuestionExperts = q4_it1_q6_aYes_followUpQuestion5 ^. experts
+  , _integrationQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
+  , _integrationQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids
   , _integrationQuestionIntegrationUuid = q4_it1_q6_aYes_followUpQuestion5 ^. integrationUuid
   , _integrationQuestionProps = Map.fromList [("domain", "biology"), ("language", "")]
   }
@@ -347,7 +349,7 @@ q4_it1_q6_aYes_fuq5ConvertedToValue =
   , _valueQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
   , _valueQuestionRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
   , _valueQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
-  , _valueQuestionReferences = q4_it1_q6_aYes_followUpQuestion5 ^. references
-  , _valueQuestionExperts = q4_it1_q6_aYes_followUpQuestion5 ^. experts
+  , _valueQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
+  , _valueQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids
   , _valueQuestionValueType = StringQuestionValueType
   }

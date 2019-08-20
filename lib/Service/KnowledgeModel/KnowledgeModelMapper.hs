@@ -1,6 +1,7 @@
 module Service.KnowledgeModel.KnowledgeModelMapper where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import LensesConfig
@@ -11,9 +12,22 @@ toKnowledgeModelDTO km =
   KnowledgeModelDTO
   { _knowledgeModelDTOUuid = km ^. uuid
   , _knowledgeModelDTOName = km ^. name
-  , _knowledgeModelDTOChapters = toChapterDTO <$> (km ^. chapters)
-  , _knowledgeModelDTOTags = toTagDTO <$> (km ^. tags)
-  , _knowledgeModelDTOIntegrations = toIntegrationDTO <$> (km ^. integrations)
+  , _knowledgeModelDTOChapterUuids = km ^. chapterUuids
+  , _knowledgeModelDTOTagUuids = km ^. tagUuids
+  , _knowledgeModelDTOIntegrationUuids = km ^. integrationUuids
+  , _knowledgeModelDTOEntities = toKnowledgeModelEntitiesDTO $ km ^. entities
+  }
+
+toKnowledgeModelEntitiesDTO :: KnowledgeModelEntities -> KnowledgeModelEntitiesDTO
+toKnowledgeModelEntitiesDTO e =
+  KnowledgeModelEntitiesDTO
+  { _knowledgeModelEntitiesDTOChapters = M.map toChapterDTO (e ^. chapters)
+  , _knowledgeModelEntitiesDTOQuestions = M.map toQuestionDTO (e ^. questions)
+  , _knowledgeModelEntitiesDTOAnswers = M.map toAnswerDTO (e ^. answers)
+  , _knowledgeModelEntitiesDTOExperts = M.map toExpertDTO (e ^. experts)
+  , _knowledgeModelEntitiesDTOReferences = M.map toReferenceDTO (e ^. references)
+  , _knowledgeModelEntitiesDTOIntegrations = M.map toIntegrationDTO (e ^. integrations)
+  , _knowledgeModelEntitiesDTOTags = M.map toTagDTO (e ^. tags)
   }
 
 toChapterDTO :: Chapter -> ChapterDTO
@@ -22,7 +36,7 @@ toChapterDTO chapter =
   { _chapterDTOUuid = chapter ^. uuid
   , _chapterDTOTitle = chapter ^. title
   , _chapterDTOText = chapter ^. text
-  , _chapterDTOQuestions = toQuestionDTO <$> (chapter ^. questions)
+  , _chapterDTOQuestionUuids = chapter ^. questionUuids
   }
 
 toQuestionDTO :: Question -> QuestionDTO
@@ -34,9 +48,9 @@ toQuestionDTO (OptionsQuestion' question) =
     , _optionsQuestionDTOText = question ^. text
     , _optionsQuestionDTORequiredLevel = question ^. requiredLevel
     , _optionsQuestionDTOTagUuids = question ^. tagUuids
-    , _optionsQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
-    , _optionsQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
-    , _optionsQuestionDTOAnswers = toAnswerDTO <$> (question ^. answers)
+    , _optionsQuestionDTOExpertUuids = question ^. expertUuids
+    , _optionsQuestionDTOReferenceUuids = question ^. referenceUuids
+    , _optionsQuestionDTOAnswerUuids = question ^. answerUuids
     }
 toQuestionDTO (ListQuestion' question) =
   ListQuestionDTO'
@@ -46,10 +60,10 @@ toQuestionDTO (ListQuestion' question) =
     , _listQuestionDTOText = question ^. text
     , _listQuestionDTORequiredLevel = question ^. requiredLevel
     , _listQuestionDTOTagUuids = question ^. tagUuids
-    , _listQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
-    , _listQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _listQuestionDTOExpertUuids = question ^. expertUuids
+    , _listQuestionDTOReferenceUuids = question ^. referenceUuids
     , _listQuestionDTOItemTemplateTitle = question ^. itemTemplateTitle
-    , _listQuestionDTOItemTemplateQuestions = toQuestionDTO <$> (question ^. itemTemplateQuestions)
+    , _listQuestionDTOItemTemplateQuestionUuids = question ^. itemTemplateQuestionUuids
     }
 toQuestionDTO (ValueQuestion' question) =
   ValueQuestionDTO'
@@ -59,8 +73,8 @@ toQuestionDTO (ValueQuestion' question) =
     , _valueQuestionDTOText = question ^. text
     , _valueQuestionDTORequiredLevel = question ^. requiredLevel
     , _valueQuestionDTOTagUuids = question ^. tagUuids
-    , _valueQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
-    , _valueQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _valueQuestionDTOExpertUuids = question ^. expertUuids
+    , _valueQuestionDTOReferenceUuids = question ^. referenceUuids
     , _valueQuestionDTOValueType = question ^. valueType
     }
 toQuestionDTO (IntegrationQuestion' question) =
@@ -71,8 +85,8 @@ toQuestionDTO (IntegrationQuestion' question) =
     , _integrationQuestionDTOText = question ^. text
     , _integrationQuestionDTORequiredLevel = question ^. requiredLevel
     , _integrationQuestionDTOTagUuids = question ^. tagUuids
-    , _integrationQuestionDTOExperts = toExpertDTO <$> (question ^. experts)
-    , _integrationQuestionDTOReferences = toReferenceDTO <$> (question ^. references)
+    , _integrationQuestionDTOExpertUuids = question ^. expertUuids
+    , _integrationQuestionDTOReferenceUuids = question ^. referenceUuids
     , _integrationQuestionDTOIntegrationUuid = question ^. integrationUuid
     , _integrationQuestionDTOProps = question ^. props
     }
@@ -83,7 +97,7 @@ toAnswerDTO answer =
   { _answerDTOUuid = answer ^. uuid
   , _answerDTOLabel = answer ^. label
   , _answerDTOAdvice = answer ^. advice
-  , _answerDTOFollowUps = toQuestionDTO <$> (answer ^. followUps)
+  , _answerDTOFollowUpUuids = answer ^. followUpUuids
   , _answerDTOMetricMeasures = toMetricMeasureDTO <$> (answer ^. metricMeasures)
   }
 
@@ -153,9 +167,22 @@ fromKnowledgeModelDTO km =
   KnowledgeModel
   { _knowledgeModelUuid = km ^. uuid
   , _knowledgeModelName = km ^. name
-  , _knowledgeModelChapters = fromChapterDTO <$> (km ^. chapters)
-  , _knowledgeModelTags = fromTagDTO <$> (km ^. tags)
-  , _knowledgeModelIntegrations = fromIntegrationDTO <$> (km ^. integrations)
+  , _knowledgeModelChapterUuids = km ^. chapterUuids
+  , _knowledgeModelTagUuids = km ^. tagUuids
+  , _knowledgeModelIntegrationUuids = km ^. integrationUuids
+  , _knowledgeModelEntities = fromKnowledgeModelEntitiesDTO $ km ^. entities
+  }
+
+fromKnowledgeModelEntitiesDTO :: KnowledgeModelEntitiesDTO -> KnowledgeModelEntities
+fromKnowledgeModelEntitiesDTO e =
+  KnowledgeModelEntities
+  { _knowledgeModelEntitiesChapters = M.map fromChapterDTO (e ^. chapters)
+  , _knowledgeModelEntitiesQuestions = M.map fromQuestionDTO (e ^. questions)
+  , _knowledgeModelEntitiesAnswers = M.map fromAnswerDTO (e ^. answers)
+  , _knowledgeModelEntitiesExperts = M.map fromExpertDTO (e ^. experts)
+  , _knowledgeModelEntitiesReferences = M.map fromReferenceDTO (e ^. references)
+  , _knowledgeModelEntitiesIntegrations = M.map fromIntegrationDTO (e ^. integrations)
+  , _knowledgeModelEntitiesTags = M.map fromTagDTO (e ^. tags)
   }
 
 fromChapterDTO :: ChapterDTO -> Chapter
@@ -164,7 +191,7 @@ fromChapterDTO chapter =
   { _chapterUuid = chapter ^. uuid
   , _chapterTitle = chapter ^. title
   , _chapterText = chapter ^. text
-  , _chapterQuestions = fromQuestionDTO <$> (chapter ^. questions)
+  , _chapterQuestionUuids = chapter ^. questionUuids
   }
 
 fromQuestionDTO :: QuestionDTO -> Question
@@ -176,9 +203,9 @@ fromQuestionDTO (OptionsQuestionDTO' question) =
     , _optionsQuestionText = question ^. text
     , _optionsQuestionRequiredLevel = question ^. requiredLevel
     , _optionsQuestionTagUuids = question ^. tagUuids
-    , _optionsQuestionExperts = fromExpertDTO <$> (question ^. experts)
-    , _optionsQuestionReferences = fromReferenceDTO <$> (question ^. references)
-    , _optionsQuestionAnswers = fromAnswerDTO <$> (question ^. answers)
+    , _optionsQuestionExpertUuids = question ^. expertUuids
+    , _optionsQuestionReferenceUuids = question ^. referenceUuids
+    , _optionsQuestionAnswerUuids = question ^. answerUuids
     }
 fromQuestionDTO (ListQuestionDTO' question) =
   ListQuestion'
@@ -188,10 +215,10 @@ fromQuestionDTO (ListQuestionDTO' question) =
     , _listQuestionText = question ^. text
     , _listQuestionRequiredLevel = question ^. requiredLevel
     , _listQuestionTagUuids = question ^. tagUuids
-    , _listQuestionExperts = fromExpertDTO <$> (question ^. experts)
-    , _listQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _listQuestionExpertUuids = question ^. expertUuids
+    , _listQuestionReferenceUuids = question ^. referenceUuids
     , _listQuestionItemTemplateTitle = question ^. itemTemplateTitle
-    , _listQuestionItemTemplateQuestions = fromQuestionDTO <$> (question ^. itemTemplateQuestions)
+    , _listQuestionItemTemplateQuestionUuids = question ^. itemTemplateQuestionUuids
     }
 fromQuestionDTO (ValueQuestionDTO' question) =
   ValueQuestion'
@@ -201,8 +228,8 @@ fromQuestionDTO (ValueQuestionDTO' question) =
     , _valueQuestionText = question ^. text
     , _valueQuestionRequiredLevel = question ^. requiredLevel
     , _valueQuestionTagUuids = question ^. tagUuids
-    , _valueQuestionExperts = fromExpertDTO <$> (question ^. experts)
-    , _valueQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _valueQuestionExpertUuids = question ^. expertUuids
+    , _valueQuestionReferenceUuids = question ^. referenceUuids
     , _valueQuestionValueType = question ^. valueType
     }
 fromQuestionDTO (IntegrationQuestionDTO' question) =
@@ -213,8 +240,8 @@ fromQuestionDTO (IntegrationQuestionDTO' question) =
     , _integrationQuestionText = question ^. text
     , _integrationQuestionRequiredLevel = question ^. requiredLevel
     , _integrationQuestionTagUuids = question ^. tagUuids
-    , _integrationQuestionExperts = fromExpertDTO <$> (question ^. experts)
-    , _integrationQuestionReferences = fromReferenceDTO <$> (question ^. references)
+    , _integrationQuestionExpertUuids = question ^. expertUuids
+    , _integrationQuestionReferenceUuids = question ^. referenceUuids
     , _integrationQuestionIntegrationUuid = question ^. integrationUuid
     , _integrationQuestionProps = question ^. props
     }
@@ -225,7 +252,7 @@ fromAnswerDTO answer =
   { _answerUuid = answer ^. uuid
   , _answerLabel = answer ^. label
   , _answerAdvice = answer ^. advice
-  , _answerFollowUps = fromQuestionDTO <$> (answer ^. followUps)
+  , _answerFollowUpUuids = answer ^. followUpUuids
   , _answerMetricMeasures = fromMetricMeasureDTO <$> (answer ^. metricMeasures)
   }
 

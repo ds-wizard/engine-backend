@@ -7,7 +7,6 @@ import Text.Read (readMaybe)
 import Web.Scotty.Trans (addHeader, json, param, raw, status)
 
 import Api.Handler.Common
-import Api.Resource.FilledKnowledgeModel.FilledKnowledgeModelDTO ()
 import Api.Resource.Questionnaire.QuestionnaireChangeJM ()
 import Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Api.Resource.Questionnaire.QuestionnaireDetailJM ()

@@ -11,9 +11,9 @@ import Model.Error.Error
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 import Service.Event.EventMapper
+import Service.KnowledgeModel.Compilator.Compilator
 import Service.KnowledgeModel.KnowledgeModelFilter
 import Service.KnowledgeModel.KnowledgeModelMapper
-import Service.Migration.KnowledgeModel.Applicator.Applicator
 import Service.Package.PackageService
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM (Either AppError KnowledgeModelDTO)
@@ -23,7 +23,7 @@ createKnowledgeModelPreview reqDto = do
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM (Either AppError KnowledgeModel)
 compileKnowledgeModel events mPackageId tagUuids =
-  getEvents mPackageId $ \allEvents -> return . fmap (filterKnowledgeModel tagUuids) . runApplicator Nothing $ allEvents
+  getEvents mPackageId $ \allEvents -> return . fmap (filterKnowledgeModel tagUuids) . compile Nothing $ allEvents
   where
     getEvents Nothing callback = callback events
     getEvents (Just packageId) callback =
