@@ -1,9 +1,5 @@
 module Localization where
 
-import qualified Data.UUID as U
-
-import Model.KnowledgeModel.Path
-
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------
@@ -199,36 +195,6 @@ _ERROR_UTIL_JSON__CANT_DESERIALIZE_FIELD fieldName error =
 -- --------------------------------------
 -- KNOWLEDGE MODEL MIGRATION TOOL
 -- --------------------------------------
--- --------------
--- 1. Applicator
--- --------------
-_ERROR_KMMT_APPLICATOR__UNSPECIFIED_ERROR = "Unspecified problem in building Knowledge Model happened"
-
-_ERROR_KMMT_APPLICATOR__CREATE_KM_AT_FIRST = "You have to create a Knowledge Model first"
-
-_ERROR_KMMT_APPLICATOR__ILLEGAL_STATE eUuid eventName entityName =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): You can't apply " ++ eventName ++ " to " ++ entityName
-
-_ERROR_KMMT_APPLICATOR__EDIT_NON_EXISTING_THING eUuid =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): Try to edit non-existing thing."
-
-_ERROR_KMMT_APPLICATOR__EMPTY_PATH eUuid =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): Applicator ends with empty path but the event wasn't applied yet."
-
-_ERROR_KMMT_APPLICATOR__KM_AND_EVENT_NODE_UUID_DOES_NOT_MATCH eUuid path =
-  "Failed Event (" ++
-  (U.toString eUuid) ++
-  "): KM Node Uuid doesn't match with Event Node Uuid (actual path: " ++ (showPathShort path) ++ ")"
-
-_ERROR_KMMT_APPLICATOR__PATH_SHOULD_BE_EMPTY eUuid path =
-  "Failed Event (" ++ (U.toString eUuid) ++ "): Path should be empty (actual path: " ++ (showPathShort path) ++ ")"
-
--- Uniqueness
-_ERROR_KMMT_VALIDATION_APPLICATOR__KM_UNIQUENESS = "Knowledge Model is already created"
-
--- ------------
--- 2. Migrator
--- ------------
 _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER = "Target Package is not higher than the current one"
 
 _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT = "Branch has to have a merge checkpoint"

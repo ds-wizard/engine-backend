@@ -24,7 +24,6 @@ import Api.Resource.Feedback.FeedbackDTO
 import Api.Resource.Info.InfoDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Api.Resource.KnowledgeModel.PathDTO
 import Api.Resource.Level.LevelDTO
 import qualified
        Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
@@ -98,7 +97,6 @@ import Model.Feedback.Feedback
 import Model.Feedback.SimpleIssue
 import Model.Http.HttpRequest
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.Path
 import Model.Level.Level
 import qualified Model.Migration.KnowledgeModel.MigratorState
        as KM_MigratorState
@@ -291,8 +289,6 @@ makeFields ''MetricMeasure
 makeFields ''Tag
 
 makeFields ''Integration
-
-makeFields ''PathItem
 
 -- Model / Level
 makeFields ''Level
@@ -499,8 +495,6 @@ makeFields ''MetricMeasureDTO
 makeFields ''TagDTO
 
 makeFields ''IntegrationDTO
-
-makeFields ''PathItemDTO
 
 -- Model / Level
 makeFields ''LevelDTO
