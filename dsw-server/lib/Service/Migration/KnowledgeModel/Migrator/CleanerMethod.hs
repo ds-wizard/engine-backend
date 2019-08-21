@@ -25,7 +25,10 @@ doIsCleanerMethod km (EditKnowledgeModelEvent' event) = False
 doIsCleanerMethod km (AddChapterEvent' event) = False
 doIsCleanerMethod km (EditChapterEvent' event) = isNothing $ M.lookup (getEventNodeUuid event) (km ^. chaptersM)
 doIsCleanerMethod km (DeleteChapterEvent' event) = isNothing $ M.lookup (getEventNodeUuid event) (km ^. chaptersM)
-doIsCleanerMethod km (AddQuestionEvent' event) = isNothing $ M.lookup (getEventParentUuid event) (km ^. chaptersM)
+doIsCleanerMethod km (AddQuestionEvent' event) =
+  isNothing (M.lookup (getEventParentUuid event) (km ^. chaptersM)) &&
+  isNothing (M.lookup (getEventParentUuid event) (km ^. questionsM)) &&
+  isNothing (M.lookup (getEventParentUuid event) (km ^. answersM))
 doIsCleanerMethod km (EditQuestionEvent' event) = isNothing $ M.lookup (getEventNodeUuid event) (km ^. questionsM)
 doIsCleanerMethod km (DeleteQuestionEvent' event) = isNothing $ M.lookup (getEventNodeUuid event) (km ^. questionsM)
 doIsCleanerMethod km (AddAnswerEvent' event) = isNothing $ M.lookup (getEventParentUuid event) (km ^. questionsM)
