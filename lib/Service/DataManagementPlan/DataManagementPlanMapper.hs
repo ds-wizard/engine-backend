@@ -38,7 +38,4 @@ toDataManagementPlanDTO dmp =
 
 toDataManagementPlanConfigDTO :: DataManagementPlanConfig -> DataManagementPlanConfigDTO
 toDataManagementPlanConfigDTO config =
-  DataManagementPlanConfigDTO
-  { _dataManagementPlanConfigDTOLevelsEnabled = config ^. levelsEnabled
-  , _dataManagementPlanConfigDTOItemTitleEnabled = config ^. itemTitleEnabled
-  }
+  DataManagementPlanConfigDTO {_dataManagementPlanConfigDTOLevelsEnabled = config ^. levelsEnabled}

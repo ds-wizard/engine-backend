@@ -7,7 +7,6 @@ general:
   registrationEnabled: true
   publicQuestionnaireEnabled: true
   levelsEnabled: true
-  itemTitleEnabled: true
 
 client:
   appTitle:

@@ -26,7 +26,6 @@ data AppConfigGeneral = AppConfigGeneral
   , _appConfigGeneralRegistrationEnabled :: Bool
   , _appConfigGeneralPublicQuestionnaireEnabled :: Bool
   , _appConfigGeneralLevelsEnabled :: Bool
-  , _appConfigGeneralItemTitleEnabled :: Bool
   , _appConfigGeneralQuestionnaireAccessibilityEnabled :: Bool
   } deriving (Generic, Show)
 

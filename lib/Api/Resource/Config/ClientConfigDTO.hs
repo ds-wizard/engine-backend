@@ -8,7 +8,6 @@ data ClientConfigDTO = ClientConfigDTO
   , _clientConfigDTORegistrationEnabled :: Bool
   , _clientConfigDTOPublicQuestionnaireEnabled :: Bool
   , _clientConfigDTOLevelsEnabled :: Bool
-  , _clientConfigDTOItemTitleEnabled :: Bool
   , _clientConfigDTOQuestionnaireAccessibilityEnabled :: Bool
   , _clientConfigDTORegistry :: ClientConfigRegistryDTO
   } deriving (Show, Eq, Generic)

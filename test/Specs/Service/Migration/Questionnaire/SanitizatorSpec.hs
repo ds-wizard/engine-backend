@@ -7,9 +7,7 @@ import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
 import Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Database.Migration.Development.KnowledgeModel.Data.Questions
 import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import LensesConfig
 import Model.Questionnaire.QuestionnaireReply
@@ -47,41 +45,6 @@ sanitizatorSpec =
       createTest "IntegrationQuestion" "ItemListReply" "Removed" rQ9 itemListReply Nothing
       createTest "IntegrationQuestion" "IntegrationReply (plain)" "Keep" rQ9 (rQ9 ^. value) (Just rQ9)
       createTest "IntegrationQuestion" "IntegrationReply (full)" "Keep" rQ9 (rQ9 ^. value) (Just rQ9)
-    -- -------------------------------------------------------------
-    -- -------------------------------------------------------------
-    -- Item Name
-    -- -------------------------------------------------------------
-    describe "sanitize item name" $ do
-      it "Parent question remains ListQuestion -> Keep" $
-        -- Given:
-       do
-        let reply = rQ4_it2_itemName
-        let expected = Just rQ4_it2_itemName
-        -- When:
-        let result = sanitizeReply km1WithQ4 reply
-        -- Then:
-        result `shouldBe` expected
-      it "Parent question of item name is changed to different question type -> Remove" $
-        -- Given:
-       do
-        let newPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question2 ^. uuid, "1", "itemName"]
-        let reply = rQ4_it2_itemName & path .~ newPath
-        let expected = Nothing
-        -- When:
-        let result = sanitizeReply km1WithQ4 reply
-        -- Then:
-        result `shouldBe` expected
-      it "Parent question of item name is deleted -> Remove" $
-        -- Given:
-       do
-        let newPath =
-              createReplyKey [U.toString $ chapter2 ^. uuid, "6p2393pe-7s99-129o-d972-283957448d9f", "1", "itemName"]
-        let reply = rQ4_it2_itemName & path .~ newPath
-        let expected = Nothing
-        -- When:
-        let result = sanitizeReply km1WithQ4 reply
-        -- Then:
-        result `shouldBe` expected
 
 -- --------------------------------
 -- TEST TEMPLATE

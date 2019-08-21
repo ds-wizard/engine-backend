@@ -47,9 +47,7 @@ createDataManagementPlan qtnUuid =
                       { _dataManagementPlanUuid = dmpUuid
                       , _dataManagementPlanConfig =
                           DataManagementPlanConfig
-                          { _dataManagementPlanConfigLevelsEnabled = dswConfig ^. general . levelsEnabled
-                          , _dataManagementPlanConfigItemTitleEnabled = dswConfig ^. general . itemTitleEnabled
-                          }
+                          {_dataManagementPlanConfigLevelsEnabled = dswConfig ^. general . levelsEnabled}
                       , _dataManagementPlanQuestionnaireUuid = qtnUuid
                       , _dataManagementPlanQuestionnaireName = qtn ^. name
                       , _dataManagementPlanQuestionnaireReplies = qtn ^. replies

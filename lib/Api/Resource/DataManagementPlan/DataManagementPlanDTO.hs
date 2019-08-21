@@ -48,5 +48,4 @@ instance Eq DataManagementPlanDTO where
 
 data DataManagementPlanConfigDTO = DataManagementPlanConfigDTO
   { _dataManagementPlanConfigDTOLevelsEnabled :: Bool
-  , _dataManagementPlanConfigDTOItemTitleEnabled :: Bool
   } deriving (Show, Eq, Generic)

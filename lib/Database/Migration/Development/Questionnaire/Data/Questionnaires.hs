@@ -220,13 +220,6 @@ rQ4 =
   , _replyValue = ItemListReply 2
   }
 
-rQ4_it1_itemName :: Reply
-rQ4_it1_itemName =
-  Reply
-  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "0", "itemName"]
-  , _replyValue = StringReply "Ai1: First item"
-  }
-
 rQ4_it1_q5 :: Reply
 rQ4_it1_q5 =
   Reply
@@ -234,21 +227,6 @@ rQ4_it1_q5 =
       createReplyKey
         [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "0", U.toString $ q4_it1_question5 ^. uuid]
   , _replyValue = ItemListReply 1
-  }
-
-rQ4_it1_q5_it1_itemName :: Reply
-rQ4_it1_q5_it1_itemName =
-  Reply
-  { _replyPath =
-      createReplyKey
-        [ U.toString $ chapter2 ^. uuid
-        , U.toString $ question4 ^. uuid
-        , "0"
-        , U.toString $ q4_it1_question5 ^. uuid
-        , "0"
-        , "itemName"
-        ]
-  , _replyValue = StringReply "Ai1: q5: Ai1: First item"
   }
 
 rQ4_it1_q5_it1_question7 :: Reply
@@ -291,13 +269,6 @@ rQ4_it1_q6 =
   }
 
 -- ------------------------------------------------------------
-rQ4_it2_itemName :: Reply
-rQ4_it2_itemName =
-  Reply
-  { _replyPath = createReplyKey [U.toString $ chapter2 ^. uuid, U.toString $ question4 ^. uuid, "1", "itemName"]
-  , _replyValue = StringReply "Ai 2: Second item"
-  }
-
 rQ4_it2_q5 :: Reply
 rQ4_it2_q5 =
   Reply

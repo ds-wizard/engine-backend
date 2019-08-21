@@ -18,11 +18,9 @@ sanitizeReplies km replies = catMaybes . fmap (sanitizeReply km) $ replies
 sanitizeReply :: KnowledgeModel -> Reply -> Maybe Reply
 sanitizeReply km reply =
   let pathParsed = reverse $ splitOn "." (reply ^. path)
-  in if head pathParsed == "itemName"
-       then sanitizeItemName km reply pathParsed
-       else case sanitizeQuestion km pathParsed (reply ^. value) of
-              Just replyValue -> Just $ reply & value .~ replyValue
-              Nothing -> Nothing
+  in case sanitizeQuestion km pathParsed (reply ^. value) of
+       Just replyValue -> Just $ reply & value .~ replyValue
+       Nothing -> Nothing
 
 -- -------------------------------------------------------------
 sanitizeQuestion :: KnowledgeModel -> [String] -> ReplyValue -> Maybe ReplyValue
@@ -58,13 +56,3 @@ sanitizeIntegrationQuestion km IntegrationReply {..} q = Just $ IntegrationReply
 sanitizeIntegrationQuestion km StringReply {..} q =
   Just $ IntegrationReply {_integrationReplyValue = PlainValue _stringReplyValue}
 sanitizeIntegrationQuestion _ _ _ = Nothing
-
--- -------------------------------------------------------------
-sanitizeItemName :: KnowledgeModel -> Reply -> [String] -> Maybe Reply
-sanitizeItemName km reply ("itemName":(number:(questionUuidS:_))) =
-  case U.fromString questionUuidS of
-    Just questionUuid ->
-      case M.lookup questionUuid (km ^. questionsM) of
-        Just (ListQuestion' q) -> Just reply
-        _ -> Nothing
-    Nothing -> Nothing

@@ -14,7 +14,6 @@ defaultGeneral =
   , _appConfigGeneralRegistrationEnabled = True
   , _appConfigGeneralPublicQuestionnaireEnabled = False
   , _appConfigGeneralLevelsEnabled = True
-  , _appConfigGeneralItemTitleEnabled = False
   , _appConfigGeneralQuestionnaireAccessibilityEnabled = True
   }
 

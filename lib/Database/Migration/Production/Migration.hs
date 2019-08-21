@@ -69,6 +69,9 @@ import qualified
 import qualified
        Database.Migration.Production.Migration_0022_forkOfPackageId_and_mergeCheckpointPackageId.Migration
        as M_0022
+import qualified
+       Database.Migration.Production.Migration_0023_remove_itemTitle.Migration
+       as M_0023
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
 import LensesConfig
@@ -101,4 +104,5 @@ migrationDefinitions =
   , M_0020.definition
   , M_0021.definition
   , M_0022.definition
+  , M_0023.definition
   ]
