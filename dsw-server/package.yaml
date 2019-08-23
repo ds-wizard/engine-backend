@@ -12,21 +12,6 @@ homepage: https://github.com/ds-wizard/dsw-server
 git: git@github.com:ds-wizard/dsw-server.git
 bug-reports: https://github.com/ds-wizard/ds-wizard/issues
 tested-with: GHC==8.6.*
-data-files:
-  - config/application.yml
-  - config/build-info.yml
-  - templates/dmp/root.css
-  - templates/dmp/root.html.j2
-  - templates/mail/_common/images/logo.png
-  - templates/mail/_common/footer.txt.j2
-  - templates/mail/_common/layout.html.j2
-  - templates/mail/_common/style.css
-  - templates/mail/registrationConfirmation/message.html.j2
-  - templates/mail/registrationConfirmation/message.txt.j2
-  - templates/mail/registrationCreatedAnalytics/message.html.j2
-  - templates/mail/registrationCreatedAnalytics/message.txt.j2
-  - templates/mail/resetPassword/message.html.j2
-  - templates/mail/resetPassword/message.txt.j2
 library:
   source-dirs: lib
   when:

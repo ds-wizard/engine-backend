@@ -4,4 +4,5 @@ config/application.yml
 config/application-test.yml
 config/integration.yml
 config/integration-test.yml
-dsw-server.cabal
+config/build-info.yml
+dsw-server/dsw-server.cabal
