@@ -34,7 +34,7 @@ library:
     then:
       ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -65,23 +65,20 @@ library:
   - markdown
   - mime-mail
   - mime-types
-  - MissingH
   - mtl
   - monad-control
   - monad-logger
   - mongoDB
   - mongoDB-migration
-  - network
+  - network # OK
   - persistent
   - persistent-mongoDB
-  - persistent-template
   - pretty-simple
   - pretty-terminal
   - pwstore-fast
-  - random
+  - random # OK
   - regex-compat
   - retry
-  - roman-numerals
   - scotty
   - text
   - text-replace
@@ -93,28 +90,25 @@ library:
   - vector
   - wai
   - wai-extra
-  - wai-cors
-  - warp
-  - wreq
-  - yaml
+  - warp # OK
+  - wreq # OK
+  - yaml # OK
   default-extensions:
     - TemplateHaskell
-    - QuasiQuotes
     - OverloadedStrings
-    - MultiParamTypeClasses
-    - FlexibleContexts
-    - GeneralizedNewtypeDeriving
-    - GADTs
-    - TypeFamilies
     - DeriveGeneric
-    - ExtendedDefaultRules
+    - FlexibleContexts
     - RecordWildCards
+    - ScopedTypeVariables
+    - ExtendedDefaultRules
+    - FlexibleInstances
+    - MultiParamTypeClasses
+    - GeneralizedNewtypeDeriving
+    - TypeFamilies
     - UnicodeSyntax
     - ExistentialQuantification
     - FunctionalDependencies
     - TypeSynonymInstances
-    - FlexibleInstances
-    - ScopedTypeVariables
     - RankNTypes
 
 executables:
@@ -126,7 +120,7 @@ executables:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - dsw-server
@@ -139,7 +133,7 @@ tests:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson
@@ -161,13 +155,11 @@ tests:
     - mongoDB
     - network
     - persistent
-    - persistent-template
     - persistent-mongoDB
     - pretty-simple
     - pwstore-fast
     - random
     - regex-compat
-    - roman-numerals
     - scotty
     - text
     - time
@@ -177,7 +169,6 @@ tests:
     - vector
     - wai
     - wai-extra
-    - wai-cors
     - warp
     - yaml
     - dsw-server
@@ -192,7 +183,6 @@ tests:
       - MultiParamTypeClasses
       - FlexibleContexts
       - GeneralizedNewtypeDeriving
-      - GADTs
       - TypeFamilies
       - DeriveGeneric
       - ExtendedDefaultRules

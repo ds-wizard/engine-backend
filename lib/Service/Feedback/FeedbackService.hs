@@ -10,7 +10,6 @@ module Service.Feedback.FeedbackService
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.List as L
-import Data.List.Utils as DLU
 import Data.Text (Text)
 import Data.Time
 import qualified Data.UUID as U
@@ -28,6 +27,7 @@ import Service.Feedback.Connector.Connector
 import Service.Feedback.Connector.GitHub.GitHubConnector ()
 import Service.Feedback.FeedbackMapper
 import Util.Uuid
+import Util.String
 
 getFeedbacksFiltered :: [(Text, Text)] -> AppContextM (Either AppError [FeedbackDTO])
 getFeedbacksFiltered queryParams =

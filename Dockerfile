@@ -11,7 +11,7 @@ RUN wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkh
 RUN wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb && gdebi -n pandoc-2.7.2-1-amd64.deb
 
 # Add built exectutable binary
-ADD .stack-work/install/x86_64-linux/lts-13.12/8.6.4/bin/dsw-server /dsw/dsw-server
+ADD dsw-server-bin /dsw/dsw-server
 
 # Add templates
 ADD templates /dsw/templates

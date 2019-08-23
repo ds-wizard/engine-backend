@@ -27,5 +27,5 @@ library
       Database.MongoDB.Migration.Entity
       Database.MongoDB.Migration.Migration
       Database.MongoDB.Migration.Utils
-  ghc-options: -O2 -fwarn-unused-imports
+  ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
   default-language: Haskell2010

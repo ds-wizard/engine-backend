@@ -23,6 +23,8 @@ dependencies:
 - unordered-containers
 - uuid
 
+ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+
 library:
   source-dirs: src
   default-extensions:

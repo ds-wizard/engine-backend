@@ -1,4 +1,8 @@
-flags: {}
+resolver: lts-13.12
+
 packages:
 - '.'
-resolver: lts-13.2
+
+extra-deps:
+  - persistent-mongoDB-2.8.0
+  - http-api-data-0.3.10
