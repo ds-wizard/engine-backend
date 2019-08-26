@@ -43,7 +43,7 @@ The application is currently deployed on a server provided by FIT CTU. Here are 
 ### Requirements
 
  - **Stack** (recommended 1.9.3 or higher)
- - **MongoDB** (recommended 3.4.10 or higher)
+ - **MongoDB** (recommended 4.0.12 or higher)
  - **RabbitMQ** (recommended 3.7.8 or higher, optional)
  - **wkhtmltopdf** (recommended 0.12.5 or higher) - *for exports in PDF format only*
  - **Pandoc** (recommended 2.2.1 or higher) - *for exports in non HTML/PDF formats only*
@@ -56,7 +56,6 @@ For running application it's need to run MongoDB database and set up connection 
 Run these comands from the root of the project
 
 ```bash
-$ hpack
 $ stack build
 $ stack exec dsw-server
 ```
@@ -66,7 +65,6 @@ $ stack exec dsw-server
 Run these comands from the root of the project
 
 ```bash
-$ hpack
 $ stack build
 $ stack test --jobs=1 --fast
 ```
@@ -76,8 +74,8 @@ $ stack test --jobs=1 --fast
 Create a bash script which will do the work for you. Run the script from the root of the project
 
 ```bash
-$ find lib -name '*.hs' | while read line ; do hindent $line ; done
-$ find test -name '*.hs' | while read line ; do hindent $line ; done
+$ find dsw-server/lib -name '*.hs' | while read line ; do hindent $line ; done
+$ find dsw-server/test -name '*.hs' | while read line ; do hindent $line ; done
 ```
 
 ### Code coverage
@@ -85,7 +83,6 @@ $ find test -name '*.hs' | while read line ; do hindent $line ; done
 Run these comands from the root of the project
 
 ```bash
-$ hpack
 $ stack build
 $ stack test --jobs=1 --fast --coverage --ghc-options "-fforce-recomp"`
 ```

@@ -26,8 +26,8 @@ import Service.Common
 import Service.Feedback.Connector.Connector
 import Service.Feedback.Connector.GitHub.GitHubConnector ()
 import Service.Feedback.FeedbackMapper
-import Util.Uuid
 import Util.String
+import Util.Uuid
 
 getFeedbacksFiltered :: [(Text, Text)] -> AppContextM (Either AppError [FeedbackDTO])
 getFeedbacksFiltered queryParams =
