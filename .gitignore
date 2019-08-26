@@ -1,8 +1,9 @@
 .stack-work
-src.iml
-config/application.yml
-config/application-test.yml
-config/integration.yml
-config/integration-test.yml
-config/build-info.yml
-dsw-server/dsw-server.cabal
+*.cabal
+
+application.yml
+application-test.yml
+integration.yml
+integration-test.yml
+build-info.yml
+build-info-test.yml
