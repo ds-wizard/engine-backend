@@ -1,7 +1,6 @@
 module DSW.Metamodel.Migration.Migration1 where
 
 import Data.Aeson
-import Data.Either
 
 import qualified DSW.Metamodel.Event.Version1 as V1
 import qualified DSW.Metamodel.Event.Version2 as V2

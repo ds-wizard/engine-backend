@@ -3,7 +3,6 @@ module DSW.Metamodel.Event.Version2 where
 import Control.Monad
 import Data.Aeson
 import Data.Map
-import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 

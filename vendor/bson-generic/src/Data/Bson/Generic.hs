@@ -98,7 +98,6 @@ module Data.Bson.Generic
 ------------------------------------------------------------------------------
 import           GHC.Generics
 ------------------------------------------------------------------------------
-import           Control.Applicative
 import           Control.Monad
 ------------------------------------------------------------------------------
 import qualified Data.Bson     as BSON (lookup)

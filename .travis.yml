@@ -21,10 +21,10 @@ cache:
   directories:
   - $HOME/.stack
   - .stack-work
-  - bson-generic/.stack-work
+  - vendor/bson-generic/.stack-work
+  - vendor/mongoDB-migration/.stack-work
   - dsw-metamodel-migrator/.stack-work
   - dsw-server/.stack-work
-  - mongoDB-migration/.stack-work
 
 install:
   # 1. Download, unpack, and check the stack executable

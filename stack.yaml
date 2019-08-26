@@ -1,12 +1,12 @@
 resolver: lts-13.12
 
 packages:
-- bson-generic
-- dsw-metamodel-migrator
 - dsw-server
-- mongoDB-migration
+- dsw-metamodel-migrator
 
 extra-deps:
+  - vendor/bson-generic
+  - vendor/mongoDB-migration
   - fromhtml-1.0.1
   - persistent-mongoDB-2.8.0
   - pwstore-fast-2.4.4
