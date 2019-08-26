@@ -5,6 +5,7 @@ import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 import Test.Hspec
 
+import Constant.Resource
 import Database.Connection
 import Database.Migration.Development.User.Data.Users
 import Integration.Http.Common.HttpClientFactory
@@ -61,10 +62,6 @@ import Specs.Util.MathSpec
 import Specs.Util.TokenSpec
 import TestMigration
 
-testApplicationConfigFile = "config/application-test.yml"
-
-testBuildInfoConfigFile = "config/build-info-test.yml"
-
 hLoadConfig fileName loadFn callback = do
   eitherConfig <- loadFn fileName
   case eitherConfig of
@@ -77,8 +74,8 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback = do
-  hLoadConfig testApplicationConfigFile getApplicationConfig $ \appConfig ->
-    hLoadConfig testBuildInfoConfigFile getBuildInfoConfig $ \buildInfoConfig -> do
+  hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
+    hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ appConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool appConfig
       putStrLn "DATABASE: connected"
