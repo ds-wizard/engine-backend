@@ -28,7 +28,7 @@ data KnowledgeModelEntities = KnowledgeModelEntities
 data Chapter = Chapter
   { _chapterUuid :: U.UUID
   , _chapterTitle :: String
-  , _chapterText :: String
+  , _chapterText :: Maybe String
   , _chapterQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 

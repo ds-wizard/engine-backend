@@ -30,7 +30,7 @@ data KnowledgeModelEntitiesDTO = KnowledgeModelEntitiesDTO
 data ChapterDTO = ChapterDTO
   { _chapterDTOUuid :: U.UUID
   , _chapterDTOTitle :: String
-  , _chapterDTOText :: String
+  , _chapterDTOText :: Maybe String
   , _chapterDTOQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 

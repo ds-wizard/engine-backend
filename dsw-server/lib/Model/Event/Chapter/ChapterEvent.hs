@@ -10,7 +10,7 @@ data AddChapterEvent = AddChapterEvent
   , _addChapterEventParentUuid :: U.UUID
   , _addChapterEventEntityUuid :: U.UUID
   , _addChapterEventTitle :: String
-  , _addChapterEventText :: String
+  , _addChapterEventText :: Maybe String
   } deriving (Show, Eq, Generic)
 
 data EditChapterEvent = EditChapterEvent
@@ -18,7 +18,7 @@ data EditChapterEvent = EditChapterEvent
   , _editChapterEventParentUuid :: U.UUID
   , _editChapterEventEntityUuid :: U.UUID
   , _editChapterEventTitle :: EventField String
-  , _editChapterEventText :: EventField String
+  , _editChapterEventText :: EventField (Maybe String)
   , _editChapterEventQuestionUuids :: EventField [U.UUID]
   } deriving (Show, Eq, Generic)
 
