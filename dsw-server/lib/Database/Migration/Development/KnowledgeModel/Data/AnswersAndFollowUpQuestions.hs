@@ -249,7 +249,6 @@ q4_it1_q6_aYes_followUpQuestion4 =
   , _listQuestionTagUuids = []
   , _listQuestionReferenceUuids = []
   , _listQuestionExpertUuids = []
-  , _listQuestionItemTemplateTitle = "fup 4 template title"
   , _listQuestionItemTemplateQuestionUuids =
       [q4_it1_q6_aYes_fuq4_it_question1 ^. uuid, q4_it1_q6_aYes_fuq4_it_question2 ^. uuid]
   }
@@ -267,7 +266,6 @@ q4_it1_q6_aYes_followUpQuestion4Edited =
   , _listQuestionTagUuids = []
   , _listQuestionReferenceUuids = []
   , _listQuestionExpertUuids = []
-  , _listQuestionItemTemplateTitle = "EDITED: fup 4 template title"
   , _listQuestionItemTemplateQuestionUuids =
       [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
   }

@@ -265,17 +265,6 @@ answerUuids' convert entity = fmap (set entity) (convert . get $ entity)
     set q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-itemTemplateTitle' :: Functor f => (String -> f String) -> Question -> f Question
-itemTemplateTitle' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> String
-    get (ListQuestion' q) = q ^. itemTemplateTitle
-    get q = []
-    set :: Question -> String -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & itemTemplateTitle .~ newValue
-    set q newValue = q
-
--- ------------------------------------------------------------------------------------------
 itemTemplateQuestionUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
 itemTemplateQuestionUuids' convert entity = fmap (set entity) (convert . get $ entity)
   where

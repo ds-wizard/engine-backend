@@ -59,7 +59,6 @@ instance ToJSON AddListQuestionEventDTO where
       , "text" .= _addListQuestionEventDTOText
       , "requiredLevel" .= _addListQuestionEventDTORequiredLevel
       , "tagUuids" .= _addListQuestionEventDTOTagUuids
-      , "itemTemplateTitle" .= _addListQuestionEventDTOItemTemplateTitle
       ]
 
 -- --------------------------------------------
@@ -159,7 +158,6 @@ instance ToJSON EditListQuestionEventDTO where
       , "tagUuids" .= _editListQuestionEventDTOTagUuids
       , "expertUuids" .= _editListQuestionEventDTOExpertUuids
       , "referenceUuids" .= _editListQuestionEventDTOReferenceUuids
-      , "itemTemplateTitle" .= _editListQuestionEventDTOItemTemplateTitle
       , "itemTemplateQuestionUuids" .= _editListQuestionEventDTOItemTemplateQuestionUuids
       ]
 

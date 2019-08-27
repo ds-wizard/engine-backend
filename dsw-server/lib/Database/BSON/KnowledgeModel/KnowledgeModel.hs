@@ -123,7 +123,6 @@ instance ToBSON ListQuestion where
     , "tagUuids" BSON.=: _listQuestionTagUuids
     , "expertUuids" BSON.=: _listQuestionExpertUuids
     , "referenceUuids" BSON.=: _listQuestionReferenceUuids
-    , "itemTemplateTitle" BSON.=: _listQuestionItemTemplateTitle
     , "itemTemplateQuestionUuids" BSON.=: _listQuestionItemTemplateQuestionUuids
     ]
 
@@ -136,7 +135,6 @@ instance FromBSON ListQuestion where
     _listQuestionTagUuids <- BSON.lookup "tagUuids" doc
     _listQuestionExpertUuids <- BSON.lookup "expertUuids" doc
     _listQuestionReferenceUuids <- BSON.lookup "referenceUuids" doc
-    _listQuestionItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
     _listQuestionItemTemplateQuestionUuids <- BSON.lookup "itemTemplateQuestionUuids" doc
     return ListQuestion {..}
 

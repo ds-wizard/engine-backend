@@ -38,7 +38,6 @@ instance CreateEntity AddQuestionEvent Question where
     , _listQuestionTagUuids = e ^. tagUuids
     , _listQuestionReferenceUuids = []
     , _listQuestionExpertUuids = []
-    , _listQuestionItemTemplateTitle = e ^. itemTemplateTitle
     , _listQuestionItemTemplateQuestionUuids = []
     }
   createEntity (AddValueQuestionEvent' e) =
@@ -80,7 +79,6 @@ instance EditEntity EditQuestionEvent Question where
         applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
       applyToListQuestion e =
         applyItemTemplateQuestionUuids e .
-        applyItemTemplateTitle e .
         applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
       applyToValueQuestion e =
         applyValueType e .
@@ -96,7 +94,6 @@ instance EditEntity EditQuestionEvent Question where
       applyExpertUuids e q = applyValue (e ^. expertUuids) q expertUuids'
       applyReferenceUuids e q = applyValue (e ^. referenceUuids) q referenceUuids'
       applyAnwerUuids e q = applyValue (e ^. answerUuids) q answerUuids'
-      applyItemTemplateTitle e q = applyValue (e ^. itemTemplateTitle) q itemTemplateTitle'
       applyItemTemplateQuestionUuids e q = applyValue (e ^. itemTemplateQuestionUuids) q itemTemplateQuestionUuids'
       applyValueType e q = applyValue (e ^. valueType) q valueType'
       applyIntegrationUuid e q = applyValue (e ^. integrationUuid) q integrationUuid'
@@ -141,7 +138,6 @@ convertToListQuestion q' =
       , _listQuestionTagUuids = q ^. tagUuids
       , _listQuestionReferenceUuids = q ^. referenceUuids
       , _listQuestionExpertUuids = q ^. expertUuids
-      , _listQuestionItemTemplateTitle = ""
       , _listQuestionItemTemplateQuestionUuids = []
       }
 

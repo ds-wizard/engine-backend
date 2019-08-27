@@ -32,7 +32,6 @@ data AddListQuestionEventDTO = AddListQuestionEventDTO
   , _addListQuestionEventDTOText :: Maybe String
   , _addListQuestionEventDTORequiredLevel :: Maybe Int
   , _addListQuestionEventDTOTagUuids :: [U.UUID]
-  , _addListQuestionEventDTOItemTemplateTitle :: String
   } deriving (Show, Eq, Generic)
 
 data AddValueQuestionEventDTO = AddValueQuestionEventDTO
@@ -89,7 +88,6 @@ data EditListQuestionEventDTO = EditListQuestionEventDTO
   , _editListQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
   , _editListQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
   , _editListQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
-  , _editListQuestionEventDTOItemTemplateTitle :: EventFieldDTO String
   , _editListQuestionEventDTOItemTemplateQuestionUuids :: EventFieldDTO [U.UUID]
   } deriving (Show, Eq, Generic)
 

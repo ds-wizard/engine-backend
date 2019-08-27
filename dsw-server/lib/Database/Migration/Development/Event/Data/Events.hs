@@ -193,7 +193,6 @@ a_km1_ch2_q4 =
   , _addListQuestionEventText = question4 ^. text
   , _addListQuestionEventRequiredLevel = question4 ^. requiredLevel
   , _addListQuestionEventTagUuids = question4 ^. tagUuids
-  , _addListQuestionEventItemTemplateTitle = question4 ^. itemTemplateTitle
   }
 
 a_km1_ch3_q9' :: AddQuestionEvent
@@ -317,7 +316,6 @@ e_km1_ch1_q2_type =
   , _editListQuestionEventTagUuids = NothingChanged
   , _editListQuestionEventExpertUuids = NothingChanged
   , _editListQuestionEventReferenceUuids = NothingChanged
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question2WithNewType ^. itemTemplateTitle
   , _editListQuestionEventItemTemplateQuestionUuids = ChangedValue $ []
   }
 
@@ -336,7 +334,6 @@ e_km1_ch2_q4 =
   , _editListQuestionEventTagUuids = ChangedValue $ question4Edited ^. tagUuids
   , _editListQuestionEventExpertUuids = ChangedValue $ question4Edited' ^. expertUuids'
   , _editListQuestionEventReferenceUuids = ChangedValue $ question4Edited' ^. referenceUuids'
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ question4Edited ^. itemTemplateTitle
   , _editListQuestionEventItemTemplateQuestionUuids = ChangedValue $ question4Edited ^. itemTemplateQuestionUuids
   }
 
@@ -601,7 +598,6 @@ a_km1_ch2_q4_it1_q5 =
   , _addListQuestionEventText = q4_it1_question5 ^. text
   , _addListQuestionEventRequiredLevel = q4_it1_question5 ^. requiredLevel
   , _addListQuestionEventTagUuids = q4_it1_question5 ^. tagUuids
-  , _addListQuestionEventItemTemplateTitle = q4_it1_question5 ^. itemTemplateTitle
   }
 
 a_km1_ch2_q4_it1_q6' :: AddQuestionEvent
@@ -696,7 +692,6 @@ e_km1_ch2_q4_it1_q5 =
   , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_question5Edited ^. tagUuids
   , _editListQuestionEventExpertUuids = NothingChanged
   , _editListQuestionEventReferenceUuids = NothingChanged
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ "EDITED: Template Title 2"
   , _editListQuestionEventItemTemplateQuestionUuids =
       ChangedValue $ [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
   }
@@ -791,7 +786,6 @@ a_km1_ch2_ansYes6_fuq4 =
   , _addListQuestionEventText = q4_it1_q6_aYes_followUpQuestion4 ^. text
   , _addListQuestionEventRequiredLevel = q4_it1_q6_aYes_followUpQuestion4 ^. requiredLevel
   , _addListQuestionEventTagUuids = q4_it1_q6_aYes_followUpQuestion4 ^. tagUuids
-  , _addListQuestionEventItemTemplateTitle = q4_it1_q6_aYes_followUpQuestion4 ^. itemTemplateTitle
   }
 
 a_km1_ch2_ansYes6_fuq5' :: AddQuestionEvent
@@ -863,7 +857,6 @@ e_km1_ch2_ansMaybe6_fuq4 =
   , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. tagUuids
   , _editListQuestionEventExpertUuids = NothingChanged
   , _editListQuestionEventReferenceUuids = NothingChanged
-  , _editListQuestionEventItemTemplateTitle = ChangedValue $ "EDITED: fup 4 template title"
   , _editListQuestionEventItemTemplateQuestionUuids =
       ChangedValue $ [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
   }

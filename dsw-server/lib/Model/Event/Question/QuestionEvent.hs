@@ -32,7 +32,6 @@ data AddListQuestionEvent = AddListQuestionEvent
   , _addListQuestionEventText :: Maybe String
   , _addListQuestionEventRequiredLevel :: Maybe Int
   , _addListQuestionEventTagUuids :: [U.UUID]
-  , _addListQuestionEventItemTemplateTitle :: String
   } deriving (Show, Eq, Generic)
 
 data AddValueQuestionEvent = AddValueQuestionEvent
@@ -89,7 +88,6 @@ data EditListQuestionEvent = EditListQuestionEvent
   , _editListQuestionEventTagUuids :: EventField [U.UUID]
   , _editListQuestionEventExpertUuids :: EventField [U.UUID]
   , _editListQuestionEventReferenceUuids :: EventField [U.UUID]
-  , _editListQuestionEventItemTemplateTitle :: EventField String
   , _editListQuestionEventItemTemplateQuestionUuids :: EventField [U.UUID]
   } deriving (Show, Eq, Generic)
 

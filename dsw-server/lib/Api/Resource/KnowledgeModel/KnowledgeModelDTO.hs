@@ -61,7 +61,6 @@ data ListQuestionDTO = ListQuestionDTO
   , _listQuestionDTOTagUuids :: [U.UUID]
   , _listQuestionDTOExpertUuids :: [U.UUID]
   , _listQuestionDTOReferenceUuids :: [U.UUID]
-  , _listQuestionDTOItemTemplateTitle :: String
   , _listQuestionDTOItemTemplateQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 

@@ -66,7 +66,6 @@ data ListQuestion = ListQuestion
   , _listQuestionTagUuids :: [U.UUID]
   , _listQuestionExpertUuids :: [U.UUID]
   , _listQuestionReferenceUuids :: [U.UUID]
-  , _listQuestionItemTemplateTitle :: String
   , _listQuestionItemTemplateQuestionUuids :: [U.UUID]
   } deriving (Show, Eq, Generic)
 

@@ -62,7 +62,6 @@ toQuestionDTO (ListQuestion' question) =
     , _listQuestionDTOTagUuids = question ^. tagUuids
     , _listQuestionDTOExpertUuids = question ^. expertUuids
     , _listQuestionDTOReferenceUuids = question ^. referenceUuids
-    , _listQuestionDTOItemTemplateTitle = question ^. itemTemplateTitle
     , _listQuestionDTOItemTemplateQuestionUuids = question ^. itemTemplateQuestionUuids
     }
 toQuestionDTO (ValueQuestion' question) =
@@ -217,7 +216,6 @@ fromQuestionDTO (ListQuestionDTO' question) =
     , _listQuestionTagUuids = question ^. tagUuids
     , _listQuestionExpertUuids = question ^. expertUuids
     , _listQuestionReferenceUuids = question ^. referenceUuids
-    , _listQuestionItemTemplateTitle = question ^. itemTemplateTitle
     , _listQuestionItemTemplateQuestionUuids = question ^. itemTemplateQuestionUuids
     }
 fromQuestionDTO (ValueQuestionDTO' question) =

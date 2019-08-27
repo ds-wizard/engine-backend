@@ -63,7 +63,6 @@ instance ToBSON AddListQuestionEvent where
     , "text" BSON.=: _addListQuestionEventText
     , "requiredLevel" BSON.=: _addListQuestionEventRequiredLevel
     , "tagUuids" BSON.=: _addListQuestionEventTagUuids
-    , "itemTemplateTitle" BSON.=: _addListQuestionEventItemTemplateTitle
     ]
 
 instance FromBSON AddListQuestionEvent where
@@ -75,7 +74,6 @@ instance FromBSON AddListQuestionEvent where
     _addListQuestionEventText <- BSON.lookup "text" doc
     _addListQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
     _addListQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
-    _addListQuestionEventItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
     return AddListQuestionEvent {..}
 
 -- ------------------------------------------------
@@ -197,7 +195,6 @@ instance ToBSON EditListQuestionEvent where
     , "tagUuids" BSON.=: _editListQuestionEventTagUuids
     , "expertUuids" BSON.=: _editListQuestionEventExpertUuids
     , "referenceUuids" BSON.=: _editListQuestionEventReferenceUuids
-    , "itemTemplateTitle" BSON.=: _editListQuestionEventItemTemplateTitle
     , "itemTemplateQuestionUuids" BSON.=: _editListQuestionEventItemTemplateQuestionUuids
     ]
 
@@ -212,7 +209,6 @@ instance FromBSON EditListQuestionEvent where
     _editListQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
     _editListQuestionEventExpertUuids <- BSON.lookup "expertUuids" doc
     _editListQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
-    _editListQuestionEventItemTemplateTitle <- BSON.lookup "itemTemplateTitle" doc
     _editListQuestionEventItemTemplateQuestionUuids <- BSON.lookup "itemTemplateQuestionUuids" doc
     return EditListQuestionEvent {..}
 

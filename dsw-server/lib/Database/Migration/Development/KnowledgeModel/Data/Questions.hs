@@ -108,7 +108,6 @@ question2WithNewType =
   , _listQuestionTagUuids = question2 ^. tagUuids
   , _listQuestionReferenceUuids = question2 ^. referenceUuids
   , _listQuestionExpertUuids = question2 ^. expertUuids
-  , _listQuestionItemTemplateTitle = "EDITED: Template Title"
   , _listQuestionItemTemplateQuestionUuids = []
   }
 
@@ -173,7 +172,6 @@ question4 =
   , _listQuestionTagUuids = [tagBioInformatic ^. uuid]
   , _listQuestionReferenceUuids = []
   , _listQuestionExpertUuids = []
-  , _listQuestionItemTemplateTitle = "Template Title"
   , _listQuestionItemTemplateQuestionUuids = [q4_it1_question5 ^. uuid, q4_it1_question6 ^. uuid]
   }
 
@@ -190,7 +188,6 @@ question4Edited =
   , _listQuestionTagUuids = question4 ^. tagUuids
   , _listQuestionReferenceUuids = question4 ^. referenceUuids
   , _listQuestionExpertUuids = question4 ^. expertUuids
-  , _listQuestionItemTemplateTitle = "EDITED: Template Title"
   , _listQuestionItemTemplateQuestionUuids = [q4_it1_question6 ^. uuid, q4_it1_question5 ^. uuid]
   }
 
@@ -224,7 +221,6 @@ question4Plain =
   , _listQuestionTagUuids = question4 ^. tagUuids
   , _listQuestionReferenceUuids = question4 ^. referenceUuids
   , _listQuestionExpertUuids = question4 ^. expertUuids
-  , _listQuestionItemTemplateTitle = "Template Title"
   , _listQuestionItemTemplateQuestionUuids = []
   }
 
@@ -241,7 +237,6 @@ q4_it1_question5 =
   , _listQuestionTagUuids = [tagBioInformatic ^. uuid]
   , _listQuestionReferenceUuids = []
   , _listQuestionExpertUuids = []
-  , _listQuestionItemTemplateTitle = "Template Title 2"
   , _listQuestionItemTemplateQuestionUuids = [q4_it1_q5_it2_question7 ^. uuid, q4_it1_q5_it2_question8 ^. uuid]
   }
 
@@ -258,7 +253,6 @@ q4_it1_question5Plain =
   , _listQuestionTagUuids = q4_it1_question5 ^. tagUuids
   , _listQuestionReferenceUuids = q4_it1_question5 ^. referenceUuids
   , _listQuestionExpertUuids = q4_it1_question5 ^. expertUuids
-  , _listQuestionItemTemplateTitle = q4_it1_question5 ^. itemTemplateTitle
   , _listQuestionItemTemplateQuestionUuids = []
   }
 
@@ -275,7 +269,6 @@ q4_it1_question5Edited =
   , _listQuestionTagUuids = q4_it1_question5 ^. tagUuids
   , _listQuestionReferenceUuids = q4_it1_question5 ^. referenceUuids
   , _listQuestionExpertUuids = q4_it1_question5 ^. expertUuids
-  , _listQuestionItemTemplateTitle = "EDITED: Template Title 2"
   , _listQuestionItemTemplateQuestionUuids = [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
   }
 

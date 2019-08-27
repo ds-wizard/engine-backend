@@ -123,7 +123,6 @@ instance EventFromDTO AddQuestionEventDTO where
     , _addListQuestionEventText = dto ^. text
     , _addListQuestionEventRequiredLevel = dto ^. requiredLevel
     , _addListQuestionEventTagUuids = dto ^. tagUuids
-    , _addListQuestionEventItemTemplateTitle = dto ^. itemTemplateTitle
     }
   fromDTO (AddValueQuestionEventDTO' dto) =
     AddQuestionEvent' $
@@ -182,7 +181,6 @@ instance EventFromDTO EditQuestionEventDTO where
     , _editListQuestionEventTagUuids = fromEventFieldDTO $ dto ^. tagUuids
     , _editListQuestionEventExpertUuids = fromEventFieldDTO $ dto ^. expertUuids
     , _editListQuestionEventReferenceUuids = fromEventFieldDTO $ dto ^. referenceUuids
-    , _editListQuestionEventItemTemplateTitle = fromEventFieldDTO $ dto ^. itemTemplateTitle
     , _editListQuestionEventItemTemplateQuestionUuids = fromEventFieldDTO $ dto ^. itemTemplateQuestionUuids
     }
   fromDTO (EditValueQuestionEventDTO' dto) =
