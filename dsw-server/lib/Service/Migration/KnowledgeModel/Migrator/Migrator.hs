@@ -21,7 +21,7 @@ doMigrate stateIO event = do
       if isCleanerMethod state event
         then runCleanerMethod state event
         else runCorrectorMethod state event
-    _ -> stateIO
+    _ -> return state
 
 migrate :: MigratorState -> IO MigratorState
 migrate state =
