@@ -2,7 +2,7 @@ module Database.DAO.Branch.BranchDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
-import Database.MongoDB ((=:), find, rest, select)
+import Database.MongoDB ((=:))
 
 import Database.BSON.Branch.Branch ()
 import Database.BSON.Branch.BranchWithEvents ()
@@ -20,6 +20,10 @@ collection = "branches"
 findBranches :: AppContextM (Either AppError [Branch])
 findBranches = createFindEntitiesFn collection
 
+findBranchesByPreviousPackageId :: String -> AppContextM (Either AppError [Branch])
+findBranchesByPreviousPackageId previousPackageId =
+  createFindEntitiesByFn collection ["previousPackageId" =: previousPackageId]
+
 findBranchesWithEvents :: AppContextM (Either AppError [BranchWithEvents])
 findBranchesWithEvents = createFindEntitiesFn collection
 
@@ -31,23 +35,6 @@ findBranchByKmId = createFindEntityByFn collection entityName "kmId"
 
 findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)
 findBranchWithEventsById = createFindEntityByFn collection entityName "uuid"
-
-findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId ::
-     String -> AppContextM (Either AppError [Branch])
-findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId packageId = do
-  let action =
-        rest =<<
-        find
-          (select
-             [ "$or" =:
-               [ ["previousPackageId" =: packageId]
-               , ["forkOfPackageId" =: packageId]
-               , ["mergeCheckpointPackageId" =: packageId]
-               ]
-             ]
-             collection)
-  branchesS <- runDB action
-  return . deserializeEntities $ branchesS
 
 insertBranch :: BranchWithEvents -> AppContextM Value
 insertBranch = createInsertFn collection

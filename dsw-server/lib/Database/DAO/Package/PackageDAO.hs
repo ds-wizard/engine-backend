@@ -34,6 +34,9 @@ findPackagesByPreviousPackageId :: String -> AppContextM (Either AppError [Packa
 findPackagesByPreviousPackageId previousPackageId =
   createFindEntitiesByFn collection ["previousPackageId" =: previousPackageId]
 
+findPackagesByForkOfPackageId :: String -> AppContextM (Either AppError [Package])
+findPackagesByForkOfPackageId forkOfPackageId = createFindEntitiesByFn collection ["forkOfPackageId" =: forkOfPackageId]
+
 findPackageById :: String -> AppContextM (Either AppError Package)
 findPackageById = createFindEntityByFn collection entityName "id"
 

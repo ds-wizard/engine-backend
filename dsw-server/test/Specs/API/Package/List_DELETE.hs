@@ -41,7 +41,7 @@ list_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/packages"
+reqUrl = "/packages?organizationId=dsw.nl&kmId=core-nl"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -67,7 +67,7 @@ test_204 appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findPackages appContext 0
+    assertCountInDB findPackages appContext 2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

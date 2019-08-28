@@ -19,18 +19,15 @@ module Service.Package.PackageValidation
   , hmValidateUsageBySomeQuestionnaire
   ) where
 
-import Control.Lens ((^.))
 import Data.Maybe
 import Text.Regex
 
 import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
-import LensesConfig
 import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Package.Package
 import Service.Package.PackageUtils
 
 validateVersionFormat :: String -> Maybe AppError
@@ -71,41 +68,40 @@ validatePreviousPackageIdExistence pkgId previousPkgId = do
     Left error -> return . Just $ error
 
 validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
-validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (validateOnePackage <$> pkgPIdsToDelete)
+validatePackagesDeletation pkgIds = foldl validateOnePackage (return Nothing) pkgIds
   where
-    foldOne :: AppContextM (Maybe AppError) -> AppContextM (Maybe AppError) -> AppContextM (Maybe AppError)
-    foldOne accIO resultIO = do
+    validateOnePackage :: AppContextM (Maybe AppError) -> String -> AppContextM (Maybe AppError)
+    validateOnePackage accIO pkgId = do
       acc <- accIO
-      if isJust acc
-        then accIO
-        else resultIO
-    validateOnePackage :: String -> AppContextM (Maybe AppError)
-    validateOnePackage pkgId = do
-      hmValidateUsageBySomeBranch pkgId $ \() ->
-        validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
-    validateUsageBySomeOtherPackage pkgId callback = do
-      eitherPkgs <- findPackagesByPreviousPackageId pkgId
-      case eitherPkgs of
-        Right [] -> callback ()
-        Right pkgs -> do
-          if length (filter (filFun) pkgs) > 0
-            then return . Just . UserError $
-                 _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
-            else callback ()
+      case acc of
+        Just error -> return . Just $ error
+        Nothing ->
+          hmValidateUsageBySomeBranch pkgId $
+          hmValidateUsageBySomeQuestionnaire pkgId $ hmValidateUsageBySomeOtherPackage pkgId
+    hmValidateUsageBySomeOtherPackage pkgId = do
+      ePkgs <- findPackagesByForkOfPackageId pkgId
+      case ePkgs of
+        Right [] -> return Nothing
+        Right _ ->
+          return . Just . UserError $
+          _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
         Left error -> return . Just $ error
-      where
-        filFun :: Package -> Bool
-        filFun p = not ((p ^. pId) `elem` pkgPIdsToDelete)
 
 validatePackageDeletation :: String -> AppContextM (Maybe AppError)
 validatePackageDeletation pkgId =
-  hmValidateUsageBySomeBranch pkgId $ \() ->
-    validateUsageBySomeOtherPackage pkgId $ \() -> hmValidateUsageBySomeQuestionnaire pkgId $ \() -> return Nothing
+  hmValidateUsageBySomeBranch pkgId $ hmValidateUsageBySomeQuestionnaire pkgId $ hmValidateUsageBySomeOtherPackage pkgId
   where
-    validateUsageBySomeOtherPackage pkgId callback = do
+    hmValidateUsageBySomeOtherPackage pkgId = do
       eitherPkgs <- findPackagesByPreviousPackageId pkgId
       case eitherPkgs of
-        Right [] -> callback ()
+        Right [] -> do
+          ePkgs <- findPackagesByForkOfPackageId pkgId
+          case ePkgs of
+            Right [] -> return Nothing
+            Right _ ->
+              return . Just . UserError $
+              _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
+            Left error -> return . Just $ error
         Right _ ->
           return . Just . UserError $
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
@@ -113,7 +109,7 @@ validatePackageDeletation pkgId =
 
 validateUsageBySomeBranch :: String -> AppContextM (Maybe AppError)
 validateUsageBySomeBranch pkgId = do
-  eitherBranches <- findBranchByPreviousPackageIdOrForkOfPackageIdOrMergeCheckpointPackageId pkgId
+  eitherBranches <- findBranchesByPreviousPackageId pkgId
   case eitherBranches of
     Right [] -> return Nothing
     Right _ ->
@@ -174,12 +170,12 @@ heValidateMaybePreviousPackageIdExistence pkgId mPreviousPkgId callback =
 hmValidateUsageBySomeBranch pkgId callback = do
   maybeError <- validateUsageBySomeBranch pkgId
   case maybeError of
-    Nothing -> callback ()
+    Nothing -> callback
     Just error -> return . Just $ error
 
 -- -----------------------------------------------------
 hmValidateUsageBySomeQuestionnaire pkgId callback = do
   maybeError <- validateUsageBySomeQuestionnaire pkgId
   case maybeError of
-    Nothing -> callback ()
+    Nothing -> callback
     Just error -> return . Just $ error

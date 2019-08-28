@@ -49,14 +49,6 @@ foldInContext = Prelude.foldl foldOne (return [])
       entity <- entityIO
       return $ list ++ [entity]
 
--- foldInContext' :: [monad a] -> BaseContextM [a]
--- foldInContext' = Prelude.foldl foldOne (return [])
---   where
---     foldOne :: BaseContextM [a] -> BaseContextM a -> BaseContextM [a]
---     foldOne listIO entityIO = do
---       list <- listIO
---       entity <- entityIO
---       return $ list ++ [entity]
 foldMaybesInContext :: [AppContextM (Either AppError (Maybe a))] -> AppContextM (Either AppError [a])
 foldMaybesInContext = Prelude.foldl foldOne (return . Right $ [])
   where
