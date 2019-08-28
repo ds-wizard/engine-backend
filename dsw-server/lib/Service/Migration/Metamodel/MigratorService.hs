@@ -21,7 +21,7 @@ import Database.BSON.Branch.BranchWithEvents ()
 import Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Database.BSON.Package.PackageWithEvents ()
 import Database.DAO.Common
-import Localization
+import Localization.Messages.Internal
 import Model.Context.AppContext
 import Model.Error.Error
 import qualified Service.Branch.BranchMapper as BranchMapper

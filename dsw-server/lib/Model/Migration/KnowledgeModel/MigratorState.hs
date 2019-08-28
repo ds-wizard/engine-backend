@@ -3,14 +3,13 @@ module Model.Migration.KnowledgeModel.MigratorState where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Model.Error.Error
 import Model.Event.Event
 import Model.KnowledgeModel.KnowledgeModel
 
 data MigrationState
   = RunningState
   | ConflictState Conflict
-  | ErrorState AppError
+  | ErrorState
   | CompletedState
   deriving (Show, Eq, Generic)
 

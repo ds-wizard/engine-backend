@@ -17,14 +17,15 @@ import Api.Resource.Package.PackageJM ()
 import Api.Resource.Package.PackageSimpleDTO
 import Api.Resource.PackageBundle.PackageBundleDTO
 import Api.Resource.PackageBundle.PackageBundleJM ()
+import Constant.Component
 import Constant.KnowledgeModel
 import Database.DAO.Package.PackageDAO
 import Integration.Http.Registry.Runner
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.PackageBundle.PackageBundle
 import Service.KnowledgeModel.KnowledgeModelValidation
 import Service.Migration.Metamodel.MigratorService
@@ -33,6 +34,7 @@ import Service.Package.PackageService
 import Service.Package.PackageValidation
 import Service.PackageBundle.PackageBundleMapper
 import Util.List (foldMaybesInContext)
+import Util.Logger (logWarnU, msg)
 
 exportPackageBundle :: String -> AppContextM (Either AppError PackageBundleDTO)
 exportPackageBundle pbId =
@@ -76,8 +78,13 @@ importAndConvertPackageBundle content =
          heMigratePackageBundle deserializedContent $ \encodedPb ->
            case eitherDecode . encode $ encodedPb of
              Right pb -> importPackageBundle pb
-             Left error -> return . Left . createErrorWithErrorMessage $ error
-       Left error -> return . Left . createErrorWithErrorMessage $ error
+             Left error -> do
+               logWarnU $
+                 msg _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ (show error) ++ ")")
+               return . Left . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
+       Left error -> do
+         logWarnU $ msg _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ (show error) ++ ")")
+         return . Left . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
 importPackageBundle :: PackageBundleDTO -> AppContextM (Either AppError [PackageSimpleDTO])
 importPackageBundle pb =
@@ -89,7 +96,7 @@ importPackageBundle pb =
     heExtractMainPackage pb callback =
       case find (\p -> p ^. pId == pb ^. bundleId) (pb ^. packages) of
         Just pkg -> callback pkg
-        Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_PB__MAIN_PKG_ABSENCE
+        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__MAIN_PKG_ABSENCE
 
 -- --------------------------------
 -- PRIVATE

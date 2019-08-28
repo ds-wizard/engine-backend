@@ -15,7 +15,7 @@ import Network.Wreq
 
 import Constant.Component
 import LensesConfig hiding (headers)
-import Localization
+import Localization.Messages.Internal
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Http.HttpRequest

@@ -17,13 +17,13 @@ import Api.Resource.User.UserProfileChangeDTO
 import Api.Resource.User.UserStateDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Messaging.Out.Topic.UserTopic
 import Model.ActionKey.ActionKey
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.ActionKey.ActionKeyService
 import Service.Common
@@ -134,8 +134,7 @@ changeUserPasswordByHash userUuid maybeHash userPasswordDto =
     validateHash maybeHash callback =
       case maybeHash of
         Just akHash -> callback akHash
-        Nothing ->
-          return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+        Nothing -> return . Just . UserError $ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
 
 resetUserPassword :: ActionKeyDTO -> AppContextM (Maybe AppError)
 resetUserPassword reqDto =
@@ -158,7 +157,7 @@ changeUserState userUuid maybeHash userStateDto =
     validateHash maybeHash callback =
       case maybeHash of
         Just akHash -> callback akHash
-        Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
+        Nothing -> return . Just . UserError $ _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
 
 deleteUser :: String -> AppContextM (Maybe AppError)
 deleteUser userUuid =

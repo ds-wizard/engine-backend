@@ -6,8 +6,8 @@ import Test.Hspec.Expectations.Pretty
 
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
-import Localization
-import Model.Error.ErrorHelpers
+import Localization.Messages.Public
+import Model.Error.Error
 import Service.User.UserService
 
 import Specs.Common
@@ -19,8 +19,7 @@ userServiceIntegrationSpec appContext =
       it "Registation is disabled" $
         -- GIVEN: Prepare expectations
        do
-        let expectation =
-              Left . createErrorWithErrorMessage . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
         -- WHEN:
         result <- runInContext (registrateUser userJohnCreate) updatedAppContext
         -- THEN:

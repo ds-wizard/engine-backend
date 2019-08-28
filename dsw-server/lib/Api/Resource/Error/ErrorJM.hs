@@ -1,56 +1,16 @@
 module Api.Resource.Error.ErrorJM where
 
-import Control.Monad
 import Data.Aeson
 
-import Model.Error.Error
+import Api.Resource.Error.ErrorDTO
 
-instance ToJSON AppError where
-  toJSON (ValidationError errorMessage formErrors fieldErrors) =
-    object
-      [ "status" .= 400
-      , "error" .= "Bad Request"
-      , "message" .= errorMessage
-      , "formErrors" .= formErrors
-      , "fieldErrors" .= fieldErrors
-      ]
-  toJSON (NotExistsError errorMessage) = object ["status" .= 404, "error" .= "Not Found", "message" .= errorMessage]
-  toJSON (DatabaseError errorMessage) =
-    object ["status" .= 500, "error" .= "Server Internal Error", "type" .= "DatabaseError", "message" .= errorMessage]
-  toJSON (MigratorError errorMessage) =
-    object ["status" .= 400, "error" .= "Bad Request", "type" .= "MigratorError", "message" .= errorMessage]
-  toJSON (HttpClientError errorMessage) =
-    object ["status" .= 500, "error" .= "Internal Server Error", "type" .= "HttpClientError", "message" .= errorMessage]
-  toJSON (ForbiddenError errorMessage) = object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
-  toJSON (GeneralServerError errorMessage) =
-    object
-      ["status" .= 500, "error" .= "Internal Server Error", "type" .= "GeneralServerError", "message" .= errorMessage]
-
-instance FromJSON AppError where
-  parseJSON (Object o) = do
-    errorType <- o .: "errorType"
-    case errorType of
-      "ValidationError" -> do
-        message <- o .: "message"
-        formErrors <- o .: "formErrors"
-        fieldErrors <- o .: "fieldErrors"
-        return $ ValidationError message formErrors fieldErrors
-      "NotExistsError" -> do
-        message <- o .: "message"
-        return $ NotExistsError message
-      "DatabaseError" -> do
-        message <- o .: "message"
-        return $ DatabaseError message
-      "MigratorError" -> do
-        message <- o .: "message"
-        return $ MigratorError message
-      "HttpClientError" -> do
-        message <- o .: "message"
-        return $ HttpClientError message
-      "ForbiddenError" -> do
-        message <- o .: "message"
-        return $ ForbiddenError message
-      "GeneralServerError" -> do
-        message <- o .: "message"
-        return $ GeneralServerError message
-  parseJSON _ = mzero
+instance ToJSON ErrorDTO where
+  toJSON (ValidationErrorDTO formErrors fieldErrors) =
+    object ["status" .= 400, "error" .= "Bad Request", "formErrors" .= formErrors, "fieldErrors" .= fieldErrors]
+  toJSON (UserErrorDTO errorMessage) = object ["status" .= 400, "error" .= "Bad Request", "message" .= errorMessage]
+  toJSON (UnauthorizedErrorDTO errorMessage) =
+    object ["status" .= 401, "error" .= "Unauthorized", "message" .= errorMessage]
+  toJSON (ForbiddenErrorDTO errorMessage) = object ["status" .= 403, "error" .= "Forbidden", "message" .= errorMessage]
+  toJSON (NotExistsErrorDTO errorMessage) = object ["status" .= 404, "error" .= "Not Found", "message" .= errorMessage]
+  toJSON (GeneralServerErrorDTO errorMessage) =
+    object ["status" .= 500, "error" .= "Internal Server Error", "type" .= "GeneralServerError"]

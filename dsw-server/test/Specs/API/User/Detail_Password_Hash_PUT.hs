@@ -21,10 +21,9 @@ import Api.Resource.User.UserPasswordDTO
 import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.ActionKey.ActionKey
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 import Specs.Common
@@ -104,7 +103,7 @@ test_400_hash_is_not_provided appContext =
   -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto = createErrorWithErrorMessage _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+    let expDto = createUserError _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
     let expBody = encode expDto
   -- WHEN: Call API
     response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody

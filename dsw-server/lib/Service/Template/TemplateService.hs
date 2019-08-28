@@ -19,7 +19,8 @@ import qualified Text.Ginger as Q
 import Api.Resource.Template.TemplateDTO
 import Api.Resource.Template.TemplateJM ()
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.File.FileService

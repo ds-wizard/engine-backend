@@ -16,7 +16,7 @@ import qualified Data.Text as T
 import qualified Data.Vector as Vector
 import Network.Wreq (Response, responseBody)
 
-import Localization
+import Localization.Messages.Internal
 import Model.Error.Error
 
 getResponseBody :: Response BSL.ByteString -> BSL.ByteString

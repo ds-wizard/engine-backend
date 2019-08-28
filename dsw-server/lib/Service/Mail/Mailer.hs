@@ -31,7 +31,7 @@ import Api.Resource.User.UserJM ()
 import Constant.Component
 import Constant.Mailer
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Util.Logger

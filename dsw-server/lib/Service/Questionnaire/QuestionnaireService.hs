@@ -13,7 +13,7 @@ import Database.DAO.Migration.Questionnaire.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Context.AppContextHelpers
 import Model.Error.Error

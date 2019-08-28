@@ -8,7 +8,7 @@ import Data.Time
 import qualified Data.UUID as U
 import Database.DAO.PublicPackage.PublicPackageDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Questionnaire.Questionnaire
@@ -42,7 +42,8 @@ getPublicQuestionnaire =
             , _questionnaireDetailDTOCreatedAt = now
             , _questionnaireDetailDTOUpdatedAt = now
             }
-      Left (NotExistsError _) -> return . Left . NotExistsError $ _ERROR_SERVICE_PQ__NOT_SET_UP
+      Left (NotExistsError _) ->
+        return . Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Public Questionnaire"
       Left error -> return . Left $ error
 
 -- --------------------------------

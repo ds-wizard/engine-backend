@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
+import Model.Error.Error
 import Util.Uuid
 
 runAppContextWithBaseContext function baseContext = do
@@ -14,6 +14,7 @@ runAppContextWithBaseContext function baseContext = do
   let appContext =
         AppContext
         { _appContextAppConfig = baseContext ^. appConfig
+        , _appContextLocalization = baseContext ^. localization
         , _appContextBuildInfoConfig = baseContext ^. buildInfoConfig
         , _appContextPool = baseContext ^. pool
         , _appContextMsgChannel = baseContext ^. msgChannel
@@ -30,10 +31,10 @@ heGetCurrentUser callback = do
   mCurrentUser <- asks _appContextCurrentUser
   case mCurrentUser of
     Just user -> callback user
-    Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__MISSING_USER
+    Nothing -> return . Left . UserError $ _ERROR_SERVICE_USER__MISSING_USER
 
 hmGetCurrentUser callback = do
   mCurrentUser <- asks _appContextCurrentUser
   case mCurrentUser of
     Just user -> callback user
-    Nothing -> return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_USER__MISSING_USER
+    Nothing -> return . Just . UserError $ _ERROR_SERVICE_USER__MISSING_USER

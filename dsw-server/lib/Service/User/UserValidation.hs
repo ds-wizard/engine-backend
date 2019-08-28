@@ -4,17 +4,16 @@ import Data.Char (toLower)
 import Data.Either (isRight)
 
 import Database.DAO.User.UserDAO
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.User.User
 
 validateUserEmailUniqueness :: Email -> AppContextM (Maybe AppError)
 validateUserEmailUniqueness email = do
   eitherUserFromDb <- findUserByEmail (toLower <$> email)
   if isRight eitherUserFromDb
-    then return . Just . createErrorWithFieldError $ ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email)
+    then return . Just $ ValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS email)]
     else return Nothing
 
 validateUserChangedEmailUniqueness :: Email -> Email -> AppContextM (Maybe AppError)

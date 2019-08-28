@@ -19,18 +19,21 @@ import Web.Scotty.Trans
        (ActionT, ScottyError, addHeader, body, header, json,
         liftAndCatchIO, params, raw, request, showError, status)
 
+import Api.Resource.Error.ErrorDTO
 import Api.Resource.Error.ErrorJM ()
 import Constant.Api
        (authorizationHeaderName, xDSWTraceUuidHeaderName)
 import Constant.Component
 import LensesConfig hiding (requestMethod)
-import Localization
+import Localization.Locale
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Context.BaseContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Service.Token.TokenService
 import Service.User.UserService
+import Util.List (foldInContext)
 import Util.Logger
 import Util.Token
 import Util.Uuid
@@ -41,6 +44,7 @@ runInUnauthService function = do
   traceUuid <- liftIO generateUuid
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
   appConfig <- lift $ asks _baseContextAppConfig
+  localization <- lift $ asks _baseContextLocalization
   buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
@@ -48,6 +52,7 @@ runInUnauthService function = do
   let appContext =
         AppContext
         { _appContextAppConfig = appConfig
+        , _appContextLocalization = localization
         , _appContextBuildInfoConfig = buildInfoConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
@@ -61,6 +66,7 @@ runInAuthService user function = do
   traceUuid <- liftIO generateUuid
   addHeader (LT.pack xDSWTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
   appConfig <- lift $ asks _baseContextAppConfig
+  localization <- lift $ asks _baseContextLocalization
   buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
   dbPool <- lift $ asks _baseContextPool
   msgChannel <- lift $ asks _baseContextMsgChannel
@@ -68,6 +74,7 @@ runInAuthService user function = do
   let appContext =
         AppContext
         { _appContextAppConfig = appConfig
+        , _appContextLocalization = localization
         , _appContextBuildInfoConfig = buildInfoConfig
         , _appContextPool = dbPool
         , _appContextMsgChannel = msgChannel
@@ -84,7 +91,9 @@ getReqDto callback = do
   let eitherReqDto = eitherDecode reqBody
   case eitherReqDto of
     Right reqDto -> callback reqDto
-    Left error -> sendError $ createErrorWithErrorMessage error
+    Left error -> do
+      lift . logWarn $ msg _CMP_API (show error)
+      sendError $ UserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
 getCurrentUserUuid callback = do
   tokenHeader <- header (LT.pack authorizationHeaderName)
@@ -99,7 +108,7 @@ getCurrentUser callback =
     eitherUser <- runInUnauthService $ getUserById userUuid
     case eitherUser of
       Right user -> callback user
-      Left error -> unauthorizedA (_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid)
+      Left error -> sendError $ UnauthorizedError (_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid)
 
 getQueryParam paramName = do
   reqParams <- params
@@ -156,31 +165,35 @@ isAdmin callback =
       else callback False
 
 sendError :: AppError -> Endpoint
-sendError (ValidationError errorMessage formErrors fieldErrors) = do
+sendError (ValidationError formErrorRecords fieldErrorRecords) = do
+  formErrors <- lift . foldInContext $ fmap locale formErrorRecords
+  let localeTuple =
+        \(k, v) -> do
+          v' <- locale v
+          return (k, v')
+  fieldErrors <- lift . foldInContext . fmap localeTuple $ fieldErrorRecords
   status badRequest400
-  json $ ValidationError errorMessage formErrors fieldErrors
-sendError (NotExistsError errorMessage) = do
-  status notFound404
-  json $ NotExistsError errorMessage
-sendError (DatabaseError errorMessage) = do
-  lift $ logError errorMessage
-  status internalServerError500
-  json $ DatabaseError errorMessage
-sendError (MigratorError errorMessage) = do
-  lift $ logWarn errorMessage
+  json $ ValidationErrorDTO formErrors fieldErrors
+sendError (UserError localeRecord) = do
+  message <- lift $ locale localeRecord
   status badRequest400
-  json $ MigratorError errorMessage
-sendError (HttpClientError errorMessage) = do
-  lift $ logError errorMessage
-  status internalServerError500
-  json $ HttpClientError errorMessage
-sendError (ForbiddenError errorMessage) = do
+  json $ UserErrorDTO message
+sendError (UnauthorizedError localeRecord) = do
+  message <- lift $ locale localeRecord
+  status unauthorized401
+  json $ UnauthorizedErrorDTO message
+sendError (ForbiddenError localeRecord) = do
+  message <- lift $ locale localeRecord
   status forbidden403
-  json $ ForbiddenError errorMessage
+  json $ ForbiddenErrorDTO message
+sendError (NotExistsError localeRecord) = do
+  message <- lift $ locale localeRecord
+  status notFound404
+  json $ NotExistsErrorDTO message
 sendError (GeneralServerError errorMessage) = do
   lift $ logError errorMessage
   status internalServerError500
-  json $ GeneralServerError errorMessage
+  json $ GeneralServerErrorDTO errorMessage
 
 sendFile :: String -> BSL.ByteString -> Endpoint
 sendFile filename body = do
@@ -219,4 +232,4 @@ internalServerErrorA e = do
   let message = LT.unpack . showError $ e
   lift . logError $ message
   status internalServerError500
-  json . GeneralServerError $ message
+  json . GeneralServerErrorDTO $ message

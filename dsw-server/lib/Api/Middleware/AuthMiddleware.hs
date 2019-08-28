@@ -19,7 +19,7 @@ import Text.Regex
 import Api.Handler.Common
 import Constant.Api (authorizationHeaderName)
 import LensesConfig hiding (requestHeaders, requestMethod)
-import Localization
+import Localization.Messages.Internal
 import Model.Config.AppConfig
 import Service.Token.TokenService
 import Util.Token

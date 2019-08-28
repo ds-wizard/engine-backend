@@ -2,7 +2,7 @@ module Service.Document.DocumentMapper where
 
 import qualified Text.FromHTML as FromHTML
 
-import Localization
+import Localization.Messages.Internal
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error
 

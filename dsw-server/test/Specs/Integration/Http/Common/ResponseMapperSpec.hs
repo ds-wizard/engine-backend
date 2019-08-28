@@ -5,7 +5,7 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Integration.Http.Common.ResponseMapper
-import Localization
+import Localization.Messages.Internal
 import Model.Error.Error
 
 import Specs.Integration.Http.Common

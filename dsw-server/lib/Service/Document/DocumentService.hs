@@ -20,7 +20,7 @@ import Api.Resource.DataManagementPlan.DataManagementPlanDTO
 import Api.Resource.DataManagementPlan.DataManagementPlanJM ()
 import Api.Resource.Template.TemplateDTO
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
 import Model.Context.AppContext
 import Model.DataManagementPlan.DataManagementPlan
 import Model.Error.Error

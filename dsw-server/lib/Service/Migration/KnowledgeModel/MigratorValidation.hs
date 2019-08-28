@@ -3,7 +3,7 @@ module Service.Migration.KnowledgeModel.MigratorValidation where
 import Data.Maybe
 
 import Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.Package.PackageUtils
@@ -15,7 +15,7 @@ validateMigrationUniqueness bUuid = do
   eResult <- findMigratorStateByBranchUuid bUuid
   case eResult of
     Left (NotExistsError _) -> return Nothing
-    Right _ -> return . Just . MigratorError $ _ERROR_KMMT_VALIDATION_MIGRATOR__MIGRATION_UNIQUENESS
+    Right _ -> return . Just . UserError $ _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS
     Left error -> return . Just $ error
 
 validateIfTargetPackageVersionIsHigher :: String -> String -> AppContextM (Maybe AppError)
@@ -24,7 +24,7 @@ validateIfTargetPackageVersionIsHigher forkOfPackageId targetPackageId = do
   let forkOfPackageIdVersion = getVersionFromPkgId forkOfPackageId
   if isNothing $ validateIsVersionHigher targetPackageVersion forkOfPackageIdVersion
     then return Nothing
-    else return . Just . MigratorError $ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
+    else return . Just . UserError $ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
 
 -- --------------------------------
 -- HELPERS

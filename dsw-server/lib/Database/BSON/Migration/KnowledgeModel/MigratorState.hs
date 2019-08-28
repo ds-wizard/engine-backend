@@ -6,7 +6,6 @@ import Data.Bson.Generic
 import Data.Maybe
 
 import Database.BSON.Common ()
-import Database.BSON.Error.Error ()
 import Database.BSON.Event.Answer ()
 import Database.BSON.Event.Chapter ()
 import Database.BSON.Event.Common
@@ -22,7 +21,7 @@ instance ToBSON MigrationState where
   toBSON RunningState = ["stateType" BSON.=: "RunningState"]
   toBSON (ConflictState (CorrectorConflict event)) =
     ["stateType" BSON.=: "ConflictState", "targetEvent" BSON.=: convertEventToBSON event]
-  toBSON (ErrorState appError) = ["stateType" BSON.=: "ErrorState", "error" BSON.=: appError]
+  toBSON ErrorState = ["stateType" BSON.=: "ErrorState"]
   toBSON CompletedState = ["stateType" BSON.=: "CompletedState"]
 
 instance FromBSON MigrationState where
@@ -33,9 +32,7 @@ instance FromBSON MigrationState where
       "ConflictState" -> do
         event <- BSON.lookup "targetEvent" doc
         return . ConflictState . CorrectorConflict . fromJust . chooseEventDeserializator $ event
-      "ErrorState" -> do
-        error <- BSON.lookup "error" doc
-        return . ErrorState $ error
+      "ErrorState" -> return ErrorState
       "CompletedState" -> return CompletedState
 
 instance ToBSON MigratorState where

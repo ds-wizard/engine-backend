@@ -15,10 +15,11 @@ import Api.Resource.Error.ErrorJM ()
 import Api.Resource.Token.TokenDTO
 import Database.Migration.Development.Token.Data.Tokens
 import LensesConfig
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 
 import Specs.API.Common
+import Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /tokens
@@ -28,7 +29,7 @@ list_post appContext =
   describe "POST /tokens" $ do
     test_201 appContext
     test_400_invalid_json appContext
-    test_400_bad_credentials appContext
+    test_401_bad_credentials appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -69,16 +70,16 @@ test_400_invalid_json appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_bad_credentials appContext = do
-  it "HTTP 400 BAD REQUEST when invalid creadentials are provided" $
+test_401_bad_credentials appContext = do
+  it "HTTP 401 UNAUTHORIZED when invalid creadentials are provided" $
      -- GIVEN: Prepare request
    do
     let reqDto = albertCreateToken & email .~ "albert.einstein@example.com2"
     let reqBody = encode reqDto
      -- AND: Prepare expectation
-    let expStatus = 400
+    let expStatus = 401
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage "Incorrect email or password"
+    let expDto = createUnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

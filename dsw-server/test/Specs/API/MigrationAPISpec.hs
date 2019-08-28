@@ -13,6 +13,7 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Api.Resource.Branch.BranchCreateDTO
+import Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
@@ -28,8 +29,7 @@ import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
-import Localization
-import Model.Error.Error
+import Localization.Messages.Public
 import Model.Migration.KnowledgeModel.MigratorState
 import Service.Branch.BranchService
 import Service.Event.EventMapper
@@ -66,7 +66,7 @@ migratorAPI appContext = do
                 MigratorStateDTO
                 { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
                 , _migratorStateDTOMigrationState =
-                    ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
+                    ConflictStateDTO . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
                 , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
                 , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
@@ -94,7 +94,8 @@ migratorAPI appContext = do
           let expStatus = 404
           let expHeaders = [resCtHeader] ++ resCorsHeaders
           let expDto =
-                NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6")
+                createNotExistsError
+                  (_ERROR_DATABASE__ENTITY_NOT_FOUND "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6")
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -129,7 +130,7 @@ migratorAPI appContext = do
                 MigratorStateDTO
                 { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
                 , _migratorStateDTOMigrationState =
-                    ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
+                    ConflictStateDTO . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
                 , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
                 , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
                 , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
@@ -161,7 +162,7 @@ migratorAPI appContext = do
          do
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError "Migration is already created"
+          let expDto = createUserError _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -186,7 +187,7 @@ migratorAPI appContext = do
           -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
+          let expDto = createUserError _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -205,7 +206,7 @@ migratorAPI appContext = do
          do
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PREVIOUS_PKG_ABSENCE
+          let expDto = createUserError _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -234,7 +235,7 @@ migratorAPI appContext = do
          do
           let expStatus = 404
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "dsw.nl:core-nl:2.0.0")
+          let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "dsw.nl:core-nl:2.0.0")
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -343,7 +344,8 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
+          let expDto =
+                createUserError _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited =
                 reqDto & originalEventUuid .~ (fromJust . U.fromString $ "30ac5193-5685-41b1-86d7-ab0b356c516a")
@@ -368,7 +370,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
+          let expDto = createUserError _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
           let expBody = encode expDto
           let reqDtoEdited = reqDto & event .~ Nothing
           let reqBodyEdited = encode reqDtoEdited
@@ -392,7 +394,7 @@ migratorAPI appContext = do
           -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = MigratorError _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
+          let expDto = createUserError _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext

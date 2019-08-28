@@ -27,9 +27,8 @@ import qualified
 import qualified Database.Migration.Development.User.UserMigration
        as U
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.Error
 
 import Specs.API.Common
 import Specs.API.Questionnaire.Migration.Common
@@ -146,7 +145,7 @@ create_test_403 title appContext qtn reason =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
+    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

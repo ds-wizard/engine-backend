@@ -17,9 +17,8 @@ import Api.Resource.Error.ErrorJM ()
 import Database.Migration.Development.Branch.Data.Branches
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 import Service.Branch.BranchService
 
 import Specs.API.Branch.Common
@@ -108,7 +107,7 @@ test_400_not_valid_kmId appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)
+    let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
@@ -144,7 +143,7 @@ test_400_already_taken_kmId appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId)
+    let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId)]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO

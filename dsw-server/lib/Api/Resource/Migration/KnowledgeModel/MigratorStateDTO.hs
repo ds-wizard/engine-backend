@@ -4,11 +4,11 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Model.Migration.KnowledgeModel.MigratorState
+import Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 
 data MigratorStateDTO = MigratorStateDTO
   { _migratorStateDTOBranchUuid :: U.UUID
-  , _migratorStateDTOMigrationState :: MigrationState
+  , _migratorStateDTOMigrationState :: MigrationStateDTO
   , _migratorStateDTOBranchPreviousPackageId :: String
   , _migratorStateDTOTargetPackageId :: String
   , _migratorStateDTOCurrentKnowledgeModel :: Maybe KnowledgeModelDTO

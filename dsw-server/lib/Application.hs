@@ -11,6 +11,7 @@ import Bootstrap.Config
 import Bootstrap.Database
 import Bootstrap.DatabaseMigration
 import Bootstrap.HttpClient
+import Bootstrap.Localization
 import Bootstrap.Messaging
 import Bootstrap.MetamodelMigration
 import Bootstrap.Web
@@ -35,9 +36,11 @@ runApplication = do
         dbPool <- connectDB appConfig
         msgChannel <- connectMQ appConfig
         httpClientManager <- setupHttpClientManager appConfig
+        localization <- loadLocalization appConfig
         let baseContext =
               BaseContext
               { _baseContextAppConfig = appConfig
+              , _baseContextLocalization = localization
               , _baseContextBuildInfoConfig = buildInfoConfig
               , _baseContextPool = dbPool
               , _baseContextMsgChannel = msgChannel

@@ -8,10 +8,9 @@ import Api.Resource.Typehint.TypehintDTO
 import Api.Resource.Typehint.TypehintRequestDTO
 import Integration.Http.Typehint.Runner
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelLenses
 import Service.Config.IntegrationConfigService
@@ -34,9 +33,9 @@ getTypehints reqDto =
     heGetQuestion km questionUuid callback =
       case M.lookup questionUuid (km ^. questionsM) of
         Just (IntegrationQuestion' question) -> callback question
-        Just _ -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION
-        Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__NON_EXISTING_QUESTION
+        Just _ -> return . Left . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION
+        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__QUESTION_ABSENCE
     heGetIntegration km integrationUuid callback =
       case M.lookup integrationUuid (km ^. integrationsM) of
         Just integration -> callback integration
-        Nothing -> return . Left . createErrorWithErrorMessage $ _ERROR_SERVICE_TYPEHINT__NON_EXISTING_INTEGRATION
+        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__INTEGRATION_ABSENCE

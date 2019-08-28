@@ -13,7 +13,7 @@ import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
 import Model.Context.AppContext
 import Model.Error.Error
 import Service.Feedback.Connector.Connector
@@ -32,7 +32,7 @@ instance Connector AppContextM where
       Right issues -> return . Right . V.toList $ toSimpleIssue <$> issues
       Left error -> do
         logError . show $ error
-        return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Get issues"
+        return . Left . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Get issues"
   createIssue packageId questionUuid title content = do
     dswConfig <- asks _appContextAppConfig
     let fToken = dswConfig ^. feedback . token
@@ -52,7 +52,7 @@ instance Connector AppContextM where
       Right issue -> return . Right . GD.unIssueNumber . GI.issueNumber $ issue
       Left error -> do
         logError . show $ error
-        return . Left . HttpClientError $ _ERROR_HTTP_CLIENT__REQUEST_FAILED "GitHub" "Create issue"
+        return . Left . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Create issue"
 
 packToName :: String -> GN.Name a
 packToName str = GN.N . T.pack $ str

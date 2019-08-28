@@ -17,9 +17,8 @@ import Test.Hspec.Wai.Matcher
 import Api.Resource.User.UserPasswordDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 import Specs.Common
@@ -86,7 +85,7 @@ test_403_no_hash appContext =
   -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto = createErrorWithErrorMessage _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+    let expDto = createUserError _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
     let expBody = encode expDto
   -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

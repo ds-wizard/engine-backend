@@ -23,10 +23,8 @@ import qualified
 import qualified Database.Migration.Development.User.UserMigration
        as U
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.Error
-import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 import Specs.Common
@@ -96,7 +94,7 @@ test_400 appContext = do
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto = createErrorWithErrorMessage _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
+    let expDto = createUserError _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
     let expBody = encode expDto
     -- AND: Prepare DB
     runInContextIO (insertQuestionnaire questionnaire4) appContext
@@ -133,7 +131,7 @@ create_test_403 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

@@ -30,9 +30,8 @@ import Database.Migration.Development.Report.Data.Reports
 import qualified Database.Migration.Development.User.UserMigration
        as U
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.Error
 import Service.Questionnaire.QuestionnaireMapper
 import Service.Report.ReportMapper
 
@@ -145,7 +144,7 @@ test_403 appContext = do
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

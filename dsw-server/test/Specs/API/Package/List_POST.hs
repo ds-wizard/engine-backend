@@ -19,9 +19,8 @@ import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.Package.Data.Packages
 import Database.Migration.Development.PackageBundle.Data.PackageBundles
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 import Service.Package.PackageMapper
 import qualified Service.PackageBundle.PackageBundleMapper as PBM
 
@@ -232,7 +231,7 @@ test_400 appContext =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
+    let expDto = createUserError . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -250,7 +249,7 @@ test_400_main_package_duplication appContext = do
    do
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
+    let expDto = createUserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -276,7 +275,7 @@ test_400_missing_previous_package appContext = do
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expDto =
-          createErrorWithErrorMessage $
+          createUserError $
           _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
@@ -302,7 +301,7 @@ test_400_bad_package_coordinates appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (netherlandsPackage ^. pId)
+    let expDto = createUserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (netherlandsPackage ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

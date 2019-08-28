@@ -17,10 +17,10 @@ import Api.Resource.Token.TokenCreateDTO
 import Api.Resource.Token.TokenDTO
 import Database.DAO.User.UserDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.Token.Token
 import Model.User.User
 import Service.Token.TokenMapper
@@ -39,21 +39,20 @@ getToken tokenCreateDto =
       eitherUser <- findUserByEmail (toLower <$> tokenCreateDto ^. email)
       case eitherUser of
         Right user -> callback user
-        Left (NotExistsError _) ->
-          return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        Left (NotExistsError _) -> return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
         Left error -> return . Left $ error
     -- ------------------------------------------------------------
     checkIsUserActive user callback =
       if user ^. active
         then callback ()
-        else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+        else return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     -- ------------------------------------------------------------
     authenticateUser user callback = do
       let incomingPassword = BS.pack (tokenCreateDto ^. password)
       let passwordHashFromDB = BS.pack (user ^. passwordHash)
       if verifyPassword incomingPassword passwordHashFromDB
         then callback ()
-        else return . Left $ createErrorWithErrorMessage _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        else return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     -- ------------------------------------------------------------
     getJwtConfig = do
       dswConfig <- asks _appContextAppConfig

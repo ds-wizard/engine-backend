@@ -15,7 +15,6 @@ import Constant.KnowledgeModel
 import qualified DSW.Metamodel.Migrator.EventMigrator
        as EventMigrator
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Util.JSON (convertValueToOject, getArrayField, getField)
 import Util.List (foldEither)
 
@@ -31,4 +30,4 @@ migrateEventsField eventsFieldName value =
       getArrayField eventsFieldName object $ \events -> do
         case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> (Vector.toList events) of
           Right updatedEvents -> Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON updatedEvents) object
-          Left error -> Left . createErrorWithErrorMessage $ error
+          Left error -> Left . GeneralServerError $ error

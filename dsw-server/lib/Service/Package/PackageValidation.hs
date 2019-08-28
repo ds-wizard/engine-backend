@@ -27,10 +27,9 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Package.PackageDAO
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.Package.Package
 import Service.Package.PackageUtils
 
@@ -38,7 +37,7 @@ validateVersionFormat :: String -> Maybe AppError
 validateVersionFormat pkgVersion =
   if isJust $ matchRegex validationRegex pkgVersion
     then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
+    else Just $ UserError _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
   where
     validationRegex = mkRegex "^[0-9]+\\.[0-9]+\\.[0-9]+$"
 
@@ -46,20 +45,20 @@ validateIsVersionHigher :: String -> String -> Maybe AppError
 validateIsVersionHigher newVersion oldVersion =
   if compareVersion newVersion oldVersion == GT
     then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
+    else Just . UserError $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
 
 validatePackageIdWithCoordinates :: String -> String -> String -> String -> Maybe AppError
 validatePackageIdWithCoordinates pId organizationId kmId version =
   if pId == buildPackageId organizationId kmId version
     then Nothing
-    else Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pId
+    else Just . UserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pId
 
 validatePackageIdUniqueness :: String -> AppContextM (Maybe AppError)
 validatePackageIdUniqueness pkgId = do
   eitherPackage <- findPackageById pkgId
   case eitherPackage of
     Left (NotExistsError _) -> return Nothing
-    Right _ -> return . Just . createErrorWithErrorMessage $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
+    Right _ -> return . Just . UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS pkgId
     Left error -> return . Just $ error
 
 validatePreviousPackageIdExistence :: String -> String -> AppContextM (Maybe AppError)
@@ -68,7 +67,7 @@ validatePreviousPackageIdExistence pkgId previousPkgId = do
   case eitherPackage of
     Right _ -> return Nothing
     Left (NotExistsError _) ->
-      return . Just . createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId
+      return . Just . UserError $ _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST previousPkgId pkgId
     Left error -> return . Just $ error
 
 validatePackagesDeletation :: [String] -> AppContextM (Maybe AppError)
@@ -90,7 +89,7 @@ validatePackagesDeletation pkgPIdsToDelete = foldl foldOne (return Nothing) (val
         Right [] -> callback ()
         Right pkgs -> do
           if length (filter (filFun) pkgs) > 0
-            then return . Just . createErrorWithErrorMessage $
+            then return . Just . UserError $
                  _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
             else callback ()
         Left error -> return . Just $ error
@@ -108,7 +107,7 @@ validatePackageDeletation pkgId =
       case eitherPkgs of
         Right [] -> callback ()
         Right _ ->
-          return . Just . createErrorWithErrorMessage $
+          return . Just . UserError $
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "package"
         Left error -> return . Just $ error
 
@@ -118,7 +117,7 @@ validateUsageBySomeBranch pkgId = do
   case eitherBranches of
     Right [] -> return Nothing
     Right _ ->
-      return . Just . createErrorWithErrorMessage $
+      return . Just . UserError $
       _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "knowledge model"
     Left error -> return . Just $ error
 
@@ -128,7 +127,7 @@ validateUsageBySomeQuestionnaire pkgId = do
   case eitherQuestionnaires of
     Right [] -> return Nothing
     Right _ ->
-      return . Just . createErrorWithErrorMessage $
+      return . Just . UserError $
       _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
     Left error -> return . Just $ error
 

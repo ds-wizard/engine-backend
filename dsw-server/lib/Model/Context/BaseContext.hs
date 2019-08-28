@@ -4,6 +4,7 @@ import Control.Applicative (Applicative)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
+import qualified Data.Map.Strict as M
 import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
@@ -13,6 +14,7 @@ import Model.Config.BuildInfoConfig
 
 data BaseContext = BaseContext
   { _baseContextAppConfig :: AppConfig
+  , _baseContextLocalization :: M.Map String String
   , _baseContextBuildInfoConfig :: BuildInfoConfig
   , _baseContextPool :: ConnectionPool
   , _baseContextMsgChannel :: Maybe Channel

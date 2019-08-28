@@ -15,13 +15,13 @@ import Api.Resource.Organization.OrganizationChangeDTO ()
 import Api.Resource.Organization.OrganizationDTO
 import Database.Migration.Development.Organization.Data.Organizations
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 import Service.Organization.OrganizationMapper
 
 import Specs.API.Common
 import Specs.API.Organization.Common
+import Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /organizations/current
@@ -85,7 +85,7 @@ test_400_invalid_organizationId appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithFieldError ("organizationId", _ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT)
+    let expDto = createValidationError [] [("organizationId", _ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT)]
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

@@ -40,20 +40,23 @@ foldMaybe = foldl go (Just [])
     go _ Nothing = Nothing
     go Nothing _ = Nothing
 
-foldInContext :: [AppContextM (Either AppError a)] -> AppContextM (Either AppError [a])
-foldInContext = Prelude.foldl foldOne (return . Right $ [])
+foldInContext :: Monad monad => [monad a] -> monad [a]
+foldInContext = Prelude.foldl foldOne (return [])
   where
-    foldOne :: AppContextM (Either AppError [a]) -> AppContextM (Either AppError a) -> AppContextM (Either AppError [a])
-    foldOne eitherListIO eitherEntityIO = do
-      eitherList <- eitherListIO
-      eitherEntity <- eitherEntityIO
-      case eitherList of
-        Right list ->
-          case eitherEntity of
-            Right entity -> return . Right $ list ++ [entity]
-            Left error -> return . Left $ error
-        Left error -> return . Left $ error
+    foldOne :: Monad monad => monad [a] -> monad a -> monad [a]
+    foldOne listIO entityIO = do
+      list <- listIO
+      entity <- entityIO
+      return $ list ++ [entity]
 
+-- foldInContext' :: [monad a] -> BaseContextM [a]
+-- foldInContext' = Prelude.foldl foldOne (return [])
+--   where
+--     foldOne :: BaseContextM [a] -> BaseContextM a -> BaseContextM [a]
+--     foldOne listIO entityIO = do
+--       list <- listIO
+--       entity <- entityIO
+--       return $ list ++ [entity]
 foldMaybesInContext :: [AppContextM (Either AppError (Maybe a))] -> AppContextM (Either AppError [a])
 foldMaybesInContext = Prelude.foldl foldOne (return . Right $ [])
   where

@@ -19,9 +19,8 @@ import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 
 import Specs.API.Common
 import Specs.Common
@@ -80,7 +79,7 @@ test_400 appContext = do
     let expStatus = 400
     let expHeaders = resCorsHeaders
     let expDto =
-          createErrorWithErrorMessage $
+          createUserError $
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
             (netherlandsPackage ^. pId)
             "knowledge model"

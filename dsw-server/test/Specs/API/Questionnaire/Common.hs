@@ -9,7 +9,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Questionnaire.QuestionnaireDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Error.Error
 
 import Specs.Common

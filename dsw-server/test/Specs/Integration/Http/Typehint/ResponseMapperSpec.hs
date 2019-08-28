@@ -6,7 +6,7 @@ import Test.Hspec.Expectations.Pretty
 import Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Integration.Http.Typehint.ResponseMapper
 import Integration.Resource.Typehint.TypehintIDTO
-import Localization
+import Localization.Messages.Internal
 import Model.Error.Error
 
 import Specs.Integration.Http.Common

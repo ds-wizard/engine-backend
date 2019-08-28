@@ -20,9 +20,8 @@ import Database.Migration.Development.Package.Data.Packages
 import qualified
        Database.Migration.Development.Package.PackageMigration as PKG
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
 import Service.Package.PackageMapper
 import Service.Version.VersionService
 
@@ -102,7 +101,7 @@ test_400_invalid_version_format appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
+    let expDto = createUserError _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO B.runMigration appContext
@@ -122,7 +121,7 @@ test_400_not_higher_pkg_version appContext = do
    do
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
+    let expDto = createUserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

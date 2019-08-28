@@ -15,9 +15,8 @@ import Api.Resource.Error.ErrorJM ()
 import Database.DAO.Package.PackageDAO
 import Database.Migration.Development.Package.Data.Packages
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.Error
 
 import Specs.API.Common
 import Specs.API.Package.Common
@@ -88,7 +87,7 @@ test_404 appContext =
      -- AND: Prepare expectation
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "dsw.global:non-existing-package:1.0.0")
+    let expDto = createNotExistsError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "dsw.global:non-existing-package:1.0.0")
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody

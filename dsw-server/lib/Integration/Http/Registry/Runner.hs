@@ -13,11 +13,10 @@ import Integration.Http.Registry.RequestMapper
 import Integration.Http.Registry.ResponseMapper
 import Integration.Resource.Package.PackageSimpleIDTO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.Statistics.InstanceStatistics
 
 retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM (Either AppError [PackageSimpleIDTO])
@@ -30,7 +29,7 @@ retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM (Either 
 retrievePackageBundleById registryConfig pkgId =
   if registryConfig ^. enabled
     then runRequest (toRetrievePackageBundleByIdRequest registryConfig pkgId) toRetrievePackageBundleByIdResponse
-    else return . Left . createErrorWithErrorMessage . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+    else return . Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 -- --------------------------------
 -- HELPERS

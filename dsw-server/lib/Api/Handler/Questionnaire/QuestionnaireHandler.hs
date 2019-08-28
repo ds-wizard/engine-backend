@@ -12,10 +12,10 @@ import Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Api.Resource.Questionnaire.QuestionnaireJM ()
 import Api.Resource.Report.ReportJM ()
-import Localization
+import Localization.Messages.Public
 import Model.DataManagementPlan.DataManagementPlan
 import Model.DataManagementPlan.DataManagementPlanHelpers
-import Model.Error.ErrorHelpers
+import Model.Error.Error
 import Service.DataManagementPlan.DataManagementPlanService
 import Service.Questionnaire.QuestionnaireService
 import Service.Report.ReportService
@@ -90,7 +90,7 @@ getQuestionnaireDmpA = do
     heGetFormat format callback =
       case readMaybe (T.unpack format) of
         Just knownFormat -> callback knownFormat
-        Nothing -> sendError . createErrorWithErrorMessage . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $ T.unpack format
+        Nothing -> sendError . UserError . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $ T.unpack format
     getFilename :: String -> DataManagementPlanFormat -> String
     getFilename qtnUuid format = qtnUuid ++ formatExtension format
 

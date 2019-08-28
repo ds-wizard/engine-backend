@@ -32,7 +32,7 @@ migrate state =
         then return $ newState & migrationState .~ CompletedState
         else return newState
     ConflictState _ -> return state
-    ErrorState _ -> return state
+    ErrorState -> return state
     CompletedState -> return state
 
 solveConflict :: MigratorState -> MigratorConflictDTO -> MigratorState
@@ -59,4 +59,4 @@ solveConflict state mcDto =
            then let (Right newKm) = eitherNewKm
                 in newState & currentKnowledgeModel .~ (Just newKm)
            else let (Left error) = eitherNewKm
-                in newState & migrationState .~ (ErrorState error)
+                in newState & migrationState .~ ErrorState

@@ -24,12 +24,10 @@ import Web.Scotty.Trans (scottyAppT)
 import Api.Resource.Error.ErrorJM ()
 import Api.Router
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Config.AppConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
-import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.User.User
 import Service.Token.TokenService
 import Service.User.UserService
@@ -42,6 +40,7 @@ startWebApp appContext = do
   let baseContext =
         BaseContext
         { _baseContextAppConfig = appContext ^. appConfig
+        , _baseContextLocalization = appContext ^. localization
         , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
         , _baseContextPool = appContext ^. pool
         , _baseContextMsgChannel = appContext ^. msgChannel
@@ -115,7 +114,7 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ "Error in $: key \"" ++ missingField ++ "\" not present"
+    let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -130,7 +129,7 @@ createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createErrorWithErrorMessage $ "Error in $[0]: key \"" ++ missingField ++ "\" not present"
+    let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -189,7 +188,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator 
    do
     let expStatus = 404
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
+    let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody

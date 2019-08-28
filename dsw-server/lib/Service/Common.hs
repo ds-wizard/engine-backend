@@ -6,18 +6,18 @@ module Service.Common
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks)
 
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.ErrorHelpers
+import Model.Error.Error
 
 heCheckIfFeatureIsEnabled featureName accessor callback = do
   dswConfig <- asks _appContextAppConfig
   if dswConfig ^. accessor
     then callback
-    else return . Left . createErrorWithErrorMessage . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
+    else return . Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
 
 hmCheckIfFeatureIsEnabled featureName accessor callback = do
   dswConfig <- asks _appContextAppConfig
   if dswConfig ^. accessor
     then callback
-    else return . Just . createErrorWithErrorMessage . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName
+    else return . Just . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ featureName

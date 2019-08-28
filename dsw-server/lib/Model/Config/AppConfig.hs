@@ -23,6 +23,7 @@ data AppConfigGeneral = AppConfigGeneral
   , _appConfigGeneralServerPort :: Int
   , _appConfigGeneralServiceToken :: String
   , _appConfigGeneralIntegrationConfig :: String
+  , _appConfigGeneralLocalizationUrl :: Maybe String
   , _appConfigGeneralRegistrationEnabled :: Bool
   , _appConfigGeneralPublicQuestionnaireEnabled :: Bool
   , _appConfigGeneralLevelsEnabled :: Bool

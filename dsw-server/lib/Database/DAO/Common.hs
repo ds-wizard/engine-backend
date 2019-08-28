@@ -11,7 +11,8 @@ import Database.MongoDB
         merge, modify, rest, save, select)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
-import Localization
+import Localization.Messages.Internal
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
 
@@ -25,7 +26,7 @@ deserializeEntities entitiesS = do
   let entities = catMaybes maybeEntities
   if length maybeEntities == length entities
     then Right entities
-    else Left . DatabaseError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
+    else Left . GeneralServerError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
 
 deserializeMaybeEntity :: (FromBSON a) => String -> String -> Maybe Document -> Either AppError a
 deserializeMaybeEntity entityName identificator mEntityS =
@@ -34,7 +35,7 @@ deserializeMaybeEntity entityName identificator mEntityS =
       let mEntity = fromBSON entityS
       case mEntity of
         Just entity -> Right entity
-        Nothing -> Left . DatabaseError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
+        Nothing -> Left . GeneralServerError $ _ERROR_DATABASE__DESERIALIZATION_FAILED
     Nothing -> Left . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator
 
 createFindEntitiesFn collection = do

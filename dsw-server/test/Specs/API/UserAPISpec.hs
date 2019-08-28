@@ -25,9 +25,8 @@ import Database.DAO.ActionKey.ActionKeyDAO
 import Database.DAO.User.UserDAO
 import Database.Migration.Development.User.Data.Users
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.ActionKey.ActionKey
-import Model.Error.ErrorHelpers
 import Service.User.UserMapper
 import Service.User.UserService
 import Util.List (elems)
@@ -123,7 +122,7 @@ userAPI appContext =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)
+          let expDto = createValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)]
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -248,7 +247,7 @@ userAPI appContext =
            -- GIVEN: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)
+          let expDto = createValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)]
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -329,7 +328,7 @@ userAPI appContext =
            -- AND: Prepare expectation
           let expStatus = 400
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto = createErrorWithFieldError ("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)
+          let expDto = createValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)]
           let expBody = encode expDto
            -- WHEN: Call APIA
           response <- request reqMethod "/users/cb877c12-2654-41ae-a7b3-6f444d57af7f" reqHeaders reqBody

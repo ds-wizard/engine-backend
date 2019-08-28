@@ -27,13 +27,12 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Event.EventDAO
 import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Branch.Branch
 import Model.Branch.BranchState
 import Model.Context.AppContext
 import Model.Context.AppContextHelpers
 import Model.Error.Error
-import Model.Error.ErrorHelpers
 import Model.Event.Event
 import Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Model.Migration.KnowledgeModel.MigratorState
@@ -132,7 +131,7 @@ modifyBranch branchUuid reqDto =
           heFindBranchById branchUuid $ \branch -> do
             eitherBranchFromDb <- findBranchByKmId bKmId
             if isAlreadyUsedAndIsNotMine eitherBranchFromDb
-              then return . Left . createErrorWithFieldError $ ("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)
+              then return . Left $ ValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)]
               else callback
         Just error -> return . Left $ error
     isAlreadyUsedAndIsNotMine (Right branch) = U.toString (branch ^. uuid) /= branchUuid

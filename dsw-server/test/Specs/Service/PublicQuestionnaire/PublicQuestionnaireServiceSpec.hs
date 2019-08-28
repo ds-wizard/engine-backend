@@ -5,8 +5,8 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import LensesConfig
-import Localization
-import Model.Error.ErrorHelpers
+import Localization.Messages.Public
+import Model.Error.Error
 import Service.PublicQuestionnaire.PublicQuestionnaireService
 
 import Specs.Common
@@ -18,8 +18,7 @@ publicQuestionnaireServiceIntegrationSpec appContext =
       it "PublicQuestionnaire is disabled" $
         -- GIVEN: Prepare expectations
        do
-        let expectation =
-              Left . createErrorWithErrorMessage . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "PublicQuestionnaire"
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "PublicQuestionnaire"
         -- WHEN:
         result <- runInContext getPublicQuestionnaire updatedAppContext
         -- THEN:

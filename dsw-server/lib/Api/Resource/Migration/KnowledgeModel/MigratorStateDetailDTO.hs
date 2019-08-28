@@ -5,12 +5,12 @@ import GHC.Generics
 
 import Api.Resource.Event.EventDTO
 import Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Model.Migration.KnowledgeModel.MigratorState
+import Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 
 data MigratorStateDetailDTO = MigratorStateDetailDTO
   { _migratorStateDetailDTOBranchUuid :: U.UUID
   , _migratorStateDetailDTOMetamodelVersion :: Int
-  , _migratorStateDetailDTOMigrationState :: MigrationState
+  , _migratorStateDetailDTOMigrationState :: MigrationStateDTO
   , _migratorStateDetailDTOBranchPreviousPackageId :: String
   , _migratorStateDetailDTOTargetPackageId :: String
   , _migratorStateDetailDTOBranchEvents :: [EventDTO]

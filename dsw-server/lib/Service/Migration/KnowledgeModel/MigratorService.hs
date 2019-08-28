@@ -11,7 +11,7 @@ import Database.DAO.Branch.BranchDAO
 import Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Database.DAO.Package.PackageDAO
 import LensesConfig
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
 import Model.Error.Error
 import Model.Event.EventAccessors
@@ -55,19 +55,18 @@ createMigration bUuid mscDto = do
     heGetPreviousPkg branch callback =
       case branch ^. previousPackageId of
         Just previousPkgId -> heFindPackageById previousPkgId callback
-        Nothing -> return . Left . MigratorError $ _ERROR_KMMT_VALIDATION_MIGRATOR__BRANCH_PREVIOUS_PKG_ABSENCE
+        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
     heGetMergeCheckpointPackageId branch callback =
       heGetBranchMergeCheckpointPackageId branch $ \mMergeCheckpointPackageId ->
         case mMergeCheckpointPackageId of
           Just mergeCheckpointPackageId -> callback mergeCheckpointPackageId
-          Nothing -> return . Left . MigratorError $ _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT
+          Nothing -> return . Left . UserError $ _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT
     heGetForkOfPackageId branch callback =
       heGetBranchForkOfPackageId branch $ \mForkOfPackageId ->
         case mForkOfPackageId of
           Just forkOfPackageId -> callback forkOfPackageId
           Nothing ->
-            return . Left . MigratorError $
-            _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_MERGED_PREVIOUS_PKG
+            return . Left . UserError $ _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_MERGED_PREVIOUS_PKG
 
 deleteCurrentMigration :: String -> AppContextM (Maybe AppError)
 deleteCurrentMigration branchUuid =
@@ -88,17 +87,17 @@ solveConflictAndMigrate branchUuid reqDto =
     validateMigrationState ms callback =
       case ms ^. migrationState of
         ConflictState (CorrectorConflict _) -> callback
-        _ -> return . Just . MigratorError $ _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
+        _ -> return . Just . UserError $ _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
     validateTargetPackageEvent ms callback =
       case length (ms ^. targetPackageEvents) of
-        0 -> return . Just . MigratorError $ _ERROR_KMMT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
+        0 -> return . Just . UserError $ _ERROR_KMMT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> callback
     validateReqDto (ConflictState (CorrectorConflict e)) reqDto callback =
       if getEventUuid' e == reqDto ^. originalEventUuid
         then if reqDto ^. action == MCAEdited && isNothing (reqDto ^. event)
-               then return . Just . MigratorError $ _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
+               then return . Just . UserError $ _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
                else callback
-        else return . Just . MigratorError $
+        else return . Just . UserError $
              _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
 
 migrateState :: MigratorState -> AppContextM MigratorState

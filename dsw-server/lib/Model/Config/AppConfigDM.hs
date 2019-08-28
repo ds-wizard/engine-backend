@@ -11,6 +11,7 @@ defaultGeneral =
   , _appConfigGeneralServerPort = 3000
   , _appConfigGeneralServiceToken = ""
   , _appConfigGeneralIntegrationConfig = "integration.yml"
+  , _appConfigGeneralLocalizationUrl = Nothing
   , _appConfigGeneralRegistrationEnabled = True
   , _appConfigGeneralPublicQuestionnaireEnabled = False
   , _appConfigGeneralLevelsEnabled = True

@@ -6,7 +6,7 @@ import qualified Data.Text as T
 import System.Directory (listDirectory)
 import System.IO (FilePath)
 
-import Localization
+import Localization.Messages.Internal
 import Model.Error.Error
 
 listFilesWithExtension :: String -> String -> IO [FilePath]

@@ -2,6 +2,7 @@ module Service.Migration.KnowledgeModel.MigratorMapper where
 
 import Control.Lens ((^.))
 
+import Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
 import Constant.KnowledgeModel
@@ -18,18 +19,24 @@ toDTO :: MigratorState -> MigratorStateDTO
 toDTO ms =
   MigratorStateDTO
   { _migratorStateDTOBranchUuid = ms ^. branchUuid
-  , _migratorStateDTOMigrationState = ms ^. migrationState
+  , _migratorStateDTOMigrationState = toMigrationStateDTO $ ms ^. migrationState
   , _migratorStateDTOBranchPreviousPackageId = ms ^. branchPreviousPackageId
   , _migratorStateDTOTargetPackageId = ms ^. targetPackageId
   , _migratorStateDTOCurrentKnowledgeModel = toKnowledgeModelDTO <$> ms ^. currentKnowledgeModel
   }
+
+toMigrationStateDTO :: MigrationState -> MigrationStateDTO
+toMigrationStateDTO RunningState = RunningStateDTO
+toMigrationStateDTO (ConflictState conflict) = ConflictStateDTO conflict
+toMigrationStateDTO ErrorState = ErrorStateDTO
+toMigrationStateDTO CompletedState = CompletedStateDTO
 
 fromDetailDTO :: MigratorStateDetailDTO -> MigratorState
 fromDetailDTO dto =
   MigratorState
   { _migratorStateBranchUuid = dto ^. branchUuid
   , _migratorStateMetamodelVersion = dto ^. metamodelVersion
-  , _migratorStateMigrationState = dto ^. migrationState
+  , _migratorStateMigrationState = fromMigrationStateDTO $ dto ^. migrationState
   , _migratorStateBranchPreviousPackageId = dto ^. branchPreviousPackageId
   , _migratorStateTargetPackageId = dto ^. targetPackageId
   , _migratorStateBranchEvents = fromDTOs (dto ^. branchEvents)
@@ -37,6 +44,12 @@ fromDetailDTO dto =
   , _migratorStateResultEvents = fromDTOs (dto ^. resultEvents)
   , _migratorStateCurrentKnowledgeModel = fromKnowledgeModelDTO <$> dto ^. currentKnowledgeModel
   }
+
+fromMigrationStateDTO :: MigrationStateDTO -> MigrationState
+fromMigrationStateDTO RunningStateDTO = RunningState
+fromMigrationStateDTO (ConflictStateDTO conflict) = ConflictState conflict
+fromMigrationStateDTO ErrorStateDTO = ErrorState
+fromMigrationStateDTO CompletedStateDTO = CompletedState
 
 fromCreateDTO :: BranchWithEvents -> Package -> [Event] -> String -> [Event] -> KnowledgeModel -> MigratorState
 fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km =

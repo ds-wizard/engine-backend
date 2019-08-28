@@ -20,9 +20,8 @@ import Database.Migration.Development.PublicPackage.Data.PublicPackages
 import qualified
        Database.Migration.Development.PublicPackage.PublicPackageMigration
        as PUBQTN
-import Localization
+import Localization.Messages.Public
 import Model.Context.AppContext
-import Model.Error.Error
 import Model.Questionnaire.Questionnaire
 import Model.Questionnaire.QuestionnaireState
 import Service.KnowledgeModel.KnowledgeModelMapper
@@ -39,7 +38,7 @@ public_get :: AppContext -> SpecWith Application
 public_get appContext =
   describe "GET /questionnaires/public" $ do
     test_200 appContext
-    test_404 appContext
+    test_400 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -91,13 +90,13 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext =
-  it "HTTP 404 NOT FOUND - Public questionnaire is not set up" $
+test_400 appContext =
+  it "HTTP 400 BAD REQUEST - Public questionnaire is not set up" $
       -- GIVEN: Prepare expectation
    do
-    let expStatus = 404
+    let expStatus = 400
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = NotExistsError _ERROR_SERVICE_PQ__NOT_SET_UP
+    let expDto = createUserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Public Questionnaire"
     let expBody = encode expDto
     -- AND: Delete public questionnaire
     runInContextIO deletePublicPackages appContext

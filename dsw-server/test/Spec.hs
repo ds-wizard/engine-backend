@@ -1,6 +1,7 @@
 module Main where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 import Test.Hspec
@@ -36,6 +37,7 @@ import Specs.API.UserAPISpec
 import Specs.API.Version.APISpec
 import Specs.Integration.Http.Common.ResponseMapperSpec
 import Specs.Integration.Http.Typehint.ResponseMapperSpec
+import Specs.Localization.LocaleSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
@@ -86,6 +88,7 @@ prepareWebApp runCallback = do
       let appContext =
             AppContext
             { _appContextAppConfig = appConfig
+            , _appContextLocalization = M.empty
             , _appContextBuildInfoConfig = buildInfoConfig
             , _appContextPool = dbPool
             , _appContextMsgChannel = msgChannel
@@ -106,6 +109,7 @@ main =
                describe "Common" $ commonResponseMapperSpec
                describe "Typehint" $ typehintResponseMapperSpec
            describe "MODEL" $ do knowledgeModelAccessorsSpec
+           describe "LOCALIZATION" $ localeSpec
            describe "SERVICE" $ do
              describe "Branch" $ do branchValidationSpec
              describe "KnowledgeModel" $ do

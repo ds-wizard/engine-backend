@@ -1,19 +1,17 @@
 module Model.Error.Error where
 
-type ErrorMessage = String
+import Model.Localization.LocaleRecord
 
-type FormError = String
+type FormError = LocaleRecord
 
-type FieldError = (String, String)
+type FieldError = (String, LocaleRecord)
 
 data AppError
-  = ValidationError ErrorMessage
-                    [FormError]
+  = ValidationError [FormError]
                     [FieldError]
-  | NotExistsError ErrorMessage
-  | DatabaseError ErrorMessage
-  | MigratorError ErrorMessage
-  | HttpClientError ErrorMessage
-  | ForbiddenError ErrorMessage
-  | GeneralServerError ErrorMessage
+  | UserError LocaleRecord
+  | UnauthorizedError LocaleRecord
+  | ForbiddenError LocaleRecord
+  | NotExistsError LocaleRecord
+  | GeneralServerError String
   deriving (Show, Eq)
