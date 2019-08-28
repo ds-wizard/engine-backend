@@ -7,8 +7,9 @@ import Control.Monad.Reader (asks)
 import Control.Monad.Reader (MonadReader)
 import qualified Data.Text as T
 import qualified Data.UUID as U
+import System.Console.Pretty (Color(..), color)
 
-import LensesConfig
+import LensesConfig hiding (color)
 import Model.Context.AppContext
 
 msg :: String -> String -> String
@@ -19,24 +20,24 @@ logInfo :: MonadLogger m => String -> m ()
 logInfo = logInfoN . T.pack
 
 logWarn :: MonadLogger m => String -> m ()
-logWarn = logWarnN . T.pack
+logWarn = logWarnN . color Magenta . T.pack
 
 logError :: MonadLogger m => String -> m ()
-logError = logErrorN . T.pack
+logError = logErrorN . color Red . T.pack
 
 -- ---------------------------------------------------------------------------
 logInfoU :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logInfoU = logU logInfoN
+logInfoU = logU Default logInfoN
 
 logWarnU :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logWarnU = logU logWarnN
+logWarnU = logU Magenta logWarnN
 
 logErrorU :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logErrorU = logU logErrorN
+logErrorU = logU Red logErrorN
 
 -- ---------------------------------------------------------------------------
-logU :: (MonadReader AppContext m, MonadLogger m) => (T.Text -> m ()) -> String -> m ()
-logU log message = do
+logU :: (MonadReader AppContext m, MonadLogger m) => Color -> (T.Text -> m ()) -> String -> m ()
+logU c log message = do
   mUser <- asks _appContextCurrentUser
   traceUuid <- asks _appContextTraceUuid
   case mUser of
@@ -44,12 +45,12 @@ logU log message = do
       let userUuidStamp = createUserUuidLoggerStamp (U.toString $ user ^. uuid)
           traceUuidStamp = createTraceUuidLoggerStamp (U.toString $ traceUuid)
           composedMessage = (userUuidStamp ++ traceUuidStamp) ++ " " ++ message
-      in log . T.pack $ composedMessage
+      in log . color c . T.pack $ composedMessage
     Nothing ->
       let userUuidStamp = createUserUuidLoggerStamp "Anonymous"
           traceUuidStamp = createTraceUuidLoggerStamp (U.toString $ traceUuid)
           composedMessage = (userUuidStamp ++ traceUuidStamp) ++ " " ++ message
-      in log . T.pack $ composedMessage
+      in log . color c . T.pack $ composedMessage
 
 -- ---------------------------------------------------------------------------
 createLoggerStamp :: String -> String -> String
