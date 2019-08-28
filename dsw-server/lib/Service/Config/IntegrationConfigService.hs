@@ -10,9 +10,11 @@ import Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
 
+import Constant.Component
 import LensesConfig hiding (items)
 import Model.Context.AppContext
 import Model.Error.Error
+import Util.Logger (logWarnU, msg)
 
 getIntegrationConfig :: String -> AppContextM (Either AppError (M.Map String String))
 getIntegrationConfig sectionName = do
@@ -21,7 +23,9 @@ getIntegrationConfig sectionName = do
   eIntConfig <- liftIO $ decodeFileEither ("config/" ++ integrationConfigFileName)
   case eIntConfig of
     Right intConfig -> return . Right . fromMaybe M.empty . M.lookup sectionName $ intConfig
-    Left error -> return . Left . GeneralServerError . show $ error
+    Left error -> do
+      logWarnU $ msg _CMP_SERVICE ("Failed to load integration configuration (error: " ++ show error ++ ")")
+      return . Right $ M.empty
 
 -- --------------------------------
 -- HELPERS
