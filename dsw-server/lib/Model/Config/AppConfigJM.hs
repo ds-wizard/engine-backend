@@ -48,6 +48,9 @@ instance FromJSON AppConfigClient where
     _appConfigClientAppTitleShort <- o .:? "appTitleShort" .!= (defaultClient ^. appTitleShort)
     _appConfigClientWelcomeWarning <- o .:? "welcomeWarning" .!= (defaultClient ^. welcomeWarning)
     _appConfigClientWelcomeInfo <- o .:? "welcomeInfo" .!= (defaultClient ^. welcomeInfo)
+    _appConfigClientSupportEmail <- o .:? "supportEmail" .!= (defaultClient ^. supportEmail)
+    _appConfigClientSupportRepositoryName <- o .:? "supportRepositoryName" .!= (defaultClient ^. supportRepositoryName)
+    _appConfigClientSupportRepositoryUrl <- o .:? "supportRepositoryUrl" .!= (defaultClient ^. supportRepositoryUrl)
     _appConfigClientDashboard <- o .:? "dashboard" .!= (defaultClient ^. dashboard)
     _appConfigClientCustomMenuLinks <- o .:? "customMenuLinks" .!= (defaultClient ^. customMenuLinks)
     return AppConfigClient {..}

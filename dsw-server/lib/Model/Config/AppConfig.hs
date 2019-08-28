@@ -36,6 +36,9 @@ data AppConfigClient = AppConfigClient
   , _appConfigClientAppTitleShort :: Maybe String
   , _appConfigClientWelcomeWarning :: Maybe String
   , _appConfigClientWelcomeInfo :: Maybe String
+  , _appConfigClientSupportEmail :: Maybe String
+  , _appConfigClientSupportRepositoryName :: Maybe String
+  , _appConfigClientSupportRepositoryUrl :: Maybe String
   , _appConfigClientDashboard :: Maybe AppConfigClientDashboard
   , _appConfigClientCustomMenuLinks :: [AppConfigClientCustomMenuLink]
   } deriving (Generic, Show)

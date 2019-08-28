@@ -26,6 +26,9 @@ defaultClient =
   , _appConfigClientAppTitleShort = Nothing
   , _appConfigClientWelcomeWarning = Nothing
   , _appConfigClientWelcomeInfo = Nothing
+  , _appConfigClientSupportEmail = Nothing
+  , _appConfigClientSupportRepositoryName = Nothing
+  , _appConfigClientSupportRepositoryUrl = Nothing
   , _appConfigClientDashboard = Just defaultClientDashboard
   , _appConfigClientCustomMenuLinks = []
   }

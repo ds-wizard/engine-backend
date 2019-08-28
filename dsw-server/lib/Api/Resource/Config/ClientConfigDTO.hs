@@ -23,6 +23,9 @@ data ClientConfigClientDTO = ClientConfigClientDTO
   , _clientConfigClientDTOAppTitleShort :: Maybe String
   , _clientConfigClientDTOWelcomeWarning :: Maybe String
   , _clientConfigClientDTOWelcomeInfo :: Maybe String
+  , _clientConfigClientDTOSupportEmail :: Maybe String
+  , _clientConfigClientDTOSupportRepositoryName :: Maybe String
+  , _clientConfigClientDTOSupportRepositoryUrl :: Maybe String
   , _clientConfigClientDTODashboard :: Maybe ClientConfigClientDashboardDTO
   , _clientConfigClientDTOCustomMenuLinks :: [ClientConfigClientCustomMenuLinkDTO]
   } deriving (Show, Eq, Generic)
