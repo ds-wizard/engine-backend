@@ -24,7 +24,7 @@ validateIfTargetPackageVersionIsHigher forkOfPackageId targetPackageId = do
   let forkOfPackageIdVersion = getVersionFromPkgId forkOfPackageId
   if isNothing $ validateIsVersionHigher targetPackageVersion forkOfPackageIdVersion
     then return Nothing
-    else return . Just . UserError $ _ERROR_KMMT_MIGRATOR__TARGET_PKG_IS_NOT_HIGHER
+    else return . Just . UserError $ _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER
 
 -- --------------------------------
 -- HELPERS

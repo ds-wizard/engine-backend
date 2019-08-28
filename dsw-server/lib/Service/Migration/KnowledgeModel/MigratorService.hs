@@ -60,13 +60,12 @@ createMigration bUuid mscDto = do
       heGetBranchMergeCheckpointPackageId branch $ \mMergeCheckpointPackageId ->
         case mMergeCheckpointPackageId of
           Just mergeCheckpointPackageId -> callback mergeCheckpointPackageId
-          Nothing -> return . Left . UserError $ _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_MERGE_CHECKPOINT
+          Nothing -> return . Left . UserError $ _ERROR_SERVICE_MIGRATION_KM__BRANCH_MISSING_MERGE_CHECKPOINT_PACKAGE_ID
     heGetForkOfPackageId branch callback =
       heGetBranchForkOfPackageId branch $ \mForkOfPackageId ->
         case mForkOfPackageId of
           Just forkOfPackageId -> callback forkOfPackageId
-          Nothing ->
-            return . Left . UserError $ _ERROR_KMMT_MIGRATOR__BRANCH_HAS_TO_HAVE_CHECKPOINT_ABOUT_MERGED_PREVIOUS_PKG
+          Nothing -> return . Left . UserError $ _ERROR_SERVICE_MIGRATION_KM__BRANCH_MISSING_FORK_OF_PACKAGE_ID
 
 deleteCurrentMigration :: String -> AppContextM (Maybe AppError)
 deleteCurrentMigration branchUuid =
@@ -87,18 +86,17 @@ solveConflictAndMigrate branchUuid reqDto =
     validateMigrationState ms callback =
       case ms ^. migrationState of
         ConflictState (CorrectorConflict _) -> callback
-        _ -> return . Just . UserError $ _ERROR_KMMT_MIGRATOR__NO_CONFLICTS_TO_SOLVE
+        _ -> return . Just . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE
     validateTargetPackageEvent ms callback =
       case length (ms ^. targetPackageEvents) of
-        0 -> return . Just . UserError $ _ERROR_KMMT_MIGRATOR__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
+        0 -> return . Just . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> callback
     validateReqDto (ConflictState (CorrectorConflict e)) reqDto callback =
       if getEventUuid' e == reqDto ^. originalEventUuid
         then if reqDto ^. action == MCAEdited && isNothing (reqDto ^. event)
-               then return . Just . UserError $ _ERROR_KMMT_MIGRATOR__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
+               then return . Just . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
                else callback
-        else return . Just . UserError $
-             _ERROR_KMMT_MIGRATOR__ORIGINAL_EVENT_UUID_DOES_NOT_MARCH_WITH_CURRENT_TARGET_EVENT
+        else return . Just . UserError $ _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
 
 migrateState :: MigratorState -> AppContextM MigratorState
 migrateState ms = do

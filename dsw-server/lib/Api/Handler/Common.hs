@@ -108,7 +108,7 @@ getCurrentUser callback =
     eitherUser <- runInUnauthService $ getUserById userUuid
     case eitherUser of
       Right user -> callback user
-      Left error -> sendError $ UnauthorizedError (_ERROR_SERVICE_TOKEN__USER_ABSENCE userUuid)
+      Left error -> sendError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
 
 getQueryParam paramName = do
   reqParams <- params

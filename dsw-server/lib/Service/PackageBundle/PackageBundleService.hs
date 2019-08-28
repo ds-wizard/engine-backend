@@ -96,7 +96,7 @@ importPackageBundle pb =
     heExtractMainPackage pb callback =
       case find (\p -> p ^. pId == pb ^. bundleId) (pb ^. packages) of
         Just pkg -> callback pkg
-        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__MAIN_PKG_ABSENCE
+        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__MAIN_PKG_OF_PB_ABSENCE
 
 -- --------------------------------
 -- PRIVATE
