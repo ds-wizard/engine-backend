@@ -9,6 +9,11 @@ import Model.Package.Package
 import Model.Package.PackageState
 import Util.String (splitOn)
 
+instance Ord Package where
+  compare a b =
+    (compare (_packageOrganizationId a) (_packageOrganizationId b)) <> (compare (_packageKmId a) (_packageKmId b)) <>
+    (compareVersion (_packageVersion a) (_packageVersion b))
+
 compareVersionNeg :: String -> String -> Ordering
 compareVersionNeg verA verB = compareVersion verB verA
 

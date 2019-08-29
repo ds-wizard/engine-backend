@@ -53,7 +53,7 @@ getSimplePackagesFiltered queryParams = do
     toSimpleDTOs :: [PackageSimpleIDTO] -> [Package] -> PackageSimpleDTO
     toSimpleDTOs pkgRs pkgs = toSimpleDTO' newestPkg pkgRs (pkgs ^.. traverse . version)
       where
-        newestPkg = maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) pkgs
+        newestPkg = maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) pkgs
 
 getPackageById :: String -> AppContextM (Either AppError PackageDetailDTO)
 getPackageById pkgId = do
