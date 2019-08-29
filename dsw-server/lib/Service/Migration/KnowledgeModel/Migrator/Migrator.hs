@@ -40,7 +40,9 @@ solveConflict state mcDto =
   case mcDto ^. action of
     MCAApply ->
       let events = tail $ state ^. targetPackageEvents
-          targetEvent = head $ state ^. targetPackageEvents
+          targetEvent =
+            case state ^. migrationState of
+              ConflictState (CorrectorConflict event) -> event
       in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail $ state ^. targetPackageEvents
