@@ -60,25 +60,28 @@ mLoadFile fn =
 
 customFilters :: (Eq a, Data.String.IsString a, ToGVal m a, Monad m) => [(a, GVal m)]
 customFilters =
-  [ ("markdown", fromFunction gfnMarkdown)
-  , ("range", fromFunction gfnRange)
-  , ("endswith", fromFunction gfnEndsWith)
+  [ ("endswith", fromFunction gfnEndsWith)
   , ("indexOf", fromFunction gfnIndexOf)
-  , ("roman", fromFunction gfnRoman)
+  , ("intercalate", fromFunction gfnJoin)
+  , ("join", fromFunction gfnJoin)
+  , ("markdown", fromFunction gfnMarkdown)
   , ("ofAlphabet", fromFunction gfnOfAlphabet)
+  , ("range", fromFunction gfnRange)
+  , ("reverse", fromFunction gfnReverse)
+  , ("roman", fromFunction gfnRoman)
+  , ("toCharArray", fromFunction gfnToCharArray)
   ]
 
--- Markdown filter
 gfnMarkdown :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnMarkdown ((_, input):_) =
-  return $ toGVal . unsafeRawHtml . TL.toStrict . renderHtml . markdown def . TL.fromStrict . asText $ input
+  return . toGVal . unsafeRawHtml . TL.toStrict . renderHtml . markdown def . TL.fromStrict . asText $ input
 gfnMarkdown _ = return def
 
 gfnRange :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnRange ((_, from):(_, to):(_, step):_) =
-  return $ toGVal $ makeRange (T.unpack . asText $ from) (T.unpack . asText $ to) (T.unpack . asText $ step)
-gfnRange ((_, from):(_, to):_) = return $ toGVal $ makeRange (T.unpack . asText $ from) (T.unpack . asText $ to) "1"
-gfnRange ((_, to):_) = return $ toGVal $ makeRange "0" (T.unpack . asText $ to) "1"
+  return . toGVal $ makeRange (T.unpack . asText $ from) (T.unpack . asText $ to) (T.unpack . asText $ step)
+gfnRange ((_, from):(_, to):_) = return . toGVal $ makeRange (T.unpack . asText $ from) (T.unpack . asText $ to) "1"
+gfnRange ((_, to):_) = return . toGVal $ makeRange "0" (T.unpack . asText $ to) "1"
 gfnRange _ = return def
 
 makeRange :: String -> String -> String -> [Integer]
@@ -88,7 +91,7 @@ makeRange from to step =
     _ -> []
 
 gfnEndsWith :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnEndsWith ((_, txt):(_, suffix):_) = return $ toGVal $ endswith (T.unpack . asText $ txt) (T.unpack . asText $ suffix)
+gfnEndsWith ((_, txt):(_, suffix):_) = return . toGVal $ endswith (T.unpack . asText $ txt) (T.unpack . asText $ suffix)
 gfnEndsWith _ = return def
 
 endswith :: String -> String -> Bool
@@ -98,11 +101,12 @@ endswith t1 t2
 
 gfnIndexOf :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnIndexOf ((_, lst):(_, txt):_) =
-  return $ toGVal $ elemIndex (T.unpack . asText $ txt) (map (T.unpack . asText) . fromMaybe [] . asList $ lst)
+  return . toGVal $ elemIndex (T.unpack . asText $ txt) (map (T.unpack . asText) . fromMaybe [] . asList $ lst)
 gfnIndexOf _ = return def
 
 gfnRoman :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnRoman ((_, n):_) = return $ toGVal $ toRoman (makeInt n)
+gfnRoman ((_, n):_) = return . toGVal . toRoman . makeInt $ n
+gfnRoman _ = return def
 
 toRoman :: Int -> String
 toRoman x
@@ -120,8 +124,21 @@ toRoman x
     digit x y z k = [[x], [x, x], [x, x, x], [x, y], [y], [y, x], [y, x, x], [y, x, x, x], [x, z]] !! (k - 1)
 
 gfnOfAlphabet :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnOfAlphabet ((_, n):_) = return $ toGVal $ ofAlphabet (makeInt n)
+gfnOfAlphabet ((_, n):_) = return . toGVal . ofAlphabet . makeInt $ n
+gfnOfAlphabet _ = return def
 
 ofAlphabet n = chr (n + ord ('a') - 1)
 
 makeInt = fromMaybe 0 . readMaybe . T.unpack . asText
+
+gfnReverse :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
+gfnReverse ((_, xs):_) = return . toGVal . reverse . fromMaybe [] . asList $ xs
+gfnReverse _ = return def
+
+gfnJoin :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
+gfnJoin ((_, txts):(_, glue):_) = return . toGVal $ T.intercalate (asText glue) (map asText . fromMaybe [] $ asList txts)
+gfnJoin _ = return def
+
+gfnToCharArray :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
+gfnToCharArray ((_, txt):_) = return . toGVal . T.unpack . asText $ txt
+gfnToCharArray _ = return def
