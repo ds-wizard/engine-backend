@@ -7,7 +7,7 @@ import Data.Time
 import LensesConfig
 import Model.Context.AppContext
 import Model.KnowledgeModel.KnowledgeModel
-import Model.KnowledgeModel.KnowledgeModelLenses
+import Model.KnowledgeModel.KnowledgeModelAccessors
 import Model.Questionnaire.QuestionnaireReply
 import Model.Report.Report
 import Service.Report.Evaluator.Indication
@@ -29,7 +29,7 @@ generateReport requiredLevel metrics km replies = do
   return
     Report
     { _reportUuid = rUuid
-    , _reportChapterReports = (computeChapterReport requiredLevel metrics km replies) <$> (km ^. chaptersL)
+    , _reportChapterReports = (computeChapterReport requiredLevel metrics km replies) <$> (getChaptersForKmUuid km)
     , _reportCreatedAt = now
     , _reportUpdatedAt = now
     }

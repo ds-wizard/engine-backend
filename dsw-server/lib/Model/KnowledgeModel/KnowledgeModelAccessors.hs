@@ -9,7 +9,18 @@ import Model.KnowledgeModel.KnowledgeModel
 import Model.KnowledgeModel.KnowledgeModelLenses
 
 -- -------------------
--- QUESTIONS----------
+-- CHAPTERS ----------
+-- -------------------
+getChaptersForKmUuid :: KnowledgeModel -> [Chapter]
+getChaptersForKmUuid km = foldl go [] (km ^. chapterUuids)
+  where
+    go acc chUuid =
+      case M.lookup (chUuid) (km ^. chaptersM) of
+        Just ch -> acc ++ [ch]
+        Nothing -> acc
+
+-- -------------------
+-- QUESTIONS ---------
 -- -------------------
 getQuestionUuidsForChapterUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
 getQuestionUuidsForChapterUuid km chUuid =
