@@ -1,7 +1,7 @@
 module Service.Report.ReportGenerator where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
 import LensesConfig
@@ -14,11 +14,11 @@ import Service.Report.Evaluator.Indication
 import Service.Report.Evaluator.Metric
 import Util.Uuid
 
-computeChapterReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> Chapter -> ChapterReport
-computeChapterReport requiredLevel metrics km replies ch =
+computeChapterReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [Reply] -> Chapter -> ChapterReport
+computeChapterReport levelsEnabled requiredLevel metrics km replies ch =
   ChapterReport
   { _chapterReportChapterUuid = ch ^. uuid
-  , _chapterReportIndications = computeIndications requiredLevel km replies ch
+  , _chapterReportIndications = computeIndications levelsEnabled requiredLevel km replies ch
   , _chapterReportMetrics = computeMetrics metrics km replies ch
   }
 
@@ -26,10 +26,13 @@ generateReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> AppContextM Re
 generateReport requiredLevel metrics km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
+  dswConfig <- asks _appContextAppConfig
+  let _levelsEnabled = dswConfig ^. general . levelsEnabled
   return
     Report
     { _reportUuid = rUuid
-    , _reportChapterReports = (computeChapterReport requiredLevel metrics km replies) <$> (getChaptersForKmUuid km)
+    , _reportChapterReports =
+        (computeChapterReport _levelsEnabled requiredLevel metrics km replies) <$> (getChaptersForKmUuid km)
     , _reportCreatedAt = now
     , _reportUpdatedAt = now
     }

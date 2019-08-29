@@ -326,6 +326,8 @@ makeFields ''Indication
 
 makeFields ''AnsweredIndication
 
+makeFields ''LevelsAnsweredIndication
+
 makeFields ''MetricSummary
 
 makeFields ''ChapterReport
@@ -551,6 +553,8 @@ makeFields ''LabelDTO
 makeFields ''IndicationDTO
 
 makeFields ''AnsweredIndicationDTO
+
+makeFields ''LevelsAnsweredIndicationDTO
 
 makeFields ''MetricSummaryDTO
 

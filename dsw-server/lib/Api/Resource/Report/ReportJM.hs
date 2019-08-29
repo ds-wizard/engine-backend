@@ -30,12 +30,14 @@ instance ToJSON MetricSummaryDTO where
 -- --------------------------------------------------------------------
 instance ToJSON IndicationDTO where
   toJSON (AnsweredIndicationDTO' event) = toJSON event
+  toJSON (LevelsAnsweredIndicationDTO' event) = toJSON event
 
 instance FromJSON IndicationDTO where
   parseJSON (Object o) = do
     indicationType <- o .: "indicationType"
     case indicationType of
       "AnsweredIndication" -> parseJSON (Object o) >>= \event -> return (AnsweredIndicationDTO' event)
+      "LevelsAnsweredIndication" -> parseJSON (Object o) >>= \event -> return (LevelsAnsweredIndicationDTO' event)
       _ -> fail "One of the references has unsupported indicationType"
   parseJSON _ = mzero
 
@@ -45,3 +47,10 @@ instance FromJSON AnsweredIndicationDTO where
 
 instance ToJSON AnsweredIndicationDTO where
   toJSON = simpleToJSON' "indicationType" "_answeredIndicationDTO"
+
+-- --------------------------------------------------------------------
+instance FromJSON LevelsAnsweredIndicationDTO where
+  parseJSON = simpleParseJSON "_levelsAnsweredIndicationDTO"
+
+instance ToJSON LevelsAnsweredIndicationDTO where
+  toJSON = simpleToJSON' "indicationType" "_levelsAnsweredIndicationDTO"

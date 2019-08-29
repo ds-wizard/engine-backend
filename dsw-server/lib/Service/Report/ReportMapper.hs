@@ -9,12 +9,20 @@ import Model.Report.Report
 
 toIndicationDTO :: Indication -> IndicationDTO
 toIndicationDTO (AnsweredIndication' i) = AnsweredIndicationDTO' . toAnsweredIndicationDTO $ i
+toIndicationDTO (LevelsAnsweredIndication' i) = LevelsAnsweredIndicationDTO' . toLevelsAnsweredIndicationDTO $ i
 
 toAnsweredIndicationDTO :: AnsweredIndication -> AnsweredIndicationDTO
 toAnsweredIndicationDTO ai =
   AnsweredIndicationDTO
   { _answeredIndicationDTOAnsweredQuestions = ai ^. answeredQuestions
   , _answeredIndicationDTOUnansweredQuestions = ai ^. unansweredQuestions
+  }
+
+toLevelsAnsweredIndicationDTO :: LevelsAnsweredIndication -> LevelsAnsweredIndicationDTO
+toLevelsAnsweredIndicationDTO ai =
+  LevelsAnsweredIndicationDTO
+  { _levelsAnsweredIndicationDTOAnsweredQuestions = ai ^. answeredQuestions
+  , _levelsAnsweredIndicationDTOUnansweredQuestions = ai ^. unansweredQuestions
   }
 
 toMetricSummaryDTO :: MetricSummary -> Maybe MetricSummaryDTO

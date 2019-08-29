@@ -64,7 +64,7 @@ reqDto =
   QuestionnaireChangeDTO
   { _questionnaireChangeDTOName = questionnaire1Edited ^. name
   , _questionnaireChangeDTOAccessibility = questionnaire1Edited ^. accessibility
-  , _questionnaireChangeDTOLevel = 3
+  , _questionnaireChangeDTOLevel = 1
   , _questionnaireChangeDTOReplies =
       toReplyDTO <$>
       [ rQ1

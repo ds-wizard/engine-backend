@@ -13,19 +13,22 @@ import Service.Report.ReportGenerator
 
 reportGeneratorSpec =
   describe "Report Generator" $ do
-    createReportTest 1 chapter1 report1_ch1_full
-    createReportTest 2 chapter2 report1_ch2_full
-    createReportTest 3 chapter3 report1_ch3_full
+    createReportTest False 1 chapter1 report1_ch1_full_disabled_levels
+    createReportTest False 2 chapter2 report1_ch2_full_disabled_levels
+    createReportTest False 3 chapter3 report1_ch3_full_disabled_levels
+    createReportTest True 1 chapter1 report1_ch1_full
+    createReportTest True 2 chapter2 report1_ch2_full
+    createReportTest True 3 chapter3 report1_ch3_full
 
-createReportTest number chapter expectation =
+createReportTest levelsEnabled number chapter expectation =
   it ("generateReport for chapter" ++ show number ++ " should work") $
     -- GIVEN: Prepare
    do
-    let requiredLevel = 3
+    let requiredLevel = 1
     let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     let km = km1WithQ4
     let rs = questionnaire1 ^. replies
     -- WHEN:
-    let result = computeChapterReport requiredLevel metrics km rs chapter
+    let result = computeChapterReport levelsEnabled requiredLevel metrics km rs chapter
     -- THEN
     result `shouldBe` expectation

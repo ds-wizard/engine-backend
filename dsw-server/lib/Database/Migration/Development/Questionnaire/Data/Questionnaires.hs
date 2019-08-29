@@ -21,7 +21,7 @@ questionnaire1 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
   , _questionnaireName = "My Private Questionnaire"
-  , _questionnaireLevel = 2
+  , _questionnaireLevel = 1
   , _questionnaireAccessibility = PrivateQuestionnaire
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
@@ -55,7 +55,7 @@ questionnaire2 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "d57520b4-5a70-4d40-8623-af2bfbbdfdfe")
   , _questionnaireName = "My PublicReadOnly Questionnaire"
-  , _questionnaireLevel = 2
+  , _questionnaireLevel = questionnaire1 ^. level
   , _questionnaireAccessibility = PublicReadOnlyQuestionnaire
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []
@@ -89,7 +89,7 @@ questionnaire3 =
   Questionnaire
   { _questionnaireUuid = fromJust (U.fromString "16530a07-e673-4ff3-ac1f-57250f2c1bfe")
   , _questionnaireName = "My Public Questionnaire"
-  , _questionnaireLevel = 2
+  , _questionnaireLevel = questionnaire1 ^. level
   , _questionnaireAccessibility = PublicQuestionnaire
   , _questionnairePackageId = germanyPackage ^. pId
   , _questionnaireSelectedTagUuids = []

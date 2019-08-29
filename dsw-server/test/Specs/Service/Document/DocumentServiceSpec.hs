@@ -13,6 +13,7 @@ import Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
        as QTN
+import Database.Migration.Development.Report.Data.Reports
 import LensesConfig
 import Service.Document.DocumentMapper
 import Service.Document.DocumentService
@@ -21,8 +22,7 @@ import Specs.Common
 import Specs.Service.Document.Common
 
 documentIntegrationSpec appContext =
-  describe "Document Service Integration" $
-  describe "createDocumentContext" $ do
+  describe "Document Service Integration" $ describe "createDocumentContext" $ do
     it "Successfully created" $
         -- GIVEN: Prepare expectation
      do
@@ -38,7 +38,10 @@ documentIntegrationSpec appContext =
     it "Successfully created (when levels are disabled)" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDocumentContextDTO (dmp1 & level .~ 9999)
+      let expectation =
+            toDocumentContextDTO
+              ((dmp1 & level .~ 9999) & report . chapterReports .~
+               [report1_ch1_full_disabled_levels, report1_ch2_full_disabled_levels, report1_ch3_full_disabled_levels])
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
