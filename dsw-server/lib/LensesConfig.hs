@@ -10,7 +10,7 @@ import Api.Resource.Branch.BranchDTO
 import Api.Resource.Branch.BranchDetailDTO
 import Api.Resource.Branch.BranchWithEventsDTO
 import Api.Resource.Config.ClientConfigDTO
-import Api.Resource.DataManagementPlan.DataManagementPlanDTO
+import Api.Resource.Document.DocumentContextDTO
 import Api.Resource.Event.AnswerEventDTO
 import Api.Resource.Event.ChapterEventDTO
 import Api.Resource.Event.ExpertEventDTO
@@ -82,8 +82,8 @@ import Model.Config.AppConfig
 import Model.Config.BuildInfoConfig
 import Model.Context.AppContext
 import Model.Context.BaseContext
-import Model.DataManagementPlan.DataManagementPlan
-import Model.DataManagementPlan.DataManagementPlanTemplateContext
+import Model.Document.DocumentContext
+import Model.Document.DocumentTemplateContext
 import Model.Event.Answer.AnswerEvent
 import Model.Event.Chapter.ChapterEvent
 import Model.Event.EventField
@@ -161,12 +161,12 @@ makeFields ''BaseContext
 
 makeFields ''AppContext
 
--- Model / DataManagementPlan
-makeFields ''DataManagementPlan
+-- Model / Document
+makeFields ''DocumentContext
 
-makeFields ''DataManagementPlanConfig
+makeFields ''DocumentContextConfig
 
-makeFields ''DataManagementPlanTemplateContext
+makeFields ''DocumentTemplateContext
 
 -- Model / Event
 makeFields ''EventField
@@ -369,10 +369,10 @@ makeFields ''ClientConfigClientDashboardDTO
 
 makeFields ''ClientConfigClientCustomMenuLinkDTO
 
--- Api / Resource / DataManagementPlan
-makeFields ''DataManagementPlanDTO
+-- Api / Resource / Document
+makeFields ''DocumentContextDTO
 
-makeFields ''DataManagementPlanConfigDTO
+makeFields ''DocumentContextConfigDTO
 
 -- Api / Resource / Event
 makeFields ''AddKnowledgeModelEventDTO

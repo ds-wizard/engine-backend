@@ -1,10 +1,10 @@
-module Model.DataManagementPlan.DataManagementPlanHelpers where
+module Model.Document.DocumentHelpers where
 
 import qualified Data.Char as C
 
-import Model.DataManagementPlan.DataManagementPlan
+import Model.Document.DocumentContext
 
-formatExtension :: DataManagementPlanFormat -> String
+formatExtension :: DocumentFormat -> String
 formatExtension JSON = ".json"
 formatExtension HTML = ".html"
 formatExtension LaTeX = ".tex"
@@ -20,16 +20,16 @@ formatExtension MediaWiki = ".mw.txt"
 formatExtension EPUB2 = ".epub"
 formatExtension EPUB3 = ".epub"
 
-allFormats :: [DataManagementPlanFormat]
+allFormats :: [DocumentFormat]
 allFormats = [minBound .. maxBound]
 
-stringFormatMap :: [(String, DataManagementPlanFormat)]
+stringFormatMap :: [(String, DocumentFormat)]
 stringFormatMap = [(map C.toLower . show $ format, format) | format <- allFormats]
 
-stringToFormat :: String -> Maybe DataManagementPlanFormat
+stringToFormat :: String -> Maybe DocumentFormat
 stringToFormat str = lookup (C.toLower <$> str) stringFormatMap
 
-instance Read DataManagementPlanFormat where
+instance Read DocumentFormat where
   readsPrec _ str =
     case stringToFormat str of
       Just format -> [(format, "")]

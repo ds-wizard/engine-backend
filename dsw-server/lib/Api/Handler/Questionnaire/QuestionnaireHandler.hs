@@ -13,10 +13,10 @@ import Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Api.Resource.Questionnaire.QuestionnaireJM ()
 import Api.Resource.Report.ReportJM ()
 import Localization.Messages.Public
-import Model.DataManagementPlan.DataManagementPlan
-import Model.DataManagementPlan.DataManagementPlanHelpers
+import Model.Document.DocumentContext
+import Model.Document.DocumentHelpers
 import Model.Error.Error
-import Service.DataManagementPlan.DataManagementPlanService
+import Service.Document.DocumentService
 import Service.Questionnaire.QuestionnaireService
 import Service.Report.ReportService
 
@@ -69,12 +69,12 @@ getQuestionnaireDmpA = do
   mTemplateUuid <- getQueryParam "templateUuid"
   case mFormatS of
     Nothing -> do
-      eitherDto <- runInUnauthService $ createDataManagementPlan qtnUuid
+      eitherDto <- runInUnauthService $ createDocumentContext qtnUuid
       case eitherDto of
         Right dto -> json dto
         Left error -> sendError error
     Just "html-preview" -> do
-      eitherHTMLto <- runInUnauthService $ exportDataManagementPlan qtnUuid (T.unpack <$> mTemplateUuid) HTML
+      eitherHTMLto <- runInUnauthService $ exportDocument qtnUuid (T.unpack <$> mTemplateUuid) HTML
       case eitherHTMLto of
         Right html -> do
           addHeader "Content-Type" (LT.pack "text/html; charset=utf-8")
@@ -82,7 +82,7 @@ getQuestionnaireDmpA = do
         Left error -> sendError error
     Just formatS ->
       heGetFormat formatS $ \format -> do
-        eitherBody <- runInUnauthService $ exportDataManagementPlan qtnUuid (T.unpack <$> mTemplateUuid) format
+        eitherBody <- runInUnauthService $ exportDocument qtnUuid (T.unpack <$> mTemplateUuid) format
         case eitherBody of
           Right body -> sendFile (getFilename qtnUuid format) body
           Left error -> sendError error
@@ -91,7 +91,7 @@ getQuestionnaireDmpA = do
       case readMaybe (T.unpack format) of
         Just knownFormat -> callback knownFormat
         Nothing -> sendError . UserError . _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT $ T.unpack format
-    getFilename :: String -> DataManagementPlanFormat -> String
+    getFilename :: String -> DocumentFormat -> String
     getFilename qtnUuid format = qtnUuid ++ formatExtension format
 
 getQuestionnaireReportA :: Endpoint

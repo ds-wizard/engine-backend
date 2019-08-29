@@ -1,10 +1,10 @@
-module Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec where
+module Specs.Service.Document.DocumentServiceSpec where
 
 import Control.Lens ((&), (.~), (^.))
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 
-import Database.Migration.Development.DataManagementPlan.Data.DataManagementPlans
+import Database.Migration.Development.Document.Data.Documents
 import qualified
        Database.Migration.Development.Level.LevelMigration as LVL
 import qualified
@@ -14,31 +14,31 @@ import qualified
        Database.Migration.Development.Questionnaire.QuestionnaireMigration
        as QTN
 import LensesConfig
-import Service.DataManagementPlan.DataManagementPlanMapper
-import Service.DataManagementPlan.DataManagementPlanService
+import Service.Document.DocumentMapper
+import Service.Document.DocumentService
 
 import Specs.Common
-import Specs.Service.DataManagementPlan.Common
+import Specs.Service.Document.Common
 
-dataManagementPlanIntegrationSpec appContext =
-  describe "DataManagementPlan Service Integration" $
-  describe "createDataManagementPlan" $ do
+documentIntegrationSpec appContext =
+  describe "Document Service Integration" $
+  describe "createDocumentContext" $ do
     it "Successfully created" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDataManagementPlanDTO dmp1
+      let expectation = toDocumentContextDTO dmp1
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
         -- WHEN:
-      (Right result) <- runInContext (createDataManagementPlan . U.toString $ questionnaire1 ^. uuid) appContext
+      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) appContext
         -- THEN:
-      compareDataManagementPlanDtos result expectation
+      compareDocumentContextDTOs result expectation
     it "Successfully created (when levels are disabled)" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDataManagementPlanDTO (dmp1 & level .~ 9999)
+      let expectation = toDocumentContextDTO (dmp1 & level .~ 9999)
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
@@ -46,6 +46,6 @@ dataManagementPlanIntegrationSpec appContext =
          -- AND: Prepare AppContext
       let updatedAppContext = appContext & (appConfig . general . levelsEnabled) .~ False
         -- WHEN:
-      (Right result) <- runInContext (createDataManagementPlan . U.toString $ questionnaire1 ^. uuid) updatedAppContext
+      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) updatedAppContext
         -- THEN:
-      compareDataManagementPlanDtos result expectation
+      compareDocumentContextDTOs result expectation

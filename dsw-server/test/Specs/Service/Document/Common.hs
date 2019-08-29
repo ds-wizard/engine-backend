@@ -1,4 +1,4 @@
-module Specs.Service.DataManagementPlan.Common where
+module Specs.Service.Document.Common where
 
 import Control.Lens ((^.))
 import Test.Hspec.Expectations.Pretty
@@ -8,7 +8,7 @@ import LensesConfig
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareDataManagementPlanDtos resDto expDto = do
+compareDocumentContextDTOs resDto expDto = do
   (resDto ^. questionnaireUuid) `shouldBe` (expDto ^. questionnaireUuid)
   (resDto ^. questionnaireName) `shouldBe` (expDto ^. questionnaireName)
   (resDto ^. questionnaireReplies) `shouldBe` (expDto ^. questionnaireReplies)

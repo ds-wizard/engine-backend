@@ -41,7 +41,7 @@ import Specs.Localization.LocaleSpec
 import Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Specs.Service.Branch.BranchServiceSpec
 import Specs.Service.Branch.BranchValidationSpec
-import Specs.Service.DataManagementPlan.DataManagementPlanServiceSpec
+import Specs.Service.Document.DocumentServiceSpec
 import Specs.Service.Feedback.FeedbackServiceSpec
 import Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
 import Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
@@ -154,6 +154,6 @@ main =
            describe "SERVICE" $ do
              branchServiceIntegrationSpec appContext
              feedbackServiceIntegrationSpec appContext
-             dataManagementPlanIntegrationSpec appContext
+             documentIntegrationSpec appContext
              publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)
