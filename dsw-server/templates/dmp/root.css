@@ -158,16 +158,12 @@ footer {
 /**************************/
 
 .question, .answer-item {
-  margin-bottom: 20px;
-  padding: 0.3rem 0.6rem;
-  padding-left: 10px;
-  padding-top: 5px;
-  padding-bottom: 5px;
+  padding: 5px 10px 25px 10px;
   border-left: 5px solid #ddd;
 }
 
 .question:last-child, .answer-item:last-child {
-  margin-bottom: 0;
+  padding-bottom: 5px;
 }
 
 .answer-item > .followups > .question, .questions > .question {
@@ -245,7 +241,7 @@ footer {
   vertical-align: middle;
 }
 
-.answer-block .answer svg, 
+.answer-block .answer svg,
 .no-answer svg {
   height: 20px;
   width: 20px;

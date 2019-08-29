@@ -94,12 +94,8 @@
 
 {% macro renderIndication(indication) -%}
   <tr>
-    <td>Answered</td>
-    <td>{{indication.answeredQuestions}}</td>
-  </tr>
-  <tr>
-    <td>Unanswered</td>
-    <td>{{indication.unansweredQuestions}}</td>
+    <td>Answered {% if indication.indicationType == "LevelsAnsweredIndication" %}(current phase){% endif %}</td>
+    <td>{{indication.answeredQuestions}} / {{indication.answeredQuestions + indication.unansweredQuestions}} </td>
   </tr>
 {%- endmacro -%}
 
