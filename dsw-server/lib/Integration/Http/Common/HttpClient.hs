@@ -11,7 +11,7 @@ import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
 import Network.Wreq
        (Response, checkResponse, customPayloadMethodWith, defaults,
-        headers, manager, responseStatus, statusCode)
+        getWith, headers, manager, responseStatus, statusCode)
 
 import Constant.Component
 import LensesConfig hiding (headers)
@@ -40,12 +40,15 @@ runSimpleRequest req = do
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & checkResponse .~
         (Just $ \_ _ -> return ())
-  liftIO $ customPayloadMethodWith reqMethod opts reqUrl reqBody
+  liftIO . action $ opts
   where
     reqMethod = req ^. requestMethod
     reqUrl = req ^. requestUrl
     reqHeaders = mapHeader <$> (toList $ req ^. requestHeaders)
     reqBody = BS.pack $ req ^. requestBody
+    action opts
+      | reqMethod == "GET" && reqBody == "" = getWith opts reqUrl
+      | otherwise = customPayloadMethodWith reqMethod opts reqUrl reqBody
 
 -- --------------------------------
 -- PRIVATE
