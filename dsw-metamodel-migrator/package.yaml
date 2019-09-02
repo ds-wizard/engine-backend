@@ -1,0 +1,41 @@
+name:                dsw-metamodel-migrator
+version:             1.10.0
+license:             Apache-2.0
+author:              "Marek Suchánek"
+maintainer:          "suchama4@fit.cvut.cz"
+copyright:           "2019 Marek Suchánek"
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description: Library for migrating DSW KMs when the DSW Metamodel changes
+
+dependencies:
+- base >= 4.7 && < 5
+- aeson
+- containers
+- text
+- time
+- unordered-containers
+- uuid
+
+ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+
+library:
+  source-dirs: src
+  default-extensions:
+    - TemplateHaskell
+    - OverloadedStrings
+    - DeriveGeneric
+    - ExtendedDefaultRules
+    - RecordWildCards
+    - ExistentialQuantification
+    - TypeSynonymInstances
+    - FlexibleInstances
+    - ScopedTypeVariables
+    - MultiParamTypeClasses
+    - FlexibleContexts

@@ -1,4 +1,0 @@
-flags: {}
-packages:
-- '.'
-resolver: lts-13.2
