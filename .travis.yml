@@ -10,9 +10,10 @@ stages:
   - tag
 
 env:
-  - PRIVATE_IMAGE="$REGISTRY/dsw-server" \
-    IMAGE="datastewardshipwizard/server" \
+  - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server" \
+    IMAGE="$PUBLIC_DOCKER_USER/server" \
     IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" \
+    IMAGE_TAG_BRANCH="$PRIVATE_IMAGE:"`echo $TRAVIS_BRANCH | sed 's#/#-#g'` \
     IMAGE_TAG_DEVELOP="$IMAGE:develop" \
     IMAGE_TAG_LATEST="$IMAGE:latest"
 
@@ -43,9 +44,9 @@ install:
 
 before_script:
   # 1. Log to public Docker Hub
-  - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD"
+  - docker login -u "$PUBLIC_DOCKER_USER" -p "$PUBLIC_DOCKER_PASSWORD"
   # 2. Log to private Docker Registry
-  - docker login -u "$REGISTRY_USERNAME" -p "$REGISTRY_PASSWORD" "$REGISTRY"
+  - docker login -u "$PRIVATE_DOCKER_USER" -p "$PRIVATE_DOCKER_PASSWORD" "$PRIVATE_DOCKER_REGISTRY"
 
 jobs:
   include:
@@ -91,11 +92,19 @@ jobs:
         - docker push $IMAGE_TAG_LATEST
 
     - stage: tag
+      if: (type = push)
+      install: false
+      script:
+        - docker pull $IMAGE_TAG
+        - docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH
+        - docker push $IMAGE_TAG_BRANCH
+
+    - stage: tag
       if: (tag =~ ^v\d+\.\d+\.\d+$)
       install: false
       env:
-        - PRIVATE_IMAGE="$REGISTRY/dsw-server"
-        - IMAGE="datastewardshipwizard/server"
+        - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server"
+        - IMAGE="$PUBLIC_DOCKER_USER/server"
         - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
         - IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
@@ -113,8 +122,8 @@ jobs:
       if: (tag =~ ^v\d+\.\d+\.\d+-rc\.\d+$)
       install: false
       env:
-        - PRIVATE_IMAGE="$REGISTRY/dsw-server"
-        - IMAGE="datastewardshipwizard/server"
+        - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server"
+        - IMAGE="$PUBLIC_DOCKER_USER/server"
         - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
         - IMAGE_TAG_RC="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
       script:
