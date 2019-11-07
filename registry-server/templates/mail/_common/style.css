@@ -1,0 +1,23 @@
+header {
+  line-height: 3em;
+  padding: 0.5em;
+  margin-bottom: 1.5em;
+}
+header > img {
+  height: 3em;
+  margin-right: 1em;
+  display: inline-block;
+  vertical-align: middle;
+}
+header > h1 {
+  display: inline-block;
+  margin: 0;
+  color: #333;
+  font-family: Roboto, sans-serif;
+  vertical-align: middle;
+}
+footer {
+  margin-top: 1em;
+  font-style: italic;
+  color: #666;
+}

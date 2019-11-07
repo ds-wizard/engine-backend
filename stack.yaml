@@ -1,6 +1,7 @@
 resolver: lts-13.12
 
 packages:
+- registry-server
 - dsw-server
 - dsw-metamodel-migrator
 
