@@ -1,0 +1,33 @@
+general:
+  clientUrl: http://localhost:3001
+  serviceToken:
+
+database:
+  host: mongo
+  databaseName: engine-wizard
+  port: 27017
+  authEnabled: false
+  username:
+  password:
+
+jwt:
+  secret:
+
+mail:
+  enabled: false
+  name:
+  email:
+  host:
+  port:
+  ssl:
+  authEnabled:
+  username:
+  password:
+
+registry:
+  token:
+
+feedback:
+  token:
+  owner:
+  repo:

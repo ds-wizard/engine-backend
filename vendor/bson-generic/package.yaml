@@ -8,8 +8,8 @@ maintainer: Petr Pilar <the.palmik+maintainer@gmail.com>
 copyright: 2019 Petr Pilar <the.palmik+maintainer@gmail.com>
 license: BSD3
 license-file: LICENSE.md
-homepage: https://github.com/ds-wizard/dsw-server
-git: git@github.com:ds-wizard/dsw-server.git
+homepage: https://github.com/ds-wizard/engine-backend
+git: git@github.com:ds-wizard/engine-backend.git
 bug-reports: https://github.com/ds-wizard/ds-wizard/issues
 tested-with: GHC==8.6.*
 library:

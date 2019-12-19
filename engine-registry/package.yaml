@@ -1,0 +1,171 @@
+name: engine-registry
+version: '1.2.1'
+synopsis: Engine Registry
+description: Engine Registry
+category: Web
+author: Vojtech Knaisl <vknaisl@gmail.com>
+maintainer: Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2019 Vojtech Knaisl <vknaisl@gmail.com>
+license: Apache
+license-file: LICENSE.md
+homepage: https://github.com/engine/engine-platform-server
+git: git@github.com:engine/engine-platform-server.git
+bug-reports: https://github.com/engine/engine/issues
+tested-with: GHC==8.6.*
+library:
+  source-dirs: src
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+    else:
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+  dependencies:
+  - base
+  - aeson
+  - bson
+  - bson-generic
+  - bytestring
+  - case-insensitive
+  - containers
+  - cryptonite
+  - data-default
+  - directory
+  - exceptions
+  - filepath
+  - engine-shared
+  - ginger
+  - hashable
+  - HaskellNet
+  - HaskellNet-SSL
+  - http-types
+  - lens
+  - lens-aeson
+  - memory
+  - mime-mail
+  - mime-types
+  - mtl
+  - monad-control
+  - monad-logger
+  - mongoDB
+  - mongoDB-migration
+  - network
+  - persistent
+  - persistent-mongoDB
+  - pretty-simple
+  - pretty-terminal
+  - pwstore-fast
+  - random
+  - regex-compat
+  - retry
+  - scotty
+  - text
+  - text-replace
+  - time
+  - transformers
+  - unordered-containers
+  - uri-encode
+  - uuid
+  - vector
+  - wai
+  - wai-extra
+  - warp
+  - wreq
+  - yaml
+  default-extensions:
+    - TemplateHaskell
+    - OverloadedStrings
+    - MultiParamTypeClasses
+    - FlexibleContexts
+    - GeneralizedNewtypeDeriving
+    - TypeFamilies
+    - DeriveGeneric
+    - ExtendedDefaultRules
+    - RecordWildCards
+    - UnicodeSyntax
+    - ExistentialQuantification
+    - FunctionalDependencies
+    - TypeSynonymInstances
+    - FlexibleInstances
+    - ScopedTypeVariables
+    - RankNTypes
+
+executables:
+  engine-registry:
+    main: Main.hs
+    source-dirs: app
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+      else:
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+    dependencies:
+    - base
+    - engine-registry
+tests:
+  hspec:
+    main: Spec.hs
+    source-dirs: test
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+      else:
+        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+    dependencies:
+    - base
+    - aeson
+    - bson
+    - bson-generic
+    - bytestring
+    - case-insensitive
+    - containers
+    - data-default
+    - engine-shared
+    - ginger
+    - http-types
+    - lens
+    - mtl
+    - monad-control
+    - monad-logger
+    - mongoDB
+    - network
+    - persistent
+    - persistent-mongoDB
+    - pretty-simple
+    - pwstore-fast
+    - random
+    - regex-compat
+    - scotty
+    - text
+    - time
+    - transformers
+    - unordered-containers
+    - uuid
+    - vector
+    - wai
+    - wai-extra
+    - warp
+    - yaml
+    - engine-registry
+    - hspec
+    - hspec-expectations-pretty-diff
+    - hspec-wai
+    - hspec-wai-json
+    default-extensions:
+      - TemplateHaskell
+      - QuasiQuotes
+      - OverloadedStrings
+      - MultiParamTypeClasses
+      - FlexibleContexts
+      - GeneralizedNewtypeDeriving
+      - TypeFamilies
+      - DeriveGeneric
+      - ExtendedDefaultRules
+      - RecordWildCards
+      - UnicodeSyntax
+      - ExistentialQuantification
+      - FunctionalDependencies
+      - TypeSynonymInstances
+      - FlexibleInstances

@@ -1,0 +1,50 @@
+module Wizard.Service.KnowledgeModel.Compilator.Compilator
+  ( compile
+  ) where
+
+import Shared.Model.Error.Error
+import Shared.Model.Event.Event
+import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModelDM
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Answer ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Chapter ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Expert ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Integration ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Question ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Reference ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Tag ()
+
+compile :: Maybe KnowledgeModel -> [Event] -> Either AppError KnowledgeModel
+compile (Just km) events = foldl foldEvent (Right km) events
+compile Nothing events = foldl foldEvent (Right defaultKnowledgeModel) events
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+foldEvent :: Either AppError KnowledgeModel -> Event -> Either AppError KnowledgeModel
+foldEvent (Right km) (AddKnowledgeModelEvent' e) = apply e km
+foldEvent (Right km) (EditKnowledgeModelEvent' e) = apply e km
+foldEvent (Right km) (AddChapterEvent' e) = apply e km
+foldEvent (Right km) (EditChapterEvent' e) = apply e km
+foldEvent (Right km) (DeleteChapterEvent' e) = apply e km
+foldEvent (Right km) (AddQuestionEvent' e) = apply e km
+foldEvent (Right km) (EditQuestionEvent' e) = apply e km
+foldEvent (Right km) (DeleteQuestionEvent' e) = apply e km
+foldEvent (Right km) (AddAnswerEvent' e) = apply e km
+foldEvent (Right km) (EditAnswerEvent' e) = apply e km
+foldEvent (Right km) (DeleteAnswerEvent' e) = apply e km
+foldEvent (Right km) (AddExpertEvent' e) = apply e km
+foldEvent (Right km) (EditExpertEvent' e) = apply e km
+foldEvent (Right km) (DeleteExpertEvent' e) = apply e km
+foldEvent (Right km) (AddReferenceEvent' e) = apply e km
+foldEvent (Right km) (EditReferenceEvent' e) = apply e km
+foldEvent (Right km) (DeleteReferenceEvent' e) = apply e km
+foldEvent (Right km) (AddTagEvent' e) = apply e km
+foldEvent (Right km) (EditTagEvent' e) = apply e km
+foldEvent (Right km) (DeleteTagEvent' e) = apply e km
+foldEvent (Right km) (AddIntegrationEvent' e) = apply e km
+foldEvent (Right km) (EditIntegrationEvent' e) = apply e km
+foldEvent (Right km) (DeleteIntegrationEvent' e) = apply e km
+foldEvent (Left error) _ = Left error

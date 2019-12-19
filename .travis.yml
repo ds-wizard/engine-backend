@@ -5,18 +5,6 @@ language: generic
 services:
   - mongodb
 
-stages:
-  - build
-  - tag
-
-env:
-  - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server" \
-    IMAGE="$PUBLIC_DOCKER_USER/server" \
-    IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT" \
-    IMAGE_TAG_BRANCH="$PRIVATE_IMAGE:"`echo $TRAVIS_BRANCH | sed 's#/#-#g'` \
-    IMAGE_TAG_DEVELOP="$IMAGE:develop" \
-    IMAGE_TAG_LATEST="$IMAGE:latest"
-
 cache:
   timeout: 600
   directories:
@@ -24,109 +12,81 @@ cache:
   - .stack-work
   - vendor/bson-generic/.stack-work
   - vendor/mongoDB-migration/.stack-work
-  - dsw-metamodel-migrator/.stack-work
-  - dsw-server/.stack-work
+  - engine-registry/.stack-work
+  - engine-shared/.stack-work
+  - engine-wizard/.stack-work
+  - engine-wizard-metamodel-migrator/.stack-work
+
+env:
+  matrix:
+    - COMPONENT=wizard
+    - COMPONENT=registry
 
 install:
   # 1. Download, unpack, and check the stack executable
   - mkdir -p ~/.local/bin
   - export PATH=$HOME/.local/bin:$PATH
   - travis_retry curl -L https://github.com/commercialhaskell/stack/releases/download/v2.1.3/stack-2.1.3-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
-  # 2. Init Application Config
-  - cp dsw-server/config/application.yml.example dsw-server/config/application.yml
-  - cp dsw-server/config/application-test.yml.example dsw-server/config/application-test.yml
-  - cp dsw-server/config/integration.yml.example dsw-server/config/integration.yml
-  - cp dsw-server/config/integration-test.yml.example dsw-server/config/integration-test.yml
-  # 3. Update file timestamps
+  # 2. Update file timestamps
   - ./scripts/update-file-timestamps.sh
   # 3. Install app dependencies
   - stack --no-terminal --install-ghc test --only-dependencies
 
 before_script:
-  # 1. Log to public Docker Hub
   - docker login -u "$PUBLIC_DOCKER_USER" -p "$PUBLIC_DOCKER_PASSWORD"
-  # 2. Log to private Docker Registry
   - docker login -u "$PRIVATE_DOCKER_USER" -p "$PRIVATE_DOCKER_PASSWORD" "$PRIVATE_DOCKER_REGISTRY"
 
-jobs:
-  include:
-    - stage: build
-      script:
-        # 1. Init and check testing Mongo Database
-        - mongo dsw-server-test --eval 'db.collection.find()'
-        # 2. Create build info inside application
-        - cd dsw-server/scripts
-        - ./build-info.sh
-        - cd ../..
-        # 3. Build and Test Application
-        - stack build --no-terminal --skip-ghc-check --test
-        - cp $(stack path --local-install-root)/bin/dsw-server dsw-server/dsw-server-bin
-        # 4. Build Docker Image
-        - cd dsw-server
-        - docker pull $IMAGE_TAG_DEVELOP
-        - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
-        - docker push $IMAGE_TAG
+  - export PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/engine/$COMPONENT-server"
+  - export IMAGE="datastewardshipwizard/$COMPONENT-server"
+  - export IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
+  - export IMAGE_TAG_BRANCH="$PRIVATE_IMAGE:"`echo $TRAVIS_BRANCH | sed 's#/#-#g'`
+  - export IMAGE_TAG_DEVELOP="$IMAGE:develop"
+  - export IMAGE_TAG_LATEST="$IMAGE:latest"
+  - export IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
+  - export IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
+  - export IMAGE_TAG_PATCH="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
+  - export IMAGE_TAG_RC="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
 
-    - stage: tag
-      if: (branch = develop) AND (NOT (type IN (pull_request)))
-      addons: false
-      services: false
-      cache: false
-      before_install: false
-      install: false
-      script:
-        - docker pull $IMAGE_TAG
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP
-        - docker push $IMAGE_TAG_DEVELOP
+script:
+  # 1. Init configs
+  - ./scripts/expand-example-files.sh
+  # 2. Init and check testing Mongo Database
+  - mongo engine-$COMPONENT-test --eval 'db.collection.find()'
+  # 3. Create build info inside application
+  - ./scripts/generate-build-info.sh engine-$COMPONENT
+  # 4. Build and Test Application
+  - stack build engine-$COMPONENT --no-terminal --skip-ghc-check --test
+  - cp $(stack path --local-install-root)/bin/engine-$COMPONENT engine-$COMPONENT/engine-$COMPONENT-bin
+  # 5. Build Docker Image
+  - cd engine-$COMPONENT
+  - docker pull $IMAGE_TAG_DEVELOP
+  - docker build --cache-from $IMAGE_TAG_DEVELOP -t $IMAGE_TAG .
+  - docker push $IMAGE_TAG
 
-    - stage: tag
-      if: (branch = master) AND (NOT (type IN (pull_request)))
-      addons: false
-      services: false
-      cache: false
-      before_install: false
-      install: false
-      script:
-        - docker pull $IMAGE_TAG
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST
-        - docker push $IMAGE_TAG_LATEST
+after_success:
+  # current branch tag (private registry)
+  - if [[ $TRAVIS_PULL_REQUEST == "false" ]]; then
+    docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH && docker push $IMAGE_TAG_BRANCH;
+    fi
 
-    - stage: tag
-      if: (type = push)
-      install: false
-      script:
-        - docker pull $IMAGE_TAG
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_BRANCH
-        - docker push $IMAGE_TAG_BRANCH
+  # develop
+  - if [[ $TRAVIS_BRANCH == "develop" && $TRAVIS_PULL_REQUEST == "false" ]]; then
+    docker image tag $IMAGE_TAG $IMAGE_TAG_DEVELOP && docker push $IMAGE_TAG_DEVELOP;
+    fi
 
-    - stage: tag
-      if: (tag =~ ^v\d+\.\d+\.\d+$)
-      install: false
-      env:
-        - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server"
-        - IMAGE="$PUBLIC_DOCKER_USER/server"
-        - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
-        - IMAGE_TAG_MAJOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*\..*/\1/g"`
-        - IMAGE_TAG_MINOR="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v(.*)\..*/\1/g"`
-        - IMAGE_TAG_PATCH="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
-      script:
-        - docker pull $IMAGE_TAG
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_MAJOR
-        - docker push $IMAGE_TAG_MAJOR
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_MINOR
-        - docker push $IMAGE_TAG_MINOR
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_PATCH
-        - docker push $IMAGE_TAG_PATCH
+  # latest
+  - if [[ $TRAVIS_BRANCH == "master" && $TRAVIS_PULL_REQUEST == "false" ]]; then
+    docker image tag $IMAGE_TAG $IMAGE_TAG_LATEST && docker push $IMAGE_TAG_LATEST;
+    fi
 
-    - stage: tag
-      if: (tag =~ ^v\d+\.\d+\.\d+-rc\.\d+$)
-      install: false
-      env:
-        - PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/dsw-server"
-        - IMAGE="$PUBLIC_DOCKER_USER/server"
-        - IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
-        - IMAGE_TAG_RC="$IMAGE:"`echo $TRAVIS_TAG | sed -E "s/v//g"`
-      script:
-        - docker pull $IMAGE_TAG
-        - docker image tag $IMAGE_TAG $IMAGE_TAG_RC
-        - docker push $IMAGE_TAG_RC
+  # version
+  - if [[ $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+    docker image tag $IMAGE_TAG $IMAGE_TAG_MAJOR && docker push $IMAGE_TAG_MAJOR;
+    docker image tag $IMAGE_TAG $IMAGE_TAG_MINOR && docker push $IMAGE_TAG_MINOR;
+    docker image tag $IMAGE_TAG $IMAGE_TAG_PATCH && docker push $IMAGE_TAG_PATCH;
+    fi
+
+  # rc version
+  - if [[ $TRAVIS_TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
+    docker image tag $IMAGE_TAG $IMAGE_TAG_RC && docker push $IMAGE_TAG_RC;
+    fi
