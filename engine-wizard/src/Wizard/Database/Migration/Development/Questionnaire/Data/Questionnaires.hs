@@ -1,7 +1,6 @@
 module Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires where
 
 import Control.Lens ((^.))
-import Data.List
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
@@ -10,6 +9,7 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Model.Questionnaire.QuestionnaireUtil
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
@@ -174,9 +174,6 @@ fReplies =
   , rQ9
   , rQ10
   ]
-
-createReplyKey :: [String] -> String
-createReplyKey uuids = intercalate "." uuids
 
 rQ1 :: Reply
 rQ1 =

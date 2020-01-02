@@ -8,6 +8,7 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -29,6 +30,7 @@ import Wizard.Api.Resource.Event.ChapterEventDTO
 import Wizard.Api.Resource.Event.ExpertEventDTO
 import Wizard.Api.Resource.Event.IntegrationEventDTO
 import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
+import Wizard.Api.Resource.Event.MoveEventDTO
 import Wizard.Api.Resource.Event.QuestionEventDTO
 import Wizard.Api.Resource.Event.ReferenceEventDTO
 import Wizard.Api.Resource.Event.TagEventDTO
@@ -228,6 +230,14 @@ makeFields ''AddIntegrationEvent
 makeFields ''EditIntegrationEvent
 
 makeFields ''DeleteIntegrationEvent
+
+makeFields ''MoveQuestionEvent
+
+makeFields ''MoveAnswerEvent
+
+makeFields ''MoveExpertEvent
+
+makeFields ''MoveReferenceEvent
 
 -- Model / Feedback
 makeFields ''Feedback
@@ -434,6 +444,14 @@ makeFields ''AddIntegrationEventDTO
 makeFields ''EditIntegrationEventDTO
 
 makeFields ''DeleteIntegrationEventDTO
+
+makeFields ''MoveQuestionEventDTO
+
+makeFields ''MoveAnswerEventDTO
+
+makeFields ''MoveExpertEventDTO
+
+makeFields ''MoveReferenceEventDTO
 
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO

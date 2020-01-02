@@ -47,6 +47,20 @@ doIsCleanerMethod km (AddIntegrationEvent' event) = False
 doIsCleanerMethod km (EditIntegrationEvent' event) = isNothing $ M.lookup (getEventNodeUuid event) (km ^. integrationsM)
 doIsCleanerMethod km (DeleteIntegrationEvent' event) =
   isNothing $ M.lookup (getEventNodeUuid event) (km ^. integrationsM)
+doIsCleanerMethod km (MoveQuestionEvent' event) =
+  isNothing (M.lookup (getEventNodeUuid event) (km ^. questionsM)) ||
+  (isNothing (M.lookup (event ^. targetUuid) (km ^. chaptersM)) &&
+   isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM)) &&
+   isNothing (M.lookup (event ^. targetUuid) (km ^. answersM)))
+doIsCleanerMethod km (MoveAnswerEvent' event) =
+  isNothing (M.lookup (getEventNodeUuid event) (km ^. answersM)) ||
+  isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM))
+doIsCleanerMethod km (MoveExpertEvent' event) =
+  isNothing (M.lookup (getEventNodeUuid event) (km ^. expertsM)) ||
+  isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM))
+doIsCleanerMethod km (MoveReferenceEvent' event) =
+  isNothing (M.lookup (getEventNodeUuid event) (km ^. referencesM)) ||
+  isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM))
 
 runCleanerMethod :: MigratorState -> Event -> IO MigratorState
 runCleanerMethod state event =

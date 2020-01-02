@@ -16,8 +16,8 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
-import Wizard.Service.Migration.Questionnaire.Sanitizator
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QM
 import Wizard.Service.Questionnaire.QuestionnaireService
 
@@ -35,8 +35,8 @@ getQuestionnaireMigration qtnUuid =
   heFindMigratorStateByNewQuestionnaireId qtnUuid $ \state ->
     heGetQuestionnaireDetailById (U.toString $ state ^. oldQuestionnaireUuid) $ \oldQtn ->
       heGetQuestionnaireDetailById (U.toString $ state ^. newQuestionnaireUuid) $ \newQtn ->
-        heCheckMigrationPermissionToQtn oldQtn $ heCheckMigrationPermissionToQtn newQtn $ do
-          return . Right $ toDTO oldQtn newQtn (state ^. resolvedQuestionUuids)
+        heCheckMigrationPermissionToQtn oldQtn $ heCheckMigrationPermissionToQtn newQtn $ return . Right $
+        toDTO oldQtn newQtn (state ^. resolvedQuestionUuids)
 
 modifyQuestionnaireMigration :: String -> MigratorStateChangeDTO -> AppContextM (Either AppError MigratorStateDTO)
 modifyQuestionnaireMigration qtnUuid reqDto =
@@ -66,11 +66,12 @@ upgradeQuestionnaire :: MigratorStateCreateDTO -> Questionnaire -> AppContextM (
 upgradeQuestionnaire reqDto oldQtn = do
   let newPkgId = reqDto ^. targetPackageId
   let newTagUuids = reqDto ^. targetTagUuids
-  heCompileKnowledgeModel [] (Just newPkgId) newTagUuids $ \km -> do
-    newUuid <- liftIO generateUuid
-    let newReplies = sanitizeReplies km (oldQtn ^. replies)
-    return . Right $ (((oldQtn & uuid .~ newUuid) & packageId .~ newPkgId) & replies .~ newReplies) & selectedTagUuids .~
-      newTagUuids
+  heCompileKnowledgeModel [] (Just $ oldQtn ^. packageId) newTagUuids $ \oldKm ->
+    heCompileKnowledgeModel [] (Just newPkgId) newTagUuids $ \newKm -> do
+      newUuid <- liftIO generateUuid
+      let newReplies = sanitizeReplies oldKm newKm (oldQtn ^. replies)
+      return . Right $ (((oldQtn & uuid .~ newUuid) & packageId .~ newPkgId) & replies .~ newReplies) & selectedTagUuids .~
+        newTagUuids
 
 -- --------------------------------
 -- HELPERS

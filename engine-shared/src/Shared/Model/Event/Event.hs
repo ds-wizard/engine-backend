@@ -7,6 +7,7 @@ import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -35,4 +36,8 @@ data Event
   | AddIntegrationEvent' AddIntegrationEvent
   | EditIntegrationEvent' EditIntegrationEvent
   | DeleteIntegrationEvent' DeleteIntegrationEvent
+  | MoveQuestionEvent' MoveQuestionEvent
+  | MoveAnswerEvent' MoveAnswerEvent
+  | MoveExpertEvent' MoveExpertEvent
+  | MoveReferenceEvent' MoveReferenceEvent
   deriving (Show, Eq, Generic)

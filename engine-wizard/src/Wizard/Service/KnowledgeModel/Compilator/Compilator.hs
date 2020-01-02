@@ -12,6 +12,7 @@ import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Move ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Question ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Tag ()
@@ -47,4 +48,8 @@ foldEvent (Right km) (DeleteTagEvent' e) = apply e km
 foldEvent (Right km) (AddIntegrationEvent' e) = apply e km
 foldEvent (Right km) (EditIntegrationEvent' e) = apply e km
 foldEvent (Right km) (DeleteIntegrationEvent' e) = apply e km
+foldEvent (Right km) (MoveQuestionEvent' e) = apply e km
+foldEvent (Right km) (MoveAnswerEvent' e) = apply e km
+foldEvent (Right km) (MoveExpertEvent' e) = apply e km
+foldEvent (Right km) (MoveReferenceEvent' e) = apply e km
 foldEvent (Left error) _ = Left error

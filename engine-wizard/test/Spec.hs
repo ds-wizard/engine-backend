@@ -47,7 +47,8 @@ import Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
-import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizatorSpec as QTN_SanitizatorSpec
+import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
+import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Organization.OrganizationValidationSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
@@ -114,7 +115,9 @@ main =
                  describe "Migrator" $ do
                    migratorSpec
                    KM_SanitizatorSpec.sanitizatorSpec
-               describe "Questionnaire" $ QTN_SanitizatorSpec.sanitizatorSpec
+               describe "Questionnaire" $ describe "Migrator" $ do
+                 QTN_ChangeQTypeSanitizator.sanitizatorSpec
+                 QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Organization" $ organizationValidationSpec
              describe "Package" $ packageValidationSpec
              describe "Report" $ reportGeneratorSpec
