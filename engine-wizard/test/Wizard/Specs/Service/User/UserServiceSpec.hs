@@ -4,9 +4,9 @@ import Control.Lens ((&), (.~))
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Service.User.UserService
 

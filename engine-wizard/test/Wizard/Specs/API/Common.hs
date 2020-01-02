@@ -21,10 +21,10 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import Web.Scotty.Trans (scottyAppT)
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Wizard.Api.Router
-import Wizard.LensesConfig
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext

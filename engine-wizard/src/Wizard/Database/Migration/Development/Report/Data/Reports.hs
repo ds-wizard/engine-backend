@@ -5,9 +5,9 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Wizard.Database.Migration.Development.Metric.Data.Metrics
-import Wizard.LensesConfig
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Model.Report.Report
 
 report1 :: Report

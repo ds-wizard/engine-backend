@@ -23,6 +23,7 @@ import Data.List (maximumBy)
 import Data.Maybe
 import Data.Text (Text)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
@@ -32,7 +33,6 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtils

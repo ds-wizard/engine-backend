@@ -19,9 +19,9 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 import Web.Scotty.Trans (scottyAppT)
 
+import LensesConfig
 import Registry.Api.Router
 import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistics
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Util.List (elems)

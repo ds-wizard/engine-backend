@@ -3,9 +3,9 @@ module Registry.Database.DAO.Organization.OrganizationDAO where
 import Control.Lens ((^.))
 import Data.Bson
 
+import LensesConfig
 import Registry.Database.BSON.Organization.Organization ()
 import Registry.Database.DAO.Common
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
 import Shared.Model.Error.Error

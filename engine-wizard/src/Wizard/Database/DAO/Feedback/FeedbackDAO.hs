@@ -4,11 +4,11 @@ import Control.Lens ((^.))
 import Data.Bson
 import Data.Text (Text)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Wizard.Database.BSON.Feedback.Feedback ()
 import Wizard.Database.DAO.Common
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
 

@@ -4,11 +4,11 @@ import Control.Lens
 import qualified Data.Map.Strict as M
 import Data.Maybe (isNothing)
 
+import LensesConfig
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 isCleanerMethod :: MigratorState -> Event -> Bool

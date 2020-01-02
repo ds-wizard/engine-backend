@@ -13,11 +13,11 @@ module Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Control.Lens ((^.))
 import Data.Bson
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper)
 import Wizard.Database.BSON.Migration.Questionnaire.MigratorState ()
 import Wizard.Database.DAO.Common
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.Questionnaire.MigratorState
 

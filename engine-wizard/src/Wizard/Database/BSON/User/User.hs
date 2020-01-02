@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
+import LensesConfig
 import Wizard.Database.BSON.Common ()
-import Wizard.LensesConfig
 import Wizard.Model.User.User
 
 instance ToBSON User where

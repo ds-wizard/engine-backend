@@ -2,10 +2,10 @@ module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Answer where
 
 import Prelude hiding (lookup)
 
+import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.EventAccessors
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()

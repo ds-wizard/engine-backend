@@ -10,9 +10,9 @@ import Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
 
+import LensesConfig hiding (items)
 import Shared.Model.Error.Error
 import Wizard.Constant.Component
-import Wizard.LensesConfig hiding (items)
 import Wizard.Model.Context.AppContext
 import Wizard.Util.Logger (logWarnU, msg)
 

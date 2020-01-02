@@ -3,8 +3,8 @@ module Registry.Service.KnowledgeModel.KnowledgeModelMapper where
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 
+import LensesConfig
 import Registry.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Registry.LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO

@@ -6,6 +6,7 @@ import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Text.Regex
 import Web.Scotty.Trans (ScottyT, defaultHandler, delete, get, middleware, notFound, post, put)
 
+import LensesConfig
 import Wizard.Api.Handler.ActionKey.ActionKeyHandler
 import Wizard.Api.Handler.BookReference.BookReferenceHandler
 import Wizard.Api.Handler.Branch.BranchHandler
@@ -31,7 +32,6 @@ import Wizard.Api.Handler.Version.VersionHandler
 import Wizard.Api.Middleware.AuthMiddleware
 import Wizard.Api.Middleware.CORSMiddleware
 import Wizard.Api.Middleware.LoggingMiddleware
-import Wizard.LensesConfig
 import Wizard.Model.Context.BaseContext
 
 unauthorizedEndpoints =

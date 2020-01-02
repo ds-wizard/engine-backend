@@ -4,11 +4,11 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Database.DAO.Metric.MetricDAO
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Service.KnowledgeModel.KnowledgeModelService

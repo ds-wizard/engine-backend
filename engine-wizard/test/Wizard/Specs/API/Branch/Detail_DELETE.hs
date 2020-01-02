@@ -10,10 +10,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 

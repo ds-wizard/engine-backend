@@ -2,8 +2,8 @@ module Wizard.Service.Config.ClientConfigMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.LensesConfig
 import Wizard.Model.Config.AppConfig
 
 toClientConfigDTO :: AppConfig -> ClientConfigDTO

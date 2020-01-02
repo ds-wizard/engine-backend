@@ -4,6 +4,7 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import Data.Maybe
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventAccessors
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
@@ -12,7 +13,6 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState

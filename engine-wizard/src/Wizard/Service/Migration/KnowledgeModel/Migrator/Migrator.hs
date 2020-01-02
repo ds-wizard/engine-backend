@@ -4,9 +4,9 @@ import Control.Lens
 import Data.Either
 import Data.Maybe
 
+import LensesConfig
 import Shared.Model.Event.Event
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
-import Wizard.LensesConfig
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.Compilator.Compilator

@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Control.Monad
 import Data.Aeson
 
+import LensesConfig
 import Shared.Model.Config.EnvironmentJM ()
-import Wizard.LensesConfig
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigDM
 

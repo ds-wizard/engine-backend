@@ -3,7 +3,7 @@ module Registry.Service.Package.PackageUtils where
 import Control.Lens ((^.))
 import Data.List
 
-import Registry.LensesConfig
+import LensesConfig
 import Shared.Model.Package.Package
 import Shared.Util.String (splitOn)
 

@@ -6,13 +6,13 @@ import qualified Data.Map as M
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddQuestionEvent Question where

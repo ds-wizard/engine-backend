@@ -12,6 +12,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
+import Shared.Database.Migration.Development.Event.Data.Events
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
@@ -23,11 +26,8 @@ import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
-import Wizard.Database.Migration.Development.Event.Data.Events
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchService

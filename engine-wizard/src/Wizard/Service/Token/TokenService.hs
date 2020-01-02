@@ -13,11 +13,11 @@ import Data.Time
 import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext

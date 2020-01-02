@@ -3,11 +3,11 @@ module Wizard.Service.Organization.OrganizationMapper where
 import Control.Lens ((^.))
 import Data.Time
 
+import LensesConfig
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO
 import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
-import Wizard.LensesConfig
 import Wizard.Model.Organization.Organization
 
 toDTO :: Organization -> OrganizationDTO

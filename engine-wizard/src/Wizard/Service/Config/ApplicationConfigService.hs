@@ -5,8 +5,8 @@ import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
 import System.Environment (lookupEnv)
 
+import LensesConfig
 import Shared.Model.Error.Error
-import Wizard.LensesConfig
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigJM ()
 

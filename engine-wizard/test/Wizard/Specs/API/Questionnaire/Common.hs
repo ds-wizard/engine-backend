@@ -6,11 +6,11 @@ import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.LensesConfig
 
 import Wizard.Specs.Common
 

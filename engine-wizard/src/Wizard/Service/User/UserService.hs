@@ -8,6 +8,7 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
@@ -18,7 +19,6 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Messaging.Out.Topic.UserTopic

@@ -11,10 +11,10 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.LensesConfig
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper

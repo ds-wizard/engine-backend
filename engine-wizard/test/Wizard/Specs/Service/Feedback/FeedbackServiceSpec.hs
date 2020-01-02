@@ -5,9 +5,9 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Service.Feedback.FeedbackService
 

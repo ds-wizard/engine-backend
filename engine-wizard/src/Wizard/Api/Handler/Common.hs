@@ -28,6 +28,7 @@ import Web.Scotty.Trans
   , status
   )
 
+import LensesConfig hiding (requestMethod)
 import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
@@ -37,7 +38,6 @@ import Shared.Model.Error.Error
 import Shared.Util.Token
 import Shared.Util.Uuid
 import Wizard.Constant.Component
-import Wizard.LensesConfig hiding (requestMethod)
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext

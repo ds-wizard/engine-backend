@@ -4,13 +4,13 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
+import LensesConfig
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.LensesConfig
 import Registry.Localization
 import Registry.Localization.Messages.Public
 import Registry.Model.ActionKey.ActionKey

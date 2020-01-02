@@ -3,8 +3,8 @@ module Wizard.Service.Report.ReportMapper where
 import Control.Lens ((^.))
 import Data.Maybe (catMaybes)
 
+import LensesConfig
 import Wizard.Api.Resource.Report.ReportDTO
-import Wizard.LensesConfig
 import Wizard.Model.Report.Report
 
 toIndicationDTO :: Indication -> IndicationDTO

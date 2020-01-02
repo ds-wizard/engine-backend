@@ -8,12 +8,12 @@ module Wizard.Integration.Http.Registry.Runner
 import Control.Lens ((^.))
 import qualified Data.ByteString.Lazy as BSL
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext

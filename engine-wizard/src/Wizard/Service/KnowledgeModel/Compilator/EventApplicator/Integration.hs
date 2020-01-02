@@ -4,12 +4,12 @@ import Control.Lens
 import qualified Data.Map as M
 import Prelude hiding (lookup)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventAccessors
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()

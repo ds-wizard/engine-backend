@@ -4,8 +4,8 @@ module Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod
 
 import Control.Lens
 
+import LensesConfig
 import Shared.Model.Event.Event
-import Wizard.LensesConfig
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Sanitizator
 

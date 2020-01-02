@@ -2,6 +2,7 @@ module Wizard.Service.Migration.KnowledgeModel.MigratorMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
@@ -9,7 +10,6 @@ import Shared.Model.Package.Package
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Event.EventMapper

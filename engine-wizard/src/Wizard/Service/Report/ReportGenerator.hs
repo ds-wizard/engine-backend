@@ -4,11 +4,11 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Util.Uuid
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModel.KnowledgeModelAccessors
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Indication

@@ -2,8 +2,8 @@ module Registry.Service.PackageBundle.PackageBundleMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Registry.Api.Resource.PackageBundle.PackageBundleDTO
-import Registry.LensesConfig
 import qualified Registry.Service.Package.PackageMapper as PM
 import Shared.Model.PackageBundle.PackageBundle
 

@@ -21,9 +21,9 @@ import Network.Wreq
   , statusCode
   )
 
+import LensesConfig hiding (headers)
 import Shared.Model.Error.Error
 import Wizard.Constant.Component
-import Wizard.LensesConfig hiding (headers)
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Http.HttpRequest

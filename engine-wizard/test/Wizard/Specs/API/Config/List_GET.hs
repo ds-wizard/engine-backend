@@ -12,7 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.LensesConfig
+import LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ClientConfigMapper
 

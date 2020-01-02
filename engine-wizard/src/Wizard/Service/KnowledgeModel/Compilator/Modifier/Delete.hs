@@ -5,9 +5,9 @@ import qualified Data.Map as M
 import qualified Data.UUID as U
 import Prelude hiding (lookup)
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()

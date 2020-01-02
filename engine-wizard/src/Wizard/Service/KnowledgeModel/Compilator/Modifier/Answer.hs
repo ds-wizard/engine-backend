@@ -2,9 +2,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddAnswerEvent Answer where

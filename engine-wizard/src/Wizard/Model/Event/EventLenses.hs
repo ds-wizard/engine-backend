@@ -3,9 +3,9 @@ module Wizard.Model.Event.EventLenses where
 import Control.Lens
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Question.QuestionEvent
-import Wizard.LensesConfig
 
 eUuid' :: Functor f => (U.UUID -> f U.UUID) -> EditQuestionEvent -> f EditQuestionEvent
 eUuid' convert entity = fmap (set entity) (convert . get $ entity)

@@ -3,12 +3,12 @@ module Wizard.Service.Version.VersionMapper where
 import Control.Lens ((&), (.~), (^.))
 import Data.Time
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Version.VersionDTO
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Service.Package.PackageUtils
 

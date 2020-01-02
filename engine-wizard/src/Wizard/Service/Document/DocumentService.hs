@@ -21,6 +21,7 @@ import Data.Time
 import qualified Data.UUID as U
 import qualified Text.FromHTML as FromHTML
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper)
 import Shared.Util.Uuid
@@ -33,7 +34,6 @@ import Wizard.Database.DAO.Organization.OrganizationDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.DocumentContext

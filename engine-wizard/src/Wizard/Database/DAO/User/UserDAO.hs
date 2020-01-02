@@ -5,11 +5,11 @@ import Data.Bson
 import Data.Time
 import Database.MongoDB ((=:), modify, select)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Wizard.Database.BSON.User.User ()
 import Wizard.Database.DAO.Common
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 

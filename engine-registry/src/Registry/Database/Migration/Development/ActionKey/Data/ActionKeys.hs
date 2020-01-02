@@ -5,9 +5,9 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.LensesConfig
 import Registry.Model.ActionKey.ActionKey
 
 regActionKey =

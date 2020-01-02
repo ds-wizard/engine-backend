@@ -5,6 +5,7 @@ module Wizard.Database.Migration.Production.Migration
 import Control.Lens ((^.))
 import Database.MongoDB.Migration.Entity
 import Database.MongoDB.Migration.Migration
+import LensesConfig
 import qualified Wizard.Database.Migration.Production.Migration_0001_organization_init.Migration as M_0001
 import qualified Wizard.Database.Migration.Production.Migration_0002_users_init.Migration as M_0002
 import qualified Wizard.Database.Migration.Production.Migration_0003_book_references_init.Migration as M_0003
@@ -28,7 +29,6 @@ import qualified Wizard.Database.Migration.Production.Migration_0020_package_lic
 import qualified Wizard.Database.Migration.Production.Migration_0021_questionniare_labels.Migration as M_0021
 import qualified Wizard.Database.Migration.Production.Migration_0022_forkOfPackageId_and_mergeCheckpointPackageId.Migration as M_0022
 import qualified Wizard.Database.Migration.Production.Migration_0023_remove_itemTitle.Migration as M_0023
-import Wizard.LensesConfig
 
 runMigration baseContext = do
   migrateDatabase (baseContext ^. pool) migrationDefinitions

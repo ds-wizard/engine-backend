@@ -4,12 +4,12 @@ import Control.Lens
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
+import LensesConfig
+import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventAccessors
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Question.QuestionEvent
-import Wizard.Database.Migration.Development.Event.Data.Events
-import Wizard.LensesConfig
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator

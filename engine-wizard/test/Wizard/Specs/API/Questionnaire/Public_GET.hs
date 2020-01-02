@@ -13,9 +13,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.PublicPackage.PublicPackageDAO
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Database.Migration.Development.PublicPackage.Data.PublicPackages
 import qualified Wizard.Database.Migration.Development.PublicPackage.PublicPackageMigration as PUBQTN
 import Wizard.Localization.Messages.Public

@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Wizard.LensesConfig
+import LensesConfig
 import Wizard.Model.Level.Level
 
 instance ToBSON Level where

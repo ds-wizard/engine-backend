@@ -14,10 +14,10 @@ import Network.Wai (Middleware, Request, ResponseReceived, pathInfo, requestHead
 import Prelude hiding (exp)
 import Text.Regex
 
+import LensesConfig hiding (requestHeaders, requestMethod)
 import Shared.Constant.Api (authorizationHeaderName)
 import Shared.Util.Token
 import Wizard.Api.Handler.Common
-import Wizard.LensesConfig hiding (requestHeaders, requestMethod)
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
 import Wizard.Service.Token.TokenService

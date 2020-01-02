@@ -4,9 +4,9 @@ module Registry.Service.PackageBundle.PackageBundleService
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Registry.Api.Resource.PackageBundle.PackageBundleDTO
 import Registry.Api.Resource.PackageBundle.PackageBundleJM ()
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageService

@@ -5,10 +5,10 @@ import qualified Data.Map.Strict as M
 import Data.Maybe (catMaybes)
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Shared.Util.String (splitOn)
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Util.Maybe (concatMaybe)
 

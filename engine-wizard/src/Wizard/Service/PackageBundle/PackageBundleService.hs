@@ -12,6 +12,7 @@ import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List (find)
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
@@ -24,7 +25,6 @@ import Wizard.Api.Resource.PackageBundle.PackageBundleJM ()
 import Wizard.Constant.Component
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext

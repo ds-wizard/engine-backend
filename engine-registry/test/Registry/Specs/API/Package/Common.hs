@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import LensesConfig
 import Registry.Database.DAO.Package.PackageDAO
-import Registry.LensesConfig
 import Shared.Api.Resource.Error.ErrorDTO ()
 
 import Registry.Specs.API.Common

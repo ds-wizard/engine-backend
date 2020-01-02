@@ -6,8 +6,8 @@ import Control.Lens ((^.))
 import Data.Map.Strict as M
 import Prelude hiding (lookup)
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 

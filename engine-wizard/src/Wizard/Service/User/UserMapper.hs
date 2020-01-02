@@ -5,11 +5,11 @@ import Data.Char (toLower)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
-import Wizard.LensesConfig
 import Wizard.Model.User.User
 
 toDTO :: User -> UserDTO

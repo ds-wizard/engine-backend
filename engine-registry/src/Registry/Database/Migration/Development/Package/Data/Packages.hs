@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
-import Registry.Database.Migration.Development.Event.Data.Events
-import Registry.LensesConfig
+import LensesConfig
 import Shared.Constant.KnowledgeModel
+import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
 

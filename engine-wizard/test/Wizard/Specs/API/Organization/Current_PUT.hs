@@ -11,11 +11,11 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO ()
 import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Organization.OrganizationMapper
 

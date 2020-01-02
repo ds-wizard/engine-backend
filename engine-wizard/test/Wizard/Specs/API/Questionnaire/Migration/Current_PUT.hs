@@ -13,6 +13,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
@@ -21,7 +22,6 @@ import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.Migrat
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common

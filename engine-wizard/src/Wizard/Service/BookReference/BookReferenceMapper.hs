@@ -2,8 +2,8 @@ module Wizard.Service.BookReference.BookReferenceMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Wizard.Api.Resource.BookReference.BookReferenceDTO
-import Wizard.LensesConfig
 import Wizard.Model.BookReference.BookReference
 
 toDTO :: BookReference -> BookReferenceDTO

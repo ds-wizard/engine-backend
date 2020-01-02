@@ -10,11 +10,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common

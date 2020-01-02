@@ -4,15 +4,15 @@ import Control.Lens ((&), (.~), (^.))
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Experts
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Questions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.References
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Tags
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.References
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 
 knowledgeModelFilterSpec =

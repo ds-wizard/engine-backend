@@ -3,15 +3,15 @@ module Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec wher
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Wizard.Database.Migration.Development.Event.Data.Events
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Experts
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Questions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.References
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Tags
+import Shared.Database.Migration.Development.Event.Data.Events
+import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.References
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()

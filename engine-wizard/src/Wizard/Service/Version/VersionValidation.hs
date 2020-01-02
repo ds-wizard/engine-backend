@@ -2,7 +2,7 @@ module Wizard.Service.Version.VersionValidation where
 
 import Control.Lens ((^.))
 
-import Wizard.LensesConfig
+import LensesConfig
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
 

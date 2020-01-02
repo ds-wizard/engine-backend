@@ -1,9 +1,9 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Reference where
 
+import LensesConfig
 import Shared.Model.Event.EventAccessors
 import Shared.Model.Event.Reference.ReferenceEvent
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()

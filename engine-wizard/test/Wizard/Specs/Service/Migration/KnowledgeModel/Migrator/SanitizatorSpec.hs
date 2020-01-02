@@ -6,20 +6,20 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
+import LensesConfig
+import Shared.Database.Migration.Development.Event.Data.Events
+import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.References
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Shared.Model.Event.Event
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Database.Migration.Development.Event.Data.Events
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Experts
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Questions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.References
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Tags
-import Wizard.LensesConfig
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
 

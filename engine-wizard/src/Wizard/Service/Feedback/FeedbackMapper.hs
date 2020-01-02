@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.LensesConfig
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Feedback.SimpleIssue
 

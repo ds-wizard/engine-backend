@@ -2,13 +2,13 @@ module Wizard.Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Package.PackageDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.LensesConfig
 import Wizard.Service.Event.EventMapper
 import Wizard.Service.Organization.OrganizationMapper
 import Wizard.Service.Package.PackageUtils

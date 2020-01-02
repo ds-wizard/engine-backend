@@ -25,11 +25,11 @@ import qualified Network.Mime as MIME
 import System.Directory (listDirectory)
 import System.FilePath ((</>))
 
+import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Constant.Component
 import Registry.Constant.Mailer
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Util.Logger
 import Registry.Util.Template (loadAndRender)

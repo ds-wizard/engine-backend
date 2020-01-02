@@ -3,11 +3,11 @@ module Registry.Service.Organization.OrganizationMapper where
 import Control.Lens ((^.))
 import Data.Time
 
+import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationSimpleDTO
-import Registry.LensesConfig
 import Registry.Model.Organization.Organization
 
 toDTO :: Organization -> OrganizationDTO

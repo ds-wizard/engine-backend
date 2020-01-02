@@ -2,9 +2,9 @@ module Wizard.Service.Branch.BranchUtils where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Util.Helper (createHeeHelper)
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.LensesConfig
 import Wizard.Service.Organization.OrganizationService
 
 getBranchPreviousPackage branch =

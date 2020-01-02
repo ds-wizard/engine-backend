@@ -14,9 +14,9 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.User.UserDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

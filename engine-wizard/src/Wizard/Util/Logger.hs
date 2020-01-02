@@ -8,7 +8,7 @@ import qualified Data.Text as T
 import qualified Data.UUID as U
 import System.Console.Pretty (Color(..), color)
 
-import Wizard.LensesConfig hiding (color)
+import LensesConfig hiding (color)
 import Wizard.Model.Context.AppContext
 
 msg :: String -> String -> String

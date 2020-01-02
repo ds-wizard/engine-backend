@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
+import LensesConfig
 import Wizard.Database.BSON.Common ()
 import Wizard.Database.BSON.KnowledgeModel.KnowledgeModel ()
-import Wizard.LensesConfig
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
 instance FromBSON Reply where

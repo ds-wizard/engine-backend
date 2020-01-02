@@ -6,10 +6,10 @@ import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 import Test.Hspec
 
+import LensesConfig
 import Registry.Constant.Resource
 import Registry.Database.Connection
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Service.Config.ApplicationConfigService
 import Registry.Service.Config.BuildInfoConfigService

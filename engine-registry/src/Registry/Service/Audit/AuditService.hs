@@ -13,8 +13,8 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 import Text.Read (readMaybe)
 
+import LensesConfig
 import Registry.Database.DAO.Audit.AuditEntryDAO
-import Registry.LensesConfig
 import Registry.Model.Audit.AuditEntry
 import Registry.Model.Context.AppContext
 import Registry.Model.Statistics.InstanceStatistics

@@ -6,6 +6,7 @@ import Network.HTTP.Types.Method (methodGet, methodPost, methodPut)
 import Text.Regex
 import Web.Scotty.Trans (ScottyT, defaultHandler, delete, get, middleware, notFound, post, put)
 
+import LensesConfig
 import Registry.Api.Handler.ActionKey.ActionKeyHandler
 import Registry.Api.Handler.Common
 import Registry.Api.Handler.Info.InfoHandler
@@ -13,7 +14,6 @@ import Registry.Api.Handler.Organization.OrganizationHandler
 import Registry.Api.Handler.Package.PackageHandler
 import Registry.Api.Middleware.CORSMiddleware
 import Registry.Api.Middleware.LoggingMiddleware
-import Registry.LensesConfig
 import Registry.Model.Context.BaseContext
 
 unauthorizedEndpoints =

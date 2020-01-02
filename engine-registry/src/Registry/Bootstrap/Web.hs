@@ -9,8 +9,8 @@ import Data.Default (def)
 import Network.Wai.Handler.Warp (Settings, defaultSettings, setPort)
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
+import LensesConfig
 import Registry.Api.Router
-import Registry.LensesConfig
 import Registry.Model.Context.BaseContext
 import Shared.Model.Config.Environment
 

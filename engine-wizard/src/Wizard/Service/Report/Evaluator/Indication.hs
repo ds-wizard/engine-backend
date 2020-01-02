@@ -7,10 +7,10 @@ import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
-import Wizard.Model.KnowledgeModel.KnowledgeModelAccessors
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Util.List (generateList)

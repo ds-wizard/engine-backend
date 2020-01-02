@@ -7,7 +7,7 @@ import Control.Monad.Reader (MonadReader)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 
-import Registry.LensesConfig
+import LensesConfig
 import Registry.Model.Context.AppContext
 
 msg :: String -> String -> String

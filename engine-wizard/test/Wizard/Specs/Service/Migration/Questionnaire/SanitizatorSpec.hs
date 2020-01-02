@@ -6,10 +6,10 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.LensesConfig
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Service.Migration.Questionnaire.Sanitizator
 

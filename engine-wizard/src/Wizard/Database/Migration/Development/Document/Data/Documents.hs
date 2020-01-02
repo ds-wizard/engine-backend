@@ -5,15 +5,15 @@ import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Database.Migration.Development.Level.Data.Levels
-import Wizard.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.LensesConfig
 import Wizard.Model.Document.DocumentContext
 import Wizard.Service.Package.PackageMapper
 

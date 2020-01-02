@@ -2,9 +2,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddExpertEvent Expert where

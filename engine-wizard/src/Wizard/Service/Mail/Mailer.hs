@@ -26,12 +26,12 @@ import qualified Network.Mime as MIME
 import System.Directory (listDirectory)
 import System.FilePath ((</>))
 
+import LensesConfig
 import Shared.Localization.Messages.Internal
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Constant.Component
 import Wizard.Constant.Mailer
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext

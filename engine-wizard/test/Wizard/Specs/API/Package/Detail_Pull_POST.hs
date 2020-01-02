@@ -11,10 +11,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

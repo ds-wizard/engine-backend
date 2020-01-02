@@ -6,11 +6,11 @@ import Data.Maybe (fromJust)
 import qualified Data.UUID as U
 import Test.Hspec
 
+import LensesConfig
 import Wizard.Constant.Resource
 import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
-import Wizard.LensesConfig
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ApplicationConfigService
@@ -38,7 +38,6 @@ import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Localization.LocaleSpec
-import Wizard.Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
@@ -102,7 +101,6 @@ main =
              describe "Http" $ do
                describe "Common" $ commonResponseMapperSpec
                describe "Typehint" $ typehintResponseMapperSpec
-           describe "MODEL" $ do knowledgeModelAccessorsSpec
            describe "LOCALIZATION" $ localeSpec
            describe "SERVICE" $ do
              describe "Branch" $ do branchValidationSpec

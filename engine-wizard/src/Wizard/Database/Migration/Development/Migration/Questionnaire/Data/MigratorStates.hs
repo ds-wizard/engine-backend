@@ -2,12 +2,12 @@ module Wizard.Database.Migration.Development.Migration.Questionnaire.Data.Migrat
 
 import Control.Lens ((^.))
 
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.LensesConfig
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper

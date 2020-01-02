@@ -3,9 +3,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference where
 import Control.Lens ((^.))
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddReferenceEvent Reference where

@@ -3,9 +3,9 @@ module Wizard.Model.Context.AppContextHelpers where
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

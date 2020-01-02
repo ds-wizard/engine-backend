@@ -5,6 +5,7 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Database.BSON.Common ()
 import Wizard.Database.BSON.Event.Answer ()
@@ -14,7 +15,6 @@ import Wizard.Database.BSON.Event.Expert ()
 import Wizard.Database.BSON.Event.KnowledgeModel ()
 import Wizard.Database.BSON.Event.Question ()
 import Wizard.Database.BSON.Event.Reference ()
-import Wizard.LensesConfig
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 instance ToBSON MigrationState where

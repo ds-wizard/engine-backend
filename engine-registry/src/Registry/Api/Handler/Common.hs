@@ -28,9 +28,9 @@ import Web.Scotty.Trans
   , status
   )
 
+import LensesConfig hiding (requestMethod)
 import Registry.Constant.Component
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.LensesConfig hiding (requestMethod)
 import Registry.Localization
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext

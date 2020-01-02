@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.Metric.Data.Metrics
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Metric.MetricMapper

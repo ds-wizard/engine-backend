@@ -3,10 +3,10 @@ module Wizard.Service.Package.PackageUtils where
 import Control.Lens ((^.))
 import Data.List
 
+import LensesConfig
 import Shared.Model.Package.Package
 import Shared.Util.String (splitOn)
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.LensesConfig
 import Wizard.Model.Package.PackageState
 
 compareVersionNeg :: String -> String -> Ordering

@@ -3,10 +3,10 @@ module Wizard.Service.Migration.Questionnaire.MigratorMapper where
 import Control.Lens ((^.))
 import qualified Data.UUID as U
 
+import LensesConfig
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.LensesConfig
 import Wizard.Model.Migration.Questionnaire.MigratorState
 
 toDTO :: QuestionnaireDetailDTO -> QuestionnaireDetailDTO -> [U.UUID] -> MigratorStateDTO

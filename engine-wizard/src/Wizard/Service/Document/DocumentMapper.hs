@@ -5,11 +5,11 @@ import Data.Time
 import qualified Data.UUID as U
 import qualified Text.FromHTML as FromHTML
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Wizard.Api.Resource.Document.DocumentContextDTO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Document.DocumentContext

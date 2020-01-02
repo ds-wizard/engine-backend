@@ -9,9 +9,9 @@ import Data.Default (def)
 import Network.Wai.Handler.Warp (Settings, defaultSettings, setPort)
 import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
 
+import LensesConfig
 import Shared.Model.Config.Environment
 import Wizard.Api.Router
-import Wizard.LensesConfig
 import Wizard.Model.Context.BaseContext
 
 runWebServer :: BaseContext -> IO ()

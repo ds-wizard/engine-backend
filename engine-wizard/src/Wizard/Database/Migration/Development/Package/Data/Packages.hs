@@ -4,14 +4,14 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
+import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
-import Wizard.Database.Migration.Development.Event.Data.Events
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.LensesConfig
 
 globalPackageEmpty :: PackageWithEvents
 globalPackageEmpty =

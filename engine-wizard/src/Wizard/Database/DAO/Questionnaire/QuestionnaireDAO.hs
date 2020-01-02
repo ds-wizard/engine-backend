@@ -3,11 +3,11 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireDAO where
 import Control.Lens ((^.))
 import Data.Bson
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper)
 import Wizard.Database.BSON.Questionnaire.Questionnaire ()
 import Wizard.Database.DAO.Common
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 

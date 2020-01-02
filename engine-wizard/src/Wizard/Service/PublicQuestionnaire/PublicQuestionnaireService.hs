@@ -5,10 +5,10 @@ import Control.Monad.Reader (liftIO)
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.PublicPackage.PublicPackageDAO
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire

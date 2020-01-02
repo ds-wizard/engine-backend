@@ -7,7 +7,7 @@ import qualified Data.Text as T
 import Network.AMQP (Channel, openChannel, openConnection')
 import Network.Socket
 
-import Wizard.LensesConfig
+import LensesConfig
 import Wizard.Model.Config.AppConfig
 
 createMessagingChannel :: AppConfig -> IO (Maybe Channel)

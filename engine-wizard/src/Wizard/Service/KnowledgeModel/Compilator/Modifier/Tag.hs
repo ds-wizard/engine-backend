@@ -2,9 +2,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddTagEvent Tag where

@@ -3,8 +3,8 @@ module Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec where
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Model.Error.Error
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Wizard.Integration.Http.Typehint.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Localization.Messages.Internal

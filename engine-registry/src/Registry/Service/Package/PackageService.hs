@@ -10,11 +10,11 @@ import Control.Lens ((^.))
 import Data.List (maximumBy)
 import Data.Text (Text)
 
+import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.DAO.Package.PackageDAO
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper

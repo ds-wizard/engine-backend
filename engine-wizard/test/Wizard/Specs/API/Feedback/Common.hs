@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
-import Wizard.LensesConfig
 
 import Wizard.Specs.API.Common
 

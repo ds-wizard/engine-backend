@@ -5,8 +5,8 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO
-import Wizard.LensesConfig
 import Wizard.Model.Organization.Organization
 
 org1 :: Organization

@@ -4,6 +4,7 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Shared.Util.Uuid
@@ -12,7 +13,6 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.KnowledgeModel.KnowledgeModelService

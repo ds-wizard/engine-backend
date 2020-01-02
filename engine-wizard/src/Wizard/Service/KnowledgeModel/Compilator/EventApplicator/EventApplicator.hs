@@ -8,7 +8,7 @@ import qualified Data.UUID as U
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()

@@ -16,11 +16,11 @@ import Data.List (find)
 import qualified Data.UUID as U
 import qualified Text.Ginger as Q
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Service.File.FileService
 import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Api.Resource.Template.TemplateJM ()
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext

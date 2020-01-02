@@ -4,13 +4,13 @@ import Control.Lens ((&), (.~), (^.))
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 
+import LensesConfig
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.LensesConfig
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentService
 

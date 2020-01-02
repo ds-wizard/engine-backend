@@ -3,12 +3,12 @@ module Wizard.Specs.Service.Report.ReportGeneratorSpec where
 import Control.Lens ((^.))
 import Test.Hspec
 
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Wizard.Database.Migration.Development.Metric.Data.Metrics
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.LensesConfig
 import Wizard.Service.Report.ReportGenerator
 
 reportGeneratorSpec =

@@ -3,7 +3,7 @@ module Wizard.Specs.Service.Document.Common where
 import Control.Lens ((^.))
 import Test.Hspec.Expectations.Pretty
 
-import Wizard.LensesConfig
+import LensesConfig
 
 -- --------------------------------
 -- COMPARATORS

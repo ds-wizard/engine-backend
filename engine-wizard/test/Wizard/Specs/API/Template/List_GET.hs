@@ -10,8 +10,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Wizard.Database.Migration.Development.Template.Data.Templates
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common

@@ -17,6 +17,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 import Data.UUID as U
 
+import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
@@ -31,7 +32,6 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext

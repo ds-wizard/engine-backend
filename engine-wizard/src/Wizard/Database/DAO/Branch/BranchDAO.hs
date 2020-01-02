@@ -4,12 +4,12 @@ import Control.Lens ((^.))
 import Data.Bson
 import Database.MongoDB ((=:))
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Wizard.Database.BSON.Branch.Branch ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.DAO.Common
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 

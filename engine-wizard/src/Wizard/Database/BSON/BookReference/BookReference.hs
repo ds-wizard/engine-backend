@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Wizard.LensesConfig
+import LensesConfig
 import Wizard.Model.BookReference.BookReference
 
 instance ToBSON BookReference where

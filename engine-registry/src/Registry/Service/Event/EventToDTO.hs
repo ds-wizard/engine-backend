@@ -2,6 +2,7 @@ module Registry.Service.Event.EventToDTO where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Registry.Api.Resource.Event.AnswerEventDTO
 import Registry.Api.Resource.Event.ChapterEventDTO
 import Registry.Api.Resource.Event.EventDTO
@@ -12,7 +13,6 @@ import Registry.Api.Resource.Event.KnowledgeModelEventDTO
 import Registry.Api.Resource.Event.QuestionEventDTO
 import Registry.Api.Resource.Event.ReferenceEventDTO
 import Registry.Api.Resource.Event.TagEventDTO
-import Registry.LensesConfig
 import Registry.Service.KnowledgeModel.KnowledgeModelMapper
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent

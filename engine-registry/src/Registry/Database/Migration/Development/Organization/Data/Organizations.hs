@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
+import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.LensesConfig
 import Registry.Model.Organization.Organization
 
 orgGlobal :: Organization

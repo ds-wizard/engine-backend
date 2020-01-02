@@ -3,9 +3,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel where
 import Control.Lens ((^.))
 import qualified Data.Map as M
 
+import LensesConfig
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where

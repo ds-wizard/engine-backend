@@ -4,11 +4,11 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO
 import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Database.DAO.Organization.OrganizationDAO
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Organization.OrganizationMapper
 import Wizard.Service.Organization.OrganizationValidation

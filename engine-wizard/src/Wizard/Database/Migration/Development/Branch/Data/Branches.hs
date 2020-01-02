@@ -5,17 +5,17 @@ import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
+import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
-import Wizard.Database.Migration.Development.Event.Data.Events
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
 import Wizard.Service.Event.EventMapper

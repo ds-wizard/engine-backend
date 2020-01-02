@@ -3,9 +3,9 @@ module Wizard.Service.KnowledgeModel.KnowledgeModelMapper where
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.LensesConfig
 
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO
 toKnowledgeModelDTO km =

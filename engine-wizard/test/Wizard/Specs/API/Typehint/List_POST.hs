@@ -10,13 +10,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common

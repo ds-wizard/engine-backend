@@ -7,6 +7,7 @@ import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO)
 import System.IO
 
+import LensesConfig
 import Registry.Bootstrap.Config
 import Registry.Bootstrap.Database
 import Registry.Bootstrap.DatabaseMigration
@@ -15,7 +16,6 @@ import Registry.Bootstrap.Web
 import Registry.Constant.ASCIIArt
 import Registry.Constant.Component
 import Registry.Constant.Resource
-import Registry.LensesConfig
 import Registry.Model.Context.BaseContext
 import Registry.Service.Config.ApplicationConfigService
 import Registry.Service.Config.BuildInfoConfigService

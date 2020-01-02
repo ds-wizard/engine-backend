@@ -11,11 +11,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Database.Migration.Development.Package.Data.Packages
 import Registry.Database.Migration.Development.PackageBundle.Data.PackageBundles
-import Registry.LensesConfig
 import Registry.Model.Context.AppContext
 import Registry.Service.PackageBundle.PackageBundleMapper
 import Shared.Api.Resource.Error.ErrorDTO ()

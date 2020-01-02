@@ -2,10 +2,10 @@ module Registry.Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Registry.Api.Resource.Package.PackageDTO
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.LensesConfig
 import Registry.Model.Organization.Organization
 import Registry.Service.Event.EventMapper
 import qualified Registry.Service.Organization.OrganizationMapper as OM

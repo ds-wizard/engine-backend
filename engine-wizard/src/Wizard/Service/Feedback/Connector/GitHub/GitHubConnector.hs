@@ -12,8 +12,8 @@ import qualified GitHub.Data as GD
 import qualified GitHub.Data.Issues as GI
 import qualified GitHub.Data.Name as GN
 
+import LensesConfig
 import Shared.Model.Error.Error
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Feedback.Connector.Connector

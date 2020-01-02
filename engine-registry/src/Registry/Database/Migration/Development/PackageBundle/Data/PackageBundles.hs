@@ -2,8 +2,8 @@ module Registry.Database.Migration.Development.PackageBundle.Data.PackageBundles
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Registry.Database.Migration.Development.Package.Data.Packages
-import Registry.LensesConfig
 import Shared.Model.PackageBundle.PackageBundle
 
 netherlandsPackageV2Budle :: PackageBundle

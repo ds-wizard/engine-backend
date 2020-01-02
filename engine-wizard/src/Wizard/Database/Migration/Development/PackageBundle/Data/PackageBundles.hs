@@ -2,9 +2,9 @@ module Wizard.Database.Migration.Development.PackageBundle.Data.PackageBundles w
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.PackageBundle.PackageBundle
 import Wizard.Database.Migration.Development.Package.Data.Packages
-import Wizard.LensesConfig
 
 netherlandsPackageV2Budle :: PackageBundle
 netherlandsPackageV2Budle =

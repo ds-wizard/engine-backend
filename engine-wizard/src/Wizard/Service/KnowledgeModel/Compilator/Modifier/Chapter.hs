@@ -2,9 +2,9 @@ module Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddChapterEvent Chapter where

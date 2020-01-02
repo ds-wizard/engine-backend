@@ -3,12 +3,12 @@ module Wizard.Service.KnowledgeModel.KnowledgeModelService where
 import Control.Lens ((^.))
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.LensesConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.Compilator.Compilator

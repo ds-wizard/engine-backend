@@ -15,6 +15,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
@@ -25,7 +26,6 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.LensesConfig
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService

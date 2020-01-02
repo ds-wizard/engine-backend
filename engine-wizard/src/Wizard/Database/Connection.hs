@@ -6,7 +6,7 @@ import Database.MongoDB hiding (host)
 import Database.Persist.MongoDB
 import Network.Socket
 
-import Wizard.LensesConfig
+import LensesConfig
 
 createDatabaseConnectionPool appConfig = do
   dbPool <- createMongoDBPool dbName dbHost dbPort dbCred 1 1 1

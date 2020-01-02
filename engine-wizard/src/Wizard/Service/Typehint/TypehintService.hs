@@ -4,15 +4,15 @@ import Control.Lens ((^.))
 import Data.Map.Strict as M
 import Network.URI.Encode (encode)
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Integration.Http.Typehint.Runner
-import Wizard.LensesConfig
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.Config.IntegrationConfigService
 import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService

@@ -4,10 +4,10 @@ import Control.Lens ((^.))
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
+import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO
-import Wizard.LensesConfig
 
 validateOrganizationDto :: OrganizationChangeDTO -> Maybe AppError
 validateOrganizationDto reqDto = isValidOrganizationId $ reqDto ^. organizationId

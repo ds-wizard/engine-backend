@@ -2,6 +2,7 @@ module Wizard.Service.Event.EventToDTO where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -21,7 +22,6 @@ import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
 import Wizard.Api.Resource.Event.QuestionEventDTO
 import Wizard.Api.Resource.Event.ReferenceEventDTO
 import Wizard.Api.Resource.Event.TagEventDTO
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 
 -- ------------------------------------------------------------------------

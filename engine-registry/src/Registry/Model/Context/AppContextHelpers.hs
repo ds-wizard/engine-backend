@@ -3,7 +3,7 @@ module Registry.Model.Context.AppContextHelpers where
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 
-import Registry.LensesConfig
+import LensesConfig
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Shared.Model.Error.Error

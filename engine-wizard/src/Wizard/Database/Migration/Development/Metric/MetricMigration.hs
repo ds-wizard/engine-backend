@@ -1,8 +1,8 @@
 module Wizard.Database.Migration.Development.Metric.MetricMigration where
 
+import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Constant.Component
 import Wizard.Database.DAO.Metric.MetricDAO
-import Wizard.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Util.Logger
 
 runMigration = do

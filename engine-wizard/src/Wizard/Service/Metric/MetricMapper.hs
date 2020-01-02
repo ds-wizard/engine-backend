@@ -2,9 +2,9 @@ module Wizard.Service.Metric.MetricMapper where
 
 import Control.Lens ((^.))
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.LensesConfig
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 
 toMetricDTO :: Metric -> MetricDTO

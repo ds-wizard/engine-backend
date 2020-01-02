@@ -5,10 +5,10 @@ import Control.Monad.Reader (asks)
 import Control.Monad.Trans.Class (lift)
 import Web.Scotty.Trans (json)
 
+import LensesConfig
 import Registry.Api.Handler.Common
 import Registry.Api.Resource.Info.InfoDTO
 import Registry.Api.Resource.Info.InfoJM ()
-import Registry.LensesConfig
 import Registry.Model.Context.BaseContext
 
 getInfoA :: Endpoint

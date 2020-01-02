@@ -6,6 +6,7 @@ import qualified Data.Map.Strict as M
 import Data.Maybe
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventAccessors
@@ -13,11 +14,10 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
+import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Shared.Util.Uuid
-import Wizard.LensesConfig
 import Wizard.Model.Event.EventLenses
-import Wizard.Model.KnowledgeModel.KnowledgeModelAccessors
-import Wizard.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Util.List
 

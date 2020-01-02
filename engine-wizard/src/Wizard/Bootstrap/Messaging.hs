@@ -3,9 +3,9 @@ module Wizard.Bootstrap.Messaging where
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 
+import LensesConfig
 import Wizard.Bootstrap.Retry
 import Wizard.Constant.Component
-import Wizard.LensesConfig
 import Wizard.Messaging.Connection
 import Wizard.Util.Logger
 

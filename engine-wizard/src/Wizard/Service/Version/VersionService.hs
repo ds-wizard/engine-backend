@@ -7,13 +7,13 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 import Data.UUID as U
 
+import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.LensesConfig
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchUtils
