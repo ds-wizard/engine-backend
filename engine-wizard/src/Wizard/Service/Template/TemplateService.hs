@@ -11,7 +11,7 @@ module Wizard.Service.Template.TemplateService
   ) where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO, asks)
+import Control.Monad.Reader (asks, liftIO)
 import Data.List (find)
 import qualified Data.UUID as U
 import qualified Text.Ginger as Q

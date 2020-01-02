@@ -1,8 +1,8 @@
-module Wizard.Service.Migration.Questionnaire.Sanitizator where
+module Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizator where
 
 import Control.Lens ((&), (.~), (^.))
 import qualified Data.Map.Strict as M
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -13,7 +13,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Util.Maybe (concatMaybe)
 
 sanitizeReplies :: KnowledgeModel -> [Reply] -> [Reply]
-sanitizeReplies km replies = catMaybes . fmap (sanitizeReply km) $ replies
+sanitizeReplies km = mapMaybe (sanitizeReply km)
 
 sanitizeReply :: KnowledgeModel -> Reply -> Maybe Reply
 sanitizeReply km reply =
@@ -22,7 +22,9 @@ sanitizeReply km reply =
         Just replyValue -> Just $ reply & value .~ replyValue
         Nothing -> Nothing
 
--- -------------------------------------------------------------
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
 sanitizeQuestion :: KnowledgeModel -> [String] -> ReplyValue -> Maybe ReplyValue
 sanitizeQuestion km (questionUuidS:_) replyValue =
   case concatMaybe $ fmap (\qUuid -> M.lookup qUuid (km ^. questionsM)) . U.fromString $ questionUuidS of

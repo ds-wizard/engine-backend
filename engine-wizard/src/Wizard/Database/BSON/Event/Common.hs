@@ -10,6 +10,7 @@ import Shared.Model.Event.Event
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -18,6 +19,7 @@ import Wizard.Database.BSON.Event.Chapter ()
 import Wizard.Database.BSON.Event.Expert ()
 import Wizard.Database.BSON.Event.Integration ()
 import Wizard.Database.BSON.Event.KnowledgeModel ()
+import Wizard.Database.BSON.Event.Move ()
 import Wizard.Database.BSON.Event.Question ()
 import Wizard.Database.BSON.Event.Reference ()
 import Wizard.Database.BSON.Event.Tag ()
@@ -52,6 +54,10 @@ chooseEventDeserializator doc = do
     "EditIntegrationEvent" -> Just . EditIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe EditIntegrationEvent)
     "DeleteIntegrationEvent" ->
       Just . DeleteIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe DeleteIntegrationEvent)
+    "MoveQuestionEvent" -> Just . MoveQuestionEvent' . fromJust $ (fromBSON doc :: Maybe MoveQuestionEvent)
+    "MoveAnswerEvent" -> Just . MoveAnswerEvent' . fromJust $ (fromBSON doc :: Maybe MoveAnswerEvent)
+    "MoveExpertEvent" -> Just . MoveExpertEvent' . fromJust $ (fromBSON doc :: Maybe MoveExpertEvent)
+    "MoveReferenceEvent" -> Just . MoveReferenceEvent' . fromJust $ (fromBSON doc :: Maybe MoveReferenceEvent)
 
 convertEventToBSON :: Event -> BSON.Document
 convertEventToBSON (AddKnowledgeModelEvent' event) = toBSON event
@@ -77,3 +83,7 @@ convertEventToBSON (DeleteTagEvent' event) = toBSON event
 convertEventToBSON (AddIntegrationEvent' event) = toBSON event
 convertEventToBSON (EditIntegrationEvent' event) = toBSON event
 convertEventToBSON (DeleteIntegrationEvent' event) = toBSON event
+convertEventToBSON (MoveQuestionEvent' event) = toBSON event
+convertEventToBSON (MoveAnswerEvent' event) = toBSON event
+convertEventToBSON (MoveExpertEvent' event) = toBSON event
+convertEventToBSON (MoveReferenceEvent' event) = toBSON event

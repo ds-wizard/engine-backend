@@ -8,6 +8,7 @@ import Registry.Api.Resource.Event.ChapterEventDTO
 import Registry.Api.Resource.Event.ExpertEventDTO
 import Registry.Api.Resource.Event.IntegrationEventDTO
 import Registry.Api.Resource.Event.KnowledgeModelEventDTO
+import Registry.Api.Resource.Event.MoveEventDTO
 import Registry.Api.Resource.Event.QuestionEventDTO
 import Registry.Api.Resource.Event.ReferenceEventDTO
 import Registry.Api.Resource.Event.TagEventDTO
@@ -34,6 +35,7 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -142,6 +144,14 @@ makeFields ''AddIntegrationEvent
 makeFields ''EditIntegrationEvent
 
 makeFields ''DeleteIntegrationEvent
+
+makeFields ''MoveQuestionEvent
+
+makeFields ''MoveAnswerEvent
+
+makeFields ''MoveExpertEvent
+
+makeFields ''MoveReferenceEvent
 
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
@@ -274,6 +284,14 @@ makeFields ''AddIntegrationEventDTO
 makeFields ''EditIntegrationEventDTO
 
 makeFields ''DeleteIntegrationEventDTO
+
+makeFields ''MoveQuestionEventDTO
+
+makeFields ''MoveAnswerEventDTO
+
+makeFields ''MoveExpertEventDTO
+
+makeFields ''MoveReferenceEventDTO
 
 -- Api / Resource / Info
 makeFields ''InfoDTO

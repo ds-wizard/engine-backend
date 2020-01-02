@@ -1,9 +1,12 @@
 module Shared.Model.KnowledgeModel.KnowledgeModel where
 
 import Data.Map
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
+
+type KMParentMap = M.Map U.UUID U.UUID
 
 data KnowledgeModel =
   KnowledgeModel

@@ -10,7 +10,7 @@ import Registry.Api.Resource.Event.EventFieldJM ()
 import Registry.Api.Resource.Event.ExpertEventJM ()
 import Registry.Api.Resource.Event.IntegrationEventJM ()
 import Registry.Api.Resource.Event.KnowledgeModelEventJM ()
-import Registry.Api.Resource.Event.KnowledgeModelEventJM ()
+import Registry.Api.Resource.Event.MoveEventJM ()
 import Registry.Api.Resource.Event.QuestionEventJM ()
 import Registry.Api.Resource.Event.ReferenceEventJM ()
 import Registry.Api.Resource.Event.TagEventJM ()
@@ -39,6 +39,10 @@ instance ToJSON EventDTO where
   toJSON (AddIntegrationEventDTO' event) = toJSON event
   toJSON (EditIntegrationEventDTO' event) = toJSON event
   toJSON (DeleteIntegrationEventDTO' event) = toJSON event
+  toJSON (MoveQuestionEventDTO' event) = toJSON event
+  toJSON (MoveAnswerEventDTO' event) = toJSON event
+  toJSON (MoveExpertEventDTO' event) = toJSON event
+  toJSON (MoveReferenceEventDTO' event) = toJSON event
 
 instance FromJSON EventDTO where
   parseJSON (Object o) = do
@@ -67,5 +71,9 @@ instance FromJSON EventDTO where
       "AddIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (AddIntegrationEventDTO' event)
       "EditIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (EditIntegrationEventDTO' event)
       "DeleteIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (DeleteIntegrationEventDTO' event)
+      "MoveQuestionEvent" -> parseJSON (Object o) >>= \event -> return (MoveQuestionEventDTO' event)
+      "MoveAnswerEvent" -> parseJSON (Object o) >>= \event -> return (MoveAnswerEventDTO' event)
+      "MoveExpertEvent" -> parseJSON (Object o) >>= \event -> return (MoveExpertEventDTO' event)
+      "MoveReferenceEvent" -> parseJSON (Object o) >>= \event -> return (MoveReferenceEventDTO' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero

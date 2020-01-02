@@ -19,6 +19,7 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -1199,4 +1200,69 @@ d_km1_iop =
     { _deleteIntegrationEventUuid = fromJust $ U.fromString "d211d46f-5358-497a-92a0-e0bde08ce3d3"
     , _deleteIntegrationEventParentUuid = km1 ^. uuid
     , _deleteIntegrationEventEntityUuid = ontologyPortal ^. uuid
+    }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+m_km1_ch1_q1__to_ch2 :: MoveQuestionEvent
+m_km1_ch1_q1__to_ch2 =
+  MoveQuestionEvent
+    { _moveQuestionEventUuid = fromJust $ U.fromString "f13a1d1b-5cb6-458a-ad99-cafe3912aa1d"
+    , _moveQuestionEventParentUuid = chapter1 ^. uuid
+    , _moveQuestionEventEntityUuid = question1 ^. uuid
+    , _moveQuestionEventTargetUuid = chapter2 ^. uuid
+    }
+
+m_km1_ch1_q1__to_ch2_q3_aNo :: MoveQuestionEvent
+m_km1_ch1_q1__to_ch2_q3_aNo =
+  MoveQuestionEvent
+    { _moveQuestionEventUuid = fromJust $ U.fromString "3bf501a1-cbc2-4b94-9b17-d23f0bad7fc9"
+    , _moveQuestionEventParentUuid = chapter1 ^. uuid
+    , _moveQuestionEventEntityUuid = question1 ^. uuid
+    , _moveQuestionEventTargetUuid = q3_answerNo ^. uuid
+    }
+
+m_km1_ch2_q4_it1_q5__to_ch2_q4_it1_q6_aNo :: MoveQuestionEvent
+m_km1_ch2_q4_it1_q5__to_ch2_q4_it1_q6_aNo =
+  MoveQuestionEvent
+    { _moveQuestionEventUuid = fromJust $ U.fromString "a2f35e98-dd67-45cf-a18e-a8a38382c7be"
+    , _moveQuestionEventParentUuid = question4 ^. uuid
+    , _moveQuestionEventEntityUuid = q4_it1_question5 ^. uuid
+    , _moveQuestionEventTargetUuid = q4_it1_q6_answerNo ^. uuid
+    }
+
+m_km1_ch2_q4_it1_q6_aYes_fuq4_it_q1__to_ch2_q4 :: MoveQuestionEvent
+m_km1_ch2_q4_it1_q6_aYes_fuq4_it_q1__to_ch2_q4 =
+  MoveQuestionEvent
+    { _moveQuestionEventUuid = fromJust $ U.fromString "a2f35e98-dd67-45cf-a18e-a8a38382c7be"
+    , _moveQuestionEventParentUuid = q4_it1_q6_aYes_followUpQuestion4 ^. uuid
+    , _moveQuestionEventEntityUuid = q4_it1_q6_aYes_fuq4_it_question1 ^. uuid
+    , _moveQuestionEventTargetUuid = question4 ^. uuid
+    }
+
+m_km1_ch1_q2_aYes__to_ch2_q3 :: MoveAnswerEvent
+m_km1_ch1_q2_aYes__to_ch2_q3 =
+  MoveAnswerEvent
+    { _moveAnswerEventUuid = fromJust $ U.fromString "b660447a-ddbd-482a-9610-68dfca6a25fd"
+    , _moveAnswerEventParentUuid = question2 ^. uuid
+    , _moveAnswerEventEntityUuid = q2_answerYes ^. uuid
+    , _moveAnswerEventTargetUuid = question3 ^. uuid
+    }
+
+m_km1_ch1_q2_eAlbert__to_ch2_q3 :: MoveExpertEvent
+m_km1_ch1_q2_eAlbert__to_ch2_q3 =
+  MoveExpertEvent
+    { _moveExpertEventUuid = fromJust $ U.fromString "35b18cb0-912f-4c76-9f80-b6bfc6479c7c"
+    , _moveExpertEventParentUuid = question2 ^. uuid
+    , _moveExpertEventEntityUuid = km1_ch1_q2_eAlbert ^. uuid
+    , _moveExpertEventTargetUuid = question3 ^. uuid
+    }
+
+m_km1_ch1_q2_r1__to_ch2_q3 :: MoveReferenceEvent
+m_km1_ch1_q2_r1__to_ch2_q3 =
+  MoveReferenceEvent
+    { _moveReferenceEventUuid = fromJust $ U.fromString "1cc9ad2b-22bc-4806-902e-49b46ccc14d5"
+    , _moveReferenceEventParentUuid = question2 ^. uuid
+    , _moveReferenceEventEntityUuid = km1_ch1_q2_r1 ^. uuid
+    , _moveReferenceEventTargetUuid = question3 ^. uuid
     }

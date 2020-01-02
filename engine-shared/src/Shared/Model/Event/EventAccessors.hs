@@ -8,6 +8,7 @@ import Shared.Model.Event.Event
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -36,6 +37,10 @@ getEventUuid' (DeleteTagEvent' event) = getEventUuid event
 getEventUuid' (AddIntegrationEvent' event) = getEventUuid event
 getEventUuid' (EditIntegrationEvent' event) = getEventUuid event
 getEventUuid' (DeleteIntegrationEvent' event) = getEventUuid event
+getEventUuid' (MoveQuestionEvent' event) = getEventUuid event
+getEventUuid' (MoveAnswerEvent' event) = getEventUuid event
+getEventUuid' (MoveExpertEvent' event) = getEventUuid event
+getEventUuid' (MoveReferenceEvent' event) = getEventUuid event
 
 class EventAccesors a where
   getEventUuid :: a -> U.UUID
@@ -186,3 +191,23 @@ instance EventAccesors DeleteIntegrationEvent where
   getEventUuid = _deleteIntegrationEventUuid
   getEventParentUuid = _deleteIntegrationEventParentUuid
   getEventNodeUuid = _deleteIntegrationEventEntityUuid
+
+instance EventAccesors MoveQuestionEvent where
+  getEventUuid = _moveQuestionEventUuid
+  getEventParentUuid = _moveQuestionEventParentUuid
+  getEventNodeUuid = _moveQuestionEventEntityUuid
+
+instance EventAccesors MoveAnswerEvent where
+  getEventUuid = _moveAnswerEventUuid
+  getEventParentUuid = _moveAnswerEventParentUuid
+  getEventNodeUuid = _moveAnswerEventEntityUuid
+
+instance EventAccesors MoveExpertEvent where
+  getEventUuid = _moveExpertEventUuid
+  getEventParentUuid = _moveExpertEventParentUuid
+  getEventNodeUuid = _moveExpertEventEntityUuid
+
+instance EventAccesors MoveReferenceEvent where
+  getEventUuid = _moveReferenceEventUuid
+  getEventParentUuid = _moveReferenceEventParentUuid
+  getEventNodeUuid = _moveReferenceEventEntityUuid

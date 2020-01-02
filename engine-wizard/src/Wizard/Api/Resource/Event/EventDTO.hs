@@ -5,6 +5,7 @@ import Wizard.Api.Resource.Event.ChapterEventDTO
 import Wizard.Api.Resource.Event.ExpertEventDTO
 import Wizard.Api.Resource.Event.IntegrationEventDTO
 import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
+import Wizard.Api.Resource.Event.MoveEventDTO
 import Wizard.Api.Resource.Event.QuestionEventDTO
 import Wizard.Api.Resource.Event.ReferenceEventDTO
 import Wizard.Api.Resource.Event.TagEventDTO
@@ -33,4 +34,8 @@ data EventDTO
   | AddIntegrationEventDTO' AddIntegrationEventDTO
   | EditIntegrationEventDTO' EditIntegrationEventDTO
   | DeleteIntegrationEventDTO' DeleteIntegrationEventDTO
+  | MoveQuestionEventDTO' MoveQuestionEventDTO
+  | MoveAnswerEventDTO' MoveAnswerEventDTO
+  | MoveExpertEventDTO' MoveExpertEventDTO
+  | MoveReferenceEventDTO' MoveReferenceEventDTO
   deriving (Show, Eq)

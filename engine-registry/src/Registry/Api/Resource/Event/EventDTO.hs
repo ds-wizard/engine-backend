@@ -5,6 +5,7 @@ import Registry.Api.Resource.Event.ChapterEventDTO
 import Registry.Api.Resource.Event.ExpertEventDTO
 import Registry.Api.Resource.Event.IntegrationEventDTO
 import Registry.Api.Resource.Event.KnowledgeModelEventDTO
+import Registry.Api.Resource.Event.MoveEventDTO
 import Registry.Api.Resource.Event.QuestionEventDTO
 import Registry.Api.Resource.Event.ReferenceEventDTO
 import Registry.Api.Resource.Event.TagEventDTO
@@ -33,4 +34,8 @@ data EventDTO
   | AddIntegrationEventDTO' AddIntegrationEventDTO
   | EditIntegrationEventDTO' EditIntegrationEventDTO
   | DeleteIntegrationEventDTO' DeleteIntegrationEventDTO
+  | MoveQuestionEventDTO' MoveQuestionEventDTO
+  | MoveAnswerEventDTO' MoveAnswerEventDTO
+  | MoveExpertEventDTO' MoveExpertEventDTO
+  | MoveReferenceEventDTO' MoveReferenceEventDTO
   deriving (Show, Eq)

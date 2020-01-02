@@ -9,6 +9,7 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -19,6 +20,7 @@ import Wizard.Api.Resource.Event.EventFieldDTO
 import Wizard.Api.Resource.Event.ExpertEventDTO
 import Wizard.Api.Resource.Event.IntegrationEventDTO
 import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
+import Wizard.Api.Resource.Event.MoveEventDTO
 import Wizard.Api.Resource.Event.QuestionEventDTO
 import Wizard.Api.Resource.Event.ReferenceEventDTO
 import Wizard.Api.Resource.Event.TagEventDTO
@@ -460,4 +462,47 @@ instance EventToDTO DeleteIntegrationEvent where
         { _deleteIntegrationEventDTOUuid = event ^. uuid
         , _deleteIntegrationEventDTOParentUuid = event ^. parentUuid
         , _deleteIntegrationEventDTOEntityUuid = event ^. entityUuid
+        }
+
+-------------------------
+-- Move -----------------
+-------------------------
+instance EventToDTO MoveQuestionEvent where
+  toDTO dto =
+    MoveQuestionEventDTO'
+      MoveQuestionEventDTO
+        { _moveQuestionEventDTOUuid = dto ^. uuid
+        , _moveQuestionEventDTOParentUuid = dto ^. parentUuid
+        , _moveQuestionEventDTOEntityUuid = dto ^. entityUuid
+        , _moveQuestionEventDTOTargetUuid = dto ^. targetUuid
+        }
+
+instance EventToDTO MoveAnswerEvent where
+  toDTO dto =
+    MoveAnswerEventDTO'
+      MoveAnswerEventDTO
+        { _moveAnswerEventDTOUuid = dto ^. uuid
+        , _moveAnswerEventDTOParentUuid = dto ^. parentUuid
+        , _moveAnswerEventDTOEntityUuid = dto ^. entityUuid
+        , _moveAnswerEventDTOTargetUuid = dto ^. targetUuid
+        }
+
+instance EventToDTO MoveExpertEvent where
+  toDTO dto =
+    MoveExpertEventDTO'
+      MoveExpertEventDTO
+        { _moveExpertEventDTOUuid = dto ^. uuid
+        , _moveExpertEventDTOParentUuid = dto ^. parentUuid
+        , _moveExpertEventDTOEntityUuid = dto ^. entityUuid
+        , _moveExpertEventDTOTargetUuid = dto ^. targetUuid
+        }
+
+instance EventToDTO MoveReferenceEvent where
+  toDTO dto =
+    MoveReferenceEventDTO'
+      MoveReferenceEventDTO
+        { _moveReferenceEventDTOUuid = dto ^. uuid
+        , _moveReferenceEventDTOParentUuid = dto ^. parentUuid
+        , _moveReferenceEventDTOEntityUuid = dto ^. entityUuid
+        , _moveReferenceEventDTOTargetUuid = dto ^. targetUuid
         }

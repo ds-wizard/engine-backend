@@ -325,6 +325,37 @@ compilatorSpec =
               km1WithQ4
         computed `shouldBe` expected
    -- ---------------
+    describe "Apply:  Move Events" $ do
+      it "Apply:  MoveQuestionEvent" $ do
+        let (Right computed) = compile (Just km1) [MoveQuestionEvent' m_km1_ch1_q1__to_ch2]
+        let expected =
+              (chaptersM . at (chapter1 ^. uuid) ?~ (chapter1 & questionUuids .~ [question2 ^. uuid])) .
+              (chaptersM . at (chapter2 ^. uuid) ?~ (chapter2 & questionUuids .~ [question3 ^. uuid, question1 ^. uuid])) $
+              km1
+        computed `shouldBe` expected
+      it "Apply:  MoveAnswerEvent" $ do
+        let (Right computed) = compile (Just km1) [MoveAnswerEvent' m_km1_ch1_q2_aYes__to_ch2_q3]
+        let expected =
+              (questionsM . at (question2 ^. uuid) ?~ (question2' & answerUuids' .~ [q2_answerNo ^. uuid])) .
+              (questionsM . at (question3 ^. uuid) ?~
+               (question3' & answerUuids' .~ [q3_answerNo ^. uuid, q3_answerYes ^. uuid, q2_answerYes ^. uuid])) $
+              km1
+        computed `shouldBe` expected
+      it "Apply:  MoveExpertEvent" $ do
+        let (Right computed) = compile (Just km1) [MoveExpertEvent' m_km1_ch1_q2_eAlbert__to_ch2_q3]
+        let expected =
+              (questionsM . at (question2 ^. uuid) ?~ (question2' & expertUuids' .~ [km1_ch1_q2_eNikola ^. uuid])) .
+              (questionsM . at (question3 ^. uuid) ?~ (question3' & expertUuids' .~ [km1_ch1_q2_eAlbert ^. uuid])) $
+              km1
+        computed `shouldBe` expected
+      it "Apply:  MoveReferenceEvent" $ do
+        let (Right computed) = compile (Just km1) [MoveReferenceEvent' m_km1_ch1_q2_r1__to_ch2_q3]
+        let expected =
+              (questionsM . at (question2 ^. uuid) ?~ (question2' & referenceUuids' .~ [km1_ch1_q2_r2 ^. uuid])) .
+              (questionsM . at (question3 ^. uuid) ?~ (question3' & referenceUuids' .~ [km1_ch1_q2_r1 ^. uuid])) $
+              km1
+        computed `shouldBe` expected
+   -- ---------------
     describe "Build whole KM" $ it "Apply: Create KM from scratch" $ do
       let events =
             [ AddKnowledgeModelEvent' a_km1
