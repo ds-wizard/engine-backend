@@ -31,6 +31,7 @@ instance FromJSON AppConfigGeneral where
     _appConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
     _appConfigGeneralServiceToken <- o .: "serviceToken"
     _appConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
+    _appConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _appConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
     _appConfigGeneralRegistrationEnabled <- o .:? "registrationEnabled" .!= (defaultGeneral ^. registrationEnabled)

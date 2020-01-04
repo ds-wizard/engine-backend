@@ -2,16 +2,7 @@ general:
   environment: Production
   serverPort: 3000
   clientUrl: http://localhost:3001
-
-client:
-  appTitle:
-  appTitleShort:
-  welcomeWarning:
-  welcomeInfo:
-  dashboard:
-    admin: [Welcome]
-    dataSteward: [Welcome]
-    researcher: [Welcome]
+  templateFolder: engine-registry/templates
 
 database:
   host: mongo

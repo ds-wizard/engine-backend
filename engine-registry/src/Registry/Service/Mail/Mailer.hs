@@ -89,8 +89,9 @@ composeMail to subject mailName context = do
       addrFrom = MIME.Address (T.pack <$> mailConfig ^. name) (T.pack . fromMaybe "" $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
       emptyMail = MIME.Mail addrFrom addrsTo [] [] [("Subject", TL.toStrict subject)] []
-      root = _MAIL_TEMPLATE_ROOT </> mailName
-      commonRoot = _MAIL_TEMPLATE_ROOT </> _MAIL_TEMPLATE_COMMON_FOLDER
+      mailFolder = (appConfig ^. general . templateFolder) ++ _MAIL_TEMPLATE_ROOT
+      root = mailFolder </> mailName
+      commonRoot = mailFolder </> _MAIL_TEMPLATE_COMMON_FOLDER
   plainTextPart <- makePlainTextPart (root </> _MAIL_TEMPLATE_PLAIN_NAME) context
   htmlPart <- makeHTMLPart (root </> _MAIL_TEMPLATE_HTML_NAME) context
   case (htmlPart, plainTextPart) of

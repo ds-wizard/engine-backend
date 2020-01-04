@@ -11,6 +11,7 @@ defaultGeneral =
     , _appConfigGeneralServerPort = 3000
     , _appConfigGeneralServiceToken = ""
     , _appConfigGeneralIntegrationConfig = "integration.yml"
+    , _appConfigGeneralTemplateFolder = "engine-wizard/templates"
     , _appConfigGeneralRemoteLocalizationUrl = Nothing
     , _appConfigGeneralRegistrationEnabled = True
     , _appConfigGeneralPublicQuestionnaireEnabled = False

@@ -17,6 +17,7 @@ data AppConfigGeneral =
     { _appConfigGeneralEnvironment :: Environment
     , _appConfigGeneralClientUrl :: String
     , _appConfigGeneralServerPort :: Int
+    , _appConfigGeneralTemplateFolder :: String
     , _appConfigGeneralRemoteLocalizationUrl :: Maybe String
     }
   deriving (Generic, Show)

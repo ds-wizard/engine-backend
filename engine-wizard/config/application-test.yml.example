@@ -4,6 +4,7 @@ general:
   clientUrl: http://localhost:3001
   serviceToken: my-token
   integrationConfig: integration-test.yml
+  templateFolder: templates
   registrationEnabled: true
   publicQuestionnaireEnabled: true
   levelsEnabled: true

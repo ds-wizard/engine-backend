@@ -11,7 +11,7 @@ module Wizard.Service.Template.TemplateService
   ) where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (liftIO, asks)
 import Data.List (find)
 import qualified Data.UUID as U
 import qualified Text.Ginger as Q
@@ -27,12 +27,13 @@ import Wizard.Model.Context.AppContext
 import Wizard.Util.List (foldEithersInContext)
 import Wizard.Util.Template (mLoadFile)
 
-templateFolder = "templates/dmp"
+dmpFolder = "/dmp"
 
 listTemplates :: AppContextM (Either AppError [TemplateDTO])
 listTemplates = do
-  files <- liftIO $ listFilesWithExtension templateFolder "json"
-  foldEithersInContext $ (liftIO . loadJSONFile) <$> (\f -> templateFolder ++ "/" ++ f) <$> files
+  folder <- getFolder
+  files <- liftIO $ listFilesWithExtension folder "json"
+  foldEithersInContext $ (liftIO . loadJSONFile) <$> (\f -> folder ++ "/" ++ f) <$> files
 
 getTemplateByUuid :: String -> AppContextM (Either AppError TemplateDTO)
 getTemplateByUuid templateUuid =
@@ -53,12 +54,21 @@ getTemplateByUuidOrFirst mTemplateUuid =
 
 loadTemplateFile :: String -> AppContextM (Either AppError (Q.Template Q.SourcePos))
 loadTemplateFile fileName = do
-  eTemplate <- liftIO $ Q.parseGingerFile mLoadFile (templateFolder ++ "/" ++ fileName)
+  folder <- getFolder
+  eTemplate <- liftIO $ Q.parseGingerFile mLoadFile (folder ++ "/" ++ fileName)
   case eTemplate of
     Right template -> return . Right $ template
     Left error ->
       return . Left . GeneralServerError $
       _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED (Q.formatParserError Nothing error)
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+getFolder :: AppContextM String
+getFolder = do
+  appConfig <- asks _appContextApplicationConfig
+  return $ (appConfig ^. general . templateFolder) ++ dmpFolder
 
 -- --------------------------------
 -- HELPERS
