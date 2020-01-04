@@ -3,7 +3,7 @@ general:
   serverPort: 3000
   clientUrl: http://localhost:3001
   serviceToken: my-token
-  integrationConfig: integration-test.yml
+  integrationConfig: config/integration-test.yml
   templateFolder: templates
   registrationEnabled: true
   publicQuestionnaireEnabled: true

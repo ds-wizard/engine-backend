@@ -19,8 +19,8 @@ import Wizard.Util.Logger (logWarnU, msg)
 getIntegrationConfig :: String -> AppContextM (Either AppError (M.Map String String))
 getIntegrationConfig sectionName = do
   appConfig <- asks _appContextApplicationConfig
-  let integrationConfigFileName = appConfig ^. general . integrationConfig
-  eIntConfig <- liftIO $ decodeFileEither ("config/" ++ integrationConfigFileName)
+  let integrationConfigPath = appConfig ^. general . integrationConfig
+  eIntConfig <- liftIO $ decodeFileEither integrationConfigPath
   case eIntConfig of
     Right intConfig -> return . Right . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do
