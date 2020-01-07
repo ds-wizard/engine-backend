@@ -40,6 +40,15 @@ compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
 
+compareQuestionnaireCloneDtos resDto expDto = do
+  liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
+  liftIO $ resDto ^. name `shouldBe` ("Copy of " ++ expDto ^. name)
+  liftIO $ resDto ^. level `shouldBe` expDto ^. level
+  liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
+  liftIO $ resDto ^. state `shouldBe` expDto ^. state
+  liftIO $ resDto ^. package `shouldBe` expDto ^. package
+  liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
+
 compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
   liftIO $ resDto ^. level `shouldBe` expDto ^. level

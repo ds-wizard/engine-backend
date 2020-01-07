@@ -32,14 +32,24 @@ getQuestionnairesA =
 postQuestionnairesA :: Endpoint
 postQuestionnairesA =
   checkPermission "QTN_PERM" $
-  getAuthServiceExecutor $ \runInAuthService ->
-    getReqDto $ \reqDto -> do
-      eitherQuestionnaireDto <- runInAuthService $ createQuestionnaire reqDto
-      case eitherQuestionnaireDto of
-        Left appError -> sendError appError
-        Right questionnaireDto -> do
-          status created201
-          json questionnaireDto
+  getAuthServiceExecutor $ \runInAuthService -> do
+    mCloneUuid <- getQueryParam "cloneUuid"
+    case mCloneUuid of
+      Just cloneUuid -> do
+        eitherQuestionnaireDto <- runInAuthService $ cloneQuestionnaire (T.unpack cloneUuid)
+        case eitherQuestionnaireDto of
+          Left appError -> sendError appError
+          Right questionnaireDto -> do
+            status created201
+            json questionnaireDto
+      Nothing ->
+        getReqDto $ \reqDto -> do
+          eitherQuestionnaireDto <- runInAuthService $ createQuestionnaire reqDto
+          case eitherQuestionnaireDto of
+            Left appError -> sendError appError
+            Right questionnaireDto -> do
+              status created201
+              json questionnaireDto
 
 getQuestionnaireA :: Endpoint
 getQuestionnaireA =

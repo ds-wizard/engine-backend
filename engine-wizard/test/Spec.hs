@@ -69,10 +69,10 @@ hLoadConfig fileName loadFn callback = do
       putStrLn $ "CONFIG: '" ++ fileName ++ "' loaded"
       callback config
 
-prepareWebApp runCallback = do
+prepareWebApp runCallback =
   hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ appConfig ^. general . environment)
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show (appConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool appConfig
       putStrLn "DATABASE: connected"
       msgChannel <- createMessagingChannel appConfig
@@ -98,31 +98,29 @@ main =
     (\appContext ->
        hspec $ do
          describe "UNIT TESTING" $ do
-           describe "INTEGRATION" $ do
-             describe "Http" $ do
-               describe "Common" $ commonResponseMapperSpec
-               describe "Typehint" $ typehintResponseMapperSpec
-           describe "LOCALIZATION" $ localeSpec
+           describe "INTEGRATION" $ describe "Http" $ do
+             describe "Common" commonResponseMapperSpec
+             describe "Typehint" typehintResponseMapperSpec
+           describe "LOCALIZATION" localeSpec
            describe "SERVICE" $ do
-             describe "Branch" $ do branchValidationSpec
+             describe "Branch" branchValidationSpec
              describe "KnowledgeModel" $ do
                describe "Compilator" $ do
-                 describe "Modifier" $ do modifierSpec
+                 describe "Modifier" modifierSpec
                  compilatorSpec
                knowledgeModelFilterSpec
              describe "Migration" $ do
-               describe "KnowledgeModel" $ do
-                 describe "Migrator" $ do
-                   migratorSpec
-                   KM_SanitizatorSpec.sanitizatorSpec
+               describe "KnowledgeModel" $ describe "Migrator" $ do
+                 migratorSpec
+                 KM_SanitizatorSpec.sanitizatorSpec
                describe "Questionnaire" $ describe "Migrator" $ do
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
-             describe "Organization" $ organizationValidationSpec
-             describe "Package" $ packageValidationSpec
-             describe "Report" $ reportGeneratorSpec
-             describe "Token" $ tokenServiceSpec
-           describe "UTIL" $ do listSpec
+             describe "Organization" organizationValidationSpec
+             describe "Package" packageValidationSpec
+             describe "Report" reportGeneratorSpec
+             describe "Token" tokenServiceSpec
+           describe "UTIL" listSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              bookReferenceAPI appContext

@@ -11,6 +11,7 @@ import Wizard.Specs.API.Questionnaire.Detail_Report_GET
 import Wizard.Specs.API.Questionnaire.Detail_Report_Preview_POST
 import Wizard.Specs.API.Questionnaire.List_GET
 import Wizard.Specs.API.Questionnaire.List_POST
+import Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
 import Wizard.Specs.API.Questionnaire.Public_GET
 
 questionnaireAPI appContext =
@@ -18,6 +19,7 @@ questionnaireAPI appContext =
   describe "QUESTIONNAIRE API Spec" $ do
     list_get appContext
     list_post appContext
+    list_post_cloneUuid appContext
     public_get appContext
     detail_get appContext
     detail_put appContext

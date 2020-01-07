@@ -28,7 +28,7 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}
+-- POST /questionnaires
 -- ------------------------------------------------------------------------
 list_post :: AppContext -> SpecWith Application
 list_post appContext =
