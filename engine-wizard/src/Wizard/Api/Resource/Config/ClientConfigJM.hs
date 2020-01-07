@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Config.ClientConfigJM where
 
+import Control.Monad (mzero)
 import Data.Aeson
 
 import Wizard.Api.Resource.Config.ClientConfigDTO
@@ -25,10 +26,20 @@ instance ToJSON ClientConfigClientDTO where
   toJSON = simpleToJSON "_clientConfigClientDTO"
 
 instance FromJSON ClientConfigClientDashboardDTO where
-  parseJSON = simpleParseJSON "_clientConfigClientDashboardDTO"
+  parseJSON (Object o) = do
+    _clientConfigClientDashboardDTOAdmin <- o .: "ADMIN"
+    _clientConfigClientDashboardDTODataSteward <- o .: "DATASTEWARD"
+    _clientConfigClientDashboardDTOResearcher <- o .: "RESEARCHER"
+    return ClientConfigClientDashboardDTO {..}
+  parseJSON _ = mzero
 
 instance ToJSON ClientConfigClientDashboardDTO where
-  toJSON = simpleToJSON "_clientConfigClientDashboardDTO"
+  toJSON ClientConfigClientDashboardDTO {..} =
+    object
+      [ "ADMIN" .= _clientConfigClientDashboardDTOAdmin
+      , "DATASTEWARD" .= _clientConfigClientDashboardDTODataSteward
+      , "RESEARCHER" .= _clientConfigClientDashboardDTOResearcher
+      ]
 
 instance FromJSON ClientConfigClientCustomMenuLinkDTO where
   parseJSON = simpleParseJSON "_clientConfigClientCustomMenuLinkDTO"
