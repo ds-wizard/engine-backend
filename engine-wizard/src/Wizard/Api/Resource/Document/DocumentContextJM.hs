@@ -19,7 +19,7 @@ instance ToJSON DocumentContextDTO where
   toJSON = simpleToJSON "_documentContextDTO"
 
 instance FromJSON DocumentContextConfigDTO where
-  parseJSON = simpleParseJSON "_documentConfigDTO"
+  parseJSON = simpleParseJSON "_documentContextConfigDTO"
 
 instance ToJSON DocumentContextConfigDTO where
-  toJSON = simpleToJSON "_documentConfigDTO"
+  toJSON = simpleToJSON "_documentContextConfigDTO"
