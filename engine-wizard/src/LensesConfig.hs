@@ -567,6 +567,8 @@ makeFields ''ReportDTO
 -- Api / Resource / Template
 makeFields ''TemplateDTO
 
+makeFields ''TemplateAllowedKMDTO
+
 -- Api / Resource / Token
 makeFields ''TokenDTO
 

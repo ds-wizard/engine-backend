@@ -69,12 +69,13 @@ createDocumentContext qtnUuid =
         Nothing -> callback Nothing
 
 exportDocument :: String -> Maybe String -> DocumentFormat -> AppContextM (Either AppError BS.ByteString)
-exportDocument qtnUuid mTemplateUuid format = do
+exportDocument qtnUuid mTemplateUuid format =
   heCreateDocumentContext qtnUuid $ \dmp ->
     case format of
       JSON -> return . Right . encode $ dmp
       otherFormat ->
-        heGetTemplateByUuidOrFirst mTemplateUuid $ \template -> generateDocumentInFormat otherFormat template dmp
+        heGetTemplateByUuidOrFirst mTemplateUuid (Just $ dmp ^. package . pId) $ \template ->
+          generateDocumentInFormat otherFormat template dmp
 
 generateDocumentInFormat ::
      DocumentFormat -> TemplateDTO -> DocumentContextDTO -> AppContextM (Either AppError BS.ByteString)
@@ -89,7 +90,7 @@ generateDocumentInFormat format template dmp =
           _ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED (T.unpack . E.decodeUtf8 $ err)
 
 generateDocument :: TemplateDTO -> DocumentContextDTO -> AppContextM (Either AppError T.Text)
-generateDocument template dmp = do
+generateDocument template dmp =
   heLoadTemplateFile (template ^. rootFile) $ \templateFile -> return . Right $ render templateFile context
   where
     context = fromList [("dmp", fromMaybe emptyObject . decode . encode $ dmp)]

@@ -7,6 +7,16 @@ import Wizard.Service.Package.PackageValidation
 
 packageValidationSpec =
   describe "Package Validation" $ do
+    it "validatePackageIdFormat" $ do
+      isNothing (validatePackageIdFormat "org.nl:core-nl:0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat "") `shouldBe` True
+      isJust (validatePackageIdFormat "0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat ":0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat "core-nl:0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat ":core-nl:0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat "org.nl::0.0.0") `shouldBe` True
+      isJust (validatePackageIdFormat "org.nl:core-nl:") `shouldBe` True
+      isJust (validatePackageIdFormat "org.nl:core-nl:1") `shouldBe` True
     it "validateVersionFormat" $ do
       isNothing (validateVersionFormat "0.0.0") `shouldBe` True
       isNothing (validateVersionFormat "1.2.0") `shouldBe` True

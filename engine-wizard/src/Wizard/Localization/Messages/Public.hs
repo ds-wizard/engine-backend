@@ -6,8 +6,11 @@ import Shared.Model.Localization.LocaleRecord
 -- VALIDATION
 -- --------------------------------------
 -- Format
+_ERROR_VALIDATION__INVALID_PKG_ID_FORMAT =
+  LocaleRecord "error.validation.invalid_pkg_id_format" "Package ID is not in the valid format" []
+
 _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT =
-  LocaleRecord "error.validation.invalid_pkg_id_format" "Version is not in the valid format" []
+  LocaleRecord "error.validation.invalid_pkg_version_format" "Version is not in the valid format" []
 
 _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
   LocaleRecord "error.validation.unsupported_dmp_format" "This Document format (%s) is not currently supported" [format]

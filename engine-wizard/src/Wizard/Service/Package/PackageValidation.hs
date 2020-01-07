@@ -1,5 +1,6 @@
 module Wizard.Service.Package.PackageValidation
-  ( validateVersionFormat
+  ( validatePackageIdFormat
+  , validateVersionFormat
   , validateIsVersionHigher
   , validatePackageIdWithCoordinates
   , validatePackageIdUniqueness
@@ -9,6 +10,7 @@ module Wizard.Service.Package.PackageValidation
   , validateUsageBySomeBranch
   , validateUsageBySomeQuestionnaire
   -- Helpers
+  , heValidatePackageIdFormat
   , heValidateVersionFormat
   , heValidateIsVersionHigher
   , heValidatePackageIdWithCoordinates
@@ -30,6 +32,13 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageUtils
+
+validatePackageIdFormat :: String -> Maybe AppError
+validatePackageIdFormat pkgId =
+  let pkgIdSplit = splitPackageId pkgId
+   in if length pkgIdSplit /= 3 || null (head pkgIdSplit) || null (pkgIdSplit !! 1)
+        then Just $ UserError _ERROR_VALIDATION__INVALID_PKG_ID_FORMAT
+        else validateVersionFormat (pkgIdSplit !! 2)
 
 validateVersionFormat :: String -> Maybe AppError
 validateVersionFormat pkgVersion =
@@ -131,6 +140,12 @@ validateUsageBySomeQuestionnaire pkgId = do
 -- --------------------------------
 -- HELPERS
 -- --------------------------------
+heValidatePackageIdFormat pkgId callback =
+  case validatePackageIdFormat pkgId of
+    Nothing -> callback
+    Just error -> return . Left $ error
+
+-- -----------------------------------------------------
 heValidateVersionFormat pkgVersion callback =
   case validateVersionFormat pkgVersion of
     Nothing -> callback

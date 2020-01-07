@@ -10,3 +10,9 @@ instance FromJSON TemplateDTO where
 
 instance ToJSON TemplateDTO where
   toJSON = simpleToJSON "_templateDTO"
+
+instance FromJSON TemplateAllowedKMDTO where
+  parseJSON = simpleParseJSON "_templateAllowedKMDTO"
+
+instance ToJSON TemplateAllowedKMDTO where
+  toJSON = simpleToJSON "_templateAllowedKMDTO"

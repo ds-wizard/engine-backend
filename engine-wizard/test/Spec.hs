@@ -53,6 +53,7 @@ import Wizard.Specs.Service.Organization.OrganizationValidationSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
+import Wizard.Specs.Service.Template.TemplateServiceSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Util.ListSpec
@@ -119,6 +120,7 @@ main =
              describe "Organization" organizationValidationSpec
              describe "Package" packageValidationSpec
              describe "Report" reportGeneratorSpec
+             describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec
            describe "UTIL" listSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
