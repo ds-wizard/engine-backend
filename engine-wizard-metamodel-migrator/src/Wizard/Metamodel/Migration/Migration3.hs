@@ -188,14 +188,11 @@ instance Upgradeable V3.AddKnowledgeModelEventDTO V4.AddKnowledgeModelEventDTO w
 
 instance Upgradeable V3.EditKnowledgeModelEventDTO V4.EditKnowledgeModelEventDTO where
   upgrade (V3.EditKnowledgeModelEventDTO {..}) =
-    V4.EditKnowledgeModelEventDTO
-      _editKnowledgeModelEventDTOUuid
-      U.nil
-      _editKnowledgeModelEventDTOKmUuid <$>
-      upgrade _editKnowledgeModelEventDTOName <*>
-      upgrade _editKnowledgeModelEventDTOChapterUuids <*>
-      upgrade _editKnowledgeModelEventDTOTagUuids <*>
-      upgrade _editKnowledgeModelEventDTOIntegrationUuids
+    V4.EditKnowledgeModelEventDTO _editKnowledgeModelEventDTOUuid U.nil _editKnowledgeModelEventDTOKmUuid <$>
+    upgrade _editKnowledgeModelEventDTOName <*>
+    upgrade _editKnowledgeModelEventDTOChapterUuids <*>
+    upgrade _editKnowledgeModelEventDTOTagUuids <*>
+    upgrade _editKnowledgeModelEventDTOIntegrationUuids
 
 instance Upgradeable V3.AddQuestionEventDTO V4.AddQuestionEventDTO where
   upgrade (V3.AddOptionsQuestionEventDTO' q) = V4.AddOptionsQuestionEventDTO' <$> upgrade q

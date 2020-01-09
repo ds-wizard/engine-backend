@@ -37,15 +37,15 @@ instance Upgradeable V2.AddValueQuestionEventDTO V3.AddValueQuestionEventDTO whe
     newQuestionValueType <- upgrade _addValueQuestionEventDTOValueType
     return
       V3.AddValueQuestionEventDTO
-      { V3._addValueQuestionEventDTOUuid = _addValueQuestionEventDTOUuid
-      , V3._addValueQuestionEventDTOPath = newPath
-      , V3._addValueQuestionEventDTOQuestionUuid = _addValueQuestionEventDTOQuestionUuid
-      , V3._addValueQuestionEventDTOTitle = _addValueQuestionEventDTOTitle
-      , V3._addValueQuestionEventDTOText = _addValueQuestionEventDTOText
-      , V3._addValueQuestionEventDTORequiredLevel = _addValueQuestionEventDTORequiredLevel
-      , V3._addValueQuestionEventDTOTagUuids = _addValueQuestionEventDTOTagUuids
-      , V3._addValueQuestionEventDTOValueType = newQuestionValueType
-      }
+        { V3._addValueQuestionEventDTOUuid = _addValueQuestionEventDTOUuid
+        , V3._addValueQuestionEventDTOPath = newPath
+        , V3._addValueQuestionEventDTOQuestionUuid = _addValueQuestionEventDTOQuestionUuid
+        , V3._addValueQuestionEventDTOTitle = _addValueQuestionEventDTOTitle
+        , V3._addValueQuestionEventDTOText = _addValueQuestionEventDTOText
+        , V3._addValueQuestionEventDTORequiredLevel = _addValueQuestionEventDTORequiredLevel
+        , V3._addValueQuestionEventDTOTagUuids = _addValueQuestionEventDTOTagUuids
+        , V3._addValueQuestionEventDTOValueType = newQuestionValueType
+        }
 
 instance Upgradeable V2.EditValueQuestionEventDTO V3.EditValueQuestionEventDTO where
   upgrade (V2.EditValueQuestionEventDTO {..}) = do
@@ -59,17 +59,17 @@ instance Upgradeable V2.EditValueQuestionEventDTO V3.EditValueQuestionEventDTO w
     newQuestionValueType <- upgrade _editValueQuestionEventDTOValueType
     return
       V3.EditValueQuestionEventDTO
-      { V3._editValueQuestionEventDTOUuid = _editValueQuestionEventDTOUuid
-      , V3._editValueQuestionEventDTOPath = newPath
-      , V3._editValueQuestionEventDTOQuestionUuid = _editValueQuestionEventDTOQuestionUuid
-      , V3._editValueQuestionEventDTOTitle = newTitle
-      , V3._editValueQuestionEventDTOText = newText
-      , V3._editValueQuestionEventDTORequiredLevel = newRequiredLevel
-      , V3._editValueQuestionEventDTOTagUuids = newTagUuids
-      , V3._editValueQuestionEventDTOExpertUuids = newExpertUuids
-      , V3._editValueQuestionEventDTOReferenceUuids = newReferenceUuids
-      , V3._editValueQuestionEventDTOValueType = newQuestionValueType
-      }
+        { V3._editValueQuestionEventDTOUuid = _editValueQuestionEventDTOUuid
+        , V3._editValueQuestionEventDTOPath = newPath
+        , V3._editValueQuestionEventDTOQuestionUuid = _editValueQuestionEventDTOQuestionUuid
+        , V3._editValueQuestionEventDTOTitle = newTitle
+        , V3._editValueQuestionEventDTOText = newText
+        , V3._editValueQuestionEventDTORequiredLevel = newRequiredLevel
+        , V3._editValueQuestionEventDTOTagUuids = newTagUuids
+        , V3._editValueQuestionEventDTOExpertUuids = newExpertUuids
+        , V3._editValueQuestionEventDTOReferenceUuids = newReferenceUuids
+        , V3._editValueQuestionEventDTOValueType = newQuestionValueType
+        }
 
 instance Upgradeable V2.AddQuestionEventDTO V3.AddQuestionEventDTO where
   upgrade (V2.AddValueQuestionEventDTO' oldEvent) = do
