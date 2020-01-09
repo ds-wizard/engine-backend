@@ -1050,7 +1050,7 @@ instance FromJSON QuestionValueType
 convertValueToOject value callback =
   case value of
     (Object obj) -> callback obj
-    _ -> Left $ "Value is not object"
+    _ -> Left "Value is not object"
 
 getField fieldName object callback =
   case HashMap.lookup (T.pack fieldName) object of
@@ -1110,4 +1110,4 @@ splitOn separator string =
     xs -> T.unpack <$> xs
 
 stripSuffix :: String -> String -> Maybe String
-stripSuffix suffix string = T.unpack <$> (T.stripSuffix (T.pack suffix) (T.pack string))
+stripSuffix suffix string = T.unpack <$> T.stripSuffix (T.pack suffix) (T.pack string)

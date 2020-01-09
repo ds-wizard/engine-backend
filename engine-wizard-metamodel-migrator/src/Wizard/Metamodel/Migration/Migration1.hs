@@ -20,7 +20,7 @@ instance (FromJSON a, ToJSON a) => Upgradeable (V1.EventFieldDTO a) (V2.EventFie
   upgrade (V1.ChangedValueDTO x) = Right (V2.ChangedValueDTO x)
 
 instance Upgradeable V1.EditKnowledgeModelEventDTO V2.EditKnowledgeModelEventDTO where
-  upgrade (V1.EditKnowledgeModelEventDTO {..}) = do
+  upgrade V1.EditKnowledgeModelEventDTO {..} = do
     newPath <- upgrade _editKnowledgeModelEventDTOPath
     newName <- upgrade _editKnowledgeModelEventDTOName
     newChapterUuids <- upgrade _editKnowledgeModelEventDTOChapterUuids

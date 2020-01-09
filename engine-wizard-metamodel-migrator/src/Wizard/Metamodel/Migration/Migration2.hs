@@ -32,7 +32,7 @@ instance Upgradeable (V2.EventFieldDTO V2.QuestionValueType) (V3.EventFieldDTO V
     return $ V3.ChangedValueDTO newQuestionValueType
 
 instance Upgradeable V2.AddValueQuestionEventDTO V3.AddValueQuestionEventDTO where
-  upgrade (V2.AddValueQuestionEventDTO {..}) = do
+  upgrade V2.AddValueQuestionEventDTO {..} = do
     newPath <- upgrade _addValueQuestionEventDTOPath
     newQuestionValueType <- upgrade _addValueQuestionEventDTOValueType
     return
@@ -48,7 +48,7 @@ instance Upgradeable V2.AddValueQuestionEventDTO V3.AddValueQuestionEventDTO whe
         }
 
 instance Upgradeable V2.EditValueQuestionEventDTO V3.EditValueQuestionEventDTO where
-  upgrade (V2.EditValueQuestionEventDTO {..}) = do
+  upgrade V2.EditValueQuestionEventDTO {..} = do
     newPath <- upgrade _editValueQuestionEventDTOPath
     newTitle <- upgrade _editValueQuestionEventDTOTitle
     newText <- upgrade _editValueQuestionEventDTOText
