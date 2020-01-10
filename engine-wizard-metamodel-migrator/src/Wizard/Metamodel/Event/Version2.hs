@@ -98,48 +98,58 @@ instance FromJSON EventDTO where
 -- -------------------------
 -- Knowledge Model ---------
 -- -------------------------
-data AddKnowledgeModelEventDTO = AddKnowledgeModelEventDTO
-  { _addKnowledgeModelEventDTOUuid :: U.UUID
-  , _addKnowledgeModelEventDTOPath :: EventPathDTO
-  , _addKnowledgeModelEventDTOKmUuid :: U.UUID
-  , _addKnowledgeModelEventDTOName :: String
-  } deriving (Show, Eq, Generic)
+data AddKnowledgeModelEventDTO =
+  AddKnowledgeModelEventDTO
+    { _addKnowledgeModelEventDTOUuid :: U.UUID
+    , _addKnowledgeModelEventDTOPath :: EventPathDTO
+    , _addKnowledgeModelEventDTOKmUuid :: U.UUID
+    , _addKnowledgeModelEventDTOName :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditKnowledgeModelEventDTO = EditKnowledgeModelEventDTO
-  { _editKnowledgeModelEventDTOUuid :: U.UUID
-  , _editKnowledgeModelEventDTOPath :: EventPathDTO
-  , _editKnowledgeModelEventDTOKmUuid :: U.UUID
-  , _editKnowledgeModelEventDTOName :: EventFieldDTO String
-  , _editKnowledgeModelEventDTOChapterUuids :: EventFieldDTO [U.UUID]
-  , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editKnowledgeModelEventDTOIntegrationUuids :: EventFieldDTO [U.UUID]
-  } deriving (Show, Eq, Generic)
+data EditKnowledgeModelEventDTO =
+  EditKnowledgeModelEventDTO
+    { _editKnowledgeModelEventDTOUuid :: U.UUID
+    , _editKnowledgeModelEventDTOPath :: EventPathDTO
+    , _editKnowledgeModelEventDTOKmUuid :: U.UUID
+    , _editKnowledgeModelEventDTOName :: EventFieldDTO String
+    , _editKnowledgeModelEventDTOChapterUuids :: EventFieldDTO [U.UUID]
+    , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
+    , _editKnowledgeModelEventDTOIntegrationUuids :: EventFieldDTO [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Chapter -----------------
 -- -------------------------
-data AddChapterEventDTO = AddChapterEventDTO
-  { _addChapterEventDTOUuid :: U.UUID
-  , _addChapterEventDTOPath :: EventPathDTO
-  , _addChapterEventDTOChapterUuid :: U.UUID
-  , _addChapterEventDTOTitle :: String
-  , _addChapterEventDTOText :: String
-  } deriving (Show, Eq, Generic)
+data AddChapterEventDTO =
+  AddChapterEventDTO
+    { _addChapterEventDTOUuid :: U.UUID
+    , _addChapterEventDTOPath :: EventPathDTO
+    , _addChapterEventDTOChapterUuid :: U.UUID
+    , _addChapterEventDTOTitle :: String
+    , _addChapterEventDTOText :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditChapterEventDTO = EditChapterEventDTO
-  { _editChapterEventDTOUuid :: U.UUID
-  , _editChapterEventDTOPath :: EventPathDTO
-  , _editChapterEventDTOChapterUuid :: U.UUID
-  , _editChapterEventDTOTitle :: EventFieldDTO String
-  , _editChapterEventDTOText :: EventFieldDTO String
-  , _editChapterEventDTOQuestionUuids :: EventFieldDTO [U.UUID]
-  } deriving (Show, Eq, Generic)
+data EditChapterEventDTO =
+  EditChapterEventDTO
+    { _editChapterEventDTOUuid :: U.UUID
+    , _editChapterEventDTOPath :: EventPathDTO
+    , _editChapterEventDTOChapterUuid :: U.UUID
+    , _editChapterEventDTOTitle :: EventFieldDTO String
+    , _editChapterEventDTOText :: EventFieldDTO String
+    , _editChapterEventDTOQuestionUuids :: EventFieldDTO [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
 
-data DeleteChapterEventDTO = DeleteChapterEventDTO
-  { _deleteChapterEventDTOUuid :: U.UUID
-  , _deleteChapterEventDTOPath :: EventPathDTO
-  , _deleteChapterEventDTOChapterUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteChapterEventDTO =
+  DeleteChapterEventDTO
+    { _deleteChapterEventDTOUuid :: U.UUID
+    , _deleteChapterEventDTOPath :: EventPathDTO
+    , _deleteChapterEventDTOChapterUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Question ----------------
@@ -151,49 +161,57 @@ data AddQuestionEventDTO
   | AddIntegrationQuestionEventDTO' AddIntegrationQuestionEventDTO
   deriving (Show, Eq, Generic)
 
-data AddOptionsQuestionEventDTO = AddOptionsQuestionEventDTO
-  { _addOptionsQuestionEventDTOUuid :: U.UUID
-  , _addOptionsQuestionEventDTOPath :: EventPathDTO
-  , _addOptionsQuestionEventDTOQuestionUuid :: U.UUID
-  , _addOptionsQuestionEventDTOTitle :: String
-  , _addOptionsQuestionEventDTOText :: Maybe String
-  , _addOptionsQuestionEventDTORequiredLevel :: Maybe Int
-  , _addOptionsQuestionEventDTOTagUuids :: [U.UUID]
-  } deriving (Show, Eq, Generic)
+data AddOptionsQuestionEventDTO =
+  AddOptionsQuestionEventDTO
+    { _addOptionsQuestionEventDTOUuid :: U.UUID
+    , _addOptionsQuestionEventDTOPath :: EventPathDTO
+    , _addOptionsQuestionEventDTOQuestionUuid :: U.UUID
+    , _addOptionsQuestionEventDTOTitle :: String
+    , _addOptionsQuestionEventDTOText :: Maybe String
+    , _addOptionsQuestionEventDTORequiredLevel :: Maybe Int
+    , _addOptionsQuestionEventDTOTagUuids :: [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
 
-data AddListQuestionEventDTO = AddListQuestionEventDTO
-  { _addListQuestionEventDTOUuid :: U.UUID
-  , _addListQuestionEventDTOPath :: EventPathDTO
-  , _addListQuestionEventDTOQuestionUuid :: U.UUID
-  , _addListQuestionEventDTOTitle :: String
-  , _addListQuestionEventDTOText :: Maybe String
-  , _addListQuestionEventDTORequiredLevel :: Maybe Int
-  , _addListQuestionEventDTOTagUuids :: [U.UUID]
-  , _addListQuestionEventDTOItemTemplateTitle :: String
-  } deriving (Show, Eq, Generic)
+data AddListQuestionEventDTO =
+  AddListQuestionEventDTO
+    { _addListQuestionEventDTOUuid :: U.UUID
+    , _addListQuestionEventDTOPath :: EventPathDTO
+    , _addListQuestionEventDTOQuestionUuid :: U.UUID
+    , _addListQuestionEventDTOTitle :: String
+    , _addListQuestionEventDTOText :: Maybe String
+    , _addListQuestionEventDTORequiredLevel :: Maybe Int
+    , _addListQuestionEventDTOTagUuids :: [U.UUID]
+    , _addListQuestionEventDTOItemTemplateTitle :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data AddValueQuestionEventDTO = AddValueQuestionEventDTO
-  { _addValueQuestionEventDTOUuid :: U.UUID
-  , _addValueQuestionEventDTOPath :: EventPathDTO
-  , _addValueQuestionEventDTOQuestionUuid :: U.UUID
-  , _addValueQuestionEventDTOTitle :: String
-  , _addValueQuestionEventDTOText :: Maybe String
-  , _addValueQuestionEventDTORequiredLevel :: Maybe Int
-  , _addValueQuestionEventDTOTagUuids :: [U.UUID]
-  , _addValueQuestionEventDTOValueType :: QuestionValueType
-  } deriving (Show, Eq, Generic)
+data AddValueQuestionEventDTO =
+  AddValueQuestionEventDTO
+    { _addValueQuestionEventDTOUuid :: U.UUID
+    , _addValueQuestionEventDTOPath :: EventPathDTO
+    , _addValueQuestionEventDTOQuestionUuid :: U.UUID
+    , _addValueQuestionEventDTOTitle :: String
+    , _addValueQuestionEventDTOText :: Maybe String
+    , _addValueQuestionEventDTORequiredLevel :: Maybe Int
+    , _addValueQuestionEventDTOTagUuids :: [U.UUID]
+    , _addValueQuestionEventDTOValueType :: QuestionValueType
+    }
+  deriving (Show, Eq, Generic)
 
-data AddIntegrationQuestionEventDTO = AddIntegrationQuestionEventDTO
-  { _addIntegrationQuestionEventDTOUuid :: U.UUID
-  , _addIntegrationQuestionEventDTOPath :: EventPathDTO
-  , _addIntegrationQuestionEventDTOQuestionUuid :: U.UUID
-  , _addIntegrationQuestionEventDTOTitle :: String
-  , _addIntegrationQuestionEventDTOText :: Maybe String
-  , _addIntegrationQuestionEventDTORequiredLevel :: Maybe Int
-  , _addIntegrationQuestionEventDTOTagUuids :: [U.UUID]
-  , _addIntegrationQuestionEventDTOIntegrationUuid :: U.UUID
-  , _addIntegrationQuestionEventDTOProps :: Map String String
-  } deriving (Show, Eq, Generic)
+data AddIntegrationQuestionEventDTO =
+  AddIntegrationQuestionEventDTO
+    { _addIntegrationQuestionEventDTOUuid :: U.UUID
+    , _addIntegrationQuestionEventDTOPath :: EventPathDTO
+    , _addIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+    , _addIntegrationQuestionEventDTOTitle :: String
+    , _addIntegrationQuestionEventDTOText :: Maybe String
+    , _addIntegrationQuestionEventDTORequiredLevel :: Maybe Int
+    , _addIntegrationQuestionEventDTOTagUuids :: [U.UUID]
+    , _addIntegrationQuestionEventDTOIntegrationUuid :: U.UUID
+    , _addIntegrationQuestionEventDTOProps :: Map String String
+    }
+  deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
 data EditQuestionEventDTO
@@ -203,119 +221,141 @@ data EditQuestionEventDTO
   | EditIntegrationQuestionEventDTO' EditIntegrationQuestionEventDTO
   deriving (Show, Eq, Generic)
 
-data EditOptionsQuestionEventDTO = EditOptionsQuestionEventDTO
-  { _editOptionsQuestionEventDTOUuid :: U.UUID
-  , _editOptionsQuestionEventDTOPath :: EventPathDTO
-  , _editOptionsQuestionEventDTOQuestionUuid :: U.UUID
-  , _editOptionsQuestionEventDTOTitle :: EventFieldDTO String
-  , _editOptionsQuestionEventDTOText :: EventFieldDTO (Maybe String)
-  , _editOptionsQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
-  , _editOptionsQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editOptionsQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
-  , _editOptionsQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
-  , _editOptionsQuestionEventDTOAnswerUuids :: EventFieldDTO [U.UUID]
-  } deriving (Show, Eq, Generic)
+data EditOptionsQuestionEventDTO =
+  EditOptionsQuestionEventDTO
+    { _editOptionsQuestionEventDTOUuid :: U.UUID
+    , _editOptionsQuestionEventDTOPath :: EventPathDTO
+    , _editOptionsQuestionEventDTOQuestionUuid :: U.UUID
+    , _editOptionsQuestionEventDTOTitle :: EventFieldDTO String
+    , _editOptionsQuestionEventDTOText :: EventFieldDTO (Maybe String)
+    , _editOptionsQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+    , _editOptionsQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+    , _editOptionsQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+    , _editOptionsQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+    , _editOptionsQuestionEventDTOAnswerUuids :: EventFieldDTO [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
 
-data EditListQuestionEventDTO = EditListQuestionEventDTO
-  { _editListQuestionEventDTOUuid :: U.UUID
-  , _editListQuestionEventDTOPath :: EventPathDTO
-  , _editListQuestionEventDTOQuestionUuid :: U.UUID
-  , _editListQuestionEventDTOTitle :: EventFieldDTO String
-  , _editListQuestionEventDTOText :: EventFieldDTO (Maybe String)
-  , _editListQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
-  , _editListQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editListQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
-  , _editListQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
-  , _editListQuestionEventDTOItemTemplateTitle :: EventFieldDTO String
-  , _editListQuestionEventDTOItemTemplateQuestionUuids :: EventFieldDTO [U.UUID]
-  } deriving (Show, Eq, Generic)
+data EditListQuestionEventDTO =
+  EditListQuestionEventDTO
+    { _editListQuestionEventDTOUuid :: U.UUID
+    , _editListQuestionEventDTOPath :: EventPathDTO
+    , _editListQuestionEventDTOQuestionUuid :: U.UUID
+    , _editListQuestionEventDTOTitle :: EventFieldDTO String
+    , _editListQuestionEventDTOText :: EventFieldDTO (Maybe String)
+    , _editListQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+    , _editListQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+    , _editListQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+    , _editListQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+    , _editListQuestionEventDTOItemTemplateTitle :: EventFieldDTO String
+    , _editListQuestionEventDTOItemTemplateQuestionUuids :: EventFieldDTO [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
 
-data EditValueQuestionEventDTO = EditValueQuestionEventDTO
-  { _editValueQuestionEventDTOUuid :: U.UUID
-  , _editValueQuestionEventDTOPath :: EventPathDTO
-  , _editValueQuestionEventDTOQuestionUuid :: U.UUID
-  , _editValueQuestionEventDTOTitle :: EventFieldDTO String
-  , _editValueQuestionEventDTOText :: EventFieldDTO (Maybe String)
-  , _editValueQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
-  , _editValueQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editValueQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
-  , _editValueQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
-  , _editValueQuestionEventDTOValueType :: EventFieldDTO QuestionValueType
-  } deriving (Show, Eq, Generic)
+data EditValueQuestionEventDTO =
+  EditValueQuestionEventDTO
+    { _editValueQuestionEventDTOUuid :: U.UUID
+    , _editValueQuestionEventDTOPath :: EventPathDTO
+    , _editValueQuestionEventDTOQuestionUuid :: U.UUID
+    , _editValueQuestionEventDTOTitle :: EventFieldDTO String
+    , _editValueQuestionEventDTOText :: EventFieldDTO (Maybe String)
+    , _editValueQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+    , _editValueQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+    , _editValueQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+    , _editValueQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+    , _editValueQuestionEventDTOValueType :: EventFieldDTO QuestionValueType
+    }
+  deriving (Show, Eq, Generic)
 
-data EditIntegrationQuestionEventDTO = EditIntegrationQuestionEventDTO
-  { _editIntegrationQuestionEventDTOUuid :: U.UUID
-  , _editIntegrationQuestionEventDTOPath :: EventPathDTO
-  , _editIntegrationQuestionEventDTOQuestionUuid :: U.UUID
-  , _editIntegrationQuestionEventDTOTitle :: EventFieldDTO String
-  , _editIntegrationQuestionEventDTOText :: EventFieldDTO (Maybe String)
-  , _editIntegrationQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
-  , _editIntegrationQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
-  , _editIntegrationQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
-  , _editIntegrationQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
-  , _editIntegrationQuestionEventDTOIntegrationUuid :: EventFieldDTO U.UUID
-  , _editIntegrationQuestionEventDTOProps :: EventFieldDTO (Map String String)
-  } deriving (Show, Eq, Generic)
+data EditIntegrationQuestionEventDTO =
+  EditIntegrationQuestionEventDTO
+    { _editIntegrationQuestionEventDTOUuid :: U.UUID
+    , _editIntegrationQuestionEventDTOPath :: EventPathDTO
+    , _editIntegrationQuestionEventDTOQuestionUuid :: U.UUID
+    , _editIntegrationQuestionEventDTOTitle :: EventFieldDTO String
+    , _editIntegrationQuestionEventDTOText :: EventFieldDTO (Maybe String)
+    , _editIntegrationQuestionEventDTORequiredLevel :: EventFieldDTO (Maybe Int)
+    , _editIntegrationQuestionEventDTOTagUuids :: EventFieldDTO [U.UUID]
+    , _editIntegrationQuestionEventDTOExpertUuids :: EventFieldDTO [U.UUID]
+    , _editIntegrationQuestionEventDTOReferenceUuids :: EventFieldDTO [U.UUID]
+    , _editIntegrationQuestionEventDTOIntegrationUuid :: EventFieldDTO U.UUID
+    , _editIntegrationQuestionEventDTOProps :: EventFieldDTO (Map String String)
+    }
+  deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
-data DeleteQuestionEventDTO = DeleteQuestionEventDTO
-  { _deleteQuestionEventDTOUuid :: U.UUID
-  , _deleteQuestionEventDTOPath :: EventPathDTO
-  , _deleteQuestionEventDTOQuestionUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteQuestionEventDTO =
+  DeleteQuestionEventDTO
+    { _deleteQuestionEventDTOUuid :: U.UUID
+    , _deleteQuestionEventDTOPath :: EventPathDTO
+    , _deleteQuestionEventDTOQuestionUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Answer ------------------
 -- -------------------------
-data AddAnswerEventDTO = AddAnswerEventDTO
-  { _addAnswerEventDTOUuid :: U.UUID
-  , _addAnswerEventDTOPath :: EventPathDTO
-  , _addAnswerEventDTOAnswerUuid :: U.UUID
-  , _addAnswerEventDTOLabel :: String
-  , _addAnswerEventDTOAdvice :: Maybe String
-  , _addAnswerEventDTOMetricMeasures :: [MetricMeasureDTO]
-  } deriving (Show, Eq, Generic)
+data AddAnswerEventDTO =
+  AddAnswerEventDTO
+    { _addAnswerEventDTOUuid :: U.UUID
+    , _addAnswerEventDTOPath :: EventPathDTO
+    , _addAnswerEventDTOAnswerUuid :: U.UUID
+    , _addAnswerEventDTOLabel :: String
+    , _addAnswerEventDTOAdvice :: Maybe String
+    , _addAnswerEventDTOMetricMeasures :: [MetricMeasureDTO]
+    }
+  deriving (Show, Eq, Generic)
 
-data EditAnswerEventDTO = EditAnswerEventDTO
-  { _editAnswerEventDTOUuid :: U.UUID
-  , _editAnswerEventDTOPath :: EventPathDTO
-  , _editAnswerEventDTOAnswerUuid :: U.UUID
-  , _editAnswerEventDTOLabel :: EventFieldDTO String
-  , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
-  , _editAnswerEventDTOFollowUpUuids :: EventFieldDTO [U.UUID]
-  , _editAnswerEventDTOMetricMeasures :: EventFieldDTO [MetricMeasureDTO]
-  } deriving (Show, Eq, Generic)
+data EditAnswerEventDTO =
+  EditAnswerEventDTO
+    { _editAnswerEventDTOUuid :: U.UUID
+    , _editAnswerEventDTOPath :: EventPathDTO
+    , _editAnswerEventDTOAnswerUuid :: U.UUID
+    , _editAnswerEventDTOLabel :: EventFieldDTO String
+    , _editAnswerEventDTOAdvice :: EventFieldDTO (Maybe String)
+    , _editAnswerEventDTOFollowUpUuids :: EventFieldDTO [U.UUID]
+    , _editAnswerEventDTOMetricMeasures :: EventFieldDTO [MetricMeasureDTO]
+    }
+  deriving (Show, Eq, Generic)
 
-data DeleteAnswerEventDTO = DeleteAnswerEventDTO
-  { _deleteAnswerEventDTOUuid :: U.UUID
-  , _deleteAnswerEventDTOPath :: EventPathDTO
-  , _deleteAnswerEventDTOAnswerUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteAnswerEventDTO =
+  DeleteAnswerEventDTO
+    { _deleteAnswerEventDTOUuid :: U.UUID
+    , _deleteAnswerEventDTOPath :: EventPathDTO
+    , _deleteAnswerEventDTOAnswerUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Expert ------------------
 -- -------------------------
-data AddExpertEventDTO = AddExpertEventDTO
-  { _addExpertEventDTOUuid :: U.UUID
-  , _addExpertEventDTOPath :: EventPathDTO
-  , _addExpertEventDTOExpertUuid :: U.UUID
-  , _addExpertEventDTOName :: String
-  , _addExpertEventDTOEmail :: String
-  } deriving (Show, Eq, Generic)
+data AddExpertEventDTO =
+  AddExpertEventDTO
+    { _addExpertEventDTOUuid :: U.UUID
+    , _addExpertEventDTOPath :: EventPathDTO
+    , _addExpertEventDTOExpertUuid :: U.UUID
+    , _addExpertEventDTOName :: String
+    , _addExpertEventDTOEmail :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditExpertEventDTO = EditExpertEventDTO
-  { _editExpertEventDTOUuid :: U.UUID
-  , _editExpertEventDTOPath :: EventPathDTO
-  , _editExpertEventDTOExpertUuid :: U.UUID
-  , _editExpertEventDTOName :: EventFieldDTO String
-  , _editExpertEventDTOEmail :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditExpertEventDTO =
+  EditExpertEventDTO
+    { _editExpertEventDTOUuid :: U.UUID
+    , _editExpertEventDTOPath :: EventPathDTO
+    , _editExpertEventDTOExpertUuid :: U.UUID
+    , _editExpertEventDTOName :: EventFieldDTO String
+    , _editExpertEventDTOEmail :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
-data DeleteExpertEventDTO = DeleteExpertEventDTO
-  { _deleteExpertEventDTOUuid :: U.UUID
-  , _deleteExpertEventDTOPath :: EventPathDTO
-  , _deleteExpertEventDTOExpertUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteExpertEventDTO =
+  DeleteExpertEventDTO
+    { _deleteExpertEventDTOUuid :: U.UUID
+    , _deleteExpertEventDTOPath :: EventPathDTO
+    , _deleteExpertEventDTOExpertUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Reference ---------------
@@ -326,28 +366,34 @@ data AddReferenceEventDTO
   | AddCrossReferenceEventDTO' AddCrossReferenceEventDTO
   deriving (Show, Eq, Generic)
 
-data AddResourcePageReferenceEventDTO = AddResourcePageReferenceEventDTO
-  { _addResourcePageReferenceEventDTOUuid :: U.UUID
-  , _addResourcePageReferenceEventDTOPath :: EventPathDTO
-  , _addResourcePageReferenceEventDTOReferenceUuid :: U.UUID
-  , _addResourcePageReferenceEventDTOShortUuid :: String
-  } deriving (Show, Eq, Generic)
+data AddResourcePageReferenceEventDTO =
+  AddResourcePageReferenceEventDTO
+    { _addResourcePageReferenceEventDTOUuid :: U.UUID
+    , _addResourcePageReferenceEventDTOPath :: EventPathDTO
+    , _addResourcePageReferenceEventDTOReferenceUuid :: U.UUID
+    , _addResourcePageReferenceEventDTOShortUuid :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data AddURLReferenceEventDTO = AddURLReferenceEventDTO
-  { _addURLReferenceEventDTOUuid :: U.UUID
-  , _addURLReferenceEventDTOPath :: EventPathDTO
-  , _addURLReferenceEventDTOReferenceUuid :: U.UUID
-  , _addURLReferenceEventDTOUrl :: String
-  , _addURLReferenceEventDTOLabel :: String
-  } deriving (Show, Eq, Generic)
+data AddURLReferenceEventDTO =
+  AddURLReferenceEventDTO
+    { _addURLReferenceEventDTOUuid :: U.UUID
+    , _addURLReferenceEventDTOPath :: EventPathDTO
+    , _addURLReferenceEventDTOReferenceUuid :: U.UUID
+    , _addURLReferenceEventDTOUrl :: String
+    , _addURLReferenceEventDTOLabel :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data AddCrossReferenceEventDTO = AddCrossReferenceEventDTO
-  { _addCrossReferenceEventDTOUuid :: U.UUID
-  , _addCrossReferenceEventDTOPath :: EventPathDTO
-  , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
-  , _addCrossReferenceEventDTOTargetUuid :: U.UUID
-  , _addCrossReferenceEventDTODescription :: String
-  } deriving (Show, Eq, Generic)
+data AddCrossReferenceEventDTO =
+  AddCrossReferenceEventDTO
+    { _addCrossReferenceEventDTOUuid :: U.UUID
+    , _addCrossReferenceEventDTOPath :: EventPathDTO
+    , _addCrossReferenceEventDTOReferenceUuid :: U.UUID
+    , _addCrossReferenceEventDTOTargetUuid :: U.UUID
+    , _addCrossReferenceEventDTODescription :: String
+    }
+  deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
 data EditReferenceEventDTO
@@ -356,107 +402,127 @@ data EditReferenceEventDTO
   | EditCrossReferenceEventDTO' EditCrossReferenceEventDTO
   deriving (Show, Eq, Generic)
 
-data EditResourcePageReferenceEventDTO = EditResourcePageReferenceEventDTO
-  { _editResourcePageReferenceEventDTOUuid :: U.UUID
-  , _editResourcePageReferenceEventDTOPath :: EventPathDTO
-  , _editResourcePageReferenceEventDTOReferenceUuid :: U.UUID
-  , _editResourcePageReferenceEventDTOShortUuid :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditResourcePageReferenceEventDTO =
+  EditResourcePageReferenceEventDTO
+    { _editResourcePageReferenceEventDTOUuid :: U.UUID
+    , _editResourcePageReferenceEventDTOPath :: EventPathDTO
+    , _editResourcePageReferenceEventDTOReferenceUuid :: U.UUID
+    , _editResourcePageReferenceEventDTOShortUuid :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditURLReferenceEventDTO = EditURLReferenceEventDTO
-  { _editURLReferenceEventDTOUuid :: U.UUID
-  , _editURLReferenceEventDTOPath :: EventPathDTO
-  , _editURLReferenceEventDTOReferenceUuid :: U.UUID
-  , _editURLReferenceEventDTOUrl :: EventFieldDTO String
-  , _editURLReferenceEventDTOLabel :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditURLReferenceEventDTO =
+  EditURLReferenceEventDTO
+    { _editURLReferenceEventDTOUuid :: U.UUID
+    , _editURLReferenceEventDTOPath :: EventPathDTO
+    , _editURLReferenceEventDTOReferenceUuid :: U.UUID
+    , _editURLReferenceEventDTOUrl :: EventFieldDTO String
+    , _editURLReferenceEventDTOLabel :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditCrossReferenceEventDTO = EditCrossReferenceEventDTO
-  { _editCrossReferenceEventDTOUuid :: U.UUID
-  , _editCrossReferenceEventDTOPath :: EventPathDTO
-  , _editCrossReferenceEventDTOReferenceUuid :: U.UUID
-  , _editCrossReferenceEventDTOTargetUuid :: EventFieldDTO U.UUID
-  , _editCrossReferenceEventDTODescription :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditCrossReferenceEventDTO =
+  EditCrossReferenceEventDTO
+    { _editCrossReferenceEventDTOUuid :: U.UUID
+    , _editCrossReferenceEventDTOPath :: EventPathDTO
+    , _editCrossReferenceEventDTOReferenceUuid :: U.UUID
+    , _editCrossReferenceEventDTOTargetUuid :: EventFieldDTO U.UUID
+    , _editCrossReferenceEventDTODescription :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
 -- --------------------------------------------
-data DeleteReferenceEventDTO = DeleteReferenceEventDTO
-  { _deleteReferenceEventDTOUuid :: U.UUID
-  , _deleteReferenceEventDTOPath :: EventPathDTO
-  , _deleteReferenceEventDTOReferenceUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteReferenceEventDTO =
+  DeleteReferenceEventDTO
+    { _deleteReferenceEventDTOUuid :: U.UUID
+    , _deleteReferenceEventDTOPath :: EventPathDTO
+    , _deleteReferenceEventDTOReferenceUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Tag ---------------------
 -- -------------------------
-data AddTagEventDTO = AddTagEventDTO
-  { _addTagEventDTOUuid :: U.UUID
-  , _addTagEventDTOPath :: EventPathDTO
-  , _addTagEventDTOTagUuid :: U.UUID
-  , _addTagEventDTOName :: String
-  , _addTagEventDTODescription :: Maybe String
-  , _addTagEventDTOColor :: String
-  } deriving (Show, Eq, Generic)
+data AddTagEventDTO =
+  AddTagEventDTO
+    { _addTagEventDTOUuid :: U.UUID
+    , _addTagEventDTOPath :: EventPathDTO
+    , _addTagEventDTOTagUuid :: U.UUID
+    , _addTagEventDTOName :: String
+    , _addTagEventDTODescription :: Maybe String
+    , _addTagEventDTOColor :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditTagEventDTO = EditTagEventDTO
-  { _editTagEventDTOUuid :: U.UUID
-  , _editTagEventDTOPath :: EventPathDTO
-  , _editTagEventDTOTagUuid :: U.UUID
-  , _editTagEventDTOName :: EventFieldDTO String
-  , _editTagEventDTODescription :: EventFieldDTO (Maybe String)
-  , _editTagEventDTOColor :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditTagEventDTO =
+  EditTagEventDTO
+    { _editTagEventDTOUuid :: U.UUID
+    , _editTagEventDTOPath :: EventPathDTO
+    , _editTagEventDTOTagUuid :: U.UUID
+    , _editTagEventDTOName :: EventFieldDTO String
+    , _editTagEventDTODescription :: EventFieldDTO (Maybe String)
+    , _editTagEventDTOColor :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
-data DeleteTagEventDTO = DeleteTagEventDTO
-  { _deleteTagEventDTOUuid :: U.UUID
-  , _deleteTagEventDTOPath :: EventPathDTO
-  , _deleteTagEventDTOTagUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteTagEventDTO =
+  DeleteTagEventDTO
+    { _deleteTagEventDTOUuid :: U.UUID
+    , _deleteTagEventDTOPath :: EventPathDTO
+    , _deleteTagEventDTOTagUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Integration -------------
 -- -------------------------
-data AddIntegrationEventDTO = AddIntegrationEventDTO
-  { _addIntegrationEventDTOUuid :: U.UUID
-  , _addIntegrationEventDTOPath :: EventPathDTO
-  , _addIntegrationEventDTOIntegrationUuid :: U.UUID
-  , _addIntegrationEventDTOIId :: String
-  , _addIntegrationEventDTOName :: String
-  , _addIntegrationEventDTOProps :: [String]
-  , _addIntegrationEventDTOLogo :: String
-  , _addIntegrationEventDTORequestMethod :: String
-  , _addIntegrationEventDTORequestUrl :: String
-  , _addIntegrationEventDTORequestHeaders :: Map String String
-  , _addIntegrationEventDTORequestBody :: String
-  , _addIntegrationEventDTOResponseListField :: String
-  , _addIntegrationEventDTOResponseIdField :: String
-  , _addIntegrationEventDTOResponseNameField :: String
-  , _addIntegrationEventDTOItemUrl :: String
-  } deriving (Show, Eq, Generic)
+data AddIntegrationEventDTO =
+  AddIntegrationEventDTO
+    { _addIntegrationEventDTOUuid :: U.UUID
+    , _addIntegrationEventDTOPath :: EventPathDTO
+    , _addIntegrationEventDTOIntegrationUuid :: U.UUID
+    , _addIntegrationEventDTOIId :: String
+    , _addIntegrationEventDTOName :: String
+    , _addIntegrationEventDTOProps :: [String]
+    , _addIntegrationEventDTOLogo :: String
+    , _addIntegrationEventDTORequestMethod :: String
+    , _addIntegrationEventDTORequestUrl :: String
+    , _addIntegrationEventDTORequestHeaders :: Map String String
+    , _addIntegrationEventDTORequestBody :: String
+    , _addIntegrationEventDTOResponseListField :: String
+    , _addIntegrationEventDTOResponseIdField :: String
+    , _addIntegrationEventDTOResponseNameField :: String
+    , _addIntegrationEventDTOItemUrl :: String
+    }
+  deriving (Show, Eq, Generic)
 
-data EditIntegrationEventDTO = EditIntegrationEventDTO
-  { _editIntegrationEventDTOUuid :: U.UUID
-  , _editIntegrationEventDTOPath :: EventPathDTO
-  , _editIntegrationEventDTOIntegrationUuid :: U.UUID
-  , _editIntegrationEventDTOIId :: EventFieldDTO String
-  , _editIntegrationEventDTOName :: EventFieldDTO String
-  , _editIntegrationEventDTOProps :: EventFieldDTO [String]
-  , _editIntegrationEventDTOLogo :: EventFieldDTO String
-  , _editIntegrationEventDTORequestMethod :: EventFieldDTO String
-  , _editIntegrationEventDTORequestUrl :: EventFieldDTO String
-  , _editIntegrationEventDTORequestHeaders :: EventFieldDTO (Map String String)
-  , _editIntegrationEventDTORequestBody :: EventFieldDTO String
-  , _editIntegrationEventDTOResponseListField :: EventFieldDTO String
-  , _editIntegrationEventDTOResponseIdField :: EventFieldDTO String
-  , _editIntegrationEventDTOResponseNameField :: EventFieldDTO String
-  , _editIntegrationEventDTOItemUrl :: EventFieldDTO String
-  } deriving (Show, Eq, Generic)
+data EditIntegrationEventDTO =
+  EditIntegrationEventDTO
+    { _editIntegrationEventDTOUuid :: U.UUID
+    , _editIntegrationEventDTOPath :: EventPathDTO
+    , _editIntegrationEventDTOIntegrationUuid :: U.UUID
+    , _editIntegrationEventDTOIId :: EventFieldDTO String
+    , _editIntegrationEventDTOName :: EventFieldDTO String
+    , _editIntegrationEventDTOProps :: EventFieldDTO [String]
+    , _editIntegrationEventDTOLogo :: EventFieldDTO String
+    , _editIntegrationEventDTORequestMethod :: EventFieldDTO String
+    , _editIntegrationEventDTORequestUrl :: EventFieldDTO String
+    , _editIntegrationEventDTORequestHeaders :: EventFieldDTO (Map String String)
+    , _editIntegrationEventDTORequestBody :: EventFieldDTO String
+    , _editIntegrationEventDTOResponseListField :: EventFieldDTO String
+    , _editIntegrationEventDTOResponseIdField :: EventFieldDTO String
+    , _editIntegrationEventDTOResponseNameField :: EventFieldDTO String
+    , _editIntegrationEventDTOItemUrl :: EventFieldDTO String
+    }
+  deriving (Show, Eq, Generic)
 
-data DeleteIntegrationEventDTO = DeleteIntegrationEventDTO
-  { _deleteIntegrationEventDTOUuid :: U.UUID
-  , _deleteIntegrationEventDTOPath :: EventPathDTO
-  , _deleteIntegrationEventDTOIntegrationUuid :: U.UUID
-  } deriving (Show, Eq, Generic)
+data DeleteIntegrationEventDTO =
+  DeleteIntegrationEventDTO
+    { _deleteIntegrationEventDTOUuid :: U.UUID
+    , _deleteIntegrationEventDTOPath :: EventPathDTO
+    , _deleteIntegrationEventDTOIntegrationUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
 
 -- -------------------------
 -- Knowledge Model ---------
@@ -1398,10 +1464,12 @@ instance ToJSON a => ToJSON (EventFieldDTO a) where
   toJSON NothingChangedDTO = object ["changed" .= False]
 
 -- EventPathDTO
-data EventPathItemDTO = EventPathItemDTO
-  { _eventPathItemDTOPType :: String
-  , _eventPathItemDTOUuid :: U.UUID
-  } deriving (Show, Eq)
+data EventPathItemDTO =
+  EventPathItemDTO
+    { _eventPathItemDTOPType :: String
+    , _eventPathItemDTOUuid :: U.UUID
+    }
+  deriving (Show, Eq)
 
 type EventPathDTO = [EventPathItemDTO]
 
@@ -1416,11 +1484,13 @@ instance ToJSON EventPathItemDTO where
   toJSON EventPathItemDTO {..} = object ["type" .= _eventPathItemDTOPType, "uuid" .= _eventPathItemDTOUuid]
 
 -- KnowledgeModelDTO
-data MetricMeasureDTO = MetricMeasureDTO
-  { _metricMeasureDTOMetricUuid :: U.UUID
-  , _metricMeasureDTOMeasure :: Double
-  , _metricMeasureDTOWeight :: Double
-  } deriving (Show, Eq)
+data MetricMeasureDTO =
+  MetricMeasureDTO
+    { _metricMeasureDTOMetricUuid :: U.UUID
+    , _metricMeasureDTOMeasure :: Double
+    , _metricMeasureDTOWeight :: Double
+    }
+  deriving (Show, Eq)
 
 instance ToJSON MetricMeasureDTO where
   toJSON MetricMeasureDTO {..} =

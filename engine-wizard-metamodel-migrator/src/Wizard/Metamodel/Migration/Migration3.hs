@@ -20,9 +20,9 @@ class Upgradeable f t where
 
 instance (Upgradeable f t) => Upgradeable [f] [t] where
   upgrade lst =
-    case (partitionEithers $ map upgrade lst) of
+    case partitionEithers $ map upgrade lst of
       ([], r) -> Right r
-      ((x:_), _) -> Left x
+      (x:_, _) -> Left x
 
 instance Upgradeable Char Char where
   upgrade = Right
@@ -50,10 +50,10 @@ instance Upgradeable V3.QuestionValueType V4.QuestionValueType where
   upgrade V3.TextQuestionValueType = Right V4.TextQuestionValueType
 
 instance Upgradeable V3.MetricMeasureDTO V4.MetricMeasureDTO where
-  upgrade x = result2Either . fromJSON . toJSON $ x
+  upgrade = result2Either . fromJSON . toJSON
 
 instance Upgradeable V3.AddAnswerEventDTO V4.AddAnswerEventDTO where
-  upgrade (V3.AddAnswerEventDTO {..}) =
+  upgrade V3.AddAnswerEventDTO {..} =
     V4.AddAnswerEventDTO
       _addAnswerEventDTOUuid
       (getParentUuid _addAnswerEventDTOPath)
@@ -63,7 +63,7 @@ instance Upgradeable V3.AddAnswerEventDTO V4.AddAnswerEventDTO where
     upgrade _addAnswerEventDTOMetricMeasures
 
 instance Upgradeable V3.EditAnswerEventDTO V4.EditAnswerEventDTO where
-  upgrade (V3.EditAnswerEventDTO {..}) =
+  upgrade V3.EditAnswerEventDTO {..} =
     V4.EditAnswerEventDTO _editAnswerEventDTOUuid (getParentUuid _editAnswerEventDTOPath) _editAnswerEventDTOAnswerUuid <$>
     upgrade _editAnswerEventDTOLabel <*>
     upgrade _editAnswerEventDTOAdvice <*>
@@ -71,7 +71,7 @@ instance Upgradeable V3.EditAnswerEventDTO V4.EditAnswerEventDTO where
     upgrade _editAnswerEventDTOMetricMeasures
 
 instance Upgradeable V3.DeleteAnswerEventDTO V4.DeleteAnswerEventDTO where
-  upgrade (V3.DeleteAnswerEventDTO {..}) =
+  upgrade V3.DeleteAnswerEventDTO {..} =
     return $
     V4.DeleteAnswerEventDTO
       _deleteAnswerEventDTOUuid
@@ -79,7 +79,7 @@ instance Upgradeable V3.DeleteAnswerEventDTO V4.DeleteAnswerEventDTO where
       _deleteAnswerEventDTOAnswerUuid
 
 instance Upgradeable V3.AddChapterEventDTO V4.AddChapterEventDTO where
-  upgrade (V3.AddChapterEventDTO {..}) =
+  upgrade V3.AddChapterEventDTO {..} =
     return $
     V4.AddChapterEventDTO
       _addChapterEventDTOUuid
@@ -89,7 +89,7 @@ instance Upgradeable V3.AddChapterEventDTO V4.AddChapterEventDTO where
       _addChapterEventDTOText
 
 instance Upgradeable V3.EditChapterEventDTO V4.EditChapterEventDTO where
-  upgrade (V3.EditChapterEventDTO {..}) =
+  upgrade V3.EditChapterEventDTO {..} =
     V4.EditChapterEventDTO
       _editChapterEventDTOUuid
       (getParentUuid _editChapterEventDTOPath)
@@ -99,7 +99,7 @@ instance Upgradeable V3.EditChapterEventDTO V4.EditChapterEventDTO where
     upgrade _editChapterEventDTOQuestionUuids
 
 instance Upgradeable V3.DeleteChapterEventDTO V4.DeleteChapterEventDTO where
-  upgrade (V3.DeleteChapterEventDTO {..}) =
+  upgrade V3.DeleteChapterEventDTO {..} =
     return $
     V4.DeleteChapterEventDTO
       _deleteChapterEventDTOUuid
@@ -107,7 +107,7 @@ instance Upgradeable V3.DeleteChapterEventDTO V4.DeleteChapterEventDTO where
       _deleteChapterEventDTOChapterUuid
 
 instance Upgradeable V3.AddExpertEventDTO V4.AddExpertEventDTO where
-  upgrade (V3.AddExpertEventDTO {..}) =
+  upgrade V3.AddExpertEventDTO {..} =
     return $
     V4.AddExpertEventDTO
       _addExpertEventDTOUuid
@@ -117,13 +117,13 @@ instance Upgradeable V3.AddExpertEventDTO V4.AddExpertEventDTO where
       _addExpertEventDTOEmail
 
 instance Upgradeable V3.EditExpertEventDTO V4.EditExpertEventDTO where
-  upgrade (V3.EditExpertEventDTO {..}) =
+  upgrade V3.EditExpertEventDTO {..} =
     V4.EditExpertEventDTO _editExpertEventDTOUuid (getParentUuid _editExpertEventDTOPath) _editExpertEventDTOExpertUuid <$>
     upgrade _editExpertEventDTOName <*>
     upgrade _editExpertEventDTOEmail
 
 instance Upgradeable V3.DeleteExpertEventDTO V4.DeleteExpertEventDTO where
-  upgrade (V3.DeleteExpertEventDTO {..}) =
+  upgrade V3.DeleteExpertEventDTO {..} =
     return $
     V4.DeleteExpertEventDTO
       _deleteExpertEventDTOUuid
@@ -131,7 +131,7 @@ instance Upgradeable V3.DeleteExpertEventDTO V4.DeleteExpertEventDTO where
       _deleteExpertEventDTOExpertUuid
 
 instance Upgradeable V3.AddIntegrationEventDTO V4.AddIntegrationEventDTO where
-  upgrade (V3.AddIntegrationEventDTO {..}) =
+  upgrade V3.AddIntegrationEventDTO {..} =
     return $
     V4.AddIntegrationEventDTO
       _addIntegrationEventDTOUuid
@@ -151,7 +151,7 @@ instance Upgradeable V3.AddIntegrationEventDTO V4.AddIntegrationEventDTO where
       _addIntegrationEventDTOItemUrl
 
 instance Upgradeable V3.EditIntegrationEventDTO V4.EditIntegrationEventDTO where
-  upgrade (V3.EditIntegrationEventDTO {..}) =
+  upgrade V3.EditIntegrationEventDTO {..} =
     V4.EditIntegrationEventDTO
       _editIntegrationEventDTOUuid
       (getParentUuid _editIntegrationEventDTOPath)
@@ -170,7 +170,7 @@ instance Upgradeable V3.EditIntegrationEventDTO V4.EditIntegrationEventDTO where
     upgrade _editIntegrationEventDTOItemUrl
 
 instance Upgradeable V3.DeleteIntegrationEventDTO V4.DeleteIntegrationEventDTO where
-  upgrade (V3.DeleteIntegrationEventDTO {..}) =
+  upgrade V3.DeleteIntegrationEventDTO {..} =
     return $
     V4.DeleteIntegrationEventDTO
       _deleteIntegrationEventDTOUuid
@@ -178,7 +178,7 @@ instance Upgradeable V3.DeleteIntegrationEventDTO V4.DeleteIntegrationEventDTO w
       _deleteIntegrationEventDTOIntegrationUuid
 
 instance Upgradeable V3.AddKnowledgeModelEventDTO V4.AddKnowledgeModelEventDTO where
-  upgrade (V3.AddKnowledgeModelEventDTO {..}) =
+  upgrade V3.AddKnowledgeModelEventDTO {..} =
     return $
     V4.AddKnowledgeModelEventDTO
       _addKnowledgeModelEventDTOUuid
@@ -187,15 +187,12 @@ instance Upgradeable V3.AddKnowledgeModelEventDTO V4.AddKnowledgeModelEventDTO w
       _addKnowledgeModelEventDTOName
 
 instance Upgradeable V3.EditKnowledgeModelEventDTO V4.EditKnowledgeModelEventDTO where
-  upgrade (V3.EditKnowledgeModelEventDTO {..}) =
-    V4.EditKnowledgeModelEventDTO
-      _editKnowledgeModelEventDTOUuid
-      U.nil
-      _editKnowledgeModelEventDTOKmUuid <$>
-      upgrade _editKnowledgeModelEventDTOName <*>
-      upgrade _editKnowledgeModelEventDTOChapterUuids <*>
-      upgrade _editKnowledgeModelEventDTOTagUuids <*>
-      upgrade _editKnowledgeModelEventDTOIntegrationUuids
+  upgrade V3.EditKnowledgeModelEventDTO {..} =
+    V4.EditKnowledgeModelEventDTO _editKnowledgeModelEventDTOUuid U.nil _editKnowledgeModelEventDTOKmUuid <$>
+    upgrade _editKnowledgeModelEventDTOName <*>
+    upgrade _editKnowledgeModelEventDTOChapterUuids <*>
+    upgrade _editKnowledgeModelEventDTOTagUuids <*>
+    upgrade _editKnowledgeModelEventDTOIntegrationUuids
 
 instance Upgradeable V3.AddQuestionEventDTO V4.AddQuestionEventDTO where
   upgrade (V3.AddOptionsQuestionEventDTO' q) = V4.AddOptionsQuestionEventDTO' <$> upgrade q
@@ -204,7 +201,7 @@ instance Upgradeable V3.AddQuestionEventDTO V4.AddQuestionEventDTO where
   upgrade (V3.AddIntegrationQuestionEventDTO' q) = V4.AddIntegrationQuestionEventDTO' <$> upgrade q
 
 instance Upgradeable V3.AddOptionsQuestionEventDTO V4.AddOptionsQuestionEventDTO where
-  upgrade (V3.AddOptionsQuestionEventDTO {..}) =
+  upgrade V3.AddOptionsQuestionEventDTO {..} =
     return $
     V4.AddOptionsQuestionEventDTO
       _addOptionsQuestionEventDTOUuid
@@ -216,7 +213,7 @@ instance Upgradeable V3.AddOptionsQuestionEventDTO V4.AddOptionsQuestionEventDTO
       _addOptionsQuestionEventDTOTagUuids
 
 instance Upgradeable V3.AddListQuestionEventDTO V4.AddListQuestionEventDTO where
-  upgrade (V3.AddListQuestionEventDTO {..}) =
+  upgrade V3.AddListQuestionEventDTO {..} =
     return $
     V4.AddListQuestionEventDTO
       _addListQuestionEventDTOUuid
@@ -226,10 +223,9 @@ instance Upgradeable V3.AddListQuestionEventDTO V4.AddListQuestionEventDTO where
       _addListQuestionEventDTOText
       _addListQuestionEventDTORequiredLevel
       _addListQuestionEventDTOTagUuids
-      _addListQuestionEventDTOItemTemplateTitle
 
 instance Upgradeable V3.AddValueQuestionEventDTO V4.AddValueQuestionEventDTO where
-  upgrade (V3.AddValueQuestionEventDTO {..}) =
+  upgrade V3.AddValueQuestionEventDTO {..} =
     V4.AddValueQuestionEventDTO
       _addValueQuestionEventDTOUuid
       (getParentUuid _addValueQuestionEventDTOPath)
@@ -241,7 +237,7 @@ instance Upgradeable V3.AddValueQuestionEventDTO V4.AddValueQuestionEventDTO whe
     upgrade _addValueQuestionEventDTOValueType
 
 instance Upgradeable V3.AddIntegrationQuestionEventDTO V4.AddIntegrationQuestionEventDTO where
-  upgrade (V3.AddIntegrationQuestionEventDTO {..}) =
+  upgrade V3.AddIntegrationQuestionEventDTO {..} =
     return $
     V4.AddIntegrationQuestionEventDTO
       _addIntegrationQuestionEventDTOUuid
@@ -261,7 +257,7 @@ instance Upgradeable V3.EditQuestionEventDTO V4.EditQuestionEventDTO where
   upgrade (V3.EditIntegrationQuestionEventDTO' q) = V4.EditIntegrationQuestionEventDTO' <$> upgrade q
 
 instance Upgradeable V3.EditOptionsQuestionEventDTO V4.EditOptionsQuestionEventDTO where
-  upgrade (V3.EditOptionsQuestionEventDTO {..}) =
+  upgrade V3.EditOptionsQuestionEventDTO {..} =
     V4.EditOptionsQuestionEventDTO
       _editOptionsQuestionEventDTOUuid
       (getParentUuid _editOptionsQuestionEventDTOPath)
@@ -275,7 +271,7 @@ instance Upgradeable V3.EditOptionsQuestionEventDTO V4.EditOptionsQuestionEventD
     upgrade _editOptionsQuestionEventDTOAnswerUuids
 
 instance Upgradeable V3.EditListQuestionEventDTO V4.EditListQuestionEventDTO where
-  upgrade (V3.EditListQuestionEventDTO {..}) =
+  upgrade V3.EditListQuestionEventDTO {..} =
     V4.EditListQuestionEventDTO
       _editListQuestionEventDTOUuid
       (getParentUuid _editListQuestionEventDTOPath)
@@ -286,11 +282,10 @@ instance Upgradeable V3.EditListQuestionEventDTO V4.EditListQuestionEventDTO whe
     upgrade _editListQuestionEventDTOTagUuids <*>
     upgrade _editListQuestionEventDTOExpertUuids <*>
     upgrade _editListQuestionEventDTOReferenceUuids <*>
-    upgrade _editListQuestionEventDTOItemTemplateTitle <*>
     upgrade _editListQuestionEventDTOItemTemplateQuestionUuids
 
 instance Upgradeable V3.EditValueQuestionEventDTO V4.EditValueQuestionEventDTO where
-  upgrade (V3.EditValueQuestionEventDTO {..}) =
+  upgrade V3.EditValueQuestionEventDTO {..} =
     V4.EditValueQuestionEventDTO
       _editValueQuestionEventDTOUuid
       (getParentUuid _editValueQuestionEventDTOPath)
@@ -304,7 +299,7 @@ instance Upgradeable V3.EditValueQuestionEventDTO V4.EditValueQuestionEventDTO w
     upgrade _editValueQuestionEventDTOValueType
 
 instance Upgradeable V3.EditIntegrationQuestionEventDTO V4.EditIntegrationQuestionEventDTO where
-  upgrade (V3.EditIntegrationQuestionEventDTO {..}) =
+  upgrade V3.EditIntegrationQuestionEventDTO {..} =
     V4.EditIntegrationQuestionEventDTO
       _editIntegrationQuestionEventDTOUuid
       (getParentUuid _editIntegrationQuestionEventDTOPath)
@@ -319,7 +314,7 @@ instance Upgradeable V3.EditIntegrationQuestionEventDTO V4.EditIntegrationQuesti
     upgrade _editIntegrationQuestionEventDTOProps
 
 instance Upgradeable V3.DeleteQuestionEventDTO V4.DeleteQuestionEventDTO where
-  upgrade (V3.DeleteQuestionEventDTO {..}) =
+  upgrade V3.DeleteQuestionEventDTO {..} =
     return $
     V4.DeleteQuestionEventDTO
       _deleteQuestionEventDTOUuid
@@ -332,7 +327,7 @@ instance Upgradeable V3.AddReferenceEventDTO V4.AddReferenceEventDTO where
   upgrade (V3.AddCrossReferenceEventDTO' r) = V4.AddCrossReferenceEventDTO' <$> upgrade r
 
 instance Upgradeable V3.AddResourcePageReferenceEventDTO V4.AddResourcePageReferenceEventDTO where
-  upgrade (V3.AddResourcePageReferenceEventDTO {..}) =
+  upgrade V3.AddResourcePageReferenceEventDTO {..} =
     return $
     V4.AddResourcePageReferenceEventDTO
       _addResourcePageReferenceEventDTOUuid
@@ -341,7 +336,7 @@ instance Upgradeable V3.AddResourcePageReferenceEventDTO V4.AddResourcePageRefer
       _addResourcePageReferenceEventDTOShortUuid
 
 instance Upgradeable V3.AddURLReferenceEventDTO V4.AddURLReferenceEventDTO where
-  upgrade (V3.AddURLReferenceEventDTO {..}) =
+  upgrade V3.AddURLReferenceEventDTO {..} =
     return $
     V4.AddURLReferenceEventDTO
       _addURLReferenceEventDTOUuid
@@ -351,7 +346,7 @@ instance Upgradeable V3.AddURLReferenceEventDTO V4.AddURLReferenceEventDTO where
       _addURLReferenceEventDTOLabel
 
 instance Upgradeable V3.AddCrossReferenceEventDTO V4.AddCrossReferenceEventDTO where
-  upgrade (V3.AddCrossReferenceEventDTO {..}) =
+  upgrade V3.AddCrossReferenceEventDTO {..} =
     return $
     V4.AddCrossReferenceEventDTO
       _addCrossReferenceEventDTOUuid
@@ -366,7 +361,7 @@ instance Upgradeable V3.EditReferenceEventDTO V4.EditReferenceEventDTO where
   upgrade (V3.EditCrossReferenceEventDTO' r) = V4.EditCrossReferenceEventDTO' <$> upgrade r
 
 instance Upgradeable V3.EditResourcePageReferenceEventDTO V4.EditResourcePageReferenceEventDTO where
-  upgrade (V3.EditResourcePageReferenceEventDTO {..}) =
+  upgrade V3.EditResourcePageReferenceEventDTO {..} =
     V4.EditResourcePageReferenceEventDTO
       _editResourcePageReferenceEventDTOUuid
       (getParentUuid _editResourcePageReferenceEventDTOPath)
@@ -374,7 +369,7 @@ instance Upgradeable V3.EditResourcePageReferenceEventDTO V4.EditResourcePageRef
     upgrade _editResourcePageReferenceEventDTOShortUuid
 
 instance Upgradeable V3.EditURLReferenceEventDTO V4.EditURLReferenceEventDTO where
-  upgrade (V3.EditURLReferenceEventDTO {..}) =
+  upgrade V3.EditURLReferenceEventDTO {..} =
     V4.EditURLReferenceEventDTO
       _editURLReferenceEventDTOUuid
       (getParentUuid _editURLReferenceEventDTOPath)
@@ -383,7 +378,7 @@ instance Upgradeable V3.EditURLReferenceEventDTO V4.EditURLReferenceEventDTO whe
     upgrade _editURLReferenceEventDTOLabel
 
 instance Upgradeable V3.EditCrossReferenceEventDTO V4.EditCrossReferenceEventDTO where
-  upgrade (V3.EditCrossReferenceEventDTO {..}) =
+  upgrade V3.EditCrossReferenceEventDTO {..} =
     V4.EditCrossReferenceEventDTO
       _editCrossReferenceEventDTOUuid
       (getParentUuid _editCrossReferenceEventDTOPath)
@@ -392,7 +387,7 @@ instance Upgradeable V3.EditCrossReferenceEventDTO V4.EditCrossReferenceEventDTO
     upgrade _editCrossReferenceEventDTODescription
 
 instance Upgradeable V3.DeleteReferenceEventDTO V4.DeleteReferenceEventDTO where
-  upgrade (V3.DeleteReferenceEventDTO {..}) =
+  upgrade V3.DeleteReferenceEventDTO {..} =
     return $
     V4.DeleteReferenceEventDTO
       _deleteReferenceEventDTOUuid
@@ -400,7 +395,7 @@ instance Upgradeable V3.DeleteReferenceEventDTO V4.DeleteReferenceEventDTO where
       _deleteReferenceEventDTOReferenceUuid
 
 instance Upgradeable V3.AddTagEventDTO V4.AddTagEventDTO where
-  upgrade (V3.AddTagEventDTO {..}) =
+  upgrade V3.AddTagEventDTO {..} =
     return $
     V4.AddTagEventDTO
       _addTagEventDTOUuid
@@ -411,14 +406,14 @@ instance Upgradeable V3.AddTagEventDTO V4.AddTagEventDTO where
       _addTagEventDTOColor
 
 instance Upgradeable V3.EditTagEventDTO V4.EditTagEventDTO where
-  upgrade (V3.EditTagEventDTO {..}) =
+  upgrade V3.EditTagEventDTO {..} =
     V4.EditTagEventDTO _editTagEventDTOUuid (getParentUuid _editTagEventDTOPath) _editTagEventDTOTagUuid <$>
     upgrade _editTagEventDTOName <*>
     upgrade _editTagEventDTODescription <*>
     upgrade _editTagEventDTOColor
 
 instance Upgradeable V3.DeleteTagEventDTO V4.DeleteTagEventDTO where
-  upgrade (V3.DeleteTagEventDTO {..}) =
+  upgrade V3.DeleteTagEventDTO {..} =
     return $
     V4.DeleteTagEventDTO _deleteTagEventDTOUuid (getParentUuid _deleteTagEventDTOPath) _deleteTagEventDTOTagUuid
 

@@ -20,21 +20,21 @@ instance (FromJSON a, ToJSON a) => Upgradeable (V1.EventFieldDTO a) (V2.EventFie
   upgrade (V1.ChangedValueDTO x) = Right (V2.ChangedValueDTO x)
 
 instance Upgradeable V1.EditKnowledgeModelEventDTO V2.EditKnowledgeModelEventDTO where
-  upgrade (V1.EditKnowledgeModelEventDTO {..}) = do
+  upgrade V1.EditKnowledgeModelEventDTO {..} = do
     newPath <- upgrade _editKnowledgeModelEventDTOPath
     newName <- upgrade _editKnowledgeModelEventDTOName
     newChapterUuids <- upgrade _editKnowledgeModelEventDTOChapterUuids
     newTagUuids <- upgrade _editKnowledgeModelEventDTOTagUuids
     return
       V2.EditKnowledgeModelEventDTO
-      { V2._editKnowledgeModelEventDTOUuid = _editKnowledgeModelEventDTOUuid
-      , V2._editKnowledgeModelEventDTOPath = newPath
-      , V2._editKnowledgeModelEventDTOKmUuid = _editKnowledgeModelEventDTOKmUuid
-      , V2._editKnowledgeModelEventDTOName = newName
-      , V2._editKnowledgeModelEventDTOChapterUuids = newChapterUuids
-      , V2._editKnowledgeModelEventDTOTagUuids = newTagUuids
-      , V2._editKnowledgeModelEventDTOIntegrationUuids = V2.NothingChangedDTO
-      }
+        { V2._editKnowledgeModelEventDTOUuid = _editKnowledgeModelEventDTOUuid
+        , V2._editKnowledgeModelEventDTOPath = newPath
+        , V2._editKnowledgeModelEventDTOKmUuid = _editKnowledgeModelEventDTOKmUuid
+        , V2._editKnowledgeModelEventDTOName = newName
+        , V2._editKnowledgeModelEventDTOChapterUuids = newChapterUuids
+        , V2._editKnowledgeModelEventDTOTagUuids = newTagUuids
+        , V2._editKnowledgeModelEventDTOIntegrationUuids = V2.NothingChangedDTO
+        }
 
 instance Upgradeable V1.EventDTO V2.EventDTO where
   upgrade (V1.EditKnowledgeModelEventDTO' oldEvent) = do
