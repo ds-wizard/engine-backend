@@ -33,12 +33,12 @@ packages:
   original:
     hackage: pretty-terminal-0.1.0.0
 - completed:
-    hackage: ginger-0.8.1.0@sha256:9fb29277923d3b7d319d1fc6e26055b899be5dce6ef8bfabe30c6af5b8132f40,3082
+    hackage: ginger-0.9.1.0@sha256:dc19f586eff45161a0e4f1099eb26937c45bf7c993c77d21ad27b48696b283da,3766
     pantry-tree:
-      size: 1375
-      sha256: 20a11db577a67b0e74c899273ee51523b2a794d783c14e3ec424e1c90dbd9a0e
+      size: 1430
+      sha256: 93fc946d8aec834920bb718fcd26775b208f6316d099060b068a1c00712489a0
   original:
-    hackage: ginger-0.8.1.0
+    hackage: ginger-0.9.1.0
 - completed:
     hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
     pantry-tree:

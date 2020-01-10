@@ -1,6 +1,7 @@
 module Wizard.Service.Document.DocumentMapper where
 
 import Control.Lens ((^.))
+import Data.Map as M
 import Data.Time
 import qualified Data.UUID as U
 import qualified Text.FromHTML as FromHTML
@@ -34,7 +35,8 @@ toDocumentContextDTO dc =
     , _documentContextDTOConfig = toDocumentContextConfigDTO $ dc ^. config
     , _documentContextDTOQuestionnaireUuid = dc ^. questionnaireUuid
     , _documentContextDTOQuestionnaireName = dc ^. questionnaireName
-    , _documentContextDTOQuestionnaireReplies = QTN_Mapper.toReplyDTO <$> dc ^. questionnaireReplies
+    , _documentContextDTOQuestionnaireReplies = replies
+    , _documentContextDTOQuestionnaireRepliesMap = M.fromList $ (\reply -> (reply ^. path, reply)) <$> replies
     , _documentContextDTOLevel = dc ^. level
     , _documentContextDTOKnowledgeModel = toKnowledgeModelDTO $ dc ^. knowledgeModel
     , _documentContextDTOMetrics = toMetricDTO <$> dc ^. metrics
@@ -46,6 +48,8 @@ toDocumentContextDTO dc =
     , _documentContextDTOCreatedAt = dc ^. createdAt
     , _documentContextDTOUpdatedAt = dc ^. updatedAt
     }
+  where
+    replies = QTN_Mapper.toReplyDTO <$> dc ^. questionnaireReplies
 
 toDocumentContextConfigDTO :: DocumentContextConfig -> DocumentContextConfigDTO
 toDocumentContextConfigDTO config =

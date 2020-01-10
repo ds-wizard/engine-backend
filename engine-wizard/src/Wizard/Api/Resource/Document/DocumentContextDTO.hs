@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.Document.DocumentContextDTO where
 
+import Data.Map
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -19,6 +20,7 @@ data DocumentContextDTO =
     , _documentContextDTOQuestionnaireUuid :: String
     , _documentContextDTOQuestionnaireName :: String
     , _documentContextDTOQuestionnaireReplies :: [ReplyDTO]
+    , _documentContextDTOQuestionnaireRepliesMap :: Map String ReplyDTO
     , _documentContextDTOLevel :: Int
     , _documentContextDTOKnowledgeModel :: KnowledgeModelDTO
     , _documentContextDTOMetrics :: [MetricDTO]
