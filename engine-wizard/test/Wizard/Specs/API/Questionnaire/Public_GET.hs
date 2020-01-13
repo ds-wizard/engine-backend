@@ -58,7 +58,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto =
           QuestionnaireDetailDTO
             { _questionnaireDetailDTOUuid = fromJust . U.fromString $ "a870d5c7-0e0a-4110-95ae-932cb65c6a6a"
@@ -90,12 +90,12 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext =
-  it "HTTP 400 BAD REQUEST - Public questionnaire is not set up" $
+  it "HTTP 400 BAD REQUEST - Public questionnaire wasn't found in DB" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = createUserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Public Questionnaire"
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = createUserError _ERROR_SERVICE_PUBLIC_QTN__PUBLIC_QTN_NOT_FOUND_IN_DB
     let expBody = encode expDto
     -- AND: Delete public questionnaire
     runInContextIO deletePublicPackages appContext

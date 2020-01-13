@@ -14,12 +14,11 @@ import Wizard.Specs.Common
 publicQuestionnaireServiceIntegrationSpec appContext =
   describe "PublicQuestionnaire Service Integration" $ do
     let updatedAppContext = appContext & applicationConfig . general . publicQuestionnaireEnabled .~ False
-    describe "getPublicQuestionnaire" $ do
-      it "PublicQuestionnaire is disabled" $
+    describe "getPublicQuestionnaire" $ it "PublicQuestionnaire is disabled" $
         -- GIVEN: Prepare expectations
-       do
-        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "PublicQuestionnaire"
+     do
+      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "PublicQuestionnaire"
         -- WHEN:
-        result <- runInContext getPublicQuestionnaire updatedAppContext
+      result <- runInContext getPublicQuestionnaire updatedAppContext
         -- THEN:
-        result `shouldBe` expectation
+      result `shouldBe` expectation

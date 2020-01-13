@@ -42,8 +42,7 @@ getPublicQuestionnaire =
               , _questionnaireDetailDTOCreatedAt = now
               , _questionnaireDetailDTOUpdatedAt = now
               }
-      Left (NotExistsError _) ->
-        return . Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Public Questionnaire"
+      Left (NotExistsError _) -> return . Left . UserError $ _ERROR_SERVICE_PUBLIC_QTN__PUBLIC_QTN_NOT_FOUND_IN_DB
       Left error -> return . Left $ error
 
 -- --------------------------------

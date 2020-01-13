@@ -113,6 +113,10 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
     "Desired knowledge model ('%s') wasn't found in Registry"
     [pkgId]
 
+-- Public Questionnaire
+_ERROR_SERVICE_PUBLIC_QTN__PUBLIC_QTN_NOT_FOUND_IN_DB =
+  LocaleRecord "error.service.qtn.public_qtn_not_found_in_db" "Public Questionnaire wasn't found in the database" []
+
 -- Questionnaire
 _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
   LocaleRecord
