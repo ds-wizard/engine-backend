@@ -88,7 +88,14 @@ getQuestionnaireDmpA = do
       case eitherHTMLto of
         Right html -> do
           addHeader "Content-Type" (LT.pack "text/html; charset=utf-8")
-          raw $ html
+          raw html
+        Left error -> sendError error
+    Just "pdf-preview" -> do
+      eitherHTMLto <- runInUnauthService $ exportDocument qtnUuid (T.unpack <$> mTemplateUuid) PDF
+      case eitherHTMLto of
+        Right html -> do
+          addHeader "Content-Type" (LT.pack "application/pdf")
+          raw html
         Left error -> sendError error
     Just formatS ->
       heGetFormat formatS $ \format -> do
