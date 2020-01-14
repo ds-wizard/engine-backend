@@ -1,0 +1,15 @@
+{% extends '../_common/layout.html.j2' %}
+{% block body %}
+Hello!
+<br>
+Good news - we have a new organization in our Registry ({{ mailName}}):
+<dl>
+  <dt>Name<dt>
+  <dd>{{ organization.name }}</dd>
+  <dt>Email<dt>
+  <dd>{{ organization.email }}</dd>
+</dl>
+<br>
+Best regards,<br>
+{{ mailName }} Team
+{% endblock %}

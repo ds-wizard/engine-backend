@@ -1,0 +1,28 @@
+general:
+  environment: Production
+  serverPort: 3000
+  clientUrl: http://localhost:3001
+  templateFolder: engine-registry/templates
+
+database:
+  host: mongo
+  databaseName: engine-registry
+  port: 27017
+  authEnabled: false
+  username:
+  password:
+
+mail:
+  enabled: false
+  name:
+  email:
+  host:
+  port:
+  ssl:
+  authEnabled:
+  username:
+  password:
+
+analytics:
+  enabled: false
+  email:

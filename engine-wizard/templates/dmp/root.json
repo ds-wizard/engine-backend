@@ -1,0 +1,13 @@
+{
+  "uuid": "43a3fdd1-8535-42e0-81a7-5edbff296e65",
+  "name": "Common Template",
+  "rootFile": "root.html.j2",
+  "allowedKMs": [
+    {
+      "orgId": null,
+      "kmId": null,
+      "minVersion": null,
+      "maxVersion": null
+    }
+  ]
+}

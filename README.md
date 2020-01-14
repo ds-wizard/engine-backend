@@ -1,50 +1,23 @@
-# Data Stewardship Wizard - Server Application
-> It's a server part of the wizard application.
+# Engine Backend
+> It's a backend part of the engine.
 
-[![Build Status](https://travis-ci.org/ds-wizard/dsw-server.svg?branch=master)](https://travis-ci.org/ds-wizard/dsw-server)
+[![Build Status](https://travis-ci.org/ds-wizard/engine-backend.svg?branch=master)](https://travis-ci.org/ds-wizard/engine-backend)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
 
-## Features
+## applications
 
-- User Management
-- Organization Management
-- Knowledge Model Management
-- Knowledge Model Editor
-- Migration Tool for obsolete Knowledge Models
-- Questionnaire
-- Migration Tool for obsolete Questionnaires
-- Data Management Plan Generator
-- Feedback
-
-## Demo
-
-The application is currently deployed on a server provided by FIT CTU. Here are the addresses of running applications:
-
-- **Server:** https://api.demo.ds-wizard.org
-- **Client:** https://demo.ds-wizard.org
-
-## Documentation
-
-**General Documentation:**
-
-> https://dswserver.docs.apiary.io
-
-- includes project overview
-- includes configuration
-- includes contribution guide
-- includes architecture description
-
-**API Documentation:**
-
-> https://docs.ds-wizard.org
+- Wizard (<application>: engine-wizard)
+- Registry (<application>: engine-registry)
 
 ## Contribute
 
 ### Requirements
 
- - **Stack** (recommended 1.9.3 or higher)
+ - **Stack** (recommended 2.1.3 or higher)
  - **MongoDB** (recommended 4.0.12 or higher)
  - **RabbitMQ** (recommended 3.7.8 or higher, optional)
+ - **Hindent** (recommended 5.3.1 or higher, optional)
+ - **HLint** (recommended 2.1.11 or higher, optional)
  - **wkhtmltopdf** (recommended 0.12.5 or higher) - *for exports in PDF format only*
  - **Pandoc** (recommended 2.2.1 or higher) - *for exports in non HTML/PDF formats only*
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
@@ -56,8 +29,8 @@ For running application it's need to run MongoDB database and set up connection 
 Run these comands from the root of the project
 
 ```bash
-$ stack build
-$ stack exec dsw-server
+$ stack build <application>
+$ stack exec <application>
 ```
 
 ### Run tests
@@ -65,8 +38,7 @@ $ stack exec dsw-server
 Run these comands from the root of the project
 
 ```bash
-$ stack build
-$ stack test --jobs=1 --fast
+$ stack test <application>
 ```
 
 ### Format code
@@ -74,8 +46,8 @@ $ stack test --jobs=1 --fast
 Create a bash script which will do the work for you. Run the script from the root of the project
 
 ```bash
-$ find dsw-server/lib -name '*.hs' | while read line ; do hindent $line ; done
-$ find dsw-server/test -name '*.hs' | while read line ; do hindent $line ; done
+$ find <application>/src -name '*.hs' | while read line ; do hindent $line ; done
+$ find <application>/test -name '*.hs' | while read line ; do hindent $line ; done
 ```
 
 ### Code coverage
@@ -83,8 +55,8 @@ $ find dsw-server/test -name '*.hs' | while read line ; do hindent $line ; done
 Run these comands from the root of the project
 
 ```bash
-$ stack build
-$ stack test --jobs=1 --fast --coverage --ghc-options "-fforce-recomp"`
+$ stack build <application>
+$ stack test <application> --jobs=1 --fast --coverage --ghc-options "-fforce-recomp"
 ```
 
 ### Build an app version and built date
@@ -92,7 +64,7 @@ $ stack test --jobs=1 --fast --coverage --ghc-options "-fforce-recomp"`
 Run these comands from the `scripts` folder
 
 ```bash
-$ ./build-info.sh
+$ ./<application>/build-info.sh
 ```
 
 ### Naming conventions

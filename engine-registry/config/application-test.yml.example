@@ -1,0 +1,25 @@
+general:
+  environment: Test
+  serverPort: 3000
+  clientUrl: http://localhost:3001
+  templateFolder: templates
+
+database:
+  host: localhost
+  databaseName: engine-registry-test
+  port: 27017
+  authEnabled: false
+  username:
+  password:
+
+mail:
+  enabled: false
+  name:
+  email:
+  host:
+  username:
+  password:
+
+analytics:
+  enabled: false
+  email:
