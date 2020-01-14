@@ -9,7 +9,7 @@ packages:
 extra-deps:
   - vendor/bson-generic
   - vendor/mongoDB-migration
-  - fromhtml-1.0.1
+  - fromhtml-1.0.4
   - persistent-mongoDB-2.8.0
   - pwstore-fast-2.4.4
   - pretty-terminal-0.1.0.0
