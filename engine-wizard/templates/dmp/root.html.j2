@@ -175,28 +175,38 @@
             <span class="km-name">{{km.name}}</span>
           </div>
         </h1>
-        <dl>
-          <dt>Organization</dt>
-          <dd>{{dmp.organization.name}}</dd>
+        <table class="dmp-data">
+          <tr>
+            <th>Organization</th>
+            <td>{{dmp.organization.name}}</td>
+          </tr>
           {% if dmp.createdBy %}
-            <dt>Created by</dt>
-            <dd>{{dmp.createdBy.name}} {{dmp.createdBy.surname}} (<a href="mailto:{{dmp.user.email}}">{{dmp.createdBy.email}}</a>)</dd>
+          <tr>
+            <th>Created by</th>
+            <td>{{dmp.createdBy.name}} {{dmp.createdBy.surname}} (<a href="mailto:{{dmp.user.email}}">{{dmp.createdBy.email}}</a>)</td>
+          </tr>
           {% endif %}
-          <dt>Based on</dt>
-          <dd>{{dmp.package.name}}, {{dmp.package.version}} (<span class="package-id"><span class="organization-id">{{dmp.package.organizationId}}</span>:<span class="km-id">{{dmp.package.kmId}}</span>:<span class="version">{{dmp.package.version}}</span></span>)</dd>
+          <tr>
+            <th>Based on</th>
+            <td>{{dmp.package.name}}, {{dmp.package.version}} (<span class="package-id"><span class="organization-id">{{dmp.package.organizationId}}</span>:<span class="km-id">{{dmp.package.kmId}}</span>:<span class="version">{{dmp.package.version}}</span></span>)</td>
+          </tr>
           {% if dmp.config.levelsEnabled %}
-          <dt>Project Phase</dt>
-          <dd>
-            {% for levelDefinition in levelDefinitions %}
-              {% if levelDefinition.level == dmp.level %}
-                {{levelDefinition.title}}
-              {% endif %}
-            {% endfor %}
-          </dd>
+          <tr>
+            <th>Project Phase</th>
+            <td>
+              {% for levelDefinition in levelDefinitions %}
+                {% if levelDefinition.level == dmp.level %}
+                  {{levelDefinition.title}}
+                {% endif %}
+              {% endfor %}
+            </td>
+          </tr>
           {% endif %}
-          <dt>Created at</dt>
-          <dd>{{dateformat(replace(dmp.createdAt, slice(dmp.createdAt,19), "Z"), "%d.%m.%Y")}}</dd>
-        </dl>
+          <tr>
+            <th>Created at</th>
+            <td>{{dateformat(replace(dmp.createdAt, slice(dmp.createdAt,19), "Z"), "%d.%m.%Y")}}</td>
+          </tr>
+        </table>
       </header>
       {# Content #}
       <main>
