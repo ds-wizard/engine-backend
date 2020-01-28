@@ -1,41 +1,40 @@
 module Registry.Bootstrap.Web
   ( runWebServer
+  , app
   ) where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
-import Data.Default (def)
-import Network.Wai.Handler.Warp (Settings, defaultSettings, setPort)
-import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
+import Network.Wai (Application)
+import Network.Wai.Handler.Warp (run)
+import Network.Wai.Middleware.Servant.Errors (errorMw)
+import Servant
 
 import LensesConfig
-import Registry.Api.Router
+import Registry.Api.Api
+import Registry.Api.Middleware.CORSMiddleware
+import Registry.Api.Middleware.ErrorMiddleware
+import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Model.Context.BaseContext
-import Shared.Model.Config.Environment
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do
-  let o = getOptions context
-  let r m = runStdoutLoggingT $ runReaderT (runBaseContextM m) context
-  scottyOptsT o r (createEndpoints context)
+  let config = context ^. appConfig
+  let webPort = config ^. general . serverPort
+  let env = config ^. general . environment
+  run
+    webPort
+    (errorMw @JSON @'[ "message", "status"] . errorMiddleware . corsMiddleware . loggingMiddleware env $ app context)
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getOptions :: BaseContext -> Options
-getOptions context =
-  def
-    { settings = getSettings context
-    , verbose =
-        case context ^. appConfig . general . environment of
-          Production -> 0
-          Staging -> 1
-          Development -> 1
-          Test -> 0
-    }
+convert :: BaseContext -> BaseContextM a -> Handler a
+convert baseContext function = Handler . runStdoutLoggingT $ runReaderT (runBaseContextM function) baseContext
 
-getSettings :: BaseContext -> Settings
-getSettings context =
-  let webPort = context ^. appConfig . general . serverPort
-   in setPort webPort defaultSettings
+appToServer :: BaseContext -> Server AppAPI
+appToServer baseContext = hoistServer appApi (convert baseContext) appServer
+
+app :: BaseContext -> Application
+app baseContext = serve appApi (appToServer baseContext)

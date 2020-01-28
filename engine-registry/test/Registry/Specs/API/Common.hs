@@ -1,8 +1,6 @@
 module Registry.Specs.API.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger (runStdoutLoggingT)
-import Control.Monad.Reader (runReaderT)
 import Data.Aeson (encode)
 import Data.Aeson (eitherDecode)
 import qualified Data.ByteString.Char8 as BS
@@ -12,23 +10,28 @@ import Data.Foldable
 import qualified Data.List as L
 import Network.HTTP.Types
 import Network.Wai (Application)
+import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Network.Wai.Test hiding (request)
+import Servant (JSON)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import Web.Scotty.Trans (scottyAppT)
 
 import LensesConfig
-import Registry.Api.Router
+import Registry.Bootstrap.Web
 import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistics
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Util.List (elems)
 import Shared.Api.Resource.Error.ErrorDTO ()
+import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 
+import Registry.Api.Middleware.CORSMiddleware
+import Registry.Api.Middleware.ErrorMiddleware
+import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Specs.Common
 import SharedTest.Specs.Common
 
@@ -41,8 +44,11 @@ startWebApp appContext = do
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool
           }
-      t m = runStdoutLoggingT $ runReaderT (runBaseContextM m) baseContext
-  scottyAppT t (createEndpoints baseContext)
+  let config = appContext ^. applicationConfig
+  let webPort = config ^. general . serverPort
+  let env = config ^. general . environment
+  return $ errorMw @JSON @'[ "message", "status"] . errorMiddleware . corsMiddleware . loggingMiddleware env $
+    app baseContext
 
 reqAdminAuthHeader :: Header
 reqAdminAuthHeader = ("Authorization", "Bearer GlobalToken")
@@ -51,7 +57,7 @@ reqUserAuthHeader :: Header
 reqUserAuthHeader = ("Authorization", "Bearer NetherlandsToken")
 
 reqCtHeader :: Header
-reqCtHeader = ("Content-Type", "application/json; charset=utf-8")
+reqCtHeader = contentTypeHeaderJSON
 
 reqStatisticsHeader :: [Header]
 reqStatisticsHeader =
@@ -61,11 +67,11 @@ reqStatisticsHeader =
   ]
 
 resCtHeaderPlain :: Header
-resCtHeaderPlain = ("Content-Type", "application/json; charset=utf-8")
+resCtHeaderPlain = contentTypeHeaderJSON
 
-resCtHeader = "Content-Type" <:> "application/json; charset=utf-8"
+resCtHeader = "Content-Type" <:> "application/json;charset=utf-8"
 
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript; charset=utf-8"
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript;charset=utf-8"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =

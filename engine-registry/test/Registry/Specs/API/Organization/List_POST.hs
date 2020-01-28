@@ -12,7 +12,9 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
+import Registry.Api.Resource.Organization.OrganizationCreateJM ()
 import Registry.Api.Resource.Organization.OrganizationDTO
+import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
@@ -43,7 +45,7 @@ reqMethod = methodPost
 
 reqUrl = "/organizations"
 
-reqHeaders = []
+reqHeaders = [reqCtHeader]
 
 reqDto = orgGlobalCreate
 
@@ -57,7 +59,7 @@ test_201 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO (orgGlobal & active .~ False)
      -- AND: Prepare DB
     runInContextIO deleteOrganizations appContext

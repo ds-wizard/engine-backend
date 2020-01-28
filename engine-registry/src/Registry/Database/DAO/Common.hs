@@ -1,10 +1,11 @@
 module Registry.Database.DAO.Common where
 
+import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Bson
 import Data.Bson.Generic
 import Data.Maybe
-import Data.Text (Text)
+import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Database.MongoDB
   ( (=:)
@@ -53,22 +54,30 @@ deserializeMaybeEntity entityName identificator mEntityS =
 createFindEntitiesFn collection = do
   let action = rest =<< find (select [] collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntitiesByFn collection queryParams = do
   let action = rest =<< find (select queryParams collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntityFn collection entityName = do
   let action = findOne $ select [] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
 
 createFindEntityByFn collection entityName paramName paramValue = do
   let action = findOne $ select [paramName =: paramValue] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+
+createFindEntityByFn' collection entityName paramName paramValue = do
+  let action = findOne $ select [paramName =: paramValue] collection
+  maybeEntityS <- runDB action
+  case deserializeMaybeEntity entityName paramValue maybeEntityS of
+    Right entity -> return (Just entity)
+    Left (NotExistsError error) -> return Nothing
+    Left error -> throwError error
 
 createInsertFn collection entity = do
   let action = insert collection (toBSON entity)
@@ -108,8 +117,8 @@ createCountFn collection = do
 
 mapToDBQueryParams queryParams = fmap go queryParams
   where
-    go :: (Text, Text) -> Field
-    go (p, v) = p =: v
+    go :: (String, String) -> Field
+    go (p, v) = (T.pack p) =: v
 
 instance Val LT.Text where
   val = String . LT.toStrict

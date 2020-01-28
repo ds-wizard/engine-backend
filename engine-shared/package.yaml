@@ -28,6 +28,7 @@ library:
   - bytestring
   - containers
   - directory
+  - http-types
   - lens
   - monad-logger
   - random
