@@ -33,10 +33,10 @@ hLoadConfig fileName loadFn callback = do
       putStrLn $ "CONFIG: '" ++ fileName ++ "' loaded"
       callback config
 
-prepareWebApp runCallback = do
+prepareWebApp runCallback =
   hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` (show $ appConfig ^. general . environment)
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show (appConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool appConfig
       putStrLn "DATABASE: connected"
       let appContext =
@@ -55,13 +55,11 @@ main =
   prepareWebApp
     (\appContext ->
        hspec $ do
-         describe "UNIT TESTING" $ do
-           describe "SERVICE" $ do
-             describe "Organization" $ organizationValidationSpec
-             describe "Package" $ packageValidationSpec
-         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
-           describe "API" $ do
-             actionKeyAPI appContext
-             infoAPI appContext
-             organizationAPI appContext
-             packageAPI appContext)
+         describe "UNIT TESTING" $ describe "SERVICE" $ do
+           describe "Organization" organizationValidationSpec
+           describe "Package" packageValidationSpec
+         before (resetDB appContext) $ describe "INTEGRATION TESTING" $ describe "API" $ do
+           actionKeyAPI appContext
+           infoAPI appContext
+           organizationAPI appContext
+           packageAPI appContext)

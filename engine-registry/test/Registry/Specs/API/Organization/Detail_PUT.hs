@@ -12,7 +12,10 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
+import Registry.Api.Resource.Organization.OrganizationChangeJM ()
+import Registry.Api.Resource.Organization.OrganizationCreateJM ()
 import Registry.Api.Resource.Organization.OrganizationDTO
+import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
@@ -42,7 +45,7 @@ reqMethod = methodPut
 
 reqUrl = "/organizations/global"
 
-reqHeaders = [reqAdminAuthHeader]
+reqHeaders = [reqCtHeader, reqAdminAuthHeader]
 
 reqDto = orgGlobalEditedChange
 
@@ -56,7 +59,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO orgGlobalEdited
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -81,7 +84,7 @@ test_400 appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" orgEmail)]
     let expBody = encode expDto
      -- WHEN: Call API
@@ -96,12 +99,13 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createForbiddenTest reqMethod reqUrl [reqUserAuthHeader] reqBody "Detail Organization"
+test_403 appContext =
+  createForbiddenTest reqMethod reqUrl [reqCtHeader, reqUserAuthHeader] reqBody "Detail Organization"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

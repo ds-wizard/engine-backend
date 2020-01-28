@@ -10,6 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Registry.Api.Resource.Info.InfoDTO
+import Registry.Api.Resource.Info.InfoJM ()
 import Registry.Model.Context.AppContext
 
 import Registry.Specs.API.Common
@@ -39,7 +40,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           InfoDTO {_infoDTOName = "Registry", _infoDTOVersion = "1.0.0", _infoDTOBuiltAt = "2017/10/25 19:50:20Z"}
     let expBody = encode expDto

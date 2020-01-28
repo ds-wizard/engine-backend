@@ -8,24 +8,31 @@ import Registry.Database.BSON.Organization.Organization ()
 import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Organization.Organization
-import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper, createHemHelper)
 
 entityName = "organization"
 
 collection = "organizations"
 
-findOrganizations :: AppContextM (Either AppError [Organization])
+findOrganizations :: AppContextM [Organization]
 findOrganizations = createFindEntitiesFn collection
 
-findOrganizationByOrgId :: String -> AppContextM (Either AppError Organization)
+findOrganizationByOrgId :: String -> AppContextM Organization
 findOrganizationByOrgId = createFindEntityByFn collection entityName "organizationId"
 
-findOrganizationByToken :: String -> AppContextM (Either AppError Organization)
+findOrganizationByOrgId' :: String -> AppContextM (Maybe Organization)
+findOrganizationByOrgId' = createFindEntityByFn' collection entityName "organizationId"
+
+findOrganizationByToken :: String -> AppContextM Organization
 findOrganizationByToken = createFindEntityByFn collection entityName "token"
 
-findOrganizationByEmail :: String -> AppContextM (Either AppError Organization)
+findOrganizationByToken' :: String -> AppContextM (Maybe Organization)
+findOrganizationByToken' = createFindEntityByFn' collection entityName "token"
+
+findOrganizationByEmail :: String -> AppContextM Organization
 findOrganizationByEmail = createFindEntityByFn collection entityName "email"
+
+findOrganizationByEmail' :: String -> AppContextM (Maybe Organization)
+findOrganizationByEmail' = createFindEntityByFn' collection entityName "email"
 
 insertOrganization :: Organization -> AppContextM Value
 insertOrganization = createInsertFn collection
@@ -38,19 +45,3 @@ deleteOrganizations = createDeleteEntitiesFn collection
 
 deleteOrganizationByOrgId :: String -> AppContextM ()
 deleteOrganizationByOrgId = createDeleteEntityByFn collection "organizationId"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heFindOrganizations callback = createHeeHelper findOrganizations callback
-
--- --------------------------------
-heFindOrganizationByOrgId orgId callback = createHeeHelper (findOrganizationByOrgId orgId) callback
-
-hmFindOrganizationByOrgId orgId callback = createHemHelper (findOrganizationByOrgId orgId) callback
-
--- --------------------------------
-heFindOrganizationByToken token callback = createHeeHelper (findOrganizationByToken token) callback
-
--- --------------------------------
-hmFindOrganizationByEmail email callback = createHemHelper (findOrganizationByEmail email) callback
