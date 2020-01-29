@@ -29,6 +29,7 @@ detail_delete appContext =
     test_204 appContext
     test_401 appContext
     test_403 appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
