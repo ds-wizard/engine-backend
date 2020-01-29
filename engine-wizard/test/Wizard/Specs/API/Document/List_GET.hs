@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.List_GET
-  ( list_get
+module Wizard.Specs.API.Document.List_GET
+  ( list_GET
   ) where
 
 import Control.Lens ((^.))
@@ -11,25 +11,27 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Database.Migration.Development.Document.Data.Documents
+import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import Wizard.Database.Migration.Development.Template.Data.Templates
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Service.Questionnaire.QuestionnaireMapper
+import Wizard.Service.Document.DocumentMapper
+import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires
+-- GET /documents
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
-list_get appContext =
-  describe "GET /questionnaires" $ do
+list_GET :: AppContext -> SpecWith Application
+list_GET appContext =
+  describe "GET /documents" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -39,9 +41,9 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires"
+reqUrl = "/documents"
 
-reqHeaders = [reqAuthHeader]
+reqHeadersT authHeader = [authHeader]
 
 reqBody = ""
 
@@ -49,38 +51,35 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  it "HTTP 200 OK (Admin)" $
-     -- GIVEN: Prepare expectation
-   do
-    let expStatus = 200
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          [ toSimpleDTO questionnaire1 germanyPackage QSDefault
-          , toSimpleDTO questionnaire2 germanyPackage QSDefault
-          , toSimpleDTO questionnaire3 germanyPackage QSDefault
-          ]
-    let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
-     -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-     -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-  it "HTTP 200 OK (Non-Admin)" $
+  create_test_200
+    "HTTP 200 CREATED (Admin)"
+    appContext
+    [ toDTO doc1 (Just $ QTN_Mapper.toSimpleDTO questionnaire1 germanyPackage QSDefault) commonWizardTemplate
+    , toDTO doc2 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
+    , toDTO doc3 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
+    ]
+    reqAuthHeader
+  create_test_200
+    "HTTP 200 CREATED (Non-Admin)"
+    appContext
+    [ toDTO doc1 Nothing commonWizardTemplate
+    , toDTO doc2 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
+    ]
+    reqNonAdminAuthHeader
+
+create_test_200 title appContext expDto authHeader =
+  it title $
      -- GIVEN: Prepare request
    do
-    let reqHeaders = [reqNonAdminAuthHeader]
-    -- AND: Prepare expectation
+    let reqHeaders = reqHeadersT authHeader
+     -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          [toSimpleDTO questionnaire2 germanyPackage QSDefault, toSimpleDTO questionnaire3 germanyPackage QSDefault] :: [QuestionnaireDTO]
     let expBody = encode expDto
-     -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO QTN.runMigration appContext
+    -- AND: Run migrations
+    runInContextIO U_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO DOC_Migration.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -96,4 +95,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "DMP_PERM"

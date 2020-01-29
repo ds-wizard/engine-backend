@@ -29,6 +29,7 @@ library:
   - bson-generic
   - bytestring
   - case-insensitive
+  - conduit
   - containers
   - data-default
   - directory
@@ -36,7 +37,6 @@ library:
   - engine-shared
   - exceptions
   - filepath
-  - fromhtml
   - ginger
   - github
   - hashable

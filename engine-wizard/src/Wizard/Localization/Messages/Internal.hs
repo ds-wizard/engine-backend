@@ -25,11 +25,6 @@ _ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response des
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
--- Document
-_ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
-
-_ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT = "Unprocessable DMP format"
-
 -- Feedback
 _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED serviceName endpoint =
   "Request to external API failed (service: '" ++ serviceName ++ "', endpoint: '" ++ endpoint ++ "')"

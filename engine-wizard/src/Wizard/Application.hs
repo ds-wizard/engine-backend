@@ -32,7 +32,7 @@ runApplication = do
     logInfo $ msg _CMP_SERVER "started"
     hLoadConfig applicationConfigFile getApplicationConfig $ \appConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
-        logInfo $ "ENVIRONMENT: set to " ++ (show $ appConfig ^. general . environment)
+        logInfo $ "ENVIRONMENT: set to " ++ show (appConfig ^. general . environment)
         dbPool <- connectDB appConfig
         msgChannel <- connectMQ appConfig
         httpClientManager <- setupHttpClientManager appConfig

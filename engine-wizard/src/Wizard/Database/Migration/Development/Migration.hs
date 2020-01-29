@@ -5,6 +5,7 @@ module Wizard.Database.Migration.Development.Migration
 import Wizard.Constant.Component
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
+import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
@@ -31,4 +32,5 @@ runMigration = do
   F.runMigration
   MTR.runMigration
   LVL.runMigration
+  DOC.runMigration
   logInfo $ msg _CMP_MIGRATION "ended"

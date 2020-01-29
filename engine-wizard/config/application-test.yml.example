@@ -33,6 +33,7 @@ messaging:
   port:
   username:
   password:
+  vhost:
 
 jwt:
   secret: secret-key

@@ -12,6 +12,7 @@ import Wizard.Api.Handler.BookReference.BookReferenceHandler
 import Wizard.Api.Handler.Branch.BranchHandler
 import Wizard.Api.Handler.Common
 import Wizard.Api.Handler.Config.ClientConfigHandler
+import Wizard.Api.Handler.Document.DocumentHandler
 import Wizard.Api.Handler.Feedback.FeedbackHandler
 import Wizard.Api.Handler.IO.IOHandler
 import Wizard.Api.Handler.Info.InfoHandler
@@ -45,8 +46,7 @@ unauthorizedEndpoints =
   , (methodPut, mkRegex "^users/.*/password?hash=.*")
   , (methodPost, mkRegex "^action-keys$")
   , (methodGet, mkRegex "^questionnaires/public$")
-  , (methodGet, mkRegex "^questionnaires/.*/dmp")
-  , (methodGet, mkRegex "^questionnaires/.*/dmp?format=.*$")
+  , (methodGet, mkRegex "^documents/.*/download")
   , (methodGet, mkRegex "^book-references/.*")
   , (methodGet, mkRegex "^feedbacks.*")
   , (methodPost, mkRegex "^feedbacks.*")
@@ -135,7 +135,6 @@ createEndpoints context
   get "/questionnaires/public" getQuestionnairePublicA
   get "/questionnaires/:qtnUuid" getQuestionnaireA
   put "/questionnaires/:qtnUuid" putQuestionnaireA
-  get "/questionnaires/:qtnUuid/dmp" getQuestionnaireDmpA
   post "/questionnaires/:qtnUuid/report/preview" postQuestionnaireReportPreviewA
   get "/questionnaires/:qtnUuid/report" getQuestionnaireReportA
   delete "/questionnaires/:qtnUuid" deleteQuestionnaireA
@@ -152,6 +151,13 @@ createEndpoints context
    -- TEMPLATE
    --------------------
   get "/templates" getTemplatesA
+   --------------------
+   -- DOCUMENT
+   --------------------
+  get "/documents" getDocumentsA
+  post "/documents" postDocumentsA
+  delete "/documents/:docUuid" deleteDocumentA
+  get "/documents/:docUuid/download" downloadDocumentA
    --------------------
    -- BOOK REFERENCE
    --------------------
