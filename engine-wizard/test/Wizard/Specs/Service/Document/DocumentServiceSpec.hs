@@ -11,8 +11,8 @@ import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Service.Document.DocumentMapper
-import Wizard.Service.Document.DocumentService
+import Wizard.Service.Document.DocumentContextMapper
+import Wizard.Service.Document.DocumentContextService
 
 import Wizard.Specs.Common
 import Wizard.Specs.Service.Document.Common

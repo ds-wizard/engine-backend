@@ -21,7 +21,7 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
-import Wizard.Messaging.Out.Topic.UserTopic
+import Wizard.Messaging.Out.Topic.User
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext

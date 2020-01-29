@@ -1,3 +1,11 @@
 module Wizard.Messaging.Route where
 
-_USER_CREATED_TOPIC = "User.Created"
+-- --------------------
+-- TOPIC
+-- --------------------
+_USER_CREATED_TOPIC = "user.created"
+
+-- --------------------
+-- QUEUE
+-- --------------------
+_DOCUMENT_QUEUE = "document.generation"

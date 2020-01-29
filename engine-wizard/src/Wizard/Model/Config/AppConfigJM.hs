@@ -93,6 +93,7 @@ instance FromJSON AppConfigMessaging where
     _appConfigMessagingPort <- o .:? "port" .!= (defaultMessaging ^. port)
     _appConfigMessagingUsername <- o .:? "username" .!= (defaultMessaging ^. username)
     _appConfigMessagingPassword <- o .:? "password" .!= (defaultMessaging ^. password)
+    _appConfigMessagingVhost <- o .:? "vhost" .!= (defaultMessaging ^. vhost)
     return AppConfigMessaging {..}
   parseJSON _ = mzero
 

@@ -10,7 +10,7 @@ import Wizard.Messaging.Connection
 import Wizard.Util.Logger
 
 connectMQ appConfig =
-  if (appConfig ^. messaging ^. enabled)
+  if appConfig ^. messaging . enabled
     then do
       logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
       msgChannel <-

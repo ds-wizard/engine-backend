@@ -1,4 +1,4 @@
-module Wizard.Messaging.Out.Topic.UserTopic where
+module Wizard.Messaging.Out.Topic.User where
 
 import Wizard.Messaging.Out.Topic.Common
 import Wizard.Messaging.Route

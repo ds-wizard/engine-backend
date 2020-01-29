@@ -56,11 +56,12 @@ defaultDatabase =
 defaultMessaging :: AppConfigMessaging
 defaultMessaging =
   AppConfigMessaging
-    { _appConfigMessagingEnabled = False
+    { _appConfigMessagingEnabled = True
     , _appConfigMessagingHost = "rabbitmq"
     , _appConfigMessagingPort = 5672
     , _appConfigMessagingUsername = "guest"
     , _appConfigMessagingPassword = "guest"
+    , _appConfigMessagingVhost = "/"
     }
 
 defaultJwt :: AppConfigJwt

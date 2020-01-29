@@ -15,11 +15,12 @@ createMessagingChannel appConfig =
   let appMessagingConfig = appConfig ^. messaging
       mcEnabled = appMessagingConfig ^. enabled
       mcHost = appMessagingConfig ^. host
-      mcPort = fromInteger (appConfig ^. messaging ^. port) :: PortNumber
+      mcPort = fromInteger (appConfig ^. (messaging . port)) :: PortNumber
       mcUsername = T.pack $ appMessagingConfig ^. username
       mcPassword = T.pack $ appMessagingConfig ^. password
+      mcVhost = T.pack $ appMessagingConfig ^. vhost
    in if mcEnabled
         then do
-          channel <- (openConnection' mcHost mcPort "/" mcUsername mcPassword) >>= openChannel
+          channel <- openConnection' mcHost mcPort mcVhost mcUsername mcPassword >>= openChannel
           return (Just channel)
         else return Nothing
