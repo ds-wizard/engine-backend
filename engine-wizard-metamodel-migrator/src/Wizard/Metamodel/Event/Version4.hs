@@ -157,7 +157,7 @@ data AddChapterEventDTO =
     , _addChapterEventDTOParentUuid :: U.UUID
     , _addChapterEventDTOEntityUuid :: U.UUID
     , _addChapterEventDTOTitle :: String
-    , _addChapterEventDTOText :: String
+    , _addChapterEventDTOText :: Maybe String
     }
   deriving (Show, Eq, Generic)
 
@@ -167,7 +167,7 @@ data EditChapterEventDTO =
     , _editChapterEventDTOParentUuid :: U.UUID
     , _editChapterEventDTOEntityUuid :: U.UUID
     , _editChapterEventDTOTitle :: EventFieldDTO String
-    , _editChapterEventDTOText :: EventFieldDTO String
+    , _editChapterEventDTOText :: EventFieldDTO (Maybe String)
     , _editChapterEventDTOQuestionUuids :: EventFieldDTO [U.UUID]
     }
   deriving (Show, Eq, Generic)

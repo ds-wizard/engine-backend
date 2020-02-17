@@ -39,6 +39,9 @@ instance Upgradeable (Maybe String) (Maybe String) where
 instance Upgradeable (M.Map String String) (M.Map String String) where
   upgrade = Right
 
+instance Upgradeable String (Maybe String) where
+  upgrade = Right . Just
+
 instance (Upgradeable f t) => Upgradeable (V3.EventFieldDTO f) (V4.EventFieldDTO t) where
   upgrade V3.NothingChangedDTO = Right V4.NothingChangedDTO
   upgrade (V3.ChangedValueDTO x) = V4.ChangedValueDTO <$> upgrade x
@@ -80,13 +83,12 @@ instance Upgradeable V3.DeleteAnswerEventDTO V4.DeleteAnswerEventDTO where
 
 instance Upgradeable V3.AddChapterEventDTO V4.AddChapterEventDTO where
   upgrade V3.AddChapterEventDTO {..} =
-    return $
     V4.AddChapterEventDTO
       _addChapterEventDTOUuid
       (getParentUuid _addChapterEventDTOPath)
       _addChapterEventDTOChapterUuid
-      _addChapterEventDTOTitle
-      _addChapterEventDTOText
+      _addChapterEventDTOTitle <$>
+      upgrade _addChapterEventDTOText
 
 instance Upgradeable V3.EditChapterEventDTO V4.EditChapterEventDTO where
   upgrade V3.EditChapterEventDTO {..} =
