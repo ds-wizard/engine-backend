@@ -4,8 +4,8 @@ import Control.Monad
 import Data.Aeson
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

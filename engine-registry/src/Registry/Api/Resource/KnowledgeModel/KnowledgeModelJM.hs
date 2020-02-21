@@ -4,8 +4,8 @@ import Control.Monad
 import Data.Aeson
 
 import Registry.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

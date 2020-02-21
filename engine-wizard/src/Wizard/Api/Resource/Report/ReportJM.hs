@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Report.ReportJM where
 import Control.Monad
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 import Wizard.Api.Resource.Report.ReportDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
 
 -- --------------------------------------------------------------------
 instance FromJSON ReportDTO where

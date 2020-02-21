@@ -19,10 +19,10 @@ import Network.Wai (Middleware, Request(..))
 import System.Console.Pretty (Color(..), color)
 import System.IO.Unsafe
 
-import Registry.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Registry.Util.Logger (createOrgTokenLoggerStamp, createTraceUuidLoggerStamp)
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
 import Shared.Model.Config.Environment
+import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
 
 loggingMiddleware :: Environment -> Middleware

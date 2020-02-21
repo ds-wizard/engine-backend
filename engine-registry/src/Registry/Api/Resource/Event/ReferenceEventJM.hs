@@ -5,7 +5,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.Event.EventFieldJM ()
 import Registry.Api.Resource.Event.ReferenceEventDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON')
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddReferenceEventDTO where
   toJSON (AddResourcePageReferenceEventDTO' event) = toJSON event

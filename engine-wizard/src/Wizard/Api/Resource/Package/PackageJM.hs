@@ -5,9 +5,9 @@ import Data.Aeson
 import Data.Maybe (fromJust)
 import Data.Time
 
+import Shared.Util.JSON (simpleToJSON)
 import Wizard.Api.Resource.Event.EventJM ()
 import Wizard.Api.Resource.Package.PackageDTO
-import Wizard.Util.JSON (simpleToJSON)
 
 instance ToJSON PackageDTO where
   toJSON = simpleToJSON "_packageDTO"

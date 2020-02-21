@@ -1,4 +1,4 @@
-module Wizard.Util.Http where
+module Shared.Util.Http where
 
 import qualified Data.ByteString.Char8 as BS
 import Data.CaseInsensitive (mk)

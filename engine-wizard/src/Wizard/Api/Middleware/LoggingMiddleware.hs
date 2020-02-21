@@ -21,9 +21,9 @@ import System.IO.Unsafe
 
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
 import Shared.Model.Config.Environment
+import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
 import Wizard.Service.Token.TokenService
-import Wizard.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Wizard.Util.Logger (createTraceUuidLoggerStamp, createUserUuidLoggerStamp)
 
 loggingMiddleware :: Environment -> Middleware

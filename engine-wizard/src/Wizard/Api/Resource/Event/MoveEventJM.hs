@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Event.MoveEventJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 import Wizard.Api.Resource.Event.MoveEventDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON MoveQuestionEventDTO where
   parseJSON = simpleParseJSON "_moveQuestionEventDTO"
