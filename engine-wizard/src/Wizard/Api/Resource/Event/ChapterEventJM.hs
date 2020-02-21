@@ -2,9 +2,9 @@ module Wizard.Api.Resource.Event.ChapterEventJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 import Wizard.Api.Resource.Event.ChapterEventDTO
 import Wizard.Api.Resource.Event.EventFieldJM ()
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON AddChapterEventDTO where
   parseJSON = simpleParseJSON "_addChapterEventDTO"

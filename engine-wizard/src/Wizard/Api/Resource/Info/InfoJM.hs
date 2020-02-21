@@ -1,7 +1,7 @@
 module Wizard.Api.Resource.Info.InfoJM where
 
 import Data.Aeson
-import Wizard.Util.JSON (simpleToJSON)
+import Shared.Util.JSON (simpleToJSON)
 
 import Wizard.Api.Resource.Info.InfoDTO
 

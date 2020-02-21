@@ -3,9 +3,9 @@ module Wizard.Api.Resource.Config.ClientConfigJM where
 import Control.Monad (mzero)
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Event.EventJM ()
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON ClientConfigDTO where
   parseJSON = simpleParseJSON "_clientConfigDTO"

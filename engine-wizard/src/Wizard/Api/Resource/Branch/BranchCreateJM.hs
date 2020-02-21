@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Branch.BranchCreateJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON BranchCreateDTO where
   parseJSON = simpleParseJSON "_branchCreateDTO"

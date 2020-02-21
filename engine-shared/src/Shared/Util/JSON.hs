@@ -1,4 +1,4 @@
-module Wizard.Util.JSON
+module Shared.Util.JSON
   ( convertValueToOject
   , getField
   , getArrayField

@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Model.ActionKey.ActionKey
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON ActionKeyType
 

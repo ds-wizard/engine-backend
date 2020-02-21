@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.Event.EventJM ()
 import Registry.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON KnowledgeModelChangeDTO where
   parseJSON = simpleParseJSON "_knowledgeModelChangeDTO"

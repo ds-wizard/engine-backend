@@ -3,7 +3,7 @@ module Registry.Api.Resource.Event.MoveEventJM where
 import Data.Aeson
 
 import Registry.Api.Resource.Event.MoveEventDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON')
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON MoveQuestionEventDTO where
   parseJSON = simpleParseJSON "_moveQuestionEventDTO"

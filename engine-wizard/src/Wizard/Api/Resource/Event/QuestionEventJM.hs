@@ -3,10 +3,10 @@ module Wizard.Api.Resource.Event.QuestionEventJM where
 import Control.Monad
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 import Wizard.Api.Resource.Event.EventFieldJM ()
 import Wizard.Api.Resource.Event.QuestionEventDTO
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddQuestionEventDTO where
   toJSON (AddOptionsQuestionEventDTO' event) = toJSON event

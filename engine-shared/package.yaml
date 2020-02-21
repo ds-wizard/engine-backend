@@ -26,6 +26,7 @@ library:
   - base
   - aeson
   - bytestring
+  - case-insensitive
   - containers
   - directory
   - http-types
@@ -36,6 +37,7 @@ library:
   - time
   - text
   - text-replace
+  - unordered-containers
   - uuid
   - wai
   default-extensions:

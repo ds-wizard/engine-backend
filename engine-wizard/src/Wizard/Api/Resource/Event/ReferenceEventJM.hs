@@ -3,9 +3,9 @@ module Wizard.Api.Resource.Event.ReferenceEventJM where
 import Control.Monad
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 import Wizard.Api.Resource.Event.EventFieldJM ()
 import Wizard.Api.Resource.Event.ReferenceEventDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance ToJSON AddReferenceEventDTO where
   toJSON (AddResourcePageReferenceEventDTO' event) = toJSON event
