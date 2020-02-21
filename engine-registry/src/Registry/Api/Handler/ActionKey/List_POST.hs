@@ -7,11 +7,12 @@ import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Api.Resource.ActionKey.ActionKeyJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Organization.OrganizationService
+import Shared.Api.Handler.Common
 
 type List_POST
-   = ReqBody '[ JSON] ActionKeyDTO
+   = ReqBody '[ SafeJSON] ActionKeyDTO
      :> "action-keys"
-     :> Verb 'POST 201 '[ JSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_POST :: ActionKeyDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_POST reqDto =

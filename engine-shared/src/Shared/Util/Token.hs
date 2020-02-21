@@ -1,11 +1,11 @@
 module Shared.Util.Token where
 
-import qualified Data.Text as T
+import Shared.Util.String (splitOn)
 
-separateToken :: T.Text -> Maybe T.Text
+separateToken :: String -> Maybe String
 separateToken headerValue =
-  case T.splitOn " " headerValue of
-    ("Bearer":token:[]) ->
+  case splitOn " " headerValue of
+    ["Bearer", token] ->
       if token == ""
         then Nothing
         else Just token

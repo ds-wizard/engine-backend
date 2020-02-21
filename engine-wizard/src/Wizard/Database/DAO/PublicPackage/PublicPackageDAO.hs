@@ -2,7 +2,6 @@ module Wizard.Database.DAO.PublicPackage.PublicPackageDAO where
 
 import Data.Bson
 
-import Shared.Model.Error.Error
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Database.BSON.Package.PackageWithEvents ()
 import Wizard.Database.DAO.Common
@@ -12,8 +11,8 @@ entityName = "publicPackage"
 
 collection = "publicPackages"
 
-findPublicPackage :: AppContextM (Either AppError PackageWithEvents)
-findPublicPackage = createFindEntityFn collection entityName
+findPublicPackage' :: AppContextM (Maybe PackageWithEvents)
+findPublicPackage' = createFindEntityFn' collection entityName
 
 insertPublicPackage :: PackageWithEvents -> AppContextM Value
 insertPublicPackage = createInsertFn collection

@@ -1,6 +1,7 @@
 module Wizard.Service.Feedback.Connector.GitHub.GitHubConnector where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.Text as T
@@ -26,13 +27,13 @@ instance Connector AppContextM where
     let fToken = appConfig ^. feedback . token
     let fOwner = appConfig ^. feedback . owner
     let fRepo = appConfig ^. feedback . repo
-    let request = GH.issuesForRepoR (packToName fOwner) (packToName fRepo) (mempty) GD.FetchAll
+    let request = GH.issuesForRepoR (packToName fOwner) (packToName fRepo) mempty GD.FetchAll
     eIssues <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
     case eIssues of
-      Right issues -> return . Right . V.toList $ toSimpleIssue <$> issues
+      Right issues -> return . V.toList $ toSimpleIssue <$> issues
       Left error -> do
         logError . show $ error
-        return . Left . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Get issues"
+        throwError . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Get issues"
   createIssue packageId questionUuid title content = do
     appConfig <- asks _appContextApplicationConfig
     let fToken = appConfig ^. feedback . token
@@ -44,15 +45,15 @@ instance Connector AppContextM where
             , newIssueBody = Just . T.pack $ content
             , newIssueAssignees = V.empty
             , newIssueMilestone = Nothing
-            , newIssueLabels = Just . V.fromList $ [(packToName packageId), (packToName . U.toString $ questionUuid)]
+            , newIssueLabels = Just . V.fromList $ [packToName packageId, packToName . U.toString $ questionUuid]
             }
     let request = GH.createIssueR (packToName fOwner) (packToName fRepo) newIssue
     eIssue <- liftIO $ GH.executeRequest (GA.OAuth . BS.pack $ fToken) request
     case eIssue of
-      Right issue -> return . Right . GD.unIssueNumber . GI.issueNumber $ issue
+      Right issue -> return . GD.unIssueNumber . GI.issueNumber $ issue
       Left error -> do
         logError . show $ error
-        return . Left . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Create issue"
+        throwError . GeneralServerError $ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED "GitHub" "Create issue"
 
 packToName :: String -> GN.Name a
-packToName str = GN.N . T.pack $ str
+packToName = GN.N . T.pack

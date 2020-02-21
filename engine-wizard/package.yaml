@@ -65,7 +65,10 @@ library:
   - random # OK
   - regex-compat
   - retry
-  - scotty
+  - servant
+  - servant-errors
+  - servant-multipart
+  - servant-server
   - text
   - text-replace
   - time
@@ -96,6 +99,9 @@ library:
     - FunctionalDependencies
     - TypeSynonymInstances
     - RankNTypes
+    - DataKinds
+    - TypeOperators
+    - TypeApplications
 
 executables:
   engine-wizard:
@@ -147,7 +153,9 @@ tests:
     - pwstore-fast
     - random
     - regex-compat
-    - scotty
+    - servant
+    - servant-server
+    - servant-errors
     - text
     - time
     - transformers
@@ -179,3 +187,6 @@ tests:
       - FunctionalDependencies
       - TypeSynonymInstances
       - FlexibleInstances
+      - DataKinds
+      - TypeOperators
+      - TypeApplications

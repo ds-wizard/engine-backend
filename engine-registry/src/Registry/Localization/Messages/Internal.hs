@@ -6,8 +6,6 @@ module Registry.Localization.Messages.Internal where
 -- Common
 _ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION = "Unable to get organization from token header"
 
-_ERROR_API_COMMON__UNABLE_TO_GET_TOKEN = "Unable to get token"
-
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------

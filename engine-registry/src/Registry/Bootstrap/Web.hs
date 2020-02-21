@@ -1,6 +1,7 @@
 module Registry.Bootstrap.Web
   ( runWebServer
-  , app
+  , runApp
+  , runMiddleware
   ) where
 
 import Control.Lens ((^.))
@@ -13,19 +14,18 @@ import Servant
 
 import LensesConfig
 import Registry.Api.Api
-import Registry.Api.Middleware.CORSMiddleware
-import Registry.Api.Middleware.ErrorMiddleware
 import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Model.Context.BaseContext
+import Shared.Api.Middleware.CORSMiddleware
+import Shared.Api.Middleware.OptionsMiddleware
+import Shared.Model.Config.Environment
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do
   let config = context ^. appConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
-  run
-    webPort
-    (errorMw @JSON @'[ "message", "status"] . errorMiddleware . corsMiddleware . loggingMiddleware env $ app context)
+  run webPort (runMiddleware env $ runApp context)
 
 -- --------------------------------
 -- PRIVATE
@@ -36,5 +36,8 @@ convert baseContext function = Handler . runStdoutLoggingT $ runReaderT (runBase
 appToServer :: BaseContext -> Server AppAPI
 appToServer baseContext = hoistServer appApi (convert baseContext) appServer
 
-app :: BaseContext -> Application
-app baseContext = serve appApi (appToServer baseContext)
+runApp :: BaseContext -> Application
+runApp baseContext = serve appApi (appToServer baseContext)
+
+runMiddleware :: Environment -> Application -> Application
+runMiddleware env = corsMiddleware . errorMw @JSON @'[ "message", "status"] . loggingMiddleware env . optionsMiddleware

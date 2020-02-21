@@ -1,51 +1,51 @@
 module Wizard.Specs.Service.Package.PackageValidationSpec where
 
-import Data.Maybe
 import Test.Hspec
 
 import Wizard.Service.Package.PackageValidation
+import Wizard.Specs.Common
 
-packageValidationSpec =
+packageValidationSpec appContext =
   describe "Package Validation" $ do
     it "validatePackageIdFormat" $ do
-      isNothing (validatePackageIdFormat "org.nl:core-nl:0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat "") `shouldBe` True
-      isJust (validatePackageIdFormat "0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat ":0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat "core-nl:0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat ":core-nl:0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat "org.nl::0.0.0") `shouldBe` True
-      isJust (validatePackageIdFormat "org.nl:core-nl:") `shouldBe` True
-      isJust (validatePackageIdFormat "org.nl:core-nl:1") `shouldBe` True
+      shouldSucceed appContext (validatePackageIdFormat "org.nl:core-nl:0.0.0")
+      shouldFailed appContext (validatePackageIdFormat "")
+      shouldFailed appContext (validatePackageIdFormat "0.0.0")
+      shouldFailed appContext (validatePackageIdFormat ":0.0.0")
+      shouldFailed appContext (validatePackageIdFormat "core-nl:0.0.0")
+      shouldFailed appContext (validatePackageIdFormat ":core-nl:0.0.0")
+      shouldFailed appContext (validatePackageIdFormat "org.nl::0.0.0")
+      shouldFailed appContext (validatePackageIdFormat "org.nl:core-nl:")
+      shouldFailed appContext (validatePackageIdFormat "org.nl:core-nl:1")
     it "validateVersionFormat" $ do
-      isNothing (validateVersionFormat "0.0.0") `shouldBe` True
-      isNothing (validateVersionFormat "1.2.0") `shouldBe` True
-      isNothing (validateVersionFormat "10.10.10") `shouldBe` True
-      isNothing (validateVersionFormat "100.100.100") `shouldBe` True
-      isJust (validateVersionFormat "1") `shouldBe` True
-      isJust (validateVersionFormat "1.") `shouldBe` True
-      isJust (validateVersionFormat "1.2") `shouldBe` True
-      isJust (validateVersionFormat "1.2.") `shouldBe` True
-      isJust (validateVersionFormat "1.2.a") `shouldBe` True
-      isJust (validateVersionFormat "1.2.3.4") `shouldBe` True
-      isJust (validateVersionFormat "a.2.3.4") `shouldBe` True
-      isJust (validateVersionFormat "a2.3.4") `shouldBe` True
-      isJust (validateVersionFormat "a.3.4") `shouldBe` True
+      shouldSucceed appContext (validateVersionFormat "0.0.0")
+      shouldSucceed appContext (validateVersionFormat "1.2.0")
+      shouldSucceed appContext (validateVersionFormat "10.10.10")
+      shouldSucceed appContext (validateVersionFormat "100.100.100")
+      shouldFailed appContext (validateVersionFormat "1")
+      shouldFailed appContext (validateVersionFormat "1.")
+      shouldFailed appContext (validateVersionFormat "1.2")
+      shouldFailed appContext (validateVersionFormat "1.2.")
+      shouldFailed appContext (validateVersionFormat "1.2.a")
+      shouldFailed appContext (validateVersionFormat "1.2.3.4")
+      shouldFailed appContext (validateVersionFormat "a.2.3.4")
+      shouldFailed appContext (validateVersionFormat "a2.3.4")
+      shouldFailed appContext (validateVersionFormat "a.3.4")
     it "validateIsVersionHigher" $ do
-      isNothing (validateIsVersionHigher "0.0.1" "0.0.0") `shouldBe` True
-      isNothing (validateIsVersionHigher "0.1.0" "0.0.0") `shouldBe` True
-      isNothing (validateIsVersionHigher "0.1.1" "0.0.0") `shouldBe` True
-      isNothing (validateIsVersionHigher "1.0.0" "0.0.0") `shouldBe` True
-      isNothing (validateIsVersionHigher "1.2.4" "1.2.3") `shouldBe` True
-      isJust (validateIsVersionHigher "0.0.0" "0.0.0") `shouldBe` True
-      isJust (validateIsVersionHigher "1.0.0" "1.0.0") `shouldBe` True
-      isJust (validateIsVersionHigher "0.1.0" "1.0.0") `shouldBe` True
-      isJust (validateIsVersionHigher "0.0.1" "1.0.0") `shouldBe` True
+      shouldSucceed appContext (validateIsVersionHigher "0.0.1" "0.0.0")
+      shouldSucceed appContext (validateIsVersionHigher "0.1.0" "0.0.0")
+      shouldSucceed appContext (validateIsVersionHigher "0.1.1" "0.0.0")
+      shouldSucceed appContext (validateIsVersionHigher "1.0.0" "0.0.0")
+      shouldSucceed appContext (validateIsVersionHigher "1.2.4" "1.2.3")
+      shouldFailed appContext (validateIsVersionHigher "0.0.0" "0.0.0")
+      shouldFailed appContext (validateIsVersionHigher "1.0.0" "1.0.0")
+      shouldFailed appContext (validateIsVersionHigher "0.1.0" "1.0.0")
+      shouldFailed appContext (validateIsVersionHigher "0.0.1" "1.0.0")
     it "validatePackageIdWithCoordinates" $ do
-      isNothing (validatePackageIdWithCoordinates "com:global:1.0.0" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates "" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates ":global:1.0.0" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates "com::1.0.0" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates "com:global:" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates "com:global:1.1.0" "com" "global" "1.0.0") `shouldBe` True
-      isJust (validatePackageIdWithCoordinates "com:global-2:1.1.0" "com" "global" "1.0.0") `shouldBe` True
+      shouldSucceed appContext (validatePackageIdWithCoordinates "com:global:1.0.0" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates "" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates ":global:1.0.0" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates "com::1.0.0" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates "com:global:" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates "com:global:1.1.0" "com" "global" "1.0.0")
+      shouldFailed appContext (validatePackageIdWithCoordinates "com:global-2:1.1.0" "com" "global" "1.0.0")

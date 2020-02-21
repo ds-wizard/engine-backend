@@ -7,11 +7,12 @@ import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Package.PackageService
+import Shared.Api.Handler.Common
 
 type Detail_GET
    = "packages"
      :> Capture "pkgId" String
-     :> Get '[ JSON] (Headers '[ Header "x-trace-uuid" String] PackageDetailDTO)
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] PackageDetailDTO)
 
 detail_GET :: String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageDetailDTO)
 detail_GET pkgId = runInUnauthService $ addTraceUuidHeader =<< getPackageById pkgId

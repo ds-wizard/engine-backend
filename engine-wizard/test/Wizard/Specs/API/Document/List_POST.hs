@@ -96,13 +96,19 @@ test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.js
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "DMP_PERM"
+  createNoPermissionTest
+    (appContext ^. applicationConfig)
+    reqMethod
+    reqUrl
+    [reqCtHeader]
+    (encode $ reqDtoT doc1)
+    "DMP_PERM"
   it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
      -- GIVEN: Prepare request
    do

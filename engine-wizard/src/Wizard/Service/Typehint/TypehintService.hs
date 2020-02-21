@@ -1,6 +1,7 @@
 module Wizard.Service.Typehint.TypehintService where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import Data.Map.Strict as M
 import Network.URI.Encode (encode)
 
@@ -18,24 +19,24 @@ import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
 
-getTypehints :: TypehintRequestDTO -> AppContextM (Either AppError [TypehintDTO])
-getTypehints reqDto =
-  heCompileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) [] $ \km ->
-    heGetQuestion km (reqDto ^. questionUuid) $ \question ->
-      heGetIntegration km (question ^. integrationUuid) $ \integration ->
-        heGetIntegrationConfig (integration ^. iId) $ \fileConfig -> do
-          let kmQuestionConfig = question ^. props
-          let userRequest = (M.singleton "q" (encode $ reqDto ^. q))
-          let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
-          iDtos <- retrieveTypehints integration variables
-          return $ fmap (fmap (toDTO (integration ^. itemUrl))) iDtos
+getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
+getTypehints reqDto = do
+  km <- compileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) []
+  question <- getQuestion km (reqDto ^. questionUuid)
+  integration <- getIntegration km (question ^. integrationUuid)
+  fileConfig <- getIntegrationConfig (integration ^. iId)
+  let kmQuestionConfig = question ^. props
+  let userRequest = M.singleton "q" (encode $ reqDto ^. q)
+  let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
+  iDtos <- retrieveTypehints integration variables
+  return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
   where
-    heGetQuestion km questionUuid callback =
+    getQuestion km questionUuid =
       case M.lookup questionUuid (km ^. questionsM) of
-        Just (IntegrationQuestion' question) -> callback question
-        Just _ -> return . Left . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION
-        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__QUESTION_ABSENCE
-    heGetIntegration km integrationUuid callback =
+        Just (IntegrationQuestion' question) -> return question
+        Just _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION
+        Nothing -> throwError . UserError $ _ERROR_VALIDATION__QUESTION_ABSENCE
+    getIntegration km integrationUuid =
       case M.lookup integrationUuid (km ^. integrationsM) of
-        Just integration -> callback integration
-        Nothing -> return . Left . UserError $ _ERROR_VALIDATION__INTEGRATION_ABSENCE
+        Just integration -> return integration
+        Nothing -> throwError . UserError $ _ERROR_VALIDATION__INTEGRATION_ABSENCE

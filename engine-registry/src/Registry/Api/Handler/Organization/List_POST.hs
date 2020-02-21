@@ -9,11 +9,12 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Organization.OrganizationService
+import Shared.Api.Handler.Common
 
 type List_POST
-   = ReqBody '[ JSON] OrganizationCreateDTO
+   = ReqBody '[ SafeJSON] OrganizationCreateDTO
      :> "organizations"
-     :> Verb 'POST 201 '[ JSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+     :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 
 list_POST :: OrganizationCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 list_POST reqDto = runInUnauthService $ addTraceUuidHeader =<< createOrganization reqDto

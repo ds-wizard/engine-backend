@@ -10,8 +10,9 @@ import Registry.Api.Resource.Info.InfoDTO
 import Registry.Api.Resource.Info.InfoJM ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
+import Shared.Api.Handler.Common
 
-type List_GET = Get '[ JSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
+type List_GET = Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 
 list_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 list_GET =

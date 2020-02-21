@@ -1,41 +1,43 @@
 module Wizard.Bootstrap.Web
   ( runWebServer
+  , runApp
+  , runMiddleware
   ) where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
-import Data.Default (def)
-import Network.Wai.Handler.Warp (Settings, defaultSettings, setPort)
-import Web.Scotty.Trans (Options, scottyOptsT, settings, verbose)
+import Network.Wai (Application)
+import Network.Wai.Handler.Warp (run)
+import Network.Wai.Middleware.Servant.Errors (errorMw)
+import Servant
 
 import LensesConfig
+import Shared.Api.Middleware.CORSMiddleware
+import Shared.Api.Middleware.OptionsMiddleware
 import Shared.Model.Config.Environment
-import Wizard.Api.Router
+import Wizard.Api.Api
+import Wizard.Api.Middleware.LoggingMiddleware
 import Wizard.Model.Context.BaseContext
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do
-  let o = getOptions context
-  let r m = runStdoutLoggingT $ runReaderT (runBaseContextM m) context
-  scottyOptsT o r (createEndpoints context)
+  let config = context ^. appConfig
+  let webPort = config ^. general . serverPort
+  let env = config ^. general . environment
+  run webPort (runMiddleware env $ runApp context)
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getOptions :: BaseContext -> Options
-getOptions context =
-  def
-    { settings = getSettings context
-    , verbose =
-        case context ^. appConfig . general . environment of
-          Production -> 0
-          Staging -> 1
-          Development -> 1
-          Test -> 0
-    }
+convert :: BaseContext -> BaseContextM a -> Handler a
+convert baseContext function = Handler . runStdoutLoggingT $ runReaderT (runBaseContextM function) baseContext
 
-getSettings :: BaseContext -> Settings
-getSettings context =
-  let webPort = context ^. appConfig . general . serverPort
-   in setPort webPort defaultSettings
+appToServer :: BaseContext -> Server AppAPI
+appToServer baseContext = hoistServer appApi (convert baseContext) appServer
+
+runApp :: BaseContext -> Application
+runApp baseContext = serve appApi (appToServer baseContext)
+
+runMiddleware :: Environment -> Application -> Application
+runMiddleware env = corsMiddleware . errorMw @JSON @'[ "message", "status"] . loggingMiddleware env . optionsMiddleware

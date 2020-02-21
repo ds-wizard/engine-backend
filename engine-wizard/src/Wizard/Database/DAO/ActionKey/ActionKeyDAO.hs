@@ -2,7 +2,6 @@ module Wizard.Database.DAO.ActionKey.ActionKeyDAO where
 
 import Data.Bson
 
-import Shared.Model.Error.Error
 import Wizard.Database.BSON.ActionKey.ActionKey ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.ActionKey.ActionKey
@@ -12,13 +11,13 @@ entityName = "actionKey"
 
 collection = "actionKeys"
 
-findActionKeys :: AppContextM (Either AppError [ActionKey])
+findActionKeys :: AppContextM [ActionKey]
 findActionKeys = createFindEntitiesFn collection
 
-findActionKeyById :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyById :: String -> AppContextM ActionKey
 findActionKeyById = createFindEntityByFn collection entityName "uuid"
 
-findActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyByHash :: String -> AppContextM ActionKey
 findActionKeyByHash = createFindEntityByFn collection entityName "hash"
 
 insertActionKey :: ActionKey -> AppContextM Value

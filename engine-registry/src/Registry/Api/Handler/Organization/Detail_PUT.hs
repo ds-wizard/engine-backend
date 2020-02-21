@@ -9,13 +9,14 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Organization.OrganizationService
+import Shared.Api.Handler.Common
 
 type Detail_PUT
    = Header "Authorization" String
-     :> ReqBody '[ JSON] OrganizationChangeDTO
+     :> ReqBody '[ SafeJSON] OrganizationChangeDTO
      :> "organizations"
      :> Capture "orgId" String
-     :> Put '[ JSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 
 detail_PUT ::
      Maybe String

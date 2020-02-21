@@ -7,11 +7,12 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Organization.OrganizationService
+import Shared.Api.Handler.Common
 
 type List_GET
    = Header "Authorization" String
      :> "organizations"
-     :> Get '[ JSON] (Headers '[ Header "x-trace-uuid" String] [OrganizationDTO])
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [OrganizationDTO])
 
 list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [OrganizationDTO])
 list_GET mTokenHeader =
