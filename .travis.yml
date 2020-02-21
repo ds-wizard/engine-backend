@@ -36,7 +36,7 @@ before_script:
   - docker login -u "$PUBLIC_DOCKER_USER" -p "$PUBLIC_DOCKER_PASSWORD"
   - docker login -u "$PRIVATE_DOCKER_USER" -p "$PRIVATE_DOCKER_PASSWORD" "$PRIVATE_DOCKER_REGISTRY"
 
-  - export PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/engine/$COMPONENT-server"
+  - export PRIVATE_IMAGE="$PRIVATE_DOCKER_REGISTRY/$COMPONENT-server"
   - export IMAGE="datastewardshipwizard/$COMPONENT-server"
   - export IMAGE_TAG="$PRIVATE_IMAGE:$TRAVIS_COMMIT"
   - export IMAGE_TAG_BRANCH="$PRIVATE_IMAGE:"`echo $TRAVIS_BRANCH | sed 's#/#-#g'`
