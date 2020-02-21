@@ -6,10 +6,9 @@ import LensesConfig
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
 
-heValidateNewPackageVersion pkgVersion branch org callback =
-  heValidateVersionFormat pkgVersion $ do
-    eitherMaybePackage <- getTheNewestPackageByOrganizationIdAndKmId (org ^. organizationId) (branch ^. kmId)
-    case eitherMaybePackage of
-      Right (Just pkg) -> heValidateIsVersionHigher pkgVersion (pkg ^. version) callback
-      Right Nothing -> callback
-      Left error -> return . Left $ error
+validateNewPackageVersion pkgVersion branch org = do
+  validateVersionFormat pkgVersion
+  mPkg <- getTheNewestPackageByOrganizationIdAndKmId (org ^. organizationId) (branch ^. kmId)
+  case mPkg of
+    Just pkg -> validateIsVersionHigher pkgVersion (pkg ^. version)
+    Nothing -> return ()

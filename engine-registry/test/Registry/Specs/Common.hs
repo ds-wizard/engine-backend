@@ -14,8 +14,7 @@ filterJustError _ LevelError = True
 filterJustError _ _ = False
 
 runInContext action appContext =
-  runExceptT . runStdoutLoggingT . (filterLogger filterJustError) $ runReaderT (runAppContextM action) appContext
+  runExceptT . runStdoutLoggingT . filterLogger filterJustError $ runReaderT (runAppContextM action) appContext
 
 runInContextIO action appContext =
-  liftIO . runExceptT $
-  runStdoutLoggingT . (filterLogger filterJustError) $ runReaderT (runAppContextM action) appContext
+  liftIO . runExceptT $ runStdoutLoggingT . filterLogger filterJustError $ runReaderT (runAppContextM action) appContext

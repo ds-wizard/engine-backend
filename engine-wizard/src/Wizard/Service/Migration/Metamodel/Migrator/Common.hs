@@ -26,7 +26,7 @@ migrateEventsField :: String -> Value -> Either AppError Value
 migrateEventsField eventsFieldName value =
   convertValueToOject value $ \object ->
     getField "metamodelVersion" object $ \oldMetamodelVersion ->
-      getArrayField eventsFieldName object $ \events -> do
-        case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> (Vector.toList events) of
+      getArrayField eventsFieldName object $ \events ->
+        case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> Vector.toList events of
           Right updatedEvents -> Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON updatedEvents) object
           Left error -> Left . GeneralServerError $ error

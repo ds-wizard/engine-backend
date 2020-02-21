@@ -8,6 +8,7 @@ import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Package.PackageService
+import Shared.Api.Handler.Common
 import Shared.Constant.Api
 
 type List_GET
@@ -18,7 +19,7 @@ type List_GET
      :> "packages"
      :> QueryParam "organizationId" String
      :> QueryParam "kmId" String
-     :> Get '[ JSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 
 list_GET ::
      Maybe String

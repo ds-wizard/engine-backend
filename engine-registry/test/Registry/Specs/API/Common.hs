@@ -10,9 +10,7 @@ import Data.Foldable
 import qualified Data.List as L
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Network.Wai.Test hiding (request)
-import Servant (JSON)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
@@ -29,9 +27,6 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 
-import Registry.Api.Middleware.CORSMiddleware
-import Registry.Api.Middleware.ErrorMiddleware
-import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Specs.Common
 import SharedTest.Specs.Common
 
@@ -47,8 +42,7 @@ startWebApp appContext = do
   let config = appContext ^. applicationConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
-  return $ errorMw @JSON @'[ "message", "status"] . errorMiddleware . corsMiddleware . loggingMiddleware env $
-    app baseContext
+  return $ runMiddleware env $ runApp baseContext
 
 reqAdminAuthHeader :: Header
 reqAdminAuthHeader = ("Authorization", "Bearer GlobalToken")
@@ -129,7 +123,6 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           [HJ.json|
     {
       status: 401,
-      error: "Unauthorized",
       message: "Unable to get token"
     }
     |]

@@ -4,7 +4,6 @@ import Control.Monad.Except (runExceptT)
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson (encode)
-import qualified Data.Text as T
 import qualified Data.UUID as U
 import Servant
   ( Header
@@ -33,6 +32,7 @@ import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api (contentTypeHeaderJSON)
 import Shared.Localization.Locale
+import Shared.Localization.Messages.Internal
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Shared.Util.Uuid
@@ -109,9 +109,9 @@ getCurrentOrganization tokenHeader = do
 
 getCurrentOrgToken :: String -> BaseContextM String
 getCurrentOrgToken tokenHeader = do
-  let orgTokenMaybe = separateToken . T.pack $ tokenHeader
+  let orgTokenMaybe = separateToken tokenHeader
   case orgTokenMaybe of
-    Just orgToken -> return (T.unpack orgToken)
+    Just orgToken -> return orgToken
     Nothing -> do
       dto <- sendErrorDTO $ UnauthorizedErrorDTO _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
       throwError dto

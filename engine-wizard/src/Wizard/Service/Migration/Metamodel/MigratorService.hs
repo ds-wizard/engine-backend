@@ -1,17 +1,15 @@
 module Wizard.Service.Migration.Metamodel.MigratorService
   ( migratePackageBundle
   , migrateCompleteDatabase
-  -- Helpers
-  , heMigratePackageBundle
   ) where
 
+import Control.Monad.Except (throwError)
 import Data.Aeson
 import Data.Bson.Generic
 import qualified Data.Text as T
 import Database.MongoDB ((=:), delete, find, findOne, insert, insertMany, rest, select)
 
 import Shared.Constant.KnowledgeModel
-import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchWithEventsJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM ()
 import Wizard.Api.Resource.Package.PackageJM ()
@@ -33,8 +31,12 @@ import Wizard.Util.BSONtoJSON (mapBSONDocumentToJSONObject)
 import Wizard.Util.List (foldEither)
 import Wizard.Util.Logger (logError, logInfo, msg)
 
-migratePackageBundle :: Value -> AppContextM (Either AppError Value)
-migratePackageBundle = return . PBMigrator.migrate
+migratePackageBundle :: Value -> AppContextM Value
+migratePackageBundle value =
+  let eResult = PBMigrator.migrate value
+   in case eResult of
+        Right result -> return result
+        Left error -> throwError error
 
 migrateCompleteDatabase :: AppContextM ()
 migrateCompleteDatabase = do
@@ -121,15 +123,6 @@ migrateOutdatedModels collection dtoMapper migrateFn = do
       let documents = toBSON <$> (dtoMapper <$> objects)
       logMigrationConvertedToBson collection
       return documents
-
--- ---------------------------
--- HELPERS
--- ---------------------------
-heMigratePackageBundle encodedPb callback = do
-  eitherResult <- migratePackageBundle encodedPb
-  case eitherResult of
-    Right result -> callback result
-    Left error -> return . Left $ error
 
 -- --------------------------------
 -- LOGGER

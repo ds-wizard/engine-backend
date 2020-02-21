@@ -5,8 +5,6 @@ import Data.Bson
 import Database.MongoDB ((=:))
 
 import LensesConfig
-import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Wizard.Database.BSON.Branch.Branch ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.DAO.Common
@@ -17,23 +15,26 @@ entityName = "branch"
 
 collection = "branches"
 
-findBranches :: AppContextM (Either AppError [Branch])
+findBranches :: AppContextM [Branch]
 findBranches = createFindEntitiesFn collection
 
-findBranchesByPreviousPackageId :: String -> AppContextM (Either AppError [Branch])
+findBranchesByPreviousPackageId :: String -> AppContextM [Branch]
 findBranchesByPreviousPackageId previousPackageId =
   createFindEntitiesByFn collection ["previousPackageId" =: previousPackageId]
 
-findBranchesWithEvents :: AppContextM (Either AppError [BranchWithEvents])
+findBranchesWithEvents :: AppContextM [BranchWithEvents]
 findBranchesWithEvents = createFindEntitiesFn collection
 
-findBranchById :: String -> AppContextM (Either AppError Branch)
+findBranchById :: String -> AppContextM Branch
 findBranchById = createFindEntityByFn collection entityName "uuid"
 
-findBranchByKmId :: String -> AppContextM (Either AppError Branch)
+findBranchByKmId :: String -> AppContextM Branch
 findBranchByKmId = createFindEntityByFn collection entityName "kmId"
 
-findBranchWithEventsById :: String -> AppContextM (Either AppError BranchWithEvents)
+findBranchByKmId' :: String -> AppContextM (Maybe Branch)
+findBranchByKmId' = createFindEntityByFn' collection entityName "kmId"
+
+findBranchWithEventsById :: String -> AppContextM BranchWithEvents
 findBranchWithEventsById = createFindEntityByFn collection entityName "uuid"
 
 insertBranch :: BranchWithEvents -> AppContextM Value
@@ -50,27 +51,10 @@ updateBranchWithMigrationInfo branchUuid forkOfPackageId mergeCheckpointPackageI
     ["forkOfPackageId" =: forkOfPackageId, "mergeCheckpointPackageId" =: mergeCheckpointPackageId]
 
 updateBranchWithPreviousPackageId :: String -> String -> AppContextM ()
-updateBranchWithPreviousPackageId branchUuid previousPackageId =
-  createPartialUpdateByFn' collection "uuid" branchUuid "previousPackageId" previousPackageId
+updateBranchWithPreviousPackageId branchUuid = createPartialUpdateByFn' collection "uuid" branchUuid "previousPackageId"
 
 deleteBranches :: AppContextM ()
 deleteBranches = createDeleteEntitiesFn collection
 
 deleteBranchById :: String -> AppContextM ()
 deleteBranchById = createDeleteEntityByFn collection "uuid"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heFindBranches callback = createHeeHelper findBranches callback
-
--- -----------------------------------------------------
-heFindBranchesWithEvents callback = createHeeHelper findBranchesWithEvents callback
-
--- -----------------------------------------------------
-heFindBranchById branchUuid callback = createHeeHelper (findBranchById branchUuid) callback
-
-hmFindBranchById branchUuid callback = createHemHelper (findBranchById branchUuid) callback
-
--- -----------------------------------------------------
-heFindBranchWithEventsById branchUuid callback = createHeeHelper (findBranchWithEventsById branchUuid) callback

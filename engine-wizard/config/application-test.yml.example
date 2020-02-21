@@ -2,7 +2,7 @@ general:
   environment: Test
   serverPort: 3000
   clientUrl: http://localhost:3001
-  serviceToken: my-token
+  serviceToken: reqServiceHeader
   integrationConfig: config/integration-test.yml
   templateFolder: templates
   registrationEnabled: true

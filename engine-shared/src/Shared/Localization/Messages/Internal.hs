@@ -1,6 +1,11 @@
 module Shared.Localization.Messages.Internal where
 
 -- --------------------------------------
+-- API
+-- --------------------------------------
+_ERROR_API_COMMON__UNABLE_TO_GET_TOKEN = "Unable to get token"
+
+-- --------------------------------------
 -- DATABASE
 -- --------------------------------------
 _ERROR_DATABASE__DESERIALIZATION_FAILED = "Problem with deserialization of entity from database"

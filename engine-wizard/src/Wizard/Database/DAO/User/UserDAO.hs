@@ -6,8 +6,6 @@ import Data.Time
 import Database.MongoDB ((=:), modify, select)
 
 import LensesConfig
-import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper, createHemHelper)
 import Wizard.Database.BSON.User.User ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
@@ -17,16 +15,19 @@ entityName = "user"
 
 collection = "users"
 
-findUsers :: AppContextM (Either AppError [User])
+findUsers :: AppContextM [User]
 findUsers = createFindEntitiesFn collection
 
-findUserById :: String -> AppContextM (Either AppError User)
+findUserById :: String -> AppContextM User
 findUserById = createFindEntityByFn collection entityName "uuid"
 
-findUserByEmail :: Email -> AppContextM (Either AppError User)
+findUserByEmail :: Email -> AppContextM User
 findUserByEmail = createFindEntityByFn collection entityName "email"
 
-countUsers :: AppContextM (Either AppError Int)
+findUserByEmail' :: Email -> AppContextM (Maybe User)
+findUserByEmail' = createFindEntityByFn' collection entityName "email"
+
+countUsers :: AppContextM Int
 countUsers = createCountFn collection
 
 insertUser :: User -> AppContextM Value
@@ -48,19 +49,3 @@ deleteUsers = createDeleteEntitiesFn collection
 
 deleteUserById :: String -> AppContextM ()
 deleteUserById = createDeleteEntityByFn collection "uuid"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heFindUsers callback = createHeeHelper findUsers callback
-
--- -----------------------------------------------------
-heFindUserById userUuid callback = createHeeHelper (findUserById userUuid) callback
-
-hmFindUserById userUuid callback = createHemHelper (findUserById userUuid) callback
-
--- -----------------------------------------------------
-hmFindUserByEmail userEmail callback = createHemHelper (findUserByEmail userEmail) callback
-
--- -----------------------------------------------------
-heCountUsers callback = createHeeHelper countUsers callback

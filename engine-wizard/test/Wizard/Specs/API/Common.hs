@@ -1,17 +1,13 @@
 module Wizard.Specs.API.Common where
 
-import Control.Lens ((^.))
-import Control.Monad.Logger (runStdoutLoggingT)
-import Control.Monad.Reader (runReaderT)
-import Data.Aeson (encode)
-import Data.Aeson (eitherDecode)
-import Data.ByteString.Char8 as BS
+import Control.Lens ((&), (.~), (^.))
+import Data.Aeson (eitherDecode, encode)
+import qualified Data.ByteString.Char8 as BS
 import Data.Either (isRight)
 import Data.Foldable
 import qualified Data.List as L
 import Data.Maybe
 import Data.Time
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Network.Wai.Test hiding (request)
@@ -19,12 +15,15 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
-import Web.Scotty.Trans (scottyAppT)
 
 import LensesConfig
+import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Constant.Api
 import Shared.Localization.Messages.Public
-import Wizard.Api.Router
+import Wizard.Bootstrap.Web
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -47,8 +46,10 @@ startWebApp appContext = do
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
           }
-      t m = runStdoutLoggingT $ runReaderT (runBaseContextM m) baseContext
-  scottyAppT t (createEndpoints baseContext)
+  let config = appContext ^. applicationConfig
+  let webPort = config ^. general . serverPort
+  let env = config ^. general . environment
+  return $ runMiddleware env $ runApp baseContext
 
 reqAuthHeader :: Header
 reqAuthHeader =
@@ -63,33 +64,24 @@ reqNonAdminAuthHeader =
 reqAuthHeaderWithoutPerms :: AppConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms appConfig perm =
   let allPerms = getPermissionForRole appConfig "ADMIN"
-      user =
-        User
-          { _userUuid = fromJust . U.fromString $ "76a60891-f00e-456f-88c5-ee9c705fee6d"
-          , _userName = "Isaac"
-          , _userSurname = "Doe"
-          , _userEmail = "john.doe@example.com"
-          , _userPasswordHash = "sha256|17|DQE8FVBnLhQOFBoamcfO4Q==|vxeEl9qYMTDuKkymrH3eIIYVpQMAKnyY9324kp++QKo="
-          , _userRole = "ADMIN"
-          , _userPermissions = L.delete perm allPerms
-          , _userActive = True
-          , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-          , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-          }
+      user = userAlbert & permissions .~ (L.delete perm allPerms)
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token =
         createToken user now (appConfig ^. jwt ^. secret) (appConfig ^. jwt ^. version) (appConfig ^. jwt ^. expiration)
    in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
+reqServiceHeader :: Header
+reqServiceHeader = ("Authorization", "Bearer my-service-token")
+
 reqCtHeader :: Header
-reqCtHeader = ("Content-Type", "application/json; charset=utf-8")
+reqCtHeader = contentTypeHeaderJSON
 
 resCtHeaderPlain :: Header
-resCtHeaderPlain = ("Content-Type", "application/json; charset=utf-8")
+resCtHeaderPlain = contentTypeHeaderJSON
 
-resCtHeader = "Content-Type" <:> "application/json; charset=utf-8"
+resCtHeader = "Content-Type" <:> "application/json;charset=utf-8"
 
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript; charset=utf-8"
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript;charset=utf-8"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =
@@ -147,7 +139,6 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           [HJ.json|
     {
       status: 401,
-      error: "Unauthorized",
       message: "Unable to get token"
     }
     |]
@@ -167,13 +158,8 @@ createNoPermissionTest appConfig reqMethod reqUrl otherHeaders reqBody missingPe
     let authHeader = reqAuthHeaderWithoutPerms appConfig missingPerm
     let reqHeaders = [authHeader] ++ otherHeaders
     -- GIVEN: Prepare expectation
-    let expBody =
-          [HJ.json|
-    {
-      status: 403,
-      error: "Forbidden"
-    }
-    |]
+    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
+    let expBody = encode expDto
     let expHeaders = [resCtHeader] ++ resCorsHeaders
     let expStatus = 403
     -- WHEN: Call API

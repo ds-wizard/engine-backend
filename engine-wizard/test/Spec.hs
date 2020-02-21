@@ -119,7 +119,6 @@ main =
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Organization" organizationValidationSpec
-             describe "Package" packageValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec
@@ -149,5 +148,6 @@ main =
              branchServiceIntegrationSpec appContext
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
+             packageValidationSpec appContext
              publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)

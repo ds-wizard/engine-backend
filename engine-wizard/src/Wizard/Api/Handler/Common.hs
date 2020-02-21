@@ -1,62 +1,55 @@
 module Wizard.Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger (MonadLogger, runStdoutLoggingT)
-import Control.Monad.Reader (asks, lift, liftIO, runReaderT)
-import Data.Aeson ((.=), eitherDecode, encode, object)
-import qualified Data.ByteString.Lazy as BSL
-import Data.Maybe
-import qualified Data.Text as T
-import qualified Data.Text.Lazy as LT
+import Control.Monad (unless)
+import Control.Monad.Except (catchError, runExceptT, throwError)
+import Control.Monad.Logger (runStdoutLoggingT)
+import Control.Monad.Reader (asks, liftIO, runReaderT)
+import Data.Aeson
 import qualified Data.UUID as U
-import Network.HTTP.Types (hContentType, notFound404)
-import Network.HTTP.Types.Method (methodOptions)
-import Network.HTTP.Types.Status (badRequest400, forbidden403, internalServerError500, ok200, unauthorized401)
-import Network.Wai
-import Web.Scotty.Trans
-  ( ActionT
-  , ScottyError
+import Servant
+  ( Header
+  , Headers
+  , ServantErr(..)
   , addHeader
-  , body
-  , header
-  , json
-  , liftAndCatchIO
-  , params
-  , raw
-  , request
-  , showError
-  , status
+  , err400
+  , err401
+  , err401
+  , err403
+  , err404
+  , err500
+  , errBody
+  , errHeaders
   )
 
-import LensesConfig hiding (requestMethod)
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
+import Shared.Constant.Api (contentTypeHeaderJSON)
 import Shared.Localization.Locale
+import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Shared.Util.Uuid
-import Wizard.Constant.Component
-import Wizard.Localization.Messages.Internal
+import Wizard.Api.Resource.Package.PackageSimpleJM ()
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
-import Wizard.Util.Logger
+import Wizard.Util.Logger (logError)
 
-type Endpoint = ActionT LT.Text BaseContextM ()
-
+runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService function = do
   traceUuid <- liftIO generateUuid
-  addHeader (LT.pack xTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
-  appConfig <- lift $ asks _baseContextAppConfig
-  localization <- lift $ asks _baseContextLocalization
-  buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
-  dbPool <- lift $ asks _baseContextPool
-  msgChannel <- lift $ asks _baseContextMsgChannel
-  httpClientManager <- lift $ asks _baseContextHttpClientManager
+  appConfig <- asks _baseContextAppConfig
+  localization <- asks _baseContextLocalization
+  buildInfoConfig <- asks _baseContextBuildInfoConfig
+  dbPool <- asks _baseContextPool
+  msgChannel <- asks _baseContextMsgChannel
+  httpClientManager <- asks _baseContextHttpClientManager
   let appContext =
         AppContext
           { _appContextApplicationConfig = appConfig
@@ -68,17 +61,22 @@ runInUnauthService function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Nothing
           }
-  liftAndCatchIO $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  case eResult of
+    Right result -> return result
+    Left error -> do
+      dto <- sendError error
+      throwError dto
 
+runInAuthService :: UserDTO -> AppContextM a -> BaseContextM a
 runInAuthService user function = do
   traceUuid <- liftIO generateUuid
-  addHeader (LT.pack xTraceUuidHeaderName) (LT.pack . U.toString $ traceUuid)
-  appConfig <- lift $ asks _baseContextAppConfig
-  localization <- lift $ asks _baseContextLocalization
-  buildInfoConfig <- lift $ asks _baseContextBuildInfoConfig
-  dbPool <- lift $ asks _baseContextPool
-  msgChannel <- lift $ asks _baseContextMsgChannel
-  httpClientManager <- lift $ asks _baseContextHttpClientManager
+  appConfig <- asks _baseContextAppConfig
+  localization <- asks _baseContextLocalization
+  buildInfoConfig <- asks _baseContextBuildInfoConfig
+  dbPool <- asks _baseContextPool
+  msgChannel <- asks _baseContextMsgChannel
+  httpClientManager <- asks _baseContextHttpClientManager
   let appContext =
         AppContext
           { _appContextApplicationConfig = appConfig
@@ -90,156 +88,114 @@ runInAuthService user function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Just user
           }
-  liftAndCatchIO $ runStdoutLoggingT $ runReaderT (runAppContextM $ function) appContext
-
-getAuthServiceExecutor callback = getCurrentUser $ \user -> callback $ runInAuthService user
-
-getReqDto callback = do
-  reqBody <- body
-  let eitherReqDto = eitherDecode reqBody
-  case eitherReqDto of
-    Right reqDto -> callback reqDto
+  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  case eResult of
+    Right result -> return result
     Left error -> do
-      lift . logWarn $ msg _CMP_API (show error)
-      sendError $ UserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
+      dto <- sendError error
+      throwError dto
 
-getCurrentUserUuid callback = do
-  tokenHeader <- header (LT.pack authorizationHeaderName)
-  let userUuidMaybe =
-        tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getUserUuidFromToken :: Maybe T.Text
-  case userUuidMaybe of
-    Just userUuid -> callback (T.unpack userUuid)
-    Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN
+getMaybeAuthServiceExecutor :: Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getMaybeAuthServiceExecutor (Just tokenHeader) callback = do
+  user <- getCurrentUser tokenHeader
+  callback (runInAuthService user)
+getMaybeAuthServiceExecutor Nothing callback = callback runInUnauthService
 
-getCurrentUser callback =
-  getCurrentUserUuid $ \userUuid -> do
-    eitherUser <- runInUnauthService $ getUserById userUuid
-    case eitherUser of
-      Right user -> callback user
-      Left error -> sendError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
+getAuthServiceExecutor :: Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getAuthServiceExecutor (Just token) callback = do
+  user <- getCurrentUser token
+  callback (runInAuthService user)
+getAuthServiceExecutor Nothing _ = do
+  dto <- sendErrorDTO $ UnauthorizedErrorDTO _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
+  throwError dto
 
-getQueryParam paramName = do
-  reqParams <- params
-  let mValue = lookup paramName reqParams
-  case mValue of
-    Just value -> return . Just . LT.toStrict $ value
-    Nothing -> return Nothing
-
-getListOfQueryParamsIfPresent :: [LT.Text] -> ActionT LT.Text BaseContextM [(T.Text, T.Text)]
-getListOfQueryParamsIfPresent = Prelude.foldr go (return [])
+getCurrentUser :: String -> BaseContextM UserDTO
+getCurrentUser tokenHeader = do
+  userUuid <- getCurrentUserUuid tokenHeader
+  runInUnauthService $ catchError (getUserById userUuid) (handleError userUuid)
   where
-    go name monadAcc = do
-      value <- extractQueryParam name
-      acc <- monadAcc
-      return $ maybeToList value ++ acc
-    extractQueryParam name = do
-      mValue <- getQueryParam name
-      case mValue of
-        Just value -> return $ Just (LT.toStrict name, value)
-        Nothing -> return Nothing
+    handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
+    handleError userUuid error = throwError error
 
-checkPermission perm callback = do
-  tokenHeader <- header (LT.pack authorizationHeaderName)
-  let mUserPerms = tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= getPermissionsFromToken
+getCurrentUserUuid :: String -> BaseContextM String
+getCurrentUserUuid tokenHeader = do
+  let userUuidMaybe = separateToken tokenHeader >>= getUserUuidFromToken
+  case userUuidMaybe of
+    Just userUuid -> return userUuid
+    Nothing -> do
+      dto <- sendErrorDTO $ UnauthorizedErrorDTO _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
+      throwError dto
+
+addTraceUuidHeader :: a -> AppContextM (Headers '[ Header "x-trace-uuid" String] a)
+addTraceUuidHeader result = do
+  traceUuid <- asks _appContextTraceUuid
+  return $ addHeader (U.toString traceUuid) result
+
+sendError :: AppError -> BaseContextM ServantErr
+sendError (ValidationError formErrorRecords fieldErrorRecords) = do
+  ls <- asks _baseContextLocalization
+  let formErrors = fmap (locale ls) formErrorRecords
+  let localeTuple (k, v) = (k, locale ls v)
+  let fieldErrors = fmap localeTuple fieldErrorRecords
+  return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
+sendError (UserError localeRecord) = do
+  ls <- asks _baseContextLocalization
+  let message = locale ls localeRecord
+  return $ err400 {errBody = encode $ UserErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendError (UnauthorizedError localeRecord) = do
+  ls <- asks _baseContextLocalization
+  let message = locale ls localeRecord
+  return $ err401 {errBody = encode $ UnauthorizedErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendError (ForbiddenError localeRecord) = do
+  ls <- asks _baseContextLocalization
+  let message = locale ls localeRecord
+  return $ err403 {errBody = encode $ ForbiddenErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendError (NotExistsError localeRecord) = do
+  ls <- asks _baseContextLocalization
+  let message = locale ls localeRecord
+  return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendError (GeneralServerError errorMessage) = do
+  logError errorMessage
+  return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
+
+sendErrorDTO :: ErrorDTO -> BaseContextM ServantErr
+sendErrorDTO (ValidationErrorDTO formErrors fieldErrors) =
+  return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (UserErrorDTO message) =
+  return $ err400 {errBody = encode $ UserErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (UnauthorizedErrorDTO message) =
+  return $ err401 {errBody = encode $ UnauthorizedErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (ForbiddenErrorDTO message) =
+  return $ err403 {errBody = encode $ ForbiddenErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (NotExistsErrorDTO message) =
+  return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (GeneralServerErrorDTO message) = do
+  logError message
+  return $ err500 {errBody = encode $ GeneralServerErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+
+checkPermission mTokenHeader perm = do
+  let mUserPerms = mTokenHeader >>= separateToken >>= getPermissionsFromToken
+      forbidden = throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ perm)
   case mUserPerms of
-    Just userPerms ->
-      if perm `Prelude.elem` userPerms
-        then callback
-        else forbidden
+    Just userPerms -> unless (perm `Prelude.elem` userPerms) forbidden
     Nothing -> forbidden
 
-checkServiceToken callback = do
-  tokenHeader <- header (LT.pack authorizationHeaderName)
-  appConfig <- lift $ asks _baseContextAppConfig
-  let mToken =
-        tokenHeader >>= (\token -> Just . LT.toStrict $ token) >>= separateToken >>= validateServiceToken appConfig
+isAdmin :: AppContextM Bool
+isAdmin = do
+  mUser <- asks _appContextCurrentUser
+  case mUser of
+    Just user -> return $ user ^. role == "ADMIN"
+    Nothing -> return False
+
+checkServiceToken :: Maybe String -> AppContextM ()
+checkServiceToken mTokenHeader = do
+  appConfig <- asks _appContextApplicationConfig
+  let mToken = mTokenHeader >>= separateToken >>= validateServiceToken appConfig
   case mToken of
-    Just _ -> callback
-    Nothing -> unauthorizedA _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN
+    Just _ -> return ()
+    Nothing -> throwError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN
   where
-    validateServiceToken appConfig token = do
-      if token == (T.pack $ appConfig ^. general . serviceToken)
+    validateServiceToken appConfig token =
+      if token == appConfig ^. general . serviceToken
         then Just token
         else Nothing
-
-isLogged callback = do
-  tokenHeader <- header (LT.pack authorizationHeaderName)
-  callback . isJust $ tokenHeader
-
-isAdmin callback =
-  isLogged $ \userIsLogged ->
-    if userIsLogged
-      then getCurrentUser $ \user -> callback $ user ^. role == "ADMIN"
-      else callback False
-
-sendError :: AppError -> Endpoint
-sendError (ValidationError formErrorRecords fieldErrorRecords) = do
-  ls <- lift . asks $ _baseContextLocalization
-  let formErrors = fmap (locale ls) formErrorRecords
-  let localeTuple = \(k, v) -> (k, locale ls v)
-  let fieldErrors = fmap localeTuple fieldErrorRecords
-  status badRequest400
-  json $ ValidationErrorDTO formErrors fieldErrors
-sendError (UserError localeRecord) = do
-  ls <- lift . asks $ _baseContextLocalization
-  let message = locale ls localeRecord
-  status badRequest400
-  json $ UserErrorDTO message
-sendError (UnauthorizedError localeRecord) = do
-  ls <- lift . asks $ _baseContextLocalization
-  let message = locale ls localeRecord
-  status unauthorized401
-  json $ UnauthorizedErrorDTO message
-sendError (ForbiddenError localeRecord) = do
-  ls <- lift . asks $ _baseContextLocalization
-  let message = locale ls localeRecord
-  status forbidden403
-  json $ ForbiddenErrorDTO message
-sendError (NotExistsError localeRecord) = do
-  ls <- lift . asks $ _baseContextLocalization
-  let message = locale ls localeRecord
-  status notFound404
-  json $ NotExistsErrorDTO message
-sendError (GeneralServerError errorMessage) = do
-  lift $ logError errorMessage
-  status internalServerError500
-  json $ GeneralServerErrorDTO errorMessage
-
-sendFile :: String -> BSL.ByteString -> Endpoint
-sendFile filename body = do
-  let cdHeader = "attachment;filename=" ++ filename
-  addHeader "Content-Disposition" (LT.pack cdHeader)
-  addHeader "Content-Type" (LT.pack "application/octet-stream")
-  raw body
-
-unauthorizedA :: String -> Endpoint
-unauthorizedA message = do
-  status unauthorized401
-  json $ object ["status" .= 401, "error" .= "Unauthorized", "message" .= message]
-
-unauthorizedL :: String -> Response
-unauthorizedL message =
-  responseLBS unauthorized401 [(hContentType, "application/json; charset=utf-8")] $
-  encode (object ["status" .= 401, "error" .= "Unauthorized", "message" .= message])
-
-forbidden :: Endpoint
-forbidden = do
-  status forbidden403
-  json $ object ["status" .= 403, "error" .= "Forbidden"]
-
-notFoundA :: Endpoint
-notFoundA = do
-  request <- request
-  if requestMethod request == methodOptions
-    then status ok200
-    else do
-      lift . logInfo $ msg _CMP_API "Request does not match any route"
-      status notFound404
-      json $ object ["status" .= 404, "error" .= "Not Found"]
-
-internalServerErrorA :: (ScottyError e, Monad m, MonadLogger m) => e -> ActionT e m ()
-internalServerErrorA e = do
-  let message = LT.unpack . showError $ e
-  lift . logError $ message
-  status internalServerError500
-  json . GeneralServerErrorDTO $ message

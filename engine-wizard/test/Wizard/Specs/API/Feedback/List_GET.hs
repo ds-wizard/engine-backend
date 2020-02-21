@@ -2,7 +2,7 @@ module Wizard.Specs.API.Feedback.List_GET
   ( list_get
   ) where
 
-import Control.Monad.Reader (asks)
+import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,6 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import Wizard.Model.Context.AppContext
@@ -23,7 +24,7 @@ import Wizard.Specs.Common
 -- GET /feedbacks
 -- ------------------------------------------------------------------------
 list_get :: AppContext -> SpecWith Application
-list_get appContext = describe "GET /feedbacks" $ do test_200 appContext
+list_get appContext = describe "GET /feedbacks" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -44,8 +45,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    appConfig <- runInContextIO (asks _appContextApplicationConfig) appContext
+    let expHeaders = resCtHeader : resCorsHeaders
+    let appConfig = appContext ^. applicationConfig
     let iUrl1 = createIssueUrl appConfig feedback1
     let iUrl2 = createIssueUrl appConfig feedback2
     let expDto = [toDTO feedback1 iUrl1, toDTO feedback2 iUrl2]

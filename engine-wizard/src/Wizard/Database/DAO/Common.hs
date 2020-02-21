@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.Common where
 
 import Control.Monad (forM_)
+import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Bson
 import Data.Bson.Generic
@@ -60,22 +61,38 @@ deserializeMaybeEntity entityName identificator mEntityS =
 createFindEntitiesFn collection = do
   let action = rest =<< find (select [] collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntitiesByFn collection queryParams = do
   let action = rest =<< find (select queryParams collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntityFn collection entityName = do
   let action = findOne $ select [] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+
+createFindEntityFn' collection entityName = do
+  let action = findOne $ select [] collection
+  maybeEntityS <- runDB action
+  case deserializeMaybeEntity entityName "nothing" maybeEntityS of
+    Right entity -> return (Just entity)
+    Left (NotExistsError error) -> return Nothing
+    Left error -> throwError error
 
 createFindEntityByFn collection entityName paramName paramValue = do
   let action = findOne $ select [paramName =: paramValue] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+
+createFindEntityByFn' collection entityName paramName paramValue = do
+  let action = findOne $ select [paramName =: paramValue] collection
+  maybeEntityS <- runDB action
+  case deserializeMaybeEntity entityName paramValue maybeEntityS of
+    Right entity -> return (Just entity)
+    Left (NotExistsError error) -> return Nothing
+    Left error -> throwError error
 
 createInsertFn collection entity = do
   let action = insert collection (toBSON entity)
@@ -111,14 +128,14 @@ createDeleteEntityByFn collection paramName paramValue = do
 createCountFn collection = do
   let action = count $ select [] collection
   count <- runDB action
-  return . Right $ count
+  liftEither . Right $ count
 
 createFindFileFn bucketName fileName = do
   bucket <- runDB $ openBucket bucketName
   let action = fetchFile bucket ["filename" =: fileName]
   file <- runDB action
   result <- runDB (sourceFile file $$ CL.fold BS.append "")
-  return . Right $ result
+  liftEither . Right $ result
 
 createCreateFileFn bucketName fileName content = do
   bucket <- runDB $ openBucket bucketName
@@ -137,11 +154,11 @@ createDeleteFileByFn bucketName paramValue = do
   file <- runDB action
   runDB $ deleteFile file
 
-mapToDBQueryParams :: Functor f => f (T.Text, T.Text) -> f Field
+mapToDBQueryParams :: Functor f => f (String, String) -> f Field
 mapToDBQueryParams = fmap go
   where
-    go :: (T.Text, T.Text) -> Field
-    go (p, v) = p =: v
+    go :: (String, String) -> Field
+    go (p, v) = T.pack p =: v
 
 instance Val LT.Text where
   val = String . LT.toStrict

@@ -9,14 +9,15 @@ import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Model.Context.BaseContext
 import Registry.Service.Organization.OrganizationService
+import Shared.Api.Handler.Common
 
 type Detail_State_PUT
-   = ReqBody '[ JSON] OrganizationStateDTO
+   = ReqBody '[ SafeJSON] OrganizationStateDTO
      :> "organizations"
      :> Capture "orgId" String
      :> "state"
      :> QueryParam "hash" String
-     :> Put '[ JSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 
 detail_state_PUT ::
      OrganizationStateDTO

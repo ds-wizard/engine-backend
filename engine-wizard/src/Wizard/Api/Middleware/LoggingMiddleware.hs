@@ -1,6 +1,7 @@
 module Wizard.Api.Middleware.LoggingMiddleware where
 
 import Data.List (intercalate)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Network.HTTP.Types
   ( Header
@@ -26,15 +27,15 @@ import Wizard.Util.Http (extractMethod, extractPath, findHeader, processHeaderIn
 import Wizard.Util.Logger (createTraceUuidLoggerStamp, createUserUuidLoggerStamp)
 
 loggingMiddleware :: Environment -> Middleware
-loggingMiddleware Test application request sendResponse = application request $ sendResponse
+loggingMiddleware Test application request sendResponse = application request sendResponse
 loggingMiddleware _ application request sendResponse =
-  application request $ sendResponse . (processHeaderInMiddleware logRequest request)
+  application request $ sendResponse . processHeaderInMiddleware logRequest request
 
 logRequest :: Request -> Status -> [Header] -> [Header]
 logRequest request resStatus resHeaders =
   filterOptionsRequests request resHeaders $
   unsafePerformIO $ do
-    putStrLn . (colorizeMessage resStatus) $ createLogMessage blockParts messageParts
+    putStrLn . colorizeMessage resStatus $ createLogMessage blockParts messageParts
     return resHeaders
   where
     blockParts = createBlockParts (requestHeaders request) resHeaders
@@ -61,14 +62,12 @@ createMessageParts request resStatus = [status, method, path]
     status = statusToString resStatus
 
 createLogMessage :: [String] -> [String] -> String
-createLogMessage blockParts messageParts = (intercalate "" blockParts) ++ " " ++ (intercalate " " messageParts)
+createLogMessage blockParts messageParts = intercalate "" blockParts ++ " " ++ unwords messageParts
 
 extractUserUuid :: T.Text -> String
 extractUserUuid tokenHeader =
-  let userUuidMaybe = (separateToken tokenHeader) >>= getUserUuidFromToken :: Maybe T.Text
-   in case userUuidMaybe of
-        Just userUuid -> (T.unpack userUuid)
-        Nothing -> createUserUuidLoggerStamp "---"
+  let mUserUuid = separateToken (T.unpack tokenHeader) >>= getUserUuidFromToken
+   in fromMaybe (createUserUuidLoggerStamp "---") mUserUuid
 
 colorizeMessage :: Status -> String -> String
 colorizeMessage resStatus
@@ -80,6 +79,7 @@ colorizeMessage resStatus
   | resStatus == status403 = color Magenta
   | resStatus == status404 = color Magenta
   | resStatus == status500 = color Red
+  | otherwise = color Red
 
 statusToString :: Status -> String
 statusToString resStatus
@@ -91,6 +91,7 @@ statusToString resStatus
   | resStatus == status403 = "403 Forbidden"
   | resStatus == status404 = "404 Not Found"
   | resStatus == status500 = "500 Internal Server Error"
+  | otherwise = show resStatus
 
 filterOptionsRequests request resHeaders callback =
   if extractMethod request == "OPTIONS"

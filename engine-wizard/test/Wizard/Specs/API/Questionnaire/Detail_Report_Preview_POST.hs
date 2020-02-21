@@ -126,13 +126,19 @@ test_400 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] reqBody
+test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
+  createNoPermissionTest
+    (appContext ^. applicationConfig)
+    reqMethod
+    (reqUrlT $ questionnaire3 ^. uuid)
+    [reqCtHeader]
+    reqBody
+    "QTN_PERM"
   it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
      -- GIVEN: Prepare request
    do

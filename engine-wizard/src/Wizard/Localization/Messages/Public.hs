@@ -131,6 +131,9 @@ _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =
 _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED =
   LocaleRecord "error.service.token.account_is_not_activated" "The account is not activated" []
 
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN =
+  LocaleRecord "error.service.typehint.bad_service_token" "Unable to get or verify service token" []
+
 -- Template
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
   LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []

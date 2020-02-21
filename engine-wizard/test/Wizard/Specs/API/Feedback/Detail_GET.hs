@@ -2,7 +2,7 @@ module Wizard.Specs.API.Feedback.Detail_GET
   ( detail_get
   ) where
 
-import Control.Monad.Reader (asks)
+import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,6 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import Wizard.Model.Context.AppContext
@@ -47,8 +48,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    appConfig <- runInContextIO (asks _appContextApplicationConfig) appContext
+    let expHeaders = resCtHeader : resCorsHeaders
+    let appConfig = appContext ^. applicationConfig
     let iUrl = createIssueUrl appConfig feedback1
     let expDto = toDTO feedback1 iUrl
     let expBody = encode expDto
