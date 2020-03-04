@@ -1,7 +1,7 @@
 module Wizard.Service.Report.ReportMapper where
 
 import Control.Lens ((^.))
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 
 import LensesConfig
 import Wizard.Api.Resource.Report.ReportDTO
@@ -37,13 +37,21 @@ toChapterReportDTO chr =
   ChapterReportDTO
     { _chapterReportDTOChapterUuid = chr ^. chapterUuid
     , _chapterReportDTOIndications = toIndicationDTO <$> chr ^. indications
-    , _chapterReportDTOMetrics = catMaybes . fmap toMetricSummaryDTO $ chr ^. metrics
+    , _chapterReportDTOMetrics = mapMaybe toMetricSummaryDTO $ chr ^. metrics
+    }
+
+toTotalReportDTO :: TotalReport -> TotalReportDTO
+toTotalReportDTO tr =
+  TotalReportDTO
+    { _totalReportDTOIndications = toIndicationDTO <$> tr ^. indications
+    , _totalReportDTOMetrics = mapMaybe toMetricSummaryDTO $ tr ^. metrics
     }
 
 toReportDTO :: Report -> ReportDTO
 toReportDTO r =
   ReportDTO
     { _reportDTOUuid = r ^. uuid
+    , _reportDTOTotalReport = toTotalReportDTO $ r ^. totalReport
     , _reportDTOChapterReports = toChapterReportDTO <$> r ^. chapterReports
     , _reportDTOCreatedAt = r ^. createdAt
     , _reportDTOUpdatedAt = r ^. updatedAt

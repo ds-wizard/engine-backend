@@ -14,6 +14,13 @@ instance ToJSON ReportDTO where
   toJSON = simpleToJSON "_reportDTO"
 
 -- --------------------------------------------------------------------
+instance FromJSON TotalReportDTO where
+  parseJSON = simpleParseJSON "_totalReportDTO"
+
+instance ToJSON TotalReportDTO where
+  toJSON = simpleToJSON "_totalReportDTO"
+
+-- --------------------------------------------------------------------
 instance FromJSON ChapterReportDTO where
   parseJSON = simpleParseJSON "_chapterReportDTO"
 

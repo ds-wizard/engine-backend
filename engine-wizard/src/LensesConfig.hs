@@ -333,6 +333,8 @@ makeFields ''MetricSummary
 
 makeFields ''ChapterReport
 
+makeFields ''TotalReport
+
 makeFields ''Report
 
 -- Model / Statistic
@@ -572,6 +574,8 @@ makeFields ''LevelsAnsweredIndicationDTO
 makeFields ''MetricSummaryDTO
 
 makeFields ''ChapterReportDTO
+
+makeFields ''TotalReportDTO
 
 makeFields ''ReportDTO
 

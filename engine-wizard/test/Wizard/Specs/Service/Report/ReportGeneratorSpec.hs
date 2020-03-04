@@ -13,15 +13,19 @@ import Wizard.Service.Report.ReportGenerator
 
 reportGeneratorSpec =
   describe "Report Generator" $ do
-    createReportTest False 1 chapter1 report1_ch1_full_disabled_levels
-    createReportTest False 2 chapter2 report1_ch2_full_disabled_levels
-    createReportTest False 3 chapter3 report1_ch3_full_disabled_levels
-    createReportTest True 1 chapter1 report1_ch1_full
-    createReportTest True 2 chapter2 report1_ch2_full
-    createReportTest True 3 chapter3 report1_ch3_full
+    describe "computeChapterReport" $ do
+      createComputeChapterReportTest False 1 chapter1 report1_ch1_full_disabled_levels
+      createComputeChapterReportTest False 2 chapter2 report1_ch2_full_disabled_levels
+      createComputeChapterReportTest False 3 chapter3 report1_ch3_full_disabled_levels
+      createComputeChapterReportTest True 1 chapter1 report1_ch1_full
+      createComputeChapterReportTest True 2 chapter2 report1_ch2_full
+      createComputeChapterReportTest True 3 chapter3 report1_ch3_full
+    describe "computeTotalReport" $ do
+      createComputeTotalReportTest True 3 report1_total_full
+      createComputeTotalReportTest False 3 report1_total_full_disabled_levels
 
-createReportTest levelsEnabled number chapter expectation =
-  it ("generateReport for chapter" ++ show number ++ " should work") $
+createComputeChapterReportTest levelsEnabled number chapter expectation =
+  it ("computeChapterReport for chapter" ++ show number ++ " should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
     -- GIVEN: Prepare
    do
     let requiredLevel = 1
@@ -30,5 +34,18 @@ createReportTest levelsEnabled number chapter expectation =
     let rs = questionnaire1 ^. replies
     -- WHEN:
     let result = computeChapterReport levelsEnabled requiredLevel metrics km rs chapter
+    -- THEN
+    result `shouldBe` expectation
+
+createComputeTotalReportTest levelsEnabled number expectation =
+  it ("computeTotalReport should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
+    -- GIVEN: Prepare
+   do
+    let requiredLevel = 1
+    let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
+    let km = km1WithQ4
+    let rs = questionnaire1 ^. replies
+    -- WHEN:
+    let result = computeTotalReport levelsEnabled requiredLevel metrics km rs
     -- THEN
     result `shouldBe` expectation

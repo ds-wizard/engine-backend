@@ -62,4 +62,6 @@ compareQuestionnaireCreateDtos' resDto expDto = do
 
 compareQuestionnaireDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
 
-compareReportDtos resDto expDto = liftIO $ resDto ^. chapterReports `shouldBe` expDto ^. chapterReports
+compareReportDtos resDto expDto = do
+  liftIO $ resDto ^. totalReport `shouldBe` expDto ^. totalReport
+  liftIO $ resDto ^. chapterReports `shouldBe` expDto ^. chapterReports
