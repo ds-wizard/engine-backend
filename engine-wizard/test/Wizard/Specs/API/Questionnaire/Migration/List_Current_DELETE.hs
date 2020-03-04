@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Migration.Current_DELETE
-  ( current_delete
+module Wizard.Specs.API.Questionnaire.Migration.List_Current_DELETE
+  ( list_current_DELETE
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -30,8 +30,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-current_delete :: AppContext -> SpecWith Application
-current_delete appContext =
+list_current_DELETE :: AppContext -> SpecWith Application
+list_current_DELETE appContext =
   describe "DELETE /questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext
     test_401 appContext
@@ -73,6 +73,7 @@ test_204 appContext =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 1
     assertCountInDB findMigratorStates appContext 0
 
 -- ----------------------------------------------------
@@ -96,7 +97,7 @@ create_test_403 title appContext qtn reason =
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
@@ -111,12 +112,13 @@ create_test_403 title appContext qtn reason =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 3
     assertCountInDB findMigratorStates appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = do
+test_404 appContext =
   createNotFoundTest
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)

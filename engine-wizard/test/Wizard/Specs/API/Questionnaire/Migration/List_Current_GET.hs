@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Migration.Current_GET
-  ( current_get
+module Wizard.Specs.API.Questionnaire.Migration.List_Current_GET
+  ( list_current_GET
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -29,8 +29,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-current_get :: AppContext -> SpecWith Application
-current_get appContext =
+list_current_GET :: AppContext -> SpecWith Application
+list_current_GET appContext =
   describe "GET /questionnaires/{qtnUuid}/migrations/current" $ do
     test_200 appContext
     test_401 appContext

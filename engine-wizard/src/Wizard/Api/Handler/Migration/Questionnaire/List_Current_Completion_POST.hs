@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Migration.Questionnaire.List_Current_DELETE where
+module Wizard.Api.Handler.Migration.Questionnaire.List_Current_Completion_POST where
 
 import Servant
 
@@ -7,19 +7,21 @@ import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Migration.Questionnaire.MigratorService
 
-type List_Current_DELETE
+type List_Current_Completion_POST
    = Header "Authorization" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "migrations"
      :> "current"
-     :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+     :> "completion"
+     :> Verb POST 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
-list_current_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_current_DELETE mTokenHeader qtnUuid =
+list_current_completion_POST ::
+     Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_current_completion_POST mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "QTN_PERM"
-      cancelQuestionnaireMigration qtnUuid
+      finishQuestionnaireMigration qtnUuid
       return NoContent

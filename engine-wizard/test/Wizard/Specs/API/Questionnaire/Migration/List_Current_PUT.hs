@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Migration.Current_PUT
-  ( current_put
+module Wizard.Specs.API.Questionnaire.Migration.List_Current_PUT
+  ( list_current_PUT
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -31,8 +31,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-current_put :: AppContext -> SpecWith Application
-current_put appContext =
+list_current_PUT :: AppContext -> SpecWith Application
+list_current_PUT appContext =
   describe "PUT /questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext
     test_400 appContext
