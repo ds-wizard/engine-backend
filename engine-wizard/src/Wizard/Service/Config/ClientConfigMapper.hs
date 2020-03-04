@@ -33,6 +33,7 @@ toClientConfigClientDTO clientConfig =
     , _clientConfigClientDTOAppTitleShort = clientConfig ^. appTitleShort
     , _clientConfigClientDTOWelcomeWarning = clientConfig ^. welcomeWarning
     , _clientConfigClientDTOWelcomeInfo = clientConfig ^. welcomeInfo
+    , _clientConfigClientDTOLoginInfo = clientConfig ^. loginInfo
     , _clientConfigClientDTOSupportEmail = clientConfig ^. supportEmail
     , _clientConfigClientDTOSupportRepositoryName = clientConfig ^. supportRepositoryName
     , _clientConfigClientDTOSupportRepositoryUrl = clientConfig ^. supportRepositoryUrl

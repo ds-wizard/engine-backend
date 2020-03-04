@@ -28,6 +28,7 @@ data ClientConfigClientDTO =
     , _clientConfigClientDTOAppTitleShort :: Maybe String
     , _clientConfigClientDTOWelcomeWarning :: Maybe String
     , _clientConfigClientDTOWelcomeInfo :: Maybe String
+    , _clientConfigClientDTOLoginInfo :: Maybe String
     , _clientConfigClientDTOSupportEmail :: Maybe String
     , _clientConfigClientDTOSupportRepositoryName :: Maybe String
     , _clientConfigClientDTOSupportRepositoryUrl :: Maybe String

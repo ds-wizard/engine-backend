@@ -27,6 +27,7 @@ defaultClient =
     , _appConfigClientAppTitleShort = Nothing
     , _appConfigClientWelcomeWarning = Nothing
     , _appConfigClientWelcomeInfo = Nothing
+    , _appConfigClientLoginInfo = Nothing
     , _appConfigClientSupportEmail = Nothing
     , _appConfigClientSupportRepositoryName = Nothing
     , _appConfigClientSupportRepositoryUrl = Nothing
