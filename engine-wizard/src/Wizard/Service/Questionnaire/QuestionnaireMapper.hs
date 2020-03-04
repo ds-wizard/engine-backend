@@ -15,6 +15,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -22,8 +23,8 @@ import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
 
-toDTO :: Questionnaire -> Package -> QuestionnaireState -> QuestionnaireDTO
-toDTO questionnaire package state =
+toDTO :: Questionnaire -> Package -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
+toDTO questionnaire package state mOwner =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
@@ -31,13 +32,13 @@ toDTO questionnaire package state =
     , _questionnaireDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO package
-    , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDTOOwner = mOwner
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
 
-toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> QuestionnaireDTO
-toSimpleDTO questionnaire package state =
+toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
+toSimpleDTO questionnaire package state mOwner =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
@@ -45,7 +46,7 @@ toSimpleDTO questionnaire package state =
     , _questionnaireDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
-    , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDTOOwner = mOwner
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }

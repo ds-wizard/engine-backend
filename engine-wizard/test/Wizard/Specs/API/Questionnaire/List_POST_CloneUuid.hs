@@ -18,13 +18,10 @@ import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
@@ -57,9 +54,9 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 200 OK (Owner, Private)" appContext questionnaire1
-  create_test_201 "HTTP 200 OK (Owner, PublicReadOnly)" appContext questionnaire2
-  create_test_201 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3
+  create_test_201 "HTTP 200 OK (Owner, Private)" appContext questionnaire1Dto
+  create_test_201 "HTTP 200 OK (Owner, PublicReadOnly)" appContext questionnaire2Dto
+  create_test_201 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3Dto
 
 create_test_201 title appContext qtn =
   it title $
@@ -70,7 +67,7 @@ create_test_201 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toSimpleDTO (qtn & level .~ 1) germanyPackage QSDefault
+    let expDto = qtn & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

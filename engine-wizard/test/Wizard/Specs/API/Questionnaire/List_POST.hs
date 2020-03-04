@@ -20,8 +20,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
@@ -66,7 +64,7 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage QSDefault
+    let expDto = questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext

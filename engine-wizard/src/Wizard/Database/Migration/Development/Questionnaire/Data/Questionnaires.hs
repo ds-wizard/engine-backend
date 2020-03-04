@@ -10,11 +10,15 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollo
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Model.Questionnaire.QuestionnaireUtil
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Service.Questionnaire.QuestionnaireMapper
+import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 questionnaire1 :: Questionnaire
 questionnaire1 =
@@ -47,6 +51,9 @@ questionnaire1Edited =
     , _questionnaireCreatedAt = questionnaire1 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
     }
+
+questionnaire1Dto :: QuestionnaireDTO
+questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -82,6 +89,9 @@ questionnaire2Edited =
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
 
+questionnaire2Dto :: QuestionnaireDTO
+questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 questionnaire3 :: Questionnaire
@@ -115,6 +125,9 @@ questionnaire3Edited =
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
+
+questionnaire3Dto :: QuestionnaireDTO
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

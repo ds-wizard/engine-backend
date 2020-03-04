@@ -22,7 +22,7 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 createQuestionnaireMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createQuestionnaireMigration oldQtnUuid reqDto = do
   oldQtn <- getQuestionnaireDetailById oldQtnUuid
-  checkMigrationPermissionToQtn oldQtn
+  checkMigrationPermissionToQtn (oldQtn ^. accessibility) (oldQtn ^. ownerUuid)
   newQtn <- upgradeQuestionnaire reqDto (QM.fromDetailDTO oldQtn)
   insertQuestionnaire newQtn
   let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid)
@@ -34,8 +34,8 @@ getQuestionnaireMigration qtnUuid = do
   state <- findMigratorStateByNewQuestionnaireId qtnUuid
   oldQtn <- getQuestionnaireDetailById (U.toString $ state ^. oldQuestionnaireUuid)
   newQtn <- getQuestionnaireDetailById (U.toString $ state ^. newQuestionnaireUuid)
-  checkMigrationPermissionToQtn oldQtn
-  checkMigrationPermissionToQtn newQtn
+  checkMigrationPermissionToQtn (oldQtn ^. accessibility) (oldQtn ^. ownerUuid)
+  checkMigrationPermissionToQtn (newQtn ^. accessibility) (newQtn ^. ownerUuid)
   return $ toDTO oldQtn newQtn (state ^. resolvedQuestionUuids)
 
 modifyQuestionnaireMigration :: String -> MigratorStateChangeDTO -> AppContextM MigratorStateDTO

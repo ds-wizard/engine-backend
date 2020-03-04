@@ -13,15 +13,12 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Document.DocumentMapper
-import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -54,17 +51,15 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 CREATED (Admin)"
     appContext
-    [ toDTO doc1 (Just $ QTN_Mapper.toSimpleDTO questionnaire1 germanyPackage QSDefault) commonWizardTemplate
-    , toDTO doc2 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
-    , toDTO doc3 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
+    [ toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
+    , toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate
+    , toDTO doc3 (Just questionnaire2Dto) commonWizardTemplate
     ]
     reqAuthHeader
   create_test_200
     "HTTP 200 CREATED (Non-Admin)"
     appContext
-    [ toDTO doc1 Nothing commonWizardTemplate
-    , toDTO doc2 (Just $ QTN_Mapper.toSimpleDTO questionnaire2 germanyPackage QSDefault) commonWizardTemplate
-    ]
+    [toDTO doc1 Nothing commonWizardTemplate, toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate]
     reqNonAdminAuthHeader
 
 create_test_200 title appContext expDto authHeader =
