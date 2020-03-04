@@ -16,8 +16,8 @@ toDTO :: User -> UserDTO
 toDTO user =
   UserDTO
     { _userDTOUuid = user ^. uuid
-    , _userDTOName = user ^. name
-    , _userDTOSurname = user ^. surname
+    , _userDTOFirstName = user ^. firstName
+    , _userDTOLastName = user ^. lastName
     , _userDTOEmail = user ^. email
     , _userDTORole = user ^. role
     , _userDTOPermissions = user ^. permissions
@@ -30,8 +30,8 @@ fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -
 fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =
   User
     { _userUuid = userUuid
-    , _userName = dto ^. name
-    , _userSurname = dto ^. surname
+    , _userFirstName = dto ^. firstName
+    , _userLastName = dto ^. lastName
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = passwordHash
     , _userRole = role
@@ -45,8 +45,8 @@ fromUserChangeDTO :: UserChangeDTO -> User -> [Permission] -> User
 fromUserChangeDTO dto oldUser permission =
   User
     { _userUuid = oldUser ^. uuid
-    , _userName = dto ^. name
-    , _userSurname = dto ^. surname
+    , _userFirstName = dto ^. firstName
+    , _userLastName = dto ^. lastName
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = oldUser ^. passwordHash
     , _userRole = dto ^. role
@@ -60,8 +60,8 @@ fromUserProfileChangeDTO :: UserProfileChangeDTO -> User -> User
 fromUserProfileChangeDTO dto oldUser =
   User
     { _userUuid = oldUser ^. uuid
-    , _userName = dto ^. name
-    , _userSurname = dto ^. surname
+    , _userFirstName = dto ^. firstName
+    , _userLastName = dto ^. lastName
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = oldUser ^. passwordHash
     , _userRole = oldUser ^. role

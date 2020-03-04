@@ -94,8 +94,8 @@ userAPI appContext =
           liftIO $ status `shouldBe` expStatus
           liftIO $ (expHeaders `elems` headers) `shouldBe` True
           -- AND: Compare state in DB with expectation
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
           liftIO $ (userFromDb ^. role) `shouldBe` fromJust (reqDto ^. role)
           -- THEN: Check created action Key
@@ -107,15 +107,15 @@ userAPI appContext =
           liftIO $ (actionKey ^. userId) `shouldBe` (userFromDb ^. uuid)
           liftIO $ (actionKey ^. aType) `shouldBe` RegistrationActionKey
           liftIO $ Prelude.length (actionKey ^. hash) > 0 `shouldBe` True
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Albert" } |] "surname"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { firstName: "Albert" } |] "lastName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "Albert"
-                  , _userCreateDTOSurname = "Einstein"
+                  { _userCreateDTOFirstName = "Albert"
+                  , _userCreateDTOLastName = "Einstein"
                   , _userCreateDTOEmail = "albert.einstein@example.com"
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
@@ -194,8 +194,8 @@ userAPI appContext =
         let reqUrl = "/users/current"
         let reqDto =
               UserProfileChangeDTO
-                { _userProfileChangeDTOName = "EDITED: Isaac"
-                , _userProfileChangeDTOSurname = "EDITED: Newton"
+                { _userProfileChangeDTOFirstName = "EDITED: Isaac"
+                , _userProfileChangeDTOLastName = "EDITED: Newton"
                 , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
                 }
         let reqBody = encode reqDto
@@ -208,7 +208,8 @@ userAPI appContext =
           let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           let expDto =
                 toDTO $
-                ((userAlbert & name .~ (reqDto ^. name)) & surname .~ (reqDto ^. name)) & email .~ (reqDto ^. email)
+                ((userAlbert & firstName .~ (reqDto ^. firstName)) & lastName .~ (reqDto ^. firstName)) &
+                email .~ (reqDto ^. email)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -221,10 +222,10 @@ userAPI appContext =
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "firstName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
          -- GIVEN: Prepare request
          do
@@ -232,8 +233,8 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "John"
-                  , _userCreateDTOSurname = "Doe"
+                  { _userCreateDTOFirstName = "John"
+                  , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
@@ -241,8 +242,8 @@ userAPI appContext =
           runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
           let reqDto =
                 UserProfileChangeDTO
-                  { _userProfileChangeDTOName = "EDITED: Isaac"
-                  , _userProfileChangeDTOSurname = "EDITED: Newton"
+                  { _userProfileChangeDTOFirstName = "EDITED: Isaac"
+                  , _userProfileChangeDTOLastName = "EDITED: Newton"
                   , _userProfileChangeDTOEmail = "john.doe@example.com"
                   }
           let reqBody = encode reqDto
@@ -270,8 +271,8 @@ userAPI appContext =
         let reqDto =
               UserChangeDTO
                 { _userChangeDTOUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _userChangeDTOName = "EDITED: Isaac"
-                , _userChangeDTOSurname = "EDITED: Newton"
+                , _userChangeDTOFirstName = "EDITED: Isaac"
+                , _userChangeDTOLastName = "EDITED: Newton"
                 , _userChangeDTOEmail = "isaac.newton@example-edited.com"
                 , _userChangeDTORole = "ADMIN"
                 , _userChangeDTOActive = True
@@ -291,18 +292,18 @@ userAPI appContext =
           liftIO $ status `shouldBe` expStatus
           liftIO $ (expHeaders `elems` headers) `shouldBe` True
           let (Right resBody) = eitherDecode body :: Either String UserDTO
-          liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (resBody ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (resBody ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (resBody ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (resBody ^. email) `shouldBe` (reqDto ^. email)
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           liftIO $ (userFromDb ^. uuid) `shouldBe` (reqDto ^. uuid)
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
           liftIO $ (userFromDb ^. role) `shouldBe` (reqDto ^. role)
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "firstName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
          -- GIVEN: Prepare request
          do
@@ -310,8 +311,8 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "John"
-                  , _userCreateDTOSurname = "Doe"
+                  { _userCreateDTOFirstName = "John"
+                  , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
@@ -320,8 +321,8 @@ userAPI appContext =
           let reqDto =
                 UserChangeDTO
                   { _userChangeDTOUuid = johnUuid
-                  , _userChangeDTOName = "EDITED: Isaac"
-                  , _userChangeDTOSurname = "EDITED: Newton"
+                  , _userChangeDTOFirstName = "EDITED: Isaac"
+                  , _userChangeDTOLastName = "EDITED: Newton"
                   , _userChangeDTOEmail = "albert.einstein@example.com"
                   , _userChangeDTORole = "ADMIN"
                   , _userChangeDTOActive = True

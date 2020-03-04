@@ -13,8 +13,8 @@ type Email = String
 data User =
   User
     { _userUuid :: UUID
-    , _userName :: String
-    , _userSurname :: String
+    , _userFirstName :: String
+    , _userLastName :: String
     , _userEmail :: Email
     , _userPasswordHash :: String
     , _userRole :: Role
@@ -28,8 +28,8 @@ data User =
 instance Eq User where
   a == b =
     _userUuid a == _userUuid b &&
-    _userName a == _userName b &&
-    _userSurname a == _userSurname b &&
+    _userFirstName a == _userFirstName b &&
+    _userLastName a == _userLastName b &&
     _userEmail a == _userEmail b &&
     _userPasswordHash a == _userPasswordHash b &&
     _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userActive a == _userActive b

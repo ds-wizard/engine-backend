@@ -6,8 +6,8 @@ import Wizard.Model.User.User
 
 data UserCreateDTO =
   UserCreateDTO
-    { _userCreateDTOName :: String
-    , _userCreateDTOSurname :: String
+    { _userCreateDTOFirstName :: String
+    , _userCreateDTOLastName :: String
     , _userCreateDTOEmail :: Email
     , _userCreateDTORole :: Maybe Role
     , _userCreateDTOPassword :: String
