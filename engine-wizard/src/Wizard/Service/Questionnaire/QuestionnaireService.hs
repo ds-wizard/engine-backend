@@ -73,11 +73,17 @@ cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
   qtnDto <- getQuestionnaireDetailById cloneUuid
   pkg <- findPackageWithEventsById (qtnDto ^. package . pId)
-  currentUser <- getCurrentUser
   newUuid <- liftIO generateUuid
+  currentUser <- getCurrentUser
+  let newOwnerUuid =
+        if qtnDto ^. accessibility == PublicQuestionnaire
+          then Nothing
+          else Just $ currentUser ^. uuid
   now <- liftIO getCurrentTime
   let originQtn = fromDetailDTO qtnDto
-  let newQtn = uuid .~ newUuid $ name .~ ("Copy of " ++ originQtn ^. name) $ updatedAt .~ now $ originQtn
+  let newQtn =
+        ownerUuid .~ newOwnerUuid $ uuid .~ newUuid $ name .~ ("Copy of " ++ originQtn ^. name) $ updatedAt .~ now $
+        originQtn
   insertQuestionnaire newQtn
   state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
   return $ toSimpleDTO newQtn pkg state
