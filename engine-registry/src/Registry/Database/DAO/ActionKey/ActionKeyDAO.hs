@@ -6,19 +6,18 @@ import Registry.Database.BSON.ActionKey.ActionKey ()
 import Registry.Database.DAO.Common
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
-import Shared.Model.Error.Error
 
 entityName = "actionKey"
 
 collection = "actionKeys"
 
-findActionKeys :: AppContextM (Either AppError [ActionKey])
+findActionKeys :: AppContextM [ActionKey]
 findActionKeys = createFindEntitiesFn collection
 
-findActionKeyById :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyById :: String -> AppContextM ActionKey
 findActionKeyById = createFindEntityByFn collection entityName "uuid"
 
-findActionKeyByHash :: String -> AppContextM (Either AppError ActionKey)
+findActionKeyByHash :: String -> AppContextM ActionKey
 findActionKeyByHash = createFindEntityByFn collection entityName "hash"
 
 insertActionKey :: ActionKey -> AppContextM Value

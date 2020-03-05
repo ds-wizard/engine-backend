@@ -13,6 +13,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
+import Registry.Api.Resource.PackageBundle.PackageBundleJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Database.Migration.Development.Package.Data.Packages
 import Registry.Database.Migration.Development.PackageBundle.Data.PackageBundles
@@ -67,7 +68,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

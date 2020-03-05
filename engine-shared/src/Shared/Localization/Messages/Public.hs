@@ -17,6 +17,9 @@ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
 -- --------------------------------------
 -- VALIDATION
 -- --------------------------------------
+-- Absence
+_ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
+
 -- Format
 _ERROR_VALIDATION__INVALID_KM_ID_FORMAT =
   LocaleRecord "error.validation.invalid_km_id_format" "KmId is not in the valid format" []

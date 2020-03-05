@@ -1,11 +1,10 @@
 module Wizard.Integration.Http.Registry.Runner
   ( retrievePackages
   , retrievePackageBundleById
-    -- Helpers
-  , heRetrievePackages
   ) where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import qualified Data.ByteString.Lazy as BSL
 
 import LensesConfig
@@ -19,23 +18,14 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
 
-retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM (Either AppError [PackageSimpleIDTO])
+retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM [PackageSimpleIDTO]
 retrievePackages registryConfig iStat =
   if registryConfig ^. enabled
     then runRequest (toRetrievePackagesRequest registryConfig iStat) toRetrievePackagesResponse
-    else return . Right $ []
+    else return []
 
-retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM (Either AppError BSL.ByteString)
+retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM BSL.ByteString
 retrievePackageBundleById registryConfig pkgId =
   if registryConfig ^. enabled
     then runRequest (toRetrievePackageBundleByIdRequest registryConfig pkgId) toRetrievePackageBundleByIdResponse
-    else return . Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heRetrievePackages registryConfig iStat callback = do
-  eitherResult <- retrievePackages registryConfig iStat
-  case eitherResult of
-    Right result -> callback result
-    Left error -> return . Left $ error
+    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"

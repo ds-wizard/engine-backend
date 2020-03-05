@@ -2,8 +2,7 @@ module Wizard.Util.Logger where
 
 import Control.Lens ((^.))
 import Control.Monad.Logger (MonadLogger, logErrorN, logInfoN, logWarnN)
-import Control.Monad.Reader (asks)
-import Control.Monad.Reader (MonadReader)
+import Control.Monad.Reader (MonadReader, asks)
 import qualified Data.Text as T
 import qualified Data.UUID as U
 import System.Console.Pretty (Color(..), color)

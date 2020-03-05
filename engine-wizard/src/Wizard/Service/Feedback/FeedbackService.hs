@@ -10,12 +10,10 @@ module Wizard.Service.Feedback.FeedbackService
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.List as L
-import Data.Text (Text)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Model.Error.Error
 import Shared.Util.String
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -29,43 +27,46 @@ import Wizard.Service.Feedback.Connector.Connector
 import Wizard.Service.Feedback.Connector.GitHub.GitHubConnector ()
 import Wizard.Service.Feedback.FeedbackMapper
 
-getFeedbacksFiltered :: [(Text, Text)] -> AppContextM (Either AppError [FeedbackDTO])
-getFeedbacksFiltered queryParams =
-  heCheckIfFeedbackIsEnabled $ heFindFeedbacksFiltered queryParams $ \feedbacks -> do
-    appConfig <- asks _appContextApplicationConfig
-    return . Right $ (\f -> toDTO f (createIssueUrl appConfig f)) <$> feedbacks
+getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
+getFeedbacksFiltered queryParams = do
+  checkIfFeedbackIsEnabled
+  feedbacks <- findFeedbacksFiltered queryParams
+  appConfig <- asks _appContextApplicationConfig
+  return $ (\f -> toDTO f (createIssueUrl appConfig f)) <$> feedbacks
 
-createFeedback :: FeedbackCreateDTO -> AppContextM (Either AppError FeedbackDTO)
-createFeedback reqDto =
-  heCheckIfFeedbackIsEnabled $ do
-    fUuid <- liftIO generateUuid
-    createFeedbackWithGivenUuid fUuid reqDto
+createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
+createFeedback reqDto = do
+  checkIfFeedbackIsEnabled
+  fUuid <- liftIO generateUuid
+  createFeedbackWithGivenUuid fUuid reqDto
 
-createFeedbackWithGivenUuid :: U.UUID -> FeedbackCreateDTO -> AppContextM (Either AppError FeedbackDTO)
-createFeedbackWithGivenUuid fUuid reqDto =
-  heCheckIfFeedbackIsEnabled $
-  heCreateIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content) $ \issueId -> do
-    now <- liftIO getCurrentTime
-    let feedback = fromCreateDTO reqDto fUuid issueId now
-    insertFeedback feedback
-    appConfig <- asks _appContextApplicationConfig
-    let iUrl = createIssueUrl appConfig feedback
-    return . Right $ toDTO feedback iUrl
+createFeedbackWithGivenUuid :: U.UUID -> FeedbackCreateDTO -> AppContextM FeedbackDTO
+createFeedbackWithGivenUuid fUuid reqDto = do
+  checkIfFeedbackIsEnabled
+  issueId <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
+  now <- liftIO getCurrentTime
+  let feedback = fromCreateDTO reqDto fUuid issueId now
+  insertFeedback feedback
+  appConfig <- asks _appContextApplicationConfig
+  let iUrl = createIssueUrl appConfig feedback
+  return $ toDTO feedback iUrl
 
-getFeedbackByUuid :: String -> AppContextM (Either AppError FeedbackDTO)
-getFeedbackByUuid fUuid =
-  heCheckIfFeedbackIsEnabled $ heFindFeedbackById fUuid $ \feedback -> do
-    appConfig <- asks _appContextApplicationConfig
-    let iUrl = createIssueUrl appConfig feedback
-    return . Right $ toDTO feedback iUrl
+getFeedbackByUuid :: String -> AppContextM FeedbackDTO
+getFeedbackByUuid fUuid = do
+  checkIfFeedbackIsEnabled
+  feedback <- findFeedbackById fUuid
+  appConfig <- asks _appContextApplicationConfig
+  let iUrl = createIssueUrl appConfig feedback
+  return $ toDTO feedback iUrl
 
-synchronizeFeedbacks :: AppContextM (Maybe AppError)
-synchronizeFeedbacks =
-  hmCheckIfFeedbackIsEnabled $ hmGetIssues $ \issues ->
-    hmFindFeedbacks $ \feedbacks -> do
-      now <- liftIO getCurrentTime
-      sequence $ (updateOrDeleteFeedback issues now) <$> feedbacks
-      return Nothing
+synchronizeFeedbacks :: AppContextM ()
+synchronizeFeedbacks = do
+  checkIfFeedbackIsEnabled
+  issues <- getIssues
+  feedbacks <- findFeedbacks
+  now <- liftIO getCurrentTime
+  sequence $ (updateOrDeleteFeedback issues now) <$> feedbacks
+  return ()
   where
     updateOrDeleteFeedback issues now feedback =
       case L.find (\issue -> feedback ^. issueId == issue ^. issueId) issues of
@@ -83,6 +84,4 @@ createIssueUrl appConfig f =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-heCheckIfFeedbackIsEnabled = heCheckIfFeatureIsEnabled "Feedback" (feedback . enabled)
-
-hmCheckIfFeedbackIsEnabled = hmCheckIfFeatureIsEnabled "Feedback" (feedback . enabled)
+checkIfFeedbackIsEnabled = checkIfFeatureIsEnabled "Feedback" (feedback . enabled)

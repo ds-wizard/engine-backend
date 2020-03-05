@@ -40,6 +40,15 @@ foldMaybe = foldl go (Just [])
     go _ Nothing = Nothing
     go Nothing _ = Nothing
 
+foldInContext' :: [AppContextM a] -> AppContextM [a]
+foldInContext' = Prelude.foldl foldOne (return [])
+  where
+    foldOne :: AppContextM [a] -> AppContextM a -> AppContextM [a]
+    foldOne listInContext entityInContext = do
+      list <- listInContext
+      entity <- entityInContext
+      return $ list ++ [entity]
+
 foldInContext :: [AppContextM (Either AppError a)] -> AppContextM (Either AppError [a])
 foldInContext = Prelude.foldl foldOne (return . Right $ [])
   where

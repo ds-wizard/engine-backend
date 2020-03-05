@@ -40,7 +40,7 @@ reqMethod = methodPost
 
 reqUrl = "/knowledge-models/preview"
 
-reqHeaders = [reqAuthHeader]
+reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto =
   KnowledgeModelChangeDTO
@@ -54,12 +54,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
+test_200 appContext =
   it "HTTP 200 OK" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = toKnowledgeModelDTO km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
@@ -75,9 +75,10 @@ test_200 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext =
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

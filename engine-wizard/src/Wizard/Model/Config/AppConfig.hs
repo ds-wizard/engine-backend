@@ -85,6 +85,7 @@ data AppConfigMessaging =
     , _appConfigMessagingPort :: Integer
     , _appConfigMessagingUsername :: String
     , _appConfigMessagingPassword :: String
+    , _appConfigMessagingVhost :: String
     }
   deriving (Generic, Show)
 

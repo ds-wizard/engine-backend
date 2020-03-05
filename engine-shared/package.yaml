@@ -1,5 +1,5 @@
 name: engine-shared
-version: '2.0.0'
+version: '2.1.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -26,15 +26,20 @@ library:
   - base
   - aeson
   - bytestring
+  - case-insensitive
   - containers
   - directory
+  - http-types
   - lens
   - monad-logger
   - random
+  - servant-server
   - time
   - text
   - text-replace
+  - unordered-containers
   - uuid
+  - wai
   default-extensions:
     - TemplateHaskell
     - OverloadedStrings

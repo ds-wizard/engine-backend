@@ -1,6 +1,7 @@
 module Wizard.Service.Token.TokenService where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
 import Data.Aeson
@@ -26,33 +27,32 @@ import Wizard.Model.User.User
 import Wizard.Service.Token.TokenMapper
 import Wizard.Util.Date
 
-getToken :: TokenCreateDTO -> AppContextM (Either AppError TokenDTO)
-getToken tokenCreateDto =
-  getUser $ \user ->
-    checkIsUserActive user $ \() ->
-      authenticateUser user $ \() -> do
-        (jwtSecret, jwtVersion, jwtExpirationInDays) <- getJwtConfig
-        now <- liftIO getCurrentTime
-        return . Right . toDTO $ createToken user now jwtSecret jwtVersion jwtExpirationInDays
+getToken :: TokenCreateDTO -> AppContextM TokenDTO
+getToken tokenCreateDto = do
+  user <- getUser
+  checkIsUserActive user
+  authenticateUser user
+  (jwtSecret, jwtVersion, jwtExpirationInDays) <- getJwtConfig
+  now <- liftIO getCurrentTime
+  return . toDTO $ createToken user now jwtSecret jwtVersion jwtExpirationInDays
   where
-    getUser callback = do
-      eitherUser <- findUserByEmail (toLower <$> tokenCreateDto ^. email)
-      case eitherUser of
-        Right user -> callback user
-        Left (NotExistsError _) -> return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
-        Left error -> return . Left $ error
+    getUser = do
+      mUser <- findUserByEmail' (toLower <$> tokenCreateDto ^. email)
+      case mUser of
+        Just user -> return user
+        Nothing -> throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     -- ------------------------------------------------------------
-    checkIsUserActive user callback =
+    checkIsUserActive user =
       if user ^. active
-        then callback ()
-        else return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+        then return ()
+        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     -- ------------------------------------------------------------
-    authenticateUser user callback = do
+    authenticateUser user = do
       let incomingPassword = BS.pack (tokenCreateDto ^. password)
       let passwordHashFromDB = BS.pack (user ^. passwordHash)
       if verifyPassword incomingPassword passwordHashFromDB
-        then callback ()
-        else return . Left $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        then return ()
+        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     -- ------------------------------------------------------------
     getJwtConfig = do
       appConfig <- asks _appContextApplicationConfig
@@ -121,14 +121,14 @@ verifyToken jwtToken jwtSecret currentJwtVersion now =
             Nothing -> Just _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES
         Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION
 
-getUserUuidFromToken :: T.Text -> Maybe T.Text
+getUserUuidFromToken :: String -> Maybe String
 getUserUuidFromToken token = do
-  (String value) <- getValueFromToken token "userUuid"
-  Just value
+  (String value) <- getValueFromToken (T.pack token) "userUuid"
+  Just . T.unpack $ value
 
-getPermissionsFromToken :: T.Text -> Maybe [Permission]
+getPermissionsFromToken :: String -> Maybe [Permission]
 getPermissionsFromToken token = do
-  (Array value) <- getValueFromToken token "permissions"
+  (Array value) <- getValueFromToken (T.pack token) "permissions"
   let values = V.toList value
   let permissionValues = fmap (\(String x) -> T.unpack x) values
   Just permissionValues

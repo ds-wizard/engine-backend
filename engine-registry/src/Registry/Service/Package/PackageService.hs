@@ -2,13 +2,10 @@ module Registry.Service.Package.PackageService
   ( getSimplePackagesFiltered
   , getPackageById
   , getSeriesOfPackages
-  -- Helpers
-  , heGetSeriesOfPackages
   ) where
 
 import Control.Lens ((^.))
 import Data.List (maximumBy)
-import Data.Text (Text)
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailDTO
@@ -18,51 +15,47 @@ import Registry.Database.DAO.Package.PackageDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper
-import Registry.Util.List (foldEithersInContext, groupBy)
-import Shared.Model.Error.Error
+import Registry.Util.List (foldInContext', groupBy)
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Shared.Util.Helper (createHeeHelper)
 
-getSimplePackagesFiltered :: [(Text, Text)] -> [(String, String)] -> AppContextM (Either AppError [PackageSimpleDTO])
+getSimplePackagesFiltered :: [(String, String)] -> [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams headers = do
-  heAuditListPackages headers $ \_ ->
-    heFindPackagesFiltered queryParams $ \pkgs ->
-      foldEithersInContext . mapToSimpleDTO . chooseTheNewest . groupPkgs $ pkgs
+  _ <- auditListPackages headers
+  pkgs <- findPackagesFiltered queryParams
+  foldInContext' . mapToSimpleDTO . chooseTheNewest . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
     chooseTheNewest :: [[Package]] -> [Package]
     chooseTheNewest = fmap (maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)))
-    mapToSimpleDTO :: [Package] -> [AppContextM (Either AppError PackageSimpleDTO)]
+    mapToSimpleDTO :: [Package] -> [AppContextM PackageSimpleDTO]
     mapToSimpleDTO =
-      fmap (\pkg -> heFindOrganizationByOrgId (pkg ^. organizationId) $ \org -> return . Right $ toSimpleDTO pkg org)
+      fmap
+        (\pkg -> do
+           org <- findOrganizationByOrgId (pkg ^. organizationId)
+           return $ toSimpleDTO pkg org)
 
-getPackageById :: String -> AppContextM (Either AppError PackageDetailDTO)
-getPackageById pkgId =
-  heFindPackageById pkgId $ \pkg ->
-    heGetPackageVersions pkg $ \versions ->
-      heFindOrganizationByOrgId (pkg ^. organizationId) $ \org -> return . Right $ toDetailDTO pkg versions org
+getPackageById :: String -> AppContextM PackageDetailDTO
+getPackageById pkgId = do
+  pkg <- findPackageById pkgId
+  versions <- getPackageVersions pkg
+  org <- findOrganizationByOrgId (pkg ^. organizationId)
+  return $ toDetailDTO pkg versions org
 
-getSeriesOfPackages :: String -> AppContextM (Either AppError [PackageWithEvents])
-getSeriesOfPackages pkgId =
-  heFindPackageWithEventsById pkgId $ \package ->
-    case package ^. previousPackageId of
-      Just parentPkgId ->
-        heGetSeriesOfPackages parentPkgId $ \parentPackages -> return . Right $ parentPackages ++ [package]
-      Nothing -> return . Right $ [package]
+getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
+getSeriesOfPackages pkgId = do
+  package <- findPackageWithEventsById pkgId
+  case package ^. previousPackageId of
+    Just parentPkgId -> do
+      parentPackages <- getSeriesOfPackages parentPkgId
+      return $ parentPackages ++ [package]
+    Nothing -> return [package]
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPackageVersions :: Package -> AppContextM (Either AppError [String])
-getPackageVersions pkg =
-  heFindPackagesByOrganizationIdAndKmId (pkg ^. organizationId) (pkg ^. kmId) $ \allPkgs ->
-    return . Right . fmap _packageVersion $ allPkgs
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heGetSeriesOfPackages pkgId callback = createHeeHelper (getSeriesOfPackages pkgId) callback
-
-heGetPackageVersions pkg callback = createHeeHelper (getPackageVersions pkg) callback
+getPackageVersions :: Package -> AppContextM [String]
+getPackageVersions pkg = do
+  allPkgs <- findPackagesByOrganizationIdAndKmId (pkg ^. organizationId) (pkg ^. kmId)
+  return . fmap _packageVersion $ allPkgs

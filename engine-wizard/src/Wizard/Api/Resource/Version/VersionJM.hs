@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Version.VersionJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Version.VersionDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON VersionDTO where
   parseJSON = simpleParseJSON "_versionDTO"

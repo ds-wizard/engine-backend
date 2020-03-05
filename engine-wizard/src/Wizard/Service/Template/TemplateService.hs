@@ -1,79 +1,50 @@
 module Wizard.Service.Template.TemplateService
   ( listTemplates
   , getTemplateByUuid
-  , getTemplateByUuidOrFirst
-  , loadTemplateFile
   -- Private
   , fitsIntoKMSpec
   , filterTemplates
-  -- Helpers
-  , heListTemplates
-  , heGetTemplateByUuid
-  , heGetTemplateByUuidOrFirst
-  , heLoadTemplateFile
   ) where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.List (find)
 import qualified Data.UUID as U
-import qualified Text.Ginger as Q
 
 import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Service.File.FileService
-import Shared.Util.Helper (createHeeHelper)
 import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Constant.Resource
-import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
 import Wizard.Util.List (foldEithersInContext)
-import Wizard.Util.Template (mLoadFile)
 
-listTemplates :: Maybe String -> AppContextM (Either AppError [TemplateDTO])
+listTemplates :: Maybe String -> AppContextM [TemplateDTO]
 listTemplates mPkgId = do
   folder <- getTemplateFolder
   files <- liftIO $ listFilesWithExtension folder "json"
-  eTemplates <- foldEithersInContext ((liftIO . loadJSONFile) . (\f -> folder ++ "/" ++ f) <$> files)
-  case mPkgId of
-    Nothing -> return eTemplates
-    Just pkgId ->
-      heValidatePackageIdFormat pkgId $ do
-        let pkgIdSplit = splitPackageId pkgId
-        case eTemplates of
-          Right templates -> return . Right . filterTemplates pkgIdSplit $ templates
-          Left error -> return . Left $ error
+  eTemplates <- foldEithersInContext (fmap ((liftIO . loadJSONFile) . (\f -> folder ++ "/" ++ f)) files)
+  case eTemplates of
+    Left error -> throwError error
+    Right templates ->
+      case mPkgId of
+        Nothing -> return templates
+        Just pkgId -> do
+          validatePackageIdFormat pkgId
+          let pkgIdSplit = splitPackageId pkgId
+          return . filterTemplates pkgIdSplit $ templates
 
-getTemplateByUuid :: String -> Maybe String -> AppContextM (Either AppError TemplateDTO)
-getTemplateByUuid templateUuid mPkgId =
-  heListTemplates mPkgId $ \templates ->
-    case find (\t -> U.toString (t ^. uuid) == templateUuid) templates of
-      Just template -> return . Right $ template
-      Nothing -> return . Left . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
-
-getTemplateByUuidOrFirst :: Maybe String -> Maybe String -> AppContextM (Either AppError TemplateDTO)
-getTemplateByUuidOrFirst mTemplateUuid mPkgId =
-  case mTemplateUuid of
-    Just templateUuid -> getTemplateByUuid templateUuid mPkgId
-    Nothing ->
-      heListTemplates mPkgId $ \templates ->
-        if not (null templates)
-          then return . Right . head $ templates
-          else return . Left . GeneralServerError $ _ERROR_SERVICE_TEMPLATE__NO_TEMPLATES_IN_SYSTEM
-
-loadTemplateFile :: String -> AppContextM (Either AppError (Q.Template Q.SourcePos))
-loadTemplateFile fileName = do
-  folder <- getTemplateFolder
-  eTemplate <- liftIO $ Q.parseGingerFile mLoadFile (folder ++ "/" ++ fileName)
-  case eTemplate of
-    Right template -> return . Right $ template
-    Left error ->
-      return . Left . GeneralServerError $
-      _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED (Q.formatParserError Nothing error)
+getTemplateByUuid :: String -> Maybe String -> AppContextM TemplateDTO
+getTemplateByUuid templateUuid mPkgId = do
+  templates <- listTemplates mPkgId
+  case find (\t -> U.toString (t ^. uuid) == templateUuid) templates of
+    Just template -> return template
+    Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
 
 -- --------------------------------
 -- PRIVATE
@@ -124,17 +95,3 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
             GT -> False
             _ -> callback
         Nothing -> callback
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heListTemplates mPkgId = createHeeHelper (listTemplates mPkgId)
-
--- -----------------------------------------------------
-heGetTemplateByUuid templateUuid mPkgId = createHeeHelper (getTemplateByUuid templateUuid mPkgId)
-
--- -----------------------------------------------------
-heGetTemplateByUuidOrFirst mTemplateUuid mPkgId = createHeeHelper (getTemplateByUuidOrFirst mTemplateUuid mPkgId)
-
--- -----------------------------------------------------
-heLoadTemplateFile fileName = createHeeHelper (loadTemplateFile fileName)

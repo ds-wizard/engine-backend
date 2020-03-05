@@ -45,7 +45,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO <$> [orgGlobal, orgNetherlands]
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -53,13 +53,13 @@ test_200 appContext =
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, [OrganizationDTO])
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareOrganizationDtos (resBody !! 0) (expDto !! 0)
+    compareOrganizationDtos (head resBody) (head expDto)
     compareOrganizationDtos (resBody !! 1) (expDto !! 1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

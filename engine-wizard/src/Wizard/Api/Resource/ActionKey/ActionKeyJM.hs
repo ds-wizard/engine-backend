@@ -2,8 +2,8 @@ module Wizard.Api.Resource.ActionKey.ActionKeyJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON ActionKeyDTO where
   parseJSON = simpleParseJSON "_actionKeyDTO"

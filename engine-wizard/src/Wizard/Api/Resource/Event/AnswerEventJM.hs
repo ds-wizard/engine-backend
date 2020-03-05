@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Event.AnswerEventJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 import Wizard.Api.Resource.Event.AnswerEventDTO
 import Wizard.Api.Resource.Event.EventFieldJM ()
 import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON AddAnswerEventDTO where
   parseJSON = simpleParseJSON "_addAnswerEventDTO"

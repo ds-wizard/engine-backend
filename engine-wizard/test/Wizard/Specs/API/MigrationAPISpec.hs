@@ -228,8 +228,8 @@ migratorAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+        createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
         it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
           -- GIVEN: Prepare expectation
          do
@@ -411,5 +411,5 @@ migratorAPI appContext = do
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+        createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"

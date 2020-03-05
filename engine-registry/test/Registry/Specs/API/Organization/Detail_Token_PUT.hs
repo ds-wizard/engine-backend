@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
+import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
@@ -41,7 +42,7 @@ reqMethod = methodPut
 
 reqUrl = "/organizations/global/token?hash=5b1aff0d-b5e3-436d-b913-6b52d3cbad5f"
 
-reqHeaders = [reqAdminAuthHeader]
+reqHeaders = [reqCtHeader]
 
 reqBody = ""
 
@@ -53,7 +54,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
      -- AND: Prepare DB
     runInContextIO (insertActionKey forgTokActionKey) appContext
      -- WHEN: Call API
@@ -70,14 +71,14 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
+test_400 appContext =
   it "HTTP 400 BAD REQUEST when hash is absent" $
      -- GIVEN: Prepare request
    do
     let reqUrl = "/organizations/global/token"
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError _ERROR_SERVICE_ORGANIZATION__REQUIRED_HASH_IN_QUERY_PARAMS
     let expBody = encode expDto
      -- AND: Prepare DB

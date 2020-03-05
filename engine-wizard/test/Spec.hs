@@ -20,6 +20,7 @@ import Wizard.Service.User.UserMapper
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.Config.APISpec
+import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
@@ -118,7 +119,6 @@ main =
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Organization" organizationValidationSpec
-             describe "Package" packageValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec
@@ -128,6 +128,7 @@ main =
              bookReferenceAPI appContext
              branchAPI appContext
              configAPI appContext
+             documentAPI appContext
              feedbackAPI appContext
              infoAPI appContext
              knowledgeModelAPI appContext
@@ -147,5 +148,6 @@ main =
              branchServiceIntegrationSpec appContext
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
+             packageValidationSpec appContext
              publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)

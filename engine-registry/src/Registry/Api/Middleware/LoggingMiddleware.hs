@@ -1,6 +1,7 @@
 module Registry.Api.Middleware.LoggingMiddleware where
 
 import Data.List (intercalate)
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import Network.HTTP.Types
   ( Header
@@ -18,10 +19,10 @@ import Network.Wai (Middleware, Request(..))
 import System.Console.Pretty (Color(..), color)
 import System.IO.Unsafe
 
-import Registry.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Registry.Util.Logger (createOrgTokenLoggerStamp, createTraceUuidLoggerStamp)
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
 import Shared.Model.Config.Environment
+import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
 
 loggingMiddleware :: Environment -> Middleware
@@ -60,14 +61,12 @@ createMessageParts request resStatus = [status, method, path]
     status = statusToString resStatus
 
 createLogMessage :: [String] -> [String] -> String
-createLogMessage blockParts messageParts = (intercalate "" blockParts) ++ " " ++ (intercalate " " messageParts)
+createLogMessage blockParts messageParts = intercalate "" blockParts ++ " " ++ unwords messageParts
 
 extractOrgToken :: T.Text -> String
 extractOrgToken tokenHeader =
-  let orgTokenMaybe = (separateToken tokenHeader) :: Maybe T.Text
-   in case orgTokenMaybe of
-        Just orgToken -> (T.unpack orgToken)
-        Nothing -> createOrgTokenLoggerStamp "---"
+  let orgTokenMaybe = separateToken (T.unpack tokenHeader)
+   in fromMaybe (createOrgTokenLoggerStamp "---") orgTokenMaybe
 
 colorizeMessage :: Status -> String -> String
 colorizeMessage resStatus
@@ -79,6 +78,7 @@ colorizeMessage resStatus
   | resStatus == status403 = color Magenta
   | resStatus == status404 = color Magenta
   | resStatus == status500 = color Red
+  | otherwise = color Red
 
 statusToString :: Status -> String
 statusToString resStatus
@@ -90,6 +90,7 @@ statusToString resStatus
   | resStatus == status403 = "403 Forbidden"
   | resStatus == status404 = "404 Not Found"
   | resStatus == status500 = "500 Internal Server Error"
+  | otherwise = show resStatus
 
 filterOptionsRequests request resHeaders callback =
   if extractMethod request == "OPTIONS"

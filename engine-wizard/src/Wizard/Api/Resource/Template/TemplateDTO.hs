@@ -10,7 +10,7 @@ data TemplateDTO =
     , _templateDTORootFile :: String
     , _templateDTOAllowedKMs :: [TemplateAllowedKMDTO]
     }
-  deriving (Show, Generic)
+  deriving (Show, Eq, Generic)
 
 data TemplateAllowedKMDTO =
   TemplateAllowedKMDTO
@@ -19,4 +19,4 @@ data TemplateAllowedKMDTO =
     , _templateAllowedKMDTOMinVersion :: Maybe String
     , _templateAllowedKMDTOMaxVersion :: Maybe String
     }
-  deriving (Show, Generic)
+  deriving (Show, Eq, Generic)

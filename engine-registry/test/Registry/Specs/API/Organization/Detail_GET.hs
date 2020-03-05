@@ -46,7 +46,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO orgGlobal
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -59,7 +59,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

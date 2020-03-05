@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.Event.EventFieldJM ()
 import Registry.Api.Resource.Event.IntegrationEventDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON')
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
 
 instance FromJSON AddIntegrationEventDTO where
   parseJSON = simpleParseJSON "_addIntegrationEventDTO"

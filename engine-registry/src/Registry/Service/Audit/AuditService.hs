@@ -1,9 +1,6 @@
 module Registry.Service.Audit.AuditService
   ( auditListPackages
   , auditGetPackageBundle
-  -- Helpers
-  , heAuditListPackages
-  , heAuditGetPackageBundle
   ) where
 
 import Control.Lens ((^.))
@@ -20,7 +17,6 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Statistics.InstanceStatistics
 import Shared.Constant.Api
 import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper)
 
 auditListPackages :: [(String, String)] -> AppContextM (Either AppError (Maybe AuditEntry))
 auditListPackages headers =
@@ -68,11 +64,3 @@ getInstanceStaticsFromHeaders headers =
         , _instanceStatisticsPkgCount = get xPkgCountHeaderName
         , _instanceStatisticsQtnCount = get xQtnCountHeaderName
         }
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heAuditListPackages headers callback = createHeeHelper (auditListPackages headers) callback
-
--- -----------------------------------------------------
-heAuditGetPackageBundle pkgId callback = createHeeHelper (auditGetPackageBundle pkgId) callback

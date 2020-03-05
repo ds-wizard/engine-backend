@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Api.Resource.Event.EventJM ()
 import Registry.Api.Resource.Package.PackageDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON PackageDTO where
   parseJSON = simpleParseJSON "_packageDTO"

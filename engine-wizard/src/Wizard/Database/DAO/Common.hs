@@ -1,10 +1,15 @@
 module Wizard.Database.DAO.Common where
 
+import Control.Monad (forM_)
+import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Bson
 import Data.Bson.Generic
+import qualified Data.ByteString.Char8 as BS
+import Data.Conduit (($$), (.|), runConduit, yield)
+import qualified Data.Conduit.List as CL
 import Data.Maybe
-import Data.Text (Text)
+import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Database.MongoDB
   ( (=:)
@@ -21,6 +26,8 @@ import Database.MongoDB
   , save
   , select
   )
+import Database.MongoDB.GridFS (deleteFile, fetchFile, findFile, openBucket, sinkFile, sourceFile)
+import Database.MongoDB.Query (Action)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Shared.Localization.Messages.Internal
@@ -28,6 +35,7 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Model.Context.AppContext
 
+runDB :: Action IO b -> AppContextM b
 runDB action = do
   dbPool <- asks _appContextPool
   liftIO $ runMongoDBPoolDef action dbPool
@@ -53,22 +61,38 @@ deserializeMaybeEntity entityName identificator mEntityS =
 createFindEntitiesFn collection = do
   let action = rest =<< find (select [] collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntitiesByFn collection queryParams = do
   let action = rest =<< find (select queryParams collection)
   entitiesS <- runDB action
-  return . deserializeEntities $ entitiesS
+  liftEither . deserializeEntities $ entitiesS
 
 createFindEntityFn collection entityName = do
   let action = findOne $ select [] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName "nothing" $ maybeEntityS
+
+createFindEntityFn' collection entityName = do
+  let action = findOne $ select [] collection
+  maybeEntityS <- runDB action
+  case deserializeMaybeEntity entityName "nothing" maybeEntityS of
+    Right entity -> return (Just entity)
+    Left (NotExistsError error) -> return Nothing
+    Left error -> throwError error
 
 createFindEntityByFn collection entityName paramName paramValue = do
   let action = findOne $ select [paramName =: paramValue] collection
   maybeEntityS <- runDB action
-  return . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+  liftEither . deserializeMaybeEntity entityName paramValue $ maybeEntityS
+
+createFindEntityByFn' collection entityName paramName paramValue = do
+  let action = findOne $ select [paramName =: paramValue] collection
+  maybeEntityS <- runDB action
+  case deserializeMaybeEntity entityName paramValue maybeEntityS of
+    Right entity -> return (Just entity)
+    Left (NotExistsError error) -> return Nothing
+    Left error -> throwError error
 
 createInsertFn collection entity = do
   let action = insert collection (toBSON entity)
@@ -104,12 +128,37 @@ createDeleteEntityByFn collection paramName paramValue = do
 createCountFn collection = do
   let action = count $ select [] collection
   count <- runDB action
-  return . Right $ count
+  liftEither . Right $ count
 
-mapToDBQueryParams queryParams = fmap go queryParams
+createFindFileFn bucketName fileName = do
+  bucket <- runDB $ openBucket bucketName
+  let action = fetchFile bucket ["filename" =: fileName]
+  file <- runDB action
+  result <- runDB (sourceFile file $$ CL.fold BS.append "")
+  liftEither . Right $ result
+
+createCreateFileFn bucketName fileName content = do
+  bucket <- runDB $ openBucket bucketName
+  runDB (runConduit $ yield content .| sinkFile bucket (T.pack fileName))
+  return ()
+
+createDeleteFilesFn bucketName = do
+  bucket <- runDB $ openBucket bucketName
+  let action = findFile bucket []
+  files <- runDB action
+  forM_ (fmap deleteFile files) runDB
+
+createDeleteFileByFn bucketName paramValue = do
+  bucket <- runDB $ openBucket bucketName
+  let action = fetchFile bucket ["filename" =: paramValue]
+  file <- runDB action
+  runDB $ deleteFile file
+
+mapToDBQueryParams :: Functor f => f (String, String) -> f Field
+mapToDBQueryParams = fmap go
   where
-    go :: (Text, Text) -> Field
-    go (p, v) = p =: v
+    go :: (String, String) -> Field
+    go (p, v) = T.pack p =: v
 
 instance Val LT.Text where
   val = String . LT.toStrict

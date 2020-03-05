@@ -4,8 +4,6 @@ import Control.Lens ((^.))
 import Data.Bson
 
 import LensesConfig
-import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper)
 import Wizard.Database.BSON.Questionnaire.Questionnaire ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
@@ -15,16 +13,19 @@ entityName = "questionnaire"
 
 collection = "questionnaires"
 
-findQuestionnaires :: AppContextM (Either AppError [Questionnaire])
+findQuestionnaires :: AppContextM [Questionnaire]
 findQuestionnaires = createFindEntitiesFn collection
 
-findQuestionnaireByPackageId :: String -> AppContextM (Either AppError [Questionnaire])
+findQuestionnaireByPackageId :: String -> AppContextM [Questionnaire]
 findQuestionnaireByPackageId packageId = createFindEntitiesByFn collection ["packageId" =: packageId]
 
-findQuestionnaireById :: String -> AppContextM (Either AppError Questionnaire)
+findQuestionnaireById :: String -> AppContextM Questionnaire
 findQuestionnaireById = createFindEntityByFn collection entityName "uuid"
 
-countQuestionnaires :: AppContextM (Either AppError Int)
+findQuestionnaireById' :: String -> AppContextM (Maybe Questionnaire)
+findQuestionnaireById' = createFindEntityByFn' collection entityName "uuid"
+
+countQuestionnaires :: AppContextM Int
 countQuestionnaires = createCountFn collection
 
 insertQuestionnaire :: Questionnaire -> AppContextM Value
@@ -38,14 +39,3 @@ deleteQuestionnaires = createDeleteEntitiesFn collection
 
 deleteQuestionnaireById :: String -> AppContextM ()
 deleteQuestionnaireById = createDeleteEntityByFn collection "uuid"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heFindQuestionnaires callback = createHeeHelper findQuestionnaires callback
-
--- -----------------------------------------------------
-heFindQuestionnaireById qtnUuid callback = createHeeHelper (findQuestionnaireById qtnUuid) callback
-
--- -----------------------------------------------------
-heCountQuestionnaires callback = createHeeHelper countQuestionnaires callback

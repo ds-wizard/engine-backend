@@ -3,7 +3,7 @@ module Registry.Api.Resource.Organization.OrganizationSimpleJM where
 import Data.Aeson
 
 import Registry.Api.Resource.Organization.OrganizationSimpleDTO
-import Registry.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance ToJSON OrganizationSimpleDTO where
   toJSON = simpleToJSON "_organizationSimpleDTO"

@@ -53,7 +53,7 @@ test_200 appContext = do
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           [ toSimpleDTO questionnaire1 germanyPackage QSDefault
           , toSimpleDTO questionnaire2 germanyPackage QSDefault
@@ -74,7 +74,7 @@ test_200 appContext = do
     let reqHeaders = [reqNonAdminAuthHeader]
     -- AND: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           [toSimpleDTO questionnaire2 germanyPackage QSDefault, toSimpleDTO questionnaire3 germanyPackage QSDefault] :: [QuestionnaireDTO]
     let expBody = encode expDto
@@ -91,9 +91,10 @@ test_200 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext =
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

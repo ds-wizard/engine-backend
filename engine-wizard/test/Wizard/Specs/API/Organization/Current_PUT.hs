@@ -42,7 +42,7 @@ reqMethod = methodPut
 
 reqUrl = "/organizations/current"
 
-reqHeaders = [reqAuthHeader]
+reqHeaders = [reqAuthHeader, reqCtHeader]
 
 reqDto = editedOrg1Change
 
@@ -99,9 +99,10 @@ test_400_invalid_organizationId appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "ORG_PERM"
+test_403 appContext =
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "ORG_PERM"

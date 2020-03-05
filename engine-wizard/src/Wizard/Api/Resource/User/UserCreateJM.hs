@@ -2,8 +2,8 @@ module Wizard.Api.Resource.User.UserCreateJM where
 
 import Data.Aeson
 
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.User.UserCreateDTO
-import Wizard.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON UserCreateDTO where
   parseJSON = simpleParseJSON "_userCreateDTO"

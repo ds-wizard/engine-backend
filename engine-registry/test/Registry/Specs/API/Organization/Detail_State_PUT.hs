@@ -48,7 +48,7 @@ reqMethod = methodPut
 
 reqUrl = "/organizations/global/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
 
-reqHeaders = [reqAdminAuthHeader]
+reqHeaders = [reqCtHeader]
 
 reqDto = OrganizationStateDTO {_organizationStateDTOActive = True}
 
@@ -89,7 +89,7 @@ test_400 appContext = do
     let reqUrl = "/organizations/global/state"
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError _ERROR_SERVICE_ORGANIZATION__REQUIRED_HASH_IN_QUERY_PARAMS
     let expBody = encode expDto
      -- AND: Prepare DB

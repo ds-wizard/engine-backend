@@ -6,13 +6,12 @@ import Registry.Database.BSON.Audit.AuditEntry ()
 import Registry.Database.DAO.Common
 import Registry.Model.Audit.AuditEntry
 import Registry.Model.Context.AppContext
-import Shared.Model.Error.Error
 
 entityName = "audit"
 
 collection = "auditEntries"
 
-findAuditEntries :: AppContextM (Either AppError [AuditEntry])
+findAuditEntries :: AppContextM [AuditEntry]
 findAuditEntries = createFindEntitiesFn collection
 
 insertAuditEntry :: AuditEntry -> AppContextM Value

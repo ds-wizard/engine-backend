@@ -50,7 +50,7 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_204 appContext =
-  it "HTTP 200 NO CONTENT" $
+  it "HTTP 204 NO CONTENT" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 204
@@ -71,7 +71,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
+test_400 appContext =
   it "HTTP 400 BAD REQUEST when package can't be deleted" $
     -- GIVEN: Prepare expectation
    do
@@ -98,10 +98,10 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] reqBody "PM_WRITE_PERM"
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"

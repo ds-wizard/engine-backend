@@ -6,6 +6,7 @@ module Registry.Service.Mail.Mailer
 
 import Control.Exception (SomeException, handle)
 import Control.Lens ((^.))
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Aeson as Aeson
 import Data.Aeson.Types (emptyObject)
@@ -34,8 +35,9 @@ import Registry.Model.Context.AppContext
 import Registry.Util.Logger
 import Registry.Util.Template (loadAndRender)
 import Shared.Localization.Messages.Internal
+import Shared.Model.Error.Error
 
-sendRegistrationConfirmationMail :: OrganizationDTO -> String -> AppContextM (Either String ())
+sendRegistrationConfirmationMail :: OrganizationDTO -> String -> AppContextM ()
 sendRegistrationConfirmationMail org hash = do
   appConfig <- asks _appContextApplicationConfig
   let clientAddress = appConfig ^. general . clientUrl
@@ -47,7 +49,7 @@ sendRegistrationConfirmationMail org hash = do
       to = [org ^. email]
   composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
-sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM (Either String ())
+sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail org = do
   appConfig <- asks _appContextApplicationConfig
   let clientAddress = appConfig ^. general . clientUrl
@@ -58,7 +60,7 @@ sendRegistrationCreatedAnalyticsMail org = do
       to = [analyticsAddress]
   composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
-sendResetTokenMail :: OrganizationDTO -> String -> AppContextM (Either String ())
+sendResetTokenMail :: OrganizationDTO -> String -> AppContextM ()
 sendResetTokenMail org hash = do
   appConfig <- asks _appContextApplicationConfig
   let clientAddress = appConfig ^. general . clientUrl
@@ -75,12 +77,12 @@ sendResetTokenMail org hash = do
 -- --------------------------------
 type MailContext = HashMap T.Text Aeson.Value
 
-composeAndSendEmail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String ())
+composeAndSendEmail :: [String] -> TL.Text -> String -> MailContext -> AppContextM ()
 composeAndSendEmail to subject mailName context = do
   mail <- composeMail to subject mailName context
   case mail of
     Right mailMessage -> sendEmail to mailMessage
-    Left err -> return $ Left err
+    Left err -> throwError . GeneralServerError $ err
 
 composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String MIME.Mail)
 composeMail to subject mailName context = do
@@ -189,8 +191,8 @@ makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settin
   where
     settings = SMTPSSL.defaultSettingsSMTPSSL {SMTPSSL.sslPort = fromIntegral port}
 
-sendEmail :: [String] -> MIME.Mail -> AppContextM (Either String ())
-sendEmail [] mailMessage = return $ Left _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
+sendEmail :: [String] -> MIME.Mail -> AppContextM ()
+sendEmail [] mailMessage = throwError . GeneralServerError $ _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
 sendEmail to mailMessage = do
   appConfig <- asks _appContextApplicationConfig
   let mailConfig = appConfig ^. mail
@@ -219,8 +221,8 @@ sendEmail to mailMessage = do
       case result of
         Right recipients -> do
           logInfo $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
-          return $ Right ()
+          return ()
         Left excMsg -> do
           logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
-          return $ Left excMsg
-    else return $ Right ()
+          throwError . GeneralServerError $ excMsg
+    else return ()

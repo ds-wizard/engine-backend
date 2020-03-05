@@ -1,6 +1,9 @@
 module Registry.Service.Organization.OrganizationValidation where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
+import Control.Monad.Except (throwError)
+import Control.Monad.Reader (forM_)
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
@@ -10,12 +13,12 @@ import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Shared.Model.Error.Error
-import Shared.Util.Helper (createHmeHelper, createHmmHelper)
 
-validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM (Maybe AppError)
-validateOrganizationCreateDto reqDto =
-  hmValidateOrganizationIdUniqueness (reqDto ^. organizationId) $
-  hmValidateOrganizationEmailUniqueness (reqDto ^. email) $ return $ validateOrganizationId (reqDto ^. organizationId)
+validateOrganizationCreateDto :: OrganizationCreateDTO -> AppContextM ()
+validateOrganizationCreateDto reqDto = do
+  _ <- validateOrganizationIdUniqueness (reqDto ^. organizationId)
+  _ <- validateOrganizationEmailUniqueness (reqDto ^. email)
+  forM_ (validateOrganizationId (reqDto ^. organizationId)) throwError
 
 validateOrganizationId :: String -> Maybe AppError
 validateOrganizationId orgId =
@@ -25,41 +28,21 @@ validateOrganizationId orgId =
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"
 
-validateOrganizationIdUniqueness :: String -> AppContextM (Maybe AppError)
+validateOrganizationIdUniqueness :: String -> AppContextM ()
 validateOrganizationIdUniqueness orgId = do
-  eOrg <- findOrganizationByOrgId orgId
-  case eOrg of
-    Left (NotExistsError _) -> return Nothing
-    Right _ ->
-      return . Just $ ValidationError [] [("organizationId", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Organization" orgId)]
-    Left error -> return . Just $ error
+  mOrg <- findOrganizationByOrgId' orgId
+  case mOrg of
+    Just _ ->
+      throwError $ ValidationError [] [("organizationId", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Organization" orgId)]
+    Nothing -> return ()
 
-validateOrganizationEmailUniqueness :: String -> AppContextM (Maybe AppError)
+validateOrganizationEmailUniqueness :: String -> AppContextM ()
 validateOrganizationEmailUniqueness email = do
-  eOrg <- findOrganizationByEmail email
-  case eOrg of
-    Left (NotExistsError _) -> return Nothing
-    Right _ -> return . Just $ ValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" email)]
-    Left error -> return . Just $ error
+  mOrg <- findOrganizationByEmail' email
+  case mOrg of
+    Just _ -> throwError $ ValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" email)]
+    Nothing -> return ()
 
-validateOrganizationChangedEmailUniqueness :: String -> String -> AppContextM (Maybe AppError)
+validateOrganizationChangedEmailUniqueness :: String -> String -> AppContextM ()
 validateOrganizationChangedEmailUniqueness newEmail oldEmail =
-  if newEmail /= oldEmail
-    then validateOrganizationEmailUniqueness newEmail
-    else return Nothing
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heValidateOrganizationCreateDto reqDto callback = createHmeHelper (validateOrganizationCreateDto reqDto) callback
-
--- --------------------------------
-hmValidateOrganizationIdUniqueness orgId callback = createHmmHelper (validateOrganizationIdUniqueness orgId) callback
-
--- --------------------------------
-hmValidateOrganizationEmailUniqueness email callback =
-  createHmmHelper (validateOrganizationEmailUniqueness email) callback
-
--- --------------------------------
-heValidateOrganizationChangedEmailUniqueness newEmail oldEmail callback =
-  createHmeHelper (validateOrganizationChangedEmailUniqueness newEmail oldEmail) callback
+  when (newEmail /= oldEmail) $ validateOrganizationEmailUniqueness newEmail

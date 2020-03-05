@@ -3,8 +3,8 @@ module Registry.Model.Config.AppConfigJM where
 import Data.Aeson
 
 import Registry.Model.Config.AppConfig
-import Registry.Util.JSON (simpleParseJSON)
 import Shared.Model.Config.EnvironmentJM ()
+import Shared.Util.JSON (simpleParseJSON)
 
 instance FromJSON AppConfig where
   parseJSON = simpleParseJSON "_appConfig"

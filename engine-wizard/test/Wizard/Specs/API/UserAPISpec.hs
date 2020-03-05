@@ -22,6 +22,7 @@ import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Api.Resource.User.UserProfileChangeJM ()
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -191,17 +192,17 @@ userAPI appContext =
       describe "PUT /users/current" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current"
+        let reqDto =
+              UserProfileChangeDTO
+                { _userProfileChangeDTOName = "EDITED: Isaac"
+                , _userProfileChangeDTOSurname = "EDITED: Newton"
+                , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
+                }
+        let reqBody = encode reqDto
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto =
-                UserProfileChangeDTO
-                  { _userProfileChangeDTOName = "EDITED: Isaac"
-                  , _userProfileChangeDTOSurname = "EDITED: Newton"
-                  , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
-                  }
-          let reqBody = encode reqDto
           -- GIVEN: Prepare expectation
           let expStatus = 200
           let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
@@ -256,7 +257,7 @@ userAPI appContext =
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
+        createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
       -- ------------------------------------------------------------------------
       -- PUT /users/{userId}
       -- ------------------------------------------------------------------------
@@ -337,8 +338,8 @@ userAPI appContext =
           let responseMatcher =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -352,12 +353,12 @@ userAPI appContext =
       describe "PUT /users/current/password" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current/password"
+        let reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+        let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
-          let reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
-          let reqBody = encode reqDto
           -- AND: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -375,7 +376,7 @@ userAPI appContext =
           let isSame = verifyPassword (BS.pack (reqDto ^. password)) (BS.pack (userFromDb ^. passwordHash))
           liftIO $ isSame `shouldBe` True
         createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
-        createAuthTest reqMethod reqUrl [] ""
+        createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
       detail_password_put appContext
       detail_password_hash_put appContext
       -- ------------------------------------------------------------------------
@@ -402,7 +403,7 @@ userAPI appContext =
                   }
           eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
           -- AND: Prepare expectation
-          let expStatus = 200
+          let expStatus = 204
           let expHeaders = resCorsHeaders
           let expDto = encode reqDto
           -- WHEN: Call API

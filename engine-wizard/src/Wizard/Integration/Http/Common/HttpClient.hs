@@ -4,6 +4,7 @@ module Wizard.Integration.Http.Common.HttpClient
   ) where
 
 import Control.Lens ((&), (.~), (^.))
+import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
@@ -29,7 +30,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Logger (logInfoU, logWarnU, msg)
 
-runRequest :: HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> AppContextM (Either AppError a)
+runRequest :: HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> AppContextM a
 runRequest req responseMapper = do
   logRequest req
   response <- runSimpleRequest req
@@ -39,8 +40,8 @@ runRequest req responseMapper = do
     then do
       let eResDto = responseMapper response
       logResponseBody eResDto
-      return eResDto
-    else return . Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
+      liftEither eResDto
+    else throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
 
 runSimpleRequest :: HttpRequest -> AppContextM (Response BSL.ByteString)
 runSimpleRequest req = do

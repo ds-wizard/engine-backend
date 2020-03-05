@@ -3,44 +3,38 @@ module Wizard.Service.Branch.BranchUtils where
 import Control.Lens ((^.))
 
 import LensesConfig
-import Shared.Util.Helper (createHeeHelper)
+import Shared.Model.Package.Package
 import Wizard.Database.DAO.Package.PackageDAO
+import Wizard.Model.Branch.Branch
+import Wizard.Model.Context.AppContext
 import Wizard.Service.Organization.OrganizationService
 
+getBranchPreviousPackage :: BranchWithEvents -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
   case branch ^. previousPackageId of
-    Just pkgId -> heFindPackageById pkgId $ \pkg -> return . Right . Just $ pkg
-    Nothing -> return . Right $ Nothing
+    Just pkgId -> do
+      pkg <- findPackageById pkgId
+      return . Just $ pkg
+    Nothing -> return Nothing
 
+getBranchForkOfPackageId :: BranchWithEvents -> AppContextM (Maybe String)
 getBranchForkOfPackageId branch = do
-  ePreviousPkg <- getBranchPreviousPackage branch
-  case ePreviousPkg of
-    Right (Just previousPkg) ->
-      heGetOrganization $ \org ->
-        if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
-          then return . Right $ previousPkg ^. forkOfPackageId
-          else return . Right . Just $ previousPkg ^. pId
-    Right Nothing -> return . Right $ Nothing
-    Left error -> return . Left $ error
+  mPreviousPkg <- getBranchPreviousPackage branch
+  case mPreviousPkg of
+    Just previousPkg -> do
+      org <- getOrganization
+      if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
+        then return $ previousPkg ^. forkOfPackageId
+        else return . Just $ previousPkg ^. pId
+    Nothing -> return Nothing
 
+getBranchMergeCheckpointPackageId :: BranchWithEvents -> AppContextM (Maybe String)
 getBranchMergeCheckpointPackageId branch = do
-  ePreviousPkg <- getBranchPreviousPackage branch
-  case ePreviousPkg of
-    Right (Just previousPkg) ->
-      heGetOrganization $ \org ->
-        if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
-          then return . Right $ previousPkg ^. mergeCheckpointPackageId
-          else return . Right . Just $ previousPkg ^. pId
-    Right Nothing -> return . Right $ Nothing
-    Left error -> return . Left $ error
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heGetBranchPreviousPackage branch = createHeeHelper (getBranchPreviousPackage branch)
-
--- -----------------------------------------------------
-heGetBranchForkOfPackageId branch = createHeeHelper (getBranchForkOfPackageId branch)
-
--- -----------------------------------------------------
-heGetBranchMergeCheckpointPackageId branch = createHeeHelper (getBranchMergeCheckpointPackageId branch)
+  mPreviousPkg <- getBranchPreviousPackage branch
+  case mPreviousPkg of
+    Just previousPkg -> do
+      org <- getOrganization
+      if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
+        then return $ previousPkg ^. mergeCheckpointPackageId
+        else return . Just $ previousPkg ^. pId
+    Nothing -> return Nothing

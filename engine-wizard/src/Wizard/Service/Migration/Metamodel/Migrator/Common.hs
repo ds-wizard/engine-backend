@@ -13,8 +13,8 @@ import qualified Data.Vector as Vector
 
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Error.Error
+import Shared.Util.JSON (convertValueToOject, getArrayField, getField)
 import qualified Wizard.Metamodel.Migrator.EventMigrator as EventMigrator
-import Wizard.Util.JSON (convertValueToOject, getArrayField, getField)
 import Wizard.Util.List (foldEither)
 
 migrateMetamodelVersionField :: Value -> Either AppError Value
@@ -26,7 +26,7 @@ migrateEventsField :: String -> Value -> Either AppError Value
 migrateEventsField eventsFieldName value =
   convertValueToOject value $ \object ->
     getField "metamodelVersion" object $ \oldMetamodelVersion ->
-      getArrayField eventsFieldName object $ \events -> do
-        case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> (Vector.toList events) of
+      getArrayField eventsFieldName object $ \events ->
+        case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> Vector.toList events of
           Right updatedEvents -> Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON updatedEvents) object
           Left error -> Left . GeneralServerError $ error

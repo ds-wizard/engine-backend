@@ -1,21 +1,9 @@
-module Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
-  ( findMigratorStates
-  , findMigratorStatesByOldQuestionnaireId
-  , findMigratorStateByNewQuestionnaireId
-  , insertMigratorState
-  , updateMigratorStateByNewQuestionnaireId
-  , deleteMigratorStates
-  , deleteMigratorStateByNewQuestionnaireId
-  -- Helpers
-  , heFindMigratorStateByNewQuestionnaireId
-  ) where
+module Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
 
 import LensesConfig
-import Shared.Model.Error.Error
-import Shared.Util.Helper (createHeeHelper)
 import Wizard.Database.BSON.Migration.Questionnaire.MigratorState ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
@@ -25,15 +13,18 @@ entityName = "questionnaireMigration"
 
 collection = "questionnaireMigrations"
 
-findMigratorStates :: AppContextM (Either AppError [MigratorState])
+findMigratorStates :: AppContextM [MigratorState]
 findMigratorStates = createFindEntitiesFn collection
 
-findMigratorStatesByOldQuestionnaireId :: String -> AppContextM (Either AppError [MigratorState])
+findMigratorStatesByOldQuestionnaireId :: String -> AppContextM [MigratorState]
 findMigratorStatesByOldQuestionnaireId oldQtnUuid =
   createFindEntitiesByFn collection ["oldQuestionnaireUuid" =: oldQtnUuid]
 
-findMigratorStateByNewQuestionnaireId :: String -> AppContextM (Either AppError MigratorState)
+findMigratorStateByNewQuestionnaireId :: String -> AppContextM MigratorState
 findMigratorStateByNewQuestionnaireId = createFindEntityByFn collection entityName "newQuestionnaireUuid"
+
+findMigratorStateByNewQuestionnaireId' :: String -> AppContextM (Maybe MigratorState)
+findMigratorStateByNewQuestionnaireId' = createFindEntityByFn' collection entityName "newQuestionnaireUuid"
 
 insertMigratorState :: MigratorState -> AppContextM Value
 insertMigratorState = createInsertFn collection
@@ -47,8 +38,3 @@ deleteMigratorStates = createDeleteEntitiesFn collection
 
 deleteMigratorStateByNewQuestionnaireId :: String -> AppContextM ()
 deleteMigratorStateByNewQuestionnaireId = createDeleteEntityByFn collection "newQuestionnaireUuid"
-
--- --------------------------------
--- HELPERS
--- --------------------------------
-heFindMigratorStateByNewQuestionnaireId qtnUuid = createHeeHelper (findMigratorStateByNewQuestionnaireId qtnUuid)

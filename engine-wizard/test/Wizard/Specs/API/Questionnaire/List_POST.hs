@@ -91,9 +91,10 @@ test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [] "" "QTN_PERM"
+test_403 appContext =
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

@@ -25,6 +25,8 @@ import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Document.DocumentContextDTO
+import Wizard.Api.Resource.Document.DocumentCreateDTO
+import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Event.AnswerEventDTO
 import Wizard.Api.Resource.Event.ChapterEventDTO
 import Wizard.Api.Resource.Event.ExpertEventDTO
@@ -83,6 +85,7 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.BuildInfoConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentTemplateContext
 import Wizard.Model.Feedback.Feedback
@@ -148,6 +151,10 @@ makeFields ''BaseContext
 makeFields ''AppContext
 
 -- Model / Document
+makeFields ''Document
+
+makeFields ''DocumentMetadata
+
 makeFields ''DocumentContext
 
 makeFields ''DocumentContextConfig
@@ -366,6 +373,10 @@ makeFields ''ClientConfigClientDashboardDTO
 makeFields ''ClientConfigClientCustomMenuLinkDTO
 
 -- Api / Resource / Document
+makeFields ''DocumentDTO
+
+makeFields ''DocumentCreateDTO
+
 makeFields ''DocumentContextDTO
 
 makeFields ''DocumentContextConfigDTO

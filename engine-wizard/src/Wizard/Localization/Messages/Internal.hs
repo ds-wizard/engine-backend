@@ -25,11 +25,6 @@ _ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response des
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
--- Document
-_ERROR_SERVICE_DOCUMENT__TRANSFORMATION_FAILED err = "Couldn't transform to desired document format: " ++ err
-
-_ERROR_SERVICE_DOCUMENT__UKNOWN_FORMAT = "Unprocessable DMP format"
-
 -- Feedback
 _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED serviceName endpoint =
   "Request to external API failed (service: '" ++ serviceName ++ "', endpoint: '" ++ endpoint ++ "')"
@@ -62,8 +57,6 @@ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION = "Unable to get token expi
 _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
-
-_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SEVICE_TOKEN = "Unable to get or verify service token"
 
 -- User
 _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT = "The activation email could not be sent. Please contact administrator."
