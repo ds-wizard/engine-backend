@@ -54,6 +54,13 @@ packages:
   original:
     hackage: servant-multipart-0.11.4
 - completed:
+    hackage: fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
+    pantry-tree:
+      size: 210
+      sha256: f92ef28c1edc20a1653f074bc85e7862c81ff850893b4417b64a8582ce62b531
+  original:
+    hackage: fsutils-0.1.2
+- completed:
     hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
     pantry-tree:
       size: 577

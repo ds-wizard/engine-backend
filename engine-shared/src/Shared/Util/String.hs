@@ -3,6 +3,7 @@ module Shared.Util.String
   , replace
   , splitOn
   , stripSuffix
+  , isSuffixOf
   ) where
 
 import Data.Char (toLower)
@@ -24,3 +25,6 @@ splitOn separator string =
 
 stripSuffix :: String -> String -> Maybe String
 stripSuffix suffix string = T.unpack <$> T.stripSuffix (T.pack suffix) (T.pack string)
+
+isSuffixOf :: String -> String -> Bool
+isSuffixOf suffix name = T.isSuffixOf (T.pack suffix) (T.pack name)

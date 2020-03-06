@@ -27,8 +27,8 @@ import Wizard.Util.List (foldEithersInContext)
 listTemplates :: Maybe String -> AppContextM [TemplateDTO]
 listTemplates mPkgId = do
   folder <- getTemplateFolder
-  files <- liftIO $ listFilesWithExtension folder "json"
-  eTemplates <- foldEithersInContext (fmap ((liftIO . loadJSONFile) . (\f -> folder ++ "/" ++ f)) files)
+  files <- liftIO $ listFilesWithName folder "template.json"
+  eTemplates <- foldEithersInContext (fmap (liftIO . loadJSONFile) files)
   case eTemplates of
     Left error -> throwError error
     Right templates ->

@@ -1,6 +1,6 @@
 {
   "uuid": "43a3fdd1-8535-42e0-81a7-5edbff296e65",
-  "name": "Common Template",
+  "name": "Default Template",
   "rootFile": "root.html.j2",
   "allowedKMs": [
     {

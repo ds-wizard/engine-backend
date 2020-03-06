@@ -29,6 +29,7 @@ library:
   - case-insensitive
   - containers
   - directory
+  - fsutils
   - http-types
   - lens
   - monad-logger
