@@ -93,7 +93,7 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
 signToken :: String -> JWT.JWTClaimsSet -> Token
 signToken jwtSecret cs =
   let key = JWT.hmacSecret $ T.pack jwtSecret
-   in T.unpack $ JWT.encodeSigned key cs
+   in T.unpack $ JWT.encodeSigned key mempty cs
 
 verifyToken :: T.Text -> String -> Integer -> UTCTime -> Maybe String
 verifyToken jwtToken jwtSecret currentJwtVersion now =

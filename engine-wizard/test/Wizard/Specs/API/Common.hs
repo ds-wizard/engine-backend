@@ -79,9 +79,11 @@ reqCtHeader = contentTypeHeaderJSON
 resCtHeaderPlain :: Header
 resCtHeaderPlain = contentTypeHeaderJSON
 
-resCtHeader = "Content-Type" <:> "application/json;charset=utf-8"
+resCtHeader = "Content-Type" <:> "application/json"
 
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript;charset=utf-8"
+resCtHeaderUtf8 = "Content-Type" <:> "application/json;charset=utf-8"
+
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =
@@ -106,7 +108,7 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
     let reqHeaders = [reqAuthHeader, reqCtHeader]
       -- GIVEN: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = [resCtHeaderUtf8] ++ resCorsHeaders
     let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call API

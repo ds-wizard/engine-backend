@@ -8,7 +8,7 @@ import qualified Data.UUID as U
 import Servant
   ( Header
   , Headers
-  , ServantErr(..)
+  , ServerError(..)
   , addHeader
   , err400
   , err401
@@ -121,7 +121,7 @@ addTraceUuidHeader result = do
   traceUuid <- asks _appContextTraceUuid
   return $ addHeader (U.toString traceUuid) result
 
-sendError :: AppError -> BaseContextM ServantErr
+sendError :: AppError -> BaseContextM ServerError
 sendError (ValidationError formErrorRecords fieldErrorRecords) = do
   ls <- asks _baseContextLocalization
   let formErrors = fmap (locale ls) formErrorRecords
@@ -148,7 +148,7 @@ sendError (GeneralServerError errorMessage) = do
   logError errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
 
-sendErrorDTO :: ErrorDTO -> BaseContextM ServantErr
+sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
 sendErrorDTO (ValidationErrorDTO formErrors fieldErrors) =
   return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (UserErrorDTO message) =

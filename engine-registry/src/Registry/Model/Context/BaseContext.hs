@@ -7,7 +7,7 @@ import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import qualified Data.Map.Strict as M
 import Database.Persist.MongoDB (ConnectionPool)
-import Servant (ServantErr)
+import Servant (ServerError)
 
 import Registry.Model.Config.AppConfig
 import Registry.Model.Config.BuildInfoConfig
@@ -22,6 +22,6 @@ data BaseContext =
 
 newtype BaseContextM a =
   BaseContextM
-    { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServantErr IO)) a
+    { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServerError IO)) a
     }
-  deriving (Applicative, Functor, Monad, MonadIO, MonadReader BaseContext, MonadError ServantErr, MonadLogger)
+  deriving (Applicative, Functor, Monad, MonadIO, MonadReader BaseContext, MonadError ServerError, MonadLogger)

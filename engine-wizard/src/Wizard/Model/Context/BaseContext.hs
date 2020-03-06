@@ -9,7 +9,7 @@ import qualified Data.Map.Strict as M
 import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
-import Servant (ServantErr)
+import Servant (ServerError)
 
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.BuildInfoConfig
@@ -26,6 +26,6 @@ data BaseContext =
 
 newtype BaseContextM a =
   BaseContextM
-    { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServantErr IO)) a
+    { runBaseContextM :: ReaderT BaseContext (LoggingT (ExceptT ServerError IO)) a
     }
-  deriving (Applicative, Functor, Monad, MonadIO, MonadReader BaseContext, MonadError ServantErr, MonadLogger)
+  deriving (Applicative, Functor, Monad, MonadIO, MonadReader BaseContext, MonadError ServerError, MonadLogger)
