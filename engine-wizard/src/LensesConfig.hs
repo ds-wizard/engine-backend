@@ -74,6 +74,7 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.Version.VersionDTO
+import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 import Wizard.Integration.Resource.Package.PackageDetailIDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
@@ -89,7 +90,6 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentTemplateContext
 import Wizard.Model.Feedback.Feedback
-import Wizard.Model.Feedback.SimpleIssue
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
@@ -248,8 +248,6 @@ makeFields ''MoveReferenceEvent
 
 -- Model / Feedback
 makeFields ''Feedback
-
-makeFields ''SimpleIssue
 
 -- Model / Http
 makeFields ''HttpRequest
@@ -613,6 +611,9 @@ makeFields ''VersionDTO
 -- -------------------------------------
 -- Integration
 -- -------------------------------------
+-- Integration / Resource / GitHub
+makeFields ''IssueIDTO
+
 -- Integration / Resource / Organization
 makeFields ''OrganizationSimpleIDTO
 

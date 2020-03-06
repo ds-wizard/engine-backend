@@ -54,41 +54,6 @@ packages:
   original:
     hackage: servant-multipart-0.11.4
 - completed:
-    hackage: github-0.21@sha256:9d88c84e308723e314069f91c70c0f3fdad6d18976f185f1ae672ce8eee30547,6296
-    pantry-tree:
-      size: 6648
-      sha256: 832e62729292d71f405bb9497939e9e8fd3823d2bcfeab19b543d2d953dc4621
-  original:
-    hackage: github-0.21
-- completed:
-    hackage: binary-0.8.6.0@sha256:6241b55809fbf713f4d53734fb3e2faf376a68a06f364e4196571aa15c492fd6,7714
-    pantry-tree:
-      size: 1976
-      sha256: 8228a7bca93b6f545dbabc945fd6ee4ee0f5ae8b1b9cbd257eef797bc0f880b1
-  original:
-    hackage: binary-0.8.6.0
-- completed:
-    hackage: binary-instances-1@sha256:b17565598b8df3241f9b46fa8e3a3368ecc8e3f2eb175d7c28f319042a6f5c79,2613
-    pantry-tree:
-      size: 1035
-      sha256: 938ffc6990cac12681c657f7afa93737eecf335e6f0212d8c0b7c1ea3e0f40f4
-  original:
-    hackage: binary-instances-1
-- completed:
-    hackage: binary-orphans-0.1.8.0@sha256:009457e7f5f2dfdc32cb4b2b0bfc5d88ac78acb1b5fa8de15fd933ceb70cdeb6,2615
-    pantry-tree:
-      size: 380
-      sha256: fbe0d58605e9e65aa161c4869190f1a2ab92f07a946aeff163aea9c272b3e6b5
-  original:
-    hackage: binary-orphans-0.1.8.0
-- completed:
-    hackage: text-1.2.4.0@sha256:8c24450feb8e3bbb7ea3e17af24ef57e85db077c4bf53e5bcc345b283d1b1d5b,10081
-    pantry-tree:
-      size: 7457
-      sha256: 3437b0a73ce2ae1a81aa8b3438d41a85981c00894cdbee0d6d6d6873046a5d5d
-  original:
-    hackage: text-1.2.4.0
-- completed:
     hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
     pantry-tree:
       size: 577

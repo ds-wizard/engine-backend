@@ -5,6 +5,7 @@ module Wizard.Integration.Http.Common.ResponseMapper
   , extractNestedField
   , extractNestedStringField
   , extractStringField
+  , extractIntField
   , convertToArray
   ) where
 
@@ -17,6 +18,7 @@ import qualified Data.Vector as Vector
 import Network.Wreq (Response, responseBody)
 
 import Shared.Model.Error.Error
+import Text.Read (readMaybe)
 import Wizard.Localization.Messages.Internal
 
 getResponseBody :: Response BSL.ByteString -> BSL.ByteString
@@ -42,7 +44,7 @@ extractNestedField (k:ks) response =
     Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS (k : ks)
 
 extractNestedStringField :: [String] -> Value -> Either AppError String
-extractNestedStringField (k:[]) response = extractStringField k response
+extractNestedStringField [k] response = extractStringField k response
 extractNestedStringField (k:ks) response =
   case response ^? key (T.pack k) of
     Just field -> extractNestedStringField ks field
@@ -53,6 +55,12 @@ extractStringField fieldName record =
   case T.unpack <$> (record ^? key (T.pack fieldName) . _String) of
     Just val -> Right val
     Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName
+
+extractIntField :: String -> Value -> Either AppError Int
+extractIntField fieldName record =
+  case readMaybe <$> (T.unpack <$> (record ^? key (T.pack fieldName) . _String)) of
+    Just (Just val) -> Right val
+    _ -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_INTEGER_FIELD fieldName
 
 convertToArray :: Value -> Either AppError [Value]
 convertToArray response =

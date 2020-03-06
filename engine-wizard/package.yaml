@@ -38,7 +38,6 @@ library:
   - exceptions
   - filepath
   - ginger
-  - github
   - hashable
   - HaskellNet
   - HaskellNet-SSL

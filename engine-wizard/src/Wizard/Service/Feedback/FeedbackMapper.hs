@@ -3,12 +3,13 @@ module Wizard.Service.Feedback.FeedbackMapper where
 import Control.Lens ((^.))
 import Data.Time
 import qualified Data.UUID as U
+import Prelude hiding (id)
 
 import LensesConfig
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
+import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Model.Feedback.Feedback
-import Wizard.Model.Feedback.SimpleIssue
 
 toDTO :: Feedback -> String -> FeedbackDTO
 toDTO feedback issueUrl =
@@ -37,15 +38,15 @@ fromCreateDTO dto fUuid issueId now =
     , _feedbackUpdatedAt = now
     }
 
-fromSimpleIssue :: Feedback -> SimpleIssue -> UTCTime -> Feedback
+fromSimpleIssue :: Feedback -> IssueIDTO -> UTCTime -> Feedback
 fromSimpleIssue feedback simpleIssue now =
   Feedback
     { _feedbackUuid = feedback ^. uuid
-    , _feedbackIssueId = simpleIssue ^. issueId
+    , _feedbackIssueId = simpleIssue ^. id
     , _feedbackQuestionUuid = feedback ^. questionUuid
     , _feedbackPackageId = feedback ^. packageId
     , _feedbackTitle = simpleIssue ^. title
-    , _feedbackContent = simpleIssue ^. content
+    , _feedbackContent = simpleIssue ^. body
     , _feedbackCreatedAt = feedback ^. createdAt
     , _feedbackUpdatedAt = now
     }

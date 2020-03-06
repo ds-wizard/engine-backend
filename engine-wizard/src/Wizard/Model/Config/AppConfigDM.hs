@@ -121,5 +121,6 @@ defaultFeedback =
     , _appConfigFeedbackToken = ""
     , _appConfigFeedbackOwner = ""
     , _appConfigFeedbackRepo = ""
-    , _appConfigFeedbackIssueUrl = "https://github.com/:owner/:repo/issues/:issueId"
+    , _appConfigFeedbackApiUrl = "https://api.github.com"
+    , _appConfigFeedbackWebUrl = "https://github.com"
     }

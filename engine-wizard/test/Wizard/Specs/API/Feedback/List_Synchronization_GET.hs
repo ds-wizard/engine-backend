@@ -19,7 +19,10 @@ import Wizard.Specs.API.Common
 -- GET /feedbacks/synchronization
 -- ------------------------------------------------------------------------
 list_synchronization_get :: AppContext -> SpecWith Application
-list_synchronization_get appContext = describe "GET /feedbacks/synchronization" $ do test_401 appContext
+list_synchronization_get appContext =
+  describe "GET /feedbacks/synchronization" $ do
+    test_204 appContext
+    test_401 appContext
 
 --  test_204 appContext -- Disable due to slow running
 -- ----------------------------------------------------

@@ -6,6 +6,8 @@ import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
+import Prelude hiding (id)
+import qualified Prelude
 
 import LensesConfig
 import Shared.Model.Event.Event
@@ -107,11 +109,11 @@ computeSharedNode pPath tPath = foldl go Nothing (reverse pPath)
 
 takeSharedPrefix :: Maybe U.UUID -> [U.UUID] -> [U.UUID]
 takeSharedPrefix (Just sharedNode) = takeWhile (/= sharedNode)
-takeSharedPrefix Nothing = id
+takeSharedPrefix Nothing = Prelude.id
 
 takeDiffSuffix :: Maybe U.UUID -> [U.UUID] -> [U.UUID]
 takeDiffSuffix (Just sharedNode) = tailSafe . dropWhile (/= sharedNode)
-takeDiffSuffix Nothing = id
+takeDiffSuffix Nothing = Prelude.id
 
 shouldWeMigrate :: KnowledgeModel -> [U.UUID] -> [U.UUID] -> Bool
 shouldWeMigrate km pPathDiff tPathDiff = not . or . fmap (isItListQuestion km) $ pPathDiff ++ tPathDiff

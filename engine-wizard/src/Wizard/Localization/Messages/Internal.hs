@@ -20,6 +20,9 @@ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_NESTED_FIELDS fieldNames =
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName =
   "Problem with a response deserialization (unable to extract string field: '" ++ fieldName ++ "')"
 
+_ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_INTEGER_FIELD fieldName =
+  "Problem with a response deserialization (unable to extract integer field: '" ++ fieldName ++ "')"
+
 _ERROR_INTEGRATION_COMMON__RDF_FIELD_IS_NOT_ARRAY = "Problem with a response deserialization (field is not an array)"
 
 -- --------------------------------------

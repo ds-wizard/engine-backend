@@ -151,6 +151,7 @@ instance FromJSON AppConfigFeedback where
     _appConfigFeedbackToken <- o .:? "token" .!= (defaultFeedback ^. token)
     _appConfigFeedbackOwner <- o .:? "owner" .!= (defaultFeedback ^. owner)
     _appConfigFeedbackRepo <- o .:? "repo" .!= (defaultFeedback ^. repo)
-    _appConfigFeedbackIssueUrl <- o .:? "issueUrl" .!= (defaultFeedback ^. issueUrl)
+    _appConfigFeedbackApiUrl <- o .:? "apiUrl" .!= (defaultFeedback ^. apiUrl)
+    _appConfigFeedbackWebUrl <- o .:? "webUrl" .!= (defaultFeedback ^. webUrl)
     return AppConfigFeedback {..}
   parseJSON _ = mzero

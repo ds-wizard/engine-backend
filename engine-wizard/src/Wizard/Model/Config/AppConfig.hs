@@ -143,6 +143,7 @@ data AppConfigFeedback =
     , _appConfigFeedbackToken :: String
     , _appConfigFeedbackOwner :: String
     , _appConfigFeedbackRepo :: String
-    , _appConfigFeedbackIssueUrl :: String
+    , _appConfigFeedbackApiUrl :: String
+    , _appConfigFeedbackWebUrl :: String
     }
   deriving (Generic, Show)

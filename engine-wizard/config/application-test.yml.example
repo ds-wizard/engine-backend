@@ -2,7 +2,7 @@ general:
   environment: Test
   serverPort: 3000
   clientUrl: http://localhost:3001
-  serviceToken: reqServiceHeader
+  serviceToken: my-service-token
   integrationConfig: config/integration-test.yml
   templateFolder: templates
   registrationEnabled: true
@@ -69,4 +69,3 @@ feedback:
   token:
   owner: DSWGlobal
   repo: dsw-test
-  issueurl: https://github.com/:owner/:repo/issues/:issueId
