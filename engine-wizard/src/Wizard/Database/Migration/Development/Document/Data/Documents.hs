@@ -28,7 +28,7 @@ doc1 =
     , _documentState = DoneDocumentState
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
-    , _documentFormat = "PDF"
+    , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
@@ -74,7 +74,7 @@ doc2 =
     , _documentState = DoneDocumentState
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
-    , _documentFormat = "PDF"
+    , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
@@ -90,7 +90,7 @@ doc3 =
     , _documentState = DoneDocumentState
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
-    , _documentFormat = "PDF"
+    , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}

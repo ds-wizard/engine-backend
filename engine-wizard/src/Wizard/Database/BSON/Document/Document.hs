@@ -28,7 +28,7 @@ instance ToBSON Document where
     , "state" BSON.=: _documentState
     , "questionnaireUuid" BSON.=: _documentQuestionnaireUuid
     , "templateUuid" BSON.=: _documentTemplateUuid
-    , "format" BSON.=: _documentFormat
+    , "formatUuid" BSON.=: _documentFormatUuid
     , "metadata" BSON.=: _documentMetadata
     , "ownerUuid" BSON.=: _documentOwnerUuid
     , "createdAt" BSON.=: _documentCreatedAt
@@ -41,7 +41,7 @@ instance FromBSON Document where
     _documentState <- BSON.lookup "state" doc
     _documentQuestionnaireUuid <- BSON.lookup "questionnaireUuid" doc
     _documentTemplateUuid <- BSON.lookup "templateUuid" doc
-    _documentFormat <- BSON.lookup "format" doc
+    _documentFormatUuid <- BSON.lookup "formatUuid" doc
     _documentMetadata <- BSON.lookup "metadata" doc
     _documentOwnerUuid <- BSON.lookup "ownerUuid" doc
     _documentCreatedAt <- BSON.lookup "createdAt" doc

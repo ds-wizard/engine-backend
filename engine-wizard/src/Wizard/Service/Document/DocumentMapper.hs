@@ -19,7 +19,7 @@ toDTO doc mQtn tml =
     , _documentDTOState = doc ^. state
     , _documentDTOQuestionnaire = mQtn
     , _documentDTOTemplate = tml
-    , _documentDTOFormat = doc ^. format
+    , _documentDTOFormatUuid = doc ^. formatUuid
     , _documentDTOOwnerUuid = doc ^. ownerUuid
     , _documentDTOCreatedAt = doc ^. createdAt
     }
@@ -32,7 +32,7 @@ fromCreateDTO dto uuid currentUserUuid now =
     , _documentState = QueuedDocumentState
     , _documentQuestionnaireUuid = dto ^. questionnaireUuid
     , _documentTemplateUuid = dto ^. templateUuid
-    , _documentFormat = dto ^. format
+    , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
     , _documentOwnerUuid = currentUserUuid
     , _documentCreatedAt = now

@@ -7,8 +7,8 @@ data TemplateDTO =
   TemplateDTO
     { _templateDTOUuid :: U.UUID
     , _templateDTOName :: String
-    , _templateDTORootFile :: String
     , _templateDTOAllowedKMs :: [TemplateAllowedKMDTO]
+    , _templateDTOFormats :: [TemplateFormatDTO]
     }
   deriving (Show, Eq, Generic)
 
@@ -18,5 +18,13 @@ data TemplateAllowedKMDTO =
     , _templateAllowedKMDTOKmId :: Maybe String
     , _templateAllowedKMDTOMinVersion :: Maybe String
     , _templateAllowedKMDTOMaxVersion :: Maybe String
+    }
+  deriving (Show, Eq, Generic)
+
+data TemplateFormatDTO =
+  TemplateFormatDTO
+    { _templateFormatDTOUuid :: U.UUID
+    , _templateFormatDTOName :: String
+    , _templateFormatDTOIcon :: String
     }
   deriving (Show, Eq, Generic)

@@ -1,7 +1,6 @@
 {
   "uuid": "43a3fdd1-8535-42e0-81a7-5edbff296e65",
   "name": "Default Template",
-  "rootFile": "root.html.j2",
   "allowedKMs": [
     {
       "orgId": null,
@@ -9,5 +8,34 @@
       "minVersion": null,
       "maxVersion": null
     }
-  ]
+  ],
+  "formats": [{
+    "uuid": "329521df-8fa1-4d7a-b9c5-49f75f5d31d5",
+    "name": "PDF",
+    "icon": "far fa-file-pdf",
+    "steps": [{
+      "name": "jinja",
+      "options": {
+        "template": "root.html.j2",
+        "content-type": "text/html",
+        "extension": "html"
+      }
+    }, {
+      "name": "wkhtmltopdf",
+      "options": {}
+    }]
+  }, {
+    "uuid": "fabab18b-2497-4878-8318-1dccdb016ff2",
+    "name": "RDF",
+    "icon": "far fa-file",
+    "steps": [{
+      "name": "jinja",
+      "options": {
+        "template": "root.html.j2",
+        "content-type": "text/turtle",
+        "extension": "ttl"
+      }
+    }]
+
+  }]
 }

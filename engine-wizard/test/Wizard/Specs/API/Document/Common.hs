@@ -19,7 +19,7 @@ assertExistenceOfDocumentInDB appContext reqDto = do
   liftIO $ (docFromDb ^. name) `shouldBe` (reqDto ^. name)
   liftIO $ (docFromDb ^. questionnaireUuid) `shouldBe` (reqDto ^. questionnaireUuid)
   liftIO $ (docFromDb ^. templateUuid) `shouldBe` (reqDto ^. templateUuid)
-  liftIO $ (docFromDb ^. format) `shouldBe` (reqDto ^. format)
+  liftIO $ (docFromDb ^. formatUuid) `shouldBe` (reqDto ^. formatUuid)
 
 -- --------------------------------
 -- COMPARATORS
@@ -28,4 +28,4 @@ compareDocumentDtos resDto expDto = do
   liftIO $ (resDto ^. name) `shouldBe` (expDto ^. name)
   liftIO $ (fromJust (resDto ^. questionnaire) ^. uuid) `shouldBe` (expDto ^. questionnaireUuid)
   liftIO $ (resDto ^. template . uuid) `shouldBe` (expDto ^. templateUuid)
-  liftIO $ (resDto ^. format) `shouldBe` (expDto ^. format)
+  liftIO $ (resDto ^. formatUuid) `shouldBe` (expDto ^. formatUuid)

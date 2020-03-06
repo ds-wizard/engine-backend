@@ -25,7 +25,7 @@ data Document =
     , _documentState :: DocumentState
     , _documentQuestionnaireUuid :: U.UUID
     , _documentTemplateUuid :: U.UUID
-    , _documentFormat :: String
+    , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata
     , _documentOwnerUuid :: U.UUID
     , _documentCreatedAt :: UTCTime

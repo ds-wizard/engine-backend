@@ -15,7 +15,7 @@ data DocumentDTO =
     , _documentDTOState :: DocumentState
     , _documentDTOQuestionnaire :: Maybe QuestionnaireDTO
     , _documentDTOTemplate :: TemplateDTO
-    , _documentDTOFormat :: String
+    , _documentDTOFormatUuid :: U.UUID
     , _documentDTOOwnerUuid :: U.UUID
     , _documentDTOCreatedAt :: UTCTime
     }

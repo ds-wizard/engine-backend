@@ -51,7 +51,7 @@ reqDtoT doc =
     { _documentCreateDTOName = doc ^. name
     , _documentCreateDTOQuestionnaireUuid = doc ^. questionnaireUuid
     , _documentCreateDTOTemplateUuid = doc ^. templateUuid
-    , _documentCreateDTOFormat = doc ^. format
+    , _documentCreateDTOFormatUuid = doc ^. formatUuid
     }
 
 reqBody = ""
