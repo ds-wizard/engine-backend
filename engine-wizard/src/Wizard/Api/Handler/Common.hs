@@ -132,6 +132,14 @@ addTraceUuidHeader result = do
   return $ addHeader (U.toString traceUuid) result
 
 sendError :: AppError -> BaseContextM ServerError
+sendError AcceptedError =
+  return $
+  ServerError
+    { errHTTPCode = 202
+    , errReasonPhrase = "Accepted"
+    , errBody = encode AcceptedErrorDTO
+    , errHeaders = [contentTypeHeaderJSON]
+    }
 sendError (ValidationError formErrorRecords fieldErrorRecords) = do
   ls <- asks _baseContextLocalization
   let formErrors = fmap (locale ls) formErrorRecords
@@ -159,6 +167,14 @@ sendError (GeneralServerError errorMessage) = do
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
 
 sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
+sendErrorDTO AcceptedErrorDTO =
+  return $
+  ServerError
+    { errHTTPCode = 202
+    , errReasonPhrase = "Accepted"
+    , errBody = encode AcceptedErrorDTO
+    , errHeaders = [contentTypeHeaderJSON]
+    }
 sendErrorDTO (ValidationErrorDTO formErrors fieldErrors) =
   return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (UserErrorDTO message) =

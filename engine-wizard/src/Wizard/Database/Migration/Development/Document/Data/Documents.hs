@@ -2,11 +2,12 @@ module Wizard.Database.Migration.Development.Document.Data.Documents where
 
 import Control.Lens ((^.))
 import qualified Data.ByteString.Char8 as BS
+import Data.Hashable
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
+import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Wizard.Database.Migration.Development.Level.Data.Levels
@@ -26,7 +27,9 @@ doc1 =
     { _documentUuid = fromJust (U.fromString "264ca352-1a99-4ffd-860e-32aee9a98428")
     , _documentName = "My exported document"
     , _documentState = DoneDocumentState
+    , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
+    , _documentQuestionnaireRepliesHash = hash (questionnaire1 ^. replies)
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -72,7 +75,9 @@ doc2 =
     { _documentUuid = fromJust (U.fromString "12de4935-58ad-4a34-9d91-dd0e16619b35")
     , _documentName = "My exported document 2"
     , _documentState = DoneDocumentState
+    , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
+    , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -88,7 +93,9 @@ doc3 =
     { _documentUuid = fromJust (U.fromString "35ef63fd-cb5c-448c-9a4f-54b572573c20")
     , _documentName = "My exported document 3"
     , _documentState = DoneDocumentState
+    , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
+    , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
     , _documentTemplateUuid = commonWizardTemplate ^. uuid
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -96,4 +103,64 @@ doc3 =
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
     , _documentOwnerUuid = userAlbert ^. uuid
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    }
+
+doc4 :: Document
+doc4 =
+  doc1
+    { _documentUuid = fromJust (U.fromString "9e010fc5-d147-4e9a-94a0-5aba40d78b97")
+    , _documentName = "My failed document 4"
+    , _documentState = ErrorDocumentState
+    }
+
+doc5 :: Document
+doc5 =
+  doc1
+    { _documentUuid = fromJust (U.fromString "c3e1a760-0941-499c-a8cd-6b9d78eee0ba")
+    , _documentName = "My in progress document 5"
+    , _documentState = InProgressDocumentState
+    }
+
+doc6 :: Document
+doc6 =
+  doc1
+    { _documentUuid = fromJust (U.fromString "6a7631bc-af69-4e72-83e4-8440be071005")
+    , _documentName = "My queued document 6"
+    , _documentState = QueuedDocumentState
+    }
+
+tempDocQueued :: Document
+tempDocQueued =
+  doc1
+    { _documentUuid = fromJust (U.fromString "537e2b86-64ec-4ee9-965b-6637775f8f89")
+    , _documentName = "My temp docs"
+    , _documentState = QueuedDocumentState
+    , _documentDurability = TemporallyDocumentDurability
+    }
+
+tempDocInProgress :: Document
+tempDocInProgress =
+  doc1
+    { _documentUuid = fromJust (U.fromString "8f075d1e-d7ca-416e-8e17-5dd6d53a01f3")
+    , _documentName = "My temp docs"
+    , _documentState = InProgressDocumentState
+    , _documentDurability = TemporallyDocumentDurability
+    }
+
+tempDocDone :: Document
+tempDocDone =
+  doc1
+    { _documentUuid = fromJust (U.fromString "ac38c865-a891-43a7-986b-b6801ed10880")
+    , _documentName = "My temp docs"
+    , _documentState = DoneDocumentState
+    , _documentDurability = TemporallyDocumentDurability
+    }
+
+tempDocError :: Document
+tempDocError =
+  doc1
+    { _documentUuid = fromJust (U.fromString "16884341-2771-437d-944f-69bc9572af20")
+    , _documentName = "My temp docs"
+    , _documentState = ErrorDocumentState
+    , _documentDurability = TemporallyDocumentDurability
     }

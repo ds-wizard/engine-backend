@@ -20,6 +20,8 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOState :: QuestionnaireState
     , _questionnaireDetailDTOPackage :: PackageSimpleDTO
     , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
+    , _questionnaireDetailDTOTemplateUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
     , _questionnaireDetailDTOReplies :: [ReplyDTO]
     , _questionnaireDetailDTOLabels :: [LabelDTO]
@@ -38,6 +40,8 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
     _questionnaireDetailDTOSelectedTagUuids a == _questionnaireDetailDTOSelectedTagUuids b &&
+    _questionnaireDetailDTOTemplateUuid a == _questionnaireDetailDTOTemplateUuid b &&
+    _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b

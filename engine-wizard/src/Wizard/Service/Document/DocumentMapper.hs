@@ -24,13 +24,15 @@ toDTO doc mQtn tml =
     , _documentDTOCreatedAt = doc ^. createdAt
     }
 
-fromCreateDTO :: DocumentCreateDTO -> U.UUID -> U.UUID -> UTCTime -> Document
-fromCreateDTO dto uuid currentUserUuid now =
+fromCreateDTO :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> U.UUID -> UTCTime -> Document
+fromCreateDTO dto uuid durability repliesHash currentUserUuid now =
   Document
     { _documentUuid = uuid
     , _documentName = dto ^. name
     , _documentState = QueuedDocumentState
+    , _documentDurability = durability
     , _documentQuestionnaireUuid = dto ^. questionnaireUuid
+    , _documentQuestionnaireRepliesHash = repliesHash
     , _documentTemplateUuid = dto ^. templateUuid
     , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}

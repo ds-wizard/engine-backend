@@ -29,6 +29,9 @@ insertDocument = createInsertFn collection
 deleteDocuments :: AppContextM ()
 deleteDocuments = createDeleteEntitiesFn collection
 
+deleteDocumentsFiltered :: [(String, String)] -> AppContextM ()
+deleteDocumentsFiltered queryParams = createDeleteEntitiesByFn collection (mapToDBQueryParams queryParams)
+
 deleteDocumentById :: String -> AppContextM ()
 deleteDocumentById = createDeleteEntityByFn collection "uuid"
 
@@ -40,6 +43,9 @@ insertDocumentContent = createCreateFileFn documentBucketName
 
 deleteDocumentContents :: AppContextM ()
 deleteDocumentContents = createDeleteFilesFn documentBucketName
+
+deleteDocumentContentsFiltered :: [(String, String)] -> AppContextM ()
+deleteDocumentContentsFiltered queryParams = createDeleteFilesByFn documentBucketName (mapToDBQueryParams queryParams)
 
 deleteDocumentContentById :: String -> AppContextM ()
 deleteDocumentContentById = createDeleteFileByFn documentBucketName

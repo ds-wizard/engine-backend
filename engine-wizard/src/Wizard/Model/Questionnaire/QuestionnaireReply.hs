@@ -1,5 +1,6 @@
 module Wizard.Model.Questionnaire.QuestionnaireReply where
 
+import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -9,6 +10,8 @@ data Reply =
     , _replyValue :: ReplyValue
     }
   deriving (Show, Eq, Generic)
+
+instance Hashable Reply
 
 data ReplyValue
   = StringReply
@@ -25,6 +28,8 @@ data ReplyValue
       }
   deriving (Show, Eq, Generic)
 
+instance Hashable ReplyValue
+
 data IntegrationReplyValue
   = PlainValue String
   | IntegrationValue
@@ -32,3 +37,5 @@ data IntegrationReplyValue
       , _integrationValueIntValue :: String
       }
   deriving (Show, Eq, Generic)
+
+instance Hashable IntegrationReplyValue

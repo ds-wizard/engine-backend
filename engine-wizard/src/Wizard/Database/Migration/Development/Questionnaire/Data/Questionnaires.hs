@@ -12,6 +12,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Model.Questionnaire.QuestionnaireUtil
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Package.Data.Packages
+import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
@@ -29,6 +30,8 @@ questionnaire1 =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -45,6 +48,8 @@ questionnaire1Edited =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire1 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire1 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
@@ -66,6 +71,8 @@ questionnaire2 =
     , _questionnaireAccessibility = PublicReadOnlyQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -82,6 +89,8 @@ questionnaire2Edited =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire2 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
@@ -103,6 +112,8 @@ questionnaire3 =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Nothing
@@ -119,6 +130,8 @@ questionnaire3Edited =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire3 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -140,6 +153,8 @@ questionnaire4 =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = []
     , _questionnaireLabels = []
     , _questionnaireOwnerUuid = Nothing

@@ -18,12 +18,19 @@ data DocumentMetadata =
     }
   deriving (Show, Eq, Generic)
 
+data DocumentDurability
+  = PersistentDocumentDurability
+  | TemporallyDocumentDurability
+  deriving (Show, Eq, Generic)
+
 data Document =
   Document
     { _documentUuid :: U.UUID
     , _documentName :: String
     , _documentState :: DocumentState
+    , _documentDurability :: DocumentDurability
     , _documentQuestionnaireUuid :: U.UUID
+    , _documentQuestionnaireRepliesHash :: Int
     , _documentTemplateUuid :: U.UUID
     , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata

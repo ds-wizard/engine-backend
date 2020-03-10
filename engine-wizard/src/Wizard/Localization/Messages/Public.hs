@@ -47,6 +47,10 @@ _ERROR_VALIDATION__USER_ABSENCE userUuid =
 _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
   LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
 
+-- Common
+_ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
+  LocaleRecord "error.service.template.template_or_format_not_set_up" "Template or format is not set up" []
+
 -- Migration / KnowledgeModel
 _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER =
   LocaleRecord

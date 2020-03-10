@@ -21,6 +21,8 @@ data Questionnaire =
     , _questionnaireAccessibility :: QuestionnaireAccessibility
     , _questionnairePackageId :: String
     , _questionnaireSelectedTagUuids :: [U.UUID]
+    , _questionnaireTemplateUuid :: Maybe U.UUID
+    , _questionnaireFormatUuid :: Maybe U.UUID
     , _questionnaireOwnerUuid :: Maybe U.UUID
     , _questionnaireReplies :: [Reply]
     , _questionnaireLabels :: [Label]
@@ -37,5 +39,7 @@ instance Eq Questionnaire where
     _questionnaireAccessibility a == _questionnaireAccessibility b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
+    _questionnaireTemplateUuid a == _questionnaireTemplateUuid b &&
+    _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
     _questionnaireOwnerUuid a == _questionnaireOwnerUuid b &&
     _questionnaireReplies a == _questionnaireReplies b && _questionnaireLabels a == _questionnaireLabels b
