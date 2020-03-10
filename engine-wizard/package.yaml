@@ -64,6 +64,7 @@ library:
   - random # OK
   - regex-compat
   - retry
+  - scientific
   - servant
   - servant-errors
   - servant-multipart

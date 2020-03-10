@@ -11,8 +11,9 @@ module Wizard.Integration.Http.Common.ResponseMapper
 
 import Control.Lens ((^.), (^?))
 import Data.Aeson (FromJSON, Value, eitherDecode)
-import Data.Aeson.Lens (_Array, _String, _Value, key)
+import Data.Aeson.Lens (Primitive(..), _Array, _Primitive, _String, _Value, key)
 import qualified Data.ByteString.Lazy as BSL
+import Data.Scientific (floatingOrInteger)
 import qualified Data.Text as T
 import qualified Data.Vector as Vector
 import Network.Wreq (Response, responseBody)
@@ -52,9 +53,15 @@ extractNestedStringField (k:ks) response =
 
 extractStringField :: String -> Value -> Either AppError String
 extractStringField fieldName record =
-  case T.unpack <$> (record ^? key (T.pack fieldName) . _String) of
-    Just val -> Right val
-    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName
+  case record ^? key (T.pack fieldName) . _Primitive of
+    Just (StringPrim val) -> Right . T.unpack $ val
+    Just (NumberPrim val) ->
+      case floatingOrInteger val of
+        Right float -> Right . show $ float
+        Left int -> Right . show $ int
+    Just (BoolPrim val) -> Right . show $ val
+    Just NullPrim -> Right "null"
+    _ -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD fieldName
 
 extractIntField :: String -> Value -> Either AppError Int
 extractIntField fieldName record =
