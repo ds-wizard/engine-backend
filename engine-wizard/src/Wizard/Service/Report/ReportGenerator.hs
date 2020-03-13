@@ -1,13 +1,14 @@
 module Wizard.Service.Report.ReportGenerator where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Reader (liftIO)
 import Data.Time
 
 import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Util.Uuid
+import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
@@ -48,8 +49,8 @@ generateReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> AppContextM Re
 generateReport requiredLevel metrics km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  appConfig <- asks _appContextApplicationConfig
-  let _levelsEnabled = appConfig ^. general . levelsEnabled
+  appConfig <- findAppConfig
+  let _levelsEnabled = appConfig ^. features . levels . enabled
   return
     Report
       { _reportUuid = rUuid

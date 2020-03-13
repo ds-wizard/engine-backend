@@ -5,6 +5,7 @@ module Wizard.Database.Migration.Development.Migration
 import Wizard.Constant.Component
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
+import qualified Wizard.Database.Migration.Development.Config.AppConfigMigration as CFG
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
@@ -20,6 +21,7 @@ import Wizard.Util.Logger
 
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "started"
+  CFG.runMigration
   ORG.runMigration
   U.runMigration
   PKG.runMigration

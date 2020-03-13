@@ -11,11 +11,11 @@ import LensesConfig
 import Shared.Constant.Api
 import Wizard.Integration.Resource.GitHub.IssueCreateIDTO
 import Wizard.Integration.Resource.GitHub.IssueCreateIJM ()
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateString)
 
-toGetIssuesRequest :: AppConfigFeedback -> HttpRequest
+toGetIssuesRequest :: ServerConfigFeedback -> HttpRequest
 toGetIssuesRequest feedbackConfig =
   let variables = M.fromList [("owner", feedbackConfig ^. owner), ("repo", feedbackConfig ^. repo)]
    in HttpRequest
@@ -28,7 +28,7 @@ toGetIssuesRequest feedbackConfig =
         , _httpRequestRequestBody = ""
         }
 
-toCreateIssueRequest :: AppConfigFeedback -> String -> U.UUID -> String -> String -> HttpRequest
+toCreateIssueRequest :: ServerConfigFeedback -> String -> U.UUID -> String -> String -> HttpRequest
 toCreateIssueRequest feedbackConfig pkgId questionUuid title content =
   let variables = M.fromList [("owner", feedbackConfig ^. owner), ("repo", feedbackConfig ^. repo)]
    in HttpRequest

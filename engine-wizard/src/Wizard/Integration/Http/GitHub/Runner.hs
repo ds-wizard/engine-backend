@@ -13,10 +13,10 @@ import Wizard.Model.Context.AppContext
 
 getIssues :: AppContextM [IssueIDTO]
 getIssues = do
-  appConfig <- asks _appContextApplicationConfig
-  runRequest (toGetIssuesRequest (appConfig ^. feedback)) toGetIssuesResponse
+  serverConfig <- asks _appContextApplicationConfig
+  runRequest (toGetIssuesRequest (serverConfig ^. feedback)) toGetIssuesResponse
 
 createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
 createIssue pkgId questionUuid title content = do
-  appConfig <- asks _appContextApplicationConfig
-  runRequest (toCreateIssueRequest (appConfig ^. feedback) pkgId questionUuid title content) toCreateIssueResponse
+  serverConfig <- asks _appContextApplicationConfig
+  runRequest (toCreateIssueRequest (serverConfig ^. feedback) pkgId questionUuid title content) toCreateIssueResponse

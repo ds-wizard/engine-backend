@@ -10,7 +10,7 @@ import qualified Wizard.Database.Migration.Development.Migration as DM
 import qualified Wizard.Database.Migration.Production.Migration as PM
 
 runDBMigrations context =
-  case context ^. appConfig . general . environment of
+  case context ^. serverConfig . general . environment of
     Development -> runAppContextWithBaseContext DM.runMigration context
     Staging -> runStdoutLoggingT $ PM.runMigration context
     Production -> runStdoutLoggingT $ PM.runMigration context

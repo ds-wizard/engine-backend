@@ -55,8 +55,8 @@ getToken tokenCreateDto = do
         else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     -- ------------------------------------------------------------
     getJwtConfig = do
-      appConfig <- asks _appContextApplicationConfig
-      let config = appConfig ^. jwt
+      serverConfig <- asks _appContextApplicationConfig
+      let config = serverConfig ^. jwt
       return (config ^. secret, config ^. version, config ^. expiration)
 
 createToken :: User -> UTCTime -> String -> Integer -> Integer -> Token

@@ -40,7 +40,7 @@ import Wizard.Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do
-    let appConfig = appContext ^. applicationConfig
+    let serverConfig = appContext ^. applicationConfig
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -65,7 +65,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
       -- ------------------------------------------------------------------------
       -- POST /users
       -- ------------------------------------------------------------------------
@@ -178,7 +178,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -340,7 +340,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -457,7 +457,7 @@ userAPI appContext =
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"

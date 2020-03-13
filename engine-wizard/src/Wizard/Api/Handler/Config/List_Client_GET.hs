@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Config.List_GET where
+module Wizard.Api.Handler.Config.List_Client_GET where
 
 import Data.Aeson (encode)
 import Data.Maybe (fromMaybe)
@@ -12,13 +12,14 @@ import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.ClientConfigService
 
-type List_GET
-   = "configuration"
+type List_Client_GET
+   = "configs"
+     :> "client"
      :> QueryParam "callback" String
      :> Get '[ ApplicationJavascript] (Headers '[ Header "x-trace-uuid" String] String)
 
-list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] String)
-list_GET mCallbackName =
+list_client_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] String)
+list_client_GET mCallbackName =
   runInUnauthService $
   addTraceUuidHeader =<< do
     let callbackName = fromMaybe "callback" mCallbackName

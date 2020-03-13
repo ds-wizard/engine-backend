@@ -7,10 +7,10 @@ import Wizard.Constant.Component
 import Wizard.Database.Connection
 import Wizard.Util.Logger
 
-connectDB appConfig = do
+connectDB serverConfig = do
   logInfo $ msg _CMP_DATABASE "connecting to the database"
   dbPool <-
     liftIO $
-    withRetry retryBackoff _CMP_DATABASE "failed to connect to the database" (createDatabaseConnectionPool appConfig)
+    withRetry retryBackoff _CMP_DATABASE "failed to connect to the database" (createDatabaseConnectionPool serverConfig)
   logInfo $ msg _CMP_DATABASE "connected"
   return dbPool

@@ -5,19 +5,6 @@ general:
   serviceToken: my-service-token
   integrationConfig: config/integration-test.yml
   templateFolder: templates
-  registrationEnabled: true
-  publicQuestionnaireEnabled: true
-  levelsEnabled: true
-
-client:
-  appTitle:
-  appTitleShort:
-  welcomeWarning:
-  welcomeInfo:
-  dashboard:
-    admin: [Welcome]
-    dataSteward: [Welcome]
-    researcher: [Welcome]
 
 database:
   host: localhost
@@ -39,12 +26,6 @@ jwt:
   secret: secret-key
   version: 1
   expiration: 9999
-
-roles:
-  defaultRole: DATASTEWARD
-  admin: [UM_PERM, ORG_PERM, KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM]
-  dataSteward: [KM_PERM, KM_UPGRADE_PERM, KM_PUBLISH_PERM, PM_READ_PERM, PM_WRITE_PERM, QTN_PERM, DMP_PERM]
-  researcher: [PM_READ_PERM, QTN_PERM, DMP_PERM]
 
 mail:
   enabled: false

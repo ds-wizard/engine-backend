@@ -1,11 +1,13 @@
 module Wizard.Specs.Common where
 
+import Control.Lens ((&), (.~))
 import Control.Monad.Except (runExceptT)
 import Control.Monad.Logger
 import Control.Monad.Reader (liftIO, runReaderT)
 import Data.Either
 import Test.Hspec
 
+import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Model.Context.AppContext
 
 fakeLogState :: String -> IO ()
@@ -28,3 +30,8 @@ shouldSucceed appContext fn = do
 shouldFailed appContext fn = do
   result <- runInContext fn appContext
   isRight result `shouldBe` False
+
+modifyAppConfig key value = do
+  appConfig <- findAppConfig
+  let updatedAppConfig = appConfig & key .~ value
+  updateAppConfig updatedAppConfig

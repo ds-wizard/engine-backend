@@ -1,5 +1,6 @@
 module Main where
 
+import Control.Concurrent.MVar
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
@@ -13,8 +14,8 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.ApplicationConfigService
 import Wizard.Service.Config.BuildInfoConfigService
+import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.BookReference.APISpec
@@ -72,18 +73,19 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
+  hLoadConfig applicationConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` show (appConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool appConfig
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
+      dbPool <- createDatabaseConnectionPool serverConfig
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel appConfig
+      msgChannel <- createMessagingChannel serverConfig
       putStrLn "MESSAGING: connected"
-      httpClientManager <- createHttpClientManager appConfig
+      httpClientManager <- createHttpClientManager serverConfig
       putStrLn "HTTP_CLIENT: created"
+      shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
-              { _appContextApplicationConfig = appConfig
+              { _appContextApplicationConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
               , _appContextPool = dbPool
@@ -91,6 +93,7 @@ prepareWebApp runCallback =
               , _appContextHttpClientManager = httpClientManager
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
+              , _appContextShutdownFlag = shutdownFlag
               }
       runCallback appContext
 

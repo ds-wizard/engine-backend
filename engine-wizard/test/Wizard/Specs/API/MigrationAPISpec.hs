@@ -43,7 +43,7 @@ timestamp = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
 
 migratorAPI appContext = do
   with (startWebApp appContext) $ do
-    let appConfig = appContext ^. applicationConfig
+    let serverConfig = appContext ^. applicationConfig
     describe "MIGRATOR API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /branches/{branchId}/migrations/current
@@ -87,7 +87,7 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest appConfig reqMethod reqUrl [] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [] reqBody "KM_UPGRADE_PERM"
         it "HTTP 404 NOT FOUND - migration doesn't exist" $
           -- GIVEN: Prepare expectation
          do
@@ -229,7 +229,7 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
         it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
           -- GIVEN: Prepare expectation
          do
@@ -288,7 +288,7 @@ migratorAPI appContext = do
            -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherMS) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
         createNotFoundTest reqMethod reqUrl reqHeaders reqBody "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6"
        ------------------------------------------------------------------------
        -- POST /branches/{branchId}/migrations/current/conflict
@@ -412,4 +412,4 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest serverConfig reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"

@@ -57,8 +57,8 @@ exportPackageBundle pbId = do
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId = do
-  appConfig <- asks _appContextApplicationConfig
-  pb <- catchError (retrievePackageBundleById (appConfig ^. registry) pkgId) handleError
+  serverConfig <- asks _appContextApplicationConfig
+  pb <- catchError (retrievePackageBundleById (serverConfig ^. registry) pkgId) handleError
   _ <- importAndConvertPackageBundle pb
   return ()
   where

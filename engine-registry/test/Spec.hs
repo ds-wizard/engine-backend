@@ -11,8 +11,8 @@ import Registry.Constant.Resource
 import Registry.Database.Connection
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
-import Registry.Service.Config.ApplicationConfigService
 import Registry.Service.Config.BuildInfoConfigService
+import Registry.Service.Config.ServerConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Info.APISpec
@@ -34,14 +34,14 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
+  hLoadConfig applicationConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` show (appConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool appConfig
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
+      dbPool <- createDatabaseConnectionPool serverConfig
       putStrLn "DATABASE: connected"
       let appContext =
             AppContext
-              { _appContextApplicationConfig = appConfig
+              { _appContextApplicationConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
               , _appContextPool = dbPool

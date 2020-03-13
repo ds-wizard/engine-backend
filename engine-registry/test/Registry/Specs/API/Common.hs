@@ -34,7 +34,7 @@ startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
   let baseContext =
         BaseContext
-          { _baseContextAppConfig = appContext ^. applicationConfig
+          { _baseContextServerConfig = appContext ^. applicationConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool

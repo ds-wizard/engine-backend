@@ -9,14 +9,14 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Database.Persist.MongoDB (ConnectionPool)
 
-import Registry.Model.Config.AppConfig
 import Registry.Model.Config.BuildInfoConfig
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Organization.Organization
 import Shared.Model.Error.Error
 
 data AppContext =
   AppContext
-    { _appContextApplicationConfig :: AppConfig
+    { _appContextApplicationConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
     , _appContextPool :: ConnectionPool

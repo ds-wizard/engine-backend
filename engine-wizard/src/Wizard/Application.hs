@@ -2,7 +2,10 @@ module Wizard.Application
   ( runApplication
   ) where
 
+import Control.Concurrent.Async
+import Control.Concurrent.MVar
 import Control.Lens ((^.))
+import Control.Monad (forever)
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO)
 import System.IO
@@ -20,32 +23,34 @@ import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Component
 import Wizard.Constant.Resource
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.ApplicationConfigService
 import Wizard.Service.Config.BuildInfoConfigService
+import Wizard.Service.Config.ServerConfigService
 import Wizard.Util.Logger
 
 runApplication :: IO ()
 runApplication = do
   hSetBuffering stdout LineBuffering
-  runStdoutLoggingT $ do
+  forever . runStdoutLoggingT $ do
+    shutdownFlag <- liftIO newEmptyMVar
     liftIO $ putStrLn asciiLogo
     logInfo $ msg _CMP_SERVER "started"
-    hLoadConfig applicationConfigFile getApplicationConfig $ \appConfig ->
+    hLoadConfig applicationConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
-        logInfo $ "ENVIRONMENT: set to " ++ show (appConfig ^. general . environment)
-        dbPool <- connectDB appConfig
-        msgChannel <- connectMQ appConfig
-        httpClientManager <- setupHttpClientManager appConfig
-        localization <- loadLocalization appConfig
+        logInfo $ "ENVIRONMENT: set to " ++ show (serverConfig ^. general . environment)
+        dbPool <- connectDB serverConfig
+        msgChannel <- connectMQ serverConfig
+        httpClientManager <- setupHttpClientManager serverConfig
+        localization <- loadLocalization serverConfig
         let baseContext =
               BaseContext
-                { _baseContextAppConfig = appConfig
+                { _baseContextServerConfig = serverConfig
                 , _baseContextLocalization = localization
                 , _baseContextBuildInfoConfig = buildInfoConfig
                 , _baseContextPool = dbPool
                 , _baseContextMsgChannel = msgChannel
                 , _baseContextHttpClientManager = httpClientManager
+                , _baseContextShutdownFlag = shutdownFlag
                 }
         liftIO $ runDBMigrations baseContext
         liftIO $ runMetamodelMigrations baseContext
-        liftIO $ runWebServer baseContext
+        liftIO $ race_ (takeMVar shutdownFlag) (runWebServer baseContext)

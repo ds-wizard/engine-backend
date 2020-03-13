@@ -66,18 +66,18 @@ fromCreateContextDTO ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-fromCreateContextDTO dmpUuid appConfig qtn level km metrics levels report pkg org mCreatedBy now =
+fromCreateContextDTO dmpUuid appConfig qtn level km metrics ls report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
-        DocumentContextConfig {_documentContextConfigLevelsEnabled = appConfig ^. general . levelsEnabled}
+        DocumentContextConfig {_documentContextConfigLevelsEnabled = appConfig ^. features . levels . enabled}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
     , _documentContextQuestionnaireReplies = qtn ^. replies
     , _documentContextLevel = level
     , _documentContextKnowledgeModel = km
     , _documentContextMetrics = metrics
-    , _documentContextLevels = levels
+    , _documentContextLevels = ls
     , _documentContextReport = report
     , _documentContextPackage = pkg
     , _documentContextOrganization = org

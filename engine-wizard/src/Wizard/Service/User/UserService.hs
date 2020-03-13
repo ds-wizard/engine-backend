@@ -25,7 +25,7 @@ import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Messaging.Out.Topic.User
 import Wizard.Model.ActionKey.ActionKey
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Service.ActionKey.ActionKeyService
@@ -47,9 +47,9 @@ createUserByAdmin reqDto = do
 createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> AppContextM UserDTO
 createUserByAdminWithUuid reqDto uUuid = do
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  appConfig <- asks _appContextApplicationConfig
-  let uRole = fromMaybe (appConfig ^. roles . defaultRole) (reqDto ^. role)
-  let uPermissions = getPermissionForRole appConfig uRole
+  serverConfig <- asks _appContextApplicationConfig
+  let uRole = fromMaybe (serverConfig ^. roles . defaultRole) (reqDto ^. role)
+  let uPermissions = getPermissionForRole serverConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
 registrateUser :: UserCreateDTO -> AppContextM UserDTO
@@ -57,9 +57,9 @@ registrateUser reqDto = do
   checkIfRegistrationIsEnabled
   uUuid <- liftIO generateUuid
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  appConfig <- asks _appContextApplicationConfig
-  let uRole = appConfig ^. roles . defaultRole
-  let uPermissions = getPermissionForRole appConfig uRole
+  serverConfig <- asks _appContextApplicationConfig
+  let uRole = serverConfig ^. roles . defaultRole
+  let uPermissions = getPermissionForRole serverConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
 createUser :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> AppContextM UserDTO
@@ -77,8 +77,8 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions = do
   return $ toDTO user
   where
     sendAnalyticsEmailIfEnabled user = do
-      appConfig <- asks _appContextApplicationConfig
-      when (appConfig ^. analytics . enabled) (sendRegistrationCreatedAnalyticsMail (toDTO user))
+      serverConfig <- asks _appContextApplicationConfig
+      when (serverConfig ^. analytics . enabled) (sendRegistrationCreatedAnalyticsMail (toDTO user))
 
 getUserById :: String -> AppContextM UserDTO
 getUserById userUuid = do
@@ -89,14 +89,14 @@ modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto = do
   user <- findUserById userUuid
   validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
-  appConfig <- asks _appContextApplicationConfig
-  updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions appConfig reqDto user)
+  serverConfig <- asks _appContextApplicationConfig
+  updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
   updateUserById updatedUser
   return . toDTO $ updatedUser
   where
-    getPermissions appConfig reqDto oldUser =
+    getPermissions serverConfig reqDto oldUser =
       if (reqDto ^. role) /= (oldUser ^. role)
-        then getPermissionForRole appConfig (reqDto ^. role)
+        then getPermissionForRole serverConfig (reqDto ^. role)
         else oldUser ^. permissions
 
 modifyProfile :: String -> UserProfileChangeDTO -> AppContextM UserDTO
@@ -171,7 +171,7 @@ deleteUser userUuid = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPermissionForRole :: AppConfig -> Role -> [Permission]
+getPermissionForRole :: ServerConfig -> Role -> [Permission]
 getPermissionForRole config role =
   case role of
     "ADMIN" -> config ^. roles . admin
@@ -187,4 +187,4 @@ updateUserTimestamp user = do
   now <- liftIO getCurrentTime
   return $ user & updatedAt ?~ now
 
-checkIfRegistrationIsEnabled = checkIfFeatureIsEnabled "Registration" (general . registrationEnabled)
+checkIfRegistrationIsEnabled = checkIfAppFeatureIsEnabled "Registration" (features . registration . enabled)

@@ -23,7 +23,10 @@ import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
+import Wizard.Api.Resource.Config.AppConfigChangeDTO
+import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
+import Wizard.Api.Resource.Config.SimpleFeatureDTO
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -84,6 +87,8 @@ import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.BuildInfoConfig
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
@@ -119,7 +124,7 @@ makeFields ''BranchWithEvents
 -- Model / Config
 makeFields ''AppConfig
 
-makeFields ''AppConfigGeneral
+makeFields ''AppConfigFeatures
 
 makeFields ''AppConfigClient
 
@@ -127,21 +132,27 @@ makeFields ''AppConfigClientDashboard
 
 makeFields ''AppConfigClientCustomMenuLink
 
-makeFields ''AppConfigDatabase
+makeFields ''SimpleFeature
 
-makeFields ''AppConfigMessaging
+makeFields ''ServerConfig
 
-makeFields ''AppConfigJwt
+makeFields ''ServerConfigGeneral
 
-makeFields ''AppConfigRoles
+makeFields ''ServerConfigDatabase
 
-makeFields ''AppConfigMail
+makeFields ''ServerConfigMessaging
 
-makeFields ''AppConfigRegistry
+makeFields ''ServerConfigJwt
 
-makeFields ''AppConfigAnalytics
+makeFields ''ServerConfigRoles
 
-makeFields ''AppConfigFeedback
+makeFields ''ServerConfigMail
+
+makeFields ''ServerConfigRegistry
+
+makeFields ''ServerConfigAnalytics
+
+makeFields ''ServerConfigFeedback
 
 makeFields ''BuildInfoConfig
 
@@ -362,15 +373,23 @@ makeFields ''BranchDetailDTO
 makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / Config
+makeFields ''AppConfigDTO
+
+makeFields ''AppConfigFeaturesDTO
+
+makeFields ''AppConfigClientDTO
+
+makeFields ''AppConfigClientDashboardDTO
+
+makeFields ''AppConfigClientCustomMenuLinkDTO
+
+makeFields ''AppConfigChangeDTO
+
+makeFields ''SimpleFeatureDTO
+
 makeFields ''ClientConfigDTO
 
 makeFields ''ClientConfigRegistryDTO
-
-makeFields ''ClientConfigClientDTO
-
-makeFields ''ClientConfigClientDashboardDTO
-
-makeFields ''ClientConfigClientCustomMenuLinkDTO
 
 -- Api / Resource / Document
 makeFields ''DocumentDTO

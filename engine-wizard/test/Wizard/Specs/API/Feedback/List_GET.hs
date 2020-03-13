@@ -46,9 +46,9 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let appConfig = appContext ^. applicationConfig
-    let iUrl1 = createIssueUrl appConfig feedback1
-    let iUrl2 = createIssueUrl appConfig feedback2
+    let serverConfig = appContext ^. applicationConfig
+    let iUrl1 = createIssueUrl serverConfig feedback1
+    let iUrl2 = createIssueUrl serverConfig feedback2
     let expDto = [toDTO feedback1 iUrl1, toDTO feedback2 iUrl2]
     let expBody = encode expDto
      -- AND: Run migrations

@@ -8,14 +8,14 @@ import Network.AMQP (Channel, openChannel, openConnection')
 import Network.Socket
 
 import LensesConfig
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 
-createMessagingChannel :: AppConfig -> IO (Maybe Channel)
-createMessagingChannel appConfig =
-  let appMessagingConfig = appConfig ^. messaging
+createMessagingChannel :: ServerConfig -> IO (Maybe Channel)
+createMessagingChannel serverConfig =
+  let appMessagingConfig = serverConfig ^. messaging
       mcEnabled = appMessagingConfig ^. enabled
       mcHost = appMessagingConfig ^. host
-      mcPort = fromInteger (appConfig ^. (messaging . port)) :: PortNumber
+      mcPort = fromInteger (serverConfig ^. (messaging . port)) :: PortNumber
       mcUsername = T.pack $ appMessagingConfig ^. username
       mcPassword = T.pack $ appMessagingConfig ^. password
       mcVhost = T.pack $ appMessagingConfig ^. vhost

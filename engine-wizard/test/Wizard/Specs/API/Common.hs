@@ -1,5 +1,6 @@
 module Wizard.Specs.API.Common where
 
+import Control.Concurrent.MVar
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Char8 as BS
@@ -24,7 +25,7 @@ import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 import Wizard.Bootstrap.Web
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
@@ -37,14 +38,16 @@ import Wizard.Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
+  shutdownFlag <- liftIO newEmptyMVar
   let baseContext =
         BaseContext
-          { _baseContextAppConfig = appContext ^. applicationConfig
+          { _baseContextServerConfig = appContext ^. applicationConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
+          , _baseContextShutdownFlag = shutdownFlag
           }
   let config = appContext ^. applicationConfig
   let webPort = config ^. general . serverPort
@@ -54,20 +57,25 @@ startWebApp appContext = do
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjM5NDAwMzIzMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiT1JHX1BFUk0iLCJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUE1fV1JJVEVfUEVSTSIsIlFUTl9QRVJNIiwiRE1QX1BFUk0iXX0.6jt40r7YR-YBXMBmo3aKypQiE6ikrVTsU_bSKDn-gPk")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ0ODAwODI0MiwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiT1JHX1BFUk0iLCJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUE1fV1JJVEVfUEVSTSIsIlFUTl9QRVJNIiwiRE1QX1BFUk0iLCJDRkdfUEVSTSJdfQ.O_LKFA-lOj5RHehsDvuOVzW9836onCV6X3K2jGTvRlk")
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader =
   ( "Authorization"
   , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQwMTYzNzU0MSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.mTmVLO2AubdqaYNmjZlOMCqOAqZ5ULYXwLoEdwGCa1k")
 
-reqAuthHeaderWithoutPerms :: AppConfig -> Permission -> Header
-reqAuthHeaderWithoutPerms appConfig perm =
-  let allPerms = getPermissionForRole appConfig "ADMIN"
+reqAuthHeaderWithoutPerms :: ServerConfig -> Permission -> Header
+reqAuthHeaderWithoutPerms serverConfig perm =
+  let allPerms = getPermissionForRole serverConfig "ADMIN"
       user = userAlbert & permissions .~ (L.delete perm allPerms)
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token =
-        createToken user now (appConfig ^. jwt ^. secret) (appConfig ^. jwt ^. version) (appConfig ^. jwt ^. expiration)
+        createToken
+          user
+          now
+          (serverConfig ^. jwt ^. secret)
+          (serverConfig ^. jwt ^. version)
+          (serverConfig ^. jwt ^. expiration)
    in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqServiceHeader :: Header
@@ -153,11 +161,11 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNoPermissionTest appConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
+createNoPermissionTest serverConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
   it "HTTP 403 FORBIDDEN - no required permission" $
     -- GIVEN: Prepare request
    do
-    let authHeader = reqAuthHeaderWithoutPerms appConfig missingPerm
+    let authHeader = reqAuthHeaderWithoutPerms serverConfig missingPerm
     let reqHeaders = [authHeader] ++ otherHeaders
     -- GIVEN: Prepare expectation
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)

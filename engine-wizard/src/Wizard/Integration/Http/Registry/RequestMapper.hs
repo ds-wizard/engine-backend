@@ -9,11 +9,11 @@ import Prelude hiding (lookup)
 
 import LensesConfig
 import Shared.Constant.Api
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Statistics.InstanceStatistics
 
-toRetrievePackagesRequest :: AppConfigRegistry -> InstanceStatistics -> HttpRequest
+toRetrievePackagesRequest :: ServerConfigRegistry -> InstanceStatistics -> HttpRequest
 toRetrievePackagesRequest registryConfig iStat =
   HttpRequest
     { _httpRequestRequestMethod = "GET"
@@ -28,7 +28,7 @@ toRetrievePackagesRequest registryConfig iStat =
     , _httpRequestRequestBody = ""
     }
 
-toRetrievePackageBundleByIdRequest :: AppConfigRegistry -> String -> HttpRequest
+toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> String -> HttpRequest
 toRetrievePackageBundleByIdRequest registryConfig pkgId =
   HttpRequest
     { _httpRequestRequestMethod = "GET"

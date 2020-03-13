@@ -3,7 +3,7 @@ module Wizard.Service.Questionnaire.QuestionnaireService where
 import Control.Lens ((.~), (^.), (^?), _Just)
 import Control.Monad (forM)
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -15,6 +15,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -158,8 +159,8 @@ deleteQuestionnaire qtnUuid = do
 -- PRIVATE
 -- --------------------------------
 extractAccessibility dto = do
-  appConfig <- asks _appContextApplicationConfig
-  if appConfig ^. general . questionnaireAccessibilityEnabled
+  appConfig <- findAppConfig
+  if appConfig ^. features . questionnaireAccessibility . enabled
     then return (dto ^. accessibility)
     else return PrivateQuestionnaire
 

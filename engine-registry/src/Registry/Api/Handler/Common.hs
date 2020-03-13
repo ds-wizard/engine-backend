@@ -40,13 +40,13 @@ import Shared.Util.Uuid
 runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -63,13 +63,13 @@ runInUnauthService function = do
 runInAuthService :: Organization -> AppContextM a -> BaseContextM a
 runInAuthService organization function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool

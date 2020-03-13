@@ -14,17 +14,17 @@ import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
 
-retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM [PackageSimpleIDTO]
+retrievePackages :: ServerConfigRegistry -> InstanceStatistics -> AppContextM [PackageSimpleIDTO]
 retrievePackages registryConfig iStat =
   if registryConfig ^. enabled
     then runRequest (toRetrievePackagesRequest registryConfig iStat) toRetrievePackagesResponse
     else return []
 
-retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM BSL.ByteString
+retrievePackageBundleById :: ServerConfigRegistry -> String -> AppContextM BSL.ByteString
 retrievePackageBundleById registryConfig pkgId =
   if registryConfig ^. enabled
     then runRequest (toRetrievePackageBundleByIdRequest registryConfig pkgId) toRetrievePackageBundleByIdResponse

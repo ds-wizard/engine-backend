@@ -21,7 +21,7 @@ import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Common
@@ -32,8 +32,8 @@ getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
   feedbacks <- findFeedbacksFiltered queryParams
-  appConfig <- asks _appContextApplicationConfig
-  return $ (\f -> toDTO f (createIssueUrl appConfig f)) <$> feedbacks
+  serverConfig <- asks _appContextApplicationConfig
+  return $ (\f -> toDTO f (createIssueUrl serverConfig f)) <$> feedbacks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto = do
@@ -48,16 +48,16 @@ createFeedbackWithGivenUuid fUuid reqDto = do
   now <- liftIO getCurrentTime
   let feedback = fromCreateDTO reqDto fUuid (issue ^. id) now
   insertFeedback feedback
-  appConfig <- asks _appContextApplicationConfig
-  let iUrl = createIssueUrl appConfig feedback
+  serverConfig <- asks _appContextApplicationConfig
+  let iUrl = createIssueUrl serverConfig feedback
   return $ toDTO feedback iUrl
 
 getFeedbackByUuid :: String -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
   feedback <- findFeedbackById fUuid
-  appConfig <- asks _appContextApplicationConfig
-  let iUrl = createIssueUrl appConfig feedback
+  serverConfig <- asks _appContextApplicationConfig
+  let iUrl = createIssueUrl serverConfig feedback
   return $ toDTO feedback iUrl
 
 synchronizeFeedbacks :: AppContextM ()
@@ -74,13 +74,13 @@ synchronizeFeedbacks = do
         Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
         Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
 
-createIssueUrl :: AppConfig -> Feedback -> String
-createIssueUrl appConfig f =
-  let urlTemplate = (appConfig ^. feedback . webUrl) ++ "/${owner}/${repo}/issues/${issueId}"
+createIssueUrl :: ServerConfig -> Feedback -> String
+createIssueUrl serverConfig f =
+  let urlTemplate = (serverConfig ^. feedback . webUrl) ++ "/${owner}/${repo}/issues/${issueId}"
       variables =
         M.fromList
-          [ ("owner", appConfig ^. feedback . owner)
-          , ("repo", appConfig ^. feedback . repo)
+          [ ("owner", serverConfig ^. feedback . owner)
+          , ("repo", serverConfig ^. feedback . repo)
           , ("issueId", show $ f ^. issueId)
           ]
    in interpolateString variables urlTemplate
@@ -88,4 +88,4 @@ createIssueUrl appConfig f =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfFeedbackIsEnabled = checkIfFeatureIsEnabled "Feedback" (feedback . enabled)
+checkIfFeedbackIsEnabled = checkIfServerFeatureIsEnabled "Feedback" (feedback . enabled)

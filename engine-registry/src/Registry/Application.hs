@@ -17,8 +17,8 @@ import Registry.Constant.ASCIIArt
 import Registry.Constant.Component
 import Registry.Constant.Resource
 import Registry.Model.Context.BaseContext
-import Registry.Service.Config.ApplicationConfigService
 import Registry.Service.Config.BuildInfoConfigService
+import Registry.Service.Config.ServerConfigService
 import Registry.Util.Logger
 
 runApplication :: IO ()
@@ -27,14 +27,14 @@ runApplication = do
   runStdoutLoggingT $ do
     liftIO $ putStrLn asciiLogo
     logInfo $ msg _CMP_SERVER "started"
-    hLoadConfig applicationConfigFile getApplicationConfig $ \appConfig ->
+    hLoadConfig applicationConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
-        logInfo $ "ENVIRONMENT: set to " ++ show (appConfig ^. general . environment)
-        dbPool <- connectDB appConfig
-        localization <- loadLocalization appConfig
+        logInfo $ "ENVIRONMENT: set to " ++ show (serverConfig ^. general . environment)
+        dbPool <- connectDB serverConfig
+        localization <- loadLocalization serverConfig
         let baseContext =
               BaseContext
-                { _baseContextAppConfig = appConfig
+                { _baseContextServerConfig = serverConfig
                 , _baseContextLocalization = localization
                 , _baseContextBuildInfoConfig = buildInfoConfig
                 , _baseContextPool = dbPool

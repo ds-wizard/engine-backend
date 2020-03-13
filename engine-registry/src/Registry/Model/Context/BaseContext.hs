@@ -9,12 +9,12 @@ import qualified Data.Map.Strict as M
 import Database.Persist.MongoDB (ConnectionPool)
 import Servant (ServerError)
 
-import Registry.Model.Config.AppConfig
 import Registry.Model.Config.BuildInfoConfig
+import Registry.Model.Config.ServerConfig
 
 data BaseContext =
   BaseContext
-    { _baseContextAppConfig :: AppConfig
+    { _baseContextServerConfig :: ServerConfig
     , _baseContextLocalization :: M.Map String String
     , _baseContextBuildInfoConfig :: BuildInfoConfig
     , _baseContextPool :: ConnectionPool

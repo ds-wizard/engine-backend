@@ -48,8 +48,8 @@ createOrganization reqDto = do
   return . toDTO $ org
   where
     sendAnalyticsEmailIfEnabled org = do
-      appConfig <- asks _appContextApplicationConfig
-      when (appConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
+      serverConfig <- asks _appContextApplicationConfig
+      when (serverConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
 
 getOrganizationByOrgId :: String -> AppContextM OrganizationDTO
 getOrganizationByOrgId orgId = do

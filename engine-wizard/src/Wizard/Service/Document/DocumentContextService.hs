@@ -2,7 +2,7 @@ module Wizard.Service.Document.DocumentContextService where
 
 import Control.Lens ((^.))
 import Control.Monad (forM)
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -10,6 +10,7 @@ import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentContextJM ()
+import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Level.LevelDAO
 import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Database.DAO.Organization.OrganizationDAO
@@ -26,17 +27,17 @@ createDocumentContext qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   pkg <- findPackageById (qtn ^. packageId)
   metrics <- findMetrics
-  levels <- findLevels
+  ls <- findLevels
   org <- findOrganization
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) findUserById
-  appConfig <- asks _appContextApplicationConfig
+  appConfig <- findAppConfig
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let _level =
-        if appConfig ^. general . levelsEnabled
+        if appConfig ^. features . levels . enabled
           then qtn ^. level
           else 9999
   report <- generateReport _level metrics km (qtn ^. replies)
-  let dmp = fromCreateContextDTO dmpUuid appConfig qtn _level km metrics levels report pkg org mCreatedBy now
+  let dmp = fromCreateContextDTO dmpUuid appConfig qtn _level km metrics ls report pkg org mCreatedBy now
   return . toDocumentContextDTO $ dmp

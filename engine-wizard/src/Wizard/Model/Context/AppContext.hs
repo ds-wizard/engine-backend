@@ -1,6 +1,7 @@
 module Wizard.Model.Context.AppContext where
 
 import Control.Applicative (Applicative)
+import Control.Concurrent.MVar (MVar)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
@@ -13,12 +14,12 @@ import Network.HTTP.Client (Manager)
 
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.BuildInfoConfig
+import Wizard.Model.Config.ServerConfig
 
 data AppContext =
   AppContext
-    { _appContextApplicationConfig :: AppConfig
+    { _appContextApplicationConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
     , _appContextPool :: ConnectionPool
@@ -26,6 +27,7 @@ data AppContext =
     , _appContextHttpClientManager :: Manager
     , _appContextTraceUuid :: U.UUID
     , _appContextCurrentUser :: Maybe UserDTO
+    , _appContextShutdownFlag :: MVar ()
     }
 
 newtype AppContextM a =

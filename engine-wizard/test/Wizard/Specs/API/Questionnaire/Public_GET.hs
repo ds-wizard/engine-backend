@@ -12,6 +12,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -80,6 +81,8 @@ test_200 appContext =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PUBQTN.runMigration appContext
+     -- AND: Turn on Public Questionnaire feature
+    runInContextIO (modifyAppConfig (features . publicQuestionnaire . enabled) True) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -101,6 +104,8 @@ test_400 appContext =
     let expBody = encode expDto
     -- AND: Delete public questionnaire
     runInContextIO deletePublicPackages appContext
+    -- AND: Turn on Public Questionnaire feature
+    runInContextIO (modifyAppConfig (features . publicQuestionnaire . enabled) True) appContext
     -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

@@ -24,6 +24,7 @@ library:
   - base
   - aeson
   - amqp
+  - async
   - blaze-html
   - bson
   - bson-generic
@@ -82,26 +83,6 @@ library:
   - warp # OK
   - wreq # OK
   - yaml # OK
-  default-extensions:
-    - TemplateHaskell
-    - OverloadedStrings
-    - DeriveGeneric
-    - FlexibleContexts
-    - RecordWildCards
-    - ScopedTypeVariables
-    - ExtendedDefaultRules
-    - FlexibleInstances
-    - MultiParamTypeClasses
-    - GeneralizedNewtypeDeriving
-    - TypeFamilies
-    - UnicodeSyntax
-    - ExistentialQuantification
-    - FunctionalDependencies
-    - TypeSynonymInstances
-    - RankNTypes
-    - DataKinds
-    - TypeOperators
-    - TypeApplications
 
 executables:
   engine-wizard:
@@ -130,6 +111,7 @@ tests:
     - base
     - aeson
     - amqp
+    - async
     - bson
     - bson-generic
     - bytestring
@@ -171,22 +153,25 @@ tests:
     - hspec-expectations-pretty-diff
     - hspec-wai
     - hspec-wai-json
-    default-extensions:
-      - TemplateHaskell
-      - QuasiQuotes
-      - OverloadedStrings
-      - MultiParamTypeClasses
-      - FlexibleContexts
-      - GeneralizedNewtypeDeriving
-      - TypeFamilies
-      - DeriveGeneric
-      - ExtendedDefaultRules
-      - RecordWildCards
-      - UnicodeSyntax
-      - ExistentialQuantification
-      - FunctionalDependencies
-      - TypeSynonymInstances
-      - FlexibleInstances
-      - DataKinds
-      - TypeOperators
-      - TypeApplications
+
+default-extensions:
+  - TemplateHaskell
+  - QuasiQuotes
+  - OverloadedStrings
+  - DeriveGeneric
+  - FlexibleContexts
+  - RecordWildCards
+  - ScopedTypeVariables
+  - ExtendedDefaultRules
+  - FlexibleInstances
+  - MultiParamTypeClasses
+  - GeneralizedNewtypeDeriving
+  - TypeFamilies
+  - UnicodeSyntax
+  - ExistentialQuantification
+  - FunctionalDependencies
+  - TypeSynonymInstances
+  - RankNTypes
+  - DataKinds
+  - TypeOperators
+  - TypeApplications

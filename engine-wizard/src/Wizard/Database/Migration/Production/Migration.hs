@@ -31,6 +31,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0022_forkOfPacka
 import qualified Wizard.Database.Migration.Production.Migration_0023_remove_itemTitle.Migration as M_0023
 import qualified Wizard.Database.Migration.Production.Migration_0024_user_name_and_surname.Migration as M_0024
 import qualified Wizard.Database.Migration.Production.Migration_0025_document_durability.Migration as M_0025
+import qualified Wizard.Database.Migration.Production.Migration_0026_add_application_configs.Migration as M_0026
 
 runMigration baseContext = do
   migrateDatabase (baseContext ^. pool) migrationDefinitions
@@ -63,4 +64,5 @@ migrationDefinitions =
   , M_0023.definition
   , M_0024.definition
   , M_0025.definition
+  , M_0026.definition
   ]

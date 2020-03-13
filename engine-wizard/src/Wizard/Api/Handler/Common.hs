@@ -44,15 +44,16 @@ import Wizard.Util.Logger (logError)
 runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   msgChannel <- asks _baseContextMsgChannel
   httpClientManager <- asks _baseContextHttpClientManager
+  shutdownFlag <- asks _baseContextShutdownFlag
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -60,6 +61,7 @@ runInUnauthService function = do
           , _appContextHttpClientManager = httpClientManager
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Nothing
+          , _appContextShutdownFlag = shutdownFlag
           }
   eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
   case eResult of
@@ -71,15 +73,16 @@ runInUnauthService function = do
 runInAuthService :: UserDTO -> AppContextM a -> BaseContextM a
 runInAuthService user function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   msgChannel <- asks _baseContextMsgChannel
   httpClientManager <- asks _baseContextHttpClientManager
+  shutdownFlag <- asks _baseContextShutdownFlag
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -87,6 +90,7 @@ runInAuthService user function = do
           , _appContextHttpClientManager = httpClientManager
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Just user
+          , _appContextShutdownFlag = shutdownFlag
           }
   eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
   case eResult of
@@ -205,13 +209,13 @@ isAdmin = do
 
 checkServiceToken :: Maybe String -> AppContextM ()
 checkServiceToken mTokenHeader = do
-  appConfig <- asks _appContextApplicationConfig
-  let mToken = mTokenHeader >>= separateToken >>= validateServiceToken appConfig
+  serverConfig <- asks _appContextApplicationConfig
+  let mToken = mTokenHeader >>= separateToken >>= validateServiceToken serverConfig
   case mToken of
     Just _ -> return ()
     Nothing -> throwError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN
   where
-    validateServiceToken appConfig token =
-      if token == appConfig ^. general . serviceToken
+    validateServiceToken serverConfig token =
+      if token == serverConfig ^. general . serviceToken
         then Just token
         else Nothing

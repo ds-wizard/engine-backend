@@ -23,8 +23,8 @@ import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Api.Resource.PackageBundle.PackageBundleDTO
 import Registry.Model.ActionKey.ActionKey
-import Registry.Model.Config.AppConfig
 import Registry.Model.Config.BuildInfoConfig
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
@@ -51,15 +51,15 @@ import Shared.Model.PackageBundle.PackageBundle
 makeFields ''ActionKey
 
 -- Model / Config
-makeFields ''AppConfig
+makeFields ''ServerConfig
 
-makeFields ''AppConfigGeneral
+makeFields ''ServerConfigGeneral
 
-makeFields ''AppConfigDatabase
+makeFields ''ServerConfigDatabase
 
-makeFields ''AppConfigMail
+makeFields ''ServerConfigMail
 
-makeFields ''AppConfigAnalytics
+makeFields ''ServerConfigAnalytics
 
 makeFields ''BuildInfoConfig
 

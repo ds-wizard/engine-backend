@@ -39,10 +39,10 @@ import Shared.Model.Error.Error
 
 sendRegistrationConfirmationMail :: OrganizationDTO -> String -> AppContextM ()
 sendRegistrationConfirmationMail org hash = do
-  appConfig <- asks _appContextApplicationConfig
-  let clientAddress = appConfig ^. general . clientUrl
+  serverConfig <- asks _appContextApplicationConfig
+  let clientAddress = serverConfig ^. general . clientUrl
       activationLink = clientAddress ++ "/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
-      mailName = fromMaybe "" $ appConfig ^. mail . name
+      mailName = fromMaybe "" $ serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
       context = makeMailContext mailName clientAddress org additionals
@@ -51,10 +51,10 @@ sendRegistrationConfirmationMail org hash = do
 
 sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail org = do
-  appConfig <- asks _appContextApplicationConfig
-  let clientAddress = appConfig ^. general . clientUrl
-      analyticsAddress = fromMaybe "" $ appConfig ^. analytics . email
-      mailName = fromMaybe "" $ appConfig ^. mail . name
+  serverConfig <- asks _appContextApplicationConfig
+  let clientAddress = serverConfig ^. general . clientUrl
+      analyticsAddress = fromMaybe "" $ serverConfig ^. analytics . email
+      mailName = fromMaybe "" $ serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New organization"
       context = makeMailContext mailName clientAddress org []
       to = [analyticsAddress]
@@ -62,10 +62,10 @@ sendRegistrationCreatedAnalyticsMail org = do
 
 sendResetTokenMail :: OrganizationDTO -> String -> AppContextM ()
 sendResetTokenMail org hash = do
-  appConfig <- asks _appContextApplicationConfig
-  let clientAddress = appConfig ^. general . clientUrl
+  serverConfig <- asks _appContextApplicationConfig
+  let clientAddress = serverConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-token/" ++ (org ^. organizationId) ++ "/" ++ hash
-      mailName = fromMaybe "" $ appConfig ^. mail . name
+      mailName = fromMaybe "" $ serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset token"
       additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
       context = makeMailContext mailName clientAddress org additionals
@@ -86,12 +86,12 @@ composeAndSendEmail to subject mailName context = do
 
 composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String MIME.Mail)
 composeMail to subject mailName context = do
-  appConfig <- asks _appContextApplicationConfig
-  let mailConfig = appConfig ^. mail
+  serverConfig <- asks _appContextApplicationConfig
+  let mailConfig = serverConfig ^. mail
       addrFrom = MIME.Address (T.pack <$> mailConfig ^. name) (T.pack . fromMaybe "" $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
       emptyMail = MIME.Mail addrFrom addrsTo [] [] [("Subject", TL.toStrict subject)] []
-      mailFolder = (appConfig ^. general . templateFolder) ++ _MAIL_TEMPLATE_ROOT
+      mailFolder = (serverConfig ^. general . templateFolder) ++ _MAIL_TEMPLATE_ROOT
       root = mailFolder </> mailName
       commonRoot = mailFolder </> _MAIL_TEMPLATE_COMMON_FOLDER
   plainTextPart <- makePlainTextPart (root </> _MAIL_TEMPLATE_PLAIN_NAME) context
@@ -194,8 +194,8 @@ makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settin
 sendEmail :: [String] -> MIME.Mail -> AppContextM ()
 sendEmail [] mailMessage = throwError . GeneralServerError $ _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
 sendEmail to mailMessage = do
-  appConfig <- asks _appContextApplicationConfig
-  let mailConfig = appConfig ^. mail
+  serverConfig <- asks _appContextApplicationConfig
+  let mailConfig = serverConfig ^. mail
       from = fromMaybe "" $ mailConfig ^. email
       mailHost = fromMaybe "" $ mailConfig ^. host
       mailPort = mailConfig ^. port

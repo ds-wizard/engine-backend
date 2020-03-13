@@ -22,7 +22,7 @@ import Wizard.Model.Context.BaseContext
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do
-  let config = context ^. appConfig
+  let config = context ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
   run webPort (runMiddleware env $ runApp context)

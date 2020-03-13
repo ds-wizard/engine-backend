@@ -51,8 +51,8 @@ getTemplateByUuid templateUuid mPkgId = do
 -- --------------------------------
 getTemplateFolder :: AppContextM String
 getTemplateFolder = do
-  appConfig <- asks _appContextApplicationConfig
-  return $ (appConfig ^. general . templateFolder) ++ documentTemplatesFolder
+  serverConfig <- asks _appContextApplicationConfig
+  return $ (serverConfig ^. general . templateFolder) ++ documentTemplatesFolder
 
 filterTemplates :: [String] -> [TemplateDTO] -> [TemplateDTO]
 filterTemplates pkgIdSplit = filter (filterTemplate pkgIdSplit)

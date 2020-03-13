@@ -1,39 +1,30 @@
 module Wizard.Model.Config.AppConfig where
 
+import Data.Time
 import GHC.Generics
-import Shared.Model.Config.Environment
-import Wizard.Model.User.User
+
+import Wizard.Model.Config.SimpleFeature
 
 data AppConfig =
   AppConfig
-    { _appConfigGeneral :: AppConfigGeneral
+    { _appConfigFeatures :: AppConfigFeatures
     , _appConfigClient :: AppConfigClient
-    , _appConfigDatabase :: AppConfigDatabase
-    , _appConfigMessaging :: AppConfigMessaging
-    , _appConfigJwt :: AppConfigJwt
-    , _appConfigRoles :: AppConfigRoles
-    , _appConfigMail :: AppConfigMail
-    , _appConfigRegistry :: AppConfigRegistry
-    , _appConfigAnalytics :: AppConfigAnalytics
-    , _appConfigFeedback :: AppConfigFeedback
+    , _appConfigCreatedAt :: UTCTime
+    , _appConfigUpdatedAt :: UTCTime
     }
   deriving (Generic, Show)
 
-data AppConfigGeneral =
-  AppConfigGeneral
-    { _appConfigGeneralEnvironment :: Environment
-    , _appConfigGeneralClientUrl :: String
-    , _appConfigGeneralServerPort :: Int
-    , _appConfigGeneralServiceToken :: String
-    , _appConfigGeneralIntegrationConfig :: String
-    , _appConfigGeneralTemplateFolder :: String
-    , _appConfigGeneralRemoteLocalizationUrl :: Maybe String
-    , _appConfigGeneralRegistrationEnabled :: Bool
-    , _appConfigGeneralPublicQuestionnaireEnabled :: Bool
-    , _appConfigGeneralLevelsEnabled :: Bool
-    , _appConfigGeneralQuestionnaireAccessibilityEnabled :: Bool
+instance Eq AppConfig where
+  a == b = _appConfigFeatures a == _appConfigFeatures b && _appConfigClient a == _appConfigClient b
+
+data AppConfigFeatures =
+  AppConfigFeatures
+    { _appConfigFeaturesRegistration :: SimpleFeature
+    , _appConfigFeaturesPublicQuestionnaire :: SimpleFeature
+    , _appConfigFeaturesLevels :: SimpleFeature
+    , _appConfigFeaturesQuestionnaireAccessibility :: SimpleFeature
     }
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 
 data AppConfigClient =
   AppConfigClient
@@ -49,7 +40,7 @@ data AppConfigClient =
     , _appConfigClientDashboard :: Maybe AppConfigClientDashboard
     , _appConfigClientCustomMenuLinks :: [AppConfigClientCustomMenuLink]
     }
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 
 data AppConfigClientDashboard =
   AppConfigClientDashboard
@@ -57,7 +48,7 @@ data AppConfigClientDashboard =
     , _appConfigClientDashboardDataSteward :: [String]
     , _appConfigClientDashboardResearcher :: [String]
     }
-  deriving (Generic, Show)
+  deriving (Generic, Eq, Show)
 
 data AppConfigClientCustomMenuLink =
   AppConfigClientCustomMenuLink
@@ -67,83 +58,3 @@ data AppConfigClientCustomMenuLink =
     , _appConfigClientCustomMenuLinkNewWindow :: Bool
     }
   deriving (Show, Eq, Generic)
-
-data AppConfigDatabase =
-  AppConfigDatabase
-    { _appConfigDatabaseHost :: String
-    , _appConfigDatabaseDatabaseName :: String
-    , _appConfigDatabasePort :: Integer
-    , _appConfigDatabaseAuthEnabled :: Bool
-    , _appConfigDatabaseUsername :: String
-    , _appConfigDatabasePassword :: String
-    }
-  deriving (Generic, Show)
-
-data AppConfigMessaging =
-  AppConfigMessaging
-    { _appConfigMessagingEnabled :: Bool
-    , _appConfigMessagingHost :: String
-    , _appConfigMessagingPort :: Integer
-    , _appConfigMessagingUsername :: String
-    , _appConfigMessagingPassword :: String
-    , _appConfigMessagingVhost :: String
-    }
-  deriving (Generic, Show)
-
-data AppConfigJwt =
-  AppConfigJwt
-    { _appConfigJwtSecret :: String
-    , _appConfigJwtVersion :: Integer
-    , _appConfigJwtExpiration :: Integer
-    }
-  deriving (Generic, Show)
-
-data AppConfigRoles =
-  AppConfigRoles
-    { _appConfigRolesDefaultRole :: Role
-    , _appConfigRolesAdmin :: [Permission]
-    , _appConfigRolesDataSteward :: [Permission]
-    , _appConfigRolesResearcher :: [Permission]
-    }
-  deriving (Generic, Show)
-
-data AppConfigMail =
-  AppConfigMail
-    { _appConfigMailEnabled :: Bool
-    , _appConfigMailName :: String
-    , _appConfigMailEmail :: String
-    , _appConfigMailHost :: String
-    , _appConfigMailPort :: Int
-    , _appConfigMailSsl :: Bool
-    , _appConfigMailAuthEnabled :: Bool
-    , _appConfigMailUsername :: String
-    , _appConfigMailPassword :: String
-    }
-  deriving (Generic, Show)
-
-data AppConfigRegistry =
-  AppConfigRegistry
-    { _appConfigRegistryEnabled :: Bool
-    , _appConfigRegistryUrl :: String
-    , _appConfigRegistryToken :: String
-    , _appConfigRegistryClientUrl :: String
-    }
-  deriving (Generic, Show)
-
-data AppConfigAnalytics =
-  AppConfigAnalytics
-    { _appConfigAnalyticsEnabled :: Bool
-    , _appConfigAnalyticsEmail :: String
-    }
-  deriving (Generic, Show)
-
-data AppConfigFeedback =
-  AppConfigFeedback
-    { _appConfigFeedbackEnabled :: Bool
-    , _appConfigFeedbackToken :: String
-    , _appConfigFeedbackOwner :: String
-    , _appConfigFeedbackRepo :: String
-    , _appConfigFeedbackApiUrl :: String
-    , _appConfigFeedbackWebUrl :: String
-    }
-  deriving (Generic, Show)

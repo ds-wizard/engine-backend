@@ -43,8 +43,8 @@ documentIntegrationSpec appContext =
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
          -- AND: Prepare AppContext
-      let updatedAppContext = appContext & (applicationConfig . general . levelsEnabled) .~ False
+      runInContext (modifyAppConfig (features . levels . enabled) False) appContext
         -- WHEN:
-      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) updatedAppContext
+      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) appContext
         -- THEN:
       compareDocumentContextDTOs result expectation
