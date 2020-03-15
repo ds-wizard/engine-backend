@@ -15,12 +15,11 @@
 
  - **Stack** (recommended 2.1.3 or higher)
  - **MongoDB** (recommended 4.2.3 or higher)
- - **RabbitMQ** (recommended 3.7.8 or higher, optional)
+ - **RabbitMQ** (recommended 3.8.2 or higher, optional)
  - **Hindent** (recommended 5.3.1 or higher, optional)
  - **HLint** (recommended 2.1.11 or higher, optional)
- - **wkhtmltopdf** (recommended 0.12.5 or higher) - *for exports in PDF format only*
- - **Pandoc** (recommended 2.2.1 or higher) - *for exports in non HTML/PDF formats only*
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
+ - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version) - *for document generation, RabbitMQ required*
 
 ### Build & Run
 
