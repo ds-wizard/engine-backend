@@ -14,7 +14,7 @@
 ### Requirements
 
  - **Stack** (recommended 2.1.3 or higher)
- - **MongoDB** (recommended 4.0.12 or higher)
+ - **MongoDB** (recommended 4.2.3 or higher)
  - **RabbitMQ** (recommended 3.7.8 or higher, optional)
  - **Hindent** (recommended 5.3.1 or higher, optional)
  - **HLint** (recommended 2.1.11 or higher, optional)
