@@ -30,7 +30,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0021_questionnia
 import qualified Wizard.Database.Migration.Production.Migration_0022_forkOfPackageId_and_mergeCheckpointPackageId.Migration as M_0022
 import qualified Wizard.Database.Migration.Production.Migration_0023_remove_itemTitle.Migration as M_0023
 import qualified Wizard.Database.Migration.Production.Migration_0024_user_name_and_surname.Migration as M_0024
-import qualified Wizard.Database.Migration.Production.Migration_0025_document_durability.Migration as M_0025
+import qualified Wizard.Database.Migration.Production.Migration_0025_document_preview_and_formatUuid.Migration as M_0025
 import qualified Wizard.Database.Migration.Production.Migration_0026_add_application_configs.Migration as M_0026
 
 runMigration baseContext = do

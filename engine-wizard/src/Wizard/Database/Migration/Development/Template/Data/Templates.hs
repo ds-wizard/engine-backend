@@ -19,14 +19,39 @@ commonWizardTemplate =
         ]
     , _templateDTOFormats =
         [ TemplateFormatDTO
-            { _templateFormatDTOUuid = fromJust $ U.fromString "329521df-8fa1-4d7a-b9c5-49f75f5d31d5"
-            , _templateFormatDTOName = "PDF"
+            { _templateFormatDTOUuid = fromJust $ U.fromString "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2"
+            , _templateFormatDTOName = "JSON Data"
+            , _templateFormatDTOIcon = "far fa-file"
+            }
+        , TemplateFormatDTO
+            { _templateFormatDTOUuid = fromJust $ U.fromString "a9293d08-59a4-4e6b-ae62-7a6a570b031c"
+            , _templateFormatDTOName = "HTML Document"
+            , _templateFormatDTOIcon = "far fa-file-code"
+            }
+        , TemplateFormatDTO
+            { _templateFormatDTOUuid = fromJust $ U.fromString "68c26e34-5e77-4e15-9bf7-06ff92582257"
+            , _templateFormatDTOName = "PDF Document"
             , _templateFormatDTOIcon = "far fa-file-pdf"
             }
         , TemplateFormatDTO
-            { _templateFormatDTOUuid = fromJust $ U.fromString "fabab18b-2497-4878-8318-1dccdb016ff2"
-            , _templateFormatDTOName = "RDF"
-            , _templateFormatDTOIcon = "far fa-file"
+            { _templateFormatDTOUuid = fromJust $ U.fromString "dbc94579-40d7-42c3-975c-71e30d07778b"
+            , _templateFormatDTOName = "LaTeX Document"
+            , _templateFormatDTOIcon = "far fa-file-alt"
+            }
+        , TemplateFormatDTO
+            { _templateFormatDTOUuid = fromJust $ U.fromString "f4bd941a-dfbe-4226-a1fc-200fb5269311"
+            , _templateFormatDTOName = "MS Word Document"
+            , _templateFormatDTOIcon = "far fa-file-word"
+            }
+        , TemplateFormatDTO
+            { _templateFormatDTOUuid = fromJust $ U.fromString "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
+            , _templateFormatDTOName = "OpenDocument Text"
+            , _templateFormatDTOIcon = "far fa-file-alt"
+            }
+        , TemplateFormatDTO
+            { _templateFormatDTOUuid = fromJust $ U.fromString "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
+            , _templateFormatDTOName = "Markdown Document"
+            , _templateFormatDTOIcon = "far fa-file-alt"
             }
         ]
     }
