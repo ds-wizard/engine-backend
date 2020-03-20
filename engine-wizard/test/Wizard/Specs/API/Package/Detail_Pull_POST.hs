@@ -13,8 +13,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

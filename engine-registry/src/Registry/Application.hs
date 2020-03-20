@@ -17,9 +17,9 @@ import Registry.Constant.ASCIIArt
 import Registry.Constant.Component
 import Registry.Constant.Resource
 import Registry.Model.Context.BaseContext
-import Registry.Service.Config.BuildInfoConfigService
 import Registry.Service.Config.ServerConfigService
 import Registry.Util.Logger
+import Shared.Service.Config.BuildInfoConfigService
 
 runApplication :: IO ()
 runApplication = do

@@ -12,7 +12,7 @@ import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
 import Servant (ServerError)
 
-import Wizard.Model.Config.BuildInfoConfig
+import Shared.Model.Config.BuildInfoConfig
 import Wizard.Model.Config.ServerConfig
 
 data BaseContext =

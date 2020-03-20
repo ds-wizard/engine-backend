@@ -15,6 +15,7 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.PublicPackage.PublicPackageDAO
 import Wizard.Database.Migration.Development.PublicPackage.Data.PublicPackages

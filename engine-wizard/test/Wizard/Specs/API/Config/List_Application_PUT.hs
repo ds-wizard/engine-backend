@@ -40,7 +40,7 @@ reqUrl = "/configs/application"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = toDTO editedAppConfig
+reqDto = toChangeDTO editedAppConfig
 
 reqBody = encode reqDto
 

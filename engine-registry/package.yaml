@@ -59,8 +59,11 @@ library:
   - regex-compat
   - retry
   - servant
-  - servant-server
   - servant-errors
+  - servant-server
+  - servant-swagger
+  - servant-swagger-ui
+  - swagger2
   - text
   - text-replace
   - time

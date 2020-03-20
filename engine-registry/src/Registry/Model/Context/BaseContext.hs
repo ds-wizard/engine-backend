@@ -9,8 +9,8 @@ import qualified Data.Map.Strict as M
 import Database.Persist.MongoDB (ConnectionPool)
 import Servant (ServerError)
 
-import Registry.Model.Config.BuildInfoConfig
 import Registry.Model.Config.ServerConfig
+import Shared.Model.Config.BuildInfoConfig
 
 data BaseContext =
   BaseContext

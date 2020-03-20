@@ -2,9 +2,9 @@ module Wizard.Api.Resource.Document.DocumentContextJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Document.DocumentContextDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Api.Resource.Level.LevelJM ()
 import Wizard.Api.Resource.Organization.OrganizationJM ()
 import Wizard.Api.Resource.Package.PackageSimpleJM ()

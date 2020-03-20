@@ -6,11 +6,11 @@ import Servant
 
 import LensesConfig
 import Registry.Api.Handler.Common
-import Registry.Api.Resource.Info.InfoDTO
-import Registry.Api.Resource.Info.InfoJM ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.Info.InfoDTO
+import Shared.Api.Resource.Info.InfoJM ()
 
 type List_GET = Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 

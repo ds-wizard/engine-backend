@@ -15,8 +15,8 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -44,7 +44,7 @@ reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+reqDto = userPassword
 
 reqBody = encode reqDto
 

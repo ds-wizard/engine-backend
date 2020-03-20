@@ -1,10 +1,16 @@
 module Wizard.Database.Migration.Development.User.Data.Users where
 
+import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
+import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
+import Wizard.Api.Resource.User.UserPasswordDTO
+import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Model.User.User
 
 userAlbert :: User
@@ -72,3 +78,28 @@ userJohnCreate =
     , _userCreateDTORole = Just "ADMIN"
     , _userCreateDTOPassword = "password"
     }
+
+userIsaacChange :: UserChangeDTO
+userIsaacChange =
+  UserChangeDTO
+    { _userChangeDTOUuid = userAlbert ^. uuid
+    , _userChangeDTOFirstName = "EDITED: Isaac"
+    , _userChangeDTOLastName = "EDITED: Newton"
+    , _userChangeDTOEmail = "albert.einstein@example.com"
+    , _userChangeDTORole = "ADMIN"
+    , _userChangeDTOActive = True
+    }
+
+userIsaacProfileChange :: UserProfileChangeDTO
+userIsaacProfileChange =
+  UserProfileChangeDTO
+    { _userProfileChangeDTOFirstName = "EDITED: Isaac"
+    , _userProfileChangeDTOLastName = "EDITED: Newton"
+    , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
+    }
+
+userPassword :: UserPasswordDTO
+userPassword = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+
+userState :: UserStateDTO
+userState = UserStateDTO {_userStateDTOActive = True}

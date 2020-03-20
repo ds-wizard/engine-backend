@@ -11,12 +11,10 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Wizard.Api.Resource.Typehint.TypehintDTO
-import Wizard.Api.Resource.Typehint.TypehintRequestDTO
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common
@@ -41,13 +39,7 @@ reqUrl = "/typehints"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto =
-  TypehintRequestDTO
-    { _typehintRequestDTOPackageId = Just $ germanyPackage ^. pId
-    , _typehintRequestDTOEvents = []
-    , _typehintRequestDTOQuestionUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
-    , _typehintRequestDTOQ = "dog"
-    }
+reqDto = typehintRequest
 
 reqBody = encode reqDto
 
@@ -60,23 +52,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto =
-          [ TypehintDTO
-              { _typehintDTOIntId = "op-p000001"
-              , _typehintDTOName = "Life Science Ontology"
-              , _typehintDTOUrl = "https://example.com/ontologies/${id}"
-              }
-          , TypehintDTO
-              { _typehintDTOIntId = "op-p000008"
-              , _typehintDTOName = "Mathematical Ontology"
-              , _typehintDTOUrl = "https://example.com/ontologies/${id}"
-              }
-          , TypehintDTO
-              { _typehintDTOIntId = "op-p000015"
-              , _typehintDTOName = "Legal Ontology"
-              , _typehintDTOUrl = "https://example.com/ontologies/${id}"
-              }
-          ]
+    let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

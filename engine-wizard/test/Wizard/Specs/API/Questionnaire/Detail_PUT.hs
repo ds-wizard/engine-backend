@@ -16,10 +16,10 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U

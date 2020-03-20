@@ -9,9 +9,9 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Database.Persist.MongoDB (ConnectionPool)
 
-import Registry.Model.Config.BuildInfoConfig
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Organization.Organization
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 
 data AppContext =

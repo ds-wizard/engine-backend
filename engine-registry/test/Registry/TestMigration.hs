@@ -5,7 +5,7 @@ import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.DAO.Package.PackageDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.Package.Data.Packages
 
 import Registry.Specs.Common
 

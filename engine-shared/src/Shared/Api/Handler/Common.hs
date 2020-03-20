@@ -1,10 +1,13 @@
 module Shared.Api.Handler.Common where
 
 import Data.Aeson
-import qualified Data.ByteString.Lazy.Char8 as BS
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.List.NonEmpty as NE
+import Data.Swagger (NamedSchema(..), ToSchema(..), binarySchema)
 import Data.Typeable
-import Servant (Accept(..), MimeRender(..), MimeUnrender(..))
+import GHC.Generics
+import Servant (Accept(..), MimeRender(..), MimeUnrender(..), OctetStream(..))
 
 data ApplicationJavascript
   deriving (Typeable)
@@ -14,10 +17,10 @@ instance Accept ApplicationJavascript where
     "application/javascript" NE.:| ["application/javascript; charset=utf-8", "application/javascript;charset=utf-8"]
 
 instance MimeRender ApplicationJavascript String where
-  mimeRender _ = BS.pack
+  mimeRender _ = BSL.pack
 
 instance MimeUnrender ApplicationJavascript String where
-  mimeUnrender _ = Right . BS.unpack
+  mimeUnrender _ = Right . BSL.unpack
 
 -- ------------------------------------------------------------------------
 data JSONPlain
@@ -27,10 +30,10 @@ instance Accept JSONPlain where
   contentTypes _ = "application/json" NE.:| ["application/json; charset=utf-8", "application/json;charset=utf-8"]
 
 instance MimeRender JSONPlain String where
-  mimeRender _ = BS.pack
+  mimeRender _ = BSL.pack
 
 instance MimeUnrender JSONPlain String where
-  mimeUnrender _ = Right . BS.unpack
+  mimeUnrender _ = Right . BSL.unpack
 
 -- ------------------------------------------------------------------------
 data SafeJSON
@@ -48,3 +51,14 @@ instance FromJSON a => MimeUnrender SafeJSON a where
       Right decoded -> Right decoded
       -- It should be retrieved from Localization Dictionary
       Left error -> Left "Problem in deserialization of JSON"
+
+-- ------------------------------------------------------------------------
+newtype FileStream =
+  FileStream BS.ByteString
+  deriving (Generic)
+
+instance ToSchema FileStream where
+  declareNamedSchema _ = return $ NamedSchema (Just "FileStream") binarySchema
+
+instance MimeRender OctetStream FileStream where
+  mimeRender _ (FileStream content) = BSL.fromStrict content

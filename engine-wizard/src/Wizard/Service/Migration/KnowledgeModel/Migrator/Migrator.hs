@@ -6,9 +6,9 @@ import Data.Maybe
 
 import LensesConfig
 import Shared.Model.Event.Event
+import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CleanerMethod
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod

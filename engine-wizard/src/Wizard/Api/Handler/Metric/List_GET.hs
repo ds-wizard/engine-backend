@@ -3,9 +3,9 @@ module Wizard.Api.Handler.Metric.List_GET where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Metric.MetricService
 

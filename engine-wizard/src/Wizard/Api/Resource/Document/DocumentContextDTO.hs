@@ -5,7 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Level.LevelDTO
 import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO

@@ -2,6 +2,21 @@ module LensesConfig where
 
 import Control.Lens (makeFields)
 
+import Shared.Api.Resource.Event.AnswerEventDTO
+import Shared.Api.Resource.Event.ChapterEventDTO
+import Shared.Api.Resource.Event.ExpertEventDTO
+import Shared.Api.Resource.Event.IntegrationEventDTO
+import Shared.Api.Resource.Event.KnowledgeModelEventDTO
+import Shared.Api.Resource.Event.MoveEventDTO
+import Shared.Api.Resource.Event.QuestionEventDTO
+import Shared.Api.Resource.Event.ReferenceEventDTO
+import Shared.Api.Resource.Event.TagEventDTO
+import Shared.Api.Resource.Info.InfoDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -30,20 +45,8 @@ import Wizard.Api.Resource.Config.SimpleFeatureDTO
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Api.Resource.Event.AnswerEventDTO
-import Wizard.Api.Resource.Event.ChapterEventDTO
-import Wizard.Api.Resource.Event.ExpertEventDTO
-import Wizard.Api.Resource.Event.IntegrationEventDTO
-import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
-import Wizard.Api.Resource.Event.MoveEventDTO
-import Wizard.Api.Resource.Event.QuestionEventDTO
-import Wizard.Api.Resource.Event.ReferenceEventDTO
-import Wizard.Api.Resource.Event.TagEventDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Api.Resource.Info.InfoDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Level.LevelDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO as KM_MigratorConflictDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO as KM_MigratorStateCreateDTO
@@ -54,10 +57,8 @@ import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreate
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
 import Wizard.Api.Resource.Organization.OrganizationChangeDTO
 import Wizard.Api.Resource.Organization.OrganizationDTO
-import Wizard.Api.Resource.Package.PackageDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.PackageBundle.PackageBundleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -86,7 +87,6 @@ import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.BuildInfoConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext

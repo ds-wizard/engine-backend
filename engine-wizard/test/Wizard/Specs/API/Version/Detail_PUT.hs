@@ -13,12 +13,13 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Version.VersionDTO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
+import Wizard.Database.Migration.Development.Version.Data.Versions
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
@@ -52,12 +53,7 @@ reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/1.0.0"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto =
-  VersionDTO
-    { _versionDTODescription = amsterdamPackage ^. description
-    , _versionDTOReadme = amsterdamPackage ^. readme
-    , _versionDTOLicense = amsterdamPackage ^. license
-    }
+reqDto = versionAmsterdam
 
 reqBody = encode reqDto
 

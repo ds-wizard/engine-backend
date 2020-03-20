@@ -6,7 +6,6 @@ import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import Data.Either
 import Data.Maybe
-import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
@@ -20,12 +19,11 @@ import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeJM ()
-import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Service.User.UserMapper
@@ -192,12 +190,7 @@ userAPI appContext =
       describe "PUT /users/current" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current"
-        let reqDto =
-              UserProfileChangeDTO
-                { _userProfileChangeDTOFirstName = "EDITED: Isaac"
-                , _userProfileChangeDTOLastName = "EDITED: Newton"
-                , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
-                }
+        let reqDto = userIsaacProfileChange
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
@@ -268,15 +261,7 @@ userAPI appContext =
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto =
-              UserChangeDTO
-                { _userChangeDTOUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _userChangeDTOFirstName = "EDITED: Isaac"
-                , _userChangeDTOLastName = "EDITED: Newton"
-                , _userChangeDTOEmail = "isaac.newton@example-edited.com"
-                , _userChangeDTORole = "ADMIN"
-                , _userChangeDTOActive = True
-                }
+        let reqDto = userIsaacChange
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
           -- GIVEN: Prepare expectation
@@ -354,7 +339,7 @@ userAPI appContext =
       describe "PUT /users/current/password" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current/password"
-        let reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+        let reqDto = userPassword
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
@@ -389,20 +374,12 @@ userAPI appContext =
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
         let reqHeaders = [reqCtHeader]
-        let reqDto = UserStateDTO {_userStateDTOActive = True}
+        let reqDto = userState
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
           -- AND: Prepare DB
          do
-          let actionKey =
-                ActionKey
-                  { _actionKeyUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
-                  , _actionKeyUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                  , _actionKeyAType = RegistrationActionKey
-                  , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-                  , _actionKeyCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-                  }
-          eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
+          eitherActionKey <- runInContextIO (insertActionKey regActionKey) appContext
           -- AND: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders

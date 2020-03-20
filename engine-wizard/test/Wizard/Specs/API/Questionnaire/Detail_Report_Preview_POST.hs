@@ -15,20 +15,18 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Report.ReportMapper
 
 import SharedTest.Specs.Common
@@ -57,29 +55,7 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/report
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 
-reqDto =
-  QuestionnaireChangeDTO
-    { _questionnaireChangeDTOName = questionnaire1Edited ^. name
-    , _questionnaireChangeDTOAccessibility = questionnaire1Edited ^. accessibility
-    , _questionnaireChangeDTOLevel = 1
-    , _questionnaireChangeDTOReplies =
-        toReplyDTO <$>
-        [ rQ1
-        , rQ2
-        , rQ2_aYes_fuQ1
-        , rQ3
-        , rQ4
-        , rQ4_it1_q5
-        , rQ4_it1_q5_it1_question7
-        , rQ4_it1_q5_it1_question8
-        , rQ4_it1_q6
-        , rQ4_it2_q5
-        , rQ4_it2_q6
-        , rQ9
-        , rQ10
-        ]
-    , _questionnaireChangeDTOLabels = []
-    }
+reqDto = questionnaire1EditedChange
 
 reqBody = encode reqDto
 

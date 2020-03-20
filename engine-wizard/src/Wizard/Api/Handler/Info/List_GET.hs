@@ -6,9 +6,9 @@ import Servant
 
 import LensesConfig
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.Info.InfoDTO
+import Shared.Api.Resource.Info.InfoJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Info.InfoDTO
-import Wizard.Api.Resource.Info.InfoJM ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 

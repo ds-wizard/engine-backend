@@ -1,19 +1,15 @@
-module Shared.Util.JSON
-  ( convertValueToOject
-  , getField
-  , getArrayField
-  , simpleParseJSON
-  , simpleToJSON
-  , simpleToJSON'
-  ) where
+module Shared.Util.JSON where
 
 import Data.Aeson
 import qualified Data.HashMap.Strict as HashMap
+import qualified Data.HashMap.Strict as HM
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import GHC.Generics
 
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Reflection (HasConstructor, constructorName)
 import Shared.Util.String (lowerFirst, stripSuffix)
 
 convertValueToOject value callback =
@@ -46,20 +42,37 @@ jsonSpecialFields field = field
 stripDTOSuffix :: String -> String
 stripDTOSuffix field = fromMaybe field (stripSuffix "DTO" field)
 
-simpleParseJSON fieldPrefix = genericParseJSON opts
-  where
-    opts = defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)}
+stripDTOSuffix' :: String -> String
+stripDTOSuffix' field = fromMaybe field (stripSuffix "DTO'" field)
 
-simpleToJSON fieldPrefix = genericToJSON opts
-  where
-    opts = defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)}
+simpleParseJSON fieldPrefix = genericParseJSON (createOptions fieldPrefix)
 
-simpleToJSON' typeFieldName fieldPrefix = genericToJSON opts
-  where
-    opts =
-      defaultOptions
-        { fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (T.length fieldPrefix)
-        , tagSingleConstructors = True
-        , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
-        , constructorTagModifier = stripDTOSuffix
-        }
+toSumJSON :: (Generic a, GToJSON Zero (Rep a)) => a -> Value
+toSumJSON = genericToJSON (defaultOptions {sumEncoding = UntaggedValue})
+
+toSumJSON' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => T.Text -> a -> Value
+toSumJSON' typeFieldName dto =
+  case genericToJSON (defaultOptions {sumEncoding = UntaggedValue}) dto of
+    Object o ->
+      Object $ HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripDTOSuffix' . constructorName $ dto)])
+
+simpleToJSON fieldPrefix = genericToJSON (createOptions fieldPrefix)
+
+simpleToJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' fieldPrefix typeFieldName)
+
+simpleToJSON'' fieldPrefix additionalData dto =
+  case simpleToJSON fieldPrefix dto of
+    Object o -> Object $ HM.union o (HM.fromList additionalData)
+
+createOptions :: String -> Options
+createOptions fieldPrefix =
+  defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (length fieldPrefix)}
+
+createOptions' :: String -> String -> Options
+createOptions' fieldPrefix typeFieldName =
+  defaultOptions
+    { fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (length fieldPrefix)
+    , tagSingleConstructors = True
+    , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
+    , constructorTagModifier = stripDTOSuffix
+    }

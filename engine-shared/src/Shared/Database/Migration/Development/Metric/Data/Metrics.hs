@@ -1,9 +1,11 @@
 module Shared.Database.Migration.Development.Metric.Data.Metrics where
 
+import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 metricF :: Metric
@@ -89,3 +91,7 @@ metricO =
     , _metricCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _metricUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
+
+mm1 :: MetricMeasure
+mm1 =
+  MetricMeasure {_metricMeasureMetricUuid = metricF ^. uuid, _metricMeasureMeasure = 0.4, _metricMeasureWeight = 0.5}

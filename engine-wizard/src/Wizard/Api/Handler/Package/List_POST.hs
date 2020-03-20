@@ -2,7 +2,7 @@ module Wizard.Api.Handler.Package.List_POST where
 
 import Servant
 
-import qualified Data.ByteString.Lazy.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Shared.Api.Handler.Common
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
@@ -22,4 +22,4 @@ list_POST mTokenHeader reqBody =
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "PM_WRITE_PERM"
-      importAndConvertPackageBundle (BS.pack reqBody)
+      importAndConvertPackageBundle (BSL.pack reqBody)

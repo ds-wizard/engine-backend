@@ -14,7 +14,6 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
-import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
@@ -50,7 +49,7 @@ reqUrl = "/organizations/global/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
 
 reqHeaders = [reqCtHeader]
 
-reqDto = OrganizationStateDTO {_organizationStateDTOActive = True}
+reqDto = orgStateDto
 
 reqBody = encode reqDto
 

@@ -3,52 +3,15 @@ module Wizard.Service.Package.PackageMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Wizard.Api.Resource.Package.PackageDTO
+import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.Service.Event.EventMapper
 import Wizard.Service.Organization.OrganizationMapper
 import Wizard.Service.Package.PackageUtils
-
-toPackage :: PackageWithEvents -> Package
-toPackage pkg =
-  Package
-    { _packagePId = pkg ^. pId
-    , _packageName = pkg ^. name
-    , _packageOrganizationId = pkg ^. organizationId
-    , _packageKmId = pkg ^. kmId
-    , _packageVersion = pkg ^. version
-    , _packageMetamodelVersion = pkg ^. metamodelVersion
-    , _packageDescription = pkg ^. description
-    , _packageReadme = pkg ^. readme
-    , _packageLicense = pkg ^. license
-    , _packagePreviousPackageId = pkg ^. previousPackageId
-    , _packageForkOfPackageId = pkg ^. forkOfPackageId
-    , _packageMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
-    , _packageCreatedAt = pkg ^. createdAt
-    }
-
-toDTO :: PackageWithEvents -> PackageDTO
-toDTO pkg =
-  PackageDTO
-    { _packageDTOPId = pkg ^. pId
-    , _packageDTOName = pkg ^. name
-    , _packageDTOOrganizationId = pkg ^. organizationId
-    , _packageDTOKmId = pkg ^. kmId
-    , _packageDTOVersion = pkg ^. version
-    , _packageDTOMetamodelVersion = pkg ^. metamodelVersion
-    , _packageDTODescription = pkg ^. description
-    , _packageDTOReadme = pkg ^. readme
-    , _packageDTOLicense = pkg ^. license
-    , _packageDTOPreviousPackageId = pkg ^. previousPackageId
-    , _packageDTOForkOfPackageId = pkg ^. forkOfPackageId
-    , _packageDTOMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
-    , _packageDTOEvents = toDTOs (pkg ^. events)
-    , _packageDTOCreatedAt = pkg ^. createdAt
-    }
 
 toSimpleDTO :: Package -> PackageSimpleDTO
 toSimpleDTO pkg = toSimpleDTO' pkg [] []

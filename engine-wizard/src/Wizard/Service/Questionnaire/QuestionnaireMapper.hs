@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -45,7 +46,7 @@ toSimpleDTO questionnaire package state mOwner =
     , _questionnaireDTOLevel = questionnaire ^. level
     , _questionnaireDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
+    , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDTOOwner = mOwner
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
@@ -79,7 +80,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOLevel = questionnaire ^. level
     , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
+    , _questionnaireDetailDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
     , _questionnaireDetailDTOTemplateUuid = questionnaire ^. templateUuid
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid

@@ -2,7 +2,7 @@ module Wizard.Api.Resource.Branch.BranchChangeDTO where
 
 import GHC.Generics
 
-import Wizard.Api.Resource.Event.EventDTO
+import Shared.Api.Resource.Event.EventDTO
 
 data BranchChangeDTO =
   BranchChangeDTO

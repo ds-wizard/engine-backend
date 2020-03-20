@@ -11,8 +11,8 @@ import Registry.Constant.Resource
 import Registry.Database.Connection
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
-import Registry.Service.Config.BuildInfoConfigService
 import Registry.Service.Config.ServerConfigService
+import Shared.Service.Config.BuildInfoConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Info.APISpec

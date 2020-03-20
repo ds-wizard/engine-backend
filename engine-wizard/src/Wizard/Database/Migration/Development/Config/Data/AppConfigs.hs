@@ -37,7 +37,7 @@ defaultClient =
     , _appConfigClientSupportRepositoryName = Nothing
     , _appConfigClientSupportRepositoryUrl = Nothing
     , _appConfigClientDashboard = Just defaultClientDashboard
-    , _appConfigClientCustomMenuLinks = []
+    , _appConfigClientCustomMenuLinks = [defaultClientCustomLink]
     }
 
 defaultClientDashboard :: AppConfigClientDashboard
@@ -46,6 +46,15 @@ defaultClientDashboard =
     { _appConfigClientDashboardAdmin = ["Welcome"]
     , _appConfigClientDashboardDataSteward = ["Welcome"]
     , _appConfigClientDashboardResearcher = ["Welcome"]
+    }
+
+defaultClientCustomLink :: AppConfigClientCustomMenuLink
+defaultClientCustomLink =
+  AppConfigClientCustomMenuLink
+    { _appConfigClientCustomMenuLinkIcon = "faq"
+    , _appConfigClientCustomMenuLinkTitle = "My Link"
+    , _appConfigClientCustomMenuLinkUrl = "http://example.prg"
+    , _appConfigClientCustomMenuLinkNewWindow = False
     }
 
 -- ------------------------------------------------------------

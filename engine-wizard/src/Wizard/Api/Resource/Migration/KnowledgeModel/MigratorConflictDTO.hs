@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Event.EventDTO
+import Shared.Api.Resource.Event.EventDTO
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 data MigratorConflictDTO =

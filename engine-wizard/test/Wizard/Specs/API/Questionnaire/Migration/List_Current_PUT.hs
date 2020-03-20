@@ -15,7 +15,6 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
@@ -49,9 +48,7 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrat
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 
-reqDto =
-  MigratorStateChangeDTO
-    {_migratorStateChangeDTOResolvedQuestionUuids = nlQtnMigrationStateDtoEdited ^. resolvedQuestionUuids}
+reqDto = migratorStateChange
 
 reqBody = encode reqDto
 

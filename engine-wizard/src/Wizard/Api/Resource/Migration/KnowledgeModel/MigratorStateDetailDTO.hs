@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Event.EventDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Event.EventDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 
 data MigratorStateDetailDTO =

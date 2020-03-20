@@ -13,13 +13,13 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
-import Registry.Api.Resource.PackageBundle.PackageBundleJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
-import Registry.Database.Migration.Development.Package.Data.Packages
-import Registry.Database.Migration.Development.PackageBundle.Data.PackageBundles
 import Registry.Model.Context.AppContext
-import Registry.Service.PackageBundle.PackageBundleMapper
 import Shared.Api.Resource.Error.ErrorDTO ()
+import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
+import Shared.Service.PackageBundle.PackageBundleMapper
 
 import Registry.Specs.API.Audit.Common
 import Registry.Specs.API.Common

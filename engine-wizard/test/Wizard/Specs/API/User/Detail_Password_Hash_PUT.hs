@@ -7,9 +7,6 @@ import Crypto.PasswordStore
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import Data.Either
-import Data.Maybe
-import Data.Time
-import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -18,11 +15,11 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Localization.Messages.Public
-import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
@@ -49,7 +46,7 @@ reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=1ba90a0f-845
 
 reqHeaders = [reqCtHeader]
 
-reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+reqDto = userPassword
 
 reqBody = encode reqDto
 
@@ -63,15 +60,7 @@ test_204 appContext =
   it "HTTP 204 NO CONTENT" $
   -- GIVEN: Prepare DB
    do
-    let actionKey =
-          ActionKey
-            { _actionKeyUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
-            , _actionKeyUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-            , _actionKeyAType = ForgottenPasswordActionKey
-            , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-            , _actionKeyCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-            }
-    eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
+    eitherActionKey <- runInContextIO (insertActionKey forgPassActionKey) appContext
   -- AND: Prepare expectation
     let expStatus = 204
     let expHeaders = resCorsHeaders

@@ -12,12 +12,11 @@ import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
 
@@ -45,13 +44,7 @@ reqUrl = "/questionnaires"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto =
-  QuestionnaireCreateDTO
-    { _questionnaireCreateDTOName = questionnaire1 ^. name
-    , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
-    , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
-    , _questionnaireCreateDTOTagUuids = []
-    }
+reqDto = questionnaire1Create
 
 reqBody = encode reqDto
 

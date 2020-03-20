@@ -1,7 +1,7 @@
 module Wizard.Api.Resource.Config.AppConfigJM where
 
-import Data.Aeson
 import Control.Monad (mzero)
+import Data.Aeson
 
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Config.AppConfigDTO

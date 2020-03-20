@@ -9,8 +9,8 @@ import Registry.Api.Handler.Package.Api
 import Registry.Model.Context.BaseContext
 
 type AppAPI
-   = ActionKeyAPI
-     :<|> InfoAPI
+   = InfoAPI
+     :<|> ActionKeyAPI
      :<|> OrganizationAPI
      :<|> PackageAPI
 
@@ -18,4 +18,4 @@ appApi :: Proxy AppAPI
 appApi = Proxy
 
 appServer :: ServerT AppAPI BaseContextM
-appServer = actionKeyServer :<|> infoServer :<|> organizationServer :<|> packageServer
+appServer = infoServer :<|> actionKeyServer :<|> organizationServer :<|> packageServer

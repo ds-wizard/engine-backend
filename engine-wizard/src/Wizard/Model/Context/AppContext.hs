@@ -12,9 +12,9 @@ import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
 
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Model.Config.BuildInfoConfig
 import Wizard.Model.Config.ServerConfig
 
 data AppContext =

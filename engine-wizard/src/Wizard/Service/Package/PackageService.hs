@@ -19,6 +19,7 @@ import LensesConfig
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO

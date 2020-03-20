@@ -2,9 +2,9 @@ module Wizard.Api.Resource.Branch.BranchWithEventsJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Event.EventJM ()
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
-import Wizard.Api.Resource.Event.EventJM ()
 
 instance FromJSON BranchWithEventsDTO where
   parseJSON = simpleParseJSON "_branchWithEventsDTO"

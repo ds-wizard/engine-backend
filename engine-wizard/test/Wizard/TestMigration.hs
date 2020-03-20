@@ -1,5 +1,6 @@
 module Wizard.TestMigration where
 
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -14,7 +15,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
 
 import Wizard.Specs.Common

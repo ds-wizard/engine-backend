@@ -15,13 +15,11 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -53,11 +51,7 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrat
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 
-reqDto =
-  MigratorStateCreateDTO
-    { _migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-    , _migratorStateCreateDTOTargetTagUuids = questionnaire4Upgraded ^. selectedTagUuids
-    }
+reqDto = migratorStateCreate
 
 reqBody = encode reqDto
 

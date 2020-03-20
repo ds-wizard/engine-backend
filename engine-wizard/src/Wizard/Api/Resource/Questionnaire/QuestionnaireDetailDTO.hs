@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO

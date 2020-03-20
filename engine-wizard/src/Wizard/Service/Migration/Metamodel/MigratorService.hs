@@ -9,10 +9,10 @@ import Data.Bson.Generic
 import qualified Data.Text as T
 import Database.MongoDB ((=:), delete, find, findOne, insert, insertMany, rest, select)
 
+import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Constant.KnowledgeModel
 import Wizard.Api.Resource.Branch.BranchWithEventsJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM ()
-import Wizard.Api.Resource.Package.PackageJM ()
 import Wizard.Constant.Component
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()

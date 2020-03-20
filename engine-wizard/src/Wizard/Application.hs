@@ -11,6 +11,7 @@ import Control.Monad.Reader (liftIO)
 import System.IO
 
 import LensesConfig
+import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.Config
 import Wizard.Bootstrap.Database
 import Wizard.Bootstrap.DatabaseMigration
@@ -23,7 +24,6 @@ import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Component
 import Wizard.Constant.Resource
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.Config.BuildInfoConfigService
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Util.Logger
 

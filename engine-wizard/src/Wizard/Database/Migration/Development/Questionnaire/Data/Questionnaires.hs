@@ -9,9 +9,11 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Questionnaire.QuestionnaireUtil
+import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
@@ -59,6 +61,40 @@ questionnaire1Edited =
 
 questionnaire1Dto :: QuestionnaireDTO
 questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
+
+questionnaire1Create :: QuestionnaireCreateDTO
+questionnaire1Create =
+  QuestionnaireCreateDTO
+    { _questionnaireCreateDTOName = questionnaire1 ^. name
+    , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
+    , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
+    , _questionnaireCreateDTOTagUuids = []
+    }
+
+questionnaire1EditedChange :: QuestionnaireChangeDTO
+questionnaire1EditedChange =
+  QuestionnaireChangeDTO
+    { _questionnaireChangeDTOName = questionnaire1Edited ^. name
+    , _questionnaireChangeDTOAccessibility = questionnaire1Edited ^. accessibility
+    , _questionnaireChangeDTOLevel = 1
+    , _questionnaireChangeDTOReplies =
+        toReplyDTO <$>
+        [ rQ1
+        , rQ2
+        , rQ2_aYes_fuQ1
+        , rQ3
+        , rQ4
+        , rQ4_it1_q5
+        , rQ4_it1_q5_it1_question7
+        , rQ4_it1_q5_it1_question8
+        , rQ4_it1_q6
+        , rQ4_it2_q5
+        , rQ4_it2_q6
+        , rQ9
+        , rQ10
+        ]
+    , _questionnaireChangeDTOLabels = []
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

@@ -3,12 +3,12 @@ module Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET where
 import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
-import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 import Servant hiding (contentType)
 
 import LensesConfig
+import Shared.Api.Handler.Common
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
@@ -22,12 +22,12 @@ type Detail_Documents_Preview_GET
      :> Capture "qtnUuid" String
      :> "documents"
      :> "preview"
-     :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] BS.ByteString)
+     :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 
 detail_documents_preview_GET ::
      Maybe String
   -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] BS.ByteString)
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 detail_documents_preview_GET mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ do
@@ -37,5 +37,5 @@ detail_documents_preview_GET mTokenHeader qtnUuid =
         DoneDocumentState -> do
           let cdHeader = fromMaybe "text/plain" (doc ^. metadata . contentType)
           traceUuid <- asks _appContextTraceUuid
-          return . addHeader (U.toString traceUuid) . addHeader cdHeader . BS.fromStrict $ result
+          return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
         _ -> throwError AcceptedError

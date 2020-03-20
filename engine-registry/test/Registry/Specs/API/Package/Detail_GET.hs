@@ -14,10 +14,11 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Database.Migration.Development.Package.Data.Packages
 import Registry.Model.Context.AppContext
 import Registry.Service.Package.PackageMapper
 import Shared.Api.Resource.Error.ErrorDTO ()
+import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Service.Package.PackageMapper
 
 import Registry.Specs.API.Common
 

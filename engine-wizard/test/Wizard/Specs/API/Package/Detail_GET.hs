@@ -13,6 +13,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Service.Package.PackageMapper
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Context.AppContext

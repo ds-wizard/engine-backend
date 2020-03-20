@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Error.Error
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.PublicPackage.PublicPackageDAO
 import Wizard.Localization.Messages.Public

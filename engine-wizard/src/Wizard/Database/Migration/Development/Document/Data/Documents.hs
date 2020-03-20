@@ -10,16 +10,17 @@ import qualified Data.UUID as U
 import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Service.Package.PackageMapper
+import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Database.Migration.Development.Organization.Data.Organizations
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
-import Wizard.Service.Package.PackageMapper
 
 doc1 :: Document
 doc1 =
@@ -67,6 +68,15 @@ dmp1 =
     , _documentContextCreatedBy = Just userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _documentContextUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    }
+
+doc1Create :: DocumentCreateDTO
+doc1Create =
+  DocumentCreateDTO
+    { _documentCreateDTOName = doc1 ^. name
+    , _documentCreateDTOQuestionnaireUuid = doc1 ^. questionnaireUuid
+    , _documentCreateDTOTemplateUuid = doc1 ^. templateUuid
+    , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
 
 doc2 :: Document

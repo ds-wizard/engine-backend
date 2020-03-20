@@ -8,13 +8,13 @@ import qualified Data.UUID as U
 import Test.Hspec
 
 import LensesConfig
+import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Constant.Resource
 import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.BuildInfoConfigService
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 

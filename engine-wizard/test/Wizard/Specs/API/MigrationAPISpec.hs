@@ -13,26 +13,20 @@ import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Shared.Database.Migration.Development.Event.Data.Events
-import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Branch.BranchCreateDTO
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
-import Wizard.Database.Migration.Development.Package.Data.Packages
+import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchService
-import Wizard.Service.Event.EventMapper
-import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 import SharedTest.Specs.Common
@@ -62,24 +56,14 @@ migratorAPI appContext = do
          do
           let expStatus = 200
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                MigratorStateDTO
-                  { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
-                  , _migratorStateDTOMigrationState =
-                      ConflictStateDTO . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
-                  , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
-                  , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-                  , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
-                  }
+          let expDto = migratorState
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
           runInContextIO B.runMigration appContext
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expectation
@@ -119,22 +103,14 @@ migratorAPI appContext = do
         let reqMethod = methodPost
         let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto = MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
+        let reqDto = migratorStateCreate
         let reqBody = encode reqDto
         it "HTTP 201 CREATED" $ do
           runInContextIO PKG.runMigration appContext
           -- GIVEN: Prepare expectation
           let expStatus = 201
           let expHeaders = [resCtHeader] ++ resCorsHeaders
-          let expDto =
-                MigratorStateDTO
-                  { _migratorStateDTOBranchUuid = fromJust . U.fromString $ branchUuid
-                  , _migratorStateDTOMigrationState =
-                      ConflictStateDTO . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
-                  , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
-                  , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-                  , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
-                  }
+          let expDto = migratorState
           let expBody = encode expDto
           -- AND: Prepare database
           runInContextIO PKG.runMigration appContext
@@ -170,9 +146,7 @@ migratorAPI appContext = do
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expectation
@@ -243,9 +217,7 @@ migratorAPI appContext = do
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
           runInContextIO (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- AND: Compare response with expectation
@@ -274,9 +246,7 @@ migratorAPI appContext = do
           runInContextIO B.runMigration appContext
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
            -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
            -- THEN: Find a result
@@ -300,12 +270,7 @@ migratorAPI appContext = do
         let reqMethod = methodPost
         let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/migrations/current/conflict"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto =
-              MigratorConflictDTO
-                { _migratorConflictDTOOriginalEventUuid = a_km1_ch4 ^. uuid
-                , _migratorConflictDTOAction = MCAEdited
-                , _migratorConflictDTOEvent = Just . toDTOFn . Prelude.head $ netherlandsPackageV2 ^. events
-                }
+        let reqDto = migratorConflict
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $ do
           runInContextIO PKG.runMigration appContext
@@ -319,9 +284,7 @@ migratorAPI appContext = do
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
           -- THEN: Find a result
@@ -355,9 +318,7 @@ migratorAPI appContext = do
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
           -- AND: Compare response with expectation
@@ -379,9 +340,7 @@ migratorAPI appContext = do
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBodyEdited
           -- AND: Compare response with expectation
@@ -401,9 +360,7 @@ migratorAPI appContext = do
           runInContextIO (insertPackage netherlandsPackageV2) appContext
           runInContextIO (deleteEventsAtBranch branchUuid) appContext
           runInContextIO deleteMigratorStates appContext
-          let migratorCreateDto =
-                MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
-          runInContextIO (createMigration branchUuid migratorCreateDto) appContext
+          runInContextIO (createMigration branchUuid migratorStateCreate) appContext
           runInContextIO (solveConflictAndMigrate branchUuid reqDto) appContext
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody

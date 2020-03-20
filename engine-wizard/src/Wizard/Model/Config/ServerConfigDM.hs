@@ -3,6 +3,20 @@ module Wizard.Model.Config.ServerConfigDM where
 import Shared.Model.Config.Environment
 import Wizard.Model.Config.ServerConfig
 
+defaultConfig :: ServerConfig
+defaultConfig =
+  ServerConfig
+    { _serverConfigGeneral = defaultGeneral
+    , _serverConfigDatabase = defaultDatabase
+    , _serverConfigMessaging = defaultMessaging
+    , _serverConfigJwt = defaultJwt
+    , _serverConfigRoles = defaultRoles
+    , _serverConfigMail = defaultMail
+    , _serverConfigRegistry = defaultRegistry
+    , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigFeedback = defaultFeedback
+    }
+
 defaultGeneral :: ServerConfigGeneral
 defaultGeneral =
   ServerConfigGeneral

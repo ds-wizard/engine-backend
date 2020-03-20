@@ -70,6 +70,9 @@ library:
   - servant-errors
   - servant-multipart
   - servant-server
+  - servant-swagger
+  - servant-swagger-ui
+  - swagger2
   - text
   - text-replace
   - time
