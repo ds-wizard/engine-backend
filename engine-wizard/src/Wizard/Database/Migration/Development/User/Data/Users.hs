@@ -20,10 +20,10 @@ userAlbert =
     , _userFirstName = "Albert"
     , _userLastName = "Einstein"
     , _userEmail = "albert.einstein@example.com"
+    , _userAffiliation = Just "My University"
     , _userRole = "ADMIN"
     , _userPermissions =
         [ "UM_PERM"
-        , "ORG_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"
@@ -46,6 +46,7 @@ userNikola =
     , _userFirstName = "Nikola"
     , _userLastName = "Tesla"
     , _userEmail = "nikola.tesla@example.com"
+    , _userAffiliation = Nothing
     , _userRole = "DATASTEWARD"
     , _userPermissions = ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
     , _userActive = True
@@ -61,6 +62,7 @@ userIsaac =
     , _userFirstName = "Isaac"
     , _userLastName = "Newton"
     , _userEmail = "isaac.newton@example.com"
+    , _userAffiliation = Nothing
     , _userRole = "RESEARCHER"
     , _userPermissions = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
     , _userActive = True
@@ -75,6 +77,7 @@ userJohnCreate =
     { _userCreateDTOFirstName = "John"
     , _userCreateDTOLastName = "Doe"
     , _userCreateDTOEmail = "john.doe@example.com"
+    , _userCreateDTOAffiliation = Just "My University"
     , _userCreateDTORole = Just "ADMIN"
     , _userCreateDTOPassword = "password"
     }
@@ -86,6 +89,7 @@ userIsaacChange =
     , _userChangeDTOFirstName = "EDITED: Isaac"
     , _userChangeDTOLastName = "EDITED: Newton"
     , _userChangeDTOEmail = "albert.einstein@example.com"
+    , _userChangeDTOAffiliation = Just "EDITED: My University"
     , _userChangeDTORole = "ADMIN"
     , _userChangeDTOActive = True
     }
@@ -96,6 +100,7 @@ userIsaacProfileChange =
     { _userProfileChangeDTOFirstName = "EDITED: Isaac"
     , _userProfileChangeDTOLastName = "EDITED: Newton"
     , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
+    , _userProfileChangeDTOAffiliation = Just "EDITED: My University"
     }
 
 userPassword :: UserPasswordDTO

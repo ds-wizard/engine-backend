@@ -6,6 +6,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Config.AppConfigDAO
+import Wizard.Database.DAO.Organization.OrganizationDAO
 
 import Wizard.Specs.Common
 
@@ -16,9 +17,15 @@ assertExistenceOfAppConfigInDB appContext appConfig = do
   eitherAppConfig <- runInContextIO findAppConfig appContext
   liftIO $ isRight eitherAppConfig `shouldBe` True
   let (Right appConfigFromDb) = eitherAppConfig
-  compareAppConfigDtos appConfigFromDb appConfig
+  compareDtos appConfigFromDb appConfig
+
+assertExistenceOfOrganizationInDB appContext organization = do
+  eitherOrganization <- runInContextIO findOrganization appContext
+  liftIO $ isRight eitherOrganization `shouldBe` True
+  let (Right organizationFromDb) = eitherOrganization
+  compareDtos organizationFromDb organization
 
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareAppConfigDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True

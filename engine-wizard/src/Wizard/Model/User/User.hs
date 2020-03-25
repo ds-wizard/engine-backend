@@ -17,6 +17,7 @@ data User =
     , _userLastName :: String
     , _userEmail :: Email
     , _userPasswordHash :: String
+    , _userAffiliation :: Maybe String
     , _userRole :: Role
     , _userPermissions :: [Permission]
     , _userActive :: Bool
@@ -32,4 +33,5 @@ instance Eq User where
     _userLastName a == _userLastName b &&
     _userEmail a == _userEmail b &&
     _userPasswordHash a == _userPasswordHash b &&
+    _userAffiliation a == _userAffiliation b &&
     _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userActive a == _userActive b

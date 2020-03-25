@@ -14,6 +14,8 @@ toClientConfigDTO serverConfig appConfig =
   ClientConfigDTO
     { _clientConfigDTOFeatures = toClientConfigFeaturesDTO serverConfig appConfig
     , _clientConfigDTOClient = toClientDTO (appConfig ^. client)
+    , _clientConfigDTOInfo = toInfoDTO (appConfig ^. info)
+    , _clientConfigDTOAffiliation = toAffiliationDTO (appConfig ^. affiliation)
     }
 
 toClientConfigFeaturesDTO :: ServerConfig -> AppConfig -> ClientConfigFeaturesDTO

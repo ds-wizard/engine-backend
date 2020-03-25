@@ -9,6 +9,8 @@ data ClientConfigDTO =
   ClientConfigDTO
     { _clientConfigDTOFeatures :: ClientConfigFeaturesDTO
     , _clientConfigDTOClient :: AppConfigClientDTO
+    , _clientConfigDTOInfo :: AppConfigInfoDTO
+    , _clientConfigDTOAffiliation :: AppConfigAffiliationDTO
     }
   deriving (Show, Eq, Generic)
 

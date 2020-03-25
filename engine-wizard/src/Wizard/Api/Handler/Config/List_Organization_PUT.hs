@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Organization.List_Current_PUT where
+module Wizard.Api.Handler.Config.List_Organization_PUT where
 
 import Servant
 
@@ -11,18 +11,18 @@ import Wizard.Api.Resource.Organization.OrganizationJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Organization.OrganizationService
 
-type List_Current_PUT
+type List_Organization_PUT
    = Header "Authorization" String
      :> ReqBody '[ SafeJSON] OrganizationChangeDTO
-     :> "organizations"
-     :> "current"
+     :> "configs"
+     :> "organization"
      :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 
-list_current_PUT ::
+list_organization_PUT ::
      Maybe String -> OrganizationChangeDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
-list_current_PUT mTokenHeader reqDto =
+list_organization_PUT mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "ORG_PERM"
+      checkPermission mTokenHeader "CFG_PERM"
       modifyOrganization reqDto

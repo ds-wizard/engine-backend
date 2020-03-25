@@ -9,6 +9,7 @@ data UserCreateDTO =
     { _userCreateDTOFirstName :: String
     , _userCreateDTOLastName :: String
     , _userCreateDTOEmail :: Email
+    , _userCreateDTOAffiliation :: Maybe String
     , _userCreateDTORole :: Maybe Role
     , _userCreateDTOPassword :: String
     }

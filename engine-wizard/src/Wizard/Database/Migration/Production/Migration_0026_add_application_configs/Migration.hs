@@ -23,7 +23,8 @@ meta =
 migrate :: ConnectionPool -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   insertConfig dbPool
-  addPermissionToUser dbPool
+  addAffiliationToUsers dbPool
+  addPermissionToAdmins dbPool
   return Nothing
 
 insertConfig dbPool = do
@@ -31,6 +32,10 @@ insertConfig dbPool = do
   let action = insert "appConfigs" (config now)
   runMongoDBPoolDef action dbPool
 
-addPermissionToUser dbPool = do
+addAffiliationToUsers dbPool = do
+  let action = modify (select [] "users") ["$set" =: ["affiliation" =: (Nothing :: Maybe String)]]
+  runMongoDBPoolDef action dbPool
+
+addPermissionToAdmins dbPool = do
   let action = modify (select ["role" =: "ADMIN"] "users") ["$push" =: ["permissions" =: "CFG_PERM"]]
   runMongoDBPoolDef action dbPool

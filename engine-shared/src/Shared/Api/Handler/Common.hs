@@ -16,11 +16,18 @@ instance Accept ApplicationJavascript where
   contentTypes _ =
     "application/javascript" NE.:| ["application/javascript; charset=utf-8", "application/javascript;charset=utf-8"]
 
-instance MimeRender ApplicationJavascript String where
-  mimeRender _ = BSL.pack
+instance MimeRender ApplicationJavascript Javascript where
+  mimeRender _ (Javascript content) = content
 
-instance MimeUnrender ApplicationJavascript String where
-  mimeUnrender _ = Right . BSL.unpack
+instance MimeUnrender ApplicationJavascript Javascript where
+  mimeUnrender _ = Right . Javascript
+
+newtype Javascript =
+  Javascript BSL.ByteString
+  deriving (Generic)
+
+instance ToSchema Javascript where
+  declareNamedSchema _ = return $ NamedSchema (Just "Javascript") binarySchema
 
 -- ------------------------------------------------------------------------
 data JSONPlain

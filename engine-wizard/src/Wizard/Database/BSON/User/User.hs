@@ -13,6 +13,7 @@ instance ToBSON User where
     , "lastName" BSON.=: _userLastName
     , "email" BSON.=: _userEmail
     , "passwordHash" BSON.=: _userPasswordHash
+    , "affiliation" BSON.=: _userAffiliation
     , "role" BSON.=: _userRole
     , "permissions" BSON.=: _userPermissions
     , "active" BSON.=: _userActive
@@ -27,6 +28,7 @@ instance FromBSON User where
     _userLastName <- BSON.lookup "lastName" doc
     _userEmail <- BSON.lookup "email" doc
     _userPasswordHash <- BSON.lookup "passwordHash" doc
+    _userAffiliation <- BSON.lookup "affiliation" doc
     _userRole <- BSON.lookup "role" doc
     _userPermissions <- BSON.lookup "permissions" doc
     _userActive <- BSON.lookup "active" doc

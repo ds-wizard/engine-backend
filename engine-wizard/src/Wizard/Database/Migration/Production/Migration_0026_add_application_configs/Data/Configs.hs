@@ -13,9 +13,6 @@ config now =
     [ "privacyUrl" BSON.=: "https://ds-wizard.org/privacy.html"
     , "appTitle" BSON.=: (Nothing :: Maybe String)
     , "appTitleShort" BSON.=: (Nothing :: Maybe String)
-    , "welcomeWarning" BSON.=: (Nothing :: Maybe String)
-    , "welcomeInfo" BSON.=: (Nothing :: Maybe String)
-    , "loginInfo" BSON.=: (Nothing :: Maybe String)
     , "supportEmail" BSON.=: (Nothing :: Maybe String)
     , "supportRepositoryName" BSON.=: (Nothing :: Maybe String)
     , "supportRepositoryUrl" BSON.=: (Nothing :: Maybe String)
@@ -23,6 +20,12 @@ config now =
       Just ["admin" BSON.=: ["Welcome"], "dataSteward" BSON.=: ["Welcome"], "researcher" BSON.=: ["Welcome"]]
     , "customMenuLinks" BSON.=: ([] :: [String])
     ]
+  , "info" BSON.=:
+    [ "welcomeWarning" BSON.=: (Nothing :: Maybe String)
+    , "welcomeInfo" BSON.=: (Nothing :: Maybe String)
+    , "loginInfo" BSON.=: (Nothing :: Maybe String)
+    ]
+  , "affiliation" BSON.=: ["affiliations" BSON.=: ([] :: [String])]
   , "createdAt" BSON.=: now
   , "updatedAt" BSON.=: now
   ]

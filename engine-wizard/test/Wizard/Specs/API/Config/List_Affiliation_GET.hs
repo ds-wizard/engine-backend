@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Config.List_Client_GET
-  ( list_client_GET
+module Wizard.Specs.API.Config.List_Affiliation_GET
+  ( list_affiliation_GET
   ) where
 
 import Control.Lens ((^.))
@@ -18,11 +18,11 @@ import Wizard.Service.Config.AppConfigMapper
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/client
+-- GET /configs/affiliation
 -- ------------------------------------------------------------------------
-list_client_GET :: AppContext -> SpecWith Application
-list_client_GET appContext =
-  describe "GET /configs/client" $ do
+list_affiliation_GET :: AppContext -> SpecWith Application
+list_affiliation_GET appContext =
+  describe "GET /configs/affiliation" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ list_client_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/client"
+reqUrl = "/configs/affiliation"
 
 reqHeaders = [reqAuthHeader]
 
@@ -47,7 +47,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toClientDTO defaultClient
+    let expDto = toAffiliationDTO defaultAffiliation
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

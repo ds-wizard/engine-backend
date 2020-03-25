@@ -1,22 +1,11 @@
 module Wizard.Service.Config.AppConfigMapper where
 
 import Control.Lens ((^.))
-import Data.Time
 
 import LensesConfig
-import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Service.Config.SimpleFeatureMapper
-
-toDTO :: AppConfig -> AppConfigDTO
-toDTO appConfig =
-  AppConfigDTO
-    { _appConfigDTOFeatures = toFeaturesDTO $ appConfig ^. features
-    , _appConfigDTOClient = toClientDTO $ appConfig ^. client
-    , _appConfigDTOCreatedAt = appConfig ^. createdAt
-    , _appConfigDTOUpdatedAt = appConfig ^. updatedAt
-    }
 
 toFeaturesDTO :: AppConfigFeatures -> AppConfigFeaturesDTO
 toFeaturesDTO featuresConfig =
@@ -34,9 +23,6 @@ toClientDTO clientConfig =
     { _appConfigClientDTOPrivacyUrl = clientConfig ^. privacyUrl
     , _appConfigClientDTOAppTitle = clientConfig ^. appTitle
     , _appConfigClientDTOAppTitleShort = clientConfig ^. appTitleShort
-    , _appConfigClientDTOWelcomeWarning = clientConfig ^. welcomeWarning
-    , _appConfigClientDTOWelcomeInfo = clientConfig ^. welcomeInfo
-    , _appConfigClientDTOLoginInfo = clientConfig ^. loginInfo
     , _appConfigClientDTOSupportEmail = clientConfig ^. supportEmail
     , _appConfigClientDTOSupportRepositoryName = clientConfig ^. supportRepositoryName
     , _appConfigClientDTOSupportRepositoryUrl = clientConfig ^. supportRepositoryUrl
@@ -61,21 +47,17 @@ toClientCustomMenuLinkDTO customMenuLinkConfig =
     , _appConfigClientCustomMenuLinkDTONewWindow = customMenuLinkConfig ^. newWindow
     }
 
-toChangeDTO :: AppConfig -> AppConfigChangeDTO
-toChangeDTO appConfig =
-  AppConfigChangeDTO
-    { _appConfigChangeDTOFeatures = toFeaturesDTO $ appConfig ^. features
-    , _appConfigChangeDTOClient = toClientDTO $ appConfig ^. client
+toInfoDTO :: AppConfigInfo -> AppConfigInfoDTO
+toInfoDTO infoConfig =
+  AppConfigInfoDTO
+    { _appConfigInfoDTOWelcomeWarning = infoConfig ^. welcomeWarning
+    , _appConfigInfoDTOWelcomeInfo = infoConfig ^. welcomeInfo
+    , _appConfigInfoDTOLoginInfo = infoConfig ^. loginInfo
     }
 
-fromDTO :: AppConfigChangeDTO -> AppConfig -> UTCTime -> AppConfig
-fromDTO dto appConfig now =
-  AppConfig
-    { _appConfigFeatures = fromFeaturesDTO $ dto ^. features
-    , _appConfigClient = fromClientDTO $ dto ^. client
-    , _appConfigCreatedAt = appConfig ^. createdAt
-    , _appConfigUpdatedAt = now
-    }
+toAffiliationDTO :: AppConfigAffiliation -> AppConfigAffiliationDTO
+toAffiliationDTO affiliationConfig =
+  AppConfigAffiliationDTO {_appConfigAffiliationDTOAffiliations = affiliationConfig ^. affiliations}
 
 fromFeaturesDTO :: AppConfigFeaturesDTO -> AppConfigFeatures
 fromFeaturesDTO dto =
@@ -92,9 +74,6 @@ fromClientDTO dto =
     { _appConfigClientPrivacyUrl = dto ^. privacyUrl
     , _appConfigClientAppTitle = dto ^. appTitle
     , _appConfigClientAppTitleShort = dto ^. appTitleShort
-    , _appConfigClientWelcomeWarning = dto ^. welcomeWarning
-    , _appConfigClientWelcomeInfo = dto ^. welcomeInfo
-    , _appConfigClientLoginInfo = dto ^. loginInfo
     , _appConfigClientSupportEmail = dto ^. supportEmail
     , _appConfigClientSupportRepositoryName = dto ^. supportRepositoryName
     , _appConfigClientSupportRepositoryUrl = dto ^. supportRepositoryUrl
@@ -118,3 +97,14 @@ fromClientCustomMenuLinkDTO dto =
     , _appConfigClientCustomMenuLinkUrl = dto ^. url
     , _appConfigClientCustomMenuLinkNewWindow = dto ^. newWindow
     }
+
+fromInfoDTO :: AppConfigInfoDTO -> AppConfigInfo
+fromInfoDTO dto =
+  AppConfigInfo
+    { _appConfigInfoWelcomeWarning = dto ^. welcomeWarning
+    , _appConfigInfoWelcomeInfo = dto ^. welcomeInfo
+    , _appConfigInfoLoginInfo = dto ^. loginInfo
+    }
+
+fromAffiliationDTO :: AppConfigAffiliationDTO -> AppConfigAffiliation
+fromAffiliationDTO dto = AppConfigAffiliation {_appConfigAffiliationAffiliations = dto ^. affiliations}

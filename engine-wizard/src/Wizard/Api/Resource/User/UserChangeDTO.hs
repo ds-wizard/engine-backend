@@ -11,6 +11,7 @@ data UserChangeDTO =
     , _userChangeDTOFirstName :: String
     , _userChangeDTOLastName :: String
     , _userChangeDTOEmail :: Email
+    , _userChangeDTOAffiliation :: Maybe String
     , _userChangeDTORole :: Role
     , _userChangeDTOActive :: Bool
     }

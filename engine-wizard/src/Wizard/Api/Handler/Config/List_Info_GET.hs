@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Config.List_Client_GET where
+module Wizard.Api.Handler.Config.List_Info_GET where
 
 import Servant
 
@@ -9,16 +9,16 @@ import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.AppConfigService
 
-type List_Client_GET
+type List_Info_GET
    = Header "Authorization" String
      :> "configs"
-     :> "client"
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppConfigClientDTO)
+     :> "info"
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppConfigInfoDTO)
 
-list_client_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfigClientDTO)
-list_client_GET mTokenHeader =
+list_info_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfigInfoDTO)
+list_info_GET mTokenHeader =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "CFG_PERM"
-      getAppConfigClient
+      getAppConfigInfo

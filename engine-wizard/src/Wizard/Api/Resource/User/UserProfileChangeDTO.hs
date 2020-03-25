@@ -9,5 +9,6 @@ data UserProfileChangeDTO =
     { _userProfileChangeDTOFirstName :: String
     , _userProfileChangeDTOLastName :: String
     , _userProfileChangeDTOEmail :: Email
+    , _userProfileChangeDTOAffiliation :: Maybe String
     }
   deriving (Generic)

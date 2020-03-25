@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Config.List_Application_GET
-  ( list_application_GET
+module Wizard.Specs.API.Config.List_Features_GET
+  ( list_features_GET
   ) where
 
 import Control.Lens ((^.))
@@ -18,11 +18,11 @@ import Wizard.Service.Config.AppConfigMapper
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/application
+-- GET /configs/features
 -- ------------------------------------------------------------------------
-list_application_GET :: AppContext -> SpecWith Application
-list_application_GET appContext =
-  describe "GET /configs/application" $ do
+list_features_GET :: AppContext -> SpecWith Application
+list_features_GET appContext =
+  describe "GET /configs/features" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +32,7 @@ list_application_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/application"
+reqUrl = "/configs/features"
 
 reqHeaders = [reqAuthHeader]
 
@@ -47,7 +47,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toDTO defaultAppConfig
+    let expDto = toFeaturesDTO defaultFeatures
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

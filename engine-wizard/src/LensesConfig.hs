@@ -38,7 +38,6 @@ import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
-import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.SimpleFeatureDTO
@@ -131,6 +130,10 @@ makeFields ''AppConfigClient
 makeFields ''AppConfigClientDashboard
 
 makeFields ''AppConfigClientCustomMenuLink
+
+makeFields ''AppConfigInfo
+
+makeFields ''AppConfigAffiliation
 
 makeFields ''SimpleFeature
 
@@ -373,8 +376,6 @@ makeFields ''BranchDetailDTO
 makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / Config
-makeFields ''AppConfigDTO
-
 makeFields ''AppConfigFeaturesDTO
 
 makeFields ''AppConfigClientDTO
@@ -383,7 +384,9 @@ makeFields ''AppConfigClientDashboardDTO
 
 makeFields ''AppConfigClientCustomMenuLinkDTO
 
-makeFields ''AppConfigChangeDTO
+makeFields ''AppConfigInfoDTO
+
+makeFields ''AppConfigAffiliationDTO
 
 makeFields ''SimpleFeatureDTO
 

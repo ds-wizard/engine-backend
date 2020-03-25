@@ -11,6 +11,8 @@ defaultAppConfig =
   AppConfig
     { _appConfigFeatures = defaultFeatures
     , _appConfigClient = defaultClient
+    , _appConfigInfo = defaultInfo
+    , _appConfigAffiliation = defaultAffiliation
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -30,9 +32,6 @@ defaultClient =
     { _appConfigClientPrivacyUrl = "https://ds-wizard.org/privacy.html"
     , _appConfigClientAppTitle = Nothing
     , _appConfigClientAppTitleShort = Nothing
-    , _appConfigClientWelcomeWarning = Nothing
-    , _appConfigClientWelcomeInfo = Nothing
-    , _appConfigClientLoginInfo = Nothing
     , _appConfigClientSupportEmail = Nothing
     , _appConfigClientSupportRepositoryName = Nothing
     , _appConfigClientSupportRepositoryUrl = Nothing
@@ -57,13 +56,24 @@ defaultClientCustomLink =
     , _appConfigClientCustomMenuLinkNewWindow = False
     }
 
--- ------------------------------------------------------------
--- ------------------------------------------------------------
-editedAppConfig :: AppConfig
-editedAppConfig = defaultAppConfig {_appConfigFeatures = editedFeatures, _appConfigClient = editedClient}
+defaultInfo :: AppConfigInfo
+defaultInfo =
+  AppConfigInfo
+    {_appConfigInfoWelcomeWarning = Nothing, _appConfigInfoWelcomeInfo = Nothing, _appConfigInfoLoginInfo = Nothing}
 
+defaultAffiliation :: AppConfigAffiliation
+defaultAffiliation = AppConfigAffiliation {_appConfigAffiliationAffiliations = []}
+
+-- ------------------------------------------------------------
+-- ------------------------------------------------------------
 editedFeatures :: AppConfigFeatures
 editedFeatures = defaultFeatures {_appConfigFeaturesRegistration = SimpleFeature False}
 
 editedClient :: AppConfigClient
 editedClient = defaultClient {_appConfigClientPrivacyUrl = "https://ds-wizard.org/privacy.html/EDITED"}
+
+editedInfo :: AppConfigInfo
+editedInfo = defaultInfo {_appConfigInfoWelcomeInfo = Just "EDITED: Welcome Info"}
+
+editedAffiliation :: AppConfigAffiliation
+editedAffiliation = defaultAffiliation {_appConfigAffiliationAffiliations = ["https://myuniversity.org"]}

@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Config.List_Application_PUT
-  ( list_application_PUT
+module Wizard.Specs.API.Config.List_Affiliation_PUT
+  ( list_affiliation_PUT
   ) where
 
 import Control.Lens ((^.))
@@ -9,11 +9,12 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
+import Test.Hspec.Wai.Matcher
 
 import LensesConfig
-import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigMapper
 
@@ -21,11 +22,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Config.Common
 
 -- ------------------------------------------------------------------------
--- PUT /configs/application
+-- PUT /configs/affiliation
 -- ------------------------------------------------------------------------
-list_application_PUT :: AppContext -> SpecWith Application
-list_application_PUT appContext =
-  describe "PUT /configs/application" $ do
+list_affiliation_PUT :: AppContext -> SpecWith Application
+list_affiliation_PUT appContext =
+  describe "PUT /configs/affiliation" $ do
     test_200 appContext
     test_400_invalid_json appContext
     test_401 appContext
@@ -36,11 +37,11 @@ list_application_PUT appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/configs/application"
+reqUrl = "/configs/affiliation"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = toChangeDTO editedAppConfig
+reqDto = toAffiliationDTO editedAffiliation
 
 reqBody = encode reqDto
 
@@ -52,17 +53,17 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDTO editedAppConfig
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toAffiliationDTO editedAffiliation
+    let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, AppConfigDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareAppConfigDtos resBody expDto
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfAppConfigInDB appContext editedAppConfig
+    assertExistenceOfAppConfigInDB appContext (defaultAppConfig {_appConfigAffiliation = editedAffiliation})
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

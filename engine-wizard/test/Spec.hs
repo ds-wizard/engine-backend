@@ -28,7 +28,6 @@ import Wizard.Specs.API.KnowledgeModel.APISpec
 import Wizard.Specs.API.Level.APISpec
 import Wizard.Specs.API.Metric.APISpec
 import Wizard.Specs.API.MigrationAPISpec
-import Wizard.Specs.API.Organization.APISpec
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
@@ -138,7 +137,6 @@ main =
              levelAPI appContext
              metricAPI appContext
              migratorAPI appContext
-             organizationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
              questionnaireMigrationAPI appContext

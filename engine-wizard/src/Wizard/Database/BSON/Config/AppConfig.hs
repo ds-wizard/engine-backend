@@ -11,6 +11,8 @@ instance ToBSON AppConfig where
   toBSON AppConfig {..} =
     [ "features" BSON.=: _appConfigFeatures
     , "client" BSON.=: _appConfigClient
+    , "info" BSON.=: _appConfigInfo
+    , "affiliation" BSON.=: _appConfigAffiliation
     , "createdAt" BSON.=: _appConfigCreatedAt
     , "updatedAt" BSON.=: _appConfigUpdatedAt
     ]
@@ -19,6 +21,8 @@ instance FromBSON AppConfig where
   fromBSON doc = do
     _appConfigFeatures <- BSON.lookup "features" doc
     _appConfigClient <- BSON.lookup "client" doc
+    _appConfigInfo <- BSON.lookup "info" doc
+    _appConfigAffiliation <- BSON.lookup "affiliation" doc
     _appConfigCreatedAt <- BSON.lookup "createdAt" doc
     _appConfigUpdatedAt <- BSON.lookup "updatedAt" doc
     return AppConfig {..}
@@ -44,9 +48,6 @@ instance ToBSON AppConfigClient where
     [ "privacyUrl" BSON.=: _appConfigClientPrivacyUrl
     , "appTitle" BSON.=: _appConfigClientAppTitle
     , "appTitleShort" BSON.=: _appConfigClientAppTitleShort
-    , "welcomeWarning" BSON.=: _appConfigClientWelcomeWarning
-    , "welcomeInfo" BSON.=: _appConfigClientWelcomeInfo
-    , "loginInfo" BSON.=: _appConfigClientLoginInfo
     , "supportEmail" BSON.=: _appConfigClientSupportEmail
     , "supportRepositoryName" BSON.=: _appConfigClientSupportRepositoryName
     , "supportRepositoryUrl" BSON.=: _appConfigClientSupportRepositoryUrl
@@ -59,9 +60,6 @@ instance FromBSON AppConfigClient where
     _appConfigClientPrivacyUrl <- BSON.lookup "privacyUrl" doc
     _appConfigClientAppTitle <- BSON.lookup "appTitle" doc
     _appConfigClientAppTitleShort <- BSON.lookup "appTitleShort" doc
-    _appConfigClientWelcomeWarning <- BSON.lookup "welcomeWarning" doc
-    _appConfigClientWelcomeInfo <- BSON.lookup "welcomeInfo" doc
-    _appConfigClientLoginInfo <- BSON.lookup "loginInfo" doc
     _appConfigClientSupportEmail <- BSON.lookup "supportEmail" doc
     _appConfigClientSupportRepositoryName <- BSON.lookup "supportRepositoryName" doc
     _appConfigClientSupportRepositoryUrl <- BSON.lookup "supportRepositoryUrl" doc
@@ -98,3 +96,25 @@ instance FromBSON AppConfigClientCustomMenuLink where
     _appConfigClientCustomMenuLinkUrl <- BSON.lookup "url" doc
     _appConfigClientCustomMenuLinkNewWindow <- BSON.lookup "newWindow" doc
     return AppConfigClientCustomMenuLink {..}
+
+instance ToBSON AppConfigInfo where
+  toBSON AppConfigInfo {..} =
+    [ "welcomeWarning" BSON.=: _appConfigInfoWelcomeWarning
+    , "welcomeInfo" BSON.=: _appConfigInfoWelcomeInfo
+    , "loginInfo" BSON.=: _appConfigInfoLoginInfo
+    ]
+
+instance FromBSON AppConfigInfo where
+  fromBSON doc = do
+    _appConfigInfoWelcomeWarning <- BSON.lookup "welcomeWarning" doc
+    _appConfigInfoWelcomeInfo <- BSON.lookup "welcomeInfo" doc
+    _appConfigInfoLoginInfo <- BSON.lookup "loginInfo" doc
+    return AppConfigInfo {..}
+
+instance ToBSON AppConfigAffiliation where
+  toBSON AppConfigAffiliation {..} = ["affiliations" BSON.=: _appConfigAffiliationAffiliations]
+
+instance FromBSON AppConfigAffiliation where
+  fromBSON doc = do
+    _appConfigAffiliationAffiliations <- BSON.lookup "affiliations" doc
+    return AppConfigAffiliation {..}

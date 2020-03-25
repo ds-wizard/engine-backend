@@ -7,12 +7,6 @@ import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 
-instance FromJSON AppConfigDTO where
-  parseJSON = simpleParseJSON "_appConfigDTO"
-
-instance ToJSON AppConfigDTO where
-  toJSON = simpleToJSON "_appConfigDTO"
-
 instance FromJSON AppConfigFeaturesDTO where
   parseJSON = simpleParseJSON "_appConfigFeaturesDTO"
 
@@ -46,3 +40,15 @@ instance FromJSON AppConfigClientCustomMenuLinkDTO where
 
 instance ToJSON AppConfigClientCustomMenuLinkDTO where
   toJSON = simpleToJSON "_appConfigClientCustomMenuLinkDTO"
+
+instance FromJSON AppConfigInfoDTO where
+  parseJSON = simpleParseJSON "_appConfigInfoDTO"
+
+instance ToJSON AppConfigInfoDTO where
+  toJSON = simpleToJSON "_appConfigInfoDTO"
+
+instance FromJSON AppConfigAffiliationDTO where
+  parseJSON = simpleParseJSON "_appConfigAffiliationDTO"
+
+instance ToJSON AppConfigAffiliationDTO where
+  toJSON = simpleToJSON "_appConfigAffiliationDTO"

@@ -9,6 +9,8 @@ data AppConfig =
   AppConfig
     { _appConfigFeatures :: AppConfigFeatures
     , _appConfigClient :: AppConfigClient
+    , _appConfigInfo :: AppConfigInfo
+    , _appConfigAffiliation :: AppConfigAffiliation
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
     }
@@ -31,9 +33,6 @@ data AppConfigClient =
     { _appConfigClientPrivacyUrl :: String
     , _appConfigClientAppTitle :: Maybe String
     , _appConfigClientAppTitleShort :: Maybe String
-    , _appConfigClientWelcomeWarning :: Maybe String
-    , _appConfigClientWelcomeInfo :: Maybe String
-    , _appConfigClientLoginInfo :: Maybe String
     , _appConfigClientSupportEmail :: Maybe String
     , _appConfigClientSupportRepositoryName :: Maybe String
     , _appConfigClientSupportRepositoryUrl :: Maybe String
@@ -58,3 +57,17 @@ data AppConfigClientCustomMenuLink =
     , _appConfigClientCustomMenuLinkNewWindow :: Bool
     }
   deriving (Show, Eq, Generic)
+
+data AppConfigInfo =
+  AppConfigInfo
+    { _appConfigInfoWelcomeWarning :: Maybe String
+    , _appConfigInfoWelcomeInfo :: Maybe String
+    , _appConfigInfoLoginInfo :: Maybe String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAffiliation =
+  AppConfigAffiliation
+    { _appConfigAffiliationAffiliations :: [String]
+    }
+  deriving (Generic, Eq, Show)

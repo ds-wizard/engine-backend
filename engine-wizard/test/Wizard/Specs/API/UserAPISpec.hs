@@ -115,6 +115,7 @@ userAPI appContext =
                   { _userCreateDTOFirstName = "Albert"
                   , _userCreateDTOLastName = "Einstein"
                   , _userCreateDTOEmail = "albert.einstein@example.com"
+                  , _userCreateDTOAffiliation = Nothing
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
                   }
@@ -229,6 +230,7 @@ userAPI appContext =
                   { _userCreateDTOFirstName = "John"
                   , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
+                  , _userCreateDTOAffiliation = Nothing
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
                   }
@@ -238,6 +240,7 @@ userAPI appContext =
                   { _userProfileChangeDTOFirstName = "EDITED: Isaac"
                   , _userProfileChangeDTOLastName = "EDITED: Newton"
                   , _userProfileChangeDTOEmail = "john.doe@example.com"
+                  , _userProfileChangeDTOAffiliation = Nothing
                   }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
@@ -299,6 +302,7 @@ userAPI appContext =
                   { _userCreateDTOFirstName = "John"
                   , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
+                  , _userCreateDTOAffiliation = Nothing
                   , _userCreateDTORole = Just "ADMIN"
                   , _userCreateDTOPassword = "password"
                   }
@@ -309,6 +313,7 @@ userAPI appContext =
                   , _userChangeDTOFirstName = "EDITED: Isaac"
                   , _userChangeDTOLastName = "EDITED: Newton"
                   , _userChangeDTOEmail = "albert.einstein@example.com"
+                  , _userChangeDTOAffiliation = Nothing
                   , _userChangeDTORole = "ADMIN"
                   , _userChangeDTOActive = True
                   }

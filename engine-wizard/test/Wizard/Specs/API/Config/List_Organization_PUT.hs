@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Organization.Current_PUT
-  ( current_put
+module Wizard.Specs.API.Config.List_Organization_PUT
+  ( list_organization_PUT
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -21,14 +21,14 @@ import Wizard.Service.Organization.OrganizationMapper
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Organization.Common
+import Wizard.Specs.API.Config.Common
 
 -- ------------------------------------------------------------------------
--- PUT /organizations/current
+-- PUT /configs/organization
 -- ------------------------------------------------------------------------
-current_put :: AppContext -> SpecWith Application
-current_put appContext =
-  describe "PUT /organizations/current" $ do
+list_organization_PUT :: AppContext -> SpecWith Application
+list_organization_PUT appContext =
+  describe "PUT /configs/organization" $ do
     test_200 appContext
     test_400_invalid_json appContext
     test_400_invalid_organizationId appContext
@@ -40,7 +40,7 @@ current_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/organizations/current"
+reqUrl = "/configs/organization"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
@@ -64,7 +64,7 @@ test_200 appContext =
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, OrganizationDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareOrganizationDtos resBody expDto
+    compareDtos resBody expDto
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfOrganizationInDB appContext editedOrg1
 
@@ -105,4 +105,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "ORG_PERM"
+  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "CFG_PERM"

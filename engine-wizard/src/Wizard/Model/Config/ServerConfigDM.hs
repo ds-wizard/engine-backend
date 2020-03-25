@@ -60,7 +60,6 @@ defaultRoles =
     { _serverConfigRolesDefaultRole = "DATASTEWARD"
     , _serverConfigRolesAdmin =
         [ "UM_PERM"
-        , "ORG_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"

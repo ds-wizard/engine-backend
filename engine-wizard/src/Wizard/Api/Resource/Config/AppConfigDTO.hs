@@ -1,21 +1,8 @@
 module Wizard.Api.Resource.Config.AppConfigDTO where
 
-import Data.Time
 import GHC.Generics
 
 import Wizard.Api.Resource.Config.SimpleFeatureDTO
-
-data AppConfigDTO =
-  AppConfigDTO
-    { _appConfigDTOFeatures :: AppConfigFeaturesDTO
-    , _appConfigDTOClient :: AppConfigClientDTO
-    , _appConfigDTOCreatedAt :: UTCTime
-    , _appConfigDTOUpdatedAt :: UTCTime
-    }
-  deriving (Generic, Show)
-
-instance Eq AppConfigDTO where
-  a == b = _appConfigDTOFeatures a == _appConfigDTOFeatures b && _appConfigDTOClient a == _appConfigDTOClient b
 
 data AppConfigFeaturesDTO =
   AppConfigFeaturesDTO
@@ -31,9 +18,6 @@ data AppConfigClientDTO =
     { _appConfigClientDTOPrivacyUrl :: String
     , _appConfigClientDTOAppTitle :: Maybe String
     , _appConfigClientDTOAppTitleShort :: Maybe String
-    , _appConfigClientDTOWelcomeWarning :: Maybe String
-    , _appConfigClientDTOWelcomeInfo :: Maybe String
-    , _appConfigClientDTOLoginInfo :: Maybe String
     , _appConfigClientDTOSupportEmail :: Maybe String
     , _appConfigClientDTOSupportRepositoryName :: Maybe String
     , _appConfigClientDTOSupportRepositoryUrl :: Maybe String
@@ -58,3 +42,17 @@ data AppConfigClientCustomMenuLinkDTO =
     , _appConfigClientCustomMenuLinkDTONewWindow :: Bool
     }
   deriving (Show, Eq, Generic)
+
+data AppConfigInfoDTO =
+  AppConfigInfoDTO
+    { _appConfigInfoDTOWelcomeWarning :: Maybe String
+    , _appConfigInfoDTOWelcomeInfo :: Maybe String
+    , _appConfigInfoDTOLoginInfo :: Maybe String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAffiliationDTO =
+  AppConfigAffiliationDTO
+    { _appConfigAffiliationDTOAffiliations :: [String]
+    }
+  deriving (Generic, Eq, Show)
