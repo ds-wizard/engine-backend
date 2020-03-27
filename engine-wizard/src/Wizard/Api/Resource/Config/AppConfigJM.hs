@@ -52,3 +52,39 @@ instance FromJSON AppConfigAffiliationDTO where
 
 instance ToJSON AppConfigAffiliationDTO where
   toJSON = simpleToJSON "_appConfigAffiliationDTO"
+
+instance FromJSON AppConfigAuthDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthDTO"
+
+instance ToJSON AppConfigAuthDTO where
+  toJSON = simpleToJSON "_appConfigAuthDTO"
+
+instance FromJSON AppConfigAuthInternalDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthInternalDTO"
+
+instance ToJSON AppConfigAuthInternalDTO where
+  toJSON = simpleToJSON "_appConfigAuthInternalDTO"
+
+instance FromJSON AppConfigAuthExternalDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalDTO"
+
+instance ToJSON AppConfigAuthExternalDTO where
+  toJSON = simpleToJSON "_appConfigAuthExternalDTO"
+
+instance FromJSON AppConfigAuthExternalServiceDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceDTO"
+
+instance ToJSON AppConfigAuthExternalServiceDTO where
+  toJSON = simpleToJSON "_appConfigAuthExternalServiceDTO"
+
+instance FromJSON AppConfigAuthExternalServiceParameterDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceParameterDTO"
+
+instance ToJSON AppConfigAuthExternalServiceParameterDTO where
+  toJSON = simpleToJSON "_appConfigAuthExternalServiceParameterDTO"
+
+instance FromJSON AppConfigAuthExternalServiceStyleDTO where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceStyleDTO"
+
+instance ToJSON AppConfigAuthExternalServiceStyleDTO where
+  toJSON = simpleToJSON "_appConfigAuthExternalServiceStyleDTO"

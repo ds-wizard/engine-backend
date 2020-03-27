@@ -10,6 +10,8 @@ type Role = String
 
 type Email = String
 
+_USER_SOURCE_INTERNAL = "internal"
+
 data User =
   User
     { _userUuid :: UUID
@@ -18,6 +20,7 @@ data User =
     , _userEmail :: Email
     , _userPasswordHash :: String
     , _userAffiliation :: Maybe String
+    , _userSources :: [String]
     , _userRole :: Role
     , _userPermissions :: [Permission]
     , _userActive :: Bool
@@ -34,4 +37,5 @@ instance Eq User where
     _userEmail a == _userEmail b &&
     _userPasswordHash a == _userPasswordHash b &&
     _userAffiliation a == _userAffiliation b &&
+    _userSources a == _userSources b &&
     _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userActive a == _userActive b

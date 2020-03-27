@@ -61,6 +61,13 @@ packages:
   original:
     hackage: fsutils-0.1.2
 - completed:
+    hackage: oidc-client-0.5.0.0@sha256:dc45d9f33cf30b578445b54ba641c71aeb8d3decb1d8df60fa39c03d77acb379,3340
+    pantry-tree:
+      size: 1228
+      sha256: 06ce0270386c4c35d839d6304429bcbbc384139a9a0964781d01cdbadf21ab01
+  original:
+    hackage: oidc-client-0.5.0.0
+- completed:
     hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
     pantry-tree:
       size: 577

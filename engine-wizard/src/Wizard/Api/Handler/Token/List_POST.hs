@@ -17,4 +17,4 @@ type List_POST
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TokenDTO)
 
 list_POST :: TokenCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
-list_POST reqDto = runInUnauthService $ addTraceUuidHeader =<< getToken reqDto
+list_POST reqDto = runInUnauthService $ addTraceUuidHeader =<< generateTokenFromCredentials reqDto

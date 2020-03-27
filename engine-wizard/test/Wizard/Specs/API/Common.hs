@@ -69,13 +69,7 @@ reqAuthHeaderWithoutPerms serverConfig perm =
   let allPerms = getPermissionForRole serverConfig "ADMIN"
       user = userAlbert & permissions .~ (L.delete perm allPerms)
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-      token =
-        createToken
-          user
-          now
-          (serverConfig ^. jwt ^. secret)
-          (serverConfig ^. jwt ^. version)
-          (serverConfig ^. jwt ^. expiration)
+      token = createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
    in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqServiceHeader :: Header

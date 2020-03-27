@@ -14,7 +14,7 @@ instance FromJSON ServerConfig where
     _serverConfigGeneral <- o .: "general"
     _serverConfigDatabase <- o .:? "database" .!= defaultDatabase
     _serverConfigMessaging <- o .:? "messaging" .!= defaultMessaging
-    _serverConfigJwt <- o .: "jwt"
+    _serverConfigJwt <- o .:? "jwt" .!= defaultJwt
     _serverConfigRoles <- o .:? "roles" .!= defaultRoles
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
@@ -29,6 +29,7 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralClientUrl <- o .: "clientUrl"
     _serverConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
     _serverConfigGeneralServiceToken <- o .: "serviceToken"
+    _serverConfigGeneralSecret <- o .: "secret"
     _serverConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
     _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
@@ -60,7 +61,6 @@ instance FromJSON ServerConfigMessaging where
 
 instance FromJSON ServerConfigJwt where
   parseJSON (Object o) = do
-    _serverConfigJwtSecret <- o .: "secret"
     _serverConfigJwtVersion <- o .:? "version" .!= (defaultJwt ^. version)
     _serverConfigJwtExpiration <- o .:? "expiration" .!= (defaultJwt ^. expiration)
     return ServerConfigJwt {..}

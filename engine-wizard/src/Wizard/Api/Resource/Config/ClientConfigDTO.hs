@@ -11,6 +11,7 @@ data ClientConfigDTO =
     , _clientConfigDTOClient :: AppConfigClientDTO
     , _clientConfigDTOInfo :: AppConfigInfoDTO
     , _clientConfigDTOAffiliation :: AppConfigAffiliationDTO
+    , _clientConfigDTOAuth :: ClientConfigAuthDTO
     }
   deriving (Show, Eq, Generic)
 
@@ -31,3 +32,25 @@ data ClientConfigRegistryDTO =
     , _clientConfigRegistryDTOUrl :: String
     }
   deriving (Show, Eq, Generic)
+
+data ClientConfigAuthDTO =
+  ClientConfigAuthDTO
+    { _clientConfigAuthDTOInternal :: AppConfigAuthInternalDTO
+    , _clientConfigAuthDTOExternal :: ClientConfigAuthExternalDTO
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigAuthExternalDTO =
+  ClientConfigAuthExternalDTO
+    { _clientConfigAuthExternalDTOServices :: [ClientConfigAuthExternalServiceDTO]
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigAuthExternalServiceDTO =
+  ClientConfigAuthExternalServiceDTO
+    { _clientConfigAuthExternalServiceDTOAId :: String
+    , _clientConfigAuthExternalServiceDTOName :: String
+    , _clientConfigAuthExternalServiceDTOUrl :: String
+    , _clientConfigAuthExternalServiceDTOStyle :: AppConfigAuthExternalServiceStyleDTO
+    }
+  deriving (Generic, Eq, Show)

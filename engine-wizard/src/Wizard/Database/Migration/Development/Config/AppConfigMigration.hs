@@ -8,5 +8,5 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "(Config/AppConfig) started"
   deleteAppConfigs
-  insertAppConfig defaultAppConfig
+  insertAppConfig defaultAppConfigEncrypted
   logInfo $ msg _CMP_MIGRATION "(Config/AppConfig) ended"

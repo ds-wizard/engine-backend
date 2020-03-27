@@ -28,7 +28,6 @@ library:
   - bytestring
   - case-insensitive
   - containers
-  - cryptonite
   - data-default
   - directory
   - exceptions

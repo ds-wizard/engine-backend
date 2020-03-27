@@ -4,6 +4,8 @@ import Servant
 
 import Wizard.Api.Handler.Config.List_Affiliation_GET
 import Wizard.Api.Handler.Config.List_Affiliation_PUT
+import Wizard.Api.Handler.Config.List_Auth_GET
+import Wizard.Api.Handler.Config.List_Auth_PUT
 import Wizard.Api.Handler.Config.List_Bootstrap_GET
 import Wizard.Api.Handler.Config.List_Client_GET
 import Wizard.Api.Handler.Config.List_Client_PUT
@@ -19,6 +21,8 @@ type ConfigAPI
    = List_Bootstrap_GET
      :<|> List_Affiliation_GET
      :<|> List_Affiliation_PUT
+     :<|> List_Auth_GET
+     :<|> List_Auth_PUT
      :<|> List_Client_GET
      :<|> List_Client_PUT
      :<|> List_Features_GET
@@ -33,7 +37,9 @@ configApi = Proxy
 
 configServer :: ServerT ConfigAPI BaseContextM
 configServer =
-  list_bootstrap_GET :<|> list_affiliation_GET :<|> list_affiliation_PUT :<|> list_client_GET :<|> list_client_PUT :<|>
+  list_bootstrap_GET :<|> list_affiliation_GET :<|> list_affiliation_PUT :<|> list_auth_GET :<|> list_auth_PUT :<|>
+  list_client_GET :<|>
+  list_client_PUT :<|>
   list_features_GET :<|>
   list_features_PUT :<|>
   list_info_GET :<|>

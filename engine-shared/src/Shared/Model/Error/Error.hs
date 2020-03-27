@@ -8,6 +8,7 @@ type FieldError = (String, LocaleRecord)
 
 data AppError
   = AcceptedError
+  | FoundError String
   | ValidationError [FormError] [FieldError]
   | UserError LocaleRecord
   | UnauthorizedError LocaleRecord

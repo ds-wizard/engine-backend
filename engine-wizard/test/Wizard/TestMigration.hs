@@ -21,7 +21,7 @@ import Wizard.Specs.Common
 
 resetDB appContext = do
   runInContext deleteAppConfigs appContext
-  runInContext (insertAppConfig defaultAppConfig) appContext
+  runInContext (insertAppConfig defaultAppConfigEncrypted) appContext
   runInContext deleteUsers appContext
   runInContext (insertUser userAlbert) appContext
   runInContext deleteOrganizations appContext

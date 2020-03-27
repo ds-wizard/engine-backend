@@ -20,6 +20,7 @@ toDTO user =
     , _userDTOLastName = user ^. lastName
     , _userDTOEmail = user ^. email
     , _userDTOAffiliation = user ^. affiliation
+    , _userDTOSources = user ^. sources
     , _userDTORole = user ^. role
     , _userDTOPermissions = user ^. permissions
     , _userDTOActive = user ^. active
@@ -36,11 +37,30 @@ fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = passwordHash
     , _userAffiliation = dto ^. affiliation
+    , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = role
     , _userPermissions = permissions
     , _userActive = False
     , _userCreatedAt = Just createdAt
     , _userUpdatedAt = Just updatedAt
+    }
+
+fromUserExternalDTO ::
+     U.UUID -> String -> String -> String -> String -> [String] -> Role -> [Permission] -> UTCTime -> User
+fromUserExternalDTO userUuid firstName lastName email passwordHash sources role permissions now =
+  User
+    { _userUuid = userUuid
+    , _userFirstName = firstName
+    , _userLastName = lastName
+    , _userEmail = email
+    , _userPasswordHash = passwordHash
+    , _userAffiliation = Nothing
+    , _userSources = sources
+    , _userRole = role
+    , _userPermissions = permissions
+    , _userActive = True
+    , _userCreatedAt = Just now
+    , _userUpdatedAt = Just now
     }
 
 fromUserChangeDTO :: UserChangeDTO -> User -> [Permission] -> User
@@ -52,6 +72,7 @@ fromUserChangeDTO dto oldUser permission =
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = oldUser ^. passwordHash
     , _userAffiliation = dto ^. affiliation
+    , _userSources = oldUser ^. sources
     , _userRole = dto ^. role
     , _userPermissions = permission
     , _userActive = dto ^. active
@@ -68,6 +89,7 @@ fromUserProfileChangeDTO dto oldUser =
     , _userEmail = toLower <$> dto ^. email
     , _userPasswordHash = oldUser ^. passwordHash
     , _userAffiliation = dto ^. affiliation
+    , _userSources = oldUser ^. sources
     , _userRole = oldUser ^. role
     , _userPermissions = oldUser ^. permissions
     , _userActive = oldUser ^. active

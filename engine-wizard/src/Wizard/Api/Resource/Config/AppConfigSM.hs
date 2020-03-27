@@ -27,3 +27,28 @@ instance ToSchema AppConfigInfoDTO where
 
 instance ToSchema AppConfigAffiliationDTO where
   declareNamedSchema = simpleToSchema "_appConfigAffiliationDTO" (toAffiliationDTO defaultAffiliation)
+
+instance ToSchema AppConfigAuthDTO where
+  declareNamedSchema = simpleToSchema "_appConfigAuthDTO" (toAuthDTO defaultAuth)
+
+instance ToSchema AppConfigAuthInternalDTO where
+  declareNamedSchema = simpleToSchema "_appConfigAuthInternalDTO" (toAuthInternalDTO defaultAuthInternal)
+
+instance ToSchema AppConfigAuthExternalDTO where
+  declareNamedSchema = simpleToSchema "_appConfigAuthExternalDTO" (toAuthExternalDTO defaultAuthExternal)
+
+instance ToSchema AppConfigAuthExternalServiceDTO where
+  declareNamedSchema =
+    simpleToSchema "_appConfigAuthExternalServiceDTO" (toAuthExternalServiceDTO defaultAuthExternalService)
+
+instance ToSchema AppConfigAuthExternalServiceParameterDTO where
+  declareNamedSchema =
+    simpleToSchema
+      "_appConfigAuthExternalServiceParameterDTO"
+      (toAppConfigAuthExternalServiceParameterDTO defaultAuthExternalServiceParameter)
+
+instance ToSchema AppConfigAuthExternalServiceStyleDTO where
+  declareNamedSchema =
+    simpleToSchema
+      "_appConfigAuthExternalServiceStyleDTO"
+      (toAppConfigAuthExternalServiceStyleDTO defaultAuthExternalServiceStyle)

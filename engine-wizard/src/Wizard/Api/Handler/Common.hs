@@ -6,12 +6,14 @@ import Control.Monad.Except (catchError, runExceptT, throwError)
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson
+import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
 import Servant
   ( Header
   , Headers
   , ServerError(..)
   , addHeader
+  , err302
   , err400
   , err401
   , err401
@@ -144,6 +146,9 @@ sendError AcceptedError =
     , errBody = encode AcceptedErrorDTO
     , errHeaders = [contentTypeHeaderJSON]
     }
+sendError (FoundError url) =
+  return $
+  err302 {errBody = encode $ FoundErrorDTO url, errHeaders = [contentTypeHeaderJSON, ("Location", BS.pack url)]}
 sendError (ValidationError formErrorRecords fieldErrorRecords) = do
   ls <- asks _baseContextLocalization
   let formErrors = fmap (locale ls) formErrorRecords
@@ -179,6 +184,9 @@ sendErrorDTO AcceptedErrorDTO =
     , errBody = encode AcceptedErrorDTO
     , errHeaders = [contentTypeHeaderJSON]
     }
+sendErrorDTO (FoundErrorDTO url) =
+  return $
+  err302 {errBody = encode $ FoundErrorDTO url, errHeaders = [contentTypeHeaderJSON, ("Location", BS.pack url)]}
 sendErrorDTO (ValidationErrorDTO formErrors fieldErrors) =
   return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (UserErrorDTO message) =

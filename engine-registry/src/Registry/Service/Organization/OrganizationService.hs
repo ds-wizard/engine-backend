@@ -23,9 +23,9 @@ import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
-import Registry.Util.StringGenerator (generateRandomString)
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Crypto (generateRandomString)
 
 getOrganizations :: AppContextM [OrganizationDTO]
 getOrganizations = do

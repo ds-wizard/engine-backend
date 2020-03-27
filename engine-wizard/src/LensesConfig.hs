@@ -135,6 +135,18 @@ makeFields ''AppConfigInfo
 
 makeFields ''AppConfigAffiliation
 
+makeFields ''AppConfigAuth
+
+makeFields ''AppConfigAuthInternal
+
+makeFields ''AppConfigAuthExternal
+
+makeFields ''AppConfigAuthExternalService
+
+makeFields ''AppConfigAuthExternalServiceParameter
+
+makeFields ''AppConfigAuthExternalServiceStyle
+
 makeFields ''SimpleFeature
 
 makeFields ''ServerConfig
@@ -387,6 +399,18 @@ makeFields ''AppConfigClientCustomMenuLinkDTO
 makeFields ''AppConfigInfoDTO
 
 makeFields ''AppConfigAffiliationDTO
+
+makeFields ''AppConfigAuthDTO
+
+makeFields ''AppConfigAuthInternalDTO
+
+makeFields ''AppConfigAuthExternalDTO
+
+makeFields ''AppConfigAuthExternalServiceDTO
+
+makeFields ''AppConfigAuthExternalServiceParameterDTO
+
+makeFields ''AppConfigAuthExternalServiceStyleDTO
 
 makeFields ''SimpleFeatureDTO
 

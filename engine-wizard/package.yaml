@@ -57,6 +57,7 @@ library:
   - mongoDB
   - mongoDB-migration
   - network # OK
+  - oidc-client
   - persistent
   - persistent-mongoDB
   - pretty-simple

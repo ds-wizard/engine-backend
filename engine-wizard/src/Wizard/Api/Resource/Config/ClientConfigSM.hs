@@ -19,3 +19,13 @@ instance ToSchema ClientConfigFeaturesDTO where
 
 instance ToSchema ClientConfigRegistryDTO where
   declareNamedSchema = simpleToSchema "_clientConfigRegistryDTO" (toClientConfigRegistryDTO defaultRegistry)
+
+instance ToSchema ClientConfigAuthDTO where
+  declareNamedSchema = simpleToSchema "_clientConfigAuthDTO" (toClientAuthDTO defaultAuth)
+
+instance ToSchema ClientConfigAuthExternalDTO where
+  declareNamedSchema = simpleToSchema "_clientConfigAuthExternalDTO" (toClientAuthExternalDTO defaultAuthExternal)
+
+instance ToSchema ClientConfigAuthExternalServiceDTO where
+  declareNamedSchema =
+    simpleToSchema "_clientConfigAuthExternalServiceDTO" (toClientAuthExternalServiceDTO defaultAuthExternalService)

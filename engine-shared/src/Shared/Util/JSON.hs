@@ -34,6 +34,7 @@ jsonSpecialFields :: String -> String
 jsonSpecialFields "aType" = "type"
 jsonSpecialFields "pType" = "type"
 jsonSpecialFields "bundleId" = "id"
+jsonSpecialFields "aId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
 jsonSpecialFields "intId" = "id"

@@ -3,6 +3,7 @@ module Wizard.Api.Api where
 import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
+import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.Config.Api
@@ -25,6 +26,7 @@ import Wizard.Model.Context.BaseContext
 
 type AppAPI
    = ActionKeyAPI
+     :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
      :<|> ConfigAPI
@@ -49,7 +51,8 @@ appApi = Proxy
 
 appServer :: ServerT AppAPI BaseContextM
 appServer =
-  actionKeyServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|> documentServer :<|> feedbackServer :<|>
+  actionKeyServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|> documentServer :<|>
+  feedbackServer :<|>
   ioServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>

@@ -6,12 +6,14 @@ import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
+import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Error.Error
+import Shared.Util.Crypto (generateRandomString)
 import Shared.Util.Uuid
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.User.UserChangeDTO
@@ -79,6 +81,29 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions = do
     sendAnalyticsEmailIfEnabled user = do
       serverConfig <- asks _appContextApplicationConfig
       when (serverConfig ^. analytics . enabled) (sendRegistrationCreatedAnalyticsMail (toDTO user))
+
+createUserFromExternalService :: String -> String -> String -> String -> AppContextM UserDTO
+createUserFromExternalService serviceId firstName lastName email = do
+  mUserFromDb <- findUserByEmail' email
+  case mUserFromDb of
+    Just user -> do
+      let updatedUser =
+            case L.find (== serviceId) (user ^. sources) of
+              Just _ -> user
+              Nothing -> user & sources .~ ((user ^. sources) ++ [serviceId])
+      updateUserById updatedUser
+      return $ toDTO updatedUser
+    Nothing -> do
+      serverConfig <- asks _appContextApplicationConfig
+      uUuid <- liftIO generateUuid
+      password <- liftIO $ generateRandomString 40
+      uPasswordHash <- generatePasswordHash password
+      let uRole = serverConfig ^. roles . defaultRole
+      let uPermissions = getPermissionForRole serverConfig uRole
+      now <- liftIO getCurrentTime
+      let user = fromUserExternalDTO uUuid firstName lastName email uPasswordHash [serviceId] uRole uPermissions now
+      insertUser user
+      return $ toDTO user
 
 getUserById :: String -> AppContextM UserDTO
 getUserById userUuid = do
@@ -187,4 +212,4 @@ updateUserTimestamp user = do
   now <- liftIO getCurrentTime
   return $ user & updatedAt ?~ now
 
-checkIfRegistrationIsEnabled = checkIfAppFeatureIsEnabled "Registration" (features . registration . enabled)
+checkIfRegistrationIsEnabled = checkIfAppFeatureIsEnabled "Registration" (auth . internal . registration . enabled)

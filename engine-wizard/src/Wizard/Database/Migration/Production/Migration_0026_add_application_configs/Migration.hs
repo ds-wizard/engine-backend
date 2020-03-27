@@ -33,7 +33,10 @@ insertConfig dbPool = do
   runMongoDBPoolDef action dbPool
 
 addAffiliationToUsers dbPool = do
-  let action = modify (select [] "users") ["$set" =: ["affiliation" =: (Nothing :: Maybe String)]]
+  let action =
+        modify
+          (select [] "users")
+          ["$set" =: ["affiliation" =: (Nothing :: Maybe String), "sources" =: ([] :: [String])]]
   runMongoDBPoolDef action dbPool
 
 addPermissionToAdmins dbPool = do

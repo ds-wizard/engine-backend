@@ -6,8 +6,7 @@ import Wizard.Api.Resource.Config.SimpleFeatureDTO
 
 data AppConfigFeaturesDTO =
   AppConfigFeaturesDTO
-    { _appConfigFeaturesDTORegistration :: SimpleFeatureDTO
-    , _appConfigFeaturesDTOPublicQuestionnaire :: SimpleFeatureDTO
+    { _appConfigFeaturesDTOPublicQuestionnaire :: SimpleFeatureDTO
     , _appConfigFeaturesDTOLevels :: SimpleFeatureDTO
     , _appConfigFeaturesDTOQuestionnaireAccessibility :: SimpleFeatureDTO
     }
@@ -54,5 +53,51 @@ data AppConfigInfoDTO =
 data AppConfigAffiliationDTO =
   AppConfigAffiliationDTO
     { _appConfigAffiliationDTOAffiliations :: [String]
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthDTO =
+  AppConfigAuthDTO
+    { _appConfigAuthDTOInternal :: AppConfigAuthInternalDTO
+    , _appConfigAuthDTOExternal :: AppConfigAuthExternalDTO
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthInternalDTO =
+  AppConfigAuthInternalDTO
+    { _appConfigAuthInternalDTORegistration :: SimpleFeatureDTO
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalDTO =
+  AppConfigAuthExternalDTO
+    { _appConfigAuthExternalDTOServices :: [AppConfigAuthExternalServiceDTO]
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalServiceDTO =
+  AppConfigAuthExternalServiceDTO
+    { _appConfigAuthExternalServiceDTOAId :: String
+    , _appConfigAuthExternalServiceDTOName :: String
+    , _appConfigAuthExternalServiceDTOUrl :: String
+    , _appConfigAuthExternalServiceDTOClientId :: String
+    , _appConfigAuthExternalServiceDTOClientSecret :: String
+    , _appConfigAuthExternalServiceDTOParameters :: [AppConfigAuthExternalServiceParameterDTO]
+    , _appConfigAuthExternalServiceDTOStyle :: AppConfigAuthExternalServiceStyleDTO
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalServiceParameterDTO =
+  AppConfigAuthExternalServiceParameterDTO
+    { _appConfigAuthExternalServiceParameterDTOName :: String
+    , _appConfigAuthExternalServiceParameterDTOValue :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalServiceStyleDTO =
+  AppConfigAuthExternalServiceStyleDTO
+    { _appConfigAuthExternalServiceStyleDTOIcon :: String
+    , _appConfigAuthExternalServiceStyleDTOBackground :: String
+    , _appConfigAuthExternalServiceStyleDTOColor :: String
     }
   deriving (Generic, Eq, Show)

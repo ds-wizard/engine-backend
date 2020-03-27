@@ -13,6 +13,7 @@ data UserDTO =
     , _userDTOLastName :: String
     , _userDTOEmail :: Email
     , _userDTOAffiliation :: Maybe String
+    , _userDTOSources :: [String]
     , _userDTORole :: Role
     , _userDTOPermissions :: [Permission]
     , _userDTOActive :: Bool

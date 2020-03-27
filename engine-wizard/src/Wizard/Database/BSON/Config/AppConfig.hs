@@ -13,6 +13,7 @@ instance ToBSON AppConfig where
     , "client" BSON.=: _appConfigClient
     , "info" BSON.=: _appConfigInfo
     , "affiliation" BSON.=: _appConfigAffiliation
+    , "auth" BSON.=: _appConfigAuth
     , "createdAt" BSON.=: _appConfigCreatedAt
     , "updatedAt" BSON.=: _appConfigUpdatedAt
     ]
@@ -23,21 +24,20 @@ instance FromBSON AppConfig where
     _appConfigClient <- BSON.lookup "client" doc
     _appConfigInfo <- BSON.lookup "info" doc
     _appConfigAffiliation <- BSON.lookup "affiliation" doc
+    _appConfigAuth <- BSON.lookup "auth" doc
     _appConfigCreatedAt <- BSON.lookup "createdAt" doc
     _appConfigUpdatedAt <- BSON.lookup "updatedAt" doc
     return AppConfig {..}
 
 instance ToBSON AppConfigFeatures where
   toBSON AppConfigFeatures {..} =
-    [ "registration" BSON.=: _appConfigFeaturesRegistration
-    , "publicQuestionnaire" BSON.=: _appConfigFeaturesPublicQuestionnaire
+    [ "publicQuestionnaire" BSON.=: _appConfigFeaturesPublicQuestionnaire
     , "levels" BSON.=: _appConfigFeaturesLevels
     , "questionnaireAccessibility" BSON.=: _appConfigFeaturesQuestionnaireAccessibility
     ]
 
 instance FromBSON AppConfigFeatures where
   fromBSON doc = do
-    _appConfigFeaturesRegistration <- BSON.lookup "registration" doc
     _appConfigFeaturesPublicQuestionnaire <- BSON.lookup "publicQuestionnaire" doc
     _appConfigFeaturesLevels <- BSON.lookup "levels" doc
     _appConfigFeaturesQuestionnaireAccessibility <- BSON.lookup "questionnaireAccessibility" doc
@@ -118,3 +118,76 @@ instance FromBSON AppConfigAffiliation where
   fromBSON doc = do
     _appConfigAffiliationAffiliations <- BSON.lookup "affiliations" doc
     return AppConfigAffiliation {..}
+
+instance ToBSON AppConfigAuth where
+  toBSON AppConfigAuth {..} = ["internal" BSON.=: _appConfigAuthInternal, "external" BSON.=: _appConfigAuthExternal]
+
+instance FromBSON AppConfigAuth where
+  fromBSON doc = do
+    _appConfigAuthInternal <- BSON.lookup "internal" doc
+    _appConfigAuthExternal <- BSON.lookup "external" doc
+    return AppConfigAuth {..}
+
+instance ToBSON AppConfigAuthInternal where
+  toBSON AppConfigAuthInternal {..} = ["registration" BSON.=: _appConfigAuthInternalRegistration]
+
+instance FromBSON AppConfigAuthInternal where
+  fromBSON doc = do
+    _appConfigAuthInternalRegistration <- BSON.lookup "registration" doc
+    return AppConfigAuthInternal {..}
+
+instance ToBSON AppConfigAuthExternal where
+  toBSON AppConfigAuthExternal {..} = ["services" BSON.=: _appConfigAuthExternalServices]
+
+instance FromBSON AppConfigAuthExternal where
+  fromBSON doc = do
+    _appConfigAuthExternalServices <- BSON.lookup "services" doc
+    return AppConfigAuthExternal {..}
+
+instance ToBSON AppConfigAuthExternalService where
+  toBSON AppConfigAuthExternalService {..} =
+    [ "id" BSON.=: _appConfigAuthExternalServiceAId
+    , "name" BSON.=: _appConfigAuthExternalServiceName
+    , "url" BSON.=: _appConfigAuthExternalServiceUrl
+    , "clientId" BSON.=: _appConfigAuthExternalServiceClientId
+    , "clientSecret" BSON.=: _appConfigAuthExternalServiceClientSecret
+    , "parameteres" BSON.=: _appConfigAuthExternalServiceParameters
+    , "style" BSON.=: _appConfigAuthExternalServiceStyle
+    ]
+
+instance FromBSON AppConfigAuthExternalService where
+  fromBSON doc = do
+    _appConfigAuthExternalServiceAId <- BSON.lookup "id" doc
+    _appConfigAuthExternalServiceName <- BSON.lookup "name" doc
+    _appConfigAuthExternalServiceUrl <- BSON.lookup "url" doc
+    _appConfigAuthExternalServiceClientId <- BSON.lookup "clientId" doc
+    _appConfigAuthExternalServiceClientSecret <- BSON.lookup "clientSecret" doc
+    _appConfigAuthExternalServiceParameters <- BSON.lookup "parameteres" doc
+    _appConfigAuthExternalServiceStyle <- BSON.lookup "style" doc
+    return AppConfigAuthExternalService {..}
+
+instance ToBSON AppConfigAuthExternalServiceParameter where
+  toBSON AppConfigAuthExternalServiceParameter {..} =
+    [ "name" BSON.=: _appConfigAuthExternalServiceParameterName
+    , "value" BSON.=: _appConfigAuthExternalServiceParameterValue
+    ]
+
+instance FromBSON AppConfigAuthExternalServiceParameter where
+  fromBSON doc = do
+    _appConfigAuthExternalServiceParameterName <- BSON.lookup "name" doc
+    _appConfigAuthExternalServiceParameterValue <- BSON.lookup "value" doc
+    return AppConfigAuthExternalServiceParameter {..}
+
+instance ToBSON AppConfigAuthExternalServiceStyle where
+  toBSON AppConfigAuthExternalServiceStyle {..} =
+    [ "icon" BSON.=: _appConfigAuthExternalServiceStyleIcon
+    , "background" BSON.=: _appConfigAuthExternalServiceStyleBackground
+    , "color" BSON.=: _appConfigAuthExternalServiceStyleColor
+    ]
+
+instance FromBSON AppConfigAuthExternalServiceStyle where
+  fromBSON doc = do
+    _appConfigAuthExternalServiceStyleIcon <- BSON.lookup "icon" doc
+    _appConfigAuthExternalServiceStyleBackground <- BSON.lookup "background" doc
+    _appConfigAuthExternalServiceStyleColor <- BSON.lookup "color" doc
+    return AppConfigAuthExternalServiceStyle {..}

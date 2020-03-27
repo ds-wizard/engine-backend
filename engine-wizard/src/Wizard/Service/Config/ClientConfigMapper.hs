@@ -16,12 +16,13 @@ toClientConfigDTO serverConfig appConfig =
     , _clientConfigDTOClient = toClientDTO (appConfig ^. client)
     , _clientConfigDTOInfo = toInfoDTO (appConfig ^. info)
     , _clientConfigDTOAffiliation = toAffiliationDTO (appConfig ^. affiliation)
+    , _clientConfigDTOAuth = toClientAuthDTO (appConfig ^. auth)
     }
 
 toClientConfigFeaturesDTO :: ServerConfig -> AppConfig -> ClientConfigFeaturesDTO
 toClientConfigFeaturesDTO serverConfig appConfig =
   ClientConfigFeaturesDTO
-    { _clientConfigFeaturesDTORegistration = toSimpleFeatureDTO $ appConfig ^. features . registration
+    { _clientConfigFeaturesDTORegistration = toSimpleFeatureDTO $ appConfig ^. auth . internal . registration
     , _clientConfigFeaturesDTOPublicQuestionnaire = toSimpleFeatureDTO $ appConfig ^. features . publicQuestionnaire
     , _clientConfigFeaturesDTOLevels = toSimpleFeatureDTO $ appConfig ^. features . levels
     , _clientConfigFeaturesDTOQuestionnaireAccessibility =
@@ -35,4 +36,25 @@ toClientConfigRegistryDTO registryConfig =
   ClientConfigRegistryDTO
     { _clientConfigRegistryDTOEnabled = registryConfig ^. enabled
     , _clientConfigRegistryDTOUrl = registryConfig ^. clientUrl
+    }
+
+toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
+toClientAuthDTO config =
+  ClientConfigAuthDTO
+    { _clientConfigAuthDTOInternal = toAuthInternalDTO $ config ^. internal
+    , _clientConfigAuthDTOExternal = toClientAuthExternalDTO $ config ^. external
+    }
+
+toClientAuthExternalDTO :: AppConfigAuthExternal -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO config =
+  ClientConfigAuthExternalDTO
+    {_clientConfigAuthExternalDTOServices = toClientAuthExternalServiceDTO <$> config ^. services}
+
+toClientAuthExternalServiceDTO :: AppConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO config =
+  ClientConfigAuthExternalServiceDTO
+    { _clientConfigAuthExternalServiceDTOAId = config ^. aId
+    , _clientConfigAuthExternalServiceDTOName = config ^. name
+    , _clientConfigAuthExternalServiceDTOUrl = config ^. url
+    , _clientConfigAuthExternalServiceDTOStyle = toAppConfigAuthExternalServiceStyleDTO $ config ^. style
     }

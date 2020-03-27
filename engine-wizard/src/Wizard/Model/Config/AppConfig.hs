@@ -11,6 +11,7 @@ data AppConfig =
     , _appConfigClient :: AppConfigClient
     , _appConfigInfo :: AppConfigInfo
     , _appConfigAffiliation :: AppConfigAffiliation
+    , _appConfigAuth :: AppConfigAuth
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
     }
@@ -21,8 +22,7 @@ instance Eq AppConfig where
 
 data AppConfigFeatures =
   AppConfigFeatures
-    { _appConfigFeaturesRegistration :: SimpleFeature
-    , _appConfigFeaturesPublicQuestionnaire :: SimpleFeature
+    { _appConfigFeaturesPublicQuestionnaire :: SimpleFeature
     , _appConfigFeaturesLevels :: SimpleFeature
     , _appConfigFeaturesQuestionnaireAccessibility :: SimpleFeature
     }
@@ -69,5 +69,51 @@ data AppConfigInfo =
 data AppConfigAffiliation =
   AppConfigAffiliation
     { _appConfigAffiliationAffiliations :: [String]
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuth =
+  AppConfigAuth
+    { _appConfigAuthInternal :: AppConfigAuthInternal
+    , _appConfigAuthExternal :: AppConfigAuthExternal
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthInternal =
+  AppConfigAuthInternal
+    { _appConfigAuthInternalRegistration :: SimpleFeature
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternal =
+  AppConfigAuthExternal
+    { _appConfigAuthExternalServices :: [AppConfigAuthExternalService]
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalService =
+  AppConfigAuthExternalService
+    { _appConfigAuthExternalServiceAId :: String
+    , _appConfigAuthExternalServiceName :: String
+    , _appConfigAuthExternalServiceUrl :: String
+    , _appConfigAuthExternalServiceClientId :: String
+    , _appConfigAuthExternalServiceClientSecret :: String
+    , _appConfigAuthExternalServiceParameters :: [AppConfigAuthExternalServiceParameter]
+    , _appConfigAuthExternalServiceStyle :: AppConfigAuthExternalServiceStyle
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalServiceParameter =
+  AppConfigAuthExternalServiceParameter
+    { _appConfigAuthExternalServiceParameterName :: String
+    , _appConfigAuthExternalServiceParameterValue :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigAuthExternalServiceStyle =
+  AppConfigAuthExternalServiceStyle
+    { _appConfigAuthExternalServiceStyleIcon :: String
+    , _appConfigAuthExternalServiceStyleBackground :: String
+    , _appConfigAuthExternalServiceStyleColor :: String
     }
   deriving (Generic, Eq, Show)

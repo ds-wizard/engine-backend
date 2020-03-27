@@ -4,8 +4,7 @@ import qualified Data.Bson as BSON
 
 config now =
   [ "features" BSON.=:
-    [ "registration" BSON.=: ["enabled" BSON.=: True]
-    , "publicQuestionnaire" BSON.=: ["enabled" BSON.=: False]
+    [ "publicQuestionnaire" BSON.=: ["enabled" BSON.=: False]
     , "levels" BSON.=: ["enabled" BSON.=: True]
     , "questionnaireAccessibility" BSON.=: ["enabled" BSON.=: True]
     ]
@@ -26,6 +25,10 @@ config now =
     , "loginInfo" BSON.=: (Nothing :: Maybe String)
     ]
   , "affiliation" BSON.=: ["affiliations" BSON.=: ([] :: [String])]
+  , "auth" BSON.=:
+    [ "internal" BSON.=: ["registration" BSON.=: ["enabled" BSON.=: True]]
+    , "external" BSON.=: ["services" BSON.=: ([] :: [String])]
+    ]
   , "createdAt" BSON.=: now
   , "updatedAt" BSON.=: now
   ]

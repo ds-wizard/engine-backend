@@ -24,6 +24,7 @@ data ServerConfigGeneral =
     , _serverConfigGeneralClientUrl :: String
     , _serverConfigGeneralServerPort :: Int
     , _serverConfigGeneralServiceToken :: String
+    , _serverConfigGeneralSecret :: String
     , _serverConfigGeneralIntegrationConfig :: String
     , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
@@ -54,8 +55,7 @@ data ServerConfigMessaging =
 
 data ServerConfigJwt =
   ServerConfigJwt
-    { _serverConfigJwtSecret :: String
-    , _serverConfigJwtVersion :: Integer
+    { _serverConfigJwtVersion :: Integer
     , _serverConfigJwtExpiration :: Integer
     }
   deriving (Generic, Show)

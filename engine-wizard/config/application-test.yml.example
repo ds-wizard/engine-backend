@@ -3,6 +3,7 @@ general:
   serverPort: 3000
   clientUrl: http://localhost:3001
   serviceToken: my-service-token
+  secret: "01234567890123456789012345678901"
   integrationConfig: config/integration-test.yml
   templateFolder: templates
 
@@ -23,7 +24,6 @@ messaging:
   vhost:
 
 jwt:
-  secret: secret-key
   version: 1
   expiration: 9999
 

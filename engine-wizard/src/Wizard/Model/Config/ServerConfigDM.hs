@@ -24,6 +24,7 @@ defaultGeneral =
     , _serverConfigGeneralClientUrl = ""
     , _serverConfigGeneralServerPort = 3000
     , _serverConfigGeneralServiceToken = ""
+    , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
     , _serverConfigGeneralTemplateFolder = "engine-wizard/templates"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
@@ -52,7 +53,7 @@ defaultMessaging =
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {_serverConfigJwtSecret = "", _serverConfigJwtVersion = 1, _serverConfigJwtExpiration = 14}
+defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 1, _serverConfigJwtExpiration = 14}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
