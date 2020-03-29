@@ -43,56 +43,75 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.stack
-        key: stack-home-${{ matrix.component }}-ubuntu16
+        key: stack-home-${{ matrix.component }}-ubuntu16-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: |
+          stack-home-${{ matrix.component }}-ubuntu16
     
     - name: Cache .stack-work
       id: cache-stack-work
       uses: actions/cache@v1
       with:
         path: .stack-work
-        key: stack-work-${{ matrix.component }}-ubuntu16
+        key: stack-work-${{ matrix.component }}-ubuntu16-${{ hashFiles('**/stack.yaml.lock') }}
+        restore-keys: |
+          stack-work-${{ matrix.component }}-ubuntu16
     
     - name: Cache bson-generic
       id: cache-bson-generic
       uses: actions/cache@v1
       with:
         path: vendor/bson-generic/.stack-work
-        key: bson-generic-ubuntu16
+        key: bson-generic-ubuntu16-${{ hashFiles('vendor/bson-generic/**/*') }}
+        restore-keys: |
+          bson-generic-ubuntu16
     
     - name: Cache mongoDB-migration
       id: cache-mongoDB-migration
       uses: actions/cache@v1
       with:
         path: vendor/mongoDB-migration/.stack-work
-        key: mongoDB-migration-ubuntu16
+        key: mongoDB-migration-ubuntu16-${{ hashFiles('vendor/mongoDB-migration/**/*') }}
+        restore-keys: |
+          mongoDB-migration-ubuntu16
     
     - name: Cache engine-registry
       id: cache-engine-registry
       uses: actions/cache@v1
+      if: matrix.component == 'registry'
       with:
         path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu16
+        key: engine-registry-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-registry/**/*') }}
+        restore-keys: |
+          engine-registry-${{ matrix.component }}-ubuntu16
     
     - name: Cache engine-shared
       id: cache-engine-shared
       uses: actions/cache@v1
       with:
         path: engine-shared/.stack-work
-        key: engine-shared-ubuntu16
+        key: engine-shared-ubuntu16-${{ hashFiles('engine-shared/**/*') }}
+        restore-keys: |
+          engine-shared-ubuntu16
     
     - name: Cache engine-wizard
       id: cache-engine-wizard
       uses: actions/cache@v1
+      if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu16
+        key: engine-wizard-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-wizard/**/*') }}
+        restore-keys: |
+          engine-wizard-${{ matrix.component }}-ubuntu16
     
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
       uses: actions/cache@v1
+      if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu16
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-wizard-metamodel-migrator/**/*') }}
+        restore-keys: |
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu16
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
@@ -103,10 +122,9 @@ jobs:
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack
+      if: steps.cache-stack-local-bin.outputs.cache-hit != 'true'
       run: |
-        if [ ! -f ~/.local/bin/stack ]; then
-          curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSON/stack-$STACK_VERSON-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
-        fi
+        curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSON/stack-$STACK_VERSON-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
         
     - name: Update config and build info
       run: |
