@@ -1,7 +1,7 @@
 module Wizard.Service.User.UserService where
 
 import Control.Lens ((&), (.~), (?~), (^.))
-import Control.Monad (when)
+import Control.Monad (forM_, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
@@ -22,6 +22,8 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
@@ -195,7 +197,13 @@ deleteUser :: String -> AppContextM ()
 deleteUser userUuid = do
   _ <- findUserById userUuid
   deleteUserById userUuid
-  return ()
+  deleteQuestionnairesFiltered [("ownerUuid", userUuid)]
+  documents <- findDocumentsFiltered [("ownerUuid", userUuid)]
+  forM_
+    documents
+    (\d -> do
+       deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
+       deleteDocumentContentsFiltered [("filename", U.toString $ d ^. uuid)])
 
 -- --------------------------------
 -- PRIVATE

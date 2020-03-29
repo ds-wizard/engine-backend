@@ -33,6 +33,7 @@ import Wizard.Util.List (elems)
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.User.Detail_DELETE
 import Wizard.Specs.API.User.Detail_Password_Hash_PUT
 import Wizard.Specs.API.User.Detail_Password_PUT
 import Wizard.Specs.Common
@@ -414,37 +415,4 @@ userAPI appContext =
           reqBody
           "user"
           "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-      -- ------------------------------------------------------------------------
-      -- DELETE /users/{userId}
-      -- ------------------------------------------------------------------------
-      describe "DELETE /users/{userId}" $
-        -- GIVEN: Prepare request
-       do
-        let reqMethod = methodDelete
-        let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-        let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqBody = ""
-        it "HTTP 204 NO CONTENT" $
-          -- GIVEN: Prepare expectation
-         do
-          let expStatus = 204
-          let expHeaders = resCorsHeaders
-          -- WHEN: Call API
-          response <- request reqMethod reqUrl reqHeaders reqBody
-          -- THEN: Find a result
-          eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
-          -- AND: Compare response with expectation
-          let responseMatcher =
-                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
-          response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expectation
-          liftIO $ (isRight eitherUser) `shouldBe` False
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-          reqHeaders
-          reqBody
-          "user"
-          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+      detail_delete appContext
