@@ -13,8 +13,8 @@ import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Document.DocumentCreateDTO
+import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Level.Data.Levels
-import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.Template.Data.Templates
@@ -64,7 +64,7 @@ dmp1 =
     , _documentContextLevels = [level1, level2, level3]
     , _documentContextReport = report1
     , _documentContextPackage = toPackage germanyPackage
-    , _documentContextOrganization = org1
+    , _documentContextOrganization = defaultOrganization
     , _documentContextCreatedBy = Just userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _documentContextUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0

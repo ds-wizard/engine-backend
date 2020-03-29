@@ -41,6 +41,7 @@ import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Localization.LocaleSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
+import Wizard.Specs.Service.Config.AppConfigValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
@@ -50,7 +51,6 @@ import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
-import Wizard.Specs.Service.Organization.OrganizationValidationSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
@@ -72,7 +72,7 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig applicationConfigFileTest getServerConfig $ \serverConfig ->
+  hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool serverConfig
@@ -84,7 +84,7 @@ prepareWebApp runCallback =
       shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
-              { _appContextApplicationConfig = serverConfig
+              { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
               , _appContextPool = dbPool
@@ -108,6 +108,7 @@ main =
            describe "LOCALIZATION" localeSpec
            describe "SERVICE" $ do
              describe "Branch" branchValidationSpec
+             describe "Config" appConfigValidationSpec
              describe "KnowledgeModel" $ do
                describe "Compilator" $ do
                  describe "Modifier" modifierSpec
@@ -120,7 +121,6 @@ main =
                describe "Questionnaire" $ describe "Migrator" $ do
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
-             describe "Organization" organizationValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec

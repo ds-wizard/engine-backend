@@ -19,6 +19,7 @@ import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Feedback.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /feedbacks
@@ -57,6 +58,8 @@ test_200 appContext =
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+     -- AND: Run migrations
+    runInContextIO loadFeedbackTokenFromEnv appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

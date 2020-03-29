@@ -34,7 +34,7 @@ runApplication = do
     shutdownFlag <- liftIO newEmptyMVar
     liftIO $ putStrLn asciiLogo
     logInfo $ msg _CMP_SERVER "started"
-    hLoadConfig applicationConfigFile getServerConfig $ \serverConfig ->
+    hLoadConfig serverConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
         logInfo $ "ENVIRONMENT: set to " ++ show (serverConfig ^. general . environment)
         dbPool <- connectDB serverConfig

@@ -53,4 +53,4 @@ getPublicQuestionnaire = do
 -- PRIVATE
 -- --------------------------------
 checkIfPublicQuestionnaireIsEnabled =
-  checkIfAppFeatureIsEnabled "PublicQuestionnaire" (features . publicQuestionnaire . enabled)
+  checkIfAppFeatureIsEnabled "PublicQuestionnaire" (questionnaire . publicQuestionnaire . enabled)

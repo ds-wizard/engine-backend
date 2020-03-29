@@ -10,13 +10,24 @@ import Wizard.Integration.Http.GitHub.RequestMapper
 import Wizard.Integration.Http.GitHub.ResponseMapper
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Config.AppConfigService
 
 getIssues :: AppContextM [IssueIDTO]
 getIssues = do
-  serverConfig <- asks _appContextApplicationConfig
-  runRequest (toGetIssuesRequest (serverConfig ^. feedback)) toGetIssuesResponse
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  runRequest (toGetIssuesRequest (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback)) toGetIssuesResponse
 
 createIssue :: String -> U.UUID -> String -> String -> AppContextM IssueIDTO
 createIssue pkgId questionUuid title content = do
-  serverConfig <- asks _appContextApplicationConfig
-  runRequest (toCreateIssueRequest (serverConfig ^. feedback) pkgId questionUuid title content) toCreateIssueResponse
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  runRequest
+    (toCreateIssueRequest
+       (serverConfig ^. feedback)
+       (appConfig ^. questionnaire . feedback)
+       pkgId
+       questionUuid
+       title
+       content)
+    toCreateIssueResponse

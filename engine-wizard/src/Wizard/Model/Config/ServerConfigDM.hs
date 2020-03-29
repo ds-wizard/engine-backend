@@ -58,8 +58,7 @@ defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 1, _serverConfigJwtExpir
 defaultRoles :: ServerConfigRoles
 defaultRoles =
   ServerConfigRoles
-    { _serverConfigRolesDefaultRole = "DATASTEWARD"
-    , _serverConfigRolesAdmin =
+    { _serverConfigRolesAdmin =
         [ "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
@@ -92,9 +91,7 @@ defaultMail =
 defaultRegistry :: ServerConfigRegistry
 defaultRegistry =
   ServerConfigRegistry
-    { _serverConfigRegistryEnabled = False
-    , _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
-    , _serverConfigRegistryToken = ""
+    { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
     }
 
@@ -104,10 +101,4 @@ defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False,
 defaultFeedback :: ServerConfigFeedback
 defaultFeedback =
   ServerConfigFeedback
-    { _serverConfigFeedbackEnabled = True
-    , _serverConfigFeedbackToken = ""
-    , _serverConfigFeedbackOwner = ""
-    , _serverConfigFeedbackRepo = ""
-    , _serverConfigFeedbackApiUrl = "https://api.github.com"
-    , _serverConfigFeedbackWebUrl = "https://github.com"
-    }
+    {_serverConfigFeedbackApiUrl = "https://api.github.com", _serverConfigFeedbackWebUrl = "https://github.com"}

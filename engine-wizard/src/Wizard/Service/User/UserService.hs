@@ -32,6 +32,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
@@ -49,8 +50,9 @@ createUserByAdmin reqDto = do
 createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> AppContextM UserDTO
 createUserByAdminWithUuid reqDto uUuid = do
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  serverConfig <- asks _appContextApplicationConfig
-  let uRole = fromMaybe (serverConfig ^. roles . defaultRole) (reqDto ^. role)
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  let uRole = fromMaybe (appConfig ^. authentication . defaultRole) (reqDto ^. role)
   let uPermissions = getPermissionForRole serverConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
@@ -59,8 +61,9 @@ registrateUser reqDto = do
   checkIfRegistrationIsEnabled
   uUuid <- liftIO generateUuid
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
-  serverConfig <- asks _appContextApplicationConfig
-  let uRole = serverConfig ^. roles . defaultRole
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  let uRole = appConfig ^. authentication . defaultRole
   let uPermissions = getPermissionForRole serverConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
@@ -77,32 +80,33 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions = do
     (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
   sendAnalyticsEmailIfEnabled user
   return $ toDTO user
-  where
-    sendAnalyticsEmailIfEnabled user = do
-      serverConfig <- asks _appContextApplicationConfig
-      when (serverConfig ^. analytics . enabled) (sendRegistrationCreatedAnalyticsMail (toDTO user))
 
 createUserFromExternalService :: String -> String -> String -> String -> AppContextM UserDTO
 createUserFromExternalService serviceId firstName lastName email = do
   mUserFromDb <- findUserByEmail' email
   case mUserFromDb of
-    Just user -> do
-      let updatedUser =
-            case L.find (== serviceId) (user ^. sources) of
-              Just _ -> user
-              Nothing -> user & sources .~ ((user ^. sources) ++ [serviceId])
-      updateUserById updatedUser
-      return $ toDTO updatedUser
+    Just user ->
+      if user ^. active
+        then do
+          let updatedUser =
+                case L.find (== serviceId) (user ^. sources) of
+                  Just _ -> user
+                  Nothing -> user & sources .~ ((user ^. sources) ++ [serviceId])
+          updateUserById updatedUser
+          return $ toDTO updatedUser
+        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     Nothing -> do
-      serverConfig <- asks _appContextApplicationConfig
+      serverConfig <- asks _appContextServerConfig
       uUuid <- liftIO generateUuid
       password <- liftIO $ generateRandomString 40
       uPasswordHash <- generatePasswordHash password
-      let uRole = serverConfig ^. roles . defaultRole
+      appConfig <- getAppConfig
+      let uRole = appConfig ^. authentication . defaultRole
       let uPermissions = getPermissionForRole serverConfig uRole
       now <- liftIO getCurrentTime
       let user = fromUserExternalDTO uUuid firstName lastName email uPasswordHash [serviceId] uRole uPermissions now
       insertUser user
+      sendAnalyticsEmailIfEnabled user
       return $ toDTO user
 
 getUserById :: String -> AppContextM UserDTO
@@ -114,7 +118,7 @@ modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto = do
   user <- findUserById userUuid
   validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
   updateUserById updatedUser
   return . toDTO $ updatedUser
@@ -197,12 +201,11 @@ deleteUser userUuid = do
 -- PRIVATE
 -- --------------------------------
 getPermissionForRole :: ServerConfig -> Role -> [Permission]
-getPermissionForRole config role =
-  case role of
-    "ADMIN" -> config ^. roles . admin
-    "DATASTEWARD" -> config ^. roles . dataSteward
-    "RESEARCHER" -> config ^. roles . researcher
-    _ -> []
+getPermissionForRole config role
+  | role == _USER_ROLE_ADMIN = config ^. roles . admin
+  | role == _USER_ROLE_DATA_STEWARD = config ^. roles . dataSteward
+  | role == _USER_ROLE_RESEARCHER = config ^. roles . researcher
+  | otherwise = []
 
 generatePasswordHash :: String -> AppContextM String
 generatePasswordHash password = liftIO $ BS.unpack <$> makePassword (BS.pack password) 17
@@ -212,4 +215,9 @@ updateUserTimestamp user = do
   now <- liftIO getCurrentTime
   return $ user & updatedAt ?~ now
 
-checkIfRegistrationIsEnabled = checkIfAppFeatureIsEnabled "Registration" (auth . internal . registration . enabled)
+sendAnalyticsEmailIfEnabled user = do
+  serverConfig <- asks _appContextServerConfig
+  when (serverConfig ^. analytics . enabled) (sendRegistrationCreatedAnalyticsMail (toDTO user))
+
+checkIfRegistrationIsEnabled =
+  checkIfAppFeatureIsEnabled "Registration" (authentication . internal . registration . enabled)

@@ -55,14 +55,14 @@ loginUser authId mError mCode =
 createOpenIDClient :: String -> AppContextM O.OIDC
 createOpenIDClient authId = do
   httpClientManager <- asks _appContextHttpClientManager
-  serverConfig <- asks _appContextApplicationConfig
-  authConfig <- getAppConfigAuth
-  case L.find (\s -> s ^. aId == authId) (authConfig ^. external . services) of
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  case L.find (\s -> s ^. aId == authId) (appConfig ^. authentication . external . services) of
     Just service -> do
       prov <- liftIO $ O.discover (T.pack $ service ^. url) httpClientManager
       let cId = BS.pack $ service ^. clientId
       let cSecret = BS.pack $ service ^. clientSecret
-      let redirectUrl = BS.pack $ serverConfig ^. general . clientUrl ++ "/auth/" ++ authId ++ "/callback" 
+      let redirectUrl = BS.pack $ serverConfig ^. general . clientUrl ++ "/auth/" ++ authId ++ "/callback"
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)
       return openIDClient
     Nothing -> throwError . UserError $ _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId

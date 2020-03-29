@@ -15,7 +15,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -23,6 +22,8 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.User.User
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -48,7 +49,7 @@ getQuestionnairesForCurrentUser :: AppContextM [QuestionnaireDTO]
 getQuestionnairesForCurrentUser = do
   currentUser <- getCurrentUser
   questionnaires <- getQuestionnaires
-  if currentUser ^. role == "ADMIN"
+  if currentUser ^. role == _USER_ROLE_ADMIN
     then return questionnaires
     else return $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
   where
@@ -159,8 +160,8 @@ deleteQuestionnaire qtnUuid = do
 -- PRIVATE
 -- --------------------------------
 extractAccessibility dto = do
-  appConfig <- findAppConfig
-  if appConfig ^. features . questionnaireAccessibility . enabled
+  appConfig <- getAppConfig
+  if appConfig ^. questionnaire . questionnaireAccessibility . enabled
     then return (dto ^. accessibility)
     else return PrivateQuestionnaire
 
@@ -168,7 +169,7 @@ extractAccessibility dto = do
 checkPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
 checkPermissionToQtn accessibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == "ADMIN" || accessibility == PublicQuestionnaire || accessibility ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || accessibility ==
      PublicReadOnlyQuestionnaire ||
      mOwnerUuid ==
      (Just $ currentUser ^. uuid)
@@ -179,7 +180,7 @@ checkPermissionToQtn accessibility mOwnerUuid = do
 checkEditPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
 checkEditPermissionToQtn accessibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == "ADMIN" || accessibility == PublicQuestionnaire || mOwnerUuid ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || mOwnerUuid ==
      (Just $ currentUser ^. uuid)
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
@@ -188,7 +189,7 @@ checkEditPermissionToQtn accessibility mOwnerUuid = do
 checkMigrationPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
 checkMigrationPermissionToQtn accessibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == "ADMIN" || accessibility == PublicQuestionnaire || mOwnerUuid ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || mOwnerUuid ==
      (Just $ currentUser ^. uuid)
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"

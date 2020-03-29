@@ -43,7 +43,7 @@ documentIntegrationSpec appContext =
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
          -- AND: Prepare AppContext
-      runInContext (modifyAppConfig (features . levels . enabled) False) appContext
+      runInContext (modifyAppConfig (questionnaire . levels . enabled) False) appContext
         -- WHEN:
       (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) appContext
         -- THEN:

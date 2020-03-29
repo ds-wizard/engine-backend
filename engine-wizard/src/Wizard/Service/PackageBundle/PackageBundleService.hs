@@ -9,7 +9,6 @@ module Wizard.Service.PackageBundle.PackageBundleService
 import Control.Lens ((^.))
 import Control.Monad (forM)
 import Control.Monad.Except (catchError, throwError)
-import Control.Monad.Reader (asks)
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List (find)
@@ -57,8 +56,7 @@ exportPackageBundle pbId = do
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId = do
-  serverConfig <- asks _appContextApplicationConfig
-  pb <- catchError (retrievePackageBundleById (serverConfig ^. registry) pkgId) handleError
+  pb <- catchError (retrievePackageBundleById pkgId) handleError
   _ <- importAndConvertPackageBundle pb
   return ()
   where

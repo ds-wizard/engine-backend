@@ -26,6 +26,7 @@ import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Util.List (elems)
@@ -38,7 +39,7 @@ import Wizard.Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do
-    let serverConfig = appContext ^. applicationConfig
+    let serverCfg = appContext ^. serverConfig
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -63,7 +64,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
       -- ------------------------------------------------------------------------
       -- POST /users
       -- ------------------------------------------------------------------------
@@ -116,7 +117,7 @@ userAPI appContext =
                   , _userCreateDTOLastName = "Einstein"
                   , _userCreateDTOEmail = "albert.einstein@example.com"
                   , _userCreateDTOAffiliation = Nothing
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           let reqBody = encode reqDto
@@ -177,7 +178,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -231,7 +232,7 @@ userAPI appContext =
                   , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
                   , _userCreateDTOAffiliation = Nothing
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
@@ -303,7 +304,7 @@ userAPI appContext =
                   , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
                   , _userCreateDTOAffiliation = Nothing
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
@@ -314,7 +315,7 @@ userAPI appContext =
                   , _userChangeDTOLastName = "EDITED: Newton"
                   , _userChangeDTOEmail = "albert.einstein@example.com"
                   , _userChangeDTOAffiliation = Nothing
-                  , _userChangeDTORole = "ADMIN"
+                  , _userChangeDTORole = _USER_ROLE_ADMIN
                   , _userChangeDTOActive = True
                   }
           let reqBody = encode reqDto
@@ -330,7 +331,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest serverConfig reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -439,7 +440,7 @@ userAPI appContext =
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest serverConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"

@@ -12,7 +12,6 @@ import qualified Wizard.Database.Migration.Development.Level.LevelMigration as L
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
-import qualified Wizard.Database.Migration.Development.Organization.OrganizationMigration as ORG
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.PublicPackage.PublicPackageMigration as PUBPKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -22,7 +21,6 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo $ msg _CMP_MIGRATION "started"
   CFG.runMigration
-  ORG.runMigration
   U.runMigration
   PKG.runMigration
   B.runMigration

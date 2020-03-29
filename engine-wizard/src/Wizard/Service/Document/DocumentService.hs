@@ -25,6 +25,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.User.User
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
@@ -37,7 +38,7 @@ getDocumentsFiltered queryParams = do
   forM documents enhance
   where
     _getDocuments currentUser =
-      if currentUser ^. role == "ADMIN"
+      if currentUser ^. role == _USER_ROLE_ADMIN
         then findDocumentsFiltered queryParams
         else findDocumentsFiltered (queryParams ++ [("ownerUuid", U.toString $ currentUser ^. uuid)])
     enhance :: Document -> AppContextM DocumentDTO
@@ -67,7 +68,7 @@ deleteDocument :: String -> AppContextM ()
 deleteDocument docUuid = do
   currentUser <- getCurrentUser
   doc <- findDocumentById docUuid
-  if currentUser ^. role == "ADMIN" || currentUser ^. uuid == doc ^. ownerUuid
+  if currentUser ^. role == _USER_ROLE_ADMIN || currentUser ^. uuid == doc ^. ownerUuid
     then do
       deleteDocumentById docUuid
       deleteDocumentContentById docUuid

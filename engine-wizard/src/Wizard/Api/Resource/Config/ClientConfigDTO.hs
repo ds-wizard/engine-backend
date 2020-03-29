@@ -2,40 +2,24 @@ module Wizard.Api.Resource.Config.ClientConfigDTO where
 
 import GHC.Generics
 
-import Wizard.Api.Resource.Config.AppConfigDTO
-import Wizard.Api.Resource.Config.SimpleFeatureDTO
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.SimpleFeature
 
 data ClientConfigDTO =
   ClientConfigDTO
-    { _clientConfigDTOFeatures :: ClientConfigFeaturesDTO
-    , _clientConfigDTOClient :: AppConfigClientDTO
-    , _clientConfigDTOInfo :: AppConfigInfoDTO
-    , _clientConfigDTOAffiliation :: AppConfigAffiliationDTO
-    , _clientConfigDTOAuth :: ClientConfigAuthDTO
-    }
-  deriving (Show, Eq, Generic)
-
-data ClientConfigFeaturesDTO =
-  ClientConfigFeaturesDTO
-    { _clientConfigFeaturesDTORegistration :: SimpleFeatureDTO
-    , _clientConfigFeaturesDTOPublicQuestionnaire :: SimpleFeatureDTO
-    , _clientConfigFeaturesDTOLevels :: SimpleFeatureDTO
-    , _clientConfigFeaturesDTOQuestionnaireAccessibility :: SimpleFeatureDTO
-    , _clientConfigFeaturesDTOFeedback :: SimpleFeatureDTO
-    , _clientConfigFeaturesDTORegistry :: ClientConfigRegistryDTO
-    }
-  deriving (Show, Eq, Generic)
-
-data ClientConfigRegistryDTO =
-  ClientConfigRegistryDTO
-    { _clientConfigRegistryDTOEnabled :: Bool
-    , _clientConfigRegistryDTOUrl :: String
+    { _clientConfigDTOOrganization :: AppConfigOrganization
+    , _clientConfigDTOAuthentication :: ClientConfigAuthDTO
+    , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
+    , _clientConfigDTODashboard :: AppConfigDashboard
+    , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
+    , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
+    , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     }
   deriving (Show, Eq, Generic)
 
 data ClientConfigAuthDTO =
   ClientConfigAuthDTO
-    { _clientConfigAuthDTOInternal :: AppConfigAuthInternalDTO
+    { _clientConfigAuthDTOInternal :: AppConfigAuthInternal
     , _clientConfigAuthDTOExternal :: ClientConfigAuthExternalDTO
     }
   deriving (Generic, Eq, Show)
@@ -51,6 +35,22 @@ data ClientConfigAuthExternalServiceDTO =
     { _clientConfigAuthExternalServiceDTOAId :: String
     , _clientConfigAuthExternalServiceDTOName :: String
     , _clientConfigAuthExternalServiceDTOUrl :: String
-    , _clientConfigAuthExternalServiceDTOStyle :: AppConfigAuthExternalServiceStyleDTO
+    , _clientConfigAuthExternalServiceDTOStyle :: Maybe AppConfigAuthExternalServiceStyle
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigRegistryDTO =
+  ClientConfigRegistryDTO
+    { _clientConfigRegistryDTOEnabled :: Bool
+    , _clientConfigRegistryDTOUrl :: String
+    }
+  deriving (Show, Eq, Generic)
+
+data ClientConfigQuestionnaireDTO =
+  ClientConfigQuestionnaireDTO
+    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility :: SimpleFeature
+    , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
+    , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
+    , _clientConfigQuestionnaireDTOPublicQuestionnaire :: SimpleFeature
     }
   deriving (Generic, Eq, Show)

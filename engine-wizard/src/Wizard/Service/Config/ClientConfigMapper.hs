@@ -6,42 +6,25 @@ import LensesConfig
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
-import Wizard.Service.Config.AppConfigMapper
-import Wizard.Service.Config.SimpleFeatureMapper
+import Wizard.Model.Config.SimpleFeature
 
 toClientConfigDTO :: ServerConfig -> AppConfig -> ClientConfigDTO
 toClientConfigDTO serverConfig appConfig =
   ClientConfigDTO
-    { _clientConfigDTOFeatures = toClientConfigFeaturesDTO serverConfig appConfig
-    , _clientConfigDTOClient = toClientDTO (appConfig ^. client)
-    , _clientConfigDTOInfo = toInfoDTO (appConfig ^. info)
-    , _clientConfigDTOAffiliation = toAffiliationDTO (appConfig ^. affiliation)
-    , _clientConfigDTOAuth = toClientAuthDTO (appConfig ^. auth)
-    }
-
-toClientConfigFeaturesDTO :: ServerConfig -> AppConfig -> ClientConfigFeaturesDTO
-toClientConfigFeaturesDTO serverConfig appConfig =
-  ClientConfigFeaturesDTO
-    { _clientConfigFeaturesDTORegistration = toSimpleFeatureDTO $ appConfig ^. auth . internal . registration
-    , _clientConfigFeaturesDTOPublicQuestionnaire = toSimpleFeatureDTO $ appConfig ^. features . publicQuestionnaire
-    , _clientConfigFeaturesDTOLevels = toSimpleFeatureDTO $ appConfig ^. features . levels
-    , _clientConfigFeaturesDTOQuestionnaireAccessibility =
-        toSimpleFeatureDTO $ appConfig ^. features . questionnaireAccessibility
-    , _clientConfigFeaturesDTOFeedback = toSimpleFeatureDTO $ serverConfig ^. feedback
-    , _clientConfigFeaturesDTORegistry = toClientConfigRegistryDTO (serverConfig ^. registry)
-    }
-
-toClientConfigRegistryDTO :: ServerConfigRegistry -> ClientConfigRegistryDTO
-toClientConfigRegistryDTO registryConfig =
-  ClientConfigRegistryDTO
-    { _clientConfigRegistryDTOEnabled = registryConfig ^. enabled
-    , _clientConfigRegistryDTOUrl = registryConfig ^. clientUrl
+    { _clientConfigDTOOrganization = appConfig ^. organization
+    , _clientConfigDTOAuthentication = toClientAuthDTO $ appConfig ^. authentication
+    , _clientConfigDTOPrivacyAndSupport = appConfig ^. privacyAndSupport
+    , _clientConfigDTODashboard = appConfig ^. dashboard
+    , _clientConfigDTOLookAndFeel = appConfig ^. lookAndFeel
+    , _clientConfigDTOKnowledgeModelRegistry =
+        toClientConfigRegistryDTO (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry)
+    , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
 toClientAuthDTO config =
   ClientConfigAuthDTO
-    { _clientConfigAuthDTOInternal = toAuthInternalDTO $ config ^. internal
+    { _clientConfigAuthDTOInternal = config ^. internal
     , _clientConfigAuthDTOExternal = toClientAuthExternalDTO $ config ^. external
     }
 
@@ -56,5 +39,19 @@ toClientAuthExternalServiceDTO config =
     { _clientConfigAuthExternalServiceDTOAId = config ^. aId
     , _clientConfigAuthExternalServiceDTOName = config ^. name
     , _clientConfigAuthExternalServiceDTOUrl = config ^. url
-    , _clientConfigAuthExternalServiceDTOStyle = toAppConfigAuthExternalServiceStyleDTO $ config ^. style
+    , _clientConfigAuthExternalServiceDTOStyle = config ^. style
+    }
+
+toClientConfigRegistryDTO :: ServerConfigRegistry -> AppConfigRegistry -> ClientConfigRegistryDTO
+toClientConfigRegistryDTO serverConfig appConfig =
+  ClientConfigRegistryDTO
+    {_clientConfigRegistryDTOEnabled = appConfig ^. enabled, _clientConfigRegistryDTOUrl = serverConfig ^. clientUrl}
+
+toClientConfigQuestionnaireDTO :: AppConfigQuestionnaire -> ClientConfigQuestionnaireDTO
+toClientConfigQuestionnaireDTO appConfig =
+  ClientConfigQuestionnaireDTO
+    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility = appConfig ^. questionnaireAccessibility
+    , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
+    , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
+    , _clientConfigQuestionnaireDTOPublicQuestionnaire = appConfig ^. publicQuestionnaire
     }

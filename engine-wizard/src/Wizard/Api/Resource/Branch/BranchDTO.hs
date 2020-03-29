@@ -10,7 +10,6 @@ data BranchDTO =
   BranchDTO
     { _branchDTOUuid :: U.UUID
     , _branchDTOName :: String
-    , _branchDTOOrganizationId :: String
     , _branchDTOKmId :: String
     , _branchDTOState :: BranchState
     , _branchDTOPreviousPackageId :: Maybe String

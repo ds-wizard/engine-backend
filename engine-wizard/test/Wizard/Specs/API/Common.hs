@@ -41,7 +41,7 @@ startWebApp appContext = do
   shutdownFlag <- liftIO newEmptyMVar
   let baseContext =
         BaseContext
-          { _baseContextServerConfig = appContext ^. applicationConfig
+          { _baseContextServerConfig = appContext ^. serverConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool
@@ -49,7 +49,7 @@ startWebApp appContext = do
           , _baseContextHttpClientManager = appContext ^. httpClientManager
           , _baseContextShutdownFlag = shutdownFlag
           }
-  let config = appContext ^. applicationConfig
+  let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
   return $ runMiddleware env $ runApp baseContext
@@ -66,7 +66,7 @@ reqNonAdminAuthHeader =
 
 reqAuthHeaderWithoutPerms :: ServerConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms serverConfig perm =
-  let allPerms = getPermissionForRole serverConfig "ADMIN"
+  let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
       user = userAlbert & permissions .~ (L.delete perm allPerms)
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token = createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)

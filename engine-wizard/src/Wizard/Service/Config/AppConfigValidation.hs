@@ -1,4 +1,4 @@
-module Wizard.Service.Organization.OrganizationValidation where
+module Wizard.Service.Config.AppConfigValidation where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
@@ -9,11 +9,14 @@ import Text.Regex (matchRegex, mkRegex)
 import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Api.Resource.Organization.OrganizationChangeDTO
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 
-validateOrganizationDto :: OrganizationChangeDTO -> AppContextM ()
-validateOrganizationDto reqDto = forM_ (isValidOrganizationId $ reqDto ^. organizationId) throwError
+validateAppConfig :: AppConfig -> AppContextM ()
+validateAppConfig appConfig = validateOrganization (appConfig ^. organization)
+
+validateOrganization :: AppConfigOrganization -> AppContextM ()
+validateOrganization config = forM_ (isValidOrganizationId $ config ^. organizationId) throwError
 
 isValidOrganizationId :: String -> Maybe AppError
 isValidOrganizationId kmId =

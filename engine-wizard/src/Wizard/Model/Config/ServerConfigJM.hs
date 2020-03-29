@@ -3,11 +3,13 @@ module Wizard.Model.Config.ServerConfigJM where
 import Control.Lens ((^.))
 import Control.Monad
 import Data.Aeson
+import qualified Data.Text as T
 
 import LensesConfig
 import Shared.Model.Config.EnvironmentJM ()
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.ServerConfigDM
+import Wizard.Model.User.User
 
 instance FromJSON ServerConfig where
   parseJSON (Object o) = do
@@ -68,10 +70,9 @@ instance FromJSON ServerConfigJwt where
 
 instance FromJSON ServerConfigRoles where
   parseJSON (Object o) = do
-    _serverConfigRolesDefaultRole <- o .:? "defaultRole" .!= (defaultRoles ^. defaultRole)
-    _serverConfigRolesAdmin <- o .:? "admin" .!= (defaultRoles ^. admin)
-    _serverConfigRolesDataSteward <- o .:? "dataSteward" .!= (defaultRoles ^. dataSteward)
-    _serverConfigRolesResearcher <- o .:? "researcher" .!= (defaultRoles ^. researcher)
+    _serverConfigRolesAdmin <- o .:? T.pack _USER_ROLE_ADMIN .!= (defaultRoles ^. admin)
+    _serverConfigRolesDataSteward <- o .:? T.pack _USER_ROLE_DATA_STEWARD .!= (defaultRoles ^. dataSteward)
+    _serverConfigRolesResearcher <- o .:? T.pack _USER_ROLE_RESEARCHER .!= (defaultRoles ^. researcher)
     return ServerConfigRoles {..}
   parseJSON _ = mzero
 
@@ -91,9 +92,7 @@ instance FromJSON ServerConfigMail where
 
 instance FromJSON ServerConfigRegistry where
   parseJSON (Object o) = do
-    _serverConfigRegistryEnabled <- o .:? "enabled" .!= (defaultRegistry ^. enabled)
     _serverConfigRegistryUrl <- o .:? "url" .!= (defaultRegistry ^. url)
-    _serverConfigRegistryToken <- o .:? "token" .!= (defaultRegistry ^. token)
     _serverConfigRegistryClientUrl <- o .:? "clientUrl" .!= (defaultRegistry ^. clientUrl)
     return ServerConfigRegistry {..}
   parseJSON _ = mzero
@@ -107,10 +106,6 @@ instance FromJSON ServerConfigAnalytics where
 
 instance FromJSON ServerConfigFeedback where
   parseJSON (Object o) = do
-    _serverConfigFeedbackEnabled <- o .:? "enabled" .!= (defaultFeedback ^. enabled)
-    _serverConfigFeedbackToken <- o .:? "token" .!= (defaultFeedback ^. token)
-    _serverConfigFeedbackOwner <- o .:? "owner" .!= (defaultFeedback ^. owner)
-    _serverConfigFeedbackRepo <- o .:? "repo" .!= (defaultFeedback ^. repo)
     _serverConfigFeedbackApiUrl <- o .:? "apiUrl" .!= (defaultFeedback ^. apiUrl)
     _serverConfigFeedbackWebUrl <- o .:? "webUrl" .!= (defaultFeedback ^. webUrl)
     return ServerConfigFeedback {..}

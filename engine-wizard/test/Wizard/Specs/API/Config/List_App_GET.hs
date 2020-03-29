@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Config.List_Features_GET
-  ( list_features_GET
+module Wizard.Specs.API.Config.List_App_GET
+  ( list_app_GET
   ) where
 
 import Control.Lens ((^.))
@@ -13,16 +13,15 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.AppConfigMapper
 
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
--- GET /configs/features
+-- GET /configs/app
 -- ------------------------------------------------------------------------
-list_features_GET :: AppContext -> SpecWith Application
-list_features_GET appContext =
-  describe "GET /configs/features" $ do
+list_app_GET :: AppContext -> SpecWith Application
+list_app_GET appContext =
+  describe "GET /configs/app" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -32,7 +31,7 @@ list_features_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/configs/features"
+reqUrl = "/configs/app"
 
 reqHeaders = [reqAuthHeader]
 
@@ -47,7 +46,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toFeaturesDTO defaultFeatures
+    let expDto = defaultAppConfig
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -65,4 +64,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "CFG_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "CFG_PERM"

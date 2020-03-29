@@ -19,7 +19,7 @@ import Wizard.Model.Config.ServerConfig
 
 data AppContext =
   AppContext
-    { _appContextApplicationConfig :: ServerConfig
+    { _appContextServerConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
     , _appContextPool :: ConnectionPool

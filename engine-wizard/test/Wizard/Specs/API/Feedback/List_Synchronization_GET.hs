@@ -14,6 +14,8 @@ import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.Feedback.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /feedbacks/synchronization
@@ -45,6 +47,8 @@ test_204 appContext =
     let expStatus = 204
     let expHeaders = resCorsHeaders
     let expBody = ""
+     -- AND: Run migrations
+    runInContextIO loadFeedbackTokenFromEnv appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

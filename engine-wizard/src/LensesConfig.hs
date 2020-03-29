@@ -38,9 +38,8 @@ import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
-import Wizard.Api.Resource.Config.AppConfigDTO
+import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.Api.Resource.Config.SimpleFeatureDTO
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -54,8 +53,7 @@ import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetai
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO as QTN_MigratorStateChangeDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO as QTN_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
-import Wizard.Api.Resource.Organization.OrganizationChangeDTO
-import Wizard.Api.Resource.Organization.OrganizationDTO
+import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -98,7 +96,6 @@ import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
-import Wizard.Model.Organization.Organization
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -123,17 +120,7 @@ makeFields ''BranchWithEvents
 -- Model / Config
 makeFields ''AppConfig
 
-makeFields ''AppConfigFeatures
-
-makeFields ''AppConfigClient
-
-makeFields ''AppConfigClientDashboard
-
-makeFields ''AppConfigClientCustomMenuLink
-
-makeFields ''AppConfigInfo
-
-makeFields ''AppConfigAffiliation
+makeFields ''AppConfigOrganization
 
 makeFields ''AppConfigAuth
 
@@ -146,6 +133,22 @@ makeFields ''AppConfigAuthExternalService
 makeFields ''AppConfigAuthExternalServiceParameter
 
 makeFields ''AppConfigAuthExternalServiceStyle
+
+makeFields ''AppConfigPrivacyAndSupport
+
+makeFields ''AppConfigDashboard
+
+makeFields ''AppConfigDashboardWidgets
+
+makeFields ''AppConfigLookAndFeel
+
+makeFields ''AppConfigLookAndFeelCustomMenuLink
+
+makeFields ''AppConfigRegistry
+
+makeFields ''AppConfigQuestionnaire
+
+makeFields ''AppConfigQuestionnaireFeedback
 
 makeFields ''SimpleFeature
 
@@ -324,9 +327,6 @@ makeFields ''KM_MigratorState.MigratorState
 -- Model / Migration / Questionnaire
 makeFields ''QTN_MigratorState.MigratorState
 
--- Model / Organization
-makeFields ''Organization
-
 -- Model / Package
 makeFields ''Package
 
@@ -388,35 +388,13 @@ makeFields ''BranchDetailDTO
 makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / Config
-makeFields ''AppConfigFeaturesDTO
-
-makeFields ''AppConfigClientDTO
-
-makeFields ''AppConfigClientDashboardDTO
-
-makeFields ''AppConfigClientCustomMenuLinkDTO
-
-makeFields ''AppConfigInfoDTO
-
-makeFields ''AppConfigAffiliationDTO
-
-makeFields ''AppConfigAuthDTO
-
-makeFields ''AppConfigAuthInternalDTO
-
-makeFields ''AppConfigAuthExternalDTO
-
-makeFields ''AppConfigAuthExternalServiceDTO
-
-makeFields ''AppConfigAuthExternalServiceParameterDTO
-
-makeFields ''AppConfigAuthExternalServiceStyleDTO
-
-makeFields ''SimpleFeatureDTO
+makeFields ''AppConfigChangeDTO
 
 makeFields ''ClientConfigDTO
 
 makeFields ''ClientConfigRegistryDTO
+
+makeFields ''ClientConfigQuestionnaireDTO
 
 -- Api / Resource / Document
 makeFields ''DocumentDTO
@@ -577,9 +555,7 @@ makeFields ''QTN_MigratorStateCreateDTO.MigratorStateCreateDTO
 makeFields ''QTN_MigratorStateChangeDTO.MigratorStateChangeDTO
 
 -- Api / Resource / Organization
-makeFields ''OrganizationDTO
-
-makeFields ''OrganizationChangeDTO
+makeFields ''OrganizationSimpleDTO
 
 -- Api / Resource / Package
 makeFields ''PackageDTO

@@ -62,8 +62,7 @@ data ServerConfigJwt =
 
 data ServerConfigRoles =
   ServerConfigRoles
-    { _serverConfigRolesDefaultRole :: Role
-    , _serverConfigRolesAdmin :: [Permission]
+    { _serverConfigRolesAdmin :: [Permission]
     , _serverConfigRolesDataSteward :: [Permission]
     , _serverConfigRolesResearcher :: [Permission]
     }
@@ -85,9 +84,7 @@ data ServerConfigMail =
 
 data ServerConfigRegistry =
   ServerConfigRegistry
-    { _serverConfigRegistryEnabled :: Bool
-    , _serverConfigRegistryUrl :: String
-    , _serverConfigRegistryToken :: String
+    { _serverConfigRegistryUrl :: String
     , _serverConfigRegistryClientUrl :: String
     }
   deriving (Generic, Show)
@@ -101,11 +98,7 @@ data ServerConfigAnalytics =
 
 data ServerConfigFeedback =
   ServerConfigFeedback
-    { _serverConfigFeedbackEnabled :: Bool
-    , _serverConfigFeedbackToken :: String
-    , _serverConfigFeedbackOwner :: String
-    , _serverConfigFeedbackRepo :: String
-    , _serverConfigFeedbackApiUrl :: String
+    { _serverConfigFeedbackApiUrl :: String
     , _serverConfigFeedbackWebUrl :: String
     }
   deriving (Generic, Show)

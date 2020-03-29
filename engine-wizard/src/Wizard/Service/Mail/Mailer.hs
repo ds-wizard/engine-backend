@@ -34,18 +34,18 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Constant.Component
 import Wizard.Constant.Mailer
-import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Config.AppConfigService
 import Wizard.Util.Logger
 import Wizard.Util.Template (loadAndRender)
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM ()
 sendRegistrationConfirmationMail user hash = do
-  serverConfig <- asks _appContextApplicationConfig
-  appConfig <- findAppConfig
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
   let clientAddress = serverConfig ^. general . clientUrl
       activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
@@ -57,8 +57,8 @@ sendRegistrationConfirmationMail user hash = do
 
 sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail user = do
-  serverConfig <- asks _appContextApplicationConfig
-  appConfig <- findAppConfig
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
   let analyticsAddress = serverConfig ^. analytics . email
       mailName = serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New user"
@@ -68,8 +68,8 @@ sendRegistrationCreatedAnalyticsMail user = do
 
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
 sendResetPasswordMail user hash = do
-  serverConfig <- asks _appContextApplicationConfig
-  appConfig <- findAppConfig
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
   let clientAddress = serverConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
@@ -93,7 +93,7 @@ composeAndSendEmail to subject mailName context = do
 
 composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String MIME.Mail)
 composeMail to subject mailName context = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let mailConfig = serverConfig ^. mail
       addrFrom = MIME.Address (Just . T.pack $ mailConfig ^. name) (T.pack $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
@@ -184,7 +184,8 @@ makePlainTextPart fn context =
 makeMailContext :: ServerConfig -> AppConfig -> UserDTO -> [(T.Text, Aeson.Value)] -> MailContext
 makeMailContext serverConfig appConfig user others =
   fromList $
-  [ ("appTitle", Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ appConfig ^. client . appTitle)
+  [ ( "appTitle"
+    , Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ appConfig ^. lookAndFeel . appTitle)
   , ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
   , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
   , ("user", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ user)
@@ -200,7 +201,7 @@ makeConnection True host port = SMTPSSL.doSMTPSSLWithSettings host settings
 sendEmail :: [String] -> MIME.Mail -> AppContextM ()
 sendEmail [] mailMessage = throwError . GeneralServerError $ _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
 sendEmail to mailMessage = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let mailConfig = serverConfig ^. mail
       from = mailConfig ^. email
       mailHost = mailConfig ^. host

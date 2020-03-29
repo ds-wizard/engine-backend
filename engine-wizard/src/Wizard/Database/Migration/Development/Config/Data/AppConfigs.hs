@@ -7,17 +7,20 @@ import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.User.User
 
 defaultSecret = "01234567890123456789012345678901"
 
 defaultAppConfig :: AppConfig
 defaultAppConfig =
   AppConfig
-    { _appConfigFeatures = defaultFeatures
-    , _appConfigClient = defaultClient
-    , _appConfigInfo = defaultInfo
-    , _appConfigAffiliation = defaultAffiliation
-    , _appConfigAuth = defaultAuth
+    { _appConfigOrganization = defaultOrganization
+    , _appConfigAuthentication = defaultAuth
+    , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
+    , _appConfigDashboard = defaultDashboard
+    , _appConfigLookAndFeel = defaultLookAndFeel
+    , _appConfigKnowledgeModelRegistry = defaultRegistry
+    , _appConfigQuestionnaire = defaultQuestionnaire
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -25,58 +28,29 @@ defaultAppConfig =
 defaultAppConfigEncrypted :: AppConfig
 defaultAppConfigEncrypted = process defaultSecret defaultAppConfig
 
-defaultFeatures :: AppConfigFeatures
-defaultFeatures =
-  AppConfigFeatures
-    { _appConfigFeaturesPublicQuestionnaire = SimpleFeature False
-    , _appConfigFeaturesLevels = SimpleFeature True
-    , _appConfigFeaturesQuestionnaireAccessibility = SimpleFeature True
+defaultOrganization :: AppConfigOrganization
+defaultOrganization =
+  AppConfigOrganization
+    { _appConfigOrganizationName = "Organization Amsterdam"
+    , _appConfigOrganizationOrganizationId = "org.nl.amsterdam"
+    , _appConfigOrganizationAffiliations = []
     }
 
-defaultClient :: AppConfigClient
-defaultClient =
-  AppConfigClient
-    { _appConfigClientPrivacyUrl = "https://ds-wizard.org/privacy.html"
-    , _appConfigClientAppTitle = Nothing
-    , _appConfigClientAppTitleShort = Nothing
-    , _appConfigClientSupportEmail = Nothing
-    , _appConfigClientSupportRepositoryName = Nothing
-    , _appConfigClientSupportRepositoryUrl = Nothing
-    , _appConfigClientDashboard = Just defaultClientDashboard
-    , _appConfigClientCustomMenuLinks = [defaultClientCustomLink]
+defaultAuth :: AppConfigAuth
+defaultAuth =
+  AppConfigAuth
+    { _appConfigAuthDefaultRole = _USER_ROLE_DATA_STEWARD
+    , _appConfigAuthInternal = defaultAuthInternal
+    , _appConfigAuthExternal = defaultAuthExternal
     }
 
-defaultClientDashboard :: AppConfigClientDashboard
-defaultClientDashboard =
-  AppConfigClientDashboard
-    { _appConfigClientDashboardAdmin = ["Welcome"]
-    , _appConfigClientDashboardDataSteward = ["Welcome"]
-    , _appConfigClientDashboardResearcher = ["Welcome"]
-    }
-
-defaultClientCustomLink :: AppConfigClientCustomMenuLink
-defaultClientCustomLink =
-  AppConfigClientCustomMenuLink
-    { _appConfigClientCustomMenuLinkIcon = "faq"
-    , _appConfigClientCustomMenuLinkTitle = "My Link"
-    , _appConfigClientCustomMenuLinkUrl = "http://example.prg"
-    , _appConfigClientCustomMenuLinkNewWindow = False
-    }
-
-defaultInfo :: AppConfigInfo
-defaultInfo =
-  AppConfigInfo
-    {_appConfigInfoWelcomeWarning = Nothing, _appConfigInfoWelcomeInfo = Nothing, _appConfigInfoLoginInfo = Nothing}
-
-defaultAffiliation :: AppConfigAffiliation
-defaultAffiliation = AppConfigAffiliation {_appConfigAffiliationAffiliations = []}
-
-defaultAuth = AppConfigAuth {_appConfigAuthInternal = defaultAuthInternal, _appConfigAuthExternal = defaultAuthExternal}
-
+defaultAuthInternal :: AppConfigAuthInternal
 defaultAuthInternal = AppConfigAuthInternal {_appConfigAuthInternalRegistration = SimpleFeature True}
 
+defaultAuthExternal :: AppConfigAuthExternal
 defaultAuthExternal = AppConfigAuthExternal {_appConfigAuthExternalServices = [defaultAuthExternalService]}
 
+defaultAuthExternalService :: AppConfigAuthExternalService
 defaultAuthExternalService =
   AppConfigAuthExternalService
     { _appConfigAuthExternalServiceAId = "google"
@@ -85,35 +59,90 @@ defaultAuthExternalService =
     , _appConfigAuthExternalServiceClientId = "9381928r948-2i9uawjkn32ku89uafwa.apps.googleusercontent.com"
     , _appConfigAuthExternalServiceClientSecret = "ijijsd89f72ujknjksfawfawf"
     , _appConfigAuthExternalServiceParameters = [defaultAuthExternalServiceParameter]
-    , _appConfigAuthExternalServiceStyle = defaultAuthExternalServiceStyle
+    , _appConfigAuthExternalServiceStyle = Just defaultAuthExternalServiceStyle
     }
 
+defaultAuthExternalServiceParameter :: AppConfigAuthExternalServiceParameter
 defaultAuthExternalServiceParameter =
   AppConfigAuthExternalServiceParameter
     {_appConfigAuthExternalServiceParameterName = "hd", _appConfigAuthExternalServiceParameterValue = "google.com"}
 
+defaultAuthExternalServiceStyle :: AppConfigAuthExternalServiceStyle
 defaultAuthExternalServiceStyle =
   AppConfigAuthExternalServiceStyle
-    { _appConfigAuthExternalServiceStyleIcon = "fa-google"
-    , _appConfigAuthExternalServiceStyleBackground = "#000"
-    , _appConfigAuthExternalServiceStyleColor = "#FFF"
+    { _appConfigAuthExternalServiceStyleIcon = Just "fa-google"
+    , _appConfigAuthExternalServiceStyleBackground = Just "#000"
+    , _appConfigAuthExternalServiceStyleColor = Just "#FFF"
+    }
+
+defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
+defaultPrivacyAndSupport =
+  AppConfigPrivacyAndSupport
+    { _appConfigPrivacyAndSupportPrivacyUrl = "https://ds-wizard.org/privacy.html"
+    , _appConfigPrivacyAndSupportSupportEmail = Nothing
+    , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
+    , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing
+    }
+
+defaultDashboard :: AppConfigDashboard
+defaultDashboard =
+  AppConfigDashboard
+    { _appConfigDashboardWidgets = Just defaultDashboardWidgets
+    , _appConfigDashboardWelcomeWarning = Nothing
+    , _appConfigDashboardWelcomeInfo = Nothing
+    }
+
+defaultDashboardWidgets :: AppConfigDashboardWidgets
+defaultDashboardWidgets =
+  AppConfigDashboardWidgets
+    { _appConfigDashboardWidgetsAdmin = ["Welcome"]
+    , _appConfigDashboardWidgetsDataSteward = ["Welcome"]
+    , _appConfigDashboardWidgetsResearcher = ["Welcome"]
+    }
+
+defaultLookAndFeel :: AppConfigLookAndFeel
+defaultLookAndFeel =
+  AppConfigLookAndFeel
+    { _appConfigLookAndFeelAppTitle = Nothing
+    , _appConfigLookAndFeelAppTitleShort = Nothing
+    , _appConfigLookAndFeelCustomMenuLinks = [defaultLookAndFeelCustomLink]
+    , _appConfigLookAndFeelLoginInfo = Nothing
+    }
+
+defaultLookAndFeelCustomLink :: AppConfigLookAndFeelCustomMenuLink
+defaultLookAndFeelCustomLink =
+  AppConfigLookAndFeelCustomMenuLink
+    { _appConfigLookAndFeelCustomMenuLinkIcon = "faq"
+    , _appConfigLookAndFeelCustomMenuLinkTitle = "My Link"
+    , _appConfigLookAndFeelCustomMenuLinkUrl = "http://example.prg"
+    , _appConfigLookAndFeelCustomMenuLinkNewWindow = False
+    }
+
+defaultRegistry :: AppConfigRegistry
+defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = "GlobalToken"}
+
+defaultQuestionnaire :: AppConfigQuestionnaire
+defaultQuestionnaire =
+  AppConfigQuestionnaire
+    { _appConfigQuestionnairePublicQuestionnaire = SimpleFeature False
+    , _appConfigQuestionnaireLevels = SimpleFeature True
+    , _appConfigQuestionnaireFeedback = defaultFeedback
+    , _appConfigQuestionnaireQuestionnaireAccessibility = SimpleFeature True
+    }
+
+defaultFeedback :: AppConfigQuestionnaireFeedback
+defaultFeedback =
+  AppConfigQuestionnaireFeedback
+    { _appConfigQuestionnaireFeedbackEnabled = True
+    , _appConfigQuestionnaireFeedbackToken = ""
+    , _appConfigQuestionnaireFeedbackOwner = "DSWGlobal"
+    , _appConfigQuestionnaireFeedbackRepo = "dsw-test"
     }
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------
-editedFeatures :: AppConfigFeatures
-editedFeatures = defaultFeatures {_appConfigFeaturesLevels = SimpleFeature False}
+editedAppConfig :: AppConfig
+editedAppConfig = defaultAppConfig {_appConfigQuestionnaire = editedQuestionnaire}
 
-editedClient :: AppConfigClient
-editedClient = defaultClient {_appConfigClientPrivacyUrl = "https://ds-wizard.org/privacy.html/EDITED"}
-
-editedInfo :: AppConfigInfo
-editedInfo = defaultInfo {_appConfigInfoWelcomeInfo = Just "EDITED: Welcome Info"}
-
-editedAffiliation :: AppConfigAffiliation
-editedAffiliation = defaultAffiliation {_appConfigAffiliationAffiliations = ["https://myuniversity.org"]}
-
-editedAuth :: AppConfigAuth
-editedAuth =
-  defaultAuth
-    {_appConfigAuthInternal = AppConfigAuthInternal {_appConfigAuthInternalRegistration = SimpleFeature False}}
+editedQuestionnaire :: AppConfigQuestionnaire
+editedQuestionnaire = defaultQuestionnaire {_appConfigQuestionnaireLevels = SimpleFeature False}

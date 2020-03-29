@@ -13,18 +13,6 @@ instance FromJSON ClientConfigDTO where
 instance ToJSON ClientConfigDTO where
   toJSON = simpleToJSON "_clientConfigDTO"
 
-instance FromJSON ClientConfigFeaturesDTO where
-  parseJSON = simpleParseJSON "_clientConfigFeaturesDTO"
-
-instance ToJSON ClientConfigFeaturesDTO where
-  toJSON = simpleToJSON "_clientConfigFeaturesDTO"
-
-instance FromJSON ClientConfigRegistryDTO where
-  parseJSON = simpleParseJSON "_clientConfigRegistryDTO"
-
-instance ToJSON ClientConfigRegistryDTO where
-  toJSON = simpleToJSON "_clientConfigRegistryDTO"
-
 instance FromJSON ClientConfigAuthDTO where
   parseJSON = simpleParseJSON "_clientConfigAuthDTO"
 
@@ -42,3 +30,15 @@ instance FromJSON ClientConfigAuthExternalServiceDTO where
 
 instance ToJSON ClientConfigAuthExternalServiceDTO where
   toJSON = simpleToJSON "_clientConfigAuthExternalServiceDTO"
+
+instance FromJSON ClientConfigRegistryDTO where
+  parseJSON = simpleParseJSON "_clientConfigRegistryDTO"
+
+instance ToJSON ClientConfigRegistryDTO where
+  toJSON = simpleToJSON "_clientConfigRegistryDTO"
+
+instance FromJSON ClientConfigQuestionnaireDTO where
+  parseJSON = simpleParseJSON "_clientConfigQuestionnaireDTO"
+
+instance ToJSON ClientConfigQuestionnaireDTO where
+  toJSON = simpleToJSON "_clientConfigQuestionnaireDTO"

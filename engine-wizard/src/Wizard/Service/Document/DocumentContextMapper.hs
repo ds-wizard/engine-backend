@@ -12,14 +12,12 @@ import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Level.Level
-import Wizard.Model.Organization.Organization
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import Wizard.Service.Level.LevelMapper
 import Wizard.Service.Metric.MetricMapper
-import qualified Wizard.Service.Organization.OrganizationMapper as ORG_Mapper
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import Wizard.Service.Report.ReportMapper
@@ -40,7 +38,7 @@ toDocumentContextDTO dc =
     , _documentContextDTOLevels = toLevelDTO <$> dc ^. levels
     , _documentContextDTOReport = toReportDTO $ dc ^. report
     , _documentContextDTOPackage = toSimpleDTO (dc ^. package)
-    , _documentContextDTOOrganization = ORG_Mapper.toDTO $ dc ^. organization
+    , _documentContextDTOOrganization = dc ^. organization
     , _documentContextDTOCreatedBy = USR_Mapper.toDTO <$> dc ^. createdBy
     , _documentContextDTOCreatedAt = dc ^. createdAt
     , _documentContextDTOUpdatedAt = dc ^. updatedAt
@@ -62,7 +60,7 @@ fromCreateContextDTO ::
   -> [Level]
   -> Report
   -> Package
-  -> Organization
+  -> AppConfigOrganization
   -> Maybe User
   -> UTCTime
   -> DocumentContext
@@ -70,7 +68,7 @@ fromCreateContextDTO dmpUuid appConfig qtn level km metrics ls report pkg org mC
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
-        DocumentContextConfig {_documentContextConfigLevelsEnabled = appConfig ^. features . levels . enabled}
+        DocumentContextConfig {_documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
     , _documentContextQuestionnaireReplies = qtn ^. replies

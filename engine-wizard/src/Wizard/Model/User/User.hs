@@ -12,6 +12,12 @@ type Email = String
 
 _USER_SOURCE_INTERNAL = "internal"
 
+_USER_ROLE_ADMIN = "admin"
+
+_USER_ROLE_DATA_STEWARD = "dataSteward"
+
+_USER_ROLE_RESEARCHER = "researcher"
+
 data User =
   User
     { _userUuid :: UUID

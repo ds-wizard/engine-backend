@@ -21,19 +21,23 @@ import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Integration.Http.GitHub.Runner
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Service.Common
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackMapper
 import Wizard.Util.Interpolation (interpolateString)
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
   checkIfFeedbackIsEnabled
-  feedbacks <- findFeedbacksFiltered queryParams
-  serverConfig <- asks _appContextApplicationConfig
-  return $ (\f -> toDTO f (createIssueUrl serverConfig f)) <$> feedbacks
+  fbks <- findFeedbacksFiltered queryParams
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  return $ (\f -> toDTO f (createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) f)) <$>
+    fbks
 
 createFeedback :: FeedbackCreateDTO -> AppContextM FeedbackDTO
 createFeedback reqDto = do
@@ -46,46 +50,44 @@ createFeedbackWithGivenUuid fUuid reqDto = do
   checkIfFeedbackIsEnabled
   issue <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
   now <- liftIO getCurrentTime
-  let feedback = fromCreateDTO reqDto fUuid (issue ^. id) now
-  insertFeedback feedback
-  serverConfig <- asks _appContextApplicationConfig
-  let iUrl = createIssueUrl serverConfig feedback
-  return $ toDTO feedback iUrl
+  let fbk = fromCreateDTO reqDto fUuid (issue ^. id) now
+  insertFeedback fbk
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
+  return $ toDTO fbk iUrl
 
 getFeedbackByUuid :: String -> AppContextM FeedbackDTO
 getFeedbackByUuid fUuid = do
   checkIfFeedbackIsEnabled
-  feedback <- findFeedbackById fUuid
-  serverConfig <- asks _appContextApplicationConfig
-  let iUrl = createIssueUrl serverConfig feedback
-  return $ toDTO feedback iUrl
+  fbk <- findFeedbackById fUuid
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  let iUrl = createIssueUrl (serverConfig ^. feedback) (appConfig ^. questionnaire . feedback) fbk
+  return $ toDTO fbk iUrl
 
 synchronizeFeedbacks :: AppContextM ()
 synchronizeFeedbacks = do
   checkIfFeedbackIsEnabled
   issues <- getIssues
-  feedbacks <- findFeedbacks
+  fbks <- findFeedbacks
   now <- liftIO getCurrentTime
-  sequence $ (updateOrDeleteFeedback issues now) <$> feedbacks
+  sequence $ (updateOrDeleteFeedback issues now) <$> fbks
   return ()
   where
-    updateOrDeleteFeedback issues now feedback =
-      case L.find (\issue -> feedback ^. issueId == issue ^. id) issues of
-        Just issue -> updateFeedbackById $ fromSimpleIssue feedback issue now
-        Nothing -> deleteFeedbackById (U.toString $ feedback ^. uuid)
+    updateOrDeleteFeedback issues now fbk =
+      case L.find (\issue -> fbk ^. issueId == issue ^. id) issues of
+        Just issue -> updateFeedbackById $ fromSimpleIssue fbk issue now
+        Nothing -> deleteFeedbackById (U.toString $ fbk ^. uuid)
 
-createIssueUrl :: ServerConfig -> Feedback -> String
-createIssueUrl serverConfig f =
-  let urlTemplate = (serverConfig ^. feedback . webUrl) ++ "/${owner}/${repo}/issues/${issueId}"
+createIssueUrl :: ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> Feedback -> String
+createIssueUrl serverConfig appConfig fbk =
+  let urlTemplate = (serverConfig ^. webUrl) ++ "/${owner}/${repo}/issues/${issueId}"
       variables =
-        M.fromList
-          [ ("owner", serverConfig ^. feedback . owner)
-          , ("repo", serverConfig ^. feedback . repo)
-          , ("issueId", show $ f ^. issueId)
-          ]
+        M.fromList [("owner", appConfig ^. owner), ("repo", appConfig ^. repo), ("issueId", show $ fbk ^. issueId)]
    in interpolateString variables urlTemplate
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-checkIfFeedbackIsEnabled = checkIfServerFeatureIsEnabled "Feedback" (feedback . enabled)
+checkIfFeedbackIsEnabled = checkIfAppFeatureIsEnabled "Feedback" (questionnaire . feedback . enabled)

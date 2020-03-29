@@ -1,12 +1,12 @@
-module Wizard.Specs.Service.Organization.OrganizationValidationSpec where
+module Wizard.Specs.Service.Config.AppConfigValidationSpec where
 
 import Data.Maybe
 import Test.Hspec
 
-import Wizard.Service.Organization.OrganizationValidation
+import Wizard.Service.Config.AppConfigValidation
 
-organizationValidationSpec =
-  describe "Organization Service" $
+appConfigValidationSpec =
+  describe "AppConfigValidation" $
   it "isValidOrganizationId" $ do
     isNothing (isValidOrganizationId "cz") `shouldBe` True
     isNothing (isValidOrganizationId "base.global") `shouldBe` True

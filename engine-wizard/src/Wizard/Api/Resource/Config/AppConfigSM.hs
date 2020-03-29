@@ -3,52 +3,55 @@ module Wizard.Api.Resource.Config.AppConfigSM where
 import Data.Swagger
 
 import Shared.Util.Swagger
-import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.SimpleFeatureSM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
-import Wizard.Service.Config.AppConfigMapper
+import Wizard.Model.Config.AppConfig
 
-instance ToSchema AppConfigFeaturesDTO where
-  declareNamedSchema = simpleToSchema "_appConfigFeaturesDTO" (toFeaturesDTO defaultFeatures)
+instance ToSchema AppConfig where
+  declareNamedSchema = simpleToSchema "_appConfig" defaultAppConfig
 
-instance ToSchema AppConfigClientDTO where
-  declareNamedSchema = simpleToSchema "_appConfigClientDTO" (toClientDTO defaultClient)
+instance ToSchema AppConfigOrganization where
+  declareNamedSchema = simpleToSchema "_appConfigOrganization" defaultOrganization
 
-instance ToSchema AppConfigClientDashboardDTO where
-  declareNamedSchema = simpleToSchema "_appConfigDashboardDTO" (toClientDashboardDTO defaultClientDashboard)
+instance ToSchema AppConfigAuth where
+  declareNamedSchema = simpleToSchema "_appConfigAuth" defaultAuth
 
-instance ToSchema AppConfigClientCustomMenuLinkDTO where
-  declareNamedSchema =
-    simpleToSchema "_appConfigClientCustomMenuLinkDTO" (toClientCustomMenuLinkDTO defaultClientCustomLink)
+instance ToSchema AppConfigAuthInternal where
+  declareNamedSchema = simpleToSchema "_appConfigAuthInternal" defaultAuthInternal
 
-instance ToSchema AppConfigInfoDTO where
-  declareNamedSchema = simpleToSchema "_appConfigInfoDTO" (toInfoDTO defaultInfo)
+instance ToSchema AppConfigAuthExternal where
+  declareNamedSchema = simpleToSchema "_appConfigAuthExternal" defaultAuthExternal
 
-instance ToSchema AppConfigAffiliationDTO where
-  declareNamedSchema = simpleToSchema "_appConfigAffiliationDTO" (toAffiliationDTO defaultAffiliation)
+instance ToSchema AppConfigAuthExternalService where
+  declareNamedSchema = simpleToSchema "_appConfigAuthExternalService" defaultAuthExternalService
 
-instance ToSchema AppConfigAuthDTO where
-  declareNamedSchema = simpleToSchema "_appConfigAuthDTO" (toAuthDTO defaultAuth)
+instance ToSchema AppConfigAuthExternalServiceParameter where
+  declareNamedSchema = simpleToSchema "_appConfigAuthExternalServiceParameter" defaultAuthExternalServiceParameter
 
-instance ToSchema AppConfigAuthInternalDTO where
-  declareNamedSchema = simpleToSchema "_appConfigAuthInternalDTO" (toAuthInternalDTO defaultAuthInternal)
+instance ToSchema AppConfigAuthExternalServiceStyle where
+  declareNamedSchema = simpleToSchema "_appConfigAuthExternalServiceStyle" defaultAuthExternalServiceStyle
 
-instance ToSchema AppConfigAuthExternalDTO where
-  declareNamedSchema = simpleToSchema "_appConfigAuthExternalDTO" (toAuthExternalDTO defaultAuthExternal)
+instance ToSchema AppConfigPrivacyAndSupport where
+  declareNamedSchema = simpleToSchema "_appConfigPrivacyAndSupport" defaultPrivacyAndSupport
 
-instance ToSchema AppConfigAuthExternalServiceDTO where
-  declareNamedSchema =
-    simpleToSchema "_appConfigAuthExternalServiceDTO" (toAuthExternalServiceDTO defaultAuthExternalService)
+instance ToSchema AppConfigDashboard where
+  declareNamedSchema = simpleToSchema "_appConfigDashboard" defaultDashboard
 
-instance ToSchema AppConfigAuthExternalServiceParameterDTO where
-  declareNamedSchema =
-    simpleToSchema
-      "_appConfigAuthExternalServiceParameterDTO"
-      (toAppConfigAuthExternalServiceParameterDTO defaultAuthExternalServiceParameter)
+instance ToSchema AppConfigDashboardWidgets where
+  declareNamedSchema = simpleToSchema "_appConfigDashboardWidgets" defaultDashboardWidgets
 
-instance ToSchema AppConfigAuthExternalServiceStyleDTO where
-  declareNamedSchema =
-    simpleToSchema
-      "_appConfigAuthExternalServiceStyleDTO"
-      (toAppConfigAuthExternalServiceStyleDTO defaultAuthExternalServiceStyle)
+instance ToSchema AppConfigLookAndFeel where
+  declareNamedSchema = simpleToSchema "_appConfigLookAndFeel" defaultLookAndFeel
+
+instance ToSchema AppConfigLookAndFeelCustomMenuLink where
+  declareNamedSchema = simpleToSchema "_appConfigLookAndFeelCustomMenuLink" defaultLookAndFeelCustomLink
+
+instance ToSchema AppConfigRegistry where
+  declareNamedSchema = simpleToSchema "_appConfigRegistry" defaultRegistry
+
+instance ToSchema AppConfigQuestionnaire where
+  declareNamedSchema = simpleToSchema "_appConfigQuestionnaire" defaultQuestionnaire
+
+instance ToSchema AppConfigQuestionnaireFeedback where
+  declareNamedSchema = simpleToSchema "_appConfigQuestionnaireFeedback" defaultFeedback

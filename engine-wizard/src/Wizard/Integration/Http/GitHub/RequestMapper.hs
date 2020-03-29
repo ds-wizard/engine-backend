@@ -11,33 +11,33 @@ import LensesConfig
 import Shared.Constant.Api
 import Wizard.Integration.Resource.GitHub.IssueCreateIDTO
 import Wizard.Integration.Resource.GitHub.IssueCreateIJM ()
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateString)
 
-toGetIssuesRequest :: ServerConfigFeedback -> HttpRequest
-toGetIssuesRequest feedbackConfig =
-  let variables = M.fromList [("owner", feedbackConfig ^. owner), ("repo", feedbackConfig ^. repo)]
+toGetIssuesRequest :: ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> HttpRequest
+toGetIssuesRequest serverConfig appConfig =
+  let variables = M.fromList [("owner", appConfig ^. owner), ("repo", appConfig ^. repo)]
    in HttpRequest
         { _httpRequestRequestMethod = "GET"
         , _httpRequestRequestUrl =
-            interpolateString variables (feedbackConfig ^. apiUrl ++ "/repos/${owner}/${repo}/issues")
+            interpolateString variables (serverConfig ^. apiUrl ++ "/repos/${owner}/${repo}/issues")
         , _httpRequestRequestHeaders =
-            M.fromList
-              [(authorizationHeaderName, "Bearer " ++ feedbackConfig ^. token), ("User-Agent", "Wizard Server")]
+            M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token), ("User-Agent", "Wizard Server")]
         , _httpRequestRequestBody = ""
         }
 
-toCreateIssueRequest :: ServerConfigFeedback -> String -> U.UUID -> String -> String -> HttpRequest
-toCreateIssueRequest feedbackConfig pkgId questionUuid title content =
-  let variables = M.fromList [("owner", feedbackConfig ^. owner), ("repo", feedbackConfig ^. repo)]
+toCreateIssueRequest ::
+     ServerConfigFeedback -> AppConfigQuestionnaireFeedback -> String -> U.UUID -> String -> String -> HttpRequest
+toCreateIssueRequest serverConfig appConfig pkgId questionUuid title content =
+  let variables = M.fromList [("owner", appConfig ^. owner), ("repo", appConfig ^. repo)]
    in HttpRequest
         { _httpRequestRequestMethod = "POST"
         , _httpRequestRequestUrl =
-            interpolateString variables (feedbackConfig ^. apiUrl ++ "/repos/${owner}/${repo}/issues")
+            interpolateString variables (serverConfig ^. apiUrl ++ "/repos/${owner}/${repo}/issues")
         , _httpRequestRequestHeaders =
-            M.fromList
-              [(authorizationHeaderName, "Bearer " ++ feedbackConfig ^. token), ("User-Agent", "Wizard Server")]
+            M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token), ("User-Agent", "Wizard Server")]
         , _httpRequestRequestBody =
             BSL.unpack . encode $
             IssueCreateIDTO

@@ -15,7 +15,6 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
-import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
@@ -25,7 +24,6 @@ amsterdamBranch =
   BranchDTO
     { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
     , _branchDTOName = amsterdamPackage ^. name
-    , _branchDTOOrganizationId = org1 ^. organizationId
     , _branchDTOKmId = amsterdamPackage ^. kmId
     , _branchDTOPreviousPackageId = Just $ netherlandsPackage ^. pId
     , _branchDTOForkOfPackageId = Just $ netherlandsPackage ^. pId
@@ -89,7 +87,6 @@ amsterdamBranchDetail =
   BranchDetailDTO
     { _branchDetailDTOUuid = amsterdamBranch ^. uuid
     , _branchDetailDTOName = amsterdamBranch ^. name
-    , _branchDetailDTOOrganizationId = amsterdamBranch ^. organizationId
     , _branchDetailDTOKmId = amsterdamBranch ^. kmId
     , _branchDetailDTOState = BSEdited
     , _branchDetailDTOPreviousPackageId = amsterdamBranch ^. previousPackageId
@@ -105,7 +102,6 @@ leidenBranch =
   BranchDTO
     { _branchDTOUuid = fromJust (U.fromString "47421955-ba30-48d4-8c49-9ec47eda2cad")
     , _branchDTOName = "Leiden KM"
-    , _branchDTOOrganizationId = org1 ^. organizationId
     , _branchDTOKmId = "leiden-km"
     , _branchDTOState = BSDefault
     , _branchDTOPreviousPackageId = Just $ netherlandsPackage ^. pId

@@ -19,7 +19,7 @@ userServiceIntegrationSpec appContext =
    do
     let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
      -- AND: Update config in DB
-    runInContext (modifyAppConfig (auth . internal . registration . enabled) False) appContext
+    runInContext (modifyAppConfig (authentication . internal . registration . enabled) False) appContext
      -- WHEN:
     result <- runInContext (registrateUser userJohnCreate) appContext
      -- THEN:

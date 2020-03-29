@@ -43,7 +43,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toClientConfigDTO (appContext ^. applicationConfig) defaultAppConfig
+    let expDto = toClientConfigDTO (appContext ^. serverConfig) defaultAppConfig
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

@@ -22,7 +22,7 @@ userAlbert =
     , _userEmail = "albert.einstein@example.com"
     , _userAffiliation = Just "My University"
     , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = "ADMIN"
+    , _userRole = _USER_ROLE_ADMIN
     , _userPermissions =
         [ "UM_PERM"
         , "KM_PERM"
@@ -49,7 +49,7 @@ userNikola =
     , _userEmail = "nikola.tesla@example.com"
     , _userAffiliation = Nothing
     , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = "DATASTEWARD"
+    , _userRole = _USER_ROLE_DATA_STEWARD
     , _userPermissions = ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
@@ -66,7 +66,7 @@ userIsaac =
     , _userEmail = "isaac.newton@example.com"
     , _userAffiliation = Nothing
     , _userSources = [_USER_SOURCE_INTERNAL]
-    , _userRole = "RESEARCHER"
+    , _userRole = _USER_ROLE_RESEARCHER
     , _userPermissions = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
@@ -81,7 +81,7 @@ userJohnCreate =
     , _userCreateDTOLastName = "Doe"
     , _userCreateDTOEmail = "john.doe@example.com"
     , _userCreateDTOAffiliation = Just "My University"
-    , _userCreateDTORole = Just "ADMIN"
+    , _userCreateDTORole = Just _USER_ROLE_ADMIN
     , _userCreateDTOPassword = "password"
     }
 
@@ -93,7 +93,7 @@ userIsaacChange =
     , _userChangeDTOLastName = "EDITED: Newton"
     , _userChangeDTOEmail = "albert.einstein@example.com"
     , _userChangeDTOAffiliation = Just "EDITED: My University"
-    , _userChangeDTORole = "ADMIN"
+    , _userChangeDTORole = _USER_ROLE_ADMIN
     , _userChangeDTOActive = True
     }
 

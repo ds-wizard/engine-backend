@@ -8,10 +8,10 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Util.Uuid
-import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric
 
@@ -49,8 +49,8 @@ generateReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> AppContextM Re
 generateReport requiredLevel metrics km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  appConfig <- findAppConfig
-  let _levelsEnabled = appConfig ^. features . levels . enabled
+  appConfig <- getAppConfig
+  let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
   return
     Report
       { _reportUuid = rUuid

@@ -34,10 +34,9 @@ import Wizard.Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do
-  serverConfig <- asks _appContextApplicationConfig
   pkgs <- findPackagesFiltered queryParams
   iStat <- getInstanceStatistics
-  pkgRs <- retrievePackages (serverConfig ^. registry) iStat
+  pkgRs <- retrievePackages iStat
   return . fmap (toSimpleDTOs pkgRs) . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
@@ -49,11 +48,11 @@ getSimplePackagesFiltered queryParams = do
 
 getPackageById :: String -> AppContextM PackageDetailDTO
 getPackageById pkgId = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   pkg <- findPackageById pkgId
   versions <- getPackageVersions pkg
   iStat <- getInstanceStatistics
-  pkgRs <- retrievePackages (serverConfig ^. registry) iStat
+  pkgRs <- retrievePackages iStat
   return $ toDetailDTO pkg pkgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkgId)
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]

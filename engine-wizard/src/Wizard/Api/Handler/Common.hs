@@ -39,6 +39,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.User.User
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 import Wizard.Util.Logger (logError)
@@ -55,7 +56,7 @@ runInUnauthService function = do
   shutdownFlag <- asks _baseContextShutdownFlag
   let appContext =
         AppContext
-          { _appContextApplicationConfig = serverConfig
+          { _appContextServerConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -84,7 +85,7 @@ runInAuthService user function = do
   shutdownFlag <- asks _baseContextShutdownFlag
   let appContext =
         AppContext
-          { _appContextApplicationConfig = serverConfig
+          { _appContextServerConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -212,12 +213,12 @@ isAdmin :: AppContextM Bool
 isAdmin = do
   mUser <- asks _appContextCurrentUser
   case mUser of
-    Just user -> return $ user ^. role == "ADMIN"
+    Just user -> return $ user ^. role == _USER_ROLE_ADMIN
     Nothing -> return False
 
 checkServiceToken :: Maybe String -> AppContextM ()
 checkServiceToken mTokenHeader = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let mToken = mTokenHeader >>= separateToken >>= validateServiceToken serverConfig
   case mToken of
     Just _ -> return ()

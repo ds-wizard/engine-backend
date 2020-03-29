@@ -1,90 +1,103 @@
 module Wizard.Api.Resource.Config.AppConfigJM where
 
-import Control.Monad (mzero)
 import Data.Aeson
 
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
-import Wizard.Api.Resource.Config.AppConfigDTO
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
+import Wizard.Model.Config.AppConfig
 
-instance FromJSON AppConfigFeaturesDTO where
-  parseJSON = simpleParseJSON "_appConfigFeaturesDTO"
+instance FromJSON AppConfig where
+  parseJSON = simpleParseJSON "_appConfig"
 
-instance ToJSON AppConfigFeaturesDTO where
-  toJSON = simpleToJSON "_appConfigFeaturesDTO"
+instance ToJSON AppConfig where
+  toJSON = simpleToJSON "_appConfig"
 
-instance FromJSON AppConfigClientDTO where
-  parseJSON = simpleParseJSON "_appConfigClientDTO"
+instance FromJSON AppConfigOrganization where
+  parseJSON = simpleParseJSON "_appConfigOrganization"
 
-instance ToJSON AppConfigClientDTO where
-  toJSON = simpleToJSON "_appConfigClientDTO"
+instance ToJSON AppConfigOrganization where
+  toJSON = simpleToJSON "_appConfigOrganization"
 
-instance FromJSON AppConfigClientDashboardDTO where
-  parseJSON (Object o) = do
-    _appConfigClientDashboardDTOAdmin <- o .: "ADMIN"
-    _appConfigClientDashboardDTODataSteward <- o .: "DATASTEWARD"
-    _appConfigClientDashboardDTOResearcher <- o .: "RESEARCHER"
-    return AppConfigClientDashboardDTO {..}
-  parseJSON _ = mzero
+instance FromJSON AppConfigAuth where
+  parseJSON = simpleParseJSON "_appConfigAuth"
 
-instance ToJSON AppConfigClientDashboardDTO where
-  toJSON AppConfigClientDashboardDTO {..} =
-    object
-      [ "ADMIN" .= _appConfigClientDashboardDTOAdmin
-      , "DATASTEWARD" .= _appConfigClientDashboardDTODataSteward
-      , "RESEARCHER" .= _appConfigClientDashboardDTOResearcher
-      ]
+instance ToJSON AppConfigAuth where
+  toJSON = simpleToJSON "_appConfigAuth"
 
-instance FromJSON AppConfigClientCustomMenuLinkDTO where
-  parseJSON = simpleParseJSON "_appConfigClientCustomMenuLinkDTO"
+instance FromJSON AppConfigAuthInternal where
+  parseJSON = simpleParseJSON "_appConfigAuthInternal"
 
-instance ToJSON AppConfigClientCustomMenuLinkDTO where
-  toJSON = simpleToJSON "_appConfigClientCustomMenuLinkDTO"
+instance ToJSON AppConfigAuthInternal where
+  toJSON = simpleToJSON "_appConfigAuthInternal"
 
-instance FromJSON AppConfigInfoDTO where
-  parseJSON = simpleParseJSON "_appConfigInfoDTO"
+instance FromJSON AppConfigAuthExternal where
+  parseJSON = simpleParseJSON "_appConfigAuthExternal"
 
-instance ToJSON AppConfigInfoDTO where
-  toJSON = simpleToJSON "_appConfigInfoDTO"
+instance ToJSON AppConfigAuthExternal where
+  toJSON = simpleToJSON "_appConfigAuthExternal"
 
-instance FromJSON AppConfigAffiliationDTO where
-  parseJSON = simpleParseJSON "_appConfigAffiliationDTO"
+instance FromJSON AppConfigAuthExternalService where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalService"
 
-instance ToJSON AppConfigAffiliationDTO where
-  toJSON = simpleToJSON "_appConfigAffiliationDTO"
+instance ToJSON AppConfigAuthExternalService where
+  toJSON = simpleToJSON "_appConfigAuthExternalService"
 
-instance FromJSON AppConfigAuthDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthDTO"
+instance FromJSON AppConfigAuthExternalServiceParameter where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceParameter"
 
-instance ToJSON AppConfigAuthDTO where
-  toJSON = simpleToJSON "_appConfigAuthDTO"
+instance ToJSON AppConfigAuthExternalServiceParameter where
+  toJSON = simpleToJSON "_appConfigAuthExternalServiceParameter"
 
-instance FromJSON AppConfigAuthInternalDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthInternalDTO"
+instance FromJSON AppConfigAuthExternalServiceStyle where
+  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceStyle"
 
-instance ToJSON AppConfigAuthInternalDTO where
-  toJSON = simpleToJSON "_appConfigAuthInternalDTO"
+instance ToJSON AppConfigAuthExternalServiceStyle where
+  toJSON = simpleToJSON "_appConfigAuthExternalServiceStyle"
 
-instance FromJSON AppConfigAuthExternalDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalDTO"
+instance FromJSON AppConfigPrivacyAndSupport where
+  parseJSON = simpleParseJSON "_appConfigPrivacyAndSupport"
 
-instance ToJSON AppConfigAuthExternalDTO where
-  toJSON = simpleToJSON "_appConfigAuthExternalDTO"
+instance ToJSON AppConfigPrivacyAndSupport where
+  toJSON = simpleToJSON "_appConfigPrivacyAndSupport"
 
-instance FromJSON AppConfigAuthExternalServiceDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceDTO"
+instance FromJSON AppConfigDashboard where
+  parseJSON = simpleParseJSON "_appConfigDashboard"
 
-instance ToJSON AppConfigAuthExternalServiceDTO where
-  toJSON = simpleToJSON "_appConfigAuthExternalServiceDTO"
+instance ToJSON AppConfigDashboard where
+  toJSON = simpleToJSON "_appConfigDashboard"
 
-instance FromJSON AppConfigAuthExternalServiceParameterDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceParameterDTO"
+instance FromJSON AppConfigDashboardWidgets where
+  parseJSON = simpleParseJSON "_appConfigDashboardWidgets"
 
-instance ToJSON AppConfigAuthExternalServiceParameterDTO where
-  toJSON = simpleToJSON "_appConfigAuthExternalServiceParameterDTO"
+instance ToJSON AppConfigDashboardWidgets where
+  toJSON = simpleToJSON "_appConfigDashboardWidgets"
 
-instance FromJSON AppConfigAuthExternalServiceStyleDTO where
-  parseJSON = simpleParseJSON "_appConfigAuthExternalServiceStyleDTO"
+instance FromJSON AppConfigLookAndFeel where
+  parseJSON = simpleParseJSON "_appConfigLookAndFeel"
 
-instance ToJSON AppConfigAuthExternalServiceStyleDTO where
-  toJSON = simpleToJSON "_appConfigAuthExternalServiceStyleDTO"
+instance ToJSON AppConfigLookAndFeel where
+  toJSON = simpleToJSON "_appConfigLookAndFeel"
+
+instance FromJSON AppConfigLookAndFeelCustomMenuLink where
+  parseJSON = simpleParseJSON "_appConfigLookAndFeelCustomMenuLink"
+
+instance ToJSON AppConfigLookAndFeelCustomMenuLink where
+  toJSON = simpleToJSON "_appConfigLookAndFeelCustomMenuLink"
+
+instance FromJSON AppConfigRegistry where
+  parseJSON = simpleParseJSON "_appConfigRegistry"
+
+instance ToJSON AppConfigRegistry where
+  toJSON = simpleToJSON "_appConfigRegistry"
+
+instance FromJSON AppConfigQuestionnaire where
+  parseJSON = simpleParseJSON "_appConfigQuestionnaire"
+
+instance ToJSON AppConfigQuestionnaire where
+  toJSON = simpleToJSON "_appConfigQuestionnaire"
+
+instance FromJSON AppConfigQuestionnaireFeedback where
+  parseJSON = simpleParseJSON "_appConfigQuestionnaireFeedback"
+
+instance ToJSON AppConfigQuestionnaireFeedback where
+  toJSON = simpleToJSON "_appConfigQuestionnaireFeedback"

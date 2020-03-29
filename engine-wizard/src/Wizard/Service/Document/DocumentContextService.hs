@@ -10,14 +10,13 @@ import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentContextJM ()
-import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Level.LevelDAO
 import Wizard.Database.DAO.Metric.MetricDAO
-import Wizard.Database.DAO.Organization.OrganizationDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Report.ReportGenerator
@@ -28,14 +27,14 @@ createDocumentContext qtnUuid = do
   pkg <- findPackageById (qtn ^. packageId)
   metrics <- findMetrics
   ls <- findLevels
-  org <- findOrganization
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) findUserById
-  appConfig <- findAppConfig
+  appConfig <- getAppConfig
+  let org = appConfig ^. organization
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   let _level =
-        if appConfig ^. features . levels . enabled
+        if appConfig ^. questionnaire . levels . enabled
           then qtn ^. level
           else 9999
   report <- generateReport _level metrics km (qtn ^. replies)

@@ -6,8 +6,8 @@ import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Level.Level
-import Wizard.Model.Organization.Organization
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
@@ -42,7 +42,7 @@ data DocumentContext =
     , _documentContextLevels :: [Level]
     , _documentContextReport :: Report
     , _documentContextPackage :: Package
-    , _documentContextOrganization :: Organization
+    , _documentContextOrganization :: AppConfigOrganization
     , _documentContextCreatedBy :: Maybe User
     , _documentContextCreatedAt :: UTCTime
     , _documentContextUpdatedAt :: UTCTime

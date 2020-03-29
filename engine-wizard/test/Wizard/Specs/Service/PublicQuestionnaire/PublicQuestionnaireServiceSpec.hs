@@ -18,7 +18,7 @@ publicQuestionnaireServiceIntegrationSpec appContext =
    do
     let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "PublicQuestionnaire"
      -- AND: Update config in DB
-    runInContext (modifyAppConfig (features . publicQuestionnaire . enabled) False) appContext
+    runInContext (modifyAppConfig (questionnaire . publicQuestionnaire . enabled) False) appContext
      -- WHEN:
     result <- runInContext getPublicQuestionnaire appContext
      -- THEN:

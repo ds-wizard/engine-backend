@@ -11,6 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
+import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import Wizard.Model.Context.AppContext
@@ -18,6 +19,7 @@ import Wizard.Service.Feedback.FeedbackMapper
 import Wizard.Service.Feedback.FeedbackService
 
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.Feedback.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -49,11 +51,12 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let serverConfig = appContext ^. applicationConfig
-    let iUrl = createIssueUrl serverConfig feedback1
+    let feedbackConfig = appContext ^. serverConfig . feedback
+    let iUrl = createIssueUrl feedbackConfig defaultFeedback feedback1
     let expDto = toDTO feedback1 iUrl
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO loadFeedbackTokenFromEnv appContext
     runInContextIO F.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
