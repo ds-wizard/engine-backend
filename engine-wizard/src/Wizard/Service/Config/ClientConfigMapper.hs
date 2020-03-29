@@ -24,7 +24,8 @@ toClientConfigDTO serverConfig appConfig =
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
 toClientAuthDTO config =
   ClientConfigAuthDTO
-    { _clientConfigAuthDTOInternal = config ^. internal
+    { _clientConfigAuthDTODefaultRole = config ^. defaultRole
+    , _clientConfigAuthDTOInternal = config ^. internal
     , _clientConfigAuthDTOExternal = toClientAuthExternalDTO $ config ^. external
     }
 

@@ -36,6 +36,7 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
+    _serverConfigGeneralDebugLogHttpClient <- o .:? "debugLogHttpClient" .!= (defaultGeneral ^. debugLogHttpClient)
     return ServerConfigGeneral {..}
   parseJSON _ = mzero
 

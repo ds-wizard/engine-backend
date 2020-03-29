@@ -4,9 +4,11 @@ module Shared.Util.String
   , splitOn
   , stripSuffix
   , isSuffixOf
+  , format
   ) where
 
 import Data.Char (toLower)
+import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Text as T
 
 lowerFirst :: String -> String
@@ -28,3 +30,11 @@ stripSuffix suffix string = T.unpack <$> T.stripSuffix (T.pack suffix) (T.pack s
 
 isSuffixOf :: String -> String -> Bool
 isSuffixOf suffix name = T.isSuffixOf (T.pack suffix) (T.pack name)
+
+format :: String -> [String] -> String
+format str terms =
+  case str of
+    '%':'s':rest -> (fromMaybe "%s" . listToMaybe $ terms) ++ format rest (drop 1 terms)
+    '%':'%':'s':rest -> '%' : 's' : format rest terms
+    a:rest -> a : format rest terms
+    [] -> []

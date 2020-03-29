@@ -1,9 +1,9 @@
-module Wizard.Specs.Localization.LocaleSpec where
+module Shared.Specs.Util.StringSpec where
 
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
-import Shared.Localization.Locale
+import Shared.Util.String
 
 localeSpec =
   describe "LocalizationExpander" $
@@ -18,5 +18,5 @@ localeSpec =
     createTest "My %s String %s %s" ["Super", "abc"] "My Super String abc %s"
 
 createTest template variables expected =
-  it ("Expand '" ++ template ++ "' with variables " ++ (show variables) ++ " to '" ++ expected ++ "'") $
+  it ("Expand '" ++ template ++ "' with variables " ++ show variables ++ " to '" ++ expected ++ "'") $
   format template variables `shouldBe` expected

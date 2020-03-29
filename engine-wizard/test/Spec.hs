@@ -38,7 +38,6 @@ import Wizard.Specs.API.UserAPISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
-import Wizard.Specs.Localization.LocaleSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
 import Wizard.Specs.Service.Config.AppConfigValidationSpec
@@ -105,7 +104,6 @@ main =
            describe "INTEGRATION" $ describe "Http" $ do
              describe "Common" commonResponseMapperSpec
              describe "Typehint" typehintResponseMapperSpec
-           describe "LOCALIZATION" localeSpec
            describe "SERVICE" $ do
              describe "Branch" branchValidationSpec
              describe "Config" appConfigValidationSpec

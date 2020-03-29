@@ -4,6 +4,7 @@ import GHC.Generics
 
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.User.User
 
 data ClientConfigDTO =
   ClientConfigDTO
@@ -19,7 +20,8 @@ data ClientConfigDTO =
 
 data ClientConfigAuthDTO =
   ClientConfigAuthDTO
-    { _clientConfigAuthDTOInternal :: AppConfigAuthInternal
+    { _clientConfigAuthDTODefaultRole :: Role
+    , _clientConfigAuthDTOInternal :: AppConfigAuthInternal
     , _clientConfigAuthDTOExternal :: ClientConfigAuthExternalDTO
     }
   deriving (Generic, Eq, Show)

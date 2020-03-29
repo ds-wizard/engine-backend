@@ -28,6 +28,7 @@ defaultGeneral =
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
     , _serverConfigGeneralTemplateFolder = "engine-wizard/templates"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
+    , _serverConfigGeneralDebugLogHttpClient = False
     }
 
 defaultDatabase :: ServerConfigDatabase

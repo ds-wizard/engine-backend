@@ -17,6 +17,7 @@ import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Token.TokenService
@@ -25,8 +26,10 @@ import Wizard.Service.User.UserService
 createAuthenticationUrl :: String -> AppContextM ()
 createAuthenticationUrl authId = do
   state <- liftIO $ generateRandomString 40
-  openIDClient <- createOpenIDClient authId
-  loc <- liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) []
+  (service, openIDClient) <- createOpenIDClient authId
+  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameters)
+  loc <-
+    liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)
 
 loginUser :: String -> Maybe String -> Maybe String -> AppContextM TokenDTO
@@ -34,11 +37,10 @@ loginUser authId mError mCode =
   case mCode of
     Just code -> do
       httpClientManager <- asks _appContextHttpClientManager
-      openIDClient <- createOpenIDClient authId
+      (_, openIDClient) <- createOpenIDClient authId
       tokens <-
         liftIO $ O.requestTokens openIDClient Nothing (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
       let claims = O.otherClaims . O.idToken $ tokens
-      liftIO . print $ claims
       let mEmail = fmap toLower . T.unpack <$> (claims ^? key "email" . _String)
       let mFirstName = T.unpack <$> claims ^? key "given_name" . _String
       let mLastName = T.unpack <$> claims ^? key "family_name" . _String
@@ -52,7 +54,7 @@ loginUser authId mError mCode =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createOpenIDClient :: String -> AppContextM O.OIDC
+createOpenIDClient :: String -> AppContextM (AppConfigAuthExternalService, O.OIDC)
 createOpenIDClient authId = do
   httpClientManager <- asks _appContextHttpClientManager
   serverConfig <- asks _appContextServerConfig
@@ -64,5 +66,5 @@ createOpenIDClient authId = do
       let cSecret = BS.pack $ service ^. clientSecret
       let redirectUrl = BS.pack $ serverConfig ^. general . clientUrl ++ "/auth/" ++ authId ++ "/callback"
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)
-      return openIDClient
+      return (service, openIDClient)
     Nothing -> throwError . UserError $ _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId
