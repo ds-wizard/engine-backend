@@ -46,8 +46,6 @@ changeRoles dbPool = do
   changeRole dbPool "ADMIN" "admin"
   changeRole dbPool "DATASTEWARD" "dataSteward"
   changeRole dbPool "RESEARCHER" "researcher"
-  let action = modify (select ["role" =: "ADMIN"] "users") ["$set" =: ["affiliation" =: "admin"]]
-  runMongoDBPoolDef action dbPool
 
 changeRole dbPool oldRole newRole = do
   let action = modify (select ["role" =: oldRole] "users") ["$set" =: ["role" =: newRole]]

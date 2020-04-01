@@ -10,14 +10,13 @@ config now =
     , "external" BSON.=: ["services" BSON.=: ([] :: [String])]
     ]
   , "privacyAndSupport" BSON.=:
-    [ "privacyUrl" BSON.=: "https://ds-wizard.org/privacy.html"
+    [ "privacyUrl" BSON.=: (Nothing :: Maybe String)
     , "supportEmail" BSON.=: (Nothing :: Maybe String)
     , "supportRepositoryName" BSON.=: (Nothing :: Maybe String)
     , "supportRepositoryUrl" BSON.=: (Nothing :: Maybe String)
     ]
   , "dashboard" BSON.=:
-    [ "widgets" BSON.=:
-      Just ["admin" BSON.=: ["Welcome"], "dataSteward" BSON.=: ["Welcome"], "researcher" BSON.=: ["Welcome"]]
+    [ "widgets" BSON.=: (Nothing :: Maybe [BSON.Document])
     , "welcomeWarning" BSON.=: (Nothing :: Maybe String)
     , "welcomeInfo" BSON.=: (Nothing :: Maybe String)
     ]
