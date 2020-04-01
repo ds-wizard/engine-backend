@@ -1,7 +1,7 @@
 module Registry.Api.Middleware.LoggingMiddleware where
 
 import Data.List (intercalate)
-import Data.Maybe (fromMaybe)
+import qualified Data.List as L
 import qualified Data.Text as T
 import Network.HTTP.Types
   ( Header
@@ -18,42 +18,42 @@ import Network.HTTP.Types
   , status500
   )
 import Network.Wai (Middleware, Request(..))
-import System.Console.Pretty (Color(..), color)
 import System.IO.Unsafe
 
-import Registry.Util.Logger (createOrgTokenLoggerStamp, createTraceUuidLoggerStamp)
+import Registry.Util.Logger
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
 import Shared.Model.Config.Environment
 import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
 
 loggingMiddleware :: Environment -> Middleware
-loggingMiddleware Test application request sendResponse = application request $ sendResponse
+loggingMiddleware Test application request sendResponse = application request sendResponse
 loggingMiddleware _ application request sendResponse =
-  application request $ sendResponse . (processHeaderInMiddleware logRequest request)
+  application request $ sendResponse . processHeaderInMiddleware logRequest request
 
 logRequest :: Request -> Status -> [Header] -> [Header]
 logRequest request resStatus resHeaders =
   filterOptionsRequests request resHeaders $
   unsafePerformIO $ do
-    putStrLn . (colorizeMessage resStatus) $ createLogMessage blockParts messageParts
+    putStrLn $ createHttpLogRecord request resStatus resHeaders
     return resHeaders
-  where
-    blockParts = createBlockParts (requestHeaders request) resHeaders
-    messageParts = createMessageParts request resStatus
 
-createBlockParts :: [Header] -> [Header] -> [String]
-createBlockParts reqHeaders resHeaders = [logLevel, userUuid, traceUuid]
+createHttpLogRecord request resStatus resHeaders = L.intercalate "" ["[", showLogLevel logLevel, "] ", record]
   where
-    logLevel = "[Rqst] "
-    userUuid =
-      case findHeader authorizationHeaderName reqHeaders of
-        Just headerValue -> createOrgTokenLoggerStamp (extractOrgToken . T.pack $ headerValue)
-        Nothing -> createOrgTokenLoggerStamp "---"
-    traceUuid =
-      case findHeader xTraceUuidHeaderName resHeaders of
-        Just headerValue -> createTraceUuidLoggerStamp headerValue
-        Nothing -> createTraceUuidLoggerStamp "---"
+    logLevel :: LogLevel
+    logLevel = statusToLogLevel resStatus
+    logLevelS = statusToLogLevel resStatus
+    mOrgToken :: Maybe String
+    mOrgToken =
+      case findHeader authorizationHeaderName (requestHeaders request) of
+        Just headerValue -> extractOrgToken . T.pack $ headerValue
+        Nothing -> Nothing
+    mTraceUuid :: Maybe String
+    mTraceUuid = findHeader xTraceUuidHeaderName resHeaders
+    message :: String
+    message = L.intercalate " " (createMessageParts request resStatus)
+    record :: String
+    record = createLogRecord logLevel mOrgToken mTraceUuid _CMP_API message
 
 createMessageParts :: Request -> Status -> [String]
 createMessageParts request resStatus = [status, method, path]
@@ -65,24 +65,8 @@ createMessageParts request resStatus = [status, method, path]
 createLogMessage :: [String] -> [String] -> String
 createLogMessage blockParts messageParts = intercalate "" blockParts ++ " " ++ unwords messageParts
 
-extractOrgToken :: T.Text -> String
-extractOrgToken tokenHeader =
-  let orgTokenMaybe = separateToken (T.unpack tokenHeader)
-   in fromMaybe (createOrgTokenLoggerStamp "---") orgTokenMaybe
-
-colorizeMessage :: Status -> String -> String
-colorizeMessage resStatus
-  | resStatus == status200 = color Green
-  | resStatus == status201 = color Green
-  | resStatus == status202 = color Green
-  | resStatus == status204 = color Green
-  | resStatus == status302 = color Green
-  | resStatus == status400 = color Magenta
-  | resStatus == status401 = color Magenta
-  | resStatus == status403 = color Magenta
-  | resStatus == status404 = color Magenta
-  | resStatus == status500 = color Red
-  | otherwise = color Red
+extractOrgToken :: T.Text -> Maybe String
+extractOrgToken tokenHeader = separateToken (T.unpack tokenHeader)
 
 statusToString :: Status -> String
 statusToString resStatus
@@ -97,6 +81,15 @@ statusToString resStatus
   | resStatus == status404 = "404 Not Found"
   | resStatus == status500 = "500 Internal Server Error"
   | otherwise = show resStatus
+
+statusToLogLevel :: Status -> LogLevel
+statusToLogLevel resStatus
+  | resStatus == status400 = LevelWarn
+  | resStatus == status401 = LevelWarn
+  | resStatus == status403 = LevelWarn
+  | resStatus == status404 = LevelWarn
+  | resStatus == status500 = LevelError
+  | otherwise = LevelInfo
 
 filterOptionsRequests request resHeaders callback =
   if extractMethod request == "OPTIONS"

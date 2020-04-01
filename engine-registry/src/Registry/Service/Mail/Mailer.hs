@@ -97,9 +97,9 @@ composeMail to subject mailName context = do
   plainTextPart <- makePlainTextPart (root </> _MAIL_TEMPLATE_PLAIN_NAME) context
   htmlPart <- makeHTMLPart (root </> _MAIL_TEMPLATE_HTML_NAME) context
   case (htmlPart, plainTextPart) of
-    (Left _, Right _) -> logWarn $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML mailName)
-    (Right _, Left _) -> logWarn $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_PLAIN mailName)
-    (Left _, Left _) -> logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName)
+    (Left _, Right _) -> logWarn _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML mailName)
+    (Right _, Left _) -> logWarn _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_PLAIN mailName)
+    (Left _, Left _) -> logError _CMP_MAILER (_ERROR_SERVICE_MAIL__MISSING_HTML_PLAIN mailName)
     (_, _) -> return ()
   -- PLAIN alternative
   let mimeAlternative = rights [plainTextPart]
@@ -144,7 +144,7 @@ makePartFromFile fullpath action = do
   case result of
     Right part -> return . Just $ part
     Left errMsg -> do
-      logWarn $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__FILE_LOAD_FAIL errMsg)
+      logWarn _CMP_MAILER (_ERROR_SERVICE_MAIL__FILE_LOAD_FAIL errMsg)
       return Nothing
 
 makeInlineImages :: FilePath -> AppContextM [MIME.Part]
@@ -220,9 +220,9 @@ sendEmail to mailMessage = do
       result <- liftIO $ handle basicHandler runMailer
       case result of
         Right recipients -> do
-          logInfo $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
+          logInfo _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
           return ()
         Left excMsg -> do
-          logError $ msg _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
+          logError _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
           throwError . GeneralServerError $ excMsg
     else return ()

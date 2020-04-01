@@ -5,6 +5,6 @@ import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Migration/KnowledgeModel) started"
+  logInfo _CMP_MIGRATION "(Migration/KnowledgeModel) started"
   deleteMigratorStates
-  logInfo $ msg _CMP_MIGRATION "(Migration/KnowledgeModel) ended"
+  logInfo _CMP_MIGRATION "(Migration/KnowledgeModel) ended"

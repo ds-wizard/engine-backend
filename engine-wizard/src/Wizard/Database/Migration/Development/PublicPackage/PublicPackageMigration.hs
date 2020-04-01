@@ -6,7 +6,7 @@ import Wizard.Database.Migration.Development.PublicPackage.Data.PublicPackages
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(PublicPackage/PublicPackage) started"
+  logInfo _CMP_MIGRATION "(PublicPackage/PublicPackage) started"
   deletePublicPackages
   insertPublicPackage publicPackage
-  logInfo $ msg _CMP_MIGRATION "(PublicPackage/PublicPackage) ended"
+  logInfo _CMP_MIGRATION "(PublicPackage/PublicPackage) ended"

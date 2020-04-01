@@ -6,8 +6,8 @@ import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Feedback/Feedback) started"
+  logInfo _CMP_MIGRATION "(Feedback/Feedback) started"
   deleteFeedbacks
   insertFeedback feedback1
   insertFeedback feedback2
-  logInfo $ msg _CMP_MIGRATION "(Feedback/Feedback) ended"
+  logInfo _CMP_MIGRATION "(Feedback/Feedback) ended"

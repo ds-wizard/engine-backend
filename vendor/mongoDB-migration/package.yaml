@@ -1,5 +1,5 @@
 name: mongoDB-migration
-version: 1.0.0
+version: 1.1.0
 synopsis: MongoDB Migration Library
 description: This package offers easy migration library for MongoDB database
 category: Web

@@ -19,7 +19,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "started"
+  logInfo _CMP_MIGRATION "started"
   CFG.runMigration
   U.runMigration
   PKG.runMigration
@@ -33,4 +33,4 @@ runMigration = do
   MTR.runMigration
   LVL.runMigration
   DOC.runMigration
-  logInfo $ msg _CMP_MIGRATION "ended"
+  logInfo _CMP_MIGRATION "ended"

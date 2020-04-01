@@ -14,7 +14,7 @@ import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) started"
+  logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
   createBranchWithParams
     (amsterdamBranch ^. uuid)
@@ -22,4 +22,4 @@ runMigration = do
     (toDTO userAlbert)
     amsterdamBranchCreate
   updateEventsInBranch (U.toString $ amsterdamBranch ^. uuid) (amsterdamBranchWithEvents ^. events)
-  logInfo $ msg _CMP_MIGRATION "(KnowledgeModel/Branch) ended"
+  logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

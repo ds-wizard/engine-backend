@@ -6,10 +6,10 @@ import Registry.Util.Logger
 import Shared.Database.Migration.Development.Package.Data.Packages
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Package/Package) started"
+  logInfo _CMP_MIGRATION "(Package/Package) started"
   deletePackages
   insertPackage globalPackageEmpty
   insertPackage globalPackage
   insertPackage netherlandsPackage
   insertPackage netherlandsPackageV2
-  logInfo $ msg _CMP_MIGRATION "(Package/Package) ended"
+  logInfo _CMP_MIGRATION "(Package/Package) ended"

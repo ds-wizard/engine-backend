@@ -42,7 +42,7 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
-import Wizard.Util.Logger (logError)
+import Wizard.Util.Logger
 
 runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService function = do
@@ -173,7 +173,7 @@ sendError (NotExistsError localeRecord) = do
   let message = locale ls localeRecord
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendError (GeneralServerError errorMessage) = do
-  logError errorMessage
+  logError _CMP_API errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
 
 sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
@@ -199,7 +199,7 @@ sendErrorDTO (ForbiddenErrorDTO message) =
 sendErrorDTO (NotExistsErrorDTO message) =
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (GeneralServerErrorDTO message) = do
-  logError message
+  logError _CMP_API message
   return $ err500 {errBody = encode $ GeneralServerErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 
 checkPermission mTokenHeader perm = do

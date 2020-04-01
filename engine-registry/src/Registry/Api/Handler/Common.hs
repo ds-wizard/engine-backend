@@ -29,7 +29,7 @@ import Registry.Localization.Messages.Internal
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
-import Registry.Util.Logger (logError)
+import Registry.Util.Logger
 import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api (contentTypeHeaderJSON)
@@ -158,7 +158,7 @@ sendError (NotExistsError localeRecord) = do
   let message = locale ls localeRecord
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendError (GeneralServerError errorMessage) = do
-  logError errorMessage
+  logError _CMP_API errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
 
 sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
@@ -184,5 +184,5 @@ sendErrorDTO (ForbiddenErrorDTO message) =
 sendErrorDTO (NotExistsErrorDTO message) =
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (GeneralServerErrorDTO message) = do
-  logError message
+  logError _CMP_API message
   return $ err500 {errBody = encode $ GeneralServerErrorDTO message, errHeaders = [contentTypeHeaderJSON]}

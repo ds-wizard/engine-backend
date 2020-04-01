@@ -9,8 +9,8 @@ import qualified Registry.Database.Migration.Development.Package.PackageMigratio
 import Registry.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "started"
+  logInfo _CMP_MIGRATION "started"
   ORG.runMigration
   PKG.runMigration
   ADT.runMigration
-  logInfo $ msg _CMP_MIGRATION "ended"
+  logInfo _CMP_MIGRATION "ended"

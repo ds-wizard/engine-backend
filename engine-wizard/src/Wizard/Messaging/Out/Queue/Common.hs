@@ -28,5 +28,5 @@ publishMessageToQueue (Just msgChannel) queueName body = do
   let queueNameText = T.pack queueName
   liftIO $ declareQueue msgChannel (createQueue queueNameText)
   liftIO $ publishMsg msgChannel "" queueNameText (createBody body)
-  logInfoU $ msg _CMP_MESSAGING ("PublishToQueue: " ++ queueName)
+  logInfoU _CMP_MESSAGING ("PublishToQueue: " ++ queueName)
   return ()

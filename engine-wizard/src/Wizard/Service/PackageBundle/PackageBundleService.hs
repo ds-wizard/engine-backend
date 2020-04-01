@@ -36,7 +36,7 @@ import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
-import Wizard.Util.Logger (logWarnU, msg)
+import Wizard.Util.Logger
 
 exportPackageBundle :: String -> AppContextM PackageBundleDTO
 exportPackageBundle pbId = do
@@ -76,10 +76,10 @@ importAndConvertPackageBundle contentS =
       case eitherDecode . encode $ encodedPb of
         Right pb -> importPackageBundle pb
         Left error -> do
-          logWarnU $ msg _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
+          logWarnU _CMP_SERVICE ("Couln't deserialize migrated PackageBundle content (" ++ show error ++ ")")
           throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     Left error -> do
-      logWarnU $ msg _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
+      logWarnU _CMP_SERVICE ("Couln't deserialize PackageBundle content (" ++ show error ++ ")")
       throwError . UserError $ _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
 
 importPackageBundle :: PackageBundleDTO -> AppContextM [PackageSimpleDTO]

@@ -97,23 +97,23 @@ createPreview qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability._co", "TemporallyDocumentDurability")]
   let repliesHash = hash (qtn ^. replies)
-  logDebugU $ msg _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
+  logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
   case filter (\d -> d ^. state == DoneDocumentState) matchingDocs of
     (doc:_) -> do
-      logInfoU $ msg _CMP_SERVICE "Retrieving from cache"
+      logInfoU _CMP_SERVICE "Retrieving from cache"
       content <- findDocumentContent (U.toString $ doc ^. uuid)
       return (doc, content)
     [] ->
       case filter (\d -> d ^. state == QueuedDocumentState || d ^. state == InProgressDocumentState) matchingDocs of
         (doc:_) -> do
-          logInfoU $ msg _CMP_SERVICE "Waiting to generation"
+          logInfoU _CMP_SERVICE "Waiting to generation"
           return (doc, BS.empty)
         _ -> createNewDoc qtn
   where
     createNewDoc :: Questionnaire -> AppContextM (Document, BS.ByteString)
     createNewDoc qtn = do
-      logInfoU $ msg _CMP_SERVICE "Generating new preview"
+      logInfoU _CMP_SERVICE "Generating new preview"
       case (qtn ^. templateUuid, qtn ^. formatUuid) of
         (Just tUuid, Just fUuid) -> do
           let reqDto =

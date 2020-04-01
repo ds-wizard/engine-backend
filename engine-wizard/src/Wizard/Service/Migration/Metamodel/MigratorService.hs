@@ -29,7 +29,7 @@ import qualified Wizard.Service.Migration.Metamodel.Migrator.PackageMigrator as 
 import qualified Wizard.Service.Package.PackageMapper as PackageMapper
 import Wizard.Util.BSONtoJSON (mapBSONDocumentToJSONObject)
 import Wizard.Util.List (foldEither)
-import Wizard.Util.Logger (logError, logInfo, msg)
+import Wizard.Util.Logger
 
 migratePackageBundle :: Value -> AppContextM Value
 migratePackageBundle value =
@@ -127,27 +127,26 @@ migrateOutdatedModels collection dtoMapper migrateFn = do
 -- --------------------------------
 -- LOGGER
 -- --------------------------------
-logMigrationStarted collection = logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): started"
+logMigrationStarted collection = logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): started"
 
 logMigrationMigrationApplied collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): migration applied"
+  logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): migration applied"
 
 logMigrationStartConvertingToBson collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): start converting to BSON"
+  logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): start converting to BSON"
 
 logMigrationConvertedToBson collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): converted to BSON"
+  logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): converted to BSON"
 
-logMigrationCompleted collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): completed"
+logMigrationCompleted collection = logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): completed"
 
 logMigrationNotApplied collection =
-  logInfo . msg _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): nothing to convert"
+  logInfo _CMP_SERVICE $ "Metamodel Migration ('" ++ collection ++ "'): nothing to convert"
 
 logMigrationFailedToConvertToBson collection error = do
-  logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON collection
-  logError . msg _CMP_SERVICE . show $ error
+  logError _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON collection
+  logError _CMP_SERVICE . show $ error
 
 logMigrationFailedToMigrateCollection collection error = do
-  logError . msg _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection
-  logError . msg _CMP_SERVICE . show $ error
+  logError _CMP_SERVICE $ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection
+  logError _CMP_SERVICE . show $ error

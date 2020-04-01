@@ -9,7 +9,7 @@ import Data.Yaml (decodeFileEither)
 import LensesConfig hiding (items)
 import Wizard.Constant.Component
 import Wizard.Model.Context.AppContext
-import Wizard.Util.Logger (logWarnU, msg)
+import Wizard.Util.Logger
 
 getIntegrationConfig :: String -> AppContextM (M.Map String String)
 getIntegrationConfig sectionName = do
@@ -19,5 +19,5 @@ getIntegrationConfig sectionName = do
   case eIntConfig of
     Right intConfig -> return . fromMaybe M.empty . M.lookup sectionName $ intConfig
     Left error -> do
-      logWarnU $ msg _CMP_SERVICE ("Failed to load integration configuration (error: " ++ show error ++ ")")
+      logWarnU _CMP_SERVICE ("Failed to load integration configuration (error: " ++ show error ++ ")")
       return M.empty

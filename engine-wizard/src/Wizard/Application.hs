@@ -33,10 +33,10 @@ runApplication = do
   forever . runStdoutLoggingT $ do
     shutdownFlag <- liftIO newEmptyMVar
     liftIO $ putStrLn asciiLogo
-    logInfo $ msg _CMP_SERVER "started"
+    logInfo _CMP_SERVER "started"
     hLoadConfig serverConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
-        logInfo $ "ENVIRONMENT: set to " ++ show (serverConfig ^. general . environment)
+        logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
         dbPool <- connectDB serverConfig
         msgChannel <- connectMQ serverConfig
         httpClientManager <- setupHttpClientManager serverConfig
