@@ -15,7 +15,7 @@ runAppContextWithBaseContext function baseContext = do
   traceUuid <- liftIO generateUuid
   let appContext =
         AppContext
-          { _appContextApplicationConfig = baseContext ^. appConfig
+          { _appContextApplicationConfig = baseContext ^. serverConfig
           , _appContextLocalization = baseContext ^. localization
           , _appContextBuildInfoConfig = baseContext ^. buildInfoConfig
           , _appContextPool = baseContext ^. pool

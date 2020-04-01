@@ -4,12 +4,14 @@ import Control.Monad.Except (runExceptT)
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
 import Servant
   ( Header
   , Headers
-  , ServantErr(..)
+  , ServerError(..)
   , addHeader
+  , err302
   , err400
   , err401
   , err401
@@ -40,13 +42,13 @@ import Shared.Util.Uuid
 runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -63,13 +65,13 @@ runInUnauthService function = do
 runInAuthService :: Organization -> AppContextM a -> BaseContextM a
 runInAuthService organization function = do
   traceUuid <- liftIO generateUuid
-  appConfig <- asks _baseContextAppConfig
+  serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = appConfig
+          { _appContextApplicationConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -121,7 +123,18 @@ addTraceUuidHeader result = do
   traceUuid <- asks _appContextTraceUuid
   return $ addHeader (U.toString traceUuid) result
 
-sendError :: AppError -> BaseContextM ServantErr
+sendError :: AppError -> BaseContextM ServerError
+sendError AcceptedError =
+  return $
+  ServerError
+    { errHTTPCode = 202
+    , errReasonPhrase = "Accepted"
+    , errBody = encode AcceptedErrorDTO
+    , errHeaders = [contentTypeHeaderJSON]
+    }
+sendError (FoundError url) =
+  return $
+  err302 {errBody = encode $ FoundErrorDTO url, errHeaders = [contentTypeHeaderJSON, ("Location", BS.pack url)]}
 sendError (ValidationError formErrorRecords fieldErrorRecords) = do
   ls <- asks _baseContextLocalization
   let formErrors = fmap (locale ls) formErrorRecords
@@ -148,7 +161,18 @@ sendError (GeneralServerError errorMessage) = do
   logError errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
 
-sendErrorDTO :: ErrorDTO -> BaseContextM ServantErr
+sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
+sendErrorDTO AcceptedErrorDTO =
+  return $
+  ServerError
+    { errHTTPCode = 202
+    , errReasonPhrase = "Accepted"
+    , errBody = encode AcceptedErrorDTO
+    , errHeaders = [contentTypeHeaderJSON]
+    }
+sendErrorDTO (FoundErrorDTO url) =
+  return $
+  err302 {errBody = encode $ FoundErrorDTO url, errHeaders = [contentTypeHeaderJSON, ("Location", BS.pack url)]}
 sendErrorDTO (ValidationErrorDTO formErrors fieldErrors) =
   return $ err400 {errBody = encode $ ValidationErrorDTO formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (UserErrorDTO message) =

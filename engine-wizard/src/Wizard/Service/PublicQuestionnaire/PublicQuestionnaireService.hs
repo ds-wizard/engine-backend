@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Error.Error
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.PublicPackage.PublicPackageDAO
 import Wizard.Localization.Messages.Public
@@ -37,6 +38,8 @@ getPublicQuestionnaire = do
           , _questionnaireDetailDTOState = QSDefault
           , _questionnaireDetailDTOPackage = toSimpleDTO . toPackage $ package
           , _questionnaireDetailDTOSelectedTagUuids = []
+          , _questionnaireDetailDTOTemplateUuid = Nothing
+          , _questionnaireDetailDTOFormatUuid = Nothing
           , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
           , _questionnaireDetailDTOReplies = []
           , _questionnaireDetailDTOLabels = []
@@ -50,4 +53,4 @@ getPublicQuestionnaire = do
 -- PRIVATE
 -- --------------------------------
 checkIfPublicQuestionnaireIsEnabled =
-  checkIfFeatureIsEnabled "PublicQuestionnaire" (general . publicQuestionnaireEnabled)
+  checkIfAppFeatureIsEnabled "PublicQuestionnaire" (questionnaire . publicQuestionnaire . enabled)

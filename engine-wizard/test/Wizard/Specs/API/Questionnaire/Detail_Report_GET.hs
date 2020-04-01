@@ -68,7 +68,7 @@ create_test_200 title appContext qtn authHeader =
     let reqHeaders = reqHeadersT authHeader
      -- GIVEN: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toReportDTO report1
     let expBody = encode expDto
      -- AND: Run migrations
@@ -92,7 +92,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
   it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
      -- GIVEN: Prepare request
    do
@@ -100,7 +100,7 @@ test_403 appContext = do
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations

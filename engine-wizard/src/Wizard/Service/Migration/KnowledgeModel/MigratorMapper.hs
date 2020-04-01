@@ -7,12 +7,12 @@ import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 
 toDTO :: MigratorState -> MigratorStateDTO
@@ -27,9 +27,12 @@ toDTO ms =
 
 toMigrationStateDTO :: MigrationState -> MigrationStateDTO
 toMigrationStateDTO RunningState = RunningStateDTO
-toMigrationStateDTO (ConflictState conflict) = ConflictStateDTO conflict
+toMigrationStateDTO (ConflictState conflict) = ConflictStateDTO (toConflictDTO conflict)
 toMigrationStateDTO ErrorState = ErrorStateDTO
 toMigrationStateDTO CompletedState = CompletedStateDTO
+
+toConflictDTO :: Conflict -> ConflictDTO
+toConflictDTO (CorrectorConflict event) = CorrectorConflictDTO (toDTOFn event)
 
 fromDetailDTO :: MigratorStateDetailDTO -> MigratorState
 fromDetailDTO dto =
@@ -47,9 +50,12 @@ fromDetailDTO dto =
 
 fromMigrationStateDTO :: MigrationStateDTO -> MigrationState
 fromMigrationStateDTO RunningStateDTO = RunningState
-fromMigrationStateDTO (ConflictStateDTO conflict) = ConflictState conflict
+fromMigrationStateDTO (ConflictStateDTO conflict) = ConflictState (fromConflictDTO conflict)
 fromMigrationStateDTO ErrorStateDTO = ErrorState
 fromMigrationStateDTO CompletedStateDTO = CompletedState
+
+fromConflictDTO :: ConflictDTO -> Conflict
+fromConflictDTO (CorrectorConflictDTO event) = CorrectorConflict (fromDTOFn event)
 
 fromCreateDTO :: BranchWithEvents -> Package -> [Event] -> String -> [Event] -> KnowledgeModel -> MigratorState
 fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km =

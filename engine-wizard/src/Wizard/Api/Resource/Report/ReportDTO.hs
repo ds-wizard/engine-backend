@@ -7,6 +7,7 @@ import GHC.Generics
 data ReportDTO =
   ReportDTO
     { _reportDTOUuid :: U.UUID
+    , _reportDTOTotalReport :: TotalReportDTO
     , _reportDTOChapterReports :: [ChapterReportDTO]
     , _reportDTOCreatedAt :: UTCTime
     , _reportDTOUpdatedAt :: UTCTime
@@ -14,7 +15,16 @@ data ReportDTO =
   deriving (Show, Generic)
 
 instance Eq ReportDTO where
-  a == b = _reportDTOUuid a == _reportDTOUuid b && _reportDTOChapterReports a == _reportDTOChapterReports b
+  a == b =
+    _reportDTOUuid a == _reportDTOUuid b &&
+    _reportDTOTotalReport a == _reportDTOTotalReport b && _reportDTOChapterReports a == _reportDTOChapterReports b
+
+data TotalReportDTO =
+  TotalReportDTO
+    { _totalReportDTOIndications :: [IndicationDTO]
+    , _totalReportDTOMetrics :: [MetricSummaryDTO]
+    }
+  deriving (Show, Eq, Generic)
 
 data ChapterReportDTO =
   ChapterReportDTO

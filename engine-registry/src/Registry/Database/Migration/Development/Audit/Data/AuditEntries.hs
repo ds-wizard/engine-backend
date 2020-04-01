@@ -6,9 +6,9 @@ import Data.Time
 
 import LensesConfig
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Database.Migration.Development.Package.Data.Packages
 import Registry.Database.Migration.Development.Statistics.Data.InstanceStatistics
 import Registry.Model.Audit.AuditEntry
+import Shared.Database.Migration.Development.Package.Data.Packages
 
 listPackagesAuditEntry :: AuditEntry
 listPackagesAuditEntry =

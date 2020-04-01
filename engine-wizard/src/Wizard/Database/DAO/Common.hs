@@ -148,6 +148,12 @@ createDeleteFilesFn bucketName = do
   files <- runDB action
   forM_ (fmap deleteFile files) runDB
 
+createDeleteFilesByFn bucketName queryParams = do
+  bucket <- runDB $ openBucket bucketName
+  let action = findFile bucket queryParams
+  files <- runDB action
+  forM_ (fmap deleteFile files) runDB
+
 createDeleteFileByFn bucketName paramValue = do
   bucket <- runDB $ openBucket bucketName
   let action = fetchFile bucket ["filename" =: paramValue]

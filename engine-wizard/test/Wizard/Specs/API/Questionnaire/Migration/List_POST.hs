@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Questionnaire.Migration.List_POST
-  ( list_post
+  ( list_POST
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -15,13 +15,11 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -35,8 +33,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires/{qtnUuid}/migrations
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
-list_post appContext =
+list_POST :: AppContext -> SpecWith Application
+list_POST appContext =
   describe "POST /questionnaires/{qtnUuid}/migrations" $ do
     test_201 appContext
     test_400 appContext
@@ -53,11 +51,7 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrat
 
 reqHeadersT authHeader = [authHeader, reqCtHeader]
 
-reqDto =
-  MigratorStateCreateDTO
-    { _migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-    , _migratorStateCreateDTOTargetTagUuids = questionnaire4Upgraded ^. selectedTagUuids
-    }
+reqDto = migratorStateCreate
 
 reqBody = encode reqDto
 
@@ -131,7 +125,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire4 ^. uuid
 -- ----------------------------------------------------
 test_403 appContext = do
   createNoPermissionTest
-    (appContext ^. applicationConfig)
+    (appContext ^. serverConfig)
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [reqCtHeader]

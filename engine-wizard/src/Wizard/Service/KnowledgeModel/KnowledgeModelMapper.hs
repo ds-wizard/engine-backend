@@ -4,8 +4,8 @@ import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 
 import LensesConfig
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 
 toKnowledgeModelDTO :: KnowledgeModel -> KnowledgeModelDTO
 toKnowledgeModelDTO km =

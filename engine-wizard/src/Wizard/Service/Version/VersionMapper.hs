@@ -7,9 +7,9 @@ import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
-import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Config.AppConfig
 import Wizard.Service.Package.PackageUtils
 
 fromBranch :: BranchWithEvents -> PackageWithEvents -> BranchWithEvents
@@ -20,7 +20,7 @@ fromPackage ::
   -> VersionDTO
   -> Maybe String
   -> Maybe String
-  -> OrganizationDTO
+  -> AppConfigOrganization
   -> String
   -> [Event]
   -> UTCTime

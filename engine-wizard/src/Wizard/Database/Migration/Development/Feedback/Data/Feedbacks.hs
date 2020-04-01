@@ -7,8 +7,8 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Model.Feedback.Feedback
 
 feedback1 :: Feedback

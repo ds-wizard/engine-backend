@@ -21,5 +21,5 @@ list_current_DELETE mTokenHeader qtnUuid =
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "QTN_PERM"
-      finishQuestionnaireMigration qtnUuid
+      cancelQuestionnaireMigration qtnUuid
       return NoContent

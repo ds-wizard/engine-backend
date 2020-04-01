@@ -6,7 +6,6 @@ import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import Data.Either
 import Data.Maybe
-import Data.Time
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
@@ -20,27 +19,28 @@ import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeJM ()
-import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.User.User
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserService
 import Wizard.Util.List (elems)
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.User.Detail_DELETE
 import Wizard.Specs.API.User.Detail_Password_Hash_PUT
 import Wizard.Specs.API.User.Detail_Password_PUT
 import Wizard.Specs.Common
 
 userAPI appContext =
   with (startWebApp appContext) $ do
-    let appConfig = appContext ^. applicationConfig
+    let serverCfg = appContext ^. serverConfig
     describe "USER API Spec" $
       -- ------------------------------------------------------------------------
       -- GET /users
@@ -65,7 +65,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
       -- ------------------------------------------------------------------------
       -- POST /users
       -- ------------------------------------------------------------------------
@@ -94,8 +94,8 @@ userAPI appContext =
           liftIO $ status `shouldBe` expStatus
           liftIO $ (expHeaders `elems` headers) `shouldBe` True
           -- AND: Compare state in DB with expectation
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
           liftIO $ (userFromDb ^. role) `shouldBe` fromJust (reqDto ^. role)
           -- THEN: Check created action Key
@@ -107,17 +107,18 @@ userAPI appContext =
           liftIO $ (actionKey ^. userId) `shouldBe` (userFromDb ^. uuid)
           liftIO $ (actionKey ^. aType) `shouldBe` RegistrationActionKey
           liftIO $ Prelude.length (actionKey ^. hash) > 0 `shouldBe` True
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Albert" } |] "surname"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { firstName: "Albert" } |] "lastName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
           -- GIVEN: Prepare request
          do
           let reqHeaders = [reqAuthHeader, reqCtHeader]
           let reqDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "Albert"
-                  , _userCreateDTOSurname = "Einstein"
+                  { _userCreateDTOFirstName = "Albert"
+                  , _userCreateDTOLastName = "Einstein"
                   , _userCreateDTOEmail = "albert.einstein@example.com"
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTOAffiliation = Nothing
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           let reqBody = encode reqDto
@@ -178,7 +179,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -192,12 +193,7 @@ userAPI appContext =
       describe "PUT /users/current" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current"
-        let reqDto =
-              UserProfileChangeDTO
-                { _userProfileChangeDTOName = "EDITED: Isaac"
-                , _userProfileChangeDTOSurname = "EDITED: Newton"
-                , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
-                }
+        let reqDto = userIsaacProfileChange
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
           -- GIVEN: Prepare request
@@ -208,7 +204,8 @@ userAPI appContext =
           let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
           let expDto =
                 toDTO $
-                ((userAlbert & name .~ (reqDto ^. name)) & surname .~ (reqDto ^. name)) & email .~ (reqDto ^. email)
+                ((userAlbert & firstName .~ (reqDto ^. firstName)) & lastName .~ (reqDto ^. firstName)) &
+                email .~ (reqDto ^. email)
           let expBody = encode expDto
           -- WHEN: Call API
           response <- request reqMethod reqUrl reqHeaders reqBody
@@ -221,10 +218,10 @@ userAPI appContext =
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "firstName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
          -- GIVEN: Prepare request
          do
@@ -232,18 +229,20 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "John"
-                  , _userCreateDTOSurname = "Doe"
+                  { _userCreateDTOFirstName = "John"
+                  , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTOAffiliation = Nothing
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
           let reqDto =
                 UserProfileChangeDTO
-                  { _userProfileChangeDTOName = "EDITED: Isaac"
-                  , _userProfileChangeDTOSurname = "EDITED: Newton"
+                  { _userProfileChangeDTOFirstName = "EDITED: Isaac"
+                  , _userProfileChangeDTOLastName = "EDITED: Newton"
                   , _userProfileChangeDTOEmail = "john.doe@example.com"
+                  , _userProfileChangeDTOAffiliation = Nothing
                   }
           let reqBody = encode reqDto
            -- GIVEN: Prepare expectation
@@ -267,15 +266,7 @@ userAPI appContext =
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
         let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqDto =
-              UserChangeDTO
-                { _userChangeDTOUuid = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                , _userChangeDTOName = "EDITED: Isaac"
-                , _userChangeDTOSurname = "EDITED: Newton"
-                , _userChangeDTOEmail = "isaac.newton@example-edited.com"
-                , _userChangeDTORole = "ADMIN"
-                , _userChangeDTOActive = True
-                }
+        let reqDto = userIsaacChange
         let reqBody = encode reqDto
         it "HTTP 200 OK" $
           -- GIVEN: Prepare expectation
@@ -291,18 +282,18 @@ userAPI appContext =
           liftIO $ status `shouldBe` expStatus
           liftIO $ (expHeaders `elems` headers) `shouldBe` True
           let (Right resBody) = eitherDecode body :: Either String UserDTO
-          liftIO $ (resBody ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (resBody ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (resBody ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (resBody ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (resBody ^. email) `shouldBe` (reqDto ^. email)
           -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherUser) `shouldBe` True
           let (Right userFromDb) = eitherUser
           liftIO $ (userFromDb ^. uuid) `shouldBe` (reqDto ^. uuid)
-          liftIO $ (userFromDb ^. name) `shouldBe` (reqDto ^. name)
-          liftIO $ (userFromDb ^. surname) `shouldBe` (reqDto ^. surname)
+          liftIO $ (userFromDb ^. firstName) `shouldBe` (reqDto ^. firstName)
+          liftIO $ (userFromDb ^. lastName) `shouldBe` (reqDto ^. lastName)
           liftIO $ (userFromDb ^. email) `shouldBe` (reqDto ^. email)
           liftIO $ (userFromDb ^. role) `shouldBe` (reqDto ^. role)
-        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "name"
+        createInvalidJsonTest reqMethod reqUrl [HJ.json| { uuid: "91a64ea5-55e1-4445-918d-e3f5534362f4" } |] "firstName"
         it "HTTP 400 BAD REQUEST if email is already registered" $
          -- GIVEN: Prepare request
          do
@@ -310,20 +301,22 @@ userAPI appContext =
           let johnUuid = fromJust . U.fromString $ "cb877c12-2654-41ae-a7b3-6f444d57af7f"
           let johnDto =
                 UserCreateDTO
-                  { _userCreateDTOName = "John"
-                  , _userCreateDTOSurname = "Doe"
+                  { _userCreateDTOFirstName = "John"
+                  , _userCreateDTOLastName = "Doe"
                   , _userCreateDTOEmail = "john.doe@example.com"
-                  , _userCreateDTORole = Just "ADMIN"
+                  , _userCreateDTOAffiliation = Nothing
+                  , _userCreateDTORole = Just _USER_ROLE_ADMIN
                   , _userCreateDTOPassword = "password"
                   }
           runInContextIO (createUserByAdminWithUuid johnDto johnUuid) appContext
           let reqDto =
                 UserChangeDTO
                   { _userChangeDTOUuid = johnUuid
-                  , _userChangeDTOName = "EDITED: Isaac"
-                  , _userChangeDTOSurname = "EDITED: Newton"
+                  , _userChangeDTOFirstName = "EDITED: Isaac"
+                  , _userChangeDTOLastName = "EDITED: Newton"
                   , _userChangeDTOEmail = "albert.einstein@example.com"
-                  , _userChangeDTORole = "ADMIN"
+                  , _userChangeDTOAffiliation = Nothing
+                  , _userChangeDTORole = _USER_ROLE_ADMIN
                   , _userChangeDTOActive = True
                   }
           let reqBody = encode reqDto
@@ -339,7 +332,7 @@ userAPI appContext =
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest appConfig reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
+        createNoPermissionTest serverCfg reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
         createNotFoundTest
           reqMethod
           "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -353,7 +346,7 @@ userAPI appContext =
       describe "PUT /users/current/password" $ do
         let reqMethod = methodPut
         let reqUrl = "/users/current/password"
-        let reqDto = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
+        let reqDto = userPassword
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
           -- GIVEN: Prepare request
@@ -388,20 +381,12 @@ userAPI appContext =
         let reqMethod = methodPut
         let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
         let reqHeaders = [reqCtHeader]
-        let reqDto = UserStateDTO {_userStateDTOActive = True}
+        let reqDto = userState
         let reqBody = encode reqDto
         it "HTTP 204 NO CONTENT" $
           -- AND: Prepare DB
          do
-          let actionKey =
-                ActionKey
-                  { _actionKeyUuid = fromJust . U.fromString $ "23f934f2-05b2-45d3-bce9-7675c3f3e5e9"
-                  , _actionKeyUserId = fromJust . U.fromString $ "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-                  , _actionKeyAType = RegistrationActionKey
-                  , _actionKeyHash = "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-                  , _actionKeyCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-                  }
-          eitherActionKey <- runInContextIO (insertActionKey actionKey) appContext
+          eitherActionKey <- runInContextIO (insertActionKey regActionKey) appContext
           -- AND: Prepare expectation
           let expStatus = 204
           let expHeaders = resCorsHeaders
@@ -430,37 +415,4 @@ userAPI appContext =
           reqBody
           "user"
           "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-      -- ------------------------------------------------------------------------
-      -- DELETE /users/{userId}
-      -- ------------------------------------------------------------------------
-      describe "DELETE /users/{userId}" $
-        -- GIVEN: Prepare request
-       do
-        let reqMethod = methodDelete
-        let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
-        let reqHeaders = [reqAuthHeader, reqCtHeader]
-        let reqBody = ""
-        it "HTTP 204 NO CONTENT" $
-          -- GIVEN: Prepare expectation
-         do
-          let expStatus = 204
-          let expHeaders = resCorsHeaders
-          -- WHEN: Call API
-          response <- request reqMethod reqUrl reqHeaders reqBody
-          -- THEN: Find a result
-          eitherUser <- runInContextIO (findUserById "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66") appContext
-          -- AND: Compare response with expectation
-          let responseMatcher =
-                ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
-          response `shouldRespondWith` responseMatcher
-          -- AND: Compare state in DB with expectation
-          liftIO $ (isRight eitherUser) `shouldBe` False
-        createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest appConfig reqMethod reqUrl [] "" "UM_PERM"
-        createNotFoundTest
-          reqMethod
-          "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-          reqHeaders
-          reqBody
-          "user"
-          "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+      detail_delete appContext

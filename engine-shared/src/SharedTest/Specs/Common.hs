@@ -3,8 +3,8 @@ module SharedTest.Specs.Common where
 import Control.Monad.Logger
 
 import Shared.Api.Resource.Error.ErrorDTO
-import Shared.Localization.Locale
 import Shared.Model.Localization.LocaleRecord
+import Shared.Util.String
 
 fakeLogState :: String -> IO ()
 fakeLogState _ = return ()

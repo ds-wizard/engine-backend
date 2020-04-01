@@ -19,4 +19,4 @@ xQtnCountHeaderName :: String
 xQtnCountHeaderName = "x-qtn-count"
 
 contentTypeHeaderJSON :: (HeaderName, BS.ByteString)
-contentTypeHeaderJSON = ("Content-Type", "application/json;charset=utf-8")
+contentTypeHeaderJSON = ("Content-Type", "application/json")

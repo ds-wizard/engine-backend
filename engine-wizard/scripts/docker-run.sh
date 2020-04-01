@@ -18,6 +18,9 @@ if [[ $ENABLE_CRON == "1" ]]; then
         fi
     fi
 
+    # Set cron for document housekeeping
+    echo "0 */4 * * *   root   wget --header \"Authorization: Bearer $SERVICE_TOKEN\" \"$API_URL/documents/housekeeping\"" > /etc/cron.d/documents-housekeeping
+
     # Prepare cron jobs (under root's crontab)
     chmod 644 /etc/cron.d/* 2> /dev/null
     crontab /etc/cron.d/* 2> /dev/null

@@ -10,13 +10,23 @@ type Role = String
 
 type Email = String
 
+_USER_SOURCE_INTERNAL = "internal"
+
+_USER_ROLE_ADMIN = "admin"
+
+_USER_ROLE_DATA_STEWARD = "dataSteward"
+
+_USER_ROLE_RESEARCHER = "researcher"
+
 data User =
   User
     { _userUuid :: UUID
-    , _userName :: String
-    , _userSurname :: String
+    , _userFirstName :: String
+    , _userLastName :: String
     , _userEmail :: Email
     , _userPasswordHash :: String
+    , _userAffiliation :: Maybe String
+    , _userSources :: [String]
     , _userRole :: Role
     , _userPermissions :: [Permission]
     , _userActive :: Bool
@@ -28,8 +38,10 @@ data User =
 instance Eq User where
   a == b =
     _userUuid a == _userUuid b &&
-    _userName a == _userName b &&
-    _userSurname a == _userSurname b &&
+    _userFirstName a == _userFirstName b &&
+    _userLastName a == _userLastName b &&
     _userEmail a == _userEmail b &&
     _userPasswordHash a == _userPasswordHash b &&
+    _userAffiliation a == _userAffiliation b &&
+    _userSources a == _userSources b &&
     _userRole a == _userRole b && _userPermissions a == _userPermissions b && _userActive a == _userActive b

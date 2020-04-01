@@ -51,7 +51,7 @@ reqDtoT doc =
     { _documentCreateDTOName = doc ^. name
     , _documentCreateDTOQuestionnaireUuid = doc ^. questionnaireUuid
     , _documentCreateDTOTemplateUuid = doc ^. templateUuid
-    , _documentCreateDTOFormat = doc ^. format
+    , _documentCreateDTOFormatUuid = doc ^. formatUuid
     }
 
 reqBody = ""
@@ -102,13 +102,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (encode $ re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest
-    (appContext ^. applicationConfig)
-    reqMethod
-    reqUrl
-    [reqCtHeader]
-    (encode $ reqDtoT doc1)
-    "DMP_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
   it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
      -- GIVEN: Prepare request
    do

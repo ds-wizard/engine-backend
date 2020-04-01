@@ -9,9 +9,11 @@ import Wizard.Model.User.User
 data UserDTO =
   UserDTO
     { _userDTOUuid :: UUID
-    , _userDTOName :: String
-    , _userDTOSurname :: String
+    , _userDTOFirstName :: String
+    , _userDTOLastName :: String
     , _userDTOEmail :: Email
+    , _userDTOAffiliation :: Maybe String
+    , _userDTOSources :: [String]
     , _userDTORole :: Role
     , _userDTOPermissions :: [Permission]
     , _userDTOActive :: Bool

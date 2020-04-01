@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAccessibilityJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO

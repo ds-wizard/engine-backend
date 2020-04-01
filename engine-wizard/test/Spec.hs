@@ -1,5 +1,6 @@
 module Main where
 
+import Control.Concurrent.MVar
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
@@ -7,14 +8,14 @@ import qualified Data.UUID as U
 import Test.Hspec
 
 import LensesConfig
+import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Constant.Resource
 import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Config.ApplicationConfigService
-import Wizard.Service.Config.BuildInfoConfigService
+import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.BookReference.APISpec
@@ -27,7 +28,6 @@ import Wizard.Specs.API.KnowledgeModel.APISpec
 import Wizard.Specs.API.Level.APISpec
 import Wizard.Specs.API.Metric.APISpec
 import Wizard.Specs.API.MigrationAPISpec
-import Wizard.Specs.API.Organization.APISpec
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
@@ -38,9 +38,9 @@ import Wizard.Specs.API.UserAPISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
-import Wizard.Specs.Localization.LocaleSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
+import Wizard.Specs.Service.Config.AppConfigValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
@@ -50,7 +50,6 @@ import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
-import Wizard.Specs.Service.Organization.OrganizationValidationSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
@@ -72,18 +71,19 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig applicationConfigFileTest getApplicationConfig $ \appConfig ->
+  hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
-      putStrLn $ "ENVIRONMENT: set to " `mappend` show (appConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool appConfig
+      putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
+      dbPool <- createDatabaseConnectionPool serverConfig
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel appConfig
+      msgChannel <- createMessagingChannel serverConfig
       putStrLn "MESSAGING: connected"
-      httpClientManager <- createHttpClientManager appConfig
+      httpClientManager <- createHttpClientManager serverConfig
       putStrLn "HTTP_CLIENT: created"
+      shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
-              { _appContextApplicationConfig = appConfig
+              { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
               , _appContextPool = dbPool
@@ -91,6 +91,7 @@ prepareWebApp runCallback =
               , _appContextHttpClientManager = httpClientManager
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
+              , _appContextShutdownFlag = shutdownFlag
               }
       runCallback appContext
 
@@ -103,9 +104,9 @@ main =
            describe "INTEGRATION" $ describe "Http" $ do
              describe "Common" commonResponseMapperSpec
              describe "Typehint" typehintResponseMapperSpec
-           describe "LOCALIZATION" localeSpec
            describe "SERVICE" $ do
              describe "Branch" branchValidationSpec
+             describe "Config" appConfigValidationSpec
              describe "KnowledgeModel" $ do
                describe "Compilator" $ do
                  describe "Modifier" modifierSpec
@@ -118,7 +119,6 @@ main =
                describe "Questionnaire" $ describe "Migrator" $ do
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
-             describe "Organization" organizationValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec
@@ -135,7 +135,6 @@ main =
              levelAPI appContext
              metricAPI appContext
              migratorAPI appContext
-             organizationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
              questionnaireMigrationAPI appContext

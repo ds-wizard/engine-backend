@@ -5,6 +5,7 @@ module Wizard.Integration.Http.Registry.Runner
 
 import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
+import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 
 import LensesConfig
@@ -14,18 +15,26 @@ import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Localization.Messages.Public
-import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Service.Config.AppConfigService
 
-retrievePackages :: AppConfigRegistry -> InstanceStatistics -> AppContextM [PackageSimpleIDTO]
-retrievePackages registryConfig iStat =
-  if registryConfig ^. enabled
-    then runRequest (toRetrievePackagesRequest registryConfig iStat) toRetrievePackagesResponse
+retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleIDTO]
+retrievePackages iStat = do
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  if appConfig ^. knowledgeModelRegistry . enabled
+    then runRequest
+           (toRetrievePackagesRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) iStat)
+           toRetrievePackagesResponse
     else return []
 
-retrievePackageBundleById :: AppConfigRegistry -> String -> AppContextM BSL.ByteString
-retrievePackageBundleById registryConfig pkgId =
-  if registryConfig ^. enabled
-    then runRequest (toRetrievePackageBundleByIdRequest registryConfig pkgId) toRetrievePackageBundleByIdResponse
+retrievePackageBundleById :: String -> AppContextM BSL.ByteString
+retrievePackageBundleById pkgId = do
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  if appConfig ^. knowledgeModelRegistry . enabled
+    then runRequest
+           (toRetrievePackageBundleByIdRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) pkgId)
+           toRetrievePackageBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"

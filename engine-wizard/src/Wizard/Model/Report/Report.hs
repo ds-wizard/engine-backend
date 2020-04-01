@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 data Report =
   Report
     { _reportUuid :: U.UUID
+    , _reportTotalReport :: TotalReport
     , _reportChapterReports :: [ChapterReport]
     , _reportCreatedAt :: UTCTime
     , _reportUpdatedAt :: UTCTime
@@ -13,7 +14,16 @@ data Report =
   deriving (Show)
 
 instance Eq Report where
-  a == b = _reportUuid a == _reportUuid b && _reportChapterReports a == _reportChapterReports b
+  a == b =
+    _reportUuid a == _reportUuid b &&
+    _reportTotalReport a == _reportTotalReport b && _reportChapterReports a == _reportChapterReports b
+
+data TotalReport =
+  TotalReport
+    { _totalReportIndications :: [Indication]
+    , _totalReportMetrics :: [MetricSummary]
+    }
+  deriving (Show, Eq)
 
 data ChapterReport =
   ChapterReport

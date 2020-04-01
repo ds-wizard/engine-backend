@@ -3,32 +3,32 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
-import Registry.Api.Resource.Event.AnswerEventDTO
-import Registry.Api.Resource.Event.ChapterEventDTO
-import Registry.Api.Resource.Event.ExpertEventDTO
-import Registry.Api.Resource.Event.IntegrationEventDTO
-import Registry.Api.Resource.Event.KnowledgeModelEventDTO
-import Registry.Api.Resource.Event.MoveEventDTO
-import Registry.Api.Resource.Event.QuestionEventDTO
-import Registry.Api.Resource.Event.ReferenceEventDTO
-import Registry.Api.Resource.Event.TagEventDTO
-import Registry.Api.Resource.Info.InfoDTO
-import Registry.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
-import Registry.Api.Resource.Package.PackageDTO
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.Api.Resource.PackageBundle.PackageBundleDTO
 import Registry.Model.ActionKey.ActionKey
-import Registry.Model.Config.AppConfig
-import Registry.Model.Config.BuildInfoConfig
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
 import Registry.Model.Statistics.InstanceStatistics
+import Shared.Api.Resource.Event.AnswerEventDTO
+import Shared.Api.Resource.Event.ChapterEventDTO
+import Shared.Api.Resource.Event.ExpertEventDTO
+import Shared.Api.Resource.Event.IntegrationEventDTO
+import Shared.Api.Resource.Event.KnowledgeModelEventDTO
+import Shared.Api.Resource.Event.MoveEventDTO
+import Shared.Api.Resource.Event.QuestionEventDTO
+import Shared.Api.Resource.Event.ReferenceEventDTO
+import Shared.Api.Resource.Event.TagEventDTO
+import Shared.Api.Resource.Info.InfoDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -51,15 +51,15 @@ import Shared.Model.PackageBundle.PackageBundle
 makeFields ''ActionKey
 
 -- Model / Config
-makeFields ''AppConfig
+makeFields ''ServerConfig
 
-makeFields ''AppConfigGeneral
+makeFields ''ServerConfigGeneral
 
-makeFields ''AppConfigDatabase
+makeFields ''ServerConfigDatabase
 
-makeFields ''AppConfigMail
+makeFields ''ServerConfigMail
 
-makeFields ''AppConfigAnalytics
+makeFields ''ServerConfigAnalytics
 
 makeFields ''BuildInfoConfig
 

@@ -3,6 +3,7 @@ module Wizard.Api.Api where
 import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
+import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.Config.Api
@@ -14,7 +15,6 @@ import Wizard.Api.Handler.KnowledgeModel.Api
 import Wizard.Api.Handler.Level.Api
 import Wizard.Api.Handler.Metric.Api
 import Wizard.Api.Handler.Migration.Api
-import Wizard.Api.Handler.Organization.Api
 import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.Template.Api
@@ -26,6 +26,7 @@ import Wizard.Model.Context.BaseContext
 
 type AppAPI
    = ActionKeyAPI
+     :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
      :<|> ConfigAPI
@@ -37,7 +38,6 @@ type AppAPI
      :<|> LevelAPI
      :<|> MetricAPI
      :<|> MigrationAPI
-     :<|> OrganizationAPI
      :<|> PackageAPI
      :<|> QuestionnaireAPI
      :<|> TemplateAPI
@@ -51,14 +51,14 @@ appApi = Proxy
 
 appServer :: ServerT AppAPI BaseContextM
 appServer =
-  actionKeyServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|> documentServer :<|> feedbackServer :<|>
+  actionKeyServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|> documentServer :<|>
+  feedbackServer :<|>
   ioServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>
   levelServer :<|>
   metricServer :<|>
   migrationServer :<|>
-  organizationServer :<|>
   packageServer :<|>
   questionnaireServer :<|>
   templateServer :<|>

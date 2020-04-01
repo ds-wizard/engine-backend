@@ -14,10 +14,10 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -118,7 +118,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

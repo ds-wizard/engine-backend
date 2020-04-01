@@ -11,6 +11,10 @@ instance ToBSON DocumentState
 
 instance FromBSON DocumentState
 
+instance ToBSON DocumentDurability
+
+instance FromBSON DocumentDurability
+
 instance ToBSON DocumentMetadata where
   toBSON DocumentMetadata {..} =
     ["fileName" BSON.=: _documentMetadataFileName, "contentType" BSON.=: _documentMetadataContentType]
@@ -26,9 +30,11 @@ instance ToBSON Document where
     [ "uuid" BSON.=: _documentUuid
     , "name" BSON.=: _documentName
     , "state" BSON.=: _documentState
+    , "durability" BSON.=: _documentDurability
     , "questionnaireUuid" BSON.=: _documentQuestionnaireUuid
+    , "questionnaireRepliesHash" BSON.=: _documentQuestionnaireRepliesHash
     , "templateUuid" BSON.=: _documentTemplateUuid
-    , "format" BSON.=: _documentFormat
+    , "formatUuid" BSON.=: _documentFormatUuid
     , "metadata" BSON.=: _documentMetadata
     , "ownerUuid" BSON.=: _documentOwnerUuid
     , "createdAt" BSON.=: _documentCreatedAt
@@ -39,9 +45,11 @@ instance FromBSON Document where
     _documentUuid <- BSON.lookup "uuid" doc
     _documentName <- BSON.lookup "name" doc
     _documentState <- BSON.lookup "state" doc
+    _documentDurability <- BSON.lookup "durability" doc
     _documentQuestionnaireUuid <- BSON.lookup "questionnaireUuid" doc
+    _documentQuestionnaireRepliesHash <- BSON.lookup "questionnaireRepliesHash" doc
     _documentTemplateUuid <- BSON.lookup "templateUuid" doc
-    _documentFormat <- BSON.lookup "format" doc
+    _documentFormatUuid <- BSON.lookup "formatUuid" doc
     _documentMetadata <- BSON.lookup "metadata" doc
     _documentOwnerUuid <- BSON.lookup "ownerUuid" doc
     _documentCreatedAt <- BSON.lookup "createdAt" doc

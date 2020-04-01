@@ -1,8 +1,8 @@
 module Wizard.Database.Migration.Development.Package.PackageMigration where
 
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Constant.Component
 import Wizard.Database.DAO.Package.PackageDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Util.Logger
 
 runMigration = do

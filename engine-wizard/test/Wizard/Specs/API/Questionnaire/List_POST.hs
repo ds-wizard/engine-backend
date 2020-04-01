@@ -12,16 +12,13 @@ import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
@@ -47,13 +44,7 @@ reqUrl = "/questionnaires"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto =
-  QuestionnaireCreateDTO
-    { _questionnaireCreateDTOName = questionnaire1 ^. name
-    , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
-    , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
-    , _questionnaireCreateDTOTagUuids = []
-    }
+reqDto = questionnaire1Create
 
 reqBody = encode reqDto
 
@@ -66,7 +57,7 @@ test_201 appContext = do
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toSimpleDTO (questionnaire1 & level .~ 1) germanyPackage QSDefault
+    let expDto = questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
@@ -81,7 +72,10 @@ test_201 appContext = do
     -- AND: Find a result in DB
     assertExistenceOfQuestionnaireInDB
       appContext
-      ((((questionnaire1 & level .~ 1) & uuid .~ (resBody ^. uuid)) & replies .~ []) & labels .~ [])
+      ((level .~ 1) .
+       (uuid .~ (resBody ^. uuid)) .
+       (replies .~ []) . (labels .~ []) . (templateUuid .~ Nothing) . (formatUuid .~ Nothing) $
+       questionnaire1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -97,4 +91,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

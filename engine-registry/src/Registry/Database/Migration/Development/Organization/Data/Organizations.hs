@@ -7,7 +7,10 @@ import Data.Time
 import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
+import Registry.Api.Resource.Organization.OrganizationDTO
+import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Model.Organization.Organization
+import Registry.Service.Organization.OrganizationMapper
 
 orgGlobal :: Organization
 orgGlobal =
@@ -23,6 +26,9 @@ orgGlobal =
     , _organizationCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _organizationUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
+
+orgGlobalDTO :: OrganizationDTO
+orgGlobalDTO = toDTO orgGlobal
 
 orgGlobalCreate :: OrganizationCreateDTO
 orgGlobalCreate =
@@ -74,3 +80,6 @@ orgNetherlands =
 orgLogo :: String
 orgLogo =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=="
+
+orgStateDto :: OrganizationStateDTO
+orgStateDto = OrganizationStateDTO {_organizationStateDTOActive = True}

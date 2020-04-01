@@ -8,7 +8,9 @@ import Network.HTTP.Types
   , Status
   , status200
   , status201
+  , status202
   , status204
+  , status302
   , status400
   , status401
   , status403
@@ -73,7 +75,9 @@ colorizeMessage :: Status -> String -> String
 colorizeMessage resStatus
   | resStatus == status200 = color Green
   | resStatus == status201 = color Green
+  | resStatus == status202 = color Green
   | resStatus == status204 = color Green
+  | resStatus == status302 = color Green
   | resStatus == status400 = color Magenta
   | resStatus == status401 = color Magenta
   | resStatus == status403 = color Magenta
@@ -85,7 +89,9 @@ statusToString :: Status -> String
 statusToString resStatus
   | resStatus == status200 = "200 OK"
   | resStatus == status201 = "201 Created"
+  | resStatus == status202 = "202 Accepted"
   | resStatus == status204 = "204 No Content"
+  | resStatus == status302 = "302 Found"
   | resStatus == status400 = "400 Bad Request"
   | resStatus == status401 = "401 Unauthorized"
   | resStatus == status403 = "403 Forbidden"

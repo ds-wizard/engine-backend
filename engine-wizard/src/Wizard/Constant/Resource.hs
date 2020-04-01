@@ -1,8 +1,8 @@
 module Wizard.Constant.Resource where
 
-applicationConfigFile = "engine-wizard/config/application.yml"
+serverConfigFile = "engine-wizard/config/application.yml"
 
-applicationConfigFileTest = "config/application-test.yml"
+serverConfigFileTest = "config/application-test.yml"
 
 buildInfoFile = "engine-wizard/config/build-info.yml"
 

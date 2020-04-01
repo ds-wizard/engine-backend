@@ -40,12 +40,25 @@ _ERROR_VALIDATION__TEMPLATE_ABSENCE = LocaleRecord "error.validation.template_ab
 _ERROR_VALIDATION__USER_ABSENCE userUuid =
   LocaleRecord "error.validation.user_absence" "User ('%s') doesn't exist" [userUuid]
 
+_ERROR_VALIDATION__OPENID_CODE_ABSENCE =
+  LocaleRecord "error.validation.openid_code_absence" "Auth Code is not provided" []
+
+_ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE =
+  LocaleRecord "error.validation.openid_profile_info_absence" "Profile Information from OpenID service is missing" []
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
 -- Common
 _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED featureName =
   LocaleRecord "error.service.common.feature_is_disabled" "Feature '%s' is disabled" [featureName]
+
+_ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP =
+  LocaleRecord "error.service.template.template_or_format_not_set_up" "Template or format is not set up" []
+
+-- Auth
+_ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId =
+  LocaleRecord "error.service.auth.service_not_defined" "Service '%s' is not defined" [authId]
 
 -- Migration / KnowledgeModel
 _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER =

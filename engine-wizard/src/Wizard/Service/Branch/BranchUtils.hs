@@ -7,7 +7,7 @@ import Shared.Model.Package.Package
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Organization.OrganizationService
+import Wizard.Service.Config.AppConfigService
 
 getBranchPreviousPackage :: BranchWithEvents -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
@@ -22,7 +22,8 @@ getBranchForkOfPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
     Just previousPkg -> do
-      org <- getOrganization
+      appConfig <- getAppConfig
+      let org = appConfig ^. organization
       if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
         then return $ previousPkg ^. forkOfPackageId
         else return . Just $ previousPkg ^. pId
@@ -33,7 +34,8 @@ getBranchMergeCheckpointPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
     Just previousPkg -> do
-      org <- getOrganization
+      appConfig <- getAppConfig
+      let org = appConfig ^. organization
       if (previousPkg ^. organizationId == org ^. organizationId) && (previousPkg ^. kmId == branch ^. kmId)
         then return $ previousPkg ^. mergeCheckpointPackageId
         else return . Just $ previousPkg ^. pId

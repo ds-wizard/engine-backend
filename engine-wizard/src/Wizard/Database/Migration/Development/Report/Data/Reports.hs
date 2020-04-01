@@ -14,9 +14,65 @@ report1 :: Report
 report1 =
   Report
     { _reportUuid = fromJust (U.fromString "921bcb7e-e15f-49e4-b176-dbbe2f573af0")
+    , _reportTotalReport = report1_total
     , _reportChapterReports = [report1_ch1, report1_ch2, report1_ch3]
     , _reportCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _reportUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    }
+
+report1_total :: TotalReport
+report1_total =
+  TotalReport
+    { _totalReportIndications =
+        [ LevelsAnsweredIndication' $
+          LevelsAnsweredIndication
+            {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
+        , AnsweredIndication' $
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+        ]
+    , _totalReportMetrics =
+        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+        ]
+    }
+
+report1_total_full :: TotalReport
+report1_total_full =
+  TotalReport
+    { _totalReportIndications =
+        [ LevelsAnsweredIndication' $
+          LevelsAnsweredIndication
+            {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
+        , AnsweredIndication' $
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+        ]
+    , _totalReportMetrics =
+        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricG ^. uuid, _metricSummaryMeasure = Nothing}
+        , MetricSummary {_metricSummaryMetricUuid = metricO ^. uuid, _metricSummaryMeasure = Nothing}
+        ]
+    }
+
+report1_total_full_disabled_levels :: TotalReport
+report1_total_full_disabled_levels =
+  TotalReport
+    { _totalReportIndications =
+        [ AnsweredIndication' $
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+        ]
+    , _totalReportMetrics =
+        [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricA ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricI ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Just 1.0}
+        , MetricSummary {_metricSummaryMetricUuid = metricG ^. uuid, _metricSummaryMeasure = Nothing}
+        , MetricSummary {_metricSummaryMetricUuid = metricO ^. uuid, _metricSummaryMeasure = Nothing}
+        ]
     }
 
 report1_ch1 :: ChapterReport

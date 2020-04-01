@@ -5,12 +5,12 @@ import Control.Monad.Except (liftEither)
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Service.Event.EventMapper
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Event.EventMapper
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper

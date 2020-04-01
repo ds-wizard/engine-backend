@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Registry.Api.Resource.Info.InfoDTO
-import Registry.Api.Resource.Info.InfoJM ()
 import Registry.Model.Context.AppContext
+import Shared.Api.Resource.Info.InfoJM ()
+import Shared.Database.Migration.Development.Info.Data.Infos
 
 import Registry.Specs.API.Common
 
@@ -41,8 +41,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          InfoDTO {_infoDTOName = "Registry", _infoDTOVersion = "1.0.0", _infoDTOBuiltAt = "2017/10/25 19:50:20Z"}
+    let expDto = appInfo
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

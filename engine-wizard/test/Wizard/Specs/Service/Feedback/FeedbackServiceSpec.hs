@@ -1,6 +1,6 @@
 module Wizard.Specs.Service.Feedback.FeedbackServiceSpec where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
@@ -15,44 +15,58 @@ import Wizard.Specs.Common
 
 feedbackServiceIntegrationSpec appContext =
   describe "Feedback Service Integration" $ do
-    let updatedAppContext = appContext & applicationConfig . feedback . enabled .~ False
-    describe "getFeedbacksFiltered" $ it "Feedback is disabled" $
+    describe "getFeedbacksFiltered" $
+      it "Feedback is disabled" $
         -- GIVEN: Prepare expectations
-     do
-      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+       do
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+        -- AND: Update config in DB
+        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
         -- WHEN:
-      result <- runInContext (getFeedbacksFiltered []) updatedAppContext
+        result <- runInContext (getFeedbacksFiltered []) appContext
         -- THEN:
-      result `shouldBe` expectation
-    describe "createFeedback" $ it "Feedback is disabled" $
+        result `shouldBe` expectation
+    describe "createFeedback" $
+      it "Feedback is disabled" $
         -- GIVEN: Prepare expectations
-     do
-      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+       do
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+        -- AND: Update config in DB
+        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
         -- WHEN:
-      result <- runInContext (createFeedback feedback1Create) updatedAppContext
+        result <- runInContext (createFeedback feedback1Create) appContext
         -- THEN:
-      result `shouldBe` expectation
-    describe "createFeedbackWithGivenUuid" $ it "Feedback is disabled" $
+        result `shouldBe` expectation
+    describe "createFeedbackWithGivenUuid" $
+      it "Feedback is disabled" $
         -- GIVEN: Prepare expectations
-     do
-      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+       do
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+        -- AND: Update config in DB
+        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
         -- WHEN:
-      result <- runInContext (createFeedbackWithGivenUuid (feedback1 ^. uuid) feedback1Create) updatedAppContext
+        result <- runInContext (createFeedbackWithGivenUuid (feedback1 ^. uuid) feedback1Create) appContext
         -- THEN:
-      result `shouldBe` expectation
-    describe "getFeedbackByUuid" $ it "Feedback is disabled" $
+        result `shouldBe` expectation
+    describe "getFeedbackByUuid" $
+      it "Feedback is disabled" $
         -- GIVEN: Prepare expectations
-     do
-      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+       do
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+        -- AND: Update config in DB
+        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
         -- WHEN:
-      result <- runInContext (getFeedbackByUuid (U.toString $ feedback1 ^. uuid)) updatedAppContext
+        result <- runInContext (getFeedbackByUuid (U.toString $ feedback1 ^. uuid)) appContext
         -- THEN:
-      result `shouldBe` expectation
-    describe "synchronizeFeedbacks" $ it "Feedback is disabled" $
+        result `shouldBe` expectation
+    describe "synchronizeFeedbacks" $
+      it "Feedback is disabled" $
         -- GIVEN: Prepare expectations
-     do
-      let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+       do
+        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
+        -- AND: Update config in DB
+        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
         -- WHEN:
-      result <- runInContext synchronizeFeedbacks updatedAppContext
+        result <- runInContext synchronizeFeedbacks appContext
         -- THEN:
-      result `shouldBe` expectation
+        result `shouldBe` expectation

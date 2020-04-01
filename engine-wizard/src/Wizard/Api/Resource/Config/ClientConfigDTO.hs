@@ -2,17 +2,44 @@ module Wizard.Api.Resource.Config.ClientConfigDTO where
 
 import GHC.Generics
 
+import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.User.User
+
 data ClientConfigDTO =
   ClientConfigDTO
-    { _clientConfigDTOClient :: ClientConfigClientDTO
-    , _clientConfigDTOFeedbackEnabled :: Bool
-    , _clientConfigDTORegistrationEnabled :: Bool
-    , _clientConfigDTOPublicQuestionnaireEnabled :: Bool
-    , _clientConfigDTOLevelsEnabled :: Bool
-    , _clientConfigDTOQuestionnaireAccessibilityEnabled :: Bool
-    , _clientConfigDTORegistry :: ClientConfigRegistryDTO
+    { _clientConfigDTOOrganization :: AppConfigOrganization
+    , _clientConfigDTOAuthentication :: ClientConfigAuthDTO
+    , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
+    , _clientConfigDTODashboard :: AppConfigDashboard
+    , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
+    , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
+    , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     }
   deriving (Show, Eq, Generic)
+
+data ClientConfigAuthDTO =
+  ClientConfigAuthDTO
+    { _clientConfigAuthDTODefaultRole :: Role
+    , _clientConfigAuthDTOInternal :: AppConfigAuthInternal
+    , _clientConfigAuthDTOExternal :: ClientConfigAuthExternalDTO
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigAuthExternalDTO =
+  ClientConfigAuthExternalDTO
+    { _clientConfigAuthExternalDTOServices :: [ClientConfigAuthExternalServiceDTO]
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigAuthExternalServiceDTO =
+  ClientConfigAuthExternalServiceDTO
+    { _clientConfigAuthExternalServiceDTOAId :: String
+    , _clientConfigAuthExternalServiceDTOName :: String
+    , _clientConfigAuthExternalServiceDTOUrl :: String
+    , _clientConfigAuthExternalServiceDTOStyle :: Maybe AppConfigAuthExternalServiceStyle
+    }
+  deriving (Generic, Eq, Show)
 
 data ClientConfigRegistryDTO =
   ClientConfigRegistryDTO
@@ -21,34 +48,11 @@ data ClientConfigRegistryDTO =
     }
   deriving (Show, Eq, Generic)
 
-data ClientConfigClientDTO =
-  ClientConfigClientDTO
-    { _clientConfigClientDTOPrivacyUrl :: String
-    , _clientConfigClientDTOAppTitle :: Maybe String
-    , _clientConfigClientDTOAppTitleShort :: Maybe String
-    , _clientConfigClientDTOWelcomeWarning :: Maybe String
-    , _clientConfigClientDTOWelcomeInfo :: Maybe String
-    , _clientConfigClientDTOSupportEmail :: Maybe String
-    , _clientConfigClientDTOSupportRepositoryName :: Maybe String
-    , _clientConfigClientDTOSupportRepositoryUrl :: Maybe String
-    , _clientConfigClientDTODashboard :: Maybe ClientConfigClientDashboardDTO
-    , _clientConfigClientDTOCustomMenuLinks :: [ClientConfigClientCustomMenuLinkDTO]
+data ClientConfigQuestionnaireDTO =
+  ClientConfigQuestionnaireDTO
+    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility :: SimpleFeature
+    , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
+    , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
+    , _clientConfigQuestionnaireDTOPublicQuestionnaire :: SimpleFeature
     }
-  deriving (Show, Eq, Generic)
-
-data ClientConfigClientDashboardDTO =
-  ClientConfigClientDashboardDTO
-    { _clientConfigClientDashboardDTOAdmin :: [String]
-    , _clientConfigClientDashboardDTODataSteward :: [String]
-    , _clientConfigClientDashboardDTOResearcher :: [String]
-    }
-  deriving (Show, Eq, Generic)
-
-data ClientConfigClientCustomMenuLinkDTO =
-  ClientConfigClientCustomMenuLinkDTO
-    { _clientConfigClientCustomMenuLinkDTOIcon :: String
-    , _clientConfigClientCustomMenuLinkDTOTitle :: String
-    , _clientConfigClientCustomMenuLinkDTOUrl :: String
-    , _clientConfigClientCustomMenuLinkDTONewWindow :: Bool
-    }
-  deriving (Show, Eq, Generic)
+  deriving (Generic, Eq, Show)

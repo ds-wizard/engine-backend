@@ -1,5 +1,6 @@
 module Wizard.Specs.API.Common where
 
+import Control.Concurrent.MVar
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Char8 as BS
@@ -24,7 +25,7 @@ import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 import Wizard.Bootstrap.Web
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
@@ -37,16 +38,18 @@ import Wizard.Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
+  shutdownFlag <- liftIO newEmptyMVar
   let baseContext =
         BaseContext
-          { _baseContextAppConfig = appContext ^. applicationConfig
+          { _baseContextServerConfig = appContext ^. serverConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
+          , _baseContextShutdownFlag = shutdownFlag
           }
-  let config = appContext ^. applicationConfig
+  let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
   return $ runMiddleware env $ runApp baseContext
@@ -54,20 +57,19 @@ startWebApp appContext = do
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjM5NDAwMzIzMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiT1JHX1BFUk0iLCJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUE1fV1JJVEVfUEVSTSIsIlFUTl9QRVJNIiwiRE1QX1BFUk0iXX0.6jt40r7YR-YBXMBmo3aKypQiE6ikrVTsU_bSKDn-gPk")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ0ODYzNTczNSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiS01fUEVSTSIsIktNX1VQR1JBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1JFQURfUEVSTSIsIlBNX1dSSVRFX1BFUk0iLCJRVE5fUEVSTSIsIkRNUF9QRVJNIiwiQ0ZHX1BFUk0iXX0.p2OQAfgqcj9LKKnYTnAZw1PbAXu_tD0wCmN1owc0DPM")
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader =
   ( "Authorization"
   , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQwMTYzNzU0MSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.mTmVLO2AubdqaYNmjZlOMCqOAqZ5ULYXwLoEdwGCa1k")
 
-reqAuthHeaderWithoutPerms :: AppConfig -> Permission -> Header
-reqAuthHeaderWithoutPerms appConfig perm =
-  let allPerms = getPermissionForRole appConfig "ADMIN"
+reqAuthHeaderWithoutPerms :: ServerConfig -> Permission -> Header
+reqAuthHeaderWithoutPerms serverConfig perm =
+  let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
       user = userAlbert & permissions .~ (L.delete perm allPerms)
       now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-      token =
-        createToken user now (appConfig ^. jwt ^. secret) (appConfig ^. jwt ^. version) (appConfig ^. jwt ^. expiration)
+      token = createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
    in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqServiceHeader :: Header
@@ -79,9 +81,11 @@ reqCtHeader = contentTypeHeaderJSON
 resCtHeaderPlain :: Header
 resCtHeaderPlain = contentTypeHeaderJSON
 
-resCtHeader = "Content-Type" <:> "application/json;charset=utf-8"
+resCtHeader = "Content-Type" <:> "application/json"
 
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript;charset=utf-8"
+resCtHeaderUtf8 = "Content-Type" <:> "application/json;charset=utf-8"
+
+resCtHeaderJavascript = "Content-Type" <:> "application/javascript"
 
 resCorsHeadersPlain :: [Header]
 resCorsHeadersPlain =
@@ -106,7 +110,7 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
     let reqHeaders = [reqAuthHeader, reqCtHeader]
       -- GIVEN: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = [resCtHeaderUtf8] ++ resCorsHeaders
     let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call API
@@ -151,11 +155,11 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNoPermissionTest appConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
+createNoPermissionTest serverConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
   it "HTTP 403 FORBIDDEN - no required permission" $
     -- GIVEN: Prepare request
    do
-    let authHeader = reqAuthHeaderWithoutPerms appConfig missingPerm
+    let authHeader = reqAuthHeaderWithoutPerms serverConfig missingPerm
     let reqHeaders = [authHeader] ++ otherHeaders
     -- GIVEN: Prepare expectation
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)

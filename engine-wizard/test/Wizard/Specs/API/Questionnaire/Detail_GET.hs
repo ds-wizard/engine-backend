@@ -15,8 +15,8 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -88,7 +88,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. applicationConfig) reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
+  createNoPermissionTest (appContext ^. serverConfig) reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
   it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
      -- GIVEN: Prepare request
    do

@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -15,6 +16,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -22,8 +24,8 @@ import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
 
-toDTO :: Questionnaire -> Package -> QuestionnaireState -> QuestionnaireDTO
-toDTO questionnaire package state =
+toDTO :: Questionnaire -> Package -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
+toDTO questionnaire package state mOwner =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
@@ -31,21 +33,21 @@ toDTO questionnaire package state =
     , _questionnaireDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO package
-    , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDTOOwner = mOwner
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
 
-toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> QuestionnaireDTO
-toSimpleDTO questionnaire package state =
+toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
+toSimpleDTO questionnaire package state mOwner =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
     , _questionnaireDTOLevel = questionnaire ^. level
     , _questionnaireDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
-    , _questionnaireDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
+    , _questionnaireDTOOwner = mOwner
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
@@ -78,8 +80,10 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOLevel = questionnaire ^. level
     , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
     , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO . PM.toPackage $ package
+    , _questionnaireDetailDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
+    , _questionnaireDetailDTOTemplateUuid = questionnaire ^. templateUuid
+    , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
@@ -99,6 +103,8 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOState = state
     , _questionnaireDetailDTOPackage = package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
+    , _questionnaireDetailDTOTemplateUuid = questionnaire ^. templateUuid
+    , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOKnowledgeModel = toKnowledgeModelDTO knowledgeModel
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
@@ -136,6 +142,8 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
     , _questionnaireAccessibility = accessibility
     , _questionnairePackageId = qtn ^. package . pId
     , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
+    , _questionnaireTemplateUuid = qtn ^. templateUuid
+    , _questionnaireFormatUuid = qtn ^. formatUuid
     , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
     , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
     , _questionnaireOwnerUuid =
@@ -156,6 +164,8 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
     , _questionnaireAccessibility = accessibility
     , _questionnairePackageId = dto ^. packageId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
+    , _questionnaireTemplateUuid = Nothing
+    , _questionnaireFormatUuid = Nothing
     , _questionnaireReplies = []
     , _questionnaireLabels = []
     , _questionnaireOwnerUuid =
@@ -175,6 +185,8 @@ fromDetailDTO dto =
     , _questionnaireAccessibility = dto ^. accessibility
     , _questionnairePackageId = dto ^. package . pId
     , _questionnaireSelectedTagUuids = dto ^. selectedTagUuids
+    , _questionnaireTemplateUuid = dto ^. templateUuid
+    , _questionnaireFormatUuid = dto ^. formatUuid
     , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
     , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
     , _questionnaireOwnerUuid = dto ^. ownerUuid

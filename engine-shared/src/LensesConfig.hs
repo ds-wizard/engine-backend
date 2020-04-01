@@ -2,6 +2,18 @@ module LensesConfig where
 
 import Control.Lens (makeFields)
 
+import Shared.Api.Resource.Event.AnswerEventDTO
+import Shared.Api.Resource.Event.ChapterEventDTO
+import Shared.Api.Resource.Event.ExpertEventDTO
+import Shared.Api.Resource.Event.IntegrationEventDTO
+import Shared.Api.Resource.Event.KnowledgeModelEventDTO
+import Shared.Api.Resource.Event.MoveEventDTO
+import Shared.Api.Resource.Event.QuestionEventDTO
+import Shared.Api.Resource.Event.ReferenceEventDTO
+import Shared.Api.Resource.Event.TagEventDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -13,6 +25,9 @@ import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.Package.Package
+import Shared.Model.Package.PackageWithEvents
+import Shared.Model.PackageBundle.PackageBundle
 
 -- -------------------------------------
 -- Model
@@ -138,3 +153,140 @@ makeFields ''MetricMeasure
 makeFields ''Tag
 
 makeFields ''Integration
+
+-- Model / Package
+makeFields ''Package
+
+makeFields ''PackageWithEvents
+
+-- Model / PackageBundle
+makeFields ''PackageBundle
+
+-- -------------------------------------
+-- Api / Resource
+-- -------------------------------------
+-- Api / Resource / Event
+makeFields ''AddKnowledgeModelEventDTO
+
+makeFields ''EditKnowledgeModelEventDTO
+
+makeFields ''AddChapterEventDTO
+
+makeFields ''EditChapterEventDTO
+
+makeFields ''DeleteChapterEventDTO
+
+makeFields ''AddQuestionEventDTO
+
+makeFields ''AddOptionsQuestionEventDTO
+
+makeFields ''AddListQuestionEventDTO
+
+makeFields ''AddValueQuestionEventDTO
+
+makeFields ''AddIntegrationQuestionEventDTO
+
+makeFields ''EditQuestionEventDTO
+
+makeFields ''EditOptionsQuestionEventDTO
+
+makeFields ''EditListQuestionEventDTO
+
+makeFields ''EditValueQuestionEventDTO
+
+makeFields ''EditIntegrationQuestionEventDTO
+
+makeFields ''DeleteQuestionEventDTO
+
+makeFields ''AddAnswerEventDTO
+
+makeFields ''EditAnswerEventDTO
+
+makeFields ''DeleteAnswerEventDTO
+
+makeFields ''AddExpertEventDTO
+
+makeFields ''EditExpertEventDTO
+
+makeFields ''DeleteExpertEventDTO
+
+makeFields ''AddReferenceEventDTO
+
+makeFields ''AddResourcePageReferenceEventDTO
+
+makeFields ''AddURLReferenceEventDTO
+
+makeFields ''AddCrossReferenceEventDTO
+
+makeFields ''EditReferenceEventDTO
+
+makeFields ''EditResourcePageReferenceEventDTO
+
+makeFields ''EditURLReferenceEventDTO
+
+makeFields ''EditCrossReferenceEventDTO
+
+makeFields ''DeleteReferenceEventDTO
+
+makeFields ''AddTagEventDTO
+
+makeFields ''EditTagEventDTO
+
+makeFields ''DeleteTagEventDTO
+
+makeFields ''AddIntegrationEventDTO
+
+makeFields ''EditIntegrationEventDTO
+
+makeFields ''DeleteIntegrationEventDTO
+
+makeFields ''MoveQuestionEventDTO
+
+makeFields ''MoveAnswerEventDTO
+
+makeFields ''MoveExpertEventDTO
+
+makeFields ''MoveReferenceEventDTO
+
+-- Api / Resource / KnowledgeModel
+makeFields ''KnowledgeModelDTO
+
+makeFields ''KnowledgeModelEntitiesDTO
+
+makeFields ''ChapterDTO
+
+makeFields ''QuestionDTO
+
+makeFields ''OptionsQuestionDTO
+
+makeFields ''ListQuestionDTO
+
+makeFields ''ValueQuestionDTO
+
+makeFields ''IntegrationQuestionDTO
+
+makeFields ''AnswerDTO
+
+makeFields ''ExpertDTO
+
+makeFields ''ReferenceDTO
+
+makeFields ''ResourcePageReferenceDTO
+
+makeFields ''URLReferenceDTO
+
+makeFields ''CrossReferenceDTO
+
+makeFields ''MetricDTO
+
+makeFields ''MetricMeasureDTO
+
+makeFields ''TagDTO
+
+makeFields ''IntegrationDTO
+
+-- Api / Resource / Package
+makeFields ''PackageDTO
+
+-- Api / Resource / PackageBundle
+makeFields ''PackageBundleDTO

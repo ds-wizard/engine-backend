@@ -5,8 +5,10 @@ import Control.Lens ((^.))
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.Package.Data.Packages
+import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
+import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -61,3 +63,15 @@ nlQtnMigrationStateDtoEdited =
     , _migratorStateDTONewQuestionnaire = nlQtnMigrationStateDto ^. newQuestionnaire
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid, question3 ^. uuid]
     }
+
+migratorStateCreate :: MigratorStateCreateDTO
+migratorStateCreate =
+  MigratorStateCreateDTO
+    { _migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId
+    , _migratorStateCreateDTOTargetTagUuids = questionnaire4Upgraded ^. selectedTagUuids
+    }
+
+migratorStateChange :: MigratorStateChangeDTO
+migratorStateChange =
+  MigratorStateChangeDTO
+    {_migratorStateChangeDTOResolvedQuestionUuids = nlQtnMigrationStateDtoEdited ^. resolvedQuestionUuids}

@@ -18,6 +18,7 @@ import Network.Wreq
   , getWith
   , headers
   , manager
+  , responseBody
   , responseStatus
   , statusCode
   )
@@ -41,7 +42,9 @@ runRequest req responseMapper = do
       let eResDto = responseMapper response
       logResponseBody eResDto
       liftEither eResDto
-    else throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
+    else do
+      logResponseErrorBody response
+      throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
 
 runSimpleRequest :: HttpRequest -> AppContextM (Response BSL.ByteString)
 runSimpleRequest req = do
@@ -70,12 +73,16 @@ mapHeader (k, v) = (CI.mk . BS.pack $ k, BS.pack v)
 -- --------------------------------
 logRequest request = do
   logInfoU $ msg _CMP_INTEGRATION ("Retrieving '" ++ (request ^. requestUrl) ++ "'")
+  logInfoU $ msg _CMP_INTEGRATION ("Request Method '" ++ (request ^. requestMethod) ++ "'")
   logInfoU $ msg _CMP_INTEGRATION ("Request Headers: '" ++ (show . toList $ request ^. requestHeaders) ++ "'")
   logInfoU $ msg _CMP_INTEGRATION ("Request Body: '" ++ (request ^. requestBody) ++ "'")
 
 logResponse response = do
   logInfoU $ msg _CMP_INTEGRATION "Retrieved Response"
-  logInfoU $ msg _CMP_INTEGRATION ("Response StatusCode: '" ++ (show $ response ^. responseStatus . statusCode) ++ "'")
+  logInfoU $ msg _CMP_INTEGRATION ("Response StatusCode: '" ++ show (response ^. responseStatus . statusCode) ++ "'")
+
+logResponseErrorBody response =
+  logInfoU $ msg _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")
 
 logResponseBody eResDto =
   case eResDto of

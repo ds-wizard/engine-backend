@@ -9,21 +9,21 @@ import Network.Socket
 
 import LensesConfig
 
-createDatabaseConnectionPool appConfig = do
+createDatabaseConnectionPool serverConfig = do
   dbPool <- createMongoDBPool dbName dbHost dbPort dbCred 1 1 1
   verifyDatabaseConnectionPool dbPool
   return dbPool
   where
-    appConfigDatabase = appConfig ^. database
-    dbHost = appConfigDatabase ^. host
-    dbPort = PortNumber (fromInteger (appConfigDatabase ^. port) :: PortNumber) :: PortID
-    dbName = pack (appConfigDatabase ^. databaseName)
+    serverConfigDatabase = serverConfig ^. database
+    dbHost = serverConfigDatabase ^. host
+    dbPort = PortNumber (fromInteger (serverConfigDatabase ^. port) :: PortNumber) :: PortID
+    dbName = pack (serverConfigDatabase ^. databaseName)
     dbCred =
-      if appConfigDatabase ^. authEnabled
+      if serverConfigDatabase ^. authEnabled
         then Just $
              MongoAuth
-               (pack . fromMaybe "" $ appConfigDatabase ^. username)
-               (pack . fromMaybe "" $ appConfigDatabase ^. password)
+               (pack . fromMaybe "" $ serverConfigDatabase ^. username)
+               (pack . fromMaybe "" $ serverConfigDatabase ^. password)
         else Nothing
 
 verifyDatabaseConnectionPool dbPool = do

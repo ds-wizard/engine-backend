@@ -11,6 +11,7 @@ import qualified Data.Map as M
 import qualified Data.Text as T
 import Data.Text.Read
 import Data.Time
+import qualified Data.UUID as U
 import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
@@ -18,23 +19,25 @@ import LensesConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Token.Token
 import Wizard.Model.User.User
 import Wizard.Service.Token.TokenMapper
 import Wizard.Util.Date
 
-getToken :: TokenCreateDTO -> AppContextM TokenDTO
-getToken tokenCreateDto = do
+generateTokenFromCredentials :: TokenCreateDTO -> AppContextM TokenDTO
+generateTokenFromCredentials tokenCreateDto = do
   user <- getUser
   checkIsUserActive user
   authenticateUser user
-  (jwtSecret, jwtVersion, jwtExpirationInDays) <- getJwtConfig
+  serverConfig <- asks _appContextServerConfig
   now <- liftIO getCurrentTime
-  return . toDTO $ createToken user now jwtSecret jwtVersion jwtExpirationInDays
+  return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
   where
     getUser = do
       mUser <- findUserByEmail' (toLower <$> tokenCreateDto ^. email)
@@ -53,18 +56,20 @@ getToken tokenCreateDto = do
       if verifyPassword incomingPassword passwordHashFromDB
         then return ()
         else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
-    -- ------------------------------------------------------------
-    getJwtConfig = do
-      appConfig <- asks _appContextApplicationConfig
-      let config = appConfig ^. jwt
-      return (config ^. secret, config ^. version, config ^. expiration)
 
-createToken :: User -> UTCTime -> String -> Integer -> Integer -> Token
-createToken user now jwtSecret jwtVersion jwtExpirationInDays =
+generateTokenFromUser :: UserDTO -> AppContextM TokenDTO
+generateTokenFromUser user = do
+  serverConfig <- asks _appContextServerConfig
+  now <- liftIO getCurrentTime
+  return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
+
+createToken ::
+     (HasUuid user U.UUID, HasPermissions user [String]) => user -> UTCTime -> ServerConfigJwt -> String -> Token
+createToken user now config secret =
   let uUuid = toJSON (user ^. uuid) :: Value
       permissionValues = fromString <$> (user ^. permissions)
       uPermissions = Array (V.fromList permissionValues) :: Value
-      timeDelta = realToFrac $ jwtExpirationInDays * nominalDayInSeconds
+      timeDelta = realToFrac $ (config ^. expiration) * nominalDayInSeconds
       mExpiration = toNumericDate (addUTCTime timeDelta now)
       cs =
         JWT.JWTClaimsSet
@@ -75,9 +80,9 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
           , nbf = Nothing
           , iat = Nothing
           , jti = Nothing
-          , unregisteredClaims = createPayload uUuid uPermissions (fromInteger $ jwtVersion)
+          , unregisteredClaims = createPayload uUuid uPermissions (fromInteger $ config ^. version)
           }
-   in signToken jwtSecret cs
+   in signToken secret cs
   where
     fromInteger :: Integer -> Value
     fromInteger = fromString . show
@@ -87,20 +92,20 @@ createToken user now jwtSecret jwtVersion jwtExpirationInDays =
     createPayload uUuid uPermissions jwtVersion =
       JWT.ClaimsMap
         { unClaimsMap =
-            M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid $ M.empty
+            M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid M.empty
         }
 
 signToken :: String -> JWT.JWTClaimsSet -> Token
-signToken jwtSecret cs =
-  let key = JWT.hmacSecret $ T.pack jwtSecret
-   in T.unpack $ JWT.encodeSigned key cs
+signToken secret cs =
+  let key = JWT.hmacSecret $ T.pack secret
+   in T.unpack $ JWT.encodeSigned key mempty cs
 
 verifyToken :: T.Text -> String -> Integer -> UTCTime -> Maybe String
-verifyToken jwtToken jwtSecret currentJwtVersion now =
+verifyToken jwtToken secret currentJwtVersion now =
   verifySignature $ \token -> verifyJwtVersion $ \() -> verifyExpiration token $ \() -> Nothing
   where
     verifySignature callback =
-      case JWT.decodeAndVerifySignature (JWT.hmacSecret (T.pack jwtSecret)) jwtToken of
+      case JWT.decodeAndVerifySignature (JWT.hmacSecret (T.pack secret)) jwtToken of
         Just token -> callback token
         Nothing -> Just _ERROR_SERVICE_TOKEN__UNABLE_TO_DECODE_AND_VERIFY_TOKEN
     verifyJwtVersion callback =

@@ -5,54 +5,54 @@ import Control.Lens ((^.))
 import LensesConfig
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.SimpleFeature
 
-toClientConfigDTO :: AppConfig -> ClientConfigDTO
-toClientConfigDTO appConfig =
+toClientConfigDTO :: ServerConfig -> AppConfig -> ClientConfigDTO
+toClientConfigDTO serverConfig appConfig =
   ClientConfigDTO
-    { _clientConfigDTOClient = toClientConfigClientDTO (appConfig ^. client)
-    , _clientConfigDTOFeedbackEnabled = appConfig ^. feedback . enabled
-    , _clientConfigDTORegistrationEnabled = appConfig ^. general . registrationEnabled
-    , _clientConfigDTOPublicQuestionnaireEnabled = appConfig ^. general . publicQuestionnaireEnabled
-    , _clientConfigDTOLevelsEnabled = appConfig ^. general . levelsEnabled
-    , _clientConfigDTOQuestionnaireAccessibilityEnabled = appConfig ^. general . questionnaireAccessibilityEnabled
-    , _clientConfigDTORegistry = toClientConfigRegistryDTO (appConfig ^. registry)
+    { _clientConfigDTOOrganization = appConfig ^. organization
+    , _clientConfigDTOAuthentication = toClientAuthDTO $ appConfig ^. authentication
+    , _clientConfigDTOPrivacyAndSupport = appConfig ^. privacyAndSupport
+    , _clientConfigDTODashboard = appConfig ^. dashboard
+    , _clientConfigDTOLookAndFeel = appConfig ^. lookAndFeel
+    , _clientConfigDTOKnowledgeModelRegistry =
+        toClientConfigRegistryDTO (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry)
+    , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     }
 
-toClientConfigRegistryDTO :: AppConfigRegistry -> ClientConfigRegistryDTO
-toClientConfigRegistryDTO registryConfig =
+toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
+toClientAuthDTO config =
+  ClientConfigAuthDTO
+    { _clientConfigAuthDTODefaultRole = config ^. defaultRole
+    , _clientConfigAuthDTOInternal = config ^. internal
+    , _clientConfigAuthDTOExternal = toClientAuthExternalDTO $ config ^. external
+    }
+
+toClientAuthExternalDTO :: AppConfigAuthExternal -> ClientConfigAuthExternalDTO
+toClientAuthExternalDTO config =
+  ClientConfigAuthExternalDTO
+    {_clientConfigAuthExternalDTOServices = toClientAuthExternalServiceDTO <$> config ^. services}
+
+toClientAuthExternalServiceDTO :: AppConfigAuthExternalService -> ClientConfigAuthExternalServiceDTO
+toClientAuthExternalServiceDTO config =
+  ClientConfigAuthExternalServiceDTO
+    { _clientConfigAuthExternalServiceDTOAId = config ^. aId
+    , _clientConfigAuthExternalServiceDTOName = config ^. name
+    , _clientConfigAuthExternalServiceDTOUrl = config ^. url
+    , _clientConfigAuthExternalServiceDTOStyle = config ^. style
+    }
+
+toClientConfigRegistryDTO :: ServerConfigRegistry -> AppConfigRegistry -> ClientConfigRegistryDTO
+toClientConfigRegistryDTO serverConfig appConfig =
   ClientConfigRegistryDTO
-    { _clientConfigRegistryDTOEnabled = registryConfig ^. enabled
-    , _clientConfigRegistryDTOUrl = registryConfig ^. clientUrl
-    }
+    {_clientConfigRegistryDTOEnabled = appConfig ^. enabled, _clientConfigRegistryDTOUrl = serverConfig ^. clientUrl}
 
-toClientConfigClientDTO :: AppConfigClient -> ClientConfigClientDTO
-toClientConfigClientDTO clientConfig =
-  ClientConfigClientDTO
-    { _clientConfigClientDTOPrivacyUrl = clientConfig ^. privacyUrl
-    , _clientConfigClientDTOAppTitle = clientConfig ^. appTitle
-    , _clientConfigClientDTOAppTitleShort = clientConfig ^. appTitleShort
-    , _clientConfigClientDTOWelcomeWarning = clientConfig ^. welcomeWarning
-    , _clientConfigClientDTOWelcomeInfo = clientConfig ^. welcomeInfo
-    , _clientConfigClientDTOSupportEmail = clientConfig ^. supportEmail
-    , _clientConfigClientDTOSupportRepositoryName = clientConfig ^. supportRepositoryName
-    , _clientConfigClientDTOSupportRepositoryUrl = clientConfig ^. supportRepositoryUrl
-    , _clientConfigClientDTODashboard = toClientConfigClientDashboardDTO <$> clientConfig ^. dashboard
-    , _clientConfigClientDTOCustomMenuLinks = toClientConfigClientCustomMenuLinksDTO <$> clientConfig ^. customMenuLinks
-    }
-
-toClientConfigClientDashboardDTO :: AppConfigClientDashboard -> ClientConfigClientDashboardDTO
-toClientConfigClientDashboardDTO dashboardConfig =
-  ClientConfigClientDashboardDTO
-    { _clientConfigClientDashboardDTOAdmin = dashboardConfig ^. admin
-    , _clientConfigClientDashboardDTODataSteward = dashboardConfig ^. dataSteward
-    , _clientConfigClientDashboardDTOResearcher = dashboardConfig ^. researcher
-    }
-
-toClientConfigClientCustomMenuLinksDTO :: AppConfigClientCustomMenuLink -> ClientConfigClientCustomMenuLinkDTO
-toClientConfigClientCustomMenuLinksDTO customMenuLinkConfig =
-  ClientConfigClientCustomMenuLinkDTO
-    { _clientConfigClientCustomMenuLinkDTOIcon = customMenuLinkConfig ^. icon
-    , _clientConfigClientCustomMenuLinkDTOTitle = customMenuLinkConfig ^. title
-    , _clientConfigClientCustomMenuLinkDTOUrl = customMenuLinkConfig ^. url
-    , _clientConfigClientCustomMenuLinkDTONewWindow = customMenuLinkConfig ^. newWindow
+toClientConfigQuestionnaireDTO :: AppConfigQuestionnaire -> ClientConfigQuestionnaireDTO
+toClientConfigQuestionnaireDTO appConfig =
+  ClientConfigQuestionnaireDTO
+    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility = appConfig ^. questionnaireAccessibility
+    , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
+    , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
+    , _clientConfigQuestionnaireDTOPublicQuestionnaire = appConfig ^. publicQuestionnaire
     }

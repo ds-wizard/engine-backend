@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Api.Resource.Info.InfoDTO
+import Shared.Database.Migration.Development.Info.Data.Infos
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common
@@ -39,8 +39,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = InfoDTO {_infoDTOName = "Wizard", _infoDTOVersion = "1.0.0", _infoDTOBuiltAt = "2017/10/25 19:50:20Z"}
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = appInfo
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

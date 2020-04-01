@@ -5,14 +5,14 @@ module Registry.Service.PackageBundle.PackageBundleService
 import Control.Lens ((^.))
 
 import LensesConfig
-import Registry.Api.Resource.PackageBundle.PackageBundleDTO
-import Registry.Api.Resource.PackageBundle.PackageBundleJM ()
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageService
-import Registry.Service.PackageBundle.PackageBundleMapper
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Constant.KnowledgeModel
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Service.PackageBundle.PackageBundleMapper
 
 getPackageBundle :: String -> AppContextM PackageBundleDTO
 getPackageBundle pbId = do

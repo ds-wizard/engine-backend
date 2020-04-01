@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Typehint.TypehintRequestDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Event.EventDTO
+import Shared.Api.Resource.Event.EventDTO
 
 data TypehintRequestDTO =
   TypehintRequestDTO

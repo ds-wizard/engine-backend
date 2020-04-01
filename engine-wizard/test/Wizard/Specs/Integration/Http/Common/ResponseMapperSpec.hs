@@ -49,7 +49,7 @@ commonResponseMapperSpec =
         -- THEN:
         result `shouldBe` expectation
     describe "extractStringField" $ do
-      it "it works" $
+      it "it works (for string)" $
         -- GIVEN: Response
        do
         let response = obj [("targetProp", String "Target Content")]
@@ -59,13 +59,42 @@ commonResponseMapperSpec =
         let result = extractStringField "targetProp" response
         -- THEN:
         result `shouldBe` expectation
-      it "bad field type" $
+      it "it works (for int)" $
         -- GIVEN: Response
        do
         let response = obj [("targetProp", Number 123)]
         -- AND: Expectations
-        let expectation =
-              Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD "targetProp"
+        let expectation = Right "123"
+        -- WHEN:
+        let result = extractStringField "targetProp" response
+        -- THEN:
+        result `shouldBe` expectation
+      it "it works (for double)" $
+        -- GIVEN: Response
+       do
+        let response = obj [("targetProp", Number 123.45)]
+        -- AND: Expectations
+        let expectation = Right "123.45"
+        -- WHEN:
+        let result = extractStringField "targetProp" response
+        -- THEN:
+        result `shouldBe` expectation
+      it "it works (for bool)" $
+        -- GIVEN: Response
+       do
+        let response = obj [("targetProp", Bool True)]
+        -- AND: Expectations
+        let expectation = Right "True"
+        -- WHEN:
+        let result = extractStringField "targetProp" response
+        -- THEN:
+        result `shouldBe` expectation
+      it "it works (for null)" $
+        -- GIVEN: Response
+       do
+        let response = obj [("targetProp", Null)]
+        -- AND: Expectations
+        let expectation = Right "null"
         -- WHEN:
         let result = extractStringField "targetProp" response
         -- THEN:

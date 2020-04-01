@@ -9,12 +9,19 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Questionnaire.QuestionnaireUtil
-import Wizard.Database.Migration.Development.Package.Data.Packages
+import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Service.Questionnaire.QuestionnaireMapper
+import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 questionnaire1 :: Questionnaire
 questionnaire1 =
@@ -25,6 +32,8 @@ questionnaire1 =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -41,11 +50,50 @@ questionnaire1Edited =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire1 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire1 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatedAt = questionnaire1 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
+    }
+
+questionnaire1Dto :: QuestionnaireDTO
+questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
+
+questionnaire1Create :: QuestionnaireCreateDTO
+questionnaire1Create =
+  QuestionnaireCreateDTO
+    { _questionnaireCreateDTOName = questionnaire1 ^. name
+    , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
+    , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
+    , _questionnaireCreateDTOTagUuids = []
+    }
+
+questionnaire1EditedChange :: QuestionnaireChangeDTO
+questionnaire1EditedChange =
+  QuestionnaireChangeDTO
+    { _questionnaireChangeDTOName = questionnaire1Edited ^. name
+    , _questionnaireChangeDTOAccessibility = questionnaire1Edited ^. accessibility
+    , _questionnaireChangeDTOLevel = 1
+    , _questionnaireChangeDTOReplies =
+        toReplyDTO <$>
+        [ rQ1
+        , rQ2
+        , rQ2_aYes_fuQ1
+        , rQ3
+        , rQ4
+        , rQ4_it1_q5
+        , rQ4_it1_q5_it1_question7
+        , rQ4_it1_q5_it1_question8
+        , rQ4_it1_q6
+        , rQ4_it2_q5
+        , rQ4_it2_q6
+        , rQ9
+        , rQ10
+        ]
+    , _questionnaireChangeDTOLabels = []
     }
 
 -- ------------------------------------------------------------------------
@@ -59,6 +107,8 @@ questionnaire2 =
     , _questionnaireAccessibility = PublicReadOnlyQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -75,12 +125,17 @@ questionnaire2Edited =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire2 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
+
+questionnaire2Dto :: QuestionnaireDTO
+questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -93,6 +148,8 @@ questionnaire3 =
     , _questionnaireAccessibility = PublicQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Nothing
@@ -109,12 +166,17 @@ questionnaire3Edited =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire3 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
+
+questionnaire3Dto :: QuestionnaireDTO
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -127,6 +189,8 @@ questionnaire4 =
     , _questionnaireAccessibility = PrivateQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
+    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = []
     , _questionnaireLabels = []
     , _questionnaireOwnerUuid = Nothing

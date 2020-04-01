@@ -17,8 +17,8 @@ templateServiceSpec =
               [ TemplateDTO
                   { _templateDTOUuid = U.nil
                   , _templateDTOName = ""
-                  , _templateDTORootFile = ""
                   , _templateDTOAllowedKMs = []
+                  , _templateDTOFormats = []
                   }
               ]
             -- AND:
@@ -34,7 +34,6 @@ templateServiceSpec =
               [ TemplateDTO
                   { _templateDTOUuid = U.nil
                   , _templateDTOName = ""
-                  , _templateDTORootFile = ""
                   , _templateDTOAllowedKMs =
                       [ TemplateAllowedKMDTO
                           { _templateAllowedKMDTOOrgId = Nothing
@@ -43,6 +42,7 @@ templateServiceSpec =
                           , _templateAllowedKMDTOMaxVersion = Nothing
                           }
                       ]
+                  , _templateDTOFormats = []
                   }
               ]
             -- AND:
@@ -58,7 +58,6 @@ templateServiceSpec =
               [ TemplateDTO
                   { _templateDTOUuid = U.nil
                   , _templateDTOName = ""
-                  , _templateDTORootFile = ""
                   , _templateDTOAllowedKMs =
                       [ TemplateAllowedKMDTO
                           { _templateAllowedKMDTOOrgId = Nothing
@@ -73,6 +72,7 @@ templateServiceSpec =
                           , _templateAllowedKMDTOMaxVersion = Nothing
                           }
                       ]
+                  , _templateDTOFormats = []
                   }
               ]
             -- AND:

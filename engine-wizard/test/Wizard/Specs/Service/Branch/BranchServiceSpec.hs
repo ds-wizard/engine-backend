@@ -9,13 +9,13 @@ import Test.Hspec.Expectations.Pretty
 
 import LensesConfig
 import Shared.Database.Migration.Development.Event.Data.Events
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Migration.KnowledgeModel.MigratorState

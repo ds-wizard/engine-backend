@@ -1,6 +1,6 @@
 module Wizard.Specs.API.Questionnaire.Common where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^?), _Just)
 import Data.Either (isLeft, isRight)
 import qualified Data.UUID as U
 import Test.Hspec
@@ -38,7 +38,7 @@ compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
   liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
-  liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
+  liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
 compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
@@ -47,7 +47,7 @@ compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
-  liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
+  liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
 compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
@@ -62,4 +62,6 @@ compareQuestionnaireCreateDtos' resDto expDto = do
 
 compareQuestionnaireDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
 
-compareReportDtos resDto expDto = liftIO $ resDto ^. chapterReports `shouldBe` expDto ^. chapterReports
+compareReportDtos resDto expDto = do
+  liftIO $ resDto ^. totalReport `shouldBe` expDto ^. totalReport
+  liftIO $ resDto ^. chapterReports `shouldBe` expDto ^. chapterReports

@@ -3,11 +3,11 @@ module Wizard.Api.Handler.KnowledgeModel.List_POST where
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeJM ()
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeJM ()
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 

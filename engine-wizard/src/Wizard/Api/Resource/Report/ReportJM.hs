@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Report.ReportJM where
 import Control.Monad
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON')
+import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON', toSumJSON)
 import Wizard.Api.Resource.Report.ReportDTO
 
 -- --------------------------------------------------------------------
@@ -12,6 +12,13 @@ instance FromJSON ReportDTO where
 
 instance ToJSON ReportDTO where
   toJSON = simpleToJSON "_reportDTO"
+
+-- --------------------------------------------------------------------
+instance FromJSON TotalReportDTO where
+  parseJSON = simpleParseJSON "_totalReportDTO"
+
+instance ToJSON TotalReportDTO where
+  toJSON = simpleToJSON "_totalReportDTO"
 
 -- --------------------------------------------------------------------
 instance FromJSON ChapterReportDTO where
@@ -29,8 +36,7 @@ instance ToJSON MetricSummaryDTO where
 
 -- --------------------------------------------------------------------
 instance ToJSON IndicationDTO where
-  toJSON (AnsweredIndicationDTO' event) = toJSON event
-  toJSON (LevelsAnsweredIndicationDTO' event) = toJSON event
+  toJSON = toSumJSON
 
 instance FromJSON IndicationDTO where
   parseJSON (Object o) = do
@@ -46,11 +52,11 @@ instance FromJSON AnsweredIndicationDTO where
   parseJSON = simpleParseJSON "_answeredIndicationDTO"
 
 instance ToJSON AnsweredIndicationDTO where
-  toJSON = simpleToJSON' "indicationType" "_answeredIndicationDTO"
+  toJSON = simpleToJSON' "_answeredIndicationDTO" "indicationType"
 
 -- --------------------------------------------------------------------
 instance FromJSON LevelsAnsweredIndicationDTO where
   parseJSON = simpleParseJSON "_levelsAnsweredIndicationDTO"
 
 instance ToJSON LevelsAnsweredIndicationDTO where
-  toJSON = simpleToJSON' "indicationType" "_levelsAnsweredIndicationDTO"
+  toJSON = simpleToJSON' "_levelsAnsweredIndicationDTO" "indicationType"

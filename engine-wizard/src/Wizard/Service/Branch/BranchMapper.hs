@@ -6,22 +6,20 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.KnowledgeModel
+import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
-import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
-import Wizard.Service.Event.EventMapper
 
-toDTO :: BranchWithEvents -> Maybe String -> BranchState -> OrganizationDTO -> BranchDTO
-toDTO branch mForkOfPackageId state organization =
+toDTO :: BranchWithEvents -> Maybe String -> BranchState -> BranchDTO
+toDTO branch mForkOfPackageId state =
   BranchDTO
     { _branchDTOUuid = branch ^. uuid
     , _branchDTOName = branch ^. name
-    , _branchDTOOrganizationId = organization ^. organizationId
     , _branchDTOKmId = branch ^. kmId
     , _branchDTOState = state
     , _branchDTOPreviousPackageId = branch ^. previousPackageId
@@ -31,12 +29,11 @@ toDTO branch mForkOfPackageId state organization =
     , _branchDTOUpdatedAt = branch ^. updatedAt
     }
 
-toDetailDTO :: BranchWithEvents -> Maybe String -> BranchState -> OrganizationDTO -> BranchDetailDTO
-toDetailDTO branch mForkOfPackageId state organization =
+toDetailDTO :: BranchWithEvents -> Maybe String -> BranchState -> BranchDetailDTO
+toDetailDTO branch mForkOfPackageId state =
   BranchDetailDTO
     { _branchDetailDTOUuid = branch ^. uuid
     , _branchDetailDTOName = branch ^. name
-    , _branchDetailDTOOrganizationId = organization ^. organizationId
     , _branchDetailDTOKmId = branch ^. kmId
     , _branchDetailDTOState = state
     , _branchDetailDTOPreviousPackageId = branch ^. previousPackageId

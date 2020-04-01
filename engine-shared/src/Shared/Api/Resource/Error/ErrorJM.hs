@@ -5,6 +5,8 @@ import Data.Aeson
 import Shared.Api.Resource.Error.ErrorDTO
 
 instance ToJSON ErrorDTO where
+  toJSON AcceptedErrorDTO = object ["status" .= 202]
+  toJSON (FoundErrorDTO _) = object ["status" .= 302]
   toJSON (ValidationErrorDTO formErrors fieldErrors) =
     object ["status" .= 400, "formErrors" .= formErrors, "fieldErrors" .= fieldErrors]
   toJSON (UserErrorDTO errorMessage) = object ["status" .= 400, "message" .= errorMessage]

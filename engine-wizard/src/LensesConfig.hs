@@ -2,6 +2,21 @@ module LensesConfig where
 
 import Control.Lens (makeFields)
 
+import Shared.Api.Resource.Event.AnswerEventDTO
+import Shared.Api.Resource.Event.ChapterEventDTO
+import Shared.Api.Resource.Event.ExpertEventDTO
+import Shared.Api.Resource.Event.IntegrationEventDTO
+import Shared.Api.Resource.Event.KnowledgeModelEventDTO
+import Shared.Api.Resource.Event.MoveEventDTO
+import Shared.Api.Resource.Event.QuestionEventDTO
+import Shared.Api.Resource.Event.ReferenceEventDTO
+import Shared.Api.Resource.Event.TagEventDTO
+import Shared.Api.Resource.Info.InfoDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -23,24 +38,13 @@ import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
+import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Api.Resource.Event.AnswerEventDTO
-import Wizard.Api.Resource.Event.ChapterEventDTO
-import Wizard.Api.Resource.Event.ExpertEventDTO
-import Wizard.Api.Resource.Event.IntegrationEventDTO
-import Wizard.Api.Resource.Event.KnowledgeModelEventDTO
-import Wizard.Api.Resource.Event.MoveEventDTO
-import Wizard.Api.Resource.Event.QuestionEventDTO
-import Wizard.Api.Resource.Event.ReferenceEventDTO
-import Wizard.Api.Resource.Event.TagEventDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Api.Resource.Info.InfoDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Level.LevelDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO as KM_MigratorConflictDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO as KM_MigratorStateCreateDTO
@@ -49,12 +53,9 @@ import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetai
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO as QTN_MigratorStateChangeDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO as QTN_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
-import Wizard.Api.Resource.Organization.OrganizationChangeDTO
-import Wizard.Api.Resource.Organization.OrganizationDTO
-import Wizard.Api.Resource.Package.PackageDTO
+import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.PackageBundle.PackageBundleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -74,6 +75,7 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.Version.VersionDTO
+import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 import Wizard.Integration.Resource.Package.PackageDetailIDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
@@ -82,19 +84,18 @@ import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.BuildInfoConfig
+import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentTemplateContext
 import Wizard.Model.Feedback.Feedback
-import Wizard.Model.Feedback.SimpleIssue
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
-import Wizard.Model.Organization.Organization
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
@@ -119,29 +120,57 @@ makeFields ''BranchWithEvents
 -- Model / Config
 makeFields ''AppConfig
 
-makeFields ''AppConfigGeneral
+makeFields ''AppConfigOrganization
 
-makeFields ''AppConfigClient
+makeFields ''AppConfigAuth
 
-makeFields ''AppConfigClientDashboard
+makeFields ''AppConfigAuthInternal
 
-makeFields ''AppConfigClientCustomMenuLink
+makeFields ''AppConfigAuthExternal
 
-makeFields ''AppConfigDatabase
+makeFields ''AppConfigAuthExternalService
 
-makeFields ''AppConfigMessaging
+makeFields ''AppConfigAuthExternalServiceParameter
 
-makeFields ''AppConfigJwt
+makeFields ''AppConfigAuthExternalServiceStyle
 
-makeFields ''AppConfigRoles
+makeFields ''AppConfigPrivacyAndSupport
 
-makeFields ''AppConfigMail
+makeFields ''AppConfigDashboard
+
+makeFields ''AppConfigDashboardWidgets
+
+makeFields ''AppConfigLookAndFeel
+
+makeFields ''AppConfigLookAndFeelCustomMenuLink
 
 makeFields ''AppConfigRegistry
 
-makeFields ''AppConfigAnalytics
+makeFields ''AppConfigQuestionnaire
 
-makeFields ''AppConfigFeedback
+makeFields ''AppConfigQuestionnaireFeedback
+
+makeFields ''SimpleFeature
+
+makeFields ''ServerConfig
+
+makeFields ''ServerConfigGeneral
+
+makeFields ''ServerConfigDatabase
+
+makeFields ''ServerConfigMessaging
+
+makeFields ''ServerConfigJwt
+
+makeFields ''ServerConfigRoles
+
+makeFields ''ServerConfigMail
+
+makeFields ''ServerConfigRegistry
+
+makeFields ''ServerConfigAnalytics
+
+makeFields ''ServerConfigFeedback
 
 makeFields ''BuildInfoConfig
 
@@ -249,8 +278,6 @@ makeFields ''MoveReferenceEvent
 -- Model / Feedback
 makeFields ''Feedback
 
-makeFields ''SimpleIssue
-
 -- Model / Http
 makeFields ''HttpRequest
 
@@ -300,9 +327,6 @@ makeFields ''KM_MigratorState.MigratorState
 -- Model / Migration / Questionnaire
 makeFields ''QTN_MigratorState.MigratorState
 
--- Model / Organization
-makeFields ''Organization
-
 -- Model / Package
 makeFields ''Package
 
@@ -333,6 +357,8 @@ makeFields ''MetricSummary
 
 makeFields ''ChapterReport
 
+makeFields ''TotalReport
+
 makeFields ''Report
 
 -- Model / Statistic
@@ -362,15 +388,13 @@ makeFields ''BranchDetailDTO
 makeFields ''BranchWithEventsDTO
 
 -- Api / Resource / Config
+makeFields ''AppConfigChangeDTO
+
 makeFields ''ClientConfigDTO
 
 makeFields ''ClientConfigRegistryDTO
 
-makeFields ''ClientConfigClientDTO
-
-makeFields ''ClientConfigClientDashboardDTO
-
-makeFields ''ClientConfigClientCustomMenuLinkDTO
+makeFields ''ClientConfigQuestionnaireDTO
 
 -- Api / Resource / Document
 makeFields ''DocumentDTO
@@ -531,9 +555,7 @@ makeFields ''QTN_MigratorStateCreateDTO.MigratorStateCreateDTO
 makeFields ''QTN_MigratorStateChangeDTO.MigratorStateChangeDTO
 
 -- Api / Resource / Organization
-makeFields ''OrganizationDTO
-
-makeFields ''OrganizationChangeDTO
+makeFields ''OrganizationSimpleDTO
 
 -- Api / Resource / Package
 makeFields ''PackageDTO
@@ -573,12 +595,16 @@ makeFields ''MetricSummaryDTO
 
 makeFields ''ChapterReportDTO
 
+makeFields ''TotalReportDTO
+
 makeFields ''ReportDTO
 
 -- Api / Resource / Template
 makeFields ''TemplateDTO
 
 makeFields ''TemplateAllowedKMDTO
+
+makeFields ''TemplateFormatDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO
@@ -609,6 +635,9 @@ makeFields ''VersionDTO
 -- -------------------------------------
 -- Integration
 -- -------------------------------------
+-- Integration / Resource / GitHub
+makeFields ''IssueIDTO
+
 -- Integration / Resource / Organization
 makeFields ''OrganizationSimpleIDTO
 

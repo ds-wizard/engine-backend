@@ -1,5 +1,5 @@
 name: engine-registry
-version: '2.1.0'
+version: '2.2.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -28,7 +28,6 @@ library:
   - bytestring
   - case-insensitive
   - containers
-  - cryptonite
   - data-default
   - directory
   - exceptions
@@ -59,8 +58,11 @@ library:
   - regex-compat
   - retry
   - servant
-  - servant-server
   - servant-errors
+  - servant-server
+  - servant-swagger
+  - servant-swagger-ui
+  - swagger2
   - text
   - text-replace
   - time

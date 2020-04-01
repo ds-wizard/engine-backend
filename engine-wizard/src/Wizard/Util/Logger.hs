@@ -1,7 +1,7 @@
 module Wizard.Util.Logger where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger (MonadLogger, logErrorN, logInfoN, logWarnN)
+import Control.Monad.Logger (MonadLogger, logDebugN, logErrorN, logInfoN, logWarnN)
 import Control.Monad.Reader (MonadReader, asks)
 import qualified Data.Text as T
 import qualified Data.UUID as U
@@ -14,6 +14,9 @@ msg :: String -> String -> String
 msg component message = component ++ ": " ++ message
 
 -- ---------------------------------------------------------------------------
+logDebug :: MonadLogger m => String -> m ()
+logDebug = logDebugN . T.pack
+
 logInfo :: MonadLogger m => String -> m ()
 logInfo = logInfoN . T.pack
 
@@ -24,6 +27,9 @@ logError :: MonadLogger m => String -> m ()
 logError = logErrorN . color Red . T.pack
 
 -- ---------------------------------------------------------------------------
+logDebugU :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
+logDebugU = logU Default logDebugN
+
 logInfoU :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
 logInfoU = logU Default logInfoN
 

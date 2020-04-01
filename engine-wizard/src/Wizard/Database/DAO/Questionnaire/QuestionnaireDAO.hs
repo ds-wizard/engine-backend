@@ -37,5 +37,8 @@ updateQuestionnaireById qtn = createUpdateByFn collection "uuid" (qtn ^. uuid) q
 deleteQuestionnaires :: AppContextM ()
 deleteQuestionnaires = createDeleteEntitiesFn collection
 
+deleteQuestionnairesFiltered :: [(String, String)] -> AppContextM ()
+deleteQuestionnairesFiltered queryParams = createDeleteEntitiesByFn collection (mapToDBQueryParams queryParams)
+
 deleteQuestionnaireById :: String -> AppContextM ()
 deleteQuestionnaireById = createDeleteEntityByFn collection "uuid"

@@ -25,7 +25,7 @@ toRetrieveTypehintsResponse intConfig response =
     iField = splitOn "." (intConfig ^. responseIdField)
     nField = splitOn "." (intConfig ^. responseNameField)
     mapRecords :: [Value] -> Either AppError [TypehintIDTO]
-    mapRecords value = foldEither . fmap mapRecord $ value
+    mapRecords = foldEither . fmap mapRecord
     mapRecord :: Value -> Either AppError TypehintIDTO
     mapRecord record =
-      TypehintIDTO <$> (extractNestedStringField iField record) <*> (extractNestedStringField nField record)
+      TypehintIDTO <$> extractNestedStringField iField record <*> extractNestedStringField nField record

@@ -5,13 +5,6 @@
 
 packages:
 - completed:
-    hackage: fromhtml-1.0.4@sha256:24c24f6ff3aabb42cbe9556b016dc77366775bd475ebaa6d1b9e18071d9ae608,1463
-    pantry-tree:
-      size: 364
-      sha256: 917f234c2cc06c71222c77f4c0a5799c9ec5521c4112d78fac692b236cc3cbe5
-  original:
-    hackage: fromhtml-1.0.4
-- completed:
     hackage: persistent-mongoDB-2.8.0@sha256:53f945c662a3e51eb9d64fe2d6eb64add16864ae3a6838bdfc00fc546d0dbfa3,2003
     pantry-tree:
       size: 285
@@ -40,55 +33,6 @@ packages:
   original:
     hackage: ginger-0.9.1.0
 - completed:
-    hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
-    pantry-tree:
-      size: 577
-      sha256: 33fbfd0d8bbaa689f0169d442861dafcdcd4fe795a4b42aa0bedbfa41aa65b23
-  original:
-    hackage: HaskellNet-SSL-0.3.4.1
-- completed:
-    hackage: github-0.21@sha256:9d88c84e308723e314069f91c70c0f3fdad6d18976f185f1ae672ce8eee30547,6296
-    pantry-tree:
-      size: 6648
-      sha256: 832e62729292d71f405bb9497939e9e8fd3823d2bcfeab19b543d2d953dc4621
-  original:
-    hackage: github-0.21
-- completed:
-    hackage: http-api-data-0.3.10@sha256:13e1ed2514ec7a857454f472604fc6bf9616d908d2de7202c2507e413029c907,3695
-    pantry-tree:
-      size: 945
-      sha256: ced1fe4b910b92cf402ab26bd7f8fbbeec17907471052d73f8af83ce5c26bd00
-  original:
-    hackage: http-api-data-0.3.10
-- completed:
-    hackage: jwt-0.9.0@sha256:82df51e48d2c7a6773bac7cd0f99f221107e7124db5d118f828dc08af025edee,4179
-    pantry-tree:
-      size: 1027
-      sha256: b5d2fea8ec4a71942be093a6e6fc59ac55e70afae9146ab4720ce38eb4176744
-  original:
-    hackage: jwt-0.9.0
-- completed:
-    hackage: mime-mail-0.5.0@sha256:fd831e54a1ffcef0300cca4c030541cd3b0f54241ab0a79d93430d74a5432476,1631
-    pantry-tree:
-      size: 439
-      sha256: fabb3d11fa9fb9c21aefe81b575c57ad8961e4ffb6deb688a8d82fef3a7458fb
-  original:
-    hackage: mime-mail-0.5.0
-- completed:
-    size: 52167
-    url: https://github.com/jtdaugherty/HaskellNet/archive/2c3da32.tar.gz
-    cabal-file:
-      size: 1557
-      sha256: 7f8e610583da9089b12eb6215b5e015c03d49afd9c13b20f0c7b27f7360a1d2f
-    name: HaskellNet
-    version: 0.5.1
-    sha256: 80cf644eb2252ff4d70e6c497f2cd04cc45e5cf7ea2fa22d51324b67f05a3397
-    pantry-tree:
-      size: 3948
-      sha256: 894fd6ae253d0d788114a00f2487555d310864d317b0c105e2fb9e6668852174
-  original:
-    url: https://github.com/jtdaugherty/HaskellNet/archive/2c3da32.tar.gz
-- completed:
     hackage: text-replace-0.0.0.4@sha256:88800aba160dfb512cf43b24063170d34900e1646ad21f28715a22679f42ae15,1738
     pantry-tree:
       size: 293
@@ -109,9 +53,65 @@ packages:
       sha256: 2c7a1cc0208a4b5208b6bfd45c2a64649e916e8d1ba6f7a9605fce9f1f5227b2
   original:
     hackage: servant-multipart-0.11.4
+- completed:
+    hackage: fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
+    pantry-tree:
+      size: 210
+      sha256: f92ef28c1edc20a1653f074bc85e7862c81ff850893b4417b64a8582ce62b531
+  original:
+    hackage: fsutils-0.1.2
+- completed:
+    hackage: oidc-client-0.5.0.0@sha256:dc45d9f33cf30b578445b54ba641c71aeb8d3decb1d8df60fa39c03d77acb379,3340
+    pantry-tree:
+      size: 1228
+      sha256: 06ce0270386c4c35d839d6304429bcbbc384139a9a0964781d01cdbadf21ab01
+  original:
+    hackage: oidc-client-0.5.0.0
+- completed:
+    hackage: HaskellNet-SSL-0.3.4.1@sha256:3ca14dd69460a380cf69aed40654fb10c4c03e344632b6a9986568c87feda157,1843
+    pantry-tree:
+      size: 577
+      sha256: 33fbfd0d8bbaa689f0169d442861dafcdcd4fe795a4b42aa0bedbfa41aa65b23
+  original:
+    hackage: HaskellNet-SSL-0.3.4.1
+- completed:
+    size: 55439
+    url: https://github.com/jtdaugherty/HaskellNet/archive/5aa1f3b.tar.gz
+    cabal-file:
+      size: 2069
+      sha256: 9192ac19ea5da3cd4b8c86a4266592aff7b9256311aa5f42ae6de94ccacf1366
+    name: HaskellNet
+    version: 0.5.1
+    sha256: 84a2fec1b8e2e69568484854a4baa52e7a267059ad60389929e71b4b309dadbd
+    pantry-tree:
+      size: 4011
+      sha256: 921b437ef18ccb04f889301c407263d6b5b72c5864803a000b1e61328988ce70
+  original:
+    url: https://github.com/jtdaugherty/HaskellNet/archive/5aa1f3b.tar.gz
+- completed:
+    hackage: network-2.8.0.1@sha256:0f165dffa752d8cde30c2bde86f80609c4f1dc5eeb3182d593041f97839c5b3b,3011
+    pantry-tree:
+      size: 2488
+      sha256: 2dbdda2225969dcd452d983a2ac7e52341e5fc1df76103342c9fac08fc686931
+  original:
+    hackage: network-2.8.0.1
+- completed:
+    hackage: network-bsd-2.8.0.0@sha256:8438706179a09bb6e95135a16e5ce77d0ecf6f288e2d27a13fbb3aacd1c023a0,834
+    pantry-tree:
+      size: 154
+      sha256: 94ffc046a96682cc681a76f879452dea4780495d40d477ad7e28ca06ec9a1e88
+  original:
+    hackage: network-bsd-2.8.0.0
+- completed:
+    hackage: mongoDB-2.4.0.0@sha256:fc8dcbf0c9100c367dabc738f9b40a74770a5b90e05819fb31854372f035d165,4264
+    pantry-tree:
+      size: 1109
+      sha256: 3f6bef1a66d07de98c87f91420c748ae428f9fc843348dcfda334936d895e399
+  original:
+    hackage: mongoDB-2.4.0.0
 snapshots:
 - completed:
-    size: 496635
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/13/12.yaml
-    sha256: 67b74d6acad1342ba8089b75f415c1c63897e3f32091863c921104e8d0bdcfa0
-  original: lts-13.12
+    size: 524996
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/27.yaml
+    sha256: 7ea31a280c56bf36ff591a7397cc384d0dff622e7f9e4225b47d8980f019a0f0
+  original: lts-14.27

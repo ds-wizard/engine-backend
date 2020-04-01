@@ -14,14 +14,18 @@ import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.API.Feedback.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /feedbacks/synchronization
 -- ------------------------------------------------------------------------
 list_synchronization_get :: AppContext -> SpecWith Application
-list_synchronization_get appContext = describe "GET /feedbacks/synchronization" $ do test_401 appContext
+list_synchronization_get appContext =
+  describe "GET /feedbacks/synchronization" $ do
+    test_204 appContext
+    test_401 appContext
 
---  test_204 appContext -- Disable due to slow running
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -43,6 +47,8 @@ test_204 appContext =
     let expStatus = 204
     let expHeaders = resCorsHeaders
     let expBody = ""
+     -- AND: Run migrations
+    runInContextIO loadFeedbackTokenFromEnv appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

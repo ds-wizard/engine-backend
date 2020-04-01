@@ -17,7 +17,6 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
-import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Event.EventDAO
@@ -30,20 +29,18 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Branch.BranchUtils
 import Wizard.Service.Branch.BranchValidation
-import Wizard.Service.Organization.OrganizationService
 import Wizard.Service.Package.PackageService
 
 getBranches :: AppContextM [BranchDTO]
 getBranches = do
-  organization <- getOrganization
   bs <- findBranchesWithEvents
-  forM bs (enhance organization)
+  forM bs enhance
   where
-    enhance :: OrganizationDTO -> BranchWithEvents -> AppContextM BranchDTO
-    enhance organization branch = do
+    enhance :: BranchWithEvents -> AppContextM BranchDTO
+    enhance branch = do
       mForkOfPackageId <- getBranchForkOfPackageId branch
       state <- getBranchState branch
-      return $ toDTO branch mForkOfPackageId state organization
+      return $ toDTO branch mForkOfPackageId state
 
 createBranch :: BranchCreateDTO -> AppContextM BranchDTO
 createBranch reqDto = do
@@ -56,11 +53,10 @@ createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> App
 createBranchWithParams bUuid now currentUser reqDto = do
   validateNewKmId (reqDto ^. kmId)
   validatePackageExistence (reqDto ^. previousPackageId)
-  organization <- getOrganization
   let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
   insertBranch branch
   createDefaultEventIfPreviousPackageIsNotPresent branch
-  return $ toDTO branch Nothing BSDefault organization
+  return $ toDTO branch Nothing BSDefault
   where
     createDefaultEventIfPreviousPackageIsNotPresent branch = do
       let branchUuid = U.toString $ branch ^. uuid
@@ -81,15 +77,13 @@ createBranchWithParams bUuid now currentUser reqDto = do
 
 getBranchById :: String -> AppContextM BranchDetailDTO
 getBranchById branchUuid = do
-  organization <- getOrganization
   branch <- findBranchWithEventsById branchUuid
   mForkOfPackageId <- getBranchForkOfPackageId branch
   branchState <- getBranchState branch
-  return $ toDetailDTO branch mForkOfPackageId branchState organization
+  return $ toDetailDTO branch mForkOfPackageId branchState
 
 modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
 modifyBranch branchUuid reqDto = do
-  organization <- getOrganization
   branchFromDB <- findBranchById branchUuid
   validateKmId
   now <- liftIO getCurrentTime
@@ -105,7 +99,7 @@ modifyBranch branchUuid reqDto = do
   updateBranchById branch
   mForkOfPackageId <- getBranchForkOfPackageId branch
   branchState <- getBranchState branch
-  return $ toDetailDTO branch mForkOfPackageId branchState organization
+  return $ toDetailDTO branch mForkOfPackageId branchState
   where
     validateKmId = do
       let bKmId = reqDto ^. kmId

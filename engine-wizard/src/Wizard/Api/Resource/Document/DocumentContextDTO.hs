@@ -5,13 +5,13 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Wizard.Api.Resource.Level.LevelDTO
-import Wizard.Api.Resource.Organization.OrganizationDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Config.AppConfig
 
 data DocumentContextDTO =
   DocumentContextDTO
@@ -27,7 +27,7 @@ data DocumentContextDTO =
     , _documentContextDTOLevels :: [LevelDTO]
     , _documentContextDTOReport :: ReportDTO
     , _documentContextDTOPackage :: PackageSimpleDTO
-    , _documentContextDTOOrganization :: OrganizationDTO
+    , _documentContextDTOOrganization :: AppConfigOrganization
     , _documentContextDTOCreatedBy :: Maybe UserDTO
     , _documentContextDTOCreatedAt :: UTCTime
     , _documentContextDTOUpdatedAt :: UTCTime

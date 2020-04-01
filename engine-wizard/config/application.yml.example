@@ -1,6 +1,7 @@
 general:
   clientUrl: http://localhost:3001
   serviceToken:
+  secret:
 
 database:
   host: mongo
@@ -16,9 +17,6 @@ messaging:
   username: guest
   password: guest
   vhost: /
-
-jwt:
-  secret:
 
 mail:
   enabled: false

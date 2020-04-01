@@ -19,6 +19,7 @@ import LensesConfig
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO
@@ -33,10 +34,9 @@ import Wizard.Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do
-  appConfig <- asks _appContextApplicationConfig
   pkgs <- findPackagesFiltered queryParams
   iStat <- getInstanceStatistics
-  pkgRs <- retrievePackages (appConfig ^. registry) iStat
+  pkgRs <- retrievePackages iStat
   return . fmap (toSimpleDTOs pkgRs) . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
@@ -48,12 +48,12 @@ getSimplePackagesFiltered queryParams = do
 
 getPackageById :: String -> AppContextM PackageDetailDTO
 getPackageById pkgId = do
-  appConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   pkg <- findPackageById pkgId
   versions <- getPackageVersions pkg
   iStat <- getInstanceStatistics
-  pkgRs <- retrievePackages (appConfig ^. registry) iStat
-  return $ toDetailDTO pkg pkgRs versions (buildPackageUrl (appConfig ^. registry . clientUrl) pkgId)
+  pkgRs <- retrievePackages iStat
+  return $ toDetailDTO pkg pkgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkgId)
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
 getSeriesOfPackages pkgId = do

@@ -9,22 +9,22 @@ module Wizard.Service.PackageBundle.PackageBundleService
 import Control.Lens ((^.))
 import Control.Monad (forM)
 import Control.Monad.Except (catchError, throwError)
-import Control.Monad.Reader (asks)
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List (find)
 import Data.Maybe (catMaybes)
 
 import LensesConfig
+import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.Package.PackageJM ()
+import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Constant.KnowledgeModel
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.PackageBundle.PackageBundle
-import Wizard.Api.Resource.Package.PackageDTO
-import Wizard.Api.Resource.Package.PackageJM ()
+import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.PackageBundle.PackageBundleDTO
-import Wizard.Api.Resource.PackageBundle.PackageBundleJM ()
 import Wizard.Constant.Component
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
@@ -36,7 +36,6 @@ import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
-import Wizard.Service.PackageBundle.PackageBundleMapper
 import Wizard.Util.Logger (logWarnU, msg)
 
 exportPackageBundle :: String -> AppContextM PackageBundleDTO
@@ -57,8 +56,7 @@ exportPackageBundle pbId = do
 
 pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId = do
-  appConfig <- asks _appContextApplicationConfig
-  pb <- catchError (retrievePackageBundleById (appConfig ^. registry) pkgId) handleError
+  pb <- catchError (retrievePackageBundleById pkgId) handleError
   _ <- importAndConvertPackageBundle pb
   return ()
   where

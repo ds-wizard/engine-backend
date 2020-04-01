@@ -1,6 +1,5 @@
 module Wizard.Specs.Service.User.UserServiceSpec where
 
-import Control.Lens ((&), (.~))
 import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -13,14 +12,15 @@ import Wizard.Service.User.UserService
 import Wizard.Specs.Common
 
 userServiceIntegrationSpec appContext =
-  describe "User Service Integration" $ do
-    let updatedAppContext = appContext & applicationConfig . general . registrationEnabled .~ False
-    describe "registrateUser" $ do
-      it "Registation is disabled" $
-        -- GIVEN: Prepare expectations
-       do
-        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
-        -- WHEN:
-        result <- runInContext (registrateUser userJohnCreate) updatedAppContext
-        -- THEN:
-        result `shouldBe` expectation
+  describe "User Service Integration" $
+  describe "registrateUser" $
+  it "Registation is disabled" $
+     -- GIVEN: Prepare expectations
+   do
+    let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registration"
+     -- AND: Update config in DB
+    runInContext (modifyAppConfig (authentication . internal . registration . enabled) False) appContext
+     -- WHEN:
+    result <- runInContext (registrateUser userJohnCreate) appContext
+     -- THEN:
+    result `shouldBe` expectation

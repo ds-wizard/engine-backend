@@ -16,7 +16,7 @@ import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchUtils
-import Wizard.Service.Organization.OrganizationService
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Version.VersionMapper
@@ -47,7 +47,8 @@ publishPackage bUuid pkgVersion reqDto = do
 doPublishPackage ::
      String -> VersionDTO -> BranchWithEvents -> [Event] -> Maybe String -> Maybe String -> AppContextM PackageSimpleDTO
 doPublishPackage pkgVersion reqDto branch events mForkOfPkgId mMergeCheckpointPkgId = do
-  org <- getOrganization
+  appConfig <- getAppConfig
+  let org = appConfig ^. organization
   validateNewPackageVersion pkgVersion branch org
   now <- liftIO getCurrentTime
   let pkg = fromPackage branch reqDto mForkOfPkgId mMergeCheckpointPkgId org pkgVersion events now

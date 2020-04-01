@@ -23,9 +23,9 @@ import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
-import Registry.Util.StringGenerator (generateRandomString)
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Crypto (generateRandomString)
 
 getOrganizations :: AppContextM [OrganizationDTO]
 getOrganizations = do
@@ -48,8 +48,8 @@ createOrganization reqDto = do
   return . toDTO $ org
   where
     sendAnalyticsEmailIfEnabled org = do
-      appConfig <- asks _appContextApplicationConfig
-      when (appConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
+      serverConfig <- asks _appContextApplicationConfig
+      when (serverConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
 
 getOrganizationByOrgId :: String -> AppContextM OrganizationDTO
 getOrganizationByOrgId orgId = do

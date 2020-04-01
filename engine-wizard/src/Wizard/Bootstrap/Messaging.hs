@@ -9,8 +9,8 @@ import Wizard.Constant.Component
 import Wizard.Messaging.Connection
 import Wizard.Util.Logger
 
-connectMQ appConfig =
-  if appConfig ^. messaging . enabled
+connectMQ serverConfig =
+  if serverConfig ^. messaging . enabled
     then do
       logInfo $ msg _CMP_MESSAGING "connecting to the message broker"
       msgChannel <-
@@ -19,7 +19,7 @@ connectMQ appConfig =
           retryBackoff
           _CMP_MESSAGING
           "failed to connect to the message broker"
-          (createMessagingChannel appConfig)
+          (createMessagingChannel serverConfig)
       logInfo $ msg _CMP_MESSAGING "connected"
       return msgChannel
     else do

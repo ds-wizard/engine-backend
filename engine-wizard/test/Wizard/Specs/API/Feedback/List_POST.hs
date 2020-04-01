@@ -12,13 +12,14 @@ import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Feedback.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /feedbacks
@@ -57,6 +58,8 @@ test_200 appContext =
    do
     let expStatus = 201
     let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+     -- AND: Run migrations
+    runInContextIO loadFeedbackTokenFromEnv appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

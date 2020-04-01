@@ -1,5 +1,5 @@
 name: engine-shared
-version: '2.1.0'
+version: '2.2.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -28,18 +28,25 @@ library:
   - bytestring
   - case-insensitive
   - containers
+  - cryptonite
   - directory
+  - fsutils
   - http-types
   - lens
+  - memory
   - monad-logger
   - random
   - servant-server
+  - servant-multipart
+  - servant-swagger
+  - swagger2
   - time
   - text
   - text-replace
   - unordered-containers
   - uuid
   - wai
+  - yaml
   default-extensions:
     - TemplateHaskell
     - OverloadedStrings
@@ -57,6 +64,7 @@ library:
     - FunctionalDependencies
     - TypeSynonymInstances
     - RankNTypes
+    - TypeOperators
 tests:
   hspec:
     main: Spec.hs

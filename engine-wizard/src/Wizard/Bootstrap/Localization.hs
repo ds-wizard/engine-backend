@@ -16,14 +16,14 @@ import Wizard.Constant.Component
 import Wizard.Constant.Resource
 import Wizard.Util.Logger (logError, logInfo, msg)
 
-loadLocalization appConfig = do
+loadLocalization serverConfig = do
   logInfo $ msg _CMP_LOCALIZATION "start loading localization"
-  localLocalization <- loadLocalLocalization appConfig
-  remoteLocalization <- loadRemoteLocalization appConfig
+  localLocalization <- loadLocalLocalization serverConfig
+  remoteLocalization <- loadRemoteLocalization serverConfig
   logInfo $ msg _CMP_LOCALIZATION "localization loaded"
   return $ M.union remoteLocalization localLocalization
 
-loadLocalLocalization appConfig = do
+loadLocalLocalization serverConfig = do
   logInfo $ msg _CMP_LOCALIZATION "start loading local localization"
   eResult <- liftIO (loadJSONFile localizationFile :: IO (Either AppError (M.Map String String)))
   case eResult of
@@ -40,9 +40,9 @@ loadLocalLocalization appConfig = do
       logError $ msg _CMP_LOCALIZATION (show error)
       return M.empty
 
-loadRemoteLocalization appConfig = do
+loadRemoteLocalization serverConfig = do
   logInfo $ msg _CMP_LOCALIZATION "start loading remote localization"
-  let mUrl = appConfig ^. general . remoteLocalizationUrl
+  let mUrl = serverConfig ^. general . remoteLocalizationUrl
   case mUrl of
     Just url -> do
       response <- liftIO $ get url
