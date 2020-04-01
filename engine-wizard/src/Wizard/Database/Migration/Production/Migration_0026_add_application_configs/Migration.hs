@@ -26,6 +26,7 @@ migrate dbPool = do
   insertConfig dbPool
   addAffiliationToUsers dbPool
   changeRoles dbPool
+  setDefaultSource dbPool
   addPermissionToAdmins dbPool
   moveOrganizationToConfig dbPool
   return Nothing
@@ -46,11 +47,13 @@ changeRoles dbPool = do
   changeRole dbPool "ADMIN" "admin"
   changeRole dbPool "DATASTEWARD" "dataSteward"
   changeRole dbPool "RESEARCHER" "researcher"
-  let action = modify (select ["role" =: "ADMIN"] "users") ["$set" =: ["affiliation" =: "admin"]]
-  runMongoDBPoolDef action dbPool
 
 changeRole dbPool oldRole newRole = do
   let action = modify (select ["role" =: oldRole] "users") ["$set" =: ["role" =: newRole]]
+  runMongoDBPoolDef action dbPool
+
+setDefaultSource dbPool = do
+  let action = modify (select [] "users") ["$set" =: ["sources" =: ["internal"]]]
   runMongoDBPoolDef action dbPool
 
 addPermissionToAdmins dbPool = do

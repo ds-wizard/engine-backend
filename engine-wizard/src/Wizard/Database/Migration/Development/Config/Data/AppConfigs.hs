@@ -78,7 +78,7 @@ defaultAuthExternalServiceStyle =
 defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   AppConfigPrivacyAndSupport
-    { _appConfigPrivacyAndSupportPrivacyUrl = "https://ds-wizard.org/privacy.html"
+    { _appConfigPrivacyAndSupportPrivacyUrl = Nothing
     , _appConfigPrivacyAndSupportSupportEmail = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing
