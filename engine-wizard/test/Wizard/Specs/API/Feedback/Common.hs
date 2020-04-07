@@ -6,7 +6,7 @@ import Data.Maybe (fromMaybe)
 import System.Environment (lookupEnv)
 import Test.Hspec
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Model.Config.AppConfig

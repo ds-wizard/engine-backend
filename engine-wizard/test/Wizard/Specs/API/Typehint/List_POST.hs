@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG

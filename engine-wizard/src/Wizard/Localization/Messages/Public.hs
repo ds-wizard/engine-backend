@@ -46,6 +46,9 @@ _ERROR_VALIDATION__OPENID_CODE_ABSENCE =
 _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE =
   LocaleRecord "error.validation.openid_profile_info_absence" "Profile Information from OpenID service is missing" []
 
+_ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
+  LocaleRecord "error.validation.submission_definition_absence" "Definition of submission ('%s') is missing" [subId]
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------

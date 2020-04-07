@@ -1,8 +1,12 @@
 module Wizard.Database.Migration.Development.Config.Data.AppConfigs where
 
+import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 
+import LensesConfig
+import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
@@ -21,6 +25,7 @@ defaultAppConfig =
     , _appConfigLookAndFeel = defaultLookAndFeel
     , _appConfigKnowledgeModelRegistry = defaultRegistry
     , _appConfigQuestionnaire = defaultQuestionnaire
+    , _appConfigSubmission = defaultSubmission
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -137,6 +142,50 @@ defaultFeedback =
     , _appConfigQuestionnaireFeedbackToken = ""
     , _appConfigQuestionnaireFeedbackOwner = "DSWGlobal"
     , _appConfigQuestionnaireFeedbackRepo = "dsw-test"
+    }
+
+defaultSubmission :: AppConfigSubmission
+defaultSubmission =
+  AppConfigSubmission {_appConfigSubmissionEnabled = True, _appConfigSubmissionServices = [defaultSubmissionService]}
+
+defaultSubmissionService :: AppConfigSubmissionService
+defaultSubmissionService =
+  AppConfigSubmissionService
+    { _appConfigSubmissionServiceSId = "mySubmissionServer"
+    , _appConfigSubmissionServiceName = "My Submission Server"
+    , _appConfigSubmissionServiceDescription = "Some description"
+    , _appConfigSubmissionServiceProps = [defaultSubmissionServiceApiTokenProp, defaultSubmissionServiceSecretProp]
+    , _appConfigSubmissionServiceSupportedFormats = [defaultSubmissionServiceSupportedFormat]
+    , _appConfigSubmissionServiceRequest = defaultSubmissionServiceRequest
+    }
+
+defaultSubmissionServiceApiTokenProp :: String
+defaultSubmissionServiceApiTokenProp = "API Token"
+
+defaultSubmissionServiceSecretProp :: String
+defaultSubmissionServiceSecretProp = "Secret"
+
+defaultSubmissionServiceSupportedFormat :: AppConfigSubmissionServiceSupportedFormat
+defaultSubmissionServiceSupportedFormat =
+  AppConfigSubmissionServiceSupportedFormat
+    { _appConfigSubmissionServiceSupportedFormatTemplateUuid = commonWizardTemplate ^. uuid
+    , _appConfigSubmissionServiceSupportedFormatFormatUuid = templateFormatJson ^. uuid
+    }
+
+defaultSubmissionServiceRequest :: AppConfigSubmissionServiceRequest
+defaultSubmissionServiceRequest =
+  AppConfigSubmissionServiceRequest
+    { _appConfigSubmissionServiceRequestMethod = "GET"
+    , _appConfigSubmissionServiceRequestUrl = "https://mockserver.ds-wizard.org/submission.json"
+    , _appConfigSubmissionServiceRequestHeaders = M.fromList [("Api-Key", "${API Token}")]
+    , _appConfigSubmissionServiceRequestMultipart = defaultSubmissionServiceRequestMultipart
+    }
+
+defaultSubmissionServiceRequestMultipart :: AppConfigSubmissionServiceRequestMultipart
+defaultSubmissionServiceRequestMultipart =
+  AppConfigSubmissionServiceRequestMultipart
+    { _appConfigSubmissionServiceRequestMultipartEnabled = False
+    , _appConfigSubmissionServiceRequestMultipartFileName = "file"
     }
 
 -- ------------------------------------------------------------

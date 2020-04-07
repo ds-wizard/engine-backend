@@ -69,10 +69,19 @@ defaultRoles =
         , "QTN_PERM"
         , "DMP_PERM"
         , "CFG_PERM"
+        , "SUBM_PERM"
         ]
     , _serverConfigRolesDataSteward =
-        ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "PM_WRITE_PERM", "QTN_PERM", "DMP_PERM"]
-    , _serverConfigRolesResearcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
+        [ "KM_PERM"
+        , "KM_UPGRADE_PERM"
+        , "KM_PUBLISH_PERM"
+        , "PM_READ_PERM"
+        , "PM_WRITE_PERM"
+        , "QTN_PERM"
+        , "DMP_PERM"
+        , "SUBM_PERM"
+        ]
+    , _serverConfigRolesResearcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     }
 
 defaultMail :: ServerConfigMail

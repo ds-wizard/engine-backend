@@ -10,14 +10,17 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
+import qualified Data.Text as T
 import Network.Wreq
-  ( Response
+  ( Part
+  , Response
   , checkResponse
   , customPayloadMethodWith
   , defaults
   , getWith
   , headers
   , manager
+  , partBS
   , responseBody
   , responseStatus
   , statusCode
@@ -52,15 +55,18 @@ runSimpleRequest req = do
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & checkResponse .~
         (Just $ \_ _ -> return ())
-  liftIO . action $ opts
+  case req ^. multipartFileName of
+    Just fileName -> liftIO . actionMultipart opts $ fileName
+    Nothing -> liftIO . action $ opts
   where
     reqMethod = req ^. requestMethod
     reqUrl = req ^. requestUrl
-    reqHeaders = mapHeader <$> (toList $ req ^. requestHeaders)
-    reqBody = BS.pack $ req ^. requestBody
+    reqHeaders = mapHeader <$> toList (req ^. requestHeaders)
     action opts
-      | reqMethod == "GET" && reqBody == "" = getWith opts reqUrl
-      | otherwise = customPayloadMethodWith reqMethod opts reqUrl reqBody
+      | reqMethod == "GET" = getWith opts reqUrl
+      | otherwise = customPayloadMethodWith reqMethod opts reqUrl (req ^. requestBody)
+    actionMultipart opts fileName =
+      customPayloadMethodWith reqMethod opts reqUrl ([partBS (T.pack fileName) (req ^. requestBody)] :: [Part])
 
 -- --------------------------------
 -- PRIVATE
@@ -75,7 +81,10 @@ logRequest request = do
   logInfoU _CMP_INTEGRATION ("Retrieving '" ++ (request ^. requestUrl) ++ "'")
   logInfoU _CMP_INTEGRATION ("Request Method '" ++ (request ^. requestMethod) ++ "'")
   logInfoU _CMP_INTEGRATION ("Request Headers: '" ++ (show . toList $ request ^. requestHeaders) ++ "'")
-  logInfoU _CMP_INTEGRATION ("Request Body: '" ++ (request ^. requestBody) ++ "'")
+  case request ^. multipartFileName of
+    Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
+    Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
+  logInfoU _CMP_INTEGRATION ("Request Body: '" ++ BS.unpack (request ^. requestBody) ++ "'")
 
 logResponse response = do
   logInfoU _CMP_INTEGRATION "Retrieved Response"

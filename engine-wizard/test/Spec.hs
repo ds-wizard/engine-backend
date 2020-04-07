@@ -31,10 +31,11 @@ import Wizard.Specs.API.MigrationAPISpec
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
+import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Template.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
-import Wizard.Specs.API.UserAPISpec
+import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
@@ -138,6 +139,7 @@ main =
              packageAPI appContext
              questionnaireAPI appContext
              questionnaireMigrationAPI appContext
+             submissionAPI appContext
              templateAPI appContext
              typehintAPI appContext
              tokenAPI appContext

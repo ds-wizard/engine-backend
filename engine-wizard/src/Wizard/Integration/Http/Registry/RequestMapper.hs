@@ -4,6 +4,7 @@ module Wizard.Integration.Http.Registry.RequestMapper
   ) where
 
 import Control.Lens ((^.))
+import Data.ByteString.Char8 as BS
 import Data.Map.Strict as M
 import Prelude hiding (lookup)
 
@@ -26,7 +27,8 @@ toRetrievePackagesRequest serverConfig appConfig iStat =
           , (xPkgCountHeaderName, show $ iStat ^. pkgCount)
           , (xQtnCountHeaderName, show $ iStat ^. qtnCount)
           ]
-    , _httpRequestRequestBody = ""
+    , _httpRequestRequestBody = BS.empty
+    , _httpRequestMultipartFileName = Nothing
     }
 
 toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
@@ -35,5 +37,6 @@ toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =
     { _httpRequestRequestMethod = "GET"
     , _httpRequestRequestUrl = serverConfig ^. url ++ "/packages/" ++ pkgId ++ "/bundle"
     , _httpRequestRequestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token)]
-    , _httpRequestRequestBody = ""
+    , _httpRequestRequestBody = BS.empty
+    , _httpRequestMultipartFileName = Nothing
     }

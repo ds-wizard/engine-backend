@@ -18,6 +18,7 @@ instance ToBSON User where
     , "role" BSON.=: _userRole
     , "permissions" BSON.=: _userPermissions
     , "active" BSON.=: _userActive
+    , "submissionProps" BSON.=: _userSubmissionProps
     , "createdAt" BSON.=: _userCreatedAt
     , "updatedAt" BSON.=: _userUpdatedAt
     ]
@@ -34,6 +35,16 @@ instance FromBSON User where
     _userRole <- BSON.lookup "role" doc
     _userPermissions <- BSON.lookup "permissions" doc
     _userActive <- BSON.lookup "active" doc
+    _userSubmissionProps <- BSON.lookup "submissionProps" doc
     _userCreatedAt <- BSON.lookup "createdAt" doc
     _userUpdatedAt <- BSON.lookup "updatedAt" doc
     return User {..}
+
+instance ToBSON UserSubmissionProps where
+  toBSON UserSubmissionProps {..} = ["id" BSON.=: _userSubmissionPropsSId, "values" BSON.=: _userSubmissionPropsValues]
+
+instance FromBSON UserSubmissionProps where
+  fromBSON doc = do
+    _userSubmissionPropsSId <- BSON.lookup "id" doc
+    _userSubmissionPropsValues <- BSON.lookup "values" doc
+    return UserSubmissionProps {..}

@@ -63,6 +63,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Report.ReportDTO
+import Wizard.Api.Resource.Submission.SubmissionCreateDTO
+import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
@@ -73,7 +75,9 @@ import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
@@ -149,6 +153,16 @@ makeFields ''AppConfigRegistry
 makeFields ''AppConfigQuestionnaire
 
 makeFields ''AppConfigQuestionnaireFeedback
+
+makeFields ''AppConfigSubmission
+
+makeFields ''AppConfigSubmissionService
+
+makeFields ''AppConfigSubmissionServiceSupportedFormat
+
+makeFields ''AppConfigSubmissionServiceRequest
+
+makeFields ''AppConfigSubmissionServiceRequestMultipart
 
 makeFields ''SimpleFeature
 
@@ -366,6 +380,8 @@ makeFields ''InstanceStatistics
 
 -- Model / User
 makeFields ''User
+
+makeFields ''UserSubmissionProps
 
 -- -------------------------------------
 -- Api / Resource
@@ -599,6 +615,11 @@ makeFields ''TotalReportDTO
 
 makeFields ''ReportDTO
 
+-- Api / Resource / Submission
+makeFields ''SubmissionCreateDTO
+
+makeFields ''SubmissionDTO
+
 -- Api / Resource / Template
 makeFields ''TemplateDTO
 
@@ -625,9 +646,13 @@ makeFields ''UserDTO
 
 makeFields ''UserPasswordDTO
 
+makeFields ''UserProfileDTO
+
 makeFields ''UserProfileChangeDTO
 
 makeFields ''UserStateDTO
+
+makeFields ''UserSubmissionPropsDTO
 
 -- Api / Resource / Version
 makeFields ''VersionDTO

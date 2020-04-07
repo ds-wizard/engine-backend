@@ -101,3 +101,33 @@ instance FromJSON AppConfigQuestionnaireFeedback where
 
 instance ToJSON AppConfigQuestionnaireFeedback where
   toJSON = simpleToJSON "_appConfigQuestionnaireFeedback"
+
+instance FromJSON AppConfigSubmission where
+  parseJSON = simpleParseJSON "_appConfigSubmission"
+
+instance ToJSON AppConfigSubmission where
+  toJSON = simpleToJSON "_appConfigSubmission"
+
+instance FromJSON AppConfigSubmissionService where
+  parseJSON = simpleParseJSON "_appConfigSubmissionService"
+
+instance ToJSON AppConfigSubmissionService where
+  toJSON = simpleToJSON "_appConfigSubmissionService"
+
+instance FromJSON AppConfigSubmissionServiceSupportedFormat where
+  parseJSON = simpleParseJSON "_appConfigSubmissionServiceSupportedFormat"
+
+instance ToJSON AppConfigSubmissionServiceSupportedFormat where
+  toJSON = simpleToJSON "_appConfigSubmissionServiceSupportedFormat"
+
+instance FromJSON AppConfigSubmissionServiceRequest where
+  parseJSON = simpleParseJSON "_appConfigSubmissionServiceRequest"
+
+instance ToJSON AppConfigSubmissionServiceRequest where
+  toJSON = simpleToJSON "_appConfigSubmissionServiceRequest"
+
+instance FromJSON AppConfigSubmissionServiceRequestMultipart where
+  parseJSON = simpleParseJSON "_appConfigSubmissionServiceRequestMultipart"
+
+instance ToJSON AppConfigSubmissionServiceRequestMultipart where
+  toJSON = simpleToJSON "_appConfigSubmissionServiceRequestMultipart"

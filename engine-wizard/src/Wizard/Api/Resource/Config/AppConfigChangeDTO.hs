@@ -13,5 +13,6 @@ data AppConfigChangeDTO =
     , _appConfigChangeDTOLookAndFeel :: AppConfigLookAndFeel
     , _appConfigChangeDTOKnowledgeModelRegistry :: AppConfigRegistry
     , _appConfigChangeDTOQuestionnaire :: AppConfigQuestionnaire
+    , _appConfigChangeDTOSubmission :: AppConfigSubmission
     }
   deriving (Generic, Show)

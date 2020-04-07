@@ -127,3 +127,11 @@ createPreview qtnUuid = do
           doc <- findDocumentById (U.toString $ docDto ^. uuid)
           return (doc, BS.empty)
         _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
+
+checkPermissionToDocument :: String -> AppContextM ()
+checkPermissionToDocument docUuid = do
+  currentUser <- getCurrentUser
+  doc <- findDocumentById docUuid
+  if (currentUser ^. role == _USER_ROLE_ADMIN) || (currentUser ^. uuid == doc ^. ownerUuid)
+    then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Detail Document"

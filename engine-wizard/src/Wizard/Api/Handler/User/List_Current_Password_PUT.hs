@@ -11,7 +11,7 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserPasswordJM ()
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.BaseContext
-import Wizard.Service.User.UserService
+import Wizard.Service.User.UserProfileService
 
 type List_Current_Password_PUT
    = Header "Authorization" String
@@ -28,5 +28,5 @@ list_current_password_PUT mTokenHeader reqDto =
     runInAuthService $
     addTraceUuidHeader =<< do
       user <- getCurrentUser
-      changeCurrentUserPassword (U.toString $ user ^. uuid) reqDto
+      changeUserProfilePassword (U.toString $ user ^. uuid) reqDto
       return NoContent

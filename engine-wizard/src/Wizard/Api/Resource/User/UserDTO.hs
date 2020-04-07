@@ -4,6 +4,7 @@ import Data.Time
 import Data.UUID
 import GHC.Generics
 
+import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
 import Wizard.Model.User.User
 
 data UserDTO =
@@ -17,7 +18,20 @@ data UserDTO =
     , _userDTORole :: Role
     , _userDTOPermissions :: [Permission]
     , _userDTOActive :: Bool
+    , _userDTOSubmissionProps :: [UserSubmissionProps]
     , _userDTOCreatedAt :: Maybe UTCTime
     , _userDTOUpdatedAt :: Maybe UTCTime
     }
-  deriving (Show, Eq, Generic)
+  deriving (Show, Generic)
+
+instance Eq UserDTO where
+  a == b =
+    _userDTOUuid a == _userDTOUuid b &&
+    _userDTOFirstName a == _userDTOFirstName b &&
+    _userDTOLastName a == _userDTOLastName b &&
+    _userDTOEmail a == _userDTOEmail b &&
+    _userDTOAffiliation a == _userDTOAffiliation b &&
+    _userDTOSources a == _userDTOSources b &&
+    _userDTORole a == _userDTORole b &&
+    _userDTOPermissions a == _userDTOPermissions b &&
+    _userDTOActive a == _userDTOActive b && _userDTOSubmissionProps a == _userDTOSubmissionProps b

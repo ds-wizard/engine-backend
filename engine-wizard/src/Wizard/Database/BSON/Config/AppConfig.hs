@@ -16,6 +16,7 @@ instance ToBSON AppConfig where
     , "lookAndFeel" BSON.=: _appConfigLookAndFeel
     , "knowledgeModelRegistry" BSON.=: _appConfigKnowledgeModelRegistry
     , "questionnaire" BSON.=: _appConfigQuestionnaire
+    , "submission" BSON.=: _appConfigSubmission
     , "createdAt" BSON.=: _appConfigCreatedAt
     , "updatedAt" BSON.=: _appConfigUpdatedAt
     ]
@@ -29,6 +30,7 @@ instance FromBSON AppConfig where
     _appConfigLookAndFeel <- BSON.lookup "lookAndFeel" doc
     _appConfigKnowledgeModelRegistry <- BSON.lookup "knowledgeModelRegistry" doc
     _appConfigQuestionnaire <- BSON.lookup "questionnaire" doc
+    _appConfigSubmission <- BSON.lookup "submission" doc
     _appConfigCreatedAt <- BSON.lookup "createdAt" doc
     _appConfigUpdatedAt <- BSON.lookup "updatedAt" doc
     return AppConfig {..}
@@ -241,3 +243,73 @@ instance FromBSON AppConfigQuestionnaireFeedback where
     _appConfigQuestionnaireFeedbackOwner <- BSON.lookup "owner" doc
     _appConfigQuestionnaireFeedbackRepo <- BSON.lookup "repo" doc
     return AppConfigQuestionnaireFeedback {..}
+
+instance ToBSON AppConfigSubmission where
+  toBSON AppConfigSubmission {..} =
+    ["enabled" BSON.=: _appConfigSubmissionEnabled, "services" BSON.=: _appConfigSubmissionServices]
+
+instance FromBSON AppConfigSubmission where
+  fromBSON doc = do
+    _appConfigSubmissionEnabled <- BSON.lookup "enabled" doc
+    _appConfigSubmissionServices <- BSON.lookup "services" doc
+    return AppConfigSubmission {..}
+
+instance ToBSON AppConfigSubmissionService where
+  toBSON AppConfigSubmissionService {..} =
+    [ "id" BSON.=: _appConfigSubmissionServiceSId
+    , "name" BSON.=: _appConfigSubmissionServiceName
+    , "description" BSON.=: _appConfigSubmissionServiceDescription
+    , "props" BSON.=: _appConfigSubmissionServiceProps
+    , "supportedFormats" BSON.=: _appConfigSubmissionServiceSupportedFormats
+    , "request" BSON.=: _appConfigSubmissionServiceRequest
+    ]
+
+instance FromBSON AppConfigSubmissionService where
+  fromBSON doc = do
+    _appConfigSubmissionServiceSId <- BSON.lookup "id" doc
+    _appConfigSubmissionServiceName <- BSON.lookup "name" doc
+    _appConfigSubmissionServiceDescription <- BSON.lookup "description" doc
+    _appConfigSubmissionServiceProps <- BSON.lookup "props" doc
+    _appConfigSubmissionServiceSupportedFormats <- BSON.lookup "supportedFormats" doc
+    _appConfigSubmissionServiceRequest <- BSON.lookup "request" doc
+    return AppConfigSubmissionService {..}
+
+instance ToBSON AppConfigSubmissionServiceSupportedFormat where
+  toBSON AppConfigSubmissionServiceSupportedFormat {..} =
+    [ "templateUuid" BSON.=: _appConfigSubmissionServiceSupportedFormatTemplateUuid
+    , "formatUuid" BSON.=: _appConfigSubmissionServiceSupportedFormatFormatUuid
+    ]
+
+instance FromBSON AppConfigSubmissionServiceSupportedFormat where
+  fromBSON doc = do
+    _appConfigSubmissionServiceSupportedFormatTemplateUuid <- BSON.lookup "templateUuid" doc
+    _appConfigSubmissionServiceSupportedFormatFormatUuid <- BSON.lookup "formatUuid" doc
+    return AppConfigSubmissionServiceSupportedFormat {..}
+
+instance ToBSON AppConfigSubmissionServiceRequest where
+  toBSON AppConfigSubmissionServiceRequest {..} =
+    [ "method" BSON.=: _appConfigSubmissionServiceRequestMethod
+    , "url" BSON.=: _appConfigSubmissionServiceRequestUrl
+    , "headers" BSON.=: _appConfigSubmissionServiceRequestHeaders
+    , "multipart" BSON.=: _appConfigSubmissionServiceRequestMultipart
+    ]
+
+instance FromBSON AppConfigSubmissionServiceRequest where
+  fromBSON doc = do
+    _appConfigSubmissionServiceRequestMethod <- BSON.lookup "method" doc
+    _appConfigSubmissionServiceRequestUrl <- BSON.lookup "url" doc
+    _appConfigSubmissionServiceRequestHeaders <- BSON.lookup "headers" doc
+    _appConfigSubmissionServiceRequestMultipart <- BSON.lookup "multipart" doc
+    return AppConfigSubmissionServiceRequest {..}
+
+instance ToBSON AppConfigSubmissionServiceRequestMultipart where
+  toBSON AppConfigSubmissionServiceRequestMultipart {..} =
+    [ "enabled" BSON.=: _appConfigSubmissionServiceRequestMultipartEnabled
+    , "fileName" BSON.=: _appConfigSubmissionServiceRequestMultipartFileName
+    ]
+
+instance FromBSON AppConfigSubmissionServiceRequestMultipart where
+  fromBSON doc = do
+    _appConfigSubmissionServiceRequestMultipartEnabled <- BSON.lookup "enabled" doc
+    _appConfigSubmissionServiceRequestMultipartFileName <- BSON.lookup "fileName" doc
+    return AppConfigSubmissionServiceRequestMultipart {..}

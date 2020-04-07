@@ -17,6 +17,7 @@ import Wizard.Api.Handler.Metric.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.Questionnaire.Api
+import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Template.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
@@ -40,6 +41,7 @@ type AppAPI
      :<|> MigrationAPI
      :<|> PackageAPI
      :<|> QuestionnaireAPI
+     :<|> SubmissionAPI
      :<|> TemplateAPI
      :<|> TokenAPI
      :<|> TypehintAPI
@@ -61,6 +63,7 @@ appServer =
   migrationServer :<|>
   packageServer :<|>
   questionnaireServer :<|>
+  submissionServer :<|>
   templateServer :<|>
   tokenServer :<|>
   typehintServer :<|>

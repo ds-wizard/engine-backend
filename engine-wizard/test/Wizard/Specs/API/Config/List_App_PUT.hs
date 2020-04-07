@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Config.AppConfig

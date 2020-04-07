@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC

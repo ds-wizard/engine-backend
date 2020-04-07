@@ -11,7 +11,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Database.Migration.Development.Token.Data.Tokens

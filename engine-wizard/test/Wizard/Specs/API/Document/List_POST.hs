@@ -10,7 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()

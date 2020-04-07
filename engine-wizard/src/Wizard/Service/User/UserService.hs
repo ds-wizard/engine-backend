@@ -20,7 +20,6 @@ import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
-import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -32,6 +31,7 @@ import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
+import Wizard.Model.User.UserEM ()
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
@@ -130,24 +130,8 @@ modifyUser userUuid reqDto = do
         then getPermissionForRole serverConfig (reqDto ^. role)
         else oldUser ^. permissions
 
-modifyProfile :: String -> UserProfileChangeDTO -> AppContextM UserDTO
-modifyProfile userUuid reqDto = do
-  user <- findUserById userUuid
-  validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
-  updatedUser <- updateUserTimestamp $ fromUserProfileChangeDTO reqDto user
-  updateUserById updatedUser
-  return . toDTO $ updatedUser
-
 changeUserPasswordByAdmin :: String -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByAdmin userUuid reqDto = do
-  user <- findUserById userUuid
-  passwordHash <- generatePasswordHash (reqDto ^. password)
-  now <- liftIO getCurrentTime
-  updateUserPasswordById userUuid passwordHash now
-  return ()
-
-changeCurrentUserPassword :: String -> UserPasswordDTO -> AppContextM ()
-changeCurrentUserPassword userUuid reqDto = do
   user <- findUserById userUuid
   passwordHash <- generatePasswordHash (reqDto ^. password)
   now <- liftIO getCurrentTime

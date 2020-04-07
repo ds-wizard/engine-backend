@@ -1,6 +1,8 @@
 module Wizard.Model.Config.AppConfig where
 
+import qualified Data.Map.Strict as M
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Config.SimpleFeature
@@ -15,6 +17,7 @@ data AppConfig =
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
     , _appConfigKnowledgeModelRegistry :: AppConfigRegistry
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
+    , _appConfigSubmission :: AppConfigSubmission
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
     }
@@ -28,7 +31,7 @@ instance Eq AppConfig where
     _appConfigDashboard a == _appConfigDashboard b &&
     _appConfigLookAndFeel a == _appConfigLookAndFeel b &&
     _appConfigKnowledgeModelRegistry a == _appConfigKnowledgeModelRegistry b &&
-    _appConfigQuestionnaire a == _appConfigQuestionnaire b
+    _appConfigQuestionnaire a == _appConfigQuestionnaire b && _appConfigSubmission a == _appConfigSubmission b
 
 data AppConfigOrganization =
   AppConfigOrganization
@@ -150,5 +153,46 @@ data AppConfigQuestionnaireFeedback =
     , _appConfigQuestionnaireFeedbackToken :: String
     , _appConfigQuestionnaireFeedbackOwner :: String
     , _appConfigQuestionnaireFeedbackRepo :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigSubmission =
+  AppConfigSubmission
+    { _appConfigSubmissionEnabled :: Bool
+    , _appConfigSubmissionServices :: [AppConfigSubmissionService]
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigSubmissionService =
+  AppConfigSubmissionService
+    { _appConfigSubmissionServiceSId :: String
+    , _appConfigSubmissionServiceName :: String
+    , _appConfigSubmissionServiceDescription :: String
+    , _appConfigSubmissionServiceProps :: [String]
+    , _appConfigSubmissionServiceSupportedFormats :: [AppConfigSubmissionServiceSupportedFormat]
+    , _appConfigSubmissionServiceRequest :: AppConfigSubmissionServiceRequest
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigSubmissionServiceSupportedFormat =
+  AppConfigSubmissionServiceSupportedFormat
+    { _appConfigSubmissionServiceSupportedFormatTemplateUuid :: U.UUID
+    , _appConfigSubmissionServiceSupportedFormatFormatUuid :: U.UUID
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigSubmissionServiceRequest =
+  AppConfigSubmissionServiceRequest
+    { _appConfigSubmissionServiceRequestMethod :: String
+    , _appConfigSubmissionServiceRequestUrl :: String
+    , _appConfigSubmissionServiceRequestHeaders :: M.Map String String
+    , _appConfigSubmissionServiceRequestMultipart :: AppConfigSubmissionServiceRequestMultipart
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigSubmissionServiceRequestMultipart =
+  AppConfigSubmissionServiceRequestMultipart
+    { _appConfigSubmissionServiceRequestMultipartEnabled :: Bool
+    , _appConfigSubmissionServiceRequestMultipartFileName :: String
     }
   deriving (Generic, Eq, Show)
