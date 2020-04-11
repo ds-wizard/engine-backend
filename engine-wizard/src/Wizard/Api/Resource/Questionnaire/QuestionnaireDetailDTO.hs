@@ -26,6 +26,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOReplies :: [ReplyDTO]
     , _questionnaireDetailDTOLabels :: [LabelDTO]
     , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -44,4 +45,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
-    _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b
+    _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b &&
+    _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b

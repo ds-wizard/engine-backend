@@ -33,6 +33,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0024_user_name_a
 import qualified Wizard.Database.Migration.Production.Migration_0025_document_preview_and_formatUuid.Migration as M_0025
 import qualified Wizard.Database.Migration.Production.Migration_0026_add_application_configs.Migration as M_0026
 import qualified Wizard.Database.Migration.Production.Migration_0027_submission.Migration as M_0027
+import qualified Wizard.Database.Migration.Production.Migration_0028_questionnaire_creator.Migration as M_0028
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -68,4 +69,5 @@ migrationDefinitions =
   , M_0025.definition
   , M_0026.definition
   , M_0027.definition
+  , M_0028.definition
   ]

@@ -37,6 +37,7 @@ questionnaire1 =
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
+    , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -55,6 +56,7 @@ questionnaire1Edited =
     , _questionnaireReplies = questionnaire1 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
+    , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = questionnaire1 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
     }
@@ -112,6 +114,7 @@ questionnaire2 =
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
+    , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -130,6 +133,7 @@ questionnaire2Edited =
     , _questionnaireReplies = questionnaire2 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Nothing
+    , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -153,6 +157,7 @@ questionnaire3 =
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Nothing
+    , _questionnaireCreatorUuid = Nothing
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -171,6 +176,7 @@ questionnaire3Edited =
     , _questionnaireReplies = questionnaire3 ^. replies
     , _questionnaireLabels = fLabelsEdited
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
+    , _questionnaireCreatorUuid = Nothing
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
@@ -194,6 +200,7 @@ questionnaire4 =
     , _questionnaireReplies = []
     , _questionnaireLabels = []
     , _questionnaireOwnerUuid = Nothing
+    , _questionnaireCreatorUuid = Nothing
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

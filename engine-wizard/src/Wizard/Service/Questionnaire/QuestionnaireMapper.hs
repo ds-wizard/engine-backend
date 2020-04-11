@@ -88,6 +88,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
     }
@@ -109,6 +110,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
     }
@@ -150,6 +152,7 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
         if accessibility /= PublicQuestionnaire
           then Just currentUserUuid
           else Nothing
+    , _questionnaireCreatorUuid = qtn ^. creatorUuid
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
@@ -172,6 +175,7 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
         if accessibility /= PublicQuestionnaire
           then Just currentUserUuid
           else Nothing
+    , _questionnaireCreatorUuid = Just currentUserUuid
     , _questionnaireCreatedAt = qtnCreatedAt
     , _questionnaireUpdatedAt = qtnUpdatedAt
     }
@@ -190,6 +194,7 @@ fromDetailDTO dto =
     , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
     , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
     , _questionnaireOwnerUuid = dto ^. ownerUuid
+    , _questionnaireCreatorUuid = dto ^. creatorUuid
     , _questionnaireCreatedAt = dto ^. createdAt
     , _questionnaireUpdatedAt = dto ^. updatedAt
     }

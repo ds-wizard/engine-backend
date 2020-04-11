@@ -44,6 +44,7 @@ getPublicQuestionnaire = do
           , _questionnaireDetailDTOReplies = []
           , _questionnaireDetailDTOLabels = []
           , _questionnaireDetailDTOOwnerUuid = Nothing
+          , _questionnaireDetailDTOCreatorUuid = Nothing
           , _questionnaireDetailDTOCreatedAt = now
           , _questionnaireDetailDTOUpdatedAt = now
           }

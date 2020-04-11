@@ -21,6 +21,7 @@ instance ToBSON Questionnaire where
     , "templateUuid" BSON.=: _questionnaireTemplateUuid
     , "formatUuid" BSON.=: _questionnaireFormatUuid
     , "ownerUuid" BSON.=: _questionnaireOwnerUuid
+    , "creatorUuid" BSON.=: _questionnaireCreatorUuid
     , "replies" BSON.=: _questionnaireReplies
     , "labels" BSON.=: _questionnaireLabels
     , "createdAt" BSON.=: _questionnaireCreatedAt
@@ -38,6 +39,7 @@ instance FromBSON Questionnaire where
     let _questionnaireTemplateUuid = BSON.lookup "templateUuid" doc
     let _questionnaireFormatUuid = BSON.lookup "formatUuid" doc
     let _questionnaireOwnerUuid = BSON.lookup "ownerUuid" doc
+    let _questionnaireCreatorUuid = BSON.lookup "creatorUuid" doc
     _questionnaireReplies <- BSON.lookup "replies" doc
     _questionnaireLabels <- BSON.lookup "labels" doc
     _questionnaireCreatedAt <- BSON.lookup "createdAt" doc

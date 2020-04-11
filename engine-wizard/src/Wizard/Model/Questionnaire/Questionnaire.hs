@@ -24,6 +24,7 @@ data Questionnaire =
     , _questionnaireTemplateUuid :: Maybe U.UUID
     , _questionnaireFormatUuid :: Maybe U.UUID
     , _questionnaireOwnerUuid :: Maybe U.UUID
+    , _questionnaireCreatorUuid :: Maybe U.UUID
     , _questionnaireReplies :: [Reply]
     , _questionnaireLabels :: [Label]
     , _questionnaireCreatedAt :: UTCTime
@@ -42,4 +43,5 @@ instance Eq Questionnaire where
     _questionnaireTemplateUuid a == _questionnaireTemplateUuid b &&
     _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
     _questionnaireOwnerUuid a == _questionnaireOwnerUuid b &&
+    _questionnaireCreatorUuid a == _questionnaireCreatorUuid b &&
     _questionnaireReplies a == _questionnaireReplies b && _questionnaireLabels a == _questionnaireLabels b
