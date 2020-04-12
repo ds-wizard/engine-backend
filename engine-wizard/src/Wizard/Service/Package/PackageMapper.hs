@@ -3,6 +3,7 @@ module Wizard.Service.Package.PackageMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
@@ -10,14 +11,13 @@ import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
-import Wizard.Service.Organization.OrganizationMapper
 import Wizard.Service.Package.PackageUtils
 
 toSimpleDTO :: Package -> PackageSimpleDTO
-toSimpleDTO pkg = toSimpleDTO' pkg [] []
+toSimpleDTO pkg = toSimpleDTO' pkg [] [] []
 
-toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> [String] -> PackageSimpleDTO
-toSimpleDTO' pkg pkgRs localVersions =
+toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [String] -> PackageSimpleDTO
+toSimpleDTO' pkg pkgRs orgRs localVersions =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
@@ -27,15 +27,12 @@ toSimpleDTO' pkg pkgRs localVersions =
     , _packageSimpleDTOVersions = localVersions
     , _packageSimpleDTODescription = pkg ^. description
     , _packageSimpleDTOState = computePackageState pkgRs pkg
-    , _packageSimpleDTOOrganization =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just . fromSimpleIntegration $ pkgR ^. organization
-          Nothing -> Nothing
+    , _packageSimpleDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toDetailDTO :: Package -> [PackageSimpleIDTO] -> [String] -> String -> PackageDetailDTO
-toDetailDTO pkg pkgRs versionLs registryLink =
+toDetailDTO :: Package -> [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [String] -> String -> PackageDetailDTO
+toDetailDTO pkg pkgRs orgRs versionLs registryLink =
   PackageDetailDTO
     { _packageDetailDTOPId = pkg ^. pId
     , _packageDetailDTOName = pkg ^. name
@@ -59,10 +56,7 @@ toDetailDTO pkg pkgRs versionLs registryLink =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
           Just pkgR -> Just registryLink
           Nothing -> Nothing
-    , _packageDetailDTOOrganization =
-        case selectPackageByOrgIdAndKmId pkg pkgRs of
-          Just pkgR -> Just . fromSimpleIntegration $ pkgR ^. organization
-          Nothing -> Nothing
+    , _packageDetailDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageDetailDTOCreatedAt = pkg ^. createdAt
     }
 

@@ -16,6 +16,7 @@ import Control.Monad.Reader (asks)
 import Data.List (maximumBy)
 
 import LensesConfig
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
@@ -37,12 +38,13 @@ getSimplePackagesFiltered queryParams = do
   pkgs <- findPackagesFiltered queryParams
   iStat <- getInstanceStatistics
   pkgRs <- retrievePackages iStat
-  return . fmap (toSimpleDTOs pkgRs) . groupPkgs $ pkgs
+  orgRs <- retrieveOrganizations
+  return . fmap (toSimpleDTOs pkgRs orgRs) . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
-    toSimpleDTOs :: [PackageSimpleIDTO] -> [Package] -> PackageSimpleDTO
-    toSimpleDTOs pkgRs pkgs = toSimpleDTO' newestPkg pkgRs (pkgs ^.. traverse . version)
+    toSimpleDTOs :: [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [Package] -> PackageSimpleDTO
+    toSimpleDTOs pkgRs orgRs pkgs = toSimpleDTO' newestPkg pkgRs orgRs (pkgs ^.. traverse . version)
       where
         newestPkg = maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) pkgs
 
@@ -53,7 +55,8 @@ getPackageById pkgId = do
   versions <- getPackageVersions pkg
   iStat <- getInstanceStatistics
   pkgRs <- retrievePackages iStat
-  return $ toDetailDTO pkg pkgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkgId)
+  orgRs <- retrieveOrganizations
+  return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkgId)
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
 getSeriesOfPackages pkgId = do

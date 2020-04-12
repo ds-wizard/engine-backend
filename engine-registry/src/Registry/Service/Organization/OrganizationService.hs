@@ -23,6 +23,7 @@ import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
@@ -32,6 +33,11 @@ getOrganizations = do
   _ <- checkPermissionToListOrganizations
   organizations <- findOrganizations
   return . fmap toDTO $ organizations
+
+getSimpleOrganizations :: AppContextM [OrganizationSimpleDTO]
+getSimpleOrganizations = do
+  organizations <- findOrganizations
+  return . fmap toSimpleDTO $ organizations
 
 createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
 createOrganization reqDto = do

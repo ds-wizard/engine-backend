@@ -63,6 +63,8 @@ upgradePackageVersion pkgId newVersion = buildPackageId (getOrgIdFromPkgId pkgId
 selectPackageByOrgIdAndKmId pkg =
   find (\p -> (p ^. organizationId) == (pkg ^. organizationId) && (p ^. kmId) == (pkg ^. kmId))
 
+selectOrganizationByOrgId pkg = find (\org -> (org ^. organizationId) == (pkg ^. organizationId))
+
 computePackageState :: [PackageSimpleIDTO] -> Package -> PackageState
 computePackageState pkgsFromRegistry pkg =
   case selectPackageByOrgIdAndKmId pkg pkgsFromRegistry of

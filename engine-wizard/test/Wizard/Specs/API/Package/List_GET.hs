@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Wizard.Database.Migration.Development.Package.Data.Packages
@@ -52,11 +53,12 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expOrgRs = [orgGlobalSimple, orgNetherlandsSimple]
     let expDto =
-          [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage] ["0.0.1", "1.0.0"]
-          , toSimpleDTO' (toPackage germanyPackage) [] ["1.0.0"]
-          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage] ["1.0.0", "2.0.0"]
+          [ toSimpleDTO' (toPackage globalPackage) [globalRemotePackage] expOrgRs ["0.0.1", "1.0.0"]
+          , toSimpleDTO' (toPackage germanyPackage) [] expOrgRs ["1.0.0"]
+          , toSimpleDTO' (toPackage netherlandsPackageV2) [globalNetherlandsPackage] expOrgRs ["1.0.0", "2.0.0"]
           ]
     let expBody = encode expDto
      -- AND: Run migrations

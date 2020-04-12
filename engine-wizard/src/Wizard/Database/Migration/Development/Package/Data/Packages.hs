@@ -19,8 +19,8 @@ globalRemotePackage =
     , _packageSimpleIDTODescription = globalPackage ^. description
     , _packageSimpleIDTOOrganization =
         OrganizationSimpleIDTO
-          { _organizationSimpleIDTOOrganizationId = orgGlobal ^. organizationId
-          , _organizationSimpleIDTOName = orgGlobal ^. name
+          { _organizationSimpleIDTOOrganizationId = orgGlobalSimple ^. organizationId
+          , _organizationSimpleIDTOName = orgGlobalSimple ^. name
           , _organizationSimpleIDTOLogo = Just orgLogo
           }
     , _packageSimpleIDTOCreatedAt = globalPackage ^. createdAt
@@ -37,13 +37,9 @@ globalNetherlandsPackage =
     , _packageSimpleIDTODescription = netherlandsPackageV2 ^. description
     , _packageSimpleIDTOOrganization =
         OrganizationSimpleIDTO
-          { _organizationSimpleIDTOOrganizationId = orgNetherlands ^. organizationId
-          , _organizationSimpleIDTOName = orgNetherlands ^. name
+          { _organizationSimpleIDTOOrganizationId = orgNetherlandsSimple ^. organizationId
+          , _organizationSimpleIDTOName = orgNetherlandsSimple ^. name
           , _organizationSimpleIDTOLogo = Just orgLogo
           }
     , _packageSimpleIDTOCreatedAt = globalPackage ^. createdAt
     }
-
-orgLogo :: String
-orgLogo =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=="

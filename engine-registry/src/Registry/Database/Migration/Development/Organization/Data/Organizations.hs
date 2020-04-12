@@ -11,6 +11,7 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Model.Organization.Organization
 import Registry.Service.Organization.OrganizationMapper
+import Shared.Database.Migration.Development.Organization.Data.Organizations
 
 orgGlobal :: Organization
 orgGlobal =
@@ -76,10 +77,6 @@ orgNetherlands =
     , _organizationCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _organizationUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
-
-orgLogo :: String
-orgLogo =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFhAJ/wlseKgAAAABJRU5ErkJggg=="
 
 orgStateDto :: OrganizationStateDTO
 orgStateDto = OrganizationStateDTO {_organizationStateDTOActive = True}

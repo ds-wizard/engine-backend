@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Package.PackageDetailSM where
 import Data.Swagger
 
 import Shared.Api.Resource.Organization.OrganizationSimpleSM ()
+import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Shared.Util.Swagger
@@ -16,4 +17,9 @@ instance ToSchema PackageDetailDTO where
   declareNamedSchema =
     simpleToSchema
       "_packageDetailDTO"
-      (toDetailDTO (toPackage globalPackage) [globalRemotePackage] ["1.0.0"] "https://registry.example.org")
+      (toDetailDTO
+         (toPackage globalPackage)
+         [globalRemotePackage]
+         [orgGlobalSimple]
+         ["1.0.0"]
+         "https://registry.example.org")

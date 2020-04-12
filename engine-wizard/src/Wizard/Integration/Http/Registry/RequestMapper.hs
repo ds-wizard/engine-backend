@@ -1,7 +1,4 @@
-module Wizard.Integration.Http.Registry.RequestMapper
-  ( toRetrievePackagesRequest
-  , toRetrievePackageBundleByIdRequest
-  ) where
+module Wizard.Integration.Http.Registry.RequestMapper where
 
 import Control.Lens ((^.))
 import Data.ByteString.Char8 as BS
@@ -14,6 +11,16 @@ import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Statistics.InstanceStatistics
+
+toRetrieveOrganizationsRequest :: ServerConfigRegistry -> AppConfigRegistry -> HttpRequest
+toRetrieveOrganizationsRequest serverConfig appConfig =
+  HttpRequest
+    { _httpRequestRequestMethod = "GET"
+    , _httpRequestRequestUrl = serverConfig ^. url ++ "/organizations/simple"
+    , _httpRequestRequestHeaders = M.empty
+    , _httpRequestRequestBody = BS.empty
+    , _httpRequestMultipartFileName = Nothing
+    }
 
 toRetrievePackagesRequest :: ServerConfigRegistry -> AppConfigRegistry -> InstanceStatistics -> HttpRequest
 toRetrievePackagesRequest serverConfig appConfig iStat =
