@@ -43,36 +43,36 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.stack
-        key: stack-home-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-home-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-${{ matrix.component }}-ubuntu18
+          stack-home-${{ matrix.component }}-ubuntu18-
     
     - name: Cache .stack-work
       id: cache-stack-work
       uses: actions/cache@v1
       with:
         path: .stack-work
-        key: stack-work-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-work-${{ matrix.component }}-ubuntu18-${{ github.sha }}
         restore-keys: |
-          stack-work-${{ matrix.component }}-ubuntu18
+          stack-work-${{ matrix.component }}-ubuntu18-
     
     - name: Cache bson-generic
       id: cache-bson-generic
       uses: actions/cache@v1
       with:
         path: vendor/bson-generic/.stack-work
-        key: bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/**/*') }}
+        key: bson-generic-ubuntu18-${{ github.sha }}
         restore-keys: |
-          bson-generic-ubuntu18
+          bson-generic-ubuntu18-
     
     - name: Cache mongoDB-migration
       id: cache-mongoDB-migration
       uses: actions/cache@v1
       with:
         path: vendor/mongoDB-migration/.stack-work
-        key: mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/**/*') }}
+        key: mongoDB-migration-ubuntu18-${{ github.sha }}
         restore-keys: |
-          mongoDB-migration-ubuntu18
+          mongoDB-migration-ubuntu18-
     
     - name: Cache engine-registry
       id: cache-engine-registry
@@ -80,18 +80,18 @@ jobs:
       if: matrix.component == 'registry'
       with:
         path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/**/*') }}
+        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ github.sha }}
         restore-keys: |
-          engine-registry-${{ matrix.component }}-ubuntu18
+          engine-registry-${{ matrix.component }}-ubuntu18-
     
     - name: Cache engine-shared
       id: cache-engine-shared
       uses: actions/cache@v1
       with:
         path: engine-shared/.stack-work
-        key: engine-shared-ubuntu18-${{ hashFiles('engine-shared/**/*') }}
+        key: engine-shared-ubuntu18-${{ github.sha }}
         restore-keys: |
-          engine-shared-ubuntu18
+          engine-shared-ubuntu18-
     
     - name: Cache engine-wizard
       id: cache-engine-wizard
@@ -99,9 +99,9 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/**/*') }}
+        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ github.sha }}
         restore-keys: |
-          engine-wizard-${{ matrix.component }}-ubuntu18
+          engine-wizard-${{ matrix.component }}-ubuntu18-
     
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
@@ -109,9 +109,9 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/**/*') }}
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ github.sha }}
         restore-keys: |
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
