@@ -1,4 +1,4 @@
-module Registry.Api.Resource.Organization.OrganizationSimpleDTO where
+module Shared.Api.Resource.Organization.OrganizationSimpleDTO where
 
 import GHC.Generics
 

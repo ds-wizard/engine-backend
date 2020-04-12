@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Package.PackageDetailSM where
 
 import Data.Swagger
 
+import Shared.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Shared.Util.Swagger
-import Wizard.Api.Resource.Organization.OrganizationSimpleSM ()
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageDetailJM ()
 import Wizard.Api.Resource.Package.PackageStateSM ()

@@ -3,8 +3,8 @@ module Wizard.Database.Migration.Development.Package.Data.Packages where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.Migration.Development.Organization.Data.Organizations
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 

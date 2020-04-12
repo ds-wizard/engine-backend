@@ -3,7 +3,7 @@ module Registry.Api.Resource.Package.PackageDetailDTO where
 import Data.Time
 import GHC.Generics
 
-import Registry.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 
 data PackageDetailDTO =
   PackageDetailDTO

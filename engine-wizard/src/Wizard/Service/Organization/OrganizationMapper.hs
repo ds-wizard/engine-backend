@@ -3,7 +3,7 @@ module Wizard.Service.Organization.OrganizationMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
-import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 
 fromSimpleIntegration :: OrganizationSimpleIDTO -> OrganizationSimpleDTO

@@ -1,6 +1,6 @@
-module Wizard.Database.Migration.Development.Organization.Data.Organizations where
+module Shared.Database.Migration.Development.Organization.Data.Organizations where
 
-import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 
 orgGlobal :: OrganizationSimpleDTO
 orgGlobal =
@@ -17,3 +17,4 @@ orgNetherlands =
     , _organizationSimpleDTOOrganizationId = "org.nl"
     , _organizationSimpleDTOLogo = Nothing
     }
+

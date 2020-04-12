@@ -2,8 +2,8 @@ module Wizard.Api.Resource.Package.PackageDetailJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
-import Wizard.Api.Resource.Organization.OrganizationSimpleJM ()
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageStateJM ()
 

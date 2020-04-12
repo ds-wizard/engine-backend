@@ -14,6 +14,7 @@ import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Config.BuildInfoConfig
@@ -53,7 +54,6 @@ import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetai
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO as QTN_MigratorStateChangeDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO as QTN_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
-import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
