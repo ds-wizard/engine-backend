@@ -7,7 +7,7 @@ on:
 jobs:
   btp:
     name: Build-Tag-Push
-    runs-on: ubuntu-16.04
+    runs-on: ubuntu-18.04
     
     strategy:
       matrix:
@@ -43,36 +43,36 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ~/.stack
-        key: stack-home-${{ matrix.component }}-ubuntu16-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-home-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: |
-          stack-home-${{ matrix.component }}-ubuntu16
+          stack-home-${{ matrix.component }}-ubuntu18
     
     - name: Cache .stack-work
       id: cache-stack-work
       uses: actions/cache@v1
       with:
         path: .stack-work
-        key: stack-work-${{ matrix.component }}-ubuntu16-${{ hashFiles('**/stack.yaml.lock') }}
+        key: stack-work-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/stack.yaml.lock') }}
         restore-keys: |
-          stack-work-${{ matrix.component }}-ubuntu16
+          stack-work-${{ matrix.component }}-ubuntu18
     
     - name: Cache bson-generic
       id: cache-bson-generic
       uses: actions/cache@v1
       with:
         path: vendor/bson-generic/.stack-work
-        key: bson-generic-ubuntu16-${{ hashFiles('vendor/bson-generic/**/*') }}
+        key: bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/**/*') }}
         restore-keys: |
-          bson-generic-ubuntu16
+          bson-generic-ubuntu18
     
     - name: Cache mongoDB-migration
       id: cache-mongoDB-migration
       uses: actions/cache@v1
       with:
         path: vendor/mongoDB-migration/.stack-work
-        key: mongoDB-migration-ubuntu16-${{ hashFiles('vendor/mongoDB-migration/**/*') }}
+        key: mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/**/*') }}
         restore-keys: |
-          mongoDB-migration-ubuntu16
+          mongoDB-migration-ubuntu18
     
     - name: Cache engine-registry
       id: cache-engine-registry
@@ -80,18 +80,18 @@ jobs:
       if: matrix.component == 'registry'
       with:
         path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-registry/**/*') }}
+        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/**/*') }}
         restore-keys: |
-          engine-registry-${{ matrix.component }}-ubuntu16
+          engine-registry-${{ matrix.component }}-ubuntu18
     
     - name: Cache engine-shared
       id: cache-engine-shared
       uses: actions/cache@v1
       with:
         path: engine-shared/.stack-work
-        key: engine-shared-ubuntu16-${{ hashFiles('engine-shared/**/*') }}
+        key: engine-shared-ubuntu18-${{ hashFiles('engine-shared/**/*') }}
         restore-keys: |
-          engine-shared-ubuntu16
+          engine-shared-ubuntu18
     
     - name: Cache engine-wizard
       id: cache-engine-wizard
@@ -99,9 +99,9 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-wizard/**/*') }}
+        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/**/*') }}
         restore-keys: |
-          engine-wizard-${{ matrix.component }}-ubuntu16
+          engine-wizard-${{ matrix.component }}-ubuntu18
     
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
@@ -109,16 +109,16 @@ jobs:
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu16-${{ hashFiles('engine-wizard-metamodel-migrator/**/*') }}
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/**/*') }}
         restore-keys: |
-          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu16
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
       uses: actions/cache@v1
       with:
         path: ~/.local/bin
-        key: stack-local-bin-${{ matrix.stack }}-ubuntu16
+        key: stack-local-bin-${{ matrix.stack }}-ubuntu18
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack
