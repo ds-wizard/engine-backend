@@ -34,6 +34,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0025_document_pr
 import qualified Wizard.Database.Migration.Production.Migration_0026_add_application_configs.Migration as M_0026
 import qualified Wizard.Database.Migration.Production.Migration_0027_submission.Migration as M_0027
 import qualified Wizard.Database.Migration.Production.Migration_0028_questionnaire_creator.Migration as M_0028
+import qualified Wizard.Database.Migration.Production.Migration_0029_add_db_indexes.Migration as M_0029
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -70,4 +71,5 @@ migrationDefinitions =
   , M_0026.definition
   , M_0027.definition
   , M_0028.definition
+  , M_0029.definition
   ]
