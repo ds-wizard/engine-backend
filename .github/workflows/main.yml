@@ -30,7 +30,12 @@ jobs:
         options: --name mongo
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout git repository
+      uses: actions/checkout@v2
+
+    - name: Fetch all git history
+      run: |
+        git fetch --prune --unshallow
     
     - name: Prepare ~/.local/bin
       run: |
