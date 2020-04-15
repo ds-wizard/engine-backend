@@ -1,9 +1,9 @@
-module Registry.Database.BSON.KnowledgeModel.KnowledgeModel where
+module Shared.Database.BSON.KnowledgeModel.KnowledgeModel where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Registry.Database.BSON.Common ()
+import Shared.Database.BSON.Common ()
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------

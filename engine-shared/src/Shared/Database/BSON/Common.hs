@@ -1,4 +1,4 @@
-module Wizard.Database.BSON.Common where
+module Shared.Database.BSON.Common where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic

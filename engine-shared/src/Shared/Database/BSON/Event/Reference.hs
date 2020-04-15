@@ -1,10 +1,10 @@
-module Registry.Database.BSON.Event.Reference where
+module Shared.Database.BSON.Event.Reference where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Registry.Database.BSON.Common ()
-import Registry.Database.BSON.Event.EventField ()
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.EventField ()
 import Shared.Model.Event.Reference.ReferenceEvent
 
 -- -------------------------

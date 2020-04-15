@@ -1,10 +1,10 @@
-module Registry.Database.BSON.Event.Answer where
+module Shared.Database.BSON.Event.Answer where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Registry.Database.BSON.Common ()
-import Registry.Database.BSON.Event.EventField ()
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.EventField ()
 import Shared.Model.Event.Answer.AnswerEvent
 
 -- -------------------------

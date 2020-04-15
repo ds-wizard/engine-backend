@@ -1,12 +1,12 @@
-module Wizard.Database.BSON.Event.Question where
+module Shared.Database.BSON.Event.Question where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.EventField ()
+import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Shared.Model.Event.Question.QuestionEvent
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.Event.EventField ()
-import Wizard.Database.BSON.KnowledgeModel.KnowledgeModel ()
 
 -- -------------------------
 -- ADD QUESTION EVENT ------

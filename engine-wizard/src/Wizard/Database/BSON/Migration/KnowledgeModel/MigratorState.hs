@@ -6,15 +6,15 @@ import Data.Bson.Generic
 import Data.Maybe
 
 import LensesConfig
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.Answer ()
+import Shared.Database.BSON.Event.Chapter ()
+import Shared.Database.BSON.Event.Common
+import Shared.Database.BSON.Event.Expert ()
+import Shared.Database.BSON.Event.KnowledgeModel ()
+import Shared.Database.BSON.Event.Question ()
+import Shared.Database.BSON.Event.Reference ()
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.Event.Answer ()
-import Wizard.Database.BSON.Event.Chapter ()
-import Wizard.Database.BSON.Event.Common
-import Wizard.Database.BSON.Event.Expert ()
-import Wizard.Database.BSON.Event.KnowledgeModel ()
-import Wizard.Database.BSON.Event.Question ()
-import Wizard.Database.BSON.Event.Reference ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 instance ToBSON MigrationState where

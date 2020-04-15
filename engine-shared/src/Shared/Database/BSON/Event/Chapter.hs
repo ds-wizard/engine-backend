@@ -1,11 +1,11 @@
-module Wizard.Database.BSON.Event.Chapter where
+module Shared.Database.BSON.Event.Chapter where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.EventField ()
 import Shared.Model.Event.Chapter.ChapterEvent
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.Event.EventField ()
 
 -- -------------------------
 -- ADD CHAPTER EVENT--------

@@ -25,6 +25,8 @@ library:
   dependencies:
   - base
   - aeson
+  - bson
+  - bson-generic
   - bytestring
   - case-insensitive
   - containers

@@ -1,12 +1,12 @@
-module Wizard.Database.BSON.Event.KnowledgeModel where
+module Shared.Database.BSON.Event.KnowledgeModel where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.EventField ()
+import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.Event.EventField ()
-import Wizard.Database.BSON.KnowledgeModel.KnowledgeModel ()
 
 -- -------------------------------
 -- ADD KNOWLEDGE MODEL EVENT -----

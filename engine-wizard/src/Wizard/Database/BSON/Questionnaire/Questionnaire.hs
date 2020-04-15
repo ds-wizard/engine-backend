@@ -4,7 +4,7 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe ()
 
-import Wizard.Database.BSON.Common ()
+import Shared.Database.BSON.Common ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireAccessibility ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireLabel ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireReply ()

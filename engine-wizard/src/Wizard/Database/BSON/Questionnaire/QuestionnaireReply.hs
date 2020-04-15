@@ -5,8 +5,8 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
 import LensesConfig
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.KnowledgeModel.KnowledgeModel ()
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
 instance FromBSON Reply where

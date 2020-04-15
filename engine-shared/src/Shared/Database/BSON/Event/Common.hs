@@ -1,9 +1,18 @@
-module Wizard.Database.BSON.Event.Common where
+module Shared.Database.BSON.Event.Common where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
+import Shared.Database.BSON.Event.Answer ()
+import Shared.Database.BSON.Event.Chapter ()
+import Shared.Database.BSON.Event.Expert ()
+import Shared.Database.BSON.Event.Integration ()
+import Shared.Database.BSON.Event.KnowledgeModel ()
+import Shared.Database.BSON.Event.Move ()
+import Shared.Database.BSON.Event.Question ()
+import Shared.Database.BSON.Event.Reference ()
+import Shared.Database.BSON.Event.Tag ()
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.Event
@@ -14,15 +23,6 @@ import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
-import Wizard.Database.BSON.Event.Answer ()
-import Wizard.Database.BSON.Event.Chapter ()
-import Wizard.Database.BSON.Event.Expert ()
-import Wizard.Database.BSON.Event.Integration ()
-import Wizard.Database.BSON.Event.KnowledgeModel ()
-import Wizard.Database.BSON.Event.Move ()
-import Wizard.Database.BSON.Event.Question ()
-import Wizard.Database.BSON.Event.Reference ()
-import Wizard.Database.BSON.Event.Tag ()
 
 chooseEventDeserializator :: BSON.Document -> Maybe Event
 chooseEventDeserializator doc = do

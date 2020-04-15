@@ -2,8 +2,8 @@ module Wizard.Database.DAO.Metric.MetricDAO where
 
 import Data.Bson
 
+import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 

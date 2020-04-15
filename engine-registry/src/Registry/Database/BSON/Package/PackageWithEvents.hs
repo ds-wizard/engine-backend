@@ -4,13 +4,13 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
-import Registry.Database.BSON.Event.Answer ()
-import Registry.Database.BSON.Event.Chapter ()
-import Registry.Database.BSON.Event.Common
-import Registry.Database.BSON.Event.Expert ()
-import Registry.Database.BSON.Event.KnowledgeModel ()
-import Registry.Database.BSON.Event.Question ()
-import Registry.Database.BSON.Event.Reference ()
+import Shared.Database.BSON.Event.Answer ()
+import Shared.Database.BSON.Event.Chapter ()
+import Shared.Database.BSON.Event.Common
+import Shared.Database.BSON.Event.Expert ()
+import Shared.Database.BSON.Event.KnowledgeModel ()
+import Shared.Database.BSON.Event.Question ()
+import Shared.Database.BSON.Event.Reference ()
 import Shared.Model.Package.PackageWithEvents
 
 instance ToBSON PackageWithEvents where

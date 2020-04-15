@@ -83,7 +83,7 @@ downloadDocument docUuid = do
 
 cleanDocuments :: AppContextM ()
 cleanDocuments = do
-  docs <- findDocumentsFiltered [("durability._co", "TemporallyDocumentDurability")]
+  docs <- findDocumentsFiltered [("durability", "TemporallyDocumentDurability")]
   let docsFiltered = filter (\d -> d ^. state == DoneDocumentState || d ^. state == ErrorDocumentState) docs
   forM
     docsFiltered
@@ -95,7 +95,7 @@ cleanDocuments = do
 createPreview :: String -> AppContextM (Document, BS.ByteString)
 createPreview qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability._co", "TemporallyDocumentDurability")]
+  docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
   let repliesHash = hash (qtn ^. replies)
   logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs

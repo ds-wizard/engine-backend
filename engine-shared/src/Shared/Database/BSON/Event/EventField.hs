@@ -1,9 +1,9 @@
-module Registry.Database.BSON.Event.EventField where
+module Shared.Database.BSON.Event.EventField where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 
-import Registry.Database.BSON.KnowledgeModel.KnowledgeModel ()
+import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Shared.Model.Event.EventField
 
 instance BSON.Val a => ToBSON (EventField a) where
