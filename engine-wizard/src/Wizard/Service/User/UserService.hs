@@ -6,7 +6,6 @@ import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
 import Data.ByteString.Char8 as BS
-import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
@@ -83,17 +82,15 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions = do
   sendAnalyticsEmailIfEnabled user
   return $ toDTO user
 
-createUserFromExternalService :: String -> String -> String -> String -> AppContextM UserDTO
-createUserFromExternalService serviceId firstName lastName email = do
+createUserFromExternalService :: String -> String -> String -> String -> Maybe String -> AppContextM UserDTO
+createUserFromExternalService serviceId firstName lastName email mImageUrl = do
   mUserFromDb <- findUserByEmail' email
+  now <- liftIO getCurrentTime
   case mUserFromDb of
     Just user ->
       if user ^. active
         then do
-          let updatedUser =
-                case L.find (== serviceId) (user ^. sources) of
-                  Just _ -> user
-                  Nothing -> user & sources .~ ((user ^. sources) ++ [serviceId])
+          let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
           updateUserById updatedUser
           return $ toDTO updatedUser
         else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
@@ -104,9 +101,8 @@ createUserFromExternalService serviceId firstName lastName email = do
       uPasswordHash <- generatePasswordHash password
       appConfig <- getAppConfig
       let uRole = appConfig ^. authentication . defaultRole
-      let uPermissions = getPermissionForRole serverConfig uRole
-      now <- liftIO getCurrentTime
-      let user = fromUserExternalDTO uUuid firstName lastName email uPasswordHash [serviceId] uRole uPermissions now
+      let uPerms = getPermissionForRole serverConfig uRole
+      let user = fromUserExternalDTO uUuid firstName lastName email uPasswordHash [serviceId] uRole uPerms mImageUrl now
       insertUser user
       sendAnalyticsEmailIfEnabled user
       return $ toDTO user

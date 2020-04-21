@@ -19,6 +19,7 @@ data UserDTO =
     , _userDTOPermissions :: [Permission]
     , _userDTOActive :: Bool
     , _userDTOSubmissionProps :: [UserSubmissionProps]
+    , _userDTOImageUrl :: Maybe String
     , _userDTOCreatedAt :: Maybe UTCTime
     , _userDTOUpdatedAt :: Maybe UTCTime
     }
@@ -34,4 +35,5 @@ instance Eq UserDTO where
     _userDTOSources a == _userDTOSources b &&
     _userDTORole a == _userDTORole b &&
     _userDTOPermissions a == _userDTOPermissions b &&
-    _userDTOActive a == _userDTOActive b && _userDTOSubmissionProps a == _userDTOSubmissionProps b
+    _userDTOActive a == _userDTOActive b &&
+    _userDTOSubmissionProps a == _userDTOSubmissionProps b && _userDTOImageUrl a == _userDTOImageUrl b

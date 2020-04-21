@@ -24,6 +24,7 @@ toUserProfileDTO user props =
     , _userProfileDTOPermissions = user ^. permissions
     , _userProfileDTOActive = user ^. active
     , _userProfileDTOSubmissionProps = props
+    , _userProfileDTOImageUrl = user ^. imageUrl
     , _userProfileDTOCreatedAt = user ^. createdAt
     , _userProfileDTOUpdatedAt = user ^. updatedAt
     }
@@ -50,6 +51,7 @@ fromUserProfileChangeDTO dto oldUser =
     , _userPermissions = oldUser ^. permissions
     , _userActive = oldUser ^. active
     , _userSubmissionProps = fromUserSubmissionPropsDTO <$> dto ^. submissionProps
+    , _userImageUrl = oldUser ^. imageUrl
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }

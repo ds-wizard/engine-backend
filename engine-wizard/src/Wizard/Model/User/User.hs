@@ -32,6 +32,7 @@ data User =
     , _userPermissions :: [Permission]
     , _userActive :: Bool
     , _userSubmissionProps :: [UserSubmissionProps]
+    , _userImageUrl :: Maybe String
     , _userCreatedAt :: Maybe UTCTime
     , _userUpdatedAt :: Maybe UTCTime
     }
@@ -55,4 +56,5 @@ instance Eq User where
     _userSources a == _userSources b &&
     _userRole a == _userRole b &&
     _userPermissions a == _userPermissions b &&
-    _userActive a == _userActive b && _userSubmissionProps a == _userSubmissionProps b
+    _userActive a == _userActive b &&
+    _userSubmissionProps a == _userSubmissionProps b && _userImageUrl a == _userImageUrl b

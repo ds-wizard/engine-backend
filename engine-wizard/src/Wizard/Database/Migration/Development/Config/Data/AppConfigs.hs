@@ -61,8 +61,8 @@ defaultAuthExternalService =
     { _appConfigAuthExternalServiceAId = "google"
     , _appConfigAuthExternalServiceName = "Google"
     , _appConfigAuthExternalServiceUrl = "https://accounts.google.com"
-    , _appConfigAuthExternalServiceClientId = "9381928r948-2i9uawjkn32ku89uafwa.apps.googleusercontent.com"
-    , _appConfigAuthExternalServiceClientSecret = "ijijsd89f72ujknjksfawfawf"
+    , _appConfigAuthExternalServiceClientId = "32559869123-a98908094.apps.googleusercontent.com"
+    , _appConfigAuthExternalServiceClientSecret = "sad89089023"
     , _appConfigAuthExternalServiceParameters = [defaultAuthExternalServiceParameter]
     , _appConfigAuthExternalServiceStyle = Just defaultAuthExternalServiceStyle
     }
@@ -70,7 +70,7 @@ defaultAuthExternalService =
 defaultAuthExternalServiceParameter :: AppConfigAuthExternalServiceParameter
 defaultAuthExternalServiceParameter =
   AppConfigAuthExternalServiceParameter
-    {_appConfigAuthExternalServiceParameterName = "hd", _appConfigAuthExternalServiceParameterValue = "google.com"}
+    {_appConfigAuthExternalServiceParameterName = "hd2", _appConfigAuthExternalServiceParameterValue = "google.com"}
 
 defaultAuthExternalServiceStyle :: AppConfigAuthExternalServiceStyle
 defaultAuthExternalServiceStyle =

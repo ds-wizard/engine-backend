@@ -36,6 +36,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0027_submission.
 import qualified Wizard.Database.Migration.Production.Migration_0028_questionnaire_creator.Migration as M_0028
 import qualified Wizard.Database.Migration.Production.Migration_0029_add_db_indexes.Migration as M_0029
 import qualified Wizard.Database.Migration.Production.Migration_0030_bson_generic.Migration as M_0030
+import qualified Wizard.Database.Migration.Production.Migration_0031_user_imageUrl.Migration as M_0031
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -74,4 +75,5 @@ migrationDefinitions =
   , M_0028.definition
   , M_0029.definition
   , M_0030.definition
+  , M_0031.definition
   ]
