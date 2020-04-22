@@ -36,6 +36,7 @@ instance Eq AppConfig where
 data AppConfigOrganization =
   AppConfigOrganization
     { _appConfigOrganizationName :: String
+    , _appConfigOrganizationDescription :: String
     , _appConfigOrganizationOrganizationId :: String
     , _appConfigOrganizationAffiliations :: [String]
     }

@@ -37,11 +37,14 @@ import Registry.Util.Template (loadAndRender)
 import Shared.Localization.Messages.Internal
 import Shared.Model.Error.Error
 
-sendRegistrationConfirmationMail :: OrganizationDTO -> String -> AppContextM ()
-sendRegistrationConfirmationMail org hash = do
+sendRegistrationConfirmationMail :: OrganizationDTO -> String -> Maybe String -> AppContextM ()
+sendRegistrationConfirmationMail org hash mCallbackUrl = do
   serverConfig <- asks _appContextApplicationConfig
-  let clientAddress = serverConfig ^. general . clientUrl
-      activationLink = clientAddress ++ "/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
+  let clientAddress = fromMaybe (serverConfig ^. general . clientUrl) mCallbackUrl
+      activationLink =
+        case mCallbackUrl of
+          Just callbackUrl -> callbackUrl ++ "/registry/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
+          Nothing -> clientAddress ++ "/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
       mailName = fromMaybe "" $ serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]

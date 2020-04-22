@@ -39,8 +39,8 @@ getSimpleOrganizations = do
   organizations <- findOrganizations
   return . fmap toSimpleDTO $ organizations
 
-createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
-createOrganization reqDto = do
+createOrganization :: OrganizationCreateDTO -> Maybe String -> AppContextM OrganizationDTO
+createOrganization reqDto mCallbackUrl = do
   _ <- validateOrganizationCreateDto reqDto
   token <- generateNewOrgToken
   now <- liftIO getCurrentTime
@@ -48,7 +48,7 @@ createOrganization reqDto = do
   insertOrganization org
   actionKey <- createActionKey (org ^. organizationId) RegistrationActionKey
   _ <-
-    sendRegistrationConfirmationMail (toDTO org) (actionKey ^. hash) `catchError`
+    sendRegistrationConfirmationMail (toDTO org) (actionKey ^. hash) mCallbackUrl `catchError`
     (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__ACTIVATION_EMAIL_NOT_SENT)
   sendAnalyticsEmailIfEnabled org
   return . toDTO $ org

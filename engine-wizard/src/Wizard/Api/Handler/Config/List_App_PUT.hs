@@ -23,4 +23,4 @@ list_app_PUT mTokenHeader reqDto =
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "CFG_PERM"
-      modifyAppConfig reqDto
+      modifyAppConfigDto reqDto

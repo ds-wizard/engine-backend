@@ -2,6 +2,7 @@ module LensesConfig where
 
 import Control.Lens (makeFields)
 
+import Registry.Api.Resource.Organization.OrganizationDTO
 import Shared.Api.Resource.Event.AnswerEventDTO
 import Shared.Api.Resource.Event.ChapterEventDTO
 import Shared.Api.Resource.Event.ExpertEventDTO
@@ -62,6 +63,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
+import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
@@ -600,6 +603,11 @@ makeFields ''IntegrationReplyValueDTO
 
 makeFields ''LabelDTO
 
+-- Api / Resource / Registry
+makeFields ''RegistryConfirmationDTO
+
+makeFields ''RegistryCreateDTO
+
 -- Api / Resource / Report
 makeFields ''IndicationDTO
 
@@ -673,3 +681,9 @@ makeFields ''PackageSimpleIDTO
 
 -- Integration / Resource / Typehint
 makeFields ''TypehintIDTO
+
+-- -------------------------------------
+-- Registry
+-- -------------------------------------
+-- Api / Resource / Organization
+makeFields ''OrganizationDTO

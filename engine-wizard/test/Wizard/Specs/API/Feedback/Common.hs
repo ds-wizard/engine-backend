@@ -38,7 +38,7 @@ compareFeedbackDtos resDto expDto = do
 loadFeedbackTokenFromEnv = do
   appConfig <- getAppConfig
   updatedAppConfig <- applyEnvVariable "FEEDBACK_TOKEN" (questionnaire . feedback . token) appConfig
-  modifyAppConfig (toChangeDTO updatedAppConfig)
+  modifyAppConfigDto (toChangeDTO updatedAppConfig)
 
 applyEnvVariable :: String -> Lens' AppConfig String -> AppConfig -> AppContextM AppConfig
 applyEnvVariable envVariableName accessor config = do

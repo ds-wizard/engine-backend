@@ -19,8 +19,15 @@ getAppConfig = do
   encryptedAppConfig <- findAppConfig
   return $ process (serverConfig ^. general . secret) encryptedAppConfig
 
-modifyAppConfig :: AppConfigChangeDTO -> AppContextM AppConfig
-modifyAppConfig reqDto
+modifyAppConfig :: AppConfig -> AppContextM AppConfig
+modifyAppConfig appConfig = do
+  serverConfig <- asks _appContextServerConfig
+  let encryptedUpdatedAppConfig = process (serverConfig ^. general . secret) appConfig
+  updateAppConfig encryptedUpdatedAppConfig
+  return appConfig
+
+modifyAppConfigDto :: AppConfigChangeDTO -> AppContextM AppConfig
+modifyAppConfigDto reqDto
   -- 1. Get current config
  = do
   serverConfig <- asks _appContextServerConfig
@@ -29,7 +36,6 @@ modifyAppConfig reqDto
   now <- liftIO getCurrentTime
   let updatedAppConfig = fromChangeDTO reqDto appConfig now
   -- 3. Update
-  let encryptedUpdatedAppConfig = process (serverConfig ^. general . secret) updatedAppConfig
-  updateAppConfig encryptedUpdatedAppConfig
+  modifyAppConfig updatedAppConfig
   -- 4. Create response
   return updatedAppConfig

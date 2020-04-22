@@ -6,6 +6,7 @@ import Servant
 import Servant.Swagger
 import Servant.Swagger.UI
 
+import Registry.Api.Resource.Organization.OrganizationSM ()
 import Shared.Api.Resource.Info.InfoSM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.Api.Resource.Multipart.MultiPartSM ()
@@ -38,6 +39,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSM ()
+import Wizard.Api.Resource.Registry.RegistryConfirmationSM ()
+import Wizard.Api.Resource.Registry.RegistryCreateSM ()
 import Wizard.Api.Resource.Report.ReportSM ()
 import Wizard.Api.Resource.Submission.SubmissionCreateSM ()
 import Wizard.Api.Resource.Submission.SubmissionSM ()

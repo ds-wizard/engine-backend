@@ -6,8 +6,11 @@ import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 
 import LensesConfig
+import Registry.Api.Resource.Organization.OrganizationCreateDTO
+import Registry.Api.Resource.Organization.OrganizationDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.HttpClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
@@ -26,6 +29,24 @@ retrieveOrganizations = do
            (toRetrieveOrganizationsRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry))
            toRetrieveOrganizationsResponse
     else return []
+
+createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
+createOrganization reqDto = do
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  if appConfig ^. knowledgeModelRegistry . enabled
+    then runRequest (toCreateOrganizationRequest serverConfig reqDto) toCreateOrganizationResponse
+    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+
+confirmOrganizationRegistration :: RegistryConfirmationDTO -> AppContextM OrganizationDTO
+confirmOrganizationRegistration reqDto = do
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  if appConfig ^. knowledgeModelRegistry . enabled
+    then runRequest
+           (toConfirmOrganizationRegistrationRequest serverConfig reqDto)
+           toConfirmOrganizationRegistrationResponse
+    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
 
 retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleIDTO]
 retrievePackages iStat = do

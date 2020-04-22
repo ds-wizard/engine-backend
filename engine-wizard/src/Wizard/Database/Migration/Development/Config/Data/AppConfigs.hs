@@ -37,6 +37,7 @@ defaultOrganization :: AppConfigOrganization
 defaultOrganization =
   AppConfigOrganization
     { _appConfigOrganizationName = "Organization Amsterdam"
+    , _appConfigOrganizationDescription = "Some description of Organization Amsterdam"
     , _appConfigOrganizationOrganizationId = "org.nl.amsterdam"
     , _appConfigOrganizationAffiliations = []
     }

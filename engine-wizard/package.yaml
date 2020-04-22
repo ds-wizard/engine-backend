@@ -35,6 +35,7 @@ library:
   - data-default
   - directory
   - engine-wizard-metamodel-migrator
+  - engine-registry
   - engine-shared
   - exceptions
   - filepath
