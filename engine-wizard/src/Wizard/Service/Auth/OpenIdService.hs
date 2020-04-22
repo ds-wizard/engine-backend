@@ -27,7 +27,7 @@ createAuthenticationUrl :: String -> AppContextM ()
 createAuthenticationUrl authId = do
   state <- liftIO $ generateRandomString 40
   (service, openIDClient) <- createOpenIDClient authId
-  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameters)
+  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
   loc <-
     liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)

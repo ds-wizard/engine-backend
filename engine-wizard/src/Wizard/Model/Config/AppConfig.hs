@@ -68,7 +68,7 @@ data AppConfigAuthExternalService =
     , _appConfigAuthExternalServiceUrl :: String
     , _appConfigAuthExternalServiceClientId :: String
     , _appConfigAuthExternalServiceClientSecret :: String
-    , _appConfigAuthExternalServiceParameters :: [AppConfigAuthExternalServiceParameter]
+    , _appConfigAuthExternalServiceParameteres :: [AppConfigAuthExternalServiceParameter]
     , _appConfigAuthExternalServiceStyle :: Maybe AppConfigAuthExternalServiceStyle
     }
   deriving (Generic, Eq, Show)

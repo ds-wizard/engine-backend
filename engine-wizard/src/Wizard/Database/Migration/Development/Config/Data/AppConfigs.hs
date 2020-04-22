@@ -63,7 +63,7 @@ defaultAuthExternalService =
     , _appConfigAuthExternalServiceUrl = "https://accounts.google.com"
     , _appConfigAuthExternalServiceClientId = "32559869123-a98908094.apps.googleusercontent.com"
     , _appConfigAuthExternalServiceClientSecret = "sad89089023"
-    , _appConfigAuthExternalServiceParameters = [defaultAuthExternalServiceParameter]
+    , _appConfigAuthExternalServiceParameteres = [defaultAuthExternalServiceParameter]
     , _appConfigAuthExternalServiceStyle = Just defaultAuthExternalServiceStyle
     }
 
