@@ -71,7 +71,7 @@ deleteDocument docUuid = do
   if currentUser ^. role == _USER_ROLE_ADMIN || currentUser ^. uuid == doc ^. ownerUuid
     then do
       deleteDocumentById docUuid
-      deleteDocumentContentById docUuid
+      deleteDocumentContentsFiltered [("filename", docUuid)]
       return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Delete Document"
 
