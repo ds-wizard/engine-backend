@@ -38,6 +38,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0029_add_db_inde
 import qualified Wizard.Database.Migration.Production.Migration_0030_bson_generic.Migration as M_0030
 import qualified Wizard.Database.Migration.Production.Migration_0031_user_imageUrl.Migration as M_0031
 import qualified Wizard.Database.Migration.Production.Migration_0032_appConfig_organizationDescription.Migration as M_0032
+import qualified Wizard.Database.Migration.Production.Migration_0033_remove_public_questionnaire.Migration as M_0033
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -78,4 +79,5 @@ migrationDefinitions =
   , M_0030.definition
   , M_0031.definition
   , M_0032.definition
+  , M_0033.definition
   ]

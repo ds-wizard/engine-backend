@@ -55,5 +55,4 @@ toClientConfigQuestionnaireDTO appConfig =
     { _clientConfigQuestionnaireDTOQuestionnaireAccessibility = appConfig ^. questionnaireAccessibility
     , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
-    , _clientConfigQuestionnaireDTOPublicQuestionnaire = appConfig ^. publicQuestionnaire
     }

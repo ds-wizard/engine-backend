@@ -130,8 +130,7 @@ defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfi
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnairePublicQuestionnaire = SimpleFeature False
-    , _appConfigQuestionnaireLevels = SimpleFeature True
+    { _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
     , _appConfigQuestionnaireQuestionnaireAccessibility = SimpleFeature True
     }

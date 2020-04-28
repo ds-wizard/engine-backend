@@ -54,6 +54,5 @@ data ClientConfigQuestionnaireDTO =
     { _clientConfigQuestionnaireDTOQuestionnaireAccessibility :: SimpleFeature
     , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
-    , _clientConfigQuestionnaireDTOPublicQuestionnaire :: SimpleFeature
     }
   deriving (Generic, Eq, Show)

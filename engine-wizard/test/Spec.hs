@@ -52,7 +52,6 @@ import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Sanitiza
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
-import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateServiceSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
@@ -150,5 +149,4 @@ main =
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
              packageValidationSpec appContext
-             publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)

@@ -144,7 +144,6 @@ data AppConfigQuestionnaire =
     { _appConfigQuestionnaireQuestionnaireAccessibility :: SimpleFeature
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
-    , _appConfigQuestionnairePublicQuestionnaire :: SimpleFeature
     }
   deriving (Generic, Eq, Show)
 

@@ -7,7 +7,7 @@ import Control.Monad.Except (throwError)
 import Data.Aeson
 import Data.Bson.Generic
 import qualified Data.Text as T
-import Database.MongoDB ((=:), delete, find, findOne, insert, insertMany, rest, select)
+import Database.MongoDB ((=:), delete, find, insertMany, rest, select)
 
 import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Constant.KnowledgeModel
@@ -43,7 +43,6 @@ migrateCompleteDatabase = do
   migratePackages
   migrateBranches
   migrateKnowledgeModelMigrations
-  migratePublicPackages
 
 -- ---------------------------
 -- PRIVATE
@@ -57,38 +56,6 @@ migrateBranches = migrateOutdatedModels "branches" BranchMapper.fromWithEventsDT
 migrateKnowledgeModelMigrations :: AppContextM ()
 migrateKnowledgeModelMigrations =
   migrateOutdatedModels "kmMigrations" KMMigratorMapper.fromDetailDTO KMMMigrator.migrate
-
-migratePublicPackages :: AppContextM ()
-migratePublicPackages = do
-  logMigrationStarted "publicPackages"
-  mPackage <- runDB $ findOne (select [] "publicPackages")
-  case mPackage of
-    Just package ->
-      case PackageMigrator.migrate . Object . mapBSONDocumentToJSONObject $ package of
-        Right upgradedEntity -> do
-          logMigrationMigrationApplied "publicPackages"
-          case eitherDecode . encode $ upgradedEntity of
-            Right object -> do
-              document <- convertToBSON object
-              runDB . delete $ select [] "publicPackages"
-              runDB $ insert "publicPackages" document
-              logMigrationCompleted "publicPackages"
-              return ()
-            Left error -> do
-              logMigrationFailedToConvertToBson "publicPackages" error
-              return ()
-        Left error -> do
-          logMigrationFailedToMigrateCollection "publicPackages" error
-          return ()
-    Nothing -> do
-      logMigrationNotApplied "publicPackages"
-      return ()
-  where
-    convertToBSON object = do
-      logMigrationStartConvertingToBson "publicPackages"
-      let documents = toBSON . PackageMapper.fromDTO $ object
-      logMigrationConvertedToBson "publicPackages"
-      return documents
 
 findOutdatedModels collection =
   runDB $ rest =<< find (select ["metamodelVersion" =: ["$ne" =: kmMetamodelVersion]] (T.pack collection))
