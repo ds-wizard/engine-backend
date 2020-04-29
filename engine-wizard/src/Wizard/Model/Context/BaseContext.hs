@@ -11,6 +11,7 @@ import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
 import Servant (ServerError)
+import Servant.Client (ClientEnv)
 
 import Shared.Model.Config.BuildInfoConfig
 import Wizard.Model.Config.ServerConfig
@@ -23,6 +24,7 @@ data BaseContext =
     , _baseContextPool :: ConnectionPool
     , _baseContextMsgChannel :: Maybe Channel
     , _baseContextHttpClientManager :: Manager
+    , _baseContextRegistryClient :: ClientEnv
     , _baseContextShutdownFlag :: MVar ()
     }
 

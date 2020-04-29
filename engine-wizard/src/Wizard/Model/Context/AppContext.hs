@@ -11,6 +11,7 @@ import qualified Data.UUID as U
 import Database.Persist.MongoDB (ConnectionPool)
 import Network.AMQP (Channel)
 import Network.HTTP.Client (Manager)
+import Servant.Client (ClientEnv)
 
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
@@ -25,6 +26,7 @@ data AppContext =
     , _appContextPool :: ConnectionPool
     , _appContextMsgChannel :: Maybe Channel
     , _appContextHttpClientManager :: Manager
+    , _appContextRegistryClient :: ClientEnv
     , _appContextTraceUuid :: U.UUID
     , _appContextCurrentUser :: Maybe UserDTO
     , _appContextShutdownFlag :: MVar ()

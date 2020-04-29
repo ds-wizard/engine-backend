@@ -13,6 +13,7 @@ import Wizard.Constant.Resource
 import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
+import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ServerConfigService
@@ -80,6 +81,8 @@ prepareWebApp runCallback =
       putStrLn "MESSAGING: connected"
       httpClientManager <- createHttpClientManager serverConfig
       putStrLn "HTTP_CLIENT: created"
+      registryClient <- createRegistryClient serverConfig httpClientManager
+      putStrLn "REGISTRY_CLIENT: created"
       shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
@@ -89,6 +92,7 @@ prepareWebApp runCallback =
               , _appContextPool = dbPool
               , _appContextMsgChannel = msgChannel
               , _appContextHttpClientManager = httpClientManager
+              , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               , _appContextShutdownFlag = shutdownFlag

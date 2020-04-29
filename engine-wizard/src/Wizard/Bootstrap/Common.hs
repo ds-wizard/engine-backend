@@ -21,6 +21,7 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextPool = baseContext ^. pool
           , _appContextMsgChannel = baseContext ^. msgChannel
           , _appContextHttpClientManager = baseContext ^. httpClientManager
+          , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Nothing
           , _appContextShutdownFlag = baseContext ^. shutdownFlag

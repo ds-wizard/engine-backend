@@ -17,6 +17,9 @@ type List_POST
      :> QueryParam "callback" String
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 
+list_POST_Api :: Proxy List_POST
+list_POST_Api = Proxy
+
 list_POST ::
      OrganizationCreateDTO -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 list_POST reqDto mCallbackUrl = runInUnauthService $ addTraceUuidHeader =<< createOrganization reqDto mCallbackUrl

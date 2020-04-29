@@ -69,6 +69,8 @@ library:
   - retry
   - scientific
   - servant
+  - servant-client
+  - servant-client-core
   - servant-errors
   - servant-multipart
   - servant-server

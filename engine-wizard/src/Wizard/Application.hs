@@ -19,6 +19,7 @@ import Wizard.Bootstrap.HttpClient
 import Wizard.Bootstrap.Localization
 import Wizard.Bootstrap.Messaging
 import Wizard.Bootstrap.MetamodelMigration
+import Wizard.Bootstrap.RegistryClient
 import Wizard.Bootstrap.Web
 import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Component
@@ -40,6 +41,7 @@ runApplication = do
         dbPool <- connectDB serverConfig
         msgChannel <- connectMQ serverConfig
         httpClientManager <- setupHttpClientManager serverConfig
+        registryClient <- setupRegistryClient serverConfig httpClientManager
         localization <- loadLocalization serverConfig
         let baseContext =
               BaseContext
@@ -49,6 +51,7 @@ runApplication = do
                 , _baseContextPool = dbPool
                 , _baseContextMsgChannel = msgChannel
                 , _baseContextHttpClientManager = httpClientManager
+                , _baseContextRegistryClient = registryClient
                 , _baseContextShutdownFlag = shutdownFlag
                 }
         liftIO $ runDBMigrations baseContext

@@ -1,5 +1,7 @@
 module Shared.Model.Error.Error where
 
+import Network.HTTP.Types.Status
+
 import Shared.Model.Localization.LocaleRecord
 
 type FormError = LocaleRecord
@@ -15,4 +17,5 @@ data AppError
   | ForbiddenError LocaleRecord
   | NotExistsError LocaleRecord
   | GeneralServerError String
+  | HttpClientError Status String
   deriving (Show, Eq)

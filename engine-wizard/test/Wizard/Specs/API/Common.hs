@@ -47,6 +47,7 @@ startWebApp appContext = do
           , _baseContextPool = appContext ^. pool
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
+          , _baseContextRegistryClient = appContext ^. registryClient
           , _baseContextShutdownFlag = shutdownFlag
           }
   let config = appContext ^. serverConfig

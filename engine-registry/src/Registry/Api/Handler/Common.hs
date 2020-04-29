@@ -5,7 +5,9 @@ import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
+import Network.HTTP.Types.Status
 import Servant
   ( Header
   , Headers
@@ -160,6 +162,15 @@ sendError (NotExistsError localeRecord) = do
 sendError (GeneralServerError errorMessage) = do
   logError _CMP_API errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
+sendError (HttpClientError status message) = do
+  logError _CMP_API message
+  return $
+    ServerError
+      { errHTTPCode = statusCode status
+      , errReasonPhrase = BS.unpack . statusMessage $ status
+      , errBody = BSL.pack message
+      , errHeaders = [contentTypeHeaderJSON]
+      }
 
 sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
 sendErrorDTO AcceptedErrorDTO =
@@ -186,3 +197,12 @@ sendErrorDTO (NotExistsErrorDTO message) =
 sendErrorDTO (GeneralServerErrorDTO message) = do
   logError _CMP_API message
   return $ err500 {errBody = encode $ GeneralServerErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (HttpClientErrorDTO status message) = do
+  logError _CMP_API message
+  return $
+    ServerError
+      { errHTTPCode = statusCode status
+      , errReasonPhrase = BS.unpack . statusMessage $ status
+      , errBody = BSL.pack message
+      , errHeaders = [contentTypeHeaderJSON]
+      }

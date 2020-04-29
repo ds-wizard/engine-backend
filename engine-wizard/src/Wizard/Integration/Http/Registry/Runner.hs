@@ -4,14 +4,17 @@ import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
+import Servant
 
 import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
+import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Integration.Http.Common.HttpClient
+import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Integration.Http.Registry.RequestMapper
 import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Integration.Resource.Package.PackageSimpleIDTO
@@ -33,20 +36,16 @@ retrieveOrganizations = do
 createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
 createOrganization reqDto = do
   serverConfig <- asks _appContextServerConfig
-  appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
-    then runRequest (toCreateOrganizationRequest serverConfig reqDto) toCreateOrganizationResponse
-    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+  let request = toCreateOrganizationRequest serverConfig reqDto
+  res <- runRegistryClient request
+  return . getResponse $ res
 
 confirmOrganizationRegistration :: RegistryConfirmationDTO -> AppContextM OrganizationDTO
 confirmOrganizationRegistration reqDto = do
   serverConfig <- asks _appContextServerConfig
-  appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
-    then runRequest
-           (toConfirmOrganizationRegistrationRequest serverConfig reqDto)
-           toConfirmOrganizationRegistrationResponse
-    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+  let request = toConfirmOrganizationRegistrationRequest serverConfig reqDto
+  res <- runRegistryClient request
+  return . getResponse $ res
 
 retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleIDTO]
 retrievePackages iStat = do

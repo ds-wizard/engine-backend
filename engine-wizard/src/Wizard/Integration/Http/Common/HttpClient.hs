@@ -36,9 +36,8 @@ import Wizard.Util.Logger
 
 runRequest :: HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> AppContextM a
 runRequest req responseMapper = do
-  logRequest req
+  logRequestMultipart req
   response <- runSimpleRequest req
-  logResponse response
   let sc = response ^. responseStatus . statusCode
   if sc <= 399
     then do
@@ -77,18 +76,10 @@ mapHeader (k, v) = (CI.mk . BS.pack $ k, BS.pack v)
 -- --------------------------------
 -- LOGGER
 -- --------------------------------
-logRequest request = do
-  logInfoU _CMP_INTEGRATION ("Retrieving '" ++ (request ^. requestUrl) ++ "'")
-  logInfoU _CMP_INTEGRATION ("Request Method '" ++ (request ^. requestMethod) ++ "'")
-  logInfoU _CMP_INTEGRATION ("Request Headers: '" ++ (show . toList $ request ^. requestHeaders) ++ "'")
+logRequestMultipart request =
   case request ^. multipartFileName of
     Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
     Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
-  logInfoU _CMP_INTEGRATION ("Request Body: '" ++ BS.unpack (request ^. requestBody) ++ "'")
-
-logResponse response = do
-  logInfoU _CMP_INTEGRATION "Retrieved Response"
-  logInfoU _CMP_INTEGRATION ("Response StatusCode: '" ++ show (response ^. responseStatus . statusCode) ++ "'")
 
 logResponseErrorBody response =
   logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")

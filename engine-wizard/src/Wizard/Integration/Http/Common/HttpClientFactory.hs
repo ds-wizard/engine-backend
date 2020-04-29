@@ -4,10 +4,12 @@ import Control.Monad (when)
 
 import Control.Lens ((^.))
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as LBS
 import Network.HTTP.Client
   ( BodyReader
   , Manager
   , Request
+  , RequestBody(..)
   , Response
   , host
   , managerModifyRequest
@@ -16,6 +18,7 @@ import Network.HTTP.Client
   , newManager
   , path
   , queryString
+  , requestBody
   , requestHeaders
   , responseHeaders
   , responseStatus
@@ -59,12 +62,18 @@ logRequest logHttpClient request = do
   let h = BS.unpack . host $ request
   let p = BS.unpack . path $ request
   let q = BS.unpack . queryString $ request
+  let b =
+        case requestBody request of
+          RequestBodyLBS bytestring -> LBS.unpack bytestring
+          RequestBodyBS bytestring -> BS.unpack bytestring
+          _ -> "can't be shown"
   let headers = show $ requestHeaders request
   when
     logHttpClient
     (do logMessage $ format "Retrieving '%s://%s%s%s'" [protocol, h, p, q]
         logMessage $ format "Request Method '%s'" [m]
-        logMessage $ format "Request Headers: '%s'" [headers])
+        logMessage $ format "Request Headers: '%s'" [headers]
+        logMessage $ format "Request Body '%s'" [b])
 
 logResponse :: Bool -> Response BodyReader -> IO ()
 logResponse logHttpClient response = do

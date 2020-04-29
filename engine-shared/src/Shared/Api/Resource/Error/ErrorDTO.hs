@@ -1,5 +1,7 @@
 module Shared.Api.Resource.Error.ErrorDTO where
 
+import Network.HTTP.Types.Status
+
 data ErrorDTO
   = AcceptedErrorDTO
   | FoundErrorDTO String
@@ -9,3 +11,4 @@ data ErrorDTO
   | ForbiddenErrorDTO String
   | NotExistsErrorDTO String
   | GeneralServerErrorDTO String
+  | HttpClientErrorDTO Status String

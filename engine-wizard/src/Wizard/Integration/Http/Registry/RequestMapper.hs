@@ -1,15 +1,18 @@
 module Wizard.Integration.Http.Registry.RequestMapper where
 
 import Control.Lens ((^.))
-import Data.Aeson
 import Data.ByteString.Char8 as BS
-import Data.ByteString.Lazy.Char8 as BSL
 import Data.Map.Strict as M
 import Prelude hiding (lookup)
+import Servant
+import Servant.Client
 
 import LensesConfig
+import Registry.Api.Handler.Organization.Detail_State_PUT
+import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
+import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Shared.Constant.Api
@@ -29,28 +32,19 @@ toRetrieveOrganizationsRequest serverConfig appConfig =
     , _httpRequestMultipartFileName = Nothing
     }
 
-toCreateOrganizationRequest :: ServerConfig -> OrganizationCreateDTO -> HttpRequest
+toCreateOrganizationRequest ::
+     ServerConfig -> OrganizationCreateDTO -> ClientM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 toCreateOrganizationRequest serverConfig reqDto =
-  HttpRequest
-    { _httpRequestRequestMethod = "POST"
-    , _httpRequestRequestUrl =
-        serverConfig ^. registry . url ++ "/organizations?callback=" ++ serverConfig ^. general . clientUrl
-    , _httpRequestRequestHeaders = M.fromList [("Content-Type", "application/json")]
-    , _httpRequestRequestBody = BSL.toStrict . encode $ reqDto
-    , _httpRequestMultipartFileName = Nothing
-    }
+  client list_POST_Api reqDto (Just $ serverConfig ^. general . clientUrl)
 
-toConfirmOrganizationRegistrationRequest :: ServerConfig -> RegistryConfirmationDTO -> HttpRequest
+toConfirmOrganizationRegistrationRequest ::
+     ServerConfig -> RegistryConfirmationDTO -> ClientM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
 toConfirmOrganizationRegistrationRequest serverConfig reqDto =
-  HttpRequest
-    { _httpRequestRequestMethod = "PUT"
-    , _httpRequestRequestUrl =
-        serverConfig ^. registry . url ++ "/organizations/" ++ reqDto ^. organizationId ++ "/state?hash=" ++ reqDto ^.
-        hash
-    , _httpRequestRequestHeaders = M.fromList [("Content-Type", "application/json")]
-    , _httpRequestRequestBody = BSL.toStrict . encode $ OrganizationStateDTO {_organizationStateDTOActive = True}
-    , _httpRequestMultipartFileName = Nothing
-    }
+  client
+    detail_state_PUT_Api
+    (OrganizationStateDTO {_organizationStateDTOActive = True})
+    (reqDto ^. organizationId)
+    (Just $ reqDto ^. hash)
 
 toRetrievePackagesRequest :: ServerConfigRegistry -> AppConfigRegistry -> InstanceStatistics -> HttpRequest
 toRetrievePackagesRequest serverConfig appConfig iStat =
