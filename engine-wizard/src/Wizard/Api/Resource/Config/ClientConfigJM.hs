@@ -2,43 +2,43 @@ module Wizard.Api.Resource.Config.ClientConfigJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 
 instance FromJSON ClientConfigDTO where
-  parseJSON = simpleParseJSON "_clientConfigDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigDTO where
-  toJSON = simpleToJSON "_clientConfigDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON ClientConfigAuthDTO where
-  parseJSON = simpleParseJSON "_clientConfigAuthDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigAuthDTO where
-  toJSON = simpleToJSON "_clientConfigAuthDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON ClientConfigAuthExternalDTO where
-  parseJSON = simpleParseJSON "_clientConfigAuthExternalDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigAuthExternalDTO where
-  toJSON = simpleToJSON "_clientConfigAuthExternalDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON ClientConfigAuthExternalServiceDTO where
-  parseJSON = simpleParseJSON "_clientConfigAuthExternalServiceDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigAuthExternalServiceDTO where
-  toJSON = simpleToJSON "_clientConfigAuthExternalServiceDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON ClientConfigRegistryDTO where
-  parseJSON = simpleParseJSON "_clientConfigRegistryDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigRegistryDTO where
-  toJSON = simpleToJSON "_clientConfigRegistryDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON ClientConfigQuestionnaireDTO where
-  parseJSON = simpleParseJSON "_clientConfigQuestionnaireDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ClientConfigQuestionnaireDTO where
-  toJSON = simpleToJSON "_clientConfigQuestionnaireDTO"
+  toJSON = genericToJSON simpleOptions

@@ -8,4 +8,4 @@ import Wizard.Api.Resource.User.UserStateJM ()
 import Wizard.Database.Migration.Development.User.Data.Users
 
 instance ToSchema UserStateDTO where
-  declareNamedSchema = simpleToSchema "_userStateDTO" userState
+  declareNamedSchema = simpleToSchema userState

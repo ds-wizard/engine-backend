@@ -19,6 +19,4 @@ import qualified Wizard.Service.User.UserMapper as UM
 
 instance ToSchema QuestionnaireDTO where
   declareNamedSchema =
-    simpleToSchema
-      "_questionnaireDTO"
-      (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault (Just . UM.toDTO $ userAlbert))
+    simpleToSchema (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault (Just . UM.toDTO $ userAlbert))

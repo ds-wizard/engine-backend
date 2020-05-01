@@ -1,20 +1,12 @@
 module Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateJM where
 
-import Control.Monad
 import Data.Aeson
 
+import Shared.Util.JSON
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 
 instance FromJSON MigratorStateCreateDTO where
-  parseJSON (Object o) = do
-    _migratorStateCreateDTOTargetPackageId <- o .: "targetPackageId"
-    _migratorStateCreateDTOTargetTagUuids <- o .: "targetTagUuids"
-    return MigratorStateCreateDTO {..}
-  parseJSON _ = mzero
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON MigratorStateCreateDTO where
-  toJSON MigratorStateCreateDTO {..} =
-    object
-      [ "targetPackageId" .= _migratorStateCreateDTOTargetPackageId
-      , "targetTagUuids" .= _migratorStateCreateDTOTargetTagUuids
-      ]
+  toJSON = genericToJSON simpleOptions

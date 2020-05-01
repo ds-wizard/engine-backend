@@ -2,7 +2,7 @@ module Wizard.Integration.Resource.Organization.OrganizationSimpleIJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON)
+import Shared.Util.JSON
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
 
 instance FromJSON OrganizationSimpleIDTO where

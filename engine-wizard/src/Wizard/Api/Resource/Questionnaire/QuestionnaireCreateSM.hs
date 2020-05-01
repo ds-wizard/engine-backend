@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 
 instance ToSchema QuestionnaireCreateDTO where
-  declareNamedSchema = simpleToSchema "_questionnaireChangeDTO" questionnaire1Create
+  declareNamedSchema = simpleToSchema questionnaire1Create

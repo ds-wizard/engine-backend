@@ -3,14 +3,11 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM where
 import Control.Monad
 import Data.Aeson
 
+import Shared.Util.JSON
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 
 instance FromJSON ReplyDTO where
-  parseJSON (Object o) = do
-    _replyDTOPath <- o .: "path"
-    _replyDTOValue <- o .: "value"
-    return ReplyDTO {..}
-  parseJSON _ = mzero
+  parseJSON = genericParseJSON simpleOptions
 
 instance FromJSON ReplyValueDTO where
   parseJSON (Object o) = do
@@ -46,7 +43,7 @@ instance FromJSON IntegrationReplyValueDTO where
 
 -- --------------------------------------------------------------------
 instance ToJSON ReplyDTO where
-  toJSON ReplyDTO {..} = object ["path" .= _replyDTOPath, "value" .= _replyDTOValue]
+  toJSON = genericToJSON simpleOptions
 
 instance ToJSON ReplyValueDTO where
   toJSON StringReplyDTO {..} = object ["type" .= "StringReply", "value" .= _stringReplyDTOValue]

@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Token.TokenJM ()
 import Wizard.Database.Migration.Development.Token.Data.Tokens
 
 instance ToSchema TokenDTO where
-  declareNamedSchema = simpleToSchema "_tokenDTO" albertToken
+  declareNamedSchema = simpleToSchema albertToken

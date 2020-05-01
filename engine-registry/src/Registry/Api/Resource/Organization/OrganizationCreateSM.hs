@@ -8,4 +8,4 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Util.Swagger
 
 instance ToSchema OrganizationCreateDTO where
-  declareNamedSchema = simpleToSchema "_organizationCreateDTO" orgGlobalCreate
+  declareNamedSchema = simpleToSchema orgGlobalCreate

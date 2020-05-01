@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 
 instance FromJSON PackageBundleDTO where
-  parseJSON = simpleParseJSON "_packageBundleDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON PackageBundleDTO where
-  toJSON = simpleToJSON "_packageBundleDTO"
+  toJSON = genericToJSON simpleOptions

@@ -4,12 +4,12 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO ()
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
 
 instance FromJSON MigratorStateDetailDTO where
-  parseJSON = simpleParseJSON "_migratorStateDetailDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON MigratorStateDetailDTO where
-  toJSON = simpleToJSON "_migratorStateDetailDTO"
+  toJSON = genericToJSON simpleOptions

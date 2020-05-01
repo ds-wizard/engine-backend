@@ -10,4 +10,4 @@ import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Service.Config.AppConfigMapper
 
 instance ToSchema AppConfigChangeDTO where
-  declareNamedSchema = simpleToSchema "_appConfig" (toChangeDTO defaultAppConfig)
+  declareNamedSchema = simpleToSchema (toChangeDTO defaultAppConfig)

@@ -11,4 +11,4 @@ import Shared.Util.Swagger
 instance ToSchema ActionKeyType
 
 instance ToSchema ActionKeyDTO where
-  declareNamedSchema = simpleToSchema "_actionKeyDTO" forgTokActionKeyDto
+  declareNamedSchema = simpleToSchema forgTokActionKeyDto

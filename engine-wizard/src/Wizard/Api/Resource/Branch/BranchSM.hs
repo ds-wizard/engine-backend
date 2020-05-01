@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Branch.BranchStateSM ()
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 
 instance ToSchema BranchDTO where
-  declareNamedSchema = simpleToSchema "_branchDTO" amsterdamBranch
+  declareNamedSchema = simpleToSchema amsterdamBranch

@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Service.Level.LevelMapper
 
 instance ToSchema LevelDTO where
-  declareNamedSchema = simpleToSchema "_levelDTO" (toLevelDTO level1)
+  declareNamedSchema = simpleToSchema (toLevelDTO level1)

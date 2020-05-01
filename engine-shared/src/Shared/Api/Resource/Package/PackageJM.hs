@@ -7,10 +7,10 @@ import Data.Time
 
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.Package.PackageDTO
-import Shared.Util.JSON (simpleToJSON)
+import Shared.Util.JSON
 
 instance ToJSON PackageDTO where
-  toJSON = simpleToJSON "_packageDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON PackageDTO where
   parseJSON (Object o) = do

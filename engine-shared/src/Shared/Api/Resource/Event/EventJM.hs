@@ -14,7 +14,7 @@ import Shared.Api.Resource.Event.MoveEventJM ()
 import Shared.Api.Resource.Event.QuestionEventJM ()
 import Shared.Api.Resource.Event.ReferenceEventJM ()
 import Shared.Api.Resource.Event.TagEventJM ()
-import Shared.Util.JSON (toSumJSON')
+import Shared.Util.JSON
 
 instance ToJSON EventDTO where
   toJSON = toSumJSON' "eventType"

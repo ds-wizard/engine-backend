@@ -4,22 +4,22 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.ExpertEventDTO
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON')
+import Shared.Util.JSON
 
 instance FromJSON AddExpertEventDTO where
-  parseJSON = simpleParseJSON "_addExpertEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AddExpertEventDTO where
   toJSON = simpleToJSON' "_addExpertEventDTO" "eventType"
 
 instance FromJSON EditExpertEventDTO where
-  parseJSON = simpleParseJSON "_editExpertEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON EditExpertEventDTO where
   toJSON = simpleToJSON' "_editExpertEventDTO" "eventType"
 
 instance FromJSON DeleteExpertEventDTO where
-  parseJSON = simpleParseJSON "_deleteExpertEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON DeleteExpertEventDTO where
   toJSON = simpleToJSON' "_deleteExpertEventDTO" "eventType"

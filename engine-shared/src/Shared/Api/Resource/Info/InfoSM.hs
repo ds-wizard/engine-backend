@@ -8,4 +8,4 @@ import Shared.Database.Migration.Development.Info.Data.Infos
 import Shared.Util.Swagger
 
 instance ToSchema InfoDTO where
-  declareNamedSchema = simpleToSchema "_infoDTO" appInfo
+  declareNamedSchema = simpleToSchema appInfo

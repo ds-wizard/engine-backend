@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Feedback.FeedbackCreateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 
 instance FromJSON FeedbackCreateDTO where
-  parseJSON = simpleParseJSON "_feedbackCreateDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON FeedbackCreateDTO where
-  toJSON = simpleToJSON "_feedbackCreateDTO"
+  toJSON = genericToJSON simpleOptions

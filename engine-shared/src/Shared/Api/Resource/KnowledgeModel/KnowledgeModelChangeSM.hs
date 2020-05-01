@@ -11,7 +11,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Util.Swagger
 
 instance ToSchema KnowledgeModelChangeDTO where
-  declareNamedSchema = simpleToSchema "_knowledgeModelChangeDTO" kmChange
+  declareNamedSchema = simpleToSchema kmChange
 
 kmChange :: KnowledgeModelChangeDTO
 kmChange =

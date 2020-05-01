@@ -12,10 +12,10 @@ import Shared.Service.Event.EventToDTO
 import Shared.Util.Swagger
 
 instance ToSchema AddIntegrationEventDTO where
-  declareNamedSchema = simpleToSchema' "_addIntegrationEventDTO" "eventType" (toDTO a_km1_iop)
+  declareNamedSchema = simpleToSchema'' "_addIntegrationEventDTO" "eventType" (toDTO a_km1_iop)
 
 instance ToSchema EditIntegrationEventDTO where
-  declareNamedSchema = simpleToSchema' "_editIntegrationEventDTO" "eventType" (toDTO e_km1_iop)
+  declareNamedSchema = simpleToSchema'' "_editIntegrationEventDTO" "eventType" (toDTO e_km1_iop)
 
 instance ToSchema DeleteIntegrationEventDTO where
-  declareNamedSchema = simpleToSchema' "_deleteIntegrationEventDTO" "eventType" (toDTO d_km1_iop)
+  declareNamedSchema = simpleToSchema'' "_deleteIntegrationEventDTO" "eventType" (toDTO d_km1_iop)

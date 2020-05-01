@@ -12,25 +12,25 @@ import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Service.Report.ReportMapper
 
 instance ToSchema ReportDTO where
-  declareNamedSchema = simpleToSchema "_reportDTO" (toReportDTO report1)
+  declareNamedSchema = simpleToSchema (toReportDTO report1)
 
 instance ToSchema TotalReportDTO where
-  declareNamedSchema = simpleToSchema "_totalReportDTO" (toTotalReportDTO report1_total)
+  declareNamedSchema = simpleToSchema (toTotalReportDTO report1_total)
 
 instance ToSchema ChapterReportDTO where
-  declareNamedSchema = simpleToSchema "_chapterReportDTO" (toChapterReportDTO report1_ch1)
+  declareNamedSchema = simpleToSchema (toChapterReportDTO report1_ch1)
 
 instance ToSchema IndicationDTO where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
 
 instance ToSchema AnsweredIndicationDTO where
-  declareNamedSchema = simpleToSchema' "_answeredIndicationDTO" "indicationType" answeredAnsweredIndication
+  declareNamedSchema = simpleToSchema'' "_answeredIndicationDTO" "indicationType" answeredAnsweredIndication
 
 instance ToSchema LevelsAnsweredIndicationDTO where
-  declareNamedSchema = simpleToSchema' "_levelsAnsweredIndicationDTO" "indicationType" levelsAnsweredIndication
+  declareNamedSchema = simpleToSchema'' "_levelsAnsweredIndicationDTO" "indicationType" levelsAnsweredIndication
 
 instance ToSchema MetricSummaryDTO where
-  declareNamedSchema = simpleToSchema "_metricSummaryDTO" metricSummaryF
+  declareNamedSchema = simpleToSchema metricSummaryF
 
 levelsAnsweredIndication :: LevelsAnsweredIndicationDTO
 levelsAnsweredIndication =

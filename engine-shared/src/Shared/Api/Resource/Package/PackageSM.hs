@@ -9,4 +9,4 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Util.Swagger
 
 instance ToSchema PackageDTO where
-  declareNamedSchema = simpleToSchema "_packageDTO" globalPackageDto
+  declareNamedSchema = simpleToSchema globalPackageDto

@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Document.DocumentContextJM where
 import Data.Aeson
 
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Level.LevelJM ()
@@ -13,13 +13,13 @@ import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Api.Resource.User.UserJM ()
 
 instance FromJSON DocumentContextDTO where
-  parseJSON = simpleParseJSON "_documentContextDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON DocumentContextDTO where
-  toJSON = simpleToJSON "_documentContextDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON DocumentContextConfigDTO where
-  parseJSON = simpleParseJSON "_documentContextConfigDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON DocumentContextConfigDTO where
-  toJSON = simpleToJSON "_documentContextConfigDTO"
+  toJSON = genericToJSON simpleOptions

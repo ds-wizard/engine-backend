@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateJM ()
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 
 instance ToSchema MigratorStateDTO where
-  declareNamedSchema = simpleToSchema "_migratorStateDTO" migratorState
+  declareNamedSchema = simpleToSchema migratorState

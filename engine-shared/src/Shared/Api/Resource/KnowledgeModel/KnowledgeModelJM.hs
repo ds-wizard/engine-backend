@@ -5,7 +5,7 @@ import Data.Aeson
 
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON', toSumJSON)
+import Shared.Util.JSON
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -13,13 +13,13 @@ instance ToJSON KnowledgeModelDTO where
   toJSON = simpleToJSON "_knowledgeModelDTO"
 
 instance FromJSON KnowledgeModelDTO where
-  parseJSON = simpleParseJSON "_knowledgeModelDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON KnowledgeModelEntitiesDTO where
   toJSON = simpleToJSON "_knowledgeModelEntitiesDTO"
 
 instance FromJSON KnowledgeModelEntitiesDTO where
-  parseJSON = simpleParseJSON "_knowledgeModelEntitiesDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -27,7 +27,7 @@ instance ToJSON ChapterDTO where
   toJSON = simpleToJSON "_chapterDTO"
 
 instance FromJSON ChapterDTO where
-  parseJSON = simpleParseJSON "_chapterDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -54,28 +54,28 @@ instance ToJSON OptionsQuestionDTO where
   toJSON = simpleToJSON' "_optionsQuestionDTO" "questionType"
 
 instance FromJSON OptionsQuestionDTO where
-  parseJSON = simpleParseJSON "_optionsQuestionDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON ListQuestionDTO where
   toJSON = simpleToJSON' "_listQuestionDTO" "questionType"
 
 instance FromJSON ListQuestionDTO where
-  parseJSON = simpleParseJSON "_listQuestionDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON ValueQuestionDTO where
   toJSON = simpleToJSON' "_valueQuestionDTO" "questionType"
 
 instance FromJSON ValueQuestionDTO where
-  parseJSON = simpleParseJSON "_valueQuestionDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON IntegrationQuestionDTO where
   toJSON = simpleToJSON' "_integrationQuestionDTO" "questionType"
 
 instance FromJSON IntegrationQuestionDTO where
-  parseJSON = simpleParseJSON "_integrationQuestionDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -83,7 +83,7 @@ instance ToJSON AnswerDTO where
   toJSON = simpleToJSON "_answerDTO"
 
 instance FromJSON AnswerDTO where
-  parseJSON = simpleParseJSON "_answerDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -91,7 +91,7 @@ instance ToJSON ExpertDTO where
   toJSON = simpleToJSON "_expertDTO"
 
 instance FromJSON ExpertDTO where
-  parseJSON = simpleParseJSON "_expertDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
@@ -113,49 +113,49 @@ instance ToJSON ResourcePageReferenceDTO where
   toJSON = simpleToJSON' "_resourcePageReferenceDTO" "referenceType"
 
 instance FromJSON ResourcePageReferenceDTO where
-  parseJSON = simpleParseJSON "_resourcePageReferenceDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON URLReferenceDTO where
   toJSON = simpleToJSON' "_uRLReferenceDTO" "referenceType"
 
 instance FromJSON URLReferenceDTO where
-  parseJSON = simpleParseJSON "_uRLReferenceDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON CrossReferenceDTO where
   toJSON = simpleToJSON' "_crossReferenceDTO" "referenceType"
 
 instance FromJSON CrossReferenceDTO where
-  parseJSON = simpleParseJSON "_crossReferenceDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON MetricDTO where
-  toJSON = simpleToJSON "_metricDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON MetricDTO where
-  parseJSON = simpleParseJSON "_metricDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON MetricMeasureDTO where
-  toJSON = simpleToJSON "_metricMeasureDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON MetricMeasureDTO where
-  parseJSON = simpleParseJSON "_metricMeasureDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON TagDTO where
-  toJSON = simpleToJSON "_tagDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON TagDTO where
-  parseJSON = simpleParseJSON "_tagDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON IntegrationDTO where
-  toJSON = simpleToJSON "_integrationDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON IntegrationDTO where
-  parseJSON = simpleParseJSON "_integrationDTO"
+  parseJSON = genericParseJSON simpleOptions

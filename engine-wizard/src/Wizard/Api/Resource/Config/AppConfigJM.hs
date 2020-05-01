@@ -2,7 +2,7 @@ module Wizard.Api.Resource.Config.AppConfigJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 import Wizard.Model.Config.AppConfig
 

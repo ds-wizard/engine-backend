@@ -2,7 +2,7 @@ module Wizard.Api.Resource.User.UserSubmissionPropsJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Model.User.User
 
@@ -13,7 +13,7 @@ instance ToJSON UserSubmissionProps where
   toJSON = simpleToJSON "_userSubmissionProps"
 
 instance FromJSON UserSubmissionPropsDTO where
-  parseJSON = simpleParseJSON "_userSubmissionPropsDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON UserSubmissionPropsDTO where
-  toJSON = simpleToJSON "_userSubmissionPropsDTO"
+  toJSON = genericToJSON simpleOptions

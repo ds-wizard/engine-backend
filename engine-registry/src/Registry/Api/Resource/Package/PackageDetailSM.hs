@@ -12,4 +12,4 @@ import Shared.Service.Package.PackageMapper
 import Shared.Util.Swagger
 
 instance ToSchema PackageDetailDTO where
-  declareNamedSchema = simpleToSchema "_packageDetailDTO" (toDetailDTO (toPackage globalPackage) [] orgGlobal)
+  declareNamedSchema = simpleToSchema (toDetailDTO (toPackage globalPackage) [] orgGlobal)

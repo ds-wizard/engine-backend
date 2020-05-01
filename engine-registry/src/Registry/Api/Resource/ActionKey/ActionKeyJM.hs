@@ -4,14 +4,14 @@ import Data.Aeson
 
 import Registry.Api.Resource.ActionKey.ActionKeyDTO
 import Registry.Model.ActionKey.ActionKey
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 
 instance FromJSON ActionKeyType
 
 instance ToJSON ActionKeyType
 
 instance FromJSON ActionKeyDTO where
-  parseJSON = simpleParseJSON "_actionKeyDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ActionKeyDTO where
-  toJSON = simpleToJSON "_actionKeyDTO"
+  toJSON = genericToJSON simpleOptions

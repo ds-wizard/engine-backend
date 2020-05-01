@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 
 instance FromJSON MigratorStateCreateDTO where
-  parseJSON = simpleParseJSON "_migratorStateCreateDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON MigratorStateCreateDTO where
-  toJSON = simpleToJSON "_migratorStateCreateDTO"
+  toJSON = genericToJSON simpleOptions

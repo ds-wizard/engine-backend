@@ -9,7 +9,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema ReplyDTO where
-  declareNamedSchema = simpleToSchema "_replyDTO" (toReplyDTO . head $ fReplies)
+  declareNamedSchema = simpleToSchema (toReplyDTO . head $ fReplies)
 
 instance ToSchema ReplyValueDTO
 

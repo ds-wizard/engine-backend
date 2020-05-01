@@ -12,10 +12,10 @@ import Shared.Service.Event.EventToDTO
 import Shared.Util.Swagger
 
 instance ToSchema AddTagEventDTO where
-  declareNamedSchema = simpleToSchema' "_addTagEventDTO" "eventType" (toDTO a_km1_tds)
+  declareNamedSchema = simpleToSchema'' "_addTagEventDTO" "eventType" (toDTO a_km1_tds)
 
 instance ToSchema EditTagEventDTO where
-  declareNamedSchema = simpleToSchema' "_editTagEventDTO" "eventType" (toDTO e_km1_tds)
+  declareNamedSchema = simpleToSchema'' "_editTagEventDTO" "eventType" (toDTO e_km1_tds)
 
 instance ToSchema DeleteTagEventDTO where
-  declareNamedSchema = simpleToSchema' "_deleteTagEventDTO" "eventType" (toDTO d_km1_tds)
+  declareNamedSchema = simpleToSchema'' "_deleteTagEventDTO" "eventType" (toDTO d_km1_tds)

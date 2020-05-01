@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.BookReference.Data.BookReferences
 import Wizard.Service.BookReference.BookReferenceMapper
 
 instance ToSchema BookReferenceDTO where
-  declareNamedSchema = simpleToSchema "_bookReferenceDTO" (toDTO bookReferenceBvq)
+  declareNamedSchema = simpleToSchema (toDTO bookReferenceBvq)

@@ -16,4 +16,4 @@ import Wizard.Service.Document.DocumentMapper
 instance ToSchema DocumentState
 
 instance ToSchema DocumentDTO where
-  declareNamedSchema = simpleToSchema "_documentDTO" (toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate)
+  declareNamedSchema = simpleToSchema (toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate)

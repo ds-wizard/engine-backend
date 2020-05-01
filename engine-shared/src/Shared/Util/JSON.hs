@@ -10,7 +10,7 @@ import GHC.Generics
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Reflection (HasConstructor, constructorName)
-import Shared.Util.String (lowerFirst, stripSuffix)
+import Shared.Util.String (lowerFirst, splitOn, stripSuffix)
 
 convertValueToOject value callback =
   case value of
@@ -79,3 +79,9 @@ createOptions' fieldPrefix typeFieldName =
     , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
     , constructorTagModifier = stripDTOSuffix
     }
+
+simpleOptions :: Options
+simpleOptions = defaultOptions {fieldLabelModifier = fieldLabelModifierFn}
+
+fieldLabelModifierFn :: String -> String
+fieldLabelModifierFn value = jsonSpecialFields . lowerFirst $ splitOn "DTO" value !! 1

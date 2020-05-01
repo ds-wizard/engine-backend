@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Version.VersionJM ()
 import Wizard.Database.Migration.Development.Version.Data.Versions
 
 instance ToSchema VersionDTO where
-  declareNamedSchema = simpleToSchema "_versionDTO" versionAmsterdam
+  declareNamedSchema = simpleToSchema versionAmsterdam

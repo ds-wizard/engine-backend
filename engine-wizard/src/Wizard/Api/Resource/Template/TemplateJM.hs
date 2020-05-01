@@ -2,23 +2,23 @@ module Wizard.Api.Resource.Template.TemplateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Template.TemplateDTO
 
 instance FromJSON TemplateDTO where
-  parseJSON = simpleParseJSON "_templateDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON TemplateDTO where
-  toJSON = simpleToJSON "_templateDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON TemplateAllowedKMDTO where
-  parseJSON = simpleParseJSON "_templateAllowedKMDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON TemplateAllowedKMDTO where
-  toJSON = simpleToJSON "_templateAllowedKMDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON TemplateFormatDTO where
-  parseJSON = simpleParseJSON "_templateFormatDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON TemplateFormatDTO where
-  toJSON = simpleToJSON "_templateFormatDTO"
+  toJSON = genericToJSON simpleOptions

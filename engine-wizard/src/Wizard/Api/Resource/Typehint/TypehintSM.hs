@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Typehint.TypehintJM ()
 import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 
 instance ToSchema TypehintDTO where
-  declareNamedSchema = simpleToSchema "_typehintDTO" lifeScienceTypehint
+  declareNamedSchema = simpleToSchema lifeScienceTypehint

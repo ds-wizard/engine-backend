@@ -8,10 +8,10 @@ import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 
 instance ToSchema TemplateDTO where
-  declareNamedSchema = simpleToSchema "_templateDTO" commonWizardTemplate
+  declareNamedSchema = simpleToSchema commonWizardTemplate
 
 instance ToSchema TemplateAllowedKMDTO where
-  declareNamedSchema = simpleToSchema "_templateAllowedKMDTO" templateAllowedKM
+  declareNamedSchema = simpleToSchema templateAllowedKM
 
 instance ToSchema TemplateFormatDTO where
-  declareNamedSchema = simpleToSchema "_templateFormatDTO" templateFormatJson
+  declareNamedSchema = simpleToSchema templateFormatJson

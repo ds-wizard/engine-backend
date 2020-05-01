@@ -4,10 +4,10 @@ import Data.Aeson
 
 import Registry.Api.Resource.Organization.Common ()
 import Registry.Api.Resource.Organization.OrganizationDTO
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 
 instance ToJSON OrganizationDTO where
-  toJSON = simpleToJSON "_organizationDTO"
+  toJSON = genericToJSON simpleOptions
 
 instance FromJSON OrganizationDTO where
-  parseJSON = simpleParseJSON "_organizationDTO"
+  parseJSON = genericParseJSON simpleOptions

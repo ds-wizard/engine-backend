@@ -3,11 +3,11 @@ module Wizard.Api.Resource.Branch.BranchWithEventsJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Branch.BranchWithEventsDTO
 
 instance FromJSON BranchWithEventsDTO where
-  parseJSON = simpleParseJSON "_branchWithEventsDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON BranchWithEventsDTO where
-  toJSON = simpleToJSON "_branchWithEventsDTO"
+  toJSON = genericToJSON simpleOptions

@@ -3,36 +3,36 @@ module Wizard.Api.Resource.Report.ReportJM where
 import Control.Monad
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON, simpleToJSON', toSumJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Report.ReportDTO
 
 -- --------------------------------------------------------------------
 instance FromJSON ReportDTO where
-  parseJSON = simpleParseJSON "_reportDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ReportDTO where
-  toJSON = simpleToJSON "_reportDTO"
+  toJSON = genericToJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance FromJSON TotalReportDTO where
-  parseJSON = simpleParseJSON "_totalReportDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON TotalReportDTO where
-  toJSON = simpleToJSON "_totalReportDTO"
+  toJSON = genericToJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance FromJSON ChapterReportDTO where
-  parseJSON = simpleParseJSON "_chapterReportDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON ChapterReportDTO where
-  toJSON = simpleToJSON "_chapterReportDTO"
+  toJSON = genericToJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance FromJSON MetricSummaryDTO where
-  parseJSON = simpleParseJSON "_metricSummaryDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON MetricSummaryDTO where
-  toJSON = simpleToJSON "_metricSummaryDTO"
+  toJSON = genericToJSON simpleOptions
 
 -- --------------------------------------------------------------------
 instance ToJSON IndicationDTO where
@@ -49,14 +49,14 @@ instance FromJSON IndicationDTO where
 
 -- --------------------------------------------------------------------
 instance FromJSON AnsweredIndicationDTO where
-  parseJSON = simpleParseJSON "_answeredIndicationDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AnsweredIndicationDTO where
   toJSON = simpleToJSON' "_answeredIndicationDTO" "indicationType"
 
 -- --------------------------------------------------------------------
 instance FromJSON LevelsAnsweredIndicationDTO where
-  parseJSON = simpleParseJSON "_levelsAnsweredIndicationDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON LevelsAnsweredIndicationDTO where
   toJSON = simpleToJSON' "_levelsAnsweredIndicationDTO" "indicationType"

@@ -9,4 +9,4 @@ import Wizard.Api.Resource.User.UserSubmissionPropsSM ()
 import Wizard.Database.Migration.Development.User.Data.Users
 
 instance ToSchema UserProfileChangeDTO where
-  declareNamedSchema = simpleToSchema "_userProfileChangeDTO" userIsaacProfileChange
+  declareNamedSchema = simpleToSchema userIsaacProfileChange

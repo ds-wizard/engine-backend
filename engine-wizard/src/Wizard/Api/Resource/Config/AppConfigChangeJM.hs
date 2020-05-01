@@ -2,12 +2,12 @@ module Wizard.Api.Resource.Config.AppConfigChangeJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.AppConfigJM ()
 
 instance FromJSON AppConfigChangeDTO where
-  parseJSON = simpleParseJSON "_appConfigChangeDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AppConfigChangeDTO where
-  toJSON = simpleToJSON "_appConfigChangeDTO"
+  toJSON = genericToJSON simpleOptions

@@ -3,12 +3,12 @@ module Wizard.Api.Resource.Package.PackageSimpleJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageStateJM ()
 
 instance FromJSON PackageSimpleDTO where
-  parseJSON = simpleParseJSON "_packageSimpleDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON PackageSimpleDTO where
-  toJSON = simpleToJSON "_packageSimpleDTO"
+  toJSON = genericToJSON simpleOptions

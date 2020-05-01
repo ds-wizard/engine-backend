@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Submission.SubmissionCreateJM ()
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
 
 instance ToSchema SubmissionCreateDTO where
-  declareNamedSchema = simpleToSchema "_submissionCreateDTO" submissionCreate
+  declareNamedSchema = simpleToSchema submissionCreate

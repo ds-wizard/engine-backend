@@ -16,7 +16,6 @@ import Wizard.Service.Package.PackageMapper
 instance ToSchema PackageDetailDTO where
   declareNamedSchema =
     simpleToSchema
-      "_packageDetailDTO"
       (toDetailDTO
          (toPackage globalPackage)
          [globalRemotePackage]

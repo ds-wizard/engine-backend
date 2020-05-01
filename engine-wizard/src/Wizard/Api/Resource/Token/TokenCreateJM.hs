@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Token.TokenCreateJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Token.TokenCreateDTO
 
 instance FromJSON TokenCreateDTO where
-  parseJSON = simpleParseJSON "_tokenCreateDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON TokenCreateDTO where
-  toJSON = simpleToJSON "_tokenCreateDTO"
+  toJSON = genericToJSON simpleOptions

@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import Wizard.Service.Feedback.FeedbackMapper
 
 instance ToSchema FeedbackDTO where
-  declareNamedSchema = simpleToSchema "_feedbackDTO" (toDTO feedback1 "https://github.com/myorg/myrepo/issues/187")
+  declareNamedSchema = simpleToSchema (toDTO feedback1 "https://github.com/myorg/myrepo/issues/187")

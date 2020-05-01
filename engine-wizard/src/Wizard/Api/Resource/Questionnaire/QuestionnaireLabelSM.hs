@@ -9,4 +9,4 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 instance ToSchema LabelDTO where
-  declareNamedSchema = simpleToSchema "_labelDTO" (toLabelDTO . head $ fLabels)
+  declareNamedSchema = simpleToSchema (toLabelDTO . head $ fLabels)

@@ -2,11 +2,11 @@ module Wizard.Api.Resource.BookReference.BookReferenceJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.BookReference.BookReferenceDTO
 
 instance FromJSON BookReferenceDTO where
-  parseJSON = simpleParseJSON "_bookReferenceDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON BookReferenceDTO where
-  toJSON = simpleToJSON "_bookReferenceDTO"
+  toJSON = genericToJSON simpleOptions

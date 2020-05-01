@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Registry.RegistryConfirmationJM ()
 import Wizard.Database.Migration.Development.Registry.Data.Registries
 
 instance ToSchema RegistryConfirmationDTO where
-  declareNamedSchema = simpleToSchema "_registryConfirmationDTO" registryConfirmation
+  declareNamedSchema = simpleToSchema registryConfirmation

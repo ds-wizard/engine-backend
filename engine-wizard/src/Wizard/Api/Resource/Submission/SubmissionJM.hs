@@ -2,11 +2,11 @@ module Wizard.Api.Resource.Submission.SubmissionJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Submission.SubmissionDTO
 
 instance FromJSON SubmissionDTO where
-  parseJSON = simpleParseJSON "_submissionDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON SubmissionDTO where
-  toJSON = simpleToJSON "_submissionDTO"
+  toJSON = genericToJSON simpleOptions

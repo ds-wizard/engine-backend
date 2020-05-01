@@ -10,4 +10,4 @@ import Shared.Service.PackageBundle.PackageBundleMapper
 import Shared.Util.Swagger
 
 instance ToSchema PackageBundleDTO where
-  declareNamedSchema = simpleToSchema "_packageDetailDTO" (toDTO germanyBundle)
+  declareNamedSchema = simpleToSchema (toDTO germanyBundle)

@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM ()
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 
 instance ToSchema MigratorStateDTO where
-  declareNamedSchema = simpleToSchema "_migratorStateDTO" nlQtnMigrationStateDto
+  declareNamedSchema = simpleToSchema nlQtnMigrationStateDto

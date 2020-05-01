@@ -8,4 +8,4 @@ import Wizard.Api.Resource.Registry.RegistryCreateJM ()
 import Wizard.Database.Migration.Development.Registry.Data.Registries
 
 instance ToSchema RegistryCreateDTO where
-  declareNamedSchema = simpleToSchema "_registryCreateDTO" registryCreate
+  declareNamedSchema = simpleToSchema registryCreate

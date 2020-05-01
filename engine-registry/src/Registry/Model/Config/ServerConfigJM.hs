@@ -4,7 +4,7 @@ import Data.Aeson
 
 import Registry.Model.Config.ServerConfig
 import Shared.Model.Config.EnvironmentJM ()
-import Shared.Util.JSON (simpleParseJSON)
+import Shared.Util.JSON
 
 instance FromJSON ServerConfig where
   parseJSON = simpleParseJSON "_serverConfig"

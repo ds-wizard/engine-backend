@@ -2,12 +2,12 @@ module Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 
 instance FromJSON MigratorStateChangeDTO where
-  parseJSON = simpleParseJSON "_migratorStateChangeDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON MigratorStateChangeDTO where
-  toJSON = simpleToJSON "_migratorStateChangeDTO"
+  toJSON = genericToJSON simpleOptions

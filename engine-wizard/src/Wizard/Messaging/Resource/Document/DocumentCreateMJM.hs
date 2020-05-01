@@ -2,7 +2,7 @@ module Wizard.Messaging.Resource.Document.DocumentCreateMJM where
 
 import Data.Aeson
 
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
+import Shared.Util.JSON
 import Wizard.Api.Resource.Document.DocumentContextJM ()
 import Wizard.Messaging.Resource.Document.DocumentCreateMDTO
 

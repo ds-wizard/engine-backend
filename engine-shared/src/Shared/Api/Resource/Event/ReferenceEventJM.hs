@@ -5,7 +5,7 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.ReferenceEventDTO
-import Shared.Util.JSON (simpleParseJSON, simpleToJSON', simpleToJSON'', toSumJSON)
+import Shared.Util.JSON
 
 instance ToJSON AddReferenceEventDTO where
   toJSON = toSumJSON
@@ -22,21 +22,21 @@ instance FromJSON AddReferenceEventDTO where
 
 -- --------------------------------------------
 instance FromJSON AddResourcePageReferenceEventDTO where
-  parseJSON = simpleParseJSON "_addResourcePageReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AddResourcePageReferenceEventDTO where
   toJSON = simpleToJSON'' "_addResourcePageReferenceEventDTO" [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
 instance FromJSON AddURLReferenceEventDTO where
-  parseJSON = simpleParseJSON "_addURLReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AddURLReferenceEventDTO where
   toJSON = simpleToJSON'' "_addURLReferenceEventDTO" [("referenceType", "URLReference")]
 
 -- --------------------------------------------
 instance FromJSON AddCrossReferenceEventDTO where
-  parseJSON = simpleParseJSON "_addCrossReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON AddCrossReferenceEventDTO where
   toJSON = simpleToJSON'' "_addCrossReferenceEventDTO" [("referenceType", "CrossReference")]
@@ -58,21 +58,21 @@ instance FromJSON EditReferenceEventDTO where
 
 -- --------------------------------------------
 instance FromJSON EditResourcePageReferenceEventDTO where
-  parseJSON = simpleParseJSON "_editResourcePageReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON EditResourcePageReferenceEventDTO where
   toJSON = simpleToJSON'' "_editResourcePageReferenceEventDTO" [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
 instance FromJSON EditURLReferenceEventDTO where
-  parseJSON = simpleParseJSON "_editURLReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON EditURLReferenceEventDTO where
   toJSON = simpleToJSON'' "_editURLReferenceEventDTO" [("referenceType", "URLReference")]
 
 -- --------------------------------------------
 instance FromJSON EditCrossReferenceEventDTO where
-  parseJSON = simpleParseJSON "_editCrossReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON EditCrossReferenceEventDTO where
   toJSON = simpleToJSON'' "_editCrossReferenceEventDTO" [("referenceType", "CrossReference")]
@@ -80,7 +80,7 @@ instance ToJSON EditCrossReferenceEventDTO where
 -- --------------------------------------------
 -- --------------------------------------------
 instance FromJSON DeleteReferenceEventDTO where
-  parseJSON = simpleParseJSON "_deleteReferenceEventDTO"
+  parseJSON = genericParseJSON simpleOptions
 
 instance ToJSON DeleteReferenceEventDTO where
   toJSON = simpleToJSON' "_deleteReferenceEventDTO" "eventType"

@@ -9,4 +9,4 @@ import Wizard.Api.Resource.Typehint.TypehintRequestJM ()
 import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 
 instance ToSchema TypehintRequestDTO where
-  declareNamedSchema = simpleToSchema "_typehintRequestDTO" typehintRequest
+  declareNamedSchema = simpleToSchema typehintRequest

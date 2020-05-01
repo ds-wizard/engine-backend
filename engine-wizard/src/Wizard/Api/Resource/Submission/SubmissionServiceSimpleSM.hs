@@ -9,5 +9,4 @@ import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Service.Submission.SubmissionMapper
 
 instance ToSchema SubmissionServiceSimpleDTO where
-  declareNamedSchema =
-    simpleToSchema "_submissionServiceSimpleDTO" (toSubmissionServiceSimpleDTO defaultSubmissionService)
+  declareNamedSchema = simpleToSchema (toSubmissionServiceSimpleDTO defaultSubmissionService)

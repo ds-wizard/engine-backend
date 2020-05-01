@@ -12,7 +12,7 @@ import Shared.Service.Event.EventToDTO
 import Shared.Util.Swagger
 
 instance ToSchema AddKnowledgeModelEventDTO where
-  declareNamedSchema = simpleToSchema' "_addKnowledgeModelEventDTO" "eventType" (toDTO a_km1)
+  declareNamedSchema = simpleToSchema'' "_addKnowledgeModelEventDTO" "eventType" (toDTO a_km1)
 
 instance ToSchema EditKnowledgeModelEventDTO where
-  declareNamedSchema = simpleToSchema' "_editKnowledgeModelEventDTO" "eventType" (toDTO e_km1)
+  declareNamedSchema = simpleToSchema'' "_editKnowledgeModelEventDTO" "eventType" (toDTO e_km1)
