@@ -76,26 +76,6 @@ library:
   - warp
   - wreq
   - yaml
-  default-extensions:
-    - TemplateHaskell
-    - OverloadedStrings
-    - MultiParamTypeClasses
-    - FlexibleContexts
-    - GeneralizedNewtypeDeriving
-    - TypeFamilies
-    - DeriveGeneric
-    - ExtendedDefaultRules
-    - RecordWildCards
-    - UnicodeSyntax
-    - ExistentialQuantification
-    - FunctionalDependencies
-    - TypeSynonymInstances
-    - FlexibleInstances
-    - ScopedTypeVariables
-    - RankNTypes
-    - DataKinds
-    - TypeOperators
-    - TypeApplications
 
 executables:
   engine-registry:
@@ -162,21 +142,26 @@ tests:
     - hspec-expectations-pretty-diff
     - hspec-wai
     - hspec-wai-json
-    default-extensions:
-      - TemplateHaskell
-      - QuasiQuotes
-      - OverloadedStrings
-      - MultiParamTypeClasses
-      - FlexibleContexts
-      - GeneralizedNewtypeDeriving
-      - TypeFamilies
-      - DeriveGeneric
-      - ExtendedDefaultRules
-      - RecordWildCards
-      - UnicodeSyntax
-      - ExistentialQuantification
-      - FunctionalDependencies
-      - TypeSynonymInstances
-      - FlexibleInstances
-      - TypeApplications
-      - DataKinds
+
+default-extensions:
+  - DataKinds
+  - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
+  - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax

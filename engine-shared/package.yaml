@@ -49,24 +49,7 @@ library:
   - uuid
   - wai
   - yaml
-  default-extensions:
-    - TemplateHaskell
-    - OverloadedStrings
-    - DeriveGeneric
-    - FlexibleContexts
-    - RecordWildCards
-    - ScopedTypeVariables
-    - ExtendedDefaultRules
-    - FlexibleInstances
-    - MultiParamTypeClasses
-    - GeneralizedNewtypeDeriving
-    - TypeFamilies
-    - UnicodeSyntax
-    - ExistentialQuantification
-    - FunctionalDependencies
-    - TypeSynonymInstances
-    - RankNTypes
-    - TypeOperators
+
 tests:
   hspec:
     main: Spec.hs
@@ -91,19 +74,24 @@ tests:
     - hspec-expectations-pretty-diff
     - hspec-wai
     - hspec-wai-json
-    default-extensions:
-      - TemplateHaskell
-      - QuasiQuotes
-      - OverloadedStrings
-      - MultiParamTypeClasses
-      - FlexibleContexts
-      - GeneralizedNewtypeDeriving
-      - TypeFamilies
-      - DeriveGeneric
-      - ExtendedDefaultRules
-      - RecordWildCards
-      - UnicodeSyntax
-      - ExistentialQuantification
-      - FunctionalDependencies
-      - TypeSynonymInstances
-      - FlexibleInstances
+
+default-extensions:
+  - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
+  - FlexibleContexts
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - FlexibleInstances
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
+  - RecordWildCards
+  - ScopedTypeVariables
+  - TemplateHaskell
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax

@@ -162,23 +162,24 @@ tests:
     - hspec-wai-json
 
 default-extensions:
-  - TemplateHaskell
-  - QuasiQuotes
-  - OverloadedStrings
+  - DataKinds
   - DeriveGeneric
+  - DuplicateRecordFields
+  - ExistentialQuantification
+  - ExtendedDefaultRules
   - FlexibleContexts
+  - FlexibleInstances
+  - FunctionalDependencies
+  - GeneralizedNewtypeDeriving
+  - MultiParamTypeClasses
+  - OverloadedStrings
+  - QuasiQuotes
+  - RankNTypes
   - RecordWildCards
   - ScopedTypeVariables
-  - ExtendedDefaultRules
-  - FlexibleInstances
-  - MultiParamTypeClasses
-  - GeneralizedNewtypeDeriving
-  - TypeFamilies
-  - UnicodeSyntax
-  - ExistentialQuantification
-  - FunctionalDependencies
-  - TypeSynonymInstances
-  - RankNTypes
-  - DataKinds
-  - TypeOperators
+  - TemplateHaskell
   - TypeApplications
+  - TypeFamilies
+  - TypeOperators
+  - TypeSynonymInstances
+  - UnicodeSyntax
