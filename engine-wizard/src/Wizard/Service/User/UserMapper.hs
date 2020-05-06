@@ -24,7 +24,6 @@ toDTO user =
     , _userDTORole = user ^. role
     , _userDTOPermissions = user ^. permissions
     , _userDTOActive = user ^. active
-    , _userDTOSubmissionProps = user ^. submissionProps
     , _userDTOImageUrl = user ^. imageUrl
     , _userDTOCreatedAt = user ^. createdAt
     , _userDTOUpdatedAt = user ^. updatedAt
