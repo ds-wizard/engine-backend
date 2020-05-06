@@ -10,14 +10,17 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Data.CaseInsensitive as CI
 import Data.Map (toList)
+import qualified Data.Text as T
 import Network.Wreq
-  ( Response
+  ( Part
+  , Response
   , checkResponse
   , customPayloadMethodWith
   , defaults
   , getWith
   , headers
   , manager
+  , partBS
   , responseBody
   , responseStatus
   , statusCode
@@ -29,13 +32,12 @@ import Wizard.Constant.Component
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Http.HttpRequest
-import Wizard.Util.Logger (logInfoU, logWarnU, msg)
+import Wizard.Util.Logger
 
 runRequest :: HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> AppContextM a
 runRequest req responseMapper = do
-  logRequest req
+  logRequestMultipart req
   response <- runSimpleRequest req
-  logResponse response
   let sc = response ^. responseStatus . statusCode
   if sc <= 399
     then do
@@ -52,15 +54,18 @@ runSimpleRequest req = do
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & checkResponse .~
         (Just $ \_ _ -> return ())
-  liftIO . action $ opts
+  case req ^. multipartFileName of
+    Just fileName -> liftIO . actionMultipart opts $ fileName
+    Nothing -> liftIO . action $ opts
   where
     reqMethod = req ^. requestMethod
     reqUrl = req ^. requestUrl
-    reqHeaders = mapHeader <$> (toList $ req ^. requestHeaders)
-    reqBody = BS.pack $ req ^. requestBody
+    reqHeaders = mapHeader <$> toList (req ^. requestHeaders)
     action opts
-      | reqMethod == "GET" && reqBody == "" = getWith opts reqUrl
-      | otherwise = customPayloadMethodWith reqMethod opts reqUrl reqBody
+      | reqMethod == "GET" = getWith opts reqUrl
+      | otherwise = customPayloadMethodWith reqMethod opts reqUrl (req ^. requestBody)
+    actionMultipart opts fileName =
+      customPayloadMethodWith reqMethod opts reqUrl ([partBS (T.pack fileName) (req ^. requestBody)] :: [Part])
 
 -- --------------------------------
 -- PRIVATE
@@ -71,20 +76,15 @@ mapHeader (k, v) = (CI.mk . BS.pack $ k, BS.pack v)
 -- --------------------------------
 -- LOGGER
 -- --------------------------------
-logRequest request = do
-  logInfoU $ msg _CMP_INTEGRATION ("Retrieving '" ++ (request ^. requestUrl) ++ "'")
-  logInfoU $ msg _CMP_INTEGRATION ("Request Method '" ++ (request ^. requestMethod) ++ "'")
-  logInfoU $ msg _CMP_INTEGRATION ("Request Headers: '" ++ (show . toList $ request ^. requestHeaders) ++ "'")
-  logInfoU $ msg _CMP_INTEGRATION ("Request Body: '" ++ (request ^. requestBody) ++ "'")
-
-logResponse response = do
-  logInfoU $ msg _CMP_INTEGRATION "Retrieved Response"
-  logInfoU $ msg _CMP_INTEGRATION ("Response StatusCode: '" ++ show (response ^. responseStatus . statusCode) ++ "'")
+logRequestMultipart request =
+  case request ^. multipartFileName of
+    Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
+    Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
 
 logResponseErrorBody response =
-  logInfoU $ msg _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")
+  logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")
 
 logResponseBody eResDto =
   case eResDto of
-    Right dto -> logInfoU $ msg _CMP_INTEGRATION "Response Body: Successfully parsed"
-    Left error -> logWarnU $ msg _CMP_INTEGRATION "Response Body: Failed to parse"
+    Right dto -> logInfoU _CMP_INTEGRATION "Response Body: Successfully parsed"
+    Left error -> logWarnU _CMP_INTEGRATION "Response Body: Failed to parse"

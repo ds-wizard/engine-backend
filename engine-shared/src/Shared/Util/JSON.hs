@@ -34,10 +34,12 @@ jsonSpecialFields :: String -> String
 jsonSpecialFields "aType" = "type"
 jsonSpecialFields "pType" = "type"
 jsonSpecialFields "bundleId" = "id"
+jsonSpecialFields "intId" = "id"
 jsonSpecialFields "aId" = "id"
+jsonSpecialFields "dId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
-jsonSpecialFields "intId" = "id"
+jsonSpecialFields "sId" = "id"
 jsonSpecialFields field = field
 
 stripDTOSuffix :: String -> String

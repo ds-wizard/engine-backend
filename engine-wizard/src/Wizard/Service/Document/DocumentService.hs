@@ -71,7 +71,7 @@ deleteDocument docUuid = do
   if currentUser ^. role == _USER_ROLE_ADMIN || currentUser ^. uuid == doc ^. ownerUuid
     then do
       deleteDocumentById docUuid
-      deleteDocumentContentById docUuid
+      deleteDocumentContentsFiltered [("filename", docUuid)]
       return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Delete Document"
 
@@ -83,7 +83,7 @@ downloadDocument docUuid = do
 
 cleanDocuments :: AppContextM ()
 cleanDocuments = do
-  docs <- findDocumentsFiltered [("durability._co", "TemporallyDocumentDurability")]
+  docs <- findDocumentsFiltered [("durability", "TemporallyDocumentDurability")]
   let docsFiltered = filter (\d -> d ^. state == DoneDocumentState || d ^. state == ErrorDocumentState) docs
   forM
     docsFiltered
@@ -95,25 +95,25 @@ cleanDocuments = do
 createPreview :: String -> AppContextM (Document, BS.ByteString)
 createPreview qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability._co", "TemporallyDocumentDurability")]
+  docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
   let repliesHash = hash (qtn ^. replies)
-  logDebugU $ msg _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
+  logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
   case filter (\d -> d ^. state == DoneDocumentState) matchingDocs of
     (doc:_) -> do
-      logInfoU $ msg _CMP_SERVICE "Retrieving from cache"
+      logInfoU _CMP_SERVICE "Retrieving from cache"
       content <- findDocumentContent (U.toString $ doc ^. uuid)
       return (doc, content)
     [] ->
       case filter (\d -> d ^. state == QueuedDocumentState || d ^. state == InProgressDocumentState) matchingDocs of
         (doc:_) -> do
-          logInfoU $ msg _CMP_SERVICE "Waiting to generation"
+          logInfoU _CMP_SERVICE "Waiting to generation"
           return (doc, BS.empty)
         _ -> createNewDoc qtn
   where
     createNewDoc :: Questionnaire -> AppContextM (Document, BS.ByteString)
     createNewDoc qtn = do
-      logInfoU $ msg _CMP_SERVICE "Generating new preview"
+      logInfoU _CMP_SERVICE "Generating new preview"
       case (qtn ^. templateUuid, qtn ^. formatUuid) of
         (Just tUuid, Just fUuid) -> do
           let reqDto =
@@ -127,3 +127,11 @@ createPreview qtnUuid = do
           doc <- findDocumentById (U.toString $ docDto ^. uuid)
           return (doc, BS.empty)
         _ -> throwError $ UserError _ERROR_SERVICE_DOCUMENT__TEMPLATE_OR_FORMAT_NOT_SET_UP
+
+checkPermissionToDocument :: String -> AppContextM ()
+checkPermissionToDocument docUuid = do
+  currentUser <- getCurrentUser
+  doc <- findDocumentById docUuid
+  if (currentUser ^. role == _USER_ROLE_ADMIN) || (currentUser ^. uuid == doc ^. ownerUuid)
+    then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Detail Document"

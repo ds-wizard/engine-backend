@@ -2,6 +2,7 @@ module LensesConfig where
 
 import Control.Lens (makeFields)
 
+import Registry.Api.Resource.Organization.OrganizationDTO
 import Shared.Api.Resource.Event.AnswerEventDTO
 import Shared.Api.Resource.Event.ChapterEventDTO
 import Shared.Api.Resource.Event.ExpertEventDTO
@@ -14,6 +15,7 @@ import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Config.BuildInfoConfig
@@ -53,7 +55,6 @@ import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetai
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO as QTN_MigratorStateChangeDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO as QTN_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
-import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -62,7 +63,11 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
+import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Report.ReportDTO
+import Wizard.Api.Resource.Submission.SubmissionCreateDTO
+import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
@@ -73,7 +78,9 @@ import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
@@ -149,6 +156,16 @@ makeFields ''AppConfigRegistry
 makeFields ''AppConfigQuestionnaire
 
 makeFields ''AppConfigQuestionnaireFeedback
+
+makeFields ''AppConfigSubmission
+
+makeFields ''AppConfigSubmissionService
+
+makeFields ''AppConfigSubmissionServiceSupportedFormat
+
+makeFields ''AppConfigSubmissionServiceRequest
+
+makeFields ''AppConfigSubmissionServiceRequestMultipart
 
 makeFields ''SimpleFeature
 
@@ -367,6 +384,8 @@ makeFields ''InstanceStatistics
 -- Model / User
 makeFields ''User
 
+makeFields ''UserSubmissionProps
+
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
@@ -584,6 +603,11 @@ makeFields ''IntegrationReplyValueDTO
 
 makeFields ''LabelDTO
 
+-- Api / Resource / Registry
+makeFields ''RegistryConfirmationDTO
+
+makeFields ''RegistryCreateDTO
+
 -- Api / Resource / Report
 makeFields ''IndicationDTO
 
@@ -598,6 +622,11 @@ makeFields ''ChapterReportDTO
 makeFields ''TotalReportDTO
 
 makeFields ''ReportDTO
+
+-- Api / Resource / Submission
+makeFields ''SubmissionCreateDTO
+
+makeFields ''SubmissionDTO
 
 -- Api / Resource / Template
 makeFields ''TemplateDTO
@@ -625,9 +654,13 @@ makeFields ''UserDTO
 
 makeFields ''UserPasswordDTO
 
+makeFields ''UserProfileDTO
+
 makeFields ''UserProfileChangeDTO
 
 makeFields ''UserStateDTO
+
+makeFields ''UserSubmissionPropsDTO
 
 -- Api / Resource / Version
 makeFields ''VersionDTO
@@ -648,3 +681,9 @@ makeFields ''PackageSimpleIDTO
 
 -- Integration / Resource / Typehint
 makeFields ''TypehintIDTO
+
+-- -------------------------------------
+-- Registry
+-- -------------------------------------
+-- Api / Resource / Organization
+makeFields ''OrganizationDTO

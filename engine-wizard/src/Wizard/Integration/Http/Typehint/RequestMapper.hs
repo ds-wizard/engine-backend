@@ -3,7 +3,8 @@ module Wizard.Integration.Http.Typehint.RequestMapper
   ) where
 
 import Control.Lens ((^.))
-import Data.Map.Strict as M
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
 import LensesConfig
@@ -17,5 +18,6 @@ toRetrieveTypehintsRequest intConfig variables =
     { _httpRequestRequestMethod = intConfig ^. requestMethod
     , _httpRequestRequestUrl = interpolateString variables (intConfig ^. requestUrl)
     , _httpRequestRequestHeaders = interpolateMapValues variables (intConfig ^. requestHeaders)
-    , _httpRequestRequestBody = interpolateString variables (intConfig ^. requestBody)
+    , _httpRequestRequestBody = BS.pack $ interpolateString variables (intConfig ^. requestBody)
+    , _httpRequestMultipartFileName = Nothing
     }

@@ -12,7 +12,6 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 
 listPackagesAuditEntry :: AuditEntry
 listPackagesAuditEntry =
-  ListPackagesAuditEntry' $
   ListPackagesAuditEntry
     { _listPackagesAuditEntryOrganizationId = orgGlobal ^. organizationId
     , _listPackagesAuditEntryInstanceStatistics = iStat
@@ -21,7 +20,6 @@ listPackagesAuditEntry =
 
 getPackageBundleAuditEntry :: AuditEntry
 getPackageBundleAuditEntry =
-  GetPackageBundleAuditEntry' $
   GetPackageBundleAuditEntry
     { _getPackageBundleAuditEntryOrganizationId = orgGlobal ^. organizationId
     , _getPackageBundleAuditEntryPackageId = netherlandsPackageV2 ^. pId

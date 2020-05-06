@@ -27,3 +27,14 @@ library:
   - text     >= 1.2.1 && < 1.3
   default-extensions:
     - OverloadedStrings
+    - DeriveGeneric
+    - DefaultSignatures
+    - TypeOperators
+    - FlexibleContexts
+    - TypeSynonymInstances
+    - FlexibleInstances
+    - UndecidableInstances
+    - DeriveDataTypeable
+    - MultiParamTypeClasses
+    - ScopedTypeVariables
+    - OverlappingInstances

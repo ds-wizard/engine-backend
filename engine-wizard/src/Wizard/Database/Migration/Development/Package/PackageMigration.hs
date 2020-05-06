@@ -6,10 +6,10 @@ import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Package/Package) started"
+  logInfo _CMP_MIGRATION "(Package/Package) started"
   deletePackages
   insertPackage globalPackageEmpty
   insertPackage globalPackage
   insertPackage netherlandsPackage
   insertPackage netherlandsPackageV2
-  logInfo $ msg _CMP_MIGRATION "(Package/Package) ended"
+  logInfo _CMP_MIGRATION "(Package/Package) ended"

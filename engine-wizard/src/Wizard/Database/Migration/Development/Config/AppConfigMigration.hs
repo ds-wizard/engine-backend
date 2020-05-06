@@ -6,7 +6,7 @@ import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Config/AppConfig) started"
+  logInfo _CMP_MIGRATION "(Config/AppConfig) started"
   deleteAppConfigs
   insertAppConfig defaultAppConfigEncrypted
-  logInfo $ msg _CMP_MIGRATION "(Config/AppConfig) ended"
+  logInfo _CMP_MIGRATION "(Config/AppConfig) ended"

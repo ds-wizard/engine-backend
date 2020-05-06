@@ -19,6 +19,7 @@ toClientConfigDTO serverConfig appConfig =
     , _clientConfigDTOKnowledgeModelRegistry =
         toClientConfigRegistryDTO (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry)
     , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
+    , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -54,5 +55,4 @@ toClientConfigQuestionnaireDTO appConfig =
     { _clientConfigQuestionnaireDTOQuestionnaireAccessibility = appConfig ^. questionnaireAccessibility
     , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
-    , _clientConfigQuestionnaireDTOPublicQuestionnaire = appConfig ^. publicQuestionnaire
     }

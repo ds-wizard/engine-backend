@@ -2,6 +2,7 @@ module Wizard.Integration.Http.GitHub.RequestMapper where
 
 import Control.Lens ((^.))
 import Data.Aeson
+import Data.ByteString.Char8 as BS
 import Data.ByteString.Lazy.Char8 as BSL
 import Data.Map.Strict as M
 import qualified Data.UUID as U
@@ -25,7 +26,8 @@ toGetIssuesRequest serverConfig appConfig =
             interpolateString variables (serverConfig ^. apiUrl ++ "/repos/${owner}/${repo}/issues")
         , _httpRequestRequestHeaders =
             M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token), ("User-Agent", "Wizard Server")]
-        , _httpRequestRequestBody = ""
+        , _httpRequestRequestBody = BS.empty
+        , _httpRequestMultipartFileName = Nothing
         }
 
 toCreateIssueRequest ::
@@ -39,7 +41,7 @@ toCreateIssueRequest serverConfig appConfig pkgId questionUuid title content =
         , _httpRequestRequestHeaders =
             M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token), ("User-Agent", "Wizard Server")]
         , _httpRequestRequestBody =
-            BSL.unpack . encode $
+            BSL.toStrict . encode $
             IssueCreateIDTO
               { _issueCreateIDTOTitle = title
               , _issueCreateIDTOBody = content
@@ -47,4 +49,5 @@ toCreateIssueRequest serverConfig appConfig pkgId questionUuid title content =
               , _issueCreateIDTOMilestone = Nothing
               , _issueCreateIDTOLabels = [pkgId, U.toString questionUuid]
               }
+        , _httpRequestMultipartFileName = Nothing
         }

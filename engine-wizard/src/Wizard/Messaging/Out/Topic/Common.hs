@@ -28,5 +28,5 @@ publishMessageOnChannel (Just msgChannel) topicName body = do
   let topicNameText = T.pack topicName
   liftIO $ declareExchange msgChannel (createTopic topicNameText)
   liftIO $ publishMsg msgChannel topicNameText "" (createTopicMessage body)
-  logInfoU $ msg _CMP_MESSAGING ("PublishTopic: " ++ topicName)
+  logInfoU _CMP_MESSAGING ("PublishTopic: " ++ topicName)
   return ()

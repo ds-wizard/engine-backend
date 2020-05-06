@@ -6,7 +6,7 @@ import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Metric/Metric) started"
+  logInfo _CMP_MIGRATION "(Metric/Metric) started"
   deleteMetrics
   insertMetric metricF
   insertMetric metricA
@@ -14,4 +14,4 @@ runMigration = do
   insertMetric metricR
   insertMetric metricG
   insertMetric metricO
-  logInfo $ msg _CMP_MIGRATION "(Metric/Metric) ended"
+  logInfo _CMP_MIGRATION "(Metric/Metric) ended"

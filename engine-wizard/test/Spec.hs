@@ -13,6 +13,7 @@ import Wizard.Constant.Resource
 import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
+import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ServerConfigService
@@ -31,10 +32,11 @@ import Wizard.Specs.API.MigrationAPISpec
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
+import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Template.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
-import Wizard.Specs.API.UserAPISpec
+import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
@@ -51,7 +53,6 @@ import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Sanitiza
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
-import Wizard.Specs.Service.PublicQuestionnaire.PublicQuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateServiceSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
@@ -80,6 +81,8 @@ prepareWebApp runCallback =
       putStrLn "MESSAGING: connected"
       httpClientManager <- createHttpClientManager serverConfig
       putStrLn "HTTP_CLIENT: created"
+      registryClient <- createRegistryClient serverConfig httpClientManager
+      putStrLn "REGISTRY_CLIENT: created"
       shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
@@ -89,6 +92,7 @@ prepareWebApp runCallback =
               , _appContextPool = dbPool
               , _appContextMsgChannel = msgChannel
               , _appContextHttpClientManager = httpClientManager
+              , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               , _appContextShutdownFlag = shutdownFlag
@@ -138,6 +142,7 @@ main =
              packageAPI appContext
              questionnaireAPI appContext
              questionnaireMigrationAPI appContext
+             submissionAPI appContext
              templateAPI appContext
              typehintAPI appContext
              tokenAPI appContext
@@ -148,5 +153,4 @@ main =
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
              packageValidationSpec appContext
-             publicQuestionnaireServiceIntegrationSpec appContext
              userServiceIntegrationSpec appContext)

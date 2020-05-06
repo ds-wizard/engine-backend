@@ -55,3 +55,20 @@ instance ToSchema AppConfigQuestionnaire where
 
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = simpleToSchema "_appConfigQuestionnaireFeedback" defaultFeedback
+
+instance ToSchema AppConfigSubmission where
+  declareNamedSchema = simpleToSchema "_appConfigSubmission" defaultSubmission
+
+instance ToSchema AppConfigSubmissionService where
+  declareNamedSchema = simpleToSchema "_appConfigSubmissionService" defaultSubmissionService
+
+instance ToSchema AppConfigSubmissionServiceSupportedFormat where
+  declareNamedSchema =
+    simpleToSchema "_appConfigSubmissionServiceSupportedFormat" defaultSubmissionServiceSupportedFormat
+
+instance ToSchema AppConfigSubmissionServiceRequest where
+  declareNamedSchema = simpleToSchema "_appConfigSubmissionServiceRequest" defaultSubmissionServiceRequest
+
+instance ToSchema AppConfigSubmissionServiceRequestMultipart where
+  declareNamedSchema =
+    simpleToSchema "_appConfigSubmissionServiceRequestMultipart" defaultSubmissionServiceRequestMultipart

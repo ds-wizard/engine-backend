@@ -2,8 +2,8 @@ module Registry.Api.Resource.Package.PackageSimpleJM where
 
 import Data.Aeson
 
-import Registry.Api.Resource.Organization.OrganizationSimpleJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleJM ()
 import Shared.Util.JSON (simpleParseJSON, simpleToJSON)
 
 instance FromJSON PackageSimpleDTO where

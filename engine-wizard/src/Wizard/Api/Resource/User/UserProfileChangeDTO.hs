@@ -2,6 +2,7 @@ module Wizard.Api.Resource.User.UserProfileChangeDTO where
 
 import GHC.Generics
 
+import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Model.User.User
 
 data UserProfileChangeDTO =
@@ -10,5 +11,6 @@ data UserProfileChangeDTO =
     , _userProfileChangeDTOLastName :: String
     , _userProfileChangeDTOEmail :: Email
     , _userProfileChangeDTOAffiliation :: Maybe String
+    , _userProfileChangeDTOSubmissionProps :: [UserSubmissionPropsDTO]
     }
   deriving (Generic)

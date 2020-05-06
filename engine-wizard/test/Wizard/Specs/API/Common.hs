@@ -17,7 +17,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -47,6 +47,7 @@ startWebApp appContext = do
           , _baseContextPool = appContext ^. pool
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
+          , _baseContextRegistryClient = appContext ^. registryClient
           , _baseContextShutdownFlag = shutdownFlag
           }
   let config = appContext ^. serverConfig
@@ -57,12 +58,12 @@ startWebApp appContext = do
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ0ODYzNTczNSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiS01fUEVSTSIsIktNX1VQR1JBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1JFQURfUEVSTSIsIlBNX1dSSVRFX1BFUk0iLCJRVE5fUEVSTSIsIkRNUF9QRVJNIiwiQ0ZHX1BFUk0iXX0.p2OQAfgqcj9LKKnYTnAZw1PbAXu_tD0wCmN1owc0DPM")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ0OTk5ODI5OSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiS01fUEVSTSIsIktNX1VQR1JBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1JFQURfUEVSTSIsIlBNX1dSSVRFX1BFUk0iLCJRVE5fUEVSTSIsIkRNUF9QRVJNIiwiQ0ZHX1BFUk0iLCJTVUJNX1BFUk0iXX0.tHhFGomUclIWXuNrzHiAvno_p5QGvtud7kXNYftoxBs")
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQwMTYzNzU0MSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSJdfQ.mTmVLO2AubdqaYNmjZlOMCqOAqZ5ULYXwLoEdwGCa1k")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQ0OTk5ODQyMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSIsIlNVQk1fUEVSTSJdfQ.lraPu5hiBCBXRGBAAxHnUVXvhv0_EfKxicHBo6CXVlY")
 
 reqAuthHeaderWithoutPerms :: ServerConfig -> Permission -> Header
 reqAuthHeaderWithoutPerms serverConfig perm =

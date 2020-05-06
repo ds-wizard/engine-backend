@@ -23,6 +23,7 @@ import Registry.Service.ActionKey.ActionKeyService
 import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
@@ -33,8 +34,13 @@ getOrganizations = do
   organizations <- findOrganizations
   return . fmap toDTO $ organizations
 
-createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
-createOrganization reqDto = do
+getSimpleOrganizations :: AppContextM [OrganizationSimpleDTO]
+getSimpleOrganizations = do
+  organizations <- findOrganizations
+  return . fmap toSimpleDTO $ organizations
+
+createOrganization :: OrganizationCreateDTO -> Maybe String -> AppContextM OrganizationDTO
+createOrganization reqDto mCallbackUrl = do
   _ <- validateOrganizationCreateDto reqDto
   token <- generateNewOrgToken
   now <- liftIO getCurrentTime
@@ -42,7 +48,7 @@ createOrganization reqDto = do
   insertOrganization org
   actionKey <- createActionKey (org ^. organizationId) RegistrationActionKey
   _ <-
-    sendRegistrationConfirmationMail (toDTO org) (actionKey ^. hash) `catchError`
+    sendRegistrationConfirmationMail (toDTO org) (actionKey ^. hash) mCallbackUrl `catchError`
     (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_ORGANIZATION__ACTIVATION_EMAIL_NOT_SENT)
   sendAnalyticsEmailIfEnabled org
   return . toDTO $ org

@@ -6,7 +6,7 @@ import Data.Maybe (fromMaybe)
 import System.Environment (lookupEnv)
 import Test.Hspec
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Model.Config.AppConfig
@@ -38,7 +38,7 @@ compareFeedbackDtos resDto expDto = do
 loadFeedbackTokenFromEnv = do
   appConfig <- getAppConfig
   updatedAppConfig <- applyEnvVariable "FEEDBACK_TOKEN" (questionnaire . feedback . token) appConfig
-  modifyAppConfig (toChangeDTO updatedAppConfig)
+  modifyAppConfigDto (toChangeDTO updatedAppConfig)
 
 applyEnvVariable :: String -> Lens' AppConfig String -> AppConfig -> AppContextM AppConfig
 applyEnvVariable envVariableName accessor config = do

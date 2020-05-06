@@ -6,8 +6,8 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Organization/Organization) started"
+  logInfo _CMP_MIGRATION "(Organization/Organization) started"
   deleteOrganizations
   insertOrganization orgGlobal
   insertOrganization orgNetherlands
-  logInfo $ msg _CMP_MIGRATION "(Organization/Organization) ended"
+  logInfo _CMP_MIGRATION "(Organization/Organization) ended"

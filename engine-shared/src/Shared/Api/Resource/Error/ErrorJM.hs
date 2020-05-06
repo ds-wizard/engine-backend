@@ -1,6 +1,7 @@
 module Shared.Api.Resource.Error.ErrorJM where
 
 import Data.Aeson
+import Network.HTTP.Types.Status
 
 import Shared.Api.Resource.Error.ErrorDTO
 
@@ -13,4 +14,5 @@ instance ToJSON ErrorDTO where
   toJSON (UnauthorizedErrorDTO errorMessage) = object ["status" .= 401, "message" .= errorMessage]
   toJSON (ForbiddenErrorDTO errorMessage) = object ["status" .= 403, "message" .= errorMessage]
   toJSON (NotExistsErrorDTO errorMessage) = object ["status" .= 404, "message" .= errorMessage]
-  toJSON (GeneralServerErrorDTO errorMessage) = object ["status" .= 500, "type" .= "GeneralServerError"]
+  toJSON (GeneralServerErrorDTO errorMessage) = object ["status" .= 500]
+  toJSON (HttpClientErrorDTO status errorMessage) = object ["statusCode" .= statusCode status, "source" .= "external"]

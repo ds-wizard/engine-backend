@@ -17,6 +17,7 @@ toChangeDTO config =
     , _appConfigChangeDTOLookAndFeel = config ^. lookAndFeel
     , _appConfigChangeDTOKnowledgeModelRegistry = config ^. knowledgeModelRegistry
     , _appConfigChangeDTOQuestionnaire = config ^. questionnaire
+    , _appConfigChangeDTOSubmission = config ^. submission
     }
 
 fromChangeDTO :: AppConfigChangeDTO -> AppConfig -> UTCTime -> AppConfig
@@ -29,6 +30,7 @@ fromChangeDTO dto oldConfig now =
     , _appConfigLookAndFeel = dto ^. lookAndFeel
     , _appConfigKnowledgeModelRegistry = dto ^. knowledgeModelRegistry
     , _appConfigQuestionnaire = dto ^. questionnaire
+    , _appConfigSubmission = dto ^. submission
     , _appConfigCreatedAt = oldConfig ^. createdAt
     , _appConfigUpdatedAt = now
     }

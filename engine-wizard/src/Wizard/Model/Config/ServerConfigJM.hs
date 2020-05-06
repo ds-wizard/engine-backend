@@ -82,9 +82,13 @@ instance FromJSON ServerConfigMail where
     _serverConfigMailEnabled <- o .:? "enabled" .!= (defaultMail ^. enabled)
     _serverConfigMailName <- o .:? "name" .!= (defaultMail ^. name)
     _serverConfigMailEmail <- o .: "email" .!= (defaultMail ^. email)
-    _serverConfigMailHost <- o .: "host" .!= (defaultMail ^. host)
-    _serverConfigMailPort <- o .:? "port" .!= (defaultMail ^. port)
     _serverConfigMailSsl <- o .:? "ssl" .!= (defaultMail ^. ssl)
+    _serverConfigMailHost <- o .: "host" .!= (defaultMail ^. host)
+    _serverConfigMailPort <-
+      o .:? "port" .!=
+      (if _serverConfigMailSsl
+         then 465
+         else 25)
     _serverConfigMailAuthEnabled <- o .:? "authEnabled" .!= (defaultMail ^. authEnabled)
     _serverConfigMailUsername <- o .:? "username" .!= (defaultMail ^. username)
     _serverConfigMailPassword <- o .:? "password" .!= (defaultMail ^. password)

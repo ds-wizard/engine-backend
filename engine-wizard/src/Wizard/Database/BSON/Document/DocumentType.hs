@@ -14,3 +14,10 @@ instance BSON.Val DocumentState where
   cast' (BSON.String "DoneDocumentState") = Just DoneDocumentState
   cast' (BSON.String "ErrorDocumentState") = Just ErrorDocumentState
   cast' _ = Nothing
+
+instance BSON.Val DocumentDurability where
+  val PersistentDocumentDurability = BSON.String "PersistentDocumentDurability"
+  val TemporallyDocumentDurability = BSON.String "TemporallyDocumentDurability"
+  cast' (BSON.String "PersistentDocumentDurability") = Just PersistentDocumentDurability
+  cast' (BSON.String "TemporallyDocumentDurability") = Just TemporallyDocumentDurability
+  cast' _ = Nothing

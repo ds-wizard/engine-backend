@@ -27,6 +27,6 @@ withRetry backoff _CMP description action = recovering backoff handlers wrappedA
       if rsIterNumber retryStatus < retryCount
         then do
           let retryInfo = "retry #" ++ show (rsIterNumber retryStatus + 1) ++ " in " ++ show nextWait ++ " seconds"
-          runStdoutLoggingT $ logWarn $ msg _CMP (description ++ " - " ++ retryInfo)
-        else runStdoutLoggingT $ logError $ msg _CMP description
+          runStdoutLoggingT $ logWarn _CMP (description ++ " - " ++ retryInfo)
+        else runStdoutLoggingT $ logError _CMP description
       return True

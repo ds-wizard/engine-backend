@@ -32,9 +32,17 @@ import qualified Wizard.Database.Migration.Production.Migration_0023_remove_item
 import qualified Wizard.Database.Migration.Production.Migration_0024_user_name_and_surname.Migration as M_0024
 import qualified Wizard.Database.Migration.Production.Migration_0025_document_preview_and_formatUuid.Migration as M_0025
 import qualified Wizard.Database.Migration.Production.Migration_0026_add_application_configs.Migration as M_0026
+import qualified Wizard.Database.Migration.Production.Migration_0027_submission.Migration as M_0027
+import qualified Wizard.Database.Migration.Production.Migration_0028_questionnaire_creator.Migration as M_0028
+import qualified Wizard.Database.Migration.Production.Migration_0029_add_db_indexes.Migration as M_0029
+import qualified Wizard.Database.Migration.Production.Migration_0030_bson_generic.Migration as M_0030
+import qualified Wizard.Database.Migration.Production.Migration_0031_user_imageUrl.Migration as M_0031
+import qualified Wizard.Database.Migration.Production.Migration_0032_appConfig_organizationDescription.Migration as M_0032
+import qualified Wizard.Database.Migration.Production.Migration_0033_remove_public_questionnaire.Migration as M_0033
+import Wizard.Util.Logger
 
 runMigration baseContext = do
-  migrateDatabase (baseContext ^. pool) migrationDefinitions
+  migrateDatabase (baseContext ^. pool) migrationDefinitions (logInfo _CMP_MIGRATION)
   return ()
 
 migrationDefinitions :: [MigrationDefinition]
@@ -65,4 +73,11 @@ migrationDefinitions =
   , M_0024.definition
   , M_0025.definition
   , M_0026.definition
+  , M_0027.definition
+  , M_0028.definition
+  , M_0029.definition
+  , M_0030.definition
+  , M_0031.definition
+  , M_0032.definition
+  , M_0033.definition
   ]

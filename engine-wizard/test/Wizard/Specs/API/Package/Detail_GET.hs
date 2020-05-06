@@ -11,8 +11,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 import Wizard.Database.Migration.Development.Package.Data.Packages
@@ -53,11 +54,12 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           toDetailDTO
             (toPackage globalPackage)
             [globalRemotePackage]
+            [orgGlobalSimple, orgNetherlandsSimple]
             ["0.0.1", "1.0.0"]
             ("https://registry-test.ds-wizard.org/knowledge-models/" ++ (globalPackage ^. pId))
     let expBody = encode expDto

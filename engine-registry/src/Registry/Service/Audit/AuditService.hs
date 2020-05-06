@@ -24,7 +24,6 @@ auditListPackages headers =
     now <- liftIO getCurrentTime
     let iStat = getInstanceStaticsFromHeaders headers
     let entry =
-          ListPackagesAuditEntry' $
           ListPackagesAuditEntry
             { _listPackagesAuditEntryOrganizationId = org ^. organizationId
             , _listPackagesAuditEntryInstanceStatistics = iStat
@@ -38,7 +37,6 @@ auditGetPackageBundle pkgId =
   heGetOrganizationFromContext $ \org -> do
     now <- liftIO getCurrentTime
     let entry =
-          GetPackageBundleAuditEntry' $
           GetPackageBundleAuditEntry
             { _getPackageBundleAuditEntryOrganizationId = org ^. organizationId
             , _getPackageBundleAuditEntryPackageId = pkgId

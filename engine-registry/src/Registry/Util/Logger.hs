@@ -1,60 +1,95 @@
-module Registry.Util.Logger where
+module Registry.Util.Logger
+  ( logDebug
+  , logInfo
+  , logWarn
+  , logError
+  , logDebugU
+  , logInfoU
+  , logWarnU
+  , logErrorU
+  , createLogRecord
+  , showLogLevel
+  , LogLevel(..)
+  , module Registry.Constant.Component
+  ) where
 
-import Control.Lens ((^.))
-import Control.Monad.Logger (MonadLogger, logErrorN, logInfoN, logWarnN)
+import Control.Monad.Logger (LogLevel(..), MonadLogger, logWithoutLoc)
 import Control.Monad.Reader (MonadReader, asks)
+import qualified Data.List as L
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Data.UUID as U
+import Prelude hiding (log)
+import System.Console.Pretty (Color(..), color)
 
-import LensesConfig
+import Registry.Constant.Component
 import Registry.Model.Context.AppContext
-
-msg :: String -> String -> String
-msg component message = component ++ ": " ++ message
+import Registry.Model.Organization.Organization
 
 -- ---------------------------------------------------------------------------
-logInfo :: MonadLogger m => String -> m ()
-logInfo = logInfoN . T.pack
+logDebug :: MonadLogger m => String -> String -> m ()
+logDebug = log LevelDebug
 
-logWarn :: MonadLogger m => String -> m ()
-logWarn = logWarnN . T.pack
+logInfo :: MonadLogger m => String -> String -> m ()
+logInfo = log LevelInfo
 
-logError :: MonadLogger m => String -> m ()
-logError = logErrorN . T.pack
+logWarn :: MonadLogger m => String -> String -> m ()
+logWarn = log LevelWarn
 
--- ---------------------------------------------------------------------------
-logInfoO :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logInfoO = logU logInfoN
-
-logWarnO :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logWarnO = logU logWarnN
-
-logErrorO :: (MonadReader AppContext m, MonadLogger m) => String -> m ()
-logErrorO = logU logErrorN
+logError :: MonadLogger m => String -> String -> m ()
+logError = log LevelError
 
 -- ---------------------------------------------------------------------------
-logU :: (MonadReader AppContext m, MonadLogger m) => (T.Text -> m ()) -> String -> m ()
-logU log message = do
+logDebugU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logDebugU = logU LevelDebug
+
+logInfoU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logInfoU = logU LevelInfo
+
+logWarnU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logWarnU = logU LevelWarn
+
+logErrorU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
+logErrorU = logU LevelError
+
+-- ---------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------
+log logLevel component message =
+  let record = createLogRecord logLevel Nothing Nothing component message
+   in logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
+
+-- ---------------------------------------------------------------------------
+logU :: (MonadReader AppContext m, MonadLogger m) => LogLevel -> String -> String -> m ()
+logU logLevel component message = do
   mOrg <- asks _appContextCurrentOrganization
   traceUuid <- asks _appContextTraceUuid
-  case mOrg of
-    Just org ->
-      let orgTokenStamp = createOrgTokenLoggerStamp (org ^. token)
-          traceUuidStamp = createTraceUuidLoggerStamp (U.toString $ traceUuid)
-          composedMessage = (orgTokenStamp ++ traceUuidStamp) ++ " " ++ message
-       in log . T.pack $ composedMessage
-    Nothing ->
-      let orgTokenStamp = createOrgTokenLoggerStamp "Anonymous"
-          traceUuidStamp = createTraceUuidLoggerStamp (U.toString $ traceUuid)
-          composedMessage = (orgTokenStamp ++ traceUuidStamp) ++ " " ++ message
-       in log . T.pack $ composedMessage
+  let mOrgToken = fmap _organizationToken mOrg
+  let mTraceUuid = Just . U.toString $ traceUuid
+  let record = createLogRecord logLevel mOrgToken mTraceUuid component message
+  logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
 
 -- ---------------------------------------------------------------------------
+createLogRecord :: LogLevel -> Maybe String -> Maybe String -> String -> String -> String
+createLogRecord logLevel mOrgToken mTraceUuid component message = color recordColor record
+  where
+    userUuidStamp = createLoggerStamp "I" (fromMaybe "------------------------------------" mOrgToken)
+    traceUuidStamp = createLoggerStamp "T" (fromMaybe "------------------------------------" mTraceUuid)
+    componentStamp = createLoggerStamp "" component
+    record = L.intercalate "" [userUuidStamp, " ", traceUuidStamp, " ", componentStamp, " ", message]
+    recordColor = getColor logLevel
+
 createLoggerStamp :: String -> String -> String
+createLoggerStamp "" value = "[" ++ value ++ "]"
 createLoggerStamp label value = "[" ++ label ++ ":" ++ value ++ "]"
 
-createOrgTokenLoggerStamp :: String -> String
-createOrgTokenLoggerStamp = createLoggerStamp "O"
+getColor :: LogLevel -> Color
+getColor LevelDebug = Default
+getColor LevelInfo = Default
+getColor LevelWarn = Magenta
+getColor LevelError = Red
 
-createTraceUuidLoggerStamp :: String -> String
-createTraceUuidLoggerStamp = createLoggerStamp "T"
+showLogLevel :: LogLevel -> String
+showLogLevel LevelDebug = "Debug "
+showLogLevel LevelInfo = "Info "
+showLogLevel LevelWarn = "Warn "
+showLogLevel LevelError = "Error"

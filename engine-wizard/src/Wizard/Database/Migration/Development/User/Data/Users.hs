@@ -1,6 +1,7 @@
 module Wizard.Database.Migration.Development.User.Data.Users where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
 import qualified Data.UUID as U
@@ -10,8 +11,14 @@ import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Api.Resource.User.UserSubmissionPropsDTO
+import Wizard.Database.Migration.Development.Config.Data.AppConfigs
+import Wizard.Model.Common.SensitiveData
 import Wizard.Model.User.User
+import Wizard.Model.User.UserEM ()
+import Wizard.Service.User.UserProfileMapper
 
 userAlbert :: User
 userAlbert =
@@ -33,12 +40,28 @@ userAlbert =
         , "QTN_PERM"
         , "DMP_PERM"
         , "CFG_PERM"
+        , "SUBM_PERM"
         ]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , _userSubmissionProps = [userAlbertApiTokenEncrypted]
+    , _userImageUrl = Nothing
     , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
+
+userAlbertEdited :: User
+userAlbertEdited =
+  userAlbert
+    { _userFirstName = "EDITED: Isaac"
+    , _userLastName = "EDITED: Einstein"
+    , _userEmail = "albert.einstein@example-edited.com"
+    , _userAffiliation = Just "EDITED: My University"
+    , _userSubmissionProps = [userAlbertApiTokenEditedEncrypted]
+    }
+
+userAlbertDecrypted :: User
+userAlbertDecrypted = process defaultSecret userAlbert
 
 userNikola :: User
 userNikola =
@@ -50,9 +73,12 @@ userNikola =
     , _userAffiliation = Nothing
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = _USER_ROLE_DATA_STEWARD
-    , _userPermissions = ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
+    , _userPermissions =
+        ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , _userSubmissionProps = []
+    , _userImageUrl = Nothing
     , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -67,9 +93,11 @@ userIsaac =
     , _userAffiliation = Nothing
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = _USER_ROLE_RESEARCHER
-    , _userPermissions = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM"]
+    , _userPermissions = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , _userSubmissionProps = []
+    , _userImageUrl = Nothing
     , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -97,13 +125,28 @@ userIsaacChange =
     , _userChangeDTOActive = True
     }
 
+userAlbertProfile :: UserProfileDTO
+userAlbertProfile = toUserProfileDTO userAlbert [userAlbertApiTokenDto]
+
+userAlbertProfileEdited :: UserProfileDTO
+userAlbertProfileEdited =
+  userAlbertProfile
+    { _userProfileDTOFirstName = userAlbertEdited ^. firstName
+    , _userProfileDTOLastName = userAlbertEdited ^. lastName
+    , _userProfileDTOEmail = userAlbertEdited ^. email
+    , _userProfileDTOAffiliation = userAlbertEdited ^. affiliation
+    , _userProfileDTOSubmissionProps = [userAlbertApiTokenEditedDto]
+    }
+
 userIsaacProfileChange :: UserProfileChangeDTO
 userIsaacProfileChange =
   UserProfileChangeDTO
-    { _userProfileChangeDTOFirstName = "EDITED: Isaac"
-    , _userProfileChangeDTOLastName = "EDITED: Newton"
-    , _userProfileChangeDTOEmail = "isaac.newton@example-edited.com"
-    , _userProfileChangeDTOAffiliation = Just "EDITED: My University"
+    { _userProfileChangeDTOFirstName = userAlbertEdited ^. firstName
+    , _userProfileChangeDTOLastName = userAlbertEdited ^. lastName
+    , _userProfileChangeDTOEmail = userAlbertEdited ^. email
+    , _userProfileChangeDTOAffiliation = userAlbertEdited ^. affiliation
+    , _userProfileChangeDTOSubmissionProps =
+        [toUserSubmissionPropsDTO userAlbertApiTokenEdited (defaultSubmissionService ^. name)]
     }
 
 userPassword :: UserPasswordDTO
@@ -111,3 +154,40 @@ userPassword = UserPasswordDTO {_userPasswordDTOPassword = "newPassword"}
 
 userState :: UserStateDTO
 userState = UserStateDTO {_userStateDTOActive = True}
+
+userAlbertApiToken :: UserSubmissionProps
+userAlbertApiToken =
+  UserSubmissionProps
+    { _userSubmissionPropsSId = defaultSubmissionService ^. sId
+    , _userSubmissionPropsValues = M.fromList [(defaultSubmissionServiceApiTokenProp, "Some Token")]
+    }
+
+userAlbertApiTokenEncrypted :: UserSubmissionProps
+userAlbertApiTokenEncrypted = process defaultSecret userAlbertApiToken
+
+userAlbertApiTokenDto :: UserSubmissionPropsDTO
+userAlbertApiTokenDto =
+  UserSubmissionPropsDTO
+    { _userSubmissionPropsDTOSId = defaultSubmissionService ^. sId
+    , _userSubmissionPropsDTOName = defaultSubmissionService ^. name
+    , _userSubmissionPropsDTOValues =
+        M.fromList [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "Some Token")]
+    }
+
+userAlbertApiTokenEdited :: UserSubmissionProps
+userAlbertApiTokenEdited =
+  userAlbertApiToken
+    {_userSubmissionPropsValues = M.fromList [(defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]}
+
+userAlbertApiTokenEditedEncrypted :: UserSubmissionProps
+userAlbertApiTokenEditedEncrypted = process defaultSecret userAlbertApiTokenEdited
+
+userAlbertApiTokenEditedDto :: UserSubmissionPropsDTO
+userAlbertApiTokenEditedDto =
+  UserSubmissionPropsDTO
+    { _userSubmissionPropsDTOSId = defaultSubmissionService ^. sId
+    , _userSubmissionPropsDTOName = defaultSubmissionService ^. name
+    , _userSubmissionPropsDTOValues =
+        M.fromList
+          [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
+    }

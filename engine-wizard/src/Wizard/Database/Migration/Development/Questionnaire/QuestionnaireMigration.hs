@@ -8,10 +8,10 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(Questionnaire/Questionnaire) started"
+  logInfo _CMP_MIGRATION "(Questionnaire/Questionnaire) started"
   deleteQuestionnaires
   insertPackage germanyPackage
   insertQuestionnaire questionnaire1
   insertQuestionnaire questionnaire2
   insertQuestionnaire questionnaire3
-  logInfo $ msg _CMP_MIGRATION "(Questionnaire/Questionnaire) ended"
+  logInfo _CMP_MIGRATION "(Questionnaire/Questionnaire) ended"

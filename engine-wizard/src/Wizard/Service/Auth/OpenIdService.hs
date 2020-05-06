@@ -27,7 +27,7 @@ createAuthenticationUrl :: String -> AppContextM ()
 createAuthenticationUrl authId = do
   state <- liftIO $ generateRandomString 40
   (service, openIDClient) <- createOpenIDClient authId
-  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameters)
+  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
   loc <-
     liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)
@@ -44,9 +44,10 @@ loginUser authId mError mCode =
       let mEmail = fmap toLower . T.unpack <$> (claims ^? key "email" . _String)
       let mFirstName = T.unpack <$> claims ^? key "given_name" . _String
       let mLastName = T.unpack <$> claims ^? key "family_name" . _String
+      let mPicture = T.unpack <$> claims ^? key "picture" . _String
       case (mEmail, mFirstName, mLastName) of
         (Just email, Just firstName, Just lastName) -> do
-          userDto <- createUserFromExternalService authId firstName lastName email
+          userDto <- createUserFromExternalService authId firstName lastName email mPicture
           generateTokenFromUser userDto
         _ -> throwError . UserError $ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE
     Nothing -> throwError . UserError $ _ERROR_VALIDATION__OPENID_CODE_ABSENCE

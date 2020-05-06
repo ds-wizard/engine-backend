@@ -15,6 +15,7 @@ data ClientConfigDTO =
     , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
     , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
+    , _clientConfigDTOSubmission :: SimpleFeature
     }
   deriving (Show, Eq, Generic)
 
@@ -53,6 +54,5 @@ data ClientConfigQuestionnaireDTO =
     { _clientConfigQuestionnaireDTOQuestionnaireAccessibility :: SimpleFeature
     , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
-    , _clientConfigQuestionnaireDTOPublicQuestionnaire :: SimpleFeature
     }
   deriving (Generic, Eq, Show)

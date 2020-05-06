@@ -5,7 +5,9 @@ import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.UUID as U
+import Network.HTTP.Types.Status
 import Servant
   ( Header
   , Headers
@@ -29,7 +31,7 @@ import Registry.Localization.Messages.Internal
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
-import Registry.Util.Logger (logError)
+import Registry.Util.Logger
 import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api (contentTypeHeaderJSON)
@@ -158,8 +160,17 @@ sendError (NotExistsError localeRecord) = do
   let message = locale ls localeRecord
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendError (GeneralServerError errorMessage) = do
-  logError errorMessage
+  logError _CMP_API errorMessage
   return $ err500 {errBody = encode $ GeneralServerErrorDTO errorMessage, errHeaders = [contentTypeHeaderJSON]}
+sendError (HttpClientError status message) = do
+  logError _CMP_API message
+  return $
+    ServerError
+      { errHTTPCode = statusCode status
+      , errReasonPhrase = BS.unpack . statusMessage $ status
+      , errBody = BSL.pack message
+      , errHeaders = [contentTypeHeaderJSON]
+      }
 
 sendErrorDTO :: ErrorDTO -> BaseContextM ServerError
 sendErrorDTO AcceptedErrorDTO =
@@ -184,5 +195,14 @@ sendErrorDTO (ForbiddenErrorDTO message) =
 sendErrorDTO (NotExistsErrorDTO message) =
   return $ err404 {errBody = encode $ NotExistsErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
 sendErrorDTO (GeneralServerErrorDTO message) = do
-  logError message
+  logError _CMP_API message
   return $ err500 {errBody = encode $ GeneralServerErrorDTO message, errHeaders = [contentTypeHeaderJSON]}
+sendErrorDTO (HttpClientErrorDTO status message) = do
+  logError _CMP_API message
+  return $
+    ServerError
+      { errHTTPCode = statusCode status
+      , errReasonPhrase = BS.unpack . statusMessage $ status
+      , errBody = BSL.pack message
+      , errHeaders = [contentTypeHeaderJSON]
+      }

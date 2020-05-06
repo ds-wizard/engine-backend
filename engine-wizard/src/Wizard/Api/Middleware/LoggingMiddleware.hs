@@ -1,7 +1,6 @@
 module Wizard.Api.Middleware.LoggingMiddleware where
 
-import Data.List (intercalate)
-import Data.Maybe (fromMaybe)
+import qualified Data.List as L
 import qualified Data.Text as T
 import Network.HTTP.Types
   ( Header
@@ -18,15 +17,15 @@ import Network.HTTP.Types
   , status500
   )
 import Network.Wai (Middleware, Request(..))
-import System.Console.Pretty (Color(..), color)
 import System.IO.Unsafe
 
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
 import Shared.Model.Config.Environment
 import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
+import Wizard.Constant.Component
 import Wizard.Service.Token.TokenService
-import Wizard.Util.Logger (createTraceUuidLoggerStamp, createUserUuidLoggerStamp)
+import Wizard.Util.Logger
 
 loggingMiddleware :: Environment -> Middleware
 loggingMiddleware Test application request sendResponse = application request sendResponse
@@ -37,24 +36,25 @@ logRequest :: Request -> Status -> [Header] -> [Header]
 logRequest request resStatus resHeaders =
   filterOptionsRequests request resHeaders $
   unsafePerformIO $ do
-    putStrLn . colorizeMessage resStatus $ createLogMessage blockParts messageParts
+    putStrLn $ createHttpLogRecord request resStatus resHeaders
     return resHeaders
-  where
-    blockParts = createBlockParts (requestHeaders request) resHeaders
-    messageParts = createMessageParts request resStatus
 
-createBlockParts :: [Header] -> [Header] -> [String]
-createBlockParts reqHeaders resHeaders = [logLevel, userUuid, traceUuid]
+createHttpLogRecord request resStatus resHeaders = L.intercalate "" ["[", showLogLevel logLevel, "] ", record]
   where
-    logLevel = "[Rqst] "
-    userUuid =
-      case findHeader authorizationHeaderName reqHeaders of
-        Just headerValue -> createUserUuidLoggerStamp (extractUserUuid . T.pack $ headerValue)
-        Nothing -> createUserUuidLoggerStamp "---"
-    traceUuid =
-      case findHeader xTraceUuidHeaderName resHeaders of
-        Just headerValue -> createTraceUuidLoggerStamp headerValue
-        Nothing -> createTraceUuidLoggerStamp "---"
+    logLevel :: LogLevel
+    logLevel = statusToLogLevel resStatus
+    logLevelS = statusToLogLevel resStatus
+    mUserUuid :: Maybe String
+    mUserUuid =
+      case findHeader authorizationHeaderName (requestHeaders request) of
+        Just headerValue -> extractUserUuid . T.pack $ headerValue
+        Nothing -> Nothing
+    mTraceUuid :: Maybe String
+    mTraceUuid = findHeader xTraceUuidHeaderName resHeaders
+    message :: String
+    message = L.intercalate " " (createMessageParts request resStatus)
+    record :: String
+    record = createLogRecord logLevel mUserUuid mTraceUuid _CMP_API message
 
 createMessageParts :: Request -> Status -> [String]
 createMessageParts request resStatus = [status, method, path]
@@ -63,27 +63,8 @@ createMessageParts request resStatus = [status, method, path]
     path = extractPath request
     status = statusToString resStatus
 
-createLogMessage :: [String] -> [String] -> String
-createLogMessage blockParts messageParts = intercalate "" blockParts ++ " " ++ unwords messageParts
-
-extractUserUuid :: T.Text -> String
-extractUserUuid tokenHeader =
-  let mUserUuid = separateToken (T.unpack tokenHeader) >>= getUserUuidFromToken
-   in fromMaybe (createUserUuidLoggerStamp "---") mUserUuid
-
-colorizeMessage :: Status -> String -> String
-colorizeMessage resStatus
-  | resStatus == status200 = color Green
-  | resStatus == status201 = color Green
-  | resStatus == status202 = color Green
-  | resStatus == status204 = color Green
-  | resStatus == status302 = color Green
-  | resStatus == status400 = color Magenta
-  | resStatus == status401 = color Magenta
-  | resStatus == status403 = color Magenta
-  | resStatus == status404 = color Magenta
-  | resStatus == status500 = color Red
-  | otherwise = color Red
+extractUserUuid :: T.Text -> Maybe String
+extractUserUuid tokenHeader = separateToken (T.unpack tokenHeader) >>= getUserUuidFromToken
 
 statusToString :: Status -> String
 statusToString resStatus
@@ -98,6 +79,15 @@ statusToString resStatus
   | resStatus == status404 = "404 Not Found"
   | resStatus == status500 = "500 Internal Server Error"
   | otherwise = show resStatus
+
+statusToLogLevel :: Status -> LogLevel
+statusToLogLevel resStatus
+  | resStatus == status400 = LevelWarn
+  | resStatus == status401 = LevelWarn
+  | resStatus == status403 = LevelWarn
+  | resStatus == status404 = LevelWarn
+  | resStatus == status500 = LevelError
+  | otherwise = LevelInfo
 
 filterOptionsRequests request resHeaders callback =
   if extractMethod request == "OPTIONS"

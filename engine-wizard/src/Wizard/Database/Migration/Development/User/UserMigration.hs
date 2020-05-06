@@ -6,9 +6,9 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Util.Logger
 
 runMigration = do
-  logInfo $ msg _CMP_MIGRATION "(User/User) started"
+  logInfo _CMP_MIGRATION "(User/User) started"
   deleteUsers
   insertUser userAlbert
   insertUser userNikola
   insertUser userIsaac
-  logInfo $ msg _CMP_MIGRATION "(User/User) ended"
+  logInfo _CMP_MIGRATION "(User/User) ended"

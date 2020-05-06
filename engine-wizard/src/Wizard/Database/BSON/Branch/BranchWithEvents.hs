@@ -4,8 +4,8 @@ import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
-import Wizard.Database.BSON.Common ()
-import Wizard.Database.BSON.Event.Common
+import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Event.Common
 import Wizard.Model.Branch.Branch
 
 instance ToBSON BranchWithEvents where

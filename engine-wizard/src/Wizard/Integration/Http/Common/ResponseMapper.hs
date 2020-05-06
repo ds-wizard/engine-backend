@@ -1,6 +1,7 @@
 module Wizard.Integration.Http.Common.ResponseMapper
   ( getResponseBody
   , deserializeResponseBody
+  , extractResponseHeader
   , extractResponseBody
   , extractNestedField
   , extractNestedStringField
@@ -12,11 +13,13 @@ module Wizard.Integration.Http.Common.ResponseMapper
 import Control.Lens ((^.), (^?))
 import Data.Aeson (FromJSON, Value, eitherDecode)
 import Data.Aeson.Lens (Primitive(..), _Array, _Primitive, _String, _Value, key)
+import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy as BSL
+import qualified Data.CaseInsensitive as CI
 import Data.Scientific (floatingOrInteger)
 import qualified Data.Text as T
 import qualified Data.Vector as Vector
-import Network.Wreq (Response, responseBody)
+import Network.Wreq (Response, responseBody, responseHeader)
 
 import Shared.Model.Error.Error
 import Text.Read (readMaybe)
@@ -30,6 +33,12 @@ deserializeResponseBody response =
   case eitherDecode $ response ^. responseBody of
     Right body -> Right body
     Left error -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY error
+
+extractResponseHeader :: String -> Response BSL.ByteString -> Maybe String
+extractResponseHeader headerName response =
+  case response ^? responseHeader (CI.mk . BS.pack $ headerName) of
+    Just header -> Just . BS.unpack $ header
+    Nothing -> Nothing
 
 extractResponseBody :: Response BSL.ByteString -> Either AppError Value
 extractResponseBody response =

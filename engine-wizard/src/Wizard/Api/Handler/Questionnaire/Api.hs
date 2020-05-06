@@ -11,14 +11,12 @@ import Wizard.Api.Handler.Questionnaire.Detail_Report_Preview_POST
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
-import Wizard.Api.Handler.Questionnaire.List_Public_GET
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireAPI
    = List_GET
      :<|> List_POST
      :<|> List_POST_CloneUuid
-     :<|> List_Public_GET
      :<|> Detail_GET
      :<|> Detail_PUT
      :<|> Detail_DELETE
@@ -31,8 +29,7 @@ questionnaireApi = Proxy
 
 questionnaireServer :: ServerT QuestionnaireAPI BaseContextM
 questionnaireServer =
-  list_GET :<|> list_POST :<|> list_POST_CloneUuid :<|> list_public_GET :<|> detail_GET :<|> detail_PUT :<|>
-  detail_DELETE :<|>
+  list_GET :<|> list_POST :<|> list_POST_CloneUuid :<|> detail_GET :<|> detail_PUT :<|> detail_DELETE :<|>
   detail_report_GET :<|>
   detail_report_preview_POST :<|>
   detail_documents_preview_GET

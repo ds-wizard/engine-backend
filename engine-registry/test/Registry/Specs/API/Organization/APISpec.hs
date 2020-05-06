@@ -11,11 +11,13 @@ import Registry.Specs.API.Organization.Detail_State_PUT
 import Registry.Specs.API.Organization.Detail_Token_PUT
 import Registry.Specs.API.Organization.List_GET
 import Registry.Specs.API.Organization.List_POST
+import Registry.Specs.API.Organization.List_Simple_GET
 
 organizationAPI appContext =
   with (startWebApp appContext) $
   describe "ORGANIZATION API Spec" $ do
     list_get appContext
+    list_simple_get appContext
     list_post appContext
     detail_get appContext
     detail_put appContext

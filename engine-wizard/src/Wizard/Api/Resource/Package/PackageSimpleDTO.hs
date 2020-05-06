@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Package.PackageSimpleDTO where
 import Data.Time
 import GHC.Generics
 
-import Wizard.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Wizard.Model.Package.PackageState
 
 data PackageSimpleDTO =
