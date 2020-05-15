@@ -70,6 +70,10 @@ instance ToBSON AppConfigQuestionnaireFeedback
 
 instance FromBSON AppConfigQuestionnaireFeedback
 
+instance ToBSON AppConfigTemplate
+
+instance FromBSON AppConfigTemplate
+
 instance ToBSON AppConfigSubmission
 
 instance FromBSON AppConfigSubmission

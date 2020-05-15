@@ -15,6 +15,7 @@ data ClientConfigDTO =
     , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
     , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
+    , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
     }
   deriving (Show, Eq, Generic)

@@ -21,4 +21,4 @@ list_GET mTokenHeader mPkgId =
     runInAuthService $
     addTraceUuidHeader =<< do
       checkPermission mTokenHeader "DMP_PERM"
-      listTemplates mPkgId
+      getTemplatesDto mPkgId

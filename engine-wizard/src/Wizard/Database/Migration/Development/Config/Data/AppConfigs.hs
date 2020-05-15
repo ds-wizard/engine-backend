@@ -25,6 +25,7 @@ defaultAppConfig =
     , _appConfigLookAndFeel = defaultLookAndFeel
     , _appConfigKnowledgeModelRegistry = defaultRegistry
     , _appConfigQuestionnaire = defaultQuestionnaire
+    , _appConfigTemplate = defaultTemplate
     , _appConfigSubmission = defaultSubmission
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -143,6 +144,9 @@ defaultFeedback =
     , _appConfigQuestionnaireFeedbackOwner = "DSWGlobal"
     , _appConfigQuestionnaireFeedbackRepo = "dsw-test"
     }
+
+defaultTemplate :: AppConfigTemplate
+defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateUuid = Just $ commonWizardTemplate ^. uuid}
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission =

@@ -102,6 +102,12 @@ instance FromJSON AppConfigQuestionnaireFeedback where
 instance ToJSON AppConfigQuestionnaireFeedback where
   toJSON = simpleToJSON "_appConfigQuestionnaireFeedback"
 
+instance FromJSON AppConfigTemplate where
+  parseJSON = simpleParseJSON "_appConfigTemplate"
+
+instance ToJSON AppConfigTemplate where
+  toJSON = simpleToJSON "_appConfigTemplate"
+
 instance FromJSON AppConfigSubmission where
   parseJSON = simpleParseJSON "_appConfigSubmission"
 

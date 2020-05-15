@@ -60,6 +60,7 @@ reqDtoT qtn =
     , _questionnaireChangeDTOLevel = qtn ^. level
     , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
     , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
+    , _questionnaireChangeDTOTemplateUuid = qtn ^. templateUuid
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn

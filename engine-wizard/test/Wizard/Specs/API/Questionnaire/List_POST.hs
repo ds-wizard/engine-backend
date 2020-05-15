@@ -72,9 +72,7 @@ test_201 appContext = do
     -- AND: Find a result in DB
     assertExistenceOfQuestionnaireInDB
       appContext
-      ((level .~ 1) .
-       (uuid .~ (resBody ^. uuid)) .
-       (replies .~ []) . (labels .~ []) . (templateUuid .~ Nothing) . (formatUuid .~ Nothing) $
+      ((level .~ 1) . (uuid .~ (resBody ^. uuid)) . (replies .~ []) . (labels .~ []) . (formatUuid .~ Nothing) $
        questionnaire1)
 
 -- ----------------------------------------------------

@@ -1,7 +1,8 @@
 {
   "uuid": "43a3fdd1-8535-42e0-81a7-5edbff296e65",
   "name": "Default Template",
-  "allowedKMs": [
+  "description": "This is a default template",
+  "allowedPackages": [
     {
       "orgId": null,
       "kmId": null,
@@ -13,7 +14,9 @@
     {
       "uuid": "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2",
       "name": "JSON Data",
+      "shortName": "json",
       "icon": "far fa-file",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "json",
@@ -24,7 +27,9 @@
     {
       "uuid": "a9293d08-59a4-4e6b-ae62-7a6a570b031c",
       "name": "HTML Document",
+      "shortName": "html",
       "icon": "far fa-file-code",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",
@@ -39,7 +44,9 @@
     {
       "uuid": "68c26e34-5e77-4e15-9bf7-06ff92582257",
       "name": "PDF Document",
+      "shortName": "pdf",
       "icon": "far fa-file-pdf",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",
@@ -58,7 +65,9 @@
     {
       "uuid": "dbc94579-40d7-42c3-975c-71e30d07778b",
       "name": "LaTeX Document",
+      "shortName": "latex",
       "icon": "far fa-file-alt",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",
@@ -80,7 +89,9 @@
     {
       "uuid": "f4bd941a-dfbe-4226-a1fc-200fb5269311",
       "name": "MS Word Document",
+      "shortName": "docx",
       "icon": "far fa-file-word",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",
@@ -102,7 +113,9 @@
     {
       "uuid": "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6",
       "name": "OpenDocument Text",
+      "shortName": "odt",
       "icon": "far fa-file-alt",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",
@@ -124,7 +137,9 @@
     {
       "uuid": "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0",
       "name": "Markdown Document",
+      "shortName": "md",
       "icon": "far fa-file-alt",
+      "color": "#f15a24",
       "steps": [
         {
           "name": "jinja",

@@ -71,6 +71,7 @@ questionnaire1Create =
     , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
     , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
     , _questionnaireCreateDTOTagUuids = []
+    , _questionnaireCreateDTOTemplateUuid = questionnaire1 ^. templateUuid
     }
 
 questionnaire1EditedChange :: QuestionnaireChangeDTO
@@ -96,6 +97,7 @@ questionnaire1EditedChange =
         , rQ10
         ]
     , _questionnaireChangeDTOLabels = []
+    , _questionnaireChangeDTOTemplateUuid = Nothing
     }
 
 -- ------------------------------------------------------------------------

@@ -39,6 +39,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0030_bson_generi
 import qualified Wizard.Database.Migration.Production.Migration_0031_user_imageUrl.Migration as M_0031
 import qualified Wizard.Database.Migration.Production.Migration_0032_appConfig_organizationDescription.Migration as M_0032
 import qualified Wizard.Database.Migration.Production.Migration_0033_remove_public_questionnaire.Migration as M_0033
+import qualified Wizard.Database.Migration.Production.Migration_0034_appConfig_recommendedTemplateUuid.Migration as M_0034
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -80,4 +81,5 @@ migrationDefinitions =
   , M_0031.definition
   , M_0032.definition
   , M_0033.definition
+  , M_0034.definition
   ]

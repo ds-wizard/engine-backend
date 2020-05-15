@@ -1,7 +1,9 @@
 module Wizard.Service.Template.TemplateService
-  ( listTemplates
+  ( getTemplates
+  , getTemplatesDto
   , getTemplateByUuid
   -- Private
+  , getAllowedPackagesForTemplate
   , fitsIntoKMSpec
   , filterTemplates
   ) where
@@ -14,18 +16,22 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Error.Error
+import Shared.Model.Package.Package
 import Shared.Service.File.FileService
 import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Constant.Resource
+import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Template.Template
 import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
+import Wizard.Service.Template.TemplateMapper
 import Wizard.Util.List (foldEithersInContext)
 
-listTemplates :: Maybe String -> AppContextM [TemplateDTO]
-listTemplates mPkgId = do
+getTemplates :: Maybe String -> AppContextM [Template]
+getTemplates mPkgId = do
   folder <- getTemplateFolder
   files <- liftIO $ listFilesWithName folder "template.json"
   eTemplates <- foldEithersInContext (fmap (liftIO . loadJSONFile) files)
@@ -39,9 +45,15 @@ listTemplates mPkgId = do
           let pkgIdSplit = splitPackageId pkgId
           return . filterTemplates pkgIdSplit $ templates
 
-getTemplateByUuid :: String -> Maybe String -> AppContextM TemplateDTO
+getTemplatesDto :: Maybe String -> AppContextM [TemplateDTO]
+getTemplatesDto mPkgId = do
+  templates <- getTemplates mPkgId
+  pkgs <- findPackages
+  return . fmap (\tml -> toDTO (getAllowedPackagesForTemplate tml pkgs) tml) $ templates
+
+getTemplateByUuid :: String -> Maybe String -> AppContextM Template
 getTemplateByUuid templateUuid mPkgId = do
-  templates <- listTemplates mPkgId
+  templates <- getTemplates mPkgId
   case find (\t -> U.toString (t ^. uuid) == templateUuid) templates of
     Just template -> return template
     Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
@@ -54,13 +66,19 @@ getTemplateFolder = do
   serverConfig <- asks _appContextServerConfig
   return $ (serverConfig ^. general . templateFolder) ++ documentTemplatesFolder
 
-filterTemplates :: [String] -> [TemplateDTO] -> [TemplateDTO]
+getAllowedPackagesForTemplate :: Template -> [Package] -> [Package]
+getAllowedPackagesForTemplate tml = getNewestUniquePackages . filterPackages tml
+  where
+    filterPackages :: Template -> [Package] -> [Package]
+    filterPackages tml = filter (\pkg -> not . null $ filterTemplates (splitPackageId $ pkg ^. pId) [tml])
+
+filterTemplates :: [String] -> [Template] -> [Template]
 filterTemplates pkgIdSplit = filter (filterTemplate pkgIdSplit)
   where
-    filterTemplate :: [String] -> TemplateDTO -> Bool
-    filterTemplate pkgIdSplit template = foldl (foldOverKmSpec pkgIdSplit) False (template ^. allowedKMs)
-    foldOverKmSpec :: [String] -> Bool -> TemplateAllowedKMDTO -> Bool
-    foldOverKmSpec pkgIdSplit acc allowedKm = acc || fitsIntoKMSpec pkgIdSplit allowedKm
+    filterTemplate :: [String] -> Template -> Bool
+    filterTemplate pkgIdSplit template = foldl (foldOverKmSpec pkgIdSplit) False (template ^. allowedPackages)
+    foldOverKmSpec :: [String] -> Bool -> TemplateAllowedPackage -> Bool
+    foldOverKmSpec pkgIdSplit acc allowedPackages = acc || fitsIntoKMSpec pkgIdSplit allowedPackages
 
 fitsIntoKMSpec ::
      ( HasOrgId kmSpec (Maybe String)

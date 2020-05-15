@@ -144,7 +144,7 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
     , _questionnaireAccessibility = accessibility
     , _questionnairePackageId = qtn ^. package . pId
     , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
-    , _questionnaireTemplateUuid = qtn ^. templateUuid
+    , _questionnaireTemplateUuid = dto ^. templateUuid
     , _questionnaireFormatUuid = qtn ^. formatUuid
     , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
     , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
@@ -167,7 +167,7 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
     , _questionnaireAccessibility = accessibility
     , _questionnairePackageId = dto ^. packageId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
-    , _questionnaireTemplateUuid = Nothing
+    , _questionnaireTemplateUuid = dto ^. templateUuid
     , _questionnaireFormatUuid = Nothing
     , _questionnaireReplies = []
     , _questionnaireLabels = []

@@ -108,6 +108,7 @@ import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Model.Template.Template
 import Wizard.Model.User.User
 
 -- -------------------------------------
@@ -156,6 +157,8 @@ makeFields ''AppConfigRegistry
 makeFields ''AppConfigQuestionnaire
 
 makeFields ''AppConfigQuestionnaireFeedback
+
+makeFields ''AppConfigTemplate
 
 makeFields ''AppConfigSubmission
 
@@ -380,6 +383,13 @@ makeFields ''Report
 
 -- Model / Statistic
 makeFields ''InstanceStatistics
+
+-- Model / Template
+makeFields ''Template
+
+makeFields ''TemplateAllowedPackage
+
+makeFields ''TemplateFormat
 
 -- Model / User
 makeFields ''User
@@ -630,10 +640,6 @@ makeFields ''SubmissionDTO
 
 -- Api / Resource / Template
 makeFields ''TemplateDTO
-
-makeFields ''TemplateAllowedKMDTO
-
-makeFields ''TemplateFormatDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO

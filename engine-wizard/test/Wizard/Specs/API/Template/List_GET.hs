@@ -11,8 +11,12 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Database.Migration.Development.Package.Data.Packages
+import qualified Shared.Service.Package.PackageMapper as SPM
+import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Template.TemplateMapper
 
 import Wizard.Specs.API.Common
 
@@ -45,8 +49,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = [commonWizardTemplate]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = [toDTO (fmap SPM.toPackage [globalPackage, netherlandsPackageV2]) commonWizardTemplate]
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

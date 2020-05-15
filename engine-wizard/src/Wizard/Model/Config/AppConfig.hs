@@ -17,6 +17,7 @@ data AppConfig =
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
     , _appConfigKnowledgeModelRegistry :: AppConfigRegistry
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
+    , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
@@ -153,6 +154,12 @@ data AppConfigQuestionnaireFeedback =
     , _appConfigQuestionnaireFeedbackToken :: String
     , _appConfigQuestionnaireFeedbackOwner :: String
     , _appConfigQuestionnaireFeedbackRepo :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigTemplate =
+  AppConfigTemplate
+    { _appConfigTemplateRecommendedTemplateUuid :: Maybe U.UUID
     }
   deriving (Generic, Eq, Show)
 

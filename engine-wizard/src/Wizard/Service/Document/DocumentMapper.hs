@@ -8,10 +8,10 @@ import LensesConfig
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
-import Wizard.Api.Resource.Template.TemplateDTO
 import Wizard.Model.Document.Document
+import Wizard.Model.Template.Template
 
-toDTO :: Document -> Maybe QuestionnaireDTO -> TemplateDTO -> DocumentDTO
+toDTO :: Document -> Maybe QuestionnaireDTO -> Template -> DocumentDTO
 toDTO doc mQtn tml =
   DocumentDTO
     { _documentDTOUuid = doc ^. uuid

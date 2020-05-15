@@ -56,6 +56,9 @@ instance ToSchema AppConfigQuestionnaire where
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireFeedback" defaultFeedback
 
+instance ToSchema AppConfigTemplate where
+  declareNamedSchema = simpleToSchema' "_appConfigTemplate" defaultTemplate
+
 instance ToSchema AppConfigSubmission where
   declareNamedSchema = simpleToSchema' "_appConfigSubmission" defaultSubmission
 

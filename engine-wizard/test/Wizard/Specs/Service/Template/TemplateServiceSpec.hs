@@ -3,7 +3,7 @@ module Wizard.Specs.Service.Template.TemplateServiceSpec where
 import qualified Data.UUID as U
 import Test.Hspec
 
-import Wizard.Api.Resource.Template.TemplateDTO
+import Wizard.Model.Template.Template
 import Wizard.Service.Template.TemplateService
 
 templateServiceSpec =
@@ -14,11 +14,13 @@ templateServiceSpec =
             -- GIVEN:
        do
         let templates =
-              [ TemplateDTO
-                  { _templateDTOUuid = U.nil
-                  , _templateDTOName = ""
-                  , _templateDTOAllowedKMs = []
-                  , _templateDTOFormats = []
+              [ Template
+                  { _templateUuid = U.nil
+                  , _templateName = ""
+                  , _templateDescription = ""
+                  , _templateAllowedPackages = []
+                  , _templateRecommendedPackageId = Nothing
+                  , _templateFormats = []
                   }
               ]
             -- AND:
@@ -31,18 +33,20 @@ templateServiceSpec =
             -- GIVEN:
        do
         let templates =
-              [ TemplateDTO
-                  { _templateDTOUuid = U.nil
-                  , _templateDTOName = ""
-                  , _templateDTOAllowedKMs =
-                      [ TemplateAllowedKMDTO
-                          { _templateAllowedKMDTOOrgId = Nothing
-                          , _templateAllowedKMDTOKmId = Nothing
-                          , _templateAllowedKMDTOMinVersion = Nothing
-                          , _templateAllowedKMDTOMaxVersion = Nothing
+              [ Template
+                  { _templateUuid = U.nil
+                  , _templateName = ""
+                  , _templateDescription = ""
+                  , _templateAllowedPackages =
+                      [ TemplateAllowedPackage
+                          { _templateAllowedPackageOrgId = Nothing
+                          , _templateAllowedPackageKmId = Nothing
+                          , _templateAllowedPackageMinVersion = Nothing
+                          , _templateAllowedPackageMaxVersion = Nothing
                           }
                       ]
-                  , _templateDTOFormats = []
+                  , _templateRecommendedPackageId = Nothing
+                  , _templateFormats = []
                   }
               ]
             -- AND:
@@ -55,24 +59,26 @@ templateServiceSpec =
             -- GIVEN:
        do
         let templates =
-              [ TemplateDTO
-                  { _templateDTOUuid = U.nil
-                  , _templateDTOName = ""
-                  , _templateDTOAllowedKMs =
-                      [ TemplateAllowedKMDTO
-                          { _templateAllowedKMDTOOrgId = Nothing
-                          , _templateAllowedKMDTOKmId = Nothing
-                          , _templateAllowedKMDTOMinVersion = Nothing
-                          , _templateAllowedKMDTOMaxVersion = Nothing
+              [ Template
+                  { _templateUuid = U.nil
+                  , _templateName = ""
+                  , _templateDescription = ""
+                  , _templateAllowedPackages =
+                      [ TemplateAllowedPackage
+                          { _templateAllowedPackageOrgId = Nothing
+                          , _templateAllowedPackageKmId = Nothing
+                          , _templateAllowedPackageMinVersion = Nothing
+                          , _templateAllowedPackageMaxVersion = Nothing
                           }
-                      , TemplateAllowedKMDTO
-                          { _templateAllowedKMDTOOrgId = Nothing
-                          , _templateAllowedKMDTOKmId = Just "core-de"
-                          , _templateAllowedKMDTOMinVersion = Nothing
-                          , _templateAllowedKMDTOMaxVersion = Nothing
+                      , TemplateAllowedPackage
+                          { _templateAllowedPackageOrgId = Nothing
+                          , _templateAllowedPackageKmId = Just "core-de"
+                          , _templateAllowedPackageMinVersion = Nothing
+                          , _templateAllowedPackageMaxVersion = Nothing
                           }
                       ]
-                  , _templateDTOFormats = []
+                  , _templateRecommendedPackageId = Nothing
+                  , _templateFormats = []
                   }
               ]
             -- AND:
@@ -86,11 +92,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -100,11 +106,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Just "org.nl"
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Just "org.nl"
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -114,11 +120,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Just "org.de"
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Just "org.de"
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -128,11 +134,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Just "core-nl"
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Just "core-nl"
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -142,11 +148,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Just "core-de"
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Just "core-de"
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -156,11 +162,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Just "1.0.0"
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Just "1.0.0"
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -170,11 +176,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Just "2.0.1"
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Just "2.0.1"
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -184,11 +190,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Just "2.0.1"
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Just "2.0.1"
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -198,11 +204,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Nothing
-                , _templateAllowedKMDTOKmId = Nothing
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Just "1.0.0"
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Nothing
+                , _templateAllowedPackageKmId = Nothing
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Just "1.0.0"
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec
@@ -212,11 +218,11 @@ templateServiceSpec =
         -- GIVEN:
        do
         let kmSpec =
-              TemplateAllowedKMDTO
-                { _templateAllowedKMDTOOrgId = Just "org.de"
-                , _templateAllowedKMDTOKmId = Just "core-nl"
-                , _templateAllowedKMDTOMinVersion = Nothing
-                , _templateAllowedKMDTOMaxVersion = Nothing
+              TemplateAllowedPackage
+                { _templateAllowedPackageOrgId = Just "org.de"
+                , _templateAllowedPackageKmId = Just "core-nl"
+                , _templateAllowedPackageMinVersion = Nothing
+                , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
         let result = fitsIntoKMSpec pkgId kmSpec

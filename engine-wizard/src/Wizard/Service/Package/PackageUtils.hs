@@ -74,3 +74,11 @@ computePackageState pkgsFromRegistry pkg =
         EQ -> UpToDatePackageState
         GT -> OutdatedPackageState
     Nothing -> UnknownPackageState
+
+getNewestUniquePackages :: [Package] -> [Package]
+getNewestUniquePackages = fmap chooseNewest . groupPackages
+  where
+    groupPackages :: [Package] -> [[Package]]
+    groupPackages = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
+    chooseNewest :: [Package] -> Package
+    chooseNewest = maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version))
