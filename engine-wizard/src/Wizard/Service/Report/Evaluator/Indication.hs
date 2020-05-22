@@ -97,7 +97,7 @@ isRequiredNow :: Maybe Int -> Int -> Int -> Int
 isRequiredNow mQLevel qtnLevel currentValue =
   if qtnLevel == 9999
     then currentValue
-    else let qLevel = fromMaybe 0 mQLevel
+    else let qLevel = fromMaybe 9999 mQLevel
           in if qLevel <= qtnLevel
                then currentValue
                else 0

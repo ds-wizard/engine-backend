@@ -26,7 +26,7 @@ report1_total =
     { _totalReportIndications =
         [ LevelsAnsweredIndication' $
           LevelsAnsweredIndication
-            {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
+            {_levelsAnsweredIndicationAnsweredQuestions = 3, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
         ]
@@ -44,7 +44,7 @@ report1_total_full =
     { _totalReportIndications =
         [ LevelsAnsweredIndication' $
           LevelsAnsweredIndication
-            {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
+            {_levelsAnsweredIndicationAnsweredQuestions = 3, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
         ]
@@ -132,7 +132,7 @@ report1_ch2 =
     , _chapterReportIndications =
         [ LevelsAnsweredIndication' $
           LevelsAnsweredIndication
-            {_levelsAnsweredIndicationAnsweredQuestions = 2, _levelsAnsweredIndicationUnansweredQuestions = 1}
+            {_levelsAnsweredIndicationAnsweredQuestions = 1, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 7, _answeredIndicationUnansweredQuestions = 1}
         ]
@@ -180,7 +180,7 @@ report1_ch3 =
     , _chapterReportIndications =
         [ LevelsAnsweredIndication' $
           LevelsAnsweredIndication
-            {_levelsAnsweredIndicationAnsweredQuestions = 2, _levelsAnsweredIndicationUnansweredQuestions = 0}
+            {_levelsAnsweredIndicationAnsweredQuestions = 1, _levelsAnsweredIndicationUnansweredQuestions = 0}
         , AnsweredIndication' $
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 2, _answeredIndicationUnansweredQuestions = 0}
         ]
