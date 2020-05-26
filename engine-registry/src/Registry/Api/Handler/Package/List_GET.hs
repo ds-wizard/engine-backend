@@ -21,6 +21,9 @@ type List_GET
      :> QueryParam "kmId" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 
+list_GET_Api :: Proxy List_GET
+list_GET_Api = Proxy
+
 list_GET ::
      Maybe String
   -> Maybe String

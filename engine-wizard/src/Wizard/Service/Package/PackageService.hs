@@ -16,6 +16,7 @@ import Control.Monad.Reader (asks)
 import Data.List (maximumBy)
 
 import LensesConfig
+import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
@@ -25,7 +26,6 @@ import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
-import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtils
@@ -43,7 +43,7 @@ getSimplePackagesFiltered queryParams = do
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
-    toSimpleDTOs :: [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [Package] -> PackageSimpleDTO
+    toSimpleDTOs :: [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [Package] -> PackageSimpleDTO
     toSimpleDTOs pkgRs orgRs pkgs = toSimpleDTO' newestPkg pkgRs orgRs (pkgs ^.. traverse . version)
       where
         newestPkg = maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) pkgs

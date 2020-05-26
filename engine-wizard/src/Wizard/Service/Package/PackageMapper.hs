@@ -3,6 +3,7 @@ module Wizard.Service.Package.PackageMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
+import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
@@ -10,13 +11,13 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Service.Package.PackageUtils
 
 toSimpleDTO :: Package -> PackageSimpleDTO
 toSimpleDTO pkg = toSimpleDTO' pkg [] [] []
 
-toSimpleDTO' :: Package -> [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [String] -> PackageSimpleDTO
+toSimpleDTO' ::
+     Package -> [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [String] -> PackageSimpleDTO
 toSimpleDTO' pkg pkgRs orgRs localVersions =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
@@ -31,7 +32,13 @@ toSimpleDTO' pkg pkgRs orgRs localVersions =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toDetailDTO :: Package -> [PackageSimpleIDTO] -> [OrganizationSimpleDTO] -> [String] -> String -> PackageDetailDTO
+toDetailDTO ::
+     Package
+  -> [R_PackageSimpleDTO.PackageSimpleDTO]
+  -> [OrganizationSimpleDTO]
+  -> [String]
+  -> String
+  -> PackageDetailDTO
 toDetailDTO pkg pkgRs orgRs versionLs registryLink =
   PackageDetailDTO
     { _packageDetailDTOPId = pkg ^. pId

@@ -3,6 +3,7 @@ module LensesConfig where
 import Control.Lens (makeFields)
 
 import Registry.Api.Resource.Organization.OrganizationDTO
+import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Event.AnswerEventDTO
 import Shared.Api.Resource.Event.ChapterEventDTO
 import Shared.Api.Resource.Event.ExpertEventDTO
@@ -83,9 +84,6 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
-import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
-import Wizard.Integration.Resource.Package.PackageDetailIDTO
-import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
@@ -677,14 +675,6 @@ makeFields ''VersionDTO
 -- Integration / Resource / GitHub
 makeFields ''IssueIDTO
 
--- Integration / Resource / Organization
-makeFields ''OrganizationSimpleIDTO
-
--- Integration / Resource / Package
-makeFields ''PackageDetailIDTO
-
-makeFields ''PackageSimpleIDTO
-
 -- Integration / Resource / Typehint
 makeFields ''TypehintIDTO
 
@@ -693,3 +683,6 @@ makeFields ''TypehintIDTO
 -- -------------------------------------
 -- Api / Resource / Organization
 makeFields ''OrganizationDTO
+
+-- Api / Resource / Package
+makeFields ''R_PackageSimpleDTO.PackageSimpleDTO

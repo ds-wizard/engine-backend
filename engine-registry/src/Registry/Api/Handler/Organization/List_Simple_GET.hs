@@ -14,5 +14,8 @@ type List_Simple_GET
      :> "simple"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [OrganizationSimpleDTO])
 
+list_simple_GET_Api :: Proxy List_Simple_GET
+list_simple_GET_Api = Proxy
+
 list_simple_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] [OrganizationSimpleDTO])
 list_simple_GET = runInUnauthService $ addTraceUuidHeader =<< getSimpleOrganizations

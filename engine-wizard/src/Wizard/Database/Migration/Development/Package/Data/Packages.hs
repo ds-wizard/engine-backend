@@ -3,43 +3,43 @@ module Wizard.Database.Migration.Development.Package.Data.Packages where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Registry.Api.Resource.Package.PackageSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Integration.Resource.Organization.OrganizationSimpleIDTO
-import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 
-globalRemotePackage :: PackageSimpleIDTO
+globalRemotePackage :: PackageSimpleDTO
 globalRemotePackage =
-  PackageSimpleIDTO
-    { _packageSimpleIDTOPId = globalPackage ^. pId
-    , _packageSimpleIDTOName = globalPackage ^. name
-    , _packageSimpleIDTOOrganizationId = globalPackage ^. organizationId
-    , _packageSimpleIDTOKmId = globalPackage ^. kmId
-    , _packageSimpleIDTOVersion = globalPackage ^. version
-    , _packageSimpleIDTODescription = globalPackage ^. description
-    , _packageSimpleIDTOOrganization =
-        OrganizationSimpleIDTO
-          { _organizationSimpleIDTOOrganizationId = orgGlobalSimple ^. organizationId
-          , _organizationSimpleIDTOName = orgGlobalSimple ^. name
-          , _organizationSimpleIDTOLogo = Just orgLogo
+  PackageSimpleDTO
+    { _packageSimpleDTOPId = globalPackage ^. pId
+    , _packageSimpleDTOName = globalPackage ^. name
+    , _packageSimpleDTOOrganizationId = globalPackage ^. organizationId
+    , _packageSimpleDTOKmId = globalPackage ^. kmId
+    , _packageSimpleDTOVersion = globalPackage ^. version
+    , _packageSimpleDTODescription = globalPackage ^. description
+    , _packageSimpleDTOOrganization =
+        OrganizationSimpleDTO
+          { _organizationSimpleDTOOrganizationId = orgGlobalSimple ^. organizationId
+          , _organizationSimpleDTOName = orgGlobalSimple ^. name
+          , _organizationSimpleDTOLogo = Just orgLogo
           }
-    , _packageSimpleIDTOCreatedAt = globalPackage ^. createdAt
+    , _packageSimpleDTOCreatedAt = globalPackage ^. createdAt
     }
 
-globalNetherlandsPackage :: PackageSimpleIDTO
+globalNetherlandsPackage :: PackageSimpleDTO
 globalNetherlandsPackage =
-  PackageSimpleIDTO
-    { _packageSimpleIDTOPId = netherlandsPackageV2 ^. pId
-    , _packageSimpleIDTOName = netherlandsPackageV2 ^. name
-    , _packageSimpleIDTOOrganizationId = netherlandsPackageV2 ^. organizationId
-    , _packageSimpleIDTOKmId = netherlandsPackageV2 ^. kmId
-    , _packageSimpleIDTOVersion = netherlandsPackageV2 ^. version
-    , _packageSimpleIDTODescription = netherlandsPackageV2 ^. description
-    , _packageSimpleIDTOOrganization =
-        OrganizationSimpleIDTO
-          { _organizationSimpleIDTOOrganizationId = orgNetherlandsSimple ^. organizationId
-          , _organizationSimpleIDTOName = orgNetherlandsSimple ^. name
-          , _organizationSimpleIDTOLogo = Just orgLogo
+  PackageSimpleDTO
+    { _packageSimpleDTOPId = netherlandsPackageV2 ^. pId
+    , _packageSimpleDTOName = netherlandsPackageV2 ^. name
+    , _packageSimpleDTOOrganizationId = netherlandsPackageV2 ^. organizationId
+    , _packageSimpleDTOKmId = netherlandsPackageV2 ^. kmId
+    , _packageSimpleDTOVersion = netherlandsPackageV2 ^. version
+    , _packageSimpleDTODescription = netherlandsPackageV2 ^. description
+    , _packageSimpleDTOOrganization =
+        OrganizationSimpleDTO
+          { _organizationSimpleDTOOrganizationId = orgNetherlandsSimple ^. organizationId
+          , _organizationSimpleDTOName = orgNetherlandsSimple ^. name
+          , _organizationSimpleDTOLogo = Just orgLogo
           }
-    , _packageSimpleIDTOCreatedAt = globalPackage ^. createdAt
+    , _packageSimpleDTOCreatedAt = globalPackage ^. createdAt
     }

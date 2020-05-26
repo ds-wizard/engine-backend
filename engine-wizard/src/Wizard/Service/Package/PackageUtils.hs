@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Data.List
 
 import LensesConfig
+import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Util.String (splitOn)
-import Wizard.Integration.Resource.Package.PackageSimpleIDTO
 import Wizard.Model.Package.PackageState
 
 compareVersionNeg :: String -> String -> Ordering
@@ -65,7 +65,7 @@ selectPackageByOrgIdAndKmId pkg =
 
 selectOrganizationByOrgId pkg = find (\org -> (org ^. organizationId) == (pkg ^. organizationId))
 
-computePackageState :: [PackageSimpleIDTO] -> Package -> PackageState
+computePackageState :: [PackageSimpleDTO] -> Package -> PackageState
 computePackageState pkgsFromRegistry pkg =
   case selectPackageByOrgIdAndKmId pkg pkgsFromRegistry of
     Just pkgFromRegistry ->
