@@ -13,7 +13,7 @@
 
 ### Requirements
 
- - **Stack** (recommended 2.1.3 or higher)
+ - **Stack** (recommended 2.3.1 or higher)
  - **MongoDB** (recommended 4.2.3 or higher)
  - **RabbitMQ** (recommended 3.8.2 or higher, optional)
  - **Hindent** (recommended 5.3.1 or higher, optional)

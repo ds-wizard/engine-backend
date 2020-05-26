@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [2.1.3]
+        stack: [2.3.1]
     
     env:
       COMPONENT: ${{ matrix.component }}
