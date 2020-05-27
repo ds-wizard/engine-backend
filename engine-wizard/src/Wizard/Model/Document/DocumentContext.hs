@@ -67,5 +67,6 @@ instance Eq DocumentContext where
 data DocumentContextConfig =
   DocumentContextConfig
     { _documentContextConfigLevelsEnabled :: Bool
+    , _documentContextConfigClientUrl :: String
     }
   deriving (Show, Eq, Generic)

@@ -10,6 +10,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
@@ -48,11 +49,15 @@ toDocumentContextDTO dc =
 
 toDocumentContextConfigDTO :: DocumentContextConfig -> DocumentContextConfigDTO
 toDocumentContextConfigDTO config =
-  DocumentContextConfigDTO {_documentContextConfigDTOLevelsEnabled = config ^. levelsEnabled}
+  DocumentContextConfigDTO
+    { _documentContextConfigDTOLevelsEnabled = config ^. levelsEnabled
+    , _documentContextConfigDTOClientUrl = config ^. clientUrl
+    }
 
 fromCreateContextDTO ::
      U.UUID
   -> AppConfig
+  -> ServerConfig
   -> Questionnaire
   -> Int
   -> KnowledgeModel
@@ -64,11 +69,14 @@ fromCreateContextDTO ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-fromCreateContextDTO dmpUuid appConfig qtn level km metrics ls report pkg org mCreatedBy now =
+fromCreateContextDTO dmpUuid appConfig serverConfig qtn level km metrics ls report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
-        DocumentContextConfig {_documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled}
+        DocumentContextConfig
+          { _documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled
+          , _documentContextConfigClientUrl = serverConfig ^. general . clientUrl
+          }
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
     , _documentContextQuestionnaireReplies = qtn ^. replies

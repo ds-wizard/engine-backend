@@ -56,7 +56,9 @@ dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
     { _documentContextUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
-    , _documentContextConfig = DocumentContextConfig {_documentContextConfigLevelsEnabled = True}
+    , _documentContextConfig =
+        DocumentContextConfig
+          {_documentContextConfigLevelsEnabled = True, _documentContextConfigClientUrl = "https://example.com"}
     , _documentContextQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
     , _documentContextQuestionnaireName = questionnaire1 ^. name
     , _documentContextQuestionnaireReplies = questionnaire1 ^. replies

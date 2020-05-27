@@ -2,7 +2,7 @@ module Wizard.Service.Document.DocumentContextService where
 
 import Control.Lens ((^.))
 import Control.Monad (forM)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -30,6 +30,7 @@ createDocumentContext qtnUuid = do
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) findUserById
   appConfig <- getAppConfig
+  serverConfig <- asks _appContextServerConfig
   let org = appConfig ^. organization
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
@@ -38,5 +39,5 @@ createDocumentContext qtnUuid = do
           then qtn ^. level
           else 9999
   report <- generateReport _level metrics km (qtn ^. replies)
-  let dmp = fromCreateContextDTO dmpUuid appConfig qtn _level km metrics ls report pkg org mCreatedBy now
+  let dmp = fromCreateContextDTO dmpUuid appConfig serverConfig qtn _level km metrics ls report pkg org mCreatedBy now
   return . toDocumentContextDTO $ dmp

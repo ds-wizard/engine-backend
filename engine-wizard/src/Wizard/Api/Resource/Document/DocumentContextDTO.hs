@@ -53,5 +53,6 @@ instance Eq DocumentContextDTO where
 data DocumentContextConfigDTO =
   DocumentContextConfigDTO
     { _documentContextConfigDTOLevelsEnabled :: Bool
+    , _documentContextConfigDTOClientUrl :: String
     }
   deriving (Show, Eq, Generic)
