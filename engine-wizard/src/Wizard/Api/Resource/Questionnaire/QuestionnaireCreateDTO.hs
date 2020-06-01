@@ -9,7 +9,7 @@ data QuestionnaireCreateDTO =
   QuestionnaireCreateDTO
     { _questionnaireCreateDTOName :: String
     , _questionnaireCreateDTOPackageId :: String
-    , _questionnaireCreateDTOAccessibility :: QuestionnaireAccessibility
+    , _questionnaireCreateDTOVisibility :: QuestionnaireVisibility
     , _questionnaireCreateDTOTagUuids :: [U.UUID]
     , _questionnaireCreateDTOTemplateUuid :: Maybe U.UUID
     }

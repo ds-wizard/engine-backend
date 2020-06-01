@@ -53,7 +53,7 @@ toClientConfigRegistryDTO serverConfig appConfig =
 toClientConfigQuestionnaireDTO :: AppConfigQuestionnaire -> ClientConfigQuestionnaireDTO
 toClientConfigQuestionnaireDTO appConfig =
   ClientConfigQuestionnaireDTO
-    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility = appConfig ^. questionnaireAccessibility
+    { _clientConfigQuestionnaireDTOQuestionnaireVisibility = appConfig ^. questionnaireVisibility
     , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }

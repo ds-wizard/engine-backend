@@ -7,7 +7,7 @@ import GHC.Generics
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-data QuestionnaireAccessibility
+data QuestionnaireVisibility
   = PublicQuestionnaire
   | PrivateQuestionnaire
   | PublicReadOnlyQuestionnaire
@@ -18,7 +18,7 @@ data Questionnaire =
     { _questionnaireUuid :: U.UUID
     , _questionnaireName :: String
     , _questionnaireLevel :: Int
-    , _questionnaireAccessibility :: QuestionnaireAccessibility
+    , _questionnaireVisibility :: QuestionnaireVisibility
     , _questionnairePackageId :: String
     , _questionnaireSelectedTagUuids :: [U.UUID]
     , _questionnaireTemplateUuid :: Maybe U.UUID
@@ -37,7 +37,7 @@ instance Eq Questionnaire where
     _questionnaireUuid a == _questionnaireUuid b &&
     _questionnaireName a == _questionnaireName b &&
     _questionnaireLevel a == _questionnaireLevel b &&
-    _questionnaireAccessibility a == _questionnaireAccessibility b &&
+    _questionnaireVisibility a == _questionnaireVisibility b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
     _questionnaireTemplateUuid a == _questionnaireTemplateUuid b &&

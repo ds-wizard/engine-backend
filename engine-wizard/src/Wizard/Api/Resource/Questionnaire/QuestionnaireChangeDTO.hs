@@ -10,7 +10,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 data QuestionnaireChangeDTO =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName :: String
-    , _questionnaireChangeDTOAccessibility :: QuestionnaireAccessibility
+    , _questionnaireChangeDTOVisibility :: QuestionnaireVisibility
     , _questionnaireChangeDTOLevel :: Int
     , _questionnaireChangeDTOReplies :: [ReplyDTO]
     , _questionnaireChangeDTOLabels :: [LabelDTO]

@@ -54,8 +54,7 @@ getQuestionnairesForCurrentUser = do
     else return $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
   where
     justOwnersAndPublicQuestionnaires currentUser questionnaire =
-      questionnaire ^. accessibility == PublicQuestionnaire || questionnaire ^. accessibility ==
-      PublicReadOnlyQuestionnaire ||
+      questionnaire ^. visibility == PublicQuestionnaire || questionnaire ^. visibility == PublicReadOnlyQuestionnaire ||
       (questionnaire ^? owner . _Just . uuid) ==
       (Just $ currentUser ^. uuid)
 
@@ -70,8 +69,8 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto = do
   package <- findPackageWithEventsById (reqDto ^. packageId)
   qtnState <- getQuestionnaireState (U.toString qtnUuid) (reqDto ^. packageId)
   now <- liftIO getCurrentTime
-  accessibility <- extractAccessibility reqDto
-  let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid accessibility (currentUser ^. uuid) now now
+  visibility <- extractVisibility reqDto
+  let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid visibility (currentUser ^. uuid) now now
   insertQuestionnaire qtn
   let mOwner =
         case qtn ^. ownerUuid of
@@ -86,7 +85,7 @@ cloneQuestionnaire cloneUuid = do
   newUuid <- liftIO generateUuid
   currentUser <- getCurrentUser
   let newOwnerUuid =
-        if qtnDto ^. accessibility == PublicQuestionnaire
+        if qtnDto ^. visibility == PublicQuestionnaire
           then Nothing
           else Just $ currentUser ^. uuid
   now <- liftIO getCurrentTime
@@ -114,7 +113,7 @@ getQuestionnaireById' qtnUuid = do
   mQtn <- findQuestionnaireById' qtnUuid
   case mQtn of
     Just qtn -> do
-      checkPermissionToQtn (qtn ^. accessibility) (qtn ^. ownerUuid)
+      checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
       package <- findPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       mOwner <-
@@ -127,7 +126,7 @@ getQuestionnaireById' qtnUuid = do
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  checkPermissionToQtn (qtn ^. accessibility) (qtn ^. ownerUuid)
+  checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
   package <- findPackageWithEventsById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (package ^. pId)
@@ -136,11 +135,11 @@ getQuestionnaireDetailById qtnUuid = do
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
   qtnDto <- getQuestionnaireDetailById qtnUuid
-  checkEditPermissionToQtn (qtnDto ^. accessibility) (qtnDto ^. ownerUuid)
+  checkEditPermissionToQtn (qtnDto ^. visibility) (qtnDto ^. ownerUuid)
   currentUser <- getCurrentUser
   now <- liftIO getCurrentTime
-  accessibility <- extractAccessibility reqDto
-  let updatedQtn = fromChangeDTO qtnDto reqDto accessibility (currentUser ^. uuid) now
+  visibility <- extractVisibility reqDto
+  let updatedQtn = fromChangeDTO qtnDto reqDto visibility (currentUser ^. uuid) now
   let pkgId = qtnDto ^. package . pId
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
@@ -151,7 +150,7 @@ deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
   qtn <- getQuestionnaireById qtnUuid
   validateQuestionnaireDeletation qtnUuid
-  checkEditPermissionToQtn (qtn ^. accessibility) (qtn ^? owner . _Just . uuid)
+  checkEditPermissionToQtn (qtn ^. visibility) (qtn ^? owner . _Just . uuid)
   deleteQuestionnaireById qtnUuid
   deleteMigratorStateByNewQuestionnaireId qtnUuid
   return ()
@@ -159,17 +158,17 @@ deleteQuestionnaire qtnUuid = do
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-extractAccessibility dto = do
+extractVisibility dto = do
   appConfig <- getAppConfig
-  if appConfig ^. questionnaire . questionnaireAccessibility . enabled
-    then return (dto ^. accessibility)
+  if appConfig ^. questionnaire . questionnaireVisibility . enabled
+    then return (dto ^. visibility)
     else return PrivateQuestionnaire
 
 -- -----------------------------------------------------
-checkPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
-checkPermissionToQtn accessibility mOwnerUuid = do
+checkPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
+checkPermissionToQtn visibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || accessibility ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || visibility ==
      PublicReadOnlyQuestionnaire ||
      mOwnerUuid ==
      (Just $ currentUser ^. uuid)
@@ -177,19 +176,19 @@ checkPermissionToQtn accessibility mOwnerUuid = do
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
 
 -- -----------------------------------------------------
-checkEditPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
-checkEditPermissionToQtn accessibility mOwnerUuid = do
+checkEditPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
+checkEditPermissionToQtn visibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || mOwnerUuid ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || mOwnerUuid ==
      (Just $ currentUser ^. uuid)
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 
 -- -----------------------------------------------------
-checkMigrationPermissionToQtn :: QuestionnaireAccessibility -> Maybe U.UUID -> AppContextM ()
-checkMigrationPermissionToQtn accessibility mOwnerUuid = do
+checkMigrationPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
+checkMigrationPermissionToQtn visibility mOwnerUuid = do
   currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || accessibility == PublicQuestionnaire || mOwnerUuid ==
+  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || mOwnerUuid ==
      (Just $ currentUser ^. uuid)
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"

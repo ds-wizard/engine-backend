@@ -1,10 +1,10 @@
-module Wizard.Database.BSON.Questionnaire.QuestionnaireAccessibility where
+module Wizard.Database.BSON.Questionnaire.QuestionnaireVisibility where
 
 import qualified Data.Bson as BSON
 
 import Wizard.Model.Questionnaire.Questionnaire
 
-instance BSON.Val QuestionnaireAccessibility where
+instance BSON.Val QuestionnaireVisibility where
   val PublicQuestionnaire = BSON.String "PublicQuestionnaire"
   val PrivateQuestionnaire = BSON.String "PrivateQuestionnaire"
   val PublicReadOnlyQuestionnaire = BSON.String "PublicReadOnlyQuestionnaire"

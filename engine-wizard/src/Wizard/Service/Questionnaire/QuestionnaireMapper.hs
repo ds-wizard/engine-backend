@@ -30,7 +30,7 @@ toDTO questionnaire package state mOwner =
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
     , _questionnaireDTOLevel = questionnaire ^. level
-    , _questionnaireDTOAccessibility = questionnaire ^. accessibility
+    , _questionnaireDTOVisibility = questionnaire ^. visibility
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO package
     , _questionnaireDTOOwner = mOwner
@@ -44,7 +44,7 @@ toSimpleDTO questionnaire package state mOwner =
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
     , _questionnaireDTOLevel = questionnaire ^. level
-    , _questionnaireDTOAccessibility = questionnaire ^. accessibility
+    , _questionnaireDTOVisibility = questionnaire ^. visibility
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDTOOwner = mOwner
@@ -78,7 +78,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
     , _questionnaireDetailDTOLevel = questionnaire ^. level
-    , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
+    , _questionnaireDetailDTOVisibility = questionnaire ^. visibility
     , _questionnaireDetailDTOState = state
     , _questionnaireDetailDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
@@ -100,7 +100,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
     , _questionnaireDetailDTOLevel = questionnaire ^. level
-    , _questionnaireDetailDTOAccessibility = questionnaire ^. accessibility
+    , _questionnaireDetailDTOVisibility = questionnaire ^. visibility
     , _questionnaireDetailDTOState = state
     , _questionnaireDetailDTOPackage = package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
@@ -135,13 +135,13 @@ fromLabelDTO :: LabelDTO -> Label
 fromLabelDTO label = Label {_labelPath = label ^. path, _labelValue = label ^. value}
 
 fromChangeDTO ::
-     QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> QuestionnaireAccessibility -> UUID -> UTCTime -> Questionnaire
-fromChangeDTO qtn dto accessibility currentUserUuid now =
+     QuestionnaireDetailDTO -> QuestionnaireChangeDTO -> QuestionnaireVisibility -> UUID -> UTCTime -> Questionnaire
+fromChangeDTO qtn dto visibility currentUserUuid now =
   Questionnaire
     { _questionnaireUuid = qtn ^. uuid
     , _questionnaireName = dto ^. name
     , _questionnaireLevel = dto ^. level
-    , _questionnaireAccessibility = accessibility
+    , _questionnaireVisibility = visibility
     , _questionnairePackageId = qtn ^. package . pId
     , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
     , _questionnaireTemplateUuid = dto ^. templateUuid
@@ -149,7 +149,7 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
     , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
     , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
     , _questionnaireOwnerUuid =
-        if accessibility /= PublicQuestionnaire
+        if visibility /= PublicQuestionnaire
           then Just currentUserUuid
           else Nothing
     , _questionnaireCreatorUuid = qtn ^. creatorUuid
@@ -158,13 +158,13 @@ fromChangeDTO qtn dto accessibility currentUserUuid now =
     }
 
 fromQuestionnaireCreateDTO ::
-     QuestionnaireCreateDTO -> UUID -> QuestionnaireAccessibility -> UUID -> UTCTime -> UTCTime -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedAt qtnUpdatedAt =
+     QuestionnaireCreateDTO -> UUID -> QuestionnaireVisibility -> UUID -> UTCTime -> UTCTime -> Questionnaire
+fromQuestionnaireCreateDTO dto qtnUuid visibility currentUserUuid qtnCreatedAt qtnUpdatedAt =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
     , _questionnaireLevel = 1
-    , _questionnaireAccessibility = accessibility
+    , _questionnaireVisibility = visibility
     , _questionnairePackageId = dto ^. packageId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateUuid = dto ^. templateUuid
@@ -172,7 +172,7 @@ fromQuestionnaireCreateDTO dto qtnUuid accessibility currentUserUuid qtnCreatedA
     , _questionnaireReplies = []
     , _questionnaireLabels = []
     , _questionnaireOwnerUuid =
-        if accessibility /= PublicQuestionnaire
+        if visibility /= PublicQuestionnaire
           then Just currentUserUuid
           else Nothing
     , _questionnaireCreatorUuid = Just currentUserUuid
@@ -186,7 +186,7 @@ fromDetailDTO dto =
     { _questionnaireUuid = dto ^. uuid
     , _questionnaireName = dto ^. name
     , _questionnaireLevel = dto ^. level
-    , _questionnaireAccessibility = dto ^. accessibility
+    , _questionnaireVisibility = dto ^. visibility
     , _questionnairePackageId = dto ^. package . pId
     , _questionnaireSelectedTagUuids = dto ^. selectedTagUuids
     , _questionnaireTemplateUuid = dto ^. templateUuid

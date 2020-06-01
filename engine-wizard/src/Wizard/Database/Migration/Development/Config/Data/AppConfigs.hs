@@ -133,7 +133,7 @@ defaultQuestionnaire =
   AppConfigQuestionnaire
     { _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
-    , _appConfigQuestionnaireQuestionnaireAccessibility = SimpleFeature True
+    , _appConfigQuestionnaireQuestionnaireVisibility = SimpleFeature True
     }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback

@@ -52,7 +52,7 @@ data ClientConfigRegistryDTO =
 
 data ClientConfigQuestionnaireDTO =
   ClientConfigQuestionnaireDTO
-    { _clientConfigQuestionnaireDTOQuestionnaireAccessibility :: SimpleFeature
+    { _clientConfigQuestionnaireDTOQuestionnaireVisibility :: SimpleFeature
     , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
     }

@@ -36,7 +36,7 @@ assertAbsenceOfQuestionnaireInDB appContext qtn = do
 compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
-  liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
+  liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
@@ -44,7 +44,7 @@ compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
   liftIO $ resDto ^. name `shouldBe` ("Copy of " ++ expDto ^. name)
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
-  liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
+  liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
@@ -52,7 +52,7 @@ compareQuestionnaireCloneDtos resDto expDto = do
 compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
-  liftIO $ resDto ^. accessibility `shouldBe` expDto ^. accessibility
+  liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^. selectedTagUuids `shouldBe` expDto ^. selectedTagUuids

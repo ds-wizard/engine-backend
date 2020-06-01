@@ -142,7 +142,7 @@ data AppConfigRegistry =
 
 data AppConfigQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireAccessibility :: SimpleFeature
+    { _appConfigQuestionnaireQuestionnaireVisibility :: SimpleFeature
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
     }

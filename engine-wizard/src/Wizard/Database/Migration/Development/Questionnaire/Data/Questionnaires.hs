@@ -29,7 +29,7 @@ questionnaire1 =
     { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
     , _questionnaireName = "My Private Questionnaire"
     , _questionnaireLevel = 1
-    , _questionnaireAccessibility = PrivateQuestionnaire
+    , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -48,7 +48,7 @@ questionnaire1Edited =
     { _questionnaireUuid = questionnaire1 ^. uuid
     , _questionnaireName = "EDITED" ++ (questionnaire1 ^. name)
     , _questionnaireLevel = 3
-    , _questionnaireAccessibility = PublicQuestionnaire
+    , _questionnaireVisibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire1 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -69,7 +69,7 @@ questionnaire1Create =
   QuestionnaireCreateDTO
     { _questionnaireCreateDTOName = questionnaire1 ^. name
     , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
-    , _questionnaireCreateDTOAccessibility = questionnaire1 ^. accessibility
+    , _questionnaireCreateDTOVisibility = questionnaire1 ^. visibility
     , _questionnaireCreateDTOTagUuids = []
     , _questionnaireCreateDTOTemplateUuid = questionnaire1 ^. templateUuid
     }
@@ -78,7 +78,7 @@ questionnaire1EditedChange :: QuestionnaireChangeDTO
 questionnaire1EditedChange =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = questionnaire1Edited ^. name
-    , _questionnaireChangeDTOAccessibility = questionnaire1Edited ^. accessibility
+    , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
     , _questionnaireChangeDTOLevel = 1
     , _questionnaireChangeDTOReplies =
         toReplyDTO <$>
@@ -108,7 +108,7 @@ questionnaire2 =
     { _questionnaireUuid = fromJust (U.fromString "d57520b4-5a70-4d40-8623-af2bfbbdfdfe")
     , _questionnaireName = "My PublicReadOnly Questionnaire"
     , _questionnaireLevel = questionnaire1 ^. level
-    , _questionnaireAccessibility = PublicReadOnlyQuestionnaire
+    , _questionnaireVisibility = PublicReadOnlyQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -127,7 +127,7 @@ questionnaire2Edited =
     { _questionnaireUuid = questionnaire2 ^. uuid
     , _questionnaireName = "EDITED" ++ (questionnaire2 ^. name)
     , _questionnaireLevel = 3
-    , _questionnaireAccessibility = PublicQuestionnaire
+    , _questionnaireVisibility = PublicQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -151,7 +151,7 @@ questionnaire3 =
     { _questionnaireUuid = fromJust (U.fromString "16530a07-e673-4ff3-ac1f-57250f2c1bfe")
     , _questionnaireName = "My Public Questionnaire"
     , _questionnaireLevel = questionnaire1 ^. level
-    , _questionnaireAccessibility = PublicQuestionnaire
+    , _questionnaireVisibility = PublicQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -170,7 +170,7 @@ questionnaire3Edited =
     { _questionnaireUuid = questionnaire3 ^. uuid
     , _questionnaireName = "EDITED" ++ (questionnaire3 ^. name)
     , _questionnaireLevel = 3
-    , _questionnaireAccessibility = PrivateQuestionnaire
+    , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -194,7 +194,7 @@ questionnaire4 =
     { _questionnaireUuid = fromJust (U.fromString "57250a07-a663-4ff3-ac1f-16530f2c1bfe")
     , _questionnaireName = "Outdated Questionnaire"
     , _questionnaireLevel = 2
-    , _questionnaireAccessibility = PrivateQuestionnaire
+    , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateUuid = Just $ commonWizardTemplate ^. uuid
@@ -208,11 +208,11 @@ questionnaire4 =
     }
 
 questionnaire4PublicReadOnly :: Questionnaire
-questionnaire4PublicReadOnly = questionnaire4 {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+questionnaire4PublicReadOnly = questionnaire4 {_questionnaireVisibility = PublicReadOnlyQuestionnaire}
 
 questionnaire4Public :: Questionnaire
 questionnaire4Public =
-  questionnaire4 {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+  questionnaire4 {_questionnaireVisibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
 
 questionnaire4Upgraded :: Questionnaire
 questionnaire4Upgraded =
@@ -222,12 +222,11 @@ questionnaire4Upgraded =
     }
 
 questionnaire4PublicReadOnlyUpgraded :: Questionnaire
-questionnaire4PublicReadOnlyUpgraded =
-  questionnaire4Upgraded {_questionnaireAccessibility = PublicReadOnlyQuestionnaire}
+questionnaire4PublicReadOnlyUpgraded = questionnaire4Upgraded {_questionnaireVisibility = PublicReadOnlyQuestionnaire}
 
 questionnaire4PublicUpgraded :: Questionnaire
 questionnaire4PublicUpgraded =
-  questionnaire4Upgraded {_questionnaireAccessibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
+  questionnaire4Upgraded {_questionnaireVisibility = PublicQuestionnaire, _questionnaireOwnerUuid = Nothing}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

@@ -5,9 +5,9 @@ import Data.Bson.Generic
 import Data.Maybe ()
 
 import Shared.Database.BSON.Common ()
-import Wizard.Database.BSON.Questionnaire.QuestionnaireAccessibility ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireLabel ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireReply ()
+import Wizard.Database.BSON.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Questionnaire.Questionnaire
 
 instance ToBSON Questionnaire where
@@ -15,7 +15,7 @@ instance ToBSON Questionnaire where
     [ "uuid" BSON.=: _questionnaireUuid
     , "name" BSON.=: _questionnaireName
     , "level" BSON.=: _questionnaireLevel
-    , "accessibility" BSON.=: _questionnaireAccessibility
+    , "visibility" BSON.=: _questionnaireVisibility
     , "packageId" BSON.=: _questionnairePackageId
     , "selectedTagUuids" BSON.=: _questionnaireSelectedTagUuids
     , "templateUuid" BSON.=: _questionnaireTemplateUuid
@@ -33,7 +33,7 @@ instance FromBSON Questionnaire where
     _questionnaireUuid <- BSON.lookup "uuid" doc
     _questionnaireName <- BSON.lookup "name" doc
     _questionnaireLevel <- BSON.lookup "level" doc
-    _questionnaireAccessibility <- BSON.lookup "accessibility" doc
+    _questionnaireVisibility <- BSON.lookup "visibility" doc
     _questionnairePackageId <- BSON.lookup "packageId" doc
     _questionnaireSelectedTagUuids <- BSON.lookup "selectedTagUuids" doc
     let _questionnaireTemplateUuid = BSON.lookup "templateUuid" doc
