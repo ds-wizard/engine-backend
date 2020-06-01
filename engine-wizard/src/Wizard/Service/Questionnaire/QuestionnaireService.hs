@@ -162,7 +162,7 @@ extractVisibility dto = do
   appConfig <- getAppConfig
   if appConfig ^. questionnaire . questionnaireVisibility . enabled
     then return (dto ^. visibility)
-    else return PrivateQuestionnaire
+    else return $ appConfig ^. questionnaire . questionnaireVisibility . defaultValue
 
 -- -----------------------------------------------------
 checkPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()

@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 
 data AppConfig =
@@ -142,9 +143,16 @@ data AppConfigRegistry =
 
 data AppConfigQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireVisibility :: SimpleFeature
+    { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigQuestionnaireVisibility =
+  AppConfigQuestionnaireVisibility
+    { _appConfigQuestionnaireVisibilityEnabled :: Bool
+    , _appConfigQuestionnaireVisibilityDefaultValue :: QuestionnaireVisibility
     }
   deriving (Generic, Eq, Show)
 

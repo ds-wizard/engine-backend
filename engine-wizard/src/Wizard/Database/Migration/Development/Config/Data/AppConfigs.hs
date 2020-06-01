@@ -11,6 +11,7 @@ import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 
 defaultSecret = "01234567890123456789012345678901"
@@ -131,9 +132,16 @@ defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfi
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireLevels = SimpleFeature True
+    { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
+    , _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
-    , _appConfigQuestionnaireQuestionnaireVisibility = SimpleFeature True
+    }
+
+defaultQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
+defaultQuestionnaireVisibility =
+  AppConfigQuestionnaireVisibility
+    { _appConfigQuestionnaireVisibilityEnabled = True
+    , _appConfigQuestionnaireVisibilityDefaultValue = PrivateQuestionnaire
     }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback

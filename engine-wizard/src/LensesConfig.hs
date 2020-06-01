@@ -154,6 +154,8 @@ makeFields ''AppConfigRegistry
 
 makeFields ''AppConfigQuestionnaire
 
+makeFields ''AppConfigQuestionnaireVisibility
+
 makeFields ''AppConfigQuestionnaireFeedback
 
 makeFields ''AppConfigTemplate
