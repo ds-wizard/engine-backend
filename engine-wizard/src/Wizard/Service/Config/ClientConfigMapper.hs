@@ -54,6 +54,7 @@ toClientConfigQuestionnaireDTO :: AppConfigQuestionnaire -> ClientConfigQuestion
 toClientConfigQuestionnaireDTO appConfig =
   ClientConfigQuestionnaireDTO
     { _clientConfigQuestionnaireDTOQuestionnaireVisibility = appConfig ^. questionnaireVisibility
+    , _clientConfigQuestionnaireDTOSummaryReport = appConfig ^. summaryReport
     , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }

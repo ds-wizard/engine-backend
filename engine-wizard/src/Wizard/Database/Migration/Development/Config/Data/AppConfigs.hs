@@ -133,6 +133,7 @@ defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
     { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
+    , _appConfigQuestionnaireSummaryReport = SimpleFeature True
     , _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
     }
