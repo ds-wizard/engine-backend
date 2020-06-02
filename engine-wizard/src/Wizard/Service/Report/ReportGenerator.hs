@@ -25,6 +25,13 @@ computeChapterReport levelsEnabled requiredLevel metrics km replies ch =
 
 computeTotalReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [Reply] -> TotalReport
 computeTotalReport levelsEnabled requiredLevel metrics km replies =
+  TotalReport
+    { _totalReportIndications = computeTotalReportIndications levelsEnabled requiredLevel km replies
+    , _totalReportMetrics = computeMetrics metrics km replies Nothing
+    }
+
+computeTotalReportIndications :: Bool -> Int -> KnowledgeModel -> [Reply] -> [Indication]
+computeTotalReportIndications levelsEnabled requiredLevel km replies =
   let chapterIndications = fmap (computeIndications levelsEnabled requiredLevel km replies) (getChaptersForKmUuid km)
       mergeIndications [LevelsAnsweredIndication' (LevelsAnsweredIndication a1 b1), AnsweredIndication' (AnsweredIndication c1 d1)] [LevelsAnsweredIndication' (LevelsAnsweredIndication a2 b2), AnsweredIndication' (AnsweredIndication c2 d2)] =
         [ LevelsAnsweredIndication' (LevelsAnsweredIndication (a1 + a2) (b1 + b2))
@@ -32,18 +39,12 @@ computeTotalReport levelsEnabled requiredLevel metrics km replies =
         ]
       mergeIndications [AnsweredIndication' (AnsweredIndication c1 d1)] [AnsweredIndication' (AnsweredIndication c2 d2)] =
         [AnsweredIndication' (AnsweredIndication (c1 + c2) (d1 + d2))]
-   in TotalReport
-        { _totalReportIndications =
-            if levelsEnabled
-              then foldl
-                     mergeIndications
-                     [ LevelsAnsweredIndication' (LevelsAnsweredIndication 0 0)
-                     , AnsweredIndication' (AnsweredIndication 0 0)
-                     ]
-                     chapterIndications
-              else foldl mergeIndications [AnsweredIndication' (AnsweredIndication 0 0)] chapterIndications
-        , _totalReportMetrics = computeMetrics metrics km replies Nothing
-        }
+   in if levelsEnabled
+        then foldl
+               mergeIndications
+               [LevelsAnsweredIndication' (LevelsAnsweredIndication 0 0), AnsweredIndication' (AnsweredIndication 0 0)]
+               chapterIndications
+        else foldl mergeIndications [AnsweredIndication' (AnsweredIndication 0 0)] chapterIndications
 
 generateReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> AppContextM Report
 generateReport requiredLevel metrics km replies = do

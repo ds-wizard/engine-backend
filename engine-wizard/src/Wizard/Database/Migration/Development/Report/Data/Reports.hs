@@ -8,6 +8,8 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
+import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Model.Report.Report
 
 report1 :: Report
@@ -217,5 +219,20 @@ report1_ch3_full_disabled_levels =
         , MetricSummary {_metricSummaryMetricUuid = metricR ^. uuid, _metricSummaryMeasure = Nothing}
         , MetricSummary {_metricSummaryMetricUuid = metricG ^. uuid, _metricSummaryMeasure = Nothing}
         , MetricSummary {_metricSummaryMetricUuid = metricO ^. uuid, _metricSummaryMeasure = Nothing}
+        ]
+    }
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaireReport :: QuestionnaireReportDTO
+questionnaireReport =
+  QuestionnaireReportDTO
+    { _questionnaireReportDTOIndications =
+        [ LevelsAnsweredIndicationDTO' $
+          LevelsAnsweredIndicationDTO
+            {_levelsAnsweredIndicationDTOAnsweredQuestions = 3, _levelsAnsweredIndicationDTOUnansweredQuestions = 1}
+        , AnsweredIndicationDTO' $
+          AnsweredIndicationDTO
+            {_answeredIndicationDTOAnsweredQuestions = 12, _answeredIndicationDTOUnansweredQuestions = 1}
         ]
     }

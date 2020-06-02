@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -18,6 +19,7 @@ data QuestionnaireDTO =
     , _questionnaireDTOState :: QuestionnaireState
     , _questionnaireDTOPackage :: PackageSimpleDTO
     , _questionnaireDTOOwner :: Maybe UserDTO
+    , _questionnaireDTOReport :: QuestionnaireReportDTO
     , _questionnaireDTOCreatedAt :: UTCTime
     , _questionnaireDTOUpdatedAt :: UTCTime
     }
@@ -30,4 +32,5 @@ instance Eq QuestionnaireDTO where
     _questionnaireDTOLevel a == _questionnaireDTOLevel b &&
     _questionnaireDTOVisibility a == _questionnaireDTOVisibility b &&
     _questionnaireDTOState a == _questionnaireDTOState b &&
-    _questionnaireDTOPackage a == _questionnaireDTOPackage b && _questionnaireDTOOwner a == _questionnaireDTOOwner b
+    _questionnaireDTOPackage a == _questionnaireDTOPackage b &&
+    _questionnaireDTOOwner a == _questionnaireDTOOwner b && _questionnaireDTOReport a == _questionnaireDTOReport b

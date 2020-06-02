@@ -14,6 +14,7 @@ import Shared.Model.Questionnaire.QuestionnaireUtil
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
@@ -62,7 +63,8 @@ questionnaire1Edited =
     }
 
 questionnaire1Dto :: QuestionnaireDTO
-questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
+questionnaire1Dto =
+  toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
@@ -141,7 +143,8 @@ questionnaire2Edited =
     }
 
 questionnaire2Dto :: QuestionnaireDTO
-questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert)
+questionnaire2Dto =
+  toSimpleDTO questionnaire2 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -184,7 +187,7 @@ questionnaire3Edited =
     }
 
 questionnaire3Dto :: QuestionnaireDTO
-questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing questionnaireReport
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

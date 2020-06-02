@@ -64,6 +64,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Report.ReportDTO
@@ -612,6 +613,8 @@ makeFields ''ReplyValueDTO
 makeFields ''IntegrationReplyValueDTO
 
 makeFields ''LabelDTO
+
+makeFields ''QuestionnaireReportDTO
 
 -- Api / Resource / Registry
 makeFields ''RegistryConfirmationDTO

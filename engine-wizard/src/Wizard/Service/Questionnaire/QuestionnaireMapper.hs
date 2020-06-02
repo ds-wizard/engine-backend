@@ -16,16 +16,19 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Model.Report.Report
 import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import qualified Wizard.Service.Package.PackageMapper as PM
+import Wizard.Service.Report.ReportMapper
 
-toDTO :: Questionnaire -> Package -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
-toDTO questionnaire package state mOwner =
+toDTO :: Questionnaire -> Package -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireReportDTO -> QuestionnaireDTO
+toDTO questionnaire package state mOwner report =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
@@ -34,12 +37,19 @@ toDTO questionnaire package state mOwner =
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO package
     , _questionnaireDTOOwner = mOwner
+    , _questionnaireDTOReport = report
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
 
-toSimpleDTO :: Questionnaire -> PackageWithEvents -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireDTO
-toSimpleDTO questionnaire package state mOwner =
+toSimpleDTO ::
+     Questionnaire
+  -> PackageWithEvents
+  -> QuestionnaireState
+  -> Maybe UserDTO
+  -> QuestionnaireReportDTO
+  -> QuestionnaireDTO
+toSimpleDTO questionnaire package state mOwner report =
   QuestionnaireDTO
     { _questionnaireDTOUuid = questionnaire ^. uuid
     , _questionnaireDTOName = questionnaire ^. name
@@ -48,6 +58,7 @@ toSimpleDTO questionnaire package state mOwner =
     , _questionnaireDTOState = state
     , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
     , _questionnaireDTOOwner = mOwner
+    , _questionnaireDTOReport = report
     , _questionnaireDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
@@ -114,6 +125,10 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
     }
+
+toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
+toQuestionnaireReportDTO indications =
+  QuestionnaireReportDTO {_questionnaireReportDTOIndications = fmap toIndicationDTO indications}
 
 fromReplyDTO :: ReplyDTO -> Reply
 fromReplyDTO reply = Reply {_replyPath = reply ^. path, _replyValue = fromReplyValueDTO $ reply ^. value}

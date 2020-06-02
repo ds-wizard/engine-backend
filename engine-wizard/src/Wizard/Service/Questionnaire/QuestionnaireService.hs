@@ -15,6 +15,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -28,6 +29,7 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireValidation
+import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.User.UserService
 
 getQuestionnaires :: AppContextM [QuestionnaireDTO]
@@ -43,7 +45,8 @@ getQuestionnaires = do
         case qtn ^. ownerUuid of
           Just uUuid -> Just <$> getUserById (U.toString uUuid)
           Nothing -> return Nothing
-      return $ toDTO qtn pkg state mOwner
+      report <- getQuestionnaireReport qtn
+      return $ toDTO qtn pkg state mOwner report
 
 getQuestionnairesForCurrentUser :: AppContextM [QuestionnaireDTO]
 getQuestionnairesForCurrentUser = do
@@ -76,7 +79,8 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto = do
         case qtn ^. ownerUuid of
           Just uUuid -> Just currentUser
           Nothing -> Nothing
-  return $ toSimpleDTO qtn package qtnState mOwner
+  report <- getQuestionnaireReport qtn
+  return $ toSimpleDTO qtn package qtnState mOwner report
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
@@ -95,11 +99,12 @@ cloneQuestionnaire cloneUuid = do
         originQtn
   insertQuestionnaire newQtn
   state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
+  report <- getQuestionnaireReport newQtn
   let mOwner =
         case newOwnerUuid of
           Just uUuid -> Just currentUser
           Nothing -> Nothing
-  return $ toSimpleDTO newQtn pkg state mOwner
+  return $ toSimpleDTO newQtn pkg state mOwner report
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -116,11 +121,12 @@ getQuestionnaireById' qtnUuid = do
       checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
       package <- findPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
+      report <- getQuestionnaireReport qtn
       mOwner <-
         case qtn ^. ownerUuid of
           Just uUuid -> Just <$> getUserById (U.toString uUuid)
           Nothing -> return Nothing
-      return . Just $ toDTO qtn package state mOwner
+      return . Just $ toDTO qtn package state mOwner report
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
@@ -204,3 +210,14 @@ getQuestionnaireState qtnUuid pkgId = do
       if null pkgs
         then return QSDefault
         else return QSOutdated
+
+-- -----------------------------------------------------
+getQuestionnaireReport :: Questionnaire -> AppContextM QuestionnaireReportDTO
+getQuestionnaireReport qtn = do
+  appConfig <- getAppConfig
+  let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
+  let _requiredLevel = qtn ^. level
+  let _replies = qtn ^. replies
+  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+  let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
+  return . toQuestionnaireReportDTO $ indications
