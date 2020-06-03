@@ -50,7 +50,7 @@ runInUnauthService function = do
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = serverConfig
+          { _appContextServerConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool
@@ -73,7 +73,7 @@ runInAuthService organization function = do
   dbPool <- asks _baseContextPool
   let appContext =
         AppContext
-          { _appContextApplicationConfig = serverConfig
+          { _appContextServerConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
           , _appContextPool = dbPool

@@ -34,8 +34,8 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 
 import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
-import Shared.Model.Error.Error
 import Shared.Model.Context.AppContextLenses
+import Shared.Model.Error.Error
 
 runDB :: (MonadReader s m, HasPool' s, MonadIO m) => Action IO b -> m b
 runDB action = do

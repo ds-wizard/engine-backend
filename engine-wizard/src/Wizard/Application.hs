@@ -38,7 +38,7 @@ runApplication = do
     hLoadConfig serverConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
         logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-        dbPool <- connectDB serverConfig
+        dbPool <- connectDB (serverConfig ^. database)
         msgChannel <- connectMQ serverConfig
         httpClientManager <- setupHttpClientManager serverConfig
         registryClient <- setupRegistryClient serverConfig httpClientManager

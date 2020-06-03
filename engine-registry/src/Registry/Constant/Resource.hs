@@ -1,8 +1,8 @@
 module Registry.Constant.Resource where
 
-applicationConfigFile = "engine-registry/config/application.yml"
+serverConfigFile = "engine-registry/config/application.yml"
 
-applicationConfigFileTest = "config/application-test.yml"
+serverConfigFileTest = "config/application-test.yml"
 
 buildInfoFile = "engine-registry/config/build-info.yml"
 

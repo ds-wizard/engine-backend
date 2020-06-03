@@ -34,12 +34,12 @@ startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
   let baseContext =
         BaseContext
-          { _baseContextServerConfig = appContext ^. applicationConfig
+          { _baseContextServerConfig = appContext ^. serverConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
           , _baseContextPool = appContext ^. pool
           }
-  let config = appContext ^. applicationConfig
+  let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
   return $ runMiddleware env $ runApp baseContext

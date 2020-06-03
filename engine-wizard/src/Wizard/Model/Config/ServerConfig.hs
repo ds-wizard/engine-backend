@@ -2,6 +2,7 @@ module Wizard.Model.Config.ServerConfig where
 
 import GHC.Generics
 import Shared.Model.Config.Environment
+import Shared.Model.Config.ServerConfig
 import Wizard.Model.User.User
 
 data ServerConfig =
@@ -32,17 +33,6 @@ data ServerConfigGeneral =
     }
   deriving (Generic, Show)
 
-data ServerConfigDatabase =
-  ServerConfigDatabase
-    { _serverConfigDatabaseHost :: String
-    , _serverConfigDatabaseDatabaseName :: String
-    , _serverConfigDatabasePort :: Integer
-    , _serverConfigDatabaseAuthEnabled :: Bool
-    , _serverConfigDatabaseUsername :: String
-    , _serverConfigDatabasePassword :: String
-    }
-  deriving (Generic, Show)
-
 data ServerConfigMessaging =
   ServerConfigMessaging
     { _serverConfigMessagingEnabled :: Bool
@@ -69,31 +59,10 @@ data ServerConfigRoles =
     }
   deriving (Generic, Show)
 
-data ServerConfigMail =
-  ServerConfigMail
-    { _serverConfigMailEnabled :: Bool
-    , _serverConfigMailName :: String
-    , _serverConfigMailEmail :: String
-    , _serverConfigMailHost :: String
-    , _serverConfigMailPort :: Int
-    , _serverConfigMailSsl :: Bool
-    , _serverConfigMailAuthEnabled :: Bool
-    , _serverConfigMailUsername :: String
-    , _serverConfigMailPassword :: String
-    }
-  deriving (Generic, Show)
-
 data ServerConfigRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl :: String
     , _serverConfigRegistryClientUrl :: String
-    }
-  deriving (Generic, Show)
-
-data ServerConfigAnalytics =
-  ServerConfigAnalytics
-    { _serverConfigAnalyticsEnabled :: Bool
-    , _serverConfigAnalyticsEmail :: String
     }
   deriving (Generic, Show)
 

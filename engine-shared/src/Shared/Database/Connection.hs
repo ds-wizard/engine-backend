@@ -1,4 +1,4 @@
-module Wizard.Database.Connection where
+module Shared.Database.Connection where
 
 import Control.Lens ((^.))
 import Data.Text
@@ -13,13 +13,12 @@ createDatabaseConnectionPool serverConfig = do
   verifyDatabaseConnectionPool dbPool
   return dbPool
   where
-    serverConfigDatabase = serverConfig ^. database
-    dbHost = serverConfigDatabase ^. host
-    dbPort = PortNumber (fromInteger (serverConfigDatabase ^. port) :: PortNumber) :: PortID
-    dbName = pack (serverConfigDatabase ^. databaseName)
+    dbHost = serverConfig ^. host
+    dbPort = PortNumber (fromInteger (serverConfig ^. port) :: PortNumber) :: PortID
+    dbName = pack (serverConfig ^. databaseName)
     dbCred =
-      if serverConfigDatabase ^. authEnabled
-        then Just $ MongoAuth (pack $ serverConfigDatabase ^. username) (pack $ serverConfigDatabase ^. password)
+      if serverConfig ^. authEnabled
+        then Just $ MongoAuth (pack $ serverConfig ^. username) (pack $ serverConfig ^. password)
         else Nothing
 
 verifyDatabaseConnectionPool dbPool = do

@@ -20,6 +20,7 @@ import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField

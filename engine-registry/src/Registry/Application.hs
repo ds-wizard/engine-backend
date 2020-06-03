@@ -27,10 +27,10 @@ runApplication = do
   runStdoutLoggingT $ do
     liftIO $ putStrLn asciiLogo
     logInfo _CMP_SERVER "started"
-    hLoadConfig applicationConfigFile getServerConfig $ \serverConfig ->
+    hLoadConfig serverConfigFile getServerConfig $ \serverConfig ->
       hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
         logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-        dbPool <- connectDB serverConfig
+        dbPool <- connectDB (serverConfig ^. database)
         localization <- loadLocalization serverConfig
         let baseContext =
               BaseContext

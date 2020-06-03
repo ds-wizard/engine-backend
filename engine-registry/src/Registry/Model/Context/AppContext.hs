@@ -16,7 +16,7 @@ import Shared.Model.Error.Error
 
 data AppContext =
   AppContext
-    { _appContextApplicationConfig :: ServerConfig
+    { _appContextServerConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
     , _appContextPool :: ConnectionPool

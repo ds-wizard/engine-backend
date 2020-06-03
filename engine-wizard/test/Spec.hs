@@ -8,9 +8,9 @@ import qualified Data.UUID as U
 import Test.Hspec
 
 import LensesConfig
+import Shared.Database.Connection
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Constant.Resource
-import Wizard.Database.Connection
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Integration.Http.Common.ServantClient
@@ -75,7 +75,7 @@ prepareWebApp runCallback =
   hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool serverConfig
+      dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
       msgChannel <- createMessagingChannel serverConfig
       putStrLn "MESSAGING: connected"

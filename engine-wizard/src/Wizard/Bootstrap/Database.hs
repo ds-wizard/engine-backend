@@ -2,9 +2,9 @@ module Wizard.Bootstrap.Database where
 
 import Control.Monad.Reader (liftIO)
 
+import Shared.Database.Connection
 import Wizard.Bootstrap.Retry
 import Wizard.Constant.Component
-import Wizard.Database.Connection
 import Wizard.Util.Logger
 
 connectDB serverConfig = do

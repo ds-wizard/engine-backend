@@ -54,7 +54,7 @@ createOrganization reqDto mCallbackUrl = do
   return . toDTO $ org
   where
     sendAnalyticsEmailIfEnabled org = do
-      serverConfig <- asks _appContextApplicationConfig
+      serverConfig <- asks _appContextServerConfig
       when (serverConfig ^. analytics . enabled) $ sendRegistrationCreatedAnalyticsMail (toDTO org)
 
 getOrganizationByOrgId :: String -> AppContextM OrganizationDTO

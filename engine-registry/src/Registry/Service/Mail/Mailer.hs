@@ -31,6 +31,7 @@ import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Constant.Component
 import Registry.Constant.Mailer
+import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Util.Logger
 import Registry.Util.Template (loadAndRender)
@@ -39,39 +40,38 @@ import Shared.Model.Error.Error
 
 sendRegistrationConfirmationMail :: OrganizationDTO -> String -> Maybe String -> AppContextM ()
 sendRegistrationConfirmationMail org hash mCallbackUrl = do
-  serverConfig <- asks _appContextApplicationConfig
-  let clientAddress = fromMaybe (serverConfig ^. general . clientUrl) mCallbackUrl
+  serverConfig <- asks _appContextServerConfig
+  let clientAddress = serverConfig ^. general . clientUrl
       activationLink =
         case mCallbackUrl of
           Just callbackUrl -> callbackUrl ++ "/registry/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
           Nothing -> clientAddress ++ "/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
-      mailName = fromMaybe "" $ serverConfig ^. mail . name
+      mailName = serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Confirmation Email"
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-      context = makeMailContext mailName clientAddress org additionals
+      context = makeMailContext serverConfig org additionals
       to = [org ^. email]
   composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
 sendRegistrationCreatedAnalyticsMail :: OrganizationDTO -> AppContextM ()
 sendRegistrationCreatedAnalyticsMail org = do
-  serverConfig <- asks _appContextApplicationConfig
-  let clientAddress = serverConfig ^. general . clientUrl
-      analyticsAddress = fromMaybe "" $ serverConfig ^. analytics . email
-      mailName = fromMaybe "" $ serverConfig ^. mail . name
+  serverConfig <- asks _appContextServerConfig
+  let analyticsAddress = serverConfig ^. analytics . email
+      mailName = serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": New organization"
-      context = makeMailContext mailName clientAddress org []
+      context = makeMailContext serverConfig org []
       to = [analyticsAddress]
   composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
 sendResetTokenMail :: OrganizationDTO -> String -> AppContextM ()
 sendResetTokenMail org hash = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let clientAddress = serverConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-token/" ++ (org ^. organizationId) ++ "/" ++ hash
-      mailName = fromMaybe "" $ serverConfig ^. mail . name
+      mailName = serverConfig ^. mail . name
       subject = TL.pack $ mailName ++ ": Reset token"
-      additionals = [("resetLink", (Aeson.String $ T.pack resetLink))]
-      context = makeMailContext mailName clientAddress org additionals
+      additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
+      context = makeMailContext serverConfig org additionals
       to = [org ^. email]
   composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
@@ -89,9 +89,9 @@ composeAndSendEmail to subject mailName context = do
 
 composeMail :: [String] -> TL.Text -> String -> MailContext -> AppContextM (Either String MIME.Mail)
 composeMail to subject mailName context = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let mailConfig = serverConfig ^. mail
-      addrFrom = MIME.Address (T.pack <$> mailConfig ^. name) (T.pack . fromMaybe "" $ mailConfig ^. email)
+      addrFrom = MIME.Address (Just . T.pack $ mailConfig ^. name) (T.pack $ mailConfig ^. email)
       addrsTo = map (MIME.Address Nothing . T.pack) to
       emptyMail = MIME.Mail addrFrom addrsTo [] [] [("Subject", TL.toStrict subject)] []
       mailFolder = (serverConfig ^. general . templateFolder) ++ _MAIL_TEMPLATE_ROOT
@@ -177,35 +177,33 @@ makePlainTextPart fn context =
     template <- loadAndRender fn context
     return $ MIME.plainPart . TL.fromStrict <$> template
 
-makeMailContext :: String -> String -> OrganizationDTO -> [(T.Text, Aeson.Value)] -> MailContext
-makeMailContext mailName clientAddress organization others =
+makeMailContext :: ServerConfig -> OrganizationDTO -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext serverConfig organization others =
   fromList $
-  [ ("mailName", Aeson.String $ T.pack mailName)
-  , ("clientAddress", Aeson.String $ T.pack clientAddress)
+  [ ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
+  , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
   , ("organization", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ organization)
   ] ++
   others
 
-makeConnection :: Integral i => Bool -> String -> Maybe i -> ((SMTP.SMTPConnection -> IO a) -> IO a)
-makeConnection False host Nothing = SMTP.doSMTP host
-makeConnection False host (Just port) = SMTP.doSMTPPort host (fromIntegral port)
-makeConnection True host Nothing = SMTPSSL.doSMTPSSL host
-makeConnection True host (Just port) = SMTPSSL.doSMTPSSLWithSettings host settings
+makeConnection :: Integral i => Bool -> String -> i -> ((SMTP.SMTPConnection -> IO a) -> IO a)
+makeConnection False host port = SMTP.doSMTPPort host (fromIntegral port)
+makeConnection True host port = SMTPSSL.doSMTPSSLWithSettings host settings
   where
     settings = SMTPSSL.defaultSettingsSMTPSSL {SMTPSSL.sslPort = fromIntegral port}
 
 sendEmail :: [String] -> MIME.Mail -> AppContextM ()
 sendEmail [] mailMessage = throwError . GeneralServerError $ _ERROR_SERVICE_MAIL__TRIED_SEND_TO_NOONE
 sendEmail to mailMessage = do
-  serverConfig <- asks _appContextApplicationConfig
+  serverConfig <- asks _appContextServerConfig
   let mailConfig = serverConfig ^. mail
-      from = fromMaybe "" $ mailConfig ^. email
-      mailHost = fromMaybe "" $ mailConfig ^. host
+      from = mailConfig ^. email
+      mailHost = mailConfig ^. host
       mailPort = mailConfig ^. port
-      mailSSL = fromMaybe False $ mailConfig ^. ssl
-      mailAuthEnabled = fromMaybe False $ mailConfig ^. authEnabled
-      mailUsername = fromMaybe "" $ mailConfig ^. username
-      mailPassword = fromMaybe "" $ mailConfig ^. password
+      mailSSL = mailConfig ^. ssl
+      mailAuthEnabled = mailConfig ^. authEnabled
+      mailUsername = mailConfig ^. username
+      mailPassword = mailConfig ^. password
       callback connection = do
         authSuccess <-
           if mailAuthEnabled

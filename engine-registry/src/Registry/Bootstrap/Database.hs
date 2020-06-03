@@ -4,8 +4,8 @@ import Control.Monad.Reader (liftIO)
 
 import Registry.Bootstrap.Retry
 import Registry.Constant.Component
-import Registry.Database.Connection
 import Registry.Util.Logger
+import Shared.Database.Connection
 
 connectDB serverConfig = do
   logInfo _CMP_DATABASE "connecting to the database"
