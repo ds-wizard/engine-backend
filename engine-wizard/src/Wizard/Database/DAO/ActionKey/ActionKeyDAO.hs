@@ -2,10 +2,11 @@ module Wizard.Database.DAO.ActionKey.ActionKeyDAO where
 
 import Data.Bson
 
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.ActionKey.ActionKey ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 
 entityName = "actionKey"
 

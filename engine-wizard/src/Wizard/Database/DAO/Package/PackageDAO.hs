@@ -3,12 +3,13 @@ module Wizard.Database.DAO.Package.PackageDAO where
 import Data.Bson
 import Database.MongoDB ((=:))
 
+import Shared.Database.DAO.Common
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Database.BSON.Package.Package ()
 import Wizard.Database.BSON.Package.PackageWithEvents ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 
 entityName = "package"
 

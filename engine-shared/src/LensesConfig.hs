@@ -14,6 +14,7 @@ import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Context.AppContext
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -32,6 +33,9 @@ import Shared.Model.PackageBundle.PackageBundle
 -- -------------------------------------
 -- Model
 -- -------------------------------------
+-- Model / Context
+makeFields ''AppContext
+
 -- Model / Event
 makeFields ''EventField
 

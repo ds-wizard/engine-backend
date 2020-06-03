@@ -5,8 +5,9 @@ import Database.MongoDB ((=:))
 
 import Registry.Database.BSON.Package.Package ()
 import Registry.Database.BSON.Package.PackageWithEvents ()
-import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.AppContextLenses ()
+import Shared.Database.DAO.Common
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 

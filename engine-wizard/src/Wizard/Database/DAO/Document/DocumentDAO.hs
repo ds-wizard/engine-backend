@@ -3,9 +3,10 @@ module Wizard.Database.DAO.Document.DocumentDAO where
 import Data.Bson hiding (Document)
 import qualified Data.ByteString as BS
 
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Document.Document ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 import Wizard.Model.Document.Document
 
 entityName = "document"

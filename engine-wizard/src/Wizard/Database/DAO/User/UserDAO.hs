@@ -6,9 +6,10 @@ import Data.Time
 import Database.MongoDB ((=:), modify, select)
 
 import LensesConfig
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.User.User ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 import Wizard.Model.User.User
 
 entityName = "user"

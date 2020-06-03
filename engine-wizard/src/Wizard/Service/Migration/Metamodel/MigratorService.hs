@@ -11,15 +11,16 @@ import Database.MongoDB ((=:), delete, find, insertMany, rest, select)
 
 import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Constant.KnowledgeModel
+import Shared.Database.DAO.Common
 import Wizard.Api.Resource.Branch.BranchWithEventsJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM ()
 import Wizard.Constant.Component
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Wizard.Database.BSON.Package.PackageWithEvents ()
-import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 import qualified Wizard.Service.Branch.BranchMapper as BranchMapper
 import qualified Wizard.Service.Migration.KnowledgeModel.MigratorMapper as KMMigratorMapper
 import qualified Wizard.Service.Migration.Metamodel.Migrator.BranchMigrator as BranchMigrator

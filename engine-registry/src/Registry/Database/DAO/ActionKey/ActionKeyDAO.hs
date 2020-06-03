@@ -3,9 +3,10 @@ module Registry.Database.DAO.ActionKey.ActionKeyDAO where
 import Data.Bson
 
 import Registry.Database.BSON.ActionKey.ActionKey ()
-import Registry.Database.DAO.Common
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.AppContextLenses ()
+import Shared.Database.DAO.Common
 
 entityName = "actionKey"
 

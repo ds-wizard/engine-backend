@@ -1,8 +1,10 @@
-module Wizard.Database.DAO.Common where
+module Shared.Database.DAO.Common where
 
+import Control.Lens ((^.))
 import Control.Monad (forM_)
 import Control.Monad.Except (liftEither, throwError)
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Reader (MonadReader, ask, liftIO)
 import Data.Bson
 import Data.Bson.Generic
 import qualified Data.ByteString.Char8 as BS
@@ -33,11 +35,12 @@ import Database.Persist.MongoDB (runMongoDBPoolDef)
 import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Model.Context.AppContext
+import Shared.Model.Context.AppContextLenses
 
-runDB :: Action IO b -> AppContextM b
+runDB :: (MonadReader s m, HasPool' s, MonadIO m) => Action IO b -> m b
 runDB action = do
-  dbPool <- asks _appContextPool
+  context <- ask
+  let dbPool = context ^. pool'
   liftIO $ runMongoDBPoolDef action dbPool
 
 deserializeEntities :: (FromBSON a) => [Document] -> Either AppError [a]

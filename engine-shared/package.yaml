@@ -29,6 +29,7 @@ library:
   - bson-generic
   - bytestring
   - case-insensitive
+  - conduit
   - containers
   - cryptonite
   - directory
@@ -36,7 +37,10 @@ library:
   - http-types
   - lens
   - memory
+  - mtl
   - monad-logger
+  - mongoDB
+  - persistent-mongoDB
   - random
   - servant-server
   - servant-multipart

@@ -5,11 +5,12 @@ import Data.Bson
 import Database.MongoDB ((=:))
 
 import LensesConfig
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Branch.Branch ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 
 entityName = "branch"
 

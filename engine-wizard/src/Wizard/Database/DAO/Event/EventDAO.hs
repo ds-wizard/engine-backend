@@ -7,11 +7,12 @@ import Shared.Database.BSON.Event.Expert ()
 import Shared.Database.BSON.Event.KnowledgeModel ()
 import Shared.Database.BSON.Event.Question ()
 import Shared.Database.BSON.Event.Reference ()
+import Shared.Database.DAO.Common
 import Shared.Model.Event.Event
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextLenses ()
 
 updateEventsInBranch :: String -> [Event] -> AppContextM ()
 updateEventsInBranch branchUuid events = do
