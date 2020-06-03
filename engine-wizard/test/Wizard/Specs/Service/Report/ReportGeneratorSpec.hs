@@ -31,7 +31,7 @@ createComputeChapterReportTest levelsEnabled number chapter expectation =
     let requiredLevel = 1
     let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     let km = km1WithQ4
-    let rs = questionnaire1 ^. replies
+    let rs = questionnaire1 ^. replies ++ [unused_rQ2_aYes_fuQ1_aYes_fuq2]
     -- WHEN:
     let result = computeChapterReport levelsEnabled requiredLevel metrics km rs chapter
     -- THEN
@@ -44,7 +44,7 @@ createComputeTotalReportTest levelsEnabled number expectation =
     let requiredLevel = 1
     let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     let km = km1WithQ4
-    let rs = questionnaire1 ^. replies
+    let rs = questionnaire1 ^. replies ++ [unused_rQ2_aYes_fuQ1_aYes_fuq2]
     -- WHEN:
     let result = computeTotalReport levelsEnabled requiredLevel metrics km rs
     -- THEN

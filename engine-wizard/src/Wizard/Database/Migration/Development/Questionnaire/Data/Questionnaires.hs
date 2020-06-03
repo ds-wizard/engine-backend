@@ -274,6 +274,21 @@ rQ2_aYes_fuQ1 =
     , _replyValue = AnswerReply $ q2_aYes_fuq1_answerNo ^. uuid
     }
 
+unused_rQ2_aYes_fuQ1_aYes_fuq2 :: Reply
+unused_rQ2_aYes_fuQ1_aYes_fuq2 =
+  Reply
+    { _replyPath =
+        createReplyKey
+          [ U.toString $ chapter1 ^. uuid
+          , U.toString $ question2 ^. uuid
+          , U.toString $ q2_answerYes ^. uuid
+          , U.toString $ q2_aYes_fuQuestion1 ^. uuid
+          , U.toString $ q2_aYes_fuq1_answerYes ^. uuid
+          , U.toString $ q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
+          ]
+    , _replyValue = AnswerReply $ q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid
+    }
+
 rQ3 :: Reply
 rQ3 =
   Reply

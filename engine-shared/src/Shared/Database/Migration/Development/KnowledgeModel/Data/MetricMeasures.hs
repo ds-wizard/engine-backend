@@ -18,6 +18,9 @@ metricMeasureA1 =
 metricMeasureI1 =
   MetricMeasure {_metricMeasureMetricUuid = metricI ^. uuid, _metricMeasureMeasure = 1.0, _metricMeasureWeight = 1.0}
 
+metricMeasureI0_5 =
+  MetricMeasure {_metricMeasureMetricUuid = metricI ^. uuid, _metricMeasureMeasure = 0.5, _metricMeasureWeight = 0.5}
+
 metricMeasureR1 =
   MetricMeasure {_metricMeasureMetricUuid = metricR ^. uuid, _metricMeasureMeasure = 1.0, _metricMeasureWeight = 1.0}
 

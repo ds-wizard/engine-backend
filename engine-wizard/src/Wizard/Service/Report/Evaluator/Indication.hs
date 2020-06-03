@@ -3,8 +3,6 @@ module Wizard.Service.Report.Evaluator.Indication
   ) where
 
 import Control.Lens ((^.))
-import qualified Data.List as L
-import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -13,6 +11,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
+import Wizard.Service.Report.Evaluator.Common
 import Wizard.Util.List (generateList)
 
 computeIndications :: Bool -> Int -> KnowledgeModel -> [Reply] -> Chapter -> [Indication]
@@ -57,7 +56,7 @@ evaluateQuestion found notFound qtnLevel km replies path q' =
       case q' of
         ValueQuestion' q -> rFound
         IntegrationQuestion' q -> rFound
-        OptionsQuestion' q -> rFound + (evaluateOptionsQuestion q found notFound qtnLevel km replies currentPath)
+        OptionsQuestion' q -> rFound + evaluateOptionsQuestion q found notFound qtnLevel km replies currentPath
         ListQuestion' q -> evaluateListQuestion found notFound qtnLevel km replies currentPath q
       where
         rFound = isRequiredNow (q' ^. requiredLevel') qtnLevel found
@@ -65,7 +64,7 @@ evaluateQuestion found notFound qtnLevel km replies path q' =
 evaluateOptionsQuestion :: OptionsQuestion -> Int -> Int -> Int -> KnowledgeModel -> [Reply] -> String -> Int
 evaluateOptionsQuestion q found notFound qtnLevel km replies path =
   case getReply replies path of
-    Just (Reply {_replyValue = AnswerReply {..}}) ->
+    Just Reply {_replyValue = AnswerReply {..}} ->
       let currentPath = composePathUuid path _answerReplyValue
           qs = getQuestionsForAnswerUuid km _answerReplyValue
        in sum . fmap (evaluateQuestion found notFound qtnLevel km replies currentPath) $ qs
@@ -76,34 +75,14 @@ evaluateListQuestion found notFound qtnLevel km replies currentPath q =
   let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q ^. uuid
       itemCount =
         case getReply replies currentPath of
-          Just (Reply {_replyValue = ItemListReply {..}}) -> _itemListReplyValue
+          Just Reply {_replyValue = ItemListReply {..}} -> _itemListReplyValue
           _ -> 0
       indexes = generateList itemCount
       evaluateQuestion' index =
-        fmap (evaluateQuestion found notFound qtnLevel km replies (composePath currentPath $ show index)) $ itemQs
+        fmap (evaluateQuestion found notFound qtnLevel km replies (composePath currentPath $ show index)) itemQs
       current =
         if itemCount > 0
           then isRequiredNow (q ^. requiredLevel) qtnLevel found
           else isRequiredNow (q ^. requiredLevel) qtnLevel notFound
-      childrens = sum . concat . fmap evaluateQuestion' $ indexes
+      childrens = sum . concatMap evaluateQuestion' $ indexes
    in current + childrens
-
--- ------------------------------------------------------------------------------------------------------------
--- ------------------------------------------------------------------------------------------------------------
-getReply :: [Reply] -> String -> Maybe Reply
-getReply replies p = L.find (\r -> r ^. path == p) replies
-
-isRequiredNow :: Maybe Int -> Int -> Int -> Int
-isRequiredNow mQLevel qtnLevel currentValue =
-  if qtnLevel == 9999
-    then currentValue
-    else let qLevel = fromMaybe 9999 mQLevel
-          in if qLevel <= qtnLevel
-               then currentValue
-               else 0
-
-composePath :: String -> String -> String
-composePath path element = path ++ "." ++ element
-
-composePathUuid :: String -> U.UUID -> String
-composePathUuid path uuid = composePath path (U.toString uuid)

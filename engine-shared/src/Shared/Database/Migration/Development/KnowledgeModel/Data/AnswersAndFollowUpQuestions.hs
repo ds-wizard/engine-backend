@@ -61,7 +61,7 @@ q2_aYes_fuq1_aYes_fuq2_answerNo =
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
     , _answerFollowUpUuids = []
-    , _answerMetricMeasures = []
+    , _answerMetricMeasures = [metricMeasureI0_5]
     }
 
 q2_answerYes :: Answer
