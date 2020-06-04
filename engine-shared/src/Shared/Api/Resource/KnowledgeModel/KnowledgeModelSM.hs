@@ -41,28 +41,28 @@ instance ToSchema QuestionDTO
 
 -- --------------------------------------------------------------------
 instance ToSchema OptionsQuestionDTO where
-  declareNamedSchema = simpleToSchema'' "questionType" "_optionsQuestionDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_optionsQuestionDTO" "questionType" (extract dto)
     where
       extract (OptionsQuestionDTO' e) = e
       dto = toQuestionDTO question2'
 
 -- --------------------------------------------------------------------
 instance ToSchema ListQuestionDTO where
-  declareNamedSchema = simpleToSchema'' "questionType" "_listQuestionDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_listQuestionDTO" "questionType" (extract dto)
     where
       extract (ListQuestionDTO' e) = e
       dto = toQuestionDTO question4'
 
 -- --------------------------------------------------------------------
 instance ToSchema ValueQuestionDTO where
-  declareNamedSchema = simpleToSchema'' "questionType" "_valueQuestionDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_valueQuestionDTO" "questionType" (extract dto)
     where
       extract (ValueQuestionDTO' e) = e
       dto = toQuestionDTO question1'
 
 -- --------------------------------------------------------------------
 instance ToSchema IntegrationQuestionDTO where
-  declareNamedSchema = simpleToSchema'' "questionType" "_integrationQuestionDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_integrationQuestionDTO" "questionType" (extract dto)
     where
       extract (IntegrationQuestionDTO' e) = e
       dto = toQuestionDTO question9'
@@ -83,21 +83,21 @@ instance ToSchema ReferenceDTO
 
 -- --------------------------------------------------------------------
 instance ToSchema ResourcePageReferenceDTO where
-  declareNamedSchema = simpleToSchema'' "referenceType" "_resourcePageReferenceDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_resourcePageReferenceDTO" "referenceType" (extract dto)
     where
       extract (ResourcePageReferenceDTO' e) = e
       dto = toReferenceDTO km1_ch1_q2_r1'
 
 -- --------------------------------------------------------------------
 instance ToSchema URLReferenceDTO where
-  declareNamedSchema = simpleToSchema'' "referenceType" "_uRLReferenceDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_uRLReferenceDTO" "referenceType" (extract dto)
     where
       extract (URLReferenceDTO' e) = e
       dto = toReferenceDTO km1_ch1_q2_r2'
 
 -- --------------------------------------------------------------------
 instance ToSchema CrossReferenceDTO where
-  declareNamedSchema = simpleToSchema'' "referenceType" "_crossReferenceDTO" (extract dto)
+  declareNamedSchema = simpleToSchema'' "_crossReferenceDTO" "referenceType" (extract dto)
     where
       extract (CrossReferenceDTO' e) = e
       dto = toReferenceDTO km1_ch1_q2_r3'

@@ -10,13 +10,13 @@ import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Template.Template
 
 instance ToSchema Template where
-  declareNamedSchema = simpleToSchema commonWizardTemplate
+  declareNamedSchema = simpleToSchema' "_template" commonWizardTemplate
 
 instance ToSchema TemplateAllowedPackage where
-  declareNamedSchema = simpleToSchema templateAllowedPackage
+  declareNamedSchema = simpleToSchema' "_templateAllowedPackage" templateAllowedPackage
 
 instance ToSchema TemplateFormat where
-  declareNamedSchema = simpleToSchema templateFormatJson
+  declareNamedSchema = simpleToSchema' "_templateFormat" templateFormatJson
 
 instance ToSchema TemplateDTO where
   declareNamedSchema = simpleToSchema commonWizardTemplate
