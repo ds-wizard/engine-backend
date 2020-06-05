@@ -120,7 +120,7 @@ questionnaire2 =
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
 
 questionnaire2Edited :: Questionnaire
@@ -164,7 +164,7 @@ questionnaire3 =
     , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Nothing
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
 
 questionnaire3Edited :: Questionnaire

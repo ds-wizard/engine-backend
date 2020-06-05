@@ -34,5 +34,4 @@ instance Eq UserDTO where
     _userDTOSources a == _userDTOSources b &&
     _userDTORole a == _userDTORole b &&
     _userDTOPermissions a == _userDTOPermissions b &&
-    _userDTOActive a == _userDTOActive b &&
-    _userDTOImageUrl a == _userDTOImageUrl b
+    _userDTOActive a == _userDTOActive b && _userDTOImageUrl a == _userDTOImageUrl b

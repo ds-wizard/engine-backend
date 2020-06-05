@@ -118,7 +118,7 @@ test_401 appContext =
 -- ----------------------------------------------------
 test_403 appContext = do
   createNoPermissionTest
-    (appContext ^. serverConfig)
+    appContext
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [reqCtHeader]

@@ -102,7 +102,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (encode $ re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
   it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
      -- GIVEN: Prepare request
    do

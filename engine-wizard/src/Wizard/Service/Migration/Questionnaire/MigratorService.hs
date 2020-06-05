@@ -16,6 +16,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.Questionnaire.Migrator.Sanitizator
 import Wizard.Service.Migration.Questionnaire.MigratorMapper
+import Wizard.Service.Questionnaire.QuestionnaireACL
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QM
 import Wizard.Service.Questionnaire.QuestionnaireService
 

@@ -2,7 +2,6 @@ module Wizard.Specs.API.Template.List_GET
   ( list_get
   ) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,7 +9,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Template.TemplateJM ()
@@ -67,5 +65,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "DMP_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "DMP_PERM"

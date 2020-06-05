@@ -24,6 +24,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 import Wizard.Bootstrap.Web
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -65,11 +66,14 @@ reqNonAdminAuthHeader =
   ( "Authorization"
   , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQ0OTk5ODQyMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSIsIlNVQk1fUEVSTSJdfQ.lraPu5hiBCBXRGBAAxHnUVXvhv0_EfKxicHBo6CXVlY")
 
-reqAuthHeaderWithoutPerms :: ServerConfig -> Permission -> Header
-reqAuthHeaderWithoutPerms serverConfig perm =
+userWithoutPerm :: ServerConfig -> Permission -> User
+userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
-      user = userAlbert & permissions .~ (L.delete perm allPerms)
-      now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+   in userAlbert & permissions .~ (L.delete perm allPerms)
+
+reqAuthHeaderWithoutPerms :: ServerConfig -> User -> Header
+reqAuthHeaderWithoutPerms serverConfig user =
+  let now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
       token = createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
    in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
@@ -156,11 +160,13 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNoPermissionTest serverConfig reqMethod reqUrl otherHeaders reqBody missingPerm =
+createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingPerm =
   it "HTTP 403 FORBIDDEN - no required permission" $
     -- GIVEN: Prepare request
    do
-    let authHeader = reqAuthHeaderWithoutPerms serverConfig missingPerm
+    let user = userWithoutPerm (appContext ^. serverConfig) missingPerm
+    runInContextIO (updateUserById user) appContext
+    let authHeader = reqAuthHeaderWithoutPerms (appContext ^. serverConfig) user
     let reqHeaders = [authHeader] ++ otherHeaders
     -- GIVEN: Prepare expectation
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)

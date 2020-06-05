@@ -2,14 +2,12 @@ module Wizard.Specs.API.User.Detail_DELETE
   ( detail_delete
   ) where
 
-import Control.Lens ((^.))
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
@@ -78,7 +76,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [] "" "UM_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "UM_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

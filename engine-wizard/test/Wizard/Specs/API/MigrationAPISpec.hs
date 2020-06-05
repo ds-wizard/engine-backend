@@ -71,7 +71,7 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [] reqBody
-        createNoPermissionTest serverCfg reqMethod reqUrl [] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest appContext reqMethod reqUrl [] reqBody "KM_UPGRADE_PERM"
         it "HTTP 404 NOT FOUND - migration doesn't exist" $
           -- GIVEN: Prepare expectation
          do
@@ -203,7 +203,7 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest serverCfg reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
         it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
           -- GIVEN: Prepare expectation
          do
@@ -258,7 +258,7 @@ migratorAPI appContext = do
            -- AND: Compare state in DB with expectation
           liftIO $ (isRight eitherMS) `shouldBe` False
         createAuthTest reqMethod reqUrl [] ""
-        createNoPermissionTest serverCfg reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
+        createNoPermissionTest appContext reqMethod reqUrl [] "" "KM_UPGRADE_PERM"
         createNotFoundTest reqMethod reqUrl reqHeaders reqBody "kmMigration" "6474b24b-262b-42b1-9451-008e8363f2b6"
        ------------------------------------------------------------------------
        -- POST /branches/{branchId}/migrations/current/conflict
@@ -369,4 +369,4 @@ migratorAPI appContext = do
                 ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
           response `shouldRespondWith` responseMatcher
         createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-        createNoPermissionTest serverCfg reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"
+        createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KM_UPGRADE_PERM"

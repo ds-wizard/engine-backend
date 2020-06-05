@@ -5,6 +5,9 @@ import Data.Bson
 
 import LensesConfig
 import Shared.Database.DAO.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Questionnaire.Questionnaire ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextLenses ()
@@ -16,6 +19,24 @@ collection = "questionnaires"
 
 findQuestionnaires :: AppContextM [Questionnaire]
 findQuestionnaires = createFindEntitiesFn collection
+
+findQuestionnairesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Questionnaire)
+findQuestionnairesPage mQuery = createFindEntitiesPageableQuerySortFn collection ["name" =: regex mQuery]
+
+findQuestionnairesForCurrentUserPage :: Maybe String -> String -> Pageable -> [Sort] -> AppContextM (Page Questionnaire)
+findQuestionnairesForCurrentUserPage mQuery ownerUuid =
+  createFindEntitiesPageableQuerySortFn
+    collection
+    [ "$and" =:
+      [ ["name" =: regex mQuery]
+      , [ "$or" =:
+          [ ["visibility" =: "PublicQuestionnaire"]
+          , ["visibility" =: "PublicReadOnlyQuestionnaire"]
+          , ["ownerUuid" =: ownerUuid]
+          ]
+        ]
+      ]
+    ]
 
 findQuestionnaireByPackageId :: String -> AppContextM [Questionnaire]
 findQuestionnaireByPackageId packageId = createFindEntitiesByFn collection ["packageId" =: packageId]
@@ -43,3 +64,6 @@ deleteQuestionnairesFiltered queryParams = createDeleteEntitiesByFn collection (
 
 deleteQuestionnaireById :: String -> AppContextM ()
 deleteQuestionnaireById = createDeleteEntityByFn collection "uuid"
+
+ensureQuestionnaireTextIndex :: AppContextM Document
+ensureQuestionnaireTextIndex = createEnsureTextIndex collection ["name"]

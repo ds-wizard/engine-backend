@@ -7,6 +7,7 @@ import Servant.Swagger
 import Servant.Swagger.UI
 
 import Registry.Api.Resource.Organization.OrganizationSM ()
+import Shared.Api.Resource.Common.PageMetadataSM ()
 import Shared.Api.Resource.Info.InfoSM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.Api.Resource.Multipart.MultiPartSM ()
@@ -19,6 +20,7 @@ import Wizard.Api.Resource.Branch.BranchCreateSM ()
 import Wizard.Api.Resource.Branch.BranchDetailSM ()
 import Wizard.Api.Resource.Branch.BranchSM ()
 import Wizard.Api.Resource.Branch.BranchStateSM ()
+import Wizard.Api.Resource.Common.PageSM ()
 import Wizard.Api.Resource.Config.AppConfigChangeSM ()
 import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigSM ()

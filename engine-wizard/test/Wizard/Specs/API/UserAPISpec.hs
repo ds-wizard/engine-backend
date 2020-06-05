@@ -55,7 +55,7 @@ userAPI appContext = do
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
     createAuthTest reqMethod reqUrl [] ""
-    createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
+    createNoPermissionTest appContext reqMethod reqUrl [] "" "UM_PERM"
   -- ------------------------------------------------------------------------
   -- POST /users
   -- ------------------------------------------------------------------------
@@ -147,7 +147,7 @@ userAPI appContext = do
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
     createAuthTest reqMethod reqUrl [] ""
-    createNoPermissionTest serverCfg reqMethod reqUrl [] "" "UM_PERM"
+    createNoPermissionTest appContext reqMethod reqUrl [] "" "UM_PERM"
     createNotFoundTest
       reqMethod
       "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
@@ -230,7 +230,7 @@ userAPI appContext = do
             ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
       response `shouldRespondWith` responseMatcher
     createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-    createNoPermissionTest serverCfg reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
+    createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "UM_PERM"
     createNotFoundTest
       reqMethod
       "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"

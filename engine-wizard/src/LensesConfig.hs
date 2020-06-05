@@ -19,6 +19,8 @@ import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
@@ -124,6 +126,11 @@ makeFields ''BookReference
 makeFields ''Branch
 
 makeFields ''BranchWithEvents
+
+-- Model / Common
+makeFields ''Page
+
+makeFields ''PageMetadata
 
 -- Model / Config
 makeFields ''AppConfig

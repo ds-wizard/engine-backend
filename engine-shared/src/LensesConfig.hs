@@ -14,6 +14,7 @@ import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Common.Pageable
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
 import Shared.Model.Event.Answer.AnswerEvent
@@ -34,6 +35,9 @@ import Shared.Model.PackageBundle.PackageBundle
 -- -------------------------------------
 -- Model
 -- -------------------------------------
+-- Model / Common
+makeFields ''Pageable
+
 -- Model / Config
 makeFields ''ServerConfigDatabase
 

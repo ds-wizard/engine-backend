@@ -14,7 +14,8 @@ import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
 import Database.MongoDB
-  ( (=:)
+  ( Query(..)
+  , (=:)
   , count
   , delete
   , deleteOne
@@ -25,15 +26,21 @@ import Database.MongoDB
   , merge
   , modify
   , rest
+  , runCommand
   , save
   , select
+  , sort
   )
 import Database.MongoDB.GridFS (deleteFile, fetchFile, findFile, openBucket, sinkFile, sourceFile)
 import Database.MongoDB.Query (Action)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
 
+import LensesConfig
 import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
+import Shared.Model.Common.Sort
 import Shared.Model.Context.AppContextLenses
 import Shared.Model.Error.Error
 
@@ -65,6 +72,30 @@ createFindEntitiesFn collection = do
   let action = rest =<< find (select [] collection)
   entitiesS <- runDB action
   liftEither . deserializeEntities $ entitiesS
+
+createFindEntitiesPageableQuerySortFn collection query pageable sort
+  -- 1. Prepare variables
+ = do
+  let sizeI = abs . fromMaybe 0 $ pageable ^. size
+  let pageI = abs . fromMaybe 0 $ pageable ^. page
+  let skip = fromIntegral $ pageI * sizeI
+  let limit = fromIntegral sizeI
+  -- 2. Get total count
+  let countFn = createCountQueryFn collection query
+  count <- countFn
+  -- 3. Get entities
+  let action = rest =<< find ((select query collection) {skip = skip, limit = limit, sort = mapSort sort})
+  entitiesS <- runDB action
+  entities <- liftEither . deserializeEntities $ entitiesS
+  -- 4. Constructor response
+  let metadata =
+        PageMetadata
+          { _pageMetadataSize = sizeI
+          , _pageMetadataTotalElements = count
+          , _pageMetadataTotalPages = computeTotalPage count sizeI
+          , _pageMetadataNumber = pageI
+          }
+  return $ Page (T.unpack collection) metadata entities
 
 createFindEntitiesByFn collection queryParams = do
   let action = rest =<< find (select queryParams collection)
@@ -133,6 +164,11 @@ createCountFn collection = do
   count <- runDB action
   liftEither . Right $ count
 
+createCountQueryFn collection query = do
+  let action = count $ select query collection
+  count <- runDB action
+  liftEither . Right $ count
+
 createFindFileFn bucketName fileName = do
   bucket <- runDB $ openBucket bucketName
   let action = fetchFile bucket ["filename" =: fileName]
@@ -163,11 +199,31 @@ createDeleteFileByFn bucketName paramValue = do
   file <- runDB action
   runDB $ deleteFile file
 
+createEnsureTextIndex collection indexes = do
+  let i = ["createIndexes" =: "questionnaires", "indexes" =: fmap (textIndex collection) indexes]
+  let action = runCommand i
+  runDB action
+
+textIndex collection field = ["key" =: [field =: "text"], "name" =: (T.append collection . T.append "_" $ field)]
+
+regex mQuery = ["$regex" =: ".*" ++ fromMaybe "" mQuery ++ ".*", "$options" =: "si"]
+
+mapSort :: [Sort] -> Document
+mapSort = foldl go []
+  where
+    go acc (Sort name Ascending) = acc ++ [T.pack name =: 1]
+    go acc (Sort name Descending) = acc ++ [T.pack name =: -1]
+
 mapToDBQueryParams :: Functor f => f (String, String) -> f Field
 mapToDBQueryParams = fmap go
   where
     go :: (String, String) -> Field
     go (p, v) = T.pack p =: v
+
+computeTotalPage :: Int -> Int -> Int
+computeTotalPage 0 0 = 0
+computeTotalPage _ 0 = 1
+computeTotalPage count size = ceiling $ fromIntegral count / fromIntegral size
 
 instance Val LT.Text where
   val = String . LT.toStrict

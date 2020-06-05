@@ -9,6 +9,9 @@ import Data.Typeable
 import GHC.Generics
 import Servant (Accept(..), MimeRender(..), MimeUnrender(..), OctetStream(..))
 
+import Shared.Model.Common.Sort
+import Shared.Util.String (splitOn)
+
 data ApplicationJavascript
   deriving (Typeable)
 
@@ -69,3 +72,12 @@ instance ToSchema FileStream where
 
 instance MimeRender OctetStream FileStream where
   mimeRender _ (FileStream content) = BSL.fromStrict content
+
+-- ------------------------------------------------------------------------
+parseSortQuery :: Maybe String -> [Sort]
+parseSortQuery Nothing = []
+parseSortQuery (Just query) =
+  case splitOn "," query of
+    [by, "asc"] -> [Sort {_sortBy = by, _sortDirection = Ascending}]
+    [by, "desc"] -> [Sort {_sortBy = by, _sortDirection = Descending}]
+    _ -> []

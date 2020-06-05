@@ -13,6 +13,7 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireService
+import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.Report.ReportMapper
 
