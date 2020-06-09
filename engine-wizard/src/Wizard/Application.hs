@@ -20,6 +20,7 @@ import Wizard.Bootstrap.Localization
 import Wizard.Bootstrap.Messaging
 import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
+import Wizard.Bootstrap.ServerCache
 import Wizard.Bootstrap.Web
 import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Component
@@ -43,6 +44,7 @@ runApplication = do
         httpClientManager <- setupHttpClientManager serverConfig
         registryClient <- setupRegistryClient serverConfig httpClientManager
         localization <- loadLocalization serverConfig
+        cache <- setupServerCache serverConfig
         let baseContext =
               BaseContext
                 { _baseContextServerConfig = serverConfig
@@ -53,6 +55,7 @@ runApplication = do
                 , _baseContextHttpClientManager = httpClientManager
                 , _baseContextRegistryClient = registryClient
                 , _baseContextShutdownFlag = shutdownFlag
+                , _baseContextCache = cache
                 }
         liftIO $ runDBMigrations baseContext
         liftIO $ runMetamodelMigrations baseContext

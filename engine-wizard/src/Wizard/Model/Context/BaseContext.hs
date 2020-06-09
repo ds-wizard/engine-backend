@@ -13,6 +13,7 @@ import Servant (ServerError)
 import Servant.Client (ClientEnv)
 
 import Shared.Model.Config.BuildInfoConfig
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 
 data BaseContext =
@@ -25,6 +26,7 @@ data BaseContext =
     , _baseContextHttpClientManager :: Manager
     , _baseContextRegistryClient :: ClientEnv
     , _baseContextShutdownFlag :: MVar ()
+    , _baseContextCache :: ServerCache
     }
 
 newtype BaseContextM a =

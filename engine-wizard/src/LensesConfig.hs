@@ -92,6 +92,7 @@ import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
@@ -126,6 +127,9 @@ makeFields ''BookReference
 makeFields ''Branch
 
 makeFields ''BranchWithEvents
+
+-- Model / Cache
+makeFields ''ServerCache
 
 -- Model / Common
 makeFields ''Page

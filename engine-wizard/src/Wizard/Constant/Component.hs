@@ -2,6 +2,8 @@ module Wizard.Constant.Component where
 
 _CMP_API = "API         "
 
+_CMP_CACHE = "Cache       "
+
 _CMP_CONFIG = "Config      "
 
 _CMP_DATABASE = "Database    "

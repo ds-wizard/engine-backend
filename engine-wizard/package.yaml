@@ -29,6 +29,7 @@ library:
   - bson
   - bson-generic
   - bytestring
+  - cache
   - case-insensitive
   - conduit
   - containers
@@ -122,6 +123,7 @@ tests:
     - bson
     - bson-generic
     - bytestring
+    - cache
     - case-insensitive
     - containers
     - data-default

@@ -10,6 +10,7 @@ import Test.Hspec
 import LensesConfig
 import Shared.Database.Connection
 import Shared.Service.Config.BuildInfoConfigService
+import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.HttpClientFactory
@@ -21,6 +22,7 @@ import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
+import Wizard.Specs.API.Cache.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.Feedback.APISpec
@@ -83,6 +85,8 @@ prepareWebApp runCallback =
       putStrLn "HTTP_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"
+      cache <- createServerCache
+      putStrLn "CACHE: created"
       shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
@@ -96,6 +100,7 @@ prepareWebApp runCallback =
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               , _appContextShutdownFlag = shutdownFlag
+              , _appContextCache = cache
               }
       runCallback appContext
 
@@ -131,6 +136,7 @@ main =
            describe "API" $ do
              bookReferenceAPI appContext
              branchAPI appContext
+             cacheAPI appContext
              configAPI appContext
              documentAPI appContext
              feedbackAPI appContext

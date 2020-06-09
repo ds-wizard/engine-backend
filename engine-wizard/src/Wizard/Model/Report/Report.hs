@@ -2,6 +2,7 @@ module Wizard.Model.Report.Report where
 
 import Data.Time
 import qualified Data.UUID as U
+import GHC.Generics
 
 data Report =
   Report
@@ -11,7 +12,7 @@ data Report =
     , _reportCreatedAt :: UTCTime
     , _reportUpdatedAt :: UTCTime
     }
-  deriving (Show)
+  deriving (Show, Generic)
 
 instance Eq Report where
   a == b =
@@ -23,7 +24,7 @@ data TotalReport =
     { _totalReportIndications :: [Indication]
     , _totalReportMetrics :: [MetricSummary]
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data ChapterReport =
   ChapterReport
@@ -31,30 +32,30 @@ data ChapterReport =
     , _chapterReportIndications :: [Indication]
     , _chapterReportMetrics :: [MetricSummary]
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data Indication
   = AnsweredIndication' AnsweredIndication
   | LevelsAnsweredIndication' LevelsAnsweredIndication
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data AnsweredIndication =
   AnsweredIndication
     { _answeredIndicationAnsweredQuestions :: Int
     , _answeredIndicationUnansweredQuestions :: Int
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data LevelsAnsweredIndication =
   LevelsAnsweredIndication
     { _levelsAnsweredIndicationAnsweredQuestions :: Int
     , _levelsAnsweredIndicationUnansweredQuestions :: Int
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)
 
 data MetricSummary =
   MetricSummary
     { _metricSummaryMetricUuid :: U.UUID
     , _metricSummaryMeasure :: Maybe Double
     }
-  deriving (Show, Eq)
+  deriving (Show, Eq, Generic)

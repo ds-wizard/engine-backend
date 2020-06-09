@@ -50,6 +50,7 @@ startWebApp appContext = do
           , _baseContextHttpClientManager = appContext ^. httpClientManager
           , _baseContextRegistryClient = appContext ^. registryClient
           , _baseContextShutdownFlag = shutdownFlag
+          , _baseContextCache = appContext ^. cache
           }
   let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort

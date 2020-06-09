@@ -89,7 +89,7 @@ getColor LevelWarn = Magenta
 getColor LevelError = Red
 
 showLogLevel :: LogLevel -> String
-showLogLevel LevelDebug = "Debug "
+showLogLevel LevelDebug = "Debug"
 showLogLevel LevelInfo = "Info "
 showLogLevel LevelWarn = "Warn "
 showLogLevel LevelError = "Error"

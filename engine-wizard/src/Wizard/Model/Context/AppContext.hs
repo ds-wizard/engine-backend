@@ -15,6 +15,7 @@ import Servant.Client (ClientEnv)
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.ServerConfig
 
 data AppContext =
@@ -29,6 +30,7 @@ data AppContext =
     , _appContextTraceUuid :: U.UUID
     , _appContextCurrentUser :: Maybe UserDTO
     , _appContextShutdownFlag :: MVar ()
+    , _appContextCache :: ServerCache
     }
 
 newtype AppContextM a =

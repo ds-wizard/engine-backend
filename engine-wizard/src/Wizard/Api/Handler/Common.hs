@@ -57,6 +57,7 @@ runInUnauthService function = do
   httpClientManager <- asks _baseContextHttpClientManager
   registryClient <- asks _baseContextRegistryClient
   shutdownFlag <- asks _baseContextShutdownFlag
+  cache <- asks _baseContextCache
   let appContext =
         AppContext
           { _appContextServerConfig = serverConfig
@@ -69,6 +70,7 @@ runInUnauthService function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Nothing
           , _appContextShutdownFlag = shutdownFlag
+          , _appContextCache = cache
           }
   eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
   case eResult of
@@ -88,6 +90,7 @@ runInAuthService user function = do
   httpClientManager <- asks _baseContextHttpClientManager
   registryClient <- asks _baseContextRegistryClient
   shutdownFlag <- asks _baseContextShutdownFlag
+  cache <- asks _baseContextCache
   let appContext =
         AppContext
           { _appContextServerConfig = serverConfig
@@ -100,6 +103,7 @@ runInAuthService user function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Just user
           , _appContextShutdownFlag = shutdownFlag
+          , _appContextCache = cache
           }
   eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
   case eResult of

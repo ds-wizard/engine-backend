@@ -11,6 +11,7 @@ import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Service.Cache.QuestionnaireReportCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
@@ -48,10 +49,15 @@ getQuestionnaireState qtnUuid pkgId = do
 
 getQuestionnaireReport :: Questionnaire -> AppContextM QuestionnaireReportDTO
 getQuestionnaireReport qtn = do
-  appConfig <- getAppConfig
-  let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
-  let _requiredLevel = qtn ^. level
-  let _replies = qtn ^. replies
-  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-  let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
-  return . toQuestionnaireReportDTO $ indications
+  mIndications <- getFromCache qtn
+  case mIndications of
+    Just indications -> return . toQuestionnaireReportDTO $ indications
+    Nothing -> do
+      appConfig <- getAppConfig
+      let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
+      let _requiredLevel = qtn ^. level
+      let _replies = qtn ^. replies
+      km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+      let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
+      addToCache qtn indications
+      return . toQuestionnaireReportDTO $ indications
