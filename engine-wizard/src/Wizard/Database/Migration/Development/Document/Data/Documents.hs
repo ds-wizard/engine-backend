@@ -11,8 +11,9 @@ import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Service.Package.PackageMapper
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Document.DocumentCreateDTO
+import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -21,6 +22,7 @@ import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
+import Wizard.Service.Document.DocumentMapper
 
 doc1 :: Document
 doc1 =
@@ -63,7 +65,7 @@ dmp1 =
     , _documentContextMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     , _documentContextLevels = [level1, level2, level3]
     , _documentContextReport = report1
-    , _documentContextPackage = toPackage germanyPackage
+    , _documentContextPackage = SPM.toPackage germanyPackage
     , _documentContextOrganization = defaultOrganization
     , _documentContextCreatedBy = Just userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -78,6 +80,9 @@ doc1Create =
     , _documentCreateDTOTemplateUuid = doc1 ^. templateUuid
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
+
+doc1Dto :: DocumentDTO
+doc1Dto = toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
 
 doc2 :: Document
 doc2 =

@@ -9,6 +9,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -49,15 +51,21 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 CREATED (Admin)"
     appContext
-    [ toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
-    , toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate
-    , toDTO doc3 (Just questionnaire2Dto) commonWizardTemplate
-    ]
+    (Page
+       "documents"
+       (PageMetadata 0 3 1 0)
+       [ toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
+       , toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate
+       , toDTO doc3 (Just questionnaire2Dto) commonWizardTemplate
+       ])
     reqAuthHeader
   create_test_200
     "HTTP 200 CREATED (Non-Admin)"
     appContext
-    [toDTO doc1 Nothing commonWizardTemplate, toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate]
+    (Page
+       "documents"
+       (PageMetadata 0 2 1 0)
+       [toDTO doc1 Nothing commonWizardTemplate, toDTO doc2 (Just questionnaire2Dto) commonWizardTemplate])
     reqNonAdminAuthHeader
 
 create_test_200 title appContext expDto authHeader =

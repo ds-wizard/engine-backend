@@ -23,7 +23,6 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.User.User
 import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.QuestionnaireACL
@@ -36,10 +35,7 @@ getQuestionnairesForCurrentUserPageDto :: Maybe String -> Pageable -> [Sort] -> 
 getQuestionnairesForCurrentUserPageDto mQuery pageable sort = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
-  qtnPage <-
-    if currentUser ^. role == _USER_ROLE_ADMIN
-      then findQuestionnairesPage mQuery pageable sort
-      else findQuestionnairesForCurrentUserPage mQuery (U.toString $ currentUser ^. uuid) pageable sort
+  qtnPage <- findQuestionnairesForCurrentUserPage mQuery pageable sort
   traverse enhanceQuestionnaire qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
