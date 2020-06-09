@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.DAO.Common
@@ -9,9 +10,12 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Questionnaire.Questionnaire ()
+import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.AppContextLenses ()
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.User.User
 
 entityName = "questionnaire"
 
@@ -20,23 +24,9 @@ collection = "questionnaires"
 findQuestionnaires :: AppContextM [Questionnaire]
 findQuestionnaires = createFindEntitiesFn collection
 
-findQuestionnairesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Questionnaire)
-findQuestionnairesPage mQuery = createFindEntitiesPageableQuerySortFn collection ["name" =: regex mQuery]
-
-findQuestionnairesForCurrentUserPage :: Maybe String -> String -> Pageable -> [Sort] -> AppContextM (Page Questionnaire)
-findQuestionnairesForCurrentUserPage mQuery ownerUuid =
-  createFindEntitiesPageableQuerySortFn
-    collection
-    [ "$and" =:
-      [ ["name" =: regex mQuery]
-      , [ "$or" =:
-          [ ["visibility" =: "PublicQuestionnaire"]
-          , ["visibility" =: "PublicReadOnlyQuestionnaire"]
-          , ["ownerUuid" =: ownerUuid]
-          ]
-        ]
-      ]
-    ]
+findQuestionnairesForCurrentUserPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Questionnaire)
+findQuestionnairesForCurrentUserPage mQuery pageable sort =
+  createFindEntitiesPageableQuerySortFn collection pageable sort =<< sel [regexSel "name" mQuery, qtnOwnerSel]
 
 findQuestionnaireByPackageId :: String -> AppContextM [Questionnaire]
 findQuestionnaireByPackageId packageId = createFindEntitiesByFn collection ["packageId" =: packageId]
@@ -67,3 +57,17 @@ deleteQuestionnaireById = createDeleteEntityByFn collection "uuid"
 
 ensureQuestionnaireTextIndex :: AppContextM Document
 ensureQuestionnaireTextIndex = createEnsureTextIndex collection ["name"]
+
+-- ---------------------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------------
+qtnOwnerSel = do
+  currentUser <- getCurrentUser
+  return $
+    if currentUser ^. role /= _USER_ROLE_ADMIN
+      then [ "$or" =:
+             [ ["visibility" =: "PublicQuestionnaire"]
+             , ["visibility" =: "PublicReadOnlyQuestionnaire"]
+             , ["ownerUuid" =: (U.toString $ currentUser ^. uuid)]
+             ]
+           ]
+      else []

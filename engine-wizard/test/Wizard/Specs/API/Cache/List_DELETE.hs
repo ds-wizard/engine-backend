@@ -21,7 +21,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /caches
 -- ------------------------------------------------------------------------
-list_delete :: AppContext -> SpecWith Application
+list_delete :: AppContext -> SpecWith ((), Application)
 list_delete appContext =
   describe "GET /caches" $ do
     test_204 appContext

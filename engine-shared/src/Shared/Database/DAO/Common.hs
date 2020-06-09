@@ -13,24 +13,7 @@ import qualified Data.Conduit.List as CL
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
-import Database.MongoDB
-  ( Query(..)
-  , (=:)
-  , count
-  , delete
-  , deleteOne
-  , fetch
-  , find
-  , findOne
-  , insert
-  , merge
-  , modify
-  , rest
-  , runCommand
-  , save
-  , select
-  , sort
-  )
+import Database.MongoDB (count, delete, deleteOne, fetch, find, findOne, insert, modify, rest, runCommand, save, select)
 import Database.MongoDB.GridFS (deleteFile, fetchFile, findFile, openBucket, sinkFile, sourceFile)
 import Database.MongoDB.Query (Action)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
@@ -73,7 +56,7 @@ createFindEntitiesFn collection = do
   entitiesS <- runDB action
   liftEither . deserializeEntities $ entitiesS
 
-createFindEntitiesPageableQuerySortFn collection query pageable sort
+createFindEntitiesPageableQuerySortFn collection pageable sort query
   -- 1. Prepare variables
  = do
   let sizeI = abs . fromMaybe 0 $ pageable ^. size
@@ -84,8 +67,17 @@ createFindEntitiesPageableQuerySortFn collection query pageable sort
   let countFn = createCountQueryFn collection query
   count <- countFn
   -- 3. Get entities
-  let action = rest =<< find ((select query collection) {skip = skip, limit = limit, sort = mapSort sort})
-  entitiesS <- runDB action
+  let i =
+        [ "find" =: collection
+        , "filter" =: query
+        , "skip" =: skip
+        , "limit" =: limit
+        , "sort" =: mapSort sort
+        , "collation" =: ["locale" =: "en"]
+        ]
+  let action = runCommand i
+  result <- runDB action
+  let entitiesS = fromJust . Data.Bson.lookup "firstBatch" . fromJust . Data.Bson.lookup "cursor" $ result
   entities <- liftEither . deserializeEntities $ entitiesS
   -- 4. Constructor response
   let metadata =
