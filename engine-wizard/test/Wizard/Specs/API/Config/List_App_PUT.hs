@@ -23,7 +23,7 @@ import Wizard.Specs.API.Config.Common
 -- ------------------------------------------------------------------------
 -- PUT /configs/app
 -- ------------------------------------------------------------------------
-list_app_PUT :: AppContext -> SpecWith Application
+list_app_PUT :: AppContext -> SpecWith ((), Application)
 list_app_PUT appContext =
   describe "PUT /configs/app" $ do
     test_200 appContext

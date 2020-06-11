@@ -2,7 +2,6 @@ module Wizard.Database.DAO.Branch.BranchDAO where
 
 import Control.Lens ((^.))
 import Data.Bson
-import Database.MongoDB ((=:))
 
 import LensesConfig
 import Shared.Database.DAO.Common

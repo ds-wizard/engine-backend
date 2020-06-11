@@ -9,7 +9,6 @@ import Control.Monad
 import qualified Data.Bson as BSON (lookup)
 import Data.Bson
 import Data.Char (toLower)
-import Data.Maybe (fromMaybe)
 import qualified Data.Text as TS (pack)
 import Data.Typeable
 import GHC.Generics

@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password?hash={hash}
 -- ------------------------------------------------------------------------
-detail_password_hash_put :: AppContext -> SpecWith Application
+detail_password_hash_put :: AppContext -> SpecWith ((), Application)
 detail_password_hash_put appContext =
   describe "PUT /users/{userId}/password?hash={hash}" $ do
     test_204 appContext

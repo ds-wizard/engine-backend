@@ -1,7 +1,6 @@
 module Wizard.Integration.Http.Registry.Runner where
 
 import Control.Lens ((^.))
-import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 import Servant

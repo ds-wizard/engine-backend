@@ -7,7 +7,6 @@ module Registry.Bootstrap.Web
 import Control.Lens ((^.))
 import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
-import Network.Wai (Application)
 import Network.Wai.Handler.Warp (run)
 import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Servant

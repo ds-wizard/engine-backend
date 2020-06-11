@@ -19,7 +19,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /configs/app
 -- ------------------------------------------------------------------------
-list_app_GET :: AppContext -> SpecWith Application
+list_app_GET :: AppContext -> SpecWith ((), Application)
 list_app_GET appContext =
   describe "GET /configs/app" $ do
     test_200 appContext

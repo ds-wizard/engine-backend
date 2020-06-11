@@ -1,6 +1,5 @@
 module Wizard.Model.Context.BaseContext where
 
-import Control.Applicative (Applicative)
 import Control.Concurrent.MVar (MVar)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)

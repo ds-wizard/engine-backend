@@ -11,7 +11,7 @@ module Wizard.Service.Package.PackageService
   , deletePackage
   ) where
 
-import Control.Lens ((^.), (^..), traverse)
+import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
 import Data.List (maximumBy)
 

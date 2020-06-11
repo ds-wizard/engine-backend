@@ -23,7 +23,7 @@ import Wizard.Specs.API.User.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password
 -- ------------------------------------------------------------------------
-detail_password_put :: AppContext -> SpecWith Application
+detail_password_put :: AppContext -> SpecWith ((), Application)
 detail_password_put appContext =
   describe "PUT /users/{userId}/password" $ do
     test_204 appContext

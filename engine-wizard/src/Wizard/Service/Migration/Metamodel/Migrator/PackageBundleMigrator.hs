@@ -7,7 +7,6 @@ import qualified Data.HashMap.Strict as HashMap
 import qualified Data.Vector as Vector
 
 import Shared.Model.Error.Error
-import Shared.Util.JSON (convertValueToOject, getArrayField)
 import Wizard.Service.Migration.Metamodel.Migrator.Common
 import qualified Wizard.Service.Migration.Metamodel.Migrator.PackageMigrator as PackageMigrator
 import Wizard.Util.List (foldEither)

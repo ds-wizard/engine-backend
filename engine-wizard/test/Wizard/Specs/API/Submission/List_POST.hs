@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /submissions
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /submissions" $ do
     test_201 appContext

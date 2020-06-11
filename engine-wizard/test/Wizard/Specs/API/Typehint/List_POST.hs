@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /typehints
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /typehints" $ do
     test_200 appContext

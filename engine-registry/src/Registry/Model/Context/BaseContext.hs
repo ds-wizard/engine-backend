@@ -1,6 +1,5 @@
 module Registry.Model.Context.BaseContext where
 
-import Control.Applicative (Applicative)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)

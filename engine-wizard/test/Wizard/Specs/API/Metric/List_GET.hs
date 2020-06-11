@@ -20,7 +20,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /metrics
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /metrics/" $ do
     test_200 appContext

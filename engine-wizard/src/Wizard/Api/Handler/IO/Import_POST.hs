@@ -1,6 +1,5 @@
 module Wizard.Api.Handler.IO.Import_POST where
 
-import Control.Monad.Except (throwError)
 import qualified Data.List as L
 import Servant
 import Servant.Multipart

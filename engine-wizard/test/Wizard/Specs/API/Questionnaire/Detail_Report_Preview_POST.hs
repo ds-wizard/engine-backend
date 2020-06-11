@@ -37,7 +37,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires/{qtnUuid}/report/preview
 -- ------------------------------------------------------------------------
-detail_report_preview_post :: AppContext -> SpecWith Application
+detail_report_preview_post :: AppContext -> SpecWith ((), Application)
 detail_report_preview_post appContext =
   describe "POST /questionnaires/{qtnUuid}/report/preview" $ do
     test_200 appContext

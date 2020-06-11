@@ -34,7 +34,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /packages
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /packages" $ do
     test_201_req_all_db_all appContext

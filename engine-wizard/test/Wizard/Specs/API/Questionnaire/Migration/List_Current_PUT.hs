@@ -30,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-list_current_PUT :: AppContext -> SpecWith Application
+list_current_PUT :: AppContext -> SpecWith ((), Application)
 list_current_PUT appContext =
   describe "PUT /questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext

@@ -1,7 +1,6 @@
 module Registry.Database.DAO.Package.PackageDAO where
 
 import Data.Bson
-import Database.MongoDB ((=:))
 
 import Registry.Database.BSON.Package.Package ()
 import Registry.Database.BSON.Package.PackageWithEvents ()

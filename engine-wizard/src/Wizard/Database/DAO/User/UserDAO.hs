@@ -3,7 +3,7 @@ module Wizard.Database.DAO.User.UserDAO where
 import Control.Lens ((^.))
 import Data.Bson
 import Data.Time
-import Database.MongoDB ((=:), modify, select)
+import Database.MongoDB (modify, select)
 
 import LensesConfig
 import Shared.Database.DAO.Common

@@ -24,7 +24,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /branches
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /branches" $ do
     test_200 appContext

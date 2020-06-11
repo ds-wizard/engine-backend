@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_pull_post :: AppContext -> SpecWith Application
+detail_pull_post :: AppContext -> SpecWith ((), Application)
 detail_pull_post appContext =
   describe "POST /packages/{pkgId}/pull" $ do
     test_200 appContext

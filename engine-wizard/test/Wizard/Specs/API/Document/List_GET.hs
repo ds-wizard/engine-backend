@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /documents
 -- ------------------------------------------------------------------------
-list_GET :: AppContext -> SpecWith Application
+list_GET :: AppContext -> SpecWith ((), Application)
 list_GET appContext =
   describe "GET /documents" $ do
     test_200 appContext

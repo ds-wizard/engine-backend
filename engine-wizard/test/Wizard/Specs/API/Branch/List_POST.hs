@@ -31,7 +31,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /branches
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /branches" $ do
     test_201 appContext

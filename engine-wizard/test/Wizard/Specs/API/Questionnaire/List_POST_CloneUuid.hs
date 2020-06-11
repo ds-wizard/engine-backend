@@ -31,7 +31,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires?cloneUuid={qtnUuid}
 -- ------------------------------------------------------------------------
-list_post_cloneUuid :: AppContext -> SpecWith Application
+list_post_cloneUuid :: AppContext -> SpecWith ((), Application)
 list_post_cloneUuid appContext =
   describe "POST /questionnaires?cloneUuid={qtnUuid}" $ do
     test_201 appContext

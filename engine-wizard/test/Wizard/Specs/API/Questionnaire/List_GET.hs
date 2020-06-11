@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /questionnaires
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /questionnaires" $ do
     test_200 appContext

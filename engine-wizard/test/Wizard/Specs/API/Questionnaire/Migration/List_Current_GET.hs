@@ -29,7 +29,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-list_current_GET :: AppContext -> SpecWith Application
+list_current_GET :: AppContext -> SpecWith ((), Application)
 list_current_GET appContext =
   describe "GET /questionnaires/{qtnUuid}/migrations/current" $ do
     test_200 appContext

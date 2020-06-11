@@ -25,7 +25,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /documents/{documentId}
 -- ------------------------------------------------------------------------
-detail_DELETE :: AppContext -> SpecWith Application
+detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
   describe "DELETE /documents/{documentId}" $ do
     test_204 appContext

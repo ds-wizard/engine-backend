@@ -24,7 +24,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /feedbacks
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /feedbacks" $ do
     test_200 appContext

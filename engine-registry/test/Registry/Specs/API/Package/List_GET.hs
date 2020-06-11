@@ -24,7 +24,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /packages
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext = describe "GET /packages" $ test_200 appContext
 
 -- ----------------------------------------------------

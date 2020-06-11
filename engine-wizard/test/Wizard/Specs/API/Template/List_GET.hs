@@ -23,7 +23,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /templates
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /templates" $ do
     test_200 appContext

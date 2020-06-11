@@ -23,7 +23,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /action-keys
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /action-keys" $ do
     test_201 appContext

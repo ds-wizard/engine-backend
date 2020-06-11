@@ -20,7 +20,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /configs/bootstrap
 -- ------------------------------------------------------------------------
-list_bootstrap_GET :: AppContext -> SpecWith Application
+list_bootstrap_GET :: AppContext -> SpecWith ((), Application)
 list_bootstrap_GET appContext = describe "GET /configs/bootstrap" $ test_200 appContext
 
 -- ----------------------------------------------------

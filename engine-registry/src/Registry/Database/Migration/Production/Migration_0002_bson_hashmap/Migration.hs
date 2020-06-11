@@ -2,7 +2,6 @@ module Registry.Database.Migration.Production.Migration_0002_bson_hashmap.Migrat
   ( definition
   ) where
 
-import Control.Applicative ((<*>))
 import Control.Monad
 import Control.Monad.Logger
 import Data.Bson.Generic

@@ -30,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith Application
+detail_delete :: AppContext -> SpecWith ((), Application)
 detail_delete appContext =
   describe "DELETE /packages/{pkgId}" $ do
     test_204 appContext

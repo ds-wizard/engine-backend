@@ -24,7 +24,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /tokens
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /tokens" $ do
     test_201 appContext

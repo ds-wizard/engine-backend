@@ -2,7 +2,6 @@ module Wizard.Database.Migration.Production.Migration_0019_bson_hashmap.Migratio
   ( definition
   ) where
 
-import Control.Applicative ((<*>))
 import Control.Monad
 import Control.Monad.Logger
 import Data.Bson.Generic

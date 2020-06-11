@@ -15,7 +15,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- DELETE /organizations/{orgId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith Application
+detail_delete :: AppContext -> SpecWith ((), Application)
 detail_delete appContext =
   describe "DELETE /organizations/{orgId}" $ do
     test_204 appContext

@@ -29,7 +29,7 @@ import SharedTest.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /organizations
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /organizations" $ do
     test_201 appContext

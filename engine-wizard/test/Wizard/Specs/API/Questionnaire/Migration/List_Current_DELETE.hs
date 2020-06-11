@@ -30,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-list_current_DELETE :: AppContext -> SpecWith Application
+list_current_DELETE :: AppContext -> SpecWith ((), Application)
 list_current_DELETE appContext =
   describe "DELETE /questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext

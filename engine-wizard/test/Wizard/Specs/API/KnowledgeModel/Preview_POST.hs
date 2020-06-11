@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /knowledge-models/preview
 -- ------------------------------------------------------------------------
-preview_post :: AppContext -> SpecWith Application
+preview_post :: AppContext -> SpecWith ((), Application)
 preview_post appContext =
   describe "POST /knowledge-models/preview" $ do
     test_200 appContext

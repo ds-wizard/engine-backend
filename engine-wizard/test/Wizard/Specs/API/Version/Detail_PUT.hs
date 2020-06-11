@@ -33,7 +33,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /branches/{branchUuid}/versions/{version}
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith Application
+detail_put :: AppContext -> SpecWith ((), Application)
 detail_put appContext =
   describe "PUT /branches/{branchUuid}/versions/{version}" $ do
     test_201 appContext

@@ -30,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires/{qtnUuid}/migrations/current/completion
 -- ------------------------------------------------------------------------
-list_current_completion_POST :: AppContext -> SpecWith Application
+list_current_completion_POST :: AppContext -> SpecWith ((), Application)
 list_current_completion_POST appContext =
   describe "POST /questionnaires/{qtnUuid}/migrations/current/completion" $ do
     test_204 appContext

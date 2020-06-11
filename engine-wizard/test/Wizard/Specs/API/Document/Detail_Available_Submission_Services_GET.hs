@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------------------
 -- GET /documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services
 -- ------------------------------------------------------------------------------------
-detail_available_submission_Services_GET :: AppContext -> SpecWith Application
+detail_available_submission_Services_GET :: AppContext -> SpecWith ((), Application)
 detail_available_submission_Services_GET appContext =
   describe "GET /documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services" $ do
     test_200 appContext

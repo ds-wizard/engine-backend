@@ -2,7 +2,6 @@ module Wizard.Integration.Http.Typehint.ResponseMapper
   ( toRetrieveTypehintsResponse
   ) where
 
-import Control.Applicative ((<*>))
 import Control.Lens ((^.))
 import Data.Aeson (Value)
 import qualified Data.ByteString.Lazy as BSL

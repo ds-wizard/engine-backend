@@ -20,7 +20,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /book-references/{brShortUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
+detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /book-references/{brShortUuid}" $ do
     test_200 appContext

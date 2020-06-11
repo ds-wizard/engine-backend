@@ -1,7 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET where
 
 import Control.Lens ((^.))
-import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U

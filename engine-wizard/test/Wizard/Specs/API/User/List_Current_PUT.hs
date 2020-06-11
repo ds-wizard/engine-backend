@@ -27,7 +27,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/current
 -- ------------------------------------------------------------------------
-list_current_PUT :: AppContext -> SpecWith Application
+list_current_PUT :: AppContext -> SpecWith ((), Application)
 list_current_PUT appContext =
   describe "PUT /users/current" $ do
     test_200 appContext

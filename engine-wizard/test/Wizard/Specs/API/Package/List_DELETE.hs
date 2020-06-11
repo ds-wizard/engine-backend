@@ -27,7 +27,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /packages
 -- ------------------------------------------------------------------------
-list_delete :: AppContext -> SpecWith Application
+list_delete :: AppContext -> SpecWith ((), Application)
 list_delete appContext =
   describe "DELETE /packages" $ do
     test_204 appContext

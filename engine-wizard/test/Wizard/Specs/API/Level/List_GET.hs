@@ -21,7 +21,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /levels
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /levels/" $ do
     test_200 appContext

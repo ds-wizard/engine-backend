@@ -19,7 +19,7 @@ import Registry.Specs.API.Organization.Common
 -- ------------------------------------------------------------------------
 -- GET /organizations
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /organizations" $ do
     test_200 appContext

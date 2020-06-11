@@ -1,7 +1,6 @@
 module Wizard.Database.DAO.Package.PackageDAO where
 
 import Data.Bson
-import Database.MongoDB ((=:))
 
 import Shared.Database.DAO.Common
 import Shared.Model.Package.Package

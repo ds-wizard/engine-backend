@@ -33,7 +33,7 @@ import SharedTest.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/state
 -- ------------------------------------------------------------------------
-detail_state_put :: AppContext -> SpecWith Application
+detail_state_put :: AppContext -> SpecWith ((), Application)
 detail_state_put appContext =
   describe "PUT /organizations/{orgId}/state" $ do
     test_200 appContext
