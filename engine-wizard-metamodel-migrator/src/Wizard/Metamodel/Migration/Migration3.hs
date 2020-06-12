@@ -6,7 +6,26 @@ import qualified Data.Map as M
 import qualified Data.UUID as U
 
 import qualified Wizard.Metamodel.Event.Version3 as V3
+import qualified Wizard.Metamodel.Event.Version3.Answer as V3
+import qualified Wizard.Metamodel.Event.Version3.Chapter as V3
+import qualified Wizard.Metamodel.Event.Version3.Common as V3
+import qualified Wizard.Metamodel.Event.Version3.Expert as V3
+import qualified Wizard.Metamodel.Event.Version3.Integration as V3
+import qualified Wizard.Metamodel.Event.Version3.KnowledgeModel as V3
+import qualified Wizard.Metamodel.Event.Version3.Question as V3
+import qualified Wizard.Metamodel.Event.Version3.Reference as V3
+import qualified Wizard.Metamodel.Event.Version3.Tag as V3
 import qualified Wizard.Metamodel.Event.Version4 as V4
+import qualified Wizard.Metamodel.Event.Version4.Answer as V4
+import qualified Wizard.Metamodel.Event.Version4.Chapter as V4
+import qualified Wizard.Metamodel.Event.Version4.Common as V4
+import qualified Wizard.Metamodel.Event.Version4.Expert as V4
+import qualified Wizard.Metamodel.Event.Version4.Integration as V4
+import qualified Wizard.Metamodel.Event.Version4.KnowledgeModel as V4
+import qualified Wizard.Metamodel.Event.Version4.Question as V4
+import qualified Wizard.Metamodel.Event.Version4.Reference as V4
+import qualified Wizard.Metamodel.Event.Version4.Tag as V4
+
 
 result2Either :: Result a -> Either String a
 result2Either (Error msg) = Left msg
