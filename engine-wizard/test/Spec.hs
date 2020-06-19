@@ -34,6 +34,7 @@ import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
 import Wizard.Specs.API.Submission.APISpec
+import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Template.APISpec
 import Wizard.Specs.API.Template.Asset.APISpec
 import Wizard.Specs.API.Template.File.APISpec
@@ -149,6 +150,7 @@ main =
              questionnaireAPI appContext
              questionnaireMigrationAPI appContext
              submissionAPI appContext
+             swaggerAPI appContext
              templateAPI appContext
              templateAssetAPI appContext
              templateFileAPI appContext
