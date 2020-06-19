@@ -8,6 +8,7 @@ import Data.Aeson.Lens (_String, key)
 import qualified Data.ByteString.Char8 as BS
 import Data.Char (toLower)
 import qualified Data.List as L
+import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
 import qualified Web.OIDC.Client as O
 import qualified Web.OIDC.Client.Tokens as OT
@@ -23,21 +24,21 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 
-createAuthenticationUrl :: String -> AppContextM ()
-createAuthenticationUrl authId = do
+createAuthenticationUrl :: String -> Maybe String -> AppContextM ()
+createAuthenticationUrl authId mClientUrl = do
   state <- liftIO $ generateRandomString 40
-  (service, openIDClient) <- createOpenIDClient authId
+  (service, openIDClient) <- createOpenIDClient authId mClientUrl
   let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
   loc <-
     liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
   throwError $ FoundError (show loc)
 
-loginUser :: String -> Maybe String -> Maybe String -> AppContextM TokenDTO
-loginUser authId mError mCode =
+loginUser :: String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
+loginUser authId mClientUrl mError mCode =
   case mCode of
     Just code -> do
       httpClientManager <- asks _appContextHttpClientManager
-      (_, openIDClient) <- createOpenIDClient authId
+      (_, openIDClient) <- createOpenIDClient authId mClientUrl
       tokens <-
         liftIO $ O.requestTokens openIDClient Nothing (BS.pack code) httpClientManager :: AppContextM (OT.Tokens Value)
       let claims = O.otherClaims . O.idToken $ tokens
@@ -55,8 +56,8 @@ loginUser authId mError mCode =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-createOpenIDClient :: String -> AppContextM (AppConfigAuthExternalService, O.OIDC)
-createOpenIDClient authId = do
+createOpenIDClient :: String -> Maybe String -> AppContextM (AppConfigAuthExternalService, O.OIDC)
+createOpenIDClient authId mClientUrl = do
   httpClientManager <- asks _appContextHttpClientManager
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
@@ -65,7 +66,8 @@ createOpenIDClient authId = do
       prov <- liftIO $ O.discover (T.pack $ service ^. url) httpClientManager
       let cId = BS.pack $ service ^. clientId
       let cSecret = BS.pack $ service ^. clientSecret
-      let redirectUrl = BS.pack $ serverConfig ^. general . clientUrl ++ "/auth/" ++ authId ++ "/callback"
+      let clientCallbackUrl = fromMaybe (serverConfig ^. general . clientUrl) mClientUrl
+      let redirectUrl = BS.pack $ clientCallbackUrl ++ "/auth/" ++ authId ++ "/callback"
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)
       return (service, openIDClient)
     Nothing -> throwError . UserError $ _ERROR_SERVICE_AUTH__SERVICE_NOT_DEFINED authId
