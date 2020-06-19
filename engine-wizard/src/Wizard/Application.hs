@@ -2,11 +2,9 @@ module Wizard.Application
   ( runApplication
   ) where
 
+import Control.Concurrent
 import Control.Concurrent.Async
-import Control.Concurrent.MVar
 import Control.Lens ((^.))
-import Control.Monad (forever)
-import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO)
 import System.IO
 
@@ -22,6 +20,7 @@ import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
 import Wizard.Bootstrap.ServerCache
 import Wizard.Bootstrap.Web
+import Wizard.Bootstrap.Worker
 import Wizard.Constant.ASCIIArt
 import Wizard.Constant.Component
 import Wizard.Constant.Resource
@@ -32,7 +31,7 @@ import Wizard.Util.Logger
 runApplication :: IO ()
 runApplication = do
   hSetBuffering stdout LineBuffering
-  forever . runStdoutLoggingT $ do
+  runLogging $ do
     shutdownFlag <- liftIO newEmptyMVar
     liftIO $ putStrLn asciiLogo
     logInfo _CMP_SERVER "started"
@@ -54,9 +53,10 @@ runApplication = do
                 , _baseContextMsgChannel = msgChannel
                 , _baseContextHttpClientManager = httpClientManager
                 , _baseContextRegistryClient = registryClient
-                , _baseContextShutdownFlag = shutdownFlag
                 , _baseContextCache = cache
                 }
         liftIO $ runDBMigrations baseContext
         liftIO $ runMetamodelMigrations baseContext
-        liftIO $ race_ (takeMVar shutdownFlag) (runWebServer baseContext)
+        liftIO $
+          race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (cronJob shutdownFlag baseContext))
+        return ()

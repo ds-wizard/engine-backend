@@ -1,6 +1,5 @@
 module Wizard.Specs.API.Common where
 
-import Control.Concurrent.MVar
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (eitherDecode, encode)
 import qualified Data.ByteString.Char8 as BS
@@ -20,7 +19,6 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
 import Wizard.Bootstrap.Web
@@ -39,7 +37,6 @@ import Wizard.Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
-  shutdownFlag <- liftIO newEmptyMVar
   let baseContext =
         BaseContext
           { _baseContextServerConfig = appContext ^. serverConfig
@@ -49,7 +46,6 @@ startWebApp appContext = do
           , _baseContextMsgChannel = appContext ^. msgChannel
           , _baseContextHttpClientManager = appContext ^. httpClientManager
           , _baseContextRegistryClient = appContext ^. registryClient
-          , _baseContextShutdownFlag = shutdownFlag
           , _baseContextCache = appContext ^. cache
           }
   let config = appContext ^. serverConfig
@@ -70,7 +66,7 @@ reqNonAdminAuthHeader =
 userWithoutPerm :: ServerConfig -> Permission -> User
 userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
-   in userAlbert & permissions .~ (L.delete perm allPerms)
+   in userAlbert & permissions .~ L.delete perm allPerms
 
 reqAuthHeaderWithoutPerms :: ServerConfig -> User -> Header
 reqAuthHeaderWithoutPerms serverConfig user =
@@ -108,15 +104,14 @@ resCorsHeaders =
   , "Access-Control-Allow-Methods" <:> "OPTIONS, HEAD, GET, POST, PUT, DELETE"
   ]
 
-shouldRespondWith r matcher = do
-  forM_ (match r matcher) (liftIO . expectationFailure)
+shouldRespondWith r matcher = forM_ (match r matcher) (liftIO . expectationFailure)
 
 createInvalidJsonTest reqMethod reqUrl reqBody missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
     let reqHeaders = [reqAuthHeader, reqCtHeader]
       -- GIVEN: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeaderUtf8] ++ resCorsHeaders
+    let expHeaders = resCtHeaderUtf8 : resCorsHeaders
     let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call API
@@ -131,7 +126,7 @@ createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
     let reqHeaders = [reqAuthHeader, reqCtHeader]
       -- GIVEN: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
     let expBody = encode expDto
       -- WHEN: Call APIA
@@ -152,7 +147,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
       message: "Unable to get token"
     }
     |]
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expStatus = 401
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -168,11 +163,11 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
     let user = userWithoutPerm (appContext ^. serverConfig) missingPerm
     runInContextIO (updateUserById user) appContext
     let authHeader = reqAuthHeaderWithoutPerms (appContext ^. serverConfig) user
-    let reqHeaders = [authHeader] ++ otherHeaders
+    let reqHeaders = authHeader : otherHeaders
     -- GIVEN: Prepare expectation
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
     let expBody = encode expDto
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expStatus = 403
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -186,7 +181,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator 
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
     let expBody = encode expDto
       -- WHEN: Call APIA
@@ -207,18 +202,18 @@ destructResponse response =
 
 assertCountInDB dbFunction appContext count = do
   eitherList <- runInContextIO dbFunction appContext
-  liftIO $ (isRight eitherList) `shouldBe` True
+  liftIO $ isRight eitherList `shouldBe` True
   let (Right list) = eitherList
-  liftIO $ (L.length list) `shouldBe` count
+  liftIO $ L.length list `shouldBe` count
 
 getFirstFromDB dbFunction appContext = do
   eitherList <- runInContextIO dbFunction appContext
-  liftIO $ (isRight eitherList) `shouldBe` True
+  liftIO $ isRight eitherList `shouldBe` True
   let (Right list) = eitherList
-  return $ list !! 0
+  return . head $ list
 
 getOneFromDB dbFunction appContext = do
   eitherOne <- runInContextIO dbFunction appContext
-  liftIO $ (isRight eitherOne) `shouldBe` True
+  liftIO $ isRight eitherOne `shouldBe` True
   let (Right one) = eitherOne
   return one

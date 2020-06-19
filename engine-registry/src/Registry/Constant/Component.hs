@@ -2,6 +2,8 @@ module Registry.Constant.Component where
 
 _CMP_API = "API         "
 
+_CMP_CACHE = "Cache       "
+
 _CMP_CONFIG = "Config      "
 
 _CMP_DATABASE = "Database    "
@@ -23,3 +25,5 @@ _CMP_MIGRATION = "Migration   "
 _CMP_SERVER = "Server      "
 
 _CMP_SERVICE = "Service     "
+
+_CMP_WORKER = "Worker      "

@@ -25,3 +25,5 @@ _CMP_MIGRATION = "Migration   "
 _CMP_SERVER = "Server      "
 
 _CMP_SERVICE = "Service     "
+
+_CMP_WORKER = "Worker      "

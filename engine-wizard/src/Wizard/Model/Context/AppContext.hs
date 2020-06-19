@@ -1,6 +1,5 @@
 module Wizard.Model.Context.AppContext where
 
-import Control.Concurrent.MVar (MVar)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
@@ -29,7 +28,6 @@ data AppContext =
     , _appContextRegistryClient :: ClientEnv
     , _appContextTraceUuid :: U.UUID
     , _appContextCurrentUser :: Maybe UserDTO
-    , _appContextShutdownFlag :: MVar ()
     , _appContextCache :: ServerCache
     }
 

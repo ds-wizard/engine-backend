@@ -24,7 +24,6 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Nothing
-          , _appContextShutdownFlag = baseContext ^. shutdownFlag
           , _appContextCache = baseContext ^. cache
           }
   _ <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext

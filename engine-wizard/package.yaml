@@ -33,6 +33,7 @@ library:
   - case-insensitive
   - conduit
   - containers
+  - cron
   - data-default
   - directory
   - engine-wizard-metamodel-migrator
@@ -82,6 +83,7 @@ library:
   - text-replace
   - time
   - transformers
+  - unix
   - unordered-containers
   - uri-encode
   - uuid

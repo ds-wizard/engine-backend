@@ -9,11 +9,13 @@ module Wizard.Util.Logger
   , logErrorU
   , createLogRecord
   , showLogLevel
+  , runLogging
   , LogLevel(..)
   , module Wizard.Constant.Component
   ) where
 
-import Control.Monad.Logger (LogLevel(..), MonadLogger, logWithoutLoc)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Logger (LogLevel(..), LoggingT(..), MonadLogger, logWithoutLoc, runStdoutLoggingT)
 import Control.Monad.Reader (MonadReader, asks)
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
@@ -51,6 +53,10 @@ logWarnU = logU LevelWarn
 
 logErrorU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m ()
 logErrorU = logU LevelError
+
+-- ---------------------------------------------------------------------------
+runLogging :: MonadIO m => LoggingT m a -> m a
+runLogging = runStdoutLoggingT
 
 -- ---------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------

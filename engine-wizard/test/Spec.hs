@@ -1,6 +1,5 @@
 module Main where
 
-import Control.Concurrent.MVar
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
@@ -87,7 +86,6 @@ prepareWebApp runCallback =
       putStrLn "REGISTRY_CLIENT: created"
       cache <- createServerCache
       putStrLn "CACHE: created"
-      shutdownFlag <- newEmptyMVar
       let appContext =
             AppContext
               { _appContextServerConfig = serverConfig
@@ -99,7 +97,6 @@ prepareWebApp runCallback =
               , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
-              , _appContextShutdownFlag = shutdownFlag
               , _appContextCache = cache
               }
       runCallback appContext
