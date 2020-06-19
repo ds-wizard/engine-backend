@@ -24,7 +24,7 @@ import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Package.PackageUtils
+import Wizard.Util.IdentifierUtil
 
 validatePackageIdFormat :: String -> AppContextM ()
 validatePackageIdFormat pkgId =

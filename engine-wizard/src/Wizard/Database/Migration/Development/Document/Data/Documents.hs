@@ -11,6 +11,7 @@ import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.Template.Data.Templates
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -18,7 +19,6 @@ import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
@@ -33,7 +33,7 @@ doc1 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire1 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
@@ -79,7 +79,7 @@ doc1Create =
   DocumentCreateDTO
     { _documentCreateDTOName = doc1 ^. name
     , _documentCreateDTOQuestionnaireUuid = doc1 ^. questionnaireUuid
-    , _documentCreateDTOTemplateUuid = doc1 ^. templateUuid
+    , _documentCreateDTOTemplateId = doc1 ^. templateId
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
 
@@ -95,7 +95,7 @@ doc2 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
@@ -113,7 +113,7 @@ doc3 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata

@@ -23,7 +23,7 @@ assertExistenceOfDocumentInDB appContext reqDto = do
   docFromDb <- getFirstFromDB findDocuments appContext
   liftIO $ (docFromDb ^. name) `shouldBe` (reqDto ^. name)
   liftIO $ (docFromDb ^. questionnaireUuid) `shouldBe` (reqDto ^. questionnaireUuid)
-  liftIO $ (docFromDb ^. templateUuid) `shouldBe` (reqDto ^. templateUuid)
+  liftIO $ (docFromDb ^. templateId) `shouldBe` (reqDto ^. templateId)
   liftIO $ (docFromDb ^. formatUuid) `shouldBe` (reqDto ^. formatUuid)
 
 assertAbsenceOfDocumentInDB appContext doc = do
@@ -39,5 +39,5 @@ assertAbsenceOfDocumentInDB appContext doc = do
 compareDocumentDtos resDto expDto = do
   liftIO $ (resDto ^. name) `shouldBe` (expDto ^. name)
   liftIO $ (fromJust (resDto ^. questionnaire) ^. uuid) `shouldBe` (expDto ^. questionnaireUuid)
-  liftIO $ (resDto ^. template . uuid) `shouldBe` (expDto ^. templateUuid)
+  liftIO $ (resDto ^. template . tId) `shouldBe` (expDto ^. templateId)
   liftIO $ (resDto ^. formatUuid) `shouldBe` (expDto ^. formatUuid)

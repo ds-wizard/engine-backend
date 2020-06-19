@@ -41,6 +41,7 @@ userAlbert =
         , "DMP_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
+        , "TML_PERM"
         ]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="

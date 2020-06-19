@@ -18,6 +18,7 @@ import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.Organization.APISpec
 import Registry.Specs.API.Package.APISpec
+import Registry.Specs.API.Template.APISpec
 import Registry.Specs.Service.Organization.OrganizationValidationSpec
 import Registry.Specs.Service.Package.PackageValidationSpec
 import Registry.TestMigration
@@ -62,4 +63,5 @@ main =
            actionKeyAPI appContext
            infoAPI appContext
            organizationAPI appContext
-           packageAPI appContext)
+           packageAPI appContext
+           templateAPI appContext)

@@ -44,6 +44,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Model.Template.Template
 
 -- -------------------------------------
 -- Model
@@ -206,6 +207,17 @@ makeFields ''PackageBundle
 
 -- Model / Statistics
 makeFields ''InstanceStatistics
+
+-- Model / Template
+makeFields ''Template
+
+makeFields ''TemplateAllowedPackage
+
+makeFields ''TemplateFormat
+
+makeFields ''TemplateFile
+
+makeFields ''TemplateAsset
 
 -- -------------------------------------
 -- Api / Resource

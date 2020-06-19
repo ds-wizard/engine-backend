@@ -10,4 +10,4 @@ buildInfoConfigFileTest = "config/build-info-test.yml"
 
 localizationFile = "engine-wizard/config/localization.json"
 
-documentTemplatesFolder = "/dmp"
+documentTemplatesFolder = "src/Wizard/Database/Migration/Production/Migration_0038_template_management/Data"

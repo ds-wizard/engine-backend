@@ -17,8 +17,5 @@ type List_GET
 
 list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateDTO])
 list_GET mTokenHeader mPkgId =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "DMP_PERM"
-      getTemplatesDto mPkgId
+  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $ addTraceUuidHeader =<< getTemplatesDto mPkgId

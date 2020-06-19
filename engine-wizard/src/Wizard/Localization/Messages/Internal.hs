@@ -5,7 +5,7 @@ module Wizard.Localization.Messages.Internal where
 -- --------------------------------------
 -- Common
 _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR statusCode =
-  "Integration Service returned an error (statusCode: " ++ (show statusCode) ++ ")"
+  "Integration Service returned an error (statusCode: " ++ show statusCode ++ ")"
 
 -- Response Mappers (Response deserialization problem = RDF)
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY a =
@@ -60,6 +60,8 @@ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_TOKEN_EXPIRATION = "Unable to get token expi
 _ERROR_SERVICE_TOKEN__TOKEN_IS_EXPIRED = "Token is expired"
 
 _ERROR_SERVICE_TOKEN__UNKNOWN_TECHNICAL_DIFFICULTIES = "Unknown technical difficulties"
+
+_ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN' = "Unable to get or verify service token"
 
 -- User
 _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT = "The activation email could not be sent. Please contact administrator."

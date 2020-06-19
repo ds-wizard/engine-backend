@@ -6,8 +6,8 @@ import Shared.Model.Error.Error
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
+import Wizard.Util.IdentifierUtil
 
 validateMigrationUniqueness :: String -> AppContextM ()
 validateMigrationUniqueness bUuid = do

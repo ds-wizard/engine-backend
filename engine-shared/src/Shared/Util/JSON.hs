@@ -40,6 +40,7 @@ jsonSpecialFields "dId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
 jsonSpecialFields "sId" = "id"
+jsonSpecialFields "tId" = "id"
 jsonSpecialFields field = field
 
 stripDTOSuffix :: String -> String

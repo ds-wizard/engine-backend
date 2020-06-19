@@ -64,3 +64,13 @@ retrievePackageBundleById pkgId = do
            (toRetrievePackageBundleByIdRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) pkgId)
            toRetrievePackageBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+
+retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
+retrieveTemplateBundleById tmlId = do
+  serverConfig <- asks _appContextServerConfig
+  appConfig <- getAppConfig
+  if appConfig ^. knowledgeModelRegistry . enabled
+    then runRequest
+           (toRetrieveTemplateBundleByIdRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) tmlId)
+           toRetrieveTemplateBundleByIdResponse
+    else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"

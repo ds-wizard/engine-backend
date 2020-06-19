@@ -5,11 +5,11 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Model.Document.Document
-import Wizard.Model.Template.Template
 
 toDTO :: Document -> Maybe QuestionnaireDTO -> Template -> DocumentDTO
 toDTO doc mQtn tml =
@@ -33,7 +33,7 @@ fromCreateDTO dto uuid durability repliesHash currentUserUuid now =
     , _documentDurability = durability
     , _documentQuestionnaireUuid = dto ^. questionnaireUuid
     , _documentQuestionnaireRepliesHash = repliesHash
-    , _documentTemplateUuid = dto ^. templateUuid
+    , _documentTemplateId = dto ^. templateId
     , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
     , _documentOwnerUuid = currentUserUuid

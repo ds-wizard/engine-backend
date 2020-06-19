@@ -140,6 +140,25 @@ _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
     "Questionnaire can't be deleted because it's used in some questionnaire migration"
     []
 
+-- Template Bundle
+_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
+  LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
+
+_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON =
+  LocaleRecord
+    "error.service.tb.missing_template_json"
+    "Desired definition ('template.json') wasn't found in archive"
+    []
+
+_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON errorMessage =
+  LocaleRecord
+    "error.service.tb.unable_to_decode_template_json"
+    "Desired definition ('template.json') couldn't be decoded (error: '%s')"
+    [errorMessage]
+
+_ERROR_SERVICE_TB__MISSING_ASSET fileName =
+  LocaleRecord "error.service.tb.missing_asset" "Desired asset ('%s') wasn't found in zip" [fileName]
+
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =
   LocaleRecord "error.service.token.Incorrect_email_or_password" "Incorrect email or password" []

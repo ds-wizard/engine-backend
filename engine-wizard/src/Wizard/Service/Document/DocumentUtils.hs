@@ -14,6 +14,6 @@ import Wizard.Service.Template.TemplateService
 
 enhanceDocument :: Document -> AppContextM DocumentDTO
 enhanceDocument doc = do
-  tml <- getTemplateByUuid (U.toString $ doc ^. templateUuid) Nothing
+  tml <- getTemplateByUuid (doc ^. templateId) Nothing
   mQtn <- catchError (getQuestionnaireById' (U.toString $ doc ^. questionnaireUuid)) (\_ -> return Nothing)
   return $ toDTO doc mQtn tml

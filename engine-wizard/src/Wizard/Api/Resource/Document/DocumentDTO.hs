@@ -4,9 +4,9 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Model.Document.Document
-import Wizard.Model.Template.Template
 
 data DocumentDTO =
   DocumentDTO

@@ -74,6 +74,17 @@ instance MimeRender OctetStream FileStream where
   mimeRender _ (FileStream content) = BSL.fromStrict content
 
 -- ------------------------------------------------------------------------
+newtype FileStreamLazy =
+  FileStreamLazy BSL.ByteString
+  deriving (Generic)
+
+instance ToSchema FileStreamLazy where
+  declareNamedSchema _ = return $ NamedSchema (Just "FileStreamLazy") binarySchema
+
+instance MimeRender OctetStream FileStreamLazy where
+  mimeRender _ (FileStreamLazy content) = content
+
+-- ------------------------------------------------------------------------
 parseSortQuery :: Maybe String -> [Sort]
 parseSortQuery Nothing = []
 parseSortQuery (Just query) =

@@ -25,6 +25,7 @@ import Servant
   , errHeaders
   )
 
+import Data.Time
 import LensesConfig
 import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -37,7 +38,9 @@ import Shared.Util.Token
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
+import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
@@ -46,39 +49,20 @@ import Wizard.Service.User.UserService
 import Wizard.Util.Logger
 
 runInUnauthService :: AppContextM a -> BaseContextM a
-runInUnauthService function = do
-  traceUuid <- liftIO generateUuid
-  serverConfig <- asks _baseContextServerConfig
-  localization <- asks _baseContextLocalization
-  buildInfoConfig <- asks _baseContextBuildInfoConfig
-  dbPool <- asks _baseContextPool
-  msgChannel <- asks _baseContextMsgChannel
-  httpClientManager <- asks _baseContextHttpClientManager
-  registryClient <- asks _baseContextRegistryClient
-  cache <- asks _baseContextCache
-  let appContext =
-        AppContext
-          { _appContextServerConfig = serverConfig
-          , _appContextLocalization = localization
-          , _appContextBuildInfoConfig = buildInfoConfig
-          , _appContextPool = dbPool
-          , _appContextMsgChannel = msgChannel
-          , _appContextHttpClientManager = httpClientManager
-          , _appContextRegistryClient = registryClient
-          , _appContextTraceUuid = traceUuid
-          , _appContextCurrentUser = Nothing
-          , _appContextCache = cache
-          }
-  let loggingLevel = serverConfig ^. logging . level
-  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
-  case eResult of
-    Right result -> return result
-    Left error -> do
-      dto <- sendError error
-      throwError dto
+runInUnauthService = runIn Nothing
 
 runInAuthService :: UserDTO -> AppContextM a -> BaseContextM a
-runInAuthService user function = do
+runInAuthService user = runIn (Just user)
+
+runInServiceAuthService :: AppContextM a -> BaseContextM a
+runInServiceAuthService function = do
+  serverConfig <- asks _baseContextServerConfig
+  now <- liftIO getCurrentTime
+  let user = createServiceUser serverConfig now
+  runIn (Just user) function
+
+runIn :: Maybe UserDTO -> AppContextM a -> BaseContextM a
+runIn mUser function = do
   traceUuid <- liftIO generateUuid
   serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
@@ -88,6 +72,8 @@ runInAuthService user function = do
   httpClientManager <- asks _baseContextHttpClientManager
   registryClient <- asks _baseContextRegistryClient
   cache <- asks _baseContextCache
+  now <- liftIO getCurrentTime
+  let user = createServiceUser serverConfig now
   let appContext =
         AppContext
           { _appContextServerConfig = serverConfig
@@ -98,7 +84,7 @@ runInAuthService user function = do
           , _appContextHttpClientManager = httpClientManager
           , _appContextRegistryClient = registryClient
           , _appContextTraceUuid = traceUuid
-          , _appContextCurrentUser = Just user
+          , _appContextCurrentUser = mUser
           , _appContextCache = cache
           }
   let loggingLevel = serverConfig ^. logging . level
@@ -122,6 +108,16 @@ getAuthServiceExecutor (Just token) callback = do
 getAuthServiceExecutor Nothing _ = do
   dto <- sendErrorDTO $ UnauthorizedErrorDTO _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
   throwError dto
+
+getServiceTokenOrAuthServiceExecutor ::
+     Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getServiceTokenOrAuthServiceExecutor mTokenHeader callback =
+  (do checkServiceToken' mTokenHeader
+      callback runInServiceAuthService) `catchError`
+  handleError
+  where
+    handleError ServerError {errHTTPCode = 401} = getAuthServiceExecutor mTokenHeader callback
+    handleError rest = throwError rest
 
 getCurrentUser :: String -> BaseContextM UserDTO
 getCurrentUser tokenHeader = do
@@ -253,3 +249,35 @@ checkServiceToken mTokenHeader = do
       if token == serverConfig ^. general . serviceToken
         then Just token
         else Nothing
+
+checkServiceToken' :: Maybe String -> BaseContextM ()
+checkServiceToken' mTokenHeader = do
+  serverConfig <- asks _baseContextServerConfig
+  let mToken = mTokenHeader >>= separateToken >>= validateServiceToken serverConfig
+  case mToken of
+    Just _ -> return ()
+    Nothing -> do
+      dto <- sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN'
+      throwError dto
+  where
+    validateServiceToken serverConfig token =
+      if token == serverConfig ^. general . serviceToken
+        then Just token
+        else Nothing
+
+createServiceUser :: ServerConfig -> UTCTime -> UserDTO
+createServiceUser serverConfig now =
+  UserDTO
+    { _userDTOUuid = U.nil
+    , _userDTOFirstName = "Service"
+    , _userDTOLastName = "User"
+    , _userDTOEmail = "service@user.com"
+    , _userDTOAffiliation = Nothing
+    , _userDTOSources = [_USER_SOURCE_INTERNAL]
+    , _userDTORole = _USER_ROLE_ADMIN
+    , _userDTOPermissions = serverConfig ^. roles . admin
+    , _userDTOActive = True
+    , _userDTOImageUrl = Nothing
+    , _userDTOCreatedAt = Just now
+    , _userDTOUpdatedAt = Just now
+    }

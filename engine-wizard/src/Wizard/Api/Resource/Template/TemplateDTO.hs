@@ -1,18 +1,25 @@
 module Wizard.Api.Resource.Template.TemplateDTO where
 
-import qualified Data.UUID as U
+import Data.Time
 import GHC.Generics
 
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Model.Template.Template
 
 data TemplateDTO =
   TemplateDTO
-    { _templateDTOUuid :: U.UUID
+    { _templateDTOTId :: String
     , _templateDTOName :: String
+    , _templateDTOOrganizationId :: String
+    , _templateDTOTemplateId :: String
+    , _templateDTOVersion :: String
+    , _templateDTOMetamodelVersion :: Int
     , _templateDTODescription :: String
+    , _templateDTOReadme :: String
+    , _templateDTOLicense :: String
     , _templateDTOAllowedPackages :: [PackageSimpleDTO]
     , _templateDTORecommendedPackageId :: Maybe String
     , _templateDTOFormats :: [TemplateFormat]
+    , _templateDTOCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

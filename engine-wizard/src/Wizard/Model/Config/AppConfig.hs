@@ -168,7 +168,7 @@ data AppConfigQuestionnaireFeedback =
 
 data AppConfigTemplate =
   AppConfigTemplate
-    { _appConfigTemplateRecommendedTemplateUuid :: Maybe U.UUID
+    { _appConfigTemplateRecommendedTemplateId :: Maybe String
     }
   deriving (Generic, Eq, Show)
 
@@ -192,7 +192,7 @@ data AppConfigSubmissionService =
 
 data AppConfigSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateUuid :: U.UUID
+    { _appConfigSubmissionServiceSupportedFormatTemplateId :: String
     , _appConfigSubmissionServiceSupportedFormatFormatUuid :: U.UUID
     }
   deriving (Generic, Eq, Show)

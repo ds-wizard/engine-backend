@@ -11,6 +11,7 @@ import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Template.TemplateDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -28,6 +29,8 @@ resetDB appContext = do
   runInContext deleteDocuments appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteQuestionnaires appContext
+  runInContext deleteTemplates appContext
+  runInContext deleteTemplateAssetContents appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deletePackages appContext

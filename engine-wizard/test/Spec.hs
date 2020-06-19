@@ -35,6 +35,8 @@ import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.Migration.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Template.APISpec
+import Wizard.Specs.API.Template.Asset.APISpec
+import Wizard.Specs.API.Template.File.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
 import Wizard.Specs.API.User.APISpec
@@ -55,10 +57,10 @@ import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitiz
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
-import Wizard.Specs.Service.Template.TemplateServiceSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Util.ListSpec
+import Wizard.Specs.Util.TemplateUtilSpec
 import Wizard.TestMigration
 
 hLoadConfig fileName loadFn callback = do
@@ -126,9 +128,10 @@ main =
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Report" reportGeneratorSpec
-             describe "Template" templateServiceSpec
              describe "Token" tokenServiceSpec
-           describe "UTIL" listSpec
+           describe "UTIL" $ do
+             listSpec
+             templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              bookReferenceAPI appContext
@@ -147,6 +150,8 @@ main =
              questionnaireMigrationAPI appContext
              submissionAPI appContext
              templateAPI appContext
+             templateAssetAPI appContext
+             templateFileAPI appContext
              typehintAPI appContext
              tokenAPI appContext
              userAPI appContext

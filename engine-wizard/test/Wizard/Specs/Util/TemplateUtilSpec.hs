@@ -1,13 +1,14 @@
-module Wizard.Specs.Service.Template.TemplateServiceSpec where
+module Wizard.Specs.Util.TemplateUtilSpec where
 
-import qualified Data.UUID as U
+import Data.Maybe (fromJust)
+import Data.Time
 import Test.Hspec
 
-import Wizard.Model.Template.Template
-import Wizard.Service.Template.TemplateService
+import Shared.Model.Template.Template
+import Wizard.Service.Template.TemplateUtil
 
-templateServiceSpec =
-  describe "Package Utils" $ do
+templateUtilSpec =
+  describe "Template Utils" $ do
     let pkgId = ["org.nl", "core-nl", "2.0.0"]
     describe "filterTemplates" $ do
       it "No KM Specifications given => Deny" $
@@ -15,12 +16,21 @@ templateServiceSpec =
        do
         let templates =
               [ Template
-                  { _templateUuid = U.nil
+                  { _templateTId = ""
                   , _templateName = ""
+                  , _templateOrganizationId = ""
+                  , _templateTemplateId = ""
+                  , _templateVersion = ""
+                  , _templateMetamodelVersion = 1
                   , _templateDescription = ""
+                  , _templateReadme = ""
+                  , _templateLicense = ""
                   , _templateAllowedPackages = []
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateFiles = []
+                  , _templateAssets = []
+                  , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
             -- AND:
@@ -34,9 +44,15 @@ templateServiceSpec =
        do
         let templates =
               [ Template
-                  { _templateUuid = U.nil
+                  { _templateTId = ""
                   , _templateName = ""
+                  , _templateOrganizationId = ""
+                  , _templateTemplateId = ""
+                  , _templateVersion = ""
+                  , _templateMetamodelVersion = 1
                   , _templateDescription = ""
+                  , _templateReadme = ""
+                  , _templateLicense = ""
                   , _templateAllowedPackages =
                       [ TemplateAllowedPackage
                           { _templateAllowedPackageOrgId = Nothing
@@ -47,6 +63,9 @@ templateServiceSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateFiles = []
+                  , _templateAssets = []
+                  , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
             -- AND:
@@ -60,9 +79,15 @@ templateServiceSpec =
        do
         let templates =
               [ Template
-                  { _templateUuid = U.nil
+                  { _templateTId = ""
                   , _templateName = ""
+                  , _templateOrganizationId = ""
+                  , _templateTemplateId = ""
+                  , _templateVersion = ""
+                  , _templateMetamodelVersion = 1
                   , _templateDescription = ""
+                  , _templateReadme = ""
+                  , _templateLicense = ""
                   , _templateAllowedPackages =
                       [ TemplateAllowedPackage
                           { _templateAllowedPackageOrgId = Nothing
@@ -79,6 +104,9 @@ templateServiceSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateFiles = []
+                  , _templateAssets = []
+                  , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
             -- AND:

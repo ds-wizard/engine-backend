@@ -76,6 +76,7 @@ library:
   - warp
   - wreq
   - yaml
+  - zip-archive
 
 executables:
   engine-registry:

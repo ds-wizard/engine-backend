@@ -31,7 +31,7 @@ data Document =
     , _documentDurability :: DocumentDurability
     , _documentQuestionnaireUuid :: U.UUID
     , _documentQuestionnaireRepliesHash :: Int
-    , _documentTemplateUuid :: U.UUID
+    , _documentTemplateId :: String
     , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata
     , _documentOwnerUuid :: U.UUID

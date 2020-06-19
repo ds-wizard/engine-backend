@@ -64,3 +64,13 @@ toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =
     , _httpRequestRequestBody = BS.empty
     , _httpRequestMultipartFileName = Nothing
     }
+
+toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
+toRetrieveTemplateBundleByIdRequest serverConfig appConfig tmlId =
+  HttpRequest
+    { _httpRequestRequestMethod = "GET"
+    , _httpRequestRequestUrl = serverConfig ^. url ++ "/templates/" ++ tmlId ++ "/bundle"
+    , _httpRequestRequestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token)]
+    , _httpRequestRequestBody = BS.empty
+    , _httpRequestMultipartFileName = Nothing
+    }

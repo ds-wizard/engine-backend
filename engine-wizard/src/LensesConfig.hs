@@ -37,6 +37,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.BookReference.BookReferenceDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
@@ -73,7 +74,10 @@ import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
+import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
+import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDTO
+import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.Typehint.TypehintDTO
@@ -111,7 +115,6 @@ import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
-import Wizard.Model.Template.Template
 import Wizard.Model.User.User
 
 -- -------------------------------------
@@ -406,6 +409,10 @@ makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 
+makeFields ''TemplateFile
+
+makeFields ''TemplateAsset
+
 -- Model / User
 makeFields ''User
 
@@ -657,6 +664,12 @@ makeFields ''SubmissionDTO
 
 -- Api / Resource / Template
 makeFields ''TemplateDTO
+
+makeFields ''TemplateSimpleDTO
+
+makeFields ''TemplateChangeDTO
+
+makeFields ''TemplateFileChangeDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO

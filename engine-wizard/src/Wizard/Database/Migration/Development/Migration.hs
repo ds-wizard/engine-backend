@@ -14,6 +14,7 @@ import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Util.Logger
 
@@ -31,4 +32,5 @@ runMigration = do
   MTR.runMigration
   LVL.runMigration
   DOC.runMigration
+  TML.runMigration
   logInfo _CMP_MIGRATION "ended"

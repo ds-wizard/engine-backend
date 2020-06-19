@@ -31,6 +31,7 @@ import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
+import Wizard.Util.IdentifierUtil
 import Wizard.Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]

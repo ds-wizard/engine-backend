@@ -2,8 +2,8 @@ module Wizard.Database.Migration.Development.Document.DocumentMigration where
 
 import Control.Lens ((^.))
 import qualified Data.UUID as U
-import LensesConfig
 
+import LensesConfig
 import Wizard.Constant.Component
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents

@@ -1,6 +1,6 @@
 module Wizard.Service.Version.VersionMapper where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (?~), (^.))
 import Data.Time
 
 import LensesConfig
@@ -10,10 +10,10 @@ import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
-import Wizard.Service.Package.PackageUtils
+import Wizard.Util.IdentifierUtil
 
 fromBranch :: BranchWithEvents -> PackageWithEvents -> BranchWithEvents
-fromBranch branch pkg = (branch & events .~ []) & previousPackageId .~ (Just $ pkg ^. pId)
+fromBranch branch pkg = (branch & events .~ []) & previousPackageId ?~ (pkg ^. pId)
 
 fromPackage ::
      BranchWithEvents

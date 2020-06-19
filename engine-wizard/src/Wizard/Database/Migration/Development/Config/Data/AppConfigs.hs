@@ -6,7 +6,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
-import Wizard.Database.Migration.Development.Template.Data.Templates
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
@@ -155,7 +155,7 @@ defaultFeedback =
     }
 
 defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateUuid = Just $ commonWizardTemplate ^. uuid}
+defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateId = Just $ commonWizardTemplate ^. tId}
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission =
@@ -181,7 +181,7 @@ defaultSubmissionServiceSecretProp = "Secret"
 defaultSubmissionServiceSupportedFormat :: AppConfigSubmissionServiceSupportedFormat
 defaultSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateUuid = commonWizardTemplate ^. uuid
+    { _appConfigSubmissionServiceSupportedFormatTemplateId = commonWizardTemplate ^. tId
     , _appConfigSubmissionServiceSupportedFormatFormatUuid = templateFormatJson ^. uuid
     }
 

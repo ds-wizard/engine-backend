@@ -17,6 +17,7 @@ import Registry.Api.Resource.Package.PackageSimpleSM ()
 import Shared.Api.Resource.Info.InfoSM ()
 import Shared.Api.Resource.Package.PackageSM ()
 import Shared.Api.Resource.PackageBundle.PackageBundleSM ()
+import Shared.Api.Resource.Template.TemplateSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 

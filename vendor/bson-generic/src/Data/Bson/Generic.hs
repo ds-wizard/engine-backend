@@ -69,7 +69,7 @@ class FromBSON a where
   fromBSON :: Document -> Maybe a
   default fromBSON :: (Generic a, GFromBSON (Rep a)) =>
     Document -> Maybe a
-  fromBSON doc = maybe Nothing (Just . to) (genericFromBSON "" doc)
+  fromBSON doc = fmap to (genericFromBSON "" doc)
 
 class GFromBSON f where
   genericFromBSON :: String -> Document -> Maybe (f a)
@@ -136,7 +136,7 @@ instance (FromBSON a, ToBSON a, Typeable a, Show a, Eq a) => Val a where
 keyLabel :: Label
 keyLabel = TS.pack "_id"
 
-------------------------------------------------------------------------------  
+------------------------------------------------------------------------------
 removePrefix :: String -> String -> String
 removePrefix fieldPrefix = bsonSpecialFields . lowerFirst . drop (length fieldPrefix)
 
@@ -150,6 +150,7 @@ bsonSpecialFields "dId" = "id"
 bsonSpecialFields "iId" = "id"
 bsonSpecialFields "pId" = "id"
 bsonSpecialFields "sId" = "id"
+bsonSpecialFields "tId" = "id"
 bsonSpecialFields field = field
 
 lowerFirst :: String -> String

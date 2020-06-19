@@ -28,7 +28,7 @@ defaultGeneral =
     , _serverConfigGeneralServiceToken = ""
     , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
-    , _serverConfigGeneralTemplateFolder = "engine-wizard/templates"
+    , _serverConfigGeneralTemplateFolder = "engine-wizard/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
     }
 
@@ -60,6 +60,7 @@ defaultRoles =
         , "DMP_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
+        , "TML_PERM"
         ]
     , _serverConfigRolesDataSteward =
         [ "KM_PERM"

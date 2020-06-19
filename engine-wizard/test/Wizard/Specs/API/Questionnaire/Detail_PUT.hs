@@ -60,7 +60,7 @@ reqDtoT qtn =
     , _questionnaireChangeDTOLevel = qtn ^. level
     , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
     , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
-    , _questionnaireChangeDTOTemplateUuid = qtn ^. templateUuid
+    , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -82,7 +82,7 @@ create_test_200 title appContext qtn qtnEdited =
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault
     let expBody = encode expDto
      -- AND: Run migrations
@@ -146,7 +146,7 @@ create_test_403 title appContext qtn qtnEdited reason =
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
