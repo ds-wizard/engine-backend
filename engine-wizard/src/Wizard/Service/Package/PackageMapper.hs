@@ -8,7 +8,6 @@ import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Service.Package.PackageUtils
@@ -82,7 +81,7 @@ fromDTO dto =
     , _packageWithEventsPreviousPackageId = dto ^. previousPackageId
     , _packageWithEventsForkOfPackageId = dto ^. forkOfPackageId
     , _packageWithEventsMergeCheckpointPackageId = dto ^. mergeCheckpointPackageId
-    , _packageWithEventsEvents = fromDTOs (dto ^. events)
+    , _packageWithEventsEvents = dto ^. events
     , _packageWithEventsCreatedAt = dto ^. createdAt
     }
 

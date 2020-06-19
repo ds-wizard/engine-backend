@@ -4,38 +4,37 @@ import Data.Swagger
 
 import Shared.Api.Resource.Event.EventFieldSM ()
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Api.Resource.Event.ReferenceEventDTO
 import Shared.Api.Resource.Event.ReferenceEventJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 import Shared.Database.Migration.Development.Event.Data.Events
-import Shared.Service.Event.EventToDTO
+import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Util.Swagger
 
-instance ToSchema AddReferenceEventDTO
+instance ToSchema AddReferenceEvent
 
-instance ToSchema AddResourcePageReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_addResourcePageReferenceEventDTO" "eventType" (toDTO a_km1_ch1_q2_rCh1')
+instance ToSchema AddResourcePageReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_addResourcePageReferenceEvent" "eventType" a_km1_ch1_q2_rCh1'
 
-instance ToSchema AddURLReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_addURLReferenceEventDTO" "eventType" (toDTO a_km1_ch1_q2_rCh2')
+instance ToSchema AddURLReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_addURLReferenceEvent" "eventType" a_km1_ch1_q2_rCh2'
 
-instance ToSchema AddCrossReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_addCrossReferenceEventDTO" "eventType" (toDTO a_km1_ch1_q2_rCh3')
-
--- --------------------------------------------
--- --------------------------------------------
-instance ToSchema EditReferenceEventDTO
-
-instance ToSchema EditResourcePageReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_editResourcePageReferenceEventDTO" "eventType" (toDTO e_km1_ch1_q2_rCh1')
-
-instance ToSchema EditURLReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_editURLReferenceEventDTO" "eventType" (toDTO e_km1_ch1_q2_rCh2')
-
-instance ToSchema EditCrossReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_editCrossReferenceEventDTO" "eventType" (toDTO e_km1_ch1_q2_rCh3')
+instance ToSchema AddCrossReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_addCrossReferenceEvent" "eventType" a_km1_ch1_q2_rCh3'
 
 -- --------------------------------------------
 -- --------------------------------------------
-instance ToSchema DeleteReferenceEventDTO where
-  declareNamedSchema = simpleToSchema'' "_deleteReferenceEventDTO" "eventType" (toDTO d_km1_ch1_q2_rCh2)
+instance ToSchema EditReferenceEvent
+
+instance ToSchema EditResourcePageReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_editResourcePageReferenceEvent" "eventType" e_km1_ch1_q2_rCh1'
+
+instance ToSchema EditURLReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_editURLReferenceEvent" "eventType" e_km1_ch1_q2_rCh2'
+
+instance ToSchema EditCrossReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_editCrossReferenceEvent" "eventType" e_km1_ch1_q2_rCh3'
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance ToSchema DeleteReferenceEvent where
+  declareNamedSchema = simpleToSchema'' "_deleteReferenceEvent" "eventType" d_km1_ch1_q2_rCh2

@@ -18,7 +18,6 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Context.AppContext
-import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -60,7 +59,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toKnowledgeModelDTO km1WithQ4
+    let expDto = km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

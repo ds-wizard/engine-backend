@@ -16,9 +16,7 @@ import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
-import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import Wizard.Service.Level.LevelMapper
-import Wizard.Service.Metric.MetricMapper
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import Wizard.Service.Report.ReportMapper
@@ -34,8 +32,8 @@ toDocumentContextDTO dc =
     , _documentContextDTOQuestionnaireReplies = replies
     , _documentContextDTOQuestionnaireRepliesMap = M.fromList $ (\reply -> (reply ^. path, reply)) <$> replies
     , _documentContextDTOLevel = dc ^. level
-    , _documentContextDTOKnowledgeModel = toKnowledgeModelDTO $ dc ^. knowledgeModel
-    , _documentContextDTOMetrics = toMetricDTO <$> dc ^. metrics
+    , _documentContextDTOKnowledgeModel = dc ^. knowledgeModel
+    , _documentContextDTOMetrics = dc ^. metrics
     , _documentContextDTOLevels = toLevelDTO <$> dc ^. levels
     , _documentContextDTOReport = toReportDTO $ dc ^. report
     , _documentContextDTOPackage = toSimpleDTO (dc ^. package)

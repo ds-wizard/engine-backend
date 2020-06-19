@@ -4,83 +4,83 @@ import Control.Monad
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventFieldJM ()
-import Shared.Api.Resource.Event.ReferenceEventDTO
+import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Util.JSON
 
-instance ToJSON AddReferenceEventDTO where
+instance ToJSON AddReferenceEvent where
   toJSON = toSumJSON
 
-instance FromJSON AddReferenceEventDTO where
+instance FromJSON AddReferenceEvent where
   parseJSON (Object o) = do
     referenceType <- o .: "referenceType"
     case referenceType of
-      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (AddResourcePageReferenceEventDTO' event)
-      "URLReference" -> parseJSON (Object o) >>= \event -> return (AddURLReferenceEventDTO' event)
-      "CrossReference" -> parseJSON (Object o) >>= \event -> return (AddCrossReferenceEventDTO' event)
+      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (AddResourcePageReferenceEvent' event)
+      "URLReference" -> parseJSON (Object o) >>= \event -> return (AddURLReferenceEvent' event)
+      "CrossReference" -> parseJSON (Object o) >>= \event -> return (AddCrossReferenceEvent' event)
       _ -> fail "One of the events has unsupported referenceType"
   parseJSON _ = mzero
 
 -- --------------------------------------------
-instance FromJSON AddResourcePageReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddResourcePageReferenceEvent where
+  parseJSON = simpleParseJSON "_addResourcePageReferenceEvent"
 
-instance ToJSON AddResourcePageReferenceEventDTO where
-  toJSON = simpleToJSON'' "_addResourcePageReferenceEventDTO" [("referenceType", "ResourcePageReference")]
-
--- --------------------------------------------
-instance FromJSON AddURLReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON AddURLReferenceEventDTO where
-  toJSON = simpleToJSON'' "_addURLReferenceEventDTO" [("referenceType", "URLReference")]
+instance ToJSON AddResourcePageReferenceEvent where
+  toJSON = simpleToJSON'' "_addResourcePageReferenceEvent" [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
-instance FromJSON AddCrossReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddURLReferenceEvent where
+  parseJSON = simpleParseJSON "_addURLReferenceEvent"
 
-instance ToJSON AddCrossReferenceEventDTO where
-  toJSON = simpleToJSON'' "_addCrossReferenceEventDTO" [("referenceType", "CrossReference")]
+instance ToJSON AddURLReferenceEvent where
+  toJSON = simpleToJSON'' "_addURLReferenceEvent" [("referenceType", "URLReference")]
+
+-- --------------------------------------------
+instance FromJSON AddCrossReferenceEvent where
+  parseJSON = simpleParseJSON "_addCrossReferenceEvent"
+
+instance ToJSON AddCrossReferenceEvent where
+  toJSON = simpleToJSON'' "_addCrossReferenceEvent" [("referenceType", "CrossReference")]
 
 -- --------------------------------------------
 -- --------------------------------------------
-instance ToJSON EditReferenceEventDTO where
+instance ToJSON EditReferenceEvent where
   toJSON = toSumJSON
 
-instance FromJSON EditReferenceEventDTO where
+instance FromJSON EditReferenceEvent where
   parseJSON (Object o) = do
     referenceType <- o .: "referenceType"
     case referenceType of
-      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (EditResourcePageReferenceEventDTO' event)
-      "URLReference" -> parseJSON (Object o) >>= \event -> return (EditURLReferenceEventDTO' event)
-      "CrossReference" -> parseJSON (Object o) >>= \event -> return (EditCrossReferenceEventDTO' event)
+      "ResourcePageReference" -> parseJSON (Object o) >>= \event -> return (EditResourcePageReferenceEvent' event)
+      "URLReference" -> parseJSON (Object o) >>= \event -> return (EditURLReferenceEvent' event)
+      "CrossReference" -> parseJSON (Object o) >>= \event -> return (EditCrossReferenceEvent' event)
       _ -> fail "One of the events has unsupported referenceType"
   parseJSON _ = mzero
 
 -- --------------------------------------------
-instance FromJSON EditResourcePageReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditResourcePageReferenceEvent where
+  parseJSON = simpleParseJSON "_editResourcePageReferenceEvent"
 
-instance ToJSON EditResourcePageReferenceEventDTO where
-  toJSON = simpleToJSON'' "_editResourcePageReferenceEventDTO" [("referenceType", "ResourcePageReference")]
-
--- --------------------------------------------
-instance FromJSON EditURLReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON EditURLReferenceEventDTO where
-  toJSON = simpleToJSON'' "_editURLReferenceEventDTO" [("referenceType", "URLReference")]
+instance ToJSON EditResourcePageReferenceEvent where
+  toJSON = simpleToJSON'' "_editResourcePageReferenceEvent" [("referenceType", "ResourcePageReference")]
 
 -- --------------------------------------------
-instance FromJSON EditCrossReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditURLReferenceEvent where
+  parseJSON = simpleParseJSON "_editURLReferenceEvent"
 
-instance ToJSON EditCrossReferenceEventDTO where
-  toJSON = simpleToJSON'' "_editCrossReferenceEventDTO" [("referenceType", "CrossReference")]
+instance ToJSON EditURLReferenceEvent where
+  toJSON = simpleToJSON'' "_editURLReferenceEvent" [("referenceType", "URLReference")]
+
+-- --------------------------------------------
+instance FromJSON EditCrossReferenceEvent where
+  parseJSON = simpleParseJSON "_editCrossReferenceEvent"
+
+instance ToJSON EditCrossReferenceEvent where
+  toJSON = simpleToJSON'' "_editCrossReferenceEvent" [("referenceType", "CrossReference")]
 
 -- --------------------------------------------
 -- --------------------------------------------
-instance FromJSON DeleteReferenceEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON DeleteReferenceEvent where
+  parseJSON = simpleParseJSON "_deleteReferenceEvent"
 
-instance ToJSON DeleteReferenceEventDTO where
-  toJSON = simpleToJSON' "_deleteReferenceEventDTO" "eventType"
+instance ToJSON DeleteReferenceEvent where
+  toJSON = simpleToJSON' "_deleteReferenceEvent" "eventType"

@@ -6,21 +6,16 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Shared.Service.Event.EventMapper
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Cache.KnowledgeModelCache
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
-import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 import Wizard.Service.Package.PackageService
 
-createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModelDTO
-createKnowledgeModelPreview reqDto = do
-  km <- compileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
-  return $ toKnowledgeModelDTO km
+createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
+createKnowledgeModelPreview reqDto = compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
 compileKnowledgeModel events mPackageId tagUuids = do

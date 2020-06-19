@@ -4,18 +4,17 @@ import Data.Swagger
 
 import Shared.Api.Resource.Event.EventFieldSM ()
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.Event.TagEventJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 import Shared.Database.Migration.Development.Event.Data.Events
-import Shared.Service.Event.EventToDTO
+import Shared.Model.Event.Tag.TagEvent
 import Shared.Util.Swagger
 
-instance ToSchema AddTagEventDTO where
-  declareNamedSchema = simpleToSchema'' "_addTagEventDTO" "eventType" (toDTO a_km1_tds)
+instance ToSchema AddTagEvent where
+  declareNamedSchema = simpleToSchema'' "_addTagEvent" "eventType" a_km1_tds
 
-instance ToSchema EditTagEventDTO where
-  declareNamedSchema = simpleToSchema'' "_editTagEventDTO" "eventType" (toDTO e_km1_tds)
+instance ToSchema EditTagEvent where
+  declareNamedSchema = simpleToSchema'' "_editTagEvent" "eventType" e_km1_tds
 
-instance ToSchema DeleteTagEventDTO where
-  declareNamedSchema = simpleToSchema'' "_deleteTagEventDTO" "eventType" (toDTO d_km1_tds)
+instance ToSchema DeleteTagEvent where
+  declareNamedSchema = simpleToSchema'' "_deleteTagEvent" "eventType" d_km1_tds

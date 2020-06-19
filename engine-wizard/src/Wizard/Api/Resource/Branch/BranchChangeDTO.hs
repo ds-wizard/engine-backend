@@ -2,12 +2,12 @@ module Wizard.Api.Resource.Branch.BranchChangeDTO where
 
 import GHC.Generics
 
-import Shared.Api.Resource.Event.EventDTO
+import Shared.Model.Event.Event
 
 data BranchChangeDTO =
   BranchChangeDTO
     { _branchChangeDTOName :: String
     , _branchChangeDTOKmId :: String
-    , _branchChangeDTOEvents :: [EventDTO]
+    , _branchChangeDTOEvents :: [Event]
     }
   deriving (Generic)

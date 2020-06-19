@@ -2,8 +2,7 @@ module Shared.Api.Resource.Event.EventFieldSM where
 
 import Data.Swagger
 
-import Shared.Api.Resource.Event.EventFieldDTO
+import Shared.Model.Event.EventField
 
-instance ToSchema a => ToSchema (EventFieldDTO a) where
+instance ToSchema a => ToSchema (EventField a) where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
---  declareNamedSchema = genericDeclareNamedSchema

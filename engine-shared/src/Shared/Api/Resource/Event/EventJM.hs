@@ -5,7 +5,6 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.AnswerEventJM ()
 import Shared.Api.Resource.Event.ChapterEventJM ()
-import Shared.Api.Resource.Event.EventDTO
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.ExpertEventJM ()
 import Shared.Api.Resource.Event.IntegrationEventJM ()
@@ -14,41 +13,42 @@ import Shared.Api.Resource.Event.MoveEventJM ()
 import Shared.Api.Resource.Event.QuestionEventJM ()
 import Shared.Api.Resource.Event.ReferenceEventJM ()
 import Shared.Api.Resource.Event.TagEventJM ()
+import Shared.Model.Event.Event
 import Shared.Util.JSON
 
-instance ToJSON EventDTO where
+instance ToJSON Event where
   toJSON = toSumJSON' "eventType"
 
-instance FromJSON EventDTO where
+instance FromJSON Event where
   parseJSON (Object o) = do
     eventType <- o .: "eventType"
     case eventType of
-      "AddKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (AddKnowledgeModelEventDTO' event)
-      "EditKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (EditKnowledgeModelEventDTO' event)
-      "AddChapterEvent" -> parseJSON (Object o) >>= \event -> return (AddChapterEventDTO' event)
-      "EditChapterEvent" -> parseJSON (Object o) >>= \event -> return (EditChapterEventDTO' event)
-      "DeleteChapterEvent" -> parseJSON (Object o) >>= \event -> return (DeleteChapterEventDTO' event)
-      "AddQuestionEvent" -> parseJSON (Object o) >>= \event -> return (AddQuestionEventDTO' event)
-      "EditQuestionEvent" -> parseJSON (Object o) >>= \event -> return (EditQuestionEventDTO' event)
-      "DeleteQuestionEvent" -> parseJSON (Object o) >>= \event -> return (DeleteQuestionEventDTO' event)
-      "AddAnswerEvent" -> parseJSON (Object o) >>= \event -> return (AddAnswerEventDTO' event)
-      "EditAnswerEvent" -> parseJSON (Object o) >>= \event -> return (EditAnswerEventDTO' event)
-      "DeleteAnswerEvent" -> parseJSON (Object o) >>= \event -> return (DeleteAnswerEventDTO' event)
-      "AddExpertEvent" -> parseJSON (Object o) >>= \event -> return (AddExpertEventDTO' event)
-      "EditExpertEvent" -> parseJSON (Object o) >>= \event -> return (EditExpertEventDTO' event)
-      "DeleteExpertEvent" -> parseJSON (Object o) >>= \event -> return (DeleteExpertEventDTO' event)
-      "AddReferenceEvent" -> parseJSON (Object o) >>= \event -> return (AddReferenceEventDTO' event)
-      "EditReferenceEvent" -> parseJSON (Object o) >>= \event -> return (EditReferenceEventDTO' event)
-      "DeleteReferenceEvent" -> parseJSON (Object o) >>= \event -> return (DeleteReferenceEventDTO' event)
-      "AddTagEvent" -> parseJSON (Object o) >>= \event -> return (AddTagEventDTO' event)
-      "EditTagEvent" -> parseJSON (Object o) >>= \event -> return (EditTagEventDTO' event)
-      "DeleteTagEvent" -> parseJSON (Object o) >>= \event -> return (DeleteTagEventDTO' event)
-      "AddIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (AddIntegrationEventDTO' event)
-      "EditIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (EditIntegrationEventDTO' event)
-      "DeleteIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (DeleteIntegrationEventDTO' event)
-      "MoveQuestionEvent" -> parseJSON (Object o) >>= \event -> return (MoveQuestionEventDTO' event)
-      "MoveAnswerEvent" -> parseJSON (Object o) >>= \event -> return (MoveAnswerEventDTO' event)
-      "MoveExpertEvent" -> parseJSON (Object o) >>= \event -> return (MoveExpertEventDTO' event)
-      "MoveReferenceEvent" -> parseJSON (Object o) >>= \event -> return (MoveReferenceEventDTO' event)
+      "AddKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (AddKnowledgeModelEvent' event)
+      "EditKnowledgeModelEvent" -> parseJSON (Object o) >>= \event -> return (EditKnowledgeModelEvent' event)
+      "AddChapterEvent" -> parseJSON (Object o) >>= \event -> return (AddChapterEvent' event)
+      "EditChapterEvent" -> parseJSON (Object o) >>= \event -> return (EditChapterEvent' event)
+      "DeleteChapterEvent" -> parseJSON (Object o) >>= \event -> return (DeleteChapterEvent' event)
+      "AddQuestionEvent" -> parseJSON (Object o) >>= \event -> return (AddQuestionEvent' event)
+      "EditQuestionEvent" -> parseJSON (Object o) >>= \event -> return (EditQuestionEvent' event)
+      "DeleteQuestionEvent" -> parseJSON (Object o) >>= \event -> return (DeleteQuestionEvent' event)
+      "AddAnswerEvent" -> parseJSON (Object o) >>= \event -> return (AddAnswerEvent' event)
+      "EditAnswerEvent" -> parseJSON (Object o) >>= \event -> return (EditAnswerEvent' event)
+      "DeleteAnswerEvent" -> parseJSON (Object o) >>= \event -> return (DeleteAnswerEvent' event)
+      "AddExpertEvent" -> parseJSON (Object o) >>= \event -> return (AddExpertEvent' event)
+      "EditExpertEvent" -> parseJSON (Object o) >>= \event -> return (EditExpertEvent' event)
+      "DeleteExpertEvent" -> parseJSON (Object o) >>= \event -> return (DeleteExpertEvent' event)
+      "AddReferenceEvent" -> parseJSON (Object o) >>= \event -> return (AddReferenceEvent' event)
+      "EditReferenceEvent" -> parseJSON (Object o) >>= \event -> return (EditReferenceEvent' event)
+      "DeleteReferenceEvent" -> parseJSON (Object o) >>= \event -> return (DeleteReferenceEvent' event)
+      "AddTagEvent" -> parseJSON (Object o) >>= \event -> return (AddTagEvent' event)
+      "EditTagEvent" -> parseJSON (Object o) >>= \event -> return (EditTagEvent' event)
+      "DeleteTagEvent" -> parseJSON (Object o) >>= \event -> return (DeleteTagEvent' event)
+      "AddIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (AddIntegrationEvent' event)
+      "EditIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (EditIntegrationEvent' event)
+      "DeleteIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (DeleteIntegrationEvent' event)
+      "MoveQuestionEvent" -> parseJSON (Object o) >>= \event -> return (MoveQuestionEvent' event)
+      "MoveAnswerEvent" -> parseJSON (Object o) >>= \event -> return (MoveAnswerEvent' event)
+      "MoveExpertEvent" -> parseJSON (Object o) >>= \event -> return (MoveExpertEvent' event)
+      "MoveReferenceEvent" -> parseJSON (Object o) >>= \event -> return (MoveReferenceEvent' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero

@@ -3,7 +3,7 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventJM ()
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO ()
+import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Util.JSON
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO

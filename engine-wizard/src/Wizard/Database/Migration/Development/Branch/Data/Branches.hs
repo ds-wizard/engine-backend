@@ -10,7 +10,6 @@ import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
-import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -92,7 +91,7 @@ amsterdamBranchDetail =
     , _branchDetailDTOPreviousPackageId = amsterdamBranch ^. previousPackageId
     , _branchDetailDTOForkOfPackageId = amsterdamBranch ^. forkOfPackageId
     , _branchDetailDTOOwnerUuid = amsterdamBranch ^. ownerUuid
-    , _branchDetailDTOEvents = toDTOs $ amsterdamBranchWithEvents ^. events
+    , _branchDetailDTOEvents = amsterdamBranchWithEvents ^. events
     , _branchDetailDTOCreatedAt = amsterdamBranch ^. createdAt
     , _branchDetailDTOUpdatedAt = amsterdamBranch ^. updatedAt
     }

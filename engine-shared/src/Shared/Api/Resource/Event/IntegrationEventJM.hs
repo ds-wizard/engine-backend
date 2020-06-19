@@ -3,25 +3,25 @@ module Shared.Api.Resource.Event.IntegrationEventJM where
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventFieldJM ()
-import Shared.Api.Resource.Event.IntegrationEventDTO
+import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Util.JSON
 
-instance FromJSON AddIntegrationEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddIntegrationEvent where
+  parseJSON = simpleParseJSON "_addIntegrationEvent"
 
-instance ToJSON AddIntegrationEventDTO where
-  toJSON = simpleToJSON' "_addIntegrationEventDTO" "eventType"
-
--- --------------------------------------------
-instance FromJSON EditIntegrationEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON EditIntegrationEventDTO where
-  toJSON = simpleToJSON' "_editIntegrationEventDTO" "eventType"
+instance ToJSON AddIntegrationEvent where
+  toJSON = simpleToJSON' "_addIntegrationEvent" "eventType"
 
 -- --------------------------------------------
-instance FromJSON DeleteIntegrationEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditIntegrationEvent where
+  parseJSON = simpleParseJSON "_editIntegrationEvent"
 
-instance ToJSON DeleteIntegrationEventDTO where
-  toJSON = simpleToJSON' "_deleteIntegrationEventDTO" "eventType"
+instance ToJSON EditIntegrationEvent where
+  toJSON = simpleToJSON' "_editIntegrationEvent" "eventType"
+
+-- --------------------------------------------
+instance FromJSON DeleteIntegrationEvent where
+  parseJSON = simpleParseJSON "_deleteIntegrationEvent"
+
+instance ToJSON DeleteIntegrationEvent where
+  toJSON = simpleToJSON' "_deleteIntegrationEvent" "eventType"

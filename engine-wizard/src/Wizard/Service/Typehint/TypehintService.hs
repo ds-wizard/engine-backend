@@ -9,7 +9,6 @@ import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
-import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Integration.Http.Typehint.Runner
@@ -21,7 +20,7 @@ import Wizard.Service.Typehint.TypehintMapper
 
 getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
 getTypehints reqDto = do
-  km <- compileKnowledgeModel (fromDTOs $ reqDto ^. events) (reqDto ^. packageId) []
+  km <- compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) []
   question <- getQuestion km (reqDto ^. questionUuid)
   integration <- getIntegration km (question ^. integrationUuid)
   fileConfig <- getIntegrationConfig (integration ^. iId)

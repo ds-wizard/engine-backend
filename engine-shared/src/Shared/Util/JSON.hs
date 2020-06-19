@@ -44,10 +44,9 @@ jsonSpecialFields "tId" = "id"
 jsonSpecialFields field = field
 
 stripDTOSuffix :: String -> String
-stripDTOSuffix field = fromMaybe field (stripSuffix "DTO" field)
-
-stripDTOSuffix' :: String -> String
-stripDTOSuffix' field = fromMaybe field (stripSuffix "DTO'" field)
+stripDTOSuffix f1 =
+  let f2 = fromMaybe f1 (stripSuffix "'" f1)
+   in fromMaybe f2 (stripSuffix "DTO" f2)
 
 simpleParseJSON fieldPrefix = genericParseJSON (createOptions fieldPrefix)
 
@@ -58,7 +57,7 @@ toSumJSON' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => T.Tex
 toSumJSON' typeFieldName dto =
   case genericToJSON (defaultOptions {sumEncoding = UntaggedValue}) dto of
     Object o ->
-      Object $ HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripDTOSuffix' . constructorName $ dto)])
+      Object $ HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripDTOSuffix . constructorName $ dto)])
 
 simpleToJSON fieldPrefix = genericToJSON (createOptions fieldPrefix)
 
