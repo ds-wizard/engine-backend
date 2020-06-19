@@ -1,5 +1,5 @@
 module Wizard.Specs.API.User.Detail_Password_Hash_PUT
-  ( detail_password_hash_put
+  ( detail_password_hash_PUT
   ) where
 
 import Control.Lens ((^.))
@@ -26,8 +26,8 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password?hash={hash}
 -- ------------------------------------------------------------------------
-detail_password_hash_put :: AppContext -> SpecWith ((), Application)
-detail_password_hash_put appContext =
+detail_password_hash_PUT :: AppContext -> SpecWith ((), Application)
+detail_password_hash_PUT appContext =
   describe "PUT /users/{userId}/password?hash={hash}" $ do
     test_204 appContext
     test_400 appContext

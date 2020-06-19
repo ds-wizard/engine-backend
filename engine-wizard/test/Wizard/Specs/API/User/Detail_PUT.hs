@@ -1,5 +1,5 @@
-module Wizard.Specs.API.User.List_Current_PUT
-  ( list_current_PUT
+module Wizard.Specs.API.User.Detail_PUT
+  ( detail_PUT
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -13,11 +13,12 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.User.UserProfileChangeJM ()
-import Wizard.Api.Resource.User.UserProfileDTO
+import Wizard.Api.Resource.User.UserDTO
+import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
+import Wizard.Service.User.UserMapper
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
@@ -25,25 +26,27 @@ import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /users/current
+-- PUT /users/{userId}
 -- ------------------------------------------------------------------------
-list_current_PUT :: AppContext -> SpecWith ((), Application)
-list_current_PUT appContext =
-  describe "PUT /users/current" $ do
+detail_PUT :: AppContext -> SpecWith ((), Application)
+detail_PUT appContext =
+  describe "PUT /users/{userId}" $ do
     test_200 appContext
     test_400 appContext
     test_401 appContext
+    test_403 appContext
+    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/users/current"
+reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
 
 reqHeaders = [reqAuthHeader, reqCtHeader]
 
-reqDto = userIsaacProfileChange
+reqDto = userIsaacEditedChange
 
 reqBody = encode reqDto
 
@@ -56,17 +59,17 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCorsHeadersPlain
-    let expDto = userAlbertProfileEdited
+    let expDto = toDTO userIsaacEdited
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserProfileDTO)
+    let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareUserDtos resDto expDto
     -- AND: Find result in DB and compare with expectation state
-    assertExistenceOfUserInDB appContext userAlbertEdited
+    assertExistenceOfUserInDB appContext userIsaacEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -76,7 +79,7 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST if email is already registered" $
     -- GIVEN: Prepare request
    do
-    let reqDto = userIsaacProfileChange & email .~ (userIsaac ^. email)
+    let reqDto = userIsaacEditedChange & email .~ (userIsaac ^. email)
     let reqBody = encode reqDto
     -- AND: Prepare expectation
     let expStatus = 400
@@ -96,3 +99,20 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl reqHeaders reqBody "UM_PERM"
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    reqHeaders
+    reqBody
+    "user"
+    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

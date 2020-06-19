@@ -1,34 +1,27 @@
-module Wizard.Specs.API.User.Detail_DELETE
-  ( detail_DELETE
+module Wizard.Specs.API.User.Detail_GET
+  ( detail_GET
   ) where
 
+import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.Migration.Development.Document.Data.Documents
-import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
+import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Document.Common
-import Wizard.Specs.API.Questionnaire.Common
-import Wizard.Specs.API.User.Common
-import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- DELETE /users/{uUuid}
+-- GET /users/{userId}
 -- ------------------------------------------------------------------------
-detail_DELETE :: AppContext -> SpecWith ((), Application)
-detail_DELETE appContext =
-  describe "DELETE /users/{uUuid}" $ do
-    test_204 appContext
+detail_GET :: AppContext -> SpecWith ((), Application)
+detail_GET appContext =
+  describe "GET /users/{userId}" $ do
+    test_200 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -36,42 +29,36 @@ detail_DELETE appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodDelete
+reqMethod = methodGet
 
 reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeaders = [reqAuthHeader]
 
 reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_204 appContext =
-  it "HTTP 204 NO CONTENT" $
-    -- GIVEN: Prepare expectation
+test_200 appContext =
+  it "HTTP 200 OK" $
+     -- GIVEN: Prepare expectation
    do
-    let expStatus = 204
-    let expHeaders = resCorsHeaders
-     -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
-    runInContextIO DOC.runMigration appContext
-    -- WHEN: Call API
+    let expStatus = 200
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toDTO userAlbert
+    let expBody = encode expDto
+     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- AND: Compare response with expectation
     let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals ""}
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-    -- AND: Compare state in DB with expectation
-    assertAbsenceOfUserInDB appContext userAlbert
-    assertAbsenceOfQuestionnaireInDB appContext questionnaire1
-    assertAbsenceOfQuestionnaireInDB appContext questionnaire2
-    assertAbsenceOfDocumentInDB appContext doc3
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [] ""
+test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

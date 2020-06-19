@@ -1,14 +1,12 @@
 module Wizard.Api.Resource.User.UserChangeDTO where
 
-import Data.UUID
 import GHC.Generics
 
 import Wizard.Model.User.User
 
 data UserChangeDTO =
   UserChangeDTO
-    { _userChangeDTOUuid :: UUID
-    , _userChangeDTOFirstName :: String
+    { _userChangeDTOFirstName :: String
     , _userChangeDTOLastName :: String
     , _userChangeDTOEmail :: Email
     , _userChangeDTOAffiliation :: Maybe String
