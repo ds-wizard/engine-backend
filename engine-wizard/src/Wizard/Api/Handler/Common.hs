@@ -3,7 +3,6 @@ module Wizard.Api.Handler.Common where
 import Control.Lens ((^.))
 import Control.Monad (unless)
 import Control.Monad.Except (catchError, runExceptT, throwError)
-import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
@@ -70,7 +69,8 @@ runInUnauthService function = do
           , _appContextCurrentUser = Nothing
           , _appContextCache = cache
           }
-  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  let loggingLevel = serverConfig ^. logging . level
+  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> do
@@ -101,7 +101,8 @@ runInAuthService user function = do
           , _appContextCurrentUser = Just user
           , _appContextCache = cache
           }
-  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  let loggingLevel = serverConfig ^. logging . level
+  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> do

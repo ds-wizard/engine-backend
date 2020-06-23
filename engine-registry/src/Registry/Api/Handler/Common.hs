@@ -1,7 +1,7 @@
 module Registry.Api.Handler.Common where
 
+import Control.Lens ((^.))
 import Control.Monad.Except (runExceptT)
-import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
@@ -25,6 +25,7 @@ import Servant
   , throwError
   )
 
+import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
@@ -57,7 +58,8 @@ runInUnauthService function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentOrganization = Nothing
           }
-  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  let loggingLevel = serverConfig ^. logging . level
+  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> do
@@ -80,7 +82,8 @@ runInAuthService organization function = do
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentOrganization = Just organization
           }
-  eResult <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  let loggingLevel = serverConfig ^. logging . level
+  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> do

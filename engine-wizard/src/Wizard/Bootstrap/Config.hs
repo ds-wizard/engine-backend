@@ -1,17 +1,15 @@
 module Wizard.Bootstrap.Config where
 
-import Control.Monad.Reader (liftIO)
+import System.Exit
 
-import Wizard.Constant.Component
-import Wizard.Util.Logger
-
-hLoadConfig fileName loadFn callback = do
-  eitherConfig <- liftIO (loadFn fileName)
+loadConfig fileName loadFn = do
+  eitherConfig <- loadFn fileName
   case eitherConfig of
     Right config -> do
-      logInfo _CMP_CONFIG ("'" ++ fileName ++ "' loaded")
-      callback config
+      print ("Config '" ++ fileName ++ "' loaded")
+      return config
     Left error -> do
-      logError _CMP_CONFIG "load failed"
-      logError _CMP_CONFIG ("can't load '" ++ fileName ++ "'. Maybe the file is missing or not well-formatted")
-      logError _CMP_CONFIG (show error)
+      print "Config load failed"
+      print ("Server can't load '" ++ fileName ++ "'. Maybe the file is missing or not well-formatted")
+      print error
+      exitFailure

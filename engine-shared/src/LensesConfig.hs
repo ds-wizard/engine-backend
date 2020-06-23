@@ -45,6 +45,8 @@ makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigLogging
+
 -- Model / Context
 makeFields ''AppContext
 

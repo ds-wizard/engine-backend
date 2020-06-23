@@ -15,7 +15,15 @@ module Wizard.Util.Logger
   ) where
 
 import Control.Monad.IO.Class (MonadIO)
-import Control.Monad.Logger (LogLevel(..), LoggingT(..), MonadLogger, logWithoutLoc, runStdoutLoggingT)
+import Control.Monad.Logger
+  ( LogLevel(..)
+  , LogSource(..)
+  , LoggingT(..)
+  , MonadLogger
+  , filterLogger
+  , logWithoutLoc
+  , runStdoutLoggingT
+  )
 import Control.Monad.Reader (MonadReader, asks)
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
@@ -55,8 +63,27 @@ logErrorU :: (MonadReader AppContext m, MonadLogger m) => String -> String -> m 
 logErrorU = logU LevelError
 
 -- ---------------------------------------------------------------------------
-runLogging :: MonadIO m => LoggingT m a -> m a
-runLogging = runStdoutLoggingT
+runLogging :: MonadIO m => LogLevel -> LoggingT m a -> m a
+runLogging level = runStdoutLoggingT . filterLogger (filterAppLogging level)
+
+filterAppLogging :: LogLevel -> LogSource -> LogLevel -> Bool
+filterAppLogging LevelDebug _ (LevelOther "Debug") = True
+filterAppLogging LevelDebug _ (LevelOther "Info ") = True
+filterAppLogging LevelDebug _ (LevelOther "Warn ") = True
+filterAppLogging LevelDebug _ (LevelOther "Error") = True
+filterAppLogging LevelInfo _ (LevelOther "Debug") = False
+filterAppLogging LevelInfo _ (LevelOther "Info ") = True
+filterAppLogging LevelInfo _ (LevelOther "Warn ") = True
+filterAppLogging LevelInfo _ (LevelOther "Error") = True
+filterAppLogging LevelWarn _ (LevelOther "Debug") = False
+filterAppLogging LevelWarn _ (LevelOther "Info ") = False
+filterAppLogging LevelWarn _ (LevelOther "Warn ") = True
+filterAppLogging LevelWarn _ (LevelOther "Error") = True
+filterAppLogging LevelError _ (LevelOther "Debug") = False
+filterAppLogging LevelError _ (LevelOther "Info ") = False
+filterAppLogging LevelError _ (LevelOther "Warn ") = False
+filterAppLogging LevelError _ (LevelOther "Error") = True
+filterAppLogging _ _ _ = False
 
 -- ---------------------------------------------------------------------------
 -- ---------------------------------------------------------------------------

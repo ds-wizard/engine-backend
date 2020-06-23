@@ -62,6 +62,8 @@ makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigLogging
+
 makeFields ''BuildInfoConfig
 
 -- Model / Context

@@ -24,6 +24,7 @@ instance FromJSON ServerConfig where
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
+    _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     return ServerConfig {..}
   parseJSON _ = mzero
 
@@ -38,7 +39,6 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
-    _serverConfigGeneralDebugLogHttpClient <- o .:? "debugLogHttpClient" .!= (defaultGeneral ^. debugLogHttpClient)
     return ServerConfigGeneral {..}
   parseJSON _ = mzero
 

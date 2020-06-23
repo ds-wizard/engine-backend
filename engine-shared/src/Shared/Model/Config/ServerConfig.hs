@@ -1,5 +1,6 @@
 module Shared.Model.Config.ServerConfig where
 
+import Control.Monad.Logger (LogLevel(..))
 import GHC.Generics
 
 data ServerConfigDatabase =
@@ -31,5 +32,12 @@ data ServerConfigAnalytics =
   ServerConfigAnalytics
     { _serverConfigAnalyticsEnabled :: Bool
     , _serverConfigAnalyticsEmail :: String
+    }
+  deriving (Generic, Show)
+
+data ServerConfigLogging =
+  ServerConfigLogging
+    { _serverConfigLoggingLevel :: LogLevel
+    , _serverConfigLoggingHttpClientDebug :: Bool
     }
   deriving (Generic, Show)

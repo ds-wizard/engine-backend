@@ -16,6 +16,7 @@ defaultConfig =
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigFeedback = defaultFeedback
+    , _serverConfigLogging = defaultLogging
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -29,7 +30,6 @@ defaultGeneral =
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
     , _serverConfigGeneralTemplateFolder = "engine-wizard/templates"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
-    , _serverConfigGeneralDebugLogHttpClient = True
     }
 
 defaultMessaging :: ServerConfigMessaging

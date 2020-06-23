@@ -31,32 +31,30 @@ import Wizard.Util.Logger
 runApplication :: IO ()
 runApplication = do
   hSetBuffering stdout LineBuffering
-  runLogging $ do
+  putStrLn asciiLogo
+  serverConfig <- loadConfig serverConfigFile getServerConfig
+  buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
+  runLogging (serverConfig ^. logging . level) $ do
+    logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
     shutdownFlag <- liftIO newEmptyMVar
-    liftIO $ putStrLn asciiLogo
-    logInfo _CMP_SERVER "started"
-    hLoadConfig serverConfigFile getServerConfig $ \serverConfig ->
-      hLoadConfig buildInfoFile getBuildInfoConfig $ \buildInfoConfig -> do
-        logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-        dbPool <- connectDB (serverConfig ^. database)
-        msgChannel <- connectMQ serverConfig
-        httpClientManager <- setupHttpClientManager serverConfig
-        registryClient <- setupRegistryClient serverConfig httpClientManager
-        localization <- loadLocalization serverConfig
-        cache <- setupServerCache serverConfig
-        let baseContext =
-              BaseContext
-                { _baseContextServerConfig = serverConfig
-                , _baseContextLocalization = localization
-                , _baseContextBuildInfoConfig = buildInfoConfig
-                , _baseContextPool = dbPool
-                , _baseContextMsgChannel = msgChannel
-                , _baseContextHttpClientManager = httpClientManager
-                , _baseContextRegistryClient = registryClient
-                , _baseContextCache = cache
-                }
-        liftIO $ runDBMigrations baseContext
-        liftIO $ runMetamodelMigrations baseContext
-        liftIO $
-          race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (cronJob shutdownFlag baseContext))
-        return ()
+    dbPool <- connectDB serverConfig
+    msgChannel <- connectMQ serverConfig
+    httpClientManager <- setupHttpClientManager serverConfig
+    registryClient <- setupRegistryClient serverConfig httpClientManager
+    localization <- loadLocalization serverConfig
+    cache <- setupServerCache serverConfig
+    let baseContext =
+          BaseContext
+            { _baseContextServerConfig = serverConfig
+            , _baseContextLocalization = localization
+            , _baseContextBuildInfoConfig = buildInfoConfig
+            , _baseContextPool = dbPool
+            , _baseContextMsgChannel = msgChannel
+            , _baseContextHttpClientManager = httpClientManager
+            , _baseContextRegistryClient = registryClient
+            , _baseContextCache = cache
+            }
+    liftIO $ runDBMigrations baseContext
+    liftIO $ runMetamodelMigrations baseContext
+    liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (cronJob shutdownFlag baseContext))
+    return ()

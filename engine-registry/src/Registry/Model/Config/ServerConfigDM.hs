@@ -11,6 +11,7 @@ defaultConfig =
     , _serverConfigDatabase = defaultDatabase
     , _serverConfigMail = defaultMail
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigLogging = defaultLogging
     }
 
 defaultGeneral :: ServerConfigGeneral

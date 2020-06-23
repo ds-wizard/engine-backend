@@ -17,6 +17,7 @@ instance FromJSON ServerConfig where
     _serverConfigDatabase <- o .:? "database" .!= defaultDatabase
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     return ServerConfig {..}
   parseJSON _ = mzero
 

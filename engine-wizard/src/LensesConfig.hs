@@ -205,6 +205,8 @@ makeFields ''ServerConfigAnalytics
 
 makeFields ''ServerConfigFeedback
 
+makeFields ''ServerConfigLogging
+
 makeFields ''BuildInfoConfig
 
 -- Model / Context

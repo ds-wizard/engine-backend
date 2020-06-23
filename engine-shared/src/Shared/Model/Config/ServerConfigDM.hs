@@ -1,5 +1,7 @@
 module Shared.Model.Config.ServerConfigDM where
 
+import Control.Monad.Logger (LogLevel(..))
+
 import Shared.Model.Config.ServerConfig
 
 defaultDatabase :: ServerConfigDatabase
@@ -29,3 +31,7 @@ defaultMail =
 
 defaultAnalytics :: ServerConfigAnalytics
 defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False, _serverConfigAnalyticsEmail = ""}
+
+defaultLogging :: ServerConfigLogging
+defaultLogging =
+  ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}

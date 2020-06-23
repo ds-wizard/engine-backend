@@ -26,14 +26,14 @@ import Network.HTTP.Client
   )
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 
-import LensesConfig (debugLogHttpClient, general)
+import LensesConfig (httpClientDebug, logging)
 import Shared.Util.String (format, replace)
 import Wizard.Model.Config.ServerConfig
 import Wizard.Util.Logger
 
 createHttpClientManager :: ServerConfig -> IO Manager
 createHttpClientManager serverConfig =
-  let logHttpClient = serverConfig ^. general . debugLogHttpClient
+  let logHttpClient = serverConfig ^. logging . httpClientDebug
    in newManager
         (tlsManagerSettings
            {managerModifyRequest = modifyRequest logHttpClient, managerModifyResponse = modifyResponse logHttpClient})

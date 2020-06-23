@@ -2,6 +2,7 @@ module Shared.Model.Config.ServerConfigJM where
 
 import Control.Lens ((^.))
 import Control.Monad
+import Control.Monad.Logger (LogLevel(..))
 import Data.Aeson
 
 import LensesConfig
@@ -43,3 +44,19 @@ instance FromJSON ServerConfigAnalytics where
     _serverConfigAnalyticsEmail <- o .:? "email" .!= (defaultAnalytics ^. email)
     return ServerConfigAnalytics {..}
   parseJSON _ = mzero
+
+instance FromJSON ServerConfigLogging where
+  parseJSON (Object o) = do
+    _serverConfigLoggingLevel <- o .:? "level" .!= (defaultLogging ^. level)
+    _serverConfigLoggingHttpClientDebug <- o .:? "httpClientDebug" .!= (defaultLogging ^. httpClientDebug)
+    return ServerConfigLogging {..}
+  parseJSON _ = mzero
+
+instance FromJSON LogLevel where
+  parseJSON = withText "LogLevel" parse
+    where
+      parse "DEBUG" = return LevelDebug
+      parse "INFO" = return LevelInfo
+      parse "WARN" = return LevelWarn
+      parse "ERROR" = return LevelError
+      parse _ = fail "Log Level has unsupported log level"

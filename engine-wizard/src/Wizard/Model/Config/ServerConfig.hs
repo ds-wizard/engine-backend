@@ -16,6 +16,7 @@ data ServerConfig =
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigFeedback :: ServerConfigFeedback
+    , _serverConfigLogging :: ServerConfigLogging
     }
   deriving (Generic, Show)
 
@@ -29,7 +30,6 @@ data ServerConfigGeneral =
     , _serverConfigGeneralIntegrationConfig :: String
     , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
-    , _serverConfigGeneralDebugLogHttpClient :: Bool
     }
   deriving (Generic, Show)
 

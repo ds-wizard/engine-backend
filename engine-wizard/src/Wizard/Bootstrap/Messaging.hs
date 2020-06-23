@@ -16,6 +16,7 @@ connectMQ serverConfig =
       msgChannel <-
         liftIO $
         withRetry
+          serverConfig
           retryBackoff
           _CMP_MESSAGING
           "failed to connect to the message broker"
