@@ -9,8 +9,8 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
-import Shared.Model.Event.EventAccessors
 import Shared.Model.Event.EventField
+import Shared.Model.Event.EventLenses
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
@@ -170,7 +170,7 @@ instance Sanitizator EditQuestionEvent where
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]
-          childUuidsFromKM km = getReferenceUuidsForQuestionUuid km (getEventNodeUuid event)
+          childUuidsFromKM km = getReferenceUuidsForQuestionUuid km (event ^. entityUuid')
           isInChildUuids :: KnowledgeModel -> U.UUID -> Bool
           isInChildUuids km uuid = isJust $ find (== uuid) (childUuidsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]
@@ -188,7 +188,7 @@ instance Sanitizator EditQuestionEvent where
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]
-          childUuidsFromKM km = getExpertUuidsForQuestionUuid km (getEventNodeUuid event)
+          childUuidsFromKM km = getExpertUuidsForQuestionUuid km (event ^. entityUuid')
           isInChildUuids :: KnowledgeModel -> U.UUID -> Bool
           isInChildUuids km uuid = isJust $ find (== uuid) (childUuidsFromKM km)
           resultUuids :: KnowledgeModel -> [U.UUID] -> [U.UUID]

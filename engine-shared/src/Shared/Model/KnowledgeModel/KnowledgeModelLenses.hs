@@ -1,10 +1,41 @@
-module Shared.Model.KnowledgeModel.KnowledgeModelLenses where
+module Shared.Model.KnowledgeModel.KnowledgeModelLenses
+  ( module Shared.Model.Common.Lens
+  , chaptersL
+  , chaptersM
+  , questionsL
+  , questionsM
+  , answersL
+  , answersM
+  , expertsL
+  , expertsM
+  , referencesL
+  , referencesM
+  , integrationsL
+  , integrationsM
+  , tagsL
+  , tagsM
+  , createEntityLFn
+  , createEntityMFn
+  , toMap
+  , title'
+  , text'
+  , requiredLevel'
+  , tagUuids'
+  , expertUuids'
+  , referenceUuids'
+  , answerUuids'
+  , itemTemplateQuestionUuids'
+  , valueType'
+  , integrationUuid'
+  , props'
+  ) where
 
 import Control.Lens
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Common.Lens
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------
@@ -13,36 +44,35 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 chaptersL :: Functor f => ([Chapter] -> f [Chapter]) -> KnowledgeModel -> f KnowledgeModel
 chaptersL = createEntityLFn (entities . chapters)
 
-chaptersM :: Functor f => ((M.Map U.UUID Chapter) -> f (M.Map U.UUID Chapter)) -> KnowledgeModel -> f KnowledgeModel
+chaptersM :: Functor f => (M.Map U.UUID Chapter -> f (M.Map U.UUID Chapter)) -> KnowledgeModel -> f KnowledgeModel
 chaptersM = createEntityMFn (entities . chapters)
 
 ------------------------------------------------------------------------------------------
 questionsL :: Functor f => ([Question] -> f [Question]) -> KnowledgeModel -> f KnowledgeModel
 questionsL = createEntityLFn (entities . questions)
 
-questionsM :: Functor f => ((M.Map U.UUID Question) -> f (M.Map U.UUID Question)) -> KnowledgeModel -> f KnowledgeModel
+questionsM :: Functor f => (M.Map U.UUID Question -> f (M.Map U.UUID Question)) -> KnowledgeModel -> f KnowledgeModel
 questionsM = createEntityMFn (entities . questions)
 
 ------------------------------------------------------------------------------------------
 answersL :: Functor f => ([Answer] -> f [Answer]) -> KnowledgeModel -> f KnowledgeModel
 answersL = createEntityLFn (entities . answers)
 
-answersM :: Functor f => ((M.Map U.UUID Answer) -> f (M.Map U.UUID Answer)) -> KnowledgeModel -> f KnowledgeModel
+answersM :: Functor f => (M.Map U.UUID Answer -> f (M.Map U.UUID Answer)) -> KnowledgeModel -> f KnowledgeModel
 answersM = createEntityMFn (entities . answers)
 
 ------------------------------------------------------------------------------------------
 expertsL :: Functor f => ([Expert] -> f [Expert]) -> KnowledgeModel -> f KnowledgeModel
 expertsL = createEntityLFn (entities . experts)
 
-expertsM :: Functor f => ((M.Map U.UUID Expert) -> f (M.Map U.UUID Expert)) -> KnowledgeModel -> f KnowledgeModel
+expertsM :: Functor f => (M.Map U.UUID Expert -> f (M.Map U.UUID Expert)) -> KnowledgeModel -> f KnowledgeModel
 expertsM = createEntityMFn (entities . experts)
 
 ------------------------------------------------------------------------------------------
 referencesL :: Functor f => ([Reference] -> f [Reference]) -> KnowledgeModel -> f KnowledgeModel
 referencesL = createEntityLFn (entities . references)
 
-referencesM ::
-     Functor f => ((M.Map U.UUID Reference) -> f (M.Map U.UUID Reference)) -> KnowledgeModel -> f KnowledgeModel
+referencesM :: Functor f => (M.Map U.UUID Reference -> f (M.Map U.UUID Reference)) -> KnowledgeModel -> f KnowledgeModel
 referencesM = createEntityMFn (entities . references)
 
 ------------------------------------------------------------------------------------------
@@ -50,30 +80,30 @@ integrationsL :: Functor f => ([Integration] -> f [Integration]) -> KnowledgeMod
 integrationsL = createEntityLFn (entities . integrations)
 
 integrationsM ::
-     Functor f => ((M.Map U.UUID Integration) -> f (M.Map U.UUID Integration)) -> KnowledgeModel -> f KnowledgeModel
+     Functor f => (M.Map U.UUID Integration -> f (M.Map U.UUID Integration)) -> KnowledgeModel -> f KnowledgeModel
 integrationsM = createEntityMFn (entities . integrations)
 
 ------------------------------------------------------------------------------------------
 tagsL :: Functor f => ([Tag] -> f [Tag]) -> KnowledgeModel -> f KnowledgeModel
 tagsL = createEntityLFn (entities . tags)
 
-tagsM :: Functor f => ((M.Map U.UUID Tag) -> f (M.Map U.UUID Tag)) -> KnowledgeModel -> f KnowledgeModel
+tagsM :: Functor f => (M.Map U.UUID Tag -> f (M.Map U.UUID Tag)) -> KnowledgeModel -> f KnowledgeModel
 tagsM = createEntityMFn (entities . tags)
 
 ------------------------------------------------------------------------------------------
 createEntityLFn ::
      (HasUuid' a, Functor f)
-  => (Lens' KnowledgeModel (M.Map U.UUID a))
+  => Lens' KnowledgeModel (M.Map U.UUID a)
   -> ([a] -> f [a])
   -> KnowledgeModel
   -> f KnowledgeModel
 createEntityLFn accessor convert km = fmap (update km) (convert . M.elems $ km ^. accessor)
   where
-    update km newValue = km & accessor .~ (toMap newValue)
+    update km newValue = km & accessor .~ toMap newValue
 
 createEntityMFn ::
      Functor f
-  => (Lens' KnowledgeModel (M.Map U.UUID a))
+  => Lens' KnowledgeModel (M.Map U.UUID a)
   -> (M.Map U.UUID a -> f (M.Map U.UUID a))
   -> KnowledgeModel
   -> f KnowledgeModel
@@ -86,9 +116,6 @@ toMap = M.fromList . fmap (\entity -> (entity ^. uuid', entity))
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------
-class HasUuid' entity where
-  uuid' :: Functor f => (U.UUID -> f U.UUID) -> entity -> f entity
-
 instance HasUuid' KnowledgeModel where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

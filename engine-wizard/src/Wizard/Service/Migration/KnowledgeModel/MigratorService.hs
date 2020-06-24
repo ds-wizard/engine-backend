@@ -8,7 +8,7 @@ import Data.Maybe
 
 import LensesConfig
 import Shared.Model.Error.Error
-import Shared.Model.Event.EventAccessors
+import Shared.Model.Event.EventLenses
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
@@ -101,7 +101,7 @@ solveConflictAndMigrate branchUuid reqDto = do
         0 -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> return ()
     validateReqDto (ConflictState (CorrectorConflict e)) reqDto =
-      if getEventUuid' e == reqDto ^. originalEventUuid
+      if e ^. uuid' == reqDto ^. originalEventUuid
         then when
                (reqDto ^. action == MCAEdited && isNothing (reqDto ^. event))
                (throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT)

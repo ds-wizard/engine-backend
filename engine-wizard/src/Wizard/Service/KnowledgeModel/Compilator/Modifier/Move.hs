@@ -4,7 +4,7 @@ import Control.Lens (Lens', (&), (.~), (^.))
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Model.Event.EventAccessors
+import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
@@ -34,7 +34,7 @@ instance EditEntity MoveReferenceEvent Question where
 -- -------------------------------------------------------------------------------------------------------------
 -- -------------------------------------------------------------------------------------------------------------
 moveEntity ::
-     (EventAccesors event, HasTargetUuid event U.UUID)
+     (HasParentUuid' event, HasEntityUuid' event, HasTargetUuid event U.UUID)
   => Lens' entity U.UUID
   -> Lens' entity [U.UUID]
   -> event
@@ -43,10 +43,10 @@ moveEntity ::
 moveEntity entityUuid parentUuidList event = addReferenceToNewParent . deleteReferenceFromOldParent
   where
     deleteReferenceFromOldParent entity =
-      if getEventParentUuid event == entity ^. entityUuid
-        then entity & parentUuidList .~ filter (getEventNodeUuid event /=) (entity ^. parentUuidList)
+      if event ^. parentUuid' == entity ^. entityUuid
+        then entity & parentUuidList .~ filter (event ^. entityUuid' /=) (entity ^. parentUuidList)
         else entity
     addReferenceToNewParent entity =
       if event ^. targetUuid == entity ^. entityUuid
-        then entity & parentUuidList .~ ((entity ^. parentUuidList) ++ [getEventNodeUuid event])
+        then entity & parentUuidList .~ ((entity ^. parentUuidList) ++ [event ^. entityUuid'])
         else entity
