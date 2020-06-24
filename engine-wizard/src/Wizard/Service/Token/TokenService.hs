@@ -12,7 +12,6 @@ import qualified Data.Text as T
 import Data.Text.Read
 import Data.Time
 import qualified Data.UUID as U
-import qualified Data.Vector as V
 import qualified Web.JWT as JWT
 
 import LensesConfig
@@ -26,7 +25,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Token.Token
-import Wizard.Model.User.User
 import Wizard.Service.Token.TokenMapper
 import Wizard.Util.Date
 
@@ -63,12 +61,9 @@ generateTokenFromUser user = do
   now <- liftIO getCurrentTime
   return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
 
-createToken ::
-     (HasUuid user U.UUID, HasPermissions user [String]) => user -> UTCTime -> ServerConfigJwt -> String -> Token
+createToken :: (HasUuid user U.UUID) => user -> UTCTime -> ServerConfigJwt -> String -> Token
 createToken user now config secret =
   let uUuid = toJSON (user ^. uuid) :: Value
-      permissionValues = fromString <$> (user ^. permissions)
-      uPermissions = Array (V.fromList permissionValues) :: Value
       timeDelta = realToFrac $ (config ^. expiration) * nominalDayInSeconds
       mExpiration = toNumericDate (addUTCTime timeDelta now)
       cs =
@@ -80,7 +75,7 @@ createToken user now config secret =
           , nbf = Nothing
           , iat = Nothing
           , jti = Nothing
-          , unregisteredClaims = createPayload uUuid uPermissions (fromInteger $ config ^. version)
+          , unregisteredClaims = createPayload uUuid (fromInteger $ config ^. version)
           }
    in signToken secret cs
   where
@@ -88,12 +83,9 @@ createToken user now config secret =
     fromInteger = fromString . show
     fromString :: String -> Value
     fromString = String . T.pack
-    createPayload :: Value -> Value -> Value -> JWT.ClaimsMap
-    createPayload uUuid uPermissions jwtVersion =
-      JWT.ClaimsMap
-        { unClaimsMap =
-            M.insert "version" jwtVersion $ M.insert "permissions" uPermissions $ M.insert "userUuid" uUuid M.empty
-        }
+    createPayload :: Value -> Value -> JWT.ClaimsMap
+    createPayload uUuid jwtVersion =
+      JWT.ClaimsMap {unClaimsMap = M.insert "version" jwtVersion $ M.insert "userUuid" uUuid M.empty}
 
 signToken :: String -> JWT.JWTClaimsSet -> Token
 signToken secret cs =
@@ -130,13 +122,6 @@ getUserUuidFromToken :: String -> Maybe String
 getUserUuidFromToken token = do
   (String value) <- getValueFromToken (T.pack token) "userUuid"
   Just . T.unpack $ value
-
-getPermissionsFromToken :: String -> Maybe [Permission]
-getPermissionsFromToken token = do
-  (Array value) <- getValueFromToken (T.pack token) "permissions"
-  let values = V.toList value
-  let permissionValues = fmap (\(String x) -> T.unpack x) values
-  Just permissionValues
 
 getJWTVersionFromToken :: T.Text -> Maybe Integer
 getJWTVersionFromToken token = do

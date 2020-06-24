@@ -19,6 +19,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Service.Common
+import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentService
 import Wizard.Service.Submission.SubmissionMapper
@@ -26,6 +27,7 @@ import Wizard.Service.User.UserProfileService
 
 getAvailableServicesForSubmission :: String -> AppContextM [SubmissionServiceSimpleDTO]
 getAvailableServicesForSubmission docUuid = do
+  checkPermission _SUBM_PERM
   checkPermissionToDocument docUuid
   appConfig <- getAppConfig
   doc <- findDocumentById docUuid
@@ -39,6 +41,7 @@ getAvailableServicesForSubmission docUuid = do
 
 submitDocument :: SubmissionCreateDTO -> AppContextM SubmissionDTO
 submitDocument reqDto = do
+  checkPermission _SUBM_PERM
   checkIfSubmissionIsEnabled
   appConfig <- getAppConfig
   case L.find (\s -> s ^. sId == (reqDto ^. serviceId)) (appConfig ^. submission . services) of

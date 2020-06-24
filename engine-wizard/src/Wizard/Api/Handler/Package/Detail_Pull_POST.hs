@@ -19,6 +19,5 @@ detail_pull_POST mTokenHeader pkgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "PM_WRITE_PERM"
       pullPackageBundleFromRegistry pkgId
       return NoContent

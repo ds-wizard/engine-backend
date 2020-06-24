@@ -18,6 +18,5 @@ detail_DELETE mTokenHeader docUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "DMP_PERM"
       deleteDocument docUuid
       return NoContent

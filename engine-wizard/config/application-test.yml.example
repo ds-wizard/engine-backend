@@ -24,7 +24,6 @@ messaging:
   vhost:
 
 jwt:
-  version: 1
   expiration: 9999
 
 mail:

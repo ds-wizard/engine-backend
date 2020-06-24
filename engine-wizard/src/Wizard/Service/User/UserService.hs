@@ -33,6 +33,7 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
+import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.User.UserMapper
@@ -40,6 +41,7 @@ import Wizard.Service.User.UserValidation
 
 getUsers :: AppContextM [UserDTO]
 getUsers = do
+  checkPermission _UM_PERM
   users <- findUsers
   return . fmap toDTO $ users
 
@@ -50,6 +52,7 @@ createUserByAdmin reqDto = do
 
 createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> AppContextM UserDTO
 createUserByAdminWithUuid reqDto uUuid = do
+  checkPermission _UM_PERM
   uPasswordHash <- generatePasswordHash (reqDto ^. password)
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
@@ -112,8 +115,14 @@ getUserById userUuid = do
   user <- findUserById userUuid
   return $ toDTO user
 
+getUserByIdDto :: String -> AppContextM UserDTO
+getUserByIdDto userUuid = do
+  checkPermission _UM_PERM
+  getUserById userUuid
+
 modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto = do
+  checkPermission _UM_PERM
   user <- findUserById userUuid
   validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
   serverConfig <- asks _appContextServerConfig
@@ -175,6 +184,7 @@ changeUserState userUuid maybeHash userStateDto = do
 
 deleteUser :: String -> AppContextM ()
 deleteUser userUuid = do
+  checkPermission _UM_PERM
   _ <- findUserById userUuid
   deleteUserById userUuid
   deleteQuestionnairesFiltered [("ownerUuid", userUuid)]

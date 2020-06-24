@@ -48,6 +48,7 @@ createDocument reqDto = createDocumentWithDurability reqDto PersistentDocumentDu
 
 createDocumentWithDurability :: DocumentCreateDTO -> DocumentDurability -> AppContextM DocumentDTO
 createDocumentWithDurability dto durability = do
+  checkPermission _DMP_PERM
   qtnDto <- getQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   tml <- getTemplateByUuid (dto ^. templateId) (Just $ qtn ^. packageId)
@@ -62,6 +63,7 @@ createDocumentWithDurability dto durability = do
 
 deleteDocument :: String -> AppContextM ()
 deleteDocument docUuid = do
+  checkPermission _DMP_PERM
   currentUser <- getCurrentUser
   doc <- findDocumentById docUuid
   if currentUser ^. role == _USER_ROLE_ADMIN || currentUser ^. uuid == doc ^. ownerUuid
@@ -89,6 +91,7 @@ cleanDocuments = do
 
 createPreview :: String -> AppContextM (Document, BS.ByteString)
 createPreview qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
   let repliesHash = hash (qtn ^. replies)

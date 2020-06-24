@@ -27,7 +27,4 @@ list_current_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_POST mTokenHeader reqDto bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_UPGRADE_PERM"
-      createMigration bUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< createMigration bUuid reqDto

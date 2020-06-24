@@ -14,12 +14,14 @@ import Wizard.Api.Resource.Typehint.TypehintRequestDTO
 import Wizard.Integration.Http.Typehint.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Common.ACL
 import Wizard.Service.Config.IntegrationConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
 
 getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
 getTypehints reqDto = do
+  checkPermission _QTN_PERM
   km <- compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) []
   question <- getQuestion km (reqDto ^. questionUuid)
   integration <- getIntegration km (question ^. integrationUuid)

@@ -20,7 +20,4 @@ type List_POST
 list_POST :: Maybe String -> BranchCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDTO)
 list_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_PERM"
-      createBranch reqDto
+    runInAuthService $ addTraceUuidHeader =<< createBranch reqDto

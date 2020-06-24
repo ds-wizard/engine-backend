@@ -2,12 +2,9 @@ module Wizard.Specs.API.Common where
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (eitherDecode, encode)
-import qualified Data.ByteString.Char8 as BS
 import Data.Either (isRight)
 import Data.Foldable
 import qualified Data.List as L
-import Data.Maybe
-import Data.Time
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Network.Wai.Test hiding (request)
@@ -28,7 +25,6 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
-import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 import Wizard.Util.List (elems)
 
@@ -56,23 +52,17 @@ startWebApp appContext = do
 reqAuthHeader :: Header
 reqAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ1MzQ1NTIwNiwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJVTV9QRVJNIiwiS01fUEVSTSIsIktNX1VQR1JBREVfUEVSTSIsIktNX1BVQkxJU0hfUEVSTSIsIlBNX1JFQURfUEVSTSIsIlBNX1dSSVRFX1BFUk0iLCJRVE5fUEVSTSIsIkRNUF9QRVJNIiwiQ0ZHX1BFUk0iLCJTVUJNX1BFUk0iLCJUTUxfUEVSTSJdfQ.xqa15Pfj0OVVbpXPWLUiURShWbFYSaDBW1AME-Z0GJI")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImVjNmY4ZTkwLTJhOTEtNDllYy1hYTNmLTllYWIyMjY3ZmM2NiIsImV4cCI6MjQ1Njk4MjMyMCwidmVyc2lvbiI6IjIifQ.QFwvynp-TcEckL2wIQ5hgX71DVrsUMWrSTY9uzADnLU")
 
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader =
   ( "Authorization"
-  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQ0OTk5ODQyMSwidmVyc2lvbiI6IjEiLCJwZXJtaXNzaW9ucyI6WyJLTV9QRVJNIiwiS01fVVBHUkFERV9QRVJNIiwiS01fUFVCTElTSF9QRVJNIiwiUE1fUkVBRF9QRVJNIiwiUVROX1BFUk0iLCJETVBfUEVSTSIsIlNVQk1fUEVSTSJdfQ.lraPu5hiBCBXRGBAAxHnUVXvhv0_EfKxicHBo6CXVlY")
+  , "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6IjMwZDQ4Y2Y0LThjOGEtNDk2Zi1iYWZlLTU4NWJkMjM4Zjc5OCIsImV4cCI6MjQ1Njk4MjI1OSwidmVyc2lvbiI6IjIifQ.bk1qLv7CTgROvc9ncTV5WD9sdYb5qEabIlWss7lQ87k")
 
 userWithoutPerm :: ServerConfig -> Permission -> User
 userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
    in userAlbert & permissions .~ L.delete perm allPerms
-
-reqAuthHeaderWithoutPerms :: ServerConfig -> User -> Header
-reqAuthHeaderWithoutPerms serverConfig user =
-  let now = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-      token = createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
-   in ("Authorization", BS.concat ["Bearer ", BS.pack token])
 
 reqServiceHeader :: Header
 reqServiceHeader = ("Authorization", "Bearer my-service-token")
@@ -162,8 +152,7 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
    do
     let user = userWithoutPerm (appContext ^. serverConfig) missingPerm
     runInContextIO (updateUserById user) appContext
-    let authHeader = reqAuthHeaderWithoutPerms (appContext ^. serverConfig) user
-    let reqHeaders = authHeader : otherHeaders
+    let reqHeaders = reqAuthHeader : otherHeaders
     -- GIVEN: Prepare expectation
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
     let expBody = encode expDto

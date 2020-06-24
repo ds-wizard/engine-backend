@@ -29,6 +29,5 @@ import_POST mTokenHeader multipartData =
       case L.find (\file -> fdInputName file == "file") fs of
         Just file -> do
           let content = fdPayload file
-          checkPermission mTokenHeader "PM_WRITE_PERM"
           importAndConvertPackageBundle content
         Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

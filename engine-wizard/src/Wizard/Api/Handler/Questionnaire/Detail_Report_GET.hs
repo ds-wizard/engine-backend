@@ -19,7 +19,4 @@ type Detail_Report_GET
 detail_report_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] ReportDTO)
 detail_report_GET mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      getReportByQuestionnaireUuid qtnUuid
+    runInAuthService $ addTraceUuidHeader =<< getReportByQuestionnaireUuid qtnUuid

@@ -27,7 +27,4 @@ detail_report_preview_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] ReportDTO)
 detail_report_preview_POST mTokenHeader reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto

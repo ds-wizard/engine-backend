@@ -26,6 +26,5 @@ list_GET mTokenHeader mOrganizationId mKmId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "PM_READ_PERM"
       let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "kmId" <$> mKmId]
       getSimplePackagesFiltered queryParams

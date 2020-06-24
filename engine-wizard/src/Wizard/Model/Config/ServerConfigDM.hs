@@ -44,7 +44,7 @@ defaultMessaging =
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 1, _serverConfigJwtExpiration = 14}
+defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 2, _serverConfigJwtExpiration = 14}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =

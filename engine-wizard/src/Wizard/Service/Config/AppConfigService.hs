@@ -11,6 +11,7 @@ import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigMapper
 
 getAppConfig :: AppContextM AppConfig
@@ -18,6 +19,11 @@ getAppConfig = do
   serverConfig <- asks _appContextServerConfig
   encryptedAppConfig <- findAppConfig
   return $ process (serverConfig ^. general . secret) encryptedAppConfig
+
+getAppConfigDto :: AppContextM AppConfig
+getAppConfigDto = do
+  checkPermission _CFG_PERM
+  getAppConfig
 
 modifyAppConfig :: AppConfig -> AppContextM AppConfig
 modifyAppConfig appConfig = do
@@ -28,14 +34,16 @@ modifyAppConfig appConfig = do
 
 modifyAppConfigDto :: AppConfigChangeDTO -> AppContextM AppConfig
 modifyAppConfigDto reqDto
-  -- 1. Get current config
+  -- 1. Check permission
  = do
+  checkPermission _CFG_PERM
+  -- 2. Get current config
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
-  -- 2. Prepare to update & validate
+  -- 3. Prepare to update & validate
   now <- liftIO getCurrentTime
   let updatedAppConfig = fromChangeDTO reqDto appConfig now
-  -- 3. Update
+  -- 4. Update
   modifyAppConfig updatedAppConfig
-  -- 4. Create response
+  -- 5. Create response
   return updatedAppConfig

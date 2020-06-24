@@ -20,6 +20,5 @@ list_current_DELETE mTokenHeader bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_UPGRADE_PERM"
       deleteCurrentMigration bUuid
       return NoContent

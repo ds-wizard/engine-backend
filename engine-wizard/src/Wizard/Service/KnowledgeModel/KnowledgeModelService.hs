@@ -10,12 +10,15 @@ import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Cache.KnowledgeModelCache
+import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageService
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
-createKnowledgeModelPreview reqDto = compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
+createKnowledgeModelPreview reqDto = do
+  checkPermission _QTN_PERM
+  compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
 compileKnowledgeModel events mPackageId tagUuids = do

@@ -30,7 +30,6 @@ detail_documents_preview_GET ::
 detail_documents_preview_GET mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ do
-      checkPermission mTokenHeader "QTN_PERM"
       (doc, result) <- createPreview qtnUuid
       case doc ^. state of
         DoneDocumentState -> do

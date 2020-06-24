@@ -18,6 +18,5 @@ detail_DELETE mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
       deleteQuestionnaire qtnUuid
       return NoContent

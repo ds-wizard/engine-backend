@@ -1,7 +1,6 @@
 module Wizard.Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad (unless)
 import Control.Monad.Except (catchError, runExceptT, throwError)
 import Control.Monad.Reader (asks, liftIO, runReaderT)
 import Data.Aeson
@@ -32,7 +31,6 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api (contentTypeHeaderJSON)
 import Shared.Localization.Locale
 import Shared.Localization.Messages.Internal
-import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Shared.Util.Uuid
@@ -222,13 +220,6 @@ sendErrorDTO (HttpClientErrorDTO status message) = do
       , errBody = BSL.pack message
       , errHeaders = [contentTypeHeaderJSON]
       }
-
-checkPermission mTokenHeader perm = do
-  let mUserPerms = mTokenHeader >>= separateToken >>= getPermissionsFromToken
-      forbidden = throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ perm)
-  case mUserPerms of
-    Just userPerms -> unless (perm `Prelude.elem` userPerms) forbidden
-    Nothing -> forbidden
 
 isAdmin :: AppContextM Bool
 isAdmin = do

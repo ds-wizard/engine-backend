@@ -19,6 +19,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchUtils
+import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
 import Wizard.Service.Migration.KnowledgeModel.MigratorMapper
@@ -27,6 +28,7 @@ import Wizard.Service.Package.PackageService
 
 getCurrentMigrationDto :: String -> AppContextM MigratorStateDTO
 getCurrentMigrationDto branchUuid = do
+  checkPermission _KM_UPGRADE_PERM
   ms <- getCurrentMigration branchUuid
   return . toDTO $ ms
 
@@ -39,6 +41,7 @@ getCurrentMigration branchUuid = do
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
 createMigration bUuid mscDto = do
+  checkPermission _KM_UPGRADE_PERM
   let targetPkgId = mscDto ^. targetPackageId
   branch <- findBranchWithEventsById bUuid
   previousPkg <- getPreviousPkg branch
@@ -73,12 +76,14 @@ createMigration bUuid mscDto = do
 
 deleteCurrentMigration :: String -> AppContextM ()
 deleteCurrentMigration branchUuid = do
+  checkPermission _KM_UPGRADE_PERM
   _ <- getCurrentMigration branchUuid
   deleteMigratorStateByBranchUuid branchUuid
   return ()
 
 solveConflictAndMigrate :: String -> MigratorConflictDTO -> AppContextM ()
 solveConflictAndMigrate branchUuid reqDto = do
+  checkPermission _KM_UPGRADE_PERM
   ms <- getCurrentMigration branchUuid
   validateMigrationState ms
   validateTargetPackageEvent ms

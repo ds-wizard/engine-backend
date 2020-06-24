@@ -21,7 +21,6 @@ list_DELETE mTokenHeader mOrganizationId mKmId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "PM_WRITE_PERM"
       let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "kmId" <$> mKmId]
       deletePackagesByQueryParams queryParams
       return NoContent

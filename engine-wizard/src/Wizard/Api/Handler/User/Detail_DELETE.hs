@@ -18,6 +18,5 @@ detail_DELETE mTokenHeader uUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "UM_PERM"
       deleteUser uUuid
       return NoContent

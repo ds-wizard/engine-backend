@@ -20,7 +20,4 @@ detail_available_submission_Services_GET ::
      Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
 detail_available_submission_Services_GET mTokenHeader docUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "SUBM_PERM"
-      getAvailableServicesForSubmission docUuid
+    runInAuthService $ addTraceUuidHeader =<< getAvailableServicesForSubmission docUuid

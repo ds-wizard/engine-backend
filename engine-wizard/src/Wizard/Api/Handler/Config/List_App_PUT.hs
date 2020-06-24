@@ -20,7 +20,4 @@ type List_App_PUT
 list_app_PUT :: Maybe String -> AppConfigChangeDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
 list_app_PUT mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "CFG_PERM"
-      modifyAppConfigDto reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyAppConfigDto reqDto

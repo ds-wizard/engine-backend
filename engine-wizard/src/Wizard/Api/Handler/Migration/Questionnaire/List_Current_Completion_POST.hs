@@ -22,6 +22,5 @@ list_current_completion_POST mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
       finishQuestionnaireMigration qtnUuid
       return NoContent

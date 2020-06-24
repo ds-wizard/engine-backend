@@ -10,6 +10,7 @@ import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireService
@@ -19,6 +20,7 @@ import Wizard.Service.Report.ReportMapper
 
 getReportByQuestionnaireUuid :: String -> AppContextM ReportDTO
 getReportByQuestionnaireUuid qtnUuid = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById qtnUuid
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids)
   metrics <- findMetrics
@@ -27,6 +29,7 @@ getReportByQuestionnaireUuid qtnUuid = do
 
 getPreviewOfReportByQuestionnaireUuid :: String -> QuestionnaireChangeDTO -> AppContextM ReportDTO
 getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById qtnUuid
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids)
   currentUser <- getCurrentUser

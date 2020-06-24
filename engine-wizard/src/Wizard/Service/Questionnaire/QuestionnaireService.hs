@@ -44,6 +44,7 @@ createQuestionnaire questionnaireCreateDto =
 
 createQuestionnaireWithGivenUuid :: QuestionnaireCreateDTO -> U.UUID -> AppContextM QuestionnaireDTO
 createQuestionnaireWithGivenUuid reqDto qtnUuid = do
+  checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   package <- findPackageWithEventsById (reqDto ^. packageId)
   qtnState <- getQuestionnaireState (U.toString qtnUuid) (reqDto ^. packageId)
@@ -60,6 +61,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid = do
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById cloneUuid
   pkg <- findPackageWithEventsById (qtnDto ^. package . pId)
   newUuid <- liftIO generateUuid
@@ -107,6 +109,7 @@ getQuestionnaireById' qtnUuid = do
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
   checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
   package <- findPackageWithEventsById (qtn ^. packageId)
@@ -116,6 +119,7 @@ getQuestionnaireDetailById qtnUuid = do
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById qtnUuid
   checkEditPermissionToQtn (qtnDto ^. visibility) (qtnDto ^. ownerUuid)
   currentUser <- getCurrentUser
@@ -130,6 +134,7 @@ modifyQuestionnaire qtnUuid reqDto = do
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- getQuestionnaireById qtnUuid
   validateQuestionnaireDeletation qtnUuid
   checkEditPermissionToQtn (qtn ^. visibility) (qtn ^? owner . _Just . uuid)

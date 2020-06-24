@@ -29,10 +29,12 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Branch.BranchUtils
 import Wizard.Service.Branch.BranchValidation
+import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageService
 
 getBranches :: AppContextM [BranchDTO]
 getBranches = do
+  checkPermission _KM_PERM
   bs <- findBranchesWithEvents
   forM bs enhance
   where
@@ -51,6 +53,7 @@ createBranch reqDto = do
 
 createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchDTO
 createBranchWithParams bUuid now currentUser reqDto = do
+  checkPermission _KM_PERM
   validateNewKmId (reqDto ^. kmId)
   validatePackageExistence (reqDto ^. previousPackageId)
   let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
@@ -77,6 +80,7 @@ createBranchWithParams bUuid now currentUser reqDto = do
 
 getBranchById :: String -> AppContextM BranchDetailDTO
 getBranchById branchUuid = do
+  checkPermission _KM_PERM
   branch <- findBranchWithEventsById branchUuid
   mForkOfPackageId <- getBranchForkOfPackageId branch
   branchState <- getBranchState branch
@@ -84,6 +88,7 @@ getBranchById branchUuid = do
 
 modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
 modifyBranch branchUuid reqDto = do
+  checkPermission _KM_PERM
   branchFromDB <- findBranchById branchUuid
   validateKmId
   now <- liftIO getCurrentTime
@@ -116,13 +121,14 @@ modifyBranch branchUuid reqDto = do
 
 deleteBranch :: String -> AppContextM ()
 deleteBranch branchUuid = do
+  checkPermission _KM_PERM
   branch <- findBranchById branchUuid
   deleteBranchById branchUuid
   deleteMigratorStateByBranchUuid branchUuid
   return ()
 
 getBranchState :: BranchWithEvents -> AppContextM BranchState
-getBranchState branch = isMigrating $ isEditing $ isMigrated $ isOutdated $ isDefault
+getBranchState branch = isMigrating $ isEditing $ isMigrated $ isOutdated isDefault
   where
     isMigrating continue = do
       mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)

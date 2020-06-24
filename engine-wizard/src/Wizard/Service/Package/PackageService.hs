@@ -27,6 +27,7 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
@@ -36,6 +37,7 @@ import Wizard.Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do
+  checkPermission _PM_READ_PERM
   pkgs <- findPackagesFiltered queryParams
   iStat <- getInstanceStatistics
   pkgRs <- retrievePackages iStat
@@ -51,6 +53,7 @@ getSimplePackagesFiltered queryParams = do
 
 getPackageById :: String -> AppContextM PackageDetailDTO
 getPackageById pkgId = do
+  checkPermission _PM_READ_PERM
   serverConfig <- asks _appContextServerConfig
   pkg <- findPackageById pkgId
   versions <- getPackageVersions pkg
@@ -113,12 +116,14 @@ createPackage pkg = do
 
 deletePackagesByQueryParams :: [(String, String)] -> AppContextM ()
 deletePackagesByQueryParams queryParams = do
+  checkPermission _PM_WRITE_PERM
   packages <- findPackagesFiltered queryParams
   validatePackagesDeletation (_packagePId <$> packages)
   deletePackagesFiltered queryParams
 
 deletePackage :: String -> AppContextM ()
 deletePackage pkgId = do
+  checkPermission _PM_WRITE_PERM
   package <- findPackageById pkgId
   validatePackageDeletation pkgId
   deletePackageById pkgId

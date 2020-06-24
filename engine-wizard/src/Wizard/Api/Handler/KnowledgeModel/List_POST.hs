@@ -22,7 +22,4 @@ list_POST ::
      Maybe String -> KnowledgeModelChangeDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] KnowledgeModel)
 list_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      createKnowledgeModelPreview reqDto
+    runInAuthService $ addTraceUuidHeader =<< createKnowledgeModelPreview reqDto

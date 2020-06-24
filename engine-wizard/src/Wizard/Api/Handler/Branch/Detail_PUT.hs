@@ -25,7 +25,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
 detail_PUT mTokenHeader reqDto bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_PERM"
-      modifyBranch bUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyBranch bUuid reqDto
