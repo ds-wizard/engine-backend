@@ -14,6 +14,9 @@ entityName = "kmMigration"
 
 collection = "kmMigrations"
 
+findMigratorStates :: AppContextM [MigratorState]
+findMigratorStates = createFindEntitiesFn collection
+
 findMigratorStateByBranchUuid :: String -> AppContextM MigratorState
 findMigratorStateByBranchUuid = createFindEntityByFn collection entityName "branchUuid"
 

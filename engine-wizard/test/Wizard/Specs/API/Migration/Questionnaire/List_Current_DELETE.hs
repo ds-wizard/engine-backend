@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Migration.List_Current_Completion_POST
-  ( list_current_completion_POST
+module Wizard.Specs.API.Migration.Questionnaire.List_Current_DELETE
+  ( list_current_DELETE
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -28,11 +28,11 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /questionnaires/{qtnUuid}/migrations/current/completion
+-- DELETE /questionnaires/{qtnUuid}/migrations/current
 -- ------------------------------------------------------------------------
-list_current_completion_POST :: AppContext -> SpecWith ((), Application)
-list_current_completion_POST appContext =
-  describe "POST /questionnaires/{qtnUuid}/migrations/current/completion" $ do
+list_current_DELETE :: AppContext -> SpecWith ((), Application)
+list_current_DELETE appContext =
+  describe "DELETE /questionnaires/{qtnUuid}/migrations/current" $ do
     test_204 appContext
     test_401 appContext
     test_403 appContext
@@ -41,9 +41,9 @@ list_current_completion_POST appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodPost
+reqMethod = methodDelete
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current/completion"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
 
 reqHeadersT authHeader = [authHeader]
 
@@ -73,7 +73,7 @@ test_204 appContext =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findQuestionnaires appContext 2
+    assertCountInDB findQuestionnaires appContext 1
     assertCountInDB findMigratorStates appContext 0
 
 -- ----------------------------------------------------

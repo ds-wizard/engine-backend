@@ -1,4 +1,4 @@
-module Wizard.Specs.API.Questionnaire.Migration.List_POST
+module Wizard.Specs.API.Migration.Questionnaire.List_POST
   ( list_POST
   ) where
 
@@ -27,7 +27,7 @@ import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
-import Wizard.Specs.API.Questionnaire.Migration.Common
+import Wizard.Specs.API.Migration.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------

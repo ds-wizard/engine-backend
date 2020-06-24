@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Migration.List_Current_GET
-  ( list_current_GET
+module Wizard.Specs.API.Migration.Questionnaire.List_Current_Completion_POST
+  ( list_current_completion_POST
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -13,6 +13,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -27,12 +28,12 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires/{qtnUuid}/migrations/current
+-- POST /questionnaires/{qtnUuid}/migrations/current/completion
 -- ------------------------------------------------------------------------
-list_current_GET :: AppContext -> SpecWith ((), Application)
-list_current_GET appContext =
-  describe "GET /questionnaires/{qtnUuid}/migrations/current" $ do
-    test_200 appContext
+list_current_completion_POST :: AppContext -> SpecWith ((), Application)
+list_current_completion_POST appContext =
+  describe "POST /questionnaires/{qtnUuid}/migrations/current/completion" $ do
+    test_204 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -40,69 +41,45 @@ list_current_GET appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-reqMethod = methodGet
+reqMethod = methodPost
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/migrations/current/completion"
 
-reqHeadersT authHeader = [authHeader, reqCtHeader]
+reqHeadersT authHeader = [authHeader]
 
 reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
-  create_test_200
-    "HTTP 200 OK (Owner, Private)"
-    appContext
-    questionnaire4
-    questionnaire4Upgraded
-    nlQtnMigrationState
-    nlQtnMigrationStateDto
-    reqNonAdminAuthHeader
-  create_test_200
-    "HTTP 200 OK (Non-Owner, PublicReadOnly)"
-    appContext
-    questionnaire4PublicReadOnly
-    questionnaire4PublicReadOnlyUpgraded
-    nlQtnMigrationState
-    nlQtnMigrationStatePublicReadOnlyDto
-    reqNonAdminAuthHeader
-  create_test_200
-    "HTTP 200 OK (Non-Owner, Public)"
-    appContext
-    questionnaire4Public
-    questionnaire4PublicUpgraded
-    nlQtnMigrationState
-    nlQtnMigrationStatePublicDto
-    reqNonAdminAuthHeader
-
-create_test_200 title appContext oldQtn newQtn state stateDto authHeader =
-  it title $
-    -- GIVEN: Prepare request
+test_204 appContext =
+  it "HTTP 204 NO CONTENT" $
+     -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT $ questionnaire4Upgraded ^. uuid
     let reqHeaders = reqHeadersT reqAuthHeader
-    -- AND: Prepare expectation
-    let expStatus = 200
-    let expDto = stateDto
-    let expBody = encode expDto
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+     -- AND: Prepare expectation
+    let expStatus = 204
+    let expBody = ""
+    let expHeaders = resCorsHeaders
     -- AND: Prepare database
-    runInContextIO (insertQuestionnaire oldQtn) appContext
-    runInContextIO (insertQuestionnaire newQtn) appContext
-    runInContextIO (insertMigratorState state) appContext
+    runInContextIO (insertQuestionnaire questionnaire4) appContext
+    runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
+    runInContextIO (insertMigratorState nlQtnMigrationState) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 2
+    assertCountInDB findMigratorStates appContext 0
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire4 ^. uuid) [] reqBody
+test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -120,7 +97,7 @@ create_test_403 title appContext qtn reason =
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
@@ -134,11 +111,14 @@ create_test_403 title appContext qtn reason =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findQuestionnaires appContext 3
+    assertCountInDB findMigratorStates appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = do
+test_404 appContext =
   createNotFoundTest
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)

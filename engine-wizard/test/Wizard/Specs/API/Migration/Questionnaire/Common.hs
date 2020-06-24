@@ -1,4 +1,4 @@
-module Wizard.Specs.API.Questionnaire.Migration.Common where
+module Wizard.Specs.API.Migration.Questionnaire.Common where
 
 import Control.Lens ((^.))
 import Data.Either (isRight)

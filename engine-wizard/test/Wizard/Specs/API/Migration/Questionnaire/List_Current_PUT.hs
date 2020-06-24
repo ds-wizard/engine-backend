@@ -1,4 +1,4 @@
-module Wizard.Specs.API.Questionnaire.Migration.List_Current_PUT
+module Wizard.Specs.API.Migration.Questionnaire.List_Current_PUT
   ( list_current_PUT
   ) where
 

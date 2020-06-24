@@ -29,10 +29,10 @@ import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
 import Wizard.Specs.API.Level.APISpec
 import Wizard.Specs.API.Metric.APISpec
-import Wizard.Specs.API.MigrationAPISpec
+import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
+import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
-import Wizard.Specs.API.Questionnaire.Migration.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Template.APISpec
@@ -145,10 +145,10 @@ main =
              knowledgeModelAPI appContext
              levelAPI appContext
              metricAPI appContext
-             migratorAPI appContext
+             KM_MigrationAPI.migrationAPI appContext
+             QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
-             questionnaireMigrationAPI appContext
              submissionAPI appContext
              swaggerAPI appContext
              templateAPI appContext
