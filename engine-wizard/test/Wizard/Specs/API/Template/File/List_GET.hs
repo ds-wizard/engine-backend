@@ -11,8 +11,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Api.Resource.Template.TemplateJM ()
-import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 
@@ -55,7 +55,6 @@ create_test_200 title appContext reqAuthHeader =
       -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    (Right commonWizardTemplate) <- runInContextIO getCommonWizardTemplate appContext
     let expDto = commonWizardTemplate ^. files
     let expBody = encode expDto
      -- AND: Run migrations

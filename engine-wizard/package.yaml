@@ -67,6 +67,7 @@ library:
   - pretty-terminal
   - pwstore-fast
   - random # OK
+  - raw-strings-qq
   - regex-compat
   - retry
   - scientific

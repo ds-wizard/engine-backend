@@ -43,6 +43,7 @@ library:
   - network
   - persistent-mongoDB
   - random
+  - raw-strings-qq
   - servant-server
   - servant-multipart
   - servant-swagger

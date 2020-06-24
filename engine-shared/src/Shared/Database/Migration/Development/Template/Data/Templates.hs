@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.Template
+import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (css, html)
 import Shared.Model.Template.Template
 
 commonWizardTemplate :: Template
@@ -193,7 +194,7 @@ templateFileDefaultHtml =
   TemplateFile
     { _templateFileUuid = fromJust $ U.fromString "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     , _templateFileFileName = "default.html.j2"
-    , _templateFileContent = ""
+    , _templateFileContent = html
     }
 
 templateFileDefaultHtmlEdited :: TemplateFile
@@ -209,7 +210,7 @@ templateFileDefaultCss =
   TemplateFile
     { _templateFileUuid = fromJust $ U.fromString "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
     , _templateFileFileName = "default.css"
-    , _templateFileContent = ""
+    , _templateFileContent = css
     }
 
 templateFileNewFile :: TemplateFile

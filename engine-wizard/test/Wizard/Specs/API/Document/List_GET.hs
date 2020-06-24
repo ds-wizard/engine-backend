@@ -9,13 +9,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
-import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
@@ -71,7 +71,6 @@ create_test_200 title appContext expDto authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    (Right commonWizardTemplate) <- runInContextIO getCommonWizardTemplate appContext
     let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

@@ -1,28 +1,25 @@
 module Wizard.Database.Migration.Production.Migration_0038_template_management.Data.Templates where
 
 import qualified Data.Bson as BSON
-import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Time
+
+import Wizard.Database.Migration.Production.Migration_0038_template_management.Data.DefaultTemplate (css, html)
 
 getDefaultTemplate = do
   now <- getCurrentTime
-  html <- BSL.readFile (folder ++ "/default.html.j2")
-  css <- BSL.readFile (folder ++ "/default.css")
   let files =
         [ "files" BSON.=:
           [ [ "uuid" BSON.=: "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
             , "fileName" BSON.=: "default.html.j2"
-            , "content" BSON.=: BSL.unpack html
+            , "content" BSON.=: html
             ]
           , [ "uuid" BSON.=: "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
             , "fileName" BSON.=: "default.css"
-            , "content" BSON.=: BSL.unpack css
+            , "content" BSON.=: css
             ]
           ]
         ]
   return $ template now ++ files
-
-folder = "engine-wizard/src/Wizard/Database/Migration/Production/Migration_0038_template_management/Data"
 
 template now =
   [ "id" BSON.=: "dsw:default-template:1.0.0"
