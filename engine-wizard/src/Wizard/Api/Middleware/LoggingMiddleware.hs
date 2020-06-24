@@ -20,10 +20,10 @@ import Network.Wai (Middleware, Request(..))
 import System.IO.Unsafe
 
 import Shared.Constant.Api (authorizationHeaderName, xTraceUuidHeaderName)
+import Shared.Constant.Component
 import Shared.Model.Config.Environment
 import Shared.Util.Http (extractMethod, extractPath, findHeader, processHeaderInMiddleware)
 import Shared.Util.Token
-import Wizard.Constant.Component
 import Wizard.Service.Token.TokenService
 import Wizard.Util.Logger
 
@@ -52,7 +52,7 @@ createHttpLogRecord request resStatus resHeaders = L.intercalate "" ["[", showLo
     mTraceUuid :: Maybe String
     mTraceUuid = findHeader xTraceUuidHeaderName resHeaders
     message :: String
-    message = L.intercalate " " (createMessageParts request resStatus)
+    message = unwords (createMessageParts request resStatus)
     record :: String
     record = createLogRecord logLevel mUserUuid mTraceUuid _CMP_API message
 

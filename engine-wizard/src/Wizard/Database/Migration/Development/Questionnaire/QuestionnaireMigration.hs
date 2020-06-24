@@ -1,7 +1,7 @@
 module Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration where
 
+import Shared.Constant.Component
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Constant.Component
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires

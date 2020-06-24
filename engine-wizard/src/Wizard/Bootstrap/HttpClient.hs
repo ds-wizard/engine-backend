@@ -2,7 +2,7 @@ module Wizard.Bootstrap.HttpClient where
 
 import Control.Monad.Reader (liftIO)
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Util.Logger
 

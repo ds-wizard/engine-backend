@@ -2,7 +2,7 @@ module Wizard.Database.Migration.Development.Migration
   ( runMigration
   ) where
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Config.AppConfigMigration as CFG

@@ -4,7 +4,6 @@ import Control.Lens ((^.))
 import qualified Data.UUID as U
 
 import LensesConfig
-import Registry.Constant.Component
 import Registry.Database.DAO.Template.TemplateDAO
 import Registry.Util.Logger
 import Shared.Database.Migration.Development.Template.Data.Templates

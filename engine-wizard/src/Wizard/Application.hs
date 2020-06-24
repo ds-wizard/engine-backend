@@ -9,6 +9,7 @@ import Control.Monad.Reader (liftIO)
 import System.IO
 
 import LensesConfig
+import Shared.Constant.Component
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.Config
 import Wizard.Bootstrap.Database
@@ -22,7 +23,6 @@ import Wizard.Bootstrap.ServerCache
 import Wizard.Bootstrap.Web
 import Wizard.Bootstrap.Worker
 import Wizard.Constant.ASCIIArt
-import Wizard.Constant.Component
 import Wizard.Constant.Resource
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.ServerConfigService

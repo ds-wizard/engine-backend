@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.UUID as U
 
 import LensesConfig
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches

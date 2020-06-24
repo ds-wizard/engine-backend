@@ -10,7 +10,6 @@ import qualified Data.Map.Strict as M
 import Network.Wreq (get, responseBody)
 
 import LensesConfig hiding (headers)
-import Registry.Constant.Component
 import Registry.Constant.Resource
 import Registry.Util.Logger
 import Shared.Model.Error.Error

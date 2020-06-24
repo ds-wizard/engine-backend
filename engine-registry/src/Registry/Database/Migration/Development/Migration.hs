@@ -2,7 +2,6 @@ module Registry.Database.Migration.Development.Migration
   ( runMigration
   ) where
 
-import Registry.Constant.Component
 import qualified Registry.Database.Migration.Development.Audit.AuditMigration as ADT
 import qualified Registry.Database.Migration.Development.Organization.OrganizationMigration as ORG
 import qualified Registry.Database.Migration.Development.Package.PackageMigration as PKG

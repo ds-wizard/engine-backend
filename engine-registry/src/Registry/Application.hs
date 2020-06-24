@@ -13,7 +13,6 @@ import Registry.Bootstrap.DatabaseMigration
 import Registry.Bootstrap.Localization
 import Registry.Bootstrap.Web
 import Registry.Constant.ASCIIArt
-import Registry.Constant.Component
 import Registry.Constant.Resource
 import Registry.Model.Context.BaseContext
 import Registry.Service.Config.ServerConfigService

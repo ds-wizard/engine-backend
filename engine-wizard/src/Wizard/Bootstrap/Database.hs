@@ -4,9 +4,9 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 
 import LensesConfig
+import Shared.Constant.Component
 import Shared.Database.Connection
 import Wizard.Bootstrap.Retry
-import Wizard.Constant.Component
 import Wizard.Util.Logger
 
 connectDB serverConfig = do

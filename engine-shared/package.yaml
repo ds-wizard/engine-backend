@@ -42,6 +42,7 @@ library:
   - mongoDB
   - network
   - persistent-mongoDB
+  - pretty-terminal
   - random
   - raw-strings-qq
   - servant-server

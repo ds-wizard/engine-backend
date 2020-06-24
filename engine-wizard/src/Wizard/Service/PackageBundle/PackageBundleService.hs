@@ -19,13 +19,13 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
+import Shared.Constant.Component
 import Shared.Constant.KnowledgeModel
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Constant.Component
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal

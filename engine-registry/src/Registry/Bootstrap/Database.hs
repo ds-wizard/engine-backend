@@ -5,7 +5,6 @@ import Control.Monad.Reader (liftIO)
 
 import LensesConfig
 import Registry.Bootstrap.Retry
-import Registry.Constant.Component
 import Registry.Util.Logger
 import Shared.Database.Connection
 

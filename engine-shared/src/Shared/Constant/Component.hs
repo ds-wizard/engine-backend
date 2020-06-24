@@ -1,4 +1,4 @@
-module Registry.Constant.Component where
+module Shared.Constant.Component where
 
 _CMP_API = "API         "
 

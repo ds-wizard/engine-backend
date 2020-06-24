@@ -1,6 +1,5 @@
 module Registry.Database.Migration.Development.Package.PackageMigration where
 
-import Registry.Constant.Component
 import Registry.Database.DAO.Package.PackageDAO
 import Registry.Util.Logger
 import Shared.Database.Migration.Development.Package.Data.Packages

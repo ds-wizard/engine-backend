@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.BookReference.BookReferenceMigration where
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.BookReference.BookReferenceDAO
 import Wizard.Database.Migration.Development.BookReference.Data.BookReferences
 import Wizard.Util.Logger

@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.User.UserMigration where
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Util.Logger

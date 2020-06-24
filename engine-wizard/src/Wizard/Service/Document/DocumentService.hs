@@ -10,6 +10,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig hiding (hash)
+import Shared.Constant.Component
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -19,7 +20,6 @@ import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextJM ()
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Constant.Component
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public

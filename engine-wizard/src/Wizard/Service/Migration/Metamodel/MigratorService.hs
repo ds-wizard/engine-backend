@@ -10,11 +10,11 @@ import qualified Data.Text as T
 import Database.MongoDB ((=:), delete, find, insertMany, rest, select)
 
 import Shared.Api.Resource.Package.PackageJM ()
+import Shared.Constant.Component
 import Shared.Constant.KnowledgeModel
 import Shared.Database.DAO.Common
 import Wizard.Api.Resource.Branch.BranchWithEventsJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM ()
-import Wizard.Constant.Component
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Wizard.Database.BSON.Package.PackageWithEvents ()

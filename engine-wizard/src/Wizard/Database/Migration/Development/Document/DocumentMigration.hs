@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.UUID as U
 
 import LensesConfig
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Util.Logger
