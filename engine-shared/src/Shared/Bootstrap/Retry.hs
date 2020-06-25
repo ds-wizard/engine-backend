@@ -1,12 +1,12 @@
-module Registry.Bootstrap.Retry where
+module Shared.Bootstrap.Retry where
 
 import Control.Lens ((^.))
 import Control.Monad.Catch
 import Control.Retry
 
 import LensesConfig
-import Registry.Model.Config.ServerConfig
-import Registry.Util.Logger
+import Shared.Model.Config.ServerConfig
+import Shared.Util.Logger
 
 retryCount = 5
 
@@ -15,13 +15,13 @@ retryBaseWait = 2000000
 retryBackoff :: RetryPolicyM IO
 retryBackoff = exponentialBackoff retryBaseWait <> limitRetries retryCount
 
-withRetry :: ServerConfig -> RetryPolicyM IO -> String -> String -> IO a -> IO a
-withRetry serverConfig backoff _CMP description action = recovering backoff handlers wrappedAction
+withRetry :: ServerConfigLogging -> RetryPolicyM IO -> String -> String -> IO a -> IO a
+withRetry serverConfigLogging backoff _CMP description action = recovering backoff handlers wrappedAction
   where
     wrappedAction _ = action
     handlers = skipAsyncExceptions ++ [handler]
     handler retryStatus = Handler $ \(_ :: SomeException) -> loggingHandler retryStatus
-    loggingLevel = serverConfig ^. logging . level
+    loggingLevel = serverConfigLogging ^. level
     loggingHandler retryStatus = do
       let nextWait =
             case rsPreviousDelay retryStatus of

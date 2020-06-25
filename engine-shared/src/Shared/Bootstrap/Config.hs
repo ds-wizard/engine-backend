@@ -1,4 +1,4 @@
-module Registry.Bootstrap.Config where
+module Shared.Bootstrap.Config where
 
 import System.Exit
 

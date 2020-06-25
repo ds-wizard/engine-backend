@@ -7,8 +7,6 @@ import Control.Monad.Reader (liftIO)
 import System.IO
 
 import LensesConfig
-import Registry.Bootstrap.Config
-import Registry.Bootstrap.Database
 import Registry.Bootstrap.DatabaseMigration
 import Registry.Bootstrap.Localization
 import Registry.Bootstrap.Web
@@ -17,6 +15,8 @@ import Registry.Constant.Resource
 import Registry.Model.Context.BaseContext
 import Registry.Service.Config.ServerConfigService
 import Registry.Util.Logger
+import Shared.Bootstrap.Config
+import Shared.Bootstrap.Database
 import Shared.Service.Config.BuildInfoConfigService
 
 runApplication :: IO ()
@@ -27,7 +27,7 @@ runApplication = do
   buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
   runLogging (serverConfig ^. logging . level) $ do
     logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-    dbPool <- connectDB serverConfig
+    dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
     localization <- loadLocalization serverConfig
     let baseContext =
           BaseContext

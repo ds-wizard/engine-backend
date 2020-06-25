@@ -1,23 +1,20 @@
-module Wizard.Bootstrap.Database where
+module Shared.Bootstrap.Database where
 
-import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 
-import LensesConfig
-import Shared.Constant.Component
+import Shared.Bootstrap.Retry
 import Shared.Database.Connection
-import Wizard.Bootstrap.Retry
-import Wizard.Util.Logger
+import Shared.Util.Logger
 
-connectDB serverConfig = do
+connectDB serverConfigLogging serverConfigDatabase = do
   logInfo _CMP_DATABASE "connecting to the database"
   dbPool <-
     liftIO $
     withRetry
-      serverConfig
+      serverConfigLogging
       retryBackoff
       _CMP_DATABASE
       "failed to connect to the database"
-      (createDatabaseConnectionPool (serverConfig ^. database))
+      (createDatabaseConnectionPool serverConfigDatabase)
   logInfo _CMP_DATABASE "connected"
   return dbPool

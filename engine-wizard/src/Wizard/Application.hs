@@ -9,10 +9,10 @@ import Control.Monad.Reader (liftIO)
 import System.IO
 
 import LensesConfig
+import Shared.Bootstrap.Config
+import Shared.Bootstrap.Database
 import Shared.Constant.Component
 import Shared.Service.Config.BuildInfoConfigService
-import Wizard.Bootstrap.Config
-import Wizard.Bootstrap.Database
 import Wizard.Bootstrap.DatabaseMigration
 import Wizard.Bootstrap.HttpClient
 import Wizard.Bootstrap.Localization
@@ -37,7 +37,7 @@ runApplication = do
   runLogging (serverConfig ^. logging . level) $ do
     logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
     shutdownFlag <- liftIO newEmptyMVar
-    dbPool <- connectDB serverConfig
+    dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
     msgChannel <- connectMQ serverConfig
     httpClientManager <- setupHttpClientManager serverConfig
     registryClient <- setupRegistryClient serverConfig httpClientManager

@@ -56,7 +56,6 @@ library:
   - pwstore-fast
   - random
   - regex-compat
-  - retry
   - servant
   - servant-errors
   - servant-server

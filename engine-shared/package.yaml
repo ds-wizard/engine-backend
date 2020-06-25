@@ -33,6 +33,7 @@ library:
   - containers
   - cryptonite
   - directory
+  - exceptions
   - fsutils
   - http-types
   - lens
@@ -45,6 +46,7 @@ library:
   - pretty-terminal
   - random
   - raw-strings-qq
+  - retry
   - servant-server
   - servant-multipart
   - servant-swagger
