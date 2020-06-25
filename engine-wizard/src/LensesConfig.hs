@@ -94,7 +94,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Document.DocumentTemplateContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
@@ -215,8 +214,6 @@ makeFields ''DocumentMetadata
 makeFields ''DocumentContext
 
 makeFields ''DocumentContextConfig
-
-makeFields ''DocumentTemplateContext
 
 -- Model / Event
 makeFields ''EventField
