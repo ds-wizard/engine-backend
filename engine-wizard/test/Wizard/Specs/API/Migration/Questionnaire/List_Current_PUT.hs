@@ -10,7 +10,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -65,7 +64,7 @@ test_204 appContext =
     let expStatus = 200
     let expDto = nlQtnMigrationStateDtoEdited
     let expBody = encode expDto
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     -- AND: Prepare database
     runInContextIO (insertQuestionnaire questionnaire4) appContext
     runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
@@ -80,8 +79,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
-  createInvalidJsonTest reqMethod (reqUrlT $ questionnaire4 ^. uuid) [HJ.json| { } |] "resolvedQuestionUuids"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire4 ^. uuid) "resolvedQuestionUuids"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -104,7 +102,7 @@ create_test_403 title appContext qtn reason =
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
@@ -122,7 +120,7 @@ create_test_403 title appContext qtn reason =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = do
+test_404 appContext =
   createNotFoundTest
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)

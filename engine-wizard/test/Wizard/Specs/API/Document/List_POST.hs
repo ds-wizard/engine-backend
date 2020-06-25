@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -93,7 +92,7 @@ create_test_201 title appContext doc authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "kmId"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "kmId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

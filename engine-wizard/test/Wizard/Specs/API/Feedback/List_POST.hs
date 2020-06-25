@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
@@ -57,7 +56,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
      -- AND: Run migrations
     runInContextIO loadFeedbackTokenFromEnv appContext
     -- WHEN: Call API
@@ -73,4 +72,4 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { title: "Albert" } |] "questionUuid"
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl "questionUuid"

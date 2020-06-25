@@ -10,7 +10,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -75,7 +74,7 @@ create_test_200 title appContext qtn authHeader =
     let reqHeaders = reqHeadersT reqAuthHeader
      -- GIVEN: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toReportDTO report1
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
@@ -92,12 +91,7 @@ create_test_200 title appContext qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext =
-  createInvalidJsonTest
-    reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
-    [HJ.json| { name: "Common Questionnaire" } |]
-    "visibility"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) "visibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -116,7 +110,7 @@ test_403 appContext = do
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations

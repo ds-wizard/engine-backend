@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -70,7 +69,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
+  createInvalidJsonTest reqMethod reqUrl "password"
   it "HTTP 400 BAD REQUEST when hash is not provided" $
     -- GIVEN: Prepare url
    do

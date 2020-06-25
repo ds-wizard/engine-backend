@@ -2,6 +2,7 @@ module Wizard.Specs.API.Common where
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (eitherDecode, encode)
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Either (isRight)
 import Data.Foldable
 import qualified Data.List as L
@@ -10,11 +11,11 @@ import Network.Wai (Application)
 import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
+
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
-import Shared.Api.Resource.Error.ErrorDTO ()
+import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
@@ -96,9 +97,10 @@ resCorsHeaders =
 
 shouldRespondWith r matcher = forM_ (match r matcher) (liftIO . expectationFailure)
 
-createInvalidJsonTest reqMethod reqUrl reqBody missingField =
+createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
     let reqHeaders = [reqAuthHeader, reqCtHeader]
+    let reqBody = BSL.pack "{}"
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeaderUtf8 : resCorsHeaders
@@ -111,34 +113,14 @@ createInvalidJsonTest reqMethod reqUrl reqBody missingField =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createInvalidJsonArrayTest reqMethod reqUrl reqBody missingField =
-  it "HTTP 400 BAD REQUEST when json is not valid" $ do
-    let reqHeaders = [reqAuthHeader, reqCtHeader]
-      -- GIVEN: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
-    let expBody = encode expDto
-      -- WHEN: Call APIA
-    response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-
 createAuthTest reqMethod reqUrl reqHeaders reqBody =
   it "HTTP 401 UNAUTHORIZED" $
     -- GIVEN: Prepare expectation
    do
-    let expBody =
-          [HJ.json|
-    {
-      status: 401,
-      message: "Unable to get token"
-    }
-    |]
-    let expHeaders = resCtHeader : resCorsHeaders
     let expStatus = 401
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = UnauthorizedErrorDTO "Unable to get token"
+    let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

@@ -141,7 +141,6 @@ tests:
     - hspec
     - hspec-expectations-pretty-diff
     - hspec-wai
-    - hspec-wai-json
 
 default-extensions:
   - DataKinds

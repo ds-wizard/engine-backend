@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -51,12 +50,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
+test_201 appContext =
   it "HTTP 201 CREATED" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
@@ -78,7 +77,7 @@ test_201 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common Questionnaire" } |] "packageId"
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl "packageId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

@@ -7,7 +7,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -58,12 +57,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
+test_201 appContext =
   it "HTTP 201 CREATED" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toSimpleDTO . toPackage $ amsterdamPackage
     let expBody = encode expDto
      -- AND: Run migrations
@@ -82,19 +81,19 @@ test_201 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "description"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "description"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_version_format appContext = do
+test_400_invalid_version_format appContext =
   it "HTTP 400 BAD REQUEST when version is not in a valid format" $
      -- GIVEN: Prepare request
    do
     let reqUrl = "/branches/6474b24b-262b-42b1-9451-008e8363f2b6/versions/.0.0"
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
     let expBody = encode expDto
      -- AND: Run migrations
@@ -109,12 +108,12 @@ test_400_invalid_version_format appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_not_higher_pkg_version appContext = do
+test_400_not_higher_pkg_version appContext =
   it "HTTP 400 BAD REQUEST when version is not higher than the previous one" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
     let expBody = encode expDto
      -- AND: Run migrations

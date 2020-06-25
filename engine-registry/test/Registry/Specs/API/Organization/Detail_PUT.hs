@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
@@ -75,7 +74,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "description"
+  createInvalidJsonTest reqMethod reqUrl "description"
   it "HTTP 400 BAD REQUEST when email is already used" $
      -- GIVEN: Prepare request
    do
