@@ -13,7 +13,6 @@ import Wizard.Api.Resource.Level.LevelJM ()
 import Wizard.Database.Migration.Development.Level.Data.Levels
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Level.LevelMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -46,8 +45,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toLevelDTO <$> [level1, level2, level3]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = [level1, level2, level3]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO LVL.runMigration appContext

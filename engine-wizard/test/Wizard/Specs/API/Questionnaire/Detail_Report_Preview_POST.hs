@@ -16,7 +16,6 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -26,7 +25,7 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Report.ReportMapper
+import Wizard.Model.Report.Report
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
@@ -75,7 +74,7 @@ create_test_200 title appContext qtn authHeader =
      -- GIVEN: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toReportDTO report1
+    let expDto = report1
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO (insertQuestionnaire (qtn & replies .~ [])) appContext
@@ -83,7 +82,7 @@ create_test_200 title appContext qtn authHeader =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ReportDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, Report)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareReportDtos resBody expDto

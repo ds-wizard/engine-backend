@@ -16,10 +16,8 @@ import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
-import Wizard.Service.Level.LevelMapper
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
-import Wizard.Service.Report.ReportMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
 toDocumentContextDTO :: DocumentContext -> DocumentContextDTO
@@ -34,8 +32,8 @@ toDocumentContextDTO dc =
     , _documentContextDTOLevel = dc ^. level
     , _documentContextDTOKnowledgeModel = dc ^. knowledgeModel
     , _documentContextDTOMetrics = dc ^. metrics
-    , _documentContextDTOLevels = toLevelDTO <$> dc ^. levels
-    , _documentContextDTOReport = toReportDTO $ dc ^. report
+    , _documentContextDTOLevels = dc ^. levels
+    , _documentContextDTOReport = dc ^. report
     , _documentContextDTOPackage = toSimpleDTO (dc ^. package)
     , _documentContextDTOOrganization = dc ^. organization
     , _documentContextDTOCreatedBy = USR_Mapper.toDTO <$> dc ^. createdBy

@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO where
 
 import GHC.Generics
 
-import Wizard.Api.Resource.Report.ReportDTO
+import Wizard.Model.Report.Report
 
 data QuestionnaireReportDTO =
   QuestionnaireReportDTO
-    { _questionnaireReportDTOIndications :: [IndicationDTO]
+    { _questionnaireReportDTOIndications :: [Indication]
     }
   deriving (Show, Eq, Generic)

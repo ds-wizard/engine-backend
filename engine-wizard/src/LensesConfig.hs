@@ -29,7 +29,6 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
-import Wizard.Api.Resource.BookReference.BookReferenceDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -42,7 +41,6 @@ import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Api.Resource.Level.LevelDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO as KM_MigratorConflictDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO as KM_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO as KM_MigratorStateDTO
@@ -61,7 +59,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
@@ -411,9 +408,6 @@ makeFields ''UserSubmissionProps
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
 
--- Api / Resource / BookReference
-makeFields ''BookReferenceDTO
-
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
 
@@ -453,9 +447,6 @@ makeFields ''InfoDTO
 
 -- Api / Resource / KnowledgeModel
 makeFields ''KnowledgeModelChangeDTO
-
--- Model / Level
-makeFields ''LevelDTO
 
 -- Api / Resource / Migration / KnowledgeModel
 makeFields ''KM_MigratorConflictDTO.MigratorConflictDTO
@@ -509,21 +500,6 @@ makeFields ''QuestionnaireReportDTO
 makeFields ''RegistryConfirmationDTO
 
 makeFields ''RegistryCreateDTO
-
--- Api / Resource / Report
-makeFields ''IndicationDTO
-
-makeFields ''AnsweredIndicationDTO
-
-makeFields ''LevelsAnsweredIndicationDTO
-
-makeFields ''MetricSummaryDTO
-
-makeFields ''ChapterReportDTO
-
-makeFields ''TotalReportDTO
-
-makeFields ''ReportDTO
 
 -- Api / Resource / Submission
 makeFields ''SubmissionCreateDTO

@@ -2,6 +2,7 @@ module Wizard.Service.Report.Evaluator.Metric where
 
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
+import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -15,7 +16,8 @@ import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
 
 computeMetrics :: [Metric] -> KnowledgeModel -> [Reply] -> Maybe Chapter -> [MetricSummary]
-computeMetrics metrics km replies mCh = fmap (computeMetric km replies mCh) metrics
+computeMetrics metrics km replies mCh =
+  mapMaybe filterEmptyMetricSummary . fmap (computeMetric km replies mCh) $ metrics
 
 computeMetric :: KnowledgeModel -> [Reply] -> Maybe Chapter -> Metric -> MetricSummary
 computeMetric km replies mCh m =
@@ -38,6 +40,12 @@ computeMetric km replies mCh m =
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
+filterEmptyMetricSummary :: MetricSummary -> Maybe MetricSummary
+filterEmptyMetricSummary ms =
+  case ms ^. measure of
+    Just msMeasure -> Just ms
+    Nothing -> Nothing
+
 evaluateChapter :: KnowledgeModel -> [Reply] -> Chapter -> [MetricMeasure]
 evaluateChapter km replies ch =
   let currentPath = U.toString $ ch ^. uuid

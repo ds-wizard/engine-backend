@@ -24,7 +24,6 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
 import qualified Wizard.Service.Package.PackageMapper as PM
-import Wizard.Service.Report.ReportMapper
 
 toDTO :: Questionnaire -> Package -> QuestionnaireState -> Maybe UserDTO -> QuestionnaireReportDTO -> QuestionnaireDTO
 toDTO questionnaire package state mOwner report =
@@ -126,8 +125,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     }
 
 toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
-toQuestionnaireReportDTO indications =
-  QuestionnaireReportDTO {_questionnaireReportDTOIndications = fmap toIndicationDTO indications}
+toQuestionnaireReportDTO indications = QuestionnaireReportDTO {_questionnaireReportDTOIndications = indications}
 
 fromReplyDTO :: ReplyDTO -> Reply
 fromReplyDTO reply = Reply {_replyPath = reply ^. path, _replyValue = fromReplyValueDTO $ reply ^. value}

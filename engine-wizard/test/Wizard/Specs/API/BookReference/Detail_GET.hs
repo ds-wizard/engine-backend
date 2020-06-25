@@ -12,7 +12,6 @@ import Test.Hspec.Wai.Matcher
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import Wizard.Database.Migration.Development.BookReference.Data.BookReferences
 import Wizard.Model.Context.AppContext
-import Wizard.Service.BookReference.BookReferenceMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -45,8 +44,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDTO bookReferenceBvq
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = bookReferenceBvq
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO BR.runMigration appContext
