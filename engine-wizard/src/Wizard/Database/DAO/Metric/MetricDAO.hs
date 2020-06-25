@@ -6,7 +6,7 @@ import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Shared.Database.DAO.Common
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "metric"
 

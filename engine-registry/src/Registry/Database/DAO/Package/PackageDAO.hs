@@ -5,7 +5,7 @@ import Data.Bson
 import Registry.Database.BSON.Package.Package ()
 import Registry.Database.BSON.Package.PackageWithEvents ()
 import Registry.Model.Context.AppContext
-import Registry.Model.Context.AppContextLenses ()
+import Registry.Model.Context.ContextLenses ()
 import Shared.Database.DAO.Common
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents

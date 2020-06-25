@@ -7,7 +7,7 @@ import LensesConfig
 import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 entityName = "kmMigration"

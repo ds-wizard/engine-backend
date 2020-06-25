@@ -6,7 +6,7 @@ import qualified Data.ByteString as BS
 
 import LensesConfig
 import Registry.Model.Context.AppContext
-import Registry.Model.Context.AppContextLenses ()
+import Registry.Model.Context.ContextLenses ()
 import Shared.Database.BSON.Template.Template ()
 import Shared.Database.DAO.Common
 import Shared.Model.Template.Template

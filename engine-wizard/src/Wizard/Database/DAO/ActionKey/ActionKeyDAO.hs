@@ -6,7 +6,7 @@ import Shared.Database.DAO.Common
 import Wizard.Database.BSON.ActionKey.ActionKey ()
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "actionKey"
 

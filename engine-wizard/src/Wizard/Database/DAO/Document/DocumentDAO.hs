@@ -10,7 +10,7 @@ import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Document.Document ()
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Document.Document
 
 entityName = "document"

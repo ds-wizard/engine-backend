@@ -9,7 +9,7 @@ import Shared.Database.BSON.Template.Template ()
 import Shared.Database.DAO.Common
 import Shared.Model.Template.Template
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "template"
 

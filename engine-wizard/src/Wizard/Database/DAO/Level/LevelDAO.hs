@@ -5,7 +5,7 @@ import Data.Bson
 import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Level.Level ()
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Level.Level
 
 entityName = "level"

@@ -7,6 +7,7 @@ import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Common.Pageable
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
+import Shared.Model.Context.BaseContext
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -40,6 +41,8 @@ makeFields ''ServerConfigLogging
 
 -- Model / Context
 makeFields ''AppContext
+
+makeFields ''BaseContext
 
 -- Model / Event
 makeFields ''EventField

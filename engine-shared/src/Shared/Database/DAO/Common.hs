@@ -24,7 +24,7 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Sort
-import Shared.Model.Context.AppContextLenses
+import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 
 runDB :: (MonadReader s m, HasPool' s, MonadIO m) => Action IO b -> m b

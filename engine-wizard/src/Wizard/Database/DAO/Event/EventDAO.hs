@@ -12,12 +12,12 @@ import Shared.Model.Event.Event
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 
 updateEventsInBranch :: String -> [Event] -> AppContextM ()
-updateEventsInBranch branchUuid events = do
+updateEventsInBranch branchUuid events =
   createPartialUpdateByFn' collection "uuid" branchUuid "events" (convertEventToBSON <$> events)
 
 deleteEventsAtBranch :: String -> AppContextM ()
-deleteEventsAtBranch branchUuid = do
+deleteEventsAtBranch branchUuid =
   createPartialUpdateByFn' collection "uuid" branchUuid "events" (convertEventToBSON <$> [])

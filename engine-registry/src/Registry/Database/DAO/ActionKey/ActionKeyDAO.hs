@@ -5,7 +5,7 @@ import Data.Bson
 import Registry.Database.BSON.ActionKey.ActionKey ()
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
-import Registry.Model.Context.AppContextLenses ()
+import Registry.Model.Context.ContextLenses ()
 import Shared.Database.DAO.Common
 
 entityName = "actionKey"

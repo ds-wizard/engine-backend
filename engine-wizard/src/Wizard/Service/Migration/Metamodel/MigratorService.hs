@@ -20,7 +20,7 @@ import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()
 import Wizard.Database.BSON.Package.PackageWithEvents ()
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 import qualified Wizard.Service.Branch.BranchMapper as BranchMapper
 import qualified Wizard.Service.Migration.KnowledgeModel.MigratorMapper as KMMigratorMapper
 import qualified Wizard.Service.Migration.Metamodel.Migrator.BranchMigrator as BranchMigrator

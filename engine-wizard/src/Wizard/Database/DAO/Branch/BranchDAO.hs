@@ -9,7 +9,7 @@ import Wizard.Database.BSON.Branch.Branch ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Context.AppContextLenses ()
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "branch"
 
