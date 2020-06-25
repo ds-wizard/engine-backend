@@ -13,6 +13,7 @@ import Shared.Api.Resource.Package.PackageJM ()
 import Shared.Constant.Component
 import Shared.Constant.KnowledgeModel
 import Shared.Database.DAO.Common
+import Shared.Util.List (foldEither)
 import Wizard.Api.Resource.Branch.BranchWithEventsJM ()
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailJM ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
@@ -29,7 +30,6 @@ import qualified Wizard.Service.Migration.Metamodel.Migrator.PackageBundleMigrat
 import qualified Wizard.Service.Migration.Metamodel.Migrator.PackageMigrator as PackageMigrator
 import qualified Wizard.Service.Package.PackageMapper as PackageMapper
 import Wizard.Util.BSONtoJSON (mapBSONDocumentToJSONObject)
-import Wizard.Util.List (foldEither)
 import Wizard.Util.Logger
 
 migratePackageBundle :: Value -> AppContextM Value

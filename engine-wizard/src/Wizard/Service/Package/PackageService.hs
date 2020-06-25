@@ -22,6 +22,7 @@ import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
+import Shared.Util.List (groupBy)
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Package.PackageDAO
@@ -33,7 +34,6 @@ import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
 import Wizard.Util.IdentifierUtil
-import Wizard.Util.List (groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do

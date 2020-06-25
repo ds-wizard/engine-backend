@@ -15,15 +15,15 @@ import Registry.Database.DAO.Package.PackageDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper
-import Registry.Util.List (foldInContext', groupBy)
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import Shared.Util.List (foldInContext, groupBy)
 
 getSimplePackagesFiltered :: [(String, String)] -> [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams headers = do
   _ <- auditListPackages headers
   pkgs <- findPackagesFiltered queryParams
-  foldInContext' . mapToSimpleDTO . chooseTheNewest . groupPkgs $ pkgs
+  foldInContext . mapToSimpleDTO . chooseTheNewest . groupPkgs $ pkgs
   where
     groupPkgs :: [Package] -> [[Package]]
     groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))

@@ -14,8 +14,8 @@ import qualified Data.Vector as Vector
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Error.Error
 import Shared.Util.JSON (convertValueToOject, getArrayField, getField)
+import Shared.Util.List (foldEither)
 import qualified Wizard.Metamodel.Migrator.EventMigrator as EventMigrator
-import Wizard.Util.List (foldEither)
 
 migrateMetamodelVersionField :: Value -> Either AppError Value
 migrateMetamodelVersionField value =

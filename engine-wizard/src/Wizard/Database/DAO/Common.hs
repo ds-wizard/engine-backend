@@ -7,10 +7,10 @@ import Database.MongoDB (Selector)
 
 import LensesConfig
 import Shared.Database.DAO.Common
+import Shared.Util.List
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.User.User
-import Wizard.Util.List
 
 sel :: [AppContextM Selector] -> AppContextM Selector
 sel = fmap concat . foldInContext
@@ -23,5 +23,5 @@ ownerUuidSel = do
   currentUser <- getCurrentUser
   return $
     if currentUser ^. role /= _USER_ROLE_ADMIN
-      then ["ownerUuid" =: (U.toString $ currentUser ^. uuid)]
+      then ["ownerUuid" =: U.toString (currentUser ^. uuid)]
       else []

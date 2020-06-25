@@ -18,6 +18,7 @@ import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
+import Shared.Util.List (elems)
 import Wizard.Bootstrap.Web
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -26,7 +27,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
 import Wizard.Service.User.UserService
-import Wizard.Util.List (elems)
 
 import SharedTest.Specs.Common
 import Wizard.Specs.Common

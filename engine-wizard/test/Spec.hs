@@ -60,7 +60,6 @@ import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
-import Wizard.Specs.Util.ListSpec
 import Wizard.Specs.Util.TemplateUtilSpec
 import Wizard.TestMigration
 
@@ -130,9 +129,7 @@ main =
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
-           describe "UTIL" $ do
-             listSpec
-             templateUtilSpec
+           describe "UTIL" templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              bookReferenceAPI appContext

@@ -16,10 +16,10 @@ import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Model.Event.EventLenses
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Util.List
 
 -- ------------------------------------------------------------
 class Sanitizator a where

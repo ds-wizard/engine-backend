@@ -7,6 +7,7 @@ import Data.Maybe (fromMaybe)
 import Data.Time
 
 import LensesConfig
+import Shared.Util.List (groupBy)
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileDTO
@@ -21,7 +22,6 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.User.UserProfileMapper
 import Wizard.Service.User.UserService
 import Wizard.Service.User.UserValidation
-import Wizard.Util.List (groupBy)
 
 getUserProfile :: String -> AppContextM UserProfileDTO
 getUserProfile userUuid = do

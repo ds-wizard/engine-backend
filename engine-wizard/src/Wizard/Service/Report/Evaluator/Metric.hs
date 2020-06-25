@@ -8,11 +8,11 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Util.List (generateList)
 import Shared.Util.Math
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
-import Wizard.Util.List (generateList)
 
 computeMetrics :: [Metric] -> KnowledgeModel -> [Reply] -> Maybe Chapter -> [MetricSummary]
 computeMetrics metrics km replies mCh = fmap (computeMetric km replies mCh) metrics
