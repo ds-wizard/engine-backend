@@ -31,6 +31,8 @@ instance HasUuid' DeleteChapterEvent where
       set :: DeleteChapterEvent -> U.UUID -> DeleteChapterEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddChapterEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -55,6 +57,8 @@ instance HasParentUuid' DeleteChapterEvent where
       set :: DeleteChapterEvent -> U.UUID -> DeleteChapterEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddChapterEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

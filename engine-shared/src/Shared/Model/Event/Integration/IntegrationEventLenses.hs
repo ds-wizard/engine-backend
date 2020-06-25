@@ -31,6 +31,8 @@ instance HasUuid' DeleteIntegrationEvent where
       set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddIntegrationEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -55,6 +57,8 @@ instance HasParentUuid' DeleteIntegrationEvent where
       set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddIntegrationEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

@@ -23,6 +23,8 @@ instance HasUuid' EditKnowledgeModelEvent where
       set :: EditKnowledgeModelEvent -> U.UUID -> EditKnowledgeModelEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddKnowledgeModelEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -39,6 +41,8 @@ instance HasParentUuid' EditKnowledgeModelEvent where
       set :: EditKnowledgeModelEvent -> U.UUID -> EditKnowledgeModelEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddKnowledgeModelEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

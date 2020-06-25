@@ -5,6 +5,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Common.Lens
+import Shared.Model.Event.EventField
 import Shared.Model.Event.Question.QuestionEvent
 
 instance HasUuid' AddQuestionEvent where
@@ -43,6 +44,8 @@ instance HasUuid' DeleteQuestionEvent where
       set :: DeleteQuestionEvent -> U.UUID -> DeleteQuestionEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddQuestionEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -81,6 +84,8 @@ instance HasParentUuid' DeleteQuestionEvent where
       set :: DeleteQuestionEvent -> U.UUID -> DeleteQuestionEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddQuestionEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -118,3 +123,37 @@ instance HasEntityUuid' DeleteQuestionEvent where
       get entity = entity ^. entityUuid
       set :: DeleteQuestionEvent -> U.UUID -> DeleteQuestionEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasExpertUuids' EditQuestionEvent (EventField [U.UUID]) where
+  expertUuids' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditQuestionEvent -> EventField [U.UUID]
+      get (EditListQuestionEvent' entity) = entity ^. expertUuids
+      get (EditOptionsQuestionEvent' entity) = entity ^. expertUuids
+      get (EditValueQuestionEvent' entity) = entity ^. expertUuids
+      get (EditIntegrationQuestionEvent' entity) = entity ^. expertUuids
+      set :: EditQuestionEvent -> EventField [U.UUID] -> EditQuestionEvent
+      set (EditListQuestionEvent' entity) newValue = EditListQuestionEvent' $ entity & expertUuids .~ newValue
+      set (EditOptionsQuestionEvent' entity) newValue = EditOptionsQuestionEvent' $ entity & expertUuids .~ newValue
+      set (EditValueQuestionEvent' entity) newValue = EditValueQuestionEvent' $ entity & expertUuids .~ newValue
+      set (EditIntegrationQuestionEvent' entity) newValue =
+        EditIntegrationQuestionEvent' $ entity & expertUuids .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasReferenceUuids' EditQuestionEvent (EventField [U.UUID]) where
+  referenceUuids' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditQuestionEvent -> EventField [U.UUID]
+      get (EditListQuestionEvent' entity) = entity ^. referenceUuids
+      get (EditOptionsQuestionEvent' entity) = entity ^. referenceUuids
+      get (EditValueQuestionEvent' entity) = entity ^. referenceUuids
+      get (EditIntegrationQuestionEvent' entity) = entity ^. referenceUuids
+      set :: EditQuestionEvent -> EventField [U.UUID] -> EditQuestionEvent
+      set (EditListQuestionEvent' entity) newValue = EditListQuestionEvent' $ entity & referenceUuids .~ newValue
+      set (EditOptionsQuestionEvent' entity) newValue = EditOptionsQuestionEvent' $ entity & referenceUuids .~ newValue
+      set (EditValueQuestionEvent' entity) newValue = EditValueQuestionEvent' $ entity & referenceUuids .~ newValue
+      set (EditIntegrationQuestionEvent' entity) newValue =
+        EditIntegrationQuestionEvent' $ entity & referenceUuids .~ newValue

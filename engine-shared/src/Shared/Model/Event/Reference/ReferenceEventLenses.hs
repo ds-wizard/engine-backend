@@ -40,6 +40,8 @@ instance HasUuid' DeleteReferenceEvent where
       set :: DeleteReferenceEvent -> U.UUID -> DeleteReferenceEvent
       set entity newCross = entity & uuid .~ newCross
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddReferenceEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -74,6 +76,8 @@ instance HasParentUuid' DeleteReferenceEvent where
       set :: DeleteReferenceEvent -> U.UUID -> DeleteReferenceEvent
       set entity newCross = entity & parentUuid .~ newCross
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddReferenceEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

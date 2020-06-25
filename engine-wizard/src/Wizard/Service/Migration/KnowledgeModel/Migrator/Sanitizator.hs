@@ -18,7 +18,6 @@ import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Shared.Util.List
 import Shared.Util.Uuid
-import Wizard.Model.Event.EventLenses
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 -- ------------------------------------------------------------
@@ -116,7 +115,7 @@ instance Sanitizator EditQuestionEvent where
       event2 <- applyReferenceChange km event1
       event3 <- applyAnswerChange km event2
       event4 <- applyItemTemplateQuestionChange km event3
-      changeEventUuid eUuid' event4
+      changeEventUuid uuid' event4
       -- ------------------------
       -- Answer Item Template
       -- ------------------------
@@ -163,10 +162,10 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyReferenceChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & eReferenceUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & referenceUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
-            case event ^. eReferenceUuids' of
+            case event ^. referenceUuids' of
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]
@@ -181,10 +180,10 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyExpertChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & eExpertUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & expertUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
-            case event ^. eExpertUuids' of
+            case event ^. expertUuids' of
               NothingChanged -> return event
               ChangedValue uuids -> callback uuids
           childUuidsFromKM :: KnowledgeModel -> [U.UUID]

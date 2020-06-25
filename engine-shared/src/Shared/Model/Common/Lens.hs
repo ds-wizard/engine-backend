@@ -10,3 +10,9 @@ class HasEntityUuid' entity where
 
 class HasParentUuid' entity where
   parentUuid' :: Functor f => (U.UUID -> f U.UUID) -> entity -> f entity
+
+class HasExpertUuids' entity fieldType where
+  expertUuids' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity
+
+class HasReferenceUuids' entity fieldType where
+  referenceUuids' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity

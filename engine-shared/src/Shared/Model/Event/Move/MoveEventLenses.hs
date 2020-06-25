@@ -39,6 +39,8 @@ instance HasUuid' MoveReferenceEvent where
       set :: MoveReferenceEvent -> U.UUID -> MoveReferenceEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' MoveQuestionEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -71,6 +73,8 @@ instance HasParentUuid' MoveReferenceEvent where
       set :: MoveReferenceEvent -> U.UUID -> MoveReferenceEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' MoveQuestionEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

@@ -31,6 +31,8 @@ instance HasUuid' DeleteTagEvent where
       set :: DeleteTagEvent -> U.UUID -> DeleteTagEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddTagEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -55,6 +57,8 @@ instance HasParentUuid' DeleteTagEvent where
       set :: DeleteTagEvent -> U.UUID -> DeleteTagEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddTagEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

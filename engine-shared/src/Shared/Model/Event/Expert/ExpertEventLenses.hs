@@ -31,6 +31,8 @@ instance HasUuid' DeleteExpertEvent where
       set :: DeleteExpertEvent -> U.UUID -> DeleteExpertEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddExpertEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -55,6 +57,8 @@ instance HasParentUuid' DeleteExpertEvent where
       set :: DeleteExpertEvent -> U.UUID -> DeleteExpertEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddExpertEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where

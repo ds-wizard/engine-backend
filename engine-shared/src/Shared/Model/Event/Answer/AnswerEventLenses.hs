@@ -31,6 +31,8 @@ instance HasUuid' DeleteAnswerEvent where
       set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
       set entity newValue = entity & uuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasParentUuid' AddAnswerEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -55,6 +57,8 @@ instance HasParentUuid' DeleteAnswerEvent where
       set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 instance HasEntityUuid' AddAnswerEvent where
   entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
