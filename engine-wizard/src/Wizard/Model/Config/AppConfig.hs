@@ -94,6 +94,7 @@ data AppConfigAuthExternalServiceStyle =
 data AppConfigPrivacyAndSupport =
   AppConfigPrivacyAndSupport
     { _appConfigPrivacyAndSupportPrivacyUrl :: Maybe String
+    , _appConfigPrivacyAndSupportTermsOfServiceUrl :: Maybe String
     , _appConfigPrivacyAndSupportSupportEmail :: Maybe String
     , _appConfigPrivacyAndSupportSupportRepositoryName :: Maybe String
     , _appConfigPrivacyAndSupportSupportRepositoryUrl :: Maybe String

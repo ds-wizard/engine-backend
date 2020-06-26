@@ -87,6 +87,7 @@ defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   AppConfigPrivacyAndSupport
     { _appConfigPrivacyAndSupportPrivacyUrl = Nothing
+    , _appConfigPrivacyAndSupportTermsOfServiceUrl = Nothing
     , _appConfigPrivacyAndSupportSupportEmail = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing

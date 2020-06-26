@@ -44,6 +44,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0035_questionnai
 import qualified Wizard.Database.Migration.Production.Migration_0036_appConfig_qtnVisibility_defaultValue.Migration as M_0036
 import qualified Wizard.Database.Migration.Production.Migration_0037_appConfig_qtn_summaryReport.Migration as M_0037
 import qualified Wizard.Database.Migration.Production.Migration_0038_template_management.Migration as M_0038
+import qualified Wizard.Database.Migration.Production.Migration_0039_appConfig_termsOfServiceUrl.Migration as M_0039
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -90,4 +91,5 @@ migrationDefinitions =
   , M_0036.definition
   , M_0037.definition
   , M_0038.definition
+  , M_0039.definition
   ]
