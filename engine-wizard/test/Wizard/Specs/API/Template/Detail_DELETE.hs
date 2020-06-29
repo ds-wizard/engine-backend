@@ -31,7 +31,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/templates/dsw:default-template:1.0.0"
+reqUrl = "/templates/dsw:default:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

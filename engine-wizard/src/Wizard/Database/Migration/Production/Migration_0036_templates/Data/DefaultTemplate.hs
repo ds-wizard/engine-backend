@@ -1,4 +1,4 @@
-module Wizard.Database.Migration.Production.Migration_0038_template_management.Data.DefaultTemplate where
+module Wizard.Database.Migration.Production.Migration_0036_templates.Data.DefaultTemplate where
 
 import Text.RawString.QQ
 

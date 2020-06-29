@@ -15,10 +15,10 @@ import Shared.Model.Template.Template
 commonWizardTemplate :: Template
 commonWizardTemplate =
   Template
-    { _templateTId = "dsw:default-template:1.0.0"
+    { _templateTId = "dsw:default:1.0.0"
     , _templateName = "Default Template"
     , _templateOrganizationId = "dsw"
-    , _templateTemplateId = "default-template"
+    , _templateTemplateId = "default"
     , _templateVersion = "1.0.0"
     , _templateMetamodelVersion = templateMetamodelVersion
     , _templateDescription = "This is a default template"

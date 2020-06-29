@@ -35,7 +35,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default-template:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = "/templates/dsw:default:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -83,8 +83,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/templates/dsw:default-template:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/templates/dsw:default:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "template"
-    "dsw:default-template:1.0.0"
+    "dsw:default:1.0.0"

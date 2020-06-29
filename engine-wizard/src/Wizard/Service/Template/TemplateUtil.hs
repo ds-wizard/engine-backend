@@ -1,20 +1,12 @@
 module Wizard.Service.Template.TemplateUtil where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (asks)
 
 import LensesConfig
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
-import Wizard.Constant.Resource
-import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageUtils
 import Wizard.Util.IdentifierUtil
-
-getTemplateFolder :: AppContextM String
-getTemplateFolder = do
-  serverConfig <- asks _appContextServerConfig
-  return $ (serverConfig ^. general . templateFolder) ++ documentTemplatesFolder
 
 getAllowedPackagesForTemplate :: Template -> [Package] -> [Package]
 getAllowedPackagesForTemplate tml = getNewestUniquePackages . filterPackages tml

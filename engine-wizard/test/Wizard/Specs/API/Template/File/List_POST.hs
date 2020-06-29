@@ -37,7 +37,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/templates/dsw:default-template:1.0.0/files"
+reqUrl = "/templates/dsw:default:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

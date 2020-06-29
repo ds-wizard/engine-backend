@@ -41,10 +41,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0032_appConfig_o
 import qualified Wizard.Database.Migration.Production.Migration_0033_remove_public_questionnaire.Migration as M_0033
 import qualified Wizard.Database.Migration.Production.Migration_0034_appConfig_recommendedTemplateUuid.Migration as M_0034
 import qualified Wizard.Database.Migration.Production.Migration_0035_questionnaireVisibility.Migration as M_0035
-import qualified Wizard.Database.Migration.Production.Migration_0036_appConfig_qtnVisibility_defaultValue.Migration as M_0036
-import qualified Wizard.Database.Migration.Production.Migration_0037_appConfig_qtn_summaryReport.Migration as M_0037
-import qualified Wizard.Database.Migration.Production.Migration_0038_template_management.Migration as M_0038
-import qualified Wizard.Database.Migration.Production.Migration_0039_appConfig_termsOfServiceUrl.Migration as M_0039
+import qualified Wizard.Database.Migration.Production.Migration_0036_templates.Migration as M_0036
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -89,7 +86,4 @@ migrationDefinitions =
   , M_0034.definition
   , M_0035.definition
   , M_0036.definition
-  , M_0037.definition
-  , M_0038.definition
-  , M_0039.definition
   ]

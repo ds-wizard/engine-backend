@@ -1,31 +1,14 @@
-module Wizard.Database.Migration.Production.Migration_0038_template_management.Data.Templates where
+module Wizard.Database.Migration.Production.Migration_0036_templates.Data.Templates where
 
 import qualified Data.Bson as BSON
-import Data.Time
 
-import Wizard.Database.Migration.Production.Migration_0038_template_management.Data.DefaultTemplate (css, html)
-
-getDefaultTemplate = do
-  now <- getCurrentTime
-  let files =
-        [ "files" BSON.=:
-          [ [ "uuid" BSON.=: "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
-            , "fileName" BSON.=: "default.html.j2"
-            , "content" BSON.=: html
-            ]
-          , [ "uuid" BSON.=: "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
-            , "fileName" BSON.=: "default.css"
-            , "content" BSON.=: css
-            ]
-          ]
-        ]
-  return $ template now ++ files
+import Wizard.Database.Migration.Production.Migration_0036_templates.Data.DefaultTemplate (css, html)
 
 template now =
-  [ "id" BSON.=: "dsw:default-template:1.0.0"
+  [ "id" BSON.=: "dsw:default:1.0.0"
   , "name" BSON.=: "Default Template"
   , "organizationId" BSON.=: "dsw"
-  , "templateId" BSON.=: "default-template"
+  , "templateId" BSON.=: "default"
   , "version" BSON.=: "1.0.0"
   , "metamodelVersion" BSON.=: 1
   , "description" BSON.=: "This is a default template"
@@ -126,5 +109,15 @@ template now =
       ]
     ]
   , "assets" BSON.=: ([] :: [String])
+  , "files" BSON.=:
+    [ [ "uuid" BSON.=: "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+      , "fileName" BSON.=: "default.html.j2"
+      , "content" BSON.=: html
+      ]
+    , [ "uuid" BSON.=: "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
+      , "fileName" BSON.=: "default.css"
+      , "content" BSON.=: css
+      ]
+    ]
   , "createdAt" BSON.=: now
   ]

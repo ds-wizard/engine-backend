@@ -34,7 +34,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default-template:1.0.0/files"
+reqUrl = "/templates/dsw:default:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

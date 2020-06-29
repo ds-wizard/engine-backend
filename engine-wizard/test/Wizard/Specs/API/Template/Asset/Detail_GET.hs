@@ -33,7 +33,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default-template:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/templates/dsw:default:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,8 +81,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/templates/dsw:default-template:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    "/templates/dsw:default:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
     "template"
-    "dsw:default-template:1.0.0"
+    "dsw:default:1.0.0"
