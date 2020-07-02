@@ -44,5 +44,5 @@ toDTO pkg =
     , _packageDTOCreatedAt = pkg ^. createdAt
     }
 
-buildPackageId :: String -> String -> String -> String
-buildPackageId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion
+buildIdentifierId :: String -> String -> String -> String
+buildIdentifierId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion

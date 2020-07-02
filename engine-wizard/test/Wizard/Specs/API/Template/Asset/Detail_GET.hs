@@ -10,7 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Database.Migration.Development.Template.Data.Templates
-import Wizard.Api.Resource.Template.TemplateJM ()
+import Shared.Model.Template.TemplateJM ()
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 
@@ -33,7 +33,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+reqUrl = "/templates/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -81,8 +81,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/templates/dsw:default:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
+    "/templates/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
     "template"
-    "dsw:default:1.0.0"
+    "global:questionnaire-report:1.0.0"

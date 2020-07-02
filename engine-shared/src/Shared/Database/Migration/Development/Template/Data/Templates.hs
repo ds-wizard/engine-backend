@@ -15,13 +15,13 @@ import Shared.Model.Template.Template
 commonWizardTemplate :: Template
 commonWizardTemplate =
   Template
-    { _templateTId = "dsw:default:1.0.0"
-    , _templateName = "Default Template"
-    , _templateOrganizationId = "dsw"
-    , _templateTemplateId = "default"
+    { _templateTId = "global:questionnaire-report:1.0.0"
+    , _templateName = "Questionnaire Report"
+    , _templateOrganizationId = "global"
+    , _templateTemplateId = "questionnaire-report"
     , _templateVersion = "1.0.0"
     , _templateMetamodelVersion = templateMetamodelVersion
-    , _templateDescription = "This is a default template"
+    , _templateDescription = "Exported questions and answers from a questionnaire"
     , _templateReadme = "# Default Template"
     , _templateLicense = "Apache-2.0"
     , _templateAllowedPackages = [templateAllowedPackage]

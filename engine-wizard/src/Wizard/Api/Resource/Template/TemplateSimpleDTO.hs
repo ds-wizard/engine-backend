@@ -3,7 +3,10 @@ module Wizard.Api.Resource.Template.TemplateSimpleDTO where
 import Data.Time
 import GHC.Generics
 
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Template.Template
+import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Model.Template.TemplateState
 
 data TemplateSimpleDTO =
   TemplateSimpleDTO
@@ -19,6 +22,9 @@ data TemplateSimpleDTO =
     , _templateSimpleDTOAllowedPackages :: [TemplateAllowedPackage]
     , _templateSimpleDTORecommendedPackageId :: Maybe String
     , _templateSimpleDTOFormats :: [TemplateFormat]
+    , _templateSimpleDTOUsablePackages :: [PackageSimpleDTO]
+    , _templateSimpleDTOState :: TemplateState
+    , _templateSimpleDTOOrganization :: Maybe OrganizationSimpleDTO
     , _templateSimpleDTOCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

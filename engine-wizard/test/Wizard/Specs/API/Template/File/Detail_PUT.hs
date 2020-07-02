@@ -12,8 +12,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Resource.Template.TemplateChangeJM ()
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -38,7 +38,7 @@ detail_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/templates/dsw:default:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+reqUrl = "/templates/global:questionnaire-report:1.0.0/files/7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 
@@ -90,8 +90,8 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/templates/dsw:default:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
+    "/templates/global:questionnaire-report:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "template"
-    "dsw:default:1.0.0"
+    "global:questionnaire-report:1.0.0"

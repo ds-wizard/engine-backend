@@ -2,20 +2,27 @@ module Wizard.Service.TemplateBundle.TemplateBundleService where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (catchError, throwError)
+import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
-import Wizard.Database.DAO.Template.TemplateDAO
+import Shared.Service.TemplateBundle.TemplateBundleMapper
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common.ACL
-import Wizard.Service.TemplateBundle.TemplateBundleMapper
+
+exportTemplateBundle :: String -> AppContextM BSL.ByteString
+exportTemplateBundle tmlId = do
+  template <- findTemplateById tmlId
+  assets <- traverse findAsset (template ^. assets)
+  return $ toTemplateArchive template assets
 
 pullTemplateBundleFromRegistry :: String -> AppContextM ()
 pullTemplateBundleFromRegistry tmlId = do
@@ -49,3 +56,11 @@ deleteOldTemplateIfPresent template = do
         (oldTemplate ^. assets)
       deleteTemplateById (oldTemplate ^. tId)
     Nothing -> return ()
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+findAsset :: TemplateAsset -> AppContextM (TemplateAsset, BS.ByteString)
+findAsset asset = do
+  content <- findTemplateAssetContent (U.toString $ asset ^. uuid)
+  return (asset, content)

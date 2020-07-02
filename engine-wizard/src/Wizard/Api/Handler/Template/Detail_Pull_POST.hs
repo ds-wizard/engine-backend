@@ -10,7 +10,7 @@ import Wizard.Service.TemplateBundle.TemplateBundleService
 type Detail_Pull_POST
    = Header "Authorization" String
      :> "templates"
-     :> Capture "tmlId" String
+     :> Capture "templateId" String
      :> "pull"
      :> Verb POST 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 

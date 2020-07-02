@@ -11,7 +11,7 @@ data AppConfigChangeDTO =
     , _appConfigChangeDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _appConfigChangeDTODashboard :: AppConfigDashboard
     , _appConfigChangeDTOLookAndFeel :: AppConfigLookAndFeel
-    , _appConfigChangeDTOKnowledgeModelRegistry :: AppConfigRegistry
+    , _appConfigChangeDTORegistry :: AppConfigRegistry
     , _appConfigChangeDTOQuestionnaire :: AppConfigQuestionnaire
     , _appConfigChangeDTOTemplate :: AppConfigTemplate
     , _appConfigChangeDTOSubmission :: AppConfigSubmission

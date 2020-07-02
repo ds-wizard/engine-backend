@@ -5,14 +5,15 @@ import qualified Data.Bson as BSON
 import Wizard.Database.Migration.Production.Migration_0036_templates.Data.DefaultTemplate (css, html)
 
 template now =
-  [ "id" BSON.=: "dsw:default:1.0.0"
-  , "name" BSON.=: "Default Template"
+  [ "id" BSON.=: "dsw:questionnaire-report:1.0.0"
+  , "name" BSON.=: "Questionnaire Report"
   , "organizationId" BSON.=: "dsw"
-  , "templateId" BSON.=: "default"
+  , "templateId" BSON.=: "questionnaire-report"
   , "version" BSON.=: "1.0.0"
   , "metamodelVersion" BSON.=: 1
-  , "description" BSON.=: "This is a default template"
-  , "readme" BSON.=: "# Default Template"
+  , "description" BSON.=: "Exported questions and answers from a questionnaire"
+  , "readme" BSON.=:
+    "# Questionnaire Report\n\nThis generic *default* template for [Data Stewardship Wizard](https://ds-wizard.org) (DSW) directly transforms answers from a questionnaire into a document while maintaining the structure. It is not tied to any knowledge model and is included by default in every DSW instance.\n\n## Changelog\n\n### 1.0.0\n\n- Initial version previously distributed as files directly in DSW\n"
   , "license" BSON.=: "Apache-2.0"
   , "allowedPackages" BSON.=:
     [ [ "orgId" BSON.=: (Nothing :: Maybe String)
@@ -114,10 +115,7 @@ template now =
       , "fileName" BSON.=: "default.html.j2"
       , "content" BSON.=: html
       ]
-    , [ "uuid" BSON.=: "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
-      , "fileName" BSON.=: "default.css"
-      , "content" BSON.=: css
-      ]
+    , ["uuid" BSON.=: "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc", "fileName" BSON.=: "default.css", "content" BSON.=: css]
     ]
   , "createdAt" BSON.=: now
   ]

@@ -12,9 +12,9 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Localization.Messages.Public

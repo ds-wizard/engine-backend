@@ -7,7 +7,7 @@ import Servant
 import Registry.Api.Handler.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
-import Registry.Service.Template.TemplateService
+import Registry.Service.TemplateBundle.TemplateBundleService
 import Shared.Api.Handler.Common
 
 type Detail_Bundle_GET
@@ -24,7 +24,7 @@ detail_bundle_GET ::
 detail_bundle_GET mTokenHeader tmlId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ do
-      zipFile <- getTemplateBundle tmlId
+      zipFile <- exportTemplateBundle tmlId
       let cdHeader = "attachment;filename=\"template.zip\""
       traceUuid <- asks _appContextTraceUuid
       return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStreamLazy $ zipFile

@@ -10,6 +10,7 @@ import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
+import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
@@ -25,7 +26,7 @@ import Wizard.Service.Config.AppConfigService
 retrieveOrganizations :: AppContextM [OrganizationSimpleDTO]
 retrieveOrganizations = do
   appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
+  if appConfig ^. registry . enabled
     then do
       let request = toRetrieveOrganizationsRequest
       res <- runRegistryClient request
@@ -48,9 +49,9 @@ confirmOrganizationRegistration reqDto = do
 retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleDTO]
 retrievePackages iStat = do
   appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
+  if appConfig ^. registry . enabled
     then do
-      let request = toRetrievePackagesRequest (appConfig ^. knowledgeModelRegistry) iStat
+      let request = toRetrievePackagesRequest (appConfig ^. registry) iStat
       res <- runRegistryClient request
       return . getResponse $ res
     else return []
@@ -59,18 +60,28 @@ retrievePackageBundleById :: String -> AppContextM BSL.ByteString
 retrievePackageBundleById pkgId = do
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
+  if appConfig ^. registry . enabled
     then runRequest
-           (toRetrievePackageBundleByIdRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) pkgId)
+           (toRetrievePackageBundleByIdRequest (serverConfig ^. registry) (appConfig ^. registry) pkgId)
            toRetrievePackageBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"
+
+retrieveTemplates :: AppContextM [TemplateSimpleDTO]
+retrieveTemplates = do
+  appConfig <- getAppConfig
+  if appConfig ^. registry . enabled
+    then do
+      let request = toRetrieveTemplatesRequest (appConfig ^. registry)
+      res <- runRegistryClient request
+      return . getResponse $ res
+    else return []
 
 retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
 retrieveTemplateBundleById tmlId = do
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
-  if appConfig ^. knowledgeModelRegistry . enabled
+  if appConfig ^. registry . enabled
     then runRequest
-           (toRetrieveTemplateBundleByIdRequest (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry) tmlId)
+           (toRetrieveTemplateBundleByIdRequest (serverConfig ^. registry) (appConfig ^. registry) tmlId)
            toRetrieveTemplateBundleByIdResponse
     else throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Registry"

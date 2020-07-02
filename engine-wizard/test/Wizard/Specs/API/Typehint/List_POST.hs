@@ -9,8 +9,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 import Wizard.Model.Context.AppContext
@@ -49,7 +49,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
     let expBody = encode expDto
      -- AND: Run migrations

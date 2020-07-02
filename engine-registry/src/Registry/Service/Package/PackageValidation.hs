@@ -2,7 +2,7 @@ module Registry.Service.Package.PackageValidation
   ( validateIsVersionHigher
   ) where
 
-import Registry.Service.Package.PackageUtils
+import Registry.Service.Package.PackageUtil
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 

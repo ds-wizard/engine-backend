@@ -14,10 +14,10 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Report.ReportJM ()
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires

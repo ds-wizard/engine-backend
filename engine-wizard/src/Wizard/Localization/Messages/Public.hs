@@ -49,6 +49,10 @@ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE =
 _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
   LocaleRecord "error.validation.submission_definition_absence" "Definition of submission ('%s') is missing" [subId]
 
+-- Delete
+_ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
+  LocaleRecord "error.validation.tml_deletation" "Template '%s' can't be deleted. It's used by some %s" [tmlId, target]
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
@@ -143,21 +147,6 @@ _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
 -- Template Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
-
-_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON =
-  LocaleRecord
-    "error.service.tb.missing_template_json"
-    "Desired definition ('template.json') wasn't found in archive"
-    []
-
-_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON errorMessage =
-  LocaleRecord
-    "error.service.tb.unable_to_decode_template_json"
-    "Desired definition ('template.json') couldn't be decoded (error: '%s')"
-    [errorMessage]
-
-_ERROR_SERVICE_TB__MISSING_ASSET fileName =
-  LocaleRecord "error.service.tb.missing_asset" "Desired asset ('%s') wasn't found in zip" [fileName]
 
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =

@@ -7,10 +7,10 @@ import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageWithEvents
+import Shared.Util.Identifier
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
-import Wizard.Util.IdentifierUtil
 
 fromBranch :: BranchWithEvents -> PackageWithEvents -> BranchWithEvents
 fromBranch branch pkg = (branch & events .~ []) & previousPackageId ?~ (pkg ^. pId)
@@ -27,7 +27,7 @@ fromPackage ::
   -> PackageWithEvents
 fromPackage branch versionDto forkOfPkgId mergeCheckpointPkgId org version events now =
   PackageWithEvents
-    { _packageWithEventsPId = buildPackageId (org ^. organizationId) (branch ^. kmId) version
+    { _packageWithEventsPId = buildIdentifierId (org ^. organizationId) (branch ^. kmId) version
     , _packageWithEventsName = branch ^. name
     , _packageWithEventsOrganizationId = org ^. organizationId
     , _packageWithEventsKmId = branch ^. kmId

@@ -16,8 +16,7 @@ toClientConfigDTO serverConfig appConfig =
     , _clientConfigDTOPrivacyAndSupport = appConfig ^. privacyAndSupport
     , _clientConfigDTODashboard = appConfig ^. dashboard
     , _clientConfigDTOLookAndFeel = appConfig ^. lookAndFeel
-    , _clientConfigDTOKnowledgeModelRegistry =
-        toClientConfigRegistryDTO (serverConfig ^. registry) (appConfig ^. knowledgeModelRegistry)
+    , _clientConfigDTORegistry = toClientConfigRegistryDTO (serverConfig ^. registry) (appConfig ^. registry)
     , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled

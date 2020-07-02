@@ -4,10 +4,10 @@ import Control.Lens ((^.))
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState

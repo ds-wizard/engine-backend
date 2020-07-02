@@ -10,8 +10,8 @@ import Shared.Api.Handler.Common
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.Asset.TemplateAssetService
 
@@ -19,7 +19,7 @@ type List_POST
    = Header "Authorization" String
      :> MultipartForm Mem (MultipartData Mem)
      :> "templates"
-     :> Capture "tmlId" String
+     :> Capture "templateId" String
      :> "assets"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
 

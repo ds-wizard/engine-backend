@@ -8,11 +8,11 @@ import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Resource.Template.TemplateChangeJM ()
-import Wizard.Api.Resource.Template.TemplateJM ()
-import Wizard.Database.DAO.Template.TemplateDAO
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Template.TemplateMapper

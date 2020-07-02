@@ -16,13 +16,13 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
 import Shared.Localization.Messages.Public
 import Shared.Service.Package.PackageMapper
 import qualified Shared.Service.PackageBundle.PackageBundleMapper as PBM
 import Shared.Util.String (replace)
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper

@@ -12,8 +12,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Model.Context.AppContext
@@ -45,12 +45,12 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
+test_200 appContext =
   it "HTTP 200 OK" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = [amsterdamBranch]
     let expBody = encode expDto
      -- AND: Run migrations

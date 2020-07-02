@@ -4,10 +4,10 @@ import Servant
 
 import Shared.Api.Handler.Common
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateChangeJM ()
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
 

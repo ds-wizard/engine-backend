@@ -4,15 +4,15 @@ import Servant
 
 import Shared.Api.Handler.Common
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.Asset.TemplateAssetService
 
 type Detail_GET
    = Header "Authorization" String
      :> "templates"
-     :> Capture "tmlId" String
+     :> Capture "templateId" String
      :> "assets"
      :> Capture "assetUuid" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateAsset)

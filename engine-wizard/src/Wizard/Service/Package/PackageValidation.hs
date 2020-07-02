@@ -1,5 +1,6 @@
 module Wizard.Service.Package.PackageValidation
   ( validatePackageIdFormat
+  , validatePackageIdFormat'
   , validateVersionFormat
   , validateIsVersionHigher
   , validatePackageIdWithCoordinates
@@ -17,14 +18,14 @@ import Control.Monad.Except (throwError)
 import Data.Maybe
 import Text.Regex
 
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Identifier
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Util.IdentifierUtil
 
 validatePackageIdFormat :: String -> AppContextM ()
 validatePackageIdFormat pkgId =
@@ -32,6 +33,9 @@ validatePackageIdFormat pkgId =
    in if length pkgIdSplit /= 3 || null (head pkgIdSplit) || null (pkgIdSplit !! 1)
         then throwError . UserError $ _ERROR_VALIDATION__INVALID_PKG_ID_FORMAT
         else validateVersionFormat (pkgIdSplit !! 2)
+
+validatePackageIdFormat' :: Maybe String -> AppContextM ()
+validatePackageIdFormat' mPkgId = forM_ mPkgId validatePackageIdFormat
 
 validateVersionFormat :: String -> AppContextM ()
 validateVersionFormat pkgVersion =
@@ -49,7 +53,7 @@ validateIsVersionHigher newVersion oldVersion =
 
 validatePackageIdWithCoordinates :: String -> String -> String -> String -> AppContextM ()
 validatePackageIdWithCoordinates pId organizationId kmId version =
-  if pId == buildPackageId organizationId kmId version
+  if pId == buildIdentifierId organizationId kmId version
     then return ()
     else throwError . UserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pId
 
@@ -118,7 +122,7 @@ validateUsageBySomeBranch pkgId = do
 
 validateUsageBySomeQuestionnaire :: String -> AppContextM ()
 validateUsageBySomeQuestionnaire pkgId = do
-  questionnaires <- findQuestionnaireByPackageId pkgId
+  questionnaires <- findQuestionnairesByPackageId pkgId
   case questionnaires of
     [] -> return ()
     _ ->

@@ -27,7 +27,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchMapper
-import Wizard.Service.Branch.BranchUtils
+import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageService

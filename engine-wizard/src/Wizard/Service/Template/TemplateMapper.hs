@@ -4,48 +4,82 @@ import Control.Lens ((^.))
 import Data.Time
 
 import LensesConfig
+import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
+import Shared.Util.Identifier
 import Wizard.Api.Resource.Template.TemplateChangeDTO
-import Wizard.Api.Resource.Template.TemplateDTO
+import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
-import Wizard.Util.IdentifierUtil
-
-toDTO :: [Package] -> Template -> TemplateDTO
-toDTO pkgs template =
-  TemplateDTO
-    { _templateDTOTId = template ^. tId
-    , _templateDTOName = template ^. name
-    , _templateDTOOrganizationId = template ^. organizationId
-    , _templateDTOTemplateId = template ^. templateId
-    , _templateDTOVersion = template ^. version
-    , _templateDTOMetamodelVersion = template ^. metamodelVersion
-    , _templateDTODescription = template ^. description
-    , _templateDTOReadme = template ^. readme
-    , _templateDTOLicense = template ^. license
-    , _templateDTOAllowedPackages = fmap PM_Mapper.toSimpleDTO pkgs
-    , _templateDTORecommendedPackageId = template ^. recommendedPackageId
-    , _templateDTOFormats = template ^. formats
-    , _templateDTOCreatedAt = template ^. createdAt
-    }
+import Wizard.Service.Template.TemplateUtil
 
 toSimpleDTO :: Template -> TemplateSimpleDTO
-toSimpleDTO template =
+toSimpleDTO tml = toSimpleDTO' tml [] [] [] []
+
+toSimpleDTO' ::
+     Template
+  -> [R_TemplateSimpleDTO.TemplateSimpleDTO]
+  -> [OrganizationSimpleDTO]
+  -> [String]
+  -> [Package]
+  -> TemplateSimpleDTO
+toSimpleDTO' tml tmlRs orgRs localVersions pkgs =
   TemplateSimpleDTO
-    { _templateSimpleDTOTId = template ^. tId
-    , _templateSimpleDTOName = template ^. name
-    , _templateSimpleDTOOrganizationId = template ^. organizationId
-    , _templateSimpleDTOTemplateId = template ^. templateId
-    , _templateSimpleDTOVersion = template ^. version
-    , _templateSimpleDTOMetamodelVersion = template ^. metamodelVersion
-    , _templateSimpleDTODescription = template ^. description
-    , _templateSimpleDTOReadme = template ^. readme
-    , _templateSimpleDTOLicense = template ^. license
-    , _templateSimpleDTOAllowedPackages = template ^. allowedPackages
-    , _templateSimpleDTORecommendedPackageId = template ^. recommendedPackageId
-    , _templateSimpleDTOFormats = template ^. formats
-    , _templateSimpleDTOCreatedAt = template ^. createdAt
+    { _templateSimpleDTOTId = tml ^. tId
+    , _templateSimpleDTOName = tml ^. name
+    , _templateSimpleDTOOrganizationId = tml ^. organizationId
+    , _templateSimpleDTOTemplateId = tml ^. templateId
+    , _templateSimpleDTOVersion = tml ^. version
+    , _templateSimpleDTOMetamodelVersion = tml ^. metamodelVersion
+    , _templateSimpleDTODescription = tml ^. description
+    , _templateSimpleDTOReadme = tml ^. readme
+    , _templateSimpleDTOLicense = tml ^. license
+    , _templateSimpleDTOAllowedPackages = tml ^. allowedPackages
+    , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
+    , _templateSimpleDTOFormats = tml ^. formats
+    , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO pkgs
+    , _templateSimpleDTOState = computeTemplateState tmlRs tml
+    , _templateSimpleDTOOrganization = selectOrganizationByOrgId tml orgRs
+    , _templateSimpleDTOCreatedAt = tml ^. createdAt
+    }
+
+toDetailDTO ::
+     Template
+  -> [R_TemplateSimpleDTO.TemplateSimpleDTO]
+  -> [OrganizationSimpleDTO]
+  -> [String]
+  -> String
+  -> [Package]
+  -> TemplateDetailDTO
+toDetailDTO tml tmlRs orgRs versionLs registryLink pkgs =
+  TemplateDetailDTO
+    { _templateDetailDTOTId = tml ^. tId
+    , _templateDetailDTOName = tml ^. name
+    , _templateDetailDTOOrganizationId = tml ^. organizationId
+    , _templateDetailDTOTemplateId = tml ^. templateId
+    , _templateDetailDTOVersion = tml ^. version
+    , _templateDetailDTOMetamodelVersion = tml ^. metamodelVersion
+    , _templateDetailDTODescription = tml ^. description
+    , _templateDetailDTOReadme = tml ^. readme
+    , _templateDetailDTOLicense = tml ^. license
+    , _templateDetailDTOAllowedPackages = tml ^. allowedPackages
+    , _templateDetailDTORecommendedPackageId = tml ^. recommendedPackageId
+    , _templateDetailDTOFormats = tml ^. formats
+    , _templateDetailDTOUsablePackages = fmap PM_Mapper.toSimpleDTO pkgs
+    , _templateDetailDTOVersions = versionLs
+    , _templateDetailDTORemoteLatestVersion =
+        case selectTemplateByOrgIdAndTmlId tml tmlRs of
+          Just tmlR -> Just $ tmlR ^. version
+          Nothing -> Nothing
+    , _templateDetailDTOState = computeTemplateState tmlRs tml
+    , _templateDetailDTORegistryLink =
+        case selectTemplateByOrgIdAndTmlId tml tmlRs of
+          Just tmlR -> Just registryLink
+          Nothing -> Nothing
+    , _templateDetailDTOOrganization = selectOrganizationByOrgId tml orgRs
+    , _templateDetailDTOCreatedAt = tml ^. createdAt
     }
 
 toChangeDTO :: Template -> TemplateChangeDTO
@@ -67,7 +101,7 @@ toChangeDTO template =
 fromCreateDTO :: TemplateChangeDTO -> UTCTime -> Template
 fromCreateDTO dto createdAt =
   Template
-    { _templateTId = buildPackageId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
+    { _templateTId = buildIdentifierId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
     , _templateName = dto ^. name
     , _templateOrganizationId = dto ^. organizationId
     , _templateTemplateId = dto ^. templateId
@@ -87,7 +121,7 @@ fromCreateDTO dto createdAt =
 fromChangeDTO :: TemplateChangeDTO -> Template -> Template
 fromChangeDTO dto template =
   Template
-    { _templateTId = buildPackageId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
+    { _templateTId = buildIdentifierId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
     , _templateName = dto ^. name
     , _templateOrganizationId = dto ^. organizationId
     , _templateTemplateId = dto ^. templateId
@@ -103,3 +137,6 @@ fromChangeDTO dto template =
     , _templateAssets = template ^. assets
     , _templateCreatedAt = template ^. createdAt
     }
+
+buildTemplateUrl :: String -> String -> String
+buildTemplateUrl clientRegistryUrl tmlId = clientRegistryUrl ++ "/templates/" ++ tmlId

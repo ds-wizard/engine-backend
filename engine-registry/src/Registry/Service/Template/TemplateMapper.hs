@@ -1,28 +1,40 @@
 module Registry.Service.Template.TemplateMapper where
 
-import Codec.Archive.Zip
 import Control.Lens ((^.))
-import Data.Aeson
-import qualified Data.ByteString.Char8 as BS
-import qualified Data.ByteString.Lazy.Char8 as BSL
 
 import LensesConfig
+import Registry.Api.Resource.Template.TemplateDetailDTO
+import Registry.Api.Resource.Template.TemplateSimpleDTO
+import Registry.Model.Organization.Organization
+import qualified Registry.Service.Organization.OrganizationMapper as OM_Mapper
 import Shared.Model.Template.Template
-import Shared.Model.Template.TemplateJM ()
 
-toTemplateArchive :: Template -> [(TemplateAsset, BS.ByteString)] -> BSL.ByteString
-toTemplateArchive template = fromArchive . toTemplateZip template
+toSimpleDTO :: Template -> Organization -> TemplateSimpleDTO
+toSimpleDTO template org =
+  TemplateSimpleDTO
+    { _templateSimpleDTOTId = template ^. tId
+    , _templateSimpleDTOName = template ^. name
+    , _templateSimpleDTOOrganizationId = template ^. organizationId
+    , _templateSimpleDTOTemplateId = template ^. templateId
+    , _templateSimpleDTOVersion = template ^. version
+    , _templateSimpleDTODescription = template ^. description
+    , _templateSimpleDTOOrganization = OM_Mapper.toSimpleDTO org
+    , _templateSimpleDTOCreatedAt = template ^. createdAt
+    }
 
-toTemplateZip :: Template -> [(TemplateAsset, BS.ByteString)] -> Archive
-toTemplateZip template assets =
-  let templateEntry = toTemplateEntry template
-      assetEntries = fmap toAssetEntry assets
-   in foldr addEntryToArchive emptyArchive (templateEntry : assetEntries)
-
-toTemplateEntry :: Template -> Entry
-toTemplateEntry template =
-  let templateJson = encode template
-   in toEntry "template.json" 0 templateJson
-
-toAssetEntry :: (TemplateAsset, BS.ByteString) -> Entry
-toAssetEntry (asset, content) = toEntry ("assets/" ++ asset ^. fileName) 0 (BSL.fromStrict content)
+toDetailDTO :: Template -> [String] -> Organization -> TemplateDetailDTO
+toDetailDTO template versions org =
+  TemplateDetailDTO
+    { _templateDetailDTOTId = template ^. tId
+    , _templateDetailDTOName = template ^. name
+    , _templateDetailDTOOrganizationId = template ^. organizationId
+    , _templateDetailDTOTemplateId = template ^. templateId
+    , _templateDetailDTOVersion = template ^. version
+    , _templateDetailDTOMetamodelVersion = template ^. metamodelVersion
+    , _templateDetailDTODescription = template ^. description
+    , _templateDetailDTOReadme = template ^. readme
+    , _templateDetailDTOLicense = template ^. license
+    , _templateDetailDTOVersions = versions
+    , _templateDetailDTOOrganization = OM_Mapper.toSimpleDTO org
+    , _templateDetailDTOCreatedAt = template ^. createdAt
+    }

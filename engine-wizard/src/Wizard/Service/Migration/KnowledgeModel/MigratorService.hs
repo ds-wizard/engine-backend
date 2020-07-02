@@ -7,6 +7,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Maybe
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventLenses
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
@@ -14,11 +15,10 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Branch.BranchUtils
+import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator

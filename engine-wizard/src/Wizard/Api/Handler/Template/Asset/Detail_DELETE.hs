@@ -10,7 +10,7 @@ import Wizard.Service.Template.Asset.TemplateAssetService
 type Detail_DELETE
    = Header "Authorization" String
      :> "templates"
-     :> Capture "tmlId" String
+     :> Capture "templateId" String
      :> "assets"
      :> Capture "assetUuid" String
      :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)

@@ -7,6 +7,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -18,7 +19,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers

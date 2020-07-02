@@ -8,7 +8,7 @@ instance SensitiveData AppConfig where
   process key entity =
     entity
       { _appConfigAuthentication = process key (_appConfigAuthentication entity)
-      , _appConfigKnowledgeModelRegistry = process key (_appConfigKnowledgeModelRegistry entity)
+      , _appConfigRegistry = process key (_appConfigRegistry entity)
       , _appConfigQuestionnaire = process key (_appConfigQuestionnaire entity)
       }
 

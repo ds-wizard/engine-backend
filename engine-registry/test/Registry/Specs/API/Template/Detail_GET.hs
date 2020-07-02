@@ -9,9 +9,9 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Registry.Database.Migration.Development.Template.Data.Templates
 import qualified Registry.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
-import Shared.Database.Migration.Development.Template.Data.Templates
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
@@ -30,7 +30,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default:1.0.0"
+reqUrl = "/templates/global:questionnaire-report:1.0.0"
 
 reqHeaders = [reqCtHeader]
 
@@ -45,7 +45,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = commonWizardTemplate
+    let expDto = commonWizardTemplateDetailDTO
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML_Migration.runMigration appContext

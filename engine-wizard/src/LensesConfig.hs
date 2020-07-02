@@ -4,6 +4,7 @@ import Control.Lens (makeFields)
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
+import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
@@ -63,7 +64,7 @@ import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 import Wizard.Api.Resource.Template.TemplateChangeDTO
-import Wizard.Api.Resource.Template.TemplateDTO
+import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
@@ -507,9 +508,9 @@ makeFields ''SubmissionCreateDTO
 makeFields ''SubmissionDTO
 
 -- Api / Resource / Template
-makeFields ''TemplateDTO
-
 makeFields ''TemplateSimpleDTO
+
+makeFields ''TemplateDetailDTO
 
 makeFields ''TemplateChangeDTO
 
@@ -562,3 +563,6 @@ makeFields ''OrganizationDTO
 
 -- Api / Resource / Package
 makeFields ''R_PackageSimpleDTO.PackageSimpleDTO
+
+-- Api / Resource / Package
+makeFields ''R_TemplateSimpleDTO.TemplateSimpleDTO

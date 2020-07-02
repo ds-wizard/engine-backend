@@ -9,17 +9,17 @@ import Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Event.Event
+import Shared.Service.Package.PackageUtil
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Branch.BranchUtils
+import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Package.PackageService
-import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Version.VersionMapper
 import Wizard.Service.Version.VersionValidation
 
