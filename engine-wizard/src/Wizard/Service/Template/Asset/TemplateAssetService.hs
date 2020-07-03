@@ -8,12 +8,13 @@ import qualified Data.List as L
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
 import Shared.Util.Uuid
-import Wizard.Database.DAO.Template.TemplateDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.Common.ACL
 
 getTemplateAssets :: String -> AppContextM [TemplateAsset]

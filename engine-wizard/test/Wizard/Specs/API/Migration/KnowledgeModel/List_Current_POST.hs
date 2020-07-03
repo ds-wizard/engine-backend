@@ -11,12 +11,12 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import Wizard.Database.Migration.Development.User.Data.Users

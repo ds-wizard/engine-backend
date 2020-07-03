@@ -1,6 +1,6 @@
 module Wizard.Service.Statistics.StatisticsService where
 
-import Wizard.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext

@@ -10,8 +10,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Resource.Template.TemplateChangeJM ()
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -36,7 +36,7 @@ detail_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrl = "/templates/dsw:default:1.0.0"
+reqUrl = "/templates/global:questionnaire-report:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

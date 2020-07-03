@@ -7,7 +7,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Wizard.Database.DAO.Template.TemplateDAO
+import Shared.Database.DAO.Template.TemplateDAO
 
 import Wizard.Specs.Common
 

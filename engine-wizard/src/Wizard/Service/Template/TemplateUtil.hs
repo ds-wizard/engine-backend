@@ -1,21 +1,42 @@
 module Wizard.Service.Template.TemplateUtil where
 
 import Control.Lens ((^.))
+import qualified Data.List as L
 
 import LensesConfig
+import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
-import Wizard.Service.Package.PackageUtils
-import Wizard.Util.IdentifierUtil
+import Shared.Service.Package.PackageUtil
+import Shared.Util.Identifier
+import Wizard.Model.Template.TemplateState
 
-getAllowedPackagesForTemplate :: Template -> [Package] -> [Package]
-getAllowedPackagesForTemplate tml = getNewestUniquePackages . filterPackages tml
+computeTemplateState :: [TemplateSimpleDTO] -> Template -> TemplateState
+computeTemplateState tmlsFromRegistry tml =
+  case selectTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
+    Just tmlFromRegistry ->
+      case compareVersion (tmlFromRegistry ^. version) (tml ^. version) of
+        LT -> UnpublishedTemplateState
+        EQ -> UpToDateTemplateState
+        GT -> OutdatedTemplateState
+    Nothing -> UnknownTemplateState
+
+selectTemplateByOrgIdAndTmlId tml =
+  L.find (\t -> (t ^. organizationId) == (tml ^. organizationId) && (t ^. templateId) == (tml ^. templateId))
+
+selectOrganizationByOrgId tml = L.find (\org -> (org ^. organizationId) == (tml ^. organizationId))
+
+getUsablePackagesForTemplate :: Template -> [Package] -> [Package]
+getUsablePackagesForTemplate tml = chooseTheNewest . groupPackages . filterPackages tml
   where
     filterPackages :: Template -> [Package] -> [Package]
-    filterPackages tml = filter (\pkg -> not . null $ filterTemplates (splitPackageId $ pkg ^. pId) [tml])
+    filterPackages tml = filter (\pkg -> not . null $ filterTemplates (Just $ pkg ^. pId) [tml])
 
-filterTemplates :: [String] -> [Template] -> [Template]
-filterTemplates pkgIdSplit = filter (filterTemplate pkgIdSplit)
+filterTemplates :: Maybe String -> [Template] -> [Template]
+filterTemplates mPkgId tmls =
+  case mPkgId of
+    Just pkgId -> filter (filterTemplate . splitPackageId $ pkgId) tmls
+    Nothing -> tmls
   where
     filterTemplate :: [String] -> Template -> Bool
     filterTemplate pkgIdSplit template = foldl (foldOverKmSpec pkgIdSplit) False (template ^. allowedPackages)

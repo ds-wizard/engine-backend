@@ -9,13 +9,10 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Database.Migration.Development.Template.Data.Templates
-import qualified Shared.Service.Package.PackageMapper as SPM
-import Wizard.Api.Resource.Template.TemplateJM ()
+import Shared.Model.Template.TemplateJM ()
+import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Template.TemplateMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -56,7 +53,7 @@ create_test_200 title appContext reqAuthHeader =
       -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = [toDTO (fmap SPM.toPackage [globalPackage, netherlandsPackageV2]) commonWizardTemplate]
+    let expDto = [commonWizardTemplateSimpleDTO]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML_Migration.runMigration appContext

@@ -10,7 +10,7 @@ import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Service.Package.PackageUtils
+import Wizard.Service.Package.PackageUtil
 
 toSimpleDTO :: Package -> PackageSimpleDTO
 toSimpleDTO pkg = toSimpleDTO' pkg [] [] []

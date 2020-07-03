@@ -18,22 +18,21 @@ import Data.List (maximumBy)
 import LensesConfig
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
-import Shared.Util.List (groupBy)
+import Shared.Service.Package.PackageUtil
+import Shared.Util.Identifier
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageMapper
-import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
-import Wizard.Util.IdentifierUtil
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do
@@ -42,10 +41,8 @@ getSimplePackagesFiltered queryParams = do
   iStat <- getInstanceStatistics
   pkgRs <- retrievePackages iStat
   orgRs <- retrieveOrganizations
-  return . fmap (toSimpleDTOs pkgRs orgRs) . groupPkgs $ pkgs
+  return . fmap (toSimpleDTOs pkgRs orgRs) . groupPackages $ pkgs
   where
-    groupPkgs :: [Package] -> [[Package]]
-    groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
     toSimpleDTOs :: [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [Package] -> PackageSimpleDTO
     toSimpleDTOs pkgRs orgRs pkgs = toSimpleDTO' newestPkg pkgRs orgRs (pkgs ^.. traverse . version)
       where

@@ -4,10 +4,10 @@ import Data.Maybe
 import Text.Regex
 
 import Control.Monad.Except (throwError)
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

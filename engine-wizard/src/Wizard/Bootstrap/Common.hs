@@ -6,8 +6,10 @@ import Control.Monad.Reader (liftIO, runReaderT)
 
 import LensesConfig
 import Shared.Util.Uuid
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO ()
@@ -23,7 +25,7 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextHttpClientManager = baseContext ^. httpClientManager
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
-          , _appContextCurrentUser = Nothing
+          , _appContextCurrentUser = Just . toDTO $ userAlbert
           , _appContextCache = baseContext ^. cache
           }
   let loggingLevel = baseContext ^. serverConfig . logging . level

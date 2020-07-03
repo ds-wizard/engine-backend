@@ -13,8 +13,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
@@ -87,7 +87,7 @@ test_404 appContext =
     let reqUrl = "/packages/global:non-existing-package:1.0.0/pull"
      -- AND: Prepare expectation
     let expStatus = 404
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createNotExistsError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "global:non-existing-package:1.0.0")
     let expBody = encode expDto
       -- WHEN: Call APIA

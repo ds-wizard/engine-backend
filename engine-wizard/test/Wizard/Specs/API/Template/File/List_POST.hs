@@ -12,8 +12,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Resource.Template.File.TemplateFileChangeJM ()
-import Wizard.Api.Resource.Template.TemplateJM ()
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -37,7 +37,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/templates/dsw:default:1.0.0/files"
+reqUrl = "/templates/global:questionnaire-report:1.0.0/files"
 
 reqHeadersT reqAuthHeader = [reqCtHeader, reqAuthHeader]
 

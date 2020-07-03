@@ -13,8 +13,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
-import Wizard.Database.DAO.Template.TemplateDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 

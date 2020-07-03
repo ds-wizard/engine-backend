@@ -16,7 +16,7 @@ data AppConfig =
     , _appConfigPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _appConfigDashboard :: AppConfigDashboard
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
-    , _appConfigKnowledgeModelRegistry :: AppConfigRegistry
+    , _appConfigRegistry :: AppConfigRegistry
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
@@ -32,7 +32,7 @@ instance Eq AppConfig where
     _appConfigPrivacyAndSupport a == _appConfigPrivacyAndSupport b &&
     _appConfigDashboard a == _appConfigDashboard b &&
     _appConfigLookAndFeel a == _appConfigLookAndFeel b &&
-    _appConfigKnowledgeModelRegistry a == _appConfigKnowledgeModelRegistry b &&
+    _appConfigRegistry a == _appConfigRegistry b &&
     _appConfigQuestionnaire a == _appConfigQuestionnaire b && _appConfigSubmission a == _appConfigSubmission b
 
 data AppConfigOrganization =

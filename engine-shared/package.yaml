@@ -58,6 +58,7 @@ library:
   - uuid
   - wai
   - yaml
+  - zip-archive
 
 tests:
   hspec:

@@ -25,7 +25,7 @@ migrate dbPool = do
 -- ------------------------------------------------------------------------------------------------
 -- ------------------------------------------------------------------------------------------------
 migrateAppConfig dbPool = do
-  let action =
+  let actionModify =
         modify
           (select [] "appConfigs")
           [ "$set" =:
@@ -34,7 +34,9 @@ migrateAppConfig dbPool = do
             , "privacyAndSupport.termsOfServiceUrl" =: (Nothing :: Maybe String)
             ]
           ]
-  runMongoDBPoolDef action dbPool
+  runMongoDBPoolDef actionModify dbPool
+  let actionRename = modify (select [] "appConfigs") ["$rename" =: ["knowledgeModelRegistry" =: "registry"]]
+  runMongoDBPoolDef actionRename dbPool
   return Nothing
 
 -- ------------------------------------------------------------------------------------------------
@@ -69,7 +71,7 @@ renameDocumentTemplateUuid dbPool = do
 
 renameTemplateReferences dbPool = do
   let defUuid = "43a3fdd1-8535-42e0-81a7-5edbff296e65"
-  let defId = "dsw:default:1.0.0"
+  let defId = "dsw:questionnaire-report:1.0.0"
   let scUuid = "43a3fdd1-8535-42e0-81a7-5edbff296e66"
   let scId = "dsw:science-europe:1.0.0"
   -- 1. Rename reference in appConfigs

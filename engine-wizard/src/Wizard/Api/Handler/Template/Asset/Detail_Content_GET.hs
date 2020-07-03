@@ -14,7 +14,7 @@ import Wizard.Service.Template.Asset.TemplateAssetService
 
 type Detail_Content_GET
    = "templates"
-     :> Capture "tmlId" String
+     :> Capture "templateId" String
      :> "assets"
      :> Capture "assetUuid" String
      :> "content"

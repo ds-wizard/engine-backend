@@ -28,8 +28,11 @@ findQuestionnairesForCurrentUserPage :: Maybe String -> Pageable -> [Sort] -> Ap
 findQuestionnairesForCurrentUserPage mQuery pageable sort =
   createFindEntitiesPageableQuerySortFn collection pageable sort =<< sel [regexSel "name" mQuery, qtnOwnerSel]
 
-findQuestionnaireByPackageId :: String -> AppContextM [Questionnaire]
-findQuestionnaireByPackageId packageId = createFindEntitiesByFn collection ["packageId" =: packageId]
+findQuestionnairesByPackageId :: String -> AppContextM [Questionnaire]
+findQuestionnairesByPackageId packageId = createFindEntitiesByFn collection ["packageId" =: packageId]
+
+findQuestionnairesByTemplateId :: String -> AppContextM [Questionnaire]
+findQuestionnairesByTemplateId templateId = createFindEntitiesByFn collection ["templateId" =: templateId]
 
 findQuestionnaireById :: String -> AppContextM Questionnaire
 findQuestionnaireById = createFindEntityByFn collection entityName "uuid"

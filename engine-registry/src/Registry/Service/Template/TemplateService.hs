@@ -1,29 +1,42 @@
 module Registry.Service.Template.TemplateService where
 
 import Control.Lens ((^.))
-import qualified Data.ByteString.Char8 as BS
-import qualified Data.ByteString.Lazy.Char8 as BSL
-import qualified Data.UUID as U
 
 import LensesConfig
-import Registry.Database.DAO.Template.TemplateDAO
+import Registry.Api.Resource.Template.TemplateDetailDTO
+import Registry.Api.Resource.Template.TemplateSimpleDTO
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Template.TemplateMapper
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Template.Template
+import Shared.Service.Template.TemplateUtil
+import Shared.Util.Identifier
+import Shared.Util.List (foldInContext)
 
-getTemplates :: AppContextM [Template]
-getTemplates = findTemplates
+getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
+getTemplates queryParams = do
+  tmpls <- findTemplatesFiltered queryParams
+  foldInContext . mapToSimpleDTO . chooseTheNewest . groupTemplates $ tmpls
+  where
+    mapToSimpleDTO :: [Template] -> [AppContextM TemplateSimpleDTO]
+    mapToSimpleDTO =
+      fmap
+        (\tml -> do
+           org <- findOrganizationByOrgId (tml ^. organizationId)
+           return $ toSimpleDTO tml org)
 
-getTemplateById :: String -> AppContextM Template
-getTemplateById = findTemplateById
+getTemplateById :: String -> AppContextM TemplateDetailDTO
+getTemplateById tId = do
+  tml <- findTemplateById tId
+  versions <- getTemplateVersions tml
+  org <- findOrganizationByOrgId (tml ^. organizationId)
+  return $ toDetailDTO tml versions org
 
-getTemplateBundle :: String -> AppContextM BSL.ByteString
-getTemplateBundle tmlId = do
-  template <- findTemplateById tmlId
-  assets <- traverse findAsset (template ^. assets)
-  return $ toTemplateArchive template assets
-
-findAsset :: TemplateAsset -> AppContextM (TemplateAsset, BS.ByteString)
-findAsset asset = do
-  content <- findTemplateAssetContent (U.toString $ asset ^. uuid)
-  return (asset, content)
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+getTemplateVersions :: Template -> AppContextM [String]
+getTemplateVersions tml = do
+  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
+  return . fmap _templateVersion $ allTmls

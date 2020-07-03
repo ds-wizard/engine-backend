@@ -10,7 +10,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import Shared.Database.Migration.Development.Template.Data.Templates
-import Wizard.Api.Resource.Template.TemplateJM ()
+import Shared.Model.Template.TemplateJM ()
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 
@@ -32,7 +32,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/templates/dsw:default:1.0.0/assets"
+reqUrl = "/templates/global:questionnaire-report:1.0.0/assets"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 

@@ -30,6 +30,9 @@ findDocumentsForCurrentUserPage mQtnUuid mQuery pageable sort =
   createFindEntitiesPageableQuerySortFn collection pageable sort =<<
   sel [regexSel "name" mQuery, textMaybeSel "questionnaireUuid" mQtnUuid, ownerUuidSel]
 
+findDocumentsByTemplateId :: String -> AppContextM [Document]
+findDocumentsByTemplateId templateId = createFindEntitiesByFn collection ["templateId" =: templateId]
+
 findDocumentById :: String -> AppContextM Document
 findDocumentById = createFindEntityByFn collection entityName "uuid"
 

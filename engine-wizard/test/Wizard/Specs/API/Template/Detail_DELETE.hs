@@ -2,16 +2,22 @@ module Wizard.Specs.API.Template.Detail_DELETE
   ( detail_delete
   ) where
 
+import Control.Lens ((^.))
+import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Wizard.Database.DAO.Template.TemplateDAO
+import LensesConfig hiding (request)
+import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
+import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -22,6 +28,7 @@ detail_delete :: AppContext -> SpecWith ((), Application)
 detail_delete appContext =
   describe "DELETE /templates/{tmlId}" $ do
     test_204 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
     test_404 appContext
@@ -31,7 +38,7 @@ detail_delete appContext =
 -- ----------------------------------------------------
 reqMethod = methodDelete
 
-reqUrl = "/templates/dsw:default:1.0.0"
+reqUrl = "/templates/global:questionnaire-report:1.0.0"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -55,6 +62,8 @@ create_test_204 title appContext reqAuthHeader =
     let expBody = ""
      -- AND: Run migrations
     runInContextIO TML_Migration.runMigration appContext
+     -- AND: Update config in DB
+    runInContextIO (modifyAppConfig (template . recommendedTemplateId) Nothing) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -63,6 +72,34 @@ create_test_204 title appContext reqAuthHeader =
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findTemplates appContext 0
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_400 appContext =
+  it "HTTP 400 BAD REQUEST when template can't be deleted" $
+       -- GIVEN: Prepare request
+   do
+    let reqHeaders = reqHeadersT reqAuthHeader
+      -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto =
+          createUserError $
+          _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
+            (commonWizardTemplate ^. tId)
+            "application configuration"
+    let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO TML_Migration.runMigration appContext
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findTemplates appContext 1
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

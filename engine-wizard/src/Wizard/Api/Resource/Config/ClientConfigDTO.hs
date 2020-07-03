@@ -13,7 +13,7 @@ data ClientConfigDTO =
     , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _clientConfigDTODashboard :: AppConfigDashboard
     , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
-    , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
+    , _clientConfigDTORegistry :: ClientConfigRegistryDTO
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature

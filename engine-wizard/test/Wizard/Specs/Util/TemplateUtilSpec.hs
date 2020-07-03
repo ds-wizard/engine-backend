@@ -9,7 +9,8 @@ import Wizard.Service.Template.TemplateUtil
 
 templateUtilSpec =
   describe "Template Utils" $ do
-    let pkgId = ["org.nl", "core-nl", "2.0.0"]
+    let pkgId = "org.nl:core-nl:2.0.0"
+    let pkgIdSplit = ["org.nl", "core-nl", "2.0.0"]
     describe "filterTemplates" $ do
       it "No KM Specifications given => Deny" $
             -- GIVEN:
@@ -36,7 +37,7 @@ templateUtilSpec =
             -- AND:
         let expectation = 0
             -- GIVEN:
-        let result = filterTemplates pkgId templates
+        let result = filterTemplates (Just pkgId) templates
             -- THEN:
         length result `shouldBe` expectation
       it "One relevant KM Specifications given => Allow" $
@@ -71,7 +72,7 @@ templateUtilSpec =
             -- AND:
         let expectation = 1
             -- GIVEN:
-        let result = filterTemplates pkgId templates
+        let result = filterTemplates (Just pkgId) templates
             -- THEN:
         length result `shouldBe` expectation
       it "One relevant and one non-relevant KM Specifications given => Allow" $
@@ -112,7 +113,7 @@ templateUtilSpec =
             -- AND:
         let expectation = 1
             -- GIVEN:
-        let result = filterTemplates pkgId templates
+        let result = filterTemplates (Just pkgId) templates
             -- THEN:
         length result `shouldBe` expectation
     describe "fitsIntoKMSpec" $ do
@@ -127,7 +128,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` True
       it "Restriction on 'orgId', same provided 'orgId' => Allow" $
@@ -141,7 +142,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` True
       it "Restriction on 'orgId', different provided 'orgId' => Deny" $
@@ -155,7 +156,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` False
       it "Restriction on 'KmID', same provided 'KmID' => Allow" $
@@ -169,7 +170,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` True
       it "Restriction on 'KmID', different provided 'KmID' => Deny" $
@@ -183,7 +184,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` False
       it "Restriction on 'minimal version', provided higher version => Alow" $
@@ -197,7 +198,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` True
       it "Restriction on 'minimal version', provided lower version => Deny" $
@@ -211,7 +212,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` False
       it "Restriction on 'maximal version', provided lower version => Alow" $
@@ -225,7 +226,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Just "2.0.1"
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` True
       it "Restriction on 'maximal version', provided higher version => Deny" $
@@ -239,7 +240,7 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Just "1.0.0"
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` False
       it "Two restrictions, provided data satisfies just one => Deny" $
@@ -253,6 +254,6 @@ templateUtilSpec =
                 , _templateAllowedPackageMaxVersion = Nothing
                 }
         -- GIVEN:
-        let result = fitsIntoKMSpec pkgId kmSpec
+        let result = fitsIntoKMSpec pkgIdSplit kmSpec
         -- THEN:
         result `shouldBe` False

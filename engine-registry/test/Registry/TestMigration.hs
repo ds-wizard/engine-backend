@@ -3,9 +3,9 @@ module Registry.TestMigration where
 import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.Database.DAO.Package.PackageDAO
-import Registry.Database.DAO.Template.TemplateDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 
 import Registry.Specs.Common
