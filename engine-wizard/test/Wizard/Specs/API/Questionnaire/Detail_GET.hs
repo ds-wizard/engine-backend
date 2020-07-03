@@ -19,6 +19,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -66,8 +67,8 @@ create_test_200 title appContext qtn authHeader =
     let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4 QSDefault
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4 QSDefault questionnaireReport
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -96,7 +97,7 @@ test_403 appContext = do
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations

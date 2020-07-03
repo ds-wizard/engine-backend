@@ -115,7 +115,8 @@ getQuestionnaireDetailById qtnUuid = do
   package <- findPackageWithEventsById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (package ^. pId)
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state
+  report <- getQuestionnaireReport qtn
+  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
@@ -130,7 +131,8 @@ modifyQuestionnaire qtnUuid reqDto = do
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid pkgId
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state
+  report <- getQuestionnaireReport updatedQtn
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state report
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do

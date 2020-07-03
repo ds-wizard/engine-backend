@@ -87,7 +87,7 @@ create_test_200 title appContext oldQtn newQtn state stateDto authHeader =
     let expStatus = 200
     let expDto = stateDto
     let expBody = encode expDto
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     -- AND: Prepare database
     runInContextIO (insertQuestionnaire oldQtn) appContext
     runInContextIO (insertQuestionnaire newQtn) appContext
@@ -120,7 +120,7 @@ create_test_403 title appContext qtn reason =
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
@@ -138,7 +138,7 @@ create_test_403 title appContext qtn reason =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_404 appContext = do
+test_404 appContext =
   createNotFoundTest
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)

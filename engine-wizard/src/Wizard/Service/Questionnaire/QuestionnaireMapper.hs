@@ -81,8 +81,13 @@ toLabelDTO :: Label -> LabelDTO
 toLabelDTO label = LabelDTO {_labelDTOPath = label ^. path, _labelDTOValue = label ^. value}
 
 toDetailWithPackageWithEventsDTO ::
-     Questionnaire -> PackageWithEvents -> KnowledgeModel -> QuestionnaireState -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
+     Questionnaire
+  -> PackageWithEvents
+  -> KnowledgeModel
+  -> QuestionnaireState
+  -> QuestionnaireReportDTO
+  -> QuestionnaireDetailDTO
+toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state report =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -97,14 +102,20 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
     }
 
 toDetailWithPackageDTO ::
-     Questionnaire -> PackageSimpleDTO -> KnowledgeModel -> QuestionnaireState -> QuestionnaireDetailDTO
-toDetailWithPackageDTO questionnaire package knowledgeModel state =
+     Questionnaire
+  -> PackageSimpleDTO
+  -> KnowledgeModel
+  -> QuestionnaireState
+  -> QuestionnaireReportDTO
+  -> QuestionnaireDetailDTO
+toDetailWithPackageDTO questionnaire package knowledgeModel state report =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -119,6 +130,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state =
     , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
     , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
+    , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt

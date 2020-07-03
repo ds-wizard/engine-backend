@@ -8,6 +8,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 
@@ -26,6 +27,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOReplies :: [ReplyDTO]
     , _questionnaireDetailDTOLabels :: [LabelDTO]
     , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOReport :: QuestionnaireReportDTO
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
@@ -46,4 +48,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b &&
+    _questionnaireDetailDTOReport a == _questionnaireDetailDTOReport b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b

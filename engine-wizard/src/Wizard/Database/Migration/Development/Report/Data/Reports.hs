@@ -190,3 +190,15 @@ questionnaireReport =
           AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
         ]
     }
+
+questionnaireReportEmpty :: QuestionnaireReportDTO
+questionnaireReportEmpty =
+  QuestionnaireReportDTO
+    { _questionnaireReportDTOIndications =
+        [ LevelsAnsweredIndication' $
+          LevelsAnsweredIndication
+            {_levelsAnsweredIndicationAnsweredQuestions = 0, _levelsAnsweredIndicationUnansweredQuestions = 0}
+        , AnsweredIndication' $
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 0, _answeredIndicationUnansweredQuestions = 0}
+        ]
+    }
