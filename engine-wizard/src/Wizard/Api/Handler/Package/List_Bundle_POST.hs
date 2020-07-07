@@ -16,7 +16,8 @@ import Wizard.Service.PackageBundle.PackageBundleService
 type List_Bundle_POST
    = Header "Authorization" String
      :> MultipartForm Mem (MultipartData Mem)
-     :> "import"
+     :> "packages"
+     :> "bundle"
      :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 
 list_bundle_POST ::
