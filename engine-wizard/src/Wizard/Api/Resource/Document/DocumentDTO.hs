@@ -4,8 +4,9 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Model.Template.Template
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Api.Resource.Template.TemplateSimpleDTO
+import Wizard.Api.Resource.Template.TemplateSimpleJM ()
 import Wizard.Model.Document.Document
 
 data DocumentDTO =
@@ -14,7 +15,7 @@ data DocumentDTO =
     , _documentDTOName :: String
     , _documentDTOState :: DocumentState
     , _documentDTOQuestionnaire :: Maybe QuestionnaireDTO
-    , _documentDTOTemplate :: Template
+    , _documentDTOTemplate :: TemplateSimpleDTO
     , _documentDTOFormatUuid :: U.UUID
     , _documentDTOOwnerUuid :: U.UUID
     , _documentDTOCreatedAt :: UTCTime
