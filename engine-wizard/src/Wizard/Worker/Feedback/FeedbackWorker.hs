@@ -14,7 +14,7 @@ import Wizard.Service.Feedback.FeedbackService
 import Wizard.Util.Logger
 
 feedbackWorker :: MonadSchedule m => BaseContext -> m ()
-feedbackWorker context = addJob (run context) "0 2 * * *"
+feedbackWorker context = addJob (run context) "1 2 * * *"
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------

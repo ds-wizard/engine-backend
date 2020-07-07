@@ -14,7 +14,7 @@ import Wizard.Service.Document.DocumentService
 import Wizard.Util.Logger
 
 documentWorker :: MonadSchedule m => BaseContext -> m ()
-documentWorker context = addJob (job context) "0 */4 * * *"
+documentWorker context = addJob (job context) "1 */4 * * *"
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
