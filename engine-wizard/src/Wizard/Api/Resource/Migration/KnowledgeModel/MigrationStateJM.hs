@@ -20,7 +20,7 @@ instance FromJSON MigrationStateDTO where
     case stateType of
       "RunningState" -> return RunningStateDTO
       "ConflictState" -> do
-        event <- o .: "event"
+        event <- o .: "targetEvent"
         return . ConflictStateDTO . CorrectorConflictDTO $ event
       "ErrorState" -> return ErrorStateDTO
       "CompletedState" -> return CompletedStateDTO
