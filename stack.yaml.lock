@@ -26,6 +26,13 @@ packages:
   original:
     hackage: pretty-terminal-0.1.0.0
 - completed:
+    hackage: cron-0.7.0@sha256:2a9e5637d4ebfd8db34444d340be8bd7f1968aa8b1078cc0bc7bef47a8b5af8e,3878
+    pantry-tree:
+      size: 1680
+      sha256: bcc8ad18105b96d09caf8bb6fcbe09d69145d8486cc7c67ecafb7524a47f047f
+  original:
+    hackage: cron-0.7.0
+- completed:
     hackage: ginger-0.10.0.5@sha256:b36f68c19186911b71b6e26f88fe2ceaa87c291321d76e7882b16594c6a7b2fb,3767
     pantry-tree:
       size: 1430
