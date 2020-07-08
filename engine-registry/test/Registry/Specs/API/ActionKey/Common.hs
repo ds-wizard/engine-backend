@@ -18,4 +18,4 @@ assertExistenceOfActionKeyInDB appContext actionKey = do
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareActionKeyDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareActionKeyDtos resDto expDto = liftIO $ resDto `shouldBe` expDto

@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration where
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Util.Logger
 

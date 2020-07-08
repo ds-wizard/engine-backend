@@ -11,16 +11,18 @@ import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Service.Package.PackageMapper
+import Shared.Database.Migration.Development.Template.Data.Templates
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Document.DocumentCreateDTO
+import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
+import Wizard.Service.Document.DocumentMapper
 
 doc1 :: Document
 doc1 =
@@ -31,7 +33,7 @@ doc1 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire1 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
@@ -54,7 +56,9 @@ dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
     { _documentContextUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
-    , _documentContextConfig = DocumentContextConfig {_documentContextConfigLevelsEnabled = True}
+    , _documentContextConfig =
+        DocumentContextConfig
+          {_documentContextConfigLevelsEnabled = True, _documentContextConfigClientUrl = "https://example.com"}
     , _documentContextQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
     , _documentContextQuestionnaireName = questionnaire1 ^. name
     , _documentContextQuestionnaireReplies = questionnaire1 ^. replies
@@ -63,7 +67,7 @@ dmp1 =
     , _documentContextMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     , _documentContextLevels = [level1, level2, level3]
     , _documentContextReport = report1
-    , _documentContextPackage = toPackage germanyPackage
+    , _documentContextPackage = SPM.toPackage germanyPackage
     , _documentContextOrganization = defaultOrganization
     , _documentContextCreatedBy = Just userAlbert
     , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -75,9 +79,12 @@ doc1Create =
   DocumentCreateDTO
     { _documentCreateDTOName = doc1 ^. name
     , _documentCreateDTOQuestionnaireUuid = doc1 ^. questionnaireUuid
-    , _documentCreateDTOTemplateUuid = doc1 ^. templateUuid
+    , _documentCreateDTOTemplateId = doc1 ^. templateId
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
+
+doc1Dto :: DocumentDTO
+doc1Dto = toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
 
 doc2 :: Document
 doc2 =
@@ -88,7 +95,7 @@ doc2 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata
@@ -106,7 +113,7 @@ doc3 =
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
     , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
-    , _documentTemplateUuid = commonWizardTemplate ^. uuid
+    , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
         DocumentMetadata

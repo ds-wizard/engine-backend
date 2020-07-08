@@ -4,14 +4,18 @@ import Control.Lens ((^.))
 import Data.Bson
 
 import LensesConfig
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 entityName = "kmMigration"
 
 collection = "kmMigrations"
+
+findMigratorStates :: AppContextM [MigratorState]
+findMigratorStates = createFindEntitiesFn collection
 
 findMigratorStateByBranchUuid :: String -> AppContextM MigratorState
 findMigratorStateByBranchUuid = createFindEntityByFn collection entityName "branchUuid"

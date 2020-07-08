@@ -2,10 +2,11 @@ module Wizard.Database.DAO.Config.AppConfigDAO where
 
 import Data.Bson
 
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.Config.AppConfig ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "appConfig"
 

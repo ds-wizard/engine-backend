@@ -2,25 +2,25 @@ module Shared.Api.Resource.Event.AnswerEventJM where
 
 import Data.Aeson
 
-import Shared.Api.Resource.Event.AnswerEventDTO
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Util.JSON
 
-instance FromJSON AddAnswerEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddAnswerEvent where
+  parseJSON = simpleParseJSON "_addAnswerEvent"
 
-instance ToJSON AddAnswerEventDTO where
-  toJSON = simpleToJSON' "_addAnswerEventDTO" "eventType"
+instance ToJSON AddAnswerEvent where
+  toJSON = simpleToJSON' "_addAnswerEvent" "eventType"
 
-instance FromJSON EditAnswerEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditAnswerEvent where
+  parseJSON = simpleParseJSON "_editAnswerEvent"
 
-instance ToJSON EditAnswerEventDTO where
-  toJSON = simpleToJSON' "_editAnswerEventDTO" "eventType"
+instance ToJSON EditAnswerEvent where
+  toJSON = simpleToJSON' "_editAnswerEvent" "eventType"
 
-instance FromJSON DeleteAnswerEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON DeleteAnswerEvent where
+  parseJSON = simpleParseJSON "_deleteAnswerEvent"
 
-instance ToJSON DeleteAnswerEventDTO where
-  toJSON = simpleToJSON' "_deleteAnswerEventDTO" "eventType"
+instance ToJSON DeleteAnswerEvent where
+  toJSON = simpleToJSON' "_deleteAnswerEvent" "eventType"

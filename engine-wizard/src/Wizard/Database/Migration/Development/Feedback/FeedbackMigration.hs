@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.Feedback.FeedbackMigration where
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import Wizard.Util.Logger

@@ -8,14 +8,13 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Context.AppContext
@@ -27,7 +26,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /questionnaires" $ do
     test_201 appContext
@@ -51,12 +50,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
+test_201 appContext =
   it "HTTP 201 CREATED" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
@@ -78,7 +77,7 @@ test_201 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common Questionnaire" } |] "packageId"
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl "packageId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -88,5 +87,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

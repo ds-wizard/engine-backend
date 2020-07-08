@@ -18,6 +18,5 @@ detail_DELETE mTokenHeader bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_PERM"
       deleteBranch bUuid
       return NoContent

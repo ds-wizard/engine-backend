@@ -2,7 +2,6 @@ module Shared.Service.File.FileService where
 
 import Data.Aeson (FromJSON, eitherDecode)
 import qualified Data.ByteString.Lazy as B
-import System.IO (FilePath)
 import System.Path (fileList)
 
 import Shared.Localization.Messages.Internal

@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
@@ -33,7 +32,7 @@ import SharedTest.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/state
 -- ------------------------------------------------------------------------
-detail_state_put :: AppContext -> SpecWith Application
+detail_state_put :: AppContext -> SpecWith ((), Application)
 detail_state_put appContext =
   describe "PUT /organizations/{orgId}/state" $ do
     test_200 appContext
@@ -61,7 +60,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO orgGlobal
     let expBody = encode expDto
      -- AND: Prepare DB
@@ -81,7 +80,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "active"
+  createInvalidJsonTest reqMethod reqUrl "active"
   it "HTTP 400 BAD REQUEST when hash is absent" $
      -- GIVEN: Prepare request
    do

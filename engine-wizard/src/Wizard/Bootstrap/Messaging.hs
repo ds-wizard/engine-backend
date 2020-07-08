@@ -4,10 +4,10 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 
 import LensesConfig
-import Wizard.Bootstrap.Retry
-import Wizard.Constant.Component
+import Shared.Bootstrap.Retry
+import Shared.Constant.Component
+import Shared.Util.Logger
 import Wizard.Messaging.Connection
-import Wizard.Util.Logger
 
 connectMQ serverConfig =
   if serverConfig ^. messaging . enabled
@@ -16,6 +16,7 @@ connectMQ serverConfig =
       msgChannel <-
         liftIO $
         withRetry
+          (serverConfig ^. logging)
           retryBackoff
           _CMP_MESSAGING
           "failed to connect to the message broker"

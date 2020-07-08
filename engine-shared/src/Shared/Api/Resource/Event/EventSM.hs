@@ -4,7 +4,6 @@ import Data.Swagger
 
 import Shared.Api.Resource.Event.AnswerEventSM ()
 import Shared.Api.Resource.Event.ChapterEventSM ()
-import Shared.Api.Resource.Event.EventDTO
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.Event.ExpertEventSM ()
@@ -14,6 +13,7 @@ import Shared.Api.Resource.Event.MoveEventSM ()
 import Shared.Api.Resource.Event.QuestionEventSM ()
 import Shared.Api.Resource.Event.ReferenceEventSM ()
 import Shared.Api.Resource.Event.TagEventSM ()
+import Shared.Model.Event.Event
 
-instance ToSchema EventDTO where
+instance ToSchema Event where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions

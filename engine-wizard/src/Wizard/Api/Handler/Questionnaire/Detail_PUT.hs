@@ -25,7 +25,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 detail_PUT mTokenHeader reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      modifyQuestionnaire qtnUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyQuestionnaire qtnUuid reqDto

@@ -7,7 +7,7 @@ data DocumentCreateDTO =
   DocumentCreateDTO
     { _documentCreateDTOName :: String
     , _documentCreateDTOQuestionnaireUuid :: U.UUID
-    , _documentCreateDTOTemplateUuid :: U.UUID
+    , _documentCreateDTOTemplateId :: String
     , _documentCreateDTOFormatUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)

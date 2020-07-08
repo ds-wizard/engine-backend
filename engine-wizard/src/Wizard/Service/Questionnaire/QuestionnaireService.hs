@@ -1,14 +1,17 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
 import Control.Lens ((.~), (^.), (^?), _Just)
-import Control.Monad (forM)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
@@ -16,55 +19,32 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireState
-import Wizard.Model.User.User
-import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
-import Wizard.Service.Package.PackageService
+import Wizard.Service.Questionnaire.QuestionnaireACL
 import Wizard.Service.Questionnaire.QuestionnaireMapper
+import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Service.User.UserService
 
-getQuestionnaires :: AppContextM [QuestionnaireDTO]
-getQuestionnaires = do
-  questionnaires <- findQuestionnaires
-  forM questionnaires enhance
-  where
-    enhance :: Questionnaire -> AppContextM QuestionnaireDTO
-    enhance qtn = do
-      pkg <- findPackageById (qtn ^. packageId)
-      state <- getQuestionnaireState (U.toString $ qtn ^. uuid) (pkg ^. pId)
-      mOwner <-
-        case qtn ^. ownerUuid of
-          Just uUuid -> Just <$> getUserById (U.toString uUuid)
-          Nothing -> return Nothing
-      return $ toDTO qtn pkg state mOwner
-
-getQuestionnairesForCurrentUser :: AppContextM [QuestionnaireDTO]
-getQuestionnairesForCurrentUser = do
+getQuestionnairesForCurrentUserPageDto :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
+getQuestionnairesForCurrentUserPageDto mQuery pageable sort = do
+  checkPermission _QTN_PERM
   currentUser <- getCurrentUser
-  questionnaires <- getQuestionnaires
-  if currentUser ^. role == _USER_ROLE_ADMIN
-    then return questionnaires
-    else return $ filter (justOwnersAndPublicQuestionnaires currentUser) questionnaires
-  where
-    justOwnersAndPublicQuestionnaires currentUser questionnaire =
-      questionnaire ^. visibility == PublicQuestionnaire || questionnaire ^. visibility == PublicReadOnlyQuestionnaire ||
-      (questionnaire ^? owner . _Just . uuid) ==
-      (Just $ currentUser ^. uuid)
+  qtnPage <- findQuestionnairesForCurrentUserPage mQuery pageable sort
+  traverse enhanceQuestionnaire qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
-createQuestionnaire questionnaireCreateDto = do
-  qtnUuid <- liftIO generateUuid
-  createQuestionnaireWithGivenUuid qtnUuid questionnaireCreateDto
+createQuestionnaire questionnaireCreateDto =
+  liftIO generateUuid >>= createQuestionnaireWithGivenUuid questionnaireCreateDto
 
-createQuestionnaireWithGivenUuid :: U.UUID -> QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
-createQuestionnaireWithGivenUuid qtnUuid reqDto = do
+createQuestionnaireWithGivenUuid :: QuestionnaireCreateDTO -> U.UUID -> AppContextM QuestionnaireDTO
+createQuestionnaireWithGivenUuid reqDto qtnUuid = do
+  checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   package <- findPackageWithEventsById (reqDto ^. packageId)
   qtnState <- getQuestionnaireState (U.toString qtnUuid) (reqDto ^. packageId)
@@ -76,10 +56,12 @@ createQuestionnaireWithGivenUuid qtnUuid reqDto = do
         case qtn ^. ownerUuid of
           Just uUuid -> Just currentUser
           Nothing -> Nothing
-  return $ toSimpleDTO qtn package qtnState mOwner
+  report <- getQuestionnaireReport qtn
+  return $ toSimpleDTO qtn package qtnState mOwner report
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById cloneUuid
   pkg <- findPackageWithEventsById (qtnDto ^. package . pId)
   newUuid <- liftIO generateUuid
@@ -95,11 +77,12 @@ cloneQuestionnaire cloneUuid = do
         originQtn
   insertQuestionnaire newQtn
   state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
+  report <- getQuestionnaireReport newQtn
   let mOwner =
         case newOwnerUuid of
           Just uUuid -> Just currentUser
           Nothing -> Nothing
-  return $ toSimpleDTO newQtn pkg state mOwner
+  return $ toSimpleDTO newQtn pkg state mOwner report
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -116,24 +99,28 @@ getQuestionnaireById' qtnUuid = do
       checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
       package <- findPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
+      report <- getQuestionnaireReport qtn
       mOwner <-
         case qtn ^. ownerUuid of
           Just uUuid -> Just <$> getUserById (U.toString uUuid)
           Nothing -> return Nothing
-      return . Just $ toDTO qtn package state mOwner
+      return . Just $ toDTO qtn package state mOwner report
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
   checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
   package <- findPackageWithEventsById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (package ^. pId)
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state
+  report <- getQuestionnaireReport qtn
+  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
+  checkPermission _QTN_PERM
   qtnDto <- getQuestionnaireDetailById qtnUuid
   checkEditPermissionToQtn (qtnDto ^. visibility) (qtnDto ^. ownerUuid)
   currentUser <- getCurrentUser
@@ -144,63 +131,15 @@ modifyQuestionnaire qtnUuid reqDto = do
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid pkgId
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state
+  report <- getQuestionnaireReport updatedQtn
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state report
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- getQuestionnaireById qtnUuid
   validateQuestionnaireDeletation qtnUuid
   checkEditPermissionToQtn (qtn ^. visibility) (qtn ^? owner . _Just . uuid)
   deleteQuestionnaireById qtnUuid
   deleteMigratorStateByNewQuestionnaireId qtnUuid
   return ()
-
--- --------------------------------
--- PRIVATE
--- --------------------------------
-extractVisibility dto = do
-  appConfig <- getAppConfig
-  if appConfig ^. questionnaire . questionnaireVisibility . enabled
-    then return (dto ^. visibility)
-    else return PrivateQuestionnaire
-
--- -----------------------------------------------------
-checkPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
-checkPermissionToQtn visibility mOwnerUuid = do
-  currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || visibility ==
-     PublicReadOnlyQuestionnaire ||
-     mOwnerUuid ==
-     (Just $ currentUser ^. uuid)
-    then return ()
-    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
-
--- -----------------------------------------------------
-checkEditPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
-checkEditPermissionToQtn visibility mOwnerUuid = do
-  currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || mOwnerUuid ==
-     (Just $ currentUser ^. uuid)
-    then return ()
-    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
-
--- -----------------------------------------------------
-checkMigrationPermissionToQtn :: QuestionnaireVisibility -> Maybe U.UUID -> AppContextM ()
-checkMigrationPermissionToQtn visibility mOwnerUuid = do
-  currentUser <- getCurrentUser
-  if currentUser ^. role == _USER_ROLE_ADMIN || visibility == PublicQuestionnaire || mOwnerUuid ==
-     (Just $ currentUser ^. uuid)
-    then return ()
-    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"
-
--- -----------------------------------------------------
-getQuestionnaireState :: String -> String -> AppContextM QuestionnaireState
-getQuestionnaireState qtnUuid pkgId = do
-  mMs <- findMigratorStateByNewQuestionnaireId' qtnUuid
-  case mMs of
-    Just _ -> return QSMigrating
-    Nothing -> do
-      pkgs <- getNewerPackages pkgId
-      if null pkgs
-        then return QSDefault
-        else return QSOutdated

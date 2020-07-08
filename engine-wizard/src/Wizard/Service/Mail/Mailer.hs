@@ -6,6 +6,7 @@ module Wizard.Service.Mail.Mailer
 
 import Control.Exception (SomeException, handle)
 import Control.Lens ((^.))
+import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Aeson as Aeson
@@ -28,11 +29,11 @@ import System.Directory (listDirectory)
 import System.FilePath ((</>))
 
 import LensesConfig
+import Shared.Constant.Component
 import Shared.Localization.Messages.Internal
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
-import Wizard.Constant.Component
 import Wizard.Constant.Mailer
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Config.AppConfig
@@ -222,14 +223,13 @@ sendEmail to mailMessage = do
             return . Right $ to
           else return . Left $ _ERROR_SERVICE_MAIL__AUTH_ERROR_MESSAGE
       runMailer = makeConnection mailSSL mailHost mailPort callback
-  if mailConfig ^. enabled
-    then do
-      result <- liftIO $ handle basicHandler runMailer
-      case result of
-        Right recipients -> do
-          logInfo _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
-          return ()
-        Left excMsg -> do
-          logError _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
-          throwError . GeneralServerError $ excMsg
-    else return ()
+  when
+    (mailConfig ^. enabled)
+    (do result <- liftIO $ handle basicHandler runMailer
+        case result of
+          Right recipients -> do
+            logInfo _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_OK recipients)
+            return ()
+          Left excMsg -> do
+            logError _CMP_MAILER (_ERROR_SERVICE_MAIL__EMAIL_SENT_FAIL excMsg)
+            throwError . GeneralServerError $ excMsg)

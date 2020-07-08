@@ -8,7 +8,7 @@ import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Text as T
 import Network.AMQP
 
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Model.Context.AppContext
 import Wizard.Util.Logger
 

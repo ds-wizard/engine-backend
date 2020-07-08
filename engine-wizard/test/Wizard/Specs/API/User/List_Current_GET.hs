@@ -17,7 +17,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /users/current
 -- ------------------------------------------------------------------------
-list_current_GET :: AppContext -> SpecWith Application
+list_current_GET :: AppContext -> SpecWith ((), Application)
 list_current_GET appContext =
   describe "GET /users/current" $ do
     test_200 appContext

@@ -1,5 +1,5 @@
 module Wizard.Specs.API.User.Detail_Password_PUT
-  ( detail_password_put
+  ( detail_password_PUT
   ) where
 
 import Control.Lens ((^.))
@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -23,8 +22,8 @@ import Wizard.Specs.API.User.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/{userId}/password
 -- ------------------------------------------------------------------------
-detail_password_put :: AppContext -> SpecWith Application
-detail_password_put appContext =
+detail_password_PUT :: AppContext -> SpecWith ((), Application)
+detail_password_PUT appContext =
   describe "PUT /users/{userId}/password" $ do
     test_204 appContext
     test_400 appContext
@@ -65,7 +64,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
+  createInvalidJsonTest reqMethod reqUrl "password"
   it "HTTP 400 BAD REQUEST when no hash/token is provided" $
    -- GIVEN: Prepare request
    do

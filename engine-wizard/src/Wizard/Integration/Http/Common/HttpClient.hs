@@ -3,7 +3,7 @@ module Wizard.Integration.Http.Common.HttpClient
   , runSimpleRequest
   ) where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (?~), (^.))
 import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
@@ -27,8 +27,8 @@ import Network.Wreq
   )
 
 import LensesConfig hiding (headers)
+import Shared.Constant.Component
 import Shared.Model.Error.Error
-import Wizard.Constant.Component
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Http.HttpRequest
@@ -52,8 +52,7 @@ runSimpleRequest :: HttpRequest -> AppContextM (Response BSL.ByteString)
 runSimpleRequest req = do
   httpClientManager <- asks _appContextHttpClientManager
   let opts =
-        defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & checkResponse .~
-        (Just $ \_ _ -> return ())
+        defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & (checkResponse ?~ (\_ _ -> return ()))
   case req ^. multipartFileName of
     Just fileName -> liftIO . actionMultipart opts $ fileName
     Nothing -> liftIO . action $ opts

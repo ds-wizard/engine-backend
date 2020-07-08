@@ -6,10 +6,10 @@ HEALTHCHECK --interval=5m --timeout=10s \
   CMD curl -f http://localhost:3000/ || exit 1
 
 # Install necessary libraries
-RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget curl cron
+RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget curl python3 python3-click python3-requests
 
 # Add built exectutable binary and run script
-ADD engine-wizard-bin ./scripts/docker-run.sh /application/
+ADD engine-wizard-bin ./scripts/docker-run.sh ./scripts/load-templates.py /application/
 
 # Add templates
 ADD templates /application/engine-wizard/templates

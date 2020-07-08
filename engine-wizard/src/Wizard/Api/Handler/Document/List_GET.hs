@@ -1,9 +1,10 @@
 module Wizard.Api.Handler.Document.List_GET where
 
-import Data.Maybe (catMaybes)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
@@ -14,13 +15,22 @@ type List_GET
    = Header "Authorization" String
      :> "documents"
      :> QueryParam "questionnaireUuid" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [DocumentDTO])
+     :> QueryParam "q" String
+     :> QueryParam "page" Int
+     :> QueryParam "size" Int
+     :> QueryParam "sort" String
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
 
-list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [DocumentDTO])
-list_GET mTokenHeader mQuestionnaireUuid =
+list_GET ::
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe Int
+  -> Maybe Int
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
+list_GET mTokenHeader mQuestionnaireUuid mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "DMP_PERM"
-      let queryParams = catMaybes [(,) "questionnaireUuid" <$> mQuestionnaireUuid]
-      getDocumentsFiltered queryParams
+    addTraceUuidHeader =<<
+    getDocumentsForCurrentUserPageDto mQuestionnaireUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)

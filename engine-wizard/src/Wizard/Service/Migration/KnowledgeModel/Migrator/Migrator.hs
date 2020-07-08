@@ -6,7 +6,6 @@ import Data.Maybe
 
 import LensesConfig
 import Shared.Model.Event.Event
-import Shared.Service.Event.EventMapper
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
@@ -28,7 +27,7 @@ migrate state =
   case state ^. migrationState of
     RunningState -> do
       newState <- foldl doMigrate (return state) (state ^. targetPackageEvents)
-      if newState ^. targetPackageEvents == []
+      if null $ newState ^. targetPackageEvents
         then return $ newState & migrationState .~ CompletedState
         else return newState
     ConflictState _ -> return state
@@ -46,7 +45,7 @@ solveConflict state mcDto =
        in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail $ state ^. targetPackageEvents
-          targetEvent = fromDTOFn . fromJust $ mcDto ^. event
+          targetEvent = fromJust $ mcDto ^. event
        in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAReject ->
       let events = tail $ state ^. targetPackageEvents
@@ -59,6 +58,6 @@ solveConflict state mcDto =
       let eitherNewKm = compile (newState ^. currentKnowledgeModel) [event]
        in if isRight eitherNewKm
             then let (Right newKm) = eitherNewKm
-                  in newState & currentKnowledgeModel .~ (Just newKm)
+                  in newState & currentKnowledgeModel ?~ newKm
             else let (Left error) = eitherNewKm
                   in newState & migrationState .~ ErrorState

@@ -9,3 +9,6 @@ import Wizard.Integration.Http.Common.ResponseMapper
 
 toRetrievePackageBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
 toRetrievePackageBundleByIdResponse = Right . getResponseBody
+
+toRetrieveTemplateBundleByIdResponse :: Response BSL.ByteString -> Either AppError BSL.ByteString
+toRetrieveTemplateBundleByIdResponse = Right . getResponseBody

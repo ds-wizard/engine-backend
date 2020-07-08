@@ -3,9 +3,10 @@ module Registry.Database.DAO.Audit.AuditEntryDAO where
 import Data.Bson
 
 import Registry.Database.BSON.Audit.AuditEntry ()
-import Registry.Database.DAO.Common
 import Registry.Model.Audit.AuditEntry
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.ContextLenses ()
+import Shared.Database.DAO.Common
 
 entityName = "audit"
 

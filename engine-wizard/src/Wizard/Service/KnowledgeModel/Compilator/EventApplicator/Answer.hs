@@ -1,10 +1,11 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Answer where
 
+import Control.Lens ((^.))
 import Prelude hiding (lookup)
 
 import LensesConfig
 import Shared.Model.Event.Answer.AnswerEvent
-import Shared.Model.Event.EventAccessors
+import Shared.Model.Event.EventLenses
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
@@ -25,4 +26,4 @@ instance ApplyEvent EditAnswerEvent where
 
 instance ApplyEvent DeleteAnswerEvent where
   apply event km =
-    deleteEntityReferenceFromParentNode event questionsM answerUuids' $ deleteAnswer km (getEventNodeUuid event)
+    deleteEntityReferenceFromParentNode event questionsM answerUuids' $ deleteAnswer km (event ^. entityUuid')

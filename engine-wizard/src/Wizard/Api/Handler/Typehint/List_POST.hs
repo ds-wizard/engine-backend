@@ -20,7 +20,4 @@ type List_POST
 list_POST :: Maybe String -> TypehintRequestDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
 list_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      getTypehints reqDto
+    runInAuthService $ addTraceUuidHeader =<< getTypehints reqDto

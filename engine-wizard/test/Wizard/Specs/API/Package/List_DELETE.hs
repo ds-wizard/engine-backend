@@ -12,9 +12,9 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Localization.Messages.Public
@@ -27,7 +27,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /packages
 -- ------------------------------------------------------------------------
-list_delete :: AppContext -> SpecWith Application
+list_delete :: AppContext -> SpecWith ((), Application)
 list_delete appContext =
   describe "DELETE /packages" $ do
     test_204 appContext
@@ -103,5 +103,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"

@@ -4,24 +4,25 @@ module Wizard.Specs.API.Package.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Maybe (fromJust)
 import Data.Time
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
 import Shared.Localization.Messages.Public
 import Shared.Service.Package.PackageMapper
 import qualified Shared.Service.PackageBundle.PackageBundleMapper as PBM
-import Wizard.Database.DAO.Package.PackageDAO
+import Shared.Util.String (replace)
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
@@ -34,7 +35,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /packages
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /packages" $ do
     test_201_req_all_db_all appContext
@@ -65,13 +66,13 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_req_all_db_all appContext = do
+test_201_req_all_db_all appContext =
   it "HTTP 201 CREATED - In request: all previous packages, in DB: all previous packages" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = (toSimpleDTO . toPackage) <$> [netherlandsPackageV2]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toSimpleDTO . toPackage <$> [netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -85,20 +86,20 @@ test_201_req_all_db_all appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext ((reqDto ^. packages) !! 0)
+    assertExistenceOfPackageInDB appContext (head (reqDto ^. packages))
     assertExistenceOfPackageInDB appContext ((reqDto ^. packages) !! 1)
     assertExistenceOfPackageInDB appContext ((reqDto ^. packages) !! 2)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_req_all_db_no appContext = do
+test_201_req_all_db_no appContext =
   it "HTTP 201 CREATED - In request: all previous packages, in DB: no previous packages" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = (toSimpleDTO . toPackage) <$> [globalPackage, netherlandsPackage, netherlandsPackageV2]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toSimpleDTO . toPackage <$> [globalPackage, netherlandsPackage, netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -110,14 +111,14 @@ test_201_req_all_db_no appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (globalPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
+    assertExistenceOfPackageInDB appContext globalPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_req_no_db_all appContext = do
+test_201_req_no_db_all appContext =
   it "HTTP 201 CREATED - In request: no previous packages, in DB: all previous packages" $
      -- GIVEN: Prepare request
    do
@@ -125,8 +126,8 @@ test_201_req_no_db_all appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = (toSimpleDTO . toPackage) <$> [netherlandsPackageV2]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toSimpleDTO . toPackage <$> [netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -140,14 +141,14 @@ test_201_req_no_db_all appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (globalPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
+    assertExistenceOfPackageInDB appContext globalPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_req_one_db_rest appContext = do
+test_201_req_one_db_rest appContext =
   it "HTTP 201 CREATED - In request: one previous package, in DB: rest of previous packages" $
      -- GIVEN: Prepare request
    do
@@ -155,8 +156,8 @@ test_201_req_one_db_rest appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = (toSimpleDTO . toPackage) <$> [netherlandsPackage, netherlandsPackageV2]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = toSimpleDTO . toPackage <$> [netherlandsPackage, netherlandsPackageV2]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -169,47 +170,27 @@ test_201_req_one_db_rest appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
-    assertExistenceOfPackageInDB appContext (globalPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackage)
-    assertExistenceOfPackageInDB appContext (netherlandsPackageV2)
+    assertExistenceOfPackageInDB appContext globalPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackage
+    assertExistenceOfPackageInDB appContext netherlandsPackageV2
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_without_readme_and_createdAt appContext = do
+test_201_without_readme_and_createdAt appContext =
   it "HTTP 201 CREATED - Without 'readme' and 'createdAt' props" $
      -- GIVEN: Prepare request
    do
+    let reqDto = PBM.toDTO (netherlandsPackageBudle & packages .~ [netherlandsPackage])
     let reqBody =
-          [HJ.json|
-            {
-              id: "org.nl:core-nl:1.0.0",
-              name: "Netherlands Knowledge Model",
-              organizationId: "org.nl",
-              kmId: "core-nl",
-              version: "1.0.0",
-              metamodelVersion: 2,
-              packages: [
-                {
-                id: "org.nl:core-nl:1.0.0",
-                name: "Netherlands Knowledge Model",
-                organizationId: "org.nl",
-                kmId: "core-nl",
-                  version: "1.0.0",
-                  metamodelVersion: 2,
-                  description: "First Release",
-                  previousPackageId: "global:core:1.0.0",
-                  events: []
-                 }
-              ]
-            }
-           |]
+          BSL.pack . replace "createdAt" "differentCreatedAt" . replace "readme" "differentReadme" . BSL.unpack $
+          encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
-          (toSimpleDTO . toPackage) <$>
-          [(netherlandsPackage & createdAt .~ (UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0)) & readme .~ ""]
+          toSimpleDTO . toPackage <$>
+          [(netherlandsPackage & createdAt .~ UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0) & readme .~ ""]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -222,18 +203,18 @@ test_201_without_readme_and_createdAt appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 2
-    assertExistenceOfPackageInDB appContext (expDto !! 0)
+    assertExistenceOfPackageInDB appContext (head expDto)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
-    let reqBody = [HJ.json| { name: "Common Package" }|]
     let reqHeaders = [reqAuthHeader, reqCtHeader]
+    let reqBody = BSL.pack "{}"
       -- GIVEN: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
     let expBody = encode expDto
       -- WHEN: Call APIA
@@ -246,12 +227,12 @@ test_400 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_main_package_duplication appContext = do
+test_400_main_package_duplication appContext =
   it "HTTP 400 BAD REQUEST when main package already exists" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
@@ -268,7 +249,7 @@ test_400_main_package_duplication appContext = do
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 3
 
-test_400_missing_previous_package appContext = do
+test_400_missing_previous_package appContext =
   it "HTTP 400 BAD REQUEST when missing previous package" $
      -- GIVEN: Prepare request
    do
@@ -276,7 +257,7 @@ test_400_missing_previous_package appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           createUserError $
           _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
@@ -292,7 +273,7 @@ test_400_missing_previous_package appContext = do
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertCountInDB findPackages appContext 1
-    assertExistenceOfPackageInDB appContext (globalPackage)
+    assertExistenceOfPackageInDB appContext globalPackage
 
 test_400_bad_package_coordinates appContext =
   it "HTTP 400 BAD REQUEST when package ID doesn't match with package coordinates" $
@@ -303,7 +284,7 @@ test_400_bad_package_coordinates appContext =
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (netherlandsPackage ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
@@ -326,5 +307,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"

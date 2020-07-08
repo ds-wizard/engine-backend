@@ -3,7 +3,7 @@ module Shared.Api.Resource.Package.PackageDTO where
 import Data.Time
 import GHC.Generics
 
-import Shared.Api.Resource.Event.EventDTO
+import Shared.Model.Event.Event
 
 data PackageDTO =
   PackageDTO
@@ -19,7 +19,7 @@ data PackageDTO =
     , _packageDTOPreviousPackageId :: Maybe String
     , _packageDTOForkOfPackageId :: Maybe String
     , _packageDTOMergeCheckpointPackageId :: Maybe String
-    , _packageDTOEvents :: [EventDTO]
+    , _packageDTOEvents :: [Event]
     , _packageDTOCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

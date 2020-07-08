@@ -18,7 +18,7 @@ instance ToBSON Questionnaire where
     , "visibility" BSON.=: _questionnaireVisibility
     , "packageId" BSON.=: _questionnairePackageId
     , "selectedTagUuids" BSON.=: _questionnaireSelectedTagUuids
-    , "templateUuid" BSON.=: _questionnaireTemplateUuid
+    , "templateId" BSON.=: _questionnaireTemplateId
     , "formatUuid" BSON.=: _questionnaireFormatUuid
     , "ownerUuid" BSON.=: _questionnaireOwnerUuid
     , "creatorUuid" BSON.=: _questionnaireCreatorUuid
@@ -36,7 +36,7 @@ instance FromBSON Questionnaire where
     _questionnaireVisibility <- BSON.lookup "visibility" doc
     _questionnairePackageId <- BSON.lookup "packageId" doc
     _questionnaireSelectedTagUuids <- BSON.lookup "selectedTagUuids" doc
-    let _questionnaireTemplateUuid = BSON.lookup "templateUuid" doc
+    let _questionnaireTemplateId = BSON.lookup "templateId" doc
     let _questionnaireFormatUuid = BSON.lookup "formatUuid" doc
     let _questionnaireOwnerUuid = BSON.lookup "ownerUuid" doc
     let _questionnaireCreatorUuid = BSON.lookup "creatorUuid" doc

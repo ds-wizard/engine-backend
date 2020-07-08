@@ -10,9 +10,9 @@ import qualified Data.Map.Strict as M
 import Network.Wreq (get, responseBody)
 
 import LensesConfig hiding (headers)
+import Shared.Constant.Component
 import Shared.Model.Error.Error
 import Shared.Service.File.FileService
-import Wizard.Constant.Component
 import Wizard.Constant.Resource
 import Wizard.Util.Logger
 

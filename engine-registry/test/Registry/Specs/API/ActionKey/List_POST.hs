@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
@@ -23,7 +22,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /action-keys
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /action-keys" $ do
     test_201 appContext
@@ -66,4 +65,4 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "type"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "type"

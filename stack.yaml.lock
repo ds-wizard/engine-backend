@@ -5,12 +5,12 @@
 
 packages:
 - completed:
-    hackage: persistent-mongoDB-2.8.0@sha256:53f945c662a3e51eb9d64fe2d6eb64add16864ae3a6838bdfc00fc546d0dbfa3,2003
+    hackage: persistent-mongoDB-2.10.0.0@sha256:c95f893e674ec1521e865cb1c7932b7055271fb3e248a086e3671ab5724fcbe4,2842
     pantry-tree:
-      size: 285
-      sha256: 8e7f7c9a3f735cd6bb2d0fdf32302744a3ac9bbf6f87fda71d8d9a1b50e74b96
+      size: 593
+      sha256: 3bba1c6ccc991b28e98680a485a173b45f8ef59e64b9f3d22d89266fb14ed6cb
   original:
-    hackage: persistent-mongoDB-2.8.0
+    hackage: persistent-mongoDB-2.10.0.0
 - completed:
     hackage: pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
     pantry-tree:
@@ -26,12 +26,19 @@ packages:
   original:
     hackage: pretty-terminal-0.1.0.0
 - completed:
-    hackage: ginger-0.9.1.0@sha256:dc19f586eff45161a0e4f1099eb26937c45bf7c993c77d21ad27b48696b283da,3766
+    hackage: cron-0.7.0@sha256:2a9e5637d4ebfd8db34444d340be8bd7f1968aa8b1078cc0bc7bef47a8b5af8e,3878
+    pantry-tree:
+      size: 1680
+      sha256: bcc8ad18105b96d09caf8bb6fcbe09d69145d8486cc7c67ecafb7524a47f047f
+  original:
+    hackage: cron-0.7.0
+- completed:
+    hackage: ginger-0.10.0.5@sha256:b36f68c19186911b71b6e26f88fe2ceaa87c291321d76e7882b16594c6a7b2fb,3767
     pantry-tree:
       size: 1430
-      sha256: 93fc946d8aec834920bb718fcd26775b208f6316d099060b068a1c00712489a0
+      sha256: 54da23ff3adf1fce92fa4b039926f83fdf84de4ac6b866457d6ebfb3e745872c
   original:
-    hackage: ginger-0.9.1.0
+    hackage: ginger-0.10.0.5
 - completed:
     hackage: text-replace-0.0.0.4@sha256:88800aba160dfb512cf43b24063170d34900e1646ad21f28715a22679f42ae15,1738
     pantry-tree:
@@ -77,9 +84,6 @@ packages:
 - completed:
     size: 55439
     url: https://github.com/jtdaugherty/HaskellNet/archive/5aa1f3b.tar.gz
-    cabal-file:
-      size: 2069
-      sha256: 9192ac19ea5da3cd4b8c86a4266592aff7b9256311aa5f42ae6de94ccacf1366
     name: HaskellNet
     version: 0.5.1
     sha256: 84a2fec1b8e2e69568484854a4baa52e7a267059ad60389929e71b4b309dadbd
@@ -102,16 +106,9 @@ packages:
       sha256: 94ffc046a96682cc681a76f879452dea4780495d40d477ad7e28ca06ec9a1e88
   original:
     hackage: network-bsd-2.8.0.0
-- completed:
-    hackage: mongoDB-2.4.0.0@sha256:fc8dcbf0c9100c367dabc738f9b40a74770a5b90e05819fb31854372f035d165,4264
-    pantry-tree:
-      size: 1109
-      sha256: 3f6bef1a66d07de98c87f91420c748ae428f9fc843348dcfda334936d895e399
-  original:
-    hackage: mongoDB-2.4.0.0
 snapshots:
 - completed:
-    size: 524996
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/14/27.yaml
-    sha256: 7ea31a280c56bf36ff591a7397cc384d0dff622e7f9e4225b47d8980f019a0f0
-  original: lts-14.27
+    size: 493124
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/10.yaml
+    sha256: 48bc6d1d59224a5166265ef6cdda6a512f29ecc8ef7331826312b82377e89507
+  original: lts-15.10

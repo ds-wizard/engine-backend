@@ -18,6 +18,5 @@ detail_DELETE mTokenHeader pkgId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "PM_WRITE_PERM"
       deletePackage pkgId
       return NoContent

@@ -25,6 +25,5 @@ list_current_conflict_POST mTokenHeader reqDto bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_UPGRADE_PERM"
       solveConflictAndMigrate bUuid reqDto
       return NoContent

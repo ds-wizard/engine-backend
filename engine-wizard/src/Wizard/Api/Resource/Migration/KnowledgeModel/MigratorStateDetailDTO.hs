@@ -3,8 +3,8 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Api.Resource.Event.EventDTO
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Model.Event.Event
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 
 data MigratorStateDetailDTO =
@@ -14,9 +14,9 @@ data MigratorStateDetailDTO =
     , _migratorStateDetailDTOMigrationState :: MigrationStateDTO
     , _migratorStateDetailDTOBranchPreviousPackageId :: String
     , _migratorStateDetailDTOTargetPackageId :: String
-    , _migratorStateDetailDTOBranchEvents :: [EventDTO]
-    , _migratorStateDetailDTOTargetPackageEvents :: [EventDTO]
-    , _migratorStateDetailDTOResultEvents :: [EventDTO]
-    , _migratorStateDetailDTOCurrentKnowledgeModel :: Maybe KnowledgeModelDTO
+    , _migratorStateDetailDTOBranchEvents :: [Event]
+    , _migratorStateDetailDTOTargetPackageEvents :: [Event]
+    , _migratorStateDetailDTOResultEvents :: [Event]
+    , _migratorStateDetailDTOCurrentKnowledgeModel :: Maybe KnowledgeModel
     }
   deriving (Show, Eq, Generic)

@@ -7,7 +7,7 @@ import Data.Maybe (fromMaybe)
 import Data.Yaml (decodeFileEither)
 
 import LensesConfig hiding (items)
-import Wizard.Constant.Component
+import Shared.Constant.Component
 import Wizard.Model.Context.AppContext
 import Wizard.Util.Logger
 

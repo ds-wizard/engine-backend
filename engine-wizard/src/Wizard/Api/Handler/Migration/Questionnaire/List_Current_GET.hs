@@ -20,7 +20,4 @@ type List_Current_GET
 list_current_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_GET mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      getQuestionnaireMigration qtnUuid
+    runInAuthService $ addTraceUuidHeader =<< getQuestionnaireMigration qtnUuid

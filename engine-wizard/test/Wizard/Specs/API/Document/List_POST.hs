@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
@@ -19,6 +18,7 @@ import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Model.Context.AppContext
 
@@ -29,7 +29,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /documents
 -- ------------------------------------------------------------------------
-list_POST :: AppContext -> SpecWith Application
+list_POST :: AppContext -> SpecWith ((), Application)
 list_POST appContext =
   describe "POST /documents" $ do
     test_201 appContext
@@ -50,7 +50,7 @@ reqDtoT doc =
   DocumentCreateDTO
     { _documentCreateDTOName = doc ^. name
     , _documentCreateDTOQuestionnaireUuid = doc ^. questionnaireUuid
-    , _documentCreateDTOTemplateUuid = doc ^. templateUuid
+    , _documentCreateDTOTemplateId = doc ^. templateId
     , _documentCreateDTOFormatUuid = doc ^. formatUuid
     }
 
@@ -76,6 +76,7 @@ create_test_201 title appContext doc authHeader =
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -91,7 +92,7 @@ create_test_201 title appContext doc authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "kmId"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "kmId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -102,7 +103,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (encode $ re
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
   it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
      -- GIVEN: Prepare request
    do

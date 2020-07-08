@@ -2,7 +2,6 @@ module Wizard.Specs.API.Document.Detail_Available_Submission_Services_GET
   ( detail_available_submission_Services_GET
   ) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,7 +9,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
@@ -26,7 +24,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------------------
 -- GET /documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services
 -- ------------------------------------------------------------------------------------
-detail_available_submission_Services_GET :: AppContext -> SpecWith Application
+detail_available_submission_Services_GET :: AppContext -> SpecWith ((), Application)
 detail_available_submission_Services_GET appContext =
   describe "GET /documents/264ca352-1a99-4ffd-860e-32aee9a98428/available-submission-services" $ do
     test_200 appContext
@@ -73,7 +71,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "SUBM_PERM"
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "SUBM_PERM"
   it "HTTP 403 FORBIDDEN - Doc is not accessible for user" $
      -- GIVEN: Prepare request
    do

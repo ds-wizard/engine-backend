@@ -10,7 +10,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -22,6 +21,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -35,7 +35,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith Application
+detail_put :: AppContext -> SpecWith ((), Application)
 detail_put appContext =
   describe "PUT /questionnaires/{qtnUuid}" $ do
     test_200 appContext
@@ -60,7 +60,7 @@ reqDtoT qtn =
     , _questionnaireChangeDTOLevel = qtn ^. level
     , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
     , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
-    , _questionnaireChangeDTOTemplateUuid = qtn ^. templateUuid
+    , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -82,8 +82,8 @@ create_test_200 title appContext qtn qtnEdited =
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+    let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault questionnaireReport
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
@@ -100,12 +100,7 @@ create_test_200 title appContext qtn qtnEdited =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext =
-  createInvalidJsonTest
-    reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
-    [HJ.json| { name: "Common Questionnaire" } |]
-    "visibility"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) "visibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -118,7 +113,7 @@ test_401 appContext =
 -- ----------------------------------------------------
 test_403 appContext = do
   createNoPermissionTest
-    (appContext ^. serverConfig)
+    appContext
     reqMethod
     (reqUrlT $ questionnaire3 ^. uuid)
     [reqCtHeader]
@@ -146,7 +141,7 @@ create_test_403 title appContext qtn qtnEdited reason =
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations

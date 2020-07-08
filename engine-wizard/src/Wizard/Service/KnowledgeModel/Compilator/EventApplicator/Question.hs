@@ -5,7 +5,7 @@ import qualified Data.Map as M
 import Prelude hiding (lookup)
 
 import LensesConfig
-import Shared.Model.Event.EventAccessors
+import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
@@ -22,52 +22,47 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
 import Wizard.Util.Lens
 
 instance ApplyEvent AddQuestionEvent where
-  apply event km = Right . addEntity . addEntityReference $ km
+  apply event = Right . addEntity . addEntityReference
     where
       addEntityReference :: KnowledgeModel -> KnowledgeModel
       addEntityReference km =
-        case M.lookup (getEventParentUuid event) (km ^. chaptersM) of
+        case M.lookup (event ^. parentUuid') (km ^. chaptersM) of
           Just parent ->
-            km & (chaptersM . at (getEventParentUuid event)) ?~ (parent & ap questionUuids .~ (getEventNodeUuid event))
+            km & (chaptersM . at (event ^. parentUuid')) ?~ (parent & ap questionUuids .~ (event ^. entityUuid'))
           Nothing ->
-            case M.lookup (getEventParentUuid event) (km ^. questionsM) of
+            case M.lookup (event ^. parentUuid') (km ^. questionsM) of
               Just parent ->
-                km &
-                (questionsM . at (getEventParentUuid event)) ?~
-                (parent & ap itemTemplateQuestionUuids' .~ (getEventNodeUuid event))
+                km & (questionsM . at (event ^. parentUuid')) ?~
+                (parent & ap itemTemplateQuestionUuids' .~ (event ^. entityUuid'))
               Nothing ->
-                case M.lookup (getEventParentUuid event) (km ^. answersM) of
+                case M.lookup (event ^. parentUuid') (km ^. answersM) of
                   Just parent ->
-                    km &
-                    (answersM . at (getEventParentUuid event)) ?~
-                    (parent & ap followUpUuids .~ (getEventNodeUuid event))
+                    km & (answersM . at (event ^. parentUuid')) ?~ (parent & ap followUpUuids .~ (event ^. entityUuid'))
                   Nothing -> km
       addEntity :: KnowledgeModel -> KnowledgeModel
-      addEntity km = km & (questionsM . at (getEventNodeUuid event)) ?~ (createEntity event)
+      addEntity km = km & questionsM . at (event ^. entityUuid') ?~ createEntity event
 
 instance ApplyEvent EditQuestionEvent where
   apply = applyEditEvent (entities . questions) "Question"
 
 instance ApplyEvent DeleteQuestionEvent where
-  apply event km = Right . deleteEntity . deleteEntityReference $ km
+  apply event = Right . deleteEntity . deleteEntityReference
     where
       deleteEntityReference :: KnowledgeModel -> KnowledgeModel
       deleteEntityReference km =
-        case M.lookup (getEventParentUuid event) (km ^. chaptersM) of
+        case M.lookup (event ^. parentUuid') (km ^. chaptersM) of
           Just parent ->
-            km & (chaptersM . at (getEventParentUuid event)) ?~ (parent & del questionUuids .~ (getEventNodeUuid event))
+            km & (chaptersM . at (event ^. parentUuid')) ?~ (parent & del questionUuids .~ (event ^. entityUuid'))
           Nothing ->
-            case M.lookup (getEventParentUuid event) (km ^. questionsM) of
+            case M.lookup (event ^. parentUuid') (km ^. questionsM) of
               Just parent ->
-                km &
-                (questionsM . at (getEventParentUuid event)) ?~
-                (parent & del itemTemplateQuestionUuids' .~ (getEventNodeUuid event))
+                km & (questionsM . at (event ^. parentUuid')) ?~
+                (parent & del itemTemplateQuestionUuids' .~ (event ^. entityUuid'))
               Nothing ->
-                case M.lookup (getEventParentUuid event) (km ^. answersM) of
+                case M.lookup (event ^. parentUuid') (km ^. answersM) of
                   Just parent ->
-                    km &
-                    (answersM . at (getEventParentUuid event)) ?~
-                    (parent & del followUpUuids .~ (getEventNodeUuid event))
+                    km & (answersM . at (event ^. parentUuid')) ?~
+                    (parent & del followUpUuids .~ (event ^. entityUuid'))
                   Nothing -> km
       deleteEntity :: KnowledgeModel -> KnowledgeModel
-      deleteEntity km = deleteQuestion km (getEventNodeUuid event)
+      deleteEntity km = deleteQuestion km (event ^. entityUuid')

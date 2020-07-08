@@ -2,24 +2,24 @@ module Shared.Api.Resource.Event.ChapterEventJM where
 
 import Data.Aeson
 
-import Shared.Api.Resource.Event.ChapterEventDTO
 import Shared.Api.Resource.Event.EventFieldJM ()
+import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Util.JSON
 
-instance FromJSON AddChapterEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddChapterEvent where
+  parseJSON = simpleParseJSON "_addChapterEvent"
 
-instance ToJSON AddChapterEventDTO where
-  toJSON = simpleToJSON' "_addChapterEventDTO" "eventType"
+instance ToJSON AddChapterEvent where
+  toJSON = simpleToJSON' "_addChapterEvent" "eventType"
 
-instance FromJSON EditChapterEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditChapterEvent where
+  parseJSON = simpleParseJSON "_editChapterEvent"
 
-instance ToJSON EditChapterEventDTO where
-  toJSON = simpleToJSON' "_editChapterEventDTO" "eventType"
+instance ToJSON EditChapterEvent where
+  toJSON = simpleToJSON' "_editChapterEvent" "eventType"
 
-instance FromJSON DeleteChapterEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON DeleteChapterEvent where
+  parseJSON = simpleParseJSON "_deleteChapterEvent"
 
-instance ToJSON DeleteChapterEventDTO where
-  toJSON = simpleToJSON' "_deleteChapterEventDTO" "eventType"
+instance ToJSON DeleteChapterEvent where
+  toJSON = simpleToJSON' "_deleteChapterEvent" "eventType"

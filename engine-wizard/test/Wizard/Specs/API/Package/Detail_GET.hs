@@ -27,7 +27,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
+detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /packages/{pkgId}" $ do
     test_200 appContext
@@ -80,8 +80,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_READ_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_READ_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

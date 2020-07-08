@@ -4,100 +4,100 @@ import Control.Monad
 import Data.Aeson
 
 import Shared.Api.Resource.Event.EventFieldJM ()
-import Shared.Api.Resource.Event.QuestionEventDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Shared.Model.Event.Question.QuestionEvent
 import Shared.Util.JSON
 
-instance ToJSON AddQuestionEventDTO where
+instance ToJSON AddQuestionEvent where
   toJSON = toSumJSON
 
-instance FromJSON AddQuestionEventDTO where
+instance FromJSON AddQuestionEvent where
   parseJSON (Object o) = do
     referenceType <- o .: "questionType"
     case referenceType of
-      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (AddOptionsQuestionEventDTO' event)
-      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEventDTO' event)
-      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEventDTO' event)
-      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEventDTO' event)
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (AddOptionsQuestionEvent' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEvent' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEvent' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
 -- --------------------------------------------
-instance FromJSON AddOptionsQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddOptionsQuestionEvent where
+  parseJSON = simpleParseJSON "_addOptionsQuestionEvent"
 
-instance ToJSON AddOptionsQuestionEventDTO where
-  toJSON = simpleToJSON'' "_addOptionsQuestionEventDTO" [("questionType", "OptionsQuestion")]
-
--- --------------------------------------------
-instance FromJSON AddListQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON AddListQuestionEventDTO where
-  toJSON = simpleToJSON'' "_addListQuestionEventDTO" [("questionType", "ListQuestion")]
+instance ToJSON AddOptionsQuestionEvent where
+  toJSON = simpleToJSON'' "_addOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
 
 -- --------------------------------------------
-instance FromJSON AddValueQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON AddListQuestionEvent where
+  parseJSON = simpleParseJSON "_addListQuestionEvent"
 
-instance ToJSON AddValueQuestionEventDTO where
-  toJSON = simpleToJSON'' "_addValueQuestionEventDTO" [("questionType", "ValueQuestion")]
-
--- --------------------------------------------
-instance FromJSON AddIntegrationQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON AddIntegrationQuestionEventDTO where
-  toJSON = simpleToJSON'' "_addIntegrationQuestionEventDTO" [("questionType", "IntegrationQuestion")]
+instance ToJSON AddListQuestionEvent where
+  toJSON = simpleToJSON'' "_addListQuestionEvent" [("questionType", "ListQuestion")]
 
 -- --------------------------------------------
+instance FromJSON AddValueQuestionEvent where
+  parseJSON = simpleParseJSON "_addValueQuestionEvent"
+
+instance ToJSON AddValueQuestionEvent where
+  toJSON = simpleToJSON'' "_addValueQuestionEvent" [("questionType", "ValueQuestion")]
+
 -- --------------------------------------------
-instance ToJSON EditQuestionEventDTO where
+instance FromJSON AddIntegrationQuestionEvent where
+  parseJSON = simpleParseJSON "_addIntegrationQuestionEvent"
+
+instance ToJSON AddIntegrationQuestionEvent where
+  toJSON = simpleToJSON'' "_addIntegrationQuestionEvent" [("questionType", "IntegrationQuestion")]
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance ToJSON EditQuestionEvent where
   toJSON = toSumJSON
 
-instance FromJSON EditQuestionEventDTO where
+instance FromJSON EditQuestionEvent where
   parseJSON (Object o) = do
     questionType <- o .: "questionType"
     case questionType of
-      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (EditOptionsQuestionEventDTO' event)
-      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEventDTO' event)
-      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEventDTO' event)
-      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEventDTO' event)
+      "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (EditOptionsQuestionEvent' event)
+      "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEvent' event)
+      "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEvent' event)
+      "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEvent' event)
       _ -> fail "One of the events has unsupported questionType"
   parseJSON _ = mzero
 
 -- --------------------------------------------
-instance FromJSON EditOptionsQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditOptionsQuestionEvent where
+  parseJSON = simpleParseJSON "_editOptionsQuestionEvent"
 
-instance ToJSON EditOptionsQuestionEventDTO where
-  toJSON = simpleToJSON'' "_editOptionsQuestionEventDTO" [("questionType", "OptionsQuestion")]
-
--- --------------------------------------------
-instance FromJSON EditListQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON EditListQuestionEventDTO where
-  toJSON = simpleToJSON'' "_editListQuestionEventDTO" [("questionType", "ListQuestion")]
+instance ToJSON EditOptionsQuestionEvent where
+  toJSON = simpleToJSON'' "_editOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
 
 -- --------------------------------------------
-instance FromJSON EditValueQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditListQuestionEvent where
+  parseJSON = simpleParseJSON "_editListQuestionEvent"
 
-instance ToJSON EditValueQuestionEventDTO where
-  toJSON = simpleToJSON'' "_editValueQuestionEventDTO" [("questionType", "ValueQuestion")]
-
--- --------------------------------------------
-instance FromJSON EditIntegrationQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
-
-instance ToJSON EditIntegrationQuestionEventDTO where
-  toJSON = simpleToJSON'' "_editIntegrationQuestionEventDTO" [("questionType", "IntegrationQuestion")]
+instance ToJSON EditListQuestionEvent where
+  toJSON = simpleToJSON'' "_editListQuestionEvent" [("questionType", "ListQuestion")]
 
 -- --------------------------------------------
--- --------------------------------------------
-instance FromJSON DeleteQuestionEventDTO where
-  parseJSON = genericParseJSON simpleOptions
+instance FromJSON EditValueQuestionEvent where
+  parseJSON = simpleParseJSON "_editValueQuestionEvent"
 
-instance ToJSON DeleteQuestionEventDTO where
-  toJSON = simpleToJSON' "_deleteQuestionEventDTO" "eventType"
+instance ToJSON EditValueQuestionEvent where
+  toJSON = simpleToJSON'' "_editValueQuestionEvent" [("questionType", "ValueQuestion")]
+
+-- --------------------------------------------
+instance FromJSON EditIntegrationQuestionEvent where
+  parseJSON = simpleParseJSON "_editIntegrationQuestionEvent"
+
+instance ToJSON EditIntegrationQuestionEvent where
+  toJSON = simpleToJSON'' "_editIntegrationQuestionEvent" [("questionType", "IntegrationQuestion")]
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance FromJSON DeleteQuestionEvent where
+  parseJSON = simpleParseJSON "_deleteQuestionEvent"
+
+instance ToJSON DeleteQuestionEvent where
+  toJSON = simpleToJSON' "_deleteQuestionEvent" "eventType"

@@ -2,15 +2,12 @@ module Wizard.Specs.API.Config.List_App_PUT
   ( list_app_PUT
   ) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 
-import LensesConfig hiding (request)
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Config.AppConfig
@@ -23,7 +20,7 @@ import Wizard.Specs.API.Config.Common
 -- ------------------------------------------------------------------------
 -- PUT /configs/app
 -- ------------------------------------------------------------------------
-list_app_PUT :: AppContext -> SpecWith Application
+list_app_PUT :: AppContext -> SpecWith ((), Application)
 list_app_PUT appContext =
   describe "PUT /configs/app" $ do
     test_200 appContext
@@ -67,7 +64,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "uuid"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "uuid"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -77,5 +74,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "CFG_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "CFG_PERM"

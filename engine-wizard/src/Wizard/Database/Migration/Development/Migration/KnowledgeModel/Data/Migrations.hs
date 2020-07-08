@@ -6,8 +6,6 @@ import LensesConfig
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Shared.Service.Event.EventMapper
-import Shared.Service.KnowledgeModel.KnowledgeModelMapper
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
@@ -20,10 +18,10 @@ migratorState =
   MigratorStateDTO
     { _migratorStateDTOBranchUuid = amsterdamBranch ^. uuid
     , _migratorStateDTOMigrationState =
-        ConflictStateDTO . CorrectorConflictDTO . toDTOFn . Prelude.head $ netherlandsPackageV2 ^. events
+        ConflictStateDTO . CorrectorConflictDTO . Prelude.head $ netherlandsPackageV2 ^. events
     , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-    , _migratorStateDTOCurrentKnowledgeModel = Just . toKnowledgeModelDTO $ km1Netherlands
+    , _migratorStateDTOCurrentKnowledgeModel = Just km1Netherlands
     }
 
 migratorStateCreate :: MigratorStateCreateDTO
@@ -34,5 +32,5 @@ migratorConflict =
   MigratorConflictDTO
     { _migratorConflictDTOOriginalEventUuid = a_km1_ch4 ^. uuid
     , _migratorConflictDTOAction = MCAEdited
-    , _migratorConflictDTOEvent = Just . toDTOFn . Prelude.head $ netherlandsPackageV2 ^. events
+    , _migratorConflictDTOEvent = Just . Prelude.head $ netherlandsPackageV2 ^. events
     }

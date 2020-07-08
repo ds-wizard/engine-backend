@@ -6,10 +6,10 @@ import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
+import Wizard.Api.Handler.Cache.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Document.Api
 import Wizard.Api.Handler.Feedback.Api
-import Wizard.Api.Handler.IO.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
 import Wizard.Api.Handler.Level.Api
@@ -31,10 +31,10 @@ type AppAPI
      :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
+     :<|> CacheAPI
      :<|> ConfigAPI
      :<|> DocumentAPI
      :<|> FeedbackAPI
-     :<|> IoAPI
      :<|> InfoAPI
      :<|> KnowledgeModelAPI
      :<|> LevelAPI
@@ -55,9 +55,9 @@ appApi = Proxy
 
 appServer :: ServerT AppAPI BaseContextM
 appServer =
-  actionKeyServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> configServer :<|> documentServer :<|>
+  actionKeyServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> cacheServer :<|> configServer :<|>
+  documentServer :<|>
   feedbackServer :<|>
-  ioServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>
   levelServer :<|>

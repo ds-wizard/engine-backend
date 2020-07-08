@@ -4,22 +4,16 @@ import Control.Lens (makeFields)
 
 import Registry.Api.Resource.Organization.OrganizationDTO
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
-import Shared.Api.Resource.Event.AnswerEventDTO
-import Shared.Api.Resource.Event.ChapterEventDTO
-import Shared.Api.Resource.Event.ExpertEventDTO
-import Shared.Api.Resource.Event.IntegrationEventDTO
-import Shared.Api.Resource.Event.KnowledgeModelEventDTO
-import Shared.Api.Resource.Event.MoveEventDTO
-import Shared.Api.Resource.Event.QuestionEventDTO
-import Shared.Api.Resource.Event.ReferenceEventDTO
-import Shared.Api.Resource.Event.TagEventDTO
+import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -34,8 +28,8 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
-import Wizard.Api.Resource.BookReference.BookReferenceDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -48,7 +42,6 @@ import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
 import Wizard.Api.Resource.Feedback.FeedbackDTO
-import Wizard.Api.Resource.Level.LevelDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO as KM_MigratorConflictDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO as KM_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO as KM_MigratorStateDTO
@@ -64,12 +57,15 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
-import Wizard.Api.Resource.Template.TemplateDTO
+import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
+import Wizard.Api.Resource.Template.TemplateChangeDTO
+import Wizard.Api.Resource.Template.TemplateDetailDTO
+import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.Typehint.TypehintDTO
@@ -88,6 +84,7 @@ import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
@@ -95,7 +92,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Document.DocumentTemplateContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
@@ -106,7 +102,6 @@ import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
-import Wizard.Model.Template.Template
 import Wizard.Model.User.User
 
 -- -------------------------------------
@@ -122,6 +117,14 @@ makeFields ''BookReference
 makeFields ''Branch
 
 makeFields ''BranchWithEvents
+
+-- Model / Cache
+makeFields ''ServerCache
+
+-- Model / Common
+makeFields ''Page
+
+makeFields ''PageMetadata
 
 -- Model / Config
 makeFields ''AppConfig
@@ -153,6 +156,8 @@ makeFields ''AppConfigLookAndFeelCustomMenuLink
 makeFields ''AppConfigRegistry
 
 makeFields ''AppConfigQuestionnaire
+
+makeFields ''AppConfigQuestionnaireVisibility
 
 makeFields ''AppConfigQuestionnaireFeedback
 
@@ -190,6 +195,8 @@ makeFields ''ServerConfigAnalytics
 
 makeFields ''ServerConfigFeedback
 
+makeFields ''ServerConfigLogging
+
 makeFields ''BuildInfoConfig
 
 -- Model / Context
@@ -205,8 +212,6 @@ makeFields ''DocumentMetadata
 makeFields ''DocumentContext
 
 makeFields ''DocumentContextConfig
-
-makeFields ''DocumentTemplateContext
 
 -- Model / Event
 makeFields ''EventField
@@ -389,6 +394,10 @@ makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 
+makeFields ''TemplateFile
+
+makeFields ''TemplateAsset
+
 -- Model / User
 makeFields ''User
 
@@ -399,9 +408,6 @@ makeFields ''UserSubmissionProps
 -- -------------------------------------
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
-
--- Api / Resource / BookReference
-makeFields ''BookReferenceDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
@@ -432,89 +438,6 @@ makeFields ''DocumentContextDTO
 
 makeFields ''DocumentContextConfigDTO
 
--- Api / Resource / Event
-makeFields ''AddKnowledgeModelEventDTO
-
-makeFields ''EditKnowledgeModelEventDTO
-
-makeFields ''AddChapterEventDTO
-
-makeFields ''EditChapterEventDTO
-
-makeFields ''DeleteChapterEventDTO
-
-makeFields ''AddQuestionEventDTO
-
-makeFields ''AddOptionsQuestionEventDTO
-
-makeFields ''AddListQuestionEventDTO
-
-makeFields ''AddValueQuestionEventDTO
-
-makeFields ''AddIntegrationQuestionEventDTO
-
-makeFields ''EditQuestionEventDTO
-
-makeFields ''EditOptionsQuestionEventDTO
-
-makeFields ''EditListQuestionEventDTO
-
-makeFields ''EditValueQuestionEventDTO
-
-makeFields ''EditIntegrationQuestionEventDTO
-
-makeFields ''DeleteQuestionEventDTO
-
-makeFields ''AddAnswerEventDTO
-
-makeFields ''EditAnswerEventDTO
-
-makeFields ''DeleteAnswerEventDTO
-
-makeFields ''AddExpertEventDTO
-
-makeFields ''EditExpertEventDTO
-
-makeFields ''DeleteExpertEventDTO
-
-makeFields ''AddReferenceEventDTO
-
-makeFields ''AddResourcePageReferenceEventDTO
-
-makeFields ''AddURLReferenceEventDTO
-
-makeFields ''AddCrossReferenceEventDTO
-
-makeFields ''EditReferenceEventDTO
-
-makeFields ''EditResourcePageReferenceEventDTO
-
-makeFields ''EditURLReferenceEventDTO
-
-makeFields ''EditCrossReferenceEventDTO
-
-makeFields ''DeleteReferenceEventDTO
-
-makeFields ''AddTagEventDTO
-
-makeFields ''EditTagEventDTO
-
-makeFields ''DeleteTagEventDTO
-
-makeFields ''AddIntegrationEventDTO
-
-makeFields ''EditIntegrationEventDTO
-
-makeFields ''DeleteIntegrationEventDTO
-
-makeFields ''MoveQuestionEventDTO
-
-makeFields ''MoveAnswerEventDTO
-
-makeFields ''MoveExpertEventDTO
-
-makeFields ''MoveReferenceEventDTO
-
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
 
@@ -525,45 +448,6 @@ makeFields ''InfoDTO
 
 -- Api / Resource / KnowledgeModel
 makeFields ''KnowledgeModelChangeDTO
-
-makeFields ''KnowledgeModelDTO
-
-makeFields ''KnowledgeModelEntitiesDTO
-
-makeFields ''ChapterDTO
-
-makeFields ''QuestionDTO
-
-makeFields ''OptionsQuestionDTO
-
-makeFields ''ListQuestionDTO
-
-makeFields ''ValueQuestionDTO
-
-makeFields ''IntegrationQuestionDTO
-
-makeFields ''AnswerDTO
-
-makeFields ''ExpertDTO
-
-makeFields ''ReferenceDTO
-
-makeFields ''ResourcePageReferenceDTO
-
-makeFields ''URLReferenceDTO
-
-makeFields ''CrossReferenceDTO
-
-makeFields ''MetricDTO
-
-makeFields ''MetricMeasureDTO
-
-makeFields ''TagDTO
-
-makeFields ''IntegrationDTO
-
--- Model / Level
-makeFields ''LevelDTO
 
 -- Api / Resource / Migration / KnowledgeModel
 makeFields ''KM_MigratorConflictDTO.MigratorConflictDTO
@@ -611,25 +495,12 @@ makeFields ''IntegrationReplyValueDTO
 
 makeFields ''LabelDTO
 
+makeFields ''QuestionnaireReportDTO
+
 -- Api / Resource / Registry
 makeFields ''RegistryConfirmationDTO
 
 makeFields ''RegistryCreateDTO
-
--- Api / Resource / Report
-makeFields ''IndicationDTO
-
-makeFields ''AnsweredIndicationDTO
-
-makeFields ''LevelsAnsweredIndicationDTO
-
-makeFields ''MetricSummaryDTO
-
-makeFields ''ChapterReportDTO
-
-makeFields ''TotalReportDTO
-
-makeFields ''ReportDTO
 
 -- Api / Resource / Submission
 makeFields ''SubmissionCreateDTO
@@ -637,7 +508,13 @@ makeFields ''SubmissionCreateDTO
 makeFields ''SubmissionDTO
 
 -- Api / Resource / Template
-makeFields ''TemplateDTO
+makeFields ''TemplateSimpleDTO
+
+makeFields ''TemplateDetailDTO
+
+makeFields ''TemplateChangeDTO
+
+makeFields ''TemplateFileChangeDTO
 
 -- Api / Resource / Token
 makeFields ''TokenDTO
@@ -686,3 +563,6 @@ makeFields ''OrganizationDTO
 
 -- Api / Resource / Package
 makeFields ''R_PackageSimpleDTO.PackageSimpleDTO
+
+-- Api / Resource / Package
+makeFields ''R_TemplateSimpleDTO.TemplateSimpleDTO

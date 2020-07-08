@@ -3,10 +3,10 @@ module Wizard.Service.Migration.KnowledgeModel.MigratorValidation where
 import Control.Monad.Except (catchError, throwError)
 
 import Shared.Model.Error.Error
+import Shared.Util.Identifier
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Package.PackageUtils
 import Wizard.Service.Package.PackageValidation
 
 validateMigrationUniqueness :: String -> AppContextM ()

@@ -18,7 +18,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /organizations/simple
 -- ------------------------------------------------------------------------
-list_simple_get :: AppContext -> SpecWith Application
+list_simple_get :: AppContext -> SpecWith ((), Application)
 list_simple_get appContext = describe "GET /organizations/simple" $ test_200 appContext
 
 -- ----------------------------------------------------

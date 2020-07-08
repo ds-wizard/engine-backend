@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '2.4.0'
+version: '2.5.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -29,9 +29,11 @@ library:
   - bson
   - bson-generic
   - bytestring
+  - cache
   - case-insensitive
   - conduit
   - containers
+  - cron
   - data-default
   - directory
   - engine-wizard-metamodel-migrator
@@ -65,8 +67,8 @@ library:
   - pretty-terminal
   - pwstore-fast
   - random # OK
+  - raw-strings-qq
   - regex-compat
-  - retry
   - scientific
   - servant
   - servant-client
@@ -81,6 +83,7 @@ library:
   - text-replace
   - time
   - transformers
+  - unix
   - unordered-containers
   - uri-encode
   - uuid
@@ -90,6 +93,7 @@ library:
   - warp # OK
   - wreq # OK
   - yaml # OK
+  - zip-archive
 
 executables:
   engine-wizard:
@@ -122,6 +126,7 @@ tests:
     - bson
     - bson-generic
     - bytestring
+    - cache
     - case-insensitive
     - containers
     - data-default
@@ -159,7 +164,6 @@ tests:
     - hspec
     - hspec-expectations-pretty-diff
     - hspec-wai
-    - hspec-wai-json
 
 default-extensions:
   - DataKinds

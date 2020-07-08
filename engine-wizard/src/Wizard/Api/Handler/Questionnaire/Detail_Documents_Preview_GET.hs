@@ -1,7 +1,6 @@
 module Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET where
 
 import Control.Lens ((^.))
-import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks)
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
@@ -31,7 +30,6 @@ detail_documents_preview_GET ::
 detail_documents_preview_GET mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ do
-      checkPermission mTokenHeader "QTN_PERM"
       (doc, result) <- createPreview qtnUuid
       case doc ^. state of
         DoneDocumentState -> do

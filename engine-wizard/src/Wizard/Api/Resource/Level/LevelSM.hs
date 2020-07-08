@@ -3,10 +3,9 @@ module Wizard.Api.Resource.Level.LevelSM where
 import Data.Swagger
 
 import Shared.Util.Swagger
-import Wizard.Api.Resource.Level.LevelDTO
 import Wizard.Api.Resource.Level.LevelJM ()
 import Wizard.Database.Migration.Development.Level.Data.Levels
-import Wizard.Service.Level.LevelMapper
+import Wizard.Model.Level.Level
 
-instance ToSchema LevelDTO where
-  declareNamedSchema = simpleToSchema (toLevelDTO level1)
+instance ToSchema Level where
+  declareNamedSchema = simpleToSchema' "_level" level1

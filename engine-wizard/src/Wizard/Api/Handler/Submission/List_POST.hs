@@ -21,7 +21,4 @@ list_POST ::
      Maybe String -> SubmissionCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
 list_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "SUBM_PERM"
-      submitDocument reqDto
+    runInAuthService $ addTraceUuidHeader =<< submitDocument reqDto

@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Api.Resource.Event.EventDTO
+import Shared.Model.Event.Event
 
 data BranchWithEventsDTO =
   BranchWithEventsDTO
@@ -15,7 +15,7 @@ data BranchWithEventsDTO =
     , _branchWithEventsDTOPreviousPackageId :: Maybe String
     , _branchWithEventsDTOForkOfPackageId :: Maybe String
     , _branchWithEventsDTOMergeCheckpointPackageId :: Maybe String
-    , _branchWithEventsDTOEvents :: [EventDTO]
+    , _branchWithEventsDTOEvents :: [Event]
     , _branchWithEventsDTOOwnerUuid :: Maybe U.UUID
     , _branchWithEventsDTOCreatedAt :: UTCTime
     , _branchWithEventsDTOUpdatedAt :: UTCTime

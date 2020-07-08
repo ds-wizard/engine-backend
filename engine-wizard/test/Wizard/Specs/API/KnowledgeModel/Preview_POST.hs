@@ -13,12 +13,11 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Context.AppContext
-import Wizard.Service.KnowledgeModel.KnowledgeModelMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -26,7 +25,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /knowledge-models/preview
 -- ------------------------------------------------------------------------
-preview_post :: AppContext -> SpecWith Application
+preview_post :: AppContext -> SpecWith ((), Application)
 preview_post appContext =
   describe "POST /knowledge-models/preview" $ do
     test_200 appContext
@@ -60,7 +59,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toKnowledgeModelDTO km1WithQ4
+    let expDto = km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
@@ -80,5 +79,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

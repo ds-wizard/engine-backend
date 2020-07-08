@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -27,11 +26,11 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /users/current
 -- ------------------------------------------------------------------------
-list_current_PUT :: AppContext -> SpecWith Application
+list_current_PUT :: AppContext -> SpecWith ((), Application)
 list_current_PUT appContext =
   describe "PUT /users/current" $ do
     test_200 appContext
-    test_400_invalid_json appContext
+    test_400 appContext
     test_401 appContext
 
 -- ----------------------------------------------------
@@ -71,8 +70,8 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = do
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { } |] "password"
+test_400 appContext = do
+  createInvalidJsonTest reqMethod reqUrl "password"
   it "HTTP 400 BAD REQUEST if email is already registered" $
     -- GIVEN: Prepare request
    do
@@ -80,7 +79,7 @@ test_400_invalid_json appContext = do
     let reqBody = encode reqDto
     -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)]
     let expBody = encode expDto
     -- AND: Run migrations

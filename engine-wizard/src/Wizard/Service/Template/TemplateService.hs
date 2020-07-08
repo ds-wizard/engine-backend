@@ -1,115 +1,123 @@
-module Wizard.Service.Template.TemplateService
-  ( getTemplates
-  , getTemplatesDto
-  , getTemplateByUuid
-  -- Private
-  , getAllowedPackagesForTemplate
-  , fitsIntoKMSpec
-  , filterTemplates
-  ) where
+module Wizard.Service.Template.TemplateService where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^..))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import Data.List (find)
+import Data.Foldable (traverse_)
+import qualified Data.List as L
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
+import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Error.Error
 import Shared.Model.Package.Package
-import Shared.Service.File.FileService
-import Wizard.Api.Resource.Template.TemplateDTO
-import Wizard.Api.Resource.Template.TemplateJM ()
-import Wizard.Constant.Resource
-import Wizard.Database.DAO.Package.PackageDAO
+import Shared.Model.Template.Template
+import Shared.Service.Template.TemplateUtil
+import Shared.Util.Identifier
+import Shared.Util.List (foldInContext)
+import Wizard.Api.Resource.Template.TemplateChangeDTO
+import Wizard.Api.Resource.Template.TemplateDetailDTO
+import Wizard.Api.Resource.Template.TemplateSimpleDTO
+import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Template.Template
-import Wizard.Service.Package.PackageUtils
+import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Template.TemplateMapper
-import Wizard.Util.List (foldEithersInContext)
+import Wizard.Service.Template.TemplateUtil
+import Wizard.Service.Template.TemplateValidation
 
-getTemplates :: Maybe String -> AppContextM [Template]
-getTemplates mPkgId = do
-  folder <- getTemplateFolder
-  files <- liftIO $ listFilesWithName folder "template.json"
-  eTemplates <- foldEithersInContext (fmap (liftIO . loadJSONFile) files)
-  case eTemplates of
-    Left error -> throwError error
-    Right templates ->
-      case mPkgId of
-        Nothing -> return templates
-        Just pkgId -> do
-          validatePackageIdFormat pkgId
-          let pkgIdSplit = splitPackageId pkgId
-          return . filterTemplates pkgIdSplit $ templates
+getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
+getTemplates queryParams mPkgId = do
+  validatePackageIdFormat' mPkgId
+  templates <- findTemplatesFiltered queryParams
+  return $ filterTemplates mPkgId templates
 
-getTemplatesDto :: Maybe String -> AppContextM [TemplateDTO]
-getTemplatesDto mPkgId = do
-  templates <- getTemplates mPkgId
+getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
+getTemplatesDto queryParams mPkgId = do
+  checkPermission _DMP_PERM
+  validatePackageIdFormat' mPkgId
+  tmls <- findTemplatesFiltered queryParams
+  tmlRs <- retrieveTemplates
+  orgRs <- retrieveOrganizations
   pkgs <- findPackages
-  return . fmap (\tml -> toDTO (getAllowedPackagesForTemplate tml pkgs) tml) $ templates
+  let tmls' = filterTemplates mPkgId tmls
+  foldInContext . mapToSimpleDTO tmlRs orgRs pkgs . chooseTheNewest . groupTemplates $ tmls'
+  where
+    mapToSimpleDTO ::
+         [R_TemplateSimpleDTO.TemplateSimpleDTO]
+      -> [OrganizationSimpleDTO]
+      -> [Package]
+      -> [Template]
+      -> [AppContextM TemplateSimpleDTO]
+    mapToSimpleDTO pkgRs orgRs pkgs tmls =
+      fmap
+        (\tml -> do
+           let versions = tmls ^.. traverse . version
+           let usablePackages = getUsablePackagesForTemplate tml pkgs
+           return $ toSimpleDTO' tml pkgRs orgRs versions usablePackages)
+        tmls
 
 getTemplateByUuid :: String -> Maybe String -> AppContextM Template
-getTemplateByUuid templateUuid mPkgId = do
-  templates <- getTemplates mPkgId
-  case find (\t -> U.toString (t ^. uuid) == templateUuid) templates of
+getTemplateByUuid templateId mPkgId = do
+  templates <- getTemplates [] mPkgId
+  case L.find (\t -> (t ^. tId) == templateId) templates of
     Just template -> return template
     Nothing -> throwError . NotExistsError $ _ERROR_VALIDATION__TEMPLATE_ABSENCE
+
+getTemplateByUuidDto :: String -> AppContextM TemplateDetailDTO
+getTemplateByUuidDto templateId = do
+  checkPermission _TML_PERM
+  tml <- findTemplateById templateId
+  pkgs <- findPackages
+  versions <- getTemplateVersions tml
+  tmlRs <- retrieveTemplates
+  orgRs <- retrieveOrganizations
+  serverConfig <- asks _appContextServerConfig
+  let registryLink = buildTemplateUrl (serverConfig ^. registry . clientUrl) templateId
+  let usablePackages = getUsablePackagesForTemplate tml pkgs
+  return $ toDetailDTO tml tmlRs orgRs versions registryLink usablePackages
+
+createTemplate :: TemplateChangeDTO -> AppContextM Template
+createTemplate reqDto = do
+  checkPermission _TML_PERM
+  now <- liftIO getCurrentTime
+  let template = fromCreateDTO reqDto now
+  insertTemplate template
+  return template
+
+modifyTemplate :: String -> TemplateChangeDTO -> AppContextM Template
+modifyTemplate tmlId reqDto = do
+  checkPermission _TML_PERM
+  template <- findTemplateById tmlId
+  let templateUpdated = fromChangeDTO reqDto template
+  updateTemplateById templateUpdated
+  return templateUpdated
+
+deleteTemplatesByQueryParams :: [(String, String)] -> AppContextM ()
+deleteTemplatesByQueryParams queryParams = do
+  checkPermission _TML_PERM
+  tmls <- findTemplatesFiltered queryParams
+  traverse_ validateTemplateDeletation (_templateTId <$> tmls)
+  deleteTemplatesFiltered queryParams
+
+deleteTemplate :: String -> AppContextM ()
+deleteTemplate tmlId = do
+  checkPermission _TML_PERM
+  tml <- findTemplateById tmlId
+  validateTemplateDeletation tmlId
+  deleteTemplateById tmlId
+  let assetUuids = fmap (\a -> ("filename", U.toString $ a ^. uuid)) (tml ^. assets)
+  deleteTemplateAssetContentsFiltered assetUuids
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getTemplateFolder :: AppContextM String
-getTemplateFolder = do
-  serverConfig <- asks _appContextServerConfig
-  return $ (serverConfig ^. general . templateFolder) ++ documentTemplatesFolder
-
-getAllowedPackagesForTemplate :: Template -> [Package] -> [Package]
-getAllowedPackagesForTemplate tml = getNewestUniquePackages . filterPackages tml
-  where
-    filterPackages :: Template -> [Package] -> [Package]
-    filterPackages tml = filter (\pkg -> not . null $ filterTemplates (splitPackageId $ pkg ^. pId) [tml])
-
-filterTemplates :: [String] -> [Template] -> [Template]
-filterTemplates pkgIdSplit = filter (filterTemplate pkgIdSplit)
-  where
-    filterTemplate :: [String] -> Template -> Bool
-    filterTemplate pkgIdSplit template = foldl (foldOverKmSpec pkgIdSplit) False (template ^. allowedPackages)
-    foldOverKmSpec :: [String] -> Bool -> TemplateAllowedPackage -> Bool
-    foldOverKmSpec pkgIdSplit acc allowedPackages = acc || fitsIntoKMSpec pkgIdSplit allowedPackages
-
-fitsIntoKMSpec ::
-     ( HasOrgId kmSpec (Maybe String)
-     , HasKmId kmSpec (Maybe String)
-     , HasMinVersion kmSpec (Maybe String)
-     , HasMaxVersion kmSpec (Maybe String)
-     )
-  => [String]
-  -> kmSpec
-  -> Bool
-fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVersionMin $ heCompareVersionMax True
-  where
-    heCompareOrgId callback =
-      case kmSpec ^. orgId of
-        Just orgId -> (head pkgIdSplit == orgId) && callback
-        Nothing -> callback
-    heCompareKmId callback =
-      case kmSpec ^. kmId of
-        Just kmId -> ((pkgIdSplit !! 1) == kmId) && callback
-        Nothing -> callback
-    heCompareVersionMin callback =
-      case kmSpec ^. minVersion of
-        Just minVersion ->
-          case compareVersion (pkgIdSplit !! 2) minVersion of
-            LT -> False
-            _ -> callback
-        Nothing -> callback
-    heCompareVersionMax callback =
-      case kmSpec ^. maxVersion of
-        Just maxVersion ->
-          case compareVersion (pkgIdSplit !! 2) maxVersion of
-            GT -> False
-            _ -> callback
-        Nothing -> callback
+getTemplateVersions :: Template -> AppContextM [String]
+getTemplateVersions tml = do
+  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
+  return . fmap _templateVersion $ allTmls

@@ -5,9 +5,7 @@ module Registry.Bootstrap.Web
   ) where
 
 import Control.Lens ((^.))
-import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (runReaderT)
-import Network.Wai (Application)
 import Network.Wai.Handler.Warp (run)
 import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Servant
@@ -17,6 +15,7 @@ import Registry.Api.Api
 import Registry.Api.Handler.Swagger.Api
 import Registry.Api.Middleware.LoggingMiddleware
 import Registry.Model.Context.BaseContext
+import Registry.Util.Logger
 import Shared.Api.Middleware.CORSMiddleware
 import Shared.Api.Middleware.OptionsMiddleware
 import Shared.Model.Config.Environment
@@ -39,7 +38,9 @@ serverApi :: Proxy ServerAPI
 serverApi = Proxy
 
 convert :: BaseContext -> BaseContextM a -> Handler a
-convert baseContext function = Handler . runStdoutLoggingT $ runReaderT (runBaseContextM function) baseContext
+convert baseContext function =
+  let loggingLevel = baseContext ^. serverConfig . logging . level
+   in Handler . runLogging loggingLevel $ runReaderT (runBaseContextM function) baseContext
 
 appToServer :: BaseContext -> Server ServerAPI
 appToServer baseContext = swaggerServer :<|> (hoistServer appApi (convert baseContext) appServer)

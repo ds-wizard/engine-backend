@@ -1,5 +1,6 @@
 module Wizard.Service.Package.PackageValidation
   ( validatePackageIdFormat
+  , validatePackageIdFormat'
   , validateVersionFormat
   , validateIsVersionHigher
   , validatePackageIdWithCoordinates
@@ -17,14 +18,14 @@ import Control.Monad.Except (throwError)
 import Data.Maybe
 import Text.Regex
 
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Identifier
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Package.PackageUtils
 
 validatePackageIdFormat :: String -> AppContextM ()
 validatePackageIdFormat pkgId =
@@ -32,6 +33,9 @@ validatePackageIdFormat pkgId =
    in if length pkgIdSplit /= 3 || null (head pkgIdSplit) || null (pkgIdSplit !! 1)
         then throwError . UserError $ _ERROR_VALIDATION__INVALID_PKG_ID_FORMAT
         else validateVersionFormat (pkgIdSplit !! 2)
+
+validatePackageIdFormat' :: Maybe String -> AppContextM ()
+validatePackageIdFormat' mPkgId = forM_ mPkgId validatePackageIdFormat
 
 validateVersionFormat :: String -> AppContextM ()
 validateVersionFormat pkgVersion =
@@ -49,7 +53,7 @@ validateIsVersionHigher newVersion oldVersion =
 
 validatePackageIdWithCoordinates :: String -> String -> String -> String -> AppContextM ()
 validatePackageIdWithCoordinates pId organizationId kmId version =
-  if pId == buildPackageId organizationId kmId version
+  if pId == buildIdentifierId organizationId kmId version
     then return ()
     else throwError . UserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH pId
 
@@ -118,67 +122,9 @@ validateUsageBySomeBranch pkgId = do
 
 validateUsageBySomeQuestionnaire :: String -> AppContextM ()
 validateUsageBySomeQuestionnaire pkgId = do
-  questionnaires <- findQuestionnaireByPackageId pkgId
+  questionnaires <- findQuestionnairesByPackageId pkgId
   case questionnaires of
     [] -> return ()
     _ ->
       throwError . UserError $
       _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId "questionnaire"
----- --------------------------------
----- HELPERS
----- --------------------------------
---heValidatePackageIdFormat pkgId callback =
---  case validatePackageIdFormat pkgId of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
----- -----------------------------------------------------
---heValidateVersionFormat pkgVersion callback =
---  case validateVersionFormat pkgVersion of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
----- -----------------------------------------------------
---heValidateIsVersionHigher newVersion oldVersion callback =
---  case validateIsVersionHigher newVersion oldVersion of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
----- -----------------------------------------------------
---heValidatePackageIdWithCoordinates pkgId organizationId kmId version callback =
---  case validatePackageIdWithCoordinates pkgId organizationId kmId version of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
----- -----------------------------------------------------
---heValidatePackageIdUniqueness pkgId callback = do
---  maybeError <- validatePackageIdUniqueness pkgId
---  case maybeError of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
----- -----------------------------------------------------
---heValidatePreviousPackageIdExistence pkgId previousPkgId callback = do
---  maybeError <- validatePreviousPackageIdExistence pkgId previousPkgId
---  case maybeError of
---    Nothing -> callback
---    Just error -> return . Left $ error
---
---heValidateMaybePreviousPackageIdExistence pkgId mPreviousPkgId callback =
---  case mPreviousPkgId of
---    Just previousPkgId -> heValidatePreviousPackageIdExistence pkgId previousPkgId $ callback
---    Nothing -> callback
---
----- -----------------------------------------------------
---hmValidateUsageBySomeBranch pkgId callback = do
---  maybeError <- validateUsageBySomeBranch pkgId
---  case maybeError of
---    Nothing -> callback
---    Just error -> return . Just $ error
---
----- -----------------------------------------------------
---hmValidateUsageBySomeQuestionnaire pkgId callback = do
---  maybeError <- validateUsageBySomeQuestionnaire pkgId
---  case maybeError of
---    Nothing -> callback
---    Just error -> return . Just $ error

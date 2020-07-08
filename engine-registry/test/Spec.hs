@@ -8,16 +8,17 @@ import Test.Hspec
 
 import LensesConfig
 import Registry.Constant.Resource
-import Registry.Database.Connection
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Config.ServerConfigService
+import Shared.Database.Connection
 import Shared.Service.Config.BuildInfoConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
 import Registry.Specs.API.Info.APISpec
 import Registry.Specs.API.Organization.APISpec
 import Registry.Specs.API.Package.APISpec
+import Registry.Specs.API.Template.APISpec
 import Registry.Specs.Service.Organization.OrganizationValidationSpec
 import Registry.Specs.Service.Package.PackageValidationSpec
 import Registry.TestMigration
@@ -34,14 +35,14 @@ hLoadConfig fileName loadFn callback = do
       callback config
 
 prepareWebApp runCallback =
-  hLoadConfig applicationConfigFileTest getServerConfig $ \serverConfig ->
+  hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
-      dbPool <- createDatabaseConnectionPool serverConfig
+      dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
       let appContext =
             AppContext
-              { _appContextApplicationConfig = serverConfig
+              { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
               , _appContextPool = dbPool
@@ -62,4 +63,5 @@ main =
            actionKeyAPI appContext
            infoAPI appContext
            organizationAPI appContext
-           packageAPI appContext)
+           packageAPI appContext
+           templateAPI appContext)

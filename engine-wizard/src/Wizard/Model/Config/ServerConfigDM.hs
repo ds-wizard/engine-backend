@@ -1,6 +1,7 @@
 module Wizard.Model.Config.ServerConfigDM where
 
 import Shared.Model.Config.Environment
+import Shared.Model.Config.ServerConfigDM
 import Wizard.Model.Config.ServerConfig
 
 defaultConfig :: ServerConfig
@@ -15,6 +16,7 @@ defaultConfig =
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigFeedback = defaultFeedback
+    , _serverConfigLogging = defaultLogging
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -26,20 +28,8 @@ defaultGeneral =
     , _serverConfigGeneralServiceToken = ""
     , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
-    , _serverConfigGeneralTemplateFolder = "engine-wizard/templates"
+    , _serverConfigGeneralTemplateFolder = "engine-wizard/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
-    , _serverConfigGeneralDebugLogHttpClient = True
-    }
-
-defaultDatabase :: ServerConfigDatabase
-defaultDatabase =
-  ServerConfigDatabase
-    { _serverConfigDatabaseHost = "mongo"
-    , _serverConfigDatabaseDatabaseName = "wizard-server"
-    , _serverConfigDatabasePort = 27017
-    , _serverConfigDatabaseAuthEnabled = False
-    , _serverConfigDatabaseUsername = ""
-    , _serverConfigDatabasePassword = ""
     }
 
 defaultMessaging :: ServerConfigMessaging
@@ -54,7 +44,7 @@ defaultMessaging =
     }
 
 defaultJwt :: ServerConfigJwt
-defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 1, _serverConfigJwtExpiration = 14}
+defaultJwt = ServerConfigJwt {_serverConfigJwtVersion = 2, _serverConfigJwtExpiration = 14}
 
 defaultRoles :: ServerConfigRoles
 defaultRoles =
@@ -70,6 +60,7 @@ defaultRoles =
         , "DMP_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
+        , "TML_PERM"
         ]
     , _serverConfigRolesDataSteward =
         [ "KM_PERM"
@@ -84,29 +75,12 @@ defaultRoles =
     , _serverConfigRolesResearcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     }
 
-defaultMail :: ServerConfigMail
-defaultMail =
-  ServerConfigMail
-    { _serverConfigMailEnabled = True
-    , _serverConfigMailName = "DS Wizard"
-    , _serverConfigMailEmail = ""
-    , _serverConfigMailHost = ""
-    , _serverConfigMailPort = 465
-    , _serverConfigMailSsl = False
-    , _serverConfigMailAuthEnabled = False
-    , _serverConfigMailUsername = ""
-    , _serverConfigMailPassword = ""
-    }
-
 defaultRegistry :: ServerConfigRegistry
 defaultRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
     }
-
-defaultAnalytics :: ServerConfigAnalytics
-defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False, _serverConfigAnalyticsEmail = ""}
 
 defaultFeedback :: ServerConfigFeedback
 defaultFeedback =

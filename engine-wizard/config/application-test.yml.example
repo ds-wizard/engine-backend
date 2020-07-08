@@ -5,7 +5,7 @@ general:
   serviceToken: my-service-token
   secret: "01234567890123456789012345678901"
   integrationConfig: config/integration-test.yml
-  templateFolder: templates
+  templateFolder: ""
 
 database:
   host: localhost
@@ -24,7 +24,6 @@ messaging:
   vhost:
 
 jwt:
-  version: 1
   expiration: 9999
 
 mail:

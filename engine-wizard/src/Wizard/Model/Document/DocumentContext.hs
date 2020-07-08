@@ -12,23 +12,6 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
 
-data DocumentFormat
-  = JSON
-  | HTML
-  | PDF
-  | LaTeX
-  | Docx
-  | ODT
-  | Markdown
-  | RTF
-  | RST
-  | AsciiDoc
-  | DokuWiki
-  | MediaWiki
-  | EPUB2
-  | EPUB3
-  deriving (Show, Eq, Enum, Bounded, Generic)
-
 data DocumentContext =
   DocumentContext
     { _documentContextUuid :: U.UUID
@@ -67,5 +50,6 @@ instance Eq DocumentContext where
 data DocumentContextConfig =
   DocumentContextConfig
     { _documentContextConfigLevelsEnabled :: Bool
+    , _documentContextConfigClientUrl :: String
     }
   deriving (Show, Eq, Generic)

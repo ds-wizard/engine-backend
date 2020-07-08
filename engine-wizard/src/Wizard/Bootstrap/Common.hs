@@ -2,13 +2,15 @@ module Wizard.Bootstrap.Common where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (runExceptT)
-import Control.Monad.Logger (runStdoutLoggingT)
 import Control.Monad.Reader (liftIO, runReaderT)
 
 import LensesConfig
 import Shared.Util.Uuid
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
+import Wizard.Service.User.UserMapper
+import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO ()
 runAppContextWithBaseContext function baseContext = do
@@ -23,8 +25,9 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextHttpClientManager = baseContext ^. httpClientManager
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
-          , _appContextCurrentUser = Nothing
-          , _appContextShutdownFlag = baseContext ^. shutdownFlag
+          , _appContextCurrentUser = Just . toDTO $ userAlbert
+          , _appContextCache = baseContext ^. cache
           }
-  _ <- liftIO . runExceptT $ runStdoutLoggingT $ runReaderT (runAppContextM function) appContext
+  let loggingLevel = baseContext ^. serverConfig . logging . level
+  _ <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
   return ()

@@ -17,8 +17,4 @@ type List_App_GET
 
 list_app_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
 list_app_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "CFG_PERM"
-      getAppConfig
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService -> runInAuthService $ addTraceUuidHeader =<< getAppConfigDto

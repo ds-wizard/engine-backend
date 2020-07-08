@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -24,7 +23,7 @@ import Wizard.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- POST /tokens
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /tokens" $ do
     test_201 appContext
@@ -47,12 +46,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
+test_201 appContext =
   it "HTTP 201 CREATED" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -64,13 +63,12 @@ test_201 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext =
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { email: "albert.einstein@example.com" } |] "password"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "password"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401_bad_credentials appContext = do
+test_401_bad_credentials appContext =
   it "HTTP 401 UNAUTHORIZED when invalid creadentials are provided" $
      -- GIVEN: Prepare request
    do
@@ -78,7 +76,7 @@ test_401_bad_credentials appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 401
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createUnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     let expBody = encode expDto
     -- WHEN: Call API

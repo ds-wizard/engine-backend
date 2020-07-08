@@ -31,7 +31,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires?cloneUuid={qtnUuid}
 -- ------------------------------------------------------------------------
-list_post_cloneUuid :: AppContext -> SpecWith Application
+list_post_cloneUuid :: AppContext -> SpecWith ((), Application)
 list_post_cloneUuid appContext =
   describe "POST /questionnaires?cloneUuid={qtnUuid}" $ do
     test_201 appContext
@@ -90,7 +90,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] reqBody "QTN_PERM"
+  createNoPermissionTest appContext reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] reqBody "QTN_PERM"
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext

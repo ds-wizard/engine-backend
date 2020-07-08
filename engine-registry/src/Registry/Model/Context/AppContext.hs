@@ -1,6 +1,5 @@
 module Registry.Model.Context.AppContext where
 
-import Control.Applicative (Applicative)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
@@ -16,7 +15,7 @@ import Shared.Model.Error.Error
 
 data AppContext =
   AppContext
-    { _appContextApplicationConfig :: ServerConfig
+    { _appContextServerConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
     , _appContextPool :: ConnectionPool

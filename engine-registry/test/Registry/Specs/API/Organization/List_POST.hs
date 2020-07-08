@@ -8,7 +8,6 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig
@@ -29,7 +28,7 @@ import SharedTest.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /organizations
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /organizations" $ do
     test_201 appContext
@@ -77,8 +76,7 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext =
-  createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "organizationId"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "organizationId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -91,7 +89,7 @@ test_400_invalid_organizationId appContext =
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("organizationId", _ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT)]
     let expBody = encode expDto
      -- AND: Prepare DB
@@ -115,7 +113,7 @@ test_400_organizationId_duplication appContext =
     let orgId = orgGlobalCreate ^. organizationId
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           createValidationError [] [("organizationId", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Organization" orgId)]
     let expBody = encode expDto
@@ -140,7 +138,7 @@ test_400_email_duplication appContext =
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" orgEmail)]
     let expBody = encode expDto
      -- WHEN: Call API

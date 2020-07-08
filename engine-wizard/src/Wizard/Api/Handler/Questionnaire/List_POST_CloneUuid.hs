@@ -21,7 +21,4 @@ list_POST_CloneUuid ::
      Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 list_POST_CloneUuid mTokenHeader mCloneUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      cloneQuestionnaire (fromMaybe "" mCloneUuid)
+    runInAuthService $ addTraceUuidHeader =<< cloneQuestionnaire (fromMaybe "" mCloneUuid)

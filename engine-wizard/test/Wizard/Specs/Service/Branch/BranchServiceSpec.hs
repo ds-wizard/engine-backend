@@ -8,12 +8,12 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Event.EventDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG

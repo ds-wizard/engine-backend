@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 
 data AppConfig =
@@ -15,7 +16,7 @@ data AppConfig =
     , _appConfigPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _appConfigDashboard :: AppConfigDashboard
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
-    , _appConfigKnowledgeModelRegistry :: AppConfigRegistry
+    , _appConfigRegistry :: AppConfigRegistry
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
@@ -31,7 +32,7 @@ instance Eq AppConfig where
     _appConfigPrivacyAndSupport a == _appConfigPrivacyAndSupport b &&
     _appConfigDashboard a == _appConfigDashboard b &&
     _appConfigLookAndFeel a == _appConfigLookAndFeel b &&
-    _appConfigKnowledgeModelRegistry a == _appConfigKnowledgeModelRegistry b &&
+    _appConfigRegistry a == _appConfigRegistry b &&
     _appConfigQuestionnaire a == _appConfigQuestionnaire b && _appConfigSubmission a == _appConfigSubmission b
 
 data AppConfigOrganization =
@@ -93,6 +94,7 @@ data AppConfigAuthExternalServiceStyle =
 data AppConfigPrivacyAndSupport =
   AppConfigPrivacyAndSupport
     { _appConfigPrivacyAndSupportPrivacyUrl :: Maybe String
+    , _appConfigPrivacyAndSupportTermsOfServiceUrl :: Maybe String
     , _appConfigPrivacyAndSupportSupportEmail :: Maybe String
     , _appConfigPrivacyAndSupportSupportRepositoryName :: Maybe String
     , _appConfigPrivacyAndSupportSupportRepositoryUrl :: Maybe String
@@ -142,9 +144,17 @@ data AppConfigRegistry =
 
 data AppConfigQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireQuestionnaireVisibility :: SimpleFeature
+    { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
+    , _appConfigQuestionnaireSummaryReport :: SimpleFeature
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigQuestionnaireVisibility =
+  AppConfigQuestionnaireVisibility
+    { _appConfigQuestionnaireVisibilityEnabled :: Bool
+    , _appConfigQuestionnaireVisibilityDefaultValue :: QuestionnaireVisibility
     }
   deriving (Generic, Eq, Show)
 
@@ -159,7 +169,7 @@ data AppConfigQuestionnaireFeedback =
 
 data AppConfigTemplate =
   AppConfigTemplate
-    { _appConfigTemplateRecommendedTemplateUuid :: Maybe U.UUID
+    { _appConfigTemplateRecommendedTemplateId :: Maybe String
     }
   deriving (Generic, Eq, Show)
 
@@ -183,7 +193,7 @@ data AppConfigSubmissionService =
 
 data AppConfigSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateUuid :: U.UUID
+    { _appConfigSubmissionServiceSupportedFormatTemplateId :: String
     , _appConfigSubmissionServiceSupportedFormatFormatUuid :: U.UUID
     }
   deriving (Generic, Eq, Show)

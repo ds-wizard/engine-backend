@@ -1,7 +1,9 @@
 module Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Reference where
 
+import Control.Lens ((^.))
+
 import LensesConfig
-import Shared.Model.Event.EventAccessors
+import Shared.Model.Event.EventLenses
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
@@ -24,4 +26,4 @@ instance ApplyEvent EditReferenceEvent where
 
 instance ApplyEvent DeleteReferenceEvent where
   apply event km =
-    deleteEntityReferenceFromParentNode event questionsM referenceUuids' $ deleteReference km (getEventNodeUuid event)
+    deleteEntityReferenceFromParentNode event questionsM referenceUuids' $ deleteReference km (event ^. entityUuid')

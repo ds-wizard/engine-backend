@@ -26,7 +26,4 @@ list_POST ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_POST mTokenHeader reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      createQuestionnaireMigration qtnUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< createQuestionnaireMigration qtnUuid reqDto

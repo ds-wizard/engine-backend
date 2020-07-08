@@ -15,20 +15,11 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
 import Registry.Model.Statistics.InstanceStatistics
-import Shared.Api.Resource.Event.AnswerEventDTO
-import Shared.Api.Resource.Event.ChapterEventDTO
-import Shared.Api.Resource.Event.ExpertEventDTO
-import Shared.Api.Resource.Event.IntegrationEventDTO
-import Shared.Api.Resource.Event.KnowledgeModelEventDTO
-import Shared.Api.Resource.Event.MoveEventDTO
-import Shared.Api.Resource.Event.QuestionEventDTO
-import Shared.Api.Resource.Event.ReferenceEventDTO
-import Shared.Api.Resource.Event.TagEventDTO
 import Shared.Api.Resource.Info.InfoDTO
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Config.BuildInfoConfig
+import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
 import Shared.Model.Event.EventField
@@ -43,6 +34,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Model.Template.Template
 
 -- -------------------------------------
 -- Model
@@ -60,6 +52,8 @@ makeFields ''ServerConfigDatabase
 makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
+
+makeFields ''ServerConfigLogging
 
 makeFields ''BuildInfoConfig
 
@@ -204,134 +198,25 @@ makeFields ''PackageBundle
 -- Model / Statistics
 makeFields ''InstanceStatistics
 
+-- Model / Template
+makeFields ''Template
+
+makeFields ''TemplateAllowedPackage
+
+makeFields ''TemplateFormat
+
+makeFields ''TemplateFile
+
+makeFields ''TemplateAsset
+
 -- -------------------------------------
 -- Api / Resource
 -- -------------------------------------
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
 
--- Api / Resource / Event
-makeFields ''AddKnowledgeModelEventDTO
-
-makeFields ''EditKnowledgeModelEventDTO
-
-makeFields ''AddChapterEventDTO
-
-makeFields ''EditChapterEventDTO
-
-makeFields ''DeleteChapterEventDTO
-
-makeFields ''AddQuestionEventDTO
-
-makeFields ''AddOptionsQuestionEventDTO
-
-makeFields ''AddListQuestionEventDTO
-
-makeFields ''AddValueQuestionEventDTO
-
-makeFields ''AddIntegrationQuestionEventDTO
-
-makeFields ''EditQuestionEventDTO
-
-makeFields ''EditOptionsQuestionEventDTO
-
-makeFields ''EditListQuestionEventDTO
-
-makeFields ''EditValueQuestionEventDTO
-
-makeFields ''EditIntegrationQuestionEventDTO
-
-makeFields ''DeleteQuestionEventDTO
-
-makeFields ''AddAnswerEventDTO
-
-makeFields ''EditAnswerEventDTO
-
-makeFields ''DeleteAnswerEventDTO
-
-makeFields ''AddExpertEventDTO
-
-makeFields ''EditExpertEventDTO
-
-makeFields ''DeleteExpertEventDTO
-
-makeFields ''AddReferenceEventDTO
-
-makeFields ''AddResourcePageReferenceEventDTO
-
-makeFields ''AddURLReferenceEventDTO
-
-makeFields ''AddCrossReferenceEventDTO
-
-makeFields ''EditReferenceEventDTO
-
-makeFields ''EditResourcePageReferenceEventDTO
-
-makeFields ''EditURLReferenceEventDTO
-
-makeFields ''EditCrossReferenceEventDTO
-
-makeFields ''DeleteReferenceEventDTO
-
-makeFields ''AddTagEventDTO
-
-makeFields ''EditTagEventDTO
-
-makeFields ''DeleteTagEventDTO
-
-makeFields ''AddIntegrationEventDTO
-
-makeFields ''EditIntegrationEventDTO
-
-makeFields ''DeleteIntegrationEventDTO
-
-makeFields ''MoveQuestionEventDTO
-
-makeFields ''MoveAnswerEventDTO
-
-makeFields ''MoveExpertEventDTO
-
-makeFields ''MoveReferenceEventDTO
-
 -- Api / Resource / Info
 makeFields ''InfoDTO
-
--- Api / Resource / KnowledgeModel
-makeFields ''KnowledgeModelDTO
-
-makeFields ''KnowledgeModelEntitiesDTO
-
-makeFields ''ChapterDTO
-
-makeFields ''QuestionDTO
-
-makeFields ''OptionsQuestionDTO
-
-makeFields ''ListQuestionDTO
-
-makeFields ''ValueQuestionDTO
-
-makeFields ''IntegrationQuestionDTO
-
-makeFields ''AnswerDTO
-
-makeFields ''ExpertDTO
-
-makeFields ''ReferenceDTO
-
-makeFields ''ResourcePageReferenceDTO
-
-makeFields ''URLReferenceDTO
-
-makeFields ''CrossReferenceDTO
-
-makeFields ''MetricDTO
-
-makeFields ''MetricMeasureDTO
-
-makeFields ''TagDTO
-
-makeFields ''IntegrationDTO
 
 -- Api / Resource / Organization
 makeFields ''OrganizationDTO

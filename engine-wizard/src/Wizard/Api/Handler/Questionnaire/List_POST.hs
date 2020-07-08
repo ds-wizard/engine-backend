@@ -21,7 +21,4 @@ list_POST ::
      Maybe String -> QuestionnaireCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 list_POST mTokenHeader reqDto =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      createQuestionnaire reqDto
+    runInAuthService $ addTraceUuidHeader =<< createQuestionnaire reqDto

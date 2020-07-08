@@ -11,13 +11,15 @@ import LensesConfig
 import Registry.Api.Handler.Organization.Detail_State_PUT
 import Registry.Api.Handler.Organization.List_POST
 import Registry.Api.Handler.Organization.List_Simple_GET
-import Registry.Api.Handler.Package.List_GET
+import qualified Registry.Api.Handler.Package.List_GET as PKG_List_GET
+import qualified Registry.Api.Handler.Template.List_GET as TML_List_GET
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
 import Registry.Api.Resource.Package.PackageSimpleDTO
+import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Constant.Api
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
@@ -46,7 +48,14 @@ toConfirmOrganizationRegistrationRequest reqDto =
 toRetrievePackagesRequest ::
      AppConfigRegistry -> InstanceStatistics -> ClientM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 toRetrievePackagesRequest appConfig iStat =
-  client list_GET_Api mTokenHeader xUserCountHeaderName xPkgCountHeaderName xQtnCountHeaderName organizationId kmId
+  client
+    PKG_List_GET.list_GET_Api
+    mTokenHeader
+    xUserCountHeaderName
+    xPkgCountHeaderName
+    xQtnCountHeaderName
+    organizationId
+    kmId
   where
     mTokenHeader = Just $ "Bearer " ++ (appConfig ^. token)
     xUserCountHeaderName = Just . show $ iStat ^. userCount
@@ -55,11 +64,29 @@ toRetrievePackagesRequest appConfig iStat =
     organizationId = Nothing
     kmId = Nothing
 
+toRetrieveTemplatesRequest ::
+     AppConfigRegistry -> ClientM (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
+toRetrieveTemplatesRequest appConfig = client TML_List_GET.list_GET_Api mTokenHeader organizationId tmlId
+  where
+    mTokenHeader = Just $ "Bearer " ++ (appConfig ^. token)
+    organizationId = Nothing
+    tmlId = Nothing
+
 toRetrievePackageBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
 toRetrievePackageBundleByIdRequest serverConfig appConfig pkgId =
   HttpRequest
     { _httpRequestRequestMethod = "GET"
     , _httpRequestRequestUrl = serverConfig ^. url ++ "/packages/" ++ pkgId ++ "/bundle"
+    , _httpRequestRequestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token)]
+    , _httpRequestRequestBody = BS.empty
+    , _httpRequestMultipartFileName = Nothing
+    }
+
+toRetrieveTemplateBundleByIdRequest :: ServerConfigRegistry -> AppConfigRegistry -> String -> HttpRequest
+toRetrieveTemplateBundleByIdRequest serverConfig appConfig tmlId =
+  HttpRequest
+    { _httpRequestRequestMethod = "GET"
+    , _httpRequestRequestUrl = serverConfig ^. url ++ "/templates/" ++ tmlId ++ "/bundle"
     , _httpRequestRequestHeaders = M.fromList [(authorizationHeaderName, "Bearer " ++ appConfig ^. token)]
     , _httpRequestRequestBody = BS.empty
     , _httpRequestMultipartFileName = Nothing

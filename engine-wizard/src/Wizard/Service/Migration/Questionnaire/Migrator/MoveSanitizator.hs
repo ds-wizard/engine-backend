@@ -16,9 +16,9 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 import Shared.Model.Questionnaire.QuestionnaireUtil
+import Shared.Util.List (tailSafe)
 import Shared.Util.String (replace)
 import Wizard.Model.Questionnaire.QuestionnaireReply
-import Wizard.Util.List (tailSafe)
 
 sanitizeReplies :: KnowledgeModel -> KnowledgeModel -> [Reply] -> [Reply]
 sanitizeReplies oldKm newKm replies = sanitizeRepliesWithEvents newKm replies (generateEvents oldKm newKm)

@@ -2,10 +2,10 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO where
 
 import GHC.Generics
 
-import Shared.Api.Resource.Event.EventDTO
+import Shared.Model.Event.Event
 
 data ConflictDTO =
-  CorrectorConflictDTO EventDTO
+  CorrectorConflictDTO Event
   deriving (Show, Eq, Generic)
 
 data MigrationStateDTO

@@ -21,11 +21,11 @@ assertExistenceOfOrganizationInDB appContext organization = do
 -- COMPARATORS
 -- --------------------------------
 compareOrganizationDtosWhenCreate resDto expDto = do
-  liftIO $ (resDto ^. organizationId == expDto ^. organizationId) `shouldBe` True
-  liftIO $ (resDto ^. name == expDto ^. name) `shouldBe` True
-  liftIO $ (resDto ^. description == expDto ^. description) `shouldBe` True
-  liftIO $ (resDto ^. email == expDto ^. email) `shouldBe` True
+  liftIO $ resDto ^. organizationId `shouldBe` expDto ^. organizationId
+  liftIO $ resDto ^. name `shouldBe` expDto ^. name
+  liftIO $ resDto ^. description `shouldBe` expDto ^. description
+  liftIO $ resDto ^. email `shouldBe` expDto ^. email
 
-compareOrganizationDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareOrganizationDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
-compareActionKeyDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareActionKeyDtos resDto expDto = liftIO $ resDto `shouldBe` expDto

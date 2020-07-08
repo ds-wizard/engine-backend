@@ -6,9 +6,9 @@ import Shared.Api.Handler.Common
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeJM ()
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Model.Report.Report
 import Wizard.Service.Report.ReportService
 
 type Detail_Report_Preview_POST
@@ -18,16 +18,10 @@ type Detail_Report_Preview_POST
      :> Capture "qtnUuid" String
      :> "report"
      :> "preview"
-     :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] ReportDTO)
+     :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] Report)
 
 detail_report_preview_POST ::
-     Maybe String
-  -> QuestionnaireChangeDTO
-  -> String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] ReportDTO)
+     Maybe String -> QuestionnaireChangeDTO -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Report)
 detail_report_preview_POST mTokenHeader reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< getPreviewOfReportByQuestionnaireUuid qtnUuid reqDto

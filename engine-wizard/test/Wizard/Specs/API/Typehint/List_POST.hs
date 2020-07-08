@@ -2,7 +2,6 @@ module Wizard.Specs.API.Typehint.List_POST
   ( list_post
   ) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,9 +9,8 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 import Wizard.Model.Context.AppContext
@@ -23,7 +21,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /typehints
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /typehints" $ do
     test_200 appContext
@@ -51,7 +49,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = [lifeScienceTypehint, mathematicalTypehint, legalTypehint]
     let expBody = encode expDto
      -- AND: Run migrations
@@ -72,5 +70,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

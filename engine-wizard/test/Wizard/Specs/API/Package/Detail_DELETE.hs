@@ -14,9 +14,9 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Error.Error
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Localization.Messages.Public
@@ -30,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /packages/{pkgId}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith Application
+detail_delete :: AppContext -> SpecWith ((), Application)
 detail_delete appContext =
   describe "DELETE /packages/{pkgId}" $ do
     test_204 appContext
@@ -71,7 +71,7 @@ test_204 appContext =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Compare state in DB with expectation
-    liftIO $ (isLeft eitherPackage) `shouldBe` True
+    liftIO $ isLeft eitherPackage `shouldBe` True
     let (Left (NotExistsError _)) = eitherPackage
      -- AND: We have to end with expression (if there is another way, how to do it, please fix it)
     liftIO $ True `shouldBe` True
@@ -79,7 +79,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
+test_400 appContext =
   it "HTTP 400 BAD REQUEST when package can't be deleted" $
     -- GIVEN: Prepare request
    do
@@ -105,7 +105,7 @@ test_400 appContext = do
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
     -- AND: Compare state in DB with expectation
-    liftIO $ (isRight eitherPackages) `shouldBe` True
+    liftIO $ isRight eitherPackages `shouldBe` True
     let (Right packages) = eitherPackages
     liftIO $ packages `shouldBe` [globalPackageEmpty, globalPackage, netherlandsPackage, netherlandsPackageV2]
 
@@ -117,8 +117,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

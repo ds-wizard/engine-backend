@@ -21,7 +21,7 @@ data Questionnaire =
     , _questionnaireVisibility :: QuestionnaireVisibility
     , _questionnairePackageId :: String
     , _questionnaireSelectedTagUuids :: [U.UUID]
-    , _questionnaireTemplateUuid :: Maybe U.UUID
+    , _questionnaireTemplateId :: Maybe String
     , _questionnaireFormatUuid :: Maybe U.UUID
     , _questionnaireOwnerUuid :: Maybe U.UUID
     , _questionnaireCreatorUuid :: Maybe U.UUID
@@ -40,7 +40,7 @@ instance Eq Questionnaire where
     _questionnaireVisibility a == _questionnaireVisibility b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
-    _questionnaireTemplateUuid a == _questionnaireTemplateUuid b &&
+    _questionnaireTemplateId a == _questionnaireTemplateId b &&
     _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
     _questionnaireOwnerUuid a == _questionnaireOwnerUuid b &&
     _questionnaireCreatorUuid a == _questionnaireCreatorUuid b &&

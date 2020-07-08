@@ -28,7 +28,7 @@ import SharedTest.Specs.Common
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/token
 -- ------------------------------------------------------------------------
-detail_token_put :: AppContext -> SpecWith Application
+detail_token_put :: AppContext -> SpecWith ((), Application)
 detail_token_put appContext =
   describe "PUT /organizations/{orgId}/token" $ do
     test_200 appContext

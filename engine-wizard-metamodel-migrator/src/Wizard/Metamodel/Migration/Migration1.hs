@@ -3,7 +3,12 @@ module Wizard.Metamodel.Migration.Migration1 where
 import Data.Aeson
 
 import qualified Wizard.Metamodel.Event.Version1 as V1
+import qualified Wizard.Metamodel.Event.Version1.Common as V1
+import qualified Wizard.Metamodel.Event.Version1.KnowledgeModel as V1
 import qualified Wizard.Metamodel.Event.Version2 as V2
+import qualified Wizard.Metamodel.Event.Version2.Common as V2
+import qualified Wizard.Metamodel.Event.Version2.KnowledgeModel as V2
+
 
 result2Either :: Result a -> Either String a
 result2Either (Error msg) = Left msg

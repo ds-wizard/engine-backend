@@ -16,8 +16,4 @@ type List_GET
 
 list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [BranchDTO])
 list_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_PERM"
-      getBranches
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService -> runInAuthService $ addTraceUuidHeader =<< getBranches

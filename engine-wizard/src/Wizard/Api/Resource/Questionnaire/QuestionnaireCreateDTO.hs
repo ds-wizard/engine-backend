@@ -11,6 +11,6 @@ data QuestionnaireCreateDTO =
     , _questionnaireCreateDTOPackageId :: String
     , _questionnaireCreateDTOVisibility :: QuestionnaireVisibility
     , _questionnaireCreateDTOTagUuids :: [U.UUID]
-    , _questionnaireCreateDTOTemplateUuid :: Maybe U.UUID
+    , _questionnaireCreateDTOTemplateId :: Maybe String
     }
   deriving (Show, Eq, Generic)

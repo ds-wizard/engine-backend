@@ -10,6 +10,7 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -26,9 +27,19 @@ nlQtnMigrationStateDto :: MigratorStateDTO
 nlQtnMigrationStateDto =
   MigratorStateDTO
     { _migratorStateDTOOldQuestionnaire =
-        toDetailWithPackageWithEventsDTO questionnaire4 netherlandsPackage km1Netherlands QSOutdated
+        toDetailWithPackageWithEventsDTO
+          questionnaire4
+          netherlandsPackage
+          km1Netherlands
+          QSOutdated
+          questionnaireReportEmpty
     , _migratorStateDTONewQuestionnaire =
-        toDetailWithPackageWithEventsDTO questionnaire4Upgraded netherlandsPackageV2 km1NetherlandsV2 QSMigrating
+        toDetailWithPackageWithEventsDTO
+          questionnaire4Upgraded
+          netherlandsPackageV2
+          km1NetherlandsV2
+          QSMigrating
+          questionnaireReportEmpty
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -36,13 +47,19 @@ nlQtnMigrationStatePublicReadOnlyDto :: MigratorStateDTO
 nlQtnMigrationStatePublicReadOnlyDto =
   MigratorStateDTO
     { _migratorStateDTOOldQuestionnaire =
-        toDetailWithPackageWithEventsDTO questionnaire4PublicReadOnly netherlandsPackage km1Netherlands QSOutdated
+        toDetailWithPackageWithEventsDTO
+          questionnaire4PublicReadOnly
+          netherlandsPackage
+          km1Netherlands
+          QSOutdated
+          questionnaireReportEmpty
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4PublicReadOnlyUpgraded
           netherlandsPackageV2
           km1NetherlandsV2
           QSMigrating
+          questionnaireReportEmpty
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -50,9 +67,19 @@ nlQtnMigrationStatePublicDto :: MigratorStateDTO
 nlQtnMigrationStatePublicDto =
   MigratorStateDTO
     { _migratorStateDTOOldQuestionnaire =
-        toDetailWithPackageWithEventsDTO questionnaire4Public netherlandsPackage km1Netherlands QSOutdated
+        toDetailWithPackageWithEventsDTO
+          questionnaire4Public
+          netherlandsPackage
+          km1Netherlands
+          QSOutdated
+          questionnaireReportEmpty
     , _migratorStateDTONewQuestionnaire =
-        toDetailWithPackageWithEventsDTO questionnaire4PublicUpgraded netherlandsPackageV2 km1NetherlandsV2 QSMigrating
+        toDetailWithPackageWithEventsDTO
+          questionnaire4PublicUpgraded
+          netherlandsPackageV2
+          km1NetherlandsV2
+          QSMigrating
+          questionnaireReportEmpty
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

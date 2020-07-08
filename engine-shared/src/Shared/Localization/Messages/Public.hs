@@ -50,6 +50,22 @@ _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION =
     "Your new version has to be higher than the previous version"
     []
 
+-- Template
+_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON =
+  LocaleRecord
+    "error.service.tb.missing_template_json"
+    "Desired definition ('template.json') wasn't found in archive"
+    []
+
+_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON errorMessage =
+  LocaleRecord
+    "error.service.tb.unable_to_decode_template_json"
+    "Desired definition ('template.json') couldn't be decoded (error: '%s')"
+    [errorMessage]
+
+_ERROR_SERVICE_TB__MISSING_ASSET fileName =
+  LocaleRecord "error.service.tb.missing_asset" "Desired asset ('%s') wasn't found in zip" [fileName]
+
 -- --------------------------------------
 -- UTIL
 -- --------------------------------------

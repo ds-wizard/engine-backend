@@ -5,9 +5,10 @@ import Data.Bson
 
 import LensesConfig
 import Registry.Database.BSON.Organization.Organization ()
-import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
+import Registry.Model.Context.ContextLenses ()
 import Registry.Model.Organization.Organization
+import Shared.Database.DAO.Common
 
 entityName = "organization"
 

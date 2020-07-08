@@ -1,5 +1,7 @@
 module Wizard.TestMigration where
 
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Branch.BranchDAO
@@ -9,7 +11,6 @@ import Wizard.Database.DAO.Feedback.FeedbackDAO
 import Wizard.Database.DAO.Metric.MetricDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
@@ -28,6 +29,8 @@ resetDB appContext = do
   runInContext deleteDocuments appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteQuestionnaires appContext
+  runInContext deleteTemplates appContext
+  runInContext deleteTemplateAssetContents appContext
   runInContext KM_MigratorDAO.deleteMigratorStates appContext
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deletePackages appContext

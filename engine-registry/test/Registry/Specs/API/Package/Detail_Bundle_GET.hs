@@ -27,7 +27,7 @@ import Registry.Specs.API.Common
 -- ------------------------------------------------------------------------
 -- GET /packages/{pkgId}/bundle
 -- ------------------------------------------------------------------------
-detail_bundle_get :: AppContext -> SpecWith Application
+detail_bundle_get :: AppContext -> SpecWith ((), Application)
 detail_bundle_get appContext =
   describe "GET /packages/{pkgId}/bundle" $ do
     test_200 appContext

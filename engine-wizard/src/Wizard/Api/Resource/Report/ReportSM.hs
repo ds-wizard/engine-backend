@@ -6,40 +6,39 @@ import Data.Swagger
 import LensesConfig
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Util.Swagger
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Service.Report.ReportMapper
+import Wizard.Model.Report.Report
 
-instance ToSchema ReportDTO where
-  declareNamedSchema = simpleToSchema (toReportDTO report1)
+instance ToSchema Report where
+  declareNamedSchema = simpleToSchema' "_report" report1
 
-instance ToSchema TotalReportDTO where
-  declareNamedSchema = simpleToSchema (toTotalReportDTO report1_total)
+instance ToSchema TotalReport where
+  declareNamedSchema = simpleToSchema' "_totalReport" report1_total
 
-instance ToSchema ChapterReportDTO where
-  declareNamedSchema = simpleToSchema (toChapterReportDTO report1_ch1)
+instance ToSchema ChapterReport where
+  declareNamedSchema = simpleToSchema' "_chapterReport" report1_ch1
 
-instance ToSchema IndicationDTO where
+instance ToSchema Indication where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions
 
-instance ToSchema AnsweredIndicationDTO where
-  declareNamedSchema = simpleToSchema'' "_answeredIndicationDTO" "indicationType" answeredAnsweredIndication
+instance ToSchema AnsweredIndication where
+  declareNamedSchema = simpleToSchema'' "_answeredIndication" "indicationType" answeredAnsweredIndication
 
-instance ToSchema LevelsAnsweredIndicationDTO where
-  declareNamedSchema = simpleToSchema'' "_levelsAnsweredIndicationDTO" "indicationType" levelsAnsweredIndication
+instance ToSchema LevelsAnsweredIndication where
+  declareNamedSchema = simpleToSchema'' "_levelsAnsweredIndication" "indicationType" levelsAnsweredIndication
 
-instance ToSchema MetricSummaryDTO where
-  declareNamedSchema = simpleToSchema metricSummaryF
+instance ToSchema MetricSummary where
+  declareNamedSchema = simpleToSchema' "_metricSummary" metricSummaryF
 
-levelsAnsweredIndication :: LevelsAnsweredIndicationDTO
+levelsAnsweredIndication :: LevelsAnsweredIndication
 levelsAnsweredIndication =
-  LevelsAnsweredIndicationDTO
-    {_levelsAnsweredIndicationDTOAnsweredQuestions = 5, _levelsAnsweredIndicationDTOUnansweredQuestions = 1}
+  LevelsAnsweredIndication
+    {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
 
-answeredAnsweredIndication :: AnsweredIndicationDTO
+answeredAnsweredIndication :: AnsweredIndication
 answeredAnsweredIndication =
-  AnsweredIndicationDTO {_answeredIndicationDTOAnsweredQuestions = 12, _answeredIndicationDTOUnansweredQuestions = 1}
+  AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
 
-metricSummaryF :: MetricSummaryDTO
-metricSummaryF = MetricSummaryDTO {_metricSummaryDTOMetricUuid = metricF ^. uuid, _metricSummaryDTOMeasure = 1.0}
+metricSummaryF :: MetricSummary
+metricSummaryF = MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}

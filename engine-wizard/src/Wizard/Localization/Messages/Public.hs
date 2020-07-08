@@ -49,6 +49,10 @@ _ERROR_VALIDATION__OPENID_PROFILE_INFO_ABSENCE =
 _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
   LocaleRecord "error.validation.submission_definition_absence" "Definition of submission ('%s') is missing" [subId]
 
+-- Delete
+_ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
+  LocaleRecord "error.validation.tml_deletation" "Template '%s' can't be deleted. It's used by some %s" [tmlId, target]
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
@@ -139,6 +143,10 @@ _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
     "error.service.qtn.qtn_cant_be_deleted_because_it_is_used_in_migration"
     "Questionnaire can't be deleted because it's used in some questionnaire migration"
     []
+
+-- Template Bundle
+_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
+  LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]
 
 -- Token
 _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD =

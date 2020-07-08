@@ -41,6 +41,7 @@ userAlbert =
         , "DMP_PERM"
         , "CFG_PERM"
         , "SUBM_PERM"
+        , "TML_PERM"
         ]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
@@ -102,6 +103,17 @@ userIsaac =
     , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
+userIsaacEdited :: User
+userIsaacEdited =
+  userAlbert
+    { _userFirstName = "EDITED: Isaac"
+    , _userLastName = "EDITED: Newton"
+    , _userEmail = "albert.einstein@example.com"
+    , _userAffiliation = Just "EDITED: My University"
+    , _userRole = _USER_ROLE_ADMIN
+    , _userActive = True
+    }
+
 userJohnCreate :: UserCreateDTO
 userJohnCreate =
   UserCreateDTO
@@ -113,16 +125,15 @@ userJohnCreate =
     , _userCreateDTOPassword = "password"
     }
 
-userIsaacChange :: UserChangeDTO
-userIsaacChange =
+userIsaacEditedChange :: UserChangeDTO
+userIsaacEditedChange =
   UserChangeDTO
-    { _userChangeDTOUuid = userAlbert ^. uuid
-    , _userChangeDTOFirstName = "EDITED: Isaac"
-    , _userChangeDTOLastName = "EDITED: Newton"
-    , _userChangeDTOEmail = "albert.einstein@example.com"
-    , _userChangeDTOAffiliation = Just "EDITED: My University"
-    , _userChangeDTORole = _USER_ROLE_ADMIN
-    , _userChangeDTOActive = True
+    { _userChangeDTOFirstName = userIsaacEdited ^. firstName
+    , _userChangeDTOLastName = userIsaacEdited ^. lastName
+    , _userChangeDTOEmail = userIsaacEdited ^. email
+    , _userChangeDTOAffiliation = userIsaacEdited ^. affiliation
+    , _userChangeDTORole = userIsaacEdited ^. role
+    , _userChangeDTOActive = userIsaacEdited ^. active
     }
 
 userAlbertProfile :: UserProfileDTO

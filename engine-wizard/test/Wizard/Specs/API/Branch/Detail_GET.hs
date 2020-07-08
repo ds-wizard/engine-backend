@@ -12,8 +12,8 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Database.DAO.Package.PackageDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Model.Context.AppContext
@@ -24,7 +24,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /branches/{branchId}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
+detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /branches/{branchId}" $ do
     test_200 appContext
@@ -46,12 +46,12 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
+test_200 appContext =
   it "HTTP 200 OK" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = amsterdamBranchDetail
     let expBody = encode expDto
      -- AND: Run migrations
@@ -72,8 +72,7 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "KM_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KM_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

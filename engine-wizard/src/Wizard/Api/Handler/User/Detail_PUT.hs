@@ -21,7 +21,4 @@ type Detail_PUT
 detail_PUT :: Maybe String -> UserChangeDTO -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserDTO)
 detail_PUT mTokenHeader reqDto uUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "UM_PERM"
-      modifyUser uUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyUser uUuid reqDto

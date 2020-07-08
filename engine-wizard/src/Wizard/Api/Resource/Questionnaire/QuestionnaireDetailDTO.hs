@@ -4,10 +4,11 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 
@@ -20,12 +21,13 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOState :: QuestionnaireState
     , _questionnaireDetailDTOPackage :: PackageSimpleDTO
     , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
-    , _questionnaireDetailDTOTemplateUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOTemplateId :: Maybe String
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModelDTO
+    , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: [ReplyDTO]
     , _questionnaireDetailDTOLabels :: [LabelDTO]
     , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOReport :: QuestionnaireReportDTO
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
@@ -41,9 +43,10 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
     _questionnaireDetailDTOSelectedTagUuids a == _questionnaireDetailDTOSelectedTagUuids b &&
-    _questionnaireDetailDTOTemplateUuid a == _questionnaireDetailDTOTemplateUuid b &&
+    _questionnaireDetailDTOTemplateId a == _questionnaireDetailDTOTemplateId b &&
     _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b &&
+    _questionnaireDetailDTOReport a == _questionnaireDetailDTOReport b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b

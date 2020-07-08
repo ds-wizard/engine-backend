@@ -23,6 +23,6 @@ confirmRegistration reqDto = do
   org <- confirmOrganizationRegistration reqDto
   appConfig <- getAppConfig
   let updatedRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = org ^. token}
-  let updatedAppConfig = appConfig & knowledgeModelRegistry .~ updatedRegistry
+  let updatedAppConfig = appConfig & registry .~ updatedRegistry
   modifyAppConfig updatedAppConfig
   return org

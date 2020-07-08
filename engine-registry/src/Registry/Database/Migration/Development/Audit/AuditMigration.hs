@@ -1,6 +1,5 @@
 module Registry.Database.Migration.Development.Audit.AuditMigration where
 
-import Registry.Constant.Component
 import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Util.Logger
 

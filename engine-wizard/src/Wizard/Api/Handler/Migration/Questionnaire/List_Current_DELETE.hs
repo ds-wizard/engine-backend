@@ -20,6 +20,5 @@ list_current_DELETE mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
       cancelQuestionnaireMigration qtnUuid
       return NoContent

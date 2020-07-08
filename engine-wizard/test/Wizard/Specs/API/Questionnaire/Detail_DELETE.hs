@@ -31,7 +31,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- DELETE /questionnaires/{qtnUuid}
 -- ------------------------------------------------------------------------
-detail_delete :: AppContext -> SpecWith Application
+detail_delete :: AppContext -> SpecWith ((), Application)
 detail_delete appContext =
   describe "DELETE /questionnaires/{qtnUuid}" $ do
     test_204 appContext
@@ -117,7 +117,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
+  createNoPermissionTest appContext reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)" appContext questionnaire1
 

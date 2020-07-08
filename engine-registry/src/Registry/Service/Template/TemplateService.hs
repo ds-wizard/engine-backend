@@ -1,0 +1,42 @@
+module Registry.Service.Template.TemplateService where
+
+import Control.Lens ((^.))
+
+import LensesConfig
+import Registry.Api.Resource.Template.TemplateDetailDTO
+import Registry.Api.Resource.Template.TemplateSimpleDTO
+import Registry.Database.DAO.Organization.OrganizationDAO
+import Registry.Model.Context.AppContext
+import Registry.Service.Template.TemplateMapper
+import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Model.Template.Template
+import Shared.Service.Template.TemplateUtil
+import Shared.Util.Identifier
+import Shared.Util.List (foldInContext)
+
+getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
+getTemplates queryParams = do
+  tmpls <- findTemplatesFiltered queryParams
+  foldInContext . mapToSimpleDTO . chooseTheNewest . groupTemplates $ tmpls
+  where
+    mapToSimpleDTO :: [Template] -> [AppContextM TemplateSimpleDTO]
+    mapToSimpleDTO =
+      fmap
+        (\tml -> do
+           org <- findOrganizationByOrgId (tml ^. organizationId)
+           return $ toSimpleDTO tml org)
+
+getTemplateById :: String -> AppContextM TemplateDetailDTO
+getTemplateById tId = do
+  tml <- findTemplateById tId
+  versions <- getTemplateVersions tml
+  org <- findOrganizationByOrgId (tml ^. organizationId)
+  return $ toDetailDTO tml versions org
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+getTemplateVersions :: Template -> AppContextM [String]
+getTemplateVersions tml = do
+  allTmls <- findTemplatesByOrganizationIdAndKmId (tml ^. organizationId) (tml ^. templateId)
+  return . fmap _templateVersion $ allTmls

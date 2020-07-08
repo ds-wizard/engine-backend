@@ -1,5 +1,5 @@
 name: engine-shared
-version: '2.4.0'
+version: '2.5.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -29,15 +29,24 @@ library:
   - bson-generic
   - bytestring
   - case-insensitive
+  - conduit
   - containers
   - cryptonite
   - directory
+  - exceptions
   - fsutils
   - http-types
   - lens
   - memory
+  - mtl
   - monad-logger
+  - mongoDB
+  - network
+  - persistent-mongoDB
+  - pretty-terminal
   - random
+  - raw-strings-qq
+  - retry
   - servant-server
   - servant-multipart
   - servant-swagger
@@ -49,6 +58,7 @@ library:
   - uuid
   - wai
   - yaml
+  - zip-archive
 
 tests:
   hspec:
@@ -73,9 +83,9 @@ tests:
     - hspec
     - hspec-expectations-pretty-diff
     - hspec-wai
-    - hspec-wai-json
 
 default-extensions:
+  - DataKinds
   - DeriveGeneric
   - DuplicateRecordFields
   - ExistentialQuantification

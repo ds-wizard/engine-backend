@@ -27,7 +27,4 @@ list_current_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
 list_current_PUT mTokenHeader reqDto qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "QTN_PERM"
-      modifyQuestionnaireMigration qtnUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyQuestionnaireMigration qtnUuid reqDto

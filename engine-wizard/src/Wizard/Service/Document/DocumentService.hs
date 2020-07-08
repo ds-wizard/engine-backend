@@ -1,22 +1,25 @@
 module Wizard.Service.Document.DocumentService where
 
 import Control.Lens ((^.))
-import Control.Monad (forM)
-import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import qualified Data.ByteString.Char8 as BS
+import Data.Foldable (traverse_)
 import Data.Hashable
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig hiding (hash)
+import Shared.Constant.Component
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextJM ()
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Constant.Component
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
@@ -26,35 +29,29 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
+import Wizard.Service.Common.ACL
 import Wizard.Service.Document.DocumentMapper
+import Wizard.Service.Document.DocumentUtils
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
 import Wizard.Util.Logger
 
-getDocumentsFiltered :: [(String, String)] -> AppContextM [DocumentDTO]
-getDocumentsFiltered queryParams = do
-  currentUser <- getCurrentUser
-  documents <- _getDocuments currentUser
-  forM documents enhance
-  where
-    _getDocuments currentUser =
-      if currentUser ^. role == _USER_ROLE_ADMIN
-        then findDocumentsFiltered queryParams
-        else findDocumentsFiltered (queryParams ++ [("ownerUuid", U.toString $ currentUser ^. uuid)])
-    enhance :: Document -> AppContextM DocumentDTO
-    enhance doc = do
-      tml <- getTemplateByUuid (U.toString $ doc ^. templateUuid) Nothing
-      mQtn <- catchError (getQuestionnaireById' (U.toString $ doc ^. questionnaireUuid)) (\_ -> return Nothing)
-      return $ toDTO doc mQtn tml
+getDocumentsForCurrentUserPageDto ::
+     Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
+getDocumentsForCurrentUserPageDto mQuestionnaireUuid mQuery pageable sort = do
+  checkPermission _DMP_PERM
+  docPage <- findDocumentsForCurrentUserPage mQuestionnaireUuid mQuery pageable sort
+  traverse enhanceDocument docPage
 
 createDocument :: DocumentCreateDTO -> AppContextM DocumentDTO
 createDocument reqDto = createDocumentWithDurability reqDto PersistentDocumentDurability
 
 createDocumentWithDurability :: DocumentCreateDTO -> DocumentDurability -> AppContextM DocumentDTO
 createDocumentWithDurability dto durability = do
+  checkPermission _DMP_PERM
   qtnDto <- getQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
-  tml <- getTemplateByUuid (U.toString $ dto ^. templateUuid) (Just $ qtn ^. packageId)
+  tml <- getTemplateByUuid (dto ^. templateId) (Just $ qtn ^. packageId)
   currentUser <- getCurrentUser
   dUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
@@ -66,6 +63,7 @@ createDocumentWithDurability dto durability = do
 
 deleteDocument :: String -> AppContextM ()
 deleteDocument docUuid = do
+  checkPermission _DMP_PERM
   currentUser <- getCurrentUser
   doc <- findDocumentById docUuid
   if currentUser ^. role == _USER_ROLE_ADMIN || currentUser ^. uuid == doc ^. ownerUuid
@@ -85,15 +83,15 @@ cleanDocuments :: AppContextM ()
 cleanDocuments = do
   docs <- findDocumentsFiltered [("durability", "TemporallyDocumentDurability")]
   let docsFiltered = filter (\d -> d ^. state == DoneDocumentState || d ^. state == ErrorDocumentState) docs
-  forM
-    docsFiltered
+  traverse_
     (\d -> do
        deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
        deleteDocumentContentsFiltered [("filename", U.toString $ d ^. uuid)])
-  return ()
+    docsFiltered
 
 createPreview :: String -> AppContextM (Document, BS.ByteString)
 createPreview qtnUuid = do
+  checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
   let repliesHash = hash (qtn ^. replies)
@@ -114,13 +112,13 @@ createPreview qtnUuid = do
     createNewDoc :: Questionnaire -> AppContextM (Document, BS.ByteString)
     createNewDoc qtn = do
       logInfoU _CMP_SERVICE "Generating new preview"
-      case (qtn ^. templateUuid, qtn ^. formatUuid) of
+      case (qtn ^. templateId, qtn ^. formatUuid) of
         (Just tUuid, Just fUuid) -> do
           let reqDto =
                 DocumentCreateDTO
                   { _documentCreateDTOName = qtn ^. name
                   , _documentCreateDTOQuestionnaireUuid = qtn ^. uuid
-                  , _documentCreateDTOTemplateUuid = tUuid
+                  , _documentCreateDTOTemplateId = tUuid
                   , _documentCreateDTOFormatUuid = fUuid
                   }
           docDto <- createDocumentWithDurability reqDto TemporallyDocumentDurability

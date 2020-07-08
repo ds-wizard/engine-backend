@@ -28,7 +28,4 @@ detail_version_detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] PackageSimpleDTO)
 detail_version_detail_PUT mTokenHeader reqDto bUuid version =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "KM_PUBLISH_PERM"
-      publishPackage bUuid version reqDto
+    runInAuthService $ addTraceUuidHeader =<< publishPackage bUuid version reqDto

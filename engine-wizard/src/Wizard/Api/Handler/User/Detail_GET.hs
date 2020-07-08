@@ -18,7 +18,4 @@ type Detail_GET
 detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserDTO)
 detail_GET mTokenHeader uUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
-    addTraceUuidHeader =<< do
-      checkPermission mTokenHeader "UM_PERM"
-      getUserById uUuid
+    runInAuthService $ addTraceUuidHeader =<< getUserByIdDto uUuid

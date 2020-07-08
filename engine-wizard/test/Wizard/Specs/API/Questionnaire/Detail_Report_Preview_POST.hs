@@ -10,16 +10,14 @@ import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.Report.ReportJM ()
-import Wizard.Database.DAO.Package.PackageDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -27,7 +25,7 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Report.ReportMapper
+import Wizard.Model.Report.Report
 
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
@@ -37,7 +35,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /questionnaires/{qtnUuid}/report/preview
 -- ------------------------------------------------------------------------
-detail_report_preview_post :: AppContext -> SpecWith Application
+detail_report_preview_post :: AppContext -> SpecWith ((), Application)
 detail_report_preview_post appContext =
   describe "POST /questionnaires/{qtnUuid}/report/preview" $ do
     test_200 appContext
@@ -75,8 +73,8 @@ create_test_200 title appContext qtn authHeader =
     let reqHeaders = reqHeadersT reqAuthHeader
      -- GIVEN: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
-    let expDto = toReportDTO report1
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+    let expDto = report1
      -- AND: Run migrations
     runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO (insertQuestionnaire (qtn & replies .~ [])) appContext
@@ -84,7 +82,7 @@ create_test_200 title appContext qtn authHeader =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, ReportDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, Report)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareReportDtos resBody expDto
@@ -92,12 +90,7 @@ create_test_200 title appContext qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext =
-  createInvalidJsonTest
-    reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
-    [HJ.json| { name: "Common Questionnaire" } |]
-    "visibility"
+test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) "visibility"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -108,13 +101,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest
-    (appContext ^. serverConfig)
-    reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
-    [reqCtHeader]
-    reqBody
-    "QTN_PERM"
+  createNoPermissionTest appContext reqMethod (reqUrlT $ questionnaire3 ^. uuid) [reqCtHeader] reqBody "QTN_PERM"
   it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
      -- GIVEN: Prepare request
    do
@@ -122,7 +109,7 @@ test_403 appContext = do
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations

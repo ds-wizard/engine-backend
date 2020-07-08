@@ -5,13 +5,13 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Shared.Api.Resource.KnowledgeModel.KnowledgeModelDTO
-import Wizard.Api.Resource.Level.LevelDTO
+import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
-import Wizard.Api.Resource.Report.ReportDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Level.Level
+import Wizard.Model.Report.Report
 
 data DocumentContextDTO =
   DocumentContextDTO
@@ -22,10 +22,10 @@ data DocumentContextDTO =
     , _documentContextDTOQuestionnaireReplies :: [ReplyDTO]
     , _documentContextDTOQuestionnaireRepliesMap :: Map String ReplyDTO
     , _documentContextDTOLevel :: Int
-    , _documentContextDTOKnowledgeModel :: KnowledgeModelDTO
-    , _documentContextDTOMetrics :: [MetricDTO]
-    , _documentContextDTOLevels :: [LevelDTO]
-    , _documentContextDTOReport :: ReportDTO
+    , _documentContextDTOKnowledgeModel :: KnowledgeModel
+    , _documentContextDTOMetrics :: [Metric]
+    , _documentContextDTOLevels :: [Level]
+    , _documentContextDTOReport :: Report
     , _documentContextDTOPackage :: PackageSimpleDTO
     , _documentContextDTOOrganization :: AppConfigOrganization
     , _documentContextDTOCreatedBy :: Maybe UserDTO
@@ -53,5 +53,6 @@ instance Eq DocumentContextDTO where
 data DocumentContextConfigDTO =
   DocumentContextConfigDTO
     { _documentContextConfigDTOLevelsEnabled :: Bool
+    , _documentContextConfigDTOClientUrl :: String
     }
   deriving (Show, Eq, Generic)

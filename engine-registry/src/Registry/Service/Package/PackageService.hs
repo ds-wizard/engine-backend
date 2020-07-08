@@ -5,30 +5,27 @@ module Registry.Service.Package.PackageService
   ) where
 
 import Control.Lens ((^.))
-import Data.List (maximumBy)
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.Database.DAO.Package.PackageDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper
-import Registry.Util.List (foldInContext', groupBy)
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import Shared.Service.Package.PackageUtil
+import Shared.Util.Identifier
+import Shared.Util.List (foldInContext)
 
 getSimplePackagesFiltered :: [(String, String)] -> [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams headers = do
   _ <- auditListPackages headers
   pkgs <- findPackagesFiltered queryParams
-  foldInContext' . mapToSimpleDTO . chooseTheNewest . groupPkgs $ pkgs
+  foldInContext . mapToSimpleDTO . chooseTheNewest . groupPackages $ pkgs
   where
-    groupPkgs :: [Package] -> [[Package]]
-    groupPkgs = groupBy (\p1 p2 -> (p1 ^. organizationId) == (p2 ^. organizationId) && (p1 ^. kmId) == (p2 ^. kmId))
-    chooseTheNewest :: [[Package]] -> [Package]
-    chooseTheNewest = fmap (maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)))
     mapToSimpleDTO :: [Package] -> [AppContextM PackageSimpleDTO]
     mapToSimpleDTO =
       fmap

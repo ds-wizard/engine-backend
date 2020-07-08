@@ -25,7 +25,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /feedbacks/{feedbackUuid}
 -- ------------------------------------------------------------------------
-detail_get :: AppContext -> SpecWith Application
+detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /feedbacks/{feedbackUuid}" $ do
     test_200 appContext

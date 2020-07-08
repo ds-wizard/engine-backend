@@ -16,7 +16,7 @@ type Detail_State_PUT
      :> Capture "uUuid" String
      :> "state"
      :> QueryParam "hash" String
-     :> Verb PUT 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserStateDTO)
+     :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserStateDTO)
 
 detail_state_PUT ::
      Maybe String

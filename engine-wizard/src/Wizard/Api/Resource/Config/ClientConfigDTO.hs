@@ -13,7 +13,7 @@ data ClientConfigDTO =
     , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _clientConfigDTODashboard :: AppConfigDashboard
     , _clientConfigDTOLookAndFeel :: AppConfigLookAndFeel
-    , _clientConfigDTOKnowledgeModelRegistry :: ClientConfigRegistryDTO
+    , _clientConfigDTORegistry :: ClientConfigRegistryDTO
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
@@ -52,7 +52,8 @@ data ClientConfigRegistryDTO =
 
 data ClientConfigQuestionnaireDTO =
   ClientConfigQuestionnaireDTO
-    { _clientConfigQuestionnaireDTOQuestionnaireVisibility :: SimpleFeature
+    { _clientConfigQuestionnaireDTOQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
+    , _clientConfigQuestionnaireDTOSummaryReport :: SimpleFeature
     , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
     }

@@ -6,6 +6,18 @@ import LensesConfig
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.PackageBundle.PackageBundle
 
+netherlandsPackageBudle :: PackageBundle
+netherlandsPackageBudle =
+  PackageBundle
+    { _packageBundleBundleId = netherlandsPackage ^. pId
+    , _packageBundleName = netherlandsPackage ^. name
+    , _packageBundleOrganizationId = netherlandsPackage ^. organizationId
+    , _packageBundleKmId = netherlandsPackage ^. kmId
+    , _packageBundleVersion = netherlandsPackage ^. version
+    , _packageBundleMetamodelVersion = netherlandsPackage ^. metamodelVersion
+    , _packageBundlePackages = [globalPackage, netherlandsPackage]
+    }
+
 netherlandsPackageV2Budle :: PackageBundle
 netherlandsPackageV2Budle =
   PackageBundle

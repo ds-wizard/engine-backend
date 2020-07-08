@@ -12,7 +12,6 @@ import Test.Hspec.Wai.Matcher
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Metric.MetricMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -20,7 +19,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- GET /metrics
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith Application
+list_get :: AppContext -> SpecWith ((), Application)
 list_get appContext =
   describe "GET /metrics/" $ do
     test_200 appContext
@@ -45,8 +44,8 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
-    let expDto = toMetricDTO <$> [metricF, metricA, metricI, metricR, metricG, metricO]
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = [metricF, metricA, metricI, metricR, metricG, metricO]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO MTR.runMigration appContext

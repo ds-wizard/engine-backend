@@ -2,14 +2,13 @@ module Wizard.Specs.API.Branch.List_POST
   ( list_post
   ) where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (?~), (^.))
 import Data.Aeson (encode)
 import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
-import qualified Test.Hspec.Wai.JSON as HJ
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
@@ -31,7 +30,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 -- POST /branches
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith Application
+list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /branches" $ do
     test_201 appContext
@@ -58,12 +57,12 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
+test_201 appContext =
   it "HTTP 201 CREATED" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 201
-    let expHeaders = [resCtHeaderPlain] ++ resCorsHeadersPlain
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = amsterdamBranchDetail
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -89,12 +88,12 @@ test_201 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl [HJ.json| { name: "Common KM" } |] "kmId"
+test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "kmId"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_not_valid_kmId appContext = do
+test_400_not_valid_kmId appContext =
   it "HTTP 400 BAD REQUEST when kmId is not in valid format" $
      -- GIVEN: Prepare request
    do
@@ -102,7 +101,7 @@ test_400_not_valid_kmId appContext = do
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)]
     let expBody = encode expDto
     -- WHEN: Call API
@@ -117,12 +116,12 @@ test_400_not_valid_kmId appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_already_taken_kmId appContext = do
+test_400_already_taken_kmId appContext =
   it "HTTP 400 BAD REQUEST when kmId is already taken" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId)]
     let expBody = encode expDto
      -- AND: Run migrations
@@ -145,15 +144,15 @@ test_400_already_taken_kmId appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_not_existing_previousPackageId appContext = do
+test_400_not_existing_previousPackageId appContext =
   it "HTTP 400 BAD REQUEST when previousPackageId does not exist" $
      -- GIVEN: Prepare request
    do
-    let reqDto = amsterdamBranchCreate & previousPackageId .~ (Just "org.nl:core-nl:9.9.9")
+    let reqDto = amsterdamBranchCreate & previousPackageId ?~ "org.nl:core-nl:9.9.9"
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 400
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createValidationError [] [("previousPackageId", _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE)]
     let expBody = encode expDto
     -- WHEN: Call API
@@ -173,5 +172,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext =
-  createNoPermissionTest (appContext ^. serverConfig) reqMethod reqUrl [reqCtHeader] reqBody "KM_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "KM_PERM"

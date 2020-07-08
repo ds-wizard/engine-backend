@@ -6,11 +6,12 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
-import Wizard.Database.Migration.Development.Template.Data.Templates
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Config.SimpleFeature
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.User.User
 
 defaultSecret = "01234567890123456789012345678901"
@@ -23,7 +24,7 @@ defaultAppConfig =
     , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
     , _appConfigDashboard = defaultDashboard
     , _appConfigLookAndFeel = defaultLookAndFeel
-    , _appConfigKnowledgeModelRegistry = defaultRegistry
+    , _appConfigRegistry = defaultRegistry
     , _appConfigQuestionnaire = defaultQuestionnaire
     , _appConfigTemplate = defaultTemplate
     , _appConfigSubmission = defaultSubmission
@@ -86,6 +87,7 @@ defaultPrivacyAndSupport :: AppConfigPrivacyAndSupport
 defaultPrivacyAndSupport =
   AppConfigPrivacyAndSupport
     { _appConfigPrivacyAndSupportPrivacyUrl = Nothing
+    , _appConfigPrivacyAndSupportTermsOfServiceUrl = Nothing
     , _appConfigPrivacyAndSupportSupportEmail = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryName = Nothing
     , _appConfigPrivacyAndSupportSupportRepositoryUrl = Nothing
@@ -131,9 +133,17 @@ defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfi
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =
   AppConfigQuestionnaire
-    { _appConfigQuestionnaireLevels = SimpleFeature True
+    { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
+    , _appConfigQuestionnaireSummaryReport = SimpleFeature True
+    , _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
-    , _appConfigQuestionnaireQuestionnaireVisibility = SimpleFeature True
+    }
+
+defaultQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
+defaultQuestionnaireVisibility =
+  AppConfigQuestionnaireVisibility
+    { _appConfigQuestionnaireVisibilityEnabled = True
+    , _appConfigQuestionnaireVisibilityDefaultValue = PrivateQuestionnaire
     }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback
@@ -146,7 +156,7 @@ defaultFeedback =
     }
 
 defaultTemplate :: AppConfigTemplate
-defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateUuid = Just $ commonWizardTemplate ^. uuid}
+defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateId = Just $ commonWizardTemplate ^. tId}
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission =
@@ -172,7 +182,7 @@ defaultSubmissionServiceSecretProp = "Secret"
 defaultSubmissionServiceSupportedFormat :: AppConfigSubmissionServiceSupportedFormat
 defaultSubmissionServiceSupportedFormat =
   AppConfigSubmissionServiceSupportedFormat
-    { _appConfigSubmissionServiceSupportedFormatTemplateUuid = commonWizardTemplate ^. uuid
+    { _appConfigSubmissionServiceSupportedFormatTemplateId = commonWizardTemplate ^. tId
     , _appConfigSubmissionServiceSupportedFormatFormatUuid = templateFormatJson ^. uuid
     }
 

@@ -2,10 +2,11 @@ module Wizard.Database.DAO.BookReference.BookReferenceDAO where
 
 import Data.Bson
 
+import Shared.Database.DAO.Common
 import Wizard.Database.BSON.BookReference.BookReference ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 
 entityName = "bookReference"
 
