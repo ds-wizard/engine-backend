@@ -14,8 +14,9 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.PackageBundle.PackageBundleService
 
 type Detail_Bundle_GET
-   = "export"
+   = "packages"
      :> Capture "pkgId" String
+     :> "bundle"
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_bundle_GET ::

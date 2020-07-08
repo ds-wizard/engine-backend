@@ -18,13 +18,13 @@ cronJob :: MVar () -> BaseContext -> IO ()
 cronJob shutdownFlag context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel $ do
-        logInfo _CMP_WORKER "sheduling workers started"
+        logInfo _CMP_WORKER "scheduling workers started"
         threadIds <-
           liftIO . execSchedule $ do
             feedbackWorker context
             documentWorker context
         setupHandlers loggingLevel shutdownFlag threadIds
-        logInfo _CMP_WORKER "sheduling workers completed"
+        logInfo _CMP_WORKER "scheduling workers completed"
 
 setupHandlers loggingLevel shutdownFlag threadIds = do
   logInfo _CMP_WORKER "installing handlers"
@@ -34,8 +34,8 @@ setupHandlers loggingLevel shutdownFlag threadIds = do
 
 handler loggingLevel shutdownFlag threadIds typeSignal =
   CatchOnce . runLogging loggingLevel $ do
-    logInfo _CMP_WORKER "shuting down workers: started"
+    logInfo _CMP_WORKER "shutting down workers: started"
     liftIO $ traverse killThread threadIds
-    logInfo _CMP_WORKER "shuting down workers: notifing web server"
+    logInfo _CMP_WORKER "shutting down workers: notifing web server"
     liftIO $ putMVar shutdownFlag ()
-    logInfo _CMP_WORKER "shuting down workers: completed"
+    logInfo _CMP_WORKER "shutting down workers: completed"
