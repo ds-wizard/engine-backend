@@ -18,6 +18,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOName :: String
     , _questionnaireDetailDTOLevel :: Int
     , _questionnaireDetailDTOVisibility :: QuestionnaireVisibility
+    , _questionnaireDetailDTOSharing :: QuestionnaireSharing
     , _questionnaireDetailDTOState :: QuestionnaireState
     , _questionnaireDetailDTOPackage :: PackageSimpleDTO
     , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
@@ -40,6 +41,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOName a == _questionnaireDetailDTOName b &&
     _questionnaireDetailDTOLevel a == _questionnaireDetailDTOLevel b &&
     _questionnaireDetailDTOVisibility a == _questionnaireDetailDTOVisibility b &&
+    _questionnaireDetailDTOSharing a == _questionnaireDetailDTOSharing b &&
     _questionnaireDetailDTOState a == _questionnaireDetailDTOState b &&
     _questionnaireDetailDTOPackage a == _questionnaireDetailDTOPackage b &&
     _questionnaireDetailDTOSelectedTagUuids a == _questionnaireDetailDTOSelectedTagUuids b &&

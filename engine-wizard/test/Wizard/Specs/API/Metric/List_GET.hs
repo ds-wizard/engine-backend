@@ -20,10 +20,7 @@ import Wizard.Specs.Common
 -- GET /metrics
 -- ------------------------------------------------------------------------
 list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /metrics/" $ do
-    test_200 appContext
-    test_401 appContext
+list_get appContext = describe "GET /metrics/" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -55,8 +52,3 @@ test_200 appContext =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody

@@ -52,6 +52,7 @@ import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -158,6 +159,8 @@ makeFields ''AppConfigRegistry
 makeFields ''AppConfigQuestionnaire
 
 makeFields ''AppConfigQuestionnaireVisibility
+
+makeFields ''AppConfigQuestionnaireSharing
 
 makeFields ''AppConfigQuestionnaireFeedback
 
@@ -486,6 +489,8 @@ makeFields ''QuestionnaireDTO
 makeFields ''QuestionnaireDetailDTO
 
 makeFields ''QuestionnaireChangeDTO
+
+makeFields ''QuestionnaireContentChangeDTO
 
 makeFields ''ReplyDTO
 

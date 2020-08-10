@@ -145,6 +145,7 @@ data AppConfigRegistry =
 data AppConfigQuestionnaire =
   AppConfigQuestionnaire
     { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
+    , _appConfigQuestionnaireQuestionnaireSharing :: AppConfigQuestionnaireSharing
     , _appConfigQuestionnaireSummaryReport :: SimpleFeature
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
@@ -155,6 +156,13 @@ data AppConfigQuestionnaireVisibility =
   AppConfigQuestionnaireVisibility
     { _appConfigQuestionnaireVisibilityEnabled :: Bool
     , _appConfigQuestionnaireVisibilityDefaultValue :: QuestionnaireVisibility
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigQuestionnaireSharing =
+  AppConfigQuestionnaireSharing
+    { _appConfigQuestionnaireSharingEnabled :: Bool
+    , _appConfigQuestionnaireSharingDefaultValue :: QuestionnaireSharing
     }
   deriving (Generic, Eq, Show)
 

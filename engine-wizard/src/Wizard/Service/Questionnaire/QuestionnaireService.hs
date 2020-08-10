@@ -15,6 +15,7 @@ import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -50,7 +51,8 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid = do
   qtnState <- getQuestionnaireState (U.toString qtnUuid) (reqDto ^. packageId)
   now <- liftIO getCurrentTime
   visibility <- extractVisibility reqDto
-  let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid visibility (currentUser ^. uuid) now now
+  sharing <- extractSharing reqDto
+  let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid visibility sharing (currentUser ^. uuid) now now
   insertQuestionnaire qtn
   let mOwner =
         case qtn ^. ownerUuid of
@@ -96,7 +98,7 @@ getQuestionnaireById' qtnUuid = do
   mQtn <- findQuestionnaireById' qtnUuid
   case mQtn of
     Just qtn -> do
-      checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
+      checkPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
       package <- findPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
@@ -109,9 +111,8 @@ getQuestionnaireById' qtnUuid = do
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
-  checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
-  checkPermissionToQtn (qtn ^. visibility) (qtn ^. ownerUuid)
+  checkPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
   package <- findPackageWithEventsById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (package ^. pId)
@@ -126,7 +127,8 @@ modifyQuestionnaire qtnUuid reqDto = do
   currentUser <- getCurrentUser
   now <- liftIO getCurrentTime
   visibility <- extractVisibility reqDto
-  let updatedQtn = fromChangeDTO qtnDto reqDto visibility (currentUser ^. uuid) now
+  sharing <- extractSharing reqDto
+  let updatedQtn = fromChangeDTO qtnDto reqDto visibility sharing (currentUser ^. uuid) now
   let pkgId = qtnDto ^. package . pId
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
@@ -143,3 +145,12 @@ deleteQuestionnaire qtnUuid = do
   deleteQuestionnaireById qtnUuid
   deleteMigratorStateByNewQuestionnaireId qtnUuid
   return ()
+
+modifyContent :: String -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
+modifyContent qtnUuid reqDto = do
+  qtn <- findQuestionnaireById qtnUuid
+  checkEditRepliesPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  now <- liftIO getCurrentTime
+  let updatedQtn = fromContentChangeDTO qtn reqDto now
+  updateQuestionnaireById updatedQtn
+  return reqDto

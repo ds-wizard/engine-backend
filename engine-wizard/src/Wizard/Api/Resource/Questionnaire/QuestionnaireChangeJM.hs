@@ -4,8 +4,7 @@ import Data.Aeson
 
 import Shared.Util.JSON
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 
 instance FromJSON QuestionnaireChangeDTO where

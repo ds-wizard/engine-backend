@@ -13,6 +13,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Questionnaire.QuestionnaireUtil
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Report.Data.Reports
@@ -31,6 +32,7 @@ questionnaire1 =
     , _questionnaireName = "My Private Questionnaire"
     , _questionnaireLevel = 1
     , _questionnaireVisibility = PrivateQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
@@ -47,20 +49,25 @@ questionnaire1Edited :: Questionnaire
 questionnaire1Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire1 ^. uuid
-    , _questionnaireName = "EDITED" ++ (questionnaire1 ^. name)
-    , _questionnaireLevel = 3
+    , _questionnaireName = "EDITED: " ++ (questionnaire1 ^. name)
+    , _questionnaireLevel = questionnaire1 ^. level
     , _questionnaireVisibility = PublicQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire1 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire1 ^. replies
-    , _questionnaireLabels = fLabelsEdited
+    , _questionnaireLabels = questionnaire1 ^. labels
     , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = questionnaire1 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
     }
+
+questionnaire1ContentEdited :: Questionnaire
+questionnaire1ContentEdited =
+  questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire1Dto :: QuestionnaireDTO
 questionnaire1Dto =
@@ -72,6 +79,7 @@ questionnaire1Create =
     { _questionnaireCreateDTOName = questionnaire1 ^. name
     , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
     , _questionnaireCreateDTOVisibility = questionnaire1 ^. visibility
+    , _questionnaireCreateDTOSharing = questionnaire1 ^. sharing
     , _questionnaireCreateDTOTagUuids = []
     , _questionnaireCreateDTOTemplateId = questionnaire1 ^. templateId
     }
@@ -81,24 +89,7 @@ questionnaire1EditedChange =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = questionnaire1Edited ^. name
     , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
-    , _questionnaireChangeDTOLevel = 1
-    , _questionnaireChangeDTOReplies =
-        toReplyDTO <$>
-        [ rQ1
-        , rQ2
-        , rQ2_aYes_fuQ1
-        , rQ3
-        , rQ4
-        , rQ4_it1_q5
-        , rQ4_it1_q5_it1_question7
-        , rQ4_it1_q5_it1_question8
-        , rQ4_it1_q6
-        , rQ4_it2_q5
-        , rQ4_it2_q6
-        , rQ9
-        , rQ10
-        ]
-    , _questionnaireChangeDTOLabels = []
+    , _questionnaireChangeDTOSharing = questionnaire1Edited ^. sharing
     , _questionnaireChangeDTOTemplateId = Nothing
     }
 
@@ -111,6 +102,7 @@ questionnaire2 =
     , _questionnaireName = "My PublicReadOnly Questionnaire"
     , _questionnaireLevel = questionnaire1 ^. level
     , _questionnaireVisibility = PublicReadOnlyQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
@@ -127,20 +119,25 @@ questionnaire2Edited :: Questionnaire
 questionnaire2Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire2 ^. uuid
-    , _questionnaireName = "EDITED" ++ (questionnaire2 ^. name)
-    , _questionnaireLevel = 3
+    , _questionnaireName = "EDITED: " ++ (questionnaire2 ^. name)
+    , _questionnaireLevel = questionnaire2 ^. level
     , _questionnaireVisibility = PublicQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire2 ^. replies
-    , _questionnaireLabels = fLabelsEdited
+    , _questionnaireLabels = questionnaire2 ^. labels
     , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
+
+questionnaire2ContentEdited :: Questionnaire
+questionnaire2ContentEdited =
+  questionnaire2 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire2Dto :: QuestionnaireDTO
 questionnaire2Dto =
@@ -155,6 +152,7 @@ questionnaire3 =
     , _questionnaireName = "My Public Questionnaire"
     , _questionnaireLevel = questionnaire1 ^. level
     , _questionnaireVisibility = PublicQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
@@ -171,20 +169,25 @@ questionnaire3Edited :: Questionnaire
 questionnaire3Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire3 ^. uuid
-    , _questionnaireName = "EDITED" ++ (questionnaire3 ^. name)
-    , _questionnaireLevel = 3
+    , _questionnaireName = "EDITED: " ++ (questionnaire3 ^. name)
+    , _questionnaireLevel = questionnaire3 ^. level
     , _questionnaireVisibility = PrivateQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
     , _questionnaireReplies = questionnaire3 ^. replies
-    , _questionnaireLabels = fLabelsEdited
+    , _questionnaireLabels = questionnaire3 ^. labels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatorUuid = Nothing
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
+
+questionnaire3ContentEdited :: Questionnaire
+questionnaire3ContentEdited =
+  questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire3Dto :: QuestionnaireDTO
 questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing questionnaireReport
@@ -198,6 +201,7 @@ questionnaire4 =
     , _questionnaireName = "Outdated Questionnaire"
     , _questionnaireLevel = 2
     , _questionnaireVisibility = PrivateQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
@@ -233,6 +237,44 @@ questionnaire4PublicUpgraded =
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
+questionnaire5 :: Questionnaire
+questionnaire5 =
+  questionnaire2
+    { _questionnaireUuid = fromJust (U.fromString "abd22b10-63fd-4cb8-bb23-7997ff32eccc")
+    , _questionnaireName = questionnaire2 ^. name ++ " Shared"
+    , _questionnaireSharing = AnyoneWithLinkQuestionnaire
+    }
+
+questionnaire5ContentEdited :: Questionnaire
+questionnaire5ContentEdited =
+  questionnaire5 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaire6 :: Questionnaire
+questionnaire6 =
+  questionnaire3
+    { _questionnaireUuid = fromJust (U.fromString "3c8e7ce6-cb5e-4cd1-a4d1-fb9de55f67ed")
+    , _questionnaireName = questionnaire3 ^. name ++ " Shared"
+    , _questionnaireSharing = AnyoneWithLinkQuestionnaire
+    }
+
+questionnaire6ContentEdited :: Questionnaire
+questionnaire6ContentEdited =
+  questionnaire6 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+contentChangeDTO :: QuestionnaireContentChangeDTO
+contentChangeDTO =
+  QuestionnaireContentChangeDTO
+    { _questionnaireContentChangeDTOLevel = 1
+    , _questionnaireContentChangeDTOReplies = fmap toReplyDTO fReplies
+    , _questionnaireContentChangeDTOLabels = fmap toLabelDTO fLabels
+    }
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
 fReplies :: [Reply]
 fReplies =
   [ rQ1
@@ -249,6 +291,9 @@ fReplies =
   , rQ9
   , rQ10
   ]
+
+fRepliesEdited :: [Reply]
+fRepliesEdited = [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10]
 
 rQ1 :: Reply
 rQ1 =

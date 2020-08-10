@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Util.JSON
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 import Wizard.Model.Config.AppConfig
 
@@ -102,6 +103,12 @@ instance FromJSON AppConfigQuestionnaireVisibility where
 
 instance ToJSON AppConfigQuestionnaireVisibility where
   toJSON = simpleToJSON "_appConfigQuestionnaireVisibility"
+
+instance FromJSON AppConfigQuestionnaireSharing where
+  parseJSON = simpleParseJSON "_appConfigQuestionnaireSharing"
+
+instance ToJSON AppConfigQuestionnaireSharing where
+  toJSON = simpleToJSON "_appConfigQuestionnaireSharing"
 
 instance FromJSON AppConfigQuestionnaireFeedback where
   parseJSON = simpleParseJSON "_appConfigQuestionnaireFeedback"

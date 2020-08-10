@@ -13,12 +13,18 @@ data QuestionnaireVisibility
   | PublicReadOnlyQuestionnaire
   deriving (Show, Eq, Generic)
 
+data QuestionnaireSharing
+  = RestrictedQuestionnaire
+  | AnyoneWithLinkQuestionnaire
+  deriving (Show, Eq, Generic)
+
 data Questionnaire =
   Questionnaire
     { _questionnaireUuid :: U.UUID
     , _questionnaireName :: String
     , _questionnaireLevel :: Int
     , _questionnaireVisibility :: QuestionnaireVisibility
+    , _questionnaireSharing :: QuestionnaireSharing
     , _questionnairePackageId :: String
     , _questionnaireSelectedTagUuids :: [U.UUID]
     , _questionnaireTemplateId :: Maybe String
@@ -38,6 +44,7 @@ instance Eq Questionnaire where
     _questionnaireName a == _questionnaireName b &&
     _questionnaireLevel a == _questionnaireLevel b &&
     _questionnaireVisibility a == _questionnaireVisibility b &&
+    _questionnaireSharing a == _questionnaireSharing b &&
     _questionnairePackageId a == _questionnairePackageId b &&
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
     _questionnaireTemplateId a == _questionnaireTemplateId b &&

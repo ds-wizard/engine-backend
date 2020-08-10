@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.Detail_PUT
-  ( detail_put
+module Wizard.Specs.API.Questionnaire.Detail_Content_PUT
+  ( detail_content_put
   ) where
 
 import Control.Lens ((^.))
@@ -14,17 +14,14 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
-import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import SharedTest.Specs.Common
@@ -33,14 +30,13 @@ import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- PUT /questionnaires/{qtnUuid}
+-- PUT /questionnaires/{qtnUuid}/content
 -- ------------------------------------------------------------------------
-detail_put :: AppContext -> SpecWith ((), Application)
-detail_put appContext =
-  describe "PUT /questionnaires/{qtnUuid}" $ do
+detail_content_put :: AppContext -> SpecWith ((), Application)
+detail_content_put appContext =
+  describe "PUT /questionnaires/{qtnUuid}/content" $ do
     test_200 appContext
     test_400 appContext
-    test_401 appContext
     test_403 appContext
     test_404 appContext
 
@@ -49,16 +45,15 @@ detail_put appContext =
 -- ----------------------------------------------------
 reqMethod = methodPut
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/content"
 
-reqHeadersT authHeader = [authHeader, reqCtHeader]
+reqHeadersT authHeader = reqCtHeader : authHeader
 
 reqDtoT qtn =
-  QuestionnaireChangeDTO
-    { _questionnaireChangeDTOName = qtn ^. name
-    , _questionnaireChangeDTOVisibility = qtn ^. visibility
-    , _questionnaireChangeDTOSharing = qtn ^. sharing
-    , _questionnaireChangeDTOTemplateId = qtn ^. templateId
+  QuestionnaireContentChangeDTO
+    { _questionnaireContentChangeDTOLevel = qtn ^. level
+    , _questionnaireContentChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
+    , _questionnaireContentChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -67,33 +62,46 @@ reqBodyT qtn = encode $ reqDtoT qtn
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited
-  create_test_200 "HTTP 200 OK (Owner, PublicReadOnly)" appContext questionnaire2 questionnaire2Edited
-  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 questionnaire3Edited
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1ContentEdited [reqAuthHeader]
+  create_test_200
+    "HTTP 200 OK (Owner, PublicReadOnly)"
+    appContext
+    questionnaire2
+    questionnaire2ContentEdited
+    [reqAuthHeader]
+  create_test_200
+    "HTTP 200 OK (Non-Owner, Public)"
+    appContext
+    questionnaire3
+    questionnaire3ContentEdited
+    [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire6 questionnaire6ContentEdited []
 
-create_test_200 title appContext qtn qtnEdited =
+create_test_200 title appContext qtn qtnEdited authHeader =
   it title $
      -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT reqAuthHeader
+    let reqHeaders = reqHeadersT authHeader
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault questionnaireReport
+    let expDto = reqDtoT qtnEdited
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire5) appContext
+    runInContextIO (insertQuestionnaire questionnaire6) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireDetailDTO)
+    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireContentChangeDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
     compareQuestionnaireDtos resBody expDto
     -- AND: Find a result in DB
-    assertExistenceOfQuestionnaireInDB appContext qtnEdited
+    assertExistenceOfQuestionnaireContentInDB appContext (qtn ^. uuid) qtnEdited
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -103,48 +111,53 @@ test_400 appContext = createInvalidJsonTest reqMethod (reqUrlT $ questionnaire3 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext =
-  createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid) [reqCtHeader] (reqBodyT questionnaire1)
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest
-    appContext
-    reqMethod
-    (reqUrlT $ questionnaire3 ^. uuid)
-    [reqCtHeader]
-    (reqBodyT questionnaire1)
-    "QTN_PERM"
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
     questionnaire1
-    questionnaire1Edited
-    "Get Questionnaire"
+    questionnaire1ContentEdited
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)"
     appContext
     questionnaire2
-    questionnaire2Edited
-    "Edit Questionnaire"
+    questionnaire2ContentEdited
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, PublicReadOnly, Sharing)"
+    appContext
+    questionnaire5
+    questionnaire5ContentEdited
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, Public)"
+    appContext
+    questionnaire3
+    questionnaire3ContentEdited
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
 
-create_test_403 title appContext qtn qtnEdited reason =
+create_test_403 title appContext qtn qtnEdited authHeader reason =
   it title $
      -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
+    let reqHeaders = reqHeadersT authHeader
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
+    let expDto = createForbiddenError reason
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire5) appContext
+    runInContextIO (insertQuestionnaire questionnaire6) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -158,8 +171,8 @@ create_test_403 title appContext qtn qtnEdited reason =
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
-    (reqHeadersT reqAuthHeader)
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/content"
+    (reqHeadersT [reqAuthHeader])
     (reqBodyT questionnaire1)
     "questionnaire"
     "f08ead5f-746d-411b-aee6-77ea3d24016a"

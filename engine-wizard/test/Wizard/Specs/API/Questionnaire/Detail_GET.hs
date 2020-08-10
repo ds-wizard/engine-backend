@@ -17,10 +17,12 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -36,7 +38,6 @@ detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /questionnaires/{qtnUuid}" $ do
     test_200 appContext
-    test_401 appContext
     test_403 appContext
     test_404 appContext
 
@@ -47,7 +48,7 @@ reqMethod = methodGet
 
 reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
 
-reqHeadersT authHeader = [authHeader]
+reqHeadersT authHeader = authHeader
 
 reqBody = ""
 
@@ -55,9 +56,11 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 reqAuthHeader
-  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 reqNonAdminAuthHeader
-  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, PublicReadOnly, Sharing)" appContext questionnaire5 []
+  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire6 []
 
 create_test_200 title appContext qtn authHeader =
   it title $
@@ -73,6 +76,8 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire5) appContext
+    runInContextIO (insertQuestionnaire questionnaire6) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -83,22 +88,36 @@ create_test_200 title appContext qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest appContext reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
-  it "HTTP 403 FORBIDDEN (Non-Owner, Private)" $
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private)"
+    appContext
+    questionnaire1
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, PublicReadOnly)"
+    appContext
+    questionnaire2
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, Public)"
+    appContext
+    questionnaire3
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+
+create_test_403 title appContext qtn authHeader errorMessage =
+  it title $
      -- GIVEN: Prepare request
    do
-    let reqUrl = reqUrlT (questionnaire1 ^. uuid)
-    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
+    let reqUrl = reqUrlT (qtn ^. uuid)
+    let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expDto = createForbiddenError errorMessage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -117,7 +136,7 @@ test_404 appContext =
   createNotFoundTest
     reqMethod
     "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
-    (reqHeadersT reqAuthHeader)
+    [reqHeadersT reqAuthHeader]
     reqBody
     "questionnaire"
     "f08ead5f-746d-411b-aee6-77ea3d24016a"

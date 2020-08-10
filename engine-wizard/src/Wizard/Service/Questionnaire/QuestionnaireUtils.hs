@@ -25,6 +25,12 @@ extractVisibility dto = do
     then return (dto ^. visibility)
     else return $ appConfig ^. questionnaire . questionnaireVisibility . defaultValue
 
+extractSharing dto = do
+  appConfig <- getAppConfig
+  if appConfig ^. questionnaire . questionnaireSharing . enabled
+    then return (dto ^. sharing)
+    else return $ appConfig ^. questionnaire . questionnaireSharing . defaultValue
+
 enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- findPackageById (qtn ^. packageId)

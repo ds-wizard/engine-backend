@@ -5,6 +5,7 @@ import Data.Swagger
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.SimpleFeatureSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Config.AppConfig
@@ -56,6 +57,9 @@ instance ToSchema AppConfigQuestionnaire where
 
 instance ToSchema AppConfigQuestionnaireVisibility where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireVisibility" defaultQuestionnaireVisibility
+
+instance ToSchema AppConfigQuestionnaireSharing where
+  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireSharing" defaultQuestionnaireSharing
 
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireFeedback" defaultFeedback

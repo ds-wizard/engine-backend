@@ -13,4 +13,4 @@ getCurrentUser = do
   mCurrentUser <- asks _appContextCurrentUser
   case mCurrentUser of
     Just user -> return user
-    Nothing -> throwError $ UserError _ERROR_SERVICE_USER__MISSING_USER
+    Nothing -> throwError $ ForbiddenError _ERROR_SERVICE_USER__MISSING_USER

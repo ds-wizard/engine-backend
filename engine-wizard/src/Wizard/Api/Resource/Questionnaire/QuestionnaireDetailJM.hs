@@ -9,6 +9,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()
 
