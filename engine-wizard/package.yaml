@@ -19,7 +19,7 @@ library:
     then:
       ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -104,7 +104,7 @@ executables:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - engine-wizard
@@ -117,7 +117,7 @@ tests:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson
