@@ -1,20 +1,69 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml"xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
+  <!-- NAME: ANNOUNCE -->
+  <!--[if gte mso 15]>
+        <xml>
+            <o:OfficeDocumentSettings>
+            <o:AllowPNG/>
+            <o:PixelsPerInch>96</o:PixelsPerInch>
+            </o:OfficeDocumentSettings>
+        </xml>
+        <![endif]-->
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ subject }}</title>
   <style type="text/css">
     {% include 'style.css' %}
   </style>
 </head>
-<body>
-  <header>
-    <img src="cid:logo.png" alt="Wizard logo">
-    <h1>{{ appTitle }}</h1>
-  </header>
-  <main>
-    {% block body %}{% endblock %}
-  </main>
-  <footer>
-    <small>This email was generated from <a href="{{ clientAddress }}" target="_blank">{{ mailName }}</a>.</small>
-  </footer>
+<body style="height: 100%; margin: 0;padding: 0; width: 100%; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+  <center>
+    <table align="center" border="0" cellpadding="0" cellspacing="0" height="100%" width="100%" id="bodyTable"
+      style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; height: 100%; margin: 0; padding: 0; width: 100%;">
+      <tr>
+        <td align="center" valign="top" id="bodyCell"
+          style="mso-line-height-rule: exactly; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; height: 100%; margin: 0; padding: 0; width: 100%;">
+          <!-- BEGIN TEMPLATE // -->
+          <table border="0" cellpadding="0" cellspacing="0" width="100%"
+            style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%;">
+            <tr>
+              <td align="center" valign="top" id="templateHeader" data-template-container style="background: #FFFFFF none no-repeat center/contain;mso-line-height-rule: exactly;-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #FFFFFF; background-image: none; background-repeat: no-repeat; background-position: center;background-size: contain; border-top: 0; border-bottom: 0; padding-top: 0px; padding-bottom: 0px;">
+                {% include "../_common/header.html.j2" %}
+              </td>
+            </tr>
+            <tr>
+              <td align="center" valign="top" id="templateBody" data-template-container	style="background: #FFFFFF none no-repeat center/cover; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; background-color: #FFFFFF;background-image: none; background-repeat: no-repeat; background-position: center; background-size: cover;border-top: 0; border-bottom: 0; padding-top: 0px; padding-bottom: 54px;">
+                <!--[if (gte mso 9)|(IE)]>
+                                    <table align="center" border="0" cellspacing="0" cellpadding="0" width="600" style="width:600px;">
+                                    <tr>
+                                    <td align="center" valign="top" width="600" style="width:600px;">
+                                    <![endif]-->
+                <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" class="templateContainer" style="border-collapse: collapse; mso-table-lspace: 0pt; mso-table-rspace: 0pt; -ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; max-width: 600px !important;">
+                  <tr>
+                    <td valign="top" class="bodyContainer" style="background: transparent none no-repeat center/cover; mso-line-height-rule: exactly; -ms-text-size-adjust: 100%;-webkit-text-size-adjust: 100%; background-color: transparent; background-image: none; background-repeat: no-repeat; background-position: center; background-size: cover; border-top: 0; border-bottom: 0; padding-top: 0; padding-bottom: 0;">
+                      {% block body %}{% endblock %}
+                    </td>
+                  </tr>
+                </table>
+                <!--[if (gte mso 9)|(IE)]>
+                                    </td>
+                                    </tr>
+                                    </table>
+                                    <![endif]-->
+              </td>
+            </tr>
+            <tr>
+              <td align="center" valign="top" id="templateFooter" data-template-container style="background: #333333 none no-repeat center/cover; mso-line-height-rule: exactly;-ms-text-size-adjust: 100%; -webkit-text-size-adjust: 100%; background-color: #333333; background-image: none; background-repeat: no-repeat; background-position: center;background-size: cover; border-top: 0; border-bottom: 0; padding-top: 45px; padding-bottom: 63px;">
+                {% include "../_common/footer.html.j2" %}
+              </td>
+            </tr>
+          </table>
+          <!-- // END TEMPLATE -->
+        </td>
+      </tr>
+    </table>
+  </center>
 </body>
 </html>

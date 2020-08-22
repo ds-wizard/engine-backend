@@ -47,9 +47,9 @@ sendRegistrationConfirmationMail org hash mCallbackUrl = do
           Just callbackUrl -> callbackUrl ++ "/registry/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
           Nothing -> clientAddress ++ "/signup/" ++ (org ^. organizationId) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": Confirmation Email"
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-      context = makeMailContext serverConfig org additionals
+      context = makeMailContext serverConfig org subject additionals
       to = [org ^. email]
   composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
@@ -58,8 +58,8 @@ sendRegistrationCreatedAnalyticsMail org = do
   serverConfig <- asks _appContextServerConfig
   let analyticsAddress = serverConfig ^. analytics . email
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": New organization"
-      context = makeMailContext serverConfig org []
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_CREATED_ANALYTICS
+      context = makeMailContext serverConfig org subject []
       to = [analyticsAddress]
   composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
@@ -69,9 +69,9 @@ sendResetTokenMail org hash = do
   let clientAddress = serverConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-token/" ++ (org ^. organizationId) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": Reset token"
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_RESET_TOKEN
       additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
-      context = makeMailContext serverConfig org additionals
+      context = makeMailContext serverConfig org subject additionals
       to = [org ^. email]
   composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
@@ -177,10 +177,11 @@ makePlainTextPart fn context =
     template <- loadAndRender fn context
     return $ MIME.plainPart . TL.fromStrict <$> template
 
-makeMailContext :: ServerConfig -> OrganizationDTO -> [(T.Text, Aeson.Value)] -> MailContext
-makeMailContext serverConfig organization others =
+makeMailContext :: ServerConfig -> OrganizationDTO -> TL.Text -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext serverConfig organization subject others =
   fromList $
   [ ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
+  , ("subject", Aeson.String . TL.toStrict $ subject)
   , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
   , ("organization", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ organization)
   ] ++
