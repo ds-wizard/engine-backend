@@ -50,7 +50,7 @@ createFeedbackWithGivenUuid fUuid reqDto = do
   checkIfFeedbackIsEnabled
   issue <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
   now <- liftIO getCurrentTime
-  let fbk = fromCreateDTO reqDto fUuid (issue ^. id) now
+  let fbk = fromCreateDTO reqDto fUuid (issue ^. number) now
   insertFeedback fbk
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
@@ -72,11 +72,10 @@ synchronizeFeedbacks = do
   issues <- getIssues
   fbks <- findFeedbacks
   now <- liftIO getCurrentTime
-  sequence $ (updateOrDeleteFeedback issues now) <$> fbks
-  return ()
+  sequence_ $ updateOrDeleteFeedback issues now <$> fbks
   where
     updateOrDeleteFeedback issues now fbk =
-      case L.find (\issue -> fbk ^. issueId == issue ^. id) issues of
+      case L.find (\issue -> fbk ^. issueId == issue ^. number) issues of
         Just issue -> updateFeedbackById $ fromSimpleIssue fbk issue now
         Nothing -> deleteFeedbackById (U.toString $ fbk ^. uuid)
 

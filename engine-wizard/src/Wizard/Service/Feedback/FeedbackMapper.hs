@@ -42,7 +42,7 @@ fromSimpleIssue :: Feedback -> IssueIDTO -> UTCTime -> Feedback
 fromSimpleIssue feedback simpleIssue now =
   Feedback
     { _feedbackUuid = feedback ^. uuid
-    , _feedbackIssueId = simpleIssue ^. id
+    , _feedbackIssueId = simpleIssue ^. number
     , _feedbackQuestionUuid = feedback ^. questionUuid
     , _feedbackPackageId = feedback ^. packageId
     , _feedbackTitle = simpleIssue ^. title

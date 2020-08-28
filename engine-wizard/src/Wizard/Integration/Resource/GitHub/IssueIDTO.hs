@@ -4,7 +4,7 @@ import GHC.Generics
 
 data IssueIDTO =
   IssueIDTO
-    { _issueIDTOId :: Int
+    { _issueIDTONumber :: Int
     , _issueIDTOTitle :: String
     , _issueIDTOBody :: String
     }
