@@ -1,19 +1,18 @@
 module Wizard.Database.BSON.Questionnaire.QuestionnaireReply where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
+import qualified Data.Map.Strict as M
 
-import LensesConfig
-import Shared.Database.BSON.Common ()
+import Shared.Database.BSON.Common
 import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-instance FromBSON Reply where
-  fromBSON doc = do
-    _replyPath <- BSON.lookup "path" doc
-    _replyValue <- BSON.lookup "value" doc
-    return Reply {..}
+instance ToBSON (M.Map String ReplyValue) where
+  toBSON = genericStringMapToBSON
+
+instance FromBSON (M.Map String ReplyValue) where
+  fromBSON = defaultStringMapFromBSON
 
 instance FromBSON ReplyValue where
   fromBSON doc = do
@@ -41,20 +40,17 @@ instance FromBSON IntegrationReplyValue where
         return $ PlainValue value
       "IntegrationValue" -> do
         _integrationValueIntId <- BSON.lookup "id" doc
-        _integrationValueIntValue <- BSON.lookup "value" doc
+        _integrationValueValue <- BSON.lookup "value" doc
         return IntegrationValue {..}
 
 -- --------------------------------------------------------------------
-instance ToBSON Reply where
-  toBSON reply = ["path" BSON.=: (reply ^. path), "value" BSON.=: (reply ^. value)]
-
 instance ToBSON ReplyValue where
   toBSON StringReply {..} = ["type" BSON.=: "StringReply", "value" BSON.=: _stringReplyValue]
-  toBSON AnswerReply {..} = ["type" BSON.=: "AnswerReply", "value" BSON.=: (_answerReplyValue)]
+  toBSON AnswerReply {..} = ["type" BSON.=: "AnswerReply", "value" BSON.=: _answerReplyValue]
   toBSON ItemListReply {..} = ["type" BSON.=: "ItemListReply", "value" BSON.=: _itemListReplyValue]
   toBSON IntegrationReply {..} = ["type" BSON.=: "IntegrationReply", "value" BSON.=: _integrationReplyValue]
 
 instance ToBSON IntegrationReplyValue where
   toBSON (PlainValue value) = ["type" BSON.=: "PlainValue", "value" BSON.=: value]
   toBSON IntegrationValue {..} =
-    ["type" BSON.=: "IntegrationValue", "id" BSON.=: _integrationValueIntId, "value" BSON.=: _integrationValueIntValue]
+    ["type" BSON.=: "IntegrationValue", "id" BSON.=: _integrationValueIntId, "value" BSON.=: _integrationValueValue]

@@ -12,3 +12,4 @@ data ErrorDTO
   | NotExistsErrorDTO String
   | GeneralServerErrorDTO String
   | HttpClientErrorDTO Status String
+  deriving (Show, Eq)

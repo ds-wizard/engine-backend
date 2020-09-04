@@ -5,6 +5,7 @@ import qualified Data.List as L
 
 import LensesConfig
 import Registry.Api.Resource.Template.TemplateSimpleDTO
+import Shared.Constant.Template
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil
@@ -13,13 +14,15 @@ import Wizard.Model.Template.TemplateState
 
 computeTemplateState :: [TemplateSimpleDTO] -> Template -> TemplateState
 computeTemplateState tmlsFromRegistry tml =
-  case selectTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
-    Just tmlFromRegistry ->
-      case compareVersion (tmlFromRegistry ^. version) (tml ^. version) of
-        LT -> UnpublishedTemplateState
-        EQ -> UpToDateTemplateState
-        GT -> OutdatedTemplateState
-    Nothing -> UnknownTemplateState
+  if tml ^. metamodelVersion /= templateMetamodelVersion
+    then UnsupportedMetamodelVersionTemplateState
+    else case selectTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
+           Just tmlFromRegistry ->
+             case compareVersion (tmlFromRegistry ^. version) (tml ^. version) of
+               LT -> UnpublishedTemplateState
+               EQ -> UpToDateTemplateState
+               GT -> OutdatedTemplateState
+           Nothing -> UnknownTemplateState
 
 selectTemplateByOrgIdAndTmlId tml =
   L.find (\t -> (t ^. organizationId) == (tml ^. organizationId) && (t ^. templateId) == (tml ^. templateId))

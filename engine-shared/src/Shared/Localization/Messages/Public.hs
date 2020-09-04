@@ -8,6 +8,12 @@ import Shared.Model.Localization.LocaleRecord
 _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ =
   LocaleRecord "error.api.common.cant_deserialize_obj" "Problem in deserialization of JSON" []
 
+_ERROR_API__WEBSOCKET_RECORD_NOT_FOUND connectionUUid =
+  LocaleRecord
+    "error.api.websocket.record_not_found"
+    "Websocket record (connectionUuid: '%s') does not exist"
+    [connectionUUid]
+
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------

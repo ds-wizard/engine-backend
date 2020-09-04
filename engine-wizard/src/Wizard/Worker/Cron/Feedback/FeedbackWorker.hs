@@ -1,4 +1,4 @@
-module Wizard.Worker.Feedback.FeedbackWorker
+module Wizard.Worker.Cron.Feedback.FeedbackWorker
   ( feedbackWorker
   ) where
 
@@ -8,9 +8,9 @@ import Prelude hiding (log)
 import System.Cron
 
 import LensesConfig
-import Wizard.Bootstrap.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Feedback.FeedbackService
+import Wizard.Util.Context
 import Wizard.Util.Logger
 
 feedbackWorker :: MonadSchedule m => BaseContext -> m ()

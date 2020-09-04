@@ -56,7 +56,7 @@ reqBody = ""
 -- ----------------------------------------------------
 test_204 appContext = do
   create_test_204 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 reqAuthHeader
-  create_test_204 "HTTP 204 NO CONTENT (Owner, PublicReadOnly)" appContext questionnaire2 reqAuthHeader
+  create_test_204 "HTTP 204 NO CONTENT (Owner, VisibleView)" appContext questionnaire2 reqAuthHeader
   create_test_204 "HTTP 204 NO CONTENT (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader
 
 create_test_204 title appContext qtn authHeader =
@@ -84,7 +84,7 @@ create_test_204 title appContext qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
+test_400 appContext =
   it "HTTP 400 BAD REQUEST when package can't be deleted" $
     -- GIVEN: Prepare request
    do
@@ -119,7 +119,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT (questionnaire3 ^. uuid)
 test_403 appContext = do
   createNoPermissionTest appContext reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1
-  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)" appContext questionnaire1
+  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)" appContext questionnaire1
 
 create_test_403 title appContext qtn =
   it title $
@@ -129,7 +129,7 @@ create_test_403 title appContext qtn =
     let reqHeaders = reqHeadersT reqNonAdminAuthHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations

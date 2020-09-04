@@ -5,6 +5,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Report_Preview_POST
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -58,8 +59,8 @@ reqHeadersT authHeader = reqCtHeader : authHeader
 reqDtoT qtn =
   QuestionnaireContentChangeDTO
     { _questionnaireContentChangeDTOLevel = qtn ^. level
-    , _questionnaireContentChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
-    , _questionnaireContentChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
+    , _questionnaireContentChangeDTOReplies = M.map toReplyValueDTO (qtn ^. replies)
+    , _questionnaireContentChangeDTOLabels = qtn ^. labels
     }
 
 reqBody = encode . reqDtoT $ questionnaire1
@@ -69,10 +70,10 @@ reqBody = encode . reqDtoT $ questionnaire1
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly, Sharing)" appContext questionnaire5 []
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView, Sharing)" appContext questionnaire7 []
   create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, Public, Sharing)" appContext questionnaire6 []
+  create_test_200 "HTTP 200 OK (Non-Owner, Public, Sharing)" appContext questionnaire10 []
 
 create_test_200 title appContext qtn authHeader =
   it title $
@@ -89,7 +90,7 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO (insertPackage germanyPackage) appContext
-    runInContextIO (insertQuestionnaire (qtn & replies .~ [])) appContext
+    runInContextIO (insertQuestionnaire (qtn & replies .~ M.empty)) appContext
     runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -115,7 +116,7 @@ test_403 appContext = do
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
   create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, PublicReadOnly)"
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext
     questionnaire2
     []

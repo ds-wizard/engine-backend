@@ -53,6 +53,13 @@ _ERROR_VALIDATION__SUBMISSION_DEFINITION_ABSENCE subId =
 _ERROR_VALIDATION__TML_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY tmlId target =
   LocaleRecord "error.validation.tml_deletation" "Template '%s' can't be deleted. It's used by some %s" [tmlId, target]
 
+-- Unsupported version
+_ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION tmlId tmlMetamodelVersion appTmlMetamodelVersion =
+  LocaleRecord
+    "error.validation.tml_unsupported_version"
+    "Template '%s' contains unsupported version of metamodel (template metamodel version: '%s', application metamodel version: '%s')"
+    [tmlId, show tmlMetamodelVersion, show appTmlMetamodelVersion]
+
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
@@ -133,16 +140,18 @@ _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =
     "Desired knowledge model ('%s') wasn't found in Registry"
     [pkgId]
 
--- Public Questionnaire
-_ERROR_SERVICE_PUBLIC_QTN__PUBLIC_QTN_NOT_FOUND_IN_DB =
-  LocaleRecord "error.service.qtn.public_qtn_not_found_in_db" "Public Questionnaire wasn't found in the database" []
-
 -- Questionnaire
 _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
   LocaleRecord
     "error.service.qtn.qtn_cant_be_deleted_because_it_is_used_in_migration"
     "Questionnaire can't be deleted because it's used in some questionnaire migration"
     []
+
+_ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED qtnUuid =
+  LocaleRecord
+    "error.service.qtn.collaboration.qtn_deleted"
+    "Questionnaire ('%s') no longer exists because it has been deleted"
+    [qtnUuid]
 
 -- Template Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =

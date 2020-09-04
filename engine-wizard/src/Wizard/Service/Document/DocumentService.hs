@@ -6,6 +6,7 @@ import Control.Monad.Reader (liftIO)
 import qualified Data.ByteString.Char8 as BS
 import Data.Foldable (traverse_)
 import Data.Hashable
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -34,6 +35,7 @@ import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
+import Wizard.Service.Template.TemplateValidation
 import Wizard.Util.Logger
 
 getDocumentsForCurrentUserPageDto ::
@@ -52,10 +54,11 @@ createDocumentWithDurability dto durability = do
   qtnDto <- getQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   tml <- getTemplateByUuid (dto ^. templateId) (Just $ qtn ^. packageId)
+  validateMetamodelVersion tml
   currentUser <- getCurrentUser
   dUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let repliesHash = hash (qtn ^. replies)
+  let repliesHash = hash . M.toList $ qtn ^. replies
   let doc = fromCreateDTO dto dUuid durability repliesHash (currentUser ^. uuid) now
   insertDocument doc
   publishToDocumentQueue doc
@@ -94,7 +97,7 @@ createPreview qtnUuid = do
   checkPermission _QTN_PERM
   qtn <- findQuestionnaireById qtnUuid
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
-  let repliesHash = hash (qtn ^. replies)
+  let repliesHash = hash . M.toList $ qtn ^. replies
   logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
   case filter (\d -> d ^. state == DoneDocumentState) matchingDocs of

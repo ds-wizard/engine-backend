@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -62,7 +63,7 @@ getQuestionnaireReport qtn = do
       appConfig <- getAppConfig
       let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
       let _requiredLevel = qtn ^. level
-      let _replies = qtn ^. replies
+      let _replies = M.toList $ qtn ^. replies
       km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
       let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
       addToCache qtn indications

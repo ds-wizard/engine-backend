@@ -5,7 +5,6 @@ import Data.Bson.Generic
 import Data.Maybe ()
 
 import Shared.Database.BSON.Common ()
-import Wizard.Database.BSON.Questionnaire.QuestionnaireLabel ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireReply ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireVisibility ()

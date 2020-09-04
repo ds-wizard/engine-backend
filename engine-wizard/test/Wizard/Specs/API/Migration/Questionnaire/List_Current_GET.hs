@@ -61,20 +61,20 @@ test_200 appContext = do
     nlQtnMigrationStateDto
     reqNonAdminAuthHeader
   create_test_200
-    "HTTP 200 OK (Non-Owner, PublicReadOnly)"
+    "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
-    questionnaire4PublicReadOnly
-    questionnaire4PublicReadOnlyUpgraded
+    questionnaire4VisibleView
+    questionnaire4VisibleViewUpgraded
     nlQtnMigrationState
-    nlQtnMigrationStatePublicReadOnlyDto
+    nlQtnMigrationStateVisibleViewDto
     reqNonAdminAuthHeader
   create_test_200
     "HTTP 200 OK (Non-Owner, Public)"
     appContext
-    questionnaire4Public
-    questionnaire4PublicUpgraded
+    questionnaire4VisibleEdit
+    questionnaire4VisibleEditUpgraded
     nlQtnMigrationState
-    nlQtnMigrationStatePublicDto
+    nlQtnMigrationStateVisibleEditDto
     reqNonAdminAuthHeader
 
 create_test_200 title appContext oldQtn newQtn state stateDto authHeader =
@@ -110,7 +110,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire4 ^. uuid
 test_403 appContext = do
   createNoPermissionTest appContext reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] "" "QTN_PERM"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1 "Get Questionnaire"
-  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)" appContext questionnaire2 "Migrate Questionnaire"
+  create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)" appContext questionnaire2 "Migrate Questionnaire"
 
 create_test_403 title appContext qtn reason =
   it title $

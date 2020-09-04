@@ -1,6 +1,7 @@
 module Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec where
 
 import Control.Lens ((&), (.~), (^.))
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
@@ -21,9 +22,6 @@ import Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator
 
 sanitizatorSpec =
   describe "MoveSanatizor" $ do
-    let s = U.toString
-    let s' = fmap s
-    let i' = createReplyKey
     describe "generateEvents" $
       it "Succeed" $
         -- GIVEN:
@@ -141,7 +139,7 @@ sanitizatorSpec =
         let tPathSuffix = [chapter2 ^. uuid, question3 ^. uuid, q3_answerNo ^. uuid, question1 ^. uuid]
         let replies = [rQ1, rQ2]
         -- AND: Make expectation
-        let expRQ1 = rQ1 & path .~ (i' . s') tPathSuffix
+        let expRQ1 = (createReplyKey tPathSuffix, snd rQ1)
         let expected = [expRQ1, rQ2]
         -- WHEN:
         let result = computeDesiredPath pPathSuffix tPathSuffix replies
@@ -163,14 +161,16 @@ sanitizatorSpec =
               , rQ4_it2_q6
               ]
         -- AND: Make expectation
-        let ch2___q4_0 = s' [chapter2 ^. uuid, question4 ^. uuid] ++ ["0"] ++ s' tPathSuffix
-        let ch2___q4_1 = s' [chapter2 ^. uuid, question4 ^. uuid] ++ ["1"] ++ s' tPathSuffix
-        let expRQ4_it1_q5 = rQ4_it1_q5 & path .~ i' ch2___q4_0
+        let ch2___q4_0 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it1] ++ tPathSuffix
+        let ch2___q4_1 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it2] ++ tPathSuffix
+        let expRQ4_it1_q5 = (createReplyKey ch2___q4_0, snd rQ4_it1_q5)
         let expRQ4_it1_q5_it1_question7 =
-              rQ4_it1_q5_it1_question7 & path .~ i' (ch2___q4_0 ++ ["0"] ++ s' [q4_it1_q5_it2_question7 ^. uuid])
+              ( createReplyKey (ch2___q4_0 ++ [rQ4_it1_q5_it1] ++ [q4_it1_q5_it2_question7 ^. uuid])
+              , snd rQ4_it1_q5_it1_question7)
         let expRQ4_it1_q5_it1_question8 =
-              rQ4_it1_q5_it1_question8 & path .~ i' (ch2___q4_0 ++ ["0"] ++ s' [q4_it1_q5_it2_question8 ^. uuid])
-        let expRQ4_it2_q5 = rQ4_it2_q5 & path .~ i' ch2___q4_1
+              ( createReplyKey (ch2___q4_0 ++ [rQ4_it1_q5_it1] ++ [q4_it1_q5_it2_question8 ^. uuid])
+              , snd rQ4_it1_q5_it1_question8)
+        let expRQ4_it2_q5 = (createReplyKey ch2___q4_1, snd rQ4_it2_q5)
         let expected =
               [ rQ3
               , rQ4
@@ -190,9 +190,9 @@ sanitizatorSpec =
         -- GIVEN:
        do
         let eUuid = q4_it1_question5 ^. uuid
-        let replies = fReplies
+        let replies = M.toList fReplies
         -- AND: Make expectation
-        let expected = [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10]
+        let expected = M.toList . M.fromList $ [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10]
         -- WHEN:
         let result = deleteUnwantedReplies eUuid replies
         -- THEN:
@@ -245,11 +245,11 @@ createSanitizeRepliesWithEventsTest name event shouldNotEqual =
     -- AND:
     let expected = fReplies
     -- WHEN:
-    let result = sanitizeRepliesWithEvents km1WithQ4 fReplies events
+    let result = sanitizeRepliesWithEvents km1WithQ4 (M.toList fReplies) events
     -- THEN:
     if not shouldNotEqual
-      then result `shouldBe` expected
-      else result `shouldNotBe` expected
+      then M.fromList result `shouldBe` expected
+      else M.fromList result `shouldNotBe` expected
 
 -- --------------------------------
 -- DATA

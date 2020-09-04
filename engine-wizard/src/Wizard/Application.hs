@@ -56,5 +56,5 @@ runApplication = do
             }
     liftIO $ runDBMigrations baseContext
     liftIO $ runMetamodelMigrations baseContext
-    liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (cronJob shutdownFlag baseContext))
+    liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
     return ()

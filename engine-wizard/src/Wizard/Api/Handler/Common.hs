@@ -1,8 +1,8 @@
 module Wizard.Api.Handler.Common where
 
 import Control.Lens ((^.))
-import Control.Monad.Except (catchError, runExceptT, throwError)
-import Control.Monad.Reader (asks, liftIO, runReaderT)
+import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Reader (ask, asks, liftIO)
 import qualified Data.UUID as U
 import Servant (ServerError(..))
 
@@ -14,7 +14,6 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Internal
 import Shared.Model.Error.Error
 import Shared.Util.Token
-import Shared.Util.Uuid
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Localization.Messages.Internal
@@ -25,7 +24,7 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
-import Wizard.Util.Logger
+import Wizard.Util.Context
 
 runInUnauthService :: AppContextM a -> BaseContextM a
 runInUnauthService = runIn Nothing
@@ -42,32 +41,10 @@ runInServiceAuthService function = do
 
 runIn :: Maybe UserDTO -> AppContextM a -> BaseContextM a
 runIn mUser function = do
-  traceUuid <- liftIO generateUuid
-  serverConfig <- asks _baseContextServerConfig
-  localization <- asks _baseContextLocalization
-  buildInfoConfig <- asks _baseContextBuildInfoConfig
-  dbPool <- asks _baseContextPool
-  msgChannel <- asks _baseContextMsgChannel
-  httpClientManager <- asks _baseContextHttpClientManager
-  registryClient <- asks _baseContextRegistryClient
-  cache <- asks _baseContextCache
-  now <- liftIO getCurrentTime
-  let user = createServiceUser serverConfig now
-  let appContext =
-        AppContext
-          { _appContextServerConfig = serverConfig
-          , _appContextLocalization = localization
-          , _appContextBuildInfoConfig = buildInfoConfig
-          , _appContextPool = dbPool
-          , _appContextMsgChannel = msgChannel
-          , _appContextHttpClientManager = httpClientManager
-          , _appContextRegistryClient = registryClient
-          , _appContextTraceUuid = traceUuid
-          , _appContextCurrentUser = mUser
-          , _appContextCache = cache
-          }
-  let loggingLevel = serverConfig ^. logging . level
-  eResult <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
+  baseContext <- ask
+  appContext <- liftIO $ appContextFromBaseContext mUser baseContext
+  let loggingLevel = baseContext ^. serverConfig . logging . level
+  eResult <- liftIO $ runMonads (runAppContextM function) appContext
   case eResult of
     Right result -> return result
     Left error -> throwError =<< sendError error

@@ -1,6 +1,6 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import Control.Monad (guard)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
@@ -127,10 +127,10 @@ doMigration km eUuid pPathDiff tPathDiff replies =
 computeDesiredPath :: [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
 computeDesiredPath pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPathDiffS)
   where
-    replaceReply "" _ r = r & path .~ ((r ^. path) ++ "." ++ tPathDiffS)
-    replaceReply pPathDiffS tPathDiffS r = r & path .~ replace pPathDiffS tPathDiffS (r ^. path)
-    pPathDiffS = createReplyKey . fmap U.toString $ pPathDiff
-    tPathDiffS = createReplyKey . fmap U.toString $ tPathDiff
+    replaceReply "" _ (path, value) = (path ++ "." ++ tPathDiffS, value)
+    replaceReply pPathDiffS tPathDiffS (path, value) = (replace pPathDiffS tPathDiffS path, value)
+    pPathDiffS = createReplyKey pPathDiff
+    tPathDiffS = createReplyKey tPathDiff
 
 deleteUnwantedReplies :: U.UUID -> [Reply] -> [Reply]
-deleteUnwantedReplies eUuid = filter (\r -> not $ U.toString eUuid `L.isInfixOf` (r ^. path))
+deleteUnwantedReplies eUuid = filter (\(path, _) -> not $ U.toString eUuid `L.isInfixOf` path)

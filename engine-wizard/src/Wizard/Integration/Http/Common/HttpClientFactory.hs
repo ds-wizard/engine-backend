@@ -27,7 +27,7 @@ import Network.HTTP.Client
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 
 import LensesConfig (httpClientDebug, logging)
-import Shared.Util.String (format, replace)
+import Shared.Util.String (replace)
 import Wizard.Model.Config.ServerConfig
 import Wizard.Util.Logger
 

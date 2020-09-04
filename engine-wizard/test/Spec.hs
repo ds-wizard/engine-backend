@@ -57,10 +57,15 @@ import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Sanitiza
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
+import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationACLSpec
+import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
+import Wizard.Specs.Service.Questionnaire.QuestionnaireACLSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
 import Wizard.Specs.Util.TemplateUtilSpec
+import Wizard.Specs.Websocket.Common
+import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
 import Wizard.TestMigration
 
 hLoadConfig fileName loadFn callback = do
@@ -101,7 +106,7 @@ prepareWebApp runCallback =
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               , _appContextCache = cache
               }
-      runCallback appContext
+      runWebserver appContext (runCallback appContext)
 
 main :: IO ()
 main =
@@ -124,9 +129,11 @@ main =
                describe "KnowledgeModel" $ describe "Migrator" $ do
                  migratorSpec
                  KM_SanitizatorSpec.sanitizatorSpec
-               describe "Questionnaire" $ describe "Migrator" $ do
-                 QTN_ChangeQTypeSanitizator.sanitizatorSpec
-                 QTN_MoveSanitizatorSpec.sanitizatorSpec
+               describe "Questionnaire" $ do
+                 questionnaireCompilerServiceSpec
+                 describe "Migrator" $ do
+                   QTN_ChangeQTypeSanitizator.sanitizatorSpec
+                   QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
            describe "UTIL" templateUtilSpec
@@ -160,4 +167,7 @@ main =
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
              packageValidationSpec appContext
-             userServiceIntegrationSpec appContext)
+             questionnaireACLSpec appContext
+             questionnaireCollaborationACLSpec appContext
+             userServiceIntegrationSpec appContext
+           describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

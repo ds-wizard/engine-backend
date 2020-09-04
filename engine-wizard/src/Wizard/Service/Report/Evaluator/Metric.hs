@@ -9,7 +9,6 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
-import Shared.Util.List (generateList)
 import Shared.Util.Math
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
@@ -69,7 +68,7 @@ evaluateQuestion km replies path q' =
 evaluateOptionsQuestion :: OptionsQuestion -> KnowledgeModel -> [Reply] -> String -> [MetricMeasure]
 evaluateOptionsQuestion q km replies path =
   case getReply replies path of
-    Just Reply {_replyValue = AnswerReply {..}} ->
+    Just (_, AnswerReply {..}) ->
       case M.lookup _answerReplyValue (km ^. answersM) of
         Just answer ->
           let currentMeasures = answer ^. metricMeasures
@@ -82,10 +81,10 @@ evaluateOptionsQuestion q km replies path =
 evaluateListQuestion :: KnowledgeModel -> [Reply] -> String -> ListQuestion -> [MetricMeasure]
 evaluateListQuestion km replies currentPath q =
   let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q ^. uuid
-      itemCount =
+      items =
         case getReply replies currentPath of
-          Just Reply {_replyValue = ItemListReply {..}} -> _itemListReplyValue
-          _ -> 0
-      indexes = generateList itemCount
-      evaluateQuestion' index = concatMap (evaluateQuestion km replies (composePath currentPath $ show index)) itemQs
-   in concatMap evaluateQuestion' indexes
+          Just (_, ItemListReply {..}) -> _itemListReplyValue
+          _ -> []
+      evaluateQuestion' item =
+        concatMap (evaluateQuestion km replies (composePath currentPath $ U.toString item)) itemQs
+   in concatMap evaluateQuestion' items

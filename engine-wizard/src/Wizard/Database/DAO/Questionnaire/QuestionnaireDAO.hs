@@ -68,8 +68,8 @@ qtnOwnerSel = do
   return $
     if currentUser ^. role /= _USER_ROLE_ADMIN
       then [ "$or" =:
-             [ ["visibility" =: "PublicQuestionnaire"]
-             , ["visibility" =: "PublicReadOnlyQuestionnaire"]
+             [ ["visibility" =: "VisibleEditQuestionnaire"]
+             , ["visibility" =: "VisibleViewQuestionnaire"]
              , ["ownerUuid" =: U.toString (currentUser ^. uuid)]
              ]
            ]

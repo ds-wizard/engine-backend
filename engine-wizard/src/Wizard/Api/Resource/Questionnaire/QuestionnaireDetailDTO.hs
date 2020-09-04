@@ -1,12 +1,12 @@
 module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO where
 
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Questionnaire.Questionnaire
@@ -25,8 +25,8 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOTemplateId :: Maybe String
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
-    , _questionnaireDetailDTOReplies :: [ReplyDTO]
-    , _questionnaireDetailDTOLabels :: [LabelDTO]
+    , _questionnaireDetailDTOReplies :: M.Map String ReplyValueDTO
+    , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
     , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
     , _questionnaireDetailDTOReport :: QuestionnaireReportDTO
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID

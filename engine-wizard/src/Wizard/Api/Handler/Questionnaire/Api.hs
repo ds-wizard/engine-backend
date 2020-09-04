@@ -9,6 +9,7 @@ import Wizard.Api.Handler.Questionnaire.Detail_GET
 import Wizard.Api.Handler.Questionnaire.Detail_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_Report_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Report_Preview_POST
+import Wizard.Api.Handler.Questionnaire.Detail_WS
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
@@ -25,6 +26,7 @@ type QuestionnaireAPI
      :<|> Detail_Report_GET
      :<|> Detail_Report_Preview_POST
      :<|> Detail_Documents_Preview_GET
+     :<|> Detail_WS
 
 questionnaireApi :: Proxy QuestionnaireAPI
 questionnaireApi = Proxy
@@ -35,4 +37,5 @@ questionnaireServer =
   detail_content_PUT :<|>
   detail_report_GET :<|>
   detail_report_preview_POST :<|>
-  detail_documents_preview_GET
+  detail_documents_preview_GET :<|>
+  detail_WS

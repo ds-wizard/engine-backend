@@ -16,8 +16,10 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Common.SensitiveData
+import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
+import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserProfileMapper
 
 userAlbert :: User
@@ -202,3 +204,6 @@ userAlbertApiTokenEditedDto =
         M.fromList
           [(defaultSubmissionServiceSecretProp, ""), (defaultSubmissionServiceApiTokenProp, "EDITED: Some Token")]
     }
+
+userAlbertOnlineInfo :: OnlineUserInfo
+userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10

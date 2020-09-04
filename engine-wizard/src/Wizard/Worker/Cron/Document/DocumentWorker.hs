@@ -1,4 +1,4 @@
-module Wizard.Worker.Document.DocumentWorker
+module Wizard.Worker.Cron.Document.DocumentWorker
   ( documentWorker
   ) where
 
@@ -8,9 +8,9 @@ import Prelude hiding (log)
 import System.Cron
 
 import LensesConfig
-import Wizard.Bootstrap.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Document.DocumentService
+import Wizard.Util.Context
 import Wizard.Util.Logger
 
 documentWorker :: MonadSchedule m => BaseContext -> m ()
