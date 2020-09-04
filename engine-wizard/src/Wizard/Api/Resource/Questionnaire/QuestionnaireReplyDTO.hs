@@ -3,13 +3,6 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO where
 import qualified Data.UUID as U
 import GHC.Generics
 
-data ReplyDTO =
-  ReplyDTO
-    { _replyDTOPath :: String
-    , _replyDTOValue :: ReplyValueDTO
-    }
-  deriving (Show, Eq, Generic)
-
 data ReplyValueDTO
   = StringReplyDTO
       { _stringReplyDTOValue :: String
@@ -18,7 +11,7 @@ data ReplyValueDTO
       { _answerReplyDTOValue :: U.UUID
       }
   | ItemListReplyDTO
-      { _itemListReplyDTOValue :: Int
+      { _itemListReplyDTOValue :: [U.UUID]
       }
   | IntegrationReplyDTO
       { _integrationReplyDTOValue :: IntegrationReplyValueDTO
@@ -26,9 +19,11 @@ data ReplyValueDTO
   deriving (Show, Eq, Generic)
 
 data IntegrationReplyValueDTO
-  = PlainValueDTO String
+  = PlainValueDTO
+      { _plainValueDTOValue :: String
+      }
   | IntegrationValueDTO
       { _integrationValueDTOIntId :: String
-      , _integrationValueDTOIntValue :: String
+      , _integrationValueDTOValue :: String
       }
   deriving (Show, Eq, Generic)

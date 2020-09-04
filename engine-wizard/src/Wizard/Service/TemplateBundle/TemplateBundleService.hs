@@ -17,6 +17,7 @@ import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Common.ACL
+import Wizard.Service.Template.TemplateValidation
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
 exportTemplateBundle tmlId = do
@@ -40,6 +41,7 @@ importAndConvertTemplateBundle :: BSL.ByteString -> AppContextM Template
 importAndConvertTemplateBundle contentS =
   case fromTemplateArchive contentS of
     Right (template, assets) -> do
+      validateMetamodelVersion template
       deleteOldTemplateIfPresent template
       traverse_ (\(a, content) -> insertTemplateAssetContent (a ^. fileName) content) assets
       insertTemplate template

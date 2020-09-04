@@ -4,14 +4,7 @@ import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
-data Reply =
-  Reply
-    { _replyPath :: String
-    , _replyValue :: ReplyValue
-    }
-  deriving (Show, Eq, Generic)
-
-instance Hashable Reply
+type Reply = (String, ReplyValue)
 
 data ReplyValue
   = StringReply
@@ -21,7 +14,7 @@ data ReplyValue
       { _answerReplyValue :: U.UUID
       }
   | ItemListReply
-      { _itemListReplyValue :: Int
+      { _itemListReplyValue :: [U.UUID]
       }
   | IntegrationReply
       { _integrationReplyValue :: IntegrationReplyValue
@@ -31,10 +24,12 @@ data ReplyValue
 instance Hashable ReplyValue
 
 data IntegrationReplyValue
-  = PlainValue String
+  = PlainValue
+      { _plainValueValue :: String
+      }
   | IntegrationValue
       { _integrationValueIntId :: String
-      , _integrationValueIntValue :: String
+      , _integrationValueValue :: String
       }
   deriving (Show, Eq, Generic)
 

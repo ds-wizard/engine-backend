@@ -66,6 +66,8 @@ import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.Version.VersionSM ()
+import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
+import Wizard.Api.Resource.Websocket.WebsocketSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 

@@ -4,17 +4,25 @@ module Shared.Util.String
   , splitOn
   , stripSuffix
   , isSuffixOf
+  , trim
   , format
+  , toLower
   ) where
 
-import Data.Char (toLower)
+import qualified Data.Char as CH
 import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Text as T
 
+trim :: String -> String
+trim = T.unpack . T.strip . T.pack
+
 lowerFirst :: String -> String
 lowerFirst [] = []
-lowerFirst [c] = [toLower c]
-lowerFirst (s:str) = toLower s : str
+lowerFirst [c] = [CH.toLower c]
+lowerFirst (s:str) = CH.toLower s : str
+
+toLower :: String -> String
+toLower = fmap CH.toLower
 
 replace :: String -> String -> String -> String
 replace name value string = T.unpack $ T.replace (T.pack name) (T.pack value) (T.pack string)

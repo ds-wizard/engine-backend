@@ -24,3 +24,16 @@ logCacheGetFound cacheName key = logDebugU _CMP_CACHE (format "Get (found): '%s'
 
 logCacheGetMissed :: String -> String -> AppContextM ()
 logCacheGetMissed cacheName key = logDebugU _CMP_CACHE (format "Get (missed): '%s', key: { %s }" [cacheName, key])
+
+logCacheModifyBefore :: String -> String -> AppContextM ()
+logCacheModifyBefore cacheName key = logDebugU _CMP_CACHE (format "Modify (before): %s, key: { %s }" [cacheName, key])
+
+logCacheModifyAfter :: String -> String -> AppContextM ()
+logCacheModifyAfter cacheName key = logDebugU _CMP_CACHE (format "Modify (after): %s, key: { %s }" [cacheName, key])
+
+logCacheDeleteBefore :: String -> String -> AppContextM ()
+logCacheDeleteBefore cacheName key = logDebugU _CMP_CACHE (format "Delete (before): '%s', key: { %s }" [cacheName, key])
+
+logCacheDeleteFinished :: String -> String -> AppContextM ()
+logCacheDeleteFinished cacheName key =
+  logDebugU _CMP_CACHE (format "Delete (finished): '%s', key: { %s }" [cacheName, key])

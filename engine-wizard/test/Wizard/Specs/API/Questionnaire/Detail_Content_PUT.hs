@@ -5,6 +5,7 @@ module Wizard.Specs.API.Questionnaire.Detail_Content_PUT
 import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -52,8 +53,8 @@ reqHeadersT authHeader = reqCtHeader : authHeader
 reqDtoT qtn =
   QuestionnaireContentChangeDTO
     { _questionnaireContentChangeDTOLevel = qtn ^. level
-    , _questionnaireContentChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
-    , _questionnaireContentChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
+    , _questionnaireContentChangeDTOReplies = M.map toReplyValueDTO (qtn ^. replies)
+    , _questionnaireContentChangeDTOLabels = qtn ^. labels
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
@@ -64,7 +65,7 @@ reqBodyT qtn = encode $ reqDtoT qtn
 test_200 appContext = do
   create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1ContentEdited [reqAuthHeader]
   create_test_200
-    "HTTP 200 OK (Owner, PublicReadOnly)"
+    "HTTP 200 OK (Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2ContentEdited
@@ -75,7 +76,7 @@ test_200 appContext = do
     questionnaire3
     questionnaire3ContentEdited
     [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire6 questionnaire6ContentEdited []
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10ContentEdited []
 
 create_test_200 title appContext qtn qtnEdited authHeader =
   it title $
@@ -91,8 +92,8 @@ create_test_200 title appContext qtn qtnEdited authHeader =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire5) appContext
-    runInContextIO (insertQuestionnaire questionnaire6) appContext
+    runInContextIO (insertQuestionnaire questionnaire7) appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -120,17 +121,17 @@ test_403 appContext = do
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
   create_test_403
-    "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)"
+    "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2ContentEdited
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
   create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, PublicReadOnly, Sharing)"
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
     appContext
-    questionnaire5
-    questionnaire5ContentEdited
+    questionnaire7
+    questionnaire7ContentEdited
     []
     _ERROR_SERVICE_USER__MISSING_USER
   create_test_403
@@ -156,8 +157,8 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire5) appContext
-    runInContextIO (insertQuestionnaire questionnaire6) appContext
+    runInContextIO (insertQuestionnaire questionnaire7) appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import Data.Time
 import Data.UUID (UUID)
 
@@ -15,12 +16,10 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
@@ -64,9 +63,6 @@ toSimpleDTO questionnaire package state mOwner report =
     , _questionnaireDTOUpdatedAt = questionnaire ^. updatedAt
     }
 
-toReplyDTO :: Reply -> ReplyDTO
-toReplyDTO reply = ReplyDTO {_replyDTOPath = reply ^. path, _replyDTOValue = toReplyValueDTO $ reply ^. value}
-
 toReplyValueDTO :: ReplyValue -> ReplyValueDTO
 toReplyValueDTO StringReply {..} = StringReplyDTO {_stringReplyDTOValue = _stringReplyValue}
 toReplyValueDTO AnswerReply {..} = AnswerReplyDTO {_answerReplyDTOValue = _answerReplyValue}
@@ -78,10 +74,7 @@ toIntegrationReplyValueDTO :: IntegrationReplyValue -> IntegrationReplyValueDTO
 toIntegrationReplyValueDTO (PlainValue reply) = PlainValueDTO reply
 toIntegrationReplyValueDTO IntegrationValue {..} =
   IntegrationValueDTO
-    {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOIntValue = _integrationValueIntValue}
-
-toLabelDTO :: Label -> LabelDTO
-toLabelDTO label = LabelDTO {_labelDTOPath = label ^. path, _labelDTOValue = label ^. value}
+    {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOValue = _integrationValueValue}
 
 toDetailWithPackageWithEventsDTO ::
      Questionnaire
@@ -103,8 +96,8 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state repo
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
-    , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
-    , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
+    , _questionnaireDetailDTOReplies = M.map toReplyValueDTO (questionnaire ^. replies)
+    , _questionnaireDetailDTOLabels = questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
     , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
@@ -132,8 +125,8 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state report =
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
-    , _questionnaireDetailDTOReplies = toReplyDTO <$> questionnaire ^. replies
-    , _questionnaireDetailDTOLabels = toLabelDTO <$> questionnaire ^. labels
+    , _questionnaireDetailDTOReplies = M.map toReplyValueDTO (questionnaire ^. replies)
+    , _questionnaireDetailDTOLabels = questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
     , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
@@ -144,8 +137,14 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state report =
 toQuestionnaireReportDTO :: [Indication] -> QuestionnaireReportDTO
 toQuestionnaireReportDTO indications = QuestionnaireReportDTO {_questionnaireReportDTOIndications = indications}
 
-fromReplyDTO :: ReplyDTO -> Reply
-fromReplyDTO reply = Reply {_replyPath = reply ^. path, _replyValue = fromReplyValueDTO $ reply ^. value}
+toChangeDTO :: Questionnaire -> QuestionnaireChangeDTO
+toChangeDTO dto =
+  QuestionnaireChangeDTO
+    { _questionnaireChangeDTOName = dto ^. name
+    , _questionnaireChangeDTOVisibility = dto ^. visibility
+    , _questionnaireChangeDTOSharing = dto ^. sharing
+    , _questionnaireChangeDTOTemplateId = dto ^. templateId
+    }
 
 fromReplyValueDTO :: ReplyValueDTO -> ReplyValue
 fromReplyValueDTO StringReplyDTO {..} = StringReply {_stringReplyValue = _stringReplyDTOValue}
@@ -158,10 +157,7 @@ fromIntegrationReplyValueDTO :: IntegrationReplyValueDTO -> IntegrationReplyValu
 fromIntegrationReplyValueDTO (PlainValueDTO reply) = PlainValue reply
 fromIntegrationReplyValueDTO IntegrationValueDTO {..} =
   IntegrationValue
-    {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueIntValue = _integrationValueDTOIntValue}
-
-fromLabelDTO :: LabelDTO -> Label
-fromLabelDTO label = Label {_labelPath = label ^. path, _labelValue = label ^. value}
+    {_integrationValueIntId = _integrationValueDTOIntId, _integrationValueValue = _integrationValueDTOValue}
 
 fromChangeDTO ::
      QuestionnaireDetailDTO
@@ -182,10 +178,10 @@ fromChangeDTO qtn dto visibility sharing currentUserUuid now =
     , _questionnaireSelectedTagUuids = qtn ^. selectedTagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = qtn ^. formatUuid
-    , _questionnaireReplies = fromReplyDTO <$> qtn ^. replies
-    , _questionnaireLabels = fromLabelDTO <$> qtn ^. labels
+    , _questionnaireReplies = M.map fromReplyValueDTO (qtn ^. replies)
+    , _questionnaireLabels = qtn ^. labels
     , _questionnaireOwnerUuid =
-        if visibility /= PublicQuestionnaire
+        if visibility /= VisibleEditQuestionnaire
           then Just currentUserUuid
           else Nothing
     , _questionnaireCreatorUuid = qtn ^. creatorUuid
@@ -213,10 +209,10 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCre
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = Nothing
-    , _questionnaireReplies = []
-    , _questionnaireLabels = []
+    , _questionnaireReplies = M.empty
+    , _questionnaireLabels = M.empty
     , _questionnaireOwnerUuid =
-        if visibility /= PublicQuestionnaire
+        if visibility /= VisibleEditQuestionnaire
           then Just currentUserUuid
           else Nothing
     , _questionnaireCreatorUuid = Just currentUserUuid
@@ -228,8 +224,8 @@ fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> UTCTim
 fromContentChangeDTO qtn dto now =
   qtn
     { _questionnaireLevel = dto ^. level
-    , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
-    , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
+    , _questionnaireReplies = M.map fromReplyValueDTO (dto ^. replies)
+    , _questionnaireLabels = dto ^. labels
     , _questionnaireUpdatedAt = now
     }
 
@@ -245,8 +241,8 @@ fromDetailDTO dto =
     , _questionnaireSelectedTagUuids = dto ^. selectedTagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
-    , _questionnaireReplies = fromReplyDTO <$> dto ^. replies
-    , _questionnaireLabels = fromLabelDTO <$> dto ^. labels
+    , _questionnaireReplies = M.map fromReplyValueDTO (dto ^. replies)
+    , _questionnaireLabels = dto ^. labels
     , _questionnaireOwnerUuid = dto ^. ownerUuid
     , _questionnaireCreatorUuid = dto ^. creatorUuid
     , _questionnaireCreatedAt = dto ^. createdAt

@@ -27,8 +27,7 @@ toDocumentContextDTO dc =
     , _documentContextDTOConfig = toDocumentContextConfigDTO $ dc ^. config
     , _documentContextDTOQuestionnaireUuid = dc ^. questionnaireUuid
     , _documentContextDTOQuestionnaireName = dc ^. questionnaireName
-    , _documentContextDTOQuestionnaireReplies = replies
-    , _documentContextDTOQuestionnaireRepliesMap = M.fromList $ (\reply -> (reply ^. path, reply)) <$> replies
+    , _documentContextDTOQuestionnaireReplies = M.map QTN_Mapper.toReplyValueDTO (dc ^. questionnaireReplies)
     , _documentContextDTOLevel = dc ^. level
     , _documentContextDTOKnowledgeModel = dc ^. knowledgeModel
     , _documentContextDTOMetrics = dc ^. metrics
@@ -40,8 +39,6 @@ toDocumentContextDTO dc =
     , _documentContextDTOCreatedAt = dc ^. createdAt
     , _documentContextDTOUpdatedAt = dc ^. updatedAt
     }
-  where
-    replies = QTN_Mapper.toReplyDTO <$> dc ^. questionnaireReplies
 
 toDocumentContextConfigDTO :: DocumentContextConfig -> DocumentContextConfigDTO
 toDocumentContextConfigDTO config =

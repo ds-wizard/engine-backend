@@ -5,7 +5,6 @@ import Data.Swagger
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeJM ()
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 

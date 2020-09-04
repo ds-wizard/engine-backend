@@ -3,6 +3,7 @@ module Wizard.Service.Document.DocumentContextService where
 import Control.Lens ((^.))
 import Control.Monad (forM)
 import Control.Monad.Reader (asks, liftIO)
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -38,6 +39,6 @@ createDocumentContext qtnUuid = do
         if appConfig ^. questionnaire . levels . enabled
           then qtn ^. level
           else 9999
-  report <- generateReport _level metrics km (qtn ^. replies)
+  report <- generateReport _level metrics km (M.toList $ qtn ^. replies)
   let dmp = fromCreateContextDTO dmpUuid appConfig serverConfig qtn _level km metrics ls report pkg org mCreatedBy now
   return . toDocumentContextDTO $ dmp

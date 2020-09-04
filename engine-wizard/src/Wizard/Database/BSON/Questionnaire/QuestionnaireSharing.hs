@@ -6,7 +6,9 @@ import Wizard.Model.Questionnaire.Questionnaire
 
 instance BSON.Val QuestionnaireSharing where
   val RestrictedQuestionnaire = BSON.String "RestrictedQuestionnaire"
-  val AnyoneWithLinkQuestionnaire = BSON.String "AnyoneWithLinkQuestionnaire"
+  val AnyoneWithLinkViewQuestionnaire = BSON.String "AnyoneWithLinkViewQuestionnaire"
+  val AnyoneWithLinkEditQuestionnaire = BSON.String "AnyoneWithLinkEditQuestionnaire"
   cast' (BSON.String "RestrictedQuestionnaire") = Just RestrictedQuestionnaire
-  cast' (BSON.String "AnyoneWithLinkQuestionnaire") = Just AnyoneWithLinkQuestionnaire
+  cast' (BSON.String "AnyoneWithLinkViewQuestionnaire") = Just AnyoneWithLinkViewQuestionnaire
+  cast' (BSON.String "AnyoneWithLinkEditQuestionnaire") = Just AnyoneWithLinkEditQuestionnaire
   cast' _ = Nothing

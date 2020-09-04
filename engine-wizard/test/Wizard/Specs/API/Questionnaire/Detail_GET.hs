@@ -57,10 +57,10 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, PublicReadOnly)" appContext questionnaire2 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, PublicReadOnly, Sharing)" appContext questionnaire5 []
-  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire6 []
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 []
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 []
 
 create_test_200 title appContext qtn authHeader =
   it title $
@@ -76,8 +76,8 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire5) appContext
-    runInContextIO (insertQuestionnaire questionnaire6) appContext
+    runInContextIO (insertQuestionnaire questionnaire7) appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -96,7 +96,7 @@ test_403 appContext = do
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
   create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, PublicReadOnly)"
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext
     questionnaire2
     []

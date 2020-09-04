@@ -2,6 +2,7 @@ module Wizard.Service.Migration.Questionnaire.MigratorService where
 
 import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (liftIO)
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -75,6 +76,6 @@ upgradeQuestionnaire reqDto oldQtn = do
   oldKm <- compileKnowledgeModel [] (Just $ oldQtn ^. packageId) newTagUuids
   newKm <- compileKnowledgeModel [] (Just newPkgId) newTagUuids
   newUuid <- liftIO generateUuid
-  let newReplies = sanitizeReplies oldKm newKm (oldQtn ^. replies)
-  return $ (((oldQtn & uuid .~ newUuid) & packageId .~ newPkgId) & replies .~ newReplies) & selectedTagUuids .~
+  let newReplies = sanitizeReplies oldKm newKm (M.toList $ oldQtn ^. replies)
+  return $ (((oldQtn & uuid .~ newUuid) & packageId .~ newPkgId) & replies .~ M.fromList newReplies) & selectedTagUuids .~
     newTagUuids

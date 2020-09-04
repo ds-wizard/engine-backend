@@ -56,7 +56,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireLabelDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
@@ -82,6 +82,7 @@ import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
+import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMDTO
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
@@ -99,11 +100,12 @@ import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.Questionnaire.QuestionnaireLabel
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.User.User
+import Wizard.Model.Websocket.WebsocketMessage
+import Wizard.Model.Websocket.WebsocketRecord
 
 -- -------------------------------------
 -- Model
@@ -364,13 +366,9 @@ makeFields ''PackageBundle
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
-makeFields ''Reply
-
 makeFields ''ReplyValue
 
 makeFields ''IntegrationReplyValue
-
-makeFields ''Label
 
 -- Model / Report
 makeFields ''Indication
@@ -405,6 +403,11 @@ makeFields ''TemplateAsset
 makeFields ''User
 
 makeFields ''UserSubmissionProps
+
+-- Model / Websocket
+makeFields ''WebsocketMessage
+
+makeFields ''WebsocketRecord
 
 -- -------------------------------------
 -- Api / Resource
@@ -492,13 +495,9 @@ makeFields ''QuestionnaireChangeDTO
 
 makeFields ''QuestionnaireContentChangeDTO
 
-makeFields ''ReplyDTO
-
 makeFields ''ReplyValueDTO
 
 makeFields ''IntegrationReplyValueDTO
-
-makeFields ''LabelDTO
 
 makeFields ''QuestionnaireReportDTO
 
@@ -550,6 +549,21 @@ makeFields ''UserSubmissionPropsDTO
 
 -- Api / Resource / Version
 makeFields ''VersionDTO
+
+-- Api / Resource / Websocket
+makeFields ''SetReplyEventDTO
+
+makeFields ''ClearReplyEventDTO
+
+makeFields ''SetLevelEventDTO
+
+makeFields ''SetLabelsEventDTO
+
+-- -------------------------------------
+-- Messaging
+-- -------------------------------------
+-- Messaging / Resource / Questionnaire
+makeFields ''QuestionnaireEventMDTO
 
 -- -------------------------------------
 -- Integration

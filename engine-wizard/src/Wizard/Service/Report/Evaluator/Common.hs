@@ -1,15 +1,13 @@
 module Wizard.Service.Report.Evaluator.Common where
 
-import Control.Lens ((^.))
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
 
-import LensesConfig
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
 getReply :: [Reply] -> String -> Maybe Reply
-getReply replies p = L.find (\r -> r ^. path == p) replies
+getReply replies p = L.find (\(path, _) -> path == p) replies
 
 isRequiredNow :: Maybe Int -> Int -> Int -> Int
 isRequiredNow mQLevel qtnLevel currentValue =

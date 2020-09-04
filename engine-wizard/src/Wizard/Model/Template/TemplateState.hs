@@ -7,4 +7,5 @@ data TemplateState
   | OutdatedTemplateState
   | UpToDateTemplateState
   | UnpublishedTemplateState
+  | UnsupportedMetamodelVersionTemplateState
   deriving (Show, Eq, Generic)

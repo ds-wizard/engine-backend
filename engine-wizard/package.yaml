@@ -78,6 +78,7 @@ library:
   - servant-server
   - servant-swagger
   - servant-swagger-ui
+  - servant-websockets
   - swagger2
   - text
   - text-replace
@@ -91,9 +92,12 @@ library:
   - wai
   - wai-extra
   - warp # OK
+  - websockets
   - wreq # OK
   - yaml # OK
   - zip-archive
+  - resourcet
+  - wai-websockets
 
 executables:
   engine-wizard:
@@ -159,6 +163,7 @@ tests:
     - wai
     - wai-extra
     - warp
+    - websockets
     - yaml
     - engine-wizard
     - hspec

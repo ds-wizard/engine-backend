@@ -55,8 +55,8 @@ reqBody = ""
 -- ----------------------------------------------------
 test_201 appContext = do
   create_test_201 "HTTP 200 OK (Owner, Private)" appContext questionnaire1Dto
-  create_test_201 "HTTP 200 OK (Owner, PublicReadOnly)" appContext questionnaire2Dto
-  create_test_201 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3Dto
+  create_test_201 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2Dto
+  create_test_201 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3Dto
 
 create_test_201 title appContext qtn =
   it title $

@@ -1,0 +1,11 @@
+module Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireActions where
+
+import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.User.Data.Users
+
+ensureOnlineUserAction :: ClientQuestionnaireActionDTO
+ensureOnlineUserAction = SetReply_ClientQuestionnaireActionDTO setReplyEvent
+
+setUserListAction :: ServerQuestionnaireActionDTO
+setUserListAction = SetUserList_ServerQuestionnaireActionDTO [userAlbertOnlineInfo]

@@ -1,5 +1,6 @@
 module Wizard.Model.Document.DocumentContext where
 
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
@@ -18,7 +19,7 @@ data DocumentContext =
     , _documentContextConfig :: DocumentContextConfig
     , _documentContextQuestionnaireUuid :: String
     , _documentContextQuestionnaireName :: String
-    , _documentContextQuestionnaireReplies :: [Reply]
+    , _documentContextQuestionnaireReplies :: M.Map String ReplyValue
     , _documentContextLevel :: Int
     , _documentContextKnowledgeModel :: KnowledgeModel
     , _documentContextMetrics :: [Metric]
