@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -24,6 +25,12 @@ extractVisibility dto = do
   if appConfig ^. questionnaire . questionnaireVisibility . enabled
     then return (dto ^. visibility)
     else return $ appConfig ^. questionnaire . questionnaireVisibility . defaultValue
+
+extractSharing dto = do
+  appConfig <- getAppConfig
+  if appConfig ^. questionnaire . questionnaireSharing . enabled
+    then return (dto ^. sharing)
+    else return $ appConfig ^. questionnaire . questionnaireSharing . defaultValue
 
 enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
@@ -56,7 +63,7 @@ getQuestionnaireReport qtn = do
       appConfig <- getAppConfig
       let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
       let _requiredLevel = qtn ^. level
-      let _replies = qtn ^. replies
+      let _replies = M.toList $ qtn ^. replies
       km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
       let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
       addToCache qtn indications

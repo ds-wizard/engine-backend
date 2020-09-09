@@ -2,7 +2,7 @@ module Shared.Database.BSON.Common where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import Data.Map (Map, fromList, toList)
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import qualified Data.Text as T
 import qualified Data.UUID as U
@@ -22,17 +22,30 @@ instance FromBSON (String, String) where
     value <- BSON.lookup "value" doc
     return (key, value)
 
-instance ToBSON (Map String String) where
-  toBSON m = fmap (\(k, v) -> (T.pack k) BSON.=: v) (toList m)
+instance ToBSON (M.Map String String) where
+  toBSON m = fmap (\(k, v) -> T.pack k BSON.=: v) (M.toList m)
 
-instance FromBSON (Map String String) where
-  fromBSON doc = Just . fromList . fmap (\f -> (T.unpack . BSON.label $ f, BSON.typed . BSON.value $ f)) $ doc
+instance FromBSON (M.Map String String) where
+  fromBSON = Just . M.fromList . fmap (\f -> (T.unpack . BSON.label $ f, BSON.typed . BSON.value $ f))
 
-instance ToBSON a => ToBSON (Map U.UUID a) where
-  toBSON m = fmap (\(k, v) -> (U.toText $ k) BSON.=: toBSON v) (toList m)
+instance ToBSON a => ToBSON (M.Map U.UUID a) where
+  toBSON m = fmap (\(k, v) -> U.toText k BSON.=: toBSON v) (M.toList m)
 
-instance FromBSON a => FromBSON (Map U.UUID a) where
-  fromBSON doc =
+instance FromBSON a => FromBSON (M.Map U.UUID a) where
+  fromBSON =
     Just .
-    fromList . fmap (\f -> (fromJust . U.fromText . BSON.label $ f, fromJust . fromBSON . BSON.typed . BSON.value $ f)) $
-    doc
+    M.fromList .
+    fmap (\f -> (fromJust . U.fromText . BSON.label $ f, fromJust . fromBSON . BSON.typed . BSON.value $ f))
+
+instance ToBSON (M.Map String [U.UUID]) where
+  toBSON m = fmap (\(k, v) -> T.pack k BSON.=: v) (M.toList m)
+
+instance FromBSON (M.Map String [U.UUID]) where
+  fromBSON = Just . M.fromList . fmap (\f -> (T.unpack . BSON.label $ f, BSON.typed . BSON.value $ f))
+
+genericStringMapToBSON :: ToBSON a => M.Map String a -> BSON.Document
+genericStringMapToBSON m = fmap (\(k, v) -> T.pack k BSON.=: toBSON v) (M.toList m)
+
+defaultStringMapFromBSON :: FromBSON a => BSON.Document -> Maybe (M.Map String a)
+defaultStringMapFromBSON =
+  Just . M.fromList . fmap (\f -> (T.unpack . BSON.label $ f, fromJust . fromBSON . BSON.typed . BSON.value $ f))

@@ -17,5 +17,5 @@ type Detail_GET
 
 detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 detail_GET mTokenHeader qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getQuestionnaireDetailById qtnUuid

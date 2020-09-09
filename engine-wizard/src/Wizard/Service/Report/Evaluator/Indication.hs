@@ -9,7 +9,6 @@ import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelAccessors
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
-import Shared.Util.List (generateList)
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
@@ -64,7 +63,7 @@ evaluateQuestion found notFound qtnLevel km replies path q' =
 evaluateOptionsQuestion :: OptionsQuestion -> Int -> Int -> Int -> KnowledgeModel -> [Reply] -> String -> Int
 evaluateOptionsQuestion q found notFound qtnLevel km replies path =
   case getReply replies path of
-    Just Reply {_replyValue = AnswerReply {..}} ->
+    Just (_, AnswerReply {..}) ->
       let currentPath = composePathUuid path _answerReplyValue
           qs = getQuestionsForAnswerUuid km _answerReplyValue
        in sum . fmap (evaluateQuestion found notFound qtnLevel km replies currentPath) $ qs
@@ -73,16 +72,15 @@ evaluateOptionsQuestion q found notFound qtnLevel km replies path =
 evaluateListQuestion :: Int -> Int -> Int -> KnowledgeModel -> [Reply] -> String -> ListQuestion -> Int
 evaluateListQuestion found notFound qtnLevel km replies currentPath q =
   let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q ^. uuid
-      itemCount =
+      items =
         case getReply replies currentPath of
-          Just Reply {_replyValue = ItemListReply {..}} -> _itemListReplyValue
-          _ -> 0
-      indexes = generateList itemCount
-      evaluateQuestion' index =
-        fmap (evaluateQuestion found notFound qtnLevel km replies (composePath currentPath $ show index)) itemQs
+          Just (_, ItemListReply {..}) -> _itemListReplyValue
+          _ -> []
+      evaluateQuestion' item =
+        fmap (evaluateQuestion found notFound qtnLevel km replies (composePath currentPath $ U.toString item)) itemQs
       current =
-        if itemCount > 0
+        if not (null items)
           then isRequiredNow (q ^. requiredLevel) qtnLevel found
           else isRequiredNow (q ^. requiredLevel) qtnLevel notFound
-      childrens = sum . concatMap evaluateQuestion' $ indexes
+      childrens = sum . concatMap evaluateQuestion' $ items
    in current + childrens

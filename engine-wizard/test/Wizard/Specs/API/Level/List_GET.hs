@@ -21,10 +21,7 @@ import Wizard.Specs.Common
 -- GET /levels
 -- ------------------------------------------------------------------------
 list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /levels/" $ do
-    test_200 appContext
-    test_401 appContext
+list_get appContext = describe "GET /levels/" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -56,8 +53,3 @@ test_200 appContext =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody

@@ -22,11 +22,7 @@ import Wizard.Specs.Common
 -- POST /typehints
 -- ------------------------------------------------------------------------
 list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /typehints" $ do
-    test_200 appContext
-    test_401 appContext
-    test_403 appContext
+list_post appContext = describe "POST /typehints" $ test_200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -61,13 +57,3 @@ test_200 appContext =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"

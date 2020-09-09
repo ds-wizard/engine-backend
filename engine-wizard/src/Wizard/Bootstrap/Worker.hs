@@ -1,5 +1,5 @@
 module Wizard.Bootstrap.Worker
-  ( cronJob
+  ( worker
   ) where
 
 import Control.Concurrent
@@ -11,9 +11,20 @@ import System.Posix.Signals (Handler(CatchOnce), installHandler, sigINT, sigTERM
 import LensesConfig
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
-import Wizard.Worker.Document.DocumentWorker
-import Wizard.Worker.Feedback.FeedbackWorker
+import Wizard.Worker.Cron.Document.DocumentWorker
+import Wizard.Worker.Cron.Feedback.FeedbackWorker
+import Wizard.Worker.Permanent.Questionnaire.QuestionnaireWorker
 
+worker :: MVar () -> BaseContext -> IO ()
+worker shutdownFlag context = do
+  permanentWorker shutdownFlag context
+  cronJob shutdownFlag context
+
+-- ------------------------------------------------------------------
+permanentWorker :: MVar () -> BaseContext -> IO ()
+permanentWorker = questionnaireWorker
+
+-- ------------------------------------------------------------------
 cronJob :: MVar () -> BaseContext -> IO ()
 cronJob shutdownFlag context =
   let loggingLevel = context ^. serverConfig . logging . level

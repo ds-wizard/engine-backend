@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '2.5.0'
+version: '2.6.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -19,7 +19,7 @@ library:
     then:
       ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
-      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
   dependencies:
   - base
   - aeson
@@ -78,6 +78,7 @@ library:
   - servant-server
   - servant-swagger
   - servant-swagger-ui
+  - servant-websockets
   - swagger2
   - text
   - text-replace
@@ -91,9 +92,12 @@ library:
   - wai
   - wai-extra
   - warp # OK
+  - websockets
   - wreq # OK
   - yaml # OK
   - zip-archive
+  - resourcet
+  - wai-websockets
 
 executables:
   engine-wizard:
@@ -104,7 +108,7 @@ executables:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - engine-wizard
@@ -117,7 +121,7 @@ tests:
       then:
         ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson
@@ -159,6 +163,7 @@ tests:
     - wai
     - wai-extra
     - warp
+    - websockets
     - yaml
     - engine-wizard
     - hspec

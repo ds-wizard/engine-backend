@@ -3,6 +3,7 @@ module Wizard.Database.Migration.Development.Document.Data.Documents where
 import Control.Lens ((^.))
 import qualified Data.ByteString.Char8 as BS
 import Data.Hashable
+import qualified Data.Map.Strict as M
 import Data.Maybe
 import Data.Time
 import qualified Data.UUID as U
@@ -32,7 +33,7 @@ doc1 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash (questionnaire1 ^. replies)
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire1 ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -94,7 +95,7 @@ doc2 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2 ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -112,7 +113,7 @@ doc3 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash (questionnaire2 ^. replies)
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2 ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =

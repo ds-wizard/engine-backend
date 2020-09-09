@@ -1,6 +1,6 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizator where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
@@ -16,10 +16,10 @@ sanitizeReplies :: KnowledgeModel -> [Reply] -> [Reply]
 sanitizeReplies km = mapMaybe (sanitizeReply km)
 
 sanitizeReply :: KnowledgeModel -> Reply -> Maybe Reply
-sanitizeReply km reply =
-  let pathParsed = reverse $ splitOn "." (reply ^. path)
-   in case sanitizeQuestion km pathParsed (reply ^. value) of
-        Just replyValue -> Just $ reply & value .~ replyValue
+sanitizeReply km (path, value) =
+  let pathParsed = reverse $ splitOn "." path
+   in case sanitizeQuestion km pathParsed value of
+        Just replyValue -> Just (path, replyValue)
         Nothing -> Nothing
 
 -- --------------------------------
@@ -50,7 +50,7 @@ sanitizeValueQuestion km StringReply {..} q = Just $ StringReply {..}
 sanitizeValueQuestion km IntegrationReply {_integrationReplyValue = replyValue} q =
   case replyValue of
     PlainValue value -> Just $ StringReply {_stringReplyValue = value}
-    IntegrationValue {..} -> Just $ StringReply {_stringReplyValue = _integrationValueIntValue}
+    IntegrationValue {..} -> Just $ StringReply {_stringReplyValue = _integrationValueValue}
 sanitizeValueQuestion _ _ _ = Nothing
 
 sanitizeIntegrationQuestion :: KnowledgeModel -> ReplyValue -> IntegrationQuestion -> Maybe ReplyValue

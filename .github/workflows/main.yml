@@ -2,7 +2,8 @@ name: Engine Backend CI
 
 on:
   push:
-  pull_request:
+  schedule:
+  - cron: '0 2 * * *'
 
 jobs:
   btp:
@@ -21,6 +22,7 @@ jobs:
       TAG_DEVELOP: develop
       TAG_LATEST: latest
       STACK_VERSON: ${{ matrix.stack }}
+      GHC_OPTIONS: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
 
     services:
       mongo:
@@ -30,6 +32,10 @@ jobs:
         options: --name mongo
 
     steps:
+    - name: Detect force push
+      if: github.event_name == 'push' && github.event.forced
+      run: echo "Force push detected. Cache may be invalidated..."
+
     - name: Checkout git repository
       uses: actions/checkout@v2
 
@@ -45,85 +51,117 @@ jobs:
 # (1) -> Setup cache
     - name: Cache ~/.stack
       id: cache-stack
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.stack
-        key: stack-home-${{ matrix.component }}-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        key: stack-home-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
-          stack-home-${{ matrix.component }}-ubuntu18-
-    
-    - name: Cache .stack-work
-      id: cache-stack-work
-      uses: actions/cache@v1
-      with:
-        path: .stack-work
-        key: stack-work-${{ matrix.component }}-ubuntu18-${{ github.sha }}
-        restore-keys: |
-          stack-work-${{ matrix.component }}-ubuntu18-
+          stack-home-ubuntu18-
     
     - name: Cache bson-generic
       id: cache-bson-generic
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: vendor/bson-generic/.stack-work
-        key: bson-generic-ubuntu18-${{ github.sha }}
-#        restore-keys: |
-#          bson-generic-ubuntu18-
+        key: bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/package.yaml')}}-${{ hashFiles('vendor/bson-generic/**/*.hs') }}
+        restore-keys: |
+          bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/package.yaml')}}-
+          bson-generic-ubuntu18-
+    
+    - name: Invalidate bson-generic cache (force push)
+      id: invalidate-cache-bson-generic
+      if: github.event_name == 'push' && github.event.forced && steps.cache-bson-generic.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/bson-generic/.stack-work
     
     - name: Cache mongoDB-migration
       id: cache-mongoDB-migration
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: vendor/mongoDB-migration/.stack-work
-        key: mongoDB-migration-ubuntu18-${{ github.sha }}
+        key: mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/package.yaml')}}-${{ hashFiles('vendor/mongoDB-migration/**/*.hs') }}
         restore-keys: |
+          mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/package.yaml')}}-
           mongoDB-migration-ubuntu18-
     
-    - name: Cache engine-registry
-      id: cache-engine-registry
-      uses: actions/cache@v1
-      if: matrix.component == 'registry'
-      with:
-        path: engine-registry/.stack-work
-        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ github.sha }}
-        restore-keys: |
-          engine-registry-${{ matrix.component }}-ubuntu18-
+    - name: Invalidate mongoDB-migration cache (force push)
+      id: invalidate-cache-mongoDB-migration
+      if: github.event_name == 'push' && github.event.forced && steps.cache-mongoDB-migration.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/mongoDB-migration/.stack-work
     
     - name: Cache engine-shared
       id: cache-engine-shared
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: engine-shared/.stack-work
-        key: engine-shared-ubuntu18-${{ github.sha }}
+        key: engine-shared-ubuntu18-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
         restore-keys: |
+          engine-shared-ubuntu18-${{ hashFiles('engine-shared/package.yaml')}}-
           engine-shared-ubuntu18-
+    
+    - name: Invalidate engine-shared cache (force push)
+      id: invalidate-cache-engine-shared
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-shared.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-shared/.stack-work
+
+    - name: Cache engine-registry
+      id: cache-engine-registry
+      uses: actions/cache@v2
+      with:
+        path: engine-registry/.stack-work
+        key: engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
+        restore-keys: |
+          engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/package.yaml')}}-
+          engine-registry-${{ matrix.component }}-ubuntu18-
+    
+    - name: Invalidate engine-registry cache (force push)
+      id: invalidate-cache-engine-registry
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-registry.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-registry/.stack-work
     
     - name: Cache engine-wizard
       id: cache-engine-wizard
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
-        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ github.sha }}
+        key: engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/package.yaml')}}-${{ hashFiles('engine-wizard/**/*.hs') }}
         restore-keys: |
+          engine-wizard-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard/package.yaml')}}-
           engine-wizard-${{ matrix.component }}-ubuntu18-
+    
+    - name: Invalidate engine-wizard cache (force push)
+      id: invalidate-cache-engine-wizard
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-wizard/.stack-work
     
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
-        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ github.sha }}
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
         restore-keys: |
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
           engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu18-
+    
+    - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
+      id: invalidate-cache-engine-wizard-metamodel-migrator
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard-metamodel-migrator.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-wizard-metamodel-migrator/.stack-work
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       with:
         path: ~/.local/bin
-        key: stack-local-bin-${{ matrix.stack }}-ubuntu18
+        key: stack-local-bin-ubuntu18-${{ matrix.stack }}
 
 # (2) -> Prepare and install dependencies     
     - name: Setup stack
@@ -139,12 +177,12 @@ jobs:
 
     - name: Install GHC and dependencies
       run: |
-        stack build engine-$COMPONENT --no-terminal --install-ghc --test --only-dependencies
+        stack build -j3 --no-terminal --install-ghc --test --only-dependencies --ghc-options="$GHC_OPTIONS"
         
 # (3) -> Build binary
     - name: Build and test application 
       run: |
-        stack build engine-$COMPONENT --no-terminal --skip-ghc-check --test
+        stack build -j3 engine-$COMPONENT --no-terminal --skip-ghc-check --test --ghc-options="$GHC_OPTIONS"
         cp $(stack path --local-install-root)/bin/engine-$COMPONENT engine-$COMPONENT/engine-$COMPONENT-bin
       env:
         FEEDBACK_TOKEN: ${{ secrets.FEEDBACK_TOKEN }}

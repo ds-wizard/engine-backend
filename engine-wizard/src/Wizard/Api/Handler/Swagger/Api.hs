@@ -39,6 +39,7 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateSM ()
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateSM ()
 import Wizard.Api.Resource.Package.PackageDetailSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportSM ()
@@ -65,6 +66,8 @@ import Wizard.Api.Resource.User.UserProfileSM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserStateSM ()
 import Wizard.Api.Resource.Version.VersionSM ()
+import Wizard.Api.Resource.Websocket.QuestionnaireActionSM ()
+import Wizard.Api.Resource.Websocket.WebsocketSM ()
 
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 

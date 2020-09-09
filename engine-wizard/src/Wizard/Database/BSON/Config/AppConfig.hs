@@ -4,6 +4,7 @@ import Data.Bson.Generic
 
 import Shared.Database.BSON.Common ()
 import Wizard.Database.BSON.Config.SimpleFeature ()
+import Wizard.Database.BSON.Questionnaire.QuestionnaireSharing ()
 import Wizard.Database.BSON.Questionnaire.QuestionnaireVisibility ()
 import Wizard.Model.Config.AppConfig
 
@@ -70,6 +71,10 @@ instance FromBSON AppConfigQuestionnaire
 instance ToBSON AppConfigQuestionnaireVisibility
 
 instance FromBSON AppConfigQuestionnaireVisibility
+
+instance ToBSON AppConfigQuestionnaireSharing
+
+instance FromBSON AppConfigQuestionnaireSharing
 
 instance ToBSON AppConfigQuestionnaireFeedback
 

@@ -50,9 +50,9 @@ sendRegistrationConfirmationMail user hash = do
   let clientAddress = serverConfig ^. general . clientUrl
       activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": Confirmation Email"
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
       additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-      context = makeMailContext serverConfig appConfig user additionals
+      context = makeMailContext serverConfig appConfig user subject additionals
       to = [user ^. email]
   composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
@@ -62,8 +62,8 @@ sendRegistrationCreatedAnalyticsMail user = do
   appConfig <- getAppConfig
   let analyticsAddress = serverConfig ^. analytics . email
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": New user"
-      context = makeMailContext serverConfig appConfig user []
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_CREATED_ANALYTICS
+      context = makeMailContext serverConfig appConfig user subject []
       to = [analyticsAddress]
   composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
@@ -74,9 +74,9 @@ sendResetPasswordMail user hash = do
   let clientAddress = serverConfig ^. general . clientUrl
       resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
       mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": Reset Password"
+      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_RESET_PASSWORD
       additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
-      context = makeMailContext serverConfig appConfig user additionals
+      context = makeMailContext serverConfig appConfig user subject additionals
       to = [user ^. email]
   composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
@@ -182,12 +182,15 @@ makePlainTextPart fn context =
     template <- loadAndRender fn context
     return $ MIME.plainPart . TL.fromStrict <$> template
 
-makeMailContext :: ServerConfig -> AppConfig -> UserDTO -> [(T.Text, Aeson.Value)] -> MailContext
-makeMailContext serverConfig appConfig user others =
+makeMailContext :: ServerConfig -> AppConfig -> UserDTO -> TL.Text -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext serverConfig appConfig user subject others =
   fromList $
   [ ( "appTitle"
     , Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ appConfig ^. lookAndFeel . appTitle)
+  , ("supportMail"
+    , Aeson.String . T.pack $ fromMaybe "" $ appConfig ^. privacyAndSupport . supportEmail)
   , ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
+  , ("subject", Aeson.String . TL.toStrict $ subject)
   , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
   , ("user", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ user)
   ] ++

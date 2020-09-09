@@ -10,10 +10,8 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Metric.MetricService
 
 type List_GET
-   = Header "Authorization" String
-     :> "metrics"
+   = "metrics"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [Metric])
 
-list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [Metric])
-list_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService -> runInAuthService $ addTraceUuidHeader =<< getMetrics
+list_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] [Metric])
+list_GET = runInUnauthService $ addTraceUuidHeader =<< getMetrics

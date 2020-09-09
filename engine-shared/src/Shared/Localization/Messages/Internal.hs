@@ -5,6 +5,9 @@ module Shared.Localization.Messages.Internal where
 -- --------------------------------------
 _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN = "Unable to get token"
 
+-- Websocket
+_ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED = "Deserialization failed"
+
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------

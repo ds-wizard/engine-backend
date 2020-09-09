@@ -4,6 +4,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 import Test.Hspec
 
+import Shared.Constant.Template
 import Shared.Model.Template.Template
 import Wizard.Service.Template.TemplateUtil
 
@@ -22,7 +23,7 @@ templateUtilSpec =
                   , _templateOrganizationId = ""
                   , _templateTemplateId = ""
                   , _templateVersion = ""
-                  , _templateMetamodelVersion = 1
+                  , _templateMetamodelVersion = templateMetamodelVersion
                   , _templateDescription = ""
                   , _templateReadme = ""
                   , _templateLicense = ""
@@ -50,7 +51,7 @@ templateUtilSpec =
                   , _templateOrganizationId = ""
                   , _templateTemplateId = ""
                   , _templateVersion = ""
-                  , _templateMetamodelVersion = 1
+                  , _templateMetamodelVersion = templateMetamodelVersion
                   , _templateDescription = ""
                   , _templateReadme = ""
                   , _templateLicense = ""
@@ -85,7 +86,7 @@ templateUtilSpec =
                   , _templateOrganizationId = ""
                   , _templateTemplateId = ""
                   , _templateVersion = ""
-                  , _templateMetamodelVersion = 1
+                  , _templateMetamodelVersion = templateMetamodelVersion
                   , _templateDescription = ""
                   , _templateReadme = ""
                   , _templateLicense = ""

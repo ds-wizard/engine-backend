@@ -19,14 +19,20 @@ import Wizard.Specs.Common
 -- --------------------------------
 assertExistenceOfQuestionnaireInDB appContext qtn = do
   eQtn <- runInContextIO (findQuestionnaireById (U.toString $ qtn ^. uuid)) appContext
-  liftIO $ (isRight eQtn) `shouldBe` True
+  liftIO $ isRight eQtn `shouldBe` True
   let (Right qtnFromDb) = eQtn
   compareQuestionnaireDtos qtnFromDb qtn
+
+assertExistenceOfQuestionnaireContentInDB appContext qtnUuid content = do
+  eQtn <- runInContextIO (findQuestionnaireById (U.toString qtnUuid)) appContext
+  liftIO $ isRight eQtn `shouldBe` True
+  let (Right qtnFromDb) = eQtn
+  compareQuestionnaireContentDtos qtnFromDb content
 
 assertAbsenceOfQuestionnaireInDB appContext qtn = do
   let qtnUuid = U.toString $ qtn ^. uuid
   eQtn <- runInContextIO (findQuestionnaireById qtnUuid) appContext
-  liftIO $ (isLeft eQtn) `shouldBe` True
+  liftIO $ isLeft eQtn `shouldBe` True
   let (Left error) = eQtn
   liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" qtnUuid)
 
@@ -37,6 +43,7 @@ compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
+  liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
@@ -45,6 +52,7 @@ compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` ("Copy of " ++ expDto ^. name)
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
+  liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
@@ -53,6 +61,7 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
   liftIO $ resDto ^. level `shouldBe` expDto ^. level
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
+  liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
   liftIO $ resDto ^. selectedTagUuids `shouldBe` expDto ^. selectedTagUuids
@@ -61,6 +70,11 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
 
 compareQuestionnaireDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+
+compareQuestionnaireContentDtos resDto expDto = do
+  liftIO $ resDto ^. level `shouldBe` expDto ^. level
+  liftIO $ resDto ^. replies `shouldBe` expDto ^. replies
+  liftIO $ resDto ^. labels `shouldBe` expDto ^. labels
 
 compareReportDtos resDto expDto = do
   liftIO $ resDto ^. totalReport `shouldBe` expDto ^. totalReport

@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Cache as C
 import qualified Data.Hashable as H
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -20,7 +21,7 @@ cacheKey qtnUuid repliesHash = format "qtnUuid: '%s', repliesHash: '%s'" [U.toSt
 addToCache :: Questionnaire -> [Indication] -> AppContextM ()
 addToCache qtn indications = do
   let qtnUuid = qtn ^. uuid
-  let repliesHash = H.hash $ qtn ^. replies
+  let repliesHash = H.hash . M.toList $ qtn ^. replies
   let key = cacheKey qtnUuid repliesHash
   logCacheAddBefore cacheName key
   iCache <- getCache
@@ -31,7 +32,7 @@ addToCache qtn indications = do
 getFromCache :: Questionnaire -> AppContextM (Maybe [Indication])
 getFromCache qtn = do
   let qtnUuid = qtn ^. uuid
-  let repliesHash = H.hash $ qtn ^. replies
+  let repliesHash = H.hash . M.toList $ qtn ^. replies
   let key = cacheKey qtnUuid repliesHash
   logCacheGetBefore cacheName key
   iCache <- getCache

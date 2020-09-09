@@ -10,10 +10,8 @@ import Wizard.Model.Level.Level
 import Wizard.Service.Level.LevelService
 
 type List_GET
-   = Header "Authorization" String
-     :> "levels"
+   = "levels"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [Level])
 
-list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [Level])
-list_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService -> runInAuthService $ addTraceUuidHeader =<< getLevels
+list_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] [Level])
+list_GET = runInUnauthService $ addTraceUuidHeader =<< getLevels

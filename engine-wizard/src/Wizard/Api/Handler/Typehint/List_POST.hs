@@ -18,6 +18,4 @@ type List_POST
      :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
 
 list_POST :: Maybe String -> TypehintRequestDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
-list_POST mTokenHeader reqDto =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getTypehints reqDto
+list_POST mTokenHeader reqDto = runInUnauthService $ addTraceUuidHeader =<< getTypehints reqDto

@@ -7,9 +7,11 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Util.Gravatar (gravatarHash)
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
 
 toDTO :: User -> UserDTO
@@ -28,6 +30,29 @@ toDTO user =
     , _userDTOCreatedAt = user ^. createdAt
     , _userDTOUpdatedAt = user ^. updatedAt
     }
+
+toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> OnlineUserInfo
+toOnlineUserInfo mUser avatarNumber colorNumber =
+  case mUser of
+    Just user -> toLoggedOnlineUserInfo user colorNumber
+    Nothing -> toAnonymousOnlineUserInfo avatarNumber colorNumber
+
+toLoggedOnlineUserInfo :: UserDTO -> Int -> OnlineUserInfo
+toLoggedOnlineUserInfo user colorNumber =
+  LoggedOnlineUserInfo
+    { _loggedOnlineUserInfoUuid = user ^. uuid
+    , _loggedOnlineUserInfoFirstName = user ^. firstName
+    , _loggedOnlineUserInfoLastName = user ^. lastName
+    , _loggedOnlineUserInfoGravatarHash = gravatarHash $ user ^. email
+    , _loggedOnlineUserInfoImageUrl = user ^. imageUrl
+    , _loggedOnlineUserInfoColorNumber = colorNumber
+    , _loggedOnlineUserInfoRole = user ^. role
+    }
+
+toAnonymousOnlineUserInfo :: Int -> Int -> OnlineUserInfo
+toAnonymousOnlineUserInfo avatarNumber colorNumber =
+  AnonymousOnlineUserInfo
+    {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
 fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> UTCTime -> UTCTime -> User
 fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =

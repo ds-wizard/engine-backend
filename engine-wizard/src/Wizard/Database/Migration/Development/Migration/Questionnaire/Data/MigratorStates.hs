@@ -43,19 +43,19 @@ nlQtnMigrationStateDto =
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
-nlQtnMigrationStatePublicReadOnlyDto :: MigratorStateDTO
-nlQtnMigrationStatePublicReadOnlyDto =
+nlQtnMigrationStateVisibleViewDto :: MigratorStateDTO
+nlQtnMigrationStateVisibleViewDto =
   MigratorStateDTO
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
-          questionnaire4PublicReadOnly
+          questionnaire4VisibleView
           netherlandsPackage
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
-          questionnaire4PublicReadOnlyUpgraded
+          questionnaire4VisibleViewUpgraded
           netherlandsPackageV2
           km1NetherlandsV2
           QSMigrating
@@ -63,19 +63,19 @@ nlQtnMigrationStatePublicReadOnlyDto =
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
-nlQtnMigrationStatePublicDto :: MigratorStateDTO
-nlQtnMigrationStatePublicDto =
+nlQtnMigrationStateVisibleEditDto :: MigratorStateDTO
+nlQtnMigrationStateVisibleEditDto =
   MigratorStateDTO
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
-          questionnaire4Public
+          questionnaire4VisibleEdit
           netherlandsPackage
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
-          questionnaire4PublicUpgraded
+          questionnaire4VisibleEditUpgraded
           netherlandsPackageV2
           km1NetherlandsV2
           QSMigrating

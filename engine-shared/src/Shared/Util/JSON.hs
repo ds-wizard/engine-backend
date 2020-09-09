@@ -50,6 +50,8 @@ stripDTOSuffix f1 =
 
 simpleParseJSON fieldPrefix = genericParseJSON (createOptions fieldPrefix)
 
+simpleParseJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' fieldPrefix typeFieldName)
+
 toSumJSON :: (Generic a, GToJSON Zero (Rep a)) => a -> Value
 toSumJSON = genericToJSON (defaultOptions {sumEncoding = UntaggedValue})
 
@@ -68,13 +70,12 @@ simpleToJSON'' fieldPrefix additionalData dto =
     Object o -> Object $ HM.union o (HM.fromList additionalData)
 
 createOptions :: String -> Options
-createOptions fieldPrefix =
-  defaultOptions {fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (length fieldPrefix)}
+createOptions fieldPrefix = defaultOptions {fieldLabelModifier = fieldLabelModifierFnWithoutDTO fieldPrefix}
 
 createOptions' :: String -> String -> Options
 createOptions' fieldPrefix typeFieldName =
   defaultOptions
-    { fieldLabelModifier = jsonSpecialFields . lowerFirst . drop (length fieldPrefix)
+    { fieldLabelModifier = fieldLabelModifierFnWithoutDTO fieldPrefix
     , tagSingleConstructors = True
     , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
     , constructorTagModifier = stripDTOSuffix
@@ -83,5 +84,30 @@ createOptions' fieldPrefix typeFieldName =
 simpleOptions :: Options
 simpleOptions = defaultOptions {fieldLabelModifier = fieldLabelModifierFn}
 
+simpleOptions''' :: Options
+simpleOptions''' =
+  defaultOptions
+    { fieldLabelModifier = fieldLabelModifierFn
+    , tagSingleConstructors = True
+    , sumEncoding = TaggedObject {tagFieldName = "type", contentsFieldName = "contents"}
+    , constructorTagModifier = stripDTOSuffix
+    }
+
+createSimpleOptions'''' :: String -> Options
+createSimpleOptions'''' parentEntityName =
+  defaultOptions
+    { fieldLabelModifier = fieldLabelModifierFnWithParentEntityNameDTO parentEntityName
+    , tagSingleConstructors = True
+    , sumEncoding = TaggedObject {tagFieldName = "type", contentsFieldName = "contents"}
+    , constructorTagModifier = stripDTOSuffix
+    }
+
 fieldLabelModifierFn :: String -> String
 fieldLabelModifierFn value = jsonSpecialFields . lowerFirst $ splitOn "DTO" value !! 1
+
+fieldLabelModifierFnWithoutDTO :: String -> String -> String
+fieldLabelModifierFnWithoutDTO fieldPrefix = jsonSpecialFields . lowerFirst . drop (length fieldPrefix)
+
+fieldLabelModifierFnWithParentEntityNameDTO :: String -> String -> String
+fieldLabelModifierFnWithParentEntityNameDTO parentEntityName value =
+  jsonSpecialFields . lowerFirst $ splitOn parentEntityName value !! 1

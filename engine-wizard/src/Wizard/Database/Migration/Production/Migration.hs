@@ -42,6 +42,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0033_remove_publ
 import qualified Wizard.Database.Migration.Production.Migration_0034_appConfig_recommendedTemplateUuid.Migration as M_0034
 import qualified Wizard.Database.Migration.Production.Migration_0035_questionnaireVisibility.Migration as M_0035
 import qualified Wizard.Database.Migration.Production.Migration_0036_templates.Migration as M_0036
+import qualified Wizard.Database.Migration.Production.Migration_0037_questionnaireSharingAndCollaboration.Migration as M_0037
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -86,4 +87,5 @@ migrationDefinitions =
   , M_0034.definition
   , M_0035.definition
   , M_0036.definition
+  , M_0037.definition
   ]

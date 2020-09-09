@@ -57,9 +57,7 @@ reqDtoT qtn =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = qtn ^. name
     , _questionnaireChangeDTOVisibility = qtn ^. visibility
-    , _questionnaireChangeDTOLevel = qtn ^. level
-    , _questionnaireChangeDTOReplies = toReplyDTO <$> (qtn ^. replies)
-    , _questionnaireChangeDTOLabels = toLabelDTO <$> (qtn ^. labels)
+    , _questionnaireChangeDTOSharing = qtn ^. sharing
     , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     }
 
@@ -70,8 +68,8 @@ reqBodyT qtn = encode $ reqDtoT qtn
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited
-  create_test_200 "HTTP 200 OK (Owner, PublicReadOnly)" appContext questionnaire2 questionnaire2Edited
-  create_test_200 "HTTP 200 OK (Non-Owner, Public)" appContext questionnaire3 questionnaire3Edited
+  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Edited
 
 create_test_200 title appContext qtn qtnEdited =
   it title $
@@ -126,7 +124,7 @@ test_403 appContext = do
     questionnaire1Edited
     "Get Questionnaire"
   create_test_403
-    "HTTP 403 FORBIDDEN (Non-Owner, PublicReadOnly)"
+    "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2Edited
