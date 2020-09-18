@@ -31,6 +31,12 @@ logCacheModifyBefore cacheName key = logDebugU _CMP_CACHE (f' "Modify (before): 
 logCacheModifyAfter :: String -> String -> AppContextM ()
 logCacheModifyAfter cacheName key = logDebugU _CMP_CACHE (f' "Modify (after): %s, key: { %s }" [cacheName, key])
 
+logCacheDeleteAllBefore :: String -> AppContextM ()
+logCacheDeleteAllBefore cacheName = logDebugU _CMP_CACHE (f' "Delete All (before): '%s'" [cacheName])
+
+logCacheDeleteAllFinished :: String -> AppContextM ()
+logCacheDeleteAllFinished cacheName = logDebugU _CMP_CACHE (f' "Delete All (finished): '%s'" [cacheName])
+
 logCacheDeleteBefore :: String -> String -> AppContextM ()
 logCacheDeleteBefore cacheName key = logDebugU _CMP_CACHE (f' "Delete (before): '%s', key: { %s }" [cacheName, key])
 

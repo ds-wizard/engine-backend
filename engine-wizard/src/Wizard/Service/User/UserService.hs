@@ -32,12 +32,14 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Service.Cache.UserCache
 import Wizard.Service.Common
 import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Util.Cache
 
 getUsers :: AppContextM [UserDTO]
 getUsers = do
@@ -110,15 +112,18 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl = do
       sendAnalyticsEmailIfEnabled user
       return $ toDTO user
 
-getUserById :: String -> AppContextM UserDTO
-getUserById userUuid = do
-  user <- findUserById userUuid
-  return $ toDTO user
+getUserById :: String -> AppContextM User
+getUserById = getFromCacheOrDb getFromCache addToCache findUserById
 
 getUserByIdDto :: String -> AppContextM UserDTO
 getUserByIdDto userUuid = do
+  user <- getUserById userUuid
+  return $ toDTO user
+
+getUserDetailById :: String -> AppContextM UserDTO
+getUserDetailById userUuid = do
   checkPermission _UM_PERM
-  getUserById userUuid
+  getUserByIdDto userUuid
 
 modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto = do

@@ -79,7 +79,7 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
 
 toDetailWithPackageWithEventsDTO ::
      Questionnaire
-  -> PackageWithEvents
+  -> Package
   -> KnowledgeModel
   -> QuestionnaireState
   -> QuestionnaireReportDTO
@@ -93,7 +93,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state repo
     , _questionnaireDetailDTOVisibility = questionnaire ^. visibility
     , _questionnaireDetailDTOSharing = questionnaire ^. sharing
     , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
+    , _questionnaireDetailDTOPackage = PM.toSimpleDTO package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid

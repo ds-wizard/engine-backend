@@ -5,7 +5,6 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
@@ -34,11 +33,11 @@ extractSharing dto = do
 
 enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
-  pkg <- findPackageById (qtn ^. packageId)
+  pkg <- getPackageById (qtn ^. packageId)
   state <- getQuestionnaireState (U.toString $ qtn ^. uuid) (pkg ^. pId)
   mOwner <-
     case qtn ^. ownerUuid of
-      Just uUuid -> Just <$> getUserById (U.toString uUuid)
+      Just uUuid -> Just <$> getUserByIdDto (U.toString uUuid)
       Nothing -> return Nothing
   report <- getQuestionnaireReport qtn
   return $ toDTO qtn pkg state mOwner report

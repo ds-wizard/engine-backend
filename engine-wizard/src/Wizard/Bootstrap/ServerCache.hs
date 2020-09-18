@@ -16,9 +16,13 @@ createServerCache = do
   kmCache <- C.newCache Nothing
   qriCache <- C.newCache Nothing
   qwCache <- C.newCache Nothing
+  uCache <- C.newCache Nothing
+  pCache <- C.newCache Nothing
   return $
     ServerCache
       { _serverCacheKnowledgeModel = kmCache
       , _serverCacheQuestionnaireReportIndications = qriCache
       , _serverCacheQuestionnaireWebsocket = qwCache
+      , _serverCacheUser = uCache
+      , _serverCachePackage = pCache
       }

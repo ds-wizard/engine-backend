@@ -1,6 +1,7 @@
 module Wizard.Service.Package.PackageService
   ( getSimplePackagesFiltered
   , getPackageById
+  , getPackageDetailById
   , getSeriesOfPackages
   , getAllPreviousEventsSincePackageId
   , getAllPreviousEventsSincePackageIdAndUntilPackageId
@@ -13,6 +14,7 @@ module Wizard.Service.Package.PackageService
 
 import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
+import Data.Foldable (traverse_)
 import Data.List (maximumBy)
 
 import LensesConfig
@@ -29,10 +31,12 @@ import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Cache.PackageCache
 import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
+import Wizard.Util.Cache
 
 getSimplePackagesFiltered :: [(String, String)] -> AppContextM [PackageSimpleDTO]
 getSimplePackagesFiltered queryParams = do
@@ -48,11 +52,14 @@ getSimplePackagesFiltered queryParams = do
       where
         newestPkg = maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) pkgs
 
-getPackageById :: String -> AppContextM PackageDetailDTO
-getPackageById pkgId = do
+getPackageById :: String -> AppContextM Package
+getPackageById = getFromCacheOrDb getFromCache addToCache findPackageById
+
+getPackageDetailById :: String -> AppContextM PackageDetailDTO
+getPackageDetailById pkgId = do
   checkPermission _PM_READ_PERM
   serverConfig <- asks _appContextServerConfig
-  pkg <- findPackageById pkgId
+  pkg <- getPackageById pkgId
   versions <- getPackageVersions pkg
   iStat <- getInstanceStatistics
   pkgRs <- retrievePackages iStat
@@ -115,8 +122,10 @@ deletePackagesByQueryParams :: [(String, String)] -> AppContextM ()
 deletePackagesByQueryParams queryParams = do
   checkPermission _PM_WRITE_PERM
   packages <- findPackagesFiltered queryParams
-  validatePackagesDeletation (_packagePId <$> packages)
+  let pIds = packages ^.. traverse . pId
+  validatePackagesDeletation pIds
   deletePackagesFiltered queryParams
+  traverse_ deleteFromCache pIds
 
 deletePackage :: String -> AppContextM ()
 deletePackage pkgId = do
@@ -124,6 +133,7 @@ deletePackage pkgId = do
   package <- findPackageById pkgId
   validatePackageDeletation pkgId
   deletePackageById pkgId
+  deleteFromCache pkgId
 
 -- --------------------------------
 -- PRIVATE

@@ -28,6 +28,7 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.QuestionnaireACL
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -102,12 +103,12 @@ getQuestionnaireById' qtnUuid = do
   case mQtn of
     Just qtn -> do
       checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
-      package <- findPackageById (qtn ^. packageId)
+      package <- getPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
       mOwner <-
         case qtn ^. ownerUuid of
-          Just uUuid -> Just <$> getUserById (U.toString uUuid)
+          Just uUuid -> Just <$> getUserByIdDto (U.toString uUuid)
           Nothing -> return Nothing
       return . Just $ toDTO qtn package state mOwner report
     Nothing -> return Nothing
@@ -116,9 +117,9 @@ getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
-  package <- findPackageWithEventsById (qtn ^. packageId)
+  package <- getPackageById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-  state <- getQuestionnaireState qtnUuid (package ^. pId)
+  state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
   report <- getQuestionnaireReport qtn
   mFormat <-
     case (qtn ^. templateId, qtn ^. formatUuid) of
@@ -126,6 +127,7 @@ getQuestionnaireDetailById qtnUuid = do
         template <- findTemplateById tId
         return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
       _ -> return Nothing
+  -- TODO we may not need to fetch package at all
   return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report mFormat
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO

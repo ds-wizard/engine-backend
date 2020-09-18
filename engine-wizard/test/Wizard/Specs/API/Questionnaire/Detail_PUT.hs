@@ -17,6 +17,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -84,7 +85,13 @@ create_test_200 title appContext qtn qtnEdited =
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto =
-          toDetailWithPackageWithEventsDTO qtnEdited germanyPackage km1WithQ4 QSDefault questionnaireReport Nothing
+          toDetailWithPackageWithEventsDTO
+            qtnEdited
+            (SPM.toPackage germanyPackage)
+            km1WithQ4
+            QSDefault
+            questionnaireReport
+            Nothing
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

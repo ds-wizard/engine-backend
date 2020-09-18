@@ -85,7 +85,7 @@ getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader callback =
 getCurrentUser :: String -> BaseContextM UserDTO
 getCurrentUser tokenHeader = do
   userUuid <- getCurrentUserUuid tokenHeader
-  runInUnauthService $ catchError (getUserById userUuid) (handleError userUuid)
+  runInUnauthService $ catchError (getUserByIdDto userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error

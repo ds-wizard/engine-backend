@@ -6,6 +6,7 @@ import Shared.Api.Resource.KnowledgeModel.KnowledgeModelSM ()
 import Shared.Api.Resource.Template.TemplateSM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
+import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
@@ -23,4 +24,10 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 instance ToSchema QuestionnaireDetailDTO where
   declareNamedSchema =
     simpleToSchema
-      (toDetailWithPackageWithEventsDTO questionnaire1 germanyPackage km1WithQ4 QSDefault questionnaireReport Nothing)
+      (toDetailWithPackageWithEventsDTO
+         questionnaire1
+         (PM.toPackage germanyPackage)
+         km1WithQ4
+         QSDefault
+         questionnaireReport
+         Nothing)

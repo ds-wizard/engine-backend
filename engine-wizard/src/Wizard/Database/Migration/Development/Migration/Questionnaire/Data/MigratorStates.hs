@@ -7,6 +7,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
+import qualified Shared.Service.Package.PackageMapper as PM
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
@@ -30,7 +31,7 @@ nlQtnMigrationStateDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
@@ -38,7 +39,7 @@ nlQtnMigrationStateDto =
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty
@@ -52,7 +53,7 @@ nlQtnMigrationStateVisibleViewDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleView
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
@@ -60,7 +61,7 @@ nlQtnMigrationStateVisibleViewDto =
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty
@@ -74,7 +75,7 @@ nlQtnMigrationStateVisibleEditDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEdit
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
@@ -82,7 +83,7 @@ nlQtnMigrationStateVisibleEditDto =
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty

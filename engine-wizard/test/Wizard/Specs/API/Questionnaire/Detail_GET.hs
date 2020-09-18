@@ -18,6 +18,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -76,7 +77,7 @@ create_test_200 title appContext qtn authHeader =
     let expDto =
           toDetailWithPackageWithEventsDTO
             qtn
-            germanyPackage
+            (SPM.toPackage germanyPackage)
             km1WithQ4
             QSDefault
             questionnaireReport

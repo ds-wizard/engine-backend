@@ -3,17 +3,17 @@ module Wizard.Service.Branch.BranchUtil where
 import Control.Lens ((^.))
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Package.Package
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Package.PackageService
 
 getBranchPreviousPackage :: BranchWithEvents -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
   case branch ^. previousPackageId of
     Just pkgId -> do
-      pkg <- findPackageById pkgId
+      pkg <- getPackageById pkgId
       return . Just $ pkg
     Nothing -> return Nothing
 
