@@ -1,6 +1,8 @@
 module Wizard.Service.Common.ACL
   ( checkPermission
+  , checkRole
   , module Wizard.Constant.ACL
+  , module Wizard.Model.User.User
   ) where
 
 import Control.Lens ((^.))
@@ -13,6 +15,7 @@ import Shared.Model.Error.Error
 import Wizard.Constant.ACL
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.User.User
 
 checkPermission :: String -> AppContextM ()
 checkPermission perm = do
@@ -23,3 +26,13 @@ checkPermission perm = do
       unless
         (perm `elem` (user ^. permissions))
         (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ perm))
+
+checkRole :: String -> AppContextM ()
+checkRole userRole = do
+  mCurrentUser <- asks _appContextCurrentUser
+  case mCurrentUser of
+    Nothing -> throwError . ForbiddenError $ _ERROR_SERVICE_USER__MISSING_USER
+    Just user ->
+      unless
+        (userRole == (user ^. role))
+        (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Required role: " ++ userRole))

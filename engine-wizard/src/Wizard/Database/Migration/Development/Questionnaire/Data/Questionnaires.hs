@@ -37,7 +37,7 @@ questionnaire1 =
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -57,7 +57,7 @@ questionnaire1Edited =
     , _questionnairePackageId = questionnaire1 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = questionnaire1 ^. replies
     , _questionnaireLabels = questionnaire1 ^. labels
     , _questionnaireOwnerUuid = Nothing
@@ -83,6 +83,7 @@ questionnaire1Create =
     , _questionnaireCreateDTOSharing = questionnaire1 ^. sharing
     , _questionnaireCreateDTOTagUuids = []
     , _questionnaireCreateDTOTemplateId = questionnaire1 ^. templateId
+    , _questionnaireCreateDTOFormatUuid = questionnaire1 ^. formatUuid
     }
 
 questionnaire1EditedChange :: QuestionnaireChangeDTO
@@ -92,6 +93,7 @@ questionnaire1EditedChange =
     , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
     , _questionnaireChangeDTOSharing = questionnaire1Edited ^. sharing
     , _questionnaireChangeDTOTemplateId = Nothing
+    , _questionnaireChangeDTOFormatUuid = Nothing
     }
 
 -- ------------------------------------------------------------------------
@@ -107,7 +109,7 @@ questionnaire2 =
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -127,7 +129,7 @@ questionnaire2Edited =
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = questionnaire2 ^. replies
     , _questionnaireLabels = questionnaire2 ^. labels
     , _questionnaireOwnerUuid = Nothing
@@ -157,7 +159,7 @@ questionnaire3 =
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
     , _questionnaireOwnerUuid = Nothing
@@ -177,7 +179,7 @@ questionnaire3Edited =
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = questionnaire3 ^. replies
     , _questionnaireLabels = questionnaire3 ^. labels
     , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
@@ -206,7 +208,7 @@ questionnaire4 =
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ head (commonWizardTemplate ^. formats) ^. uuid
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = M.empty
     , _questionnaireLabels = M.empty
     , _questionnaireOwnerUuid = Nothing
@@ -265,6 +267,10 @@ questionnaire6 =
 questionnaire6ContentEdited :: Questionnaire
 questionnaire6ContentEdited =
   questionnaire6 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+
+questionnaire6Dto :: QuestionnaireDTO
+questionnaire6Dto =
+  toSimpleDTO questionnaire6 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

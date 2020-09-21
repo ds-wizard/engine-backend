@@ -6,6 +6,7 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
@@ -33,6 +34,7 @@ nlQtnMigrationStateDto =
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
@@ -40,6 +42,7 @@ nlQtnMigrationStateDto =
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -53,6 +56,7 @@ nlQtnMigrationStateVisibleViewDto =
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
@@ -60,6 +64,7 @@ nlQtnMigrationStateVisibleViewDto =
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -73,6 +78,7 @@ nlQtnMigrationStateVisibleEditDto =
           km1Netherlands
           QSOutdated
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
@@ -80,6 +86,7 @@ nlQtnMigrationStateVisibleEditDto =
           km1NetherlandsV2
           QSMigrating
           questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

@@ -57,7 +57,7 @@ handleWebsocketMessage entityId connectionUuid connection handleClose disconnect
               sendMessage disconnectUser msg
           continue
     Left (CloseRequest code bs) -> do
-      log connectionUuid (format "Request to close websocket (code: %s, msg: '%s')" [show code, BSL.unpack bs])
+      log connectionUuid (f' "Request to close websocket (code: %s, msg: '%s')" [show code, BSL.unpack bs])
       handleClose
       continue
     Left ConnectionClosed -> do
@@ -83,4 +83,4 @@ handleError continue connectionUuid connection entityId disconnectUser error = d
   continue
 
 log :: U.UUID -> String -> AppContextM ()
-log connectionUuid message = logInfoU _CMP_API (format "[C:%s] %s" [U.toString connectionUuid, message])
+log connectionUuid message = logInfoU _CMP_API (f' "[C:%s] %s" [U.toString connectionUuid, message])

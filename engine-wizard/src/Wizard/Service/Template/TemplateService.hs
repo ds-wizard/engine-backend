@@ -71,7 +71,6 @@ getTemplateByUuid templateId mPkgId = do
 
 getTemplateByUuidDto :: String -> AppContextM TemplateDetailDTO
 getTemplateByUuidDto templateId = do
-  checkPermission _TML_PERM
   tml <- findTemplateById templateId
   pkgs <- findPackages
   versions <- getTemplateVersions tml

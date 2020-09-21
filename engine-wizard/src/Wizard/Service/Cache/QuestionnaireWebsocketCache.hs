@@ -17,7 +17,7 @@ import Wizard.Service.Cache.Common
 
 cacheName = "Questionnaire Websocket"
 
-cacheKey connectionUuid = format "connection: '%s'" [U.toString connectionUuid]
+cacheKey connectionUuid = f' "connection: '%s'" [U.toString connectionUuid]
 
 addToCache :: WebsocketRecord -> AppContextM ()
 addToCache record = do

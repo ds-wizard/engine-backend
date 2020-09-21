@@ -1,6 +1,6 @@
 module Wizard.Service.Document.DocumentMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^?), _Just)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -9,6 +9,7 @@ import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Document.Document
 import Wizard.Service.Template.TemplateMapper as Template
 
@@ -21,14 +22,14 @@ toDTO doc mQtn tml =
     , _documentDTOQuestionnaire = mQtn
     , _documentDTOTemplate = Template.toSimpleDTO tml
     , _documentDTOFormatUuid = doc ^. formatUuid
-    , _documentDTOOwnerUuid = doc ^. ownerUuid
+    , _documentDTOCreatorUuid = doc ^. creatorUuid
     , _documentDTOCreatedAt = doc ^. createdAt
     }
 
-fromCreateDTO :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> U.UUID -> UTCTime -> Document
-fromCreateDTO dto uuid durability repliesHash currentUserUuid now =
+fromCreateDTO :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> Maybe UserDTO -> UTCTime -> Document
+fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
   Document
-    { _documentUuid = uuid
+    { _documentUuid = docUuid
     , _documentName = dto ^. name
     , _documentState = QueuedDocumentState
     , _documentDurability = durability
@@ -37,6 +38,6 @@ fromCreateDTO dto uuid durability repliesHash currentUserUuid now =
     , _documentTemplateId = dto ^. templateId
     , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
-    , _documentOwnerUuid = currentUserUuid
+    , _documentCreatorUuid = mCurrentUser ^? _Just . uuid
     , _documentCreatedAt = now
     }

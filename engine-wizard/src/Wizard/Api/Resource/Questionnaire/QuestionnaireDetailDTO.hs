@@ -6,6 +6,7 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
@@ -24,6 +25,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOSelectedTagUuids :: [U.UUID]
     , _questionnaireDetailDTOTemplateId :: Maybe String
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOFormat :: Maybe TemplateFormat
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String ReplyValueDTO
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
@@ -47,6 +49,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOSelectedTagUuids a == _questionnaireDetailDTOSelectedTagUuids b &&
     _questionnaireDetailDTOTemplateId a == _questionnaireDetailDTOTemplateId b &&
     _questionnaireDetailDTOFormatUuid a == _questionnaireDetailDTOFormatUuid b &&
+    _questionnaireDetailDTOFormat a == _questionnaireDetailDTOFormat b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b &&

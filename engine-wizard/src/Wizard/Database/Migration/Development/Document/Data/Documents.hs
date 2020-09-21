@@ -39,7 +39,7 @@ doc1 =
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
-    , _documentOwnerUuid = userNikola ^. uuid
+    , _documentCreatorUuid = Just $ userNikola ^. uuid
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
@@ -101,7 +101,7 @@ doc2 =
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
-    , _documentOwnerUuid = userNikola ^. uuid
+    , _documentCreatorUuid = Just $ userNikola ^. uuid
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 
@@ -119,7 +119,7 @@ doc3 =
     , _documentMetadata =
         DocumentMetadata
           {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
-    , _documentOwnerUuid = userAlbert ^. uuid
+    , _documentCreatorUuid = Just $ userAlbert ^. uuid
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
 

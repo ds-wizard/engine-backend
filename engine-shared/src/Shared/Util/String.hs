@@ -5,7 +5,7 @@ module Shared.Util.String
   , stripSuffix
   , isSuffixOf
   , trim
-  , format
+  , f'
   , toLower
   , takeLastOf
   ) where
@@ -46,10 +46,10 @@ stripSuffix suffix string = T.unpack <$> T.stripSuffix (T.pack suffix) (T.pack s
 isSuffixOf :: String -> String -> Bool
 isSuffixOf suffix name = T.isSuffixOf (T.pack suffix) (T.pack name)
 
-format :: String -> [String] -> String
-format str terms =
+f' :: String -> [String] -> String
+f' str terms =
   case str of
-    '%':'s':rest -> (fromMaybe "%s" . listToMaybe $ terms) ++ format rest (drop 1 terms)
-    '%':'%':'s':rest -> '%' : 's' : format rest terms
-    a:rest -> a : format rest terms
+    '%':'s':rest -> (fromMaybe "%s" . listToMaybe $ terms) ++ f' rest (drop 1 terms)
+    '%':'%':'s':rest -> '%' : 's' : f' rest terms
+    a:rest -> a : f' rest terms
     [] -> []

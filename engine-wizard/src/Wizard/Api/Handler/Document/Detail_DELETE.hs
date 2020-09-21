@@ -15,8 +15,8 @@ type Detail_DELETE
 
 detail_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader docUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $
+  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
+    runInMaybeAuthService $
     addTraceUuidHeader =<< do
       deleteDocument docUuid
       return NoContent

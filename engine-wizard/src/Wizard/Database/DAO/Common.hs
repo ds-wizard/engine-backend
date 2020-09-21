@@ -17,6 +17,8 @@ sel = fmap concat . foldInContext
 
 regexSel name value = return [name =: regex value]
 
+textSel name value = return [name =: value]
+
 textMaybeSel name mValue = return $ maybe [] (\value -> [name =: value]) mValue
 
 ownerUuidSel = do

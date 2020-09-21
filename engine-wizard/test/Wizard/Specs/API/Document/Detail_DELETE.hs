@@ -2,18 +2,25 @@ module Wizard.Specs.API.Document.Detail_DELETE
   ( detail_DELETE
   ) where
 
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
+import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.Common
@@ -27,7 +34,6 @@ detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
   describe "DELETE /documents/{documentId}" $ do
     test_204 appContext
-    test_401 appContext
     test_403 appContext
     test_404 appContext
 
@@ -38,7 +44,7 @@ reqMethod = methodDelete
 
 reqUrl = "/documents/264ca352-1a99-4ffd-860e-32aee9a98428"
 
-reqHeaders = [reqAuthHeader]
+reqHeadersT authHeader = authHeader
 
 reqBody = ""
 
@@ -46,21 +52,25 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_204 appContext = do
-  create_test_204 "HTTP 204 NO CONTENT (Admin)" appContext reqAuthHeader
-  create_test_204 "HTTP 204 NO CONTENT (Non-Admin)" appContext reqNonAdminAuthHeader
+  create_test_204 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
+  create_test_204 "HTTP 204 NO CONTENT (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
+  create_test_204 "HTTP 204 NO CONTENT (Anonymous, Public, Sharing)" appContext questionnaire10 []
 
-create_test_204 title appContext authHeader =
+create_test_204 title appContext qtn authHeader =
   it title $
      -- GIVEN: Prepare request
    do
-    let reqHeaders = [reqNonAdminAuthHeader]
+    let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
     let expStatus = 204
-    let expHeaders = resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expBody = ""
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
+    runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
+    runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -73,26 +83,54 @@ create_test_204 title appContext authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] "" "DMP_PERM"
-  it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private)"
+    appContext
+    questionnaire1
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
+    appContext
+    questionnaire2
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
+    appContext
+    questionnaire2
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
+    appContext
+    questionnaire7
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, Public)"
+    appContext
+    questionnaire3
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+
+create_test_403 title appContext qtn authHeader errorMessage =
+  it title $
      -- GIVEN: Prepare request
    do
-    let reqUrl = "/documents/35ef63fd-cb5c-448c-9a4f-54b572573c20"
-    let reqHeaders = [reqNonAdminAuthHeader]
+    let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
     let expStatus = 403
-    let expHeaders = resCorsHeaders
-    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Delete Document")
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = createForbiddenError errorMessage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
+    runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
+    runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -109,7 +147,7 @@ test_404 appContext =
   createNotFoundTest
     reqMethod
     "/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
-    reqHeaders
+    (reqHeadersT [reqAuthHeader])
     reqBody
     "document"
     "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

@@ -188,7 +188,7 @@ deleteUser userUuid = do
   _ <- findUserById userUuid
   deleteUserById userUuid
   deleteQuestionnairesFiltered [("ownerUuid", userUuid)]
-  documents <- findDocumentsFiltered [("ownerUuid", userUuid)]
+  documents <- findDocumentsFiltered [("creatorUuid", userUuid)]
   forM_
     documents
     (\d -> do

@@ -3,11 +3,13 @@ module Wizard.Service.Questionnaire.QuestionnaireService where
 import Control.Lens ((.~), (^.), (^?), _Just)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
+import qualified Data.List as L
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -118,7 +120,13 @@ getQuestionnaireDetailById qtnUuid = do
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (package ^. pId)
   report <- getQuestionnaireReport qtn
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report
+  mFormat <-
+    case (qtn ^. templateId, qtn ^. formatUuid) of
+      (Just tId, Just fUuid) -> do
+        template <- findTemplateById tId
+        return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
+      _ -> return Nothing
+  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report mFormat
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
@@ -136,7 +144,7 @@ modifyQuestionnaire qtnUuid reqDto = do
   state <- getQuestionnaireState qtnUuid pkgId
   report <- getQuestionnaireReport updatedQtn
   updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. ownerUuid)
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state report
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state report Nothing
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
@@ -152,7 +160,7 @@ deleteQuestionnaire qtnUuid = do
 modifyContent :: String -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto = do
   qtn <- findQuestionnaireById qtnUuid
-  checkEditRepliesPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkEditContentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
   now <- liftIO getCurrentTime
   let updatedQtn = fromContentChangeDTO qtn reqDto now
   updateQuestionnaireById updatedQtn

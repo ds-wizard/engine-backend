@@ -34,7 +34,7 @@ data Document =
     , _documentTemplateId :: String
     , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata
-    , _documentOwnerUuid :: U.UUID
+    , _documentCreatorUuid :: Maybe U.UUID
     , _documentCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

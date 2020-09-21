@@ -19,5 +19,5 @@ type Detail_Available_Submission_Services_GET
 detail_available_submission_Services_GET ::
      Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [SubmissionServiceSimpleDTO])
 detail_available_submission_Services_GET mTokenHeader docUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getAvailableServicesForSubmission docUuid
+  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
+    runInMaybeAuthService $ addTraceUuidHeader =<< getAvailableServicesForSubmission docUuid

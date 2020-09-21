@@ -13,5 +13,6 @@ data QuestionnaireCreateDTO =
     , _questionnaireCreateDTOSharing :: QuestionnaireSharing
     , _questionnaireCreateDTOTagUuids :: [U.UUID]
     , _questionnaireCreateDTOTemplateId :: Maybe String
+    , _questionnaireCreateDTOFormatUuid :: Maybe U.UUID
     }
   deriving (Show, Eq, Generic)

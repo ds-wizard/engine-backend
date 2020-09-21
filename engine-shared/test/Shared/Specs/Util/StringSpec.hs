@@ -19,4 +19,4 @@ localeSpec =
 
 createTest template variables expected =
   it ("Expand '" ++ template ++ "' with variables " ++ show variables ++ " to '" ++ expected ++ "'") $
-  format template variables `shouldBe` expected
+  f' template variables `shouldBe` expected

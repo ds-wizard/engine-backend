@@ -16,7 +16,7 @@ import Wizard.Service.Cache.Common
 
 cacheName = "Report"
 
-cacheKey qtnUuid repliesHash = format "qtnUuid: '%s', repliesHash: '%s'" [U.toString qtnUuid, show repliesHash]
+cacheKey qtnUuid repliesHash = f' "qtnUuid: '%s', repliesHash: '%s'" [U.toString qtnUuid, show repliesHash]
 
 addToCache :: Questionnaire -> [Indication] -> AppContextM ()
 addToCache qtn indications = do

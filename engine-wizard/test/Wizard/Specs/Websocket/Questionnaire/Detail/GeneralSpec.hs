@@ -10,6 +10,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -66,6 +67,7 @@ test403 appContext = do
     runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     let updatedQtn = (visibility .~ PrivateQuestionnaire) . (sharing .~ RestrictedQuestionnaire) $ qtn
+    runInContextIO TML.runMigration appContext
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)
     -- AND: Prepare expectation

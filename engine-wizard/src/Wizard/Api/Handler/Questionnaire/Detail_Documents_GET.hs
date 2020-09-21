@@ -1,4 +1,4 @@
-module Wizard.Api.Handler.Document.List_GET where
+module Wizard.Api.Handler.Questionnaire.Detail_Documents_GET where
 
 import Servant
 
@@ -11,25 +11,26 @@ import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Document.DocumentService
 
-type List_GET
+type Detail_Documents_GET
    = Header "Authorization" String
+     :> "questionnaires"
+     :> Capture "qtnUuid" String
      :> "documents"
-     :> QueryParam "questionnaireUuid" String
      :> QueryParam "q" String
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
 
-list_GET ::
+detail_documents_GET ::
      Maybe String
-  -> Maybe String
+  -> String
   -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
-list_GET mTokenHeader mQuestionnaireUuid mQuery mPage mSize mSort =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_documents_GET mTokenHeader qtnUuid mQuery mPage mSize mSort =
+  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<< getDocumentsPageDto mQuestionnaireUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<< getDocumentsForQuestionnaire qtnUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)
