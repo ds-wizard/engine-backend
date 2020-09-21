@@ -78,14 +78,8 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
     {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOValue = _integrationValueValue}
 
 toDetailWithPackageWithEventsDTO ::
-     Questionnaire
-  -> Package
-  -> KnowledgeModel
-  -> QuestionnaireState
-  -> QuestionnaireReportDTO
-  -> Maybe TemplateFormat
-  -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state report mFormat =
+     Questionnaire -> Package -> KnowledgeModel -> QuestionnaireState -> Maybe TemplateFormat -> QuestionnaireDetailDTO
+toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mFormat =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -102,7 +96,6 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state repo
     , _questionnaireDetailDTOReplies = M.map toReplyValueDTO (questionnaire ^. replies)
     , _questionnaireDetailDTOLabels = questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
-    , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt
@@ -113,10 +106,9 @@ toDetailWithPackageDTO ::
   -> PackageSimpleDTO
   -> KnowledgeModel
   -> QuestionnaireState
-  -> QuestionnaireReportDTO
   -> Maybe TemplateFormat
   -> QuestionnaireDetailDTO
-toDetailWithPackageDTO questionnaire package knowledgeModel state report mFormat =
+toDetailWithPackageDTO questionnaire package knowledgeModel state mFormat =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -133,7 +125,6 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state report mFormat
     , _questionnaireDetailDTOReplies = M.map toReplyValueDTO (questionnaire ^. replies)
     , _questionnaireDetailDTOLabels = questionnaire ^. labels
     , _questionnaireDetailDTOOwnerUuid = questionnaire ^. ownerUuid
-    , _questionnaireDetailDTOReport = report
     , _questionnaireDetailDTOCreatorUuid = questionnaire ^. creatorUuid
     , _questionnaireDetailDTOCreatedAt = questionnaire ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = questionnaire ^. updatedAt

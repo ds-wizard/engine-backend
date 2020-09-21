@@ -22,7 +22,6 @@ import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
@@ -80,7 +79,6 @@ create_test_200 title appContext qtn authHeader =
             (SPM.toPackage germanyPackage)
             km1WithQ4
             QSDefault
-            questionnaireReport
             (Just templateFormatJson)
     let expBody = encode expDto
      -- AND: Run migrations

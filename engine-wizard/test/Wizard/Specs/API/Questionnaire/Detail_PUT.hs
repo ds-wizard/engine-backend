@@ -22,7 +22,6 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
@@ -84,14 +83,7 @@ create_test_200 title appContext qtn qtnEdited =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto =
-          toDetailWithPackageWithEventsDTO
-            qtnEdited
-            (SPM.toPackage germanyPackage)
-            km1WithQ4
-            QSDefault
-            questionnaireReport
-            Nothing
+    let expDto = toDetailWithPackageWithEventsDTO qtnEdited (SPM.toPackage germanyPackage) km1WithQ4 QSDefault Nothing
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
