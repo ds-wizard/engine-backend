@@ -26,6 +26,7 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentUser = Just . toDTO $ userAlbert
+          , _appContextShutdownFlag = baseContext ^. shutdownFlag
           , _appContextCache = baseContext ^. cache
           }
   let loggingLevel = baseContext ^. serverConfig . logging . level

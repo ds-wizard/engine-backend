@@ -38,7 +38,7 @@ runApplication = do
     logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
     shutdownFlag <- liftIO newEmptyMVar
     dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
-    msgChannel <- connectMQ serverConfig
+    msgChannel <- connectMQ serverConfig shutdownFlag
     httpClientManager <- setupHttpClientManager serverConfig
     registryClient <- setupRegistryClient serverConfig httpClientManager
     localization <- loadLocalization serverConfig
@@ -52,6 +52,7 @@ runApplication = do
             , _baseContextMsgChannel = msgChannel
             , _baseContextHttpClientManager = httpClientManager
             , _baseContextRegistryClient = registryClient
+            , _baseContextShutdownFlag = shutdownFlag
             , _baseContextCache = cache
             }
     liftIO $ runDBMigrations baseContext

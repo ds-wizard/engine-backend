@@ -9,7 +9,7 @@ import Shared.Constant.Component
 import Shared.Util.Logger
 import Wizard.Messaging.Connection
 
-connectMQ serverConfig =
+connectMQ serverConfig shutdownFlag =
   if serverConfig ^. messaging . enabled
     then do
       logInfo _CMP_MESSAGING "connecting to the message broker"
@@ -20,7 +20,7 @@ connectMQ serverConfig =
           retryBackoff
           _CMP_MESSAGING
           "failed to connect to the message broker"
-          (createMessagingChannel serverConfig)
+          (createMessagingChannel serverConfig shutdownFlag)
       logInfo _CMP_MESSAGING "connected"
       return msgChannel
     else do
