@@ -13,7 +13,21 @@ import qualified Data.Conduit.List as CL
 import Data.Maybe
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as LT
-import Database.MongoDB (count, delete, deleteOne, fetch, find, findOne, insert, modify, rest, runCommand, save, select)
+import Database.MongoDB
+  ( Selector
+  , count
+  , delete
+  , deleteOne
+  , fetch
+  , find
+  , findOne
+  , insert
+  , modify
+  , rest
+  , runCommand
+  , save
+  , select
+  )
 import Database.MongoDB.GridFS (deleteFile, fetchFile, findFile, openBucket, sinkFile, sourceFile)
 import Database.MongoDB.Query (Action)
 import Database.Persist.MongoDB (runMongoDBPoolDef)
@@ -23,9 +37,11 @@ import Shared.Localization.Messages.Internal
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
+import Shared.Util.List (foldInContext)
 
 runDB :: (MonadReader s m, HasPool' s, MonadIO m) => Action IO b -> m b
 runDB action = do
@@ -56,18 +72,9 @@ createFindEntitiesFn collection = do
   entitiesS <- runDB action
   liftEither . deserializeEntities $ entitiesS
 
-createFindEntitiesPageableQuerySortFn collection pageable sort query
-  -- 1. Prepare variables
- = do
-  let sizeI = abs . fromMaybe 0 $ pageable ^. size
-  let pageI = abs . fromMaybe 0 $ pageable ^. page
-  let skip = fromIntegral $ pageI * sizeI
-  let limit = fromIntegral sizeI
-  -- 2. Get total count
-  let countFn = createCountQueryFn collection query
-  count <- countFn
-  -- 3. Get entities
-  let i =
+createFindEntitiesPageableQuerySortFn collection pageable sort query = do
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable sort
+  let command =
         [ "find" =: collection
         , "filter" =: query
         , "skip" =: skip
@@ -75,7 +82,33 @@ createFindEntitiesPageableQuerySortFn collection pageable sort query
         , "sort" =: mapSort sort
         , "collation" =: ["locale" =: "en"]
         ]
-  let action = runCommand i
+  let countFn = createCountQueryFn collection query
+  createCommandEntitiesPageableQuerySortFn collection pageable sort query command countFn
+
+createAggregateEntitiesPageableQuerySortFn collection pageable sort precomputation query = do
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable sort
+  let queryPipeline =
+        [precomputation, ["$match" =: query], mapAggregateSort sort, ["$skip" =: skip], ["$limit" =: limit]]
+  let countPipeline = [precomputation, ["$match" =: query], ["$count" =: "count"]]
+  let createCommand pipeline =
+        [ "aggregate" =: collection
+        , "pipeline" =: filter ([] /=) pipeline
+        , "cursor" =: ([] :: Document)
+        , "collation" =: ["locale" =: "en"]
+        ]
+  let queryCommand = createCommand queryPipeline
+  let countCommand = createCommand countPipeline
+  let countFn = createCountAggregateFn countCommand
+  createCommandEntitiesPageableQuerySortFn collection pageable sort query queryCommand countFn
+
+createCommandEntitiesPageableQuerySortFn collection pageable sort query command countFn
+  -- 1. Prepare variables
+ = do
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable sort
+  -- 2. Get total count
+  count <- countFn
+  -- 3. Get entities
+  let action = runCommand command
   result <- runDB action
   let entitiesS = fromJust . Data.Bson.lookup "firstBatch" . fromJust . Data.Bson.lookup "cursor" $ result
   entities <- liftEither . deserializeEntities $ entitiesS
@@ -161,6 +194,15 @@ createCountQueryFn collection query = do
   count <- runDB action
   liftEither . Right $ count
 
+createCountAggregateFn countCommand = do
+  let action = runCommand countCommand
+  result <- runDB action
+  let countDocument = fromJust . Data.Bson.lookup "firstBatch" . fromJust . Data.Bson.lookup "cursor" $ result
+  return $
+    case countDocument of
+      [] -> 0
+      _ -> fromJust . Data.Bson.lookup "count" . head $ countDocument
+
 createFindFileFn bucketName fileName = do
   bucket <- runDB $ openBucket bucketName
   let action = fetchFile bucket ["filename" =: fileName]
@@ -200,11 +242,23 @@ textIndex collection field = ["key" =: [field =: "text"], "name" =: (T.append co
 
 regex mQuery = ["$regex" =: ".*" ++ fromMaybe "" mQuery ++ ".*", "$options" =: "si"]
 
+preparePaginationVariables :: Pageable -> [Sort] -> (Int, Int, Int, Int)
+preparePaginationVariables pageable sort =
+  let sizeI = abs . fromMaybe 20 $ pageable ^. size
+      pageI = abs . fromMaybe 0 $ pageable ^. page
+      skip = fromIntegral $ pageI * sizeI
+      limit = fromIntegral sizeI
+   in (sizeI, pageI, skip, limit)
+
 mapSort :: [Sort] -> Document
 mapSort = foldl go []
   where
     go acc (Sort name Ascending) = acc ++ [T.pack name =: 1]
     go acc (Sort name Descending) = acc ++ [T.pack name =: -1]
+
+mapAggregateSort :: [Sort] -> Document
+mapAggregateSort [] = []
+mapAggregateSort sort = ["$sort" =: mapSort sort]
 
 mapToDBQueryParams :: Functor f => f (String, String) -> f Field
 mapToDBQueryParams = fmap go
@@ -222,3 +276,12 @@ instance Val LT.Text where
   cast' (String x) = Just . LT.fromStrict $ x
   cast' (Sym (Symbol x)) = Just . LT.fromStrict $ x
   cast' _ = Nothing
+
+sel :: (MonadReader s m, HasPool' s, MonadIO m) => [m Selector] -> m Selector
+sel = fmap concat . foldInContext
+
+regexSel name value = return [name =: regex value]
+
+textSel name value = return [name =: value]
+
+textMaybeSel name mValue = return $ maybe [] (\value -> [name =: value]) mValue

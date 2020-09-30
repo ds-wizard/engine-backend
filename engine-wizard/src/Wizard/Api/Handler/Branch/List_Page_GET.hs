@@ -1,0 +1,33 @@
+module Wizard.Api.Handler.Branch.List_Page_GET where
+
+import Servant
+
+import Shared.Api.Handler.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Wizard.Api.Handler.Common
+import Wizard.Api.Resource.Branch.BranchDTO
+import Wizard.Api.Resource.Branch.BranchJM ()
+import Wizard.Model.Context.BaseContext
+import Wizard.Service.Branch.BranchService
+
+type List_Page_GET
+   = Header "Authorization" String
+     :> "branches"
+     :> "page"
+     :> QueryParam "q" String
+     :> QueryParam "page" Int
+     :> QueryParam "size" Int
+     :> QueryParam "sort" String
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page BranchDTO))
+
+list_page_GET ::
+     Maybe String
+  -> Maybe String
+  -> Maybe Int
+  -> Maybe Int
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page BranchDTO))
+list_page_GET mTokenHeader mQuery mPage mSize mSort =
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $ addTraceUuidHeader =<< getBranchesPage mQuery (Pageable mPage mSize) (parseSortQuery mSort)

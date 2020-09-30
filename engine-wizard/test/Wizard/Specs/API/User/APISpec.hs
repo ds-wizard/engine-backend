@@ -15,11 +15,13 @@ import Wizard.Specs.API.User.List_Current_PUT
 import Wizard.Specs.API.User.List_Current_Password_PUT
 import Wizard.Specs.API.User.List_GET
 import Wizard.Specs.API.User.List_POST
+import Wizard.Specs.API.User.List_Page_GET
 
 userAPI appContext =
   with (startWebApp appContext) $
   describe "USER API Spec" $ do
     list_GET appContext
+    list_page_GET appContext
     list_POST appContext
     list_current_GET appContext
     list_current_PUT appContext

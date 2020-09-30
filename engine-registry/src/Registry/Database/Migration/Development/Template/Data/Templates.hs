@@ -7,7 +7,7 @@ import Registry.Service.Template.TemplateMapper
 import Shared.Database.Migration.Development.Template.Data.Templates
 
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
-commonWizardTemplateSimpleDTO = toSimpleDTO commonWizardTemplate orgGlobal
+commonWizardTemplateSimpleDTO = toSimpleDTO [orgGlobal] commonWizardTemplate
 
 commonWizardTemplateDetailDTO :: TemplateDetailDTO
 commonWizardTemplateDetailDTO = toDetailDTO commonWizardTemplate ["1.0.0"] orgGlobal

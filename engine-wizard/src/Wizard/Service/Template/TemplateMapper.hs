@@ -1,6 +1,7 @@
 module Wizard.Service.Template.TemplateMapper where
 
 import Control.Lens ((^.))
+import qualified Data.List as L
 import Data.Time
 
 import LensesConfig
@@ -8,6 +9,7 @@ import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateS
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateGroup
 import Shared.Util.Identifier
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
@@ -16,16 +18,11 @@ import qualified Wizard.Service.Package.PackageMapper as PM_Mapper
 import Wizard.Service.Template.TemplateUtil
 
 toSimpleDTO :: Template -> TemplateSimpleDTO
-toSimpleDTO tml = toSimpleDTO' tml [] [] [] []
+toSimpleDTO = toSimpleDTO' [] [] []
 
 toSimpleDTO' ::
-     Template
-  -> [R_TemplateSimpleDTO.TemplateSimpleDTO]
-  -> [OrganizationSimpleDTO]
-  -> [String]
-  -> [Package]
-  -> TemplateSimpleDTO
-toSimpleDTO' tml tmlRs orgRs localVersions pkgs =
+     [R_TemplateSimpleDTO.TemplateSimpleDTO] -> [OrganizationSimpleDTO] -> [Package] -> Template -> TemplateSimpleDTO
+toSimpleDTO' tmlRs orgRs pkgs tml =
   TemplateSimpleDTO
     { _templateSimpleDTOTId = tml ^. tId
     , _templateSimpleDTOName = tml ^. name
@@ -39,11 +36,21 @@ toSimpleDTO' tml tmlRs orgRs localVersions pkgs =
     , _templateSimpleDTOAllowedPackages = tml ^. allowedPackages
     , _templateSimpleDTORecommendedPackageId = tml ^. recommendedPackageId
     , _templateSimpleDTOFormats = tml ^. formats
-    , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO pkgs
+    , _templateSimpleDTOUsablePackages = fmap PM_Mapper.toSimpleDTO . getUsablePackagesForTemplate tml $ pkgs
     , _templateSimpleDTOState = computeTemplateState tmlRs tml
     , _templateSimpleDTOOrganization = selectOrganizationByOrgId tml orgRs
     , _templateSimpleDTOCreatedAt = tml ^. createdAt
     }
+
+toSimpleDTO'' ::
+     [R_TemplateSimpleDTO.TemplateSimpleDTO]
+  -> [OrganizationSimpleDTO]
+  -> [Package]
+  -> TemplateGroup
+  -> TemplateSimpleDTO
+toSimpleDTO'' tmlRs orgRs pkgs tmlGroup =
+  let newest = L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
+   in toSimpleDTO' tmlRs orgRs pkgs newest
 
 toDetailDTO ::
      Template

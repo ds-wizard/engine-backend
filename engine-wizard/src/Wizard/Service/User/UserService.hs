@@ -11,6 +11,9 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 import Shared.Util.Uuid
@@ -46,6 +49,12 @@ getUsers = do
   checkPermission _UM_PERM
   users <- findUsers
   return . fmap toDTO $ users
+
+getUsersPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
+getUsersPage mQuery pageable sort = do
+  checkPermission _UM_PERM
+  userPage <- findUsersPage mQuery pageable sort
+  return . fmap toDTO $ userPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto = do

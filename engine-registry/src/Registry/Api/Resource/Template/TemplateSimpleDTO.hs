@@ -13,7 +13,7 @@ data TemplateSimpleDTO =
     , _templateSimpleDTOTemplateId :: String
     , _templateSimpleDTOVersion :: String
     , _templateSimpleDTODescription :: String
-    , _templateSimpleDTOOrganization :: OrganizationSimpleDTO
+    , _templateSimpleDTOOrganization :: Maybe OrganizationSimpleDTO
     , _templateSimpleDTOCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

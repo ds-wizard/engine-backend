@@ -58,7 +58,7 @@ createDocumentWithDurability :: DocumentCreateDTO -> DocumentDurability -> AppCo
 createDocumentWithDurability dto durability = do
   qtnDto <- getQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
   qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
-  tml <- getTemplateByUuid (dto ^. templateId) (Just $ qtn ^. packageId)
+  tml <- getTemplateByUuidAndPackageId (dto ^. templateId) (Just $ qtn ^. packageId)
   validateMetamodelVersion tml
   mCurrentUser <- asks _appContextCurrentUser
   dUuid <- liftIO generateUuid

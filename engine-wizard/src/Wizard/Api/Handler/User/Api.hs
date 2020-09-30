@@ -12,10 +12,12 @@ import Wizard.Api.Handler.User.List_Current_PUT
 import Wizard.Api.Handler.User.List_Current_Password_PUT
 import Wizard.Api.Handler.User.List_GET
 import Wizard.Api.Handler.User.List_POST
+import Wizard.Api.Handler.User.List_Page_GET
 import Wizard.Model.Context.BaseContext
 
 type UserAPI
    = List_GET
+     :<|> List_Page_GET
      :<|> List_POST
      :<|> List_Current_GET
      :<|> List_Current_PUT
@@ -31,7 +33,8 @@ userApi = Proxy
 
 userServer :: ServerT UserAPI BaseContextM
 userServer =
-  list_GET :<|> list_POST :<|> list_current_GET :<|> list_current_PUT :<|> list_current_password_PUT :<|> detail_GET :<|>
+  list_GET :<|> list_page_GET :<|> list_POST :<|> list_current_GET :<|> list_current_PUT :<|> list_current_password_PUT :<|>
+  detail_GET :<|>
   detail_PUT :<|>
   detail_password_PUT :<|>
   detail_state_PUT :<|>

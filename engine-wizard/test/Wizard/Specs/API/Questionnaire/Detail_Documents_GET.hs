@@ -90,7 +90,7 @@ create_test_200 title appContext authHeader =
     let expDto =
           Page
             "documents"
-            (PageMetadata 0 2 1 0)
+            (PageMetadata 20 2 1 0)
             [toDTO doc1 (Just questionnaire6Dto), toDTO (updateOwner doc2) (Just questionnaire6Dto)]
     let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
      -- WHEN: Call API

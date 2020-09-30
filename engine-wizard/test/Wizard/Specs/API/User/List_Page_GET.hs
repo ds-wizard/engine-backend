@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.List_GET
-  ( list_get
+module Wizard.Specs.API.User.List_Page_GET
+  ( list_page_GET
   ) where
 
 import Data.Aeson (encode)
@@ -9,23 +9,22 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
+import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires
+-- GET /users/page
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /questionnaires" $ do
+list_page_GET :: AppContext -> SpecWith ((), Application)
+list_page_GET appContext =
+  describe "GET /users/page" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,9 +34,9 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires"
+reqUrl = "/users/page"
 
-reqHeadersT reqAuthHeader = [reqAuthHeader]
+reqHeaders = [reqAuthHeader]
 
 reqBody = ""
 
@@ -48,61 +47,41 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin)"
     appContext
-    "/questionnaires"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire3Dto])
+    "/users/page"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userNikola, toDTO userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/questionnaires?page=1&size=1"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 1 3 3 1) [questionnaire2Dto])
+    "/users/page?page=1&size=1"
+    (Page "users" (PageMetadata 1 3 3 1) [toDTO userNikola])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/questionnaires?q=pr"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
+    "/users/page?q=te"
+    (Page "users" (PageMetadata 20 2 1 0) [toDTO userAlbert, toDTO userNikola])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/questionnaires?sort=name,asc"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire3Dto, questionnaire2Dto])
+    "/users/page?sort=name,asc"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userIsaac, toDTO userNikola])
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/questionnaires?sort=updatedAt,desc"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire1Dto, questionnaire2Dto])
-  create_test_200
-    "HTTP 200 OK (Non-Admin)"
-    appContext
-    "/questionnaires"
-    reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
-  create_test_200
-    "HTTP 200 OK (Non-Admin - query)"
-    appContext
-    "/questionnaires?q=pr"
-    reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    "/users/page?sort=name,desc"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
 
-create_test_200 title appContext reqUrl reqAuthHeader expDto =
+create_test_200 title appContext reqUrl expDto =
   it title $
        -- GIVEN: Prepare request
    do
-    let reqHeaders = reqHeadersT reqAuthHeader
-      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
     let expBody = encode expDto
-       -- AND: Run migrations
+     -- AND: Run migrations
     runInContextIO U.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-       -- WHEN: Call API
+     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-       -- THEN: Compare response with expectation
+    -- AND: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -110,9 +89,9 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "UM_PERM"

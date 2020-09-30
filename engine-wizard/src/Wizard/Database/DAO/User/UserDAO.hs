@@ -7,6 +7,9 @@ import Database.MongoDB (modify, select)
 
 import LensesConfig
 import Shared.Database.DAO.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Wizard.Database.BSON.User.User ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -19,6 +22,15 @@ collection = "users"
 
 findUsers :: AppContextM [User]
 findUsers = createFindEntitiesFn collection
+
+findUsersPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
+findUsersPage mQuery pageable sort =
+  createAggregateEntitiesPageableQuerySortFn
+    collection
+    pageable
+    sort
+    ["$addFields" =: ["name" =: ["$concat" =: ["$firstName", " ", "$lastName"]]]] =<<
+  sel [regexSel "name" mQuery]
 
 findUserById :: String -> AppContextM User
 findUserById = createFindEntityByFn collection entityName "uuid"

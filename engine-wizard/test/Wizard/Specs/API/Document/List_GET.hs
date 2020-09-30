@@ -51,22 +51,34 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 CREATED (Admin)" $
-     -- GIVEN: Prepare request
+test_200 appContext = do
+  create_test_200
+    "HTTP 200 OK"
+    appContext
+    "/documents"
+    (Page
+       "documents"
+       (PageMetadata 20 3 1 0)
+       [toDTO doc1 (Just questionnaire1Dto), toDTO doc2 (Just questionnaire2Dto), toDTO doc3 (Just questionnaire2Dto)])
+  create_test_200
+    "HTTP 200 OK (query)"
+    appContext
+    "/documents?q=My exported document 2"
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Dto)])
+  create_test_200
+    "HTTP 200 OK (query for non-existing)"
+    appContext
+    "/documents?q=Non-existing document"
+    (Page "documents" (PageMetadata 20 0 0 0) [])
+
+create_test_200 title appContext reqUrl expDto =
+  it title $
+       -- GIVEN: Prepare request
    do
     let reqHeaders = reqHeadersT reqAuthHeader
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          Page
-            "documents"
-            (PageMetadata 0 3 1 0)
-            [ toDTO doc1 (Just questionnaire1Dto)
-            , toDTO doc2 (Just questionnaire2Dto)
-            , toDTO doc3 (Just questionnaire2Dto)
-            ]
     let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

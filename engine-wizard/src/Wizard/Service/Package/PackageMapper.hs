@@ -1,35 +1,43 @@
 module Wizard.Service.Package.PackageMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^..))
+import qualified Data.List as L
 
 import LensesConfig
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Service.Package.PackageUtil
+import Shared.Util.Identifier
 
 toSimpleDTO :: Package -> PackageSimpleDTO
-toSimpleDTO pkg = toSimpleDTO' pkg [] [] []
+toSimpleDTO = toSimpleDTO' [] [] []
 
 toSimpleDTO' ::
-     Package -> [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [String] -> PackageSimpleDTO
-toSimpleDTO' pkg pkgRs orgRs localVersions =
+     [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> [String] -> Package -> PackageSimpleDTO
+toSimpleDTO' pkgRs orgRs localVersions pkg =
   PackageSimpleDTO
     { _packageSimpleDTOPId = pkg ^. pId
     , _packageSimpleDTOName = pkg ^. name
     , _packageSimpleDTOOrganizationId = pkg ^. organizationId
     , _packageSimpleDTOKmId = pkg ^. kmId
     , _packageSimpleDTOVersion = pkg ^. version
-    , _packageSimpleDTOVersions = localVersions
+    , _packageSimpleDTOVersions = L.sortBy compareVersion localVersions
     , _packageSimpleDTODescription = pkg ^. description
     , _packageSimpleDTOState = computePackageState pkgRs pkg
     , _packageSimpleDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
+
+toSimpleDTO'' :: [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> PackageGroup -> PackageSimpleDTO
+toSimpleDTO'' pkgRs orgRs pkgGroup =
+  let newest = L.maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
+   in toSimpleDTO' pkgRs orgRs (pkgGroup ^. versions ^.. traverse . version) newest
 
 toDetailDTO ::
      Package

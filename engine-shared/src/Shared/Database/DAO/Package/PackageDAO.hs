@@ -6,11 +6,16 @@ import Control.Monad.Reader (MonadReader)
 import Data.Bson
 
 import Shared.Database.BSON.Package.Package ()
+import Shared.Database.BSON.Package.PackageGroup ()
 import Shared.Database.BSON.Package.PackageWithEvents ()
 import Shared.Database.DAO.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 
 entityName = "package"
@@ -26,6 +31,44 @@ findPackageWithEvents = createFindEntitiesFn collection
 findPackagesFiltered ::
      (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m) => [(String, String)] -> m [Package]
 findPackagesFiltered queryParams = createFindEntitiesByFn collection (mapToDBQueryParams queryParams)
+
+findPackageGroups ::
+     (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m)
+  => Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> m (Page PackageGroup)
+findPackageGroups mOrganizationId mKmId mQuery pageable sort =
+  createAggregateEntitiesPageableQuerySortFn
+    collection
+    pageable
+    sort
+    [ "$group" =:
+      [ "_id" =: ["organizationId" =: "$organizationId", "kmId" =: "$kmId"]
+      , "organizationId" =: ["$first" =: "$organizationId"]
+      , "kmId" =: ["$first" =: "$kmId"]
+      , "versions" =:
+        [ "$addToSet" =:
+          [ "id" =: "$id"
+          , "name" =: "$name"
+          , "organizationId" =: "$organizationId"
+          , "kmId" =: "$kmId"
+          , "version" =: "$version"
+          , "metamodelVersion" =: "$metamodelVersion"
+          , "description" =: "$description"
+          , "readme" =: "$readme"
+          , "license" =: "$license"
+          , "previousPackageId" =: "$previousPackageId"
+          , "forkOfPackageId" =: "$forkOfPackageId"
+          , "mergeCheckpointPackageId" =: "$mergeCheckpointPackageId"
+          , "createdAt" =: "$createdAt"
+          ]
+        ]
+      ]
+    ] =<<
+  sel [regexSel "versions.name" mQuery, textMaybeSel "organizationId" mOrganizationId, textMaybeSel "kmId" mKmId]
 
 findPackagesByOrganizationIdAndKmId ::
      (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m) => String -> String -> m [Package]

@@ -10,11 +10,13 @@ import Wizard.Specs.API.Package.Detail_Pull_POST
 import Wizard.Specs.API.Package.List_DELETE
 import Wizard.Specs.API.Package.List_GET
 import Wizard.Specs.API.Package.List_POST
+import Wizard.Specs.API.Package.List_Page_GET
 
 packageAPI appContext =
   with (startWebApp appContext) $
   describe "PACKAGE API Spec" $ do
     list_get appContext
+    list_page_get appContext
     list_post appContext
     list_delete appContext
     detail_get appContext

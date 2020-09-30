@@ -1,5 +1,5 @@
-module Wizard.Specs.API.Questionnaire.List_GET
-  ( list_get
+module Wizard.Specs.API.Template.List_Page_GET
+  ( list_page_GET
   ) where
 
 import Data.Aeson (encode)
@@ -9,23 +9,22 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Shared.Model.Template.TemplateJM ()
+import Wizard.Database.Migration.Development.Template.Data.Templates
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /questionnaires
+-- GET /templates/page
 -- ------------------------------------------------------------------------
-list_get :: AppContext -> SpecWith ((), Application)
-list_get appContext =
-  describe "GET /questionnaires" $ do
+list_page_GET :: AppContext -> SpecWith ((), Application)
+list_page_GET appContext =
+  describe "GET /templates/page" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,7 +34,7 @@ list_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/questionnaires"
+reqUrl = "/templates/page"
 
 reqHeadersT reqAuthHeader = [reqAuthHeader]
 
@@ -46,47 +45,41 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200
-    "HTTP 200 OK (Admin)"
+    "HTTP 200 OK (user token)"
     appContext
-    "/questionnaires"
+    "/templates/page"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire3Dto])
+    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (Admin - pagination)"
+    "HTTP 200 OK (user token - query 'q')"
     appContext
-    "/questionnaires?page=1&size=1"
+    "/templates/page?q=Questionnaire Report"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 1 3 3 1) [questionnaire2Dto])
+    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (Admin - query)"
+    "HTTP 200 OK (user token - query 'q' for non-existing)"
     appContext
-    "/questionnaires?q=pr"
+    "/templates/page?q=Non-existing Questionnaire Report"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
+    (Page "templates" (PageMetadata 20 0 0 0) [])
   create_test_200
-    "HTTP 200 OK (Admin - sort asc)"
+    "HTTP 200 OK (user token - query 'templateId')"
     appContext
-    "/questionnaires?sort=name,asc"
+    "/templates/page?templateId=questionnaire-report"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire3Dto, questionnaire2Dto])
+    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (Admin - sort desc)"
+    "HTTP 200 OK (user token - query 'templateId' for non-existing)"
     appContext
-    "/questionnaires?sort=updatedAt,desc"
+    "/templates/page?templateId=non-existing-template"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire1Dto, questionnaire2Dto])
+    (Page "templates" (PageMetadata 20 0 0 0) [])
   create_test_200
-    "HTTP 200 OK (Non-Admin)"
+    "HTTP 200 OK (service token)"
     appContext
-    "/questionnaires"
-    reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
-  create_test_200
-    "HTTP 200 OK (Non-Admin - query)"
-    appContext
-    "/questionnaires?q=pr"
-    reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    "/templates/page"
+    reqServiceHeader
+    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $
@@ -97,12 +90,11 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
     let expBody = encode expDto
-       -- AND: Run migrations
-    runInContextIO U.runMigration appContext
-    runInContextIO QTN.runMigration appContext
-       -- WHEN: Call API
+     -- AND: Run migrations
+    runInContextIO TML_Migration.runMigration appContext
+     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-       -- THEN: Compare response with expectation
+     -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -110,9 +102,9 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] reqBody "DMP_PERM"
