@@ -3,15 +3,18 @@ module Data.Bson.Generic
   , FromBSON(..)
   , ObjectKey(..)
   , keyLabel
+  , genericVal
+  , genericCast'
   ) where
 
 import Control.Monad
-import qualified Data.Bson as BSON (lookup)
+import qualified Data.Bson as BSON
 import Data.Bson
 import Data.Char (toLower)
-import qualified Data.Text as TS (pack)
+import qualified Data.Text as T
 import Data.Typeable
 import GHC.Generics
+import Text.Read
 
 ------------------------------------------------------------------------------
 -- TO BSON
@@ -48,7 +51,7 @@ instance (GToBSON a, Constructor c) => GToBSON (C1 c a) where
 
 -- | Selector tag
 instance (Val a, Selector s) => GToBSON (S1 s (K1 i a)) where
-  genericToBSON constructorName s@(M1 (K1 x)) = [TS.pack (removePrefix fieldPrefix $ selName s) =: x]
+  genericToBSON constructorName s@(M1 (K1 x)) = [T.pack (removePrefix fieldPrefix $ selName s) =: x]
     where
       fieldPrefix = "_" ++ lowerFirst entityType
       entityType = constructorName
@@ -104,7 +107,7 @@ instance (GFromBSON a) => GFromBSON (M1 D c a) where
 instance (Val a, Selector s) => GFromBSON (S1 s (K1 i a)) where
   genericFromBSON constructorName doc = M1 . K1 <$> BSON.lookup sname doc
     where
-      sname = TS.pack . removePrefix fieldPrefix . selName $ (undefined :: S1 s (K1 i a) r)
+      sname = T.pack . removePrefix fieldPrefix . selName $ (undefined :: S1 s (K1 i a) r)
       fieldPrefix = "_" ++ lowerFirst constructorName
 
 -- | ObjectKey special treatment
@@ -132,9 +135,15 @@ instance (FromBSON a, ToBSON a, Typeable a, Show a, Eq a) => Val a where
   cast' (Doc x) = fromBSON x
   cast' _ = Nothing
 
+genericVal :: Show a => a -> Value
+genericVal = BSON.String . T.pack . show
+
+genericCast' :: Read a => Value -> Maybe a
+genericCast' (BSON.String value) = readMaybe . T.unpack $ value
+
 ------------------------------------------------------------------------------
 keyLabel :: Label
-keyLabel = TS.pack "_id"
+keyLabel = T.pack "_id"
 
 ------------------------------------------------------------------------------
 removePrefix :: String -> String -> String

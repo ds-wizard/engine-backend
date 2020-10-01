@@ -76,15 +76,8 @@ instance FromBSON ListQuestion
 
 -- ------------------------------------------------
 instance BSON.Val QuestionValueType where
-  val StringQuestionValueType = BSON.String "StringQuestionValueType"
-  val NumberQuestionValueType = BSON.String "NumberQuestionValueType"
-  val DateQuestionValueType = BSON.String "DateQuestionValueType"
-  val TextQuestionValueType = BSON.String "TextQuestionValueType"
-  cast' (BSON.String "StringQuestionValueType") = Just StringQuestionValueType
-  cast' (BSON.String "NumberQuestionValueType") = Just NumberQuestionValueType
-  cast' (BSON.String "DateQuestionValueType") = Just DateQuestionValueType
-  cast' (BSON.String "TextQuestionValueType") = Just TextQuestionValueType
-  cast' _ = Nothing
+  val = genericVal
+  cast' = genericCast'
 
 instance ToBSON ValueQuestion where
   toBSON ValueQuestion {..} =

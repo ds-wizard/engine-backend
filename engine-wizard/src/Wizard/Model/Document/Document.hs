@@ -9,7 +9,7 @@ data DocumentState
   | InProgressDocumentState
   | DoneDocumentState
   | ErrorDocumentState
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data DocumentMetadata =
   DocumentMetadata
@@ -21,7 +21,7 @@ data DocumentMetadata =
 data DocumentDurability
   = PersistentDocumentDurability
   | TemporallyDocumentDurability
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data Document =
   Document

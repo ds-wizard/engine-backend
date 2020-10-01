@@ -11,13 +11,13 @@ data QuestionnaireVisibility
   = PrivateQuestionnaire
   | VisibleViewQuestionnaire
   | VisibleEditQuestionnaire
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data QuestionnaireSharing
   = RestrictedQuestionnaire
   | AnyoneWithLinkViewQuestionnaire
   | AnyoneWithLinkEditQuestionnaire
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data Questionnaire =
   Questionnaire
