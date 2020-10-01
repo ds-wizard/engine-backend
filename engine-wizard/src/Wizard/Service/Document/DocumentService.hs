@@ -39,7 +39,7 @@ import Wizard.Util.Logger
 
 getDocumentsPageDto :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page DocumentDTO)
 getDocumentsPageDto mQuestionnaireUuid mQuery pageable sort = do
-  checkRole _USER_ROLE_ADMIN
+  checkPermission _DOC_PERM
   docPage <- findDocumentsPage mQuestionnaireUuid mQuery pageable sort
   traverse enhanceDocument docPage
 

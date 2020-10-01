@@ -108,7 +108,7 @@ test_403 appContext =
        -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Required role: admin")
+    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Missing permission: DOC_PERM")
     let expBody = encode expDto
       -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

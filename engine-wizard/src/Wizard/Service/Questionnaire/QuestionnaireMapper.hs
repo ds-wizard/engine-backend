@@ -205,7 +205,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCre
     , _questionnairePackageId = dto ^. packageId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateId = dto ^. templateId
-    , _questionnaireFormatUuid = Nothing
+    , _questionnaireFormatUuid = dto ^. formatUuid
     , _questionnaireReplies = M.empty
     , _questionnaireLabels = M.empty
     , _questionnaireOwnerUuid =
