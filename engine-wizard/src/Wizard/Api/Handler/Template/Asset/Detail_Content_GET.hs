@@ -13,7 +13,8 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.Asset.TemplateAssetService
 
 type Detail_Content_GET
-   = "templates"
+   = Header "Authorization" String
+     :> "templates"
      :> Capture "templateId" String
      :> "assets"
      :> Capture "assetUuid" String
@@ -21,12 +22,14 @@ type Detail_Content_GET
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 
 detail_content_GET ::
-     String
+     Maybe String
+  -> String
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
-detail_content_GET tmlId assetUuid =
-  runInUnauthService $ do
-    (asset, result) <- getTemplateAssetContent tmlId assetUuid
-    let cdHeader = asset ^. contentType
-    traceUuid <- asks _appContextTraceUuid
-    return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
+detail_content_GET mTokenHeader tmlId assetUuid =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $ do
+      (asset, result) <- getTemplateAssetContent tmlId assetUuid
+      let cdHeader = asset ^. contentType
+      traceUuid <- asks _appContextTraceUuid
+      return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
