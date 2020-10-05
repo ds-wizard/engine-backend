@@ -72,10 +72,20 @@ getServiceTokenOrAuthServiceExecutor mTokenHeader callback =
     handleError ServerError {errHTTPCode = 401} = getAuthServiceExecutor mTokenHeader callback
     handleError rest = throwError rest
 
+getServiceTokenOrMaybeAuthServiceExecutor ::
+     Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader callback =
+  (do checkServiceToken' mTokenHeader
+      callback runInServiceAuthService) `catchError`
+  handleError
+  where
+    handleError ServerError {errHTTPCode = 401} = getMaybeAuthServiceExecutor mTokenHeader callback
+    handleError rest = throwError rest
+
 getCurrentUser :: String -> BaseContextM UserDTO
 getCurrentUser tokenHeader = do
   userUuid <- getCurrentUserUuid tokenHeader
-  runInUnauthService $ catchError (getUserById userUuid) (handleError userUuid)
+  runInUnauthService $ catchError (getUserByIdDto userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error

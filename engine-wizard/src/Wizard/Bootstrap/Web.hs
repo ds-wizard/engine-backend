@@ -16,6 +16,7 @@ import Shared.Api.Middleware.OptionsMiddleware
 import Shared.Model.Config.Environment
 import Wizard.Api.Api
 import Wizard.Api.Handler.Swagger.Api
+import Wizard.Api.Middleware.ContentTypeMiddleware
 import Wizard.Api.Middleware.LoggingMiddleware
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
@@ -49,4 +50,6 @@ runApp :: BaseContext -> Application
 runApp baseContext = serve serverApi (appToServer baseContext)
 
 runMiddleware :: Environment -> Application -> Application
-runMiddleware env = corsMiddleware . errorMw @JSON @'[ "message", "status"] . loggingMiddleware env . optionsMiddleware
+runMiddleware env =
+  contentTypeMiddleware . corsMiddleware . errorMw @JSON @'[ "message", "status"] . loggingMiddleware env .
+  optionsMiddleware

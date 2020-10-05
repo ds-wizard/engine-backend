@@ -7,10 +7,11 @@ import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Registry.Model.Organization.Organization
 import qualified Registry.Service.Organization.OrganizationMapper as OM_Mapper
+import Registry.Service.Template.TemplateUtil
 import Shared.Model.Template.Template
 
-toSimpleDTO :: Template -> Organization -> TemplateSimpleDTO
-toSimpleDTO template org =
+toSimpleDTO :: [Organization] -> Template -> TemplateSimpleDTO
+toSimpleDTO orgs template =
   TemplateSimpleDTO
     { _templateSimpleDTOTId = template ^. tId
     , _templateSimpleDTOName = template ^. name
@@ -18,7 +19,7 @@ toSimpleDTO template org =
     , _templateSimpleDTOTemplateId = template ^. templateId
     , _templateSimpleDTOVersion = template ^. version
     , _templateSimpleDTODescription = template ^. description
-    , _templateSimpleDTOOrganization = OM_Mapper.toSimpleDTO org
+    , _templateSimpleDTOOrganization = fmap OM_Mapper.toSimpleDTO . selectOrganizationByOrgId template $ orgs
     , _templateSimpleDTOCreatedAt = template ^. createdAt
     }
 

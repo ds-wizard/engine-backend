@@ -76,15 +76,8 @@ instance FromBSON ListQuestion
 
 -- ------------------------------------------------
 instance BSON.Val QuestionValueType where
-  val StringQuestionValueType = BSON.String "StringQuestionValueType"
-  val NumberQuestionValueType = BSON.String "NumberQuestionValueType"
-  val DateQuestionValueType = BSON.String "DateQuestionValueType"
-  val TextQuestionValueType = BSON.String "TextQuestionValueType"
-  cast' (BSON.String "StringQuestionValueType") = Just StringQuestionValueType
-  cast' (BSON.String "NumberQuestionValueType") = Just NumberQuestionValueType
-  cast' (BSON.String "DateQuestionValueType") = Just DateQuestionValueType
-  cast' (BSON.String "TextQuestionValueType") = Just TextQuestionValueType
-  cast' _ = Nothing
+  val = genericVal
+  cast' = genericCast'
 
 instance ToBSON ValueQuestion where
   toBSON ValueQuestion {..} =
@@ -187,19 +180,9 @@ instance ToBSON Metric
 
 instance FromBSON Metric
 
-instance ToBSON MetricMeasure where
-  toBSON MetricMeasure {..} =
-    [ "metricUuid" BSON.=: _metricMeasureMetricUuid
-    , "measure" BSON.=: _metricMeasureMeasure
-    , "weight" BSON.=: _metricMeasureWeight
-    ]
+instance ToBSON MetricMeasure
 
-instance FromBSON MetricMeasure where
-  fromBSON doc = do
-    _metricMeasureMetricUuid <- BSON.lookup "metricUuid" doc
-    _metricMeasureMeasure <- BSON.lookup "measure" doc
-    _metricMeasureWeight <- BSON.lookup "weight" doc
-    return MetricMeasure {..}
+instance FromBSON MetricMeasure
 
 -- -------------------------
 -- TAG ---------------------

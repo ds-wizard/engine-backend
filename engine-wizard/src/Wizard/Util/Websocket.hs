@@ -123,4 +123,4 @@ createErrorWebsocketMessage connectionUuid connection entityId error =
     }
 
 -- Logs
-logWS connectionUuid message = logInfoU _CMP_SERVICE (format "[C:%s] %s" [U.toString connectionUuid, message])
+logWS connectionUuid message = logInfoU _CMP_SERVICE (f' "[C:%s] %s" [U.toString connectionUuid, message])

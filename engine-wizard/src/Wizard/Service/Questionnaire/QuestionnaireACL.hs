@@ -35,8 +35,8 @@ checkEditPermissionToQtn visibility mOwnerUuid = do
     then return ()
     else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
 
-checkEditRepliesPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> Maybe U.UUID -> AppContextM ()
-checkEditRepliesPermissionToQtn visibility sharing mOwnerUuid =
+checkEditContentPermissionToQtn :: QuestionnaireVisibility -> QuestionnaireSharing -> Maybe U.UUID -> AppContextM ()
+checkEditContentPermissionToQtn visibility sharing mOwnerUuid =
   if sharing == AnyoneWithLinkEditQuestionnaire
     then return ()
     else do

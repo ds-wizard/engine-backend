@@ -21,7 +21,9 @@ import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
@@ -41,7 +43,6 @@ list_POST appContext =
   describe "POST /documents" $ do
     test_201 appContext
     test_400 appContext
-    test_401 appContext
     test_403 appContext
 
 -- ----------------------------------------------------
@@ -51,14 +52,14 @@ reqMethod = methodPost
 
 reqUrl = "/documents"
 
-reqHeadersT authHeader = [authHeader, reqCtHeader]
+reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDtoT doc =
+reqDtoT qtn =
   DocumentCreateDTO
-    { _documentCreateDTOName = doc ^. name
-    , _documentCreateDTOQuestionnaireUuid = doc ^. questionnaireUuid
-    , _documentCreateDTOTemplateId = doc ^. templateId
-    , _documentCreateDTOFormatUuid = doc ^. formatUuid
+    { _documentCreateDTOName = "Document"
+    , _documentCreateDTOQuestionnaireUuid = qtn ^. uuid
+    , _documentCreateDTOTemplateId = doc1 ^. templateId
+    , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
 
 reqBody = ""
@@ -67,15 +68,16 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (Admin)" appContext doc1 reqAuthHeader
-  create_test_201 "HTTP 201 CREATED (Non-Admin)" appContext doc2 reqNonAdminAuthHeader
+  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
+  create_test_201 "HTTP 201 CREATED (Anonymous, Public, Sharing)" appContext questionnaire10 []
 
-create_test_201 title appContext doc authHeader =
+create_test_201 title appContext qtn authHeader =
   it title $
      -- GIVEN: Prepare request
    do
     let reqHeaders = reqHeadersT authHeader
-    let reqDto = reqDtoT doc2
+    let reqDto = reqDtoT qtn
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
@@ -83,6 +85,7 @@ create_test_201 title appContext doc authHeader =
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO TML_Migration.runMigration appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
@@ -104,8 +107,8 @@ test_400 appContext = do
   it "HTTP 400 BAD REQUEST - Invalid metamodel version of template" $
       -- GIVEN: Prepare request
    do
-    let reqHeaders = reqHeadersT reqAuthHeader
-    let reqDto = reqDtoT doc1
+    let reqHeaders = reqHeadersT [reqAuthHeader]
+    let reqDto = reqDtoT questionnaire1
     let reqBody = encode reqDto
       -- AND: Prepare expectation
     let expStatus = 400
@@ -132,27 +135,54 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1)
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
 test_403 appContext = do
-  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (encode $ reqDtoT doc1) "DMP_PERM"
-  it "HTTP 403 FORBIDDEN - Qtn is not accessible for user" $
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private)"
+    appContext
+    questionnaire1
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
+    appContext
+    questionnaire2
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
+    appContext
+    questionnaire2
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
+    appContext
+    questionnaire7
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, Public)"
+    appContext
+    questionnaire3
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+
+create_test_403 title appContext qtn authHeader errorMessage =
+  it title $
      -- GIVEN: Prepare request
    do
-    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
-    let reqDto = reqDtoT doc1
+    let reqHeaders = reqHeadersT authHeader
+    let reqDto = reqDtoT qtn
     let reqBody = encode reqDto
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
+    let expDto = createForbiddenError errorMessage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

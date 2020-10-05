@@ -1,0 +1,158 @@
+module Wizard.Specs.API.Questionnaire.Detail_Documents_GET
+  ( detail_documents_get
+  ) where
+
+import Control.Lens ((.~), (?~), (^.))
+import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
+import Network.HTTP.Types
+import Network.Wai (Application)
+import Test.Hspec
+import Test.Hspec.Wai hiding (shouldRespondWith)
+import Test.Hspec.Wai.Matcher
+
+import LensesConfig hiding (request)
+import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Localization.Messages.Public
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
+import Wizard.Api.Resource.Document.DocumentJM ()
+import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.Migration.Development.Document.Data.Documents
+import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
+import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
+import Wizard.Database.Migration.Development.User.Data.Users
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Localization.Messages.Public
+import Wizard.Model.Context.AppContext
+import Wizard.Service.Document.DocumentMapper
+
+import SharedTest.Specs.Common
+import Wizard.Specs.API.Common
+import Wizard.Specs.Common
+
+-- ------------------------------------------------------------------------
+-- GET /questionnaires/{qtnUuid}/documents
+-- ------------------------------------------------------------------------
+detail_documents_get :: AppContext -> SpecWith ((), Application)
+detail_documents_get appContext =
+  describe "GET /questionnaires/{qtnUuid}/documents" $ do
+    test_200 appContext
+    test_403 appContext
+    test_404 appContext
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+reqMethod = methodGet
+
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/documents"
+
+reqHeadersT authHeader = authHeader
+
+reqBody = ""
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_200 appContext = do
+  create_test_200 "HTTP 200 CREATED (Owner)" appContext [reqAuthHeader]
+  create_test_200 "HTTP 200 CREATED (Non-Owner)" appContext [reqNonAdminAuthHeader]
+  create_test_200 "HTTP 200 CREATED (Anonymous)" appContext []
+
+create_test_200 title appContext authHeader =
+  it title $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = reqUrlT (questionnaire6 ^. uuid)
+    let reqHeaders = reqHeadersT authHeader
+    -- AND: Run migrations
+    runInContextIO U_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire6) appContext
+    runInContextIO deleteDocuments appContext
+    runInContextIO deleteDocumentContents appContext
+    let updateQtn = questionnaireUuid .~ (questionnaire6 ^. uuid)
+    let updateOwner = creatorUuid ?~ (userIsaac ^. uuid)
+    runInContextIO (insertDocument (updateQtn doc1)) appContext
+    runInContextIO (insertDocument (updateQtn . updateOwner $ doc2)) appContext
+     -- AND: Prepare expectation
+    let expStatus = 200
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto =
+          Page
+            "documents"
+            (PageMetadata 20 2 1 0)
+            [toDTO doc1 (Just questionnaire6Dto), toDTO (updateOwner doc2) (Just questionnaire6Dto)]
+    let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_403 appContext = do
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private)"
+    appContext
+    questionnaire1
+    [reqNonAdminAuthHeader]
+    (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
+    appContext
+    questionnaire2
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, VisibleEdit)"
+    appContext
+    questionnaire3
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
+
+create_test_403 title appContext qtn authHeader errorMessage =
+  it title $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = reqUrlT (qtn ^. uuid)
+    let reqHeaders = reqHeadersT authHeader
+     -- AND: Prepare expectation
+    let expStatus = 403
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = createForbiddenError errorMessage
+    let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO U.runMigration appContext
+    runInContextIO QTN.runMigration appContext
+    runInContextIO MTR.runMigration appContext
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_404 appContext =
+  createNotFoundTest
+    reqMethod
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/documents"
+    (reqHeadersT [reqAuthHeader])
+    reqBody
+    "questionnaire"
+    "f08ead5f-746d-411b-aee6-77ea3d24016a"

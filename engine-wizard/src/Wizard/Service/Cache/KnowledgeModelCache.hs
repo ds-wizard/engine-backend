@@ -16,7 +16,7 @@ import Wizard.Service.Cache.Common
 
 cacheName = "Knowledge Model"
 
-cacheKey pkgId tagUuids = format "pkgId: '%s', tagUuids: '%s'" [pkgId, L.intercalate "," (fmap U.toString tagUuids)]
+cacheKey pkgId tagUuids = f' "pkgId: '%s', tagUuids: '%s'" [pkgId, L.intercalate "," (fmap U.toString tagUuids)]
 
 addToCache :: [Event] -> Maybe String -> [U.UUID] -> KnowledgeModel -> AppContextM ()
 addToCache [] (Just pkgId) tagUuids km = do

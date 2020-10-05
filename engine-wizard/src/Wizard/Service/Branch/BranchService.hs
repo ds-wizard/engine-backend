@@ -1,7 +1,7 @@
 module Wizard.Service.Branch.BranchService where
 
 import Control.Lens ((^.))
-import Control.Monad (forM, when)
+import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Time
@@ -9,6 +9,9 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Model.Event.Event
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -21,28 +24,25 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
-import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
-import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 import Wizard.Service.Common.ACL
-import Wizard.Service.Package.PackageService
 
 getBranches :: AppContextM [BranchDTO]
 getBranches = do
   checkPermission _KM_PERM
   bs <- findBranchesWithEvents
-  forM bs enhance
-  where
-    enhance :: BranchWithEvents -> AppContextM BranchDTO
-    enhance branch = do
-      mForkOfPackageId <- getBranchForkOfPackageId branch
-      state <- getBranchState branch
-      return $ toDTO branch mForkOfPackageId state
+  traverse enhanceBranch bs
+
+getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
+getBranchesPage mQuery pageable sort = do
+  checkPermission _KM_PERM
+  bs <- findBranchesWithEventsPage mQuery pageable sort
+  traverse enhanceBranch bs
 
 createBranch :: BranchCreateDTO -> AppContextM BranchDTO
 createBranch reqDto = do
@@ -126,37 +126,3 @@ deleteBranch branchUuid = do
   deleteBranchById branchUuid
   deleteMigratorStateByBranchUuid branchUuid
   return ()
-
-getBranchState :: BranchWithEvents -> AppContextM BranchState
-getBranchState branch = isMigrating $ isEditing $ isMigrated $ isOutdated isDefault
-  where
-    isMigrating continue = do
-      mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
-      case mMs of
-        Just ms ->
-          if ms ^. migrationState == CompletedState
-            then continue
-            else return BSMigrating
-        Nothing -> continue
-    isEditing continue =
-      if not (null $ branch ^. events)
-        then return BSEdited
-        else continue
-    isMigrated continue = do
-      mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
-      case mMs of
-        Just ms ->
-          if ms ^. migrationState == CompletedState
-            then return BSMigrated
-            else continue
-        Nothing -> continue
-    isOutdated continue = do
-      mForkOfPackageId <- getBranchForkOfPackageId branch
-      case mForkOfPackageId of
-        Just forkOfPackageId -> do
-          newerPackages <- getNewerPackages forkOfPackageId
-          if not . null $ newerPackages
-            then return BSOutdated
-            else continue
-        Nothing -> continue
-    isDefault = return BSDefault

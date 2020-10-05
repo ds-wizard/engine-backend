@@ -50,7 +50,7 @@ test_200 appContext = do
     appContext
     "/questionnaires"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 0 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire3Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire3Dto])
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
@@ -62,31 +62,31 @@ test_200 appContext = do
     appContext
     "/questionnaires?q=pr"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 0 1 1 0) [questionnaire1Dto])
+    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
     "/questionnaires?sort=name,asc"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 0 3 1 0) [questionnaire1Dto, questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire3Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
     "/questionnaires?sort=updatedAt,desc"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 0 3 1 0) [questionnaire3Dto, questionnaire1Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire1Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin)"
     appContext
     "/questionnaires"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 0 2 1 0) [questionnaire2Dto, questionnaire3Dto])
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - query)"
     appContext
     "/questionnaires?q=pr"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 0 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

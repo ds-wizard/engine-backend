@@ -31,11 +31,10 @@ templateFileNewFileChangeDto =
 commonWizardTemplateSimpleDTO :: TemplateSimpleDTO
 commonWizardTemplateSimpleDTO =
   toSimpleDTO'
-    commonWizardTemplate
     [R_Templates.commonWizardTemplateSimpleDTO]
     [orgGlobalSimple]
-    ["1.0.0"]
     [SPM.toPackage globalPackage, SPM.toPackage netherlandsPackageV2]
+    commonWizardTemplate
 
 commonWizardTemplateDetailDTO :: TemplateDetailDTO
 commonWizardTemplateDetailDTO =

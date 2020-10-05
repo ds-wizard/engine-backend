@@ -6,11 +6,12 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.Template.Data.Templates
+import qualified Shared.Service.Package.PackageMapper as PM
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -29,17 +30,17 @@ nlQtnMigrationStateDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -49,17 +50,17 @@ nlQtnMigrationStateVisibleViewDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleView
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -69,17 +70,17 @@ nlQtnMigrationStateVisibleEditDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEdit
-          netherlandsPackage
+          (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
-          netherlandsPackageV2
+          (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
-          questionnaireReportEmpty
+          (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

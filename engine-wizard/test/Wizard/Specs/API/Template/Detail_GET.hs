@@ -24,8 +24,6 @@ detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /templates/{tmlId}" $ do
     test_200 appContext
-    test_401 appContext
-    test_403 appContext
     test_404 appContext
 
 -- ----------------------------------------------------
@@ -35,7 +33,7 @@ reqMethod = methodGet
 
 reqUrl = "/templates/global:questionnaire-report:1.0.0"
 
-reqHeadersT reqAuthHeader = [reqAuthHeader]
+reqHeadersT reqAuthHeader = reqAuthHeader
 
 reqBody = ""
 
@@ -43,8 +41,9 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (user token)" appContext reqAuthHeader
-  create_test_200 "HTTP 200 OK (service token)" appContext reqServiceHeader
+  create_test_200 "HTTP 200 OK (user token)" appContext [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (service token)" appContext [reqServiceHeader]
+  create_test_200 "HTTP 200 OK (anonymous)" appContext []
 
 create_test_200 title appContext reqAuthHeader =
   it title $
@@ -68,21 +67,11 @@ create_test_200 title appContext reqAuthHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "TML_PERM"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
 test_404 appContext =
   createNotFoundTest
     reqMethod
     "/templates/deab6c38-aeac-4b17-a501-4365a0a70176"
-    (reqHeadersT reqAuthHeader)
+    (reqHeadersT [reqAuthHeader])
     reqBody
     "template"
     "deab6c38-aeac-4b17-a501-4365a0a70176"

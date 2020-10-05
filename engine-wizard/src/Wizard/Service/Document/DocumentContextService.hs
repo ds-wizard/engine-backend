@@ -8,28 +8,28 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentContextJM ()
 import Wizard.Database.DAO.Level.LevelDAO
 import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Package.PackageService
 import Wizard.Service.Report.ReportGenerator
+import Wizard.Service.User.UserService
 
 createDocumentContext :: String -> AppContextM DocumentContextDTO
 createDocumentContext qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  pkg <- findPackageById (qtn ^. packageId)
+  pkg <- getPackageById (qtn ^. packageId)
   metrics <- findMetrics
   ls <- findLevels
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-  mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) findUserById
+  mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) getUserById
   appConfig <- getAppConfig
   serverConfig <- asks _appContextServerConfig
   let org = appConfig ^. organization

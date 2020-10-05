@@ -1,26 +1,17 @@
 module Wizard.Database.BSON.Migration.KnowledgeModel.MigratorState where
 
-import Control.Lens ((^.))
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
 import Data.Maybe
 
-import LensesConfig
 import Shared.Database.BSON.Common ()
-import Shared.Database.BSON.Event.Answer ()
-import Shared.Database.BSON.Event.Chapter ()
-import Shared.Database.BSON.Event.Common
-import Shared.Database.BSON.Event.Expert ()
-import Shared.Database.BSON.Event.KnowledgeModel ()
-import Shared.Database.BSON.Event.Question ()
-import Shared.Database.BSON.Event.Reference ()
+import Shared.Database.BSON.Event.Common ()
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 instance ToBSON MigrationState where
   toBSON RunningState = ["stateType" BSON.=: "RunningState"]
-  toBSON (ConflictState (CorrectorConflict event)) =
-    ["stateType" BSON.=: "ConflictState", "targetEvent" BSON.=: convertEventToBSON event]
+  toBSON (ConflictState (CorrectorConflict event)) = ["stateType" BSON.=: "ConflictState", "targetEvent" BSON.=: event]
   toBSON ErrorState = ["stateType" BSON.=: "ErrorState"]
   toBSON CompletedState = ["stateType" BSON.=: "CompletedState"]
 
@@ -31,45 +22,32 @@ instance FromBSON MigrationState where
       "RunningState" -> return RunningState
       "ConflictState" -> do
         event <- BSON.lookup "targetEvent" doc
-        return . ConflictState . CorrectorConflict . fromJust . chooseEventDeserializator $ event
+        return . ConflictState . CorrectorConflict . fromJust $ event
       "ErrorState" -> return ErrorState
       "CompletedState" -> return CompletedState
 
 instance ToBSON MigratorState where
-  toBSON ms =
-    [ "branchUuid" BSON.=: (ms ^. branchUuid)
-    , "metamodelVersion" BSON.=: (ms ^. metamodelVersion)
-    , "migrationState" BSON.=: (ms ^. migrationState)
-    , "branchPreviousPackageId" BSON.=: (ms ^. branchPreviousPackageId)
-    , "targetPackageId" BSON.=: (ms ^. targetPackageId)
-    , "branchEvents" BSON.=: convertEventToBSON <$> (ms ^. branchEvents)
-    , "targetPackageEvents" BSON.=: convertEventToBSON <$> (ms ^. targetPackageEvents)
-    , "resultEvents" BSON.=: convertEventToBSON <$> (ms ^. resultEvents)
+  toBSON MigratorState {..} =
+    [ "branchUuid" BSON.=: _migratorStateBranchUuid
+    , "metamodelVersion" BSON.=: _migratorStateMetamodelVersion
+    , "migrationState" BSON.=: _migratorStateMigrationState
+    , "branchPreviousPackageId" BSON.=: _migratorStateBranchPreviousPackageId
+    , "targetPackageId" BSON.=: _migratorStateTargetPackageId
+    , "branchEvents" BSON.=: _migratorStateBranchEvents
+    , "targetPackageEvents" BSON.=: _migratorStateTargetPackageEvents
+    , "resultEvents" BSON.=: _migratorStateResultEvents
     , "currentKnowledgeModel" BSON.=: (Nothing :: Maybe KnowledgeModel)
     ]
 
 instance FromBSON MigratorState where
   fromBSON doc = do
-    msBranchUuid <- BSON.lookup "branchUuid" doc
-    msMetamodelVersion <- BSON.lookup "metamodelVersion" doc
-    msMigrationState <- BSON.lookup "migrationState" doc
-    msBranchPreviousPackageId <- BSON.lookup "branchPreviousPackageId" doc
-    msTargetPackageId <- BSON.lookup "targetPackageId" doc
-    msBranchEventsSerialized <- BSON.lookup "branchEvents" doc
-    let msBranchEvents = fmap (fromJust . chooseEventDeserializator) msBranchEventsSerialized
-    msTargetPackageEventsSerialized <- BSON.lookup "targetPackageEvents" doc
-    let msTargetPackageEvents = fmap (fromJust . chooseEventDeserializator) msTargetPackageEventsSerialized
-    msResultEventsSerialized <- BSON.lookup "resultEvents" doc
-    let msResultEvents = fmap (fromJust . chooseEventDeserializator) msResultEventsSerialized
-    return
-      MigratorState
-        { _migratorStateBranchUuid = msBranchUuid
-        , _migratorStateMetamodelVersion = msMetamodelVersion
-        , _migratorStateMigrationState = msMigrationState
-        , _migratorStateBranchPreviousPackageId = msBranchPreviousPackageId
-        , _migratorStateTargetPackageId = msTargetPackageId
-        , _migratorStateBranchEvents = msBranchEvents
-        , _migratorStateTargetPackageEvents = msTargetPackageEvents
-        , _migratorStateResultEvents = msResultEvents
-        , _migratorStateCurrentKnowledgeModel = Nothing
-        }
+    _migratorStateBranchUuid <- BSON.lookup "branchUuid" doc
+    _migratorStateMetamodelVersion <- BSON.lookup "metamodelVersion" doc
+    _migratorStateMigrationState <- BSON.lookup "migrationState" doc
+    _migratorStateBranchPreviousPackageId <- BSON.lookup "branchPreviousPackageId" doc
+    _migratorStateTargetPackageId <- BSON.lookup "targetPackageId" doc
+    _migratorStateBranchEvents <- BSON.lookup "branchEvents" doc
+    _migratorStateTargetPackageEvents <- BSON.lookup "targetPackageEvents" doc
+    _migratorStateResultEvents <- BSON.lookup "resultEvents" doc
+    let _migratorStateCurrentKnowledgeModel = Nothing
+    return MigratorState {..}

@@ -19,18 +19,17 @@ createValidationError formErrorRecords fieldErrorRecords =
       fieldErrors = fmap localeTuple fieldErrorRecords
    in ValidationErrorDTO formErrors fieldErrors
   where
-    locale (LocaleRecord _ defaultMessage variables) = format defaultMessage variables
-    localeTuple (key, LocaleRecord _ defaultMessage variables) = (key, format defaultMessage variables)
+    locale (LocaleRecord _ defaultMessage variables) = f' defaultMessage variables
+    localeTuple (key, LocaleRecord _ defaultMessage variables) = (key, f' defaultMessage variables)
 
 createUserError :: LocaleRecord -> ErrorDTO
-createUserError (LocaleRecord _ defaultMessage variables) = UserErrorDTO (format defaultMessage variables)
+createUserError (LocaleRecord _ defaultMessage variables) = UserErrorDTO (f' defaultMessage variables)
 
 createUnauthorizedError :: LocaleRecord -> ErrorDTO
-createUnauthorizedError (LocaleRecord _ defaultMessage variables) =
-  UnauthorizedErrorDTO (format defaultMessage variables)
+createUnauthorizedError (LocaleRecord _ defaultMessage variables) = UnauthorizedErrorDTO (f' defaultMessage variables)
 
 createForbiddenError :: LocaleRecord -> ErrorDTO
-createForbiddenError (LocaleRecord _ defaultMessage variables) = ForbiddenErrorDTO (format defaultMessage variables)
+createForbiddenError (LocaleRecord _ defaultMessage variables) = ForbiddenErrorDTO (f' defaultMessage variables)
 
 createNotExistsError :: LocaleRecord -> ErrorDTO
-createNotExistsError (LocaleRecord _ defaultMessage variables) = NotExistsErrorDTO (format defaultMessage variables)
+createNotExistsError (LocaleRecord _ defaultMessage variables) = NotExistsErrorDTO (f' defaultMessage variables)

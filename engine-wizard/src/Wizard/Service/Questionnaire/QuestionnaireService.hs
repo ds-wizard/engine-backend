@@ -3,11 +3,13 @@ module Wizard.Service.Questionnaire.QuestionnaireService where
 import Control.Lens ((.~), (^.), (^?), _Just)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
+import qualified Data.List as L
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -26,6 +28,7 @@ import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.QuestionnaireACL
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -100,12 +103,12 @@ getQuestionnaireById' qtnUuid = do
   case mQtn of
     Just qtn -> do
       checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
-      package <- findPackageById (qtn ^. packageId)
+      package <- getPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
       mOwner <-
         case qtn ^. ownerUuid of
-          Just uUuid -> Just <$> getUserById (U.toString uUuid)
+          Just uUuid -> Just <$> getUserByIdDto (U.toString uUuid)
           Nothing -> return Nothing
       return . Just $ toDTO qtn package state mOwner report
     Nothing -> return Nothing
@@ -114,11 +117,17 @@ getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
-  package <- findPackageWithEventsById (qtn ^. packageId)
+  package <- getPackageById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-  state <- getQuestionnaireState qtnUuid (package ^. pId)
-  report <- getQuestionnaireReport qtn
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state report
+  state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
+  mFormat <-
+    case (qtn ^. templateId, qtn ^. formatUuid) of
+      (Just tId, Just fUuid) -> do
+        template <- findTemplateById tId
+        return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
+      _ -> return Nothing
+  -- TODO we may not need to fetch package at all
+  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state mFormat
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
@@ -134,9 +143,8 @@ modifyQuestionnaire qtnUuid reqDto = do
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid pkgId
-  report <- getQuestionnaireReport updatedQtn
   updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. ownerUuid)
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state report
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
@@ -152,7 +160,7 @@ deleteQuestionnaire qtnUuid = do
 modifyContent :: String -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto = do
   qtn <- findQuestionnaireById qtnUuid
-  checkEditRepliesPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkEditContentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
   now <- liftIO getCurrentTime
   let updatedQtn = fromContentChangeDTO qtn reqDto now
   updateQuestionnaireById updatedQtn

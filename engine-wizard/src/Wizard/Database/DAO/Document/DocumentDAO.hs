@@ -8,7 +8,6 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Document.Document ()
-import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Document.Document
@@ -25,10 +24,19 @@ findDocuments = createFindEntitiesFn collection
 findDocumentsFiltered :: [(String, String)] -> AppContextM [Document]
 findDocumentsFiltered queryParams = createFindEntitiesByFn collection (mapToDBQueryParams queryParams)
 
-findDocumentsForCurrentUserPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
-findDocumentsForCurrentUserPage mQtnUuid mQuery pageable sort =
+findDocumentsPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
+findDocumentsPage mQtnUuid mQuery pageable sort =
   createFindEntitiesPageableQuerySortFn collection pageable sort =<<
-  sel [regexSel "name" mQuery, textMaybeSel "questionnaireUuid" mQtnUuid, ownerUuidSel]
+  sel [regexSel "name" mQuery, textMaybeSel "questionnaireUuid" mQtnUuid]
+
+findDocumentsByQuestionnaireUuidPage :: String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
+findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort =
+  createFindEntitiesPageableQuerySortFn collection pageable sort =<<
+  sel
+    [ regexSel "name" mQuery
+    , textMaybeSel "questionnaireUuid" (Just qtnUuid)
+    , textSel "durability" "PersistentDocumentDurability"
+    ]
 
 findDocumentsByTemplateId :: String -> AppContextM [Document]
 findDocumentsByTemplateId templateId = createFindEntitiesByFn collection ["templateId" =: templateId]

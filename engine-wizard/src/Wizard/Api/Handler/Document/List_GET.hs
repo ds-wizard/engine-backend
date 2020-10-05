@@ -32,5 +32,4 @@ list_GET ::
 list_GET mTokenHeader mQuestionnaireUuid mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<<
-    getDocumentsForCurrentUserPageDto mQuestionnaireUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<< getDocumentsPageDto mQuestionnaireUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)

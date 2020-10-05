@@ -47,7 +47,7 @@ data QuestionValueType
   | NumberQuestionValueType
   | DateQuestionValueType
   | TextQuestionValueType
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data Question
   = OptionsQuestion' OptionsQuestion

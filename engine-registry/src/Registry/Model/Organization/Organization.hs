@@ -6,7 +6,7 @@ import GHC.Generics
 data OrganizationRole
   = AdminRole
   | UserRole
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data Organization =
   Organization

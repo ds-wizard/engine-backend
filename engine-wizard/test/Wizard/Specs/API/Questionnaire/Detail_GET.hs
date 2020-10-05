@@ -16,11 +16,13 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
-import Wizard.Database.Migration.Development.Report.Data.Reports
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -71,13 +73,20 @@ create_test_200 title appContext qtn authHeader =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toDetailWithPackageWithEventsDTO qtn germanyPackage km1WithQ4 QSDefault questionnaireReport
+    let expDto =
+          toDetailWithPackageWithEventsDTO
+            qtn
+            (SPM.toPackage germanyPackage)
+            km1WithQ4
+            QSDefault
+            (Just templateFormatJson)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext
+    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

@@ -19,7 +19,7 @@ import Wizard.Database.Migration.Development.Branch.Data.Branches
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Service.Branch.BranchService
+import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 import Wizard.Specs.Common

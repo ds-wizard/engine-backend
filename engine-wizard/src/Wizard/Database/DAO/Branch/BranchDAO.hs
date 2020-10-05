@@ -5,6 +5,9 @@ import Data.Bson
 
 import LensesConfig
 import Shared.Database.DAO.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Branch.Branch ()
 import Wizard.Database.BSON.Branch.BranchWithEvents ()
 import Wizard.Model.Branch.Branch
@@ -24,6 +27,10 @@ findBranchesByPreviousPackageId previousPackageId =
 
 findBranchesWithEvents :: AppContextM [BranchWithEvents]
 findBranchesWithEvents = createFindEntitiesFn collection
+
+findBranchesWithEventsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchWithEvents)
+findBranchesWithEventsPage mQuery pageable sort =
+  createFindEntitiesPageableQuerySortFn collection pageable sort =<< sel [regexSel "name" mQuery]
 
 findBranchById :: String -> AppContextM Branch
 findBranchById = createFindEntityByFn collection entityName "uuid"

@@ -53,4 +53,4 @@ runConsumeMessage queueName handler context (msg, env) = void $ runAppContextWit
           log queueName "Message deserialization failed"
           return ()
 
-log queueName msg = logInfoU _CMP_MESSAGING (format "[Q:%s] %s" [queueName, msg])
+log queueName msg = logInfoU _CMP_MESSAGING (f' "[Q:%s] %s" [queueName, msg])

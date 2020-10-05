@@ -81,50 +81,50 @@ questionnaireACLSpec appContext =
       shouldSucceed ownerCtx fn3
       shouldSucceed nonOwnerCtx fn3
       shouldFailed anonymousCtx fn3
-    it "checkEditRepliesPermissionToQtn" $ do
-      let fn1 = checkEditRepliesPermissionToQtn PrivateQuestionnaire RestrictedQuestionnaire owner
+    it "checkEditContentPermissionToQtn" $ do
+      let fn1 = checkEditContentPermissionToQtn PrivateQuestionnaire RestrictedQuestionnaire owner
       shouldSucceed adminCtx fn1
       shouldSucceed ownerCtx fn1
       shouldFailed nonOwnerCtx fn1
       shouldFailed anonymousCtx fn1
-      let fn2 = checkEditRepliesPermissionToQtn VisibleViewQuestionnaire RestrictedQuestionnaire owner
+      let fn2 = checkEditContentPermissionToQtn VisibleViewQuestionnaire RestrictedQuestionnaire owner
       shouldSucceed adminCtx fn2
       shouldSucceed ownerCtx fn2
       shouldFailed nonOwnerCtx fn2
       shouldFailed anonymousCtx fn2
-      let fn3 = checkEditRepliesPermissionToQtn VisibleEditQuestionnaire RestrictedQuestionnaire owner
+      let fn3 = checkEditContentPermissionToQtn VisibleEditQuestionnaire RestrictedQuestionnaire owner
       shouldSucceed adminCtx fn3
       shouldSucceed ownerCtx fn3
       shouldSucceed nonOwnerCtx fn3
       shouldFailed anonymousCtx fn3
       -- --------------------
-      let fn4 = checkEditRepliesPermissionToQtn PrivateQuestionnaire AnyoneWithLinkViewQuestionnaire owner
+      let fn4 = checkEditContentPermissionToQtn PrivateQuestionnaire AnyoneWithLinkViewQuestionnaire owner
       shouldSucceed adminCtx fn4
       shouldSucceed ownerCtx fn4
       shouldFailed nonOwnerCtx fn4
       shouldFailed anonymousCtx fn4
-      let fn5 = checkEditRepliesPermissionToQtn VisibleViewQuestionnaire AnyoneWithLinkViewQuestionnaire owner
+      let fn5 = checkEditContentPermissionToQtn VisibleViewQuestionnaire AnyoneWithLinkViewQuestionnaire owner
       shouldSucceed adminCtx fn5
       shouldSucceed ownerCtx fn5
       shouldFailed nonOwnerCtx fn5
       shouldFailed anonymousCtx fn5
-      let fn6 = checkEditRepliesPermissionToQtn VisibleEditQuestionnaire AnyoneWithLinkViewQuestionnaire owner
+      let fn6 = checkEditContentPermissionToQtn VisibleEditQuestionnaire AnyoneWithLinkViewQuestionnaire owner
       shouldSucceed adminCtx fn6
       shouldSucceed ownerCtx fn6
       shouldSucceed nonOwnerCtx fn6
       shouldFailed anonymousCtx fn6
       -- --------------------
-      let fn7 = checkEditRepliesPermissionToQtn PrivateQuestionnaire AnyoneWithLinkEditQuestionnaire owner
+      let fn7 = checkEditContentPermissionToQtn PrivateQuestionnaire AnyoneWithLinkEditQuestionnaire owner
       shouldSucceed adminCtx fn7
       shouldSucceed ownerCtx fn7
       shouldSucceed nonOwnerCtx fn7
       shouldSucceed anonymousCtx fn7
-      let fn8 = checkEditRepliesPermissionToQtn VisibleViewQuestionnaire AnyoneWithLinkEditQuestionnaire owner
+      let fn8 = checkEditContentPermissionToQtn VisibleViewQuestionnaire AnyoneWithLinkEditQuestionnaire owner
       shouldSucceed adminCtx fn8
       shouldSucceed ownerCtx fn8
       shouldSucceed nonOwnerCtx fn8
       shouldSucceed anonymousCtx fn8
-      let fn9 = checkEditRepliesPermissionToQtn VisibleEditQuestionnaire AnyoneWithLinkEditQuestionnaire owner
+      let fn9 = checkEditContentPermissionToQtn VisibleEditQuestionnaire AnyoneWithLinkEditQuestionnaire owner
       shouldSucceed adminCtx fn9
       shouldSucceed ownerCtx fn9
       shouldSucceed nonOwnerCtx fn9

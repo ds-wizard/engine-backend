@@ -1,6 +1,6 @@
 module Wizard.Service.Template.TemplateService where
 
-import Control.Lens ((^.), (^..))
+import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -9,16 +9,15 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
-import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
-import Shared.Model.Package.Package
 import Shared.Model.Template.Template
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Identifier
-import Shared.Util.List (foldInContext)
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -34,36 +33,37 @@ import Wizard.Service.Template.TemplateValidation
 getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
 getTemplates queryParams mPkgId = do
   validatePackageIdFormat' mPkgId
-  templates <- findTemplatesFiltered queryParams
-  return $ filterTemplates mPkgId templates
+  tmls <- findTemplatesFiltered queryParams
+  return $ filterTemplates mPkgId tmls
+
+getTemplatesPage ::
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page TemplateSimpleDTO)
+getTemplatesPage mOrganizationId mTemplateId mPkgId mQuery pageable sort = do
+  checkPermission _DMP_PERM
+  groups <- findTemplateGroups mOrganizationId mTemplateId mQuery pageable sort
+  tmlRs <- retrieveTemplates
+  orgRs <- retrieveOrganizations
+  pkgs <- findPackages
+  -- TODO add filterTemplates
+  return . fmap (toSimpleDTO'' tmlRs orgRs pkgs) $ groups
 
 getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
 getTemplatesDto queryParams mPkgId = do
   checkPermission _DMP_PERM
-  validatePackageIdFormat' mPkgId
-  tmls <- findTemplatesFiltered queryParams
+  tmls <- getTemplates queryParams mPkgId
   tmlRs <- retrieveTemplates
   orgRs <- retrieveOrganizations
   pkgs <- findPackages
-  let tmls' = filterTemplates mPkgId tmls
-  foldInContext . mapToSimpleDTO tmlRs orgRs pkgs . chooseTheNewest . groupTemplates $ tmls'
-  where
-    mapToSimpleDTO ::
-         [R_TemplateSimpleDTO.TemplateSimpleDTO]
-      -> [OrganizationSimpleDTO]
-      -> [Package]
-      -> [Template]
-      -> [AppContextM TemplateSimpleDTO]
-    mapToSimpleDTO pkgRs orgRs pkgs tmls =
-      fmap
-        (\tml -> do
-           let versions = tmls ^.. traverse . version
-           let usablePackages = getUsablePackagesForTemplate tml pkgs
-           return $ toSimpleDTO' tml pkgRs orgRs versions usablePackages)
-        tmls
+  return . fmap (toSimpleDTO' tmlRs orgRs pkgs) . chooseTheNewest . groupTemplates $ tmls
 
-getTemplateByUuid :: String -> Maybe String -> AppContextM Template
-getTemplateByUuid templateId mPkgId = do
+getTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM Template
+getTemplateByUuidAndPackageId templateId mPkgId = do
   templates <- getTemplates [] mPkgId
   case L.find (\t -> (t ^. tId) == templateId) templates of
     Just template -> return template
@@ -71,7 +71,6 @@ getTemplateByUuid templateId mPkgId = do
 
 getTemplateByUuidDto :: String -> AppContextM TemplateDetailDTO
 getTemplateByUuidDto templateId = do
-  checkPermission _TML_PERM
   tml <- findTemplateById templateId
   pkgs <- findPackages
   versions <- getTemplateVersions tml

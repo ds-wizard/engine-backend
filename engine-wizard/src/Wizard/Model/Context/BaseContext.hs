@@ -1,5 +1,6 @@
 module Wizard.Model.Context.BaseContext where
 
+import Control.Concurrent.MVar (MVar)
 import Control.Monad.Except (ExceptT, MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
@@ -24,6 +25,7 @@ data BaseContext =
     , _baseContextMsgChannel :: Maybe Channel
     , _baseContextHttpClientManager :: Manager
     , _baseContextRegistryClient :: ClientEnv
+    , _baseContextShutdownFlag :: MVar ()
     , _baseContextCache :: ServerCache
     }
 

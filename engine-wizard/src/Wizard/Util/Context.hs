@@ -47,6 +47,7 @@ appContextFromBaseContext mUser baseContext = do
       , _appContextRegistryClient = baseContext ^. registryClient
       , _appContextTraceUuid = cTraceUuid
       , _appContextCurrentUser = mUser
+      , _appContextShutdownFlag = baseContext ^. shutdownFlag
       , _appContextCache = baseContext ^. cache
       }
 
@@ -60,5 +61,6 @@ baseContextFromAppContext appContext =
     , _baseContextMsgChannel = appContext ^. msgChannel
     , _baseContextHttpClientManager = appContext ^. httpClientManager
     , _baseContextRegistryClient = appContext ^. registryClient
+    , _baseContextShutdownFlag = appContext ^. shutdownFlag
     , _baseContextCache = appContext ^. cache
     }

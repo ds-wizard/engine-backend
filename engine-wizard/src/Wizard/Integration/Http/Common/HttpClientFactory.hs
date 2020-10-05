@@ -70,10 +70,10 @@ logRequest logHttpClient request = do
   let headers = show $ requestHeaders request
   when
     logHttpClient
-    (do logMessage $ format "Retrieving '%s://%s%s%s'" [protocol, h, p, q]
-        logMessage $ format "Request Method '%s'" [m]
-        logMessage $ format "Request Headers: '%s'" [headers]
-        logMessage $ format "Request Body '%s'" [b])
+    (do logMessage $ f' "Retrieving '%s://%s%s%s'" [protocol, h, p, q]
+        logMessage $ f' "Request Method '%s'" [m]
+        logMessage $ f' "Request Headers: '%s'" [headers]
+        logMessage $ f' "Request Body '%s'" [b])
 
 logResponse :: Bool -> Response BodyReader -> IO ()
 logResponse logHttpClient response = do
@@ -82,8 +82,8 @@ logResponse logHttpClient response = do
   when
     logHttpClient
     (do logMessage "Retrieved Response"
-        logMessage $ format "Response StatusCode: '%s'" [show status]
-        logMessage $ format "Response Headers: '%s'" [show headers])
+        logMessage $ f' "Response StatusCode: '%s'" [show status]
+        logMessage $ f' "Response Headers: '%s'" [show headers])
 
 logMessage :: String -> IO ()
-logMessage msg = putStrLn (format "[Debug] %s" [createLogRecord LevelDebug Nothing Nothing _CMP_HTTP_CLIENT msg])
+logMessage msg = putStrLn (f' "[Debug] %s" [createLogRecord LevelDebug Nothing Nothing _CMP_HTTP_CLIENT msg])

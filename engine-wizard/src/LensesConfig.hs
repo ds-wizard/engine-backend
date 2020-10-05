@@ -26,9 +26,11 @@ import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
@@ -360,6 +362,8 @@ makeFields ''Package
 
 makeFields ''PackageWithEvents
 
+makeFields ''PackageGroup
+
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
@@ -398,6 +402,8 @@ makeFields ''TemplateFormat
 makeFields ''TemplateFile
 
 makeFields ''TemplateAsset
+
+makeFields ''TemplateGroup
 
 -- Model / User
 makeFields ''User

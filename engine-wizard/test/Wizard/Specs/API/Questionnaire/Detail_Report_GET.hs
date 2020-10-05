@@ -21,6 +21,7 @@ import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -78,6 +79,7 @@ create_test_200 title appContext qtn authHeader =
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO MTR.runMigration appContext
+    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

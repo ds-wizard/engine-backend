@@ -9,10 +9,15 @@ import qualified Data.ByteString as BS
 
 import LensesConfig
 import Shared.Database.BSON.Template.Template ()
+import Shared.Database.BSON.Template.TemplateGroup ()
 import Shared.Database.DAO.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateGroup
 
 entityName = "template"
 
@@ -22,6 +27,50 @@ templateAssetBucketName = "templateAssetFs"
 
 findTemplates :: (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m) => m [Template]
 findTemplates = createFindEntitiesFn collection
+
+findTemplateGroups ::
+     (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m)
+  => Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> m (Page TemplateGroup)
+findTemplateGroups mOrganizationId mTemplateId mQuery pageable sort =
+  createAggregateEntitiesPageableQuerySortFn
+    collection
+    pageable
+    sort
+    [ "$group" =:
+      [ "_id" =: ["organizationId" =: "$organizationId", "templateId" =: "$templateId"]
+      , "organizationId" =: ["$first" =: "$organizationId"]
+      , "templateId" =: ["$first" =: "$templateId"]
+      , "versions" =:
+        [ "$addToSet" =:
+          [ "id" =: "$id"
+          , "name" =: "$name"
+          , "organizationId" =: "$organizationId"
+          , "templateId" =: "$templateId"
+          , "version" =: "$version"
+          , "metamodelVersion" =: "$metamodelVersion"
+          , "description" =: "$description"
+          , "readme" =: "$readme"
+          , "license" =: "$license"
+          , "allowedPackages" =: "$allowedPackages"
+          , "recommendedPackageId" =: "$recommendedPackageId"
+          , "formats" =: "$formats"
+          , "files" =: "$files"
+          , "assets" =: "$assets"
+          , "createdAt" =: "$createdAt"
+          ]
+        ]
+      ]
+    ] =<<
+  sel
+    [ regexSel "versions.name" mQuery
+    , textMaybeSel "organizationId" mOrganizationId
+    , textMaybeSel "templateId" mTemplateId
+    ]
 
 findTemplatesFiltered ::
      (MonadError AppError m, MonadReader s m, HasPool' s, MonadIO m) => [(String, String)] -> m [Template]

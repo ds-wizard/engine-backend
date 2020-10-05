@@ -1,5 +1,6 @@
 module Main where
 
+import Control.Concurrent.MVar
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
@@ -82,10 +83,11 @@ hLoadConfig fileName loadFn callback = do
 prepareWebApp runCallback =
   hLoadConfig serverConfigFileTest getServerConfig $ \serverConfig ->
     hLoadConfig buildInfoConfigFileTest getBuildInfoConfig $ \buildInfoConfig -> do
+      shutdownFlag <- newEmptyMVar
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel serverConfig
+      msgChannel <- createMessagingChannel serverConfig shutdownFlag
       putStrLn "MESSAGING: connected"
       httpClientManager <- createHttpClientManager serverConfig
       putStrLn "HTTP_CLIENT: created"
@@ -104,6 +106,7 @@ prepareWebApp runCallback =
               , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentUser = Just . toDTO $ userAlbert
+              , _appContextShutdownFlag = shutdownFlag
               , _appContextCache = cache
               }
       runWebserver appContext (runCallback appContext)

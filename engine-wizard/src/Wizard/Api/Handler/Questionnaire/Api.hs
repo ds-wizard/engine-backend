@@ -4,6 +4,7 @@ import Servant
 
 import Wizard.Api.Handler.Questionnaire.Detail_Content_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_DELETE
+import Wizard.Api.Handler.Questionnaire.Detail_Documents_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET
 import Wizard.Api.Handler.Questionnaire.Detail_GET
 import Wizard.Api.Handler.Questionnaire.Detail_PUT
@@ -25,6 +26,7 @@ type QuestionnaireAPI
      :<|> Detail_Content_PUT
      :<|> Detail_Report_GET
      :<|> Detail_Report_Preview_POST
+     :<|> Detail_Documents_GET
      :<|> Detail_Documents_Preview_GET
      :<|> Detail_WS
 
@@ -37,5 +39,6 @@ questionnaireServer =
   detail_content_PUT :<|>
   detail_report_GET :<|>
   detail_report_preview_POST :<|>
+  detail_documents_GET :<|>
   detail_documents_preview_GET :<|>
   detail_WS

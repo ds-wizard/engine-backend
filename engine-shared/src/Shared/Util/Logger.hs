@@ -6,7 +6,7 @@ module Shared.Util.Logger
   , createLogRecord
   , showLogLevel
   , runLogging
-  , format
+  , f'
   , LogLevel(..)
   , module Shared.Constant.Component
   ) where
@@ -28,7 +28,7 @@ import Prelude hiding (log)
 import System.Console.Pretty (Color(..), color)
 
 import Shared.Constant.Component
-import Shared.Util.String (format)
+import Shared.Util.String (f')
 
 -- ---------------------------------------------------------------------------
 logDebug :: MonadLogger m => String -> String -> m ()

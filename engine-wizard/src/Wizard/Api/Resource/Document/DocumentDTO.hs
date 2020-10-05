@@ -17,7 +17,7 @@ data DocumentDTO =
     , _documentDTOQuestionnaire :: Maybe QuestionnaireDTO
     , _documentDTOTemplate :: TemplateSimpleDTO
     , _documentDTOFormatUuid :: U.UUID
-    , _documentDTOOwnerUuid :: U.UUID
+    , _documentDTOCreatorUuid :: Maybe U.UUID
     , _documentDTOCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

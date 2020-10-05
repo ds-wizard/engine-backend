@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Questionnaire.Detail_Documents_Preview_GET where
 
 import Control.Lens ((^.))
+import Control.Monad (msum)
 import Control.Monad.Reader (asks)
 import Data.Maybe (fromMaybe)
 import qualified Data.UUID as U
@@ -21,16 +22,18 @@ type Detail_Documents_Preview_GET
      :> Capture "qtnUuid" String
      :> "documents"
      :> "preview"
+     :> QueryParam "Authorization" String
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 
 detail_documents_preview_GET ::
      Maybe String
   -> String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
-detail_documents_preview_GET mTokenHeader qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ do
-      (doc, result) <- createPreview qtnUuid
+detail_documents_preview_GET mTokenHeader qtnUuid mTokenQueryHeader =
+  getMaybeAuthServiceExecutor (msum [mTokenHeader, mTokenQueryHeader]) $ \runInMaybeAuthService ->
+    runInMaybeAuthService $ do
+      (doc, result) <- createDocumentPreview qtnUuid
       case doc ^. state of
         DoneDocumentState -> do
           let cdHeader = fromMaybe "text/plain" (doc ^. metadata . contentType)

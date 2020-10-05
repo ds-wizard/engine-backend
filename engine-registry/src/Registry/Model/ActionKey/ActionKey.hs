@@ -7,7 +7,7 @@ import GHC.Generics
 data ActionKeyType
   = RegistrationActionKey
   | ForgottenTokenActionKey
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data ActionKey =
   ActionKey

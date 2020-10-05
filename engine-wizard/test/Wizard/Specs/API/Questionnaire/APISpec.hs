@@ -6,6 +6,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Detail_Content_PUT
 import Wizard.Specs.API.Questionnaire.Detail_DELETE
+import Wizard.Specs.API.Questionnaire.Detail_Documents_GET
 import Wizard.Specs.API.Questionnaire.Detail_GET
 import Wizard.Specs.API.Questionnaire.Detail_PUT
 import Wizard.Specs.API.Questionnaire.Detail_Report_GET
@@ -25,4 +26,5 @@ questionnaireAPI appContext =
     detail_delete appContext
     detail_content_put appContext
     detail_report_get appContext
+    detail_documents_get appContext
     detail_report_preview_post appContext

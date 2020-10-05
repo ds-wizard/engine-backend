@@ -19,6 +19,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
@@ -69,6 +70,7 @@ test_204 appContext =
     runInContextIO (insertQuestionnaire questionnaire4) appContext
     runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
     runInContextIO (insertMigratorState nlQtnMigrationState) appContext
+    runInContextIO TML.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -110,6 +112,7 @@ create_test_403 title appContext qtn reason =
     runInContextIO QTN.runMigration appContext
     let ms = (nlQtnMigrationState & oldQuestionnaireUuid .~ (qtn ^. uuid)) & newQuestionnaireUuid .~ (qtn ^. uuid)
     runInContextIO (insertMigratorState ms) appContext
+    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

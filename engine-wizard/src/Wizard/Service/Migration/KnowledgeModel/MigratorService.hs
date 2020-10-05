@@ -7,7 +7,6 @@ import Control.Monad.Reader (liftIO)
 import Data.Maybe
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Error.Error
 import Shared.Model.Event.EventLenses
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
@@ -61,7 +60,7 @@ createMigration bUuid mscDto = do
     getTargetPackageEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getPreviousPkg branch =
       case branch ^. previousPackageId of
-        Just previousPkgId -> findPackageById previousPkgId
+        Just previousPkgId -> getPackageById previousPkgId
         Nothing -> throwError . UserError $ _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
     getMergeCheckpointPackageId branch = do
       mMergeCheckpointPackageId <- getBranchMergeCheckpointPackageId branch

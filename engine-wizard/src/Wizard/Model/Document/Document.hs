@@ -9,7 +9,7 @@ data DocumentState
   | InProgressDocumentState
   | DoneDocumentState
   | ErrorDocumentState
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data DocumentMetadata =
   DocumentMetadata
@@ -21,7 +21,7 @@ data DocumentMetadata =
 data DocumentDurability
   = PersistentDocumentDurability
   | TemporallyDocumentDurability
-  deriving (Show, Eq, Generic)
+  deriving (Show, Eq, Generic, Read)
 
 data Document =
   Document
@@ -34,7 +34,7 @@ data Document =
     , _documentTemplateId :: String
     , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata
-    , _documentOwnerUuid :: U.UUID
+    , _documentCreatorUuid :: Maybe U.UUID
     , _documentCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

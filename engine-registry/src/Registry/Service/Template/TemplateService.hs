@@ -12,19 +12,12 @@ import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Template.Template
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Identifier
-import Shared.Util.List (foldInContext)
 
 getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
 getTemplates queryParams = do
   tmpls <- findTemplatesFiltered queryParams
-  foldInContext . mapToSimpleDTO . chooseTheNewest . groupTemplates $ tmpls
-  where
-    mapToSimpleDTO :: [Template] -> [AppContextM TemplateSimpleDTO]
-    mapToSimpleDTO =
-      fmap
-        (\tml -> do
-           org <- findOrganizationByOrgId (tml ^. organizationId)
-           return $ toSimpleDTO tml org)
+  orgs <- findOrganizations
+  return . fmap (toSimpleDTO orgs) . chooseTheNewest . groupTemplates $ tmpls
 
 getTemplateById :: String -> AppContextM TemplateDetailDTO
 getTemplateById tId = do

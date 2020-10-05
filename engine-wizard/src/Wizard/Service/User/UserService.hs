@@ -11,6 +11,9 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 import Shared.Util.Uuid
@@ -32,18 +35,26 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
 import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Service.Cache.UserCache
 import Wizard.Service.Common
 import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
+import Wizard.Util.Cache
 
 getUsers :: AppContextM [UserDTO]
 getUsers = do
   checkPermission _UM_PERM
   users <- findUsers
   return . fmap toDTO $ users
+
+getUsersPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
+getUsersPage mQuery pageable sort = do
+  checkPermission _UM_PERM
+  userPage <- findUsersPage mQuery pageable sort
+  return . fmap toDTO $ userPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto = do
@@ -110,15 +121,18 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl = do
       sendAnalyticsEmailIfEnabled user
       return $ toDTO user
 
-getUserById :: String -> AppContextM UserDTO
-getUserById userUuid = do
-  user <- findUserById userUuid
-  return $ toDTO user
+getUserById :: String -> AppContextM User
+getUserById = getFromCacheOrDb getFromCache addToCache findUserById
 
 getUserByIdDto :: String -> AppContextM UserDTO
 getUserByIdDto userUuid = do
+  user <- getUserById userUuid
+  return $ toDTO user
+
+getUserDetailById :: String -> AppContextM UserDTO
+getUserDetailById userUuid = do
   checkPermission _UM_PERM
-  getUserById userUuid
+  getUserByIdDto userUuid
 
 modifyUser :: String -> UserChangeDTO -> AppContextM UserDTO
 modifyUser userUuid reqDto = do
@@ -188,7 +202,7 @@ deleteUser userUuid = do
   _ <- findUserById userUuid
   deleteUserById userUuid
   deleteQuestionnairesFiltered [("ownerUuid", userUuid)]
-  documents <- findDocumentsFiltered [("ownerUuid", userUuid)]
+  documents <- findDocumentsFiltered [("creatorUuid", userUuid)]
   forM_
     documents
     (\d -> do
