@@ -180,19 +180,9 @@ instance ToBSON Metric
 
 instance FromBSON Metric
 
-instance ToBSON MetricMeasure where
-  toBSON MetricMeasure {..} =
-    [ "metricUuid" BSON.=: _metricMeasureMetricUuid
-    , "measure" BSON.=: _metricMeasureMeasure
-    , "weight" BSON.=: _metricMeasureWeight
-    ]
+instance ToBSON MetricMeasure
 
-instance FromBSON MetricMeasure where
-  fromBSON doc = do
-    _metricMeasureMetricUuid <- BSON.lookup "metricUuid" doc
-    _metricMeasureMeasure <- BSON.lookup "measure" doc
-    _metricMeasureWeight <- BSON.lookup "weight" doc
-    return MetricMeasure {..}
+instance FromBSON MetricMeasure
 
 -- -------------------------
 -- TAG ---------------------

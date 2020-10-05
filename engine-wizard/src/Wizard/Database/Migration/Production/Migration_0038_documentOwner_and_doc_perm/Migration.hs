@@ -20,6 +20,7 @@ migrate :: ConnectionPool -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   addPermissionToAdmins dbPool
   renameDocumentOwnerUuid dbPool
+  addDefaultTemplateAndFormatToQtn dbPool
   return Nothing
 
 addPermissionToAdmins dbPool = do
@@ -28,4 +29,16 @@ addPermissionToAdmins dbPool = do
 
 renameDocumentOwnerUuid dbPool = do
   let action = modify (select [] "documents") ["$rename" =: ["ownerUuid" =: "creatorUuid"]]
+  runMongoDBPoolDef action dbPool
+
+addDefaultTemplateAndFormatToQtn dbPool = do
+  let action =
+        modify
+          (select ["templateId" =: ["$exists" =: False]] "questionnaires")
+          ["$set" =: ["templateId" =: (Nothing :: Maybe String)]]
+  runMongoDBPoolDef action dbPool
+  let action =
+        modify
+          (select ["formatUuid" =: ["$exists" =: False]] "questionnaires")
+          ["$set" =: ["formatUuid" =: (Nothing :: Maybe String)]]
   runMongoDBPoolDef action dbPool
