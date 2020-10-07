@@ -61,6 +61,7 @@ defaultRoles =
         , "CFG_PERM"
         , "SUBM_PERM"
         , "TML_PERM"
+        , "DOC_PERM"
         ]
     , _serverConfigRolesDataSteward =
         [ "KM_PERM"

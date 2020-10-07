@@ -13,4 +13,6 @@ purgeCache = do
   liftIO . C.purge $ cache ^. knowledgeModel
   liftIO . C.purge $ cache ^. questionnaireReportIndications
   liftIO . C.purge $ cache ^. questionnaireWebsocket
+  liftIO . C.purge $ cache ^. user
+  liftIO . C.purge $ cache ^. package
   return ()
