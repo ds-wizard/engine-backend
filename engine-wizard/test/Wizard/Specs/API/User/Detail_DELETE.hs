@@ -16,6 +16,7 @@ import qualified Wizard.Database.Migration.Development.Questionnaire.Questionnai
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Common
 import Wizard.Specs.API.Questionnaire.Common

@@ -9,11 +9,12 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Wizard.Api.Resource.BookReference.BookReferenceJM ()
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import Wizard.Database.Migration.Development.BookReference.Data.BookReferences
 import Wizard.Model.Context.AppContext
 
-import Wizard.Specs.API.Common
+import SharedTest.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------

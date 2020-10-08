@@ -17,6 +17,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Template.TemplateMapper
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Template.Common
 import Wizard.Specs.Common

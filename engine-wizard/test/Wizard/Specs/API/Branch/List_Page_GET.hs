@@ -20,6 +20,7 @@ import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -48,11 +49,7 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200
-    "HTTP 200 OK"
-    appContext
-    "/branches/page"
-    (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranch])
+  create_test_200 "HTTP 200 OK" appContext "/branches/page" (Page "branches" (PageMetadata 20 1 1 0) [amsterdamBranch])
   create_test_200
     "HTTP 200 OK (query)"
     appContext

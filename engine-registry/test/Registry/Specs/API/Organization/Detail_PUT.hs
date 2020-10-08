@@ -23,6 +23,7 @@ import Registry.Service.Organization.OrganizationMapper
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -60,13 +61,11 @@ test_200 appContext =
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO orgGlobalEdited
+    let expType (a :: OrganizationDTO) = a
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, OrganizationDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareOrganizationDtos resBody expDto
+    assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfOrganizationInDB appContext orgGlobalEdited
 

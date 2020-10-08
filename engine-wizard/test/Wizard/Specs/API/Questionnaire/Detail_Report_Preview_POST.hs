@@ -32,6 +32,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Report.Report
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common

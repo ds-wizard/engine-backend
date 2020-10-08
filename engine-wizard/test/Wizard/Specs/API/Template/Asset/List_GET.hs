@@ -14,6 +14,7 @@ import Shared.Model.Template.TemplateJM ()
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 

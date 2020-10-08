@@ -25,6 +25,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common

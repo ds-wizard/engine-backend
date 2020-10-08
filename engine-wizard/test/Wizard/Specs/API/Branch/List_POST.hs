@@ -22,6 +22,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Branch.Common
 import Wizard.Specs.API.Common

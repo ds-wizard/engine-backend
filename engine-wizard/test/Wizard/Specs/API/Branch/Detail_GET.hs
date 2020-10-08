@@ -18,6 +18,7 @@ import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 

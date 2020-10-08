@@ -11,11 +11,12 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Wizard.Api.Resource.Config.ClientConfigJM ()
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ClientConfigMapper
 
-import Wizard.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /configs/bootstrap

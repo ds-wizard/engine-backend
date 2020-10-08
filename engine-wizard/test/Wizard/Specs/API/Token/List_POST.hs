@@ -17,6 +17,7 @@ import Wizard.Database.Migration.Development.Token.Data.Tokens
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 

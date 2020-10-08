@@ -57,8 +57,12 @@ library:
   - unordered-containers
   - uuid
   - wai
+  - wai-extra
   - yaml
   - zip-archive
+  - hspec
+  - hspec-wai
+  - hspec-expectations-pretty-diff
 
 tests:
   hspec:

@@ -19,6 +19,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import Wizard.Model.Context.AppContext
 import Wizard.Service.User.UserMapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common

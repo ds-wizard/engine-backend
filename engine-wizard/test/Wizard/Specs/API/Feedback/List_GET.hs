@@ -18,7 +18,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Feedback.FeedbackMapper
 import Wizard.Service.Feedback.FeedbackService
 
-import Wizard.Specs.API.Common
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Feedback.Common
 import Wizard.Specs.Common
 

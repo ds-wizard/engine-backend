@@ -9,12 +9,13 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Registry.Api.Resource.Template.TemplateSimpleJM ()
 import Registry.Database.Migration.Development.Template.Data.Templates
 import qualified Registry.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Registry.Model.Context.AppContext
 
-import Registry.Specs.API.Common
 import Registry.Specs.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /templates

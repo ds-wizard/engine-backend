@@ -11,6 +11,7 @@ import Test.Hspec.Wai.Matcher
 import Registry.Model.Context.AppContext
 
 import Registry.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- DELETE /organizations/{orgId}

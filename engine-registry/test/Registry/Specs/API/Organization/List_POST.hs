@@ -23,6 +23,7 @@ import Registry.Service.Organization.OrganizationMapper
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -60,15 +61,13 @@ test_201 appContext =
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto = toDTO (orgGlobal & active .~ False)
+    let expType (a :: OrganizationDTO) = a
      -- AND: Prepare DB
     runInContextIO deleteOrganizations appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, OrganizationDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareOrganizationDtosWhenCreate resBody expDto
+    assertResponse' expStatus expHeaders expDto expType response ["organizationId", "name", "description", "email"]
      -- AND: Find result in DB and compare with expectation state
     organizationFromDb <- getFirstFromDB findOrganizations appContext
     compareOrganizationDtosWhenCreate organizationFromDb reqDto

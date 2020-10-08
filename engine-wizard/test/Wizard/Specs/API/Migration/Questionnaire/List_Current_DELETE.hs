@@ -24,6 +24,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common

@@ -16,6 +16,7 @@ import Shared.Database.Migration.Development.Template.Data.Templates
 
 import Registry.Specs.API.Common
 import Registry.Specs.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /templates/{tmlId}/bundle

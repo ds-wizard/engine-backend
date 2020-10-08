@@ -1,26 +1,20 @@
 module Wizard.Specs.API.Common where
 
 import Control.Lens ((&), (.~), (^.))
-import Data.Aeson (eitherDecode, encode)
+import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Either (isRight)
-import Data.Foldable
 import qualified Data.List as L
 import Network.HTTP.Types
 import Network.Wai (Application)
-import Network.Wai.Test hiding (request)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
-import Shared.Api.Resource.Error.ErrorDTO
-import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Constant.Api
 import Shared.Localization.Messages.Public
-import Shared.Util.List (elems)
 import Wizard.Bootstrap.Web
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -30,6 +24,7 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Model.User.User
 import Wizard.Service.User.UserService
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.Common
 
@@ -74,35 +69,6 @@ userWithoutPerm serverConfig perm =
 reqServiceHeader :: Header
 reqServiceHeader = ("Authorization", "Bearer my-service-token")
 
-reqCtHeader :: Header
-reqCtHeader = contentTypeHeaderJSON
-
-resCtHeaderPlain :: Header
-resCtHeaderPlain = contentTypeHeaderJSON
-
-resCtHeader = "Content-Type" <:> "application/json"
-
-resCtHeaderUtf8 = "Content-Type" <:> "application/json;charset=utf-8"
-
-resCtHeaderJavascript = "Content-Type" <:> "application/javascript"
-
-resCorsHeadersPlain :: [Header]
-resCorsHeadersPlain =
-  [ ("Access-Control-Allow-Origin", "*")
-  , ("Access-Control-Allow-Credential", "true")
-  , ("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization")
-  , ("Access-Control-Allow-Methods", "OPTIONS, HEAD, GET, POST, PUT, DELETE")
-  ]
-
-resCorsHeaders =
-  [ "Access-Control-Allow-Origin" <:> "*"
-  , "Access-Control-Allow-Credential" <:> "true"
-  , "Access-Control-Allow-Headers" <:> "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-  , "Access-Control-Allow-Methods" <:> "OPTIONS, HEAD, GET, POST, PUT, DELETE"
-  ]
-
-shouldRespondWith r matcher = forM_ (match r matcher) (liftIO . expectationFailure)
-
 createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
     let reqHeaders = [reqAuthHeader, reqCtHeader]
@@ -115,21 +81,6 @@ createInvalidJsonTest reqMethod reqUrl missingField =
       -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
       -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-
-createAuthTest reqMethod reqUrl reqHeaders reqBody =
-  it "HTTP 401 UNAUTHORIZED" $
-    -- GIVEN: Prepare expectation
-   do
-    let expStatus = 401
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UnauthorizedErrorDTO "Unable to get token"
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -152,30 +103,6 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
-
-createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator =
-  it "HTTP 404 NOT FOUND - entity doesn't exist" $
-      -- GIVEN: Prepare expectation
-   do
-    let expStatus = 404
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
-    let expBody = encode expDto
-      -- WHEN: Call APIA
-    response <- request reqMethod reqUrl reqHeaders reqBody
-      -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-
-assertResStatus resStatus expStatus = liftIO $ resStatus `shouldBe` expStatus
-
-assertResHeaders resHeaders expHeaders = liftIO $ (expHeaders `elems` resHeaders) `shouldBe` True
-
-destructResponse response =
-  let (SResponse (Status status _) headers body) = response
-      (Right resBody) = eitherDecode body
-   in (status, headers, resBody)
 
 assertCountInDB dbFunction appContext count = do
   eitherList <- runInContextIO dbFunction appContext
