@@ -12,6 +12,7 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Common.Pageable
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
@@ -106,6 +107,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 
@@ -130,6 +132,8 @@ makeFields ''ServerCache
 makeFields ''Page
 
 makeFields ''PageMetadata
+
+makeFields ''Pageable
 
 -- Model / Config
 makeFields ''AppConfig
@@ -409,6 +413,8 @@ makeFields ''TemplateGroup
 makeFields ''User
 
 makeFields ''UserSubmissionProps
+
+makeFields ''UserSuggestion
 
 -- Model / Websocket
 makeFields ''WebsocketMessage

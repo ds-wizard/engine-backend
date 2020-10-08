@@ -79,6 +79,7 @@ create_test_200 title appContext qtn authHeader =
             (SPM.toPackage germanyPackage)
             km1WithQ4
             QSDefault
+            (Just commonWizardTemplate)
             (Just templateFormatJson)
     let expBody = encode expDto
      -- AND: Run migrations

@@ -23,6 +23,7 @@ import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserStateDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -55,6 +56,11 @@ getUsersPage mQuery pageable sort = do
   checkPermission _UM_PERM
   userPage <- findUsersPage mQuery pageable sort
   return . fmap toDTO $ userPage
+
+getUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getUserSuggestionsPage mQuery pageable sort = do
+  suggestionPage <- findUserSuggestionsPage mQuery pageable sort
+  return . fmap toSuggestionDTO $ suggestionPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto = do

@@ -11,6 +11,7 @@ import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
+import qualified Shared.Service.Template.TemplateMapper as STM
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
@@ -78,8 +79,14 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
     {_integrationValueDTOIntId = _integrationValueIntId, _integrationValueDTOValue = _integrationValueValue}
 
 toDetailWithPackageWithEventsDTO ::
-     Questionnaire -> Package -> KnowledgeModel -> QuestionnaireState -> Maybe TemplateFormat -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mFormat =
+     Questionnaire
+  -> Package
+  -> KnowledgeModel
+  -> QuestionnaireState
+  -> Maybe Template
+  -> Maybe TemplateFormat
+  -> QuestionnaireDetailDTO
+toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mTemplate mFormat =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -90,6 +97,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mFor
     , _questionnaireDetailDTOPackage = PM.toSimpleDTO package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
+    , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOFormat = mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
@@ -106,9 +114,10 @@ toDetailWithPackageDTO ::
   -> PackageSimpleDTO
   -> KnowledgeModel
   -> QuestionnaireState
+  -> Maybe Template
   -> Maybe TemplateFormat
   -> QuestionnaireDetailDTO
-toDetailWithPackageDTO questionnaire package knowledgeModel state mFormat =
+toDetailWithPackageDTO questionnaire package knowledgeModel state mTemplate mFormat =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -119,6 +128,7 @@ toDetailWithPackageDTO questionnaire package knowledgeModel state mFormat =
     , _questionnaireDetailDTOPackage = package
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
+    , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = questionnaire ^. formatUuid
     , _questionnaireDetailDTOFormat = mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel

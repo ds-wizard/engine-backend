@@ -1,10 +1,13 @@
 module Shared.Service.Package.PackageMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^..))
+import qualified Data.List as L
 
 import LensesConfig
 import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 
 toPackage :: PackageWithEvents -> Package
@@ -43,6 +46,17 @@ toDTO pkg =
     , _packageDTOEvents = pkg ^. events
     , _packageDTOCreatedAt = pkg ^. createdAt
     }
+
+toSuggestionDTO :: PackageGroup -> PackageSuggestionDTO
+toSuggestionDTO pkgGroup =
+  let newest = L.maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
+   in PackageSuggestionDTO
+        { _packageSuggestionDTOPId = newest ^. pId
+        , _packageSuggestionDTOName = newest ^. name
+        , _packageSuggestionDTOVersion = newest ^. version
+        , _packageSuggestionDTODescription = newest ^. description
+        , _packageSuggestionDTOVersions = L.sort $ pkgGroup ^. versions ^.. traverse . version
+        }
 
 buildIdentifierId :: String -> String -> String -> String
 buildIdentifierId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion

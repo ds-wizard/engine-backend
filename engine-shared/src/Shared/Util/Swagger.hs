@@ -31,3 +31,9 @@ simpleToSchema'''' parentEntityName exampleDTO proxy =
 
 createSchemaOptions'''' :: String -> SchemaOptions
 createSchemaOptions'''' parentEntityName = fromAesonOptions (createSimpleOptions'''' parentEntityName)
+
+simpleToSchema''''' fieldPrefix dtoName exampleDTO proxy =
+  genericDeclareNamedSchema (createSchemaOptions' fieldPrefix) proxy & mapped . schema . example ?~ toJSON exampleDTO &
+  mapped .
+  name ?~
+  dtoName

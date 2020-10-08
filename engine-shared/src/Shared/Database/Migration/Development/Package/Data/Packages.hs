@@ -9,6 +9,7 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
+import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 
@@ -59,6 +60,14 @@ globalPackage =
 globalPackageDto :: PackageDTO
 globalPackageDto = toDTO globalPackage
 
+globalPackageGroup :: PackageGroup
+globalPackageGroup =
+  PackageGroup
+    { _packageGroupOrganizationId = globalPackage ^. pId
+    , _packageGroupKmId = globalPackage ^. kmId
+    , _packageGroupVersions = [toPackage globalPackage, toPackage globalPackageEmpty]
+    }
+
 netherlandsPackage :: PackageWithEvents
 netherlandsPackage =
   PackageWithEvents
@@ -95,6 +104,14 @@ netherlandsPackageV2 =
     , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackage ^. pId
     , _packageWithEventsEvents = [AddChapterEvent' a_km1_ch4]
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+
+netherlandsPackageGroup :: PackageGroup
+netherlandsPackageGroup =
+  PackageGroup
+    { _packageGroupOrganizationId = netherlandsPackageV2 ^. pId
+    , _packageGroupKmId = netherlandsPackageV2 ^. kmId
+    , _packageGroupVersions = [toPackage netherlandsPackage, toPackage netherlandsPackageV2]
     }
 
 amsterdamPackage :: PackageWithEvents
@@ -176,4 +193,12 @@ germanyPackage =
         , AddQuestionEvent' a_km1_ch3_q10'
         ]
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+
+germanyPackageGroup :: PackageGroup
+germanyPackageGroup =
+  PackageGroup
+    { _packageGroupOrganizationId = germanyPackage ^. pId
+    , _packageGroupKmId = germanyPackage ^. kmId
+    , _packageGroupVersions = [toPackage germanyPackage]
     }

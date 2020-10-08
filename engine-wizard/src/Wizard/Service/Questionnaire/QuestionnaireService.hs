@@ -120,14 +120,14 @@ getQuestionnaireDetailById qtnUuid = do
   package <- getPackageById (qtn ^. packageId)
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
-  mFormat <-
+  (mTemplate, mFormat) <-
     case (qtn ^. templateId, qtn ^. formatUuid) of
       (Just tId, Just fUuid) -> do
         template <- findTemplateById tId
-        return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
-      _ -> return Nothing
+        return (Just template, L.find (\f -> f ^. uuid == fUuid) (template ^. formats))
+      _ -> return (Nothing, Nothing)
   -- TODO we may not need to fetch package at all
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state mFormat
+  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state mTemplate mFormat
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
@@ -144,7 +144,7 @@ modifyQuestionnaire qtnUuid reqDto = do
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid pkgId
   updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. ownerUuid)
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing Nothing
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do

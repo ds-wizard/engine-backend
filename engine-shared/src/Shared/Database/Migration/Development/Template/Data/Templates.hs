@@ -11,6 +11,7 @@ import LensesConfig
 import Shared.Constant.Template
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (css, html)
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateGroup
 
 commonWizardTemplate :: Template
 commonWizardTemplate =
@@ -45,12 +46,30 @@ commonWizardTemplateEdited =
   commonWizardTemplate
     { _templateName = "EDITED: " ++ commonWizardTemplate ^. name
     , _templateDescription = "EDITED: " ++ commonWizardTemplate ^. description
+    , _templateAllowedPackages = [templateAllowedPackageEdited]
+    }
+
+commonWizardTemplateGroup :: TemplateGroup
+commonWizardTemplateGroup =
+  TemplateGroup
+    { _templateGroupOrganizationId = commonWizardTemplate ^. tId
+    , _templateGroupTemplateId = commonWizardTemplate ^. templateId
+    , _templateGroupVersions = [commonWizardTemplate]
     }
 
 templateAllowedPackage :: TemplateAllowedPackage
 templateAllowedPackage =
   TemplateAllowedPackage
     { _templateAllowedPackageOrgId = Nothing
+    , _templateAllowedPackageKmId = Nothing
+    , _templateAllowedPackageMinVersion = Nothing
+    , _templateAllowedPackageMaxVersion = Nothing
+    }
+
+templateAllowedPackageEdited :: TemplateAllowedPackage
+templateAllowedPackageEdited =
+  TemplateAllowedPackage
+    { _templateAllowedPackageOrgId = Just "global"
     , _templateAllowedPackageKmId = Nothing
     , _templateAllowedPackageMinVersion = Nothing
     , _templateAllowedPackageMaxVersion = Nothing

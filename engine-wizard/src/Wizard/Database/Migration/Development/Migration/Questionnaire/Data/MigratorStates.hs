@@ -33,6 +33,7 @@ nlQtnMigrationStateDto =
           (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
@@ -40,6 +41,7 @@ nlQtnMigrationStateDto =
           (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
@@ -53,6 +55,7 @@ nlQtnMigrationStateVisibleViewDto =
           (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
@@ -60,6 +63,7 @@ nlQtnMigrationStateVisibleViewDto =
           (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
@@ -73,6 +77,7 @@ nlQtnMigrationStateVisibleEditDto =
           (PM.toPackage netherlandsPackage)
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
@@ -80,6 +85,7 @@ nlQtnMigrationStateVisibleEditDto =
           (PM.toPackage netherlandsPackageV2)
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }

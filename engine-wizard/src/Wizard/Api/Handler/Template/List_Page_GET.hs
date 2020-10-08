@@ -16,7 +16,6 @@ type List_Page_GET
      :> "page"
      :> QueryParam "organizationId" String
      :> QueryParam "templateId" String
-     :> QueryParam "pkgId" String
      :> QueryParam "q" String
      :> QueryParam "page" Int
      :> QueryParam "size" Int
@@ -28,13 +27,11 @@ list_page_GET ::
   -> Maybe String
   -> Maybe String
   -> Maybe String
-  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
-list_page_GET mTokenHeader mOrganizationId mTmlId mPkgId mQuery mPage mSize mSort =
+list_page_GET mTokenHeader mOrganizationId mTmlId mQuery mPage mSize mSort =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<<
-    getTemplatesPage mOrganizationId mTmlId mPkgId mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<< getTemplatesPage mOrganizationId mTmlId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

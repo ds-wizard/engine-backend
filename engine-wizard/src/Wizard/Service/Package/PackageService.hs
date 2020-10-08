@@ -1,17 +1,4 @@
-module Wizard.Service.Package.PackageService
-  ( getSimplePackagesFiltered
-  , getPackagesPage
-  , getPackageById
-  , getPackageDetailById
-  , getSeriesOfPackages
-  , getAllPreviousEventsSincePackageId
-  , getAllPreviousEventsSincePackageIdAndUntilPackageId
-  , getTheNewestPackageByOrganizationIdAndKmId
-  , getNewerPackages
-  , createPackage
-  , deletePackagesByQueryParams
-  , deletePackage
-  ) where
+module Wizard.Service.Package.PackageService where
 
 import Control.Lens ((^.), (^..))
 import Control.Monad.Reader (asks)
@@ -21,6 +8,7 @@ import Data.List (maximumBy)
 import LensesConfig
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -65,6 +53,12 @@ getPackagesPage mOrganizationId mKmId mQuery pageable sort = do
   pkgRs <- retrievePackages iStat
   orgRs <- retrieveOrganizations
   return . fmap (toSimpleDTO'' pkgRs orgRs) $ groups
+
+getPackageSuggestions :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page PackageSuggestionDTO)
+getPackageSuggestions mQuery pageable sort = do
+  checkPermission _PM_READ_PERM
+  groups <- findPackageGroups Nothing Nothing mQuery pageable sort
+  return . fmap toSuggestionDTO $ groups
 
 getPackageById :: String -> AppContextM Package
 getPackageById = getFromCacheOrDb getFromCache addToCache findPackageById

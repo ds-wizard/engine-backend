@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM where
 import Data.Aeson
 
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
+import Shared.Api.Resource.Template.TemplateJM ()
 import Shared.Model.Template.TemplateJM ()
 import Shared.Util.JSON
 import Wizard.Api.Resource.Package.PackageSimpleJM ()

@@ -14,6 +14,7 @@ import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.User.OnlineUserInfo
@@ -208,3 +209,6 @@ userAlbertApiTokenEditedDto =
 
 userAlbertOnlineInfo :: OnlineUserInfo
 userAlbertOnlineInfo = toLoggedOnlineUserInfo (toDTO userAlbert) 10
+
+userAlbertSuggestion :: UserSuggestionDTO
+userAlbertSuggestion = toSuggestionDTO . toSuggestion $ userAlbert

@@ -5,17 +5,23 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Api.Resource.Template.TemplateSuggestionDTO
+import Shared.Database.DAO.Common
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Model.Template.TemplateGroup
+import Shared.Service.Template.TemplateMapper
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Identifier
 import Wizard.Api.Resource.Template.TemplateChangeDTO
@@ -37,21 +43,32 @@ getTemplates queryParams mPkgId = do
   return $ filterTemplates mPkgId tmls
 
 getTemplatesPage ::
-     Maybe String
-  -> Maybe String
-  -> Maybe String
-  -> Maybe String
-  -> Pageable
-  -> [Sort]
-  -> AppContextM (Page TemplateSimpleDTO)
-getTemplatesPage mOrganizationId mTemplateId mPkgId mQuery pageable sort = do
+     Maybe String -> Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSimpleDTO)
+getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
   checkPermission _DMP_PERM
   groups <- findTemplateGroups mOrganizationId mTemplateId mQuery pageable sort
   tmlRs <- retrieveTemplates
   orgRs <- retrieveOrganizations
   pkgs <- findPackages
-  -- TODO add filterTemplates
   return . fmap (toSimpleDTO'' tmlRs orgRs pkgs) $ groups
+
+getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
+getTemplateSuggestions mPkgId mQuery pageable sort = do
+  checkPermission _DMP_PERM
+  validatePackageIdFormat' mPkgId
+  groups <- findTemplateGroups Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
+  return . fmap toSuggestionDTO . filterTemplates' . fmap chooseNewest $ groups
+  where
+    filterTemplates' :: Page Template -> Page Template
+    filterTemplates' (Page name _ array) =
+      let filteredArray = take updatedSize . filterTemplates mPkgId $ array
+          updatedSize = fromMaybe 20 $ pageable ^. size
+          updatedTotalElements = length filteredArray
+          updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
+          updatedNumber = fromMaybe 0 $ pageable ^. page
+       in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) filteredArray
+    chooseNewest :: TemplateGroup -> Template
+    chooseNewest tmlGroup = L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
 
 getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
 getTemplatesDto queryParams mPkgId = do

@@ -11,8 +11,10 @@ import Shared.Util.Gravatar (gravatarHash)
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -29,6 +31,26 @@ toDTO user =
     , _userDTOImageUrl = user ^. imageUrl
     , _userDTOCreatedAt = user ^. createdAt
     , _userDTOUpdatedAt = user ^. updatedAt
+    }
+
+toSuggestion :: User -> UserSuggestion
+toSuggestion user =
+  UserSuggestion
+    { _userSuggestionUuid = user ^. uuid
+    , _userSuggestionFirstName = user ^. firstName
+    , _userSuggestionLastName = user ^. lastName
+    , _userSuggestionEmail = user ^. email
+    , _userSuggestionImageUrl = user ^. imageUrl
+    }
+
+toSuggestionDTO :: UserSuggestion -> UserSuggestionDTO
+toSuggestionDTO user =
+  UserSuggestionDTO
+    { _userSuggestionDTOUuid = user ^. uuid
+    , _userSuggestionDTOFirstName = user ^. firstName
+    , _userSuggestionDTOLastName = user ^. lastName
+    , _userSuggestionDTOGravatarHash = gravatarHash $ user ^. email
+    , _userSuggestionDTOImageUrl = user ^. imageUrl
     }
 
 toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> OnlineUserInfo

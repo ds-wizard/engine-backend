@@ -83,7 +83,8 @@ create_test_200 title appContext qtn qtnEdited =
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = toDetailWithPackageWithEventsDTO qtnEdited (SPM.toPackage germanyPackage) km1WithQ4 QSDefault Nothing
+    let expDto =
+          toDetailWithPackageWithEventsDTO qtnEdited (SPM.toPackage germanyPackage) km1WithQ4 QSDefault Nothing Nothing
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

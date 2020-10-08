@@ -11,11 +11,13 @@ import Wizard.Api.Handler.Package.List_DELETE
 import Wizard.Api.Handler.Package.List_GET
 import Wizard.Api.Handler.Package.List_POST
 import Wizard.Api.Handler.Package.List_Page_GET
+import Wizard.Api.Handler.Package.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type PackageAPI
    = List_GET
      :<|> List_Page_GET
+     :<|> List_Suggestions_GET
      :<|> List_POST
      :<|> List_DELETE
      :<|> Detail_GET
@@ -29,6 +31,8 @@ packageApi = Proxy
 
 packageServer :: ServerT PackageAPI BaseContextM
 packageServer =
-  list_GET :<|> list_page_GET :<|> list_POST :<|> list_DELETE :<|> detail_GET :<|> detail_DELETE :<|> list_bundle_POST :<|>
+  list_GET :<|> list_page_GET :<|> list_suggestions_GET :<|> list_POST :<|> list_DELETE :<|> detail_GET :<|>
+  detail_DELETE :<|>
+  list_bundle_POST :<|>
   detail_bundle_GET :<|>
   detail_pull_POST
