@@ -4,10 +4,10 @@
 [![Engine Backend CI](https://github.com/ds-wizard/engine-backend/workflows/Engine%20Backend%20CI/badge.svg?branch=master)](https://github.com/ds-wizard/engine-backend/actions)
 [![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
 
-## applications
+## Applications
 
-- Wizard (<application>: engine-wizard)
-- Registry (<application>: engine-registry)
+- Wizard (`<application>` = engine-wizard)
+- Registry (`<application>` = engine-registry)
 
 ## Contribute
 
