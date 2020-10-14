@@ -81,12 +81,13 @@ toIntegrationReplyValueDTO IntegrationValue {..} =
 toDetailWithPackageWithEventsDTO ::
      Questionnaire
   -> Package
+  -> [String]
   -> KnowledgeModel
   -> QuestionnaireState
   -> Maybe Template
   -> Maybe TemplateFormat
   -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mTemplate mFormat =
+toDetailWithPackageWithEventsDTO questionnaire pkg pkgVersions knowledgeModel state mTemplate mFormat =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = questionnaire ^. uuid
     , _questionnaireDetailDTOName = questionnaire ^. name
@@ -94,7 +95,7 @@ toDetailWithPackageWithEventsDTO questionnaire package knowledgeModel state mTem
     , _questionnaireDetailDTOVisibility = questionnaire ^. visibility
     , _questionnaireDetailDTOSharing = questionnaire ^. sharing
     , _questionnaireDetailDTOState = state
-    , _questionnaireDetailDTOPackage = PM.toSimpleDTO package
+    , _questionnaireDetailDTOPackage = PM.toSimpleDTO' [] [] pkgVersions pkg
     , _questionnaireDetailDTOSelectedTagUuids = questionnaire ^. selectedTagUuids
     , _questionnaireDetailDTOTemplateId = questionnaire ^. templateId
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate

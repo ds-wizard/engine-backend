@@ -31,6 +31,7 @@ nlQtnMigrationStateDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
@@ -39,6 +40,7 @@ nlQtnMigrationStateDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)
@@ -53,6 +55,7 @@ nlQtnMigrationStateVisibleViewDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleView
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
@@ -61,6 +64,7 @@ nlQtnMigrationStateVisibleViewDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)
@@ -75,6 +79,7 @@ nlQtnMigrationStateVisibleEditDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEdit
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
@@ -83,6 +88,7 @@ nlQtnMigrationStateVisibleEditDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)

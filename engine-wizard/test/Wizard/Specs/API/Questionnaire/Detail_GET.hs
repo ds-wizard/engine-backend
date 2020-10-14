@@ -78,6 +78,7 @@ create_test_200 title appContext qtn authHeader =
           toDetailWithPackageWithEventsDTO
             qtn
             (SPM.toPackage germanyPackage)
+            ["1.0.0"]
             km1WithQ4
             QSDefault
             (Just commonWizardTemplate)

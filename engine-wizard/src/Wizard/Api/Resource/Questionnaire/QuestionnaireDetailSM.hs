@@ -22,4 +22,11 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 instance ToSchema QuestionnaireDetailDTO where
   declareNamedSchema =
     simpleToSchema
-      (toDetailWithPackageWithEventsDTO questionnaire1 (PM.toPackage germanyPackage) km1WithQ4 QSDefault Nothing Nothing)
+      (toDetailWithPackageWithEventsDTO
+         questionnaire1
+         (PM.toPackage germanyPackage)
+         ["1.0.0"]
+         km1WithQ4
+         QSDefault
+         Nothing
+         Nothing)

@@ -117,17 +117,22 @@ getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
-  package <- getPackageById (qtn ^. packageId)
+  pkg <- getPackageById (qtn ^. packageId)
+  pkgVersions <- getPackageVersions pkg
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
-  (mTemplate, mFormat) <-
-    case (qtn ^. templateId, qtn ^. formatUuid) of
-      (Just tId, Just fUuid) -> do
+  mTemplate <-
+    case qtn ^. templateId of
+      Just tId -> do
         template <- findTemplateById tId
-        return (Just template, L.find (\f -> f ^. uuid == fUuid) (template ^. formats))
-      _ -> return (Nothing, Nothing)
-  -- TODO we may not need to fetch package at all
-  return $ toDetailWithPackageWithEventsDTO qtn package knowledgeModel state mTemplate mFormat
+        return $ Just template
+      _ -> return Nothing
+  mFormat <-
+    case (mTemplate, qtn ^. formatUuid) of
+      (Just template, Just fUuid) -> do
+        return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
+      _ -> return Nothing
+  return $ toDetailWithPackageWithEventsDTO qtn pkg pkgVersions knowledgeModel state mTemplate mFormat
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
