@@ -8,14 +8,12 @@ import Wizard.Specs.API.Branch.Detail_GET
 import Wizard.Specs.API.Branch.Detail_PUT
 import Wizard.Specs.API.Branch.List_GET
 import Wizard.Specs.API.Branch.List_POST
-import Wizard.Specs.API.Branch.List_Page_GET
 import Wizard.Specs.API.Common
 
 branchAPI appContext =
   with (startWebApp appContext) $
   describe "BRANCH API Spec" $ do
-    list_get appContext
-    list_page_GET appContext
+    list_GET appContext
     list_post appContext
     detail_get appContext
     detail_put appContext

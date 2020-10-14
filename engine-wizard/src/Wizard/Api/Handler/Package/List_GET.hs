@@ -1,9 +1,10 @@
 module Wizard.Api.Handler.Package.List_GET where
 
-import Data.Maybe (catMaybes)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
@@ -15,16 +16,22 @@ type List_GET
      :> "packages"
      :> QueryParam "organizationId" String
      :> QueryParam "kmId" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
+     :> QueryParam "q" String
+     :> QueryParam "page" Int
+     :> QueryParam "size" Int
+     :> QueryParam "sort" String
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] (Page PackageSimpleDTO))
 
 list_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
-list_GET mTokenHeader mOrganizationId mKmId =
+  -> Maybe String
+  -> Maybe Int
+  -> Maybe Int
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page PackageSimpleDTO))
+list_GET mTokenHeader mOrganizationId mKmId mQuery mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "kmId" <$> mKmId]
-      getSimplePackagesFiltered queryParams
+    addTraceUuidHeader =<< getPackagesPage mOrganizationId mKmId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

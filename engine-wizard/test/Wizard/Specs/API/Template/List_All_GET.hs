@@ -1,5 +1,5 @@
-module Wizard.Specs.API.User.List_Page_GET
-  ( list_page_GET
+module Wizard.Specs.API.Template.List_All_GET
+  ( list_all_get
   ) where
 
 import Data.Aeson (encode)
@@ -9,23 +9,21 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Model.Common.Page
-import Shared.Model.Common.PageMetadata
-import Wizard.Database.Migration.Development.User.Data.Users
-import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Shared.Model.Template.TemplateJM ()
+import Wizard.Database.Migration.Development.Template.Data.Templates
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
-import Wizard.Service.User.UserMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- GET /users/page
+-- GET /templates/all
 -- ------------------------------------------------------------------------
-list_page_GET :: AppContext -> SpecWith ((), Application)
-list_page_GET appContext =
-  describe "GET /users/page" $ do
+list_all_get :: AppContext -> SpecWith ((), Application)
+list_all_get appContext =
+  describe "GET /templates/all" $ do
     test_200 appContext
     test_401 appContext
     test_403 appContext
@@ -35,9 +33,9 @@ list_page_GET appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = "/users/page"
+reqUrl = "/templates/all"
 
-reqHeaders = [reqAuthHeader]
+reqHeadersT reqAuthHeader = [reqAuthHeader]
 
 reqBody = ""
 
@@ -45,44 +43,24 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200
-    "HTTP 200 OK (Admin)"
-    appContext
-    "/users/page"
-    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userNikola, toDTO userIsaac])
-  create_test_200
-    "HTTP 200 OK (Admin - pagination)"
-    appContext
-    "/users/page?page=1&size=1"
-    (Page "users" (PageMetadata 1 3 3 1) [toDTO userNikola])
-  create_test_200
-    "HTTP 200 OK (Admin - query)"
-    appContext
-    "/users/page?q=te"
-    (Page "users" (PageMetadata 20 2 1 0) [toDTO userAlbert, toDTO userNikola])
-  create_test_200
-    "HTTP 200 OK (Admin - sort asc)"
-    appContext
-    "/users/page?sort=name,asc"
-    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userIsaac, toDTO userNikola])
-  create_test_200
-    "HTTP 200 OK (Admin - sort desc)"
-    appContext
-    "/users/page?sort=name,desc"
-    (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
+  create_test_200 "HTTP 200 OK (user token)" appContext reqAuthHeader
+  create_test_200 "HTTP 200 OK (service token)" appContext reqServiceHeader
 
-create_test_200 title appContext reqUrl expDto =
+create_test_200 title appContext reqAuthHeader =
   it title $
        -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT reqAuthHeader
+      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = [commonWizardTemplateSimpleDTO]
     let expBody = encode expDto
      -- AND: Run migrations
-    runInContextIO U.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
-    -- AND: Compare response with expectation
+     -- THEN: Compare response with expectation
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
@@ -95,4 +73,4 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] "" "UM_PERM"
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [] reqBody "DMP_PERM"
