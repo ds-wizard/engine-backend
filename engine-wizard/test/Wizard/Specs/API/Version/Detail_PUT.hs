@@ -95,7 +95,7 @@ test_400_invalid_version_format appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT
+    let expDto = createUserError _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO B.runMigration appContext

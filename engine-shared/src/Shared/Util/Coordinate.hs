@@ -1,4 +1,4 @@
-module Shared.Util.Identifier where
+module Shared.Util.Coordinate where
 
 import Control.Lens ((^.))
 import qualified Data.List as L
@@ -33,23 +33,26 @@ compareVersion versionA versionB =
     versionBMinor = read (versionBSplitted !! 1) :: Int
     versionBPatch = read (versionBSplitted !! 2) :: Int
 
-splitPackageId :: String -> [String]
-splitPackageId = splitOn ":"
+splitCoordinate :: String -> [String]
+splitCoordinate = splitOn ":"
 
-getOrgIdFromPkgId :: String -> String
-getOrgIdFromPkgId pkgId = head $ splitPackageId pkgId
+getOrgIdFromCoordinate :: String -> String
+getOrgIdFromCoordinate coordinate = head $ splitCoordinate coordinate
 
-getKmIdFromPkgId :: String -> String
-getKmIdFromPkgId pkgId = splitPackageId pkgId !! 1
+getKmIdFromCoordinate :: String -> String
+getKmIdFromCoordinate coordinate = splitCoordinate coordinate !! 1
 
-getVersionFromPkgId :: String -> String
-getVersionFromPkgId pkgId = splitPackageId pkgId !! 2
+getTemplateIdFromCoordinate :: String -> String
+getTemplateIdFromCoordinate coordinate = splitCoordinate coordinate !! 1
+
+getVersionFromCoordinate :: String -> String
+getVersionFromCoordinate coordinate = splitCoordinate coordinate !! 2
 
 splitVersion :: String -> [String]
 splitVersion = splitOn "."
 
-buildIdentifierId :: String -> String -> String -> String
-buildIdentifierId orgId entityId version = orgId ++ ":" ++ entityId ++ ":" ++ version
+buildCoordinate :: String -> String -> String -> String
+buildCoordinate orgId entityId version = orgId ++ ":" ++ entityId ++ ":" ++ version
 
 chooseTheNewest :: (HasVersion a String, Ord a) => [[a]] -> [a]
 chooseTheNewest = fmap (L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)))

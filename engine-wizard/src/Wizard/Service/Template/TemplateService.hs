@@ -23,7 +23,7 @@ import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Shared.Service.Template.TemplateMapper
 import Shared.Service.Template.TemplateUtil
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -31,14 +31,14 @@ import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Package.PackageValidation
+import Wizard.Service.Coordinate.CoordinateValidation
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil
 import Wizard.Service.Template.TemplateValidation
 
 getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
 getTemplates queryParams mPkgId = do
-  validatePackageIdFormat' mPkgId
+  validateCoordinateFormat' mPkgId
   tmls <- findTemplatesFiltered queryParams
   return $ filterTemplates mPkgId tmls
 
@@ -55,7 +55,7 @@ getTemplatesPage mOrganizationId mTemplateId mQuery pageable sort = do
 getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page TemplateSuggestionDTO)
 getTemplateSuggestions mPkgId mQuery pageable sort = do
   checkPermission _DMP_PERM
-  validatePackageIdFormat' mPkgId
+  validateCoordinateFormat' mPkgId
   groups <- findTemplateGroups Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
   return . fmap toSuggestionDTO . filterTemplates' . fmap chooseNewest $ groups
   where
@@ -103,6 +103,7 @@ createTemplate reqDto = do
   checkPermission _TML_PERM
   now <- liftIO getCurrentTime
   let template = fromCreateDTO reqDto now
+  validateNewTemplate template
   insertTemplate template
   return template
 
@@ -111,6 +112,7 @@ modifyTemplate tmlId reqDto = do
   checkPermission _TML_PERM
   template <- findTemplateById tmlId
   let templateUpdated = fromChangeDTO reqDto template
+  validateExistingTemplate templateUpdated
   updateTemplateById templateUpdated
   return templateUpdated
 

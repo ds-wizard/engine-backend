@@ -57,6 +57,3 @@ toSuggestionDTO pkgGroup =
         , _packageSuggestionDTODescription = newest ^. description
         , _packageSuggestionDTOVersions = L.sort $ pkgGroup ^. versions ^.. traverse . version
         }
-
-buildIdentifierId :: String -> String -> String -> String
-buildIdentifierId pkgOrganizationId pkgKmId pkgVersion = pkgOrganizationId ++ ":" ++ pkgKmId ++ ":" ++ pkgVersion

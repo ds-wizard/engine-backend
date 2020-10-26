@@ -5,12 +5,19 @@ import Shared.Model.Localization.LocaleRecord
 -- --------------------------------------
 -- VALIDATION
 -- --------------------------------------
--- Format
-_ERROR_VALIDATION__INVALID_PKG_ID_FORMAT =
-  LocaleRecord "error.validation.invalid_pkg_id_format" "Package ID is not in the valid format" []
+-- General
+_ERROR_VALIDATION__COORDINATE_MISMATCH coordinate =
+  LocaleRecord
+    "error.validation.coordinate_mismatch"
+    "Coordinate '%s' doesn't correspond with 'orgId', 'kmId/templateId' or 'version'"
+    [coordinate]
 
-_ERROR_VALIDATION__INVALID_PKG_VERSION_FORMAT =
-  LocaleRecord "error.validation.invalid_pkg_version_format" "Version is not in the valid format" []
+-- Format
+_ERROR_VALIDATION__INVALID_COORDINATE_FORMAT =
+  LocaleRecord "error.validation.invalid_coordinate_format" "Coordinate is not in the valid format" []
+
+_ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT =
+  LocaleRecord "error.validation.invalid_coordinate_version_format" "Version is not in the valid format" []
 
 _ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
   LocaleRecord "error.validation.unsupported_dmp_format" "This Document format (%s) is not currently supported" [format]
@@ -126,12 +133,6 @@ _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY 
     "error.service.pkg.pkg_cant_be_deleted_because_it_is_used_by_some_other_entity"
     "Knowledge model ('%s') can't be deleted because some %s depends on it"
     [pkgId, target]
-
-_ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId =
-  LocaleRecord
-    "error.service.pkg.pkg_id_mismatch"
-    "Knowledge model ID '%s' doesn't correspond with Knowledge model coordinates"
-    [pkgId]
 
 -- Package Bundle
 _ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG pkgId =

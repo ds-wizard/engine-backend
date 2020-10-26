@@ -41,7 +41,7 @@ importAndConvertTemplateBundle :: BSL.ByteString -> AppContextM Template
 importAndConvertTemplateBundle contentS =
   case fromTemplateArchive contentS of
     Right (template, assets) -> do
-      validateMetamodelVersion template
+      validateNewTemplate template
       deleteOldTemplateIfPresent template
       traverse_ (\(a, content) -> insertTemplateAssetContent (a ^. fileName) content) assets
       insertTemplate template

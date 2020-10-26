@@ -48,6 +48,7 @@ import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
 import Wizard.Specs.Service.Config.AppConfigValidationSpec
+import Wizard.Specs.Service.Coordinate.CoordinateValidationSpec
 import Wizard.Specs.Service.Document.DocumentServiceSpec
 import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
@@ -167,6 +168,7 @@ main =
              versionAPI appContext
            describe "SERVICE" $ do
              branchServiceIntegrationSpec appContext
+             coordinateValidationSpec appContext
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
              packageValidationSpec appContext

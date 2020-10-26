@@ -6,7 +6,7 @@ import qualified Data.List as L
 import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Model.Package.Package
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Wizard.Model.Package.PackageState
 
 selectPackageByOrgIdAndKmId pkg =

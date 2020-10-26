@@ -18,7 +18,7 @@ import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 import Shared.Service.Package.PackageUtil
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Http.Registry.Runner
@@ -117,8 +117,8 @@ getTheNewestPackageByOrganizationIdAndKmId organizationId kmId = do
 
 getNewerPackages :: String -> AppContextM [Package]
 getNewerPackages currentPkgId = do
-  pkgs <- findPackagesByOrganizationIdAndKmId (getOrgIdFromPkgId currentPkgId) (getKmIdFromPkgId currentPkgId)
-  let newerPkgs = filter (\pkg -> compareVersion (pkg ^. version) (getVersionFromPkgId currentPkgId) == GT) pkgs
+  pkgs <- findPackagesByOrganizationIdAndKmId (getOrgIdFromCoordinate currentPkgId) (getKmIdFromCoordinate currentPkgId)
+  let newerPkgs = filter (\pkg -> compareVersion (pkg ^. version) (getVersionFromCoordinate currentPkgId) == GT) pkgs
   return . sortPackagesByVersion $ newerPkgs
 
 createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO

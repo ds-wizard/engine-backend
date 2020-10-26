@@ -2,9 +2,9 @@ module Registry.Service.Package.PackageValidation
   ( validateIsVersionHigher
   ) where
 
-import Registry.Service.Package.PackageUtil
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Shared.Util.Coordinate
 
 validateIsVersionHigher :: String -> String -> Maybe AppError
 validateIsVersionHigher newVersion oldVersion =

@@ -3,6 +3,7 @@ module Wizard.Service.Version.VersionValidation where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Wizard.Service.Coordinate.CoordinateValidation
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Package.PackageValidation
 
