@@ -22,6 +22,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
@@ -150,8 +151,14 @@ deleteQuestionnaire qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   validateQuestionnaireDeletation qtnUuid
   checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions)
-  deleteQuestionnaireById qtnUuid
   deleteMigratorStateByNewQuestionnaireId qtnUuid
+  documents <- findDocumentsFiltered [("questionnaireUuid", qtnUuid)]
+  traverse_
+    (\d -> do
+       deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
+       deleteDocumentContentsFiltered [("filename", U.toString $ d ^. uuid)])
+    documents
+  deleteQuestionnaireById qtnUuid
   logOutOnlineUsersWhenDeleted qtnUuid
   return ()
 
