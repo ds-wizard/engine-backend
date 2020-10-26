@@ -1,7 +1,7 @@
-module Wizard.Service.Common.ACL
+module Wizard.Service.Acl.AclService
   ( checkPermission
   , checkRole
-  , module Wizard.Constant.ACL
+  , module Wizard.Constant.Acl
   , module Wizard.Model.User.User
   ) where
 
@@ -12,7 +12,7 @@ import Control.Monad.Reader (asks, unless)
 import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Wizard.Constant.ACL
+import Wizard.Constant.Acl
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User

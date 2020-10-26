@@ -9,8 +9,8 @@ import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Cache.KnowledgeModelCache
-import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageService

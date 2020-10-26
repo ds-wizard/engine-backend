@@ -16,7 +16,7 @@ import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Template.TemplateValidation
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString

@@ -58,9 +58,9 @@ import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Sanitiza
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
-import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationACLSpec
+import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
-import Wizard.Specs.Service.Questionnaire.QuestionnaireACLSpec
+import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
@@ -170,7 +170,7 @@ main =
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
              packageValidationSpec appContext
-             questionnaireACLSpec appContext
-             questionnaireCollaborationACLSpec appContext
+             questionnaireAclSpec appContext
+             questionnaireCollaborationAclSpec appContext
              userServiceIntegrationSpec appContext
            describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

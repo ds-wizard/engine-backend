@@ -1,18 +1,18 @@
-module Wizard.Service.Document.DocumentACL where
+module Wizard.Service.Document.DocumentAcl where
 
 import Control.Lens ((^.))
 
 import LensesConfig
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Questionnaire.QuestionnaireACL
+import Wizard.Service.Questionnaire.QuestionnaireAcl
 
 checkViewPermissionToDoc :: String -> AppContextM ()
 checkViewPermissionToDoc qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
 
 checkEditPermissionToDoc :: String -> AppContextM ()
 checkEditPermissionToDoc qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  checkEditContentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)

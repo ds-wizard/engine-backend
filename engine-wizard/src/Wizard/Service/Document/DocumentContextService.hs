@@ -29,7 +29,7 @@ createDocumentContext qtnUuid = do
   metrics <- findMetrics
   ls <- findLevels
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-  mCreatedBy <- forM (fmap U.toString (qtn ^. ownerUuid)) getUserById
+  mCreatedBy <- forM (fmap U.toString (qtn ^. creatorUuid)) getUserById
   appConfig <- getAppConfig
   serverConfig <- asks _appContextServerConfig
   let org = appConfig ^. organization

@@ -23,8 +23,8 @@ import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Cache.PackageCache
-import Wizard.Service.Common.ACL
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService

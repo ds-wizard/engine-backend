@@ -3,6 +3,7 @@ module Wizard.TestMigration where
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Wizard.Database.DAO.Acl.GroupDAO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -13,6 +14,7 @@ import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.User.Data.Users
 
@@ -38,4 +40,7 @@ resetDB appContext = do
   runInContext (insertPackage globalPackage) appContext
   runInContext (insertPackage netherlandsPackage) appContext
   runInContext (insertPackage netherlandsPackageV2) appContext
+  runInContext deleteGroups appContext
+  runInContext (insertGroup bioGroup) appContext
+  runInContext (insertGroup plantGroup) appContext
   return ()

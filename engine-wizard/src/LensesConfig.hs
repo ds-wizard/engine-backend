@@ -86,6 +86,7 @@ import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMDTO
+import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
@@ -103,6 +104,7 @@ import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
@@ -114,6 +116,15 @@ import Wizard.Model.Websocket.WebsocketRecord
 -- -------------------------------------
 -- Model
 -- -------------------------------------
+-- Model / Acl
+makeFields ''Group
+
+makeFields ''GroupMembership
+
+makeFields ''QuestionnairePermRecord
+
+makeFields ''Member
+
 -- Model / ActionKey
 makeFields ''ActionKey
 

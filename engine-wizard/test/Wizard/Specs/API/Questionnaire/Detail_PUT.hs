@@ -60,6 +60,7 @@ reqDtoT qtn =
     { _questionnaireChangeDTOName = qtn ^. name
     , _questionnaireChangeDTOVisibility = qtn ^. visibility
     , _questionnaireChangeDTOSharing = qtn ^. sharing
+    , _questionnaireChangeDTOPermissions = qtn ^. permissions
     , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
     }
@@ -70,11 +71,16 @@ reqBodyT qtn = encode $ reqDtoT qtn
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited
-  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 questionnaire3Edited
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited []
+  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited []
+  create_test_200
+    "HTTP 200 OK (Non-Owner, VisibleEdit)"
+    appContext
+    questionnaire3
+    questionnaire3Edited
+    [albertEditPermRecordDto]
 
-create_test_200 title appContext qtn qtnEdited =
+create_test_200 title appContext qtn qtnEdited permissions =
   it title $
      -- GIVEN: Prepare request
    do
@@ -93,17 +99,15 @@ create_test_200 title appContext qtn qtnEdited =
             QSDefault
             Nothing
             Nothing
-    let expBody = encode expDto
+            permissions
+    let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
     runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, QuestionnaireDetailDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
-    compareQuestionnaireDtos resBody expDto
+    assertResponse expStatus expHeaders expDto expType response ["updatedAt"]
     -- AND: Find a result in DB
     assertExistenceOfQuestionnaireInDB appContext qtnEdited
 
@@ -134,13 +138,13 @@ test_403 appContext = do
     appContext
     questionnaire1
     questionnaire1Edited
-    "Get Questionnaire"
+    "View Questionnaire"
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2Edited
-    "Edit Questionnaire"
+    "Administrate Questionnaire"
 
 create_test_403 title appContext qtn qtnEdited reason =
   it title $

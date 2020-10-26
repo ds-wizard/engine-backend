@@ -99,7 +99,7 @@ test_403 appContext = do
     appContext
     questionnaire1
     questionnaire1Edited
-    "Get Questionnaire"
+    "View Questionnaire"
 
 create_test_403 title appContext qtn qtnEdited reason =
   it title $

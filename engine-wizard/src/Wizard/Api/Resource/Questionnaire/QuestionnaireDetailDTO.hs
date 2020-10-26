@@ -9,6 +9,7 @@ import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -30,8 +31,8 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String ReplyValueDTO
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
-    , _questionnaireDetailDTOOwnerUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
+    , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -53,5 +54,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOFormat a == _questionnaireDetailDTOFormat b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
-    _questionnaireDetailDTOOwnerUuid a == _questionnaireDetailDTOOwnerUuid b &&
+    _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b

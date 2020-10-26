@@ -131,7 +131,7 @@ create_test_403 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Get Questionnaire"
+    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

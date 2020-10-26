@@ -5,11 +5,7 @@ import Data.Time
 import Data.UUID
 import GHC.Generics
 
-type Permission = String
-
-type Role = String
-
-type Email = String
+import Wizard.Model.Acl.Acl
 
 _USER_SOURCE_INTERNAL = "internal"
 
@@ -24,15 +20,16 @@ data User =
     { _userUuid :: UUID
     , _userFirstName :: String
     , _userLastName :: String
-    , _userEmail :: Email
+    , _userEmail :: String
     , _userPasswordHash :: String
     , _userAffiliation :: Maybe String
     , _userSources :: [String]
-    , _userRole :: Role
-    , _userPermissions :: [Permission]
+    , _userRole :: String
+    , _userPermissions :: [String]
     , _userActive :: Bool
     , _userSubmissionProps :: [UserSubmissionProps]
     , _userImageUrl :: Maybe String
+    , _userGroups :: [GroupMembership]
     , _userCreatedAt :: Maybe UTCTime
     , _userUpdatedAt :: Maybe UTCTime
     }
@@ -57,4 +54,5 @@ instance Eq User where
     _userRole a == _userRole b &&
     _userPermissions a == _userPermissions b &&
     _userActive a == _userActive b &&
-    _userSubmissionProps a == _userSubmissionProps b && _userImageUrl a == _userImageUrl b
+    _userSubmissionProps a == _userSubmissionProps b &&
+    _userImageUrl a == _userImageUrl b && _userGroups a == _userGroups b

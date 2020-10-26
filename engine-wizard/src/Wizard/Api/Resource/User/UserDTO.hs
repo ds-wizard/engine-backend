@@ -5,20 +5,21 @@ import Data.UUID
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropsJM ()
-import Wizard.Model.User.User
+import Wizard.Model.Acl.Acl
 
 data UserDTO =
   UserDTO
     { _userDTOUuid :: UUID
     , _userDTOFirstName :: String
     , _userDTOLastName :: String
-    , _userDTOEmail :: Email
+    , _userDTOEmail :: String
     , _userDTOAffiliation :: Maybe String
     , _userDTOSources :: [String]
-    , _userDTORole :: Role
-    , _userDTOPermissions :: [Permission]
+    , _userDTORole :: String
+    , _userDTOPermissions :: [String]
     , _userDTOActive :: Bool
     , _userDTOImageUrl :: Maybe String
+    , _userDTOGroups :: [GroupMembership]
     , _userDTOCreatedAt :: Maybe UTCTime
     , _userDTOUpdatedAt :: Maybe UTCTime
     }
@@ -34,4 +35,5 @@ instance Eq UserDTO where
     _userDTOSources a == _userDTOSources b &&
     _userDTORole a == _userDTORole b &&
     _userDTOPermissions a == _userDTOPermissions b &&
-    _userDTOActive a == _userDTOActive b && _userDTOImageUrl a == _userDTOImageUrl b
+    _userDTOActive a == _userDTOActive b &&
+    _userDTOImageUrl a == _userDTOImageUrl b && _userDTOGroups a == _userDTOGroups b

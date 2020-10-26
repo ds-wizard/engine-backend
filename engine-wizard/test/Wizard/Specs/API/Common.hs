@@ -61,7 +61,7 @@ reqNonAdminAuthToken =
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqNonAdminAuthToken)
 
-userWithoutPerm :: ServerConfig -> Permission -> User
+userWithoutPerm :: ServerConfig -> String -> User
 userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
    in userAlbert & permissions .~ L.delete perm allPerms

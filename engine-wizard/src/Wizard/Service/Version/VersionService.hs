@@ -16,8 +16,8 @@ import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchUtil
-import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Version.VersionMapper

@@ -25,7 +25,6 @@ import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.DAO.Document.DocumentDAO
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
@@ -35,12 +34,13 @@ import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.User.User
 import Wizard.Model.User.UserEM ()
+import Wizard.Service.Acl.AclService
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Cache.UserCache
 import Wizard.Service.Common
-import Wizard.Service.Common.ACL
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Mail.Mailer
+import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 import Wizard.Util.Cache
@@ -88,7 +88,7 @@ registrateUser reqDto = do
   let uPermissions = getPermissionForRole serverConfig uRole
   createUser reqDto uUuid uPasswordHash uRole uPermissions
 
-createUser :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> AppContextM UserDTO
+createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> AppContextM UserDTO
 createUser reqDto uUuid uPasswordHash uRole uPermissions = do
   validateUserEmailUniqueness (reqDto ^. email)
   now <- liftIO getCurrentTime
@@ -205,20 +205,20 @@ changeUserState userUuid maybeHash userStateDto = do
 deleteUser :: String -> AppContextM ()
 deleteUser userUuid = do
   checkPermission _UM_PERM
-  _ <- findUserById userUuid
-  deleteUserById userUuid
-  deleteQuestionnairesFiltered [("ownerUuid", userUuid)]
+  user <- findUserById userUuid
+  removeOwnerFromQuestionnaire (user ^. uuid)
   documents <- findDocumentsFiltered [("creatorUuid", userUuid)]
   forM_
     documents
     (\d -> do
        deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
        deleteDocumentContentsFiltered [("filename", U.toString $ d ^. uuid)])
+  deleteUserById userUuid
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-getPermissionForRole :: ServerConfig -> Role -> [Permission]
+getPermissionForRole :: ServerConfig -> String -> [String]
 getPermissionForRole config role
   | role == _USER_ROLE_ADMIN = config ^. roles . admin
   | role == _USER_ROLE_DATA_STEWARD = config ^. roles . dataSteward

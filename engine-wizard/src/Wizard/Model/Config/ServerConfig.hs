@@ -3,7 +3,6 @@ module Wizard.Model.Config.ServerConfig where
 import GHC.Generics
 import Shared.Model.Config.Environment
 import Shared.Model.Config.ServerConfig
-import Wizard.Model.User.User
 
 data ServerConfig =
   ServerConfig
@@ -53,9 +52,9 @@ data ServerConfigJwt =
 
 data ServerConfigRoles =
   ServerConfigRoles
-    { _serverConfigRolesAdmin :: [Permission]
-    , _serverConfigRolesDataSteward :: [Permission]
-    , _serverConfigRolesResearcher :: [Permission]
+    { _serverConfigRolesAdmin :: [String]
+    , _serverConfigRolesDataSteward :: [String]
+    , _serverConfigRolesResearcher :: [String]
     }
   deriving (Generic, Show)
 

@@ -20,11 +20,12 @@ import Wizard.Localization.Messages.Public
 import Wizard.Messaging.Out.Queue.Questionnaire
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
-import Wizard.Service.Questionnaire.Collaboration.CollaborationACL
+import Wizard.Service.Questionnaire.Collaboration.CollaborationAcl
 import Wizard.Service.Questionnaire.Collaboration.CollaborationMapper
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Websocket
@@ -49,8 +50,9 @@ setUserList qtnUuid connectionUuid = do
   broadcast qtnUuid records (toSetUserListMessage records) disconnectUser
   logWS connectionUuid "Informed completed"
 
-updatePermsForOnlineUsers :: String -> QuestionnaireVisibility -> QuestionnaireSharing -> Maybe U.UUID -> AppContextM ()
-updatePermsForOnlineUsers qtnUuid visibility sharing mOwnerUuid = do
+updatePermsForOnlineUsers ::
+     String -> QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
+updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
   records <- getAllFromCache
   traverse_ updatePerm records
   where
@@ -60,9 +62,13 @@ updatePermsForOnlineUsers qtnUuid visibility sharing mOwnerUuid = do
         (record ^. entityId == qtnUuid)
         (do let permission =
                   case record ^. user of
-                    user@LoggedOnlineUserInfo {_loggedOnlineUserInfoUuid = uuid, _loggedOnlineUserInfoRole = role} ->
-                      getPermission visibility sharing mOwnerUuid (Just uuid) (Just role)
-                    user@AnonymousOnlineUserInfo {..} -> getPermission visibility sharing mOwnerUuid Nothing Nothing
+                    user@LoggedOnlineUserInfo { _loggedOnlineUserInfoUuid = uuid
+                                              , _loggedOnlineUserInfoRole = role
+                                              , _loggedOnlineUserInfoGroups = groups
+                                              } ->
+                      getPermission visibility sharing permissions (Just uuid) (Just role) (Just groups)
+                    user@AnonymousOnlineUserInfo {..} ->
+                      getPermission visibility sharing permissions Nothing Nothing Nothing
             let updatedRecord = record & entityPerm .~ permission
             updateCache updatedRecord
             disconnectUserIfLostPermission updatedRecord)
@@ -135,7 +141,8 @@ createRecord connectionUuid connection qtnUuid = do
         getPermission
           (qtn ^. visibility)
           (qtn ^. sharing)
-          (qtn ^. ownerUuid)
+          (qtn ^. permissions)
           (mCurrentUser ^? _Just . uuid)
           (mCurrentUser ^? _Just . role)
+          (mCurrentUser ^? _Just . groups)
   return $ WebsocketRecord connectionUuid connection qtnUuid permission user

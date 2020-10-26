@@ -17,8 +17,8 @@ import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchUtil
-import Wizard.Service.Common.ACL
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
 import Wizard.Service.Migration.KnowledgeModel.MigratorMapper

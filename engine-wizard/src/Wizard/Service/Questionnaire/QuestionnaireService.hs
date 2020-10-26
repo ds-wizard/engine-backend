@@ -1,8 +1,9 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
-import Control.Lens ((.~), (^.), (^?), _Just)
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
+import Data.Foldable (traverse_)
 import qualified Data.List as L
 import Data.Time
 import qualified Data.UUID as U
@@ -26,15 +27,16 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Common.ACL
+import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
+import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
-import Wizard.Service.Questionnaire.QuestionnaireACL
+import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Questionnaire.QuestionnaireValidation
-import Wizard.Service.User.UserService
 
 getQuestionnairesForCurrentUserPageDto :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
 getQuestionnairesForCurrentUserPageDto mQuery pageable sort = do
@@ -58,37 +60,29 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid = do
   sharing <- extractSharing reqDto
   let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid visibility sharing (currentUser ^. uuid) now now
   insertQuestionnaire qtn
-  let mOwner =
-        case qtn ^. ownerUuid of
-          Just uUuid -> Just currentUser
-          Nothing -> Nothing
   report <- getQuestionnaireReport qtn
-  return $ toSimpleDTO qtn package qtnState mOwner report
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+  return $ toSimpleDTO qtn package qtnState report permissionDtos
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
   checkPermission _QTN_PERM
-  qtnDto <- getQuestionnaireDetailById cloneUuid
-  pkg <- findPackageWithEventsById (qtnDto ^. package . pId)
+  originQtn <- findQuestionnaireById cloneUuid
+  checkViewPermissionToQtn (originQtn ^. visibility) (originQtn ^. sharing) (originQtn ^. permissions)
+  pkg <- findPackageWithEventsById (originQtn ^. packageId)
   newUuid <- liftIO generateUuid
   currentUser <- getCurrentUser
-  let newOwnerUuid =
-        if qtnDto ^. visibility == VisibleEditQuestionnaire
-          then Nothing
-          else Just $ currentUser ^. uuid
   now <- liftIO getCurrentTime
-  let originQtn = fromDetailDTO qtnDto
+  let ownerPerm = toUserPermRecord (currentUser ^. uuid) ownerPermissions
+  let newPermissions = ownerPerm : removeUserPermission (currentUser ^. uuid) (originQtn ^. permissions)
   let newQtn =
-        ownerUuid .~ newOwnerUuid $ uuid .~ newUuid $ name .~ ("Copy of " ++ originQtn ^. name) $ updatedAt .~ now $
+        permissions .~ newPermissions $ uuid .~ newUuid $ name .~ ("Copy of " ++ originQtn ^. name) $ updatedAt .~ now $
         originQtn
   insertQuestionnaire newQtn
   state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
   report <- getQuestionnaireReport newQtn
-  let mOwner =
-        case newOwnerUuid of
-          Just uUuid -> Just currentUser
-          Nothing -> Nothing
-  return $ toSimpleDTO newQtn pkg state mOwner report
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
+  return $ toSimpleDTO newQtn pkg state report permissionDtos
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -102,21 +96,18 @@ getQuestionnaireById' qtnUuid = do
   mQtn <- findQuestionnaireById' qtnUuid
   case mQtn of
     Just qtn -> do
-      checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+      checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
       package <- getPackageById (qtn ^. packageId)
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
-      mOwner <-
-        case qtn ^. ownerUuid of
-          Just uUuid -> Just <$> getUserByIdDto (U.toString uUuid)
-          Nothing -> return Nothing
-      return . Just $ toDTO qtn package state mOwner report
+      permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+      return . Just $ toDTO qtn package state report permissionDtos
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
 getQuestionnaireDetailById qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   pkg <- getPackageById (qtn ^. packageId)
   pkgVersions <- getPackageVersions pkg
   knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
@@ -129,16 +120,17 @@ getQuestionnaireDetailById qtnUuid = do
       _ -> return Nothing
   mFormat <-
     case (mTemplate, qtn ^. formatUuid) of
-      (Just template, Just fUuid) -> do
-        return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
+      (Just template, Just fUuid) -> return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
       _ -> return Nothing
-  return $ toDetailWithPackageWithEventsDTO qtn pkg pkgVersions knowledgeModel state mTemplate mFormat
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+  return $ toDetailWithPackageWithEventsDTO qtn pkg pkgVersions knowledgeModel state mTemplate mFormat permissionDtos
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
   checkPermission _QTN_PERM
+  qtn <- findQuestionnaireById qtnUuid
   qtnDto <- getQuestionnaireDetailById qtnUuid
-  checkEditPermissionToQtn (qtnDto ^. visibility) (qtnDto ^. ownerUuid)
+  checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions)
   currentUser <- getCurrentUser
   now <- liftIO getCurrentTime
   qVisibility <- extractVisibility reqDto
@@ -148,24 +140,40 @@ modifyQuestionnaire qtnUuid reqDto = do
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
   state <- getQuestionnaireState qtnUuid pkgId
-  updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. ownerUuid)
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing Nothing
+  updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. permissions)
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (updatedQtn ^. permissions)
+  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing Nothing permissionDtos
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
   checkPermission _QTN_PERM
-  qtn <- getQuestionnaireById qtnUuid
+  qtn <- findQuestionnaireById qtnUuid
   validateQuestionnaireDeletation qtnUuid
-  checkEditPermissionToQtn (qtn ^. visibility) (qtn ^? owner . _Just . uuid)
+  checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions)
   deleteQuestionnaireById qtnUuid
   deleteMigratorStateByNewQuestionnaireId qtnUuid
   logOutOnlineUsersWhenDeleted qtnUuid
   return ()
 
+removeOwnerFromQuestionnaire :: U.UUID -> AppContextM ()
+removeOwnerFromQuestionnaire userUuid = do
+  qtns <- findQuestionnairesOwnedByUser (U.toString userUuid)
+  traverse_ processQtn qtns
+  where
+    processQtn :: Questionnaire -> AppContextM ()
+    processQtn qtn = do
+      let newPermissions = removeUserPermission userUuid (qtn ^. permissions)
+      if null newPermissions
+        then deleteQuestionnaire (U.toString $ qtn ^. uuid)
+        else do
+          let reqDto = toChangeDTO qtn & permissions .~ newPermissions
+          modifyQuestionnaire (U.toString $ qtn ^. uuid) reqDto
+          return ()
+
 modifyContent :: String -> QuestionnaireContentChangeDTO -> AppContextM QuestionnaireContentChangeDTO
 modifyContent qtnUuid reqDto = do
   qtn <- findQuestionnaireById qtnUuid
-  checkEditContentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   now <- liftIO getCurrentTime
   let updatedQtn = fromContentChangeDTO qtn reqDto now
   updateQuestionnaireById updatedQtn

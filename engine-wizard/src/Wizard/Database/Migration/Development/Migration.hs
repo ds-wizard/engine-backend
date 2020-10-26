@@ -3,6 +3,7 @@ module Wizard.Database.Migration.Development.Migration
   ) where
 
 import Shared.Constant.Component
+import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Config.AppConfigMigration as CFG
@@ -33,4 +34,5 @@ runMigration = do
   LVL.runMigration
   DOC.runMigration
   TML.runMigration
+  ACL.runMigration
   logInfo _CMP_MIGRATION "ended"

@@ -36,6 +36,7 @@ nlQtnMigrationStateDto =
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
@@ -45,6 +46,7 @@ nlQtnMigrationStateDto =
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -60,6 +62,7 @@ nlQtnMigrationStateVisibleViewDto =
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
@@ -69,6 +72,7 @@ nlQtnMigrationStateVisibleViewDto =
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -84,6 +88,7 @@ nlQtnMigrationStateVisibleEditDto =
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
@@ -93,6 +98,7 @@ nlQtnMigrationStateVisibleEditDto =
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

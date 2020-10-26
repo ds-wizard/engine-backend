@@ -5,18 +5,17 @@ import Data.UUID
 import GHC.Generics
 
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
-import Wizard.Model.User.User
 
 data UserProfileDTO =
   UserProfileDTO
     { _userProfileDTOUuid :: UUID
     , _userProfileDTOFirstName :: String
     , _userProfileDTOLastName :: String
-    , _userProfileDTOEmail :: Email
+    , _userProfileDTOEmail :: String
     , _userProfileDTOAffiliation :: Maybe String
     , _userProfileDTOSources :: [String]
-    , _userProfileDTORole :: Role
-    , _userProfileDTOPermissions :: [Permission]
+    , _userProfileDTORole :: String
+    , _userProfileDTOPermissions :: [String]
     , _userProfileDTOActive :: Bool
     , _userProfileDTOSubmissionProps :: [UserSubmissionPropsDTO]
     , _userProfileDTOImageUrl :: Maybe String

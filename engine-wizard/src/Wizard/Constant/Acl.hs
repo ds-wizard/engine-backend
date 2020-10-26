@@ -1,4 +1,4 @@
-module Wizard.Constant.ACL where
+module Wizard.Constant.Acl where
 
 _UM_PERM = "UM_PERM"
 

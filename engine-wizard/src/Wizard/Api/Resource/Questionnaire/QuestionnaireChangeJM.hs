@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireChangeJM where
 import Data.Aeson
 
 import Shared.Util.JSON
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilityJM ()

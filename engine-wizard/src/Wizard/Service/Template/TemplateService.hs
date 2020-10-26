@@ -30,7 +30,7 @@ import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil

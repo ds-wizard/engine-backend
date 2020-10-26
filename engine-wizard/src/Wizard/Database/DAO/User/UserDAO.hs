@@ -46,10 +46,10 @@ findUserSuggestionsPage mQuery pageable sort =
 findUserById :: String -> AppContextM User
 findUserById = createFindEntityByFn collection entityName "uuid"
 
-findUserByEmail :: Email -> AppContextM User
+findUserByEmail :: String -> AppContextM User
 findUserByEmail = createFindEntityByFn collection entityName "email"
 
-findUserByEmail' :: Email -> AppContextM (Maybe User)
+findUserByEmail' :: String -> AppContextM (Maybe User)
 findUserByEmail' = createFindEntityByFn' collection entityName "email"
 
 countUsers :: AppContextM Int

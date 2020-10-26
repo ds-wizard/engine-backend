@@ -32,11 +32,13 @@ getArrayField fieldName object callback = getField fieldName object parseArray
 
 jsonSpecialFields :: String -> String
 jsonSpecialFields "aType" = "type"
+jsonSpecialFields "gType" = "type"
 jsonSpecialFields "pType" = "type"
 jsonSpecialFields "bundleId" = "id"
 jsonSpecialFields "intId" = "id"
 jsonSpecialFields "aId" = "id"
 jsonSpecialFields "dId" = "id"
+jsonSpecialFields "gId" = "id"
 jsonSpecialFields "iId" = "id"
 jsonSpecialFields "pId" = "id"
 jsonSpecialFields "sId" = "id"

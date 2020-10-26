@@ -9,6 +9,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
@@ -29,4 +30,5 @@ instance ToSchema QuestionnaireDetailDTO where
          km1WithQ4
          QSDefault
          Nothing
-         Nothing)
+         Nothing
+         [])

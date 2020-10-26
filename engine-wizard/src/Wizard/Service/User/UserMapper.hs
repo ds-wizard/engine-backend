@@ -29,6 +29,7 @@ toDTO user =
     , _userDTOPermissions = user ^. permissions
     , _userDTOActive = user ^. active
     , _userDTOImageUrl = user ^. imageUrl
+    , _userDTOGroups = user ^. groups
     , _userDTOCreatedAt = user ^. createdAt
     , _userDTOUpdatedAt = user ^. updatedAt
     }
@@ -69,6 +70,7 @@ toLoggedOnlineUserInfo user colorNumber =
     , _loggedOnlineUserInfoImageUrl = user ^. imageUrl
     , _loggedOnlineUserInfoColorNumber = colorNumber
     , _loggedOnlineUserInfoRole = user ^. role
+    , _loggedOnlineUserInfoGroups = user ^. groups
     }
 
 toAnonymousOnlineUserInfo :: Int -> Int -> OnlineUserInfo
@@ -76,7 +78,7 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
   AnonymousOnlineUserInfo
     {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> UTCTime -> UTCTime -> User
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> UTCTime -> UTCTime -> User
 fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =
   User
     { _userUuid = userUuid
@@ -91,22 +93,13 @@ fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt
     , _userActive = False
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
+    , _userGroups = []
     , _userCreatedAt = Just createdAt
     , _userUpdatedAt = Just updatedAt
     }
 
 fromUserExternalDTO ::
-     U.UUID
-  -> String
-  -> String
-  -> String
-  -> String
-  -> [String]
-  -> Role
-  -> [Permission]
-  -> Maybe String
-  -> UTCTime
-  -> User
+     U.UUID -> String -> String -> String -> String -> [String] -> String -> [String] -> Maybe String -> UTCTime -> User
 fromUserExternalDTO userUuid firstName lastName email passwordHash sources role permissions mImageUrl now =
   User
     { _userUuid = userUuid
@@ -121,6 +114,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userActive = True
     , _userSubmissionProps = []
     , _userImageUrl = mImageUrl
+    , _userGroups = []
     , _userCreatedAt = Just now
     , _userUpdatedAt = Just now
     }
@@ -143,11 +137,12 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , _userActive = oldUser ^. active
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = mImageUrl
+    , _userGroups = oldUser ^. groups
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }
 
-fromUserChangeDTO :: UserChangeDTO -> User -> [Permission] -> User
+fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> User
 fromUserChangeDTO dto oldUser permission =
   User
     { _userUuid = oldUser ^. uuid
@@ -162,6 +157,7 @@ fromUserChangeDTO dto oldUser permission =
     , _userActive = dto ^. active
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
+    , _userGroups = oldUser ^. groups
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }

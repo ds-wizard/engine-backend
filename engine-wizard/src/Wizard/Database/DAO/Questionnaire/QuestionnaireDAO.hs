@@ -10,6 +10,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.BSON.Questionnaire.Questionnaire ()
+import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
@@ -32,6 +33,9 @@ findQuestionnairesByPackageId packageId = createFindEntitiesByFn collection ["pa
 
 findQuestionnairesByTemplateId :: String -> AppContextM [Questionnaire]
 findQuestionnairesByTemplateId templateId = createFindEntitiesByFn collection ["templateId" =: templateId]
+
+findQuestionnairesOwnedByUser :: String -> AppContextM [Questionnaire]
+findQuestionnairesOwnedByUser userUuid = createFindEntitiesByFn collection ["permissions.member.uuid" =: userUuid]
 
 findQuestionnaireById :: String -> AppContextM Questionnaire
 findQuestionnaireById = createFindEntityByFn collection entityName "uuid"
@@ -66,10 +70,28 @@ qtnOwnerSel = do
   currentUser <- getCurrentUser
   return $
     if currentUser ^. role /= _USER_ROLE_ADMIN
-      then [ "$or" =:
-             [ ["visibility" =: "VisibleEditQuestionnaire"]
-             , ["visibility" =: "VisibleViewQuestionnaire"]
-             , ["ownerUuid" =: U.toString (currentUser ^. uuid)]
-             ]
-           ]
+      then let visibleEditOptions = [["visibility" =: show VisibleEditQuestionnaire]]
+               visibleViewOptions = [["visibility" =: show VisibleViewQuestionnaire]]
+               visiblePrivateUserOptions =
+                 [ "visibility" =: show PrivateQuestionnaire
+                 , "permissions" =:
+                   [ "$elemMatch" =:
+                     [ "perms" =: _VIEW_PERM
+                     , "member" =: ["type" =: "UserMember", "uuid" =: U.toString (currentUser ^. uuid)]
+                     ]
+                   ]
+                 ]
+               visiblePrivateGroupOptions =
+                 fmap
+                   (\group ->
+                      [ "visibility" =: show PrivateQuestionnaire
+                      , "permissions" =:
+                        [ "$elemMatch" =:
+                          ["perms" =: _VIEW_PERM, "member" =: ["type" =: "GroupMember", "uuid" =: group ^. groupId]]
+                        ]
+                      ])
+                   (currentUser ^. groups)
+               visiblePrivateOptions = visiblePrivateUserOptions : visiblePrivateGroupOptions
+               options = visibleEditOptions ++ visibleViewOptions ++ visiblePrivateOptions
+            in ["$or" =: options]
       else []

@@ -15,7 +15,7 @@ import Shared.Model.Template.Template
 import Shared.Util.Uuid
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
 
 getTemplateAssets :: String -> AppContextM [TemplateAsset]
 getTemplateAssets tmlId = do

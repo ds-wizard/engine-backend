@@ -120,14 +120,14 @@ test_403 appContext = do
     questionnaire1
     questionnaire1ContentEdited
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2ContentEdited
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
     appContext
