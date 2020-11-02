@@ -20,7 +20,7 @@ import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 
-import Registry.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /packages/{pkgId}

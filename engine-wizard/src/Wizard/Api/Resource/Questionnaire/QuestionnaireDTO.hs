@@ -5,8 +5,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
-import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 
@@ -19,8 +19,8 @@ data QuestionnaireDTO =
     , _questionnaireDTOSharing :: QuestionnaireSharing
     , _questionnaireDTOState :: QuestionnaireState
     , _questionnaireDTOPackage :: PackageSimpleDTO
-    , _questionnaireDTOOwner :: Maybe UserDTO
     , _questionnaireDTOReport :: QuestionnaireReportDTO
+    , _questionnaireDTOPermissions :: [QuestionnairePermRecordDTO]
     , _questionnaireDTOCreatedAt :: UTCTime
     , _questionnaireDTOUpdatedAt :: UTCTime
     }
@@ -35,4 +35,5 @@ instance Eq QuestionnaireDTO where
     _questionnaireDTOSharing a == _questionnaireDTOSharing b &&
     _questionnaireDTOState a == _questionnaireDTOState b &&
     _questionnaireDTOPackage a == _questionnaireDTOPackage b &&
-    _questionnaireDTOOwner a == _questionnaireDTOOwner b && _questionnaireDTOReport a == _questionnaireDTOReport b
+    _questionnaireDTOReport a == _questionnaireDTOReport b &&
+    _questionnaireDTOPermissions a == _questionnaireDTOPermissions b

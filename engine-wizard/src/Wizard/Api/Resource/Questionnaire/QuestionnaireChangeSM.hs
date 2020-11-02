@@ -3,6 +3,7 @@ module Wizard.Api.Resource.Questionnaire.QuestionnaireChangeSM where
 import Data.Swagger
 
 import Shared.Util.Swagger
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()

@@ -6,6 +6,8 @@ import Control.Monad.Except (throwError)
 
 import LensesConfig
 import Shared.Constant.Template
+import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -13,6 +15,26 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Coordinate.CoordinateValidation
+
+validateNewTemplate :: Template -> AppContextM ()
+validateNewTemplate tml = do
+  validateCoordinateFormat (tml ^. tId)
+  validateTemplateIdUniqueness (tml ^. tId)
+  validateCoordinateWithParams (tml ^. tId) (tml ^. organizationId) (tml ^. templateId) (tml ^. version)
+  validateMetamodelVersion tml
+
+validateExistingTemplate :: Template -> AppContextM ()
+validateExistingTemplate tml = do
+  validateCoordinateFormat (tml ^. tId)
+  validateCoordinateWithParams (tml ^. tId) (tml ^. organizationId) (tml ^. templateId) (tml ^. version)
+
+validateTemplateIdUniqueness :: String -> AppContextM ()
+validateTemplateIdUniqueness tmlId = do
+  mTml <- findTemplateById' tmlId
+  case mTml of
+    Nothing -> return ()
+    Just _ -> throwError . UserError $ _ERROR_VALIDATION__TML_ID_UNIQUENESS tmlId
 
 validateTemplateDeletation :: String -> AppContextM ()
 validateTemplateDeletation tmlId = do

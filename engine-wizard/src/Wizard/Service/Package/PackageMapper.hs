@@ -10,10 +10,10 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
+import Shared.Util.Coordinate
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Service.Package.PackageUtil
-import Shared.Util.Identifier
 
 toSimpleDTO :: Package -> PackageSimpleDTO
 toSimpleDTO = toSimpleDTO' [] [] []

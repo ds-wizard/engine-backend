@@ -31,16 +31,22 @@ nlQtnMigrationStateDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -51,16 +57,22 @@ nlQtnMigrationStateVisibleViewDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleView
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -71,16 +83,22 @@ nlQtnMigrationStateVisibleEditDto =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEdit
           (PM.toPackage netherlandsPackage)
+          ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
           (PM.toPackage netherlandsPackageV2)
+          ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
+          (Just commonWizardTemplate)
           (Just templateFormatJson)
+          []
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

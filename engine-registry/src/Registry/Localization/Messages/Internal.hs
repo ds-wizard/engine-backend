@@ -30,6 +30,4 @@ _ERROR_SERVICE_PKG__IMPORT_PARENT_PKG_AT_FIRST parentPkgId pkgId =
 _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY pkgId target =
   "Package '" ++ pkgId ++ "' can't be deleted. It's used by some " ++ target ++ "."
 
-_ERROR_SERVICE_PKG__PKG_ID_MISMATCH pkgId = "Package ID '" ++ pkgId ++ "' doesn't correspond with Package Coordinates"
-
 _ERROR_SERVICE_PKG__OWNERSHIP_MISMATCH pkgId = "You can not push package which you do not own ('" ++ pkgId ++ "')"

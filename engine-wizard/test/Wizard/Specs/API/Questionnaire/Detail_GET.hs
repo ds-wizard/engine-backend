@@ -29,6 +29,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -58,13 +59,18 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleView)" appContext questionnaire2 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 []
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 []
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader] [albertEditPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Non-Owner, VisibleView)"
+    appContext
+    questionnaire2
+    [reqNonAdminAuthHeader]
+    [albertEditPermRecordDto]
+  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 [] [albertEditPermRecordDto]
+  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader] []
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 [] []
 
-create_test_200 title appContext qtn authHeader =
+create_test_200 title appContext qtn authHeader permissions =
   it title $
      -- GIVEN: Prepare request
    do
@@ -77,9 +83,12 @@ create_test_200 title appContext qtn authHeader =
           toDetailWithPackageWithEventsDTO
             qtn
             (SPM.toPackage germanyPackage)
+            ["1.0.0"]
             km1WithQ4
             QSDefault
+            (Just commonWizardTemplate)
             (Just templateFormatJson)
+            permissions
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
@@ -103,7 +112,7 @@ test_403 appContext = do
     appContext
     questionnaire1
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "View Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext

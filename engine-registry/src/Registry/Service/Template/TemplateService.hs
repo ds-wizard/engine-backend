@@ -11,7 +11,7 @@ import Registry.Service.Template.TemplateMapper
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Template.Template
 import Shared.Service.Template.TemplateUtil
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 
 getTemplates :: [(String, String)] -> AppContextM [TemplateSimpleDTO]
 getTemplates queryParams = do

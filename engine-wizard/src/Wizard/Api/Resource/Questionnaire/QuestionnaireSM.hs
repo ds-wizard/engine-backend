@@ -6,6 +6,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportSM ()
@@ -15,12 +16,10 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import qualified Wizard.Service.User.UserMapper as UM
 
 instance ToSchema QuestionnaireDTO where
   declareNamedSchema =
     simpleToSchema
-      (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault (Just . UM.toDTO $ userAlbert) questionnaireReport)
+      (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault questionnaireReport [albertEditPermRecordDto])

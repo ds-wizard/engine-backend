@@ -1,6 +1,6 @@
 module Wizard.Specs.API.Questionnaire.Common where
 
-import Control.Lens ((^.), (^?), _Just)
+import Control.Lens ((^.))
 import Data.Either (isLeft, isRight)
 import qualified Data.UUID as U
 import Test.Hspec
@@ -45,7 +45,6 @@ compareQuestionnaireCreateDtos resDto expDto = do
   liftIO $ resDto ^. visibility `shouldBe` expDto ^. visibility
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
-  liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
 compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. uuid `shouldNotBe` expDto ^. uuid
@@ -55,7 +54,6 @@ compareQuestionnaireCloneDtos resDto expDto = do
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
-  liftIO $ resDto ^? owner . _Just . uuid `shouldBe` expDto ^? owner . _Just . uuid
 
 compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. name `shouldBe` expDto ^. name
@@ -67,7 +65,6 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. selectedTagUuids `shouldBe` expDto ^. selectedTagUuids
   liftIO $ resDto ^. knowledgeModel `shouldBe` expDto ^. knowledgeModel
   liftIO $ resDto ^. replies `shouldBe` expDto ^. replies
-  liftIO $ resDto ^. ownerUuid `shouldBe` expDto ^. ownerUuid
 
 compareQuestionnaireDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
 

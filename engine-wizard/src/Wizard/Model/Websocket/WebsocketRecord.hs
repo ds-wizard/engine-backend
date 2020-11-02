@@ -10,12 +10,12 @@ data WebsocketRecord =
     { _websocketRecordConnectionUuid :: U.UUID
     , _websocketRecordConnection :: Connection
     , _websocketRecordEntityId :: String
-    , _websocketRecordEntityPerm :: EntityPerm
+    , _websocketRecordEntityPerm :: WebsocketPerm
     , _websocketRecordUser :: OnlineUserInfo
     }
 
-data EntityPerm
-  = NoEntityPerm
-  | ViewEntityPerm
-  | EditEntityPerm
+data WebsocketPerm
+  = NoWebsocketPerm
+  | ViewerWebsocketPerm
+  | EditorWebsocketPerm
   deriving (Show, Eq)

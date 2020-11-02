@@ -19,10 +19,12 @@ import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
+import Registry.Service.Organization.OrganizationMapper
 
 import Registry.Specs.API.ActionKey.Common
 import Registry.Specs.API.Common
 import Registry.Specs.Common
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
@@ -55,18 +57,17 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+    let expDto = toDTO orgGlobal
+    let expType (a :: OrganizationDTO) = a
      -- AND: Prepare DB
     runInContextIO (insertActionKey forgTokActionKey) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, OrganizationDTO)
-    assertResStatus status expStatus
-    assertResHeaders headers expHeaders
+    assertResponse' expStatus expHeaders expDto expType response []
      -- AND: Find result in DB and compare with expectation state
     orgFromDb <- getFirstFromDB findOrganizations appContext
     liftIO $ (orgFromDb ^. token /= orgGlobal ^. token) `shouldBe` True
-    liftIO $ (orgFromDb ^. token == resBody ^. token) `shouldBe` True
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

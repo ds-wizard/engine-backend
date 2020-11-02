@@ -3,13 +3,17 @@ module Wizard.Service.Questionnaire.QuestionnaireUtils where
 import Control.Lens ((^.))
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
-
 import LensesConfig
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
+import Wizard.Database.DAO.Acl.GroupDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
+import Wizard.Database.DAO.User.UserDAO
+import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Cache.QuestionnaireReportCache
 import Wizard.Service.Config.AppConfigService
@@ -17,7 +21,6 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Report.ReportGenerator
-import Wizard.Service.User.UserService
 
 extractVisibility dto = do
   appConfig <- getAppConfig
@@ -35,12 +38,19 @@ enhanceQuestionnaire :: Questionnaire -> AppContextM QuestionnaireDTO
 enhanceQuestionnaire qtn = do
   pkg <- getPackageById (qtn ^. packageId)
   state <- getQuestionnaireState (U.toString $ qtn ^. uuid) (pkg ^. pId)
-  mOwner <-
-    case qtn ^. ownerUuid of
-      Just uUuid -> Just <$> getUserByIdDto (U.toString uUuid)
-      Nothing -> return Nothing
   report <- getQuestionnaireReport qtn
-  return $ toDTO qtn pkg state mOwner report
+  permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
+  return $ toDTO qtn pkg state report permissionDtos
+
+enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
+enhanceQuestionnairePermRecord record =
+  case record ^. member of
+    UserMember {_userMemberUuid = userUuid} -> do
+      user <- findUserById (U.toString userUuid)
+      return $ toUserPermRecordDTO record user
+    GroupMember {_groupMemberGId = groupId} -> do
+      group <- findGroupById groupId
+      return $ toGroupPermRecordDTO record group
 
 getQuestionnaireState :: String -> String -> AppContextM QuestionnaireState
 getQuestionnaireState qtnUuid pkgId = do

@@ -141,6 +141,7 @@ createServiceUser serverConfig now =
     , _userDTOPermissions = serverConfig ^. roles . admin
     , _userDTOActive = True
     , _userDTOImageUrl = Nothing
+    , _userDTOGroups = []
     , _userDTOCreatedAt = Just now
     , _userDTOUpdatedAt = Just now
     }

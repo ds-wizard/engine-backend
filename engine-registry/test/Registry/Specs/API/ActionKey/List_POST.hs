@@ -18,6 +18,7 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 
 import Registry.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- POST /action-keys

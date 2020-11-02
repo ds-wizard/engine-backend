@@ -20,6 +20,7 @@ import Shared.Service.Package.PackageMapper
 
 import Registry.Specs.API.Audit.Common
 import Registry.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /packages

@@ -5,6 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
 data QuestionnaireVisibility
@@ -30,10 +31,10 @@ data Questionnaire =
     , _questionnaireSelectedTagUuids :: [U.UUID]
     , _questionnaireTemplateId :: Maybe String
     , _questionnaireFormatUuid :: Maybe U.UUID
-    , _questionnaireOwnerUuid :: Maybe U.UUID
     , _questionnaireCreatorUuid :: Maybe U.UUID
     , _questionnaireReplies :: M.Map String ReplyValue
     , _questionnaireLabels :: M.Map String [U.UUID]
+    , _questionnairePermissions :: [QuestionnairePermRecord]
     , _questionnaireCreatedAt :: UTCTime
     , _questionnaireUpdatedAt :: UTCTime
     }
@@ -50,6 +51,6 @@ instance Eq Questionnaire where
     _questionnaireSelectedTagUuids a == _questionnaireSelectedTagUuids b &&
     _questionnaireTemplateId a == _questionnaireTemplateId b &&
     _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
-    _questionnaireOwnerUuid a == _questionnaireOwnerUuid b &&
     _questionnaireCreatorUuid a == _questionnaireCreatorUuid b &&
-    _questionnaireReplies a == _questionnaireReplies b && _questionnaireLabels a == _questionnaireLabels b
+    _questionnaireReplies a == _questionnaireReplies b &&
+    _questionnaireLabels a == _questionnaireLabels b && _questionnairePermissions a == _questionnairePermissions b

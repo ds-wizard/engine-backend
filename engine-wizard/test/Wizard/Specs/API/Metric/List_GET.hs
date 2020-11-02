@@ -13,6 +13,7 @@ import Shared.Database.Migration.Development.Metric.Data.Metrics
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 

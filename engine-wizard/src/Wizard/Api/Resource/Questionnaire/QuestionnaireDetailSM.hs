@@ -9,6 +9,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import qualified Shared.Service.Package.PackageMapper as PM
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
@@ -22,4 +23,12 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 instance ToSchema QuestionnaireDetailDTO where
   declareNamedSchema =
     simpleToSchema
-      (toDetailWithPackageWithEventsDTO questionnaire1 (PM.toPackage germanyPackage) km1WithQ4 QSDefault Nothing)
+      (toDetailWithPackageWithEventsDTO
+         questionnaire1
+         (PM.toPackage germanyPackage)
+         ["1.0.0"]
+         km1WithQ4
+         QSDefault
+         Nothing
+         Nothing
+         [])

@@ -11,8 +11,10 @@ import Shared.Util.Gravatar (gravatarHash)
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Model.User.OnlineUserInfo
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 
 toDTO :: User -> UserDTO
 toDTO user =
@@ -27,8 +29,29 @@ toDTO user =
     , _userDTOPermissions = user ^. permissions
     , _userDTOActive = user ^. active
     , _userDTOImageUrl = user ^. imageUrl
+    , _userDTOGroups = user ^. groups
     , _userDTOCreatedAt = user ^. createdAt
     , _userDTOUpdatedAt = user ^. updatedAt
+    }
+
+toSuggestion :: User -> UserSuggestion
+toSuggestion user =
+  UserSuggestion
+    { _userSuggestionUuid = user ^. uuid
+    , _userSuggestionFirstName = user ^. firstName
+    , _userSuggestionLastName = user ^. lastName
+    , _userSuggestionEmail = user ^. email
+    , _userSuggestionImageUrl = user ^. imageUrl
+    }
+
+toSuggestionDTO :: UserSuggestion -> UserSuggestionDTO
+toSuggestionDTO user =
+  UserSuggestionDTO
+    { _userSuggestionDTOUuid = user ^. uuid
+    , _userSuggestionDTOFirstName = user ^. firstName
+    , _userSuggestionDTOLastName = user ^. lastName
+    , _userSuggestionDTOGravatarHash = gravatarHash $ user ^. email
+    , _userSuggestionDTOImageUrl = user ^. imageUrl
     }
 
 toOnlineUserInfo :: Maybe UserDTO -> Int -> Int -> OnlineUserInfo
@@ -47,6 +70,7 @@ toLoggedOnlineUserInfo user colorNumber =
     , _loggedOnlineUserInfoImageUrl = user ^. imageUrl
     , _loggedOnlineUserInfoColorNumber = colorNumber
     , _loggedOnlineUserInfoRole = user ^. role
+    , _loggedOnlineUserInfoGroups = user ^. groups
     }
 
 toAnonymousOnlineUserInfo :: Int -> Int -> OnlineUserInfo
@@ -54,7 +78,7 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
   AnonymousOnlineUserInfo
     {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> Role -> [Permission] -> UTCTime -> UTCTime -> User
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> UTCTime -> UTCTime -> User
 fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =
   User
     { _userUuid = userUuid
@@ -69,22 +93,13 @@ fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt
     , _userActive = False
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
+    , _userGroups = []
     , _userCreatedAt = Just createdAt
     , _userUpdatedAt = Just updatedAt
     }
 
 fromUserExternalDTO ::
-     U.UUID
-  -> String
-  -> String
-  -> String
-  -> String
-  -> [String]
-  -> Role
-  -> [Permission]
-  -> Maybe String
-  -> UTCTime
-  -> User
+     U.UUID -> String -> String -> String -> String -> [String] -> String -> [String] -> Maybe String -> UTCTime -> User
 fromUserExternalDTO userUuid firstName lastName email passwordHash sources role permissions mImageUrl now =
   User
     { _userUuid = userUuid
@@ -99,6 +114,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userActive = True
     , _userSubmissionProps = []
     , _userImageUrl = mImageUrl
+    , _userGroups = []
     , _userCreatedAt = Just now
     , _userUpdatedAt = Just now
     }
@@ -121,11 +137,12 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , _userActive = oldUser ^. active
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = mImageUrl
+    , _userGroups = oldUser ^. groups
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }
 
-fromUserChangeDTO :: UserChangeDTO -> User -> [Permission] -> User
+fromUserChangeDTO :: UserChangeDTO -> User -> [String] -> User
 fromUserChangeDTO dto oldUser permission =
   User
     { _userUuid = oldUser ^. uuid
@@ -140,6 +157,7 @@ fromUserChangeDTO dto oldUser permission =
     , _userActive = dto ^. active
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
+    , _userGroups = oldUser ^. groups
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }

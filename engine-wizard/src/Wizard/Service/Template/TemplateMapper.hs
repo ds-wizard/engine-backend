@@ -10,7 +10,7 @@ import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -108,7 +108,7 @@ toChangeDTO template =
 fromCreateDTO :: TemplateChangeDTO -> UTCTime -> Template
 fromCreateDTO dto createdAt =
   Template
-    { _templateTId = buildIdentifierId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
+    { _templateTId = buildCoordinate (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
     , _templateName = dto ^. name
     , _templateOrganizationId = dto ^. organizationId
     , _templateTemplateId = dto ^. templateId
@@ -128,7 +128,7 @@ fromCreateDTO dto createdAt =
 fromChangeDTO :: TemplateChangeDTO -> Template -> Template
 fromChangeDTO dto template =
   Template
-    { _templateTId = buildIdentifierId (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
+    { _templateTId = buildCoordinate (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
     , _templateName = dto ^. name
     , _templateOrganizationId = dto ^. organizationId
     , _templateTemplateId = dto ^. templateId

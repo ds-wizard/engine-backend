@@ -9,7 +9,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import Wizard.Model.Context.AppContext
 
-import Wizard.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /swaggers

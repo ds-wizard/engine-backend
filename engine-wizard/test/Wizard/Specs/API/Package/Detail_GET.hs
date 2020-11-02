@@ -21,6 +21,7 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 

@@ -31,7 +31,8 @@ import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
+import Wizard.Service.Coordinate.CoordinateValidation
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
 import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
@@ -104,7 +105,7 @@ importPackage :: PackageDTO -> AppContextM (Maybe PackageSimpleDTO)
 importPackage dto = do
   let pkg = PM.fromDTO dto
   skipIfPackageIsAlreadyImported pkg $ do
-    validatePackageIdWithCoordinates (pkg ^. pId) (pkg ^. organizationId) (pkg ^. kmId) (pkg ^. version)
+    validateCoordinateWithParams (pkg ^. pId) (pkg ^. organizationId) (pkg ^. kmId) (pkg ^. version)
     validateMaybePreviousPackageIdExistence (pkg ^. pId) (pkg ^. previousPackageId)
     validateKmValidity (pkg ^. events) (pkg ^. previousPackageId)
     createdPkg <- createPackage pkg

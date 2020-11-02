@@ -14,17 +14,20 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Questionnaire.QuestionnaireUtil
 import Shared.Util.Uuid
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
+import Wizard.Database.Migration.Development.Acl.Data.Groups
+import Wizard.Database.Migration.Development.Acl.Data.Members
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
-import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 questionnaire1 :: Questionnaire
 questionnaire1 =
@@ -40,30 +43,19 @@ questionnaire1 =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
-    , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
+    , _questionnairePermissions = [albertEditPermRecord]
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 questionnaire1Edited :: Questionnaire
 questionnaire1Edited =
-  Questionnaire
-    { _questionnaireUuid = questionnaire1 ^. uuid
-    , _questionnaireName = "EDITED: " ++ (questionnaire1 ^. name)
-    , _questionnaireLevel = questionnaire1 ^. level
+  questionnaire1
+    { _questionnaireName = "EDITED: " ++ (questionnaire1 ^. name)
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
-    , _questionnairePackageId = questionnaire1 ^. packageId
-    , _questionnaireSelectedTagUuids = questionnaire1 ^. selectedTagUuids
-    , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = questionnaire1 ^. replies
-    , _questionnaireLabels = questionnaire1 ^. labels
-    , _questionnaireOwnerUuid = Nothing
-    , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
-    , _questionnaireCreatedAt = questionnaire1 ^. createdAt
-    , _questionnaireUpdatedAt = questionnaire1 ^. updatedAt
+    , _questionnairePermissions = []
     }
 
 questionnaire1ContentEdited :: Questionnaire
@@ -71,8 +63,7 @@ questionnaire1ContentEdited =
   questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire1Dto :: QuestionnaireDTO
-questionnaire1Dto =
-  toSimpleDTO questionnaire1 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
+questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
@@ -92,6 +83,7 @@ questionnaire1EditedChange =
     { _questionnaireChangeDTOName = questionnaire1Edited ^. name
     , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
     , _questionnaireChangeDTOSharing = questionnaire1Edited ^. sharing
+    , _questionnaireChangeDTOPermissions = questionnaire1Edited ^. permissions
     , _questionnaireChangeDTOTemplateId = Nothing
     , _questionnaireChangeDTOFormatUuid = Nothing
     }
@@ -112,8 +104,8 @@ questionnaire2 =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
-    , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
+    , _questionnairePermissions = [albertEditPermRecord]
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -132,8 +124,8 @@ questionnaire2Edited =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = questionnaire2 ^. replies
     , _questionnaireLabels = questionnaire2 ^. labels
-    , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
+    , _questionnairePermissions = []
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -143,8 +135,7 @@ questionnaire2ContentEdited =
   questionnaire2 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire2Dto :: QuestionnaireDTO
-questionnaire2Dto =
-  toSimpleDTO questionnaire2 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
+questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -162,8 +153,8 @@ questionnaire3 =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = fReplies
     , _questionnaireLabels = fLabels
-    , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Nothing
+    , _questionnairePermissions = []
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -182,8 +173,8 @@ questionnaire3Edited =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = questionnaire3 ^. replies
     , _questionnaireLabels = questionnaire3 ^. labels
-    , _questionnaireOwnerUuid = Just $ userAlbert ^. uuid
     , _questionnaireCreatorUuid = Nothing
+    , _questionnairePermissions = [albertEditPermRecord]
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
@@ -193,7 +184,7 @@ questionnaire3ContentEdited =
   questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire3Dto :: QuestionnaireDTO
-questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault Nothing questionnaireReport
+questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault questionnaireReport []
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -211,8 +202,8 @@ questionnaire4 =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireReplies = M.empty
     , _questionnaireLabels = M.empty
-    , _questionnaireOwnerUuid = Nothing
     , _questionnaireCreatorUuid = Nothing
+    , _questionnairePermissions = []
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -221,8 +212,7 @@ questionnaire4VisibleView :: Questionnaire
 questionnaire4VisibleView = questionnaire4 {_questionnaireVisibility = VisibleViewQuestionnaire}
 
 questionnaire4VisibleEdit :: Questionnaire
-questionnaire4VisibleEdit =
-  questionnaire4 {_questionnaireVisibility = VisibleEditQuestionnaire, _questionnaireOwnerUuid = Nothing}
+questionnaire4VisibleEdit = questionnaire4 {_questionnaireVisibility = VisibleEditQuestionnaire}
 
 questionnaire4Upgraded :: Questionnaire
 questionnaire4Upgraded =
@@ -235,8 +225,7 @@ questionnaire4VisibleViewUpgraded :: Questionnaire
 questionnaire4VisibleViewUpgraded = questionnaire4Upgraded {_questionnaireVisibility = VisibleViewQuestionnaire}
 
 questionnaire4VisibleEditUpgraded :: Questionnaire
-questionnaire4VisibleEditUpgraded =
-  questionnaire4Upgraded {_questionnaireVisibility = VisibleEditQuestionnaire, _questionnaireOwnerUuid = Nothing}
+questionnaire4VisibleEditUpgraded = questionnaire4Upgraded {_questionnaireVisibility = VisibleEditQuestionnaire}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -269,8 +258,7 @@ questionnaire6ContentEdited =
   questionnaire6 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
 
 questionnaire6Dto :: QuestionnaireDTO
-questionnaire6Dto =
-  toSimpleDTO questionnaire6 germanyPackage QSDefault (Just . U_Mapper.toDTO $ userAlbert) questionnaireReport
+questionnaire6Dto = toSimpleDTO questionnaire6 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -510,3 +498,21 @@ fLabels = M.fromList [(fst rQ1, [fLabel1])]
 
 fLabelsEdited :: M.Map String [U.UUID]
 fLabelsEdited = M.fromList [(fst rQ1, [fLabel1]), (fst rQ2, [fLabel1])]
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+bioGroupEditPermRecord :: QuestionnairePermRecord
+bioGroupEditPermRecord =
+  QuestionnairePermRecord
+    {_questionnairePermRecordMember = bioGroupMember, _questionnairePermRecordPerms = ownerPermissions}
+
+bioGroupEditPermRecordDto :: QuestionnairePermRecordDTO
+bioGroupEditPermRecordDto = toGroupPermRecordDTO bioGroupEditPermRecord bioGroup
+
+albertEditPermRecord :: QuestionnairePermRecord
+albertEditPermRecord =
+  QuestionnairePermRecord
+    {_questionnairePermRecordMember = albertMember, _questionnairePermRecordPerms = ownerPermissions}
+
+albertEditPermRecordDto :: QuestionnairePermRecordDTO
+albertEditPermRecordDto = toUserPermRecordDTO albertEditPermRecord userAlbert

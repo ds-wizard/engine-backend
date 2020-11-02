@@ -151,11 +151,13 @@ removePrefix fieldPrefix = bsonSpecialFields . lowerFirst . drop (length fieldPr
 
 bsonSpecialFields :: String -> String
 bsonSpecialFields "aType" = "type"
+bsonSpecialFields "gType" = "type"
 bsonSpecialFields "pType" = "type"
 bsonSpecialFields "bundleId" = "id"
 bsonSpecialFields "intId" = "id"
 bsonSpecialFields "aId" = "id"
 bsonSpecialFields "dId" = "id"
+bsonSpecialFields "gId" = "id"
 bsonSpecialFields "iId" = "id"
 bsonSpecialFields "pId" = "id"
 bsonSpecialFields "sId" = "id"

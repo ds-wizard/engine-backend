@@ -24,6 +24,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
@@ -98,7 +99,7 @@ test_403 appContext = do
     appContext
     questionnaire1
     questionnaire1Edited
-    "Get Questionnaire"
+    "View Questionnaire"
 
 create_test_403 title appContext qtn qtnEdited reason =
   it title $

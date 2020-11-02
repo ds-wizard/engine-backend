@@ -12,6 +12,7 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Common.Pageable
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
@@ -85,6 +86,7 @@ import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMDTO
+import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
@@ -102,16 +104,27 @@ import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
 import Wizard.Model.Websocket.WebsocketRecord
 
 -- -------------------------------------
 -- Model
 -- -------------------------------------
+-- Model / Acl
+makeFields ''Group
+
+makeFields ''GroupMembership
+
+makeFields ''QuestionnairePermRecord
+
+makeFields ''Member
+
 -- Model / ActionKey
 makeFields ''ActionKey
 
@@ -130,6 +143,8 @@ makeFields ''ServerCache
 makeFields ''Page
 
 makeFields ''PageMetadata
+
+makeFields ''Pageable
 
 -- Model / Config
 makeFields ''AppConfig
@@ -409,6 +424,8 @@ makeFields ''TemplateGroup
 makeFields ''User
 
 makeFields ''UserSubmissionProps
+
+makeFields ''UserSuggestion
 
 -- Model / Websocket
 makeFields ''WebsocketMessage

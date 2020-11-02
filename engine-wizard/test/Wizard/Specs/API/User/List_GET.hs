@@ -9,11 +9,16 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import Wizard.Database.Migration.Development.User.Data.Users
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Service.User.UserMapper
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- GET /users
@@ -39,14 +44,42 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200
+    "HTTP 200 OK (Admin)"
+    appContext
+    "/users"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userNikola, toDTO userIsaac])
+  create_test_200
+    "HTTP 200 OK (Admin - pagination)"
+    appContext
+    "/users?page=1&size=1"
+    (Page "users" (PageMetadata 1 3 3 1) [toDTO userNikola])
+  create_test_200
+    "HTTP 200 OK (Admin - query)"
+    appContext
+    "/users?q=te"
+    (Page "users" (PageMetadata 20 2 1 0) [toDTO userAlbert, toDTO userNikola])
+  create_test_200
+    "HTTP 200 OK (Admin - sort asc)"
+    appContext
+    "/users?sort=name,asc"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userIsaac, toDTO userNikola])
+  create_test_200
+    "HTTP 200 OK (Admin - sort desc)"
+    appContext
+    "/users?sort=name,desc"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
+
+create_test_200 title appContext reqUrl expDto =
+  it title $
+       -- GIVEN: Prepare request
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = [toDTO userAlbert]
     let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO U.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- AND: Compare response with expectation

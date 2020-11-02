@@ -9,7 +9,7 @@ import Shared.Constant.Template
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Wizard.Model.Template.TemplateState
 
 computeTemplateState :: [TemplateSimpleDTO] -> Template -> TemplateState
@@ -38,7 +38,7 @@ getUsablePackagesForTemplate tml = chooseTheNewest . groupPackages . filterPacka
 filterTemplates :: Maybe String -> [Template] -> [Template]
 filterTemplates mPkgId tmls =
   case mPkgId of
-    Just pkgId -> filter (filterTemplate . splitPackageId $ pkgId) tmls
+    Just pkgId -> filter (filterTemplate . splitCoordinate $ pkgId) tmls
     Nothing -> tmls
   where
     filterTemplate :: [String] -> Template -> Bool

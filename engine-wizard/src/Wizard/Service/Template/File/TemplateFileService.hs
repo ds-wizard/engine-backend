@@ -15,7 +15,7 @@ import Shared.Util.Uuid
 import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Template.File.TemplateFileMapper
 
 getTemplateFiles :: String -> AppContextM [TemplateFile]

@@ -17,7 +17,7 @@ import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageUtil
-import Shared.Util.Identifier
+import Shared.Util.Coordinate
 import Shared.Util.List (foldInContext)
 
 getSimplePackagesFiltered :: [(String, String)] -> [(String, String)] -> AppContextM [PackageSimpleDTO]

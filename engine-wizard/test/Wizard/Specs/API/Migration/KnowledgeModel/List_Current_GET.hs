@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 

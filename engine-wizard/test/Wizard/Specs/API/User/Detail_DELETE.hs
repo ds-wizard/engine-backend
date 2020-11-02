@@ -13,9 +13,11 @@ import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Common
 import Wizard.Specs.API.Questionnaire.Common
@@ -55,6 +57,7 @@ test_204 appContext =
     let expHeaders = resCorsHeaders
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO DOC.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

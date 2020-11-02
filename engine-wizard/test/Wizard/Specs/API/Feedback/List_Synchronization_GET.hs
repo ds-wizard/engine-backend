@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Feedback.Common

@@ -34,6 +34,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -109,7 +110,7 @@ test_403 appContext = do
     appContext
     questionnaire1
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Get Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "View Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext

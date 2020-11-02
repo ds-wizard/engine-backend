@@ -9,10 +9,11 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Api.Resource.Info.InfoJM ()
 import Shared.Database.Migration.Development.Info.Data.Infos
 import Wizard.Model.Context.AppContext
 
-import Wizard.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /

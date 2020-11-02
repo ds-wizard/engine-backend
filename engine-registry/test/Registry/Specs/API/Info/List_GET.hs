@@ -13,7 +13,7 @@ import Registry.Model.Context.AppContext
 import Shared.Api.Resource.Info.InfoJM ()
 import Shared.Database.Migration.Development.Info.Data.Infos
 
-import Registry.Specs.API.Common
+import SharedTest.Specs.API.Common
 
 -- ------------------------------------------------------------------------
 -- GET /

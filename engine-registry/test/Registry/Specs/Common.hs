@@ -6,12 +6,7 @@ import Control.Monad.Reader (liftIO, runReaderT)
 
 import Registry.Model.Context.AppContext
 
-fakeLogState :: String -> IO ()
-fakeLogState _ = return ()
-
-filterJustError :: LogSource -> LogLevel -> Bool
-filterJustError _ LevelError = True
-filterJustError _ _ = False
+import SharedTest.Specs.Common
 
 runInContext action appContext =
   runExceptT . runStdoutLoggingT . filterLogger filterJustError $ runReaderT (runAppContextM action) appContext

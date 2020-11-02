@@ -30,6 +30,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Common
@@ -141,13 +142,13 @@ test_403 appContext = do
     appContext
     questionnaire1
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     [reqNonAdminAuthHeader]
-    (_ERROR_VALIDATION__FORBIDDEN "Edit Replies Questionnaire")
+    (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
   create_test_403
     "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
     appContext

@@ -15,6 +15,7 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import Wizard.Database.Migration.Development.Typehint.Data.Typehints
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 

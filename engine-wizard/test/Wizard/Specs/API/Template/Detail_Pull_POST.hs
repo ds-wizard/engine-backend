@@ -18,6 +18,7 @@ import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Template.Common

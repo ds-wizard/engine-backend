@@ -27,6 +27,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 
+import SharedTest.Specs.API.Common
 import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Package.Common
@@ -285,7 +286,7 @@ test_400_bad_package_coordinates appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError $ _ERROR_SERVICE_PKG__PKG_ID_MISMATCH (netherlandsPackage ^. pId)
+    let expDto = createUserError $ _ERROR_VALIDATION__COORDINATE_MISMATCH (netherlandsPackage ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

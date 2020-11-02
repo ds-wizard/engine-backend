@@ -11,9 +11,11 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.BSON.User.User ()
+import Wizard.Database.BSON.User.UserSuggestion ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.User.User
+import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Cache.UserCache
 
 entityName = "user"
@@ -32,13 +34,22 @@ findUsersPage mQuery pageable sort =
     ["$addFields" =: ["name" =: ["$concat" =: ["$firstName", " ", "$lastName"]]]] =<<
   sel [regexSel "name" mQuery]
 
+findUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
+findUserSuggestionsPage mQuery pageable sort =
+  createAggregateEntitiesPageableQuerySortFn
+    collection
+    pageable
+    sort
+    ["$addFields" =: ["name" =: ["$concat" =: ["$firstName", " ", "$lastName"]]]] =<<
+  sel [regexSel "name" mQuery]
+
 findUserById :: String -> AppContextM User
 findUserById = createFindEntityByFn collection entityName "uuid"
 
-findUserByEmail :: Email -> AppContextM User
+findUserByEmail :: String -> AppContextM User
 findUserByEmail = createFindEntityByFn collection entityName "email"
 
-findUserByEmail' :: Email -> AppContextM (Maybe User)
+findUserByEmail' :: String -> AppContextM (Maybe User)
 findUserByEmail' = createFindEntityByFn' collection entityName "email"
 
 countUsers :: AppContextM Int

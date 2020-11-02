@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Model.User.User
 
 data AppConfig =
   AppConfig
@@ -46,7 +45,7 @@ data AppConfigOrganization =
 
 data AppConfigAuth =
   AppConfigAuth
-    { _appConfigAuthDefaultRole :: Role
+    { _appConfigAuthDefaultRole :: String
     , _appConfigAuthInternal :: AppConfigAuthInternal
     , _appConfigAuthExternal :: AppConfigAuthExternal
     }

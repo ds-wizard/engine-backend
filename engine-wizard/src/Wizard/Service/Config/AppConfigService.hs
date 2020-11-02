@@ -11,7 +11,7 @@ import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Common.ACL
+import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigMapper
 
 getAppConfig :: AppContextM AppConfig

@@ -27,11 +27,11 @@ import Wizard.Messaging.Out.Queue.Document
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.Questionnaire
-import Wizard.Service.Common.ACL
-import Wizard.Service.Document.DocumentACL
+import Wizard.Service.Acl.AclService
+import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
-import Wizard.Service.Questionnaire.QuestionnaireACL
+import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
 import Wizard.Service.Template.TemplateValidation
@@ -95,7 +95,7 @@ cleanDocuments = do
 createDocumentPreview :: String -> AppContextM (Document, BS.ByteString)
 createDocumentPreview qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
-  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. ownerUuid)
+  checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
   let repliesHash = hash . M.toList $ qtn ^. replies
   logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
