@@ -49,7 +49,7 @@ toSimpleDTO'' ::
   -> TemplateGroup
   -> TemplateSimpleDTO
 toSimpleDTO'' tmlRs orgRs pkgs tmlGroup =
-  let newest = L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
+  let newest = L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
    in toSimpleDTO' tmlRs orgRs pkgs newest
 
 toDetailDTO ::
