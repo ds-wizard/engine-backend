@@ -68,7 +68,7 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
           updatedNumber = fromMaybe 0 $ pageable ^. page
        in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) filteredArray
     chooseNewest :: TemplateGroup -> Template
-    chooseNewest tmlGroup = L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
+    chooseNewest tmlGroup = L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
 
 getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
 getTemplatesDto queryParams mPkgId = do

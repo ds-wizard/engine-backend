@@ -36,7 +36,7 @@ toSimpleDTO' pkgRs orgRs localVersions pkg =
 
 toSimpleDTO'' :: [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> PackageGroup -> PackageSimpleDTO
 toSimpleDTO'' pkgRs orgRs pkgGroup =
-  let newest = L.maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
+  let newest = L.maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
    in toSimpleDTO' pkgRs orgRs (pkgGroup ^. versions ^.. traverse . version) newest
 
 toDetailDTO ::
