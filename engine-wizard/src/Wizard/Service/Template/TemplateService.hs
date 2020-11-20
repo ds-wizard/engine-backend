@@ -72,7 +72,7 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
     chooseNewest [tml] = Just tml
     chooseNewest tmls = Just $ L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)) tmls
     filterTemplatesInGroup :: TemplateGroup -> [Template]
-    filterTemplatesInGroup tmlGroup = filterTemplates mPkgId $ (tmlGroup ^. versions)
+    filterTemplatesInGroup tmlGroup = filter isTemplateSupported . filterTemplates mPkgId $ (tmlGroup ^. versions)
 
 getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
 getTemplatesDto queryParams mPkgId = do
