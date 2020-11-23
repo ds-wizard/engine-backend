@@ -87,7 +87,6 @@ processRepliesForQuestionMove km event replies =
       pPath = computeParentPath parentMap (event ^. parentUuid)
       tPath = computeParentPath parentMap (event ^. targetUuid)
       sharedNode = computeSharedNode pPath tPath
-      sharedPath = takeSharedPrefix sharedNode tPath
       pPathDiff = takeDiffSuffix sharedNode pPath
       tPathDiff = takeDiffSuffix sharedNode tPath
    in doMigration km (event ^. entityUuid) pPathDiff tPathDiff replies
@@ -121,14 +120,18 @@ shouldWeMigrate km pPathDiff tPathDiff = not . or . fmap (isItListQuestion km) $
 doMigration :: KnowledgeModel -> U.UUID -> [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
 doMigration km eUuid pPathDiff tPathDiff replies =
   if shouldWeMigrate km pPathDiff tPathDiff
-    then computeDesiredPath pPathDiff tPathDiff replies
+    then computeDesiredPath eUuid pPathDiff tPathDiff replies
     else deleteUnwantedReplies eUuid replies
 
-computeDesiredPath :: [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
-computeDesiredPath pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPathDiffS)
+computeDesiredPath :: U.UUID -> [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
+computeDesiredPath eUuid pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPathDiffS)
   where
-    replaceReply "" _ (path, value) = (path ++ "." ++ tPathDiffS, value)
-    replaceReply pPathDiffS tPathDiffS (path, value) = (replace pPathDiffS tPathDiffS path, value)
+    replaceReply pPathDiffS tPathDiffS reply@(path, _) =
+      if path `replyKeyContains` eUuid
+        then replaceReply' pPathDiffS tPathDiffS reply
+        else reply
+    replaceReply' "" _ (path, value) = (path ++ "." ++ tPathDiffS, value)
+    replaceReply' pPathDiffS tPathDiffS (path, value) = (replace pPathDiffS tPathDiffS path, value)
     pPathDiffS = createReplyKey pPathDiff
     tPathDiffS = createReplyKey tPathDiff
 
