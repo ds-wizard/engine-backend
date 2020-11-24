@@ -135,6 +135,7 @@ sanitizatorSpec =
       it "m_km1_ch1_q1__to_ch2_q3_aNo" $
         -- GIVEN:
        do
+        let eUuid = question1 ^. uuid
         let pPathSuffix = [chapter1 ^. uuid, question1 ^. uuid]
         let tPathSuffix = [chapter2 ^. uuid, question3 ^. uuid, q3_answerNo ^. uuid, question1 ^. uuid]
         let replies = [rQ1, rQ2]
@@ -142,12 +143,13 @@ sanitizatorSpec =
         let expRQ1 = (createReplyKey tPathSuffix, snd rQ1)
         let expected = [expRQ1, rQ2]
         -- WHEN:
-        let result = computeDesiredPath pPathSuffix tPathSuffix replies
+        let result = computeDesiredPath eUuid pPathSuffix tPathSuffix replies
         -- THEN:
         result `shouldBe` expected
       it "m_km1_ch2_q4_it1_q5__to_ch2_q4_it1_q6_aNo" $
         -- GIVEN:
        do
+        let eUuid = q4_it1_question5 ^. uuid
         let pPathSuffix = [q4_it1_question5 ^. uuid]
         let tPathSuffix = [q4_it1_question6 ^. uuid, q4_it1_q6_answerNo ^. uuid, q4_it1_question5 ^. uuid]
         let replies =
@@ -182,7 +184,7 @@ sanitizatorSpec =
               , rQ4_it2_q6
               ]
         -- WHEN:
-        let result = computeDesiredPath pPathSuffix tPathSuffix replies
+        let result = computeDesiredPath eUuid pPathSuffix tPathSuffix replies
         -- THEN:
         result `shouldBe` expected
     describe "deleteUnwantedReplies" $
