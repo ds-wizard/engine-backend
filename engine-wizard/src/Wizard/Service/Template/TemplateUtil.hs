@@ -14,7 +14,7 @@ import Wizard.Model.Template.TemplateState
 
 computeTemplateState :: [TemplateSimpleDTO] -> Template -> TemplateState
 computeTemplateState tmlsFromRegistry tml =
-  if tml ^. metamodelVersion /= templateMetamodelVersion
+  if not (isTemplateSupported tml)
     then UnsupportedMetamodelVersionTemplateState
     else case selectTemplateByOrgIdAndTmlId tml tmlsFromRegistry of
            Just tmlFromRegistry ->
@@ -34,6 +34,9 @@ getUsablePackagesForTemplate tml = chooseTheNewest . groupPackages . filterPacka
   where
     filterPackages :: Template -> [Package] -> [Package]
     filterPackages tml = filter (\pkg -> not . null $ filterTemplates (Just $ pkg ^. pId) [tml])
+
+isTemplateSupported :: Template -> Bool
+isTemplateSupported tml = tml ^. metamodelVersion == templateMetamodelVersion
 
 filterTemplates :: Maybe String -> [Template] -> [Template]
 filterTemplates mPkgId tmls =

@@ -5,7 +5,7 @@ import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
-import Data.Maybe (fromMaybe)
+import Data.Maybe (catMaybes, fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -57,18 +57,22 @@ getTemplateSuggestions mPkgId mQuery pageable sort = do
   checkPermission _DMP_PERM
   validateCoordinateFormat' mPkgId
   groups <- findTemplateGroups Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
-  return . fmap toSuggestionDTO . filterTemplates' . fmap chooseNewest $ groups
+  return . fmap toSuggestionDTO . updatePage . fmap chooseNewest . fmap filterTemplatesInGroup $ groups
   where
-    filterTemplates' :: Page Template -> Page Template
-    filterTemplates' (Page name _ array) =
-      let filteredArray = take updatedSize . filterTemplates mPkgId $ array
+    updatePage :: Page (Maybe Template) -> Page Template
+    updatePage (Page name _ array) =
+      let updatedArray = take updatedSize . catMaybes $ array
           updatedSize = fromMaybe 20 $ pageable ^. size
-          updatedTotalElements = length filteredArray
+          updatedTotalElements = length updatedArray
           updatedTotalPages = computeTotalPage updatedTotalElements updatedSize
           updatedNumber = fromMaybe 0 $ pageable ^. page
-       in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) filteredArray
-    chooseNewest :: TemplateGroup -> Template
-    chooseNewest tmlGroup = L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
+       in Page name (PageMetadata updatedSize updatedTotalElements updatedTotalPages updatedNumber) updatedArray
+    chooseNewest :: [Template] -> Maybe Template
+    chooseNewest [] = Nothing
+    chooseNewest [tml] = Just tml
+    chooseNewest tmls = Just $ L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)) tmls
+    filterTemplatesInGroup :: TemplateGroup -> [Template]
+    filterTemplatesInGroup tmlGroup = filter isTemplateSupported . filterTemplates mPkgId $ (tmlGroup ^. versions)
 
 getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
 getTemplatesDto queryParams mPkgId = do
