@@ -44,11 +44,11 @@ fromTemplateEntry archive =
     Just templateEntry ->
       case eitherDecode . fromEntry $ templateEntry of
         Right template -> Right template
-        Left error -> Left $ ValidationError [_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON error] []
-    Nothing -> Left $ ValidationError [_ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON] []
+        Left error -> Left $ UserError (_ERROR_SERVICE_TB__UNABLE_TO_DECODE_TEMPLATE_JSON error)
+    Nothing -> Left $ UserError _ERROR_SERVICE_TB__MISSING_TEMPLATE_JSON
 
 fromAssetEntry :: Archive -> TemplateAsset -> Either AppError (TemplateAsset, BS.ByteString)
 fromAssetEntry archive asset =
   case findEntryByPath ("template/assets/" ++ asset ^. fileName) archive of
     Just assetEntry -> Right (asset, BSL.toStrict . fromEntry $ assetEntry)
-    Nothing -> Left $ ValidationError [_ERROR_SERVICE_TB__MISSING_ASSET (asset ^. fileName)] []
+    Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET (asset ^. fileName))

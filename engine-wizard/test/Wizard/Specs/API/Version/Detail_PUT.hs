@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Service.Package.PackageMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
@@ -23,7 +24,6 @@ import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Version.VersionService
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
@@ -95,7 +95,7 @@ test_400_invalid_version_format appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT
+    let expDto = UserError _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO B.runMigration appContext
@@ -115,7 +115,7 @@ test_400_not_higher_pkg_version appContext =
    do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
+    let expDto = UserError _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext

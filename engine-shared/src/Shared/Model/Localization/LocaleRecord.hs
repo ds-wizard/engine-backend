@@ -1,11 +1,11 @@
 module Shared.Model.Localization.LocaleRecord where
 
-type LocaleKey = String
-
-type DefaultValue = String
-
-type Variable = String
+import GHC.Generics
 
 data LocaleRecord =
-  LocaleRecord LocaleKey DefaultValue [Variable]
-  deriving (Show, Eq)
+  LocaleRecord
+    { _localeRecordCode :: String
+    , _localeRecordDefaultMessage :: String
+    , _localeRecordParams :: [String]
+    }
+  deriving (Show, Eq, Generic)

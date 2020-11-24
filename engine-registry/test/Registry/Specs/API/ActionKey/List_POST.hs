@@ -2,7 +2,7 @@ module Registry.Specs.API.ActionKey.List_POST
   ( list_post
   ) where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -15,7 +15,9 @@ import Registry.Api.Resource.ActionKey.ActionKeyJM ()
 import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
+import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
+import Shared.Model.Error.Error
 
 import Registry.Specs.API.Common
 import SharedTest.Specs.API.Common
@@ -27,7 +29,7 @@ list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /action-keys" $ do
     test_201 appContext
-    test_400_invalid_json appContext
+    test_400 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -66,4 +68,21 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "type"
+test_400 appContext = do
+  createInvalidJsonTest reqMethod reqUrl "type"
+  it "HTTP 400 BAD REQUEST when email doesn't exist" $
+     -- GIVEN: Prepare request
+   do
+    let reqDto = forgTokActionKeyDto & email .~ "non-existing@example.com"
+    let reqBody = encode reqDto
+     -- Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto = UserError $ _ERROR_VALIDATION__ORGANIZATION_EMAIL_ABSENCE "non-existing@example.com"
+    let expBody = encode expDto
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher

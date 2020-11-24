@@ -14,6 +14,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
@@ -24,7 +25,6 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -124,7 +124,7 @@ create_test_403 title appContext qtn reason =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN reason
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

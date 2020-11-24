@@ -16,6 +16,7 @@ import Shared.Constant.Template
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -31,7 +32,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Common
 import Wizard.Specs.Common
@@ -115,7 +115,7 @@ test_400 appContext = do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
-          createUserError $
+          UserError $
           _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION (commonWizardTemplate ^. tId) 1 templateMetamodelVersion
     let expBody = encode expDto
       -- AND: Run migrations
@@ -178,7 +178,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError errorMessage
+    let expDto = ForbiddenError errorMessage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

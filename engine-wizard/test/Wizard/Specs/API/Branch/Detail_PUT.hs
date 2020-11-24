@@ -4,6 +4,7 @@ module Wizard.Specs.API.Branch.Detail_PUT
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -14,6 +15,7 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -21,7 +23,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Branch.BranchService
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Branch.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -108,7 +109,7 @@ test_400_not_valid_kmId appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)]
+    let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_KM_ID_FORMAT])
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO
@@ -144,7 +145,7 @@ test_400_already_taken_kmId appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId)]
+    let expDto = ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS $ reqDto ^. kmId])
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO

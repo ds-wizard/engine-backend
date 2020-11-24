@@ -16,7 +16,6 @@ import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Package.PackageMapper
-import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 
@@ -45,12 +44,12 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext = do
+test_200 appContext =
   it "HTTP 200 OK" $
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = toDetailDTO (toPackage netherlandsPackageV2) ["1.0.0", "2.0.0"] orgNetherlands
     let expBody = encode expDto
      -- WHEN: Call API

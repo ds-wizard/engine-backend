@@ -12,11 +12,9 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common
 
@@ -64,25 +62,7 @@ test_204 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = do
-  createInvalidJsonTest reqMethod reqUrl "password"
-  it "HTTP 400 BAD REQUEST when no hash/token is provided" $
-   -- GIVEN: Prepare request
-   do
-    let reqHeaders = [reqCtHeader]
-    -- AND: Prepare expectation
-    let expStatus = 400
-    let expHeaders = resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
-    let expBody = encode expDto
-    -- WHEN: Call API
-    response <- request reqMethod reqUrl reqHeaders reqBody
-    -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
-    -- AND: Find result in DB and compare with expectation state
-    assertPasswordOfUserInDB appContext userAlbert "password"
+test_400 appContext = createInvalidJsonTest reqMethod reqUrl "password"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

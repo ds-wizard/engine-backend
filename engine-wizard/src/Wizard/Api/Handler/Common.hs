@@ -9,14 +9,12 @@ import Servant (ServerError(..))
 import Data.Time
 import LensesConfig
 import Shared.Api.Handler.Common
-import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Localization.Messages.Internal
+import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
-import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
@@ -60,7 +58,7 @@ getAuthServiceExecutor (Just token) callback = do
   user <- getCurrentUser token
   callback (runInAuthService user)
 getAuthServiceExecutor Nothing _ =
-  throwError =<< (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+  throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getServiceTokenOrAuthServiceExecutor ::
      Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
@@ -95,7 +93,7 @@ getCurrentUserUuid tokenHeader = do
   let userUuidMaybe = separateToken tokenHeader >>= getUserUuidFromToken
   case userUuidMaybe of
     Just userUuid -> return userUuid
-    Nothing -> throwError =<< (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 isAdmin :: AppContextM Bool
 isAdmin = do
@@ -119,8 +117,7 @@ checkServiceToken' mTokenHeader = do
   case mToken of
     Just _ -> return ()
     Nothing ->
-      throwError =<<
-      (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN')
+      throwError =<< (sendError . UnauthorizedError $ _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN)
 
 validateServiceToken :: ServerConfig -> String -> Maybe String
 validateServiceToken serverConfig token =

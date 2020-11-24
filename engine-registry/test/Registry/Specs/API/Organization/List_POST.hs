@@ -4,6 +4,7 @@ module Registry.Specs.API.Organization.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -19,12 +20,12 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import Shared.Model.Error.Error
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /organizations
@@ -89,7 +90,7 @@ test_400_invalid_organizationId appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("organizationId", _ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT)]
+    let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORGANIZATION_ID_FORMAT])
     let expBody = encode expDto
      -- AND: Prepare DB
     runInContextIO deleteOrganizations appContext
@@ -113,8 +114,7 @@ test_400_organizationId_duplication appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          createValidationError [] [("organizationId", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Organization" orgId)]
+    let expDto = ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__ORGANIZATION_ID_UNIQUENESS orgId])
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -138,7 +138,7 @@ test_400_email_duplication appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" orgEmail)]
+    let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

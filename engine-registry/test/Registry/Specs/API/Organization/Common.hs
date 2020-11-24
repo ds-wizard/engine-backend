@@ -6,7 +6,6 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Shared.Api.Resource.Error.ErrorDTO ()
 
 import Registry.Specs.API.Common
 

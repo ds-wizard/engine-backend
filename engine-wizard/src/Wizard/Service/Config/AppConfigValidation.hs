@@ -3,6 +3,7 @@ module Wizard.Service.Config.AppConfigValidation where
 import Control.Lens ((^.))
 import Control.Monad.Except (throwError)
 import Data.Foldable (forM_)
+import qualified Data.Map.Strict as M
 import Data.Maybe (isJust)
 import Text.Regex (matchRegex, mkRegex)
 
@@ -22,6 +23,6 @@ isValidOrganizationId :: String -> Maybe AppError
 isValidOrganizationId kmId =
   if isJust $ matchRegex validationRegex kmId
     then Nothing
-    else Just $ ValidationError [] [("organizationId", _ERROR_VALIDATION__INVALID_ORG_ID_FORMAT)]
+    else Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORG_ID_FORMAT])
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"

@@ -4,6 +4,7 @@ module Registry.Specs.API.Organization.Detail_PUT
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -20,11 +21,11 @@ import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import Shared.Model.Error.Error
 
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}
@@ -83,7 +84,7 @@ test_400 appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("email", _ERROR_VALIDATION__ENTITY_UNIQUENESS "Email" orgEmail)]
+    let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__ORGANIZATION_EMAIL_UNIQUENESS orgEmail])
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

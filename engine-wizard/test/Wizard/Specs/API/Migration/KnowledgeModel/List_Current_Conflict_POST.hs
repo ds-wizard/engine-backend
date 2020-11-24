@@ -13,6 +13,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import Wizard.Localization.Messages.Public
@@ -21,7 +22,6 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
@@ -85,7 +85,7 @@ test_400 appContext = do
       -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
+    let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__EVENT_UUIDS_MISMATCH
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithFullDB appContext
@@ -103,7 +103,7 @@ test_400 appContext = do
       -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
+    let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__EDIT_ACTION_HAS_TO_PROVIDE_TARGET_EVENT
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithFullDB appContext
@@ -118,7 +118,7 @@ test_400 appContext = do
    do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE
+    let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__NO_CONFLICTS_TO_SOLVE
     let expBody = encode expDto
     -- AND: Prepare database
     let branchUuid = U.toString $ amsterdamBranch ^. uuid

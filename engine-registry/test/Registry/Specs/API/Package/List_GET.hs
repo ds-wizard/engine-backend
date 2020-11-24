@@ -14,7 +14,6 @@ import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Package.PackageMapper
-import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
 
@@ -47,7 +46,7 @@ test_200 appContext = do
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           [toSimpleDTO (toPackage globalPackage) orgGlobal, toSimpleDTO (toPackage netherlandsPackageV2) orgNetherlands]
     let expBody = encode expDto
@@ -65,7 +64,7 @@ test_200 appContext = do
     let reqHeaders = [reqCtHeader, reqAdminAuthHeader] ++ reqStatisticsHeader
      -- AND: Prepare expectation
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
           [toSimpleDTO (toPackage globalPackage) orgGlobal, toSimpleDTO (toPackage netherlandsPackageV2) orgNetherlands]
     let expBody = encode expDto

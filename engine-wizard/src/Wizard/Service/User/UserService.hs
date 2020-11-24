@@ -24,6 +24,7 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserPasswordDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
+import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
@@ -113,7 +114,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl = do
           let updatedUser = fromUpdateUserExternalDTO user firstName lastName mImageUrl serviceId now
           updateUserById updatedUser
           return $ toDTO updatedUser
-        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+        else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     Nothing -> do
       serverConfig <- asks _appContextServerConfig
       uUuid <- liftIO generateUuid
@@ -165,19 +166,12 @@ changeUserPasswordByAdmin userUuid reqDto = do
 
 changeUserPasswordByHash :: String -> Maybe String -> UserPasswordDTO -> AppContextM ()
 changeUserPasswordByHash userUuid maybeHash userPasswordDto = do
-  akHash <- validateHash maybeHash
-  user <- findUserById userUuid
-  actionKey <- getActionKeyByHash akHash
+  actionKey <- getActionKeyByHash maybeHash
+  user <- findUserById (U.toString $ actionKey ^. userId)
   passwordHash <- generatePasswordHash (userPasswordDto ^. password)
   now <- liftIO getCurrentTime
   updateUserPasswordById userUuid passwordHash now
-  deleteActionKey (actionKey ^. hash)
-  return ()
-  where
-    validateHash maybeHash =
-      case maybeHash of
-        Just akHash -> return akHash
-        Nothing -> throwError . UserError $ _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+  deleteActionKeyByHash (actionKey ^. hash)
 
 resetUserPassword :: ActionKeyDTO -> AppContextM ()
 resetUserPassword reqDto = do
@@ -189,18 +183,12 @@ resetUserPassword reqDto = do
 
 changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM UserStateDTO
 changeUserState userUuid maybeHash userStateDto = do
-  akHash <- validateHash maybeHash
-  user <- findUserById userUuid
-  actionKey <- getActionKeyByHash akHash
+  actionKey <- getActionKeyByHash maybeHash
+  user <- findUserById (U.toString $ actionKey ^. userId)
   updatedUser <- updateUserTimestamp $ user & active .~ (userStateDto ^. active)
   updateUserById updatedUser
-  deleteActionKey (actionKey ^. hash)
+  deleteActionKeyByHash (actionKey ^. hash)
   return userStateDto
-  where
-    validateHash maybeHash =
-      case maybeHash of
-        Just akHash -> return akHash
-        Nothing -> throwError $ UserError _ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS
 
 deleteUser :: String -> AppContextM ()
 deleteUser userUuid = do

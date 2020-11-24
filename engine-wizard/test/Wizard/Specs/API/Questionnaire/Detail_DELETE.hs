@@ -15,6 +15,7 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -27,7 +28,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -98,7 +98,7 @@ test_400 appContext =
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
+    let expDto = UserError _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
     let expBody = encode expDto
     -- AND: Prepare DB
     runInContextIO (insertQuestionnaire questionnaire4) appContext
@@ -137,7 +137,7 @@ create_test_403 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

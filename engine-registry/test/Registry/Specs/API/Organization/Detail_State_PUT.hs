@@ -18,17 +18,17 @@ import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 
 import Registry.Specs.API.ActionKey.Common
 import Registry.Specs.API.Common
 import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/state
@@ -38,7 +38,6 @@ detail_state_put appContext =
   describe "PUT /organizations/{orgId}/state" $ do
     test_200 appContext
     test_400 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -86,7 +85,7 @@ test_400 appContext = do
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_ORGANIZATION__REQUIRED_HASH_IN_QUERY_PARAMS
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
     let expBody = encode expDto
      -- AND: Prepare DB
     runInContextIO (insertActionKey regActionKey) appContext
@@ -100,22 +99,22 @@ test_400 appContext = do
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfActionKeyInDB appContext regActionKey
     assertExistenceOfOrganizationInDB appContext (orgGlobal & active .~ False)
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext = do
-  createNotFoundTest
-    reqMethod
-    "/organizations/nonexisting.organization/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-    reqHeaders
-    reqBody
-    "organization"
-    "nonexisting.organization"
-  createNotFoundTest
-    reqMethod
-    "/organizations/global/state?hash=1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
-    reqHeaders
-    reqBody
-    "actionKey"
-    "1ba90a0f-845e-41c7-9f1c-a55fc5a0554a"
+  it "HTTP 400 BAD REQUEST when hash is not in DB" $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = "/organizations/global/state?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+     -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
+    let expBody = encode expDto
+     -- AND: Prepare DB
+    runInContextIO (updateOrganization (orgGlobal & active .~ False)) appContext
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertExistenceOfOrganizationInDB appContext (orgGlobal & active .~ False)

@@ -14,6 +14,7 @@ import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Error.Error
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -24,7 +25,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -109,7 +109,7 @@ test_403 appContext =
        -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Missing permission: DOC_PERM")
+    let expDto = ForbiddenError (_ERROR_VALIDATION__FORBIDDEN "Missing permission: DOC_PERM")
     let expBody = encode expDto
       -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

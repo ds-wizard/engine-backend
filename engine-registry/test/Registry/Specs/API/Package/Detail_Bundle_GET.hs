@@ -15,7 +15,6 @@ import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailJM ()
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Model.Context.AppContext
-import Shared.Api.Resource.Error.ErrorDTO ()
 import Shared.Api.Resource.PackageBundle.PackageBundleJM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
@@ -54,7 +53,7 @@ test_200 appContext =
      -- GIVEN: Prepare expectation
    do
     let expStatus = 200
-    let expHeaders = [resCtHeader] ++ resCorsHeaders
+    let expHeaders = resCtHeader : resCorsHeaders
     let expDto = toDTO netherlandsPackageV2Budle
     let expBody = encode expDto
      -- WHEN: Call API

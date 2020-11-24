@@ -1,7 +1,7 @@
 module Registry.Specs.API.Common where
 
 import Control.Lens ((^.))
-import Data.Aeson (encode)
+import Data.Aeson ((.=), encode, object)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.CaseInsensitive as CI
@@ -20,10 +20,10 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 
 startWebApp :: AppContext -> IO Application
 startWebApp appContext = do
@@ -62,7 +62,7 @@ createInvalidJsonTest reqMethod reqUrl missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeaderUtf8 : resCorsHeaders
-    let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
+    let expDto = object ["status" .= 400, "message" .= "Problem in deserialization of JSON"]
     let expBody = encode expDto
       -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -77,7 +77,7 @@ createForbiddenTest reqMethod reqUrl reqHeaders reqBody forbiddenReason =
    do
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError (_ERROR_VALIDATION__FORBIDDEN forbiddenReason)
+    let expDto = ForbiddenError (_ERROR_VALIDATION__FORBIDDEN forbiddenReason)
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

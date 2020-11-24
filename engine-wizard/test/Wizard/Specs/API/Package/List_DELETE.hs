@@ -14,6 +14,7 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.Branch.BranchDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
@@ -21,7 +22,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -79,7 +79,7 @@ test_400 appContext =
     let expStatus = 400
     let expHeaders = resCorsHeaders
     let expDto =
-          createUserError $
+          UserError $
           _ERROR_SERVICE_PKG__PKG_CANT_BE_DELETED_BECAUSE_IT_IS_USED_BY_SOME_OTHER_ENTITY
             (netherlandsPackage ^. pId)
             "knowledge model"

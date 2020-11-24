@@ -17,15 +17,16 @@ import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
-import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Registry.Service.Organization.OrganizationMapper
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 
 import Registry.Specs.API.ActionKey.Common
 import Registry.Specs.API.Common
+import Registry.Specs.API.Organization.Common
 import Registry.Specs.Common
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- PUT /organizations/{orgId}/token
@@ -35,7 +36,6 @@ detail_token_put appContext =
   describe "PUT /organizations/{orgId}/token" $ do
     test_200 appContext
     test_400 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -72,7 +72,7 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext =
+test_400 appContext = do
   it "HTTP 400 BAD REQUEST when hash is absent" $
      -- GIVEN: Prepare request
    do
@@ -80,7 +80,7 @@ test_400 appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_ORGANIZATION__REQUIRED_HASH_IN_QUERY_PARAMS
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
     let expBody = encode expDto
      -- AND: Prepare DB
     runInContextIO (insertActionKey forgTokActionKey) appContext
@@ -92,22 +92,20 @@ test_400 appContext =
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfActionKeyInDB appContext forgTokActionKey
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext = do
-  createNotFoundTest
-    reqMethod
-    "/organizations/nonexisting.organization/token?hash=5b1aff0d-b5e3-436d-b913-6b52d3cbad5f"
-    reqHeaders
-    reqBody
-    "organization"
-    "nonexisting.organization"
-  createNotFoundTest
-    reqMethod
-    "/organizations/global/token?hash=5b1aff0d-b5e3-436d-b913-6b52d3cbad5f"
-    reqHeaders
-    reqBody
-    "actionKey"
-    "5b1aff0d-b5e3-436d-b913-6b52d3cbad5f"
+  it "HTTP 400 BAD REQUEST when hash is not in DB" $
+     -- GIVEN: Prepare request
+   do
+    let reqUrl = "/organizations/global/token?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+     -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCtHeader : resCorsHeaders
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
+    let expBody = encode expDto
+     -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+     -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+     -- AND: Find result in DB and compare with expectation state
+    assertExistenceOfOrganizationInDB appContext orgGlobal

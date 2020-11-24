@@ -41,19 +41,19 @@ generateTokenFromCredentials tokenCreateDto = do
       mUser <- findUserByEmail' (toLower <$> tokenCreateDto ^. email)
       case mUser of
         Just user -> return user
-        Nothing -> throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        Nothing -> throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     -- ------------------------------------------------------------
     checkIsUserActive user =
       if user ^. active
         then return ()
-        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
+        else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     -- ------------------------------------------------------------
     authenticateUser user = do
       let incomingPassword = BS.pack (tokenCreateDto ^. password)
       let passwordHashFromDB = BS.pack (user ^. passwordHash)
       if verifyPassword incomingPassword passwordHashFromDB
         then return ()
-        else throwError $ UnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+        else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 
 generateTokenFromUser :: UserDTO -> AppContextM TokenDTO
 generateTokenFromUser user = do

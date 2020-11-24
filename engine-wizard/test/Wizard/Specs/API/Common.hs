@@ -1,7 +1,7 @@
 module Wizard.Specs.API.Common where
 
 import Control.Lens ((&), (.~), (^.))
-import Data.Aeson (encode)
+import Data.Aeson ((.=), encode, object)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Either (isRight)
@@ -15,6 +15,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Bootstrap.Web
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -25,7 +26,6 @@ import Wizard.Model.User.User
 import Wizard.Service.User.UserService
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.Common
 
 startWebApp :: AppContext -> IO Application
@@ -76,7 +76,7 @@ createInvalidJsonTest reqMethod reqUrl missingField =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeaderUtf8 : resCorsHeaders
-    let expDto = createUserError _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ
+    let expDto = object ["status" .= 400, "message" .= "Problem in deserialization of JSON"]
     let expBody = encode expDto
       -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -93,7 +93,7 @@ createNoPermissionTest appContext reqMethod reqUrl otherHeaders reqBody missingP
     runInContextIO (updateUserById user) appContext
     let reqHeaders = reqAuthHeader : otherHeaders
     -- GIVEN: Prepare expectation
-    let expDto = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
+    let expDto = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN ("Missing permission: " ++ missingPerm)
     let expBody = encode expDto
     let expHeaders = resCtHeader : resCorsHeaders
     let expStatus = 403

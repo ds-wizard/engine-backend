@@ -13,4 +13,4 @@ getCurrentOrganization = do
   mCurrentOrganization <- asks _appContextCurrentOrganization
   case mCurrentOrganization of
     Just org -> return org
-    Nothing -> throwError $ UserError _ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION
+    Nothing -> throwError $ ForbiddenError _ERROR_MODEL_APPCONTEXT__MISSING_ORGANIZATION

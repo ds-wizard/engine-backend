@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -16,7 +17,6 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireService
 
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Common
@@ -71,7 +71,7 @@ test403 appContext = do
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)
     -- AND: Prepare expectation
-    let expError = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
+    let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
     -- WHEN: Update permission
     runInContext (modifyQuestionnaire (U.toString $ updatedQtn ^. uuid) (toChangeDTO updatedQtn)) appContext
     -- THEN: Read response
@@ -89,7 +89,7 @@ create_403_no_perm title appContext qtn authToken errorMessage =
     runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     -- AND: Prepare expectation
-    let expError = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
+    let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
     -- WHEN: Connect to websocket
     (c1, s1) <- createConnection appContext (reqUrlT (qtn ^. uuid) authToken)
     -- THEN: Read response
@@ -106,7 +106,7 @@ test404 appContext = do
    do
     let nonExistingQtnUuid = "fd5ea37c-852a-4174-9d65-2bf23202541d"
     -- AND: Prepare expectation
-    let expError = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" nonExistingQtnUuid)
+    let expError = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" nonExistingQtnUuid)
     -- WHEN:
     (c1, s1) <- createConnection appContext (reqUrlT (u' nonExistingQtnUuid) (Just reqAuthToken))
     -- THEN:
@@ -122,7 +122,7 @@ test404 appContext = do
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)
     -- AND: Prepare expectation
-    let expError = createNotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED (U.toString $ qtn ^. uuid))
+    let expError = NotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED (U.toString $ qtn ^. uuid))
     -- WHEN: Update permission
     runInContext (deleteQuestionnaire (U.toString $ qtn ^. uuid)) appContext
     -- THEN: Read response

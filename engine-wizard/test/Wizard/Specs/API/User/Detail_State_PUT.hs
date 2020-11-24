@@ -11,6 +11,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
@@ -30,7 +32,6 @@ detail_state_PUT appContext =
   describe "PUT /users/{userId}/state?hash={hash}" $ do
     test_200 appContext
     test_400 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -72,16 +73,46 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400 appContext = createInvalidJsonTest reqMethod reqUrl "active"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext =
-  createNotFoundTest
-    reqMethod
-    "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/state?hash="
-    reqHeaders
-    reqBody
-    "user"
-    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+test_400 appContext = do
+  createInvalidJsonTest reqMethod reqUrl "active"
+  it "HTTP 400 BAD REQUEST when hash is not provided" $
+    -- GIVEN: Prepare url
+   do
+    let reqUrlWithoutHash = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state"
+    -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
+    let expBody = encode expDto
+     -- AND: Prepare DB
+    runInContextIO (insertActionKey regActionKey) appContext
+    runInContextIO (updateUserById (userAlbert & active .~ False)) appContext
+    -- WHEN: Call API
+    response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody
+    -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+    -- AND: Find result in DB and compare with expectation state
+    assertExistenceOfUserInDB appContext (userAlbert & active .~ False)
+  it "HTTP 400 BAD REQUEST when hash is not in DB" $
+   -- GIVEN: Prepare request
+   do
+    let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/state?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+    let reqHeaders = [reqCtHeader]
+    -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
+    let expBody = encode expDto
+     -- AND: Prepare DB
+    runInContextIO (insertActionKey regActionKey) appContext
+    runInContextIO (updateUserById (userAlbert & active .~ False)) appContext
+    -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+    -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+    -- AND: Find result in DB and compare with expectation state
+    assertExistenceOfUserInDB appContext (userAlbert & active .~ False)
