@@ -12,13 +12,13 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Database.Migration.Development.Token.Data.Tokens
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 
 -- ------------------------------------------------------------------------
@@ -28,8 +28,7 @@ list_post :: AppContext -> SpecWith ((), Application)
 list_post appContext =
   describe "POST /tokens" $ do
     test_201 appContext
-    test_400_invalid_json appContext
-    test_401_bad_credentials appContext
+    test_400 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -64,21 +63,17 @@ test_201 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_400_invalid_json appContext = createInvalidJsonTest reqMethod reqUrl "password"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401_bad_credentials appContext =
-  it "HTTP 401 UNAUTHORIZED when invalid creadentials are provided" $
+test_400 appContext = do
+  createInvalidJsonTest reqMethod reqUrl "password"
+  it "HTTP 400 BAD REQUEST when invalid creadentials are provided" $
      -- GIVEN: Prepare request
    do
     let reqDto = albertCreateToken & email .~ "albert.einstein@example.com2"
     let reqBody = encode reqDto
      -- AND: Prepare expectation
-    let expStatus = 401
+    let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUnauthorizedError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+    let expDto = UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

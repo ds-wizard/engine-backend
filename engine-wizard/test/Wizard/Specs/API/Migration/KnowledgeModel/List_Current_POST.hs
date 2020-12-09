@@ -14,6 +14,7 @@ import LensesConfig hiding (request)
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
@@ -26,7 +27,6 @@ import Wizard.Service.Branch.BranchService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Migration.KnowledgeModel.Common
 import Wizard.Specs.Common
@@ -88,7 +88,7 @@ test_400 appContext = do
    do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS
+    let expDto = UserError _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithFullDB appContext
@@ -106,7 +106,7 @@ test_400 appContext = do
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER
+    let expDto = UserError _ERROR_SERVICE_MIGRATION_KM__TARGET_PKG_IS_NOT_HIGHER
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithEmptyDB appContext
@@ -121,7 +121,7 @@ test_400 appContext = do
    do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
+    let expDto = UserError _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE
     let expBody = encode expDto
     -- AND: Prepare database
     let branch = amsterdamBranchCreate {_branchCreateDTOPreviousPackageId = Nothing}
@@ -156,7 +156,7 @@ test_404 appContext = do
    do
     let expStatus = 404
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "org.nl:core-nl:2.0.0")
+    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "org.nl:core-nl:2.0.0")
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithEmptyDB appContext

@@ -15,11 +15,11 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Model.Error.Error
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
@@ -31,9 +31,9 @@ detail_pull_post :: AppContext -> SpecWith ((), Application)
 detail_pull_post appContext =
   describe "POST /packages/{pkgId}/pull" $ do
     test_200 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -71,25 +71,15 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext =
-  it "HTTP 404 NOT FOUND - Package was not found in Registry" $
+test_400 appContext =
+  it "HTTP 400 BAD REQUEST - Package was not found in Registry" $
       -- GIVEN: Prepare request
    do
     let reqUrl = "/packages/global:non-existing-package:1.0.0/pull"
      -- AND: Prepare expectation
-    let expStatus = 404
+    let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createNotExistsError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "global:non-existing-package:1.0.0")
+    let expDto = UserError (_ERROR_SERVICE_PB__PULL_NON_EXISTING_PKG "global:non-existing-package:1.0.0")
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -97,3 +87,13 @@ test_404 appContext =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_WRITE_PERM"

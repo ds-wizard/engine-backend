@@ -10,6 +10,7 @@ import LensesConfig
 import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -17,7 +18,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEve
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Common
@@ -78,7 +78,7 @@ create_403_no_perm title appContext qtn authToken errorMessage =
     runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     -- AND: Prepare expectation
-    let expError = createForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
+    let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
     -- AND: Connect to websocket
     (c1, s1) <- createConnection appContext (reqUrlT (qtn ^. uuid) authToken)
     read_SetUserList c1 0

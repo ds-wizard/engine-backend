@@ -13,13 +13,11 @@ import qualified Test.Hspec.Expectations.Pretty as HP
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Util.List (elems)
-
-import SharedTest.Specs.Common
 
 reqCtHeader :: Header
 reqCtHeader = contentTypeHeaderJSON
@@ -59,7 +57,7 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
    do
     let expStatus = 401
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = UnauthorizedErrorDTO "Unable to get token"
+    let expDto = UnauthorizedError _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -74,7 +72,7 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator 
    do
     let expStatus = 404
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createNotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
+    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -106,8 +104,8 @@ assertResponse ::
   -> WaiSession () ()
 assertResponse = createAssertResponse fieldModifier fieldModifier
   where
-    fieldModifier body fields =
-      fmap (\(k, v) -> (T.unpack k, v)) . HashMap.toList . foldl (\acc f -> HashMap.delete (T.pack f) acc) body $ fields
+    fieldModifier body =
+      fmap (\(k, v) -> (T.unpack k, v)) . HashMap.toList . foldl (\acc f -> HashMap.delete (T.pack f) acc) body
 
 assertResponse' ::
      (ToJSON expDto, FromJSON expType)
@@ -120,10 +118,8 @@ assertResponse' ::
   -> WaiSession () ()
 assertResponse' = createAssertResponse expFieldModifier resFieldModifier
   where
-    expFieldModifier expBody fields =
-      fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ HashMap.lookup (T.pack f) expBody)) fields
-    resFieldModifier resBody fields =
-      fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ HashMap.lookup (T.pack f) resBody)) fields
+    expFieldModifier expBody = fmap (\f -> (f, fromMaybe "EXPECTED_FIELD_MISSING" $ HashMap.lookup (T.pack f) expBody))
+    resFieldModifier resBody = fmap (\f -> (f, fromMaybe "RESULT_FIELD_MISSING" $ HashMap.lookup (T.pack f) resBody))
 
 createAssertResponse ::
      (ToJSON expDto, FromJSON expType)

@@ -18,6 +18,7 @@ import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -35,7 +36,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Document.DocumentMapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -133,7 +133,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError errorMessage
+    let expDto = ForbiddenError errorMessage
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

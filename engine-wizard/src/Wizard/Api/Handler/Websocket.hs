@@ -10,9 +10,8 @@ import qualified Data.UUID as U
 import Network.WebSockets
 import Prelude hiding (log)
 
-import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Localization.Messages.Internal
+import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
@@ -50,9 +49,9 @@ handleWebsocketMessage entityId connectionUuid connection handleClose disconnect
           if T.isInfixOf "ping" (T.pack error)
             then return ()
             else do
-              log connectionUuid _ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED
+              log connectionUuid "Deserialization failed"
               log connectionUuid (show error)
-              let error = UserErrorDTO _ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED
+              let error = UserError _ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED
               let msg = createErrorWebsocketMessage connectionUuid connection entityId error
               sendMessage disconnectUser msg
           continue

@@ -1,5 +1,6 @@
 module Wizard.Specs.Service.Config.AppConfigValidationSpec where
 
+import qualified Data.Map.Strict as M
 import Test.Hspec
 
 import Shared.Localization.Messages.Public
@@ -8,7 +9,8 @@ import Wizard.Service.Config.AppConfigValidation
 
 appConfigValidationSpec =
   describe "AppConfigValidation" $ do
-    let validationError = Just $ ValidationError [] [("organizationId", _ERROR_VALIDATION__INVALID_ORG_ID_FORMAT)]
+    let validationError =
+          Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORG_ID_FORMAT])
     it "isValidOrganizationId" $ do
       isValidOrganizationId "cz" `shouldBe` Nothing
       isValidOrganizationId "base.global" `shouldBe` Nothing

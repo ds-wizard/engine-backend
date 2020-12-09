@@ -12,9 +12,9 @@ import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
+import Registry.Database.DAO.ActionKey.ActionKeyDAO
 import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
-import Registry.Localization.Messages.Public
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.AppContextHelpers
@@ -86,18 +86,18 @@ deleteOrganization orgId = do
 
 changeOrganizationTokenByHash :: String -> Maybe String -> AppContextM OrganizationDTO
 changeOrganizationTokenByHash orgId maybeHash = do
-  akHash <- extractHash maybeHash
-  org <- findOrganizationByOrgId orgId
-  actionKey <- getActionKeyByHash akHash
+  actionKey <- getActionKeyByHash maybeHash
+  org <- findOrganizationByOrgId (actionKey ^. organizationId)
   orgToken <- generateNewOrgToken
   now <- liftIO getCurrentTime
   let updatedOrg = (org & token .~ orgToken) & updatedAt .~ now
   updateOrganization updatedOrg
-  deleteActionKey (actionKey ^. hash)
+  deleteActionKeyByHash (actionKey ^. hash)
   return . toDTO $ updatedOrg
 
 resetOrganizationToken :: ActionKeyDTO -> AppContextM ()
 resetOrganizationToken reqDto = do
+  validateOrganizationEmailExistence (reqDto ^. email)
   org <- findOrganizationByEmail (reqDto ^. email)
   actionKey <- createActionKey (org ^. organizationId) ForgottenTokenActionKey
   _ <-
@@ -106,13 +106,12 @@ resetOrganizationToken reqDto = do
   return ()
 
 changeOrganizationState :: String -> Maybe String -> OrganizationStateDTO -> AppContextM OrganizationDTO
-changeOrganizationState organizationId maybeHash reqDto = do
-  akHash <- extractHash maybeHash
-  org <- findOrganizationByOrgId organizationId
-  actionKey <- getActionKeyByHash akHash
+changeOrganizationState orgId maybeHash reqDto = do
+  actionKey <- getActionKeyByHash maybeHash
+  org <- findOrganizationByOrgId (actionKey ^. organizationId)
   updatedOrg <- updateOrgTimestamp $ org & active .~ (reqDto ^. active)
   updateOrganization updatedOrg
-  deleteActionKey (actionKey ^. hash)
+  deleteActionKeyByHash (actionKey ^. hash)
   return . toDTO $ updatedOrg
 
 -- --------------------------------
@@ -140,8 +139,3 @@ updateOrgTimestamp :: Organization -> AppContextM Organization
 updateOrgTimestamp user = do
   now <- liftIO getCurrentTime
   return $ user & updatedAt .~ now
-
-extractHash maybeHash =
-  case maybeHash of
-    Just hash -> return hash
-    Nothing -> throwError $ UserError _ERROR_SERVICE_ORGANIZATION__REQUIRED_HASH_IN_QUERY_PARAMS

@@ -4,6 +4,7 @@ module Wizard.Specs.API.User.Detail_PUT
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -12,6 +13,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -20,7 +22,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.User.UserMapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
@@ -84,7 +85,7 @@ test_400 appContext = do
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createValidationError [] [("email", _ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email)]
+    let expDto = ValidationError [] (M.singleton "email" [_ERROR_VALIDATION__USER_EMAIL_UNIQUENESS $ reqDto ^. email])
     let expBody = encode expDto
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext

@@ -9,6 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
@@ -18,7 +19,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
@@ -83,7 +83,7 @@ test_401 appContext =
      -- GIVEN: Prepare expectation
     let expStatus = 401
     let expHeaders = resCorsHeaders
-    let expDto = createUnauthorizedError _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN
+    let expDto = UnauthorizedError _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

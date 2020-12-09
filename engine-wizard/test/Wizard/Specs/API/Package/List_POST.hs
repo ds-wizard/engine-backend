@@ -20,6 +20,7 @@ import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.PackageBundle.Data.PackageBundles
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Service.Package.PackageMapper
 import qualified Shared.Service.PackageBundle.PackageBundleMapper as PBM
 import Shared.Util.String (replace)
@@ -28,7 +29,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Package.Common
 import Wizard.Specs.Common
@@ -216,7 +216,7 @@ test_400 appContext =
       -- GIVEN: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
+    let expDto = UserError . _ERROR_UTIL_JSON__MISSING_FIELD_IN_OBJECT $ "packages"
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -234,7 +234,7 @@ test_400_main_package_duplication appContext =
    do
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
+    let expDto = UserError $ _ERROR_VALIDATION__PKG_ID_UNIQUENESS (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext
@@ -260,7 +260,7 @@ test_400_missing_previous_package appContext =
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
-          createUserError $
+          UserError $
           _ERROR_SERVICE_PKG__IMPORT_PREVIOUS_PKG_AT_FIRST (netherlandsPackage ^. pId) (netherlandsPackageV2 ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
@@ -286,7 +286,7 @@ test_400_bad_package_coordinates appContext =
      -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createUserError $ _ERROR_VALIDATION__COORDINATE_MISMATCH (netherlandsPackage ^. pId)
+    let expDto = UserError $ _ERROR_VALIDATION__COORDINATE_MISMATCH (netherlandsPackage ^. pId)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

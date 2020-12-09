@@ -18,8 +18,8 @@ findActionKeys = createFindEntitiesFn collection
 findActionKeyById :: String -> AppContextM ActionKey
 findActionKeyById = createFindEntityByFn collection entityName "uuid"
 
-findActionKeyByHash :: String -> AppContextM ActionKey
-findActionKeyByHash = createFindEntityByFn collection entityName "hash"
+findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
+findActionKeyByHash' = createFindEntityByFn' collection entityName "hash"
 
 insertActionKey :: ActionKey -> AppContextM Value
 insertActionKey = createInsertFn collection

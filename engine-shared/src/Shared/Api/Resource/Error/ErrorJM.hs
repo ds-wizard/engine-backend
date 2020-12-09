@@ -4,35 +4,45 @@ import Control.Monad
 import Data.Aeson
 import Network.HTTP.Types.Status
 
-import Shared.Api.Resource.Error.ErrorDTO
+import Shared.Api.Resource.Localization.LocaleRecordJM ()
+import Shared.Model.Error.Error
 
-instance ToJSON ErrorDTO where
-  toJSON AcceptedErrorDTO = object ["status" .= 202]
-  toJSON (FoundErrorDTO _) = object ["status" .= 302]
-  toJSON (ValidationErrorDTO formErrors fieldErrors) =
-    object ["status" .= 400, "formErrors" .= formErrors, "fieldErrors" .= fieldErrors]
-  toJSON (UserErrorDTO errorMessage) = object ["status" .= 400, "message" .= errorMessage]
-  toJSON (UnauthorizedErrorDTO errorMessage) = object ["status" .= 401, "message" .= errorMessage]
-  toJSON (ForbiddenErrorDTO errorMessage) = object ["status" .= 403, "message" .= errorMessage]
-  toJSON (NotExistsErrorDTO errorMessage) = object ["status" .= 404, "message" .= errorMessage]
-  toJSON (GeneralServerErrorDTO errorMessage) = object ["status" .= 500]
-  toJSON (HttpClientErrorDTO status errorMessage) = object ["statusCode" .= statusCode status, "source" .= "external"]
+instance ToJSON AppError where
+  toJSON AcceptedError = object ["status" .= 202]
+  toJSON (FoundError _) = object ["status" .= 302]
+  toJSON (UserError error) = object ["status" .= 400, "type" .= "UserSimpleError", "error" .= error]
+  toJSON (ValidationError formErrors fieldErrors) =
+    object ["status" .= 400, "type" .= "UserFormError", "formErrors" .= formErrors, "fieldErrors" .= fieldErrors]
+  toJSON (UnauthorizedError message) = object ["status" .= 401, "message" .= message]
+  toJSON (ForbiddenError message) = object ["status" .= 403, "message" .= message]
+  toJSON (NotExistsError message) = object ["status" .= 404, "message" .= message]
+  toJSON (GeneralServerError _) = object ["status" .= 500]
+  toJSON (HttpClientError status _) = object ["statusCode" .= statusCode status, "source" .= "external"]
 
-instance FromJSON ErrorDTO where
+instance FromJSON AppError where
   parseJSON (Object o) = do
     status <- o .: "status"
-    message <- o .:? "message" .!= ""
-    formErrors <- o .:? "formErrors" .!= []
-    fieldErrors <- o .:? "fieldErrors" .!= []
     external <- o .:? "source" .!= "internal"
-    case (status, message, formErrors, fieldErrors, external) of
-      (_, _, _, _, "external") -> return $ HttpClientErrorDTO (toEnum status) message
-      (202, _, _, _, _) -> return AcceptedErrorDTO
-      (302, _, _, _, _) -> return $ FoundErrorDTO ""
-      (400, _, [], [], _) -> return $ UserErrorDTO message
-      (400, "", _, _, _) -> return $ ValidationErrorDTO formErrors fieldErrors
-      (401, _, _, _, _) -> return $ UnauthorizedErrorDTO message
-      (403, _, _, _, _) -> return $ ForbiddenErrorDTO message
-      (404, _, _, _, _) -> return $ NotExistsErrorDTO message
-      (500, _, _, _, _) -> return $ GeneralServerErrorDTO message
+    userErrorType <- o .:? "type" .!= "UserSimpleError"
+    case (status, userErrorType, external) of
+      (_, _, "external") -> return $ HttpClientError (toEnum status) ""
+      (202, _, _) -> return AcceptedError
+      (302, _, _) -> return $ FoundError ""
+      (400, "UserSimpleError", _) -> do
+        error <- o .: "error"
+        return . UserError $ error
+      (400, "UserFormError", _) -> do
+        formErrors <- o .: "formErrors"
+        fieldErrors <- o .: "fieldErrors"
+        return $ ValidationError formErrors fieldErrors
+      (401, _, _) -> do
+        message <- o .: "message"
+        return . UnauthorizedError $ message
+      (403, _, _) -> do
+        message <- o .: "message"
+        return . ForbiddenError $ message
+      (404, _, _) -> do
+        message <- o .: "message"
+        return . NotExistsError $ message
+      (500, _, _) -> return $ GeneralServerError ""
   parseJSON _ = mzero

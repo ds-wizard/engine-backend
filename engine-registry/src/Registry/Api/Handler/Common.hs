@@ -8,15 +8,14 @@ import Servant (throwError)
 import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Database.DAO.Organization.OrganizationDAO
-import Registry.Localization.Messages.Internal
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
 import Registry.Util.Logger
 import Shared.Api.Handler.Common
-import Shared.Api.Resource.Error.ErrorDTO
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Localization.Messages.Internal
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Util.Token
 import Shared.Util.Uuid
 
@@ -59,7 +58,7 @@ getAuthServiceExecutor (Just token) callback = do
   org <- getCurrentOrganization token
   callback (runInAuthService org)
 getAuthServiceExecutor Nothing _ =
-  throwError =<< (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+  throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getCurrentOrganization :: String -> BaseContextM Organization
 getCurrentOrganization tokenHeader = do
@@ -67,11 +66,11 @@ getCurrentOrganization tokenHeader = do
   mOrg <- runInUnauthService (findOrganizationByToken' orgToken)
   case mOrg of
     Just org -> return org
-    Nothing -> throwError =<< (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION)
+    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION)
 
 getCurrentOrgToken :: String -> BaseContextM String
 getCurrentOrgToken tokenHeader = do
   let orgTokenMaybe = separateToken tokenHeader
   case orgTokenMaybe of
     Just orgToken -> return orgToken
-    Nothing -> throwError =<< (sendErrorDTO . UnauthorizedErrorDTO $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
+    Nothing -> throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)

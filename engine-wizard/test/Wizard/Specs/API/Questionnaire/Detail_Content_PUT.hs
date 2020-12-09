@@ -16,6 +16,7 @@ import Test.Hspec.Wai.Matcher
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
@@ -26,7 +27,6 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
@@ -153,7 +153,7 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createForbiddenError reason
+    let expDto = ForbiddenError reason
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

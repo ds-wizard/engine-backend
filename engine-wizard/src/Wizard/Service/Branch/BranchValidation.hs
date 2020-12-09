@@ -1,5 +1,6 @@
 module Wizard.Service.Branch.BranchValidation where
 
+import qualified Data.Map.Strict as M
 import Data.Maybe
 import Text.Regex
 
@@ -15,7 +16,7 @@ isValidKmId :: String -> Maybe AppError
 isValidKmId kmId =
   if isJust $ matchRegex validationRegex kmId
     then Nothing
-    else Just $ ValidationError [] [("kmId", _ERROR_VALIDATION__INVALID_KM_ID_FORMAT)]
+    else Just $ ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__INVALID_KM_ID_FORMAT])
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$"
 
@@ -26,7 +27,7 @@ validateNewKmId kmId =
       mBranch <- findBranchByKmId' kmId
       case mBranch of
         Nothing -> return ()
-        Just _ -> throwError $ ValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS kmId)]
+        Just _ -> throwError $ ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS kmId])
     Just error -> throwError error
 
 validatePackageExistence :: Maybe String -> AppContextM ()
@@ -36,5 +37,6 @@ validatePackageExistence mPkgId =
       mPkg <- findPackageById' pkgId
       case mPkg of
         Just _ -> return ()
-        Nothing -> throwError $ ValidationError [] [("previousPackageId", _ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE)]
+        Nothing ->
+          throwError $ ValidationError [] (M.singleton "previousPackageId" [_ERROR_VALIDATION__PREVIOUS_PKG_ABSENCE])
     Nothing -> return ()

@@ -1,16 +1,26 @@
 module Wizard.Service.ActionKey.ActionKeyService where
 
+import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
 
-getActionKeyByHash :: String -> AppContextM ActionKey
-getActionKeyByHash = findActionKeyByHash
+getActionKeyByHash :: Maybe String -> AppContextM ActionKey
+getActionKeyByHash mHash =
+  case mHash of
+    Just hash -> do
+      mActionKey <- findActionKeyByHash' hash
+      case mActionKey of
+        Just actionKey -> return actionKey
+        Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
+    Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
 
 createActionKey :: U.UUID -> ActionKeyType -> AppContextM ActionKey
 createActionKey userId actionType = do
@@ -27,9 +37,3 @@ createActionKey userId actionType = do
           }
   insertActionKey actionKey
   return actionKey
-
-deleteActionKey :: String -> AppContextM ()
-deleteActionKey hash = do
-  actionKey <- getActionKeyByHash hash
-  deleteActionKeyByHash hash
-  return ()

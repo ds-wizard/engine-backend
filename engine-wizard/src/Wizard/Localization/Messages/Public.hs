@@ -19,9 +19,6 @@ _ERROR_VALIDATION__INVALID_COORDINATE_FORMAT =
 _ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT =
   LocaleRecord "error.validation.invalid_coordinate_version_format" "Version is not in the valid format" []
 
-_ERROR_VALIDATION__UNSUPPORTED_DMP_FORMAT format =
-  LocaleRecord "error.validation.unsupported_dmp_format" "This Document format (%s) is not currently supported" [format]
-
 -- Uniqueness
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
@@ -166,21 +163,12 @@ _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED =
   LocaleRecord "error.service.token.account_is_not_activated" "The account is not activated" []
 
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN =
-  LocaleRecord "error.service.typehint.bad_service_token" "Unable to get or verify service token" []
+  LocaleRecord "error.service.token.bad_service_token" "Unable to get or verify service token" []
 
 -- Template
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
   LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []
 
 -- User
-_ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS =
-  LocaleRecord
-    "error_service.user.required_admin_role_or_hash_in_query_params"
-    "You have to log in as an Administrator or you have to provide a hash in the query param"
-    []
-
-_ERROR_SERVICE_USER__REQUIRED_HASH_IN_QUERY_PARAMS =
-  LocaleRecord "error_service.user.required_hash_in_query_params" "A hash query param has to be provided" []
-
 _ERROR_SERVICE_USER__MISSING_USER =
-  LocaleRecord "error_service.user.missing_user" "You have to be log in to perform this request." []
+  LocaleRecord "error.service.user.missing_user" "You have to be log in to perform this request." []

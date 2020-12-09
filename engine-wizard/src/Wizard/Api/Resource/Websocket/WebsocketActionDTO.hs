@@ -2,7 +2,7 @@ module Wizard.Api.Resource.Websocket.WebsocketActionDTO where
 
 import GHC.Generics
 
-import Shared.Api.Resource.Error.ErrorDTO
+import Shared.Model.Error.Error
 
 data Success_ServerActionDTO a =
   Success_ServerActionDTO
@@ -12,6 +12,6 @@ data Success_ServerActionDTO a =
 
 data Error_ServerActionDTO =
   Error_ServerActionDTO
-    { _error_ServerActionDTOData :: ErrorDTO
+    { _error_ServerActionDTOData :: AppError
     }
   deriving (Show, Eq, Generic)

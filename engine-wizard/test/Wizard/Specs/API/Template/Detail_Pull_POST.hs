@@ -15,11 +15,11 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.Error.Error
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Template.Common
 import Wizard.Specs.Common
@@ -31,9 +31,9 @@ detail_pull_post :: AppContext -> SpecWith ((), Application)
 detail_pull_post appContext =
   describe "POST /templates/{tmlId}/pull" $ do
     test_204 appContext
+    test_400 appContext
     test_401 appContext
     test_403 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -77,26 +77,16 @@ create_test_204 title appContext reqAuthHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "TML_PERM"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext =
-  it "HTTP 404 NOT FOUND - Template was not found in Registry" $
+test_400 appContext =
+  it "HTTP 400 BAD REQUEST - Template was not found in Registry" $
       -- GIVEN: Prepare request
    do
     let reqUrl = "/templates/global:non-existing-template:1.0.0/pull"
     let reqHeaders = reqHeadersT reqAuthHeader
      -- AND: Prepare expectation
-    let expStatus = 404
+    let expStatus = 400
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = createNotExistsError (_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML "global:non-existing-template:1.0.0")
+    let expDto = UserError (_ERROR_SERVICE_TB__PULL_NON_EXISTING_TML "global:non-existing-template:1.0.0")
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -104,3 +94,13 @@ test_404 appContext =
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "TML_PERM"

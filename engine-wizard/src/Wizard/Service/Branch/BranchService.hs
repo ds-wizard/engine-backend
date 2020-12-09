@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (liftIO)
+import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
@@ -114,7 +115,7 @@ modifyBranch branchUuid reqDto = do
           mBranchFromDb <- findBranchByKmId' bKmId
           when
             (isAlreadyUsedAndIsNotMine mBranchFromDb)
-            (throwError $ ValidationError [] [("kmId", _ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId)])
+            (throwError $ ValidationError [] (M.singleton "kmId" [_ERROR_VALIDATION__KM_ID_UNIQUENESS bKmId]))
         Just error -> throwError error
     isAlreadyUsedAndIsNotMine (Just branch) = U.toString (branch ^. uuid) /= branchUuid
     isAlreadyUsedAndIsNotMine Nothing = False

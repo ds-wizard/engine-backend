@@ -11,14 +11,14 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
-import SharedTest.Specs.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common
 import Wizard.Specs.Common
@@ -31,7 +31,6 @@ detail_password_hash_PUT appContext =
   describe "PUT /users/{userId}/password?hash={hash}" $ do
     test_204 appContext
     test_400 appContext
-    test_404 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -78,7 +77,7 @@ test_400 appContext = do
     -- AND: Prepare expectation
     let expStatus = 400
     let expHeaders = resCorsHeaders
-    let expDto = createUserError _ERROR_SERVICE_USER__REQUIRED_ADMIN_ROLE_OR_HASH_IN_QUERY_PARAMS
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
     let expBody = encode expDto
     -- WHEN: Call API
     response <- request reqMethod reqUrlWithoutHash reqHeaders reqBody
@@ -88,15 +87,20 @@ test_400 appContext = do
     response `shouldRespondWith` responseMatcher
     -- AND: Find result in DB and compare with expectation state
     assertPasswordOfUserInDB appContext userAlbert "password"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_404 appContext =
-  createNotFoundTest
-    reqMethod
-    "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=e565b3da-70bf-4991-ad47-4209514b3a67"
-    reqHeaders
-    reqBody
-    "actionKey"
-    "e565b3da-70bf-4991-ad47-4209514b3a67"
+  it "HTTP 400 BAD REQUEST when hash is not in DB" $
+   -- GIVEN: Prepare request
+   do
+    let reqUrl = "/users/ec6f8e90-2a91-49ec-aa3f-9eab2267fc66/password?hash=c996414a-b51d-4c8c-bc10-5ee3dab85fa8"
+    -- AND: Prepare expectation
+    let expStatus = 400
+    let expHeaders = resCorsHeaders
+    let expDto = UserError _ERROR_VALIDATION__HASH_ABSENCE
+    let expBody = encode expDto
+    -- WHEN: Call API
+    response <- request reqMethod reqUrl reqHeaders reqBody
+    -- THEN: Compare response with expectation
+    let responseMatcher =
+          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
+    response `shouldRespondWith` responseMatcher
+    -- AND: Find result in DB and compare with expectation state
+    assertPasswordOfUserInDB appContext userAlbert "password"

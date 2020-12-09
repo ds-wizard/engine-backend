@@ -5,8 +5,18 @@ import Shared.Model.Localization.LocaleRecord
 -- --------------------------------------
 -- API
 -- --------------------------------------
+-- Common
 _ERROR_API_COMMON__CANT_DESERIALIZE_OBJ =
   LocaleRecord "error.api.common.cant_deserialize_obj" "Problem in deserialization of JSON" []
+
+_ERROR_API_COMMON__UNABLE_TO_GET_ORGANIZATION =
+  LocaleRecord "error.api.common.unable_to_get_organization" "Unable to get organization from token header" []
+
+_ERROR_API_COMMON__UNABLE_TO_GET_TOKEN = LocaleRecord "error.api.common.unable_to_get_token" "Unable to get token" []
+
+-- Websocket
+_ERROR_API_WEBSOCKET__DESERIALIZATION_FAILED =
+  LocaleRecord "error.api.websocket.cant_deserialize_obj" "Deserialization failed" []
 
 _ERROR_API__WEBSOCKET_RECORD_NOT_FOUND connectionUUid =
   LocaleRecord
@@ -25,6 +35,9 @@ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
 -- --------------------------------------
 -- Absence
 _ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
+
+_ERROR_VALIDATION__HASH_ABSENCE =
+  LocaleRecord "error.validation.hash_absence" "A hash query param is absent or doesn't exist in database" []
 
 -- Format
 _ERROR_VALIDATION__INVALID_KM_ID_FORMAT =
