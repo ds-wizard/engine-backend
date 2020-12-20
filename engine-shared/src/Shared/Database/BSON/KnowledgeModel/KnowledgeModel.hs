@@ -29,6 +29,7 @@ instance FromBSON Chapter
 -- -------------------------
 instance ToBSON Question where
   toBSON (OptionsQuestion' event) = toBSON event
+  toBSON (MultiChoiceQuestion' event) = toBSON event
   toBSON (ListQuestion' event) = toBSON event
   toBSON (ValueQuestion' event) = toBSON event
   toBSON (IntegrationQuestion' event) = toBSON event
@@ -38,6 +39,7 @@ instance FromBSON Question where
     questionType <- BSON.lookup "questionType" doc
     case questionType of
       "OptionsQuestion" -> OptionsQuestion' <$> (fromBSON doc :: Maybe OptionsQuestion)
+      "MultiChoiceQuestion" -> MultiChoiceQuestion' <$> (fromBSON doc :: Maybe MultiChoiceQuestion)
       "ListQuestion" -> ListQuestion' <$> (fromBSON doc :: Maybe ListQuestion)
       "ValueQuestion" -> ValueQuestion' <$> (fromBSON doc :: Maybe ValueQuestion)
       "IntegrationQuestion" -> IntegrationQuestion' <$> (fromBSON doc :: Maybe IntegrationQuestion)
@@ -57,6 +59,22 @@ instance ToBSON OptionsQuestion where
     ]
 
 instance FromBSON OptionsQuestion
+
+-- ------------------------------------------------
+instance ToBSON MultiChoiceQuestion where
+  toBSON MultiChoiceQuestion {..} =
+    [ "questionType" BSON.=: "MultiChoiceQuestion"
+    , "uuid" BSON.=: _multiChoiceQuestionUuid
+    , "title" BSON.=: _multiChoiceQuestionTitle
+    , "text" BSON.=: _multiChoiceQuestionText
+    , "requiredLevel" BSON.=: _multiChoiceQuestionRequiredLevel
+    , "tagUuids" BSON.=: _multiChoiceQuestionTagUuids
+    , "expertUuids" BSON.=: _multiChoiceQuestionExpertUuids
+    , "referenceUuids" BSON.=: _multiChoiceQuestionReferenceUuids
+    , "choiceUuids" BSON.=: _multiChoiceQuestionChoiceUuids
+    ]
+
+instance FromBSON MultiChoiceQuestion
 
 -- ------------------------------------------------
 instance ToBSON ListQuestion where
@@ -117,6 +135,13 @@ instance FromBSON IntegrationQuestion
 instance ToBSON Answer
 
 instance FromBSON Answer
+
+-- -------------------------
+-- CHOICE ------------------
+-- -------------------------
+instance ToBSON Choice
+
+instance FromBSON Choice
 
 -- -------------------------
 -- EXPERT ------------------

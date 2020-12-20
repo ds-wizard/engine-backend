@@ -24,6 +24,9 @@ instance FromBSON ReplyValue where
       "AnswerReply" -> do
         _answerReplyValue <- BSON.lookup "value" doc
         return AnswerReply {..}
+      "MultiChoiceReply" -> do
+        _multiChoiceReplyValue <- BSON.lookup "value" doc
+        return MultiChoiceReply {..}
       "ItemListReply" -> do
         _itemListReplyValue <- BSON.lookup "value" doc
         return ItemListReply {..}
@@ -47,6 +50,7 @@ instance FromBSON IntegrationReplyValue where
 instance ToBSON ReplyValue where
   toBSON StringReply {..} = ["type" BSON.=: "StringReply", "value" BSON.=: _stringReplyValue]
   toBSON AnswerReply {..} = ["type" BSON.=: "AnswerReply", "value" BSON.=: _answerReplyValue]
+  toBSON MultiChoiceReply {..} = ["type" BSON.=: "MultiChoiceReply", "value" BSON.=: _multiChoiceReplyValue]
   toBSON ItemListReply {..} = ["type" BSON.=: "ItemListReply", "value" BSON.=: _itemListReplyValue]
   toBSON IntegrationReply {..} = ["type" BSON.=: "IntegrationReply", "value" BSON.=: _integrationReplyValue]
 

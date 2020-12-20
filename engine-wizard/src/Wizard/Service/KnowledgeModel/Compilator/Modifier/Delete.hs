@@ -23,7 +23,7 @@ deleteChapter km uuid =
     Just entity -> deleteNode . deleteChildren entity $ km
     Nothing -> km
   where
-    deleteNode km = km & chaptersM .~ (M.delete uuid (km ^. chaptersM))
+    deleteNode km = km & chaptersM .~ M.delete uuid (km ^. chaptersM)
     deleteChildren entity km = foldl deleteQuestion km (entity ^. questionUuids)
 
 deleteQuestion :: KnowledgeModel -> U.UUID -> KnowledgeModel
@@ -32,8 +32,8 @@ deleteQuestion km uuid =
     Just entity -> deleteNode . deleteChildren entity $ km
     Nothing -> km
   where
-    deleteNode km = km & questionsM .~ (M.delete uuid (km ^. questionsM))
-    deleteChildren entity km = deleteItemTemplateQuestions . deleteAnswers . deleteReferences . deleteExperts $ km
+    deleteNode km = km & questionsM .~ M.delete uuid (km ^. questionsM)
+    deleteChildren entity = deleteItemTemplateQuestions . deleteAnswers . deleteReferences . deleteExperts
       where
         deleteExperts km = foldl deleteExpert km (entity ^. expertUuids')
         deleteReferences km = foldl deleteReference km (entity ^. referenceUuids')
@@ -43,18 +43,18 @@ deleteQuestion km uuid =
 deleteExpert :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteExpert km uuid =
   case M.lookup uuid (km ^. expertsM) of
-    Just entity -> deleteNode $ km
+    Just entity -> deleteNode km
     Nothing -> km
   where
-    deleteNode km = km & expertsM .~ (M.delete uuid (km ^. expertsM))
+    deleteNode km = km & expertsM .~ M.delete uuid (km ^. expertsM)
 
 deleteReference :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteReference km uuid =
   case M.lookup uuid (km ^. referencesM) of
-    Just entity -> deleteNode $ km
+    Just entity -> deleteNode km
     Nothing -> km
   where
-    deleteNode km = km & referencesM .~ (M.delete uuid (km ^. referencesM))
+    deleteNode km = km & referencesM .~ M.delete uuid (km ^. referencesM)
 
 deleteAnswer :: KnowledgeModel -> U.UUID -> KnowledgeModel
 deleteAnswer km uuid =
@@ -62,5 +62,13 @@ deleteAnswer km uuid =
     Just entity -> deleteNode . deleteChildren entity $ km
     Nothing -> km
   where
-    deleteNode km = km & answersM .~ (M.delete uuid (km ^. answersM))
+    deleteNode km = km & answersM .~ M.delete uuid (km ^. answersM)
     deleteChildren entity km = foldl deleteQuestion km (entity ^. followUpUuids)
+
+deleteChoice :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteChoice km uuid =
+  case M.lookup uuid (km ^. choicesM) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = km & choicesM .~ M.delete uuid (km ^. choicesM)

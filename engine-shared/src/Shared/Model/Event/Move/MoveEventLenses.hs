@@ -23,6 +23,14 @@ instance HasUuid' MoveAnswerEvent where
       set :: MoveAnswerEvent -> U.UUID -> MoveAnswerEvent
       set entity newValue = entity & uuid .~ newValue
 
+instance HasUuid' MoveChoiceEvent where
+  uuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveChoiceEvent -> U.UUID
+      get entity = entity ^. uuid
+      set :: MoveChoiceEvent -> U.UUID -> MoveChoiceEvent
+      set entity newValue = entity & uuid .~ newValue
+
 instance HasUuid' MoveExpertEvent where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -57,6 +65,14 @@ instance HasParentUuid' MoveAnswerEvent where
       set :: MoveAnswerEvent -> U.UUID -> MoveAnswerEvent
       set entity newValue = entity & parentUuid .~ newValue
 
+instance HasParentUuid' MoveChoiceEvent where
+  parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveChoiceEvent -> U.UUID
+      get entity = entity ^. parentUuid
+      set :: MoveChoiceEvent -> U.UUID -> MoveChoiceEvent
+      set entity newValue = entity & parentUuid .~ newValue
+
 instance HasParentUuid' MoveExpertEvent where
   parentUuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -89,6 +105,14 @@ instance HasEntityUuid' MoveAnswerEvent where
       get :: MoveAnswerEvent -> U.UUID
       get entity = entity ^. entityUuid
       set :: MoveAnswerEvent -> U.UUID -> MoveAnswerEvent
+      set entity newValue = entity & entityUuid .~ newValue
+
+instance HasEntityUuid' MoveChoiceEvent where
+  entityUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveChoiceEvent -> U.UUID
+      get entity = entity ^. entityUuid
+      set :: MoveChoiceEvent -> U.UUID -> MoveChoiceEvent
       set entity newValue = entity & entityUuid .~ newValue
 
 instance HasEntityUuid' MoveExpertEvent where

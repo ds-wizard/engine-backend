@@ -20,6 +20,9 @@ instance ApplyEvent MoveQuestionEvent where
 instance ApplyEvent MoveAnswerEvent where
   apply event km = Right $ km & entities . questions .~ M.map (editEntity event) (km ^. entities . questions)
 
+instance ApplyEvent MoveChoiceEvent where
+  apply event km = Right $ km & entities . questions .~ M.map (editEntity event) (km ^. entities . questions)
+
 instance ApplyEvent MoveExpertEvent where
   apply event km = Right $ km & entities . questions .~ M.map (editEntity event) (km ^. entities . questions)
 

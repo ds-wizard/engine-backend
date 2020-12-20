@@ -48,6 +48,26 @@ instance FromBSON MoveAnswerEvent where
     return MoveAnswerEvent {..}
 
 -- -------------------------
+-- CHOICE MOVE EVENT -------
+-- -------------------------
+instance ToBSON MoveChoiceEvent where
+  toBSON MoveChoiceEvent {..} =
+    [ "eventType" BSON.=: "MoveChoiceEvent"
+    , "uuid" BSON.=: _moveChoiceEventUuid
+    , "parentUuid" BSON.=: _moveChoiceEventParentUuid
+    , "entityUuid" BSON.=: _moveChoiceEventEntityUuid
+    , "targetUuid" BSON.=: _moveChoiceEventTargetUuid
+    ]
+
+instance FromBSON MoveChoiceEvent where
+  fromBSON doc = do
+    _moveChoiceEventUuid <- BSON.lookup "uuid" doc
+    _moveChoiceEventParentUuid <- BSON.lookup "parentUuid" doc
+    _moveChoiceEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _moveChoiceEventTargetUuid <- BSON.lookup "targetUuid" doc
+    return MoveChoiceEvent {..}
+
+-- -------------------------
 -- EXPERT MOVE EVENT -------
 -- -------------------------
 instance ToBSON MoveExpertEvent where

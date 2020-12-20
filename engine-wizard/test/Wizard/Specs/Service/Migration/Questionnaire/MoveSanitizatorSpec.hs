@@ -194,7 +194,8 @@ sanitizatorSpec =
         let eUuid = q4_it1_question5 ^. uuid
         let replies = M.toList fReplies
         -- AND: Make expectation
-        let expected = M.toList . M.fromList $ [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10]
+        let expected =
+              M.toList . M.fromList $ [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ4, rQ4_it1_q6, rQ4_it2_q6, rQ9, rQ10, rQ11]
         -- WHEN:
         let result = deleteUnwantedReplies eUuid replies
         -- THEN:
@@ -216,6 +217,10 @@ sanitizatorSpec =
         "MoveAnswerEvent should delete affected answers"
         (MoveAnswerEvent' m_km1_ch1_q2_aYes__to_ch2_q3)
         True
+      createSanitizeRepliesWithEventsTest
+        "MoveChoiceEvent has no effect on replies"
+        (MoveChoiceEvent' m_km1_ch3_q11_cho1__to_ch3_q12)
+        False
       createSanitizeRepliesWithEventsTest
         "MoveExpertEvent has no effect on replies"
         (MoveExpertEvent' m_km1_ch1_q2_eAlbert__to_ch2_q3)

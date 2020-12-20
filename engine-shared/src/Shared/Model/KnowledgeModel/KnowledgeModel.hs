@@ -24,6 +24,7 @@ data KnowledgeModelEntities =
     { _knowledgeModelEntitiesChapters :: Map U.UUID Chapter
     , _knowledgeModelEntitiesQuestions :: Map U.UUID Question
     , _knowledgeModelEntitiesAnswers :: Map U.UUID Answer
+    , _knowledgeModelEntitiesChoices :: Map U.UUID Choice
     , _knowledgeModelEntitiesExperts :: Map U.UUID Expert
     , _knowledgeModelEntitiesReferences :: Map U.UUID Reference
     , _knowledgeModelEntitiesIntegrations :: Map U.UUID Integration
@@ -51,6 +52,7 @@ data QuestionValueType
 
 data Question
   = OptionsQuestion' OptionsQuestion
+  | MultiChoiceQuestion' MultiChoiceQuestion
   | ListQuestion' ListQuestion
   | ValueQuestion' ValueQuestion
   | IntegrationQuestion' IntegrationQuestion
@@ -66,6 +68,19 @@ data OptionsQuestion =
     , _optionsQuestionExpertUuids :: [U.UUID]
     , _optionsQuestionReferenceUuids :: [U.UUID]
     , _optionsQuestionAnswerUuids :: [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
+
+data MultiChoiceQuestion =
+  MultiChoiceQuestion
+    { _multiChoiceQuestionUuid :: U.UUID
+    , _multiChoiceQuestionTitle :: String
+    , _multiChoiceQuestionText :: Maybe String
+    , _multiChoiceQuestionRequiredLevel :: Maybe Int
+    , _multiChoiceQuestionTagUuids :: [U.UUID]
+    , _multiChoiceQuestionExpertUuids :: [U.UUID]
+    , _multiChoiceQuestionReferenceUuids :: [U.UUID]
+    , _multiChoiceQuestionChoiceUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
 
@@ -117,6 +132,14 @@ data Answer =
     , _answerAdvice :: Maybe String
     , _answerFollowUpUuids :: [U.UUID]
     , _answerMetricMeasures :: [MetricMeasure]
+    }
+  deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
+data Choice =
+  Choice
+    { _choiceUuid :: U.UUID
+    , _choiceLabel :: String
     }
   deriving (Show, Eq, Generic)
 

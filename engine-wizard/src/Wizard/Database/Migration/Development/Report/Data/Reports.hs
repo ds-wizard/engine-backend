@@ -29,7 +29,7 @@ report1_total =
           LevelsAnsweredIndication
             {_levelsAnsweredIndicationAnsweredQuestions = 3, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
         ]
     , _totalReportMetrics =
         [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
@@ -47,7 +47,7 @@ report1_total_full =
           LevelsAnsweredIndication
             {_levelsAnsweredIndicationAnsweredQuestions = 3, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
         ]
     , _totalReportMetrics =
         [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
@@ -62,7 +62,7 @@ report1_total_full_disabled_levels =
   TotalReport
     { _totalReportIndications =
         [ AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
         ]
     , _totalReportMetrics =
         [ MetricSummary {_metricSummaryMetricUuid = metricF ^. uuid, _metricSummaryMeasure = Just 1.0}
@@ -153,7 +153,7 @@ report1_ch3 =
           LevelsAnsweredIndication
             {_levelsAnsweredIndicationAnsweredQuestions = 1, _levelsAnsweredIndicationUnansweredQuestions = 0}
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 2, _answeredIndicationUnansweredQuestions = 0}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 3, _answeredIndicationUnansweredQuestions = 1}
         ]
     , _chapterReportMetrics = []
     }
@@ -172,7 +172,7 @@ report1_ch3_full_disabled_levels =
     { _chapterReportChapterUuid = report1_ch3 ^. chapterUuid
     , _chapterReportIndications =
         [ AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 2, _answeredIndicationUnansweredQuestions = 0}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 3, _answeredIndicationUnansweredQuestions = 1}
         ]
     , _chapterReportMetrics = []
     }
@@ -187,6 +187,6 @@ questionnaireReport =
           LevelsAnsweredIndication
             {_levelsAnsweredIndicationAnsweredQuestions = 3, _levelsAnsweredIndicationUnansweredQuestions = 1}
         , AnsweredIndication' $
-          AnsweredIndication {_answeredIndicationAnsweredQuestions = 12, _answeredIndicationUnansweredQuestions = 1}
+          AnsweredIndication {_answeredIndicationAnsweredQuestions = 13, _answeredIndicationUnansweredQuestions = 2}
         ]
     }

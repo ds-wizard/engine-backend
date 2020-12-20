@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
@@ -349,6 +350,7 @@ fReplies =
     , rQ4_it2_q6
     , rQ9
     , rQ10
+    , rQ11
     ]
 
 fRepliesWithUpdated :: M.Map String ReplyValue
@@ -367,6 +369,7 @@ fRepliesWithUpdated =
     , rQ4_it2_q6
     , rQ9
     , rQ10
+    , rQ11
     ]
 
 fRepliesWithDeleted :: M.Map String ReplyValue
@@ -384,10 +387,11 @@ fRepliesWithDeleted =
     , rQ4_it2_q6
     , rQ9
     , rQ10
+    , rQ11
     ]
 
 fRepliesEdited :: M.Map String ReplyValue
-fRepliesEdited = M.fromList [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10]
+fRepliesEdited = M.fromList [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10, rQ11]
 
 rQ1 :: Reply
 rQ1 = (createReplyKey [chapter1 ^. uuid, question1 ^. uuid], StringReply "Reply to 1st question")
@@ -488,6 +492,12 @@ rQ10 =
           IntegrationValue
             {_integrationValueIntId = "bsg-p000007", _integrationValueValue = "Integration reply to 9st question"}
       })
+
+-- ------------------------------------------------------------------------
+rQ11 :: Reply
+rQ11 =
+  ( createReplyKey [chapter3 ^. uuid, question11 ^. uuid]
+  , MultiChoiceReply {_multiChoiceReplyValue = [q11_choice2 ^. uuid]})
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

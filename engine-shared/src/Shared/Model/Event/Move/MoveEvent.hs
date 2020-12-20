@@ -21,6 +21,15 @@ data MoveAnswerEvent =
     }
   deriving (Show, Eq, Generic)
 
+data MoveChoiceEvent =
+  MoveChoiceEvent
+    { _moveChoiceEventUuid :: U.UUID
+    , _moveChoiceEventParentUuid :: U.UUID
+    , _moveChoiceEventEntityUuid :: U.UUID
+    , _moveChoiceEventTargetUuid :: U.UUID
+    }
+  deriving (Show, Eq, Generic)
+
 data MoveExpertEvent =
   MoveExpertEvent
     { _moveExpertEventUuid :: U.UUID

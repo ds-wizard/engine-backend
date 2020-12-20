@@ -8,6 +8,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelDM
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Chapter ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Choice ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Integration ()
@@ -36,6 +37,9 @@ foldEvent (Right km) (DeleteQuestionEvent' e) = apply e km
 foldEvent (Right km) (AddAnswerEvent' e) = apply e km
 foldEvent (Right km) (EditAnswerEvent' e) = apply e km
 foldEvent (Right km) (DeleteAnswerEvent' e) = apply e km
+foldEvent (Right km) (AddChoiceEvent' e) = apply e km
+foldEvent (Right km) (EditChoiceEvent' e) = apply e km
+foldEvent (Right km) (DeleteChoiceEvent' e) = apply e km
 foldEvent (Right km) (AddExpertEvent' e) = apply e km
 foldEvent (Right km) (EditExpertEvent' e) = apply e km
 foldEvent (Right km) (DeleteExpertEvent' e) = apply e km
@@ -50,6 +54,7 @@ foldEvent (Right km) (EditIntegrationEvent' e) = apply e km
 foldEvent (Right km) (DeleteIntegrationEvent' e) = apply e km
 foldEvent (Right km) (MoveQuestionEvent' e) = apply e km
 foldEvent (Right km) (MoveAnswerEvent' e) = apply e km
+foldEvent (Right km) (MoveChoiceEvent' e) = apply e km
 foldEvent (Right km) (MoveExpertEvent' e) = apply e km
 foldEvent (Right km) (MoveReferenceEvent' e) = apply e km
 foldEvent (Left error) _ = Left error

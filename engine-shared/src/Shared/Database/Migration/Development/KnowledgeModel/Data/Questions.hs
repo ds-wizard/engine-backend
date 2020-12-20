@@ -7,11 +7,13 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.Uuid
 
 question1' :: Question
 question1' = ValueQuestion' question1
@@ -183,7 +185,7 @@ question4Edited =
   ListQuestion
     { _listQuestionUuid = question4 ^. uuid
     , _listQuestionTitle = "EDITED: " ++ question4 ^. title
-    , _listQuestionText = Just $ "EDITED: " ++ (fromJust $ question4 ^. text)
+    , _listQuestionText = Just $ "EDITED: " ++ fromJust (question4 ^. text)
     , _listQuestionRequiredLevel = Just 2
     , _listQuestionTagUuids = question4 ^. tagUuids
     , _listQuestionReferenceUuids = question4 ^. referenceUuids
@@ -361,7 +363,7 @@ question9Edited =
   IntegrationQuestion
     { _integrationQuestionUuid = question9 ^. uuid
     , _integrationQuestionTitle = "EDITED: " ++ (question9 ^. title)
-    , _integrationQuestionText = Just $ "EDITED: " ++ (fromJust $ question9 ^. text)
+    , _integrationQuestionText = Just $ "EDITED: " ++ fromJust (question9 ^. text)
     , _integrationQuestionRequiredLevel = Just 4
     , _integrationQuestionTagUuids = [tagDataScience ^. uuid]
     , _integrationQuestionReferenceUuids = question9 ^. referenceUuids
@@ -450,4 +452,50 @@ question10ConvertedToValue =
     , _valueQuestionReferenceUuids = question10 ^. referenceUuids
     , _valueQuestionExpertUuids = question10 ^. expertUuids
     , _valueQuestionValueType = StringQuestionValueType
+    }
+
+question11' :: Question
+question11' = MultiChoiceQuestion' question11
+
+question11 :: MultiChoiceQuestion
+question11 =
+  MultiChoiceQuestion
+    { _multiChoiceQuestionUuid = u' "c1bfa9fd-2d06-47ec-a180-6239a039d86f"
+    , _multiChoiceQuestionTitle = "Eleventh Question"
+    , _multiChoiceQuestionText = Just "Some non-funny description"
+    , _multiChoiceQuestionRequiredLevel = Nothing
+    , _multiChoiceQuestionTagUuids = [tagBioInformatic ^. uuid]
+    , _multiChoiceQuestionReferenceUuids = []
+    , _multiChoiceQuestionExpertUuids = []
+    , _multiChoiceQuestionChoiceUuids = [q11_choice1 ^. uuid, q11_choice2 ^. uuid]
+    }
+
+question11Edited' :: Question
+question11Edited' = MultiChoiceQuestion' question11Edited
+
+question11Edited :: MultiChoiceQuestion
+question11Edited =
+  question11
+    { _multiChoiceQuestionTitle = "EDITED: Eleventh Question"
+    , _multiChoiceQuestionText = Just "EDITED: Some non-funny description"
+    , _multiChoiceQuestionRequiredLevel = Just 2
+    , _multiChoiceQuestionReferenceUuids = []
+    , _multiChoiceQuestionExpertUuids = []
+    , _multiChoiceQuestionChoiceUuids = [q11_choice2 ^. uuid, q11_choice1 ^. uuid]
+    }
+
+question12' :: Question
+question12' = MultiChoiceQuestion' question12
+
+question12 :: MultiChoiceQuestion
+question12 =
+  MultiChoiceQuestion
+    { _multiChoiceQuestionUuid = u' "c545ace7-b9c2-4ccf-88bd-b54989efcd4c"
+    , _multiChoiceQuestionTitle = "Twelfth Question"
+    , _multiChoiceQuestionText = Just "Some non-funny description"
+    , _multiChoiceQuestionRequiredLevel = Nothing
+    , _multiChoiceQuestionTagUuids = [tagBioInformatic ^. uuid]
+    , _multiChoiceQuestionReferenceUuids = []
+    , _multiChoiceQuestionExpertUuids = []
+    , _multiChoiceQuestionChoiceUuids = []
     }

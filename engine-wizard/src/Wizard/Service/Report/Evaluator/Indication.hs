@@ -53,6 +53,7 @@ evaluateQuestion found notFound qtnLevel km replies path q' =
   where
     children currentPath =
       case q' of
+        MultiChoiceQuestion' q -> rFound
         ValueQuestion' q -> rFound
         IntegrationQuestion' q -> rFound
         OptionsQuestion' q -> rFound + evaluateOptionsQuestion q found notFound qtnLevel km replies currentPath

@@ -29,6 +29,7 @@ sanitizeQuestion :: KnowledgeModel -> [String] -> ReplyValue -> Maybe ReplyValue
 sanitizeQuestion km (questionUuidS:_) replyValue =
   case concatMaybe $ fmap (\qUuid -> M.lookup qUuid (km ^. questionsM)) . U.fromString $ questionUuidS of
     (Just (OptionsQuestion' q)) -> sanitizeOptionsQuestion km replyValue q
+    (Just (MultiChoiceQuestion' q)) -> sanitizeMultiChoiceQuestion km replyValue q
     (Just (ListQuestion' q)) -> sanitizeListQuestion km replyValue q
     (Just (ValueQuestion' q)) -> sanitizeValueQuestion km replyValue q
     (Just (IntegrationQuestion' q)) -> sanitizeIntegrationQuestion km replyValue q
@@ -40,6 +41,12 @@ sanitizeOptionsQuestion km AnswerReply {..} q =
     then Just $ AnswerReply {..}
     else Nothing
 sanitizeOptionsQuestion _ _ _ = Nothing
+
+sanitizeMultiChoiceQuestion :: KnowledgeModel -> ReplyValue -> MultiChoiceQuestion -> Maybe ReplyValue
+sanitizeMultiChoiceQuestion km MultiChoiceReply {..} q =
+  let newValue = filter (`elem` (q ^. choiceUuids)) _multiChoiceReplyValue
+   in Just $ MultiChoiceReply {_multiChoiceReplyValue = newValue}
+sanitizeMultiChoiceQuestion _ _ _ = Nothing
 
 sanitizeListQuestion :: KnowledgeModel -> ReplyValue -> ListQuestion -> Maybe ReplyValue
 sanitizeListQuestion km ItemListReply {..} q = Just $ ItemListReply {..}

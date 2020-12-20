@@ -7,6 +7,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -15,6 +16,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
+import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
@@ -230,6 +232,36 @@ a_km1_ch3_q10 =
     , _addIntegrationQuestionEventProps = question10 ^. props
     }
 
+a_km1_ch3_q11' :: AddQuestionEvent
+a_km1_ch3_q11' = AddMultiChoiceQuestionEvent' a_km1_ch3_q11
+
+a_km1_ch3_q11 :: AddMultiChoiceQuestionEvent
+a_km1_ch3_q11 =
+  AddMultiChoiceQuestionEvent
+    { _addMultiChoiceQuestionEventUuid = fromJust $ U.fromString "2083c6d2-6fa4-4170-8b14-5f5a518b78b2"
+    , _addMultiChoiceQuestionEventParentUuid = chapter3 ^. uuid
+    , _addMultiChoiceQuestionEventEntityUuid = question11 ^. uuid
+    , _addMultiChoiceQuestionEventTitle = question11 ^. title
+    , _addMultiChoiceQuestionEventText = question11 ^. text
+    , _addMultiChoiceQuestionEventRequiredLevel = question11 ^. requiredLevel
+    , _addMultiChoiceQuestionEventTagUuids = question11 ^. tagUuids
+    }
+
+a_km1_ch3_q12' :: AddQuestionEvent
+a_km1_ch3_q12' = AddMultiChoiceQuestionEvent' a_km1_ch3_q12
+
+a_km1_ch3_q12 :: AddMultiChoiceQuestionEvent
+a_km1_ch3_q12 =
+  AddMultiChoiceQuestionEvent
+    { _addMultiChoiceQuestionEventUuid = fromJust $ U.fromString "e5e6eb01-f55f-422b-9423-ada60f55b36c"
+    , _addMultiChoiceQuestionEventParentUuid = chapter3 ^. uuid
+    , _addMultiChoiceQuestionEventEntityUuid = question12 ^. uuid
+    , _addMultiChoiceQuestionEventTitle = question12 ^. title
+    , _addMultiChoiceQuestionEventText = question12 ^. text
+    , _addMultiChoiceQuestionEventRequiredLevel = question12 ^. requiredLevel
+    , _addMultiChoiceQuestionEventTagUuids = question12 ^. tagUuids
+    }
+
 e_km1_ch1_q1' :: EditQuestionEvent
 e_km1_ch1_q1' = EditValueQuestionEvent' e_km1_ch1_q1
 
@@ -317,7 +349,7 @@ e_km1_ch1_q2_type =
     , _editListQuestionEventTagUuids = NothingChanged
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
-    , _editListQuestionEventItemTemplateQuestionUuids = ChangedValue $ []
+    , _editListQuestionEventItemTemplateQuestionUuids = ChangedValue []
     }
 
 e_km1_ch2_q4' :: EditQuestionEvent
@@ -392,6 +424,24 @@ e_km1_ch3_q9_type =
     , _editValueQuestionEventExpertUuids = NothingChanged
     , _editValueQuestionEventReferenceUuids = NothingChanged
     , _editValueQuestionEventValueType = ChangedValue $ question9WithNewType ^. valueType
+    }
+
+e_km1_ch3_q11' :: EditQuestionEvent
+e_km1_ch3_q11' = EditMultiChoiceQuestionEvent' e_km1_ch3_q11
+
+e_km1_ch3_q11 :: EditMultiChoiceQuestionEvent
+e_km1_ch3_q11 =
+  EditMultiChoiceQuestionEvent
+    { _editMultiChoiceQuestionEventUuid = fromJust $ U.fromString "1a01665b-e896-450d-b606-afc1dcca586b"
+    , _editMultiChoiceQuestionEventParentUuid = chapter1 ^. uuid
+    , _editMultiChoiceQuestionEventEntityUuid = question2 ^. uuid
+    , _editMultiChoiceQuestionEventTitle = ChangedValue $ question11Edited ^. title
+    , _editMultiChoiceQuestionEventText = ChangedValue $ question11Edited ^. text
+    , _editMultiChoiceQuestionEventRequiredLevel = ChangedValue $ question11Edited ^. requiredLevel
+    , _editMultiChoiceQuestionEventTagUuids = ChangedValue $ question11Edited ^. tagUuids
+    , _editMultiChoiceQuestionEventExpertUuids = ChangedValue $ question11Edited' ^. expertUuids'
+    , _editMultiChoiceQuestionEventReferenceUuids = ChangedValue $ question11Edited' ^. referenceUuids'
+    , _editMultiChoiceQuestionEventChoiceUuids = ChangedValue $ question11Edited' ^. choiceUuids'
     }
 
 d_km1_ch1_q1 :: DeleteQuestionEvent
@@ -694,7 +744,7 @@ e_km1_ch2_q4_it1_q5 =
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
     , _editListQuestionEventItemTemplateQuestionUuids =
-        ChangedValue $ [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
+        ChangedValue [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
     }
 
 e_km1_ch2_q4_it1_q6' :: EditQuestionEvent
@@ -840,7 +890,7 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2' ^. referenceUuids'
     , _editOptionsQuestionEventAnswerUuids =
-        ChangedValue $ [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
+        ChangedValue [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
     }
 
 e_km1_ch2_ansMaybe6_fuq4' :: EditQuestionEvent
@@ -859,7 +909,7 @@ e_km1_ch2_ansMaybe6_fuq4 =
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
     , _editListQuestionEventItemTemplateQuestionUuids =
-        ChangedValue $ [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
+        ChangedValue [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
     }
 
 d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 :: DeleteQuestionEvent
@@ -868,6 +918,52 @@ d_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
     { _deleteQuestionEventUuid = fromJust $ U.fromString "db69d694-cfb6-4461-8a13-81c01638f348"
     , _deleteQuestionEventParentUuid = q2_aYes_fuq1_answerYes ^. uuid
     , _deleteQuestionEventEntityUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
+    }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_ch3_q11_cho1 :: AddChoiceEvent
+a_km1_ch3_q11_cho1 =
+  AddChoiceEvent
+    { _addChoiceEventUuid = fromJust $ U.fromString "0a58e6bf-a185-400f-945a-17a96fac6073"
+    , _addChoiceEventParentUuid = question11 ^. uuid
+    , _addChoiceEventEntityUuid = q11_choice1 ^. uuid
+    , _addChoiceEventLabel = q11_choice1 ^. label
+    }
+
+a_km1_ch3_q11_cho2 :: AddChoiceEvent
+a_km1_ch3_q11_cho2 =
+  AddChoiceEvent
+    { _addChoiceEventUuid = fromJust $ U.fromString "da967bd5-4eb3-4329-ad79-63f49ad361c3"
+    , _addChoiceEventParentUuid = question11 ^. uuid
+    , _addChoiceEventEntityUuid = q11_choice2 ^. uuid
+    , _addChoiceEventLabel = q11_choice2 ^. label
+    }
+
+a_km1_ch3_q11_cho3 :: AddChoiceEvent
+a_km1_ch3_q11_cho3 =
+  AddChoiceEvent
+    { _addChoiceEventUuid = fromJust $ U.fromString "1c8561ae-44fb-4e5e-96e7-2582563330de"
+    , _addChoiceEventParentUuid = question11 ^. uuid
+    , _addChoiceEventEntityUuid = q11_choice3 ^. uuid
+    , _addChoiceEventLabel = q11_choice3 ^. label
+    }
+
+e_km1_ch3_q11_cho1 :: EditChoiceEvent
+e_km1_ch3_q11_cho1 =
+  EditChoiceEvent
+    { _editChoiceEventUuid = fromJust $ U.fromString "bda5b518-f7f0-4ea3-b609-9117f5931c54"
+    , _editChoiceEventParentUuid = question11 ^. uuid
+    , _editChoiceEventEntityUuid = q11_choice1Edited ^. uuid
+    , _editChoiceEventLabel = ChangedValue $ q11_choice1Edited ^. label
+    }
+
+d_km1_ch3_q11_cho1 :: DeleteChoiceEvent
+d_km1_ch3_q11_cho1 =
+  DeleteChoiceEvent
+    { _deleteChoiceEventUuid = fromJust $ U.fromString "9f877d39-103c-494a-b863-19050029242c"
+    , _deleteChoiceEventParentUuid = question11 ^. uuid
+    , _deleteChoiceEventEntityUuid = q11_choice1 ^. uuid
     }
 
 -- ----------------------------------------------------------------------------
@@ -1247,6 +1343,15 @@ m_km1_ch1_q2_aYes__to_ch2_q3 =
     , _moveAnswerEventParentUuid = question2 ^. uuid
     , _moveAnswerEventEntityUuid = q2_answerYes ^. uuid
     , _moveAnswerEventTargetUuid = question3 ^. uuid
+    }
+
+m_km1_ch3_q11_cho1__to_ch3_q12 :: MoveChoiceEvent
+m_km1_ch3_q11_cho1__to_ch3_q12 =
+  MoveChoiceEvent
+    { _moveChoiceEventUuid = fromJust $ U.fromString "0ffdff49-db85-4f28-b8a9-6b7a1569f5fd"
+    , _moveChoiceEventParentUuid = question11 ^. uuid
+    , _moveChoiceEventEntityUuid = q11_choice1 ^. uuid
+    , _moveChoiceEventTargetUuid = question12 ^. uuid
     }
 
 m_km1_ch1_q2_eAlbert__to_ch2_q3 :: MoveExpertEvent

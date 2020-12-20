@@ -4,6 +4,7 @@ import GHC.Generics
 
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
+import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
@@ -24,6 +25,9 @@ data Event
   | AddAnswerEvent' AddAnswerEvent
   | EditAnswerEvent' EditAnswerEvent
   | DeleteAnswerEvent' DeleteAnswerEvent
+  | AddChoiceEvent' AddChoiceEvent
+  | EditChoiceEvent' EditChoiceEvent
+  | DeleteChoiceEvent' DeleteChoiceEvent
   | AddExpertEvent' AddExpertEvent
   | EditExpertEvent' EditExpertEvent
   | DeleteExpertEvent' DeleteExpertEvent
@@ -38,6 +42,7 @@ data Event
   | DeleteIntegrationEvent' DeleteIntegrationEvent
   | MoveQuestionEvent' MoveQuestionEvent
   | MoveAnswerEvent' MoveAnswerEvent
+  | MoveChoiceEvent' MoveChoiceEvent
   | MoveExpertEvent' MoveExpertEvent
   | MoveReferenceEvent' MoveReferenceEvent
   deriving (Show, Eq, Generic)

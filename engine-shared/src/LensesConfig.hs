@@ -10,6 +10,7 @@ import Shared.Model.Context.AppContext
 import Shared.Model.Context.BaseContext
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
+import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
@@ -63,6 +64,8 @@ makeFields ''AddQuestionEvent
 
 makeFields ''AddOptionsQuestionEvent
 
+makeFields ''AddMultiChoiceQuestionEvent
+
 makeFields ''AddListQuestionEvent
 
 makeFields ''AddValueQuestionEvent
@@ -72,6 +75,8 @@ makeFields ''AddIntegrationQuestionEvent
 makeFields ''EditQuestionEvent
 
 makeFields ''EditOptionsQuestionEvent
+
+makeFields ''EditMultiChoiceQuestionEvent
 
 makeFields ''EditListQuestionEvent
 
@@ -86,6 +91,12 @@ makeFields ''AddAnswerEvent
 makeFields ''EditAnswerEvent
 
 makeFields ''DeleteAnswerEvent
+
+makeFields ''AddChoiceEvent
+
+makeFields ''EditChoiceEvent
+
+makeFields ''DeleteChoiceEvent
 
 makeFields ''AddExpertEvent
 
@@ -127,6 +138,8 @@ makeFields ''MoveQuestionEvent
 
 makeFields ''MoveAnswerEvent
 
+makeFields ''MoveChoiceEvent
+
 makeFields ''MoveExpertEvent
 
 makeFields ''MoveReferenceEvent
@@ -142,6 +155,8 @@ makeFields ''Question
 
 makeFields ''OptionsQuestion
 
+makeFields ''MultiChoiceQuestion
+
 makeFields ''ListQuestion
 
 makeFields ''ValueQuestion
@@ -149,6 +164,8 @@ makeFields ''ValueQuestion
 makeFields ''IntegrationQuestion
 
 makeFields ''Answer
+
+makeFields ''Choice
 
 makeFields ''Expert
 

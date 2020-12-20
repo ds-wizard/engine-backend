@@ -10,6 +10,7 @@ import Shared.Model.Event.EventLenses
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Answer ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Choice ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()

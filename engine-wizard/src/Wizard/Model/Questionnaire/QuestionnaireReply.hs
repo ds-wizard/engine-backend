@@ -13,6 +13,9 @@ data ReplyValue
   | AnswerReply
       { _answerReplyValue :: U.UUID
       }
+  | MultiChoiceReply
+      { _multiChoiceReplyValue :: [U.UUID]
+      }
   | ItemListReply
       { _itemListReplyValue :: [U.UUID]
       }

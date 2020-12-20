@@ -16,6 +16,7 @@ instance FromJSON AddQuestionEvent where
     referenceType <- o .: "questionType"
     case referenceType of
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (AddOptionsQuestionEvent' event)
+      "MultiChoiceQuestion" -> parseJSON (Object o) >>= \event -> return (AddMultiChoiceQuestionEvent' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (AddListQuestionEvent' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (AddValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (AddIntegrationQuestionEvent' event)
@@ -28,6 +29,13 @@ instance FromJSON AddOptionsQuestionEvent where
 
 instance ToJSON AddOptionsQuestionEvent where
   toJSON = simpleToJSON'' "_addOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
+
+-- --------------------------------------------
+instance FromJSON AddMultiChoiceQuestionEvent where
+  parseJSON = simpleParseJSON "_addMultiChoiceQuestionEvent"
+
+instance ToJSON AddMultiChoiceQuestionEvent where
+  toJSON = simpleToJSON'' "_addMultiChoiceQuestionEvent" [("questionType", "MultiChoiceQuestion")]
 
 -- --------------------------------------------
 instance FromJSON AddListQuestionEvent where
@@ -60,6 +68,7 @@ instance FromJSON EditQuestionEvent where
     questionType <- o .: "questionType"
     case questionType of
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (EditOptionsQuestionEvent' event)
+      "MultiChoiceQuestion" -> parseJSON (Object o) >>= \event -> return (EditMultiChoiceQuestionEvent' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (EditListQuestionEvent' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (EditValueQuestionEvent' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (EditIntegrationQuestionEvent' event)
@@ -72,6 +81,13 @@ instance FromJSON EditOptionsQuestionEvent where
 
 instance ToJSON EditOptionsQuestionEvent where
   toJSON = simpleToJSON'' "_editOptionsQuestionEvent" [("questionType", "OptionsQuestion")]
+
+-- --------------------------------------------
+instance FromJSON EditMultiChoiceQuestionEvent where
+  parseJSON = simpleParseJSON "_editMultiChoiceQuestionEvent"
+
+instance ToJSON EditMultiChoiceQuestionEvent where
+  toJSON = simpleToJSON'' "_editMultiChoiceQuestionEvent" [("questionType", "MultiChoiceQuestion")]
 
 -- --------------------------------------------
 instance FromJSON EditListQuestionEvent where

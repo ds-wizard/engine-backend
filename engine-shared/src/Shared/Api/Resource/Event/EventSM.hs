@@ -4,6 +4,7 @@ import Data.Swagger
 
 import Shared.Api.Resource.Event.AnswerEventSM ()
 import Shared.Api.Resource.Event.ChapterEventSM ()
+import Shared.Api.Resource.Event.ChoiceEventSM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.EventJM ()
 import Shared.Api.Resource.Event.ExpertEventSM ()

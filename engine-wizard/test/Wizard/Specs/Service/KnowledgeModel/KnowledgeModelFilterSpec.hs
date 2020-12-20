@@ -64,6 +64,8 @@ knowledgeModelFilterSpec =
              , q4_it1_question5Plain'
              , question9'
              , question10'
+             , question11'
+             , question12'
              ]) .
             (answersL .~ [q2_answerNo, q2_answerYes, q2_aYes_fuq1_answerNo, q2_aYes_fuq1_answerYes]) .
             (referencesL .~ [km1_ch1_q2_r1', km1_ch1_q2_r2']) . (expertsL .~ [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]) $
