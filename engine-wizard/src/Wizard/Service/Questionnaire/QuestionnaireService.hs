@@ -1,7 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
 import Control.Lens ((&), (.~), (^.))
-import Control.Monad.Except (throwError)
+import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
@@ -25,6 +25,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
@@ -32,6 +33,7 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
@@ -143,6 +145,9 @@ modifyQuestionnaire qtnUuid reqDto = do
   state <- getQuestionnaireState qtnUuid pkgId
   updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. permissions)
   permissionDtos <- traverse enhanceQuestionnairePermRecord (updatedQtn ^. permissions)
+  catchError
+    (sendQuestionnaireInvitationMail qtn updatedQtn)
+    (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT)
   return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing Nothing permissionDtos
 
 deleteQuestionnaire :: String -> AppContextM ()

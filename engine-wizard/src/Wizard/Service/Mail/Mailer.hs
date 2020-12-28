@@ -2,10 +2,11 @@ module Wizard.Service.Mail.Mailer
   ( sendRegistrationConfirmationMail
   , sendRegistrationCreatedAnalyticsMail
   , sendResetPasswordMail
+  , sendQuestionnaireInvitationMail
   ) where
 
 import Control.Exception (SomeException, handle)
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^..))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -14,6 +15,7 @@ import Data.Aeson.Types (emptyObject)
 import qualified Data.ByteString as S
 import qualified Data.ByteString.Lazy as B
 import Data.Either (rights)
+import Data.Foldable (traverse_)
 import Data.HashMap.Strict (HashMap, fromList)
 import Data.Maybe (catMaybes, fromMaybe)
 import qualified Data.Text as T
@@ -35,11 +37,17 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Constant.Mailer
+import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
+import Wizard.Model.Acl.Acl
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 import Wizard.Util.Template (loadAndRender)
 
@@ -79,6 +87,34 @@ sendResetPasswordMail user hash = do
       context = makeMailContext serverConfig appConfig user subject additionals
       to = [user ^. email]
   composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
+
+sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
+sendQuestionnaireInvitationMail oldQtn newQtn = traverse_ sendEmail (filter filterPermissions (newQtn ^. permissions))
+  where
+    filterPermissions :: QuestionnairePermRecord -> Bool
+    filterPermissions perm = perm ^. member `notElem` (oldQtn ^.. permissions . traverse . member)
+    sendEmail :: QuestionnairePermRecord -> AppContextM ()
+    sendEmail permission =
+      case permission ^. member of
+        GroupMember {..} -> return ()
+        UserMember {_userMemberUuid = userUuid} -> do
+          currentUser <- getCurrentUser
+          user <- findUserById (U.toString userUuid)
+          serverConfig <- asks _appContextServerConfig
+          appConfig <- getAppConfig
+          let clientAddress = serverConfig ^. general . clientUrl
+              projectLink = clientAddress ++ "/projects/" ++ U.toString (newQtn ^. uuid)
+              mailName = serverConfig ^. mail . name
+              subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_QUESTIONNAIRE_INVITATION
+              additionals =
+                [ ("projectLink", Aeson.String . T.pack $ projectLink)
+                , ("projectName", Aeson.String . T.pack $ newQtn ^. name)
+                , ("ownerFirstName", Aeson.String . T.pack $ currentUser ^. firstName)
+                , ("ownerLastName", Aeson.String . T.pack $ currentUser ^. lastName)
+                ]
+              context = makeMailContext serverConfig appConfig (toDTO user) subject additionals
+              to = [user ^. email]
+          composeAndSendEmail to subject _MAIL_QUESTIONNAIRE_INVITATION context
 
 -- --------------------------------
 -- PRIVATE
@@ -187,8 +223,7 @@ makeMailContext serverConfig appConfig user subject others =
   fromList $
   [ ( "appTitle"
     , Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ appConfig ^. lookAndFeel . appTitle)
-  , ("supportMail"
-    , Aeson.String . T.pack $ fromMaybe "" $ appConfig ^. privacyAndSupport . supportEmail)
+  , ("supportMail", Aeson.String . T.pack $ fromMaybe "" $ appConfig ^. privacyAndSupport . supportEmail)
   , ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
   , ("subject", Aeson.String . TL.toStrict $ subject)
   , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
