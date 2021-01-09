@@ -151,12 +151,12 @@ questionnaireAclSpec appContext =
       let fn3 = checkOwnerPermissionToQtn VisibleEditQuestionnaire permissions
       shouldSucceed adminCtx fn3
       shouldSucceed ownerCtx fn3
-      shouldSucceed editorCtx fn3
-      shouldSucceed viewerCtx fn3
+      shouldFailed editorCtx fn3
+      shouldFailed viewerCtx fn3
       shouldSucceed userInOwnerGroupCtx fn3
-      shouldSucceed userInEditorGroupCtx fn3
-      shouldSucceed userInViewerGroupCtx fn3
-      shouldSucceed userWithoutPermCtx fn3
+      shouldFailed userInEditorGroupCtx fn3
+      shouldFailed userInViewerGroupCtx fn3
+      shouldFailed userWithoutPermCtx fn3
       shouldFailed anonymousCtx fn3
     it "checkEditPermissionToQtn" $ do
       let fn1 = checkEditPermissionToQtn PrivateQuestionnaire RestrictedQuestionnaire permissions
