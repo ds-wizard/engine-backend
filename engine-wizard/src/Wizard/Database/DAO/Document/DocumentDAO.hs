@@ -27,7 +27,11 @@ findDocumentsFiltered queryParams = createFindEntitiesByFn collection (mapToDBQu
 findDocumentsPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
 findDocumentsPage mQtnUuid mQuery pageable sort =
   createFindEntitiesPageableQuerySortFn collection pageable sort =<<
-  sel [regexSel "name" mQuery, textMaybeSel "questionnaireUuid" mQtnUuid]
+  sel
+    [ regexSel "name" mQuery
+    , textMaybeSel "questionnaireUuid" mQtnUuid
+    , textSel "durability" "PersistentDocumentDurability"
+    ]
 
 findDocumentsByQuestionnaireUuidPage :: String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page Document)
 findDocumentsByQuestionnaireUuidPage qtnUuid mQuery pageable sort =
