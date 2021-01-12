@@ -41,6 +41,10 @@ _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "F
 _ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
   "Failed to convert entity ('" ++ entityName ++ "') to BSON"
 
+-- Questionnaire
+_ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT =
+  "The questionnaire invitation email could not be sent. Please contact administrator."
+
 -- Template
 _ERROR_SERVICE_TEMPLATE__LOADING_TEMPLATE_FAILED reason = "Couldn't load a template from file (" ++ reason ++ ")"
 

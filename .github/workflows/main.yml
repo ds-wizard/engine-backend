@@ -8,12 +8,12 @@ on:
 jobs:
   btp:
     name: Build-Tag-Push
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     
     strategy:
       matrix:
         component: [registry, wizard]
-        stack: [2.3.1]
+        stack: [2.5.1]
     
     env:
       COMPONENT: ${{ matrix.component }}

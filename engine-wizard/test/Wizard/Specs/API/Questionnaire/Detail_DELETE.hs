@@ -60,7 +60,6 @@ reqBody = ""
 test_204 appContext = do
   create_test_204 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 reqAuthHeader 2
   create_test_204 "HTTP 204 NO CONTENT (Owner, VisibleView)" appContext questionnaire2 reqAuthHeader 1
-  create_test_204 "HTTP 204 NO CONTENT (Non-Owner, Public)" appContext questionnaire3 reqNonAdminAuthHeader 3
 
 create_test_204 title appContext qtn authHeader docCount =
   it title $
@@ -127,6 +126,7 @@ test_403 appContext = do
   createNoPermissionTest appContext reqMethod (reqUrlT (questionnaire3 ^. uuid)) [] "" "QTN_PERM"
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, Private)" appContext questionnaire1
   create_test_403 "HTTP 403 FORBIDDEN (Non-Owner, VisibleView)" appContext questionnaire1
+  create_test_403 "HTTP 403 NO CONTENT (Non-Owner, VisibleEdit)" appContext questionnaire3
 
 create_test_403 title appContext qtn =
   it title $

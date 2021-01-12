@@ -73,8 +73,6 @@ checkOwnerPermissionToQtn visibility perms = do
   let currentUserGroupIds = currentUser ^. groups ^.. traverse . groupId
   if or
        [ currentUser ^. role == _USER_ROLE_ADMIN
-       -- Check visibility
-       , visibility == VisibleEditQuestionnaire
        -- Check membership
        , currentUserUuid `elem` getUserUuidsForOwnerPerm perms
        -- Check groups
