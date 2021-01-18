@@ -93,7 +93,7 @@ createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> AppCont
 createUser reqDto uUuid uPasswordHash uRole uPermissions = do
   validateUserEmailUniqueness (reqDto ^. email)
   now <- liftIO getCurrentTime
-  let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions now now
+  let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions now
   insertUser user
   actionKey <- createActionKey uUuid RegistrationActionKey
   publishToUserCreatedTopic user
