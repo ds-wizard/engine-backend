@@ -24,7 +24,8 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Cache.PackageCache
+import qualified Wizard.Service.Cache.KnowledgeModelCache as KM_Cache
+import qualified Wizard.Service.Cache.PackageCache as PKG_Cache
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
@@ -61,7 +62,7 @@ getPackageSuggestions mQuery pageable sort = do
   return . fmap toSuggestionDTO $ groups
 
 getPackageById :: String -> AppContextM Package
-getPackageById = getFromCacheOrDb getFromCache addToCache findPackageById
+getPackageById = getFromCacheOrDb PKG_Cache.getFromCache PKG_Cache.addToCache findPackageById
 
 getPackageDetailById :: String -> AppContextM PackageDetailDTO
 getPackageDetailById pkgId = do
@@ -133,7 +134,8 @@ deletePackagesByQueryParams queryParams = do
   let pIds = packages ^.. traverse . pId
   validatePackagesDeletation pIds
   deletePackagesFiltered queryParams
-  traverse_ deleteFromCache pIds
+  traverse_ PKG_Cache.deleteFromCache pIds
+  traverse_ KM_Cache.deleteFromCache' pIds
 
 deletePackage :: String -> AppContextM ()
 deletePackage pkgId = do
@@ -141,7 +143,8 @@ deletePackage pkgId = do
   package <- findPackageById pkgId
   validatePackageDeletation pkgId
   deletePackageById pkgId
-  deleteFromCache pkgId
+  PKG_Cache.deleteFromCache pkgId
+  KM_Cache.deleteFromCache' pkgId
 
 -- --------------------------------
 -- PRIVATE
