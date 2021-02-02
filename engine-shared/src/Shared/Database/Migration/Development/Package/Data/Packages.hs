@@ -191,6 +191,10 @@ germanyPackage =
         , AddChapterEvent' a_km1_ch3
         , AddQuestionEvent' a_km1_ch3_q9'
         , AddQuestionEvent' a_km1_ch3_q10'
+        , AddQuestionEvent' a_km1_ch3_q11'
+        , AddChoiceEvent' a_km1_ch3_q11_cho1
+        , AddChoiceEvent' a_km1_ch3_q11_cho2
+        , AddQuestionEvent' a_km1_ch3_q12'
         ]
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

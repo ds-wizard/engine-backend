@@ -16,6 +16,9 @@ instance ToSchema MoveQuestionEvent where
 instance ToSchema MoveAnswerEvent where
   declareNamedSchema = simpleToSchema'' "_moveAnswerEvent" "eventType" m_km1_ch1_q2_aYes__to_ch2_q3
 
+instance ToSchema MoveChoiceEvent where
+  declareNamedSchema = simpleToSchema'' "_moveChoiceEvent" "eventType" m_km1_ch3_q11_cho1__to_ch3_q12
+
 instance ToSchema MoveExpertEvent where
   declareNamedSchema = simpleToSchema'' "_moveExpertEvent" "eventType" m_km1_ch1_q2_eAlbert__to_ch2_q3
 

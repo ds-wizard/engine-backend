@@ -30,6 +30,7 @@ data User =
     , _userSubmissionProps :: [UserSubmissionProps]
     , _userImageUrl :: Maybe String
     , _userGroups :: [GroupMembership]
+    , _userLastVisitedAt :: UTCTime
     , _userCreatedAt :: Maybe UTCTime
     , _userUpdatedAt :: Maybe UTCTime
     }

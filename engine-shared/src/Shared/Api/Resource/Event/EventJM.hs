@@ -5,6 +5,7 @@ import Data.Aeson
 
 import Shared.Api.Resource.Event.AnswerEventJM ()
 import Shared.Api.Resource.Event.ChapterEventJM ()
+import Shared.Api.Resource.Event.ChoiceEventJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Api.Resource.Event.ExpertEventJM ()
 import Shared.Api.Resource.Event.IntegrationEventJM ()
@@ -34,6 +35,9 @@ instance FromJSON Event where
       "AddAnswerEvent" -> parseJSON (Object o) >>= \event -> return (AddAnswerEvent' event)
       "EditAnswerEvent" -> parseJSON (Object o) >>= \event -> return (EditAnswerEvent' event)
       "DeleteAnswerEvent" -> parseJSON (Object o) >>= \event -> return (DeleteAnswerEvent' event)
+      "AddChoiceEvent" -> parseJSON (Object o) >>= \event -> return (AddChoiceEvent' event)
+      "EditChoiceEvent" -> parseJSON (Object o) >>= \event -> return (EditChoiceEvent' event)
+      "DeleteChoiceEvent" -> parseJSON (Object o) >>= \event -> return (DeleteChoiceEvent' event)
       "AddExpertEvent" -> parseJSON (Object o) >>= \event -> return (AddExpertEvent' event)
       "EditExpertEvent" -> parseJSON (Object o) >>= \event -> return (EditExpertEvent' event)
       "DeleteExpertEvent" -> parseJSON (Object o) >>= \event -> return (DeleteExpertEvent' event)
@@ -48,6 +52,7 @@ instance FromJSON Event where
       "DeleteIntegrationEvent" -> parseJSON (Object o) >>= \event -> return (DeleteIntegrationEvent' event)
       "MoveQuestionEvent" -> parseJSON (Object o) >>= \event -> return (MoveQuestionEvent' event)
       "MoveAnswerEvent" -> parseJSON (Object o) >>= \event -> return (MoveAnswerEvent' event)
+      "MoveChoiceEvent" -> parseJSON (Object o) >>= \event -> return (MoveChoiceEvent' event)
       "MoveExpertEvent" -> parseJSON (Object o) >>= \event -> return (MoveExpertEvent' event)
       "MoveReferenceEvent" -> parseJSON (Object o) >>= \event -> return (MoveReferenceEvent' event)
       _ -> fail "One of the events has unsupported eventType"

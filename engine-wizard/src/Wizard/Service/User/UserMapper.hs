@@ -78,8 +78,8 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
   AnonymousOnlineUserInfo
     {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> UTCTime -> UTCTime -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt =
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> UTCTime -> User
+fromUserCreateDTO dto userUuid passwordHash role permissions now =
   User
     { _userUuid = userUuid
     , _userFirstName = dto ^. firstName
@@ -94,8 +94,9 @@ fromUserCreateDTO dto userUuid passwordHash role permissions createdAt updatedAt
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
-    , _userCreatedAt = Just createdAt
-    , _userUpdatedAt = Just updatedAt
+    , _userLastVisitedAt = now
+    , _userCreatedAt = Just now
+    , _userUpdatedAt = Just now
     }
 
 fromUserExternalDTO ::
@@ -115,6 +116,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userSubmissionProps = []
     , _userImageUrl = mImageUrl
     , _userGroups = []
+    , _userLastVisitedAt = now
     , _userCreatedAt = Just now
     , _userUpdatedAt = Just now
     }
@@ -138,6 +140,7 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = mImageUrl
     , _userGroups = oldUser ^. groups
+    , _userLastVisitedAt = now
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }
@@ -158,6 +161,7 @@ fromUserChangeDTO dto oldUser permission =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
     , _userGroups = oldUser ^. groups
+    , _userLastVisitedAt = oldUser ^. lastVisitedAt
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }

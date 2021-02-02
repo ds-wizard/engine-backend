@@ -7,6 +7,7 @@ import LensesConfig
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
@@ -41,6 +42,10 @@ instance ToSchema OptionsQuestion where
   declareNamedSchema = simpleToSchema'' "_optionsQuestion" "questionType" question2
 
 -- --------------------------------------------------------------------
+instance ToSchema MultiChoiceQuestion where
+  declareNamedSchema = simpleToSchema'' "_multiChoiceQuestion" "questionType" question11
+
+-- --------------------------------------------------------------------
 instance ToSchema ListQuestion where
   declareNamedSchema = simpleToSchema'' "_listQuestion" "questionType" (extract dto)
     where
@@ -59,6 +64,11 @@ instance ToSchema IntegrationQuestion where
 -- --------------------------------------------------------------------
 instance ToSchema Answer where
   declareNamedSchema = simpleToSchema' "_answer" q2_answerNo
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
+instance ToSchema Choice where
+  declareNamedSchema = simpleToSchema' "_choice" q11_choice1
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

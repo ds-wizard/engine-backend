@@ -60,6 +60,7 @@ evaluateQuestion km replies path q' =
   where
     children currentPath =
       case q' of
+        MultiChoiceQuestion' q -> []
         ValueQuestion' q -> []
         IntegrationQuestion' q -> []
         OptionsQuestion' q -> evaluateOptionsQuestion q km replies currentPath

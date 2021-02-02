@@ -78,6 +78,7 @@ toSimpleDTO questionnaire package state report permissions =
 toReplyValueDTO :: ReplyValue -> ReplyValueDTO
 toReplyValueDTO StringReply {..} = StringReplyDTO {_stringReplyDTOValue = _stringReplyValue}
 toReplyValueDTO AnswerReply {..} = AnswerReplyDTO {_answerReplyDTOValue = _answerReplyValue}
+toReplyValueDTO MultiChoiceReply {..} = MultiChoiceReplyDTO {_multiChoiceReplyDTOValue = _multiChoiceReplyValue}
 toReplyValueDTO ItemListReply {..} = ItemListReplyDTO {_itemListReplyDTOValue = _itemListReplyValue}
 toReplyValueDTO IntegrationReply {..} =
   IntegrationReplyDTO {_integrationReplyDTOValue = toIntegrationReplyValueDTO _integrationReplyValue}
@@ -190,6 +191,7 @@ toGroupPermRecordDTO record group =
 fromReplyValueDTO :: ReplyValueDTO -> ReplyValue
 fromReplyValueDTO StringReplyDTO {..} = StringReply {_stringReplyValue = _stringReplyDTOValue}
 fromReplyValueDTO AnswerReplyDTO {..} = AnswerReply {_answerReplyValue = _answerReplyDTOValue}
+fromReplyValueDTO MultiChoiceReplyDTO {..} = MultiChoiceReply {_multiChoiceReplyValue = _multiChoiceReplyDTOValue}
 fromReplyValueDTO ItemListReplyDTO {..} = ItemListReply {_itemListReplyValue = _itemListReplyDTOValue}
 fromReplyValueDTO IntegrationReplyDTO {..} =
   IntegrationReply {_integrationReplyValue = fromIntegrationReplyValueDTO _integrationReplyDTOValue}

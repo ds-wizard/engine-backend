@@ -13,6 +13,7 @@ import Shared.Model.Event.Question.QuestionEvent
 -- -------------------------
 instance ToBSON AddQuestionEvent where
   toBSON (AddOptionsQuestionEvent' event) = toBSON event
+  toBSON (AddMultiChoiceQuestionEvent' event) = toBSON event
   toBSON (AddListQuestionEvent' event) = toBSON event
   toBSON (AddValueQuestionEvent' event) = toBSON event
   toBSON (AddIntegrationQuestionEvent' event) = toBSON event
@@ -22,6 +23,7 @@ instance FromBSON AddQuestionEvent where
     questionType <- BSON.lookup "questionType" doc
     case questionType of
       "OptionsQuestion" -> AddOptionsQuestionEvent' <$> (fromBSON doc :: Maybe AddOptionsQuestionEvent)
+      "MultiChoiceQuestion" -> AddMultiChoiceQuestionEvent' <$> (fromBSON doc :: Maybe AddMultiChoiceQuestionEvent)
       "ListQuestion" -> AddListQuestionEvent' <$> (fromBSON doc :: Maybe AddListQuestionEvent)
       "ValueQuestion" -> AddValueQuestionEvent' <$> (fromBSON doc :: Maybe AddValueQuestionEvent)
       "IntegrationQuestion" -> AddIntegrationQuestionEvent' <$> (fromBSON doc :: Maybe AddIntegrationQuestionEvent)
@@ -50,6 +52,31 @@ instance FromBSON AddOptionsQuestionEvent where
     _addOptionsQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
     _addOptionsQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
     return AddOptionsQuestionEvent {..}
+
+-- ------------------------------------------------
+instance ToBSON AddMultiChoiceQuestionEvent where
+  toBSON AddMultiChoiceQuestionEvent {..} =
+    [ "eventType" BSON.=: "AddQuestionEvent"
+    , "questionType" BSON.=: "MultiChoiceQuestion"
+    , "uuid" BSON.=: _addMultiChoiceQuestionEventUuid
+    , "parentUuid" BSON.=: _addMultiChoiceQuestionEventParentUuid
+    , "entityUuid" BSON.=: _addMultiChoiceQuestionEventEntityUuid
+    , "title" BSON.=: _addMultiChoiceQuestionEventTitle
+    , "text" BSON.=: _addMultiChoiceQuestionEventText
+    , "requiredLevel" BSON.=: _addMultiChoiceQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _addMultiChoiceQuestionEventTagUuids
+    ]
+
+instance FromBSON AddMultiChoiceQuestionEvent where
+  fromBSON doc = do
+    _addMultiChoiceQuestionEventUuid <- BSON.lookup "uuid" doc
+    _addMultiChoiceQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _addMultiChoiceQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _addMultiChoiceQuestionEventTitle <- BSON.lookup "title" doc
+    _addMultiChoiceQuestionEventText <- BSON.lookup "text" doc
+    _addMultiChoiceQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _addMultiChoiceQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    return AddMultiChoiceQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON AddListQuestionEvent where
@@ -137,6 +164,7 @@ instance FromBSON AddIntegrationQuestionEvent where
 -- -------------------------
 instance ToBSON EditQuestionEvent where
   toBSON (EditOptionsQuestionEvent' event) = toBSON event
+  toBSON (EditMultiChoiceQuestionEvent' event) = toBSON event
   toBSON (EditListQuestionEvent' event) = toBSON event
   toBSON (EditValueQuestionEvent' event) = toBSON event
   toBSON (EditIntegrationQuestionEvent' event) = toBSON event
@@ -146,6 +174,7 @@ instance FromBSON EditQuestionEvent where
     questionType <- BSON.lookup "questionType" doc
     case questionType of
       "OptionsQuestion" -> EditOptionsQuestionEvent' <$> (fromBSON doc :: Maybe EditOptionsQuestionEvent)
+      "MultiChoiceQuestion" -> EditMultiChoiceQuestionEvent' <$> (fromBSON doc :: Maybe EditMultiChoiceQuestionEvent)
       "ListQuestion" -> EditListQuestionEvent' <$> (fromBSON doc :: Maybe EditListQuestionEvent)
       "ValueQuestion" -> EditValueQuestionEvent' <$> (fromBSON doc :: Maybe EditValueQuestionEvent)
       "IntegrationQuestion" -> EditIntegrationQuestionEvent' <$> (fromBSON doc :: Maybe EditIntegrationQuestionEvent)
@@ -180,6 +209,37 @@ instance FromBSON EditOptionsQuestionEvent where
     _editOptionsQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
     _editOptionsQuestionEventAnswerUuids <- BSON.lookup "answerUuids" doc
     return EditOptionsQuestionEvent {..}
+
+-- ------------------------------------------------
+instance ToBSON EditMultiChoiceQuestionEvent where
+  toBSON EditMultiChoiceQuestionEvent {..} =
+    [ "eventType" BSON.=: "EditQuestionEvent"
+    , "questionType" BSON.=: "MultiChoiceQuestion"
+    , "uuid" BSON.=: _editMultiChoiceQuestionEventUuid
+    , "parentUuid" BSON.=: _editMultiChoiceQuestionEventParentUuid
+    , "entityUuid" BSON.=: _editMultiChoiceQuestionEventEntityUuid
+    , "title" BSON.=: _editMultiChoiceQuestionEventTitle
+    , "text" BSON.=: _editMultiChoiceQuestionEventText
+    , "requiredLevel" BSON.=: _editMultiChoiceQuestionEventRequiredLevel
+    , "tagUuids" BSON.=: _editMultiChoiceQuestionEventTagUuids
+    , "expertUuids" BSON.=: _editMultiChoiceQuestionEventExpertUuids
+    , "referenceUuids" BSON.=: _editMultiChoiceQuestionEventReferenceUuids
+    , "choiceUuids" BSON.=: _editMultiChoiceQuestionEventChoiceUuids
+    ]
+
+instance FromBSON EditMultiChoiceQuestionEvent where
+  fromBSON doc = do
+    _editMultiChoiceQuestionEventUuid <- BSON.lookup "uuid" doc
+    _editMultiChoiceQuestionEventParentUuid <- BSON.lookup "parentUuid" doc
+    _editMultiChoiceQuestionEventEntityUuid <- BSON.lookup "entityUuid" doc
+    _editMultiChoiceQuestionEventTitle <- BSON.lookup "title" doc
+    _editMultiChoiceQuestionEventText <- BSON.lookup "text" doc
+    _editMultiChoiceQuestionEventRequiredLevel <- BSON.lookup "requiredLevel" doc
+    _editMultiChoiceQuestionEventTagUuids <- BSON.lookup "tagUuids" doc
+    _editMultiChoiceQuestionEventExpertUuids <- BSON.lookup "expertUuids" doc
+    _editMultiChoiceQuestionEventReferenceUuids <- BSON.lookup "referenceUuids" doc
+    _editMultiChoiceQuestionEventChoiceUuids <- BSON.lookup "choiceUuids" doc
+    return EditMultiChoiceQuestionEvent {..}
 
 -- ------------------------------------------------
 instance ToBSON EditListQuestionEvent where

@@ -1,6 +1,6 @@
 module Wizard.Service.Token.TokenService where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Crypto.PasswordStore
@@ -35,6 +35,8 @@ generateTokenFromCredentials tokenCreateDto = do
   authenticateUser user
   serverConfig <- asks _appContextServerConfig
   now <- liftIO getCurrentTime
+  let updatedUser = user & lastVisitedAt .~ now
+  updateUserById updatedUser
   return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
   where
     getUser = do

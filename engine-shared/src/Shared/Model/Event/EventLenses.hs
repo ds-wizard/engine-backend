@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 import Shared.Model.Common.Lens
 import Shared.Model.Event.Answer.AnswerEventLenses ()
 import Shared.Model.Event.Chapter.ChapterEventLenses ()
+import Shared.Model.Event.Choice.ChoiceEventLenses ()
 import Shared.Model.Event.Event
 import Shared.Model.Event.Expert.ExpertEventLenses ()
 import Shared.Model.Event.Integration.IntegrationEventLenses ()
@@ -32,6 +33,9 @@ instance HasUuid' Event where
       get (AddAnswerEvent' entity) = entity ^. uuid'
       get (EditAnswerEvent' entity) = entity ^. uuid'
       get (DeleteAnswerEvent' entity) = entity ^. uuid'
+      get (AddChoiceEvent' entity) = entity ^. uuid'
+      get (EditChoiceEvent' entity) = entity ^. uuid'
+      get (DeleteChoiceEvent' entity) = entity ^. uuid'
       get (AddExpertEvent' entity) = entity ^. uuid'
       get (EditExpertEvent' entity) = entity ^. uuid'
       get (DeleteExpertEvent' entity) = entity ^. uuid'
@@ -46,6 +50,7 @@ instance HasUuid' Event where
       get (DeleteIntegrationEvent' entity) = entity ^. uuid'
       get (MoveQuestionEvent' entity) = entity ^. uuid'
       get (MoveAnswerEvent' entity) = entity ^. uuid'
+      get (MoveChoiceEvent' entity) = entity ^. uuid'
       get (MoveExpertEvent' entity) = entity ^. uuid'
       get (MoveReferenceEvent' entity) = entity ^. uuid'
       set :: Event -> U.UUID -> Event
@@ -60,6 +65,9 @@ instance HasUuid' Event where
       set (AddAnswerEvent' entity) newValue = AddAnswerEvent' $ entity & uuid' .~ newValue
       set (EditAnswerEvent' entity) newValue = EditAnswerEvent' $ entity & uuid' .~ newValue
       set (DeleteAnswerEvent' entity) newValue = DeleteAnswerEvent' $ entity & uuid' .~ newValue
+      set (AddChoiceEvent' entity) newValue = AddChoiceEvent' $ entity & uuid' .~ newValue
+      set (EditChoiceEvent' entity) newValue = EditChoiceEvent' $ entity & uuid' .~ newValue
+      set (DeleteChoiceEvent' entity) newValue = DeleteChoiceEvent' $ entity & uuid' .~ newValue
       set (AddExpertEvent' entity) newValue = AddExpertEvent' $ entity & uuid' .~ newValue
       set (EditExpertEvent' entity) newValue = EditExpertEvent' $ entity & uuid' .~ newValue
       set (DeleteExpertEvent' entity) newValue = DeleteExpertEvent' $ entity & uuid' .~ newValue
@@ -74,6 +82,7 @@ instance HasUuid' Event where
       set (DeleteIntegrationEvent' entity) newValue = DeleteIntegrationEvent' $ entity & uuid' .~ newValue
       set (MoveQuestionEvent' entity) newValue = MoveQuestionEvent' $ entity & uuid' .~ newValue
       set (MoveAnswerEvent' entity) newValue = MoveAnswerEvent' $ entity & uuid' .~ newValue
+      set (MoveChoiceEvent' entity) newValue = MoveChoiceEvent' $ entity & uuid' .~ newValue
       set (MoveExpertEvent' entity) newValue = MoveExpertEvent' $ entity & uuid' .~ newValue
       set (MoveReferenceEvent' entity) newValue = MoveReferenceEvent' $ entity & uuid' .~ newValue
 
@@ -92,6 +101,9 @@ instance HasParentUuid' Event where
       get (AddAnswerEvent' entity) = entity ^. parentUuid'
       get (EditAnswerEvent' entity) = entity ^. parentUuid'
       get (DeleteAnswerEvent' entity) = entity ^. parentUuid'
+      get (AddChoiceEvent' entity) = entity ^. parentUuid'
+      get (EditChoiceEvent' entity) = entity ^. parentUuid'
+      get (DeleteChoiceEvent' entity) = entity ^. parentUuid'
       get (AddExpertEvent' entity) = entity ^. parentUuid'
       get (EditExpertEvent' entity) = entity ^. parentUuid'
       get (DeleteExpertEvent' entity) = entity ^. parentUuid'
@@ -106,6 +118,7 @@ instance HasParentUuid' Event where
       get (DeleteIntegrationEvent' entity) = entity ^. parentUuid'
       get (MoveQuestionEvent' entity) = entity ^. parentUuid'
       get (MoveAnswerEvent' entity) = entity ^. parentUuid'
+      get (MoveChoiceEvent' entity) = entity ^. parentUuid'
       get (MoveExpertEvent' entity) = entity ^. parentUuid'
       get (MoveReferenceEvent' entity) = entity ^. parentUuid'
       set :: Event -> U.UUID -> Event
@@ -120,6 +133,9 @@ instance HasParentUuid' Event where
       set (AddAnswerEvent' entity) newValue = AddAnswerEvent' $ entity & parentUuid' .~ newValue
       set (EditAnswerEvent' entity) newValue = EditAnswerEvent' $ entity & parentUuid' .~ newValue
       set (DeleteAnswerEvent' entity) newValue = DeleteAnswerEvent' $ entity & parentUuid' .~ newValue
+      set (AddChoiceEvent' entity) newValue = AddChoiceEvent' $ entity & parentUuid' .~ newValue
+      set (EditChoiceEvent' entity) newValue = EditChoiceEvent' $ entity & parentUuid' .~ newValue
+      set (DeleteChoiceEvent' entity) newValue = DeleteChoiceEvent' $ entity & parentUuid' .~ newValue
       set (AddExpertEvent' entity) newValue = AddExpertEvent' $ entity & parentUuid' .~ newValue
       set (EditExpertEvent' entity) newValue = EditExpertEvent' $ entity & parentUuid' .~ newValue
       set (DeleteExpertEvent' entity) newValue = DeleteExpertEvent' $ entity & parentUuid' .~ newValue
@@ -134,6 +150,7 @@ instance HasParentUuid' Event where
       set (DeleteIntegrationEvent' entity) newValue = DeleteIntegrationEvent' $ entity & parentUuid' .~ newValue
       set (MoveQuestionEvent' entity) newValue = MoveQuestionEvent' $ entity & parentUuid' .~ newValue
       set (MoveAnswerEvent' entity) newValue = MoveAnswerEvent' $ entity & parentUuid' .~ newValue
+      set (MoveChoiceEvent' entity) newValue = MoveChoiceEvent' $ entity & parentUuid' .~ newValue
       set (MoveExpertEvent' entity) newValue = MoveExpertEvent' $ entity & parentUuid' .~ newValue
       set (MoveReferenceEvent' entity) newValue = MoveReferenceEvent' $ entity & parentUuid' .~ newValue
 
@@ -152,6 +169,9 @@ instance HasEntityUuid' Event where
       get (AddAnswerEvent' entity) = entity ^. entityUuid'
       get (EditAnswerEvent' entity) = entity ^. entityUuid'
       get (DeleteAnswerEvent' entity) = entity ^. entityUuid'
+      get (AddChoiceEvent' entity) = entity ^. entityUuid'
+      get (EditChoiceEvent' entity) = entity ^. entityUuid'
+      get (DeleteChoiceEvent' entity) = entity ^. entityUuid'
       get (AddExpertEvent' entity) = entity ^. entityUuid'
       get (EditExpertEvent' entity) = entity ^. entityUuid'
       get (DeleteExpertEvent' entity) = entity ^. entityUuid'
@@ -166,6 +186,7 @@ instance HasEntityUuid' Event where
       get (DeleteIntegrationEvent' entity) = entity ^. entityUuid'
       get (MoveQuestionEvent' entity) = entity ^. entityUuid'
       get (MoveAnswerEvent' entity) = entity ^. entityUuid'
+      get (MoveChoiceEvent' entity) = entity ^. entityUuid'
       get (MoveExpertEvent' entity) = entity ^. entityUuid'
       get (MoveReferenceEvent' entity) = entity ^. entityUuid'
       set :: Event -> U.UUID -> Event
@@ -180,6 +201,9 @@ instance HasEntityUuid' Event where
       set (AddAnswerEvent' entity) newValue = AddAnswerEvent' $ entity & entityUuid' .~ newValue
       set (EditAnswerEvent' entity) newValue = EditAnswerEvent' $ entity & entityUuid' .~ newValue
       set (DeleteAnswerEvent' entity) newValue = DeleteAnswerEvent' $ entity & entityUuid' .~ newValue
+      set (AddChoiceEvent' entity) newValue = AddChoiceEvent' $ entity & entityUuid' .~ newValue
+      set (EditChoiceEvent' entity) newValue = EditChoiceEvent' $ entity & entityUuid' .~ newValue
+      set (DeleteChoiceEvent' entity) newValue = DeleteChoiceEvent' $ entity & entityUuid' .~ newValue
       set (AddExpertEvent' entity) newValue = AddExpertEvent' $ entity & entityUuid' .~ newValue
       set (EditExpertEvent' entity) newValue = EditExpertEvent' $ entity & entityUuid' .~ newValue
       set (DeleteExpertEvent' entity) newValue = DeleteExpertEvent' $ entity & entityUuid' .~ newValue
@@ -194,5 +218,6 @@ instance HasEntityUuid' Event where
       set (DeleteIntegrationEvent' entity) newValue = DeleteIntegrationEvent' $ entity & entityUuid' .~ newValue
       set (MoveQuestionEvent' entity) newValue = MoveQuestionEvent' $ entity & entityUuid' .~ newValue
       set (MoveAnswerEvent' entity) newValue = MoveAnswerEvent' $ entity & entityUuid' .~ newValue
+      set (MoveChoiceEvent' entity) newValue = MoveChoiceEvent' $ entity & entityUuid' .~ newValue
       set (MoveExpertEvent' entity) newValue = MoveExpertEvent' $ entity & entityUuid' .~ newValue
       set (MoveReferenceEvent' entity) newValue = MoveReferenceEvent' $ entity & entityUuid' .~ newValue

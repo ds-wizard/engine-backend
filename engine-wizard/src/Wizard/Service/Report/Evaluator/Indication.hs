@@ -53,6 +53,7 @@ evaluateQuestion found notFound qtnLevel km replies path q' =
   where
     children currentPath =
       case q' of
+        MultiChoiceQuestion' q -> evaluateMultiChoiceQuestion q found notFound qtnLevel km replies currentPath
         ValueQuestion' q -> rFound
         IntegrationQuestion' q -> rFound
         OptionsQuestion' q -> rFound + evaluateOptionsQuestion q found notFound qtnLevel km replies currentPath
@@ -84,3 +85,12 @@ evaluateListQuestion found notFound qtnLevel km replies currentPath q =
           else isRequiredNow (q ^. requiredLevel) qtnLevel notFound
       childrens = sum . concatMap evaluateQuestion' $ items
    in current + childrens
+
+evaluateMultiChoiceQuestion :: MultiChoiceQuestion -> Int -> Int -> Int -> KnowledgeModel -> [Reply] -> String -> Int
+evaluateMultiChoiceQuestion q found notFound qtnLevel km replies path =
+  case getReply replies path of
+    Just (_, MultiChoiceReply {..}) ->
+      if not (null _multiChoiceReplyValue)
+        then isRequiredNow (q ^. requiredLevel) qtnLevel found
+        else isRequiredNow (q ^. requiredLevel) qtnLevel notFound
+    Nothing -> isRequiredNow (q ^. requiredLevel) qtnLevel notFound

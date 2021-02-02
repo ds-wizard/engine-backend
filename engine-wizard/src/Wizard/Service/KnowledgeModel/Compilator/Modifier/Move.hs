@@ -24,6 +24,10 @@ instance EditEntity MoveAnswerEvent Question where
   editEntity = moveEntity uuid' answerUuids'
 
 -- -------------------------------------------------------------------------------------------------------------
+instance EditEntity MoveChoiceEvent Question where
+  editEntity = moveEntity uuid' choiceUuids'
+
+-- -------------------------------------------------------------------------------------------------------------
 instance EditEntity MoveExpertEvent Question where
   editEntity = moveEntity uuid' expertUuids'
 

@@ -9,6 +9,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 
 data AddQuestionEvent
   = AddOptionsQuestionEvent' AddOptionsQuestionEvent
+  | AddMultiChoiceQuestionEvent' AddMultiChoiceQuestionEvent
   | AddListQuestionEvent' AddListQuestionEvent
   | AddValueQuestionEvent' AddValueQuestionEvent
   | AddIntegrationQuestionEvent' AddIntegrationQuestionEvent
@@ -23,6 +24,18 @@ data AddOptionsQuestionEvent =
     , _addOptionsQuestionEventText :: Maybe String
     , _addOptionsQuestionEventRequiredLevel :: Maybe Int
     , _addOptionsQuestionEventTagUuids :: [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
+
+data AddMultiChoiceQuestionEvent =
+  AddMultiChoiceQuestionEvent
+    { _addMultiChoiceQuestionEventUuid :: U.UUID
+    , _addMultiChoiceQuestionEventParentUuid :: U.UUID
+    , _addMultiChoiceQuestionEventEntityUuid :: U.UUID
+    , _addMultiChoiceQuestionEventTitle :: String
+    , _addMultiChoiceQuestionEventText :: Maybe String
+    , _addMultiChoiceQuestionEventRequiredLevel :: Maybe Int
+    , _addMultiChoiceQuestionEventTagUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
 
@@ -68,6 +81,7 @@ data AddIntegrationQuestionEvent =
 -- --------------------------------------------
 data EditQuestionEvent
   = EditOptionsQuestionEvent' EditOptionsQuestionEvent
+  | EditMultiChoiceQuestionEvent' EditMultiChoiceQuestionEvent
   | EditListQuestionEvent' EditListQuestionEvent
   | EditValueQuestionEvent' EditValueQuestionEvent
   | EditIntegrationQuestionEvent' EditIntegrationQuestionEvent
@@ -85,6 +99,21 @@ data EditOptionsQuestionEvent =
     , _editOptionsQuestionEventExpertUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventAnswerUuids :: EventField [U.UUID]
+    }
+  deriving (Show, Eq, Generic)
+
+data EditMultiChoiceQuestionEvent =
+  EditMultiChoiceQuestionEvent
+    { _editMultiChoiceQuestionEventUuid :: U.UUID
+    , _editMultiChoiceQuestionEventParentUuid :: U.UUID
+    , _editMultiChoiceQuestionEventEntityUuid :: U.UUID
+    , _editMultiChoiceQuestionEventTitle :: EventField String
+    , _editMultiChoiceQuestionEventText :: EventField (Maybe String)
+    , _editMultiChoiceQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editMultiChoiceQuestionEventTagUuids :: EventField [U.UUID]
+    , _editMultiChoiceQuestionEventExpertUuids :: EventField [U.UUID]
+    , _editMultiChoiceQuestionEventReferenceUuids :: EventField [U.UUID]
+    , _editMultiChoiceQuestionEventChoiceUuids :: EventField [U.UUID]
     }
   deriving (Show, Eq, Generic)
 

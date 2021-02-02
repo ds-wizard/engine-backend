@@ -6,6 +6,7 @@ import Data.Maybe
 
 import Shared.Database.BSON.Event.Answer ()
 import Shared.Database.BSON.Event.Chapter ()
+import Shared.Database.BSON.Event.Choice ()
 import Shared.Database.BSON.Event.Expert ()
 import Shared.Database.BSON.Event.Integration ()
 import Shared.Database.BSON.Event.KnowledgeModel ()
@@ -15,6 +16,7 @@ import Shared.Database.BSON.Event.Reference ()
 import Shared.Database.BSON.Event.Tag ()
 import Shared.Model.Event.Answer.AnswerEvent
 import Shared.Model.Event.Chapter.ChapterEvent
+import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.Event
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
@@ -41,6 +43,9 @@ instance FromBSON Event where
       "AddAnswerEvent" -> Just . AddAnswerEvent' . fromJust $ (fromBSON doc :: Maybe AddAnswerEvent)
       "EditAnswerEvent" -> Just . EditAnswerEvent' . fromJust $ (fromBSON doc :: Maybe EditAnswerEvent)
       "DeleteAnswerEvent" -> Just . DeleteAnswerEvent' . fromJust $ (fromBSON doc :: Maybe DeleteAnswerEvent)
+      "AddChoiceEvent" -> Just . AddChoiceEvent' . fromJust $ (fromBSON doc :: Maybe AddChoiceEvent)
+      "EditChoiceEvent" -> Just . EditChoiceEvent' . fromJust $ (fromBSON doc :: Maybe EditChoiceEvent)
+      "DeleteChoiceEvent" -> Just . DeleteChoiceEvent' . fromJust $ (fromBSON doc :: Maybe DeleteChoiceEvent)
       "AddExpertEvent" -> Just . AddExpertEvent' . fromJust $ (fromBSON doc :: Maybe AddExpertEvent)
       "EditExpertEvent" -> Just . EditExpertEvent' . fromJust $ (fromBSON doc :: Maybe EditExpertEvent)
       "DeleteExpertEvent" -> Just . DeleteExpertEvent' . fromJust $ (fromBSON doc :: Maybe DeleteExpertEvent)
@@ -56,6 +61,7 @@ instance FromBSON Event where
         Just . DeleteIntegrationEvent' . fromJust $ (fromBSON doc :: Maybe DeleteIntegrationEvent)
       "MoveQuestionEvent" -> Just . MoveQuestionEvent' . fromJust $ (fromBSON doc :: Maybe MoveQuestionEvent)
       "MoveAnswerEvent" -> Just . MoveAnswerEvent' . fromJust $ (fromBSON doc :: Maybe MoveAnswerEvent)
+      "MoveChoiceEvent" -> Just . MoveChoiceEvent' . fromJust $ (fromBSON doc :: Maybe MoveChoiceEvent)
       "MoveExpertEvent" -> Just . MoveExpertEvent' . fromJust $ (fromBSON doc :: Maybe MoveExpertEvent)
       "MoveReferenceEvent" -> Just . MoveReferenceEvent' . fromJust $ (fromBSON doc :: Maybe MoveReferenceEvent)
 
@@ -71,6 +77,9 @@ instance ToBSON Event where
   toBSON (AddAnswerEvent' event) = toBSON event
   toBSON (EditAnswerEvent' event) = toBSON event
   toBSON (DeleteAnswerEvent' event) = toBSON event
+  toBSON (AddChoiceEvent' event) = toBSON event
+  toBSON (EditChoiceEvent' event) = toBSON event
+  toBSON (DeleteChoiceEvent' event) = toBSON event
   toBSON (AddExpertEvent' event) = toBSON event
   toBSON (EditExpertEvent' event) = toBSON event
   toBSON (DeleteExpertEvent' event) = toBSON event
@@ -85,5 +94,6 @@ instance ToBSON Event where
   toBSON (DeleteIntegrationEvent' event) = toBSON event
   toBSON (MoveQuestionEvent' event) = toBSON event
   toBSON (MoveAnswerEvent' event) = toBSON event
+  toBSON (MoveChoiceEvent' event) = toBSON event
   toBSON (MoveExpertEvent' event) = toBSON event
   toBSON (MoveReferenceEvent' event) = toBSON event

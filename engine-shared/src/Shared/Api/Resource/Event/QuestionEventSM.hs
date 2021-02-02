@@ -15,6 +15,9 @@ instance ToSchema AddQuestionEvent
 instance ToSchema AddOptionsQuestionEvent where
   declareNamedSchema = simpleToSchema'' "_addOptionsQuestionEvent" "eventType" a_km1_ch1_q2'
 
+instance ToSchema AddMultiChoiceQuestionEvent where
+  declareNamedSchema = simpleToSchema'' "_addMultiChoiceQuestionEvent" "eventType" a_km1_ch3_q11'
+
 instance ToSchema AddListQuestionEvent where
   declareNamedSchema = simpleToSchema'' "_addListQuestionEvent" "eventType" a_km1_ch2_q4'
 
@@ -30,6 +33,9 @@ instance ToSchema EditQuestionEvent
 
 instance ToSchema EditOptionsQuestionEvent where
   declareNamedSchema = simpleToSchema'' "_editOptionsQuestionEvent" "eventType" e_km1_ch1_q2'
+
+instance ToSchema EditMultiChoiceQuestionEvent where
+  declareNamedSchema = simpleToSchema'' "_editMultiChoiceQuestionEvent" "eventType" e_km1_ch3_q11'
 
 instance ToSchema EditListQuestionEvent where
   declareNamedSchema = simpleToSchema'' "_editListQuestionEvent" "eventType" e_km1_ch2_q4'

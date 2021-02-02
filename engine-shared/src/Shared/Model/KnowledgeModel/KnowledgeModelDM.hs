@@ -17,6 +17,7 @@ defaultKnowledgeModel =
           { _knowledgeModelEntitiesChapters = M.empty
           , _knowledgeModelEntitiesQuestions = M.empty
           , _knowledgeModelEntitiesAnswers = M.empty
+          , _knowledgeModelEntitiesChoices = M.empty
           , _knowledgeModelEntitiesExperts = M.empty
           , _knowledgeModelEntitiesReferences = M.empty
           , _knowledgeModelEntitiesIntegrations = M.empty

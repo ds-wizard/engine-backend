@@ -50,6 +50,7 @@ userAlbert =
     , _userSubmissionProps = [userAlbertApiTokenEncrypted]
     , _userImageUrl = Nothing
     , _userGroups = [ownerBioGroup, ownerPlantGroup]
+    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userCreatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userUpdatedAt = Just $ UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

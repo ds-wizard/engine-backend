@@ -7,6 +7,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
@@ -35,6 +36,8 @@ km1 =
                 , question3'
                 , question9'
                 , question10'
+                , question11'
+                , question12'
                 ]
           , _knowledgeModelEntitiesAnswers =
               toMap
@@ -47,6 +50,7 @@ km1 =
                 , q3_answerNo
                 , q3_answerYes
                 ]
+          , _knowledgeModelEntitiesChoices = toMap [q11_choice1, q11_choice2]
           , _knowledgeModelEntitiesExperts = toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]
           , _knowledgeModelEntitiesReferences = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
@@ -78,6 +82,7 @@ km1WithoutChaptersAndTagsAndIntegrations =
           { _knowledgeModelEntitiesChapters = toMap []
           , _knowledgeModelEntitiesQuestions = toMap []
           , _knowledgeModelEntitiesAnswers = toMap []
+          , _knowledgeModelEntitiesChoices = toMap []
           , _knowledgeModelEntitiesExperts = toMap []
           , _knowledgeModelEntitiesReferences = toMap []
           , _knowledgeModelEntitiesIntegrations = toMap []
@@ -106,6 +111,8 @@ km1WithQ4Plain =
                 , question4Plain'
                 , question9'
                 , question10'
+                , question11'
+                , question12'
                 ]
           , _knowledgeModelEntitiesAnswers =
               toMap
@@ -118,6 +125,7 @@ km1WithQ4Plain =
                 , q3_answerNo
                 , q3_answerYes
                 ]
+          , _knowledgeModelEntitiesChoices = toMap [q11_choice1, q11_choice2]
           , _knowledgeModelEntitiesExperts = toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola]
           , _knowledgeModelEntitiesReferences = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2']
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
@@ -154,6 +162,8 @@ km1WithQ4 =
                 , q4_it1_q6_aYes_followUpQuestion5'
                 , question9'
                 , question10'
+                , question11'
+                , question12'
                 ]
           , _knowledgeModelEntitiesAnswers =
               toMap
@@ -168,6 +178,7 @@ km1WithQ4 =
                 , q4_it1_q6_answerNo
                 , q4_it1_q6_answerYes
                 ]
+          , _knowledgeModelEntitiesChoices = toMap [q11_choice1, q11_choice2]
           , _knowledgeModelEntitiesExperts =
               toMap [km1_ch1_q2_eAlbert, km1_ch1_q2_eNikola, km1_ch2_q6_eAlbert, km1_ch2_q6_eNikola]
           , _knowledgeModelEntitiesReferences = toMap [km1_ch1_q2_r1', km1_ch1_q2_r2', km1_ch2_q6_r1', km1_ch2_q6_r2']
@@ -189,6 +200,7 @@ km1Netherlands =
           { _knowledgeModelEntitiesChapters = toMap [chapter1WithoutQuestions]
           , _knowledgeModelEntitiesQuestions = toMap []
           , _knowledgeModelEntitiesAnswers = toMap []
+          , _knowledgeModelEntitiesChoices = toMap []
           , _knowledgeModelEntitiesExperts = toMap []
           , _knowledgeModelEntitiesReferences = toMap []
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
@@ -209,6 +221,7 @@ km1NetherlandsV2 =
           { _knowledgeModelEntitiesChapters = toMap [chapter1WithoutQuestions, chapter4WithoutQuestions]
           , _knowledgeModelEntitiesQuestions = toMap []
           , _knowledgeModelEntitiesAnswers = toMap []
+          , _knowledgeModelEntitiesChoices = toMap []
           , _knowledgeModelEntitiesExperts = toMap []
           , _knowledgeModelEntitiesReferences = toMap []
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]

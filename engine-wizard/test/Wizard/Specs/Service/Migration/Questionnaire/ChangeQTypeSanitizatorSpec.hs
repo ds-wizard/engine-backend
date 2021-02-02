@@ -23,24 +23,35 @@ sanitizatorSpec =
   describe "sanitize question" $ do
     createTest "OptionsQuestion" "AnswerReply" "Keep" rQ2 (snd rQ2) (Just rQ2)
     createTest "OptionsQuestion" "non-existing AnswerReply" "Removed" rQ2 nonExistingAnswerReply Nothing
+    createTest "OptionsQuestion" "MultiChoiceReply" "Removed" rQ2 multiChoiceReply Nothing
     createTest "OptionsQuestion" "StringReply" "Removed" rQ2 stringReply Nothing
     createTest "OptionsQuestion" "ItemListReply" "Removed" rQ2 itemListReply Nothing
     createTest "OptionsQuestion" "IntegrationReply (plain)" "Removed" rQ2 plainIntegrationReply Nothing
     createTest "OptionsQuestion" "IntegrationReply (full)" "Removed" rQ2 fullIntegrationReply Nothing
       -- -------------------------------------------------------------
+    createTest "MultiChoiceQuestion" "AnswerReply" "Removed" rQ11 (snd rQ2) Nothing
+    createTest "MultiChoiceQuestion" "MultiChoiceReply" "Keep" rQ11 multiChoiceReply (Just rQ11)
+    createTest "MultiChoiceQuestion" "StringReply" "Removed" rQ11 stringReply Nothing
+    createTest "MultiChoiceQuestion" "ItemListReply" "Removed" rQ11 itemListReply Nothing
+    createTest "MultiChoiceQuestion" "IntegrationReply (plain)" "Removed" rQ11 plainIntegrationReply Nothing
+    createTest "MultiChoiceQuestion" "IntegrationReply (full)" "Removed" rQ11 fullIntegrationReply Nothing
+      -- -------------------------------------------------------------
     createTest "ListQuestion" "AnswerReply" "Removed" rQ4 answerReply Nothing
+    createTest "ListQuestion" "MultiChoiceReply" "Removed" rQ4 multiChoiceReply Nothing
     createTest "ListQuestion" "StringReply" "Removed" rQ4 stringReply Nothing
     createTest "ListQuestion" "ItemListReply" "Keep" rQ4 (snd rQ4) (Just rQ4)
     createTest "ListQuestion" "IntegrationReply (plain)" "Removed" rQ4 plainIntegrationReply Nothing
     createTest "ListQuestion" "IntegrationReply (full)" "Removed" rQ4 fullIntegrationReply Nothing
       -- -------------------------------------------------------------
     createTest "ValueQuestion" "AnswerReply" "Removed" rQ1 answerReply Nothing
+    createTest "ValueQuestion" "MultiChoiceReply" "Removed" rQ1 multiChoiceReply Nothing
     createTest "ValueQuestion" "StringReply" "Keep" rQ1 (snd rQ1) (Just rQ1)
     createTest "ValueQuestion" "ItemListReply" "Removed" rQ1 itemListReply Nothing
     createTest "ValueQuestion" "IntegrationReply (plain)" "Keep" rQ1 plainIntegrationReply (Just rQ1)
     createTest "ValueQuestion" "IntegrationReply (full)" "Keep" rQ1 fullIntegrationReply (Just rQ1)
       -- -------------------------------------------------------------
     createTest "IntegrationQuestion" "AnswerReply" "Removed" rQ9 answerReply Nothing
+    createTest "IntegrationQuestion" "MultiChoiceReply" "Removed" rQ9 multiChoiceReply Nothing
     createTest "IntegrationQuestion" "StringReply" "Keep" rQ9 stringReply (Just rQ9)
     createTest "IntegrationQuestion" "ItemListReply" "Removed" rQ9 itemListReply Nothing
     createTest "IntegrationQuestion" "IntegrationReply (plain)" "Keep" rQ9 (snd rQ9) (Just rQ9)
@@ -65,6 +76,9 @@ createTest qType replyType result (path, value) newValue expected =
 answerReply = AnswerReply $ q2_answerYes ^. uuid
 
 nonExistingAnswerReply = AnswerReply . fromJust . U.fromString $ "5c4141ac-4a61-492f-b07f-467932753f0a"
+
+multiChoiceReply =
+  MultiChoiceReply [u' "24b6d097-1be1-44d1-95bd-e7cf50052093", u' "5db38ad4-7bad-4cc7-84e6-3270b8556593"]
 
 stringReply = StringReply "Plain reply to 9st question"
 

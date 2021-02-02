@@ -17,6 +17,12 @@ instance FromJSON MoveAnswerEvent where
 instance ToJSON MoveAnswerEvent where
   toJSON = simpleToJSON' "_moveAnswerEvent" "eventType"
 
+instance FromJSON MoveChoiceEvent where
+  parseJSON = simpleParseJSON "_moveChoiceEvent"
+
+instance ToJSON MoveChoiceEvent where
+  toJSON = simpleToJSON' "_moveChoiceEvent" "eventType"
+
 instance FromJSON MoveExpertEvent where
   parseJSON = simpleParseJSON "_moveExpertEvent"
 

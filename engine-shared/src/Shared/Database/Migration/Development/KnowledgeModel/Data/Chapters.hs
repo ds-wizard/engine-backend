@@ -111,7 +111,7 @@ chapter3 =
     { _chapterUuid = fromJust $ U.fromString "ca46cd40-3999-4f0d-a8ba-15d57682dfeb"
     , _chapterTitle = "Data Capture/Measurement"
     , _chapterText = Just ""
-    , _chapterQuestionUuids = [question9 ^. uuid, question10 ^. uuid]
+    , _chapterQuestionUuids = [question9 ^. uuid, question10 ^. uuid, question11 ^. uuid, question12 ^. uuid]
     }
 
 chapter4WithoutQuestions :: Chapter

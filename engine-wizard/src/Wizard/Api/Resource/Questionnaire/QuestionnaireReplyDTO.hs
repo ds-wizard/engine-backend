@@ -10,6 +10,9 @@ data ReplyValueDTO
   | AnswerReplyDTO
       { _answerReplyDTOValue :: U.UUID
       }
+  | MultiChoiceReplyDTO
+      { _multiChoiceReplyDTOValue :: [U.UUID]
+      }
   | ItemListReplyDTO
       { _itemListReplyDTOValue :: [U.UUID]
       }

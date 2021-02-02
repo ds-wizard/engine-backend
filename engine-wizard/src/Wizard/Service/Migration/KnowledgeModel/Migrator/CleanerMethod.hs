@@ -34,6 +34,9 @@ doIsCleanerMethod km (DeleteQuestionEvent' event) = isNothing $ M.lookup (event 
 doIsCleanerMethod km (AddAnswerEvent' event) = isNothing $ M.lookup (event ^. parentUuid') (km ^. questionsM)
 doIsCleanerMethod km (EditAnswerEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. answersM)
 doIsCleanerMethod km (DeleteAnswerEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. answersM)
+doIsCleanerMethod km (AddChoiceEvent' event) = isNothing $ M.lookup (event ^. parentUuid') (km ^. questionsM)
+doIsCleanerMethod km (EditChoiceEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. choicesM)
+doIsCleanerMethod km (DeleteChoiceEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. choicesM)
 doIsCleanerMethod km (AddExpertEvent' event) = isNothing $ M.lookup (event ^. parentUuid') (km ^. questionsM)
 doIsCleanerMethod km (EditExpertEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. expertsM)
 doIsCleanerMethod km (DeleteExpertEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. expertsM)
@@ -53,6 +56,9 @@ doIsCleanerMethod km (MoveQuestionEvent' event) =
    isNothing (M.lookup (event ^. targetUuid) (km ^. answersM)))
 doIsCleanerMethod km (MoveAnswerEvent' event) =
   isNothing (M.lookup (event ^. entityUuid') (km ^. answersM)) ||
+  isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM))
+doIsCleanerMethod km (MoveChoiceEvent' event) =
+  isNothing (M.lookup (event ^. entityUuid') (km ^. choicesM)) ||
   isNothing (M.lookup (event ^. targetUuid) (km ^. questionsM))
 doIsCleanerMethod km (MoveExpertEvent' event) =
   isNothing (M.lookup (event ^. entityUuid') (km ^. expertsM)) ||

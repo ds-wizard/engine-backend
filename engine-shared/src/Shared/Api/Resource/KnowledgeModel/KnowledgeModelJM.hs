@@ -42,6 +42,7 @@ instance FromJSON Question where
     questionType <- o .: "questionType"
     case questionType of
       "OptionsQuestion" -> parseJSON (Object o) >>= \event -> return (OptionsQuestion' event)
+      "MultiChoiceQuestion" -> parseJSON (Object o) >>= \event -> return (MultiChoiceQuestion' event)
       "ListQuestion" -> parseJSON (Object o) >>= \event -> return (ListQuestion' event)
       "ValueQuestion" -> parseJSON (Object o) >>= \event -> return (ValueQuestion' event)
       "IntegrationQuestion" -> parseJSON (Object o) >>= \event -> return (IntegrationQuestion' event)
@@ -54,6 +55,13 @@ instance ToJSON OptionsQuestion where
 
 instance FromJSON OptionsQuestion where
   parseJSON = simpleParseJSON "_optionsQuestion"
+
+-- --------------------------------------------------------------------
+instance ToJSON MultiChoiceQuestion where
+  toJSON = simpleToJSON' "_multiChoiceQuestion" "questionType"
+
+instance FromJSON MultiChoiceQuestion where
+  parseJSON = simpleParseJSON "_multiChoiceQuestion"
 
 -- --------------------------------------------------------------------
 instance ToJSON ListQuestion where
@@ -83,6 +91,14 @@ instance ToJSON Answer where
 
 instance FromJSON Answer where
   parseJSON = simpleParseJSON "_answer"
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
+instance ToJSON Choice where
+  toJSON = simpleToJSON "_choice"
+
+instance FromJSON Choice where
+  parseJSON = simpleParseJSON "_choice"
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

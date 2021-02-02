@@ -53,6 +53,7 @@ fromUserProfileChangeDTO dto oldUser =
     , _userSubmissionProps = fromUserSubmissionPropsDTO <$> dto ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
     , _userGroups = oldUser ^. groups
+    , _userLastVisitedAt = oldUser ^. lastVisitedAt
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
     }

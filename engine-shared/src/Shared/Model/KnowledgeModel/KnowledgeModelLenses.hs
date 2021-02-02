@@ -6,6 +6,8 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , questionsM
   , answersL
   , answersM
+  , choicesL
+  , choicesM
   , expertsL
   , expertsM
   , referencesL
@@ -22,13 +24,14 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , requiredLevel'
   , tagUuids'
   , answerUuids'
+  , choiceUuids'
   , itemTemplateQuestionUuids'
   , valueType'
   , integrationUuid'
   , props'
   ) where
 
-import Control.Lens
+import Control.Lens hiding (Choice)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
@@ -58,6 +61,13 @@ answersL = createEntityLFn (entities . answers)
 
 answersM :: Functor f => (M.Map U.UUID Answer -> f (M.Map U.UUID Answer)) -> KnowledgeModel -> f KnowledgeModel
 answersM = createEntityMFn (entities . answers)
+
+------------------------------------------------------------------------------------------
+choicesL :: Functor f => ([Choice] -> f [Choice]) -> KnowledgeModel -> f KnowledgeModel
+choicesL = createEntityLFn (entities . choices)
+
+choicesM :: Functor f => (M.Map U.UUID Choice -> f (M.Map U.UUID Choice)) -> KnowledgeModel -> f KnowledgeModel
+choicesM = createEntityMFn (entities . choices)
 
 ------------------------------------------------------------------------------------------
 expertsL :: Functor f => ([Expert] -> f [Expert]) -> KnowledgeModel -> f KnowledgeModel
@@ -134,13 +144,15 @@ instance HasUuid' Question where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
       get :: Question -> U.UUID
-      get (ListQuestion' entity) = entity ^. uuid
       get (OptionsQuestion' entity) = entity ^. uuid
+      get (MultiChoiceQuestion' entity) = entity ^. uuid
+      get (ListQuestion' entity) = entity ^. uuid
       get (ValueQuestion' entity) = entity ^. uuid
       get (IntegrationQuestion' entity) = entity ^. uuid
       set :: Question -> U.UUID -> Question
-      set (ListQuestion' entity) newValue = ListQuestion' $ entity & uuid .~ newValue
       set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & uuid .~ newValue
+      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & uuid .~ newValue
+      set (ListQuestion' entity) newValue = ListQuestion' $ entity & uuid .~ newValue
       set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & uuid .~ newValue
       set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & uuid .~ newValue
 
@@ -172,6 +184,14 @@ instance HasUuid' Answer where
       set :: Answer -> U.UUID -> Answer
       set entity newValue = entity & uuid .~ newValue
 
+instance HasUuid' Choice where
+  uuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Choice -> U.UUID
+      get entity = entity ^. uuid
+      set :: Choice -> U.UUID -> Choice
+      set entity newValue = entity & uuid .~ newValue
+
 instance HasUuid' Tag where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -193,13 +213,15 @@ title' :: Functor f => (String -> f String) -> Question -> f Question
 title' convert entity = fmap (set entity) (convert . get $ entity)
   where
     get :: Question -> String
-    get (ListQuestion' q) = q ^. title
     get (OptionsQuestion' q) = q ^. title
+    get (MultiChoiceQuestion' q) = q ^. title
+    get (ListQuestion' q) = q ^. title
     get (ValueQuestion' q) = q ^. title
     get (IntegrationQuestion' q) = q ^. title
     set :: Question -> String -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & title .~ newValue
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & title .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & title .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & title .~ newValue
     set (ValueQuestion' q) newValue = ValueQuestion' $ q & title .~ newValue
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & title .~ newValue
 
@@ -208,13 +230,15 @@ text' :: Functor f => (Maybe String -> f (Maybe String)) -> Question -> f Questi
 text' convert entity = fmap (set entity) (convert . get $ entity)
   where
     get :: Question -> Maybe String
-    get (ListQuestion' q) = q ^. text
     get (OptionsQuestion' q) = q ^. text
+    get (MultiChoiceQuestion' q) = q ^. text
+    get (ListQuestion' q) = q ^. text
     get (ValueQuestion' q) = q ^. text
     get (IntegrationQuestion' q) = q ^. text
     set :: Question -> Maybe String -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & text .~ newValue
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & text .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & text .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & text .~ newValue
     set (ValueQuestion' q) newValue = ValueQuestion' $ q & text .~ newValue
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & text .~ newValue
 
@@ -223,13 +247,15 @@ requiredLevel' :: Functor f => (Maybe Int -> f (Maybe Int)) -> Question -> f Que
 requiredLevel' convert entity = fmap (set entity) (convert . get $ entity)
   where
     get :: Question -> Maybe Int
-    get (ListQuestion' q) = q ^. requiredLevel
     get (OptionsQuestion' q) = q ^. requiredLevel
+    get (MultiChoiceQuestion' q) = q ^. requiredLevel
+    get (ListQuestion' q) = q ^. requiredLevel
     get (ValueQuestion' q) = q ^. requiredLevel
     get (IntegrationQuestion' q) = q ^. requiredLevel
     set :: Question -> Maybe Int -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & requiredLevel .~ newValue
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & requiredLevel .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & requiredLevel .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & requiredLevel .~ newValue
     set (ValueQuestion' q) newValue = ValueQuestion' $ q & requiredLevel .~ newValue
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredLevel .~ newValue
 
@@ -238,13 +264,15 @@ tagUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
 tagUuids' convert entity = fmap (set entity) (convert . get $ entity)
   where
     get :: Question -> [U.UUID]
-    get (ListQuestion' q) = q ^. tagUuids
     get (OptionsQuestion' q) = q ^. tagUuids
+    get (MultiChoiceQuestion' q) = q ^. tagUuids
+    get (ListQuestion' q) = q ^. tagUuids
     get (ValueQuestion' q) = q ^. tagUuids
     get (IntegrationQuestion' q) = q ^. tagUuids
     set :: Question -> [U.UUID] -> Question
-    set (ListQuestion' q) newValue = ListQuestion' $ q & tagUuids .~ newValue
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & tagUuids .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & tagUuids .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & tagUuids .~ newValue
     set (ValueQuestion' q) newValue = ValueQuestion' $ q & tagUuids .~ newValue
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & tagUuids .~ newValue
 
@@ -253,13 +281,15 @@ instance HasExpertUuids' Question [U.UUID] where
   expertUuids' convert entity = fmap (set entity) (convert . get $ entity)
     where
       get :: Question -> [U.UUID]
-      get (ListQuestion' entity) = entity ^. expertUuids
       get (OptionsQuestion' entity) = entity ^. expertUuids
+      get (MultiChoiceQuestion' entity) = entity ^. expertUuids
+      get (ListQuestion' entity) = entity ^. expertUuids
       get (ValueQuestion' entity) = entity ^. expertUuids
       get (IntegrationQuestion' entity) = entity ^. expertUuids
       set :: Question -> [U.UUID] -> Question
-      set (ListQuestion' entity) newValue = ListQuestion' $ entity & expertUuids .~ newValue
       set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & expertUuids .~ newValue
+      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & expertUuids .~ newValue
+      set (ListQuestion' entity) newValue = ListQuestion' $ entity & expertUuids .~ newValue
       set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & expertUuids .~ newValue
       set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & expertUuids .~ newValue
 
@@ -268,13 +298,15 @@ instance HasReferenceUuids' Question [U.UUID] where
   referenceUuids' convert entity = fmap (set entity) (convert . get $ entity)
     where
       get :: Question -> [U.UUID]
-      get (ListQuestion' q) = q ^. referenceUuids
       get (OptionsQuestion' q) = q ^. referenceUuids
+      get (MultiChoiceQuestion' q) = q ^. referenceUuids
+      get (ListQuestion' q) = q ^. referenceUuids
       get (ValueQuestion' q) = q ^. referenceUuids
       get (IntegrationQuestion' q) = q ^. referenceUuids
       set :: Question -> [U.UUID] -> Question
-      set (ListQuestion' q) newValue = ListQuestion' $ q & referenceUuids .~ newValue
       set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & referenceUuids .~ newValue
+      set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & referenceUuids .~ newValue
+      set (ListQuestion' q) newValue = ListQuestion' $ q & referenceUuids .~ newValue
       set (ValueQuestion' q) newValue = ValueQuestion' $ q & referenceUuids .~ newValue
       set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & referenceUuids .~ newValue
 
@@ -287,6 +319,17 @@ answerUuids' convert entity = fmap (set entity) (convert . get $ entity)
     get q = []
     set :: Question -> [U.UUID] -> Question
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & answerUuids .~ newValue
+    set q newValue = q
+
+-- ------------------------------------------------------------------------------------------
+choiceUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
+choiceUuids' convert entity = fmap (set entity) (convert . get $ entity)
+  where
+    get :: Question -> [U.UUID]
+    get (MultiChoiceQuestion' q) = q ^. choiceUuids
+    get q = []
+    set :: Question -> [U.UUID] -> Question
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & choiceUuids .~ newValue
     set q newValue = q
 
 -- ------------------------------------------------------------------------------------------

@@ -45,6 +45,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0036_templates.M
 import qualified Wizard.Database.Migration.Production.Migration_0037_questionnaireSharingAndCollaboration.Migration as M_0037
 import qualified Wizard.Database.Migration.Production.Migration_0038_documentOwner_and_doc_perm.Migration as M_0038
 import qualified Wizard.Database.Migration.Production.Migration_0039_questionnaireAcl.Migration as M_0039
+import qualified Wizard.Database.Migration.Production.Migration_0040_user_lastVisitedAt.Migration as M_0040
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -92,4 +93,5 @@ migrationDefinitions =
   , M_0037.definition
   , M_0038.definition
   , M_0039.definition
+  , M_0040.definition
   ]
