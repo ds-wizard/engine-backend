@@ -41,8 +41,9 @@ knowledgeModelFilterSpec =
              , chapter2 & questionUuids .~ []
              , chapter3 & questionUuids .~ []
              ]) .
-            (questionsL .~ [question1']) .
-            (answersL .~ []) . (referencesL .~ []) . (expertsL .~ []) . (tagsL .~ [tagDataScience]) $
+            (questionsL .~ [question1' & tagUuids' .~ [tagDataScience ^. uuid]]) .
+            (answersL .~ []) .
+            (referencesL .~ []) . (expertsL .~ []) . (tagsL .~ [tagDataScience]) . (tagUuids .~ inTags) $
             km1WithQ4
         -- WHEN:
       let computedKm = filterKnowledgeModel inTags inKm

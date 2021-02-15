@@ -2,7 +2,7 @@ module Wizard.Service.KnowledgeModel.KnowledgeModelFilter where
 
 import Control.Lens ((&), (.~), (?~), (^.), at, view)
 import qualified Data.Map.Strict as M
-import Data.Maybe (catMaybes)
+import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -13,10 +13,11 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Delete
 
 filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
 filterKnowledgeModel [] km = km
-filterKnowledgeModel selectedTagUuids km = removeOrphanUuids . filterTags . filterChapters $ km
+filterKnowledgeModel selectedTagUuids km = removeOrphanUuids . filterTagUuids . filterTags . filterChapters $ km
   where
     filterChapters km = foldl (filterChapter selectedTagUuids) km (km ^. chaptersL)
-    filterTags km = km & tagsM .~ (M.filterWithKey (\tUuid _ -> tUuid `elem` selectedTagUuids) (km ^. tagsM))
+    filterTags km = km & tagsM .~ M.filterWithKey (\tUuid _ -> tUuid `elem` selectedTagUuids) (km ^. tagsM)
+    filterTagUuids km = km & tagUuids .~ filter (`elem` selectedTagUuids) (km ^. tagUuids)
 
 filterChapter :: [U.UUID] -> KnowledgeModel -> Chapter -> KnowledgeModel
 filterChapter selectedTagUuids km chapter =
@@ -25,19 +26,22 @@ filterChapter selectedTagUuids km chapter =
 
 filterQuestion :: [U.UUID] -> KnowledgeModel -> Question -> KnowledgeModel
 filterQuestion selectedTagUuids km q =
-  case filter (\qTagUuid -> qTagUuid `elem` selectedTagUuids) (q ^. tagUuids') of
+  case filter (`elem` selectedTagUuids) (q ^. tagUuids') of
     [] -> deleteQuestion km (q ^. uuid')
-    filteredQuestionTagUuids -> applyToChildren q
+    filteredQuestionTagUuids -> applyToQuestion filteredQuestionTagUuids q . applyToChildren q $ km
   where
-    applyToChildren (OptionsQuestion' q) = foldl go km (q ^. answerUuids)
+    applyToQuestion filteredQuestionTagUuids q km =
+      let updatedQuestion = q & tagUuids' .~ filteredQuestionTagUuids
+       in km & questionsM . at (q ^. uuid') ?~ updatedQuestion
+    applyToChildren (OptionsQuestion' q) km = foldl go km (q ^. answerUuids)
       where
         go km ansUuid =
           let qs = getQuestionsForAnswerUuid km ansUuid
            in foldl (filterQuestion selectedTagUuids) km qs
-    applyToChildren (ListQuestion' q) =
+    applyToChildren (ListQuestion' q) km =
       let qs = getItemTemplateQuestionsForQuestionUuid km (q ^. uuid)
        in foldl (filterQuestion selectedTagUuids) km qs
-    applyToChildren q = km
+    applyToChildren q km = km
 
 removeOrphanUuids :: KnowledgeModel -> KnowledgeModel
 removeOrphanUuids = removeOrphanUuidInQuestions . removeOrphanUuidInChapters
@@ -49,18 +53,17 @@ removeOrphanUuidInChapter :: KnowledgeModel -> Chapter -> KnowledgeModel
 removeOrphanUuidInChapter km ch = km & chaptersM . at (ch ^. uuid) ?~ (ch & questionUuids .~ newQuestionUuids)
   where
     newQuestionUuids =
-      fmap (view uuid') . catMaybes . fmap (\qUuid -> M.lookup qUuid (km ^. questionsM)) $ (ch ^. questionUuids)
+      fmap (view uuid') . mapMaybe (\qUuid -> M.lookup qUuid (km ^. questionsM)) $ (ch ^. questionUuids)
 
 removeOrphanUuidInQuestion :: KnowledgeModel -> Question -> KnowledgeModel
-removeOrphanUuidInQuestion km q = km & questionsM . at (q ^. uuid') ?~ (applyToChildren q)
+removeOrphanUuidInQuestion km q = km & questionsM . at (q ^. uuid') ?~ applyToChildren q
   where
     applyToChildren (OptionsQuestion' q) = OptionsQuestion' $ q & answerUuids .~ newAnswerUuids
       where
         newAnswerUuids =
-          fmap (view uuid') . catMaybes . fmap (\ansUuid -> M.lookup ansUuid (km ^. answersM)) $ (q ^. answerUuids)
+          fmap (view uuid') . mapMaybe (\ansUuid -> M.lookup ansUuid (km ^. answersM)) $ (q ^. answerUuids)
     applyToChildren (ListQuestion' q) = ListQuestion' $ q & itemTemplateQuestionUuids .~ newQuestionUuids
       where
         newQuestionUuids =
-          fmap (view uuid') . catMaybes . fmap (\qUuid -> M.lookup qUuid (km ^. questionsM)) $
-          (q ^. itemTemplateQuestionUuids)
+          fmap (view uuid') . mapMaybe (\qUuid -> M.lookup qUuid (km ^. questionsM)) $ (q ^. itemTemplateQuestionUuids)
     applyToChildren q = q

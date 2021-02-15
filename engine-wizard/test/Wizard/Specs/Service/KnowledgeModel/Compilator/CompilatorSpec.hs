@@ -328,7 +328,7 @@ compilatorSpec =
       it "Apply:  DeleteTagEvent" $ do
         let (Right computed) = compile (Just km1WithQ4) [DeleteTagEvent' d_km1_tds]
         let expected =
-              (questionsM . at (question1 ^. uuid) ?~ (question1' & tagUuids' .~ [])) .
+              (questionsM . at (question1 ^. uuid) ?~ (question1' & tagUuids' .~ [tagBioInformatic ^. uuid])) .
               (questionsM . at (q2_aYes_fuQuestion1 ^. uuid) ?~ (q2_aYes_fuQuestion1' & tagUuids' .~ [])) .
               (questionsM . at (q4_it1_question6 ^. uuid) ?~ (q4_it1_question6' & tagUuids' .~ [])) .
               (tagUuids .~ [tagBioInformatic ^. uuid]) .
