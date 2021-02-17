@@ -103,8 +103,11 @@ createDocumentPreview qtnUuid = do
   case filter (filterAlreadyDone qtn) matchingDocs of
     (doc:_) -> do
       logInfoU _CMP_SERVICE "Retrieving from cache"
-      content <- findDocumentContent (U.toString $ doc ^. uuid)
-      return (doc, content)
+      if doc ^. state == DoneDocumentState
+        then do
+          content <- findDocumentContent (U.toString $ doc ^. uuid)
+          return (doc, content)
+        else return (doc, BS.empty)
     [] ->
       case filter (\d -> d ^. state == QueuedDocumentState || d ^. state == InProgressDocumentState) matchingDocs of
         (doc:_) -> do
@@ -114,7 +117,7 @@ createDocumentPreview qtnUuid = do
   where
     filterAlreadyDone :: Questionnaire -> Document -> Bool
     filterAlreadyDone qtn doc =
-      doc ^. state == DoneDocumentState &&
+      (doc ^. state == DoneDocumentState || doc ^. state == ErrorDocumentState) &&
       Just (doc ^. templateId) == qtn ^. templateId && Just (doc ^. formatUuid) == qtn ^. formatUuid
     createNewDoc :: Questionnaire -> AppContextM (Document, BS.ByteString)
     createNewDoc qtn = do

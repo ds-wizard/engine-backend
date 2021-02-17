@@ -151,6 +151,9 @@ _ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED qtnUuid =
     "Questionnaire ('%s') no longer exists because it has been deleted"
     [qtnUuid]
 
+_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW =
+  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "Unable to generate preview" []
+
 -- Template Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =
   LocaleRecord "error.service.tb.pull_non_existing_tml" "Desired template ('%s') wasn't found in Registry" [tmlId]

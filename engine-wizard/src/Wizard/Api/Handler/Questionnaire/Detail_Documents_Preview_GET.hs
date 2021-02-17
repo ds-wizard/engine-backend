@@ -11,6 +11,7 @@ import LensesConfig
 import Shared.Api.Handler.Common
 import Shared.Model.Error.Error
 import Wizard.Api.Handler.Common
+import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
@@ -39,4 +40,5 @@ detail_documents_preview_GET mTokenHeader qtnUuid mTokenQueryHeader =
           let cdHeader = fromMaybe "text/plain" (doc ^. metadata . contentType)
           traceUuid <- asks _appContextTraceUuid
           return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
+        ErrorDocumentState -> throwError $ UserError _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW
         _ -> throwError AcceptedError
