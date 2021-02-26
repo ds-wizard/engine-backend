@@ -8,6 +8,8 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Common.Lens
+import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentContextJM ()
@@ -19,6 +21,8 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
+import Wizard.Service.Questionnaire.Compiler.CompilerService
+import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.User.UserService
 
@@ -35,10 +39,31 @@ createDocumentContext qtnUuid = do
   let org = appConfig ^. organization
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
+  let qtnEvents =
+        case doc ^. questionnaireEventUuid of
+          Just eventUuid -> takeWhileInclusive (\e -> e ^. uuid' /= eventUuid) (qtn ^. events)
+          Nothing -> qtn ^. events
+  qtnCtn <- compileQuestionnairePreview qtnEvents
   let _level =
         if appConfig ^. questionnaire . levels . enabled
-          then qtn ^. level
+          then qtnCtn ^. level
           else 9999
-  report <- generateReport _level metrics km (M.toList $ qtn ^. replies)
-  let dmp = fromCreateContextDTO dmpUuid appConfig serverConfig qtn _level km metrics ls report pkg org mCreatedBy now
-  return . toDocumentContextDTO $ dmp
+  report <- generateReport _level metrics km (M.toList $ qtnCtn ^. replies)
+  qtnVersionDtos <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+  return $
+    toDocumentContextDTO
+      dmpUuid
+      appConfig
+      serverConfig
+      qtn
+      qtnCtn
+      qtnVersionDtos
+      _level
+      km
+      metrics
+      ls
+      report
+      pkg
+      org
+      mCreatedBy
+      now

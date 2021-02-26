@@ -9,6 +9,7 @@ import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Level.LevelJM ()
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Api.Resource.User.UserJM ()
 

@@ -145,11 +145,17 @@ _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION =
     "Questionnaire can't be deleted because it's used in some questionnaire migration"
     []
 
-_ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED qtnUuid =
+_ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid =
   LocaleRecord
-    "error.service.qtn.collaboration.qtn_deleted"
-    "Questionnaire ('%s') no longer exists because it has been deleted"
+    "error.service.qtn.collaboration.force_disconnect"
+    "Questionnaire ('%s') dramatically changed its state. Therefore, users has to be disconnected"
     [qtnUuid]
+
+_ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
+  LocaleRecord
+    "error.service.qtn.version.non_existent_event_uuid"
+    "You can't create version for non-existent event (eventUuid: '%s')"
+    [eventUuid]
 
 _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW =
   LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "Unable to generate preview" []

@@ -4,43 +4,47 @@ import Control.Lens ((^.))
 import Test.Hspec
 
 import LensesConfig
-import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 
-questionnaireCompilerServiceSpec =
+import Wizard.Specs.Common
+
+questionnaireCompilerServiceSpec appContext =
   describe "Questionnaire Compiler Service" $
   describe "applyEvent" $ do
-    it "SetReplyEventDTO" $
+    it "SetReplyEvent" $
         -- GIVEN:
      do
-      let event = SetReplyEventDTO' setReplyEvent
+      let event = SetReplyEvent' sre_rQ1Updated
         -- WHEN:
-      let updatedQtn = applyEvent questionnaire1 event
+      (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
       updatedQtn ^. replies `shouldBe` fRepliesWithUpdated
-    it "ClearReplyEventDTO" $
+    it "ClearReplyEvent" $
         -- GIVEN:
      do
-      let event = ClearReplyEventDTO' clearReplyEvent
+      let event = ClearReplyEvent' cre_rQ1
         -- WHEN:
-      let updatedQtn = applyEvent questionnaire1 event
+      (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
       updatedQtn ^. replies `shouldBe` fRepliesWithDeleted
-    it "SetLevelEventDTO" $
+    it "SetLevelEvent" $
         -- GIVEN:
      do
-      let event = SetLevelEventDTO' setLevelEvent
+      let event = SetLevelEvent' slvle_2
         -- WHEN:
-      let updatedQtn = applyEvent questionnaire1 event
+      (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
-      updatedQtn ^. level `shouldBe` setLevelEvent ^. level
-    it "SetLabelsEventDTO" $
+      updatedQtn ^. level `shouldBe` slvle_2 ^. level
+    it "SetLabelsEvent" $
         -- GIVEN:
      do
-      let event = SetLabelsEventDTO' setLabelsEvent
+      let event = SetLabelsEvent' slble_rQ2
         -- WHEN:
-      let updatedQtn = applyEvent questionnaire1 event
+      (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
       updatedQtn ^. labels `shouldBe` fLabelsEdited

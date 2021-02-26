@@ -18,4 +18,4 @@ consumeQuestionnaireEventsQueue :: AppContextM (Maybe ConsumerTag)
 consumeQuestionnaireEventsQueue = consumeQueue _QUESTIONNAIRE_QUEUE handler
 
 handler :: QuestionnaireEventMDTO -> AppContextM ()
-handler reqDto = processEvent (reqDto ^. questionnaireUuid) (reqDto ^. event)
+handler reqDto = saveQuestionnaireEvent (reqDto ^. questionnaireUuid) (reqDto ^. event)

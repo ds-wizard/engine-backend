@@ -14,11 +14,11 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 import Wizard.Service.Report.Evaluator.Common
 
-computeMetrics :: [Metric] -> KnowledgeModel -> [Reply] -> Maybe Chapter -> [MetricSummary]
+computeMetrics :: [Metric] -> KnowledgeModel -> [ReplyTuple] -> Maybe Chapter -> [MetricSummary]
 computeMetrics metrics km replies mCh =
   mapMaybe filterEmptyMetricSummary . fmap (computeMetric km replies mCh) $ metrics
 
-computeMetric :: KnowledgeModel -> [Reply] -> Maybe Chapter -> Metric -> MetricSummary
+computeMetric :: KnowledgeModel -> [ReplyTuple] -> Maybe Chapter -> Metric -> MetricSummary
 computeMetric km replies mCh m =
   MetricSummary
     {_metricSummaryMetricUuid = m ^. uuid, _metricSummaryMeasure = weightAverage' . mapMetric . filterMetric $ measures}
@@ -45,13 +45,13 @@ filterEmptyMetricSummary ms =
     Just msMeasure -> Just ms
     Nothing -> Nothing
 
-evaluateChapter :: KnowledgeModel -> [Reply] -> Chapter -> [MetricMeasure]
+evaluateChapter :: KnowledgeModel -> [ReplyTuple] -> Chapter -> [MetricMeasure]
 evaluateChapter km replies ch =
   let currentPath = U.toString $ ch ^. uuid
       qs = getQuestionsForChapterUuid km (ch ^. uuid)
    in concatMap (evaluateQuestion km replies currentPath) qs
 
-evaluateQuestion :: KnowledgeModel -> [Reply] -> String -> Question -> [MetricMeasure]
+evaluateQuestion :: KnowledgeModel -> [ReplyTuple] -> String -> Question -> [MetricMeasure]
 evaluateQuestion km replies path q' =
   let currentPath = composePathUuid path $ q' ^. uuid'
    in case getReply replies currentPath of
@@ -66,10 +66,10 @@ evaluateQuestion km replies path q' =
         OptionsQuestion' q -> evaluateOptionsQuestion q km replies currentPath
         ListQuestion' q -> evaluateListQuestion km replies currentPath q
 
-evaluateOptionsQuestion :: OptionsQuestion -> KnowledgeModel -> [Reply] -> String -> [MetricMeasure]
+evaluateOptionsQuestion :: OptionsQuestion -> KnowledgeModel -> [ReplyTuple] -> String -> [MetricMeasure]
 evaluateOptionsQuestion q km replies path =
   case getReply replies path of
-    Just (_, AnswerReply {..}) ->
+    Just (_, Reply {_replyValue = AnswerReply {..}}) ->
       case M.lookup _answerReplyValue (km ^. answersM) of
         Just answer ->
           let currentMeasures = answer ^. metricMeasures
@@ -79,12 +79,12 @@ evaluateOptionsQuestion q km replies path =
         Nothing -> []
     _ -> []
 
-evaluateListQuestion :: KnowledgeModel -> [Reply] -> String -> ListQuestion -> [MetricMeasure]
+evaluateListQuestion :: KnowledgeModel -> [ReplyTuple] -> String -> ListQuestion -> [MetricMeasure]
 evaluateListQuestion km replies currentPath q =
   let itemQs = getItemTemplateQuestionsForQuestionUuid km $ q ^. uuid
       items =
         case getReply replies currentPath of
-          Just (_, ItemListReply {..}) -> _itemListReplyValue
+          Just (_, Reply {_replyValue = ItemListReply {..}}) -> _itemListReplyValue
           _ -> []
       evaluateQuestion' item =
         concatMap (evaluateQuestion km replies (composePath currentPath $ U.toString item)) itemQs

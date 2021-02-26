@@ -16,7 +16,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 import Shared.Model.Questionnaire.QuestionnaireUtil
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator
 

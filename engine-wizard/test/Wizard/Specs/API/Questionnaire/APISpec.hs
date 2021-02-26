@@ -10,7 +10,8 @@ import Wizard.Specs.API.Questionnaire.Detail_Documents_GET
 import Wizard.Specs.API.Questionnaire.Detail_GET
 import Wizard.Specs.API.Questionnaire.Detail_PUT
 import Wizard.Specs.API.Questionnaire.Detail_Report_GET
-import Wizard.Specs.API.Questionnaire.Detail_Report_Preview_POST
+import Wizard.Specs.API.Questionnaire.Detail_Revert_POST
+import Wizard.Specs.API.Questionnaire.Detail_Revert_Preview_POST
 import Wizard.Specs.API.Questionnaire.List_GET
 import Wizard.Specs.API.Questionnaire.List_POST
 import Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
@@ -27,4 +28,5 @@ questionnaireAPI appContext =
     detail_content_put appContext
     detail_report_get appContext
     detail_documents_get appContext
-    detail_report_preview_post appContext
+    detail_revert_POST appContext
+    detail_revert_preview_POST appContext

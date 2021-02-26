@@ -13,7 +13,9 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.Common.Lens
 import qualified Shared.Service.Package.PackageMapper as SPM
+import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
@@ -22,8 +24,11 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Document.Document
-import Wizard.Model.Document.DocumentContext
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Service.Document.DocumentMapper
+import qualified Wizard.Service.Package.PackageMapper as WPM
+import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
+import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
 doc1 :: Document
 doc1 =
@@ -33,7 +38,8 @@ doc1 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire1 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire1 ^. replies
+    , _documentQuestionnaireEventUuid = Just $ last (questionnaire1 ^. events) ^. uuid'
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -53,26 +59,27 @@ doc1Content =
   "id. Nullam sagittis justo a lobortis fermentum. Nunc pretium sem sed lectus lacinia, et tempus nulla suscipit. " ++
   "Aliquam volutpat molestie nibh sit amet iaculis."
 
-dmp1 :: DocumentContext
+dmp1 :: DocumentContextDTO
 dmp1 =
-  DocumentContext
-    { _documentContextUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
-    , _documentContextConfig =
-        DocumentContextConfig
-          {_documentContextConfigLevelsEnabled = True, _documentContextConfigClientUrl = "https://example.com"}
-    , _documentContextQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
-    , _documentContextQuestionnaireName = questionnaire1 ^. name
-    , _documentContextQuestionnaireReplies = questionnaire1 ^. replies
-    , _documentContextLevel = questionnaire1 ^. level
-    , _documentContextKnowledgeModel = km1WithQ4
-    , _documentContextMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
-    , _documentContextLevels = [level1, level2, level3]
-    , _documentContextReport = report1
-    , _documentContextPackage = SPM.toPackage germanyPackage
-    , _documentContextOrganization = defaultOrganization
-    , _documentContextCreatedBy = Just userAlbert
-    , _documentContextCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _documentContextUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  DocumentContextDTO
+    { _documentContextDTOUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
+    , _documentContextDTOConfig =
+        DocumentContextConfigDTO
+          {_documentContextConfigDTOLevelsEnabled = True, _documentContextConfigDTOClientUrl = "https://example.com"}
+    , _documentContextDTOQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
+    , _documentContextDTOQuestionnaireName = questionnaire1 ^. name
+    , _documentContextDTOQuestionnaireReplies = questionnaire1Ctn ^. replies
+    , _documentContextDTOQuestionnaireVersions = fmap (`toVersionDTO` userAlbert) (questionnaire1 ^. versions)
+    , _documentContextDTOLevel = questionnaire1Ctn ^. level
+    , _documentContextDTOKnowledgeModel = km1WithQ4
+    , _documentContextDTOMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
+    , _documentContextDTOLevels = [level1, level2, level3]
+    , _documentContextDTOReport = report1
+    , _documentContextDTOPackage = WPM.toSimpleDTO . SPM.toPackage $ germanyPackage
+    , _documentContextDTOOrganization = defaultOrganization
+    , _documentContextDTOCreatedBy = Just . USR_Mapper.toDTO $ userAlbert
+    , _documentContextDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , _documentContextDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
 doc1Create :: DocumentCreateDTO
@@ -80,6 +87,7 @@ doc1Create =
   DocumentCreateDTO
     { _documentCreateDTOName = doc1 ^. name
     , _documentCreateDTOQuestionnaireUuid = doc1 ^. questionnaireUuid
+    , _documentCreateDTOQuestionnaireEventUuid = Just $ last (questionnaire1 ^. events) ^. uuid'
     , _documentCreateDTOTemplateId = doc1 ^. templateId
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
@@ -95,7 +103,8 @@ doc2 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2 ^. replies
+    , _documentQuestionnaireEventUuid = Just $ last (questionnaire2 ^. events) ^. uuid'
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =
@@ -113,7 +122,8 @@ doc3 =
     , _documentState = DoneDocumentState
     , _documentDurability = PersistentDocumentDurability
     , _documentQuestionnaireUuid = questionnaire2 ^. uuid
-    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2 ^. replies
+    , _documentQuestionnaireEventUuid = Just $ last (questionnaire2 ^. events) ^. uuid'
+    , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
     , _documentMetadata =

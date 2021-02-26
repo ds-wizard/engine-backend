@@ -36,6 +36,7 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
+import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtils
@@ -65,7 +66,8 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid = do
   insertQuestionnaire qtn
   report <- getQuestionnaireReport qtn
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-  return $ toSimpleDTO qtn package qtnState report permissionDtos
+  qtnCtn <- compileQuestionnaire qtn
+  return $ toSimpleDTO qtn qtnCtn package qtnState report permissionDtos
 
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid = do
@@ -85,7 +87,8 @@ cloneQuestionnaire cloneUuid = do
   state <- getQuestionnaireState (U.toString newUuid) (pkg ^. pId)
   report <- getQuestionnaireReport newQtn
   permissionDtos <- traverse enhanceQuestionnairePermRecord (newQtn ^. permissions)
-  return $ toSimpleDTO newQtn pkg state report permissionDtos
+  qtnCtn <- compileQuestionnaire newQtn
+  return $ toSimpleDTO newQtn qtnCtn pkg state report permissionDtos
 
 getQuestionnaireById :: String -> AppContextM QuestionnaireDTO
 getQuestionnaireById qtnUuid = do
@@ -104,7 +107,8 @@ getQuestionnaireById' qtnUuid = do
       state <- getQuestionnaireState qtnUuid (package ^. pId)
       report <- getQuestionnaireReport qtn
       permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-      return . Just $ toDTO qtn package state report permissionDtos
+      qtnCtn <- compileQuestionnaire qtn
+      return . Just $ toDTO qtn qtnCtn package state report permissionDtos
     Nothing -> return Nothing
 
 getQuestionnaireDetailById :: String -> AppContextM QuestionnaireDetailDTO
@@ -126,7 +130,23 @@ getQuestionnaireDetailById qtnUuid = do
       (Just template, Just fUuid) -> return $ L.find (\f -> f ^. uuid == fUuid) (template ^. formats)
       _ -> return Nothing
   permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
-  return $ toDetailWithPackageWithEventsDTO qtn pkg pkgVersions knowledgeModel state mTemplate mFormat permissionDtos
+  qtnCtn <- compileQuestionnaire qtn
+  eventsDto <- traverse enhanceQuestionnaireEvent (qtn ^. events)
+  versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+  return $
+    toDetailWithPackageWithEventsDTO
+      qtn
+      qtnCtn
+      pkg
+      pkgVersions
+      knowledgeModel
+      state
+      mTemplate
+      mFormat
+      (qtnCtn ^. replies)
+      permissionDtos
+      eventsDto
+      versionDto
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto = do
@@ -138,7 +158,7 @@ modifyQuestionnaire qtnUuid reqDto = do
   now <- liftIO getCurrentTime
   qVisibility <- extractVisibility reqDto
   qSharing <- extractSharing reqDto
-  let updatedQtn = fromChangeDTO qtnDto reqDto qVisibility qSharing (currentUser ^. uuid) now
+  let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing (currentUser ^. uuid) now
   let pkgId = qtnDto ^. package . pId
   updateQuestionnaireById updatedQtn
   knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
@@ -148,7 +168,22 @@ modifyQuestionnaire qtnUuid reqDto = do
   catchError
     (sendQuestionnaireInvitationMail qtn updatedQtn)
     (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT)
-  return $ toDetailWithPackageDTO updatedQtn (qtnDto ^. package) knowledgeModel state Nothing Nothing permissionDtos
+  qtnCtn <- compileQuestionnaire updatedQtn
+  eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
+  versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+  return $
+    toDetailWithPackageDTO
+      updatedQtn
+      qtnCtn
+      (qtnDto ^. package)
+      knowledgeModel
+      state
+      Nothing
+      Nothing
+      (qtnCtn ^. replies)
+      permissionDtos
+      eventsDto
+      versionDto
 
 deleteQuestionnaire :: String -> AppContextM ()
 deleteQuestionnaire qtnUuid = do
@@ -164,7 +199,7 @@ deleteQuestionnaire qtnUuid = do
        deleteDocumentContentsFiltered [("filename", U.toString $ d ^. uuid)])
     documents
   deleteQuestionnaireById qtnUuid
-  logOutOnlineUsersWhenDeleted qtnUuid
+  logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid
   return ()
 
 removeOwnerFromQuestionnaire :: U.UUID -> AppContextM ()
@@ -186,7 +221,8 @@ modifyContent :: String -> QuestionnaireContentChangeDTO -> AppContextM Question
 modifyContent qtnUuid reqDto = do
   qtn <- findQuestionnaireById qtnUuid
   checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+  currentUser <- getCurrentUser
   now <- liftIO getCurrentTime
-  let updatedQtn = fromContentChangeDTO qtn reqDto now
+  let updatedQtn = fromContentChangeDTO qtn reqDto currentUser now
   updateQuestionnaireById updatedQtn
   return reqDto

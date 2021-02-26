@@ -15,7 +15,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric
 
-computeChapterReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [Reply] -> Chapter -> ChapterReport
+computeChapterReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
 computeChapterReport levelsEnabled requiredLevel metrics km replies ch =
   ChapterReport
     { _chapterReportChapterUuid = ch ^. uuid
@@ -23,14 +23,14 @@ computeChapterReport levelsEnabled requiredLevel metrics km replies ch =
     , _chapterReportMetrics = computeMetrics metrics km replies (Just ch)
     }
 
-computeTotalReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [Reply] -> TotalReport
+computeTotalReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> TotalReport
 computeTotalReport levelsEnabled requiredLevel metrics km replies =
   TotalReport
     { _totalReportIndications = computeTotalReportIndications levelsEnabled requiredLevel km replies
     , _totalReportMetrics = computeMetrics metrics km replies Nothing
     }
 
-computeTotalReportIndications :: Bool -> Int -> KnowledgeModel -> [Reply] -> [Indication]
+computeTotalReportIndications :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> [Indication]
 computeTotalReportIndications levelsEnabled requiredLevel km replies =
   let chapterIndications = fmap (computeIndications levelsEnabled requiredLevel km replies) (getChaptersForKmUuid km)
       mergeIndications [LevelsAnsweredIndication' (LevelsAnsweredIndication a1 b1), AnsweredIndication' (AnsweredIndication c1 d1)] [LevelsAnsweredIndication' (LevelsAnsweredIndication a2 b2), AnsweredIndication' (AnsweredIndication c2 d2)] =
@@ -46,7 +46,7 @@ computeTotalReportIndications levelsEnabled requiredLevel km replies =
                chapterIndications
         else foldl mergeIndications [AnsweredIndication' (AnsweredIndication 0 0)] chapterIndications
 
-generateReport :: Int -> [Metric] -> KnowledgeModel -> [Reply] -> AppContextM Report
+generateReport :: Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
 generateReport requiredLevel metrics km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime

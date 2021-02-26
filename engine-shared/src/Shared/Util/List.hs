@@ -21,9 +21,21 @@ elems :: Eq a => [a] -> [a] -> Bool
 elems (x:xs) list = x `elem` list && xs `elems` list
 elems [] list = True
 
+lastSafe :: [a] -> Maybe a
+lastSafe [] = Nothing
+lastSafe xs = Just . last $ xs
+
 tailSafe :: [a] -> [a]
 tailSafe [] = []
 tailSafe (x:xs) = xs
+
+takeWhileInclusive :: (a -> Bool) -> [a] -> [a]
+takeWhileInclusive _ [] = []
+takeWhileInclusive p (x:xs) =
+  x :
+  if p x
+    then takeWhileInclusive p xs
+    else []
 
 generateList :: Int -> [Int]
 generateList size = [0 .. (size - 1)]

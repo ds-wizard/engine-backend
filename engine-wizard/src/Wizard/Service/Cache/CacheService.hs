@@ -11,6 +11,7 @@ purgeCache :: AppContextM ()
 purgeCache = do
   cache <- asks _appContextCache
   liftIO . C.purge $ cache ^. knowledgeModel
+  liftIO . C.purge $ cache ^. questionnaireContent
   liftIO . C.purge $ cache ^. questionnaireReportIndications
   liftIO . C.purge $ cache ^. questionnaireWebsocket
   liftIO . C.purge $ cache ^. user

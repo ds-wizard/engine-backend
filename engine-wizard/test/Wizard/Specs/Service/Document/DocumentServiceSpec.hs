@@ -11,7 +11,6 @@ import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
-import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.Document.DocumentContextService
 
 import Wizard.Specs.Common
@@ -22,7 +21,7 @@ documentIntegrationSpec appContext =
     it "Successfully created" $
         -- GIVEN: Prepare expectation
      do
-      let expectation = toDocumentContextDTO dmp1
+      let expectation = dmp1
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
@@ -35,9 +34,8 @@ documentIntegrationSpec appContext =
         -- GIVEN: Prepare expectation
      do
       let expectation =
-            toDocumentContextDTO
-              ((dmp1 & level .~ 9999) & report . chapterReports .~
-               [report1_ch1_full_disabled_levels, report1_ch2_full_disabled_levels, report1_ch3_full_disabled_levels])
+            (dmp1 & level .~ 9999) & report . chapterReports .~
+            [report1_ch1_full_disabled_levels, report1_ch2_full_disabled_levels, report1_ch3_full_disabled_levels]
          -- AND: Run migrations
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext

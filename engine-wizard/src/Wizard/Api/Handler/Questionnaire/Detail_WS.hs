@@ -44,19 +44,7 @@ handleMessage qtnUuid connectionUuid connection =
     handleClose = deleteUser qtnUuid connectionUuid
     -- ------------------------------------------------------------------------------------
     handleAction :: ClientQuestionnaireActionDTO -> AppContextM ()
-    handleAction (SetReply_ClientQuestionnaireActionDTO reqDto) = do
-      log connectionUuid "SetReply"
-      setReply qtnUuid connectionUuid reqDto
-      handleMessage qtnUuid connectionUuid connection
-    handleAction (ClearReply_ClientQuestionnaireActionDTO reqDto) = do
-      log connectionUuid "ClearReply"
-      clearReply qtnUuid connectionUuid reqDto
-      handleMessage qtnUuid connectionUuid connection
-    handleAction (SetLevel_ClientQuestionnaireActionDTO reqDto) = do
-      log connectionUuid "ClearReply"
-      setLevel qtnUuid connectionUuid reqDto
-      handleMessage qtnUuid connectionUuid connection
-    handleAction (SetLabels_ClientQuestionnaireActionDTO reqDto) = do
-      log connectionUuid "ClearReply"
-      setLabel qtnUuid connectionUuid reqDto
+    handleAction (SetContent_ClientQuestionnaireActionDTO reqDto) = do
+      log connectionUuid "SetContent"
+      setContent qtnUuid connectionUuid reqDto
       handleMessage qtnUuid connectionUuid connection

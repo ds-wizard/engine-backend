@@ -7,27 +7,27 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
-import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
-import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
-import Shared.Model.Questionnaire.QuestionnaireUtil
-import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Acl.Data.Members
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
-import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 questionnaire1 :: Questionnaire
@@ -35,17 +35,16 @@ questionnaire1 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
     , _questionnaireName = "My Private Questionnaire"
-    , _questionnaireLevel = 1
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = fReplies
-    , _questionnaireLabels = fLabels
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnairePermissions = [albertEditPermRecord]
+    , _questionnaireEvents = fEvents
+    , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -60,11 +59,26 @@ questionnaire1Edited =
     }
 
 questionnaire1ContentEdited :: Questionnaire
-questionnaire1ContentEdited =
-  questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire1ContentEdited = questionnaire1 {_questionnaireEvents = fEventsEdited}
+
+questionnaire1Ctn :: QuestionnaireContent
+questionnaire1Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+
+questionnaire1CtnRevertedDto :: QuestionnaireContentDTO
+questionnaire1CtnRevertedDto =
+  QuestionnaireContentDTO
+    { _questionnaireContentDTOLevel = 1
+    , _questionnaireContentDTOReplies = M.fromList [rQ1, rQ2]
+    , _questionnaireContentDTOLabels = M.empty
+    , _questionnaireContentDTOEvents = [toEventDTO sre_rQ1' (Just userAlbert), toEventDTO sre_rQ2' (Just userAlbert)]
+    , _questionnaireContentDTOVersions = []
+    }
 
 questionnaire1Dto :: QuestionnaireDTO
-questionnaire1Dto = toSimpleDTO questionnaire1 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+questionnaire1Dto =
+  toSimpleDTO questionnaire1 questionnaire1Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
@@ -96,17 +110,16 @@ questionnaire2 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "d57520b4-5a70-4d40-8623-af2bfbbdfdfe")
     , _questionnaireName = "My VisibleView Questionnaire"
-    , _questionnaireLevel = questionnaire1 ^. level
     , _questionnaireVisibility = VisibleViewQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = fReplies
-    , _questionnaireLabels = fLabels
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnairePermissions = [albertEditPermRecord]
+    , _questionnaireEvents = fEvents
+    , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -116,27 +129,31 @@ questionnaire2Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire2 ^. uuid
     , _questionnaireName = "EDITED: " ++ (questionnaire2 ^. name)
-    , _questionnaireLevel = questionnaire2 ^. level
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = questionnaire2 ^. replies
-    , _questionnaireLabels = questionnaire2 ^. labels
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
     , _questionnairePermissions = []
+    , _questionnaireEvents = questionnaire2 ^. events
+    , _questionnaireVersions = questionnaire2 ^. versions
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
 
+questionnaire2Ctn :: QuestionnaireContent
+questionnaire2Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+
 questionnaire2ContentEdited :: Questionnaire
-questionnaire2ContentEdited =
-  questionnaire2 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire2ContentEdited = questionnaire2 {_questionnaireEvents = fEventsEdited}
 
 questionnaire2Dto :: QuestionnaireDTO
-questionnaire2Dto = toSimpleDTO questionnaire2 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+questionnaire2Dto =
+  toSimpleDTO questionnaire2 questionnaire2Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -145,17 +162,16 @@ questionnaire3 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "16530a07-e673-4ff3-ac1f-57250f2c1bfe")
     , _questionnaireName = "My VisibleEdit Questionnaire"
-    , _questionnaireLevel = questionnaire1 ^. level
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = fReplies
-    , _questionnaireLabels = fLabels
     , _questionnaireCreatorUuid = Nothing
     , _questionnairePermissions = []
+    , _questionnaireEvents = fEvents
+    , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -165,27 +181,30 @@ questionnaire3Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire3 ^. uuid
     , _questionnaireName = "EDITED: " ++ (questionnaire3 ^. name)
-    , _questionnaireLevel = questionnaire3 ^. level
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire3 ^. packageId
     , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = questionnaire3 ^. replies
-    , _questionnaireLabels = questionnaire3 ^. labels
     , _questionnaireCreatorUuid = Nothing
     , _questionnairePermissions = [albertEditPermRecord]
+    , _questionnaireEvents = questionnaire3 ^. events
+    , _questionnaireVersions = questionnaire3 ^. versions
     , _questionnaireCreatedAt = questionnaire3 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
 
+questionnaire3Ctn :: QuestionnaireContent
+questionnaire3Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+
 questionnaire3ContentEdited :: Questionnaire
-questionnaire3ContentEdited =
-  questionnaire1 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire3ContentEdited = questionnaire1 {_questionnaireEvents = fEventsEdited}
 
 questionnaire3Dto :: QuestionnaireDTO
-questionnaire3Dto = toSimpleDTO questionnaire3 germanyPackage QSDefault questionnaireReport []
+questionnaire3Dto = toSimpleDTO questionnaire3 questionnaire3Ctn germanyPackage QSDefault questionnaireReport []
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -194,20 +213,24 @@ questionnaire4 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "57250a07-a663-4ff3-ac1f-16530f2c1bfe")
     , _questionnaireName = "Outdated Questionnaire"
-    , _questionnaireLevel = 2
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
     , _questionnaireSelectedTagUuids = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireReplies = M.empty
-    , _questionnaireLabels = M.empty
     , _questionnaireCreatorUuid = Nothing
     , _questionnairePermissions = []
+    , _questionnaireEvents = [slvle_2']
+    , _questionnaireVersions = []
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
+
+questionnaire4Ctn :: QuestionnaireContent
+questionnaire4Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 2, _questionnaireContentReplies = M.empty, _questionnaireContentLabels = M.empty}
 
 questionnaire4VisibleView :: Questionnaire
 questionnaire4VisibleView = questionnaire4 {_questionnaireVisibility = VisibleViewQuestionnaire}
@@ -240,8 +263,7 @@ questionnaire5 =
     }
 
 questionnaire5ContentEdited :: Questionnaire
-questionnaire5ContentEdited =
-  questionnaire5 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire5ContentEdited = questionnaire5 {_questionnaireEvents = fEventsEdited}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -254,12 +276,17 @@ questionnaire6 =
     , _questionnaireSharing = AnyoneWithLinkEditQuestionnaire
     }
 
+questionnaire6Ctn :: QuestionnaireContent
+questionnaire6Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+
 questionnaire6ContentEdited :: Questionnaire
-questionnaire6ContentEdited =
-  questionnaire6 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire6ContentEdited = questionnaire6 {_questionnaireEvents = fEventsEdited}
 
 questionnaire6Dto :: QuestionnaireDTO
-questionnaire6Dto = toSimpleDTO questionnaire6 germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+questionnaire6Dto =
+  toSimpleDTO questionnaire6 questionnaire6Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -273,8 +300,12 @@ questionnaire7 =
     }
 
 questionnaire7ContentEdited :: Questionnaire
-questionnaire7ContentEdited =
-  questionnaire7 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire7ContentEdited = questionnaire7 {_questionnaireEvents = fEventsEdited}
+
+questionnaire7Ctn :: QuestionnaireContent
+questionnaire7Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -288,8 +319,7 @@ questionnaire8 =
     }
 
 questionnaire8ContentEdited :: Questionnaire
-questionnaire8ContentEdited =
-  questionnaire8 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire8ContentEdited = questionnaire8 {_questionnaireEvents = fEventsEdited}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -303,8 +333,7 @@ questionnaire9 =
     }
 
 questionnaire9ContentEdited :: Questionnaire
-questionnaire9ContentEdited =
-  questionnaire9 {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire9ContentEdited = questionnaire9 {_questionnaireEvents = fEventsEdited}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -318,196 +347,17 @@ questionnaire10 =
     }
 
 questionnaire10ContentEdited :: Questionnaire
-questionnaire10ContentEdited =
-  questionnaire10
-    {_questionnaireLevel = 3, _questionnaireReplies = fRepliesEdited, _questionnaireLabels = fLabelsEdited}
+questionnaire10ContentEdited = questionnaire10 {_questionnaireEvents = fEventsEdited}
+
+questionnaire10Ctn :: QuestionnaireContent
+questionnaire10Ctn =
+  QuestionnaireContent
+    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 contentChangeDTO :: QuestionnaireContentChangeDTO
-contentChangeDTO =
-  QuestionnaireContentChangeDTO
-    { _questionnaireContentChangeDTOLevel = 1
-    , _questionnaireContentChangeDTOReplies = M.map toReplyValueDTO fReplies
-    , _questionnaireContentChangeDTOLabels = fLabels
-    }
-
--- ------------------------------------------------------------------------
--- ------------------------------------------------------------------------
-fReplies :: M.Map String ReplyValue
-fReplies =
-  M.fromList
-    [ rQ1
-    , rQ2
-    , rQ2_aYes_fuQ1
-    , rQ3
-    , rQ4
-    , rQ4_it1_q5
-    , rQ4_it1_q5_it1_question7
-    , rQ4_it1_q5_it1_question8
-    , rQ4_it1_q6
-    , rQ4_it2_q5
-    , rQ4_it2_q6
-    , rQ9
-    , rQ10
-    , rQ11
-    ]
-
-fRepliesWithUpdated :: M.Map String ReplyValue
-fRepliesWithUpdated =
-  M.fromList
-    [ rQ1Updated
-    , rQ2
-    , rQ2_aYes_fuQ1
-    , rQ3
-    , rQ4
-    , rQ4_it1_q5
-    , rQ4_it1_q5_it1_question7
-    , rQ4_it1_q5_it1_question8
-    , rQ4_it1_q6
-    , rQ4_it2_q5
-    , rQ4_it2_q6
-    , rQ9
-    , rQ10
-    , rQ11
-    ]
-
-fRepliesWithDeleted :: M.Map String ReplyValue
-fRepliesWithDeleted =
-  M.fromList
-    [ rQ2
-    , rQ2_aYes_fuQ1
-    , rQ3
-    , rQ4
-    , rQ4_it1_q5
-    , rQ4_it1_q5_it1_question7
-    , rQ4_it1_q5_it1_question8
-    , rQ4_it1_q6
-    , rQ4_it2_q5
-    , rQ4_it2_q6
-    , rQ9
-    , rQ10
-    , rQ11
-    ]
-
-fRepliesEdited :: M.Map String ReplyValue
-fRepliesEdited = M.fromList [rQ1, rQ2, rQ2_aYes_fuQ1, rQ3, rQ9, rQ10, rQ11]
-
-rQ1 :: Reply
-rQ1 = (createReplyKey [chapter1 ^. uuid, question1 ^. uuid], StringReply "Reply to 1st question")
-
-rQ1Updated :: Reply
-rQ1Updated = (createReplyKey [chapter1 ^. uuid, question1 ^. uuid], StringReply "Updated Reply to 1st question")
-
-rQ2 :: Reply
-rQ2 = (createReplyKey [chapter1 ^. uuid, question2 ^. uuid], AnswerReply $ q2_answerYes ^. uuid)
-
-rQ2_aYes_fuQ1 :: Reply
-rQ2_aYes_fuQ1 =
-  ( createReplyKey [chapter1 ^. uuid, question2 ^. uuid, q2_answerYes ^. uuid, q2_aYes_fuQuestion1 ^. uuid]
-  , AnswerReply $ q2_aYes_fuq1_answerNo ^. uuid)
-
-unused_rQ2_aYes_fuQ1_aYes_fuq2 :: Reply
-unused_rQ2_aYes_fuQ1_aYes_fuq2 =
-  ( createReplyKey
-      [ chapter1 ^. uuid
-      , question2 ^. uuid
-      , q2_answerYes ^. uuid
-      , q2_aYes_fuQuestion1 ^. uuid
-      , q2_aYes_fuq1_answerYes ^. uuid
-      , q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
-      ]
-  , AnswerReply $ q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid)
-
-rQ3 :: Reply
-rQ3 = (createReplyKey [chapter2 ^. uuid, question3 ^. uuid], AnswerReply $ q3_answerNo ^. uuid)
-
--- ------------------------------------------------------------
-rQ4 :: Reply
-rQ4 = (createReplyKey [chapter2 ^. uuid, question4 ^. uuid], ItemListReply [rQ4_it1, rQ4_it2])
-
-rQ4_it1 :: U.UUID
-rQ4_it1 = u' "97e42df3-f0f6-40f8-83ab-375a1340e8ab"
-
-rQ4_it1_q5 :: Reply
-rQ4_it1_q5 =
-  ( createReplyKey [chapter2 ^. uuid, question4 ^. uuid, rQ4_it1, q4_it1_question5 ^. uuid]
-  , ItemListReply [rQ4_it1_q5_it1])
-
-rQ4_it1_q5_it1 :: U.UUID
-rQ4_it1_q5_it1 = u' "12c243e0-f300-4178-ae4e-0b30d01c6f73"
-
-rQ4_it1_q5_it1_question7 :: Reply
-rQ4_it1_q5_it1_question7 =
-  ( createReplyKey
-      [ chapter2 ^. uuid
-      , question4 ^. uuid
-      , rQ4_it1
-      , q4_it1_question5 ^. uuid
-      , rQ4_it1_q5_it1
-      , q4_it1_q5_it2_question7 ^. uuid
-      ]
-  , StringReply "Ai1: q5: Ai1: Reply to 7th question")
-
-rQ4_it1_q5_it1_question8 :: Reply
-rQ4_it1_q5_it1_question8 =
-  ( createReplyKey
-      [ chapter2 ^. uuid
-      , question4 ^. uuid
-      , rQ4_it1
-      , q4_it1_question5 ^. uuid
-      , rQ4_it1_q5_it1
-      , q4_it1_q5_it2_question8 ^. uuid
-      ]
-  , StringReply "Ai1: q5: Ai1: Reply to 8th question")
-
-rQ4_it1_q6 :: Reply
-rQ4_it1_q6 =
-  ( createReplyKey [chapter2 ^. uuid, question4 ^. uuid, rQ4_it1, q4_it1_question6 ^. uuid]
-  , AnswerReply $ q4_it1_q6_answerNo ^. uuid)
-
--- ------------------------------------------------------------
-rQ4_it2 :: U.UUID
-rQ4_it2 = u' "aed4bcbc-0c63-4bf6-b954-4561e92babfa"
-
-rQ4_it2_q5 :: Reply
-rQ4_it2_q5 = (createReplyKey [chapter2 ^. uuid, question4 ^. uuid, rQ4_it2, q4_it1_question5 ^. uuid], ItemListReply [])
-
-rQ4_it2_q6 :: Reply
-rQ4_it2_q6 =
-  ( createReplyKey [chapter2 ^. uuid, question4 ^. uuid, rQ4_it2, q4_it1_question6 ^. uuid]
-  , AnswerReply $ q4_it1_q6_answerNo ^. uuid)
-
--- ------------------------------------------------------------
-rQ9 :: Reply
-rQ9 =
-  ( createReplyKey [chapter3 ^. uuid, question9 ^. uuid]
-  , IntegrationReply {_integrationReplyValue = PlainValue "Plain reply to 9st question"})
-
-rQ10 :: Reply
-rQ10 =
-  ( createReplyKey [chapter3 ^. uuid, question10 ^. uuid]
-  , IntegrationReply
-      { _integrationReplyValue =
-          IntegrationValue
-            {_integrationValueIntId = "bsg-p000007", _integrationValueValue = "Integration reply to 9st question"}
-      })
-
--- ------------------------------------------------------------------------
-rQ11 :: Reply
-rQ11 =
-  ( createReplyKey [chapter3 ^. uuid, question11 ^. uuid]
-  , MultiChoiceReply {_multiChoiceReplyValue = [q11_choice2 ^. uuid]})
-
--- ------------------------------------------------------------------------
--- ------------------------------------------------------------------------
-fLabel1 = u' "3268ae3b-8c1a-44ea-ba69-ad759b3ef2ae"
-
-fLabels :: M.Map String [U.UUID]
-fLabels = M.fromList [(fst rQ1, [fLabel1])]
-
-fLabelsEdited :: M.Map String [U.UUID]
-fLabelsEdited = M.fromList [(fst rQ1, [fLabel1]), (fst rQ2, [fLabel1])]
+contentChangeDTO = QuestionnaireContentChangeDTO {_questionnaireContentChangeDTOEvents = fmap toEventChangeDTO fEvents}
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

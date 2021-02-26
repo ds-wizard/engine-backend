@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Service.Report.ReportGenerator
@@ -32,7 +33,7 @@ createComputeChapterReportTest levelsEnabled number chapter expectation =
     let requiredLevel = 1
     let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     let km = km1WithQ4
-    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1 ^. replies)
+    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
     let result = computeChapterReport levelsEnabled requiredLevel metrics km rs chapter
     -- THEN
@@ -45,7 +46,7 @@ createComputeTotalReportTest levelsEnabled number expectation =
     let requiredLevel = 1
     let metrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     let km = km1WithQ4
-    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1 ^. replies)
+    let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
     let result = computeTotalReport levelsEnabled requiredLevel metrics km rs
     -- THEN

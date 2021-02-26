@@ -90,7 +90,7 @@ html =
         <span>{{reply.value.value}}</span>
       {% else %}
         <span>{{reply.value.value.value}}</span>
-        {% if reply.value.value.type == "IntegrationValue" and reply.value.value.id %}
+        {% if reply.value.value.type == "IntegrationType" and reply.value.value.id %}
           {# Integration #}
           {% set integration = km.entities.integrations[question.integrationUuid] %}
           <div class="integration-link">

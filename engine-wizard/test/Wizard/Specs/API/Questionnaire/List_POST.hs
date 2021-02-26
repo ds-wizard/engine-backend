@@ -4,7 +4,6 @@ module Wizard.Specs.API.Questionnaire.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
-import qualified Data.Map.Strict as M
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -73,7 +72,7 @@ test_201 appContext =
     -- AND: Find a result in DB
     assertExistenceOfQuestionnaireInDB
       appContext
-      ((level .~ 1) . (uuid .~ (resBody ^. uuid)) . (replies .~ M.empty) . (labels .~ M.empty) $ questionnaire1)
+      ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) $ questionnaire1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

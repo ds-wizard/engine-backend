@@ -55,14 +55,17 @@ import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreate
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionChangeDTO
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionRevertDTO
 import Wizard.Api.Resource.Registry.RegistryConfirmationDTO
 import Wizard.Api.Resource.Registry.RegistryCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
@@ -83,6 +86,7 @@ import Wizard.Api.Resource.User.UserProfileChangeDTO
 import Wizard.Api.Resource.User.UserProfileDTO
 import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
@@ -98,7 +102,6 @@ import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
-import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
@@ -106,7 +109,10 @@ import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_Migra
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
 import Wizard.Model.User.User
@@ -231,10 +237,6 @@ makeFields ''AppContext
 makeFields ''Document
 
 makeFields ''DocumentMetadata
-
-makeFields ''DocumentContext
-
-makeFields ''DocumentContextConfig
 
 -- Model / Event
 makeFields ''EventField
@@ -402,9 +404,23 @@ makeFields ''PackageBundle
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
+makeFields ''QuestionnaireContent
+
+makeFields ''Reply
+
 makeFields ''ReplyValue
 
-makeFields ''IntegrationReplyValue
+makeFields ''IntegrationReplyType
+
+makeFields ''SetReplyEvent
+
+makeFields ''ClearReplyEvent
+
+makeFields ''SetLevelEvent
+
+makeFields ''SetLabelsEvent
+
+makeFields ''QuestionnaireVersion
 
 -- Model / Report
 makeFields ''Indication
@@ -535,11 +551,29 @@ makeFields ''QuestionnaireChangeDTO
 
 makeFields ''QuestionnaireContentChangeDTO
 
-makeFields ''ReplyValueDTO
-
-makeFields ''IntegrationReplyValueDTO
-
 makeFields ''QuestionnaireReportDTO
+
+makeFields ''SetReplyEventDTO
+
+makeFields ''ClearReplyEventDTO
+
+makeFields ''SetLevelEventDTO
+
+makeFields ''SetLabelsEventDTO
+
+makeFields ''SetReplyEventChangeDTO
+
+makeFields ''ClearReplyEventChangeDTO
+
+makeFields ''SetLevelEventChangeDTO
+
+makeFields ''SetLabelsEventChangeDTO
+
+makeFields ''QuestionnaireVersionDTO
+
+makeFields ''QuestionnaireVersionChangeDTO
+
+makeFields ''QuestionnaireVersionRevertDTO
 
 -- Api / Resource / Registry
 makeFields ''RegistryConfirmationDTO
@@ -587,17 +621,10 @@ makeFields ''UserStateDTO
 
 makeFields ''UserSubmissionPropsDTO
 
+makeFields ''UserSuggestionDTO
+
 -- Api / Resource / Version
 makeFields ''VersionDTO
-
--- Api / Resource / Websocket
-makeFields ''SetReplyEventDTO
-
-makeFields ''ClearReplyEventDTO
-
-makeFields ''SetLevelEventDTO
-
-makeFields ''SetLabelsEventDTO
 
 -- -------------------------------------
 -- Messaging

@@ -16,7 +16,9 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -43,11 +45,11 @@ test200 appContext =
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
     ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
     -- WHEN:
-    write_SetReply c1 setReplyEvent
+    write_SetReply c1 (toEventChangeDTO sre_rQ1Updated')
     -- THEN:
-    read_SetReply c1 setReplyEvent
-    read_SetReply c2 setReplyEvent
-    read_SetReply c3 setReplyEvent
+    read_SetReply c1 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+    read_SetReply c2 (toEventDTO sre_rQ1Updated' (Just userAlbert))
+    read_SetReply c3 (toEventDTO sre_rQ1Updated' (Just userAlbert))
     nothingWasReceived c4
     nothingWasReceived c5
     nothingWasReceived c6
@@ -83,7 +85,7 @@ create_403_no_perm title appContext qtn authToken errorMessage =
     (c1, s1) <- createConnection appContext (reqUrlT (qtn ^. uuid) authToken)
     read_SetUserList c1 0
     -- WHEN: Send setReply
-    write_SetReply c1 setReplyEvent
+    write_SetReply c1 (toEventChangeDTO sre_rQ1Updated')
     -- THEN: Read response
     read_Error c1 expError
     -- AND: Close sockets
@@ -93,11 +95,11 @@ create_403_no_perm title appContext qtn authToken errorMessage =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 write_SetReply connection replyDto = do
-  let reqDto = SetReply_ClientQuestionnaireActionDTO replyDto
+  let reqDto = SetContent_ClientQuestionnaireActionDTO replyDto
   sendMessage connection reqDto
 
 read_SetReply connection expReplyDto = do
   resDto <- receiveData connection
   let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerQuestionnaireActionDTO)
-  let (Right (Success_ServerActionDTO (SetReply_ServerQuestionnaireActionDTO replyDto))) = eResult
+  let (Right (Success_ServerActionDTO (SetContent_ServerQuestionnaireActionDTO replyDto))) = eResult
   expReplyDto `shouldBe` replyDto

@@ -11,6 +11,7 @@ import LensesConfig
 import Shared.Util.String
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Report.Report
 import Wizard.Service.Cache.Common
 
@@ -18,10 +19,10 @@ cacheName = "Report"
 
 cacheKey qtnUuid repliesHash = f' "qtnUuid: '%s', repliesHash: '%s'" [U.toString qtnUuid, show repliesHash]
 
-addToCache :: Questionnaire -> [Indication] -> AppContextM ()
-addToCache qtn indications = do
+addToCache :: Questionnaire -> QuestionnaireContent -> [Indication] -> AppContextM ()
+addToCache qtn qtnCtn indications = do
   let qtnUuid = qtn ^. uuid
-  let repliesHash = H.hash . M.toList $ qtn ^. replies
+  let repliesHash = H.hash . M.toList $ qtnCtn ^. replies
   let key = cacheKey qtnUuid repliesHash
   logCacheAddBefore cacheName key
   iCache <- getCache
@@ -29,10 +30,10 @@ addToCache qtn indications = do
   logCacheAddAfter cacheName key
   return ()
 
-getFromCache :: Questionnaire -> AppContextM (Maybe [Indication])
-getFromCache qtn = do
+getFromCache :: Questionnaire -> QuestionnaireContent -> AppContextM (Maybe [Indication])
+getFromCache qtn qtnCtn = do
   let qtnUuid = qtn ^. uuid
-  let repliesHash = H.hash . M.toList $ qtn ^. replies
+  let repliesHash = H.hash . M.toList $ qtnCtn ^. replies
   let key = cacheKey qtnUuid repliesHash
   logCacheGetBefore cacheName key
   iCache <- getCache

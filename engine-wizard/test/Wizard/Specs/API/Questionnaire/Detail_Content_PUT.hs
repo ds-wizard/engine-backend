@@ -5,7 +5,6 @@ module Wizard.Specs.API.Questionnaire.Detail_Content_PUT
 import Control.Lens ((^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
-import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -19,14 +18,15 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
-import Wizard.Service.Questionnaire.QuestionnaireMapper
 
 import SharedTest.Specs.API.Common
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.Questionnaire.Common
 import Wizard.Specs.Common
@@ -51,14 +51,9 @@ reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/conten
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
-reqDtoT qtn =
-  QuestionnaireContentChangeDTO
-    { _questionnaireContentChangeDTOLevel = qtn ^. level
-    , _questionnaireContentChangeDTOReplies = M.map toReplyValueDTO (qtn ^. replies)
-    , _questionnaireContentChangeDTOLabels = qtn ^. labels
-    }
+reqDto = QuestionnaireContentChangeDTO {_questionnaireContentChangeDTOEvents = [toEventChangeDTO slble_rQ2']}
 
-reqBodyT qtn = encode $ reqDtoT qtn
+reqBody = encode reqDto
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -77,7 +72,6 @@ test_200 appContext = do
     questionnaire3
     questionnaire3ContentEdited
     [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10ContentEdited []
 
 create_test_200 title appContext qtn qtnEdited authHeader =
   it title $
@@ -85,11 +79,10 @@ create_test_200 title appContext qtn qtnEdited authHeader =
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
     let reqHeaders = reqHeadersT authHeader
-    let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = reqDtoT qtnEdited
+    let expDto = reqDto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext
@@ -142,6 +135,13 @@ test_403 appContext = do
     questionnaire3ContentEdited
     []
     _ERROR_SERVICE_USER__MISSING_USER
+  create_test_403
+    "HTTP 403 FORBIDDEN (Anonymous, Public, Sharing)"
+    appContext
+    questionnaire10
+    questionnaire10ContentEdited
+    []
+    _ERROR_SERVICE_USER__MISSING_USER
 
 create_test_403 title appContext qtn qtnEdited authHeader reason =
   it title $
@@ -149,7 +149,6 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
     let reqHeaders = reqHeadersT authHeader
-    let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 403
     let expHeaders = resCtHeader : resCorsHeaders
@@ -175,6 +174,6 @@ test_404 appContext =
     reqMethod
     "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/content"
     (reqHeadersT [reqAuthHeader])
-    (reqBodyT questionnaire1)
+    reqBody
     "questionnaire"
     "f08ead5f-746d-411b-aee6-77ea3d24016a"

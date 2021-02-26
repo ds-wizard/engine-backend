@@ -7,10 +7,11 @@ import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Api.Resource.Package.PackageSimpleDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Level.Level
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 
 data DocumentContextDTO =
@@ -19,7 +20,8 @@ data DocumentContextDTO =
     , _documentContextDTOConfig :: DocumentContextConfigDTO
     , _documentContextDTOQuestionnaireUuid :: String
     , _documentContextDTOQuestionnaireName :: String
-    , _documentContextDTOQuestionnaireReplies :: M.Map String ReplyValueDTO
+    , _documentContextDTOQuestionnaireReplies :: M.Map String Reply
+    , _documentContextDTOQuestionnaireVersions :: [QuestionnaireVersionDTO]
     , _documentContextDTOLevel :: Int
     , _documentContextDTOKnowledgeModel :: KnowledgeModel
     , _documentContextDTOMetrics :: [Metric]
@@ -40,6 +42,7 @@ instance Eq DocumentContextDTO where
     _documentContextDTOQuestionnaireUuid a == _documentContextDTOQuestionnaireUuid b &&
     _documentContextDTOQuestionnaireName a == _documentContextDTOQuestionnaireName b &&
     _documentContextDTOQuestionnaireReplies a == _documentContextDTOQuestionnaireReplies b &&
+    _documentContextDTOQuestionnaireVersions a == _documentContextDTOQuestionnaireVersions b &&
     _documentContextDTOLevel a == _documentContextDTOLevel b &&
     _documentContextDTOKnowledgeModel a == _documentContextDTOKnowledgeModel b &&
     _documentContextDTOMetrics a == _documentContextDTOMetrics b &&

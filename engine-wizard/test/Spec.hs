@@ -34,6 +34,7 @@ import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_Migrati
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
+import Wizard.Specs.API.Questionnaire.Version.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
 import Wizard.Specs.API.Template.APISpec
@@ -58,6 +59,7 @@ import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
+import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizatorSpec as QTN_SanitizatorSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
@@ -133,11 +135,9 @@ main =
                describe "KnowledgeModel" $ describe "Migrator" $ do
                  migratorSpec
                  KM_SanitizatorSpec.sanitizatorSpec
-               describe "Questionnaire" $ do
-                 questionnaireCompilerServiceSpec
-                 describe "Migrator" $ do
-                   QTN_ChangeQTypeSanitizator.sanitizatorSpec
-                   QTN_MoveSanitizatorSpec.sanitizatorSpec
+               describe "Questionnaire" $ describe "Migrator" $ do
+                 QTN_ChangeQTypeSanitizator.sanitizatorSpec
+                 QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
            describe "UTIL" templateUtilSpec
@@ -157,6 +157,7 @@ main =
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
+             questionnaireVersionAPI appContext
              submissionAPI appContext
              swaggerAPI appContext
              templateAPI appContext
@@ -171,8 +172,11 @@ main =
              coordinateValidationSpec appContext
              feedbackServiceIntegrationSpec appContext
              documentIntegrationSpec appContext
+             describe "Migration" $ describe "Questionnaire" $ describe "Migrator" $
+               QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext
              packageValidationSpec appContext
              questionnaireAclSpec appContext
              questionnaireCollaborationAclSpec appContext
+             questionnaireCompilerServiceSpec appContext
              userServiceIntegrationSpec appContext
            describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

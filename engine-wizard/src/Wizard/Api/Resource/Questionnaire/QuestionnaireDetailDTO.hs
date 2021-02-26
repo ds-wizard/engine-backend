@@ -9,9 +9,11 @@ import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyDTO
+import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 
 data QuestionnaireDetailDTO =
@@ -29,10 +31,12 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
     , _questionnaireDetailDTOFormat :: Maybe TemplateFormat
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
-    , _questionnaireDetailDTOReplies :: M.Map String ReplyValueDTO
+    , _questionnaireDetailDTOReplies :: M.Map String Reply
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
+    , _questionnaireDetailDTOEvents :: [QuestionnaireEventDTO]
+    , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -55,4 +59,6 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
     _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
+    _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
+    _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b

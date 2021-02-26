@@ -15,6 +15,7 @@ data DocumentDTO =
     , _documentDTOName :: String
     , _documentDTOState :: DocumentState
     , _documentDTOQuestionnaire :: Maybe QuestionnaireDTO
+    , _documentDTOQuestionnaireEventUuid :: Maybe U.UUID
     , _documentDTOTemplate :: TemplateSimpleDTO
     , _documentDTOFormatUuid :: U.UUID
     , _documentDTOCreatorUuid :: Maybe U.UUID

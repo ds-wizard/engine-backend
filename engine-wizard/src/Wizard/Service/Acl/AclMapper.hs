@@ -14,7 +14,7 @@ toUserMemberDTO user =
     { _userMemberDTOUuid = user ^. uuid
     , _userMemberDTOFirstName = user ^. firstName
     , _userMemberDTOLastName = user ^. lastName
-    , _userMemberDTOGravatarHash = gravatarHash $ user ^. email
+    , _userMemberDTOGravatarHash = createGravatarHash $ user ^. email
     , _userMemberDTOImageUrl = user ^. imageUrl
     }
 

@@ -16,3 +16,6 @@ class HasExpertUuids' entity fieldType where
 
 class HasReferenceUuids' entity fieldType where
   referenceUuids' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity
+
+class HasCreatedBy' entity where
+  createdBy' :: Functor f => (Maybe U.UUID -> f (Maybe U.UUID)) -> entity -> f entity

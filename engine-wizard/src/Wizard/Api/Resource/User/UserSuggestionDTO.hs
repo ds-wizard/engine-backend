@@ -1,5 +1,6 @@
 module Wizard.Api.Resource.User.UserSuggestionDTO where
 
+import Data.Hashable
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -11,4 +12,6 @@ data UserSuggestionDTO =
     , _userSuggestionDTOGravatarHash :: String
     , _userSuggestionDTOImageUrl :: Maybe String
     }
-  deriving (Generic)
+  deriving (Show, Eq, Generic)
+
+instance Hashable UserSuggestionDTO
