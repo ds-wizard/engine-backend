@@ -21,6 +21,7 @@ data DocumentContextDTO =
     , _documentContextDTOQuestionnaireUuid :: String
     , _documentContextDTOQuestionnaireName :: String
     , _documentContextDTOQuestionnaireReplies :: M.Map String Reply
+    , _documentContextDTOQuestionnaireVersion :: Maybe U.UUID
     , _documentContextDTOQuestionnaireVersions :: [QuestionnaireVersionDTO]
     , _documentContextDTOLevel :: Int
     , _documentContextDTOKnowledgeModel :: KnowledgeModel
@@ -42,6 +43,7 @@ instance Eq DocumentContextDTO where
     _documentContextDTOQuestionnaireUuid a == _documentContextDTOQuestionnaireUuid b &&
     _documentContextDTOQuestionnaireName a == _documentContextDTOQuestionnaireName b &&
     _documentContextDTOQuestionnaireReplies a == _documentContextDTOQuestionnaireReplies b &&
+    _documentContextDTOQuestionnaireVersion a == _documentContextDTOQuestionnaireVersion b &&
     _documentContextDTOQuestionnaireVersions a == _documentContextDTOQuestionnaireVersions b &&
     _documentContextDTOLevel a == _documentContextDTOLevel b &&
     _documentContextDTOKnowledgeModel a == _documentContextDTOKnowledgeModel b &&

@@ -1,4 +1,6 @@
-module Wizard.Service.Document.DocumentContextService where
+module Wizard.Service.Document.DocumentContextService
+  ( createDocumentContext
+  ) where
 
 import Control.Lens ((^.))
 import Control.Monad (forM)
@@ -17,6 +19,8 @@ import Wizard.Database.DAO.Level.LevelDAO
 import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Document.Document
+import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -26,9 +30,9 @@ import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Report.ReportGenerator
 import Wizard.Service.User.UserService
 
-createDocumentContext :: String -> AppContextM DocumentContextDTO
-createDocumentContext qtnUuid = do
-  qtn <- findQuestionnaireById qtnUuid
+createDocumentContext :: Document -> AppContextM DocumentContextDTO
+createDocumentContext doc = do
+  qtn <- findQuestionnaireById . U.toString $ doc ^. questionnaireUuid
   pkg <- getPackageById (qtn ^. packageId)
   metrics <- findMetrics
   ls <- findLevels
@@ -49,6 +53,10 @@ createDocumentContext qtnUuid = do
           then qtnCtn ^. level
           else 9999
   report <- generateReport _level metrics km (M.toList $ qtnCtn ^. replies)
+  let qtnVersion =
+        case doc ^. questionnaireEventUuid of
+          (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid (qtn ^. versions)
+          _ -> Nothing
   qtnVersionDtos <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
   return $
     toDocumentContextDTO
@@ -57,6 +65,7 @@ createDocumentContext qtnUuid = do
       serverConfig
       qtn
       qtnCtn
+      qtnVersion
       qtnVersionDtos
       _level
       km
@@ -67,3 +76,12 @@ createDocumentContext qtnUuid = do
       org
       mCreatedBy
       now
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+findQuestionnaireVersionUuid :: U.UUID -> [QuestionnaireVersion] -> Maybe U.UUID
+findQuestionnaireVersionUuid _ [] = Nothing
+findQuestionnaireVersionUuid desiredEventUuid (version:rest)
+  | desiredEventUuid == (version ^. eventUuid) = Just $ version ^. uuid
+  | otherwise = findQuestionnaireVersionUuid desiredEventUuid rest

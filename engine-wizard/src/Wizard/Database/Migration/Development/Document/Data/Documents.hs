@@ -69,6 +69,7 @@ dmp1 =
     , _documentContextDTOQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
     , _documentContextDTOQuestionnaireName = questionnaire1 ^. name
     , _documentContextDTOQuestionnaireReplies = questionnaire1Ctn ^. replies
+    , _documentContextDTOQuestionnaireVersion = Nothing
     , _documentContextDTOQuestionnaireVersions = fmap (`toVersionDTO` userAlbert) (questionnaire1 ^. versions)
     , _documentContextDTOLevel = questionnaire1Ctn ^. level
     , _documentContextDTOKnowledgeModel = km1WithQ4

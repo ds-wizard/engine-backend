@@ -2,7 +2,6 @@ module Wizard.Messaging.Out.Queue.Document where
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
-import qualified Data.UUID as U
 
 import LensesConfig
 import Wizard.Api.Resource.Document.DocumentContextJM ()
@@ -16,7 +15,7 @@ import Wizard.Service.Document.DocumentContextService
 
 publishToDocumentQueue :: Document -> AppContextM ()
 publishToDocumentQueue doc = do
-  docContext <- createDocumentContext (U.toString $ doc ^. questionnaireUuid)
+  docContext <- createDocumentContext doc
   let dto =
         DocumentCreateMDTO
           {_documentCreateMDTODocumentUuid = doc ^. uuid, _documentCreateMDTODocumentContext = docContext}

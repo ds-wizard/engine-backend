@@ -1,14 +1,12 @@
 module Wizard.Specs.Service.Document.DocumentServiceSpec where
 
-import Control.Lens ((&), (.~), (^.))
-import qualified Data.UUID as U
+import Control.Lens ((&), (.~))
 import Test.Hspec hiding (shouldBe)
 
 import LensesConfig
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Service.Document.DocumentContextService
@@ -27,7 +25,7 @@ documentIntegrationSpec appContext =
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
         -- WHEN:
-      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) appContext
+      (Right result) <- runInContext (createDocumentContext doc1) appContext
         -- THEN:
       compareDocumentContextDTOs result expectation
     it "Successfully created (when levels are disabled)" $
@@ -43,6 +41,6 @@ documentIntegrationSpec appContext =
          -- AND: Prepare AppContext
       runInContext (modifyAppConfig (questionnaire . levels . enabled) False) appContext
         -- WHEN:
-      (Right result) <- runInContext (createDocumentContext . U.toString $ questionnaire1 ^. uuid) appContext
+      (Right result) <- runInContext (createDocumentContext doc1) appContext
         -- THEN:
       compareDocumentContextDTOs result expectation

@@ -25,6 +25,7 @@ toDocumentContextDTO ::
   -> ServerConfig
   -> Questionnaire
   -> QuestionnaireContent
+  -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
   -> Int
   -> KnowledgeModel
@@ -36,7 +37,7 @@ toDocumentContextDTO ::
   -> Maybe User
   -> UTCTime
   -> DocumentContextDTO
-toDocumentContextDTO dmpUuid appConfig serverConfig qtn qtnCtn qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
+toDocumentContextDTO dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
   DocumentContextDTO
     { _documentContextDTOUuid = dmpUuid
     , _documentContextDTOConfig =
@@ -47,6 +48,7 @@ toDocumentContextDTO dmpUuid appConfig serverConfig qtn qtnCtn qtnVersionDtos le
     , _documentContextDTOQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextDTOQuestionnaireName = qtn ^. name
     , _documentContextDTOQuestionnaireReplies = qtnCtn ^. replies
+    , _documentContextDTOQuestionnaireVersion = qtnVersion
     , _documentContextDTOQuestionnaireVersions = qtnVersionDtos
     , _documentContextDTOLevel = level
     , _documentContextDTOKnowledgeModel = km
