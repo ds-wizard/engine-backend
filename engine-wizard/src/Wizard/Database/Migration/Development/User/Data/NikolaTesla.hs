@@ -18,7 +18,7 @@ userNikola =
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = _USER_ROLE_DATA_STEWARD
     , _userPermissions =
-        ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
+        ["KM_PERM", "KM_UPGRADE_PERM", "KM_PUBLISH_PERM", "PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM", "TML_PERM"]
     , _userActive = True
     , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , _userSubmissionProps = []

@@ -72,6 +72,7 @@ defaultRoles =
         , "QTN_PERM"
         , "DMP_PERM"
         , "SUBM_PERM"
+        , "TML_PERM"
         ]
     , _serverConfigRolesResearcher = ["PM_READ_PERM", "QTN_PERM", "DMP_PERM", "SUBM_PERM"]
     }
