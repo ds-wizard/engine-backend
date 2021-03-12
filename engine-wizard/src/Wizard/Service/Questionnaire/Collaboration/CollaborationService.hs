@@ -6,13 +6,16 @@ import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (ToJSON)
 import Data.Foldable (traverse_)
+import Data.Time
 import qualified Data.UUID as U
 import Network.WebSockets (Connection)
 
 import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Number
-import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
+import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionJM ()
 import Wizard.Api.Resource.Websocket.WebsocketActionJM ()
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -27,6 +30,7 @@ import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationAcl
 import Wizard.Service.Questionnaire.Collaboration.CollaborationMapper
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Websocket
 
@@ -73,10 +77,10 @@ updatePermsForOnlineUsers qtnUuid visibility sharing permissions = do
             updateCache updatedRecord
             disconnectUserIfLostPermission updatedRecord)
 
-logOutOnlineUsersWhenDeleted :: String -> AppContextM ()
-logOutOnlineUsersWhenDeleted qtnUuid = do
+logOutOnlineUsersWhenQtnDramaticallyChanged :: String -> AppContextM ()
+logOutOnlineUsersWhenQtnDramaticallyChanged qtnUuid = do
   records <- getAllFromCache
-  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED qtnUuid
+  let error = NotExistsError $ _ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT qtnUuid
   traverse_ (logOut error) records
   where
     logOut :: AppError -> WebsocketRecord -> AppContextM ()
@@ -86,37 +90,57 @@ logOutOnlineUsersWhenDeleted qtnUuid = do
         (sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser error)
 
 -- --------------------------------
-setReply :: String -> U.UUID -> SetReplyEventDTO -> AppContextM ()
+setContent :: String -> U.UUID -> QuestionnaireEventChangeDTO -> AppContextM ()
+setContent qtnUuid connectionUuid reqDto =
+  case reqDto of
+    SetReplyEventChangeDTO' event -> setReply qtnUuid connectionUuid event
+    ClearReplyEventChangeDTO' event -> clearReply qtnUuid connectionUuid event
+    SetLevelEventChangeDTO' event -> setLevel qtnUuid connectionUuid event
+    SetLabelsEventChangeDTO' event -> setLabel qtnUuid connectionUuid event
+
+setReply :: String -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
 setReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
-  publishToQuestionnaireEventsQueue qtnUuid (SetReplyEventDTO' reqDto)
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
+  publishToQuestionnaireEventsQueue qtnUuid (SetReplyEventDTO' resDto)
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetReplyMessage reqDto) disconnectUser
+  broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
 
-clearReply :: String -> U.UUID -> ClearReplyEventDTO -> AppContextM ()
+clearReply :: String -> U.UUID -> ClearReplyEventChangeDTO -> AppContextM ()
 clearReply qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
-  publishToQuestionnaireEventsQueue qtnUuid (ClearReplyEventDTO' reqDto)
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
+  publishToQuestionnaireEventsQueue qtnUuid (ClearReplyEventDTO' resDto)
   records <- getAllFromCache
-  broadcast qtnUuid records (toClearReplyMessage reqDto) disconnectUser
+  broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
 
-setLevel :: String -> U.UUID -> SetLevelEventDTO -> AppContextM ()
+setLevel :: String -> U.UUID -> SetLevelEventChangeDTO -> AppContextM ()
 setLevel qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
-  publishToQuestionnaireEventsQueue qtnUuid (SetLevelEventDTO' reqDto)
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toSetLevelEventDTO' reqDto mCreatedBy now
+  publishToQuestionnaireEventsQueue qtnUuid (SetLevelEventDTO' resDto)
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetLevelMessage reqDto) disconnectUser
+  broadcast qtnUuid records (toSetLevelMessage resDto) disconnectUser
 
-setLabel :: String -> U.UUID -> SetLabelsEventDTO -> AppContextM ()
+setLabel :: String -> U.UUID -> SetLabelsEventChangeDTO -> AppContextM ()
 setLabel qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
-  publishToQuestionnaireEventsQueue qtnUuid (SetLabelsEventDTO' reqDto)
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
+  publishToQuestionnaireEventsQueue qtnUuid (SetLabelsEventDTO' resDto)
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetLabelMessage reqDto) disconnectUser
+  broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
 
 -- --------------------------------
 -- PRIVATE
@@ -146,3 +170,22 @@ createRecord connectionUuid connection qtnUuid = do
           (mCurrentUser ^? _Just . role)
           (mCurrentUser ^? _Just . groups)
   return $ WebsocketRecord connectionUuid connection qtnUuid permission user
+
+getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
+getMaybeCreatedBy myself =
+  case myself ^. user of
+    u@LoggedOnlineUserInfo { _loggedOnlineUserInfoUuid = uuid
+                           , _loggedOnlineUserInfoFirstName = firstName
+                           , _loggedOnlineUserInfoLastName = lastName
+                           , _loggedOnlineUserInfoGravatarHash = gravatarHash
+                           , _loggedOnlineUserInfoImageUrl = imageUrl
+                           } ->
+      Just $
+      UserSuggestionDTO
+        { _userSuggestionDTOUuid = uuid
+        , _userSuggestionDTOFirstName = firstName
+        , _userSuggestionDTOLastName = lastName
+        , _userSuggestionDTOGravatarHash = gravatarHash
+        , _userSuggestionDTOImageUrl = imageUrl
+        }
+    u@AnonymousOnlineUserInfo {..} -> Nothing

@@ -3,7 +3,7 @@ module Wizard.Service.Questionnaire.Collaboration.CollaborationMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
-import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Model.Websocket.WebsocketMessage
@@ -29,19 +29,23 @@ toSetUserListMessage records record =
 toSetReplyMessage ::
      SetReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetReplyMessage reqDto record =
-  toWebsocketMessage record $ Success_ServerActionDTO . SetReply_ServerQuestionnaireActionDTO $ reqDto
+  toWebsocketMessage record $
+  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetReplyEventDTO' $ reqDto
 
 toClearReplyMessage ::
      ClearReplyEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toClearReplyMessage reqDto record =
-  toWebsocketMessage record $ Success_ServerActionDTO . ClearReply_ServerQuestionnaireActionDTO $ reqDto
+  toWebsocketMessage record $
+  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ClearReplyEventDTO' $ reqDto
 
 toSetLevelMessage ::
      SetLevelEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetLevelMessage reqDto record =
-  toWebsocketMessage record $ Success_ServerActionDTO . SetLevel_ServerQuestionnaireActionDTO $ reqDto
+  toWebsocketMessage record $
+  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetLevelEventDTO' $ reqDto
 
 toSetLabelMessage ::
      SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetLabelMessage reqDto record =
-  toWebsocketMessage record $ Success_ServerActionDTO . SetLabels_ServerQuestionnaireActionDTO $ reqDto
+  toWebsocketMessage record $
+  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetLabelsEventDTO' $ reqDto

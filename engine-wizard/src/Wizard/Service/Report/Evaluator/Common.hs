@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-getReply :: [Reply] -> String -> Maybe Reply
+getReply :: [ReplyTuple] -> String -> Maybe ReplyTuple
 getReply replies p = L.find (\(path, _) -> path == p) replies
 
 isRequiredNow :: Maybe Int -> Int -> Int -> Int

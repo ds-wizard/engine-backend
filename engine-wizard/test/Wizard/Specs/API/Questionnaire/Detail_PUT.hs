@@ -21,6 +21,9 @@ import Shared.Model.Error.Error
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -71,16 +74,17 @@ reqBodyT qtn = encode $ reqDtoT qtn
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited []
-  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited []
+  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited questionnaire1Ctn []
+  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited questionnaire2Ctn []
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
     questionnaire3
     questionnaire3Edited
+    questionnaire3Ctn
     [albertEditPermRecordDto]
 
-create_test_200 title appContext qtn qtnEdited permissions =
+create_test_200 title appContext qtn qtnEdited qtnCtn permissions =
   it title $
      -- GIVEN: Prepare request
    do
@@ -93,13 +97,17 @@ create_test_200 title appContext qtn qtnEdited permissions =
     let expDto =
           toDetailWithPackageWithEventsDTO
             qtnEdited
+            qtnCtn
             (SPM.toPackage germanyPackage)
             ["1.0.0"]
             km1WithQ4
             QSDefault
             Nothing
             Nothing
+            fReplies
             permissions
+            fEventsDto
+            qVersionsDto
     let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations
     runInContextIO QTN.runMigration appContext

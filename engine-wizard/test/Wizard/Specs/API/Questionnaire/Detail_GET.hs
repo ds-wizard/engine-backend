@@ -21,6 +21,9 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -59,18 +62,37 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 [reqAuthHeader] [albertEditPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Owner, Private)"
+    appContext
+    questionnaire1
+    questionnaire1Ctn
+    [reqAuthHeader]
+    [albertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
+    questionnaire2Ctn
     [reqNonAdminAuthHeader]
     [albertEditPermRecordDto]
-  create_test_200 "HTTP 200 OK (Anonymous, VisibleView, Sharing)" appContext questionnaire7 [] [albertEditPermRecordDto]
-  create_test_200 "HTTP 200 OK (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader] []
-  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 [] []
+  create_test_200
+    "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
+    appContext
+    questionnaire7
+    questionnaire7Ctn
+    []
+    [albertEditPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Non-Owner, VisibleEdit)"
+    appContext
+    questionnaire3
+    questionnaire3Ctn
+    [reqNonAdminAuthHeader]
+    []
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing)" appContext questionnaire10 questionnaire10Ctn [] []
 
-create_test_200 title appContext qtn authHeader permissions =
+create_test_200 title appContext qtn qtnCtn authHeader permissions =
   it title $
      -- GIVEN: Prepare request
    do
@@ -82,13 +104,17 @@ create_test_200 title appContext qtn authHeader permissions =
     let expDto =
           toDetailWithPackageWithEventsDTO
             qtn
+            qtnCtn
             (SPM.toPackage germanyPackage)
             ["1.0.0"]
             km1WithQ4
             QSDefault
             (Just commonWizardTemplate)
             (Just templateFormatJson)
+            fReplies
             permissions
+            fEventsDto
+            qVersionsDto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

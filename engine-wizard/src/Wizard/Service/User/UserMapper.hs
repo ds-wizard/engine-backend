@@ -7,7 +7,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
-import Shared.Util.Gravatar (gravatarHash)
+import Shared.Util.Gravatar (createGravatarHash)
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -50,7 +50,7 @@ toSuggestionDTO user =
     { _userSuggestionDTOUuid = user ^. uuid
     , _userSuggestionDTOFirstName = user ^. firstName
     , _userSuggestionDTOLastName = user ^. lastName
-    , _userSuggestionDTOGravatarHash = gravatarHash $ user ^. email
+    , _userSuggestionDTOGravatarHash = createGravatarHash $ user ^. email
     , _userSuggestionDTOImageUrl = user ^. imageUrl
     }
 
@@ -66,7 +66,7 @@ toLoggedOnlineUserInfo user colorNumber =
     { _loggedOnlineUserInfoUuid = user ^. uuid
     , _loggedOnlineUserInfoFirstName = user ^. firstName
     , _loggedOnlineUserInfoLastName = user ^. lastName
-    , _loggedOnlineUserInfoGravatarHash = gravatarHash $ user ^. email
+    , _loggedOnlineUserInfoGravatarHash = createGravatarHash $ user ^. email
     , _loggedOnlineUserInfoImageUrl = user ^. imageUrl
     , _loggedOnlineUserInfoColorNumber = colorNumber
     , _loggedOnlineUserInfoRole = user ^. role

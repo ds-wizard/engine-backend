@@ -2,7 +2,7 @@ module Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec w
 
 import Control.Lens ((^.))
 import Data.Maybe (fromJust)
-import qualified Data.UUID as U
+import Data.Time
 import Test.Hspec hiding (shouldBe, shouldNotBe)
 import Test.Hspec.Expectations.Pretty
 
@@ -10,9 +10,11 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Util.Uuid
-import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizator
+import qualified Wizard.Service.User.UserMapper as UM
 
 sanitizatorSpec =
   describe "ChangeQTypeSanatizor" $
@@ -73,21 +75,35 @@ createTest qType replyType result (path, value) newValue expected =
 -- --------------------------------
 -- DATA
 -- --------------------------------
-answerReply = AnswerReply $ q2_answerYes ^. uuid
+answerReply = createReply $ AnswerReply {_answerReplyValue = q2_answerYes ^. uuid}
 
-nonExistingAnswerReply = AnswerReply . fromJust . U.fromString $ "5c4141ac-4a61-492f-b07f-467932753f0a"
+nonExistingAnswerReply = createReply $ AnswerReply {_answerReplyValue = u' "5c4141ac-4a61-492f-b07f-467932753f0a"}
 
 multiChoiceReply =
-  MultiChoiceReply [u' "24b6d097-1be1-44d1-95bd-e7cf50052093", u' "5db38ad4-7bad-4cc7-84e6-3270b8556593"]
+  createReply $
+  MultiChoiceReply
+    {_multiChoiceReplyValue = [u' "24b6d097-1be1-44d1-95bd-e7cf50052093", u' "5db38ad4-7bad-4cc7-84e6-3270b8556593"]}
 
-stringReply = StringReply "Plain reply to 9st question"
+stringReply = createReply $ StringReply {_stringReplyValue = "Plain reply to 9st question"}
 
-itemListReply = ItemListReply [u' "58c1379d-8b1d-4d88-a890-10b4244ab7bd", u' "2f089514-54a6-41a2-9cbd-ba0e0551fc77"]
+itemListReply =
+  createReply $
+  ItemListReply
+    {_itemListReplyValue = [u' "58c1379d-8b1d-4d88-a890-10b4244ab7bd", u' "2f089514-54a6-41a2-9cbd-ba0e0551fc77"]}
 
-plainIntegrationReply = IntegrationReply {_integrationReplyValue = PlainValue "Reply to 1st question"}
+plainIntegrationReply = createReply $ IntegrationReply {_integrationReplyValue = PlainType "Reply to 1st question"}
 
 fullIntegrationReply =
+  createReply $
   IntegrationReply
     { _integrationReplyValue =
-        IntegrationValue {_integrationValueIntId = "", _integrationValueValue = "Reply to 1st question"}
+        IntegrationType {_integrationTypeIntId = "", _integrationTypeValue = "Reply to 1st question"}
+    }
+
+createReply :: ReplyValue -> Reply
+createReply value =
+  Reply
+    { _replyValue = value
+    , _replyCreatedBy = Just . UM.toSuggestionDTO . UM.toSuggestion $ userAlbert
+    , _replyCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }

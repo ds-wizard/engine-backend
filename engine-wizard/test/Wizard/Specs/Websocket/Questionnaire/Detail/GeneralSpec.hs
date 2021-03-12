@@ -122,7 +122,7 @@ test404 appContext = do
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)
     -- AND: Prepare expectation
-    let expError = NotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__QTN_DELETED (U.toString $ qtn ^. uuid))
+    let expError = NotExistsError (_ERROR_SERVICE_QTN_COLLABORATION__FORCE_DISCONNECT (U.toString $ qtn ^. uuid))
     -- WHEN: Update permission
     runInContext (deleteQuestionnaire (U.toString $ qtn ^. uuid)) appContext
     -- THEN: Read response

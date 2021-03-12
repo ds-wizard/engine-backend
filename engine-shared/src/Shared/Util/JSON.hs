@@ -45,10 +45,13 @@ jsonSpecialFields "sId" = "id"
 jsonSpecialFields "tId" = "id"
 jsonSpecialFields field = field
 
-stripDTOSuffix :: String -> String
-stripDTOSuffix f1 =
+stripCustomSuffix :: String -> String -> String
+stripCustomSuffix prefix f1 =
   let f2 = fromMaybe f1 (stripSuffix "'" f1)
-   in fromMaybe f2 (stripSuffix "DTO" f2)
+   in fromMaybe f2 (stripSuffix prefix f2)
+
+stripDTOSuffix :: String -> String
+stripDTOSuffix = stripCustomSuffix "DTO"
 
 simpleParseJSON fieldPrefix = genericParseJSON (createOptions fieldPrefix)
 
@@ -63,6 +66,13 @@ toSumJSON' typeFieldName dto =
     Object o ->
       Object $ HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripDTOSuffix . constructorName $ dto)])
 
+toSumJSON'' :: (Generic a, GToJSON Zero (Rep a), HasConstructor (Rep a)) => T.Text -> String -> a -> Value
+toSumJSON'' typeFieldName suffix dto =
+  case genericToJSON (defaultOptions {sumEncoding = UntaggedValue}) dto of
+    Object o ->
+      Object $
+      HM.union o (HM.fromList [(typeFieldName, String . T.pack . stripCustomSuffix suffix . constructorName $ dto)])
+
 simpleToJSON fieldPrefix = genericToJSON (createOptions fieldPrefix)
 
 simpleToJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' fieldPrefix typeFieldName)
@@ -70,6 +80,8 @@ simpleToJSON' fieldPrefix typeFieldName = genericToJSON (createOptions' fieldPre
 simpleToJSON'' fieldPrefix additionalData dto =
   case simpleToJSON fieldPrefix dto of
     Object o -> Object $ HM.union o (HM.fromList additionalData)
+
+simpleToJSON''' fieldPrefix typeFieldName suffix = genericToJSON (createOptions'' fieldPrefix typeFieldName suffix)
 
 createOptions :: String -> Options
 createOptions fieldPrefix = defaultOptions {fieldLabelModifier = fieldLabelModifierFnWithoutDTO fieldPrefix}
@@ -81,6 +93,15 @@ createOptions' fieldPrefix typeFieldName =
     , tagSingleConstructors = True
     , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
     , constructorTagModifier = stripDTOSuffix
+    }
+
+createOptions'' :: String -> String -> String -> Options
+createOptions'' fieldPrefix typeFieldName suffix =
+  defaultOptions
+    { fieldLabelModifier = fieldLabelModifierFnWithoutDTO fieldPrefix
+    , tagSingleConstructors = True
+    , sumEncoding = TaggedObject {tagFieldName = typeFieldName, contentsFieldName = "contents"}
+    , constructorTagModifier = stripCustomSuffix suffix
     }
 
 simpleOptions :: Options

@@ -1,6 +1,6 @@
 module Wizard.Service.Migration.Questionnaire.Migrator.ChangeQTypeSanitizator where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe (mapMaybe)
 import qualified Data.UUID as U
@@ -12,14 +12,14 @@ import Shared.Util.String (splitOn)
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Util.Maybe (concatMaybe)
 
-sanitizeReplies :: KnowledgeModel -> [Reply] -> [Reply]
+sanitizeReplies :: KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
 sanitizeReplies km = mapMaybe (sanitizeReply km)
 
-sanitizeReply :: KnowledgeModel -> Reply -> Maybe Reply
-sanitizeReply km (path, value) =
+sanitizeReply :: KnowledgeModel -> ReplyTuple -> Maybe ReplyTuple
+sanitizeReply km (path, reply) =
   let pathParsed = reverse $ splitOn "." path
-   in case sanitizeQuestion km pathParsed value of
-        Just replyValue -> Just (path, replyValue)
+   in case sanitizeQuestion km pathParsed (reply ^. value) of
+        Just replyValue -> Just (path, reply & value .~ replyValue)
         Nothing -> Nothing
 
 -- --------------------------------
@@ -56,12 +56,12 @@ sanitizeValueQuestion :: KnowledgeModel -> ReplyValue -> ValueQuestion -> Maybe 
 sanitizeValueQuestion km StringReply {..} q = Just $ StringReply {..}
 sanitizeValueQuestion km IntegrationReply {_integrationReplyValue = replyValue} q =
   case replyValue of
-    PlainValue value -> Just $ StringReply {_stringReplyValue = value}
-    IntegrationValue {..} -> Just $ StringReply {_stringReplyValue = _integrationValueValue}
+    PlainType value -> Just $ StringReply {_stringReplyValue = value}
+    IntegrationType {..} -> Just $ StringReply {_stringReplyValue = _integrationTypeValue}
 sanitizeValueQuestion _ _ _ = Nothing
 
 sanitizeIntegrationQuestion :: KnowledgeModel -> ReplyValue -> IntegrationQuestion -> Maybe ReplyValue
 sanitizeIntegrationQuestion km IntegrationReply {..} q = Just $ IntegrationReply {..}
 sanitizeIntegrationQuestion km StringReply {..} q =
-  Just $ IntegrationReply {_integrationReplyValue = PlainValue _stringReplyValue}
+  Just $ IntegrationReply {_integrationReplyValue = PlainType _stringReplyValue}
 sanitizeIntegrationQuestion _ _ _ = Nothing

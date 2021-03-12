@@ -12,7 +12,9 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Common
@@ -35,11 +37,11 @@ test200 appContext =
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
     ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
     -- WHEN:
-    write_ClearReply c1 clearReplyEvent
+    write_ClearReply c1 (toEventChangeDTO cre_rQ1')
     -- THEN:
-    read_ClearReply c1 clearReplyEvent
-    read_ClearReply c2 clearReplyEvent
-    read_ClearReply c3 clearReplyEvent
+    read_ClearReply c1 (toEventDTO cre_rQ1' (Just userAlbert))
+    read_ClearReply c2 (toEventDTO cre_rQ1' (Just userAlbert))
+    read_ClearReply c3 (toEventDTO cre_rQ1' (Just userAlbert))
     nothingWasReceived c4
     nothingWasReceived c5
     nothingWasReceived c6
@@ -50,11 +52,11 @@ test200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 write_ClearReply connection replyDto = do
-  let reqDto = ClearReply_ClientQuestionnaireActionDTO replyDto
+  let reqDto = SetContent_ClientQuestionnaireActionDTO replyDto
   sendMessage connection reqDto
 
 read_ClearReply connection expReplyDto = do
   resDto <- receiveData connection
   let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerQuestionnaireActionDTO)
-  let (Right (Success_ServerActionDTO (ClearReply_ServerQuestionnaireActionDTO replyDto))) = eResult
+  let (Right (Success_ServerActionDTO (SetContent_ServerQuestionnaireActionDTO replyDto))) = eResult
   expReplyDto `shouldBe` replyDto

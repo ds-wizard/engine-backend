@@ -12,9 +12,12 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Migration.Questionnaire.MigratorState
 import Wizard.Model.Questionnaire.QuestionnaireState
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
+import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 
 nlQtnMigrationState :: MigratorState
 nlQtnMigrationState =
@@ -30,23 +33,31 @@ nlQtnMigrationStateDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4 ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4 ^. versions))
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4Upgraded ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4Upgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     }
 
@@ -56,23 +67,31 @@ nlQtnMigrationStateVisibleViewDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleView
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleView ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleView ^. versions))
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleViewUpgraded ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 
@@ -82,23 +101,31 @@ nlQtnMigrationStateVisibleEditDto =
     { _migratorStateDTOOldQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEdit
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackage)
           ["1.0.0", "2.0.0"]
           km1Netherlands
           QSOutdated
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEdit ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleEdit ^. versions))
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
+          questionnaire4Ctn
           (PM.toPackage netherlandsPackageV2)
           ["1.0.0", "2.0.0"]
           km1NetherlandsV2
           QSMigrating
           (Just commonWizardTemplate)
           (Just templateFormatJson)
+          (questionnaire4Ctn ^. replies)
           []
+          (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEditUpgraded ^. events))
+          (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     }
 

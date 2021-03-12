@@ -39,10 +39,10 @@ sanitizatorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
-        resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
-        resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
-        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1 ^. uuid
+        resEvent ^. chapterUuids `shouldBe` e_km1 ^. chapterUuids
+        resEvent ^. tagUuids `shouldBe` e_km1 ^. tagUuids
+        resEvent ^. integrationUuids `shouldBe` e_km1 ^. integrationUuids
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -97,8 +97,8 @@ sanitizatorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch1 ^. uuid
-        resEvent ^. questionUuids `shouldBe` ChangedValue [question2 ^. uuid, question1 ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch1 ^. uuid
+        resEvent ^. questionUuids `shouldBe` e_km1_ch1 ^. questionUuids
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -141,10 +141,10 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q2_answerYes ^. uuid, q2_answerNo ^. uuid])
-        resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch1_q2_r2 ^. uuid, km1_ch1_q2_r1 ^. uuid]
-        resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch1_q2_eNikola ^. uuid, km1_ch1_q2_eAlbert ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch1_q2 ^. uuid
+        resEvent ^. answerUuids `shouldBe` e_km1_ch1_q2 ^. answerUuids
+        resEvent ^. referenceUuids `shouldBe` e_km1_ch1_q2 ^. referenceUuids
+        resEvent ^. expertUuids `shouldBe` e_km1_ch1_q2 ^. expertUuids
       it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -165,7 +165,7 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q2_answerYes ^. uuid, q2_answerNo ^. uuid])
+        resEvent ^. answerUuids `shouldBe` ChangedValue [q2_answerYes ^. uuid, q2_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch1_q2_r2 ^. uuid, km1_ch1_q2_r1 ^. uuid]
         resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch1_q2_eNikola ^. uuid, km1_ch1_q2_eAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
@@ -194,7 +194,7 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q2_answerYes ^. uuid, q2_answerNo ^. uuid])
+        resEvent ^. answerUuids `shouldBe` ChangedValue [q2_answerYes ^. uuid, q2_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch1_q2_r2 ^. uuid, km1_ch1_q2_r1 ^. uuid]
         resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch1_q2_eNikola ^. uuid, km1_ch1_q2_eAlbert ^. uuid]
       -- -------------------------------------------------------------
@@ -263,8 +263,8 @@ sanitizatorSpec =
         resState <- migrate reqState
         -- Then:
         let (ConflictState (CorrectorConflict (EditAnswerEvent' resEvent))) = resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2_aYes1_2 ^. uuid
-        resEvent ^. followUpUuids `shouldBe` ChangedValue [q2_aYes_fuQuestion1 ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch1_q2_aYes1_2 ^. uuid
+        resEvent ^. followUpUuids `shouldBe` e_km1_ch1_q2_aYes1_2 ^. followUpUuids
       it "Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -307,11 +307,10 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
-        resEvent ^. answerUuids `shouldBe`
-          (ChangedValue $ [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid])
-        resEvent ^. referenceUuids `shouldBe` ChangedValue []
-        resEvent ^. expertUuids `shouldBe` ChangedValue []
+        resEvent ^. uuid `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
+        resEvent ^. answerUuids `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. answerUuids
+        resEvent ^. referenceUuids `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. referenceUuids
+        resEvent ^. expertUuids `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. expertUuids
       it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -333,7 +332,7 @@ sanitizatorSpec =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
         resEvent ^. answerUuids `shouldBe`
-          (ChangedValue $ [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid])
+          ChangedValue [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue []
         resEvent ^. expertUuids `shouldBe` ChangedValue []
       it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
@@ -366,7 +365,7 @@ sanitizatorSpec =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
         resEvent ^. answerUuids `shouldBe`
-          (ChangedValue $ [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid])
+          ChangedValue [q2_aYes_fuq1_aYes_fuq2_answerYes ^. uuid, q2_aYes_fuq1_aYes_fuq2_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue []
         resEvent ^. expertUuids `shouldBe` ChangedValue []
       -- -------------------------------------------------------------
@@ -383,9 +382,8 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
               resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
-        let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
-        resItqus `shouldBe` [q4_it1_q6_aYes_fuq4_it_question2 ^. uuid, q4_it1_q6_aYes_fuq4_it_question1 ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
+        resEvent ^. itemTemplateQuestionUuids `shouldBe` e_km1_ch2_ansMaybe6_fuq4 ^. itemTemplateQuestionUuids
       it "QType - QuestionTypeList: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -439,10 +437,10 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q6 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid])
-        resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch2_q6_r2 ^. uuid, km1_ch2_q6_r1 ^. uuid]
-        resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch2_q6_eNikola ^. uuid, km1_ch2_q6_eAlbert ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch2_q4_it1_q6 ^. uuid
+        resEvent ^. answerUuids `shouldBe` e_km1_ch2_q4_it1_q6 ^. answerUuids
+        resEvent ^. referenceUuids `shouldBe` e_km1_ch2_q4_it1_q6 ^. referenceUuids
+        resEvent ^. expertUuids `shouldBe` e_km1_ch2_q4_it1_q6 ^. expertUuids
       it "QType - QuestionTypeOptions: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do
@@ -463,7 +461,7 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q6 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid])
+        resEvent ^. answerUuids `shouldBe` ChangedValue [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch2_q6_r2 ^. uuid, km1_ch2_q6_r1 ^. uuid]
         resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch2_q6_eNikola ^. uuid, km1_ch2_q6_eAlbert ^. uuid]
       it "QType - QuestionTypeOptions: Event - all KM uuids exists, new added in event but without existing in KM" $
@@ -493,7 +491,7 @@ sanitizatorSpec =
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q6 ^. uuid
-        resEvent ^. answerUuids `shouldBe` (ChangedValue $ [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid])
+        resEvent ^. answerUuids `shouldBe` ChangedValue [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid]
         resEvent ^. referenceUuids `shouldBe` ChangedValue [km1_ch2_q6_r2 ^. uuid, km1_ch2_q6_r1 ^. uuid]
         resEvent ^. expertUuids `shouldBe` ChangedValue [km1_ch2_q6_eNikola ^. uuid, km1_ch2_q6_eAlbert ^. uuid]
       -- -------------------------------------------------------------
@@ -506,9 +504,8 @@ sanitizatorSpec =
         -- Then:
         let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
               resState ^. migrationState
-        resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q5 ^. uuid
-        let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
-        resItqus `shouldBe` [q4_it1_q5_it2_question8 ^. uuid, q4_it1_q5_it2_question7 ^. uuid]
+        resEvent ^. uuid `shouldBe` e_km1_ch2_q4_it1_q5 ^. uuid
+        resEvent ^. itemTemplateQuestionUuids `shouldBe` e_km1_ch2_q4_it1_q5 ^. itemTemplateQuestionUuids
       it "QType - QuestionTypeList: Event - some KM uuids missing, no new added in event" $
         -- Given:
        do

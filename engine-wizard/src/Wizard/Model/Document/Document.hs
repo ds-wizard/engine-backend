@@ -30,6 +30,7 @@ data Document =
     , _documentState :: DocumentState
     , _documentDurability :: DocumentDurability
     , _documentQuestionnaireUuid :: U.UUID
+    , _documentQuestionnaireEventUuid :: Maybe U.UUID
     , _documentQuestionnaireRepliesHash :: Int
     , _documentTemplateId :: String
     , _documentFormatUuid :: U.UUID

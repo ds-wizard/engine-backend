@@ -2,17 +2,9 @@ module Wizard.Database.BSON.Questionnaire.QuestionnaireReply where
 
 import qualified Data.Bson as BSON
 import Data.Bson.Generic
-import qualified Data.Map.Strict as M
 
-import Shared.Database.BSON.Common
-import Shared.Database.BSON.KnowledgeModel.KnowledgeModel ()
+import Shared.Database.BSON.Common ()
 import Wizard.Model.Questionnaire.QuestionnaireReply
-
-instance ToBSON (M.Map String ReplyValue) where
-  toBSON = genericStringMapToBSON
-
-instance FromBSON (M.Map String ReplyValue) where
-  fromBSON = defaultStringMapFromBSON
 
 instance FromBSON ReplyValue where
   fromBSON doc = do
@@ -34,17 +26,17 @@ instance FromBSON ReplyValue where
         _integrationReplyValue <- BSON.lookup "value" doc
         return IntegrationReply {..}
 
-instance FromBSON IntegrationReplyValue where
+instance FromBSON IntegrationReplyType where
   fromBSON doc = do
     intType <- BSON.lookup "type" doc
     case intType of
-      "PlainValue" -> do
+      "PlainType" -> do
         value <- BSON.lookup "value" doc
-        return $ PlainValue value
-      "IntegrationValue" -> do
-        _integrationValueIntId <- BSON.lookup "id" doc
-        _integrationValueValue <- BSON.lookup "value" doc
-        return IntegrationValue {..}
+        return $ PlainType value
+      "IntegrationType" -> do
+        _integrationTypeIntId <- BSON.lookup "id" doc
+        _integrationTypeValue <- BSON.lookup "value" doc
+        return IntegrationType {..}
 
 -- --------------------------------------------------------------------
 instance ToBSON ReplyValue where
@@ -54,7 +46,7 @@ instance ToBSON ReplyValue where
   toBSON ItemListReply {..} = ["type" BSON.=: "ItemListReply", "value" BSON.=: _itemListReplyValue]
   toBSON IntegrationReply {..} = ["type" BSON.=: "IntegrationReply", "value" BSON.=: _integrationReplyValue]
 
-instance ToBSON IntegrationReplyValue where
-  toBSON (PlainValue value) = ["type" BSON.=: "PlainValue", "value" BSON.=: value]
-  toBSON IntegrationValue {..} =
-    ["type" BSON.=: "IntegrationValue", "id" BSON.=: _integrationValueIntId, "value" BSON.=: _integrationValueValue]
+instance ToBSON IntegrationReplyType where
+  toBSON (PlainType value) = ["type" BSON.=: "PlainType", "value" BSON.=: value]
+  toBSON IntegrationType {..} =
+    ["type" BSON.=: "IntegrationType", "id" BSON.=: _integrationTypeIntId, "value" BSON.=: _integrationTypeValue]

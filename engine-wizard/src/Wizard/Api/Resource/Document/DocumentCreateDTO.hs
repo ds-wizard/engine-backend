@@ -7,6 +7,7 @@ data DocumentCreateDTO =
   DocumentCreateDTO
     { _documentCreateDTOName :: String
     , _documentCreateDTOQuestionnaireUuid :: U.UUID
+    , _documentCreateDTOQuestionnaireEventUuid :: Maybe U.UUID
     , _documentCreateDTOTemplateId :: String
     , _documentCreateDTOFormatUuid :: U.UUID
     }

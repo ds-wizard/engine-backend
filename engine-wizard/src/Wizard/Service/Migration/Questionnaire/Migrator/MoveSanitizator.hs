@@ -20,13 +20,13 @@ import Shared.Util.List (tailSafe)
 import Shared.Util.String (replace)
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-sanitizeReplies :: KnowledgeModel -> KnowledgeModel -> [Reply] -> [Reply]
+sanitizeReplies :: KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
 sanitizeReplies oldKm newKm replies = sanitizeRepliesWithEvents newKm replies (generateEvents oldKm newKm)
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
-sanitizeRepliesWithEvents :: KnowledgeModel -> [Reply] -> [Event] -> [Reply]
+sanitizeRepliesWithEvents :: KnowledgeModel -> [ReplyTuple] -> [Event] -> [ReplyTuple]
 sanitizeRepliesWithEvents km = foldl (processReplies km)
 
 generateEvents :: KnowledgeModel -> KnowledgeModel -> [Event]
@@ -71,7 +71,7 @@ generateAnswerMoveEvents oldParentMap newParentMap events entity =
 
 -- ----------------------------------------------------------------------
 -- ----------------------------------------------------------------------
-processReplies :: KnowledgeModel -> [Reply] -> Event -> [Reply]
+processReplies :: KnowledgeModel -> [ReplyTuple] -> Event -> [ReplyTuple]
 processReplies km replies (MoveQuestionEvent' event) = processRepliesForQuestionMove km event replies
 processReplies km replies (MoveAnswerEvent' event) = deleteUnwantedReplies (event ^. entityUuid) replies
 processReplies _ replies _ = replies
@@ -80,8 +80,8 @@ processRepliesForQuestionMove ::
      (HasParentUuid event U.UUID, HasTargetUuid event U.UUID, HasEntityUuid event U.UUID)
   => KnowledgeModel
   -> event
-  -> [Reply]
-  -> [Reply]
+  -> [ReplyTuple]
+  -> [ReplyTuple]
 processRepliesForQuestionMove km event replies =
   let parentMap = makeParentMap km
       pPath = computeParentPath parentMap (event ^. parentUuid)
@@ -117,13 +117,13 @@ takeDiffSuffix Nothing = Prelude.id
 shouldWeMigrate :: KnowledgeModel -> [U.UUID] -> [U.UUID] -> Bool
 shouldWeMigrate km pPathDiff tPathDiff = not . or . fmap (isItListQuestion km) $ pPathDiff ++ tPathDiff
 
-doMigration :: KnowledgeModel -> U.UUID -> [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
+doMigration :: KnowledgeModel -> U.UUID -> [U.UUID] -> [U.UUID] -> [ReplyTuple] -> [ReplyTuple]
 doMigration km eUuid pPathDiff tPathDiff replies =
   if shouldWeMigrate km pPathDiff tPathDiff
     then computeDesiredPath eUuid pPathDiff tPathDiff replies
     else deleteUnwantedReplies eUuid replies
 
-computeDesiredPath :: U.UUID -> [U.UUID] -> [U.UUID] -> [Reply] -> [Reply]
+computeDesiredPath :: U.UUID -> [U.UUID] -> [U.UUID] -> [ReplyTuple] -> [ReplyTuple]
 computeDesiredPath eUuid pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPathDiffS)
   where
     replaceReply pPathDiffS tPathDiffS reply@(path, _) =
@@ -135,5 +135,5 @@ computeDesiredPath eUuid pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPa
     pPathDiffS = createReplyKey pPathDiff
     tPathDiffS = createReplyKey tPathDiff
 
-deleteUnwantedReplies :: U.UUID -> [Reply] -> [Reply]
+deleteUnwantedReplies :: U.UUID -> [ReplyTuple] -> [ReplyTuple]
 deleteUnwantedReplies eUuid = filter (\(path, _) -> not $ U.toString eUuid `L.isInfixOf` path)

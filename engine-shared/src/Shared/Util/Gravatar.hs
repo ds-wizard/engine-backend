@@ -1,5 +1,5 @@
 module Shared.Util.Gravatar
-  ( gravatarHash
+  ( createGravatarHash
   ) where
 
 import Shared.Util.Crypto (hashMD5)
@@ -7,5 +7,5 @@ import Shared.Util.String (toLower, trim)
 
 type Email = String
 
-gravatarHash :: Email -> String
-gravatarHash = hashMD5 . toLower . trim
+createGravatarHash :: Email -> String
+createGravatarHash = hashMD5 . toLower . trim

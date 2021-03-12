@@ -2,7 +2,7 @@ module Wizard.Messaging.Out.Queue.Questionnaire where
 
 import Data.Aeson (encode)
 
-import Wizard.Api.Resource.Questionnaire.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Messaging.Out.Queue.Common
 import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMDTO
 import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMJM ()

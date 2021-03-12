@@ -16,6 +16,7 @@ import Shared.Constant.Template
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Localization.Messages.Public
+import Shared.Model.Common.Lens
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentCreateJM ()
@@ -30,6 +31,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -59,6 +61,7 @@ reqDtoT qtn =
   DocumentCreateDTO
     { _documentCreateDTOName = "Document"
     , _documentCreateDTOQuestionnaireUuid = qtn ^. uuid
+    , _documentCreateDTOQuestionnaireEventUuid = Just $ last (qtn ^. events) ^. uuid'
     , _documentCreateDTOTemplateId = doc1 ^. templateId
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }

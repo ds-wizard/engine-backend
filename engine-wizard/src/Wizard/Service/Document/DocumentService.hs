@@ -1,6 +1,6 @@
 module Wizard.Service.Document.DocumentService where
 
-import Control.Lens ((^.))
+import Control.Lens ((^.), (^?), _Just)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
@@ -12,12 +12,13 @@ import qualified Data.UUID as U
 
 import LensesConfig hiding (hash)
 import Shared.Constant.Component
+import Shared.Model.Common.Lens
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
+import Shared.Util.List
 import Shared.Util.Uuid
-import Wizard.Api.Resource.Document.DocumentContextJM ()
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.DAO.Document.DocumentDAO
@@ -31,6 +32,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
+import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
@@ -63,7 +65,12 @@ createDocumentWithDurability dto durability = do
   mCurrentUser <- asks _appContextCurrentUser
   dUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
-  let repliesHash = hash . M.toList $ qtn ^. replies
+  let qtnEvents =
+        case dto ^. questionnaireEventUuid of
+          Just eventUuid -> takeWhileInclusive (\e -> e ^. uuid' /= eventUuid) (qtn ^. events)
+          Nothing -> qtn ^. events
+  qtnCtn <- compileQuestionnairePreview qtnEvents
+  let repliesHash = hash . M.toList $ qtnCtn ^. replies
   let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser now
   insertDocument doc
   publishToDocumentQueue doc
@@ -97,14 +104,18 @@ createDocumentPreview qtnUuid = do
   qtn <- findQuestionnaireById qtnUuid
   checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
   docs <- findDocumentsFiltered [("questionnaireUuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
-  let repliesHash = hash . M.toList $ qtn ^. replies
+  qtnCtn <- compileQuestionnaire qtn
+  let repliesHash = hash . M.toList $ qtnCtn ^. replies
   logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
   let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
   case filter (filterAlreadyDone qtn) matchingDocs of
     (doc:_) -> do
       logInfoU _CMP_SERVICE "Retrieving from cache"
-      content <- findDocumentContent (U.toString $ doc ^. uuid)
-      return (doc, content)
+      if doc ^. state == DoneDocumentState
+        then do
+          content <- findDocumentContent (U.toString $ doc ^. uuid)
+          return (doc, content)
+        else return (doc, BS.empty)
     [] ->
       case filter (\d -> d ^. state == QueuedDocumentState || d ^. state == InProgressDocumentState) matchingDocs of
         (doc:_) -> do
@@ -114,8 +125,11 @@ createDocumentPreview qtnUuid = do
   where
     filterAlreadyDone :: Questionnaire -> Document -> Bool
     filterAlreadyDone qtn doc =
-      doc ^. state == DoneDocumentState &&
-      Just (doc ^. templateId) == qtn ^. templateId && Just (doc ^. formatUuid) == qtn ^. formatUuid
+      (doc ^. state == DoneDocumentState || doc ^. state == ErrorDocumentState) && Just (doc ^. templateId) == qtn ^.
+      templateId &&
+      Just (doc ^. formatUuid) ==
+      qtn ^.
+      formatUuid
     createNewDoc :: Questionnaire -> AppContextM (Document, BS.ByteString)
     createNewDoc qtn = do
       logInfoU _CMP_SERVICE "Generating new preview"
@@ -125,6 +139,7 @@ createDocumentPreview qtnUuid = do
                 DocumentCreateDTO
                   { _documentCreateDTOName = qtn ^. name
                   , _documentCreateDTOQuestionnaireUuid = qtn ^. uuid
+                  , _documentCreateDTOQuestionnaireEventUuid = lastSafe (qtn ^. events) ^? _Just . uuid'
                   , _documentCreateDTOTemplateId = tUuid
                   , _documentCreateDTOFormatUuid = fUuid
                   }

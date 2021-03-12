@@ -22,4 +22,10 @@ import Wizard.Service.Questionnaire.QuestionnaireMapper
 instance ToSchema QuestionnaireDTO where
   declareNamedSchema =
     simpleToSchema
-      (toDTO questionnaire1 (PM.toPackage germanyPackage) QSDefault questionnaireReport [albertEditPermRecordDto])
+      (toDTO
+         questionnaire1
+         questionnaire1Ctn
+         (PM.toPackage germanyPackage)
+         QSDefault
+         questionnaireReport
+         [albertEditPermRecordDto])

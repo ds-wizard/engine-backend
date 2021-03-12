@@ -31,7 +31,9 @@ instance Sanitizator EditKnowledgeModelEvent where
       event1 <- applyChapterChange km event
       event2 <- applyTagChange km event1
       event3 <- applyIntegrationChange km event2
-      changeEventUuid uuid event3
+      if event /= event3
+        then changeEventUuid uuid event3
+        else return event
       -- ------------------------
       -- Chapter
       -- ------------------------
@@ -92,8 +94,11 @@ instance Sanitizator EditKnowledgeModelEvent where
 instance Sanitizator EditChapterEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
-      unwrapEventChildUuids $ \childUuidsFromEvent ->
-        changeEventUuid uuid $ event & questionUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+      unwrapEventChildUuids $ \childUuidsFromEvent -> do
+        let event1 = event & questionUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+        if event /= event1
+          then changeEventUuid uuid event1
+          else return event
     where
       unwrapEventChildUuids callback =
         case event ^. questionUuids of
@@ -115,7 +120,9 @@ instance Sanitizator EditQuestionEvent where
       event2 <- applyReferenceChange km event1
       event3 <- applyAnswerChange km event2
       event4 <- applyItemTemplateQuestionChange km event3
-      changeEventUuid uuid' event4
+      if event /= event4
+        then changeEventUuid uuid' event4
+        else return event
       -- ------------------------
       -- Answer Item Template
       -- ------------------------
@@ -198,8 +205,11 @@ instance Sanitizator EditQuestionEvent where
 instance Sanitizator EditAnswerEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
-      unwrapEventChildUuids $ \childUuidsFromEvent ->
-        changeEventUuid uuid $ event & followUpUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+      unwrapEventChildUuids $ \childUuidsFromEvent -> do
+        let event1 = event & followUpUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+        if event /= event1
+          then changeEventUuid uuid event1
+          else return event
     where
       unwrapEventChildUuids callback =
         case event ^. followUpUuids of
