@@ -11,6 +11,9 @@ data ServerConfigDatabase =
     , _serverConfigDatabaseAuthEnabled :: Bool
     , _serverConfigDatabaseUsername :: String
     , _serverConfigDatabasePassword :: String
+    , _serverConfigDatabaseConnectionPoolSize :: Int
+    , _serverConfigDatabaseStripeSize :: Int
+    , _serverConfigDatabaseConnectionIdleTime :: Int
     }
   deriving (Generic, Show)
 

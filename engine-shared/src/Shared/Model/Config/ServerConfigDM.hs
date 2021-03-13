@@ -13,6 +13,9 @@ defaultDatabase =
     , _serverConfigDatabaseAuthEnabled = False
     , _serverConfigDatabaseUsername = ""
     , _serverConfigDatabasePassword = ""
+    , _serverConfigDatabaseConnectionPoolSize = 1
+    , _serverConfigDatabaseStripeSize = 1
+    , _serverConfigDatabaseConnectionIdleTime = 1
     }
 
 defaultMail :: ServerConfigMail

@@ -17,6 +17,9 @@ instance FromJSON ServerConfigDatabase where
     _serverConfigDatabaseAuthEnabled <- o .:? "authEnabled" .!= (defaultDatabase ^. authEnabled)
     _serverConfigDatabaseUsername <- o .:? "username" .!= (defaultDatabase ^. username)
     _serverConfigDatabasePassword <- o .:? "password" .!= (defaultDatabase ^. password)
+    _serverConfigDatabaseConnectionPoolSize <- o .:? "connectionPoolSize" .!= (defaultDatabase ^. connectionPoolSize)
+    _serverConfigDatabaseStripeSize <- o .:? "stripeSize" .!= (defaultDatabase ^. stripeSize)
+    _serverConfigDatabaseConnectionIdleTime <- o .:? "connectionIdleTime" .!= (defaultDatabase ^. connectionIdleTime)
     return ServerConfigDatabase {..}
   parseJSON _ = mzero
 
