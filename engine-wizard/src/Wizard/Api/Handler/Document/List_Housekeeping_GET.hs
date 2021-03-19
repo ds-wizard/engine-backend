@@ -11,7 +11,7 @@ type List_Housekeeping_GET
    = Header "Authorization" String
      :> "documents"
      :> "housekeeping"
-     :> GetNoContent '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
+     :> Verb GET 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_housekeeping_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 list_housekeeping_GET mServiceToken =
