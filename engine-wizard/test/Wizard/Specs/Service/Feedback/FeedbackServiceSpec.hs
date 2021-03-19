@@ -59,14 +59,3 @@ feedbackServiceIntegrationSpec appContext =
         result <- runInContext (getFeedbackByUuid (U.toString $ feedback1 ^. uuid)) appContext
         -- THEN:
         result `shouldBe` expectation
-    describe "synchronizeFeedbacks" $
-      it "Feedback is disabled" $
-        -- GIVEN: Prepare expectations
-       do
-        let expectation = Left . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Feedback"
-        -- AND: Update config in DB
-        runInContext (modifyAppConfig (questionnaire . feedback . enabled) False) appContext
-        -- WHEN:
-        result <- runInContext synchronizeFeedbacks appContext
-        -- THEN:
-        result `shouldBe` expectation
