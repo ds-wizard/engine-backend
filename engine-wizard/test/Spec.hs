@@ -9,11 +9,11 @@ import Test.Hspec
 
 import LensesConfig
 import Shared.Database.Connection
+import Shared.Integration.Http.Common.HttpClientFactory
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
-import Wizard.Integration.Http.Common.HttpClientFactory
 import Wizard.Integration.Http.Common.ServantClient
 import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
@@ -92,7 +92,7 @@ prepareWebApp runCallback =
       putStrLn "DATABASE: connected"
       msgChannel <- createMessagingChannel serverConfig shutdownFlag
       putStrLn "MESSAGING: connected"
-      httpClientManager <- createHttpClientManager serverConfig
+      httpClientManager <- createHttpClientManager (serverConfig ^. logging)
       putStrLn "HTTP_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"

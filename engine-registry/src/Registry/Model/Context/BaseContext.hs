@@ -5,7 +5,9 @@ import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import qualified Data.Map.Strict as M
-import Database.Persist.MongoDB (ConnectionPool)
+import Data.Pool (Pool)
+import Database.PostgreSQL.Simple (Connection)
+import Network.Minio (MinioConn)
 import Servant (ServerError)
 
 import Registry.Model.Config.ServerConfig
@@ -16,7 +18,8 @@ data BaseContext =
     { _baseContextServerConfig :: ServerConfig
     , _baseContextLocalization :: M.Map String String
     , _baseContextBuildInfoConfig :: BuildInfoConfig
-    , _baseContextPool :: ConnectionPool
+    , _baseContextDbPool :: Pool Connection
+    , _baseContextS3Client :: MinioConn
     }
 
 newtype BaseContextM a =

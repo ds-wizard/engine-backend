@@ -6,6 +6,7 @@ import Registry.Api.Handler.Common
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Model.Context.BaseContext
+import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Organization.OrganizationService
 import Shared.Api.Handler.Common
 

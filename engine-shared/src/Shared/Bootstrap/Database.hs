@@ -7,14 +7,14 @@ import Shared.Database.Connection
 import Shared.Util.Logger
 
 connectDB serverConfigLogging serverConfigDatabase = do
-  logInfo _CMP_DATABASE "connecting to the database"
+  logInfo _CMP_DATABASE "connecting to the mongo database"
   dbPool <-
     liftIO $
     withRetry
       serverConfigLogging
       retryBackoff
       _CMP_DATABASE
-      "failed to connect to the database"
+      "failed to connect to the mongo database"
       (createDatabaseConnectionPool serverConfigDatabase)
   logInfo _CMP_DATABASE "connected"
   return dbPool

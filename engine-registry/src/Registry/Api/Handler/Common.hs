@@ -7,7 +7,7 @@ import Servant (throwError)
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleJM ()
-import Registry.Database.DAO.Organization.OrganizationDAO
+import Registry.Database.DAO.Organization.OrganizationSqlDAO
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
@@ -31,13 +31,15 @@ runIn mOrganization function = do
   serverConfig <- asks _baseContextServerConfig
   localization <- asks _baseContextLocalization
   buildInfoConfig <- asks _baseContextBuildInfoConfig
-  dbPool <- asks _baseContextPool
+  dbPool <- asks _baseContextDbPool
+  s3Client <- asks _baseContextS3Client
   let appContext =
         AppContext
           { _appContextServerConfig = serverConfig
           , _appContextLocalization = localization
           , _appContextBuildInfoConfig = buildInfoConfig
-          , _appContextPool = dbPool
+          , _appContextDbPool = dbPool
+          , _appContextS3Client = s3Client
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentOrganization = mOrganization
           }

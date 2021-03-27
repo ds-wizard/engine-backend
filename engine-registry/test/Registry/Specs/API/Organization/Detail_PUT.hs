@@ -16,7 +16,7 @@ import Registry.Api.Resource.Organization.OrganizationChangeJM ()
 import Registry.Api.Resource.Organization.OrganizationCreateJM ()
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
-import Registry.Database.DAO.Organization.OrganizationDAO
+import Registry.Database.DAO.Organization.OrganizationSqlDAO
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext

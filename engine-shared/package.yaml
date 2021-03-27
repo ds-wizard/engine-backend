@@ -35,17 +35,23 @@ library:
   - directory
   - exceptions
   - fsutils
+  - http-client
+  - http-client-tls
   - http-types
   - lens
   - memory
+  - minio-hs
   - mtl
   - monad-logger
   - mongoDB
   - network
   - persistent-mongoDB
+  - postgresql-simple
+  - postgresql-libpq
   - pretty-terminal
   - random
   - raw-strings-qq
+  - resource-pool
   - retry
   - servant-server
   - servant-multipart

@@ -11,6 +11,7 @@ database:
   authEnabled: false
   username:
   password:
+  connectionString: postgresql://postgres:postgres@postgres:5432/engine-registry
 
 mail:
   enabled: false

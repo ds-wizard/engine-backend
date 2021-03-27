@@ -14,6 +14,18 @@ data ServerConfigDatabase =
     , _serverConfigDatabaseConnectionPoolSize :: Int
     , _serverConfigDatabaseStripeSize :: Int
     , _serverConfigDatabaseConnectionIdleTime :: Int
+    , _serverConfigDatabaseConnectionString :: String
+    , _serverConfigDatabaseConnectionTimeout :: Int
+    , _serverConfigDatabaseMaxConnections :: Int
+    }
+  deriving (Generic, Show)
+
+data ServerConfigS3 =
+  ServerConfigS3
+    { _serverConfigS3Url :: String
+    , _serverConfigS3Username :: String
+    , _serverConfigS3Password :: String
+    , _serverConfigS3Bucket :: String
     }
   deriving (Generic, Show)
 

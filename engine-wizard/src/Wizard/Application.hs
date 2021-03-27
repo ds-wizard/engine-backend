@@ -11,10 +11,10 @@ import System.IO
 import LensesConfig
 import Shared.Bootstrap.Config
 import Shared.Bootstrap.Database
+import Shared.Bootstrap.HttpClient
 import Shared.Constant.Component
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.DatabaseMigration
-import Wizard.Bootstrap.HttpClient
 import Wizard.Bootstrap.Localization
 import Wizard.Bootstrap.Messaging
 import Wizard.Bootstrap.MetamodelMigration
@@ -39,7 +39,7 @@ runApplication = do
     shutdownFlag <- liftIO newEmptyMVar
     dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
     msgChannel <- connectMQ serverConfig shutdownFlag
-    httpClientManager <- setupHttpClientManager serverConfig
+    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
     registryClient <- setupRegistryClient serverConfig httpClientManager
     localization <- loadLocalization serverConfig
     cache <- setupServerCache serverConfig

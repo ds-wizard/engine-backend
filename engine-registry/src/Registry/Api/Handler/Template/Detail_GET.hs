@@ -6,6 +6,7 @@ import Registry.Api.Handler.Common
 import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateDetailJM ()
 import Registry.Model.Context.BaseContext
+import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Template.TemplateService
 import Shared.Api.Handler.Common
 

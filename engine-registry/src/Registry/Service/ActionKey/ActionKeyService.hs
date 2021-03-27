@@ -5,7 +5,7 @@ import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
+import Registry.Database.DAO.ActionKey.ActionKeySqlDAO
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
 import Shared.Localization.Messages.Public

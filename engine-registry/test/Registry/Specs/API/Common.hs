@@ -32,7 +32,8 @@ startWebApp appContext = do
           { _baseContextServerConfig = appContext ^. serverConfig
           , _baseContextLocalization = appContext ^. localization
           , _baseContextBuildInfoConfig = appContext ^. buildInfoConfig
-          , _baseContextPool = appContext ^. pool
+          , _baseContextDbPool = appContext ^. dbPool
+          , _baseContextS3Client = appContext ^. s3Client
           }
   let config = appContext ^. serverConfig
   let webPort = config ^. general . serverPort

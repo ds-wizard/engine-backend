@@ -5,7 +5,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.DAO.Package.PackageSqlDAO
 
 import Registry.Specs.API.Common
 

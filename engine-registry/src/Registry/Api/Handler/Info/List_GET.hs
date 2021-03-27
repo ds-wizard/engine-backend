@@ -8,6 +8,7 @@ import LensesConfig
 import Registry.Api.Handler.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
+import Registry.Model.Context.ContextLenses ()
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Info.InfoJM ()
