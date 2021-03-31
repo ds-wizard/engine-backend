@@ -1,6 +1,7 @@
 module Wizard.Integration.Http.Registry.Runner where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (catchError)
 import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Lazy as BSL
 import Servant
@@ -50,10 +51,11 @@ retrievePackages :: InstanceStatistics -> AppContextM [PackageSimpleDTO]
 retrievePackages iStat = do
   appConfig <- getAppConfig
   if appConfig ^. registry . enabled
-    then do
-      let request = toRetrievePackagesRequest (appConfig ^. registry) iStat
-      res <- runRegistryClient request
-      return . getResponse $ res
+    then catchError
+           (do let request = toRetrievePackagesRequest (appConfig ^. registry) iStat
+               res <- runRegistryClient request
+               return . getResponse $ res)
+           (\_ -> return [])
     else return []
 
 retrievePackageBundleById :: String -> AppContextM BSL.ByteString
@@ -70,10 +72,11 @@ retrieveTemplates :: AppContextM [TemplateSimpleDTO]
 retrieveTemplates = do
   appConfig <- getAppConfig
   if appConfig ^. registry . enabled
-    then do
-      let request = toRetrieveTemplatesRequest (appConfig ^. registry)
-      res <- runRegistryClient request
-      return . getResponse $ res
+    then catchError
+           (do let request = toRetrieveTemplatesRequest (appConfig ^. registry)
+               res <- runRegistryClient request
+               return . getResponse $ res)
+           (\_ -> return [])
     else return []
 
 retrieveTemplateBundleById :: String -> AppContextM BSL.ByteString
