@@ -29,7 +29,8 @@ getCurrentMigrationDto :: String -> AppContextM MigratorStateDTO
 getCurrentMigrationDto branchUuid = do
   checkPermission _KM_UPGRADE_PERM
   ms <- getCurrentMigration branchUuid
-  return . toDTO $ ms
+  branch <- findBranchWithEventsById branchUuid
+  return $ toDTO ms branch
 
 getCurrentMigration :: String -> AppContextM MigratorState
 getCurrentMigration branchUuid = do
@@ -54,7 +55,7 @@ createMigration bUuid mscDto = do
   let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km
   insertMigratorState ms
   migratedMs <- migrateState ms
-  return . toDTO $ migratedMs
+  return $ toDTO migratedMs branch
   where
     getBranchEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId
     getTargetPackageEvents = getAllPreviousEventsSincePackageIdAndUntilPackageId

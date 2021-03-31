@@ -11,7 +11,6 @@ type KMParentMap = M.Map U.UUID U.UUID
 data KnowledgeModel =
   KnowledgeModel
     { _knowledgeModelUuid :: U.UUID
-    , _knowledgeModelName :: String
     , _knowledgeModelChapterUuids :: [U.UUID]
     , _knowledgeModelTagUuids :: [U.UUID]
     , _knowledgeModelIntegrationUuids :: [U.UUID]
