@@ -10,6 +10,7 @@ import qualified Wizard.Metamodel.Migration.Migration2 as M2
 import qualified Wizard.Metamodel.Migration.Migration3 as M3
 import qualified Wizard.Metamodel.Migration.Migration4 as M4
 import qualified Wizard.Metamodel.Migration.Migration5 as M5
+import qualified Wizard.Metamodel.Migration.Migration6 as M6
 
 type Version = Int
 
@@ -22,6 +23,7 @@ migrations =
   , (3, M3.migrateEventValue)
   , (4, M4.migrateEventValue)
   , (5, M5.migrateEventValue)
+  , (6, M6.migrateEventValue)
   ]
 
 migrate :: Version -> Version -> Value -> Either String Value
