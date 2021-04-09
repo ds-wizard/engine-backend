@@ -12,7 +12,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig
 import Registry.Api.Resource.ActionKey.ActionKeyJM ()
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
+import Registry.Database.DAO.ActionKey.ActionKeySqlDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Localization.Messages.Public

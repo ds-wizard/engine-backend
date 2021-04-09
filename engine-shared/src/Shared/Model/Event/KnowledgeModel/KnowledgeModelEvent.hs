@@ -10,7 +10,6 @@ data AddKnowledgeModelEvent =
     { _addKnowledgeModelEventUuid :: U.UUID
     , _addKnowledgeModelEventParentUuid :: U.UUID
     , _addKnowledgeModelEventEntityUuid :: U.UUID
-    , _addKnowledgeModelEventName :: String
     }
   deriving (Show, Eq, Generic)
 
@@ -19,7 +18,6 @@ data EditKnowledgeModelEvent =
     { _editKnowledgeModelEventUuid :: U.UUID
     , _editKnowledgeModelEventParentUuid :: U.UUID
     , _editKnowledgeModelEventEntityUuid :: U.UUID
-    , _editKnowledgeModelEventName :: EventField String
     , _editKnowledgeModelEventChapterUuids :: EventField [U.UUID]
     , _editKnowledgeModelEventTagUuids :: EventField [U.UUID]
     , _editKnowledgeModelEventIntegrationUuids :: EventField [U.UUID]

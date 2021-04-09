@@ -36,6 +36,8 @@ makeFields ''Pageable
 -- Model / Config
 makeFields ''ServerConfigDatabase
 
+makeFields ''ServerConfigS3
+
 makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics

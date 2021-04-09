@@ -75,7 +75,6 @@ createBranchWithParams bUuid now currentUser reqDto = do
                   { _addKnowledgeModelEventUuid = uuid
                   , _addKnowledgeModelEventParentUuid = U.nil
                   , _addKnowledgeModelEventEntityUuid = kmUuid
-                  , _addKnowledgeModelEventName = "New knowledge model"
                   }
           updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
 

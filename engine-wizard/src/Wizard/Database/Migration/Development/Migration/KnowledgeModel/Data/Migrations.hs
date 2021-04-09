@@ -17,9 +17,10 @@ migratorState :: MigratorStateDTO
 migratorState =
   MigratorStateDTO
     { _migratorStateDTOBranchUuid = amsterdamBranch ^. uuid
+    , _migratorStateDTOBranchName = amsterdamBranch ^. name
+    , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOMigrationState =
         ConflictStateDTO . CorrectorConflictDTO . Prelude.head $ netherlandsPackageV2 ^. events
-    , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
     , _migratorStateDTOCurrentKnowledgeModel = Just km1Netherlands
     }

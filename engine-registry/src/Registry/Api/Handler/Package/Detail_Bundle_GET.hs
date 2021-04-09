@@ -4,6 +4,7 @@ import Servant
 
 import Registry.Api.Handler.Common
 import Registry.Model.Context.BaseContext
+import Registry.Model.Context.ContextLenses ()
 import Registry.Service.PackageBundle.PackageBundleService
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO

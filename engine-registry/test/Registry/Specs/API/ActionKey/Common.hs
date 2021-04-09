@@ -3,7 +3,7 @@ module Registry.Specs.API.ActionKey.Common where
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Registry.Database.DAO.ActionKey.ActionKeyDAO
+import Registry.Database.DAO.ActionKey.ActionKeySqlDAO
 
 import Registry.Specs.API.Common
 

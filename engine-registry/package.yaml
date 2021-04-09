@@ -1,5 +1,5 @@
 name: engine-registry
-version: '2.12.0'
+version: '2.13.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -27,6 +27,7 @@ library:
   - bson-generic
   - bytestring
   - case-insensitive
+  - conduit
   - containers
   - data-default
   - directory
@@ -43,19 +44,20 @@ library:
   - memory
   - mime-mail
   - mime-types
+  - minio-hs
   - mtl
   - monad-control
   - monad-logger
-  - mongoDB
-  - mongoDB-migration
   - network
-  - persistent
-  - persistent-mongoDB
+  - postgresql-simple
+  - postgresql-libpq
+  - postgresql-migration
   - pretty-simple
   - pretty-terminal
   - pwstore-fast
   - random
   - regex-compat
+  - resource-pool
   - servant
   - servant-errors
   - servant-server
@@ -116,10 +118,8 @@ tests:
     - mtl
     - monad-control
     - monad-logger
-    - mongoDB
     - network
     - persistent
-    - persistent-mongoDB
     - pretty-simple
     - pwstore-fast
     - random

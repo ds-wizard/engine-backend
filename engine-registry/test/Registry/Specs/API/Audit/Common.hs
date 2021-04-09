@@ -3,7 +3,7 @@ module Registry.Specs.API.Audit.Common where
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
-import Registry.Database.DAO.Audit.AuditEntryDAO
+import Registry.Database.DAO.Audit.AuditEntrySqlDAO
 
 import Registry.Specs.API.Common
 

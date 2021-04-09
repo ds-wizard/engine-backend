@@ -6,7 +6,7 @@ HEALTHCHECK --interval=5m --timeout=10s \
   CMD curl -f http://localhost:3000/ || exit 1
 
 # Install necessary libraries
-RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget gdebi-core curl
+RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates netbase wget gdebi-core curl libpq5 libpq-dev
 
 # Add built exectutable binary
 ADD engine-registry-bin ./scripts/docker-run.sh /application/

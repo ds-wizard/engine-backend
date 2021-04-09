@@ -17,7 +17,6 @@ instance ToBSON AddKnowledgeModelEvent where
     , "uuid" BSON.=: _addKnowledgeModelEventUuid
     , "parentUuid" BSON.=: _addKnowledgeModelEventParentUuid
     , "entityUuid" BSON.=: _addKnowledgeModelEventEntityUuid
-    , "name" BSON.=: _addKnowledgeModelEventName
     ]
 
 instance FromBSON AddKnowledgeModelEvent where
@@ -25,7 +24,6 @@ instance FromBSON AddKnowledgeModelEvent where
     _addKnowledgeModelEventUuid <- BSON.lookup "uuid" doc
     _addKnowledgeModelEventParentUuid <- BSON.lookup "parentUuid" doc
     _addKnowledgeModelEventEntityUuid <- BSON.lookup "entityUuid" doc
-    _addKnowledgeModelEventName <- BSON.lookup "name" doc
     return AddKnowledgeModelEvent {..}
 
 -- -------------------------------
@@ -37,7 +35,6 @@ instance ToBSON EditKnowledgeModelEvent where
     , "uuid" BSON.=: _editKnowledgeModelEventUuid
     , "parentUuid" BSON.=: _editKnowledgeModelEventParentUuid
     , "entityUuid" BSON.=: _editKnowledgeModelEventEntityUuid
-    , "name" BSON.=: _editKnowledgeModelEventName
     , "chapterUuids" BSON.=: _editKnowledgeModelEventChapterUuids
     , "tagUuids" BSON.=: _editKnowledgeModelEventTagUuids
     , "integrationUuids" BSON.=: _editKnowledgeModelEventIntegrationUuids
@@ -48,7 +45,6 @@ instance FromBSON EditKnowledgeModelEvent where
     _editKnowledgeModelEventUuid <- BSON.lookup "uuid" doc
     _editKnowledgeModelEventParentUuid <- BSON.lookup "parentUuid" doc
     _editKnowledgeModelEventEntityUuid <- BSON.lookup "entityUuid" doc
-    _editKnowledgeModelEventName <- BSON.lookup "name" doc
     _editKnowledgeModelEventChapterUuids <- BSON.lookup "chapterUuids" doc
     _editKnowledgeModelEventTagUuids <- BSON.lookup "tagUuids" doc
     _editKnowledgeModelEventIntegrationUuids <- BSON.lookup "integrationUuids" doc

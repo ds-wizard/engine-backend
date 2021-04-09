@@ -1,0 +1,34 @@
+name: postgresql-migration
+version: 1.0.0
+synopsis: Postgres Migration Library
+description: This package offers easy migration library for Postgres database
+category: Web
+author: Vojtech Knaisl <vknaisl@gmail.com>
+maintainer: Vojtech Knaisl <vknaisl@gmail.com>
+copyright: 2021 Vojtech Knaisl <vknaisl@gmail.com>
+license: Apache
+license-file: LICENSE.md
+homepage: https://github.com/ds-wizard/engine-backend
+git: git@github.com:ds-wizard/engine-backend.git
+bug-reports: https://github.com/ds-wizard/ds-wizard/issues
+tested-with: GHC==8.6.*
+library:
+  source-dirs: lib
+  when:
+  - condition: os(darwin)
+    then:
+      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+    else:
+      ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+  dependencies:
+  - base
+  - monad-logger
+  - mtl
+  - postgresql-simple
+  - postgresql-libpq
+  - resource-pool
+  - text
+  - time
+  default-extensions:
+    - OverloadedStrings
+    - DeriveGeneric

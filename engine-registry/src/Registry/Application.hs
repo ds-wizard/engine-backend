@@ -16,7 +16,9 @@ import Registry.Model.Context.BaseContext
 import Registry.Service.Config.ServerConfigService
 import Registry.Util.Logger
 import Shared.Bootstrap.Config
-import Shared.Bootstrap.Database
+import Shared.Bootstrap.HttpClient
+import Shared.Bootstrap.Postgres
+import Shared.Bootstrap.S3
 import Shared.Service.Config.BuildInfoConfigService
 
 runApplication :: IO ()
@@ -27,14 +29,17 @@ runApplication = do
   buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
   runLogging (serverConfig ^. logging . level) $ do
     logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-    dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
+    dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
+    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
+    s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
     localization <- loadLocalization serverConfig
     let baseContext =
           BaseContext
             { _baseContextServerConfig = serverConfig
             , _baseContextLocalization = localization
             , _baseContextBuildInfoConfig = buildInfoConfig
-            , _baseContextPool = dbPool
+            , _baseContextDbPool = dbPool
+            , _baseContextS3Client = s3Client
             }
     liftIO $ runDBMigrations baseContext
     liftIO $ runWebServer baseContext

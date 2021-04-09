@@ -18,7 +18,8 @@ runAppContextWithBaseContext function baseContext = do
           { _appContextServerConfig = baseContext ^. serverConfig
           , _appContextLocalization = baseContext ^. localization
           , _appContextBuildInfoConfig = baseContext ^. buildInfoConfig
-          , _appContextPool = baseContext ^. pool
+          , _appContextDbPool = baseContext ^. dbPool
+          , _appContextS3Client = baseContext ^. s3Client
           , _appContextTraceUuid = traceUuid
           , _appContextCurrentOrganization = Nothing
           }

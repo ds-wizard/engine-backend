@@ -9,8 +9,9 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 data MigratorStateDTO =
   MigratorStateDTO
     { _migratorStateDTOBranchUuid :: U.UUID
-    , _migratorStateDTOMigrationState :: MigrationStateDTO
+    , _migratorStateDTOBranchName :: String
     , _migratorStateDTOBranchPreviousPackageId :: String
+    , _migratorStateDTOMigrationState :: MigrationStateDTO
     , _migratorStateDTOTargetPackageId :: String
     , _migratorStateDTOCurrentKnowledgeModel :: Maybe KnowledgeModel
     }

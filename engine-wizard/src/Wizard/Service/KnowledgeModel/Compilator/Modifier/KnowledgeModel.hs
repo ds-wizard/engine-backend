@@ -12,7 +12,6 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
   createEntity e =
     KnowledgeModel
       { _knowledgeModelUuid = e ^. entityUuid
-      , _knowledgeModelName = e ^. name
       , _knowledgeModelChapterUuids = []
       , _knowledgeModelTagUuids = []
       , _knowledgeModelIntegrationUuids = []
@@ -30,9 +29,8 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
       }
 
 instance EditEntity EditKnowledgeModelEvent KnowledgeModel where
-  editEntity e = applyIntegrationUuids . applyTagUuids . applyChapterUuids . applyName
+  editEntity e = applyIntegrationUuids . applyTagUuids . applyChapterUuids
     where
-      applyName km = applyValue (e ^. name) km name
       applyChapterUuids km = applyValue (e ^. chapterUuids) km chapterUuids
       applyTagUuids km = applyValue (e ^. tagUuids) km tagUuids
       applyIntegrationUuids km = applyValue (e ^. integrationUuids) km integrationUuids

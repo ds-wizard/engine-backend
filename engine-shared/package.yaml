@@ -1,5 +1,5 @@
 name: engine-shared
-version: '2.12.0'
+version: '2.13.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -35,17 +35,23 @@ library:
   - directory
   - exceptions
   - fsutils
+  - http-client
+  - http-client-tls
   - http-types
   - lens
   - memory
+  - minio-hs
   - mtl
   - monad-logger
   - mongoDB
   - network
   - persistent-mongoDB
+  - postgresql-simple
+  - postgresql-libpq
   - pretty-terminal
   - random
   - raw-strings-qq
+  - resource-pool
   - retry
   - servant-server
   - servant-multipart

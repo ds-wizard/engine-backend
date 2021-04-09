@@ -10,10 +10,10 @@ data Package =
     , _packageOrganizationId :: String
     , _packageKmId :: String
     , _packageVersion :: String
+    , _packageMetamodelVersion :: Int
     , _packageDescription :: String
     , _packageReadme :: String
     , _packageLicense :: String
-    , _packageMetamodelVersion :: Int
     , _packagePreviousPackageId :: Maybe String
     , _packageForkOfPackageId :: Maybe String
     , _packageMergeCheckpointPackageId :: Maybe String

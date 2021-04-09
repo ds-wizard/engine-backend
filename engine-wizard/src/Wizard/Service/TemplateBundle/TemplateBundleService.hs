@@ -43,7 +43,7 @@ importAndConvertTemplateBundle contentS =
     Right (template, assets) -> do
       validateNewTemplate template
       deleteOldTemplateIfPresent template
-      traverse_ (\(a, content) -> insertTemplateAssetContent (a ^. fileName) content) assets
+      traverse_ (\(a, content) -> insertTemplateAssetContent (U.toString $ a ^. uuid) content) assets
       insertTemplate template
       return template
     Left error -> throwError error

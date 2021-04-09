@@ -5,7 +5,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig
-import Registry.Database.DAO.Organization.OrganizationDAO
+import Registry.Database.DAO.Organization.OrganizationSqlDAO
 
 import Registry.Specs.API.Common
 
@@ -13,7 +13,7 @@ import Registry.Specs.API.Common
 -- ASSERTS
 -- --------------------------------
 assertExistenceOfOrganizationInDB appContext organization = do
-  organizationFromDb <- getFirstFromDB findOrganizations appContext
+  organizationFromDb <- getOneFromDB (findOrganizationByOrgId (organization ^. organizationId)) appContext
   compareOrganizationDtos organizationFromDb organization
 
 -- --------------------------------

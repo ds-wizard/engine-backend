@@ -29,6 +29,7 @@ import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackMapper
 import Wizard.Util.Interpolation (interpolateString)
+import Wizard.Util.Logger
 
 getFeedbacksFiltered :: [(String, String)] -> AppContextM [FeedbackDTO]
 getFeedbacksFiltered queryParams = do
@@ -68,11 +69,15 @@ getFeedbackByUuid fUuid = do
 
 synchronizeFeedbacks :: AppContextM ()
 synchronizeFeedbacks = do
-  checkIfFeedbackIsEnabled
-  issues <- getIssues
-  fbks <- findFeedbacks
-  now <- liftIO getCurrentTime
-  sequence_ $ updateOrDeleteFeedback issues now <$> fbks
+  appConfig <- getAppConfig
+  if appConfig ^. questionnaire . feedback . enabled
+    then do
+      logInfoU _CMP_WORKER "synchronizing feedback"
+      issues <- getIssues
+      fbks <- findFeedbacks
+      now <- liftIO getCurrentTime
+      sequence_ $ updateOrDeleteFeedback issues now <$> fbks
+    else logInfoU _CMP_WORKER "synchronization is disabled"
   where
     updateOrDeleteFeedback issues now fbk =
       case L.find (\issue -> fbk ^. issueId == issue ^. number) issues of

@@ -22,6 +22,8 @@ _CMP_MESSAGING = "Messaging   "
 
 _CMP_MIGRATION = "Migration   "
 
+_CMP_S3 = "S3          "
+
 _CMP_SERVER = "Server      "
 
 _CMP_SERVICE = "Service     "

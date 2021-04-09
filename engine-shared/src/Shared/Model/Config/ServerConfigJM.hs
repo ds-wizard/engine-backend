@@ -17,7 +17,22 @@ instance FromJSON ServerConfigDatabase where
     _serverConfigDatabaseAuthEnabled <- o .:? "authEnabled" .!= (defaultDatabase ^. authEnabled)
     _serverConfigDatabaseUsername <- o .:? "username" .!= (defaultDatabase ^. username)
     _serverConfigDatabasePassword <- o .:? "password" .!= (defaultDatabase ^. password)
+    _serverConfigDatabaseConnectionPoolSize <- o .:? "connectionPoolSize" .!= (defaultDatabase ^. connectionPoolSize)
+    _serverConfigDatabaseStripeSize <- o .:? "stripeSize" .!= (defaultDatabase ^. stripeSize)
+    _serverConfigDatabaseConnectionIdleTime <- o .:? "connectionIdleTime" .!= (defaultDatabase ^. connectionIdleTime)
+    _serverConfigDatabaseConnectionString <- o .:? "connectionString" .!= (defaultDatabase ^. connectionString)
+    _serverConfigDatabaseConnectionTimeout <- o .:? "connectionTimeout" .!= (defaultDatabase ^. connectionTimeout)
+    _serverConfigDatabaseMaxConnections <- o .:? "maxConnections" .!= (defaultDatabase ^. maxConnections)
     return ServerConfigDatabase {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigS3 where
+  parseJSON (Object o) = do
+    _serverConfigS3Url <- o .:? "url" .!= (defaultS3 ^. url)
+    _serverConfigS3Username <- o .:? "username" .!= (defaultS3 ^. username)
+    _serverConfigS3Password <- o .:? "password" .!= (defaultS3 ^. password)
+    _serverConfigS3Bucket <- o .:? "bucket" .!= (defaultS3 ^. bucket)
+    return ServerConfigS3 {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigMail where

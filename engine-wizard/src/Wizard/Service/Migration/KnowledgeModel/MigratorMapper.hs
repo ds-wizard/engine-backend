@@ -13,12 +13,13 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-toDTO :: MigratorState -> MigratorStateDTO
-toDTO ms =
+toDTO :: MigratorState -> BranchWithEvents -> MigratorStateDTO
+toDTO ms branch =
   MigratorStateDTO
     { _migratorStateDTOBranchUuid = ms ^. branchUuid
-    , _migratorStateDTOMigrationState = toMigrationStateDTO $ ms ^. migrationState
+    , _migratorStateDTOBranchName = branch ^. name
     , _migratorStateDTOBranchPreviousPackageId = ms ^. branchPreviousPackageId
+    , _migratorStateDTOMigrationState = toMigrationStateDTO $ ms ^. migrationState
     , _migratorStateDTOTargetPackageId = ms ^. targetPackageId
     , _migratorStateDTOCurrentKnowledgeModel = ms ^. currentKnowledgeModel
     }

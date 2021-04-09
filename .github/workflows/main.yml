@@ -30,6 +30,19 @@ jobs:
         ports: 
         - 27017:27017
         options: --name mongo
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+        - 5432:5432
+        options: --name postgres
+      minio:
+        image: fclairamb/minio-github-actions
+        ports:
+          - 9000:9000
+        options: --name minio
 
     steps:
     - name: Detect force push
@@ -90,6 +103,22 @@ jobs:
       run: |
         rm -rf vendor/mongoDB-migration/.stack-work
     
+    - name: Cache postgresql-migration
+      id: cache-postgresql-migration
+      uses: actions/cache@v2
+      with:
+        path: vendor/postgresql-migration/.stack-work
+        key: postgresql-migration-ubuntu18-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
+        restore-keys: |
+          postgresql-migration-ubuntu18-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-
+          postgresql-migration-ubuntu18-
+
+    - name: Invalidate postgresql-migration cache (force push)
+      id: invalidate-cache-postgresql-migration
+      if: github.event_name == 'push' && github.event.forced && steps.cache-postgresql-migration.outputs.cache-hit != 'true'
+      run: |
+        rm -rf vendor/postgresql-migration/.stack-work
+
     - name: Cache engine-shared
       id: cache-engine-shared
       uses: actions/cache@v2

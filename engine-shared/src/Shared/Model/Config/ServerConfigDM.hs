@@ -13,6 +13,21 @@ defaultDatabase =
     , _serverConfigDatabaseAuthEnabled = False
     , _serverConfigDatabaseUsername = ""
     , _serverConfigDatabasePassword = ""
+    , _serverConfigDatabaseConnectionPoolSize = 1
+    , _serverConfigDatabaseStripeSize = 1
+    , _serverConfigDatabaseConnectionIdleTime = 1
+    , _serverConfigDatabaseConnectionString = ""
+    , _serverConfigDatabaseConnectionTimeout = 30000
+    , _serverConfigDatabaseMaxConnections = 10
+    }
+
+defaultS3 :: ServerConfigS3
+defaultS3 =
+  ServerConfigS3
+    { _serverConfigS3Url = "http://minio:9000"
+    , _serverConfigS3Username = "minioadmin"
+    , _serverConfigS3Password = "minioadmin"
+    , _serverConfigS3Bucket = "engine-registry"
     }
 
 defaultMail :: ServerConfigMail

@@ -11,7 +11,9 @@ import Registry.Constant.Resource
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Config.ServerConfigService
-import Shared.Database.Connection
+import Shared.Database.SqlConnection
+import Shared.Integration.Http.Common.HttpClientFactory
+import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService
 
 import Registry.Specs.API.ActionKey.APISpec
@@ -40,15 +42,21 @@ prepareWebApp runCallback =
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
+      httpClientManager <- createHttpClientManager (serverConfig ^. logging)
+      putStrLn "HTTP_CLIENT: created"
+      s3Client <- createS3Client (serverConfig ^. s3) httpClientManager
+      putStrLn "S3_CLIENT: created"
       let appContext =
             AppContext
               { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
-              , _appContextPool = dbPool
+              , _appContextDbPool = dbPool
+              , _appContextS3Client = s3Client
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
               , _appContextCurrentOrganization = Just orgGlobal
               }
+      buildSchema appContext
       runCallback appContext
 
 main :: IO ()

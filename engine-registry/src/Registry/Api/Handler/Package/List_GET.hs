@@ -7,6 +7,7 @@ import Registry.Api.Handler.Common
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Registry.Api.Resource.Package.PackageSimpleJM ()
 import Registry.Model.Context.BaseContext
+import Registry.Model.Context.ContextLenses ()
 import Registry.Service.Package.PackageService
 import Shared.Api.Handler.Common
 import Shared.Constant.Api

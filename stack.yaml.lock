@@ -61,6 +61,13 @@ packages:
   original:
     hackage: servant-multipart-0.11.4
 - completed:
+    hackage: servant-websockets-2.0.0@sha256:6e9e3600bced90fd52ed3d1bf632205cb21479075b20d6637153cc4567000234,2253
+    pantry-tree:
+      size: 523
+      sha256: 085c6620bff7671bef1d969652a349271c3703fbf10dd753cb63ee1cd700bca5
+  original:
+    hackage: servant-websockets-2.0.0
+- completed:
     hackage: fsutils-0.1.2@sha256:fb3eb68e03e4317352032642d3ed18c796c30f5a3bec40caef69cee0b859df5e,1028
     pantry-tree:
       size: 210
@@ -108,7 +115,7 @@ packages:
     hackage: network-bsd-2.8.0.0
 snapshots:
 - completed:
-    size: 493124
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/15/10.yaml
-    sha256: 48bc6d1d59224a5166265ef6cdda6a512f29ecc8ef7331826312b82377e89507
-  original: lts-15.10
+    size: 565712
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/lts/17/6.yaml
+    sha256: 4e5e581a709c88e3fe26a9ce8bf331435729bead762fb5c190064c6c5bb1b835
+  original: lts-17.6

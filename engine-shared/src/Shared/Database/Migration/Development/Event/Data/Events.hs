@@ -33,7 +33,6 @@ a_km1 =
     { _addKnowledgeModelEventUuid = fromJust $ U.fromString "b0edbc0b-2d7d-4ee7-bf2f-bc3a22d7494f"
     , _addKnowledgeModelEventParentUuid = U.nil
     , _addKnowledgeModelEventEntityUuid = km1WithoutChaptersAndTagsAndIntegrations ^. uuid
-    , _addKnowledgeModelEventName = km1WithoutChaptersAndTagsAndIntegrations ^. name
     }
 
 e_km1 :: EditKnowledgeModelEvent
@@ -42,7 +41,6 @@ e_km1 =
     { _editKnowledgeModelEventUuid = fromJust $ U.fromString "8294a55d-642d-416c-879b-5a42a4430c24"
     , _editKnowledgeModelEventParentUuid = U.nil
     , _editKnowledgeModelEventEntityUuid = km1 ^. uuid
-    , _editKnowledgeModelEventName = ChangedValue $ km1Edited ^. name
     , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1Edited ^. chapterUuids
     , _editKnowledgeModelEventTagUuids = ChangedValue $ km1Edited ^. tagUuids
     , _editKnowledgeModelEventIntegrationUuids = ChangedValue $ km1Edited ^. integrationUuids
