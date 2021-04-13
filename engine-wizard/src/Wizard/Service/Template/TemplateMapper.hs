@@ -29,6 +29,10 @@ toSimpleDTO' tmlRs orgRs pkgs tml =
     , _templateSimpleDTOOrganizationId = tml ^. organizationId
     , _templateSimpleDTOTemplateId = tml ^. templateId
     , _templateSimpleDTOVersion = tml ^. version
+    , _templateSimpleDTORemoteLatestVersion =
+        case selectTemplateByOrgIdAndTmlId tml tmlRs of
+          Just tmlR -> Just $ tmlR ^. version
+          Nothing -> Nothing
     , _templateSimpleDTOMetamodelVersion = tml ^. metamodelVersion
     , _templateSimpleDTODescription = tml ^. description
     , _templateSimpleDTOReadme = tml ^. readme

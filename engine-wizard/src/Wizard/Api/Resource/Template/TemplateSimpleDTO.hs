@@ -15,6 +15,7 @@ data TemplateSimpleDTO =
     , _templateSimpleDTOOrganizationId :: String
     , _templateSimpleDTOTemplateId :: String
     , _templateSimpleDTOVersion :: String
+    , _templateSimpleDTORemoteLatestVersion :: Maybe String
     , _templateSimpleDTOMetamodelVersion :: Int
     , _templateSimpleDTODescription :: String
     , _templateSimpleDTOReadme :: String

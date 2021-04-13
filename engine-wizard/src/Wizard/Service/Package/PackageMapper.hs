@@ -28,6 +28,10 @@ toSimpleDTO' pkgRs orgRs localVersions pkg =
     , _packageSimpleDTOKmId = pkg ^. kmId
     , _packageSimpleDTOVersion = pkg ^. version
     , _packageSimpleDTOVersions = L.sortBy compareVersion localVersions
+    , _packageSimpleDTORemoteLatestVersion =
+        case selectPackageByOrgIdAndKmId pkg pkgRs of
+          Just pkgR -> Just $ pkgR ^. version
+          Nothing -> Nothing
     , _packageSimpleDTODescription = pkg ^. description
     , _packageSimpleDTOState = computePackageState pkgRs pkg
     , _packageSimpleDTOOrganization = selectOrganizationByOrgId pkg orgRs
