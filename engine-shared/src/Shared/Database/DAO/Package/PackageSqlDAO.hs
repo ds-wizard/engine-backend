@@ -12,10 +12,12 @@ import Shared.Database.BSON.Package.PackageWithEvents ()
 import Shared.Database.DAO.CommonSql
 import Shared.Database.Mapping.Package.Package ()
 import Shared.Database.Mapping.Package.PackageWithEvents ()
+import Shared.Database.Mapping.Package.PackageWithEventsRaw ()
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
+import Shared.Model.Package.PackageWithEventsRaw
 
 entityName = "package"
 
@@ -25,6 +27,12 @@ findPackages = createFindEntitiesFn entityName
 findPackageWithEvents ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m [PackageWithEvents]
 findPackageWithEvents = createFindEntitiesFn entityName
+
+findPackageWithEventsRawById ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+  => String
+  -> m PackageWithEventsRaw
+findPackageWithEventsRawById = createFindEntityByFn entityName "id"
 
 findPackagesFiltered ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)

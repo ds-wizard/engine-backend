@@ -14,6 +14,7 @@ import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
+import Registry.Model.PackageBundle.PackageBundle
 import Registry.Model.Statistics.InstanceStatistics
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Package.PackageDTO
@@ -34,7 +35,7 @@ import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
-import Shared.Model.PackageBundle.PackageBundle
+import Shared.Model.Package.PackageWithEventsRaw
 import Shared.Model.Template.Template
 
 -- -------------------------------------
@@ -210,6 +211,8 @@ makeFields ''Organization
 makeFields ''Package
 
 makeFields ''PackageWithEvents
+
+makeFields ''PackageWithEventsRaw
 
 -- Model / PackageBundle
 makeFields ''PackageBundle

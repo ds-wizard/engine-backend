@@ -17,7 +17,7 @@ import Registry.Service.Package.PackageMapper
 import Shared.Database.DAO.CommonSql
 import Shared.Database.DAO.Package.PackageSqlDAO
 import Shared.Model.Package.Package
-import Shared.Model.Package.PackageWithEvents
+import Shared.Model.Package.PackageWithEventsRaw
 import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
 import Shared.Util.List (foldInContext)
@@ -44,10 +44,10 @@ getPackageById pkgId =
     org <- findOrganizationByOrgId (pkg ^. organizationId)
     return $ toDetailDTO pkg versions org
 
-getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
+getSeriesOfPackages :: String -> AppContextM [PackageWithEventsRaw]
 getSeriesOfPackages pkgId =
   runInTransaction $ do
-    package <- findPackageWithEventsById pkgId
+    package <- findPackageWithEventsRawById pkgId
     case package ^. previousPackageId of
       Just parentPkgId -> do
         parentPackages <- getSeriesOfPackages parentPkgId
