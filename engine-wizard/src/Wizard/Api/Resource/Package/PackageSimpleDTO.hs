@@ -14,6 +14,7 @@ data PackageSimpleDTO =
     , _packageSimpleDTOKmId :: String
     , _packageSimpleDTOVersion :: String
     , _packageSimpleDTOVersions :: [String]
+    , _packageSimpleDTORemoteLatestVersion :: Maybe String
     , _packageSimpleDTODescription :: String
     , _packageSimpleDTOState :: PackageState
     , _packageSimpleDTOOrganization :: Maybe OrganizationSimpleDTO
