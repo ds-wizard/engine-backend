@@ -9,6 +9,7 @@ import qualified Wizard.Database.Migration.Development.Level.LevelMigration as L
 import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Service.Document.DocumentContextService
 
 import Wizard.Specs.Common
@@ -21,13 +22,14 @@ documentIntegrationSpec appContext =
      do
       let expectation = dmp1
          -- AND: Run migrations
+      runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
         -- WHEN:
       (Right result) <- runInContext (createDocumentContext doc1) appContext
         -- THEN:
-      compareDocumentContextDTOs result expectation
+      compareDocumentContexts result expectation
     it "Successfully created (when levels are disabled)" $
         -- GIVEN: Prepare expectation
      do
@@ -35,6 +37,7 @@ documentIntegrationSpec appContext =
             (dmp1 & level .~ 9999) & report . chapterReports .~
             [report1_ch1_full_disabled_levels, report1_ch2_full_disabled_levels, report1_ch3_full_disabled_levels]
          -- AND: Run migrations
+      runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
       runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
@@ -43,4 +46,4 @@ documentIntegrationSpec appContext =
         -- WHEN:
       (Right result) <- runInContext (createDocumentContext doc1) appContext
         -- THEN:
-      compareDocumentContextDTOs result expectation
+      compareDocumentContexts result expectation

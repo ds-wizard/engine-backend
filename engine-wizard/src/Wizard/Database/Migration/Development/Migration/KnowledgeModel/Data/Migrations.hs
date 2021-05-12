@@ -6,7 +6,6 @@ import LensesConfig
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
@@ -20,7 +19,7 @@ migratorState =
     , _migratorStateDTOBranchName = amsterdamBranch ^. name
     , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOMigrationState =
-        ConflictStateDTO . CorrectorConflictDTO . Prelude.head $ netherlandsPackageV2 ^. events
+        ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
     , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
     , _migratorStateDTOCurrentKnowledgeModel = Just km1Netherlands
     }

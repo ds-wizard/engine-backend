@@ -36,6 +36,8 @@ data Document =
     , _documentFormatUuid :: U.UUID
     , _documentMetadata :: DocumentMetadata
     , _documentCreatorUuid :: Maybe U.UUID
+    , _documentRetrievedAt :: Maybe UTCTime
+    , _documentFinishedAt :: Maybe UTCTime
     , _documentCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

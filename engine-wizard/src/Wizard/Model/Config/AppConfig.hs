@@ -10,7 +10,8 @@ import Wizard.Model.Questionnaire.Questionnaire
 
 data AppConfig =
   AppConfig
-    { _appConfigOrganization :: AppConfigOrganization
+    { _appConfigAId :: Int
+    , _appConfigOrganization :: AppConfigOrganization
     , _appConfigAuthentication :: AppConfigAuth
     , _appConfigPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _appConfigDashboard :: AppConfigDashboard
@@ -26,6 +27,7 @@ data AppConfig =
 
 instance Eq AppConfig where
   a == b =
+    _appConfigAId a == _appConfigAId b &&
     _appConfigOrganization a == _appConfigOrganization b &&
     _appConfigAuthentication a == _appConfigAuthentication b &&
     _appConfigPrivacyAndSupport a == _appConfigPrivacyAndSupport b &&

@@ -11,3 +11,15 @@ instance FromJSON TemplateDTO where
 
 instance ToJSON TemplateDTO where
   toJSON = genericToJSON simpleOptions
+
+instance FromJSON TemplateFileDTO where
+  parseJSON = genericParseJSON simpleOptions
+
+instance ToJSON TemplateFileDTO where
+  toJSON = genericToJSON simpleOptions
+
+instance FromJSON TemplateAssetDTO where
+  parseJSON = genericParseJSON simpleOptions
+
+instance ToJSON TemplateAssetDTO where
+  toJSON = genericToJSON simpleOptions

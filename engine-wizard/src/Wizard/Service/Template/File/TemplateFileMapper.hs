@@ -7,7 +7,11 @@ import LensesConfig
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 
-fromChangeDTO :: TemplateFileChangeDTO -> U.UUID -> TemplateFile
-fromChangeDTO dto uuid =
+fromChangeDTO :: TemplateFileChangeDTO -> String -> U.UUID -> TemplateFile
+fromChangeDTO dto tmlId uuid =
   TemplateFile
-    {_templateFileUuid = uuid, _templateFileFileName = dto ^. fileName, _templateFileContent = dto ^. content}
+    { _templateFileTemplateId = tmlId
+    , _templateFileUuid = uuid
+    , _templateFileFileName = dto ^. fileName
+    , _templateFileContent = dto ^. content
+    }

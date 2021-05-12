@@ -5,13 +5,10 @@ import qualified Data.UUID as U
 import Test.Hspec hiding (shouldBe)
 
 import LensesConfig
-import Shared.Database.DAO.Package.PackageDAO
-import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
-import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -64,10 +61,8 @@ test403 appContext = do
     -- GIVEN: Prepare database
    do
     let qtn = questionnaire10
-    runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     let updatedQtn = (visibility .~ PrivateQuestionnaire) . (sharing .~ RestrictedQuestionnaire) $ qtn
-    runInContextIO TML.runMigration appContext
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)
     -- AND: Prepare expectation
@@ -86,7 +81,6 @@ create_403_no_perm title appContext qtn authToken errorMessage =
   it title $
     -- GIVEN: Prepare database
    do
-    runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     -- AND: Prepare expectation
     let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage
@@ -117,7 +111,6 @@ test404 appContext = do
     -- GIVEN: Prepare database
    do
     let qtn = questionnaire10
-    runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     -- AND: Connect to websocket
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (qtn ^. uuid)

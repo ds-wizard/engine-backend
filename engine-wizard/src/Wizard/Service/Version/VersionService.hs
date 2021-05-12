@@ -13,6 +13,7 @@ import Shared.Service.Package.PackageUtil
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
@@ -24,24 +25,25 @@ import Wizard.Service.Version.VersionMapper
 import Wizard.Service.Version.VersionValidation
 
 publishPackage :: String -> String -> VersionDTO -> AppContextM PackageSimpleDTO
-publishPackage bUuid pkgVersion reqDto = do
-  checkPermission _KM_PUBLISH_PERM
-  branch <- findBranchWithEventsById bUuid
-  mMs <- findMigratorStateByBranchUuid' bUuid
-  case mMs of
-    Just ms -> do
-      deleteMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
-      doPublishPackage
-        pkgVersion
-        reqDto
-        branch
-        (ms ^. resultEvents)
-        (Just $ ms ^. targetPackageId)
-        (Just $ upgradePackageVersion (ms ^. branchPreviousPackageId) pkgVersion)
-    Nothing -> do
-      mMergeCheckpointPkgId <- getBranchForkOfPackageId branch
-      mForkOfPkgId <- getBranchMergeCheckpointPackageId branch
-      doPublishPackage pkgVersion reqDto branch (branch ^. events) mForkOfPkgId mMergeCheckpointPkgId
+publishPackage bUuid pkgVersion reqDto =
+  runInTransaction $ do
+    checkPermission _KM_PUBLISH_PERM
+    branch <- findBranchWithEventsById bUuid
+    mMs <- findMigratorStateByBranchUuid' bUuid
+    case mMs of
+      Just ms -> do
+        deleteMigratorStateByBranchUuid (U.toString $ branch ^. uuid)
+        doPublishPackage
+          pkgVersion
+          reqDto
+          branch
+          (ms ^. resultEvents)
+          (Just $ ms ^. targetPackageId)
+          (Just $ upgradePackageVersion (ms ^. branchPreviousPackageId) pkgVersion)
+      Nothing -> do
+        mMergeCheckpointPkgId <- getBranchForkOfPackageId branch
+        mForkOfPkgId <- getBranchMergeCheckpointPackageId branch
+        doPublishPackage pkgVersion reqDto branch (branch ^. events) mForkOfPkgId mMergeCheckpointPkgId
 
 -- --------------------------------
 -- PRIVATE

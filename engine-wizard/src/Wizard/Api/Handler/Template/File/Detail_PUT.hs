@@ -28,4 +28,4 @@ detail_PUT ::
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateFile)
 detail_PUT mTokenHeader reqDto tmlId fileUuid =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< modifyTemplateFile tmlId fileUuid reqDto
+    runInAuthService $ addTraceUuidHeader =<< modifyTemplateFile fileUuid reqDto

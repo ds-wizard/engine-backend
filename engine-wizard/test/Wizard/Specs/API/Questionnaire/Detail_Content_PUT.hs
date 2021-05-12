@@ -21,6 +21,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -85,6 +86,7 @@ create_test_200 title appContext qtn qtnEdited authHeader =
     let expDto = reqDto
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext
@@ -156,6 +158,7 @@ create_test_403 title appContext qtn qtnEdited authHeader reason =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext

@@ -1,9 +1,13 @@
 module Wizard.Model.Questionnaire.QuestionnaireAclHelpers where
 
-import Control.Lens ((^.))
+import Control.Lens ((.~), (^.))
+import Control.Monad.Reader (liftIO)
 import qualified Data.UUID as U
+
 import LensesConfig
+import Shared.Util.Uuid
 import Wizard.Model.Acl.Acl
+import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 
 getUserUuidsForViewerPerm :: [QuestionnairePermRecord] -> [U.UUID]
@@ -47,6 +51,11 @@ getGroupIdsForPerm desiredPerm = foldl go []
             then acc ++ [groupId]
             else acc
         _ -> acc
+
+duplicateUserPermission :: U.UUID -> QuestionnairePermRecord -> AppContextM QuestionnairePermRecord
+duplicateUserPermission newQtnUuid record = do
+  newUuid <- liftIO generateUuid
+  return . (uuid .~ newUuid) . (questionnaireUuid .~ newQtnUuid) $ record
 
 removeUserPermission :: U.UUID -> [QuestionnairePermRecord] -> [QuestionnairePermRecord]
 removeUserPermission userUuidToDelete = filter go

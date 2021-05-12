@@ -10,6 +10,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig hiding (request)
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -60,6 +61,7 @@ test_200 appContext =
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
      -- AND: Run migrations
     runInContextIO loadFeedbackTokenFromEnv appContext
+    runInContextIO (insertPackage germanyPackage) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation

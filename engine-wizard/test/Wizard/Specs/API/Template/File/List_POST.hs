@@ -70,7 +70,7 @@ create_test_201 title appContext reqAuthHeader =
     let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, TemplateFile)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareTemplateDtos resDto expDto
+    compareTemplateFileDtos resDto expDto
     -- AND: Find result in DB and compare with expectation state
     assertExistenceOfTemplateFileInDB
       appContext

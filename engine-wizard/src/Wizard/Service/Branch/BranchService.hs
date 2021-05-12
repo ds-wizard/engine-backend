@@ -23,6 +23,7 @@ import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.BranchState
@@ -34,33 +35,37 @@ import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 
 getBranches :: AppContextM [BranchDTO]
-getBranches = do
-  checkPermission _KM_PERM
-  bs <- findBranchesWithEvents
-  traverse enhanceBranch bs
+getBranches =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    bs <- findBranchesWithEvents
+    traverse enhanceBranch bs
 
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
-getBranchesPage mQuery pageable sort = do
-  checkPermission _KM_PERM
-  bs <- findBranchesWithEventsPage mQuery pageable sort
-  traverse enhanceBranch bs
+getBranchesPage mQuery pageable sort =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    bs <- findBranchesWithEventsPage mQuery pageable sort
+    traverse enhanceBranch bs
 
 createBranch :: BranchCreateDTO -> AppContextM BranchDTO
-createBranch reqDto = do
-  bUuid <- liftIO generateUuid
-  now <- liftIO getCurrentTime
-  currentUser <- getCurrentUser
-  createBranchWithParams bUuid now currentUser reqDto
+createBranch reqDto =
+  runInTransaction $ do
+    bUuid <- liftIO generateUuid
+    now <- liftIO getCurrentTime
+    currentUser <- getCurrentUser
+    createBranchWithParams bUuid now currentUser reqDto
 
 createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchDTO
-createBranchWithParams bUuid now currentUser reqDto = do
-  checkPermission _KM_PERM
-  validateNewKmId (reqDto ^. kmId)
-  validatePackageExistence (reqDto ^. previousPackageId)
-  let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
-  insertBranch branch
-  createDefaultEventIfPreviousPackageIsNotPresent branch
-  return $ toDTO branch Nothing BSDefault
+createBranchWithParams bUuid now currentUser reqDto =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    validateNewKmId (reqDto ^. kmId)
+    validatePackageExistence (reqDto ^. previousPackageId)
+    let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
+    insertBranch branch
+    createDefaultEventIfPreviousPackageIsNotPresent branch
+    return $ toDTO branch Nothing BSDefault
   where
     createDefaultEventIfPreviousPackageIsNotPresent branch = do
       let branchUuid = U.toString $ branch ^. uuid
@@ -77,34 +82,37 @@ createBranchWithParams bUuid now currentUser reqDto = do
                   , _addKnowledgeModelEventEntityUuid = kmUuid
                   }
           updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
+          return ()
 
 getBranchById :: String -> AppContextM BranchDetailDTO
-getBranchById branchUuid = do
-  checkPermission _KM_PERM
-  branch <- findBranchWithEventsById branchUuid
-  mForkOfPackageId <- getBranchForkOfPackageId branch
-  branchState <- getBranchState branch
-  return $ toDetailDTO branch mForkOfPackageId branchState
+getBranchById branchUuid =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    branch <- findBranchWithEventsById branchUuid
+    mForkOfPackageId <- getBranchForkOfPackageId branch
+    branchState <- getBranchState branch
+    return $ toDetailDTO branch mForkOfPackageId branchState
 
 modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
-modifyBranch branchUuid reqDto = do
-  checkPermission _KM_PERM
-  branchFromDB <- findBranchById branchUuid
-  validateKmId
-  now <- liftIO getCurrentTime
-  let branch =
-        fromChangeDTO
-          reqDto
-          (branchFromDB ^. uuid)
-          (branchFromDB ^. metamodelVersion)
-          (branchFromDB ^. previousPackageId)
-          (branchFromDB ^. ownerUuid)
-          (branchFromDB ^. createdAt)
-          now
-  updateBranchById branch
-  mForkOfPackageId <- getBranchForkOfPackageId branch
-  branchState <- getBranchState branch
-  return $ toDetailDTO branch mForkOfPackageId branchState
+modifyBranch branchUuid reqDto =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    branchFromDB <- findBranchById branchUuid
+    validateKmId
+    now <- liftIO getCurrentTime
+    let branch =
+          fromChangeDTO
+            reqDto
+            (branchFromDB ^. uuid)
+            (branchFromDB ^. metamodelVersion)
+            (branchFromDB ^. previousPackageId)
+            (branchFromDB ^. ownerUuid)
+            (branchFromDB ^. createdAt)
+            now
+    updateBranchById branch
+    mForkOfPackageId <- getBranchForkOfPackageId branch
+    branchState <- getBranchState branch
+    return $ toDetailDTO branch mForkOfPackageId branchState
   where
     validateKmId = do
       let bKmId = reqDto ^. kmId
@@ -120,9 +128,10 @@ modifyBranch branchUuid reqDto = do
     isAlreadyUsedAndIsNotMine Nothing = False
 
 deleteBranch :: String -> AppContextM ()
-deleteBranch branchUuid = do
-  checkPermission _KM_PERM
-  branch <- findBranchById branchUuid
-  deleteBranchById branchUuid
-  deleteMigratorStateByBranchUuid branchUuid
-  return ()
+deleteBranch branchUuid =
+  runInTransaction $ do
+    checkPermission _KM_PERM
+    branch <- findBranchById branchUuid
+    deleteBranchById branchUuid
+    deleteMigratorStateByBranchUuid branchUuid
+    return ()

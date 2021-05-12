@@ -15,6 +15,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Database.Migration.Development.User.Data.Users
+import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -56,8 +57,9 @@ test_204 appContext =
     let expStatus = 204
     let expHeaders = resCorsHeaders
      -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
+    runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
+    runInContextIO QTN.runMigration appContext
     runInContextIO DOC.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -90,5 +92,5 @@ test_404 appContext =
     "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
-    "user"
+    "user_entity"
     "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

@@ -66,7 +66,7 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. knowledgeModel `shouldBe` expDto ^. knowledgeModel
   liftIO $ resDto ^. replies `shouldBe` expDto ^. replies
 
-compareQuestionnaireDtos resDto expDto = liftIO $ (resDto == expDto) `shouldBe` True
+compareQuestionnaireDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
 compareQuestionnaireContentDtos resDto expDto = liftIO $ (resDto ^. events) == (expDto ^. events) `shouldBe` True
 

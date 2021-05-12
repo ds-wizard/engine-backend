@@ -1,13 +1,16 @@
 module Wizard.Model.Questionnaire.QuestionnaireAcl where
 
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Acl.Acl
 
 data QuestionnairePermRecord =
   QuestionnairePermRecord
-    { _questionnairePermRecordMember :: Member
+    { _questionnairePermRecordUuid :: U.UUID
+    , _questionnairePermRecordQuestionnaireUuid :: U.UUID
     , _questionnairePermRecordPerms :: [String]
+    , _questionnairePermRecordMember :: Member
     }
   deriving (Generic, Eq, Show)
 

@@ -1,14 +1,14 @@
 module Wizard.Service.Package.PackageMapper where
 
-import Control.Lens ((^.), (^..))
+import Control.Lens ((^.))
 import qualified Data.List as L
 
 import LensesConfig
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
+import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Model.Package.Package
-import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Package.PackageDetailDTO
@@ -38,10 +38,25 @@ toSimpleDTO' pkgRs orgRs localVersions pkg =
     , _packageSimpleDTOCreatedAt = pkg ^. createdAt
     }
 
-toSimpleDTO'' :: [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> PackageGroup -> PackageSimpleDTO
-toSimpleDTO'' pkgRs orgRs pkgGroup =
-  let newest = L.maximumBy (\p1 p2 -> compareVersion (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
-   in toSimpleDTO' pkgRs orgRs (pkgGroup ^. versions ^.. traverse . version) newest
+toSimpleDTO'' ::
+     [R_PackageSimpleDTO.PackageSimpleDTO] -> [OrganizationSimpleDTO] -> (Package, [String]) -> PackageSimpleDTO
+toSimpleDTO'' pkgRs orgRs (pkg, localVersions) =
+  PackageSimpleDTO
+    { _packageSimpleDTOPId = pkg ^. pId
+    , _packageSimpleDTOName = pkg ^. name
+    , _packageSimpleDTOOrganizationId = pkg ^. organizationId
+    , _packageSimpleDTOKmId = pkg ^. kmId
+    , _packageSimpleDTOVersion = pkg ^. version
+    , _packageSimpleDTOVersions = L.sortBy compareVersion localVersions
+    , _packageSimpleDTORemoteLatestVersion =
+        case selectPackageByOrgIdAndKmId pkg pkgRs of
+          Just pkgR -> Just $ pkgR ^. version
+          Nothing -> Nothing
+    , _packageSimpleDTODescription = pkg ^. description
+    , _packageSimpleDTOState = computePackageState pkgRs pkg
+    , _packageSimpleDTOOrganization = selectOrganizationByOrgId pkg orgRs
+    , _packageSimpleDTOCreatedAt = pkg ^. createdAt
+    }
 
 toDetailDTO ::
      Package
@@ -64,7 +79,7 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
     , _packageDetailDTOPreviousPackageId = pkg ^. previousPackageId
     , _packageDetailDTOForkOfPackageId = pkg ^. forkOfPackageId
     , _packageDetailDTOMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
-    , _packageDetailDTOVersions = versionLs
+    , _packageDetailDTOVersions = L.sort versionLs
     , _packageDetailDTORemoteLatestVersion =
         case selectPackageByOrgIdAndKmId pkg pkgRs of
           Just pkgR -> Just $ pkgR ^. version
@@ -76,6 +91,16 @@ toDetailDTO pkg pkgRs orgRs versionLs registryLink =
           Nothing -> Nothing
     , _packageDetailDTOOrganization = selectOrganizationByOrgId pkg orgRs
     , _packageDetailDTOCreatedAt = pkg ^. createdAt
+    }
+
+toSuggestionDTO :: (Package, [String]) -> PackageSuggestionDTO
+toSuggestionDTO (pkg, localVersions) =
+  PackageSuggestionDTO
+    { _packageSuggestionDTOPId = pkg ^. pId
+    , _packageSuggestionDTOName = pkg ^. name
+    , _packageSuggestionDTOVersion = pkg ^. version
+    , _packageSuggestionDTODescription = pkg ^. description
+    , _packageSuggestionDTOVersions = L.sortBy compareVersion localVersions
     }
 
 fromDTO :: PackageDTO -> PackageWithEvents

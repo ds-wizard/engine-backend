@@ -11,7 +11,7 @@ import Registry.Constant.Resource
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
 import Registry.Service.Config.ServerConfigService
-import Shared.Database.SqlConnection
+import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
 import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService

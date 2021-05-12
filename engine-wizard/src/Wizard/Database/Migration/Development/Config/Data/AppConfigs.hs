@@ -19,7 +19,8 @@ defaultSecret = "01234567890123456789012345678901"
 defaultAppConfig :: AppConfig
 defaultAppConfig =
   AppConfig
-    { _appConfigOrganization = defaultOrganization
+    { _appConfigAId = 1
+    , _appConfigOrganization = defaultOrganization
     , _appConfigAuthentication = defaultAuth
     , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
     , _appConfigDashboard = defaultDashboard

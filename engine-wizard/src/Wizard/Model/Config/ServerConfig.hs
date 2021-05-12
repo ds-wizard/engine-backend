@@ -8,6 +8,7 @@ data ServerConfig =
   ServerConfig
     { _serverConfigGeneral :: ServerConfigGeneral
     , _serverConfigDatabase :: ServerConfigDatabase
+    , _serverConfigS3 :: ServerConfigS3
     , _serverConfigMessaging :: ServerConfigMessaging
     , _serverConfigJwt :: ServerConfigJwt
     , _serverConfigRoles :: ServerConfigRoles

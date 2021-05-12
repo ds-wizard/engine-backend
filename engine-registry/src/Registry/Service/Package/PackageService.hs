@@ -10,12 +10,12 @@ import qualified Data.List as L
 import LensesConfig
 import Registry.Api.Resource.Package.PackageDetailDTO
 import Registry.Api.Resource.Package.PackageSimpleDTO
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.Common
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageMapper
-import Shared.Database.DAO.CommonSql
-import Shared.Database.DAO.Package.PackageSqlDAO
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEventsRaw
 import Shared.Service.Package.PackageUtil

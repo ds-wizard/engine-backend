@@ -60,4 +60,22 @@ endMigration dbPool meta = do
   runDB dbPool action
   return ()
 
+startTransaction :: Pool Connection -> LoggingT IO ()
+startTransaction dbPool = do
+  let action conn = execute_ conn "BEGIN TRANSACTION;"
+  runDB dbPool action
+  return ()
+
+commitTransaction :: Pool Connection -> LoggingT IO ()
+commitTransaction dbPool = do
+  let action conn = execute_ conn "COMMIT;"
+  runDB dbPool action
+  return ()
+
+rollbackTransaction :: Pool Connection -> LoggingT IO ()
+rollbackTransaction dbPool = do
+  let action conn = execute_ conn "ROLLBACK;"
+  runDB dbPool action
+  return ()
+
 runDB dbPool action = liftIO $ withResource dbPool action

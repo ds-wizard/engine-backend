@@ -5,16 +5,8 @@ import GHC.Generics
 
 data ServerConfigDatabase =
   ServerConfigDatabase
-    { _serverConfigDatabaseHost :: String
-    , _serverConfigDatabaseDatabaseName :: String
-    , _serverConfigDatabasePort :: Integer
-    , _serverConfigDatabaseAuthEnabled :: Bool
-    , _serverConfigDatabaseUsername :: String
-    , _serverConfigDatabasePassword :: String
-    , _serverConfigDatabaseConnectionPoolSize :: Int
+    { _serverConfigDatabaseConnectionString :: String
     , _serverConfigDatabaseStripeSize :: Int
-    , _serverConfigDatabaseConnectionIdleTime :: Int
-    , _serverConfigDatabaseConnectionString :: String
     , _serverConfigDatabaseConnectionTimeout :: Int
     , _serverConfigDatabaseMaxConnections :: Int
     }

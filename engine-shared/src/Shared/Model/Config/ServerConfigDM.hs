@@ -7,17 +7,9 @@ import Shared.Model.Config.ServerConfig
 defaultDatabase :: ServerConfigDatabase
 defaultDatabase =
   ServerConfigDatabase
-    { _serverConfigDatabaseHost = "mongo"
-    , _serverConfigDatabaseDatabaseName = "wizard-server"
-    , _serverConfigDatabasePort = 27017
-    , _serverConfigDatabaseAuthEnabled = False
-    , _serverConfigDatabaseUsername = ""
-    , _serverConfigDatabasePassword = ""
-    , _serverConfigDatabaseConnectionPoolSize = 1
+    { _serverConfigDatabaseConnectionString = "postgresql://posgres:posgres@postgres:5432/engine-wizard"
     , _serverConfigDatabaseStripeSize = 1
-    , _serverConfigDatabaseConnectionIdleTime = 1
-    , _serverConfigDatabaseConnectionString = ""
-    , _serverConfigDatabaseConnectionTimeout = 30000
+    , _serverConfigDatabaseConnectionTimeout = 10
     , _serverConfigDatabaseMaxConnections = 10
     }
 
@@ -27,7 +19,7 @@ defaultS3 =
     { _serverConfigS3Url = "http://minio:9000"
     , _serverConfigS3Username = "minioadmin"
     , _serverConfigS3Password = "minioadmin"
-    , _serverConfigS3Bucket = "engine-registry"
+    , _serverConfigS3Bucket = "engine-wizard"
     }
 
 defaultMail :: ServerConfigMail

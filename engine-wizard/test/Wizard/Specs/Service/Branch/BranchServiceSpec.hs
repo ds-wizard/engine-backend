@@ -64,7 +64,6 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage netherlandsPackageV2) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents
         -- AND: Prepare expectations
@@ -80,7 +79,6 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage netherlandsPackageV2) appContext
         -- AND: Prepare branch
         let branch = amsterdamBranchWithEvents & events .~ []
         -- AND: Prepare expectations
@@ -96,7 +94,6 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (insertPackage netherlandsPackageV2) appContext
         runInContext (deleteEventsAtBranch branchUuid) appContext
         let migratorCreateDto =
               MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}

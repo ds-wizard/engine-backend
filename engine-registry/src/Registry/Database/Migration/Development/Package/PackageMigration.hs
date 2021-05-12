@@ -3,7 +3,7 @@ module Registry.Database.Migration.Development.Package.PackageMigration where
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Util.Logger
-import Shared.Database.DAO.Package.PackageSqlDAO
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 
 runMigration :: AppContextM ()

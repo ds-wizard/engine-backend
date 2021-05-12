@@ -1,34 +1,26 @@
 module Wizard.Database.DAO.ActionKey.ActionKeyDAO where
 
-import Data.Bson
+import GHC.Int
 
-import Shared.Database.DAO.Common
-import Wizard.Database.BSON.ActionKey.ActionKey ()
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.ActionKey.ActionKey ()
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-entityName = "actionKey"
-
-collection = "actionKeys"
+entityName = "action_key"
 
 findActionKeys :: AppContextM [ActionKey]
-findActionKeys = createFindEntitiesFn collection
-
-findActionKeyById :: String -> AppContextM ActionKey
-findActionKeyById = createFindEntityByFn collection entityName "uuid"
+findActionKeys = createFindEntitiesFn entityName
 
 findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
-findActionKeyByHash' = createFindEntityByFn' collection entityName "hash"
+findActionKeyByHash' = createFindEntityByFn' entityName "hash"
 
-insertActionKey :: ActionKey -> AppContextM Value
-insertActionKey = createInsertFn collection
+insertActionKey :: ActionKey -> AppContextM Int64
+insertActionKey = createInsertFn entityName
 
-deleteActionKeys :: AppContextM ()
-deleteActionKeys = createDeleteEntitiesFn collection
+deleteActionKeys :: AppContextM Int64
+deleteActionKeys = createDeleteEntitiesFn entityName
 
-deleteActionKeyById :: String -> AppContextM ()
-deleteActionKeyById = createDeleteEntityByFn collection "uuid"
-
-deleteActionKeyByHash :: String -> AppContextM ()
-deleteActionKeyByHash = createDeleteEntityByFn collection "hash"
+deleteActionKeyByHash :: String -> AppContextM Int64
+deleteActionKeyByHash = createDeleteEntityByFn entityName "hash"

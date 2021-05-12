@@ -28,4 +28,4 @@ instance ToSchema QuestionnaireDTO where
          (PM.toPackage germanyPackage)
          QSDefault
          questionnaireReport
-         [albertEditPermRecordDto])
+         [qtn1AlbertEditPermRecordDto])

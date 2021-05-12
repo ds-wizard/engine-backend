@@ -2,10 +2,10 @@ module Registry.Database.Migration.Development.Organization.OrganizationSchemaMi
 
 import Database.PostgreSQL.Simple
 
+import Registry.Database.DAO.Common
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Util.Logger
-import Shared.Database.DAO.CommonSql
 
 runMigration :: AppContextM ()
 runMigration = do

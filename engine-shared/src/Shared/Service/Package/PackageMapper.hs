@@ -1,14 +1,16 @@
 module Shared.Service.Package.PackageMapper where
 
-import Control.Lens ((^.), (^..))
+import Control.Lens ((^.))
 import qualified Data.List as L
 
 import LensesConfig
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.Package.PackageSuggestionDTO
+import Shared.Model.Common.Page
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
 import Shared.Model.Package.PackageWithEvents
+import Shared.Util.String (splitOn)
 
 toPackage :: PackageWithEvents -> Package
 toPackage pkg =
@@ -47,13 +49,17 @@ toDTO pkg =
     , _packageDTOCreatedAt = pkg ^. createdAt
     }
 
-toSuggestionDTO :: PackageGroup -> PackageSuggestionDTO
-toSuggestionDTO pkgGroup =
-  let newest = L.maximumBy (\p1 p2 -> compare (p1 ^. version) (p2 ^. version)) (pkgGroup ^. versions)
-   in PackageSuggestionDTO
-        { _packageSuggestionDTOPId = newest ^. pId
-        , _packageSuggestionDTOName = newest ^. name
-        , _packageSuggestionDTOVersion = newest ^. version
-        , _packageSuggestionDTODescription = newest ^. description
-        , _packageSuggestionDTOVersions = L.sort $ pkgGroup ^. versions ^.. traverse . version
-        }
+toSuggestionDTO :: Package -> Page PackageGroup -> PackageSuggestionDTO
+toSuggestionDTO pkg groups =
+  PackageSuggestionDTO
+    { _packageSuggestionDTOPId = pkg ^. pId
+    , _packageSuggestionDTOName = pkg ^. name
+    , _packageSuggestionDTOVersion = pkg ^. version
+    , _packageSuggestionDTODescription = pkg ^. description
+    , _packageSuggestionDTOVersions = vs
+    }
+  where
+    vs =
+      case L.find (\g -> g ^. organizationId == pkg ^. organizationId && g ^. kmId == pkg ^. kmId) groups of
+        Just group -> L.sort $ splitOn "," (group ^. versions)
+        Nothing -> []

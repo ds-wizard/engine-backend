@@ -9,11 +9,14 @@ import System.Timeout
 import Test.Hspec.Expectations.Pretty
 
 import LensesConfig hiding (request)
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Util.JSON
 import Shared.Util.String
 import Wizard.Api.Resource.Websocket.QuestionnaireActionDTO
 import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Websocket.WebsocketRecord
@@ -48,6 +51,8 @@ insertQuestionnaireAndUsers appContext qtn
   -- Prepare DB
  = do
   runInContext U.runMigration appContext
+  runInContextIO TML_Migration.runMigration appContext
+  runInContextIO (insertPackage germanyPackage) appContext
   runInContextIO (insertQuestionnaire qtn) appContext
 
 -- --------------------------------

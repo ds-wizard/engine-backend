@@ -1,7 +1,6 @@
 module Wizard.Service.Template.TemplateMapper where
 
 import Control.Lens ((^.))
-import qualified Data.List as L
 import Data.Time
 
 import LensesConfig
@@ -9,7 +8,6 @@ import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateS
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Model.Package.Package
 import Shared.Model.Template.Template
-import Shared.Model.Template.TemplateGroup
 import Shared.Util.Coordinate
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
@@ -45,16 +43,6 @@ toSimpleDTO' tmlRs orgRs pkgs tml =
     , _templateSimpleDTOOrganization = selectOrganizationByOrgId tml orgRs
     , _templateSimpleDTOCreatedAt = tml ^. createdAt
     }
-
-toSimpleDTO'' ::
-     [R_TemplateSimpleDTO.TemplateSimpleDTO]
-  -> [OrganizationSimpleDTO]
-  -> [Package]
-  -> TemplateGroup
-  -> TemplateSimpleDTO
-toSimpleDTO'' tmlRs orgRs pkgs tmlGroup =
-  let newest = L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)) (tmlGroup ^. versions)
-   in toSimpleDTO' tmlRs orgRs pkgs newest
 
 toDetailDTO ::
      Template
@@ -124,8 +112,6 @@ fromCreateDTO dto createdAt =
     , _templateAllowedPackages = dto ^. allowedPackages
     , _templateRecommendedPackageId = dto ^. recommendedPackageId
     , _templateFormats = dto ^. formats
-    , _templateFiles = []
-    , _templateAssets = []
     , _templateCreatedAt = createdAt
     }
 
@@ -144,8 +130,6 @@ fromChangeDTO dto template =
     , _templateAllowedPackages = dto ^. allowedPackages
     , _templateRecommendedPackageId = dto ^. recommendedPackageId
     , _templateFormats = dto ^. formats
-    , _templateFiles = template ^. files
-    , _templateAssets = template ^. assets
     , _templateCreatedAt = template ^. createdAt
     }
 

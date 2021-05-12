@@ -19,8 +19,6 @@ data Template =
     , _templateAllowedPackages :: [TemplateAllowedPackage]
     , _templateRecommendedPackageId :: Maybe String
     , _templateFormats :: [TemplateFormat]
-    , _templateFiles :: [TemplateFile]
-    , _templateAssets :: [TemplateAsset]
     , _templateCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
@@ -54,7 +52,8 @@ data TemplateFormatStep =
 
 data TemplateFile =
   TemplateFile
-    { _templateFileUuid :: U.UUID
+    { _templateFileTemplateId :: String
+    , _templateFileUuid :: U.UUID
     , _templateFileFileName :: String
     , _templateFileContent :: String
     }
@@ -62,7 +61,8 @@ data TemplateFile =
 
 data TemplateAsset =
   TemplateAsset
-    { _templateAssetUuid :: U.UUID
+    { _templateAssetTemplateId :: String
+    , _templateAssetUuid :: U.UUID
     , _templateAssetFileName :: String
     , _templateAssetContentType :: String
     }

@@ -16,6 +16,7 @@ import Wizard.Api.Resource.Websocket.WebsocketActionDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
@@ -39,6 +40,8 @@ test200 appContext =
    do
     let qtn = questionnaire10
     runInContext U.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     -- AND: Connect to websocket
@@ -77,7 +80,6 @@ create_403_no_perm title appContext qtn authToken errorMessage =
   it title $
     -- GIVEN: Prepare database
    do
-    runInContextIO (insertPackage germanyPackage) appContext
     insertQuestionnaireAndUsers appContext qtn
     -- AND: Prepare expectation
     let expError = ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN errorMessage

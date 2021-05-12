@@ -17,6 +17,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -60,6 +61,7 @@ test_201 appContext =
     let expDto = questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO TML.runMigration appContext
     runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO deleteQuestionnaires appContext
      -- WHEN: Call API
@@ -70,9 +72,13 @@ test_201 appContext =
     assertResHeaders headers expHeaders
     compareQuestionnaireCreateDtos resBody expDto
     -- AND: Find a result in DB
+    let aPermissions =
+          [ (uuid .~ head (resBody ^. permissions) ^. uuid) . (questionnaireUuid .~ resBody ^. uuid) $
+            head (questionnaire1 ^. permissions)
+          ]
     assertExistenceOfQuestionnaireInDB
       appContext
-      ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) $ questionnaire1)
+      ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) . (permissions .~ aPermissions) $ questionnaire1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

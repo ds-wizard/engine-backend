@@ -82,7 +82,7 @@ test_200 appContext = do
     questionnaire3
     questionnaire3Edited
     questionnaire3Ctn
-    [albertEditPermRecordDto]
+    [qtn3AlbertEditPermRecordDto]
 
 create_test_200 title appContext qtn qtnEdited qtnCtn permissions =
   it title $
@@ -110,8 +110,8 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions =
             qVersionsDto
     let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
     runInContextIO TML.runMigration appContext
+    runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -168,8 +168,8 @@ create_test_403 title appContext qtn qtnEdited reason =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
-    runInContextIO QTN.runMigration appContext
     runInContextIO TML.runMigration appContext
+    runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

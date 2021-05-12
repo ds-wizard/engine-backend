@@ -85,5 +85,5 @@ test_404 appContext =
     "/templates/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
-    "template"
-    "global:questionnaire-report:1.0.0"
+    "template_asset"
+    "6c367648-9b60-4307-93b2-0851938adee0"

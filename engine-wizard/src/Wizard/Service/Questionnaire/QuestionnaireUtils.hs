@@ -56,9 +56,7 @@ enhanceQuestionnaire qtn = do
 enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
 enhanceQuestionnairePermRecord record =
   case record ^. member of
-    UserMember {_userMemberUuid = userUuid}
-      -- TODO return from cache
-     -> do
+    UserMember {_userMemberUuid = userUuid} -> do
       user <- findUserById (U.toString userUuid)
       return $ toUserPermRecordDTO record user
     GroupMember {_groupMemberGId = groupId} -> do
@@ -66,9 +64,7 @@ enhanceQuestionnairePermRecord record =
       return $ toGroupPermRecordDTO record group
 
 enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEventDTO
-enhanceQuestionnaireEvent event
-  -- TODO return from cache
- = do
+enhanceQuestionnaireEvent event = do
   mUser <-
     case event ^. createdBy' of
       Just userUuid -> Just <$> findUserById (U.toString userUuid)
@@ -76,9 +72,7 @@ enhanceQuestionnaireEvent event
   return $ toEventDTO event mUser
 
 enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
-enhanceQuestionnaireVersion version
-  -- TODO return from cache
- = do
+enhanceQuestionnaireVersion version = do
   user <- findUserById (U.toString $ version ^. createdBy)
   return $ toVersionDTO version user
 

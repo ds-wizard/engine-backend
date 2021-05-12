@@ -71,7 +71,7 @@ create_test_200 title appContext reqAuthHeader =
     let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, TemplateFile)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareTemplateDtos resDto expDto
+    compareTemplateFileDtos resDto expDto
     -- AND: Find result in DB and compare with expectation state
     assertExistenceOfTemplateFileInDB appContext templateFileDefaultHtmlEdited (commonWizardTemplate ^. tId)
 
@@ -94,5 +94,5 @@ test_404 appContext =
     "/templates/global:questionnaire-report:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
-    "template"
-    "global:questionnaire-report:1.0.0"
+    "template_file"
+    "deab6c38-aeac-4b17-a501-4365a0a70176"

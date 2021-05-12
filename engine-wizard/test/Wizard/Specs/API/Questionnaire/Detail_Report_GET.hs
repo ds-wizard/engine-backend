@@ -77,10 +77,11 @@ create_test_200 title appContext qtn authHeader =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
     runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO MTR.runMigration appContext
-    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -125,6 +126,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO MTR.runMigration appContext
      -- WHEN: Call API

@@ -12,6 +12,12 @@ instance FromJSON DocumentState
 
 instance ToJSON DocumentState
 
+instance FromJSON DocumentMetadata where
+  parseJSON = simpleParseJSON "_documentMetadata"
+
+instance ToJSON DocumentMetadata where
+  toJSON = simpleToJSON "_documentMetadata"
+
 instance FromJSON DocumentDTO where
   parseJSON = genericParseJSON simpleOptions
 

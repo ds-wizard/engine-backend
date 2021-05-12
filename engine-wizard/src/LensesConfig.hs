@@ -10,6 +10,8 @@ import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.Template.TemplateDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Shared.Model.Common.Pageable
@@ -38,10 +40,8 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
-import Wizard.Api.Resource.Branch.BranchWithEventsDTO
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
-import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Api.Resource.Feedback.FeedbackCreateDTO
@@ -49,7 +49,6 @@ import Wizard.Api.Resource.Feedback.FeedbackDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO as KM_MigratorConflictDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO as KM_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO as KM_MigratorStateDTO
-import qualified Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDetailDTO as KM_MigratorStateDetailDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO as QTN_MigratorStateChangeDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO as QTN_MigratorStateCreateDTO
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
@@ -57,6 +56,7 @@ import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
@@ -90,7 +90,6 @@ import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
-import Wizard.Messaging.Resource.Questionnaire.QuestionnaireEventMDTO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.BookReference.BookReference
@@ -102,6 +101,7 @@ import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 import Wizard.Model.Document.Document
+import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Level.Level
@@ -210,6 +210,8 @@ makeFields ''ServerConfigGeneral
 
 makeFields ''ServerConfigDatabase
 
+makeFields ''ServerConfigS3
+
 makeFields ''ServerConfigMessaging
 
 makeFields ''ServerConfigJwt
@@ -237,6 +239,10 @@ makeFields ''AppContext
 makeFields ''Document
 
 makeFields ''DocumentMetadata
+
+makeFields ''DocumentContext
+
+makeFields ''DocumentContextConfig
 
 -- Model / Event
 makeFields ''EventField
@@ -480,8 +486,6 @@ makeFields ''BranchDTO
 
 makeFields ''BranchDetailDTO
 
-makeFields ''BranchWithEventsDTO
-
 -- Api / Resource / Config
 makeFields ''AppConfigChangeDTO
 
@@ -495,10 +499,6 @@ makeFields ''ClientConfigQuestionnaireDTO
 makeFields ''DocumentDTO
 
 makeFields ''DocumentCreateDTO
-
-makeFields ''DocumentContextDTO
-
-makeFields ''DocumentContextConfigDTO
 
 -- Api / Resource / Feedback
 makeFields ''FeedbackDTO
@@ -515,8 +515,6 @@ makeFields ''KnowledgeModelChangeDTO
 makeFields ''KM_MigratorConflictDTO.MigratorConflictDTO
 
 makeFields ''KM_MigratorStateCreateDTO.MigratorStateCreateDTO
-
-makeFields ''KM_MigratorStateDetailDTO.MigratorStateDetailDTO
 
 makeFields ''KM_MigratorStateDTO.MigratorStateDTO
 
@@ -552,6 +550,8 @@ makeFields ''QuestionnaireChangeDTO
 makeFields ''QuestionnaireContentChangeDTO
 
 makeFields ''QuestionnaireReportDTO
+
+makeFields ''QuestionnairePermRecordDTO
 
 makeFields ''SetReplyEventDTO
 
@@ -594,6 +594,11 @@ makeFields ''TemplateChangeDTO
 
 makeFields ''TemplateFileChangeDTO
 
+makeFields ''TemplateAssetDTO
+
+-- Api / Resource / TemplateBundle
+makeFields ''TemplateBundleDTO
+
 -- Api / Resource / Token
 makeFields ''TokenDTO
 
@@ -625,12 +630,6 @@ makeFields ''UserSuggestionDTO
 
 -- Api / Resource / Version
 makeFields ''VersionDTO
-
--- -------------------------------------
--- Messaging
--- -------------------------------------
--- Messaging / Resource / Questionnaire
-makeFields ''QuestionnaireEventMDTO
 
 -- -------------------------------------
 -- Integration

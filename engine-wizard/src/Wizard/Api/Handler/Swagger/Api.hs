@@ -13,6 +13,7 @@ import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeSM ()
 import Shared.Api.Resource.Multipart.MultiPartSM ()
 import Shared.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Api.Resource.Template.TemplateSM ()
+import Shared.Api.Resource.TemplateBundle.TemplateBundleSM ()
 import Wizard.Api.Api
 import Wizard.Api.Resource.ActionKey.ActionKeySM ()
 import Wizard.Api.Resource.BookReference.BookReferenceSM ()

@@ -41,5 +41,7 @@ fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
     , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
     , _documentCreatorUuid = mCurrentUser ^? _Just . uuid
+    , _documentRetrievedAt = Nothing
+    , _documentFinishedAt = Nothing
     , _documentCreatedAt = now
     }

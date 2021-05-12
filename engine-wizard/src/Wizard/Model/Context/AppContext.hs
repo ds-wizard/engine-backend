@@ -6,10 +6,11 @@ import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (LoggingT, MonadLogger)
 import Control.Monad.Reader (MonadReader, ReaderT)
 import qualified Data.Map.Strict as M
+import Data.Pool (Pool)
 import qualified Data.UUID as U
-import Database.Persist.MongoDB (ConnectionPool)
-import Network.AMQP (Channel)
+import Database.PostgreSQL.Simple (Connection)
 import Network.HTTP.Client (Manager)
+import Network.Minio (MinioConn)
 import Servant.Client (ClientEnv)
 
 import Shared.Model.Config.BuildInfoConfig
@@ -23,8 +24,8 @@ data AppContext =
     { _appContextServerConfig :: ServerConfig
     , _appContextLocalization :: M.Map String String
     , _appContextBuildInfoConfig :: BuildInfoConfig
-    , _appContextPool :: ConnectionPool
-    , _appContextMsgChannel :: Maybe Channel
+    , _appContextDbPool :: Pool Connection
+    , _appContextS3Client :: MinioConn
     , _appContextHttpClientManager :: Manager
     , _appContextRegistryClient :: ClientEnv
     , _appContextTraceUuid :: U.UUID

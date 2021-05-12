@@ -14,6 +14,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -54,6 +55,7 @@ test_204 appContext =
     let expBody = ""
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
     runInContextIO (insertDocument doc4) appContext

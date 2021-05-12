@@ -25,11 +25,6 @@ jobs:
       GHC_OPTIONS: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
 
     services:
-      mongo:
-        image: mongo:4.2.3
-        ports: 
-        - 27017:27017
-        options: --name mongo
       postgres:
         image: postgres
         env:
@@ -70,38 +65,6 @@ jobs:
         key: stack-home-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
         restore-keys: |
           stack-home-ubuntu18-
-    
-    - name: Cache bson-generic
-      id: cache-bson-generic
-      uses: actions/cache@v2
-      with:
-        path: vendor/bson-generic/.stack-work
-        key: bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/package.yaml')}}-${{ hashFiles('vendor/bson-generic/**/*.hs') }}
-        restore-keys: |
-          bson-generic-ubuntu18-${{ hashFiles('vendor/bson-generic/package.yaml')}}-
-          bson-generic-ubuntu18-
-    
-    - name: Invalidate bson-generic cache (force push)
-      id: invalidate-cache-bson-generic
-      if: github.event_name == 'push' && github.event.forced && steps.cache-bson-generic.outputs.cache-hit != 'true'
-      run: |
-        rm -rf vendor/bson-generic/.stack-work
-    
-    - name: Cache mongoDB-migration
-      id: cache-mongoDB-migration
-      uses: actions/cache@v2
-      with:
-        path: vendor/mongoDB-migration/.stack-work
-        key: mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/package.yaml')}}-${{ hashFiles('vendor/mongoDB-migration/**/*.hs') }}
-        restore-keys: |
-          mongoDB-migration-ubuntu18-${{ hashFiles('vendor/mongoDB-migration/package.yaml')}}-
-          mongoDB-migration-ubuntu18-
-    
-    - name: Invalidate mongoDB-migration cache (force push)
-      id: invalidate-cache-mongoDB-migration
-      if: github.event_name == 'push' && github.event.forced && steps.cache-mongoDB-migration.outputs.cache-hit != 'true'
-      run: |
-        rm -rf vendor/mongoDB-migration/.stack-work
     
     - name: Cache postgresql-migration
       id: cache-postgresql-migration

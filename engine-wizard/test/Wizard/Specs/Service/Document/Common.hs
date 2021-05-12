@@ -8,7 +8,7 @@ import LensesConfig
 -- --------------------------------
 -- COMPARATORS
 -- --------------------------------
-compareDocumentContextDTOs resDto expDto = do
+compareDocumentContexts resDto expDto = do
   (resDto ^. questionnaireUuid) `shouldBe` (expDto ^. questionnaireUuid)
   (resDto ^. questionnaireName) `shouldBe` (expDto ^. questionnaireName)
   (resDto ^. questionnaireReplies) `shouldBe` (expDto ^. questionnaireReplies)

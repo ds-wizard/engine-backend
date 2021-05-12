@@ -20,5 +20,5 @@ detail_DELETE mTokenHeader tmlId fileUuid =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      deleteTemplateFile tmlId fileUuid
+      deleteTemplateFile fileUuid
       return NoContent

@@ -95,8 +95,8 @@ fromUserCreateDTO dto userUuid passwordHash role permissions now =
     , _userImageUrl = Nothing
     , _userGroups = []
     , _userLastVisitedAt = now
-    , _userCreatedAt = Just now
-    , _userUpdatedAt = Just now
+    , _userCreatedAt = now
+    , _userUpdatedAt = now
     }
 
 fromUserExternalDTO ::
@@ -117,8 +117,8 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userImageUrl = mImageUrl
     , _userGroups = []
     , _userLastVisitedAt = now
-    , _userCreatedAt = Just now
-    , _userUpdatedAt = Just now
+    , _userCreatedAt = now
+    , _userUpdatedAt = now
     }
 
 fromUpdateUserExternalDTO :: User -> String -> String -> Maybe String -> String -> UTCTime -> User

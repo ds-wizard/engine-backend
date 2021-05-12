@@ -1,11 +1,48 @@
 module Wizard.Service.Migration.Metamodel.Migrator.BranchMigrator
-  ( migrate
+  ( migrateAllInDB
   ) where
 
 import Data.Aeson
+import Data.Foldable (traverse_)
+import qualified Data.UUID as U
+import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.FromRow
+import Database.PostgreSQL.Simple.ToField
 
-import Shared.Model.Error.Error
-import Wizard.Service.Migration.Metamodel.Migrator.Common
+import Shared.Constant.KnowledgeModel
+import Wizard.Model.Context.AppContext
+import Wizard.Service.Migration.Metamodel.Migrator.CommonDB
 
-migrate :: Value -> Either AppError Value
-migrate value = migrateEventsField "events" value >>= migrateMetamodelVersionField
+migrateAllInDB :: AppContextM ()
+migrateAllInDB = do
+  let (entityName, idField, eventsField, eventsFieldUpdate) = ("branch", "uuid", "events", "events = ?")
+  logMigrationStarted entityName
+  entities <- findOutdatedModels entityName eventsField idField
+  traverse_ (migrateOneInDB entityName eventsFieldUpdate idField) entities
+  logMigrationCompleted entityName
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+migrateOneInDB :: String -> String -> String -> MetamodelMigration -> AppContextM ()
+migrateOneInDB entityName eventsField idField MetamodelMigration {..} =
+  migrateEventField entityName oldMetamodelVersion events $ \updatedEvents ->
+    updateOutdatedModels
+      entityName
+      eventsField
+      idField
+      [toField kmMetamodelVersion, toJSONField . toJSON $ updatedEvents, toField entityId]
+
+data MetamodelMigration =
+  MetamodelMigration
+    { entityId :: U.UUID
+    , oldMetamodelVersion :: Int
+    , events :: Value
+    }
+
+instance FromRow MetamodelMigration where
+  fromRow = do
+    entityId <- field
+    oldMetamodelVersion <- field
+    events <- field
+    return $ MetamodelMigration {..}

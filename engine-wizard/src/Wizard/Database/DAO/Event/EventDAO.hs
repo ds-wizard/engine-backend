@@ -1,15 +1,25 @@
 module Wizard.Database.DAO.Event.EventDAO where
 
-import Shared.Database.BSON.Event.Common ()
-import Shared.Database.DAO.Common
+import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
+
 import Shared.Model.Event.Event
-import Wizard.Database.BSON.Branch.BranchWithEvents ()
-import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.Branch.BranchWithEvents ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
 updateEventsInBranch :: String -> [Event] -> AppContextM ()
-updateEventsInBranch branchUuid = createPartialUpdateByFn' collection "uuid" branchUuid "events"
+updateEventsInBranch branchUuid events = do
+  let params = [toJSONField events, toField branchUuid]
+  let action conn = execute conn "UPDATE branch SET events = ? WHERE uuid = ?" params
+  runDB action
+  return ()
 
 deleteEventsAtBranch :: String -> AppContextM ()
-deleteEventsAtBranch branchUuid = createPartialUpdateByFn' collection "uuid" branchUuid "events" ([] :: [Event])
+deleteEventsAtBranch branchUuid = do
+  let events = [] :: [Event]
+  let params = [toJSONField events, toField branchUuid]
+  let action conn = execute conn "UPDATE branch SET events = ? WHERE uuid = ?" params
+  runDB action
+  return ()

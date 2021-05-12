@@ -91,10 +91,10 @@ create_test_200 title appContext oldQtn newQtn state stateDto authHeader =
     let expBody = encode expDto
     let expHeaders = resCtHeader : resCorsHeaders
     -- AND: Prepare database
+    runInContextIO TML.runMigration appContext
     runInContextIO (insertQuestionnaire oldQtn) appContext
     runInContextIO (insertQuestionnaire newQtn) appContext
     runInContextIO (insertMigratorState state) appContext
-    runInContextIO TML.runMigration appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -128,10 +128,10 @@ create_test_403 title appContext qtn reason =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     let ms = (nlQtnMigrationState & oldQuestionnaireUuid .~ (qtn ^. uuid)) & newQuestionnaireUuid .~ (qtn ^. uuid)
     runInContextIO (insertMigratorState ms) appContext
-    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -148,5 +148,5 @@ test_404 appContext =
     (reqUrlT $ questionnaire4 ^. uuid)
     (reqHeadersT reqAuthHeader)
     reqBody
-    "questionnaireMigration"
+    "qtn_migration"
     "57250a07-a663-4ff3-ac1f-16530f2c1bfe"

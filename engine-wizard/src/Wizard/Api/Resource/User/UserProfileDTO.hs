@@ -19,8 +19,8 @@ data UserProfileDTO =
     , _userProfileDTOActive :: Bool
     , _userProfileDTOSubmissionProps :: [UserSubmissionPropsDTO]
     , _userProfileDTOImageUrl :: Maybe String
-    , _userProfileDTOCreatedAt :: Maybe UTCTime
-    , _userProfileDTOUpdatedAt :: Maybe UTCTime
+    , _userProfileDTOCreatedAt :: UTCTime
+    , _userProfileDTOUpdatedAt :: UTCTime
     }
   deriving (Show, Generic)
 

@@ -12,6 +12,7 @@ import Shared.Database.Migration.Development.Common.Data.Pages
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
 import qualified Shared.Service.Package.PackageMapper as SP_Mapper
 import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
@@ -53,7 +54,10 @@ instance ToSchema (Page PackageSimpleDTO) where
     simpleToSchema'''''
       "_page"
       "Page PackageSimpleDTO"
-      (Page "packages" pageMetadata [SP_Mapper.toSuggestionDTO netherlandsPackageGroup])
+      (Page
+         "packages"
+         pageMetadata
+         [SP_Mapper.toSuggestionDTO (SP_Mapper.toPackage globalPackage) (Page "packages" (PageMetadata 20 0 0 0) [])])
 
 instance ToSchema (Page PackageSuggestionDTO) where
   declareNamedSchema =

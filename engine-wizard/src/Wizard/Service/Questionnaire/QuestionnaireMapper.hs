@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -183,25 +183,41 @@ toChangeDTO qtn =
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
     }
 
-toUserPermRecord :: U.UUID -> [String] -> QuestionnairePermRecord
-toUserPermRecord userUuid perms =
+toUserPermRecord :: U.UUID -> U.UUID -> U.UUID -> [String] -> QuestionnairePermRecord
+toUserPermRecord permUuid questionnaireUuid userUuid perms =
   QuestionnairePermRecord
-    {_questionnairePermRecordMember = UserMember {_userMemberUuid = userUuid}, _questionnairePermRecordPerms = perms}
+    { _questionnairePermRecordUuid = permUuid
+    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
+    , _questionnairePermRecordMember = UserMember {_userMemberUuid = userUuid}
+    , _questionnairePermRecordPerms = perms
+    }
 
-toGroupPermRecord :: String -> [String] -> QuestionnairePermRecord
-toGroupPermRecord groupId perms =
+toGroupPermRecord :: U.UUID -> U.UUID -> String -> [String] -> QuestionnairePermRecord
+toGroupPermRecord permUuid questionnaireUuid groupId perms =
   QuestionnairePermRecord
-    {_questionnairePermRecordMember = GroupMember {_groupMemberGId = groupId}, _questionnairePermRecordPerms = perms}
+    { _questionnairePermRecordUuid = permUuid
+    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
+    , _questionnairePermRecordMember = GroupMember {_groupMemberGId = groupId}
+    , _questionnairePermRecordPerms = perms
+    }
 
 toUserPermRecordDTO :: QuestionnairePermRecord -> User -> QuestionnairePermRecordDTO
 toUserPermRecordDTO record user =
   QuestionnairePermRecordDTO
-    {_questionnairePermRecordDTOMember = toUserMemberDTO user, _questionnairePermRecordDTOPerms = record ^. perms}
+    { _questionnairePermRecordDTOUuid = record ^. uuid
+    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
+    , _questionnairePermRecordDTOMember = toUserMemberDTO user
+    , _questionnairePermRecordDTOPerms = record ^. perms
+    }
 
 toGroupPermRecordDTO :: QuestionnairePermRecord -> Group -> QuestionnairePermRecordDTO
 toGroupPermRecordDTO record group =
   QuestionnairePermRecordDTO
-    {_questionnairePermRecordDTOMember = toGroupMemberDTO group, _questionnairePermRecordDTOPerms = record ^. perms}
+    { _questionnairePermRecordDTOUuid = record ^. uuid
+    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
+    , _questionnairePermRecordDTOMember = toGroupMemberDTO group
+    , _questionnairePermRecordDTOPerms = record ^. perms
+    }
 
 fromChangeDTO ::
      Questionnaire
@@ -222,12 +238,14 @@ fromChangeDTO qtn dto visibility sharing currentUserUuid now =
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
     , _questionnaireCreatorUuid = qtn ^. creatorUuid
-    , _questionnairePermissions = dto ^. permissions
+    , _questionnairePermissions = fmap sanitizePerms (dto ^. permissions)
     , _questionnaireEvents = qtn ^. events
     , _questionnaireVersions = qtn ^. versions
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
+  where
+    sanitizePerms perm = perm & questionnaireUuid .~ (qtn ^. uuid)
 
 fromQuestionnaireCreateDTO ::
      QuestionnaireCreateDTO
@@ -237,8 +255,9 @@ fromQuestionnaireCreateDTO ::
   -> U.UUID
   -> UTCTime
   -> UTCTime
+  -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCreatedAt qtnUpdatedAt =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCreatedAt qtnUpdatedAt permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
@@ -249,7 +268,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCre
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
     , _questionnaireCreatorUuid = Just currentUserUuid
-    , _questionnairePermissions = [toUserPermRecord currentUserUuid ownerPermissions]
+    , _questionnairePermissions = [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
     , _questionnaireEvents = []
     , _questionnaireVersions = []
     , _questionnaireCreatedAt = qtnCreatedAt

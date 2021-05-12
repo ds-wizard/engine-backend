@@ -13,7 +13,6 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 import Wizard.Worker.Cron.Document.DocumentWorker
 import Wizard.Worker.Cron.Feedback.FeedbackWorker
-import Wizard.Worker.Permanent.Questionnaire.QuestionnaireWorker
 
 worker :: MVar () -> BaseContext -> IO ()
 worker shutdownFlag context = do
@@ -22,7 +21,7 @@ worker shutdownFlag context = do
 
 -- ------------------------------------------------------------------
 permanentWorker :: MVar () -> BaseContext -> IO ()
-permanentWorker = questionnaireWorker
+permanentWorker _ _ = return ()
 
 -- ------------------------------------------------------------------
 cronJob :: MVar () -> BaseContext -> IO ()

@@ -30,8 +30,6 @@ templateUtilSpec =
                   , _templateAllowedPackages = []
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
-                  , _templateFiles = []
-                  , _templateAssets = []
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
@@ -65,8 +63,6 @@ templateUtilSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
-                  , _templateFiles = []
-                  , _templateAssets = []
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
@@ -106,8 +102,6 @@ templateUtilSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
-                  , _templateFiles = []
-                  , _templateAssets = []
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]

@@ -13,6 +13,7 @@ import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -52,6 +53,7 @@ test_204 appContext =
     let expHeaders = resCtHeader : resCorsHeaders
     let expBody = ""
      -- AND: Run migrations
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

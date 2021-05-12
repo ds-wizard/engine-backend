@@ -83,7 +83,7 @@ getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader callback =
 getCurrentUser :: String -> BaseContextM UserDTO
 getCurrentUser tokenHeader = do
   userUuid <- getCurrentUserUuid tokenHeader
-  runInUnauthService $ catchError (getUserByIdDto userUuid) (handleError userUuid)
+  runInUnauthService $ catchError (getUserById userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error
@@ -139,6 +139,6 @@ createServiceUser serverConfig now =
     , _userDTOActive = True
     , _userDTOImageUrl = Nothing
     , _userDTOGroups = []
-    , _userDTOCreatedAt = Just now
-    , _userDTOUpdatedAt = Just now
+    , _userDTOCreatedAt = now
+    , _userDTOUpdatedAt = now
     }

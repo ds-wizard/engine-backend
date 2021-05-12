@@ -23,6 +23,7 @@ import qualified Wizard.Database.Migration.Development.Document.DocumentMigratio
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -73,6 +74,7 @@ create_test_204 title appContext qtn authHeader docCount =
     let expBody = ""
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO DOC.runMigration appContext
      -- WHEN: Call API
@@ -100,6 +102,9 @@ test_400 appContext =
     let expDto = UserError _ERROR_SERVICE_QTN__QTN_CANT_BE_DELETED_BECAUSE_IT_IS_USED_IN_MIGRATION
     let expBody = encode expDto
     -- AND: Prepare DB
+    runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
+    runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire4) appContext
     runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
     runInContextIO (insertMigratorState nlQtnMigrationState) appContext
@@ -111,7 +116,7 @@ test_400 appContext =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
     -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findQuestionnaires appContext 2
+    assertCountInDB findQuestionnaires appContext 5
     assertCountInDB findDocuments appContext 3
 
 -- ----------------------------------------------------
@@ -141,6 +146,7 @@ create_test_403 title appContext qtn =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

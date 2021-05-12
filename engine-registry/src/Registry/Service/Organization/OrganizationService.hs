@@ -12,8 +12,9 @@ import Registry.Api.Resource.Organization.OrganizationChangeDTO
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationStateDTO
-import Registry.Database.DAO.ActionKey.ActionKeySqlDAO
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.ActionKey.ActionKeyDAO
+import Registry.Database.DAO.Common
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Internal
 import Registry.Model.ActionKey.ActionKey
 import Registry.Model.Context.AppContext
@@ -24,7 +25,6 @@ import Registry.Service.Mail.Mailer
 import Registry.Service.Organization.OrganizationMapper
 import Registry.Service.Organization.OrganizationValidation
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
-import Shared.Database.DAO.CommonSql
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)

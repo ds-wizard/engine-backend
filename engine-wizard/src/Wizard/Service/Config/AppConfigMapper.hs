@@ -24,7 +24,8 @@ toChangeDTO config =
 fromChangeDTO :: AppConfigChangeDTO -> AppConfig -> UTCTime -> AppConfig
 fromChangeDTO dto oldConfig now =
   AppConfig
-    { _appConfigOrganization = dto ^. organization
+    { _appConfigAId = 1
+    , _appConfigOrganization = dto ^. organization
     , _appConfigAuthentication = dto ^. authentication
     , _appConfigPrivacyAndSupport = dto ^. privacyAndSupport
     , _appConfigDashboard = dto ^. dashboard

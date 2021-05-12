@@ -3,10 +3,10 @@ module Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateSM where
 import Data.Swagger
 
 import Shared.Api.Resource.Event.EventSM ()
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateJM ()
+import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-instance ToSchema ConflictDTO
+instance ToSchema Conflict
 
-instance ToSchema MigrationStateDTO where
+instance ToSchema MigrationState where
   declareNamedSchema = genericDeclareNamedSchemaUnrestricted defaultSchemaOptions

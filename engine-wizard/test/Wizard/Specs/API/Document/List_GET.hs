@@ -83,8 +83,8 @@ create_test_200 title appContext reqUrl expDto =
     let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -113,8 +113,8 @@ test_403 appContext =
     let expBody = encode expDto
       -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
        -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

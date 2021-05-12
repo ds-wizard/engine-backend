@@ -23,11 +23,8 @@ library:
   dependencies:
   - base
   - aeson
-  - amqp
   - async
   - blaze-html
-  - bson
-  - bson-generic
   - bytestring
   - cache
   - case-insensitive
@@ -54,21 +51,22 @@ library:
   - markdown
   - mime-mail
   - mime-types
+  - minio-hs
   - mtl
   - monad-control
   - monad-logger
-  - mongoDB
-  - mongoDB-migration
   - network # OK
   - oidc-client
-  - persistent
-  - persistent-mongoDB
+  - postgresql-simple
+  - postgresql-libpq
+  - postgresql-migration
   - pretty-simple
   - pretty-terminal
   - pwstore-fast
   - random # OK
   - raw-strings-qq
   - regex-compat
+  - resource-pool
   - scientific
   - servant
   - servant-client
@@ -125,10 +123,7 @@ tests:
     dependencies:
     - base
     - aeson
-    - amqp
     - async
-    - bson
-    - bson-generic
     - bytestring
     - cache
     - case-insensitive
@@ -143,10 +138,7 @@ tests:
     - mtl
     - monad-control
     - monad-logger
-    - mongoDB
     - network
-    - persistent
-    - persistent-mongoDB
     - pretty-simple
     - pwstore-fast
     - random

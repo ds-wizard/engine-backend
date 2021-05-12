@@ -39,7 +39,7 @@ assertAbsenceOfUserInDB appContext user = do
   eUser <- runInContextIO (findUserById uUuid) appContext
   liftIO $ isLeft eUser `shouldBe` True
   let (Left error) = eUser
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "user" uUuid)
+  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" uUuid)
 
 -- --------------------------------
 -- COMPARATORS

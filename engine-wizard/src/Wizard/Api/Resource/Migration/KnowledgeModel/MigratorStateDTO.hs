@@ -4,14 +4,14 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
+import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 data MigratorStateDTO =
   MigratorStateDTO
     { _migratorStateDTOBranchUuid :: U.UUID
     , _migratorStateDTOBranchName :: String
     , _migratorStateDTOBranchPreviousPackageId :: String
-    , _migratorStateDTOMigrationState :: MigrationStateDTO
+    , _migratorStateDTOMigrationState :: MigrationState
     , _migratorStateDTOTargetPackageId :: String
     , _migratorStateDTOCurrentKnowledgeModel :: Maybe KnowledgeModel
     }

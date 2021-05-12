@@ -16,6 +16,7 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEve
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -58,6 +59,7 @@ test_200 appContext =
     let expDto = questionnaire1CtnRevertedDto
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

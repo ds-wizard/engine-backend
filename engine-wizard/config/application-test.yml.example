@@ -8,20 +8,10 @@ general:
   templateFolder: ""
 
 database:
-  host: localhost
-  databaseName: engine-wizard-test
-  port: 27017
-  authEnabled: false
-  username:
-  password:
+  connectionString: postgresql://postgres:postgres@localhost:5432/postgres
 
-messaging:
-  enabled: false
-  host:
-  port:
-  username:
-  password:
-  vhost:
+s3:
+  url: http://localhost:9000
 
 jwt:
   expiration: 9999
@@ -41,3 +31,6 @@ registry:
 analytics:
   enabled: false
   email:
+
+logging:
+  httpClientDebug: true

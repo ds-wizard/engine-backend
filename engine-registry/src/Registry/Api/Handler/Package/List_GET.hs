@@ -37,7 +37,7 @@ list_GET mTokenHeader xUserCountHeaderValue xPkgCountHeaderValue xQtnCountHeader
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organizationId" <$> organizationId, (,) "kmId" <$> kmId]
+      let queryParams = catMaybes [(,) "organization_id" <$> organizationId, (,) "km_id" <$> kmId]
       let headers =
             catMaybes
               [ (,) xUserCountHeaderName <$> xUserCountHeaderValue

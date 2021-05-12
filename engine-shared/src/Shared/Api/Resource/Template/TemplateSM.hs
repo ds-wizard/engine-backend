@@ -31,3 +31,9 @@ instance ToSchema TemplateAsset where
 
 instance ToSchema TemplateDTO where
   declareNamedSchema = simpleToSchema (toDTO commonWizardTemplate)
+
+instance ToSchema TemplateFileDTO where
+  declareNamedSchema = simpleToSchema (toFileDTO templateFileDefaultHtml)
+
+instance ToSchema TemplateAssetDTO where
+  declareNamedSchema = simpleToSchema (toAssetDTO templateAssetLogo)

@@ -14,8 +14,8 @@ import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationDTO
 import Registry.Api.Resource.Organization.OrganizationJM ()
 import Registry.Api.Resource.Organization.OrganizationStateJM ()
-import Registry.Database.DAO.ActionKey.ActionKeySqlDAO
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.ActionKey.ActionKeyDAO
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Database.Migration.Development.ActionKey.Data.ActionKeys
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext

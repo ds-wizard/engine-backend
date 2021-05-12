@@ -7,12 +7,14 @@ module Shared.Util.String
   , trim
   , f'
   , toLower
+  , toSnake
   , takeLastOf
   ) where
 
 import qualified Data.Char as CH
 import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Text as T
+import Text.Regex (mkRegex, subRegex)
 
 trim :: String -> String
 trim = T.unpack . T.strip . T.pack
@@ -24,6 +26,15 @@ lowerFirst (s:str) = CH.toLower s : str
 
 toLower :: String -> String
 toLower = fmap CH.toLower
+
+toSnake :: String -> String
+toSnake = downcase . go
+  where
+    downcase = map CH.toLower
+    go s =
+      case subRegex (mkRegex "[A-Z]") s "_\\0" of
+        ('_':xs) -> xs
+        x -> x
 
 replace :: String -> String -> String -> String
 replace name value string = T.unpack $ T.replace (T.pack name) (T.pack value) (T.pack string)

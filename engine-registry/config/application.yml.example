@@ -5,13 +5,10 @@ general:
   templateFolder: engine-registry/templates
 
 database:
-  host: mongo
-  databaseName: engine-registry
-  port: 27017
-  authEnabled: false
-  username:
-  password:
   connectionString: postgresql://postgres:postgres@postgres:5432/engine-registry
+
+s3:
+  bucket: engine-registry
 
 mail:
   enabled: false

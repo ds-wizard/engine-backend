@@ -6,6 +6,12 @@ import GHC.Generics
 
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
+data QuestionnaireEventBundle =
+  QuestionnaireEventBundle
+    { _questionnaireEventBundleEvents :: [QuestionnaireEvent]
+    }
+  deriving (Show, Generic)
+
 data QuestionnaireEvent
   = SetReplyEvent' SetReplyEvent
   | ClearReplyEvent' ClearReplyEvent

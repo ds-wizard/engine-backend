@@ -1,41 +1,51 @@
 module Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO where
 
 import Control.Lens ((^.))
-import Data.Bson
+import qualified Data.UUID as U
+import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.ToField
+import Database.PostgreSQL.Simple.ToRow
+import GHC.Int
 
 import LensesConfig
-import Shared.Database.DAO.Common
-import Wizard.Database.BSON.Migration.Questionnaire.MigratorState ()
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.Migration.Questionnaire.MigratorState ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.Questionnaire.MigratorState
 
-entityName = "questionnaireMigration"
+entityName = "qtn_migration"
 
-collection = "questionnaireMigrations"
+pageLabel = "migrations"
 
 findMigratorStates :: AppContextM [MigratorState]
-findMigratorStates = createFindEntitiesFn collection
+findMigratorStates = createFindEntitiesFn entityName
 
 findMigratorStatesByOldQuestionnaireId :: String -> AppContextM [MigratorState]
 findMigratorStatesByOldQuestionnaireId oldQtnUuid =
-  createFindEntitiesByFn collection ["oldQuestionnaireUuid" =: oldQtnUuid]
+  createFindEntitiesByFn entityName [("old_questionnaire_uuid", oldQtnUuid)]
 
 findMigratorStateByNewQuestionnaireId :: String -> AppContextM MigratorState
-findMigratorStateByNewQuestionnaireId = createFindEntityByFn collection entityName "newQuestionnaireUuid"
+findMigratorStateByNewQuestionnaireId = createFindEntityByFn entityName "new_questionnaire_uuid"
 
 findMigratorStateByNewQuestionnaireId' :: String -> AppContextM (Maybe MigratorState)
-findMigratorStateByNewQuestionnaireId' = createFindEntityByFn' collection entityName "newQuestionnaireUuid"
+findMigratorStateByNewQuestionnaireId' = createFindEntityByFn' entityName "new_questionnaire_uuid"
 
-insertMigratorState :: MigratorState -> AppContextM Value
-insertMigratorState = createInsertFn collection
+insertMigratorState :: MigratorState -> AppContextM Int64
+insertMigratorState = createInsertFn entityName
 
-updateMigratorStateByNewQuestionnaireId :: MigratorState -> AppContextM ()
-updateMigratorStateByNewQuestionnaireId state =
-  createUpdateByFn collection "newQuestionnaireUuid" (state ^. newQuestionnaireUuid) state
+updateMigratorStateByNewQuestionnaireId :: MigratorState -> AppContextM Int64
+updateMigratorStateByNewQuestionnaireId ms = do
+  let params = toRow ms ++ [toField . U.toText $ ms ^. newQuestionnaireUuid]
+  let action conn =
+        execute
+          conn
+          "UPDATE qtn_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ? WHERE new_questionnaire_uuid = ?"
+          params
+  runDB action
 
-deleteMigratorStates :: AppContextM ()
-deleteMigratorStates = createDeleteEntitiesFn collection
+deleteMigratorStates :: AppContextM Int64
+deleteMigratorStates = createDeleteEntitiesFn entityName
 
-deleteMigratorStateByNewQuestionnaireId :: String -> AppContextM ()
-deleteMigratorStateByNewQuestionnaireId = createDeleteEntityByFn collection "newQuestionnaireUuid"
+deleteMigratorStateByNewQuestionnaireId :: String -> AppContextM Int64
+deleteMigratorStateByNewQuestionnaireId = createDeleteEntityByFn entityName "new_questionnaire_uuid"

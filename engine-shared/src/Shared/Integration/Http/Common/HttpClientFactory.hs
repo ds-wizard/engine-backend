@@ -27,9 +27,9 @@ import Network.HTTP.Client
 import Network.HTTP.Client.TLS (tlsManagerSettings)
 
 import LensesConfig (httpClientDebug)
-import Shared.Util.String (replace)
 import Shared.Model.Config.ServerConfig
 import Shared.Util.Logger
+import Shared.Util.String (replace)
 
 createHttpClientManager :: ServerConfigLogging -> IO Manager
 createHttpClientManager serverConfig =

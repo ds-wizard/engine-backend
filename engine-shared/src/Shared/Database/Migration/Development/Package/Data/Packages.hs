@@ -1,6 +1,7 @@
 module Shared.Database.Migration.Development.Package.Data.Packages where
 
 import Control.Lens ((^.))
+import qualified Data.List as L
 import Data.Maybe (fromJust)
 import Data.Time
 
@@ -63,9 +64,9 @@ globalPackageDto = toDTO globalPackage
 globalPackageGroup :: PackageGroup
 globalPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = globalPackage ^. pId
+    { _packageGroupOrganizationId = globalPackage ^. organizationId
     , _packageGroupKmId = globalPackage ^. kmId
-    , _packageGroupVersions = [toPackage globalPackage, toPackage globalPackageEmpty]
+    , _packageGroupVersions = L.intercalate "," [globalPackageEmpty ^. version, globalPackage ^. version]
     }
 
 netherlandsPackage :: PackageWithEvents
@@ -109,9 +110,9 @@ netherlandsPackageV2 =
 netherlandsPackageGroup :: PackageGroup
 netherlandsPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = netherlandsPackageV2 ^. pId
+    { _packageGroupOrganizationId = netherlandsPackageV2 ^. organizationId
     , _packageGroupKmId = netherlandsPackageV2 ^. kmId
-    , _packageGroupVersions = [toPackage netherlandsPackage, toPackage netherlandsPackageV2]
+    , _packageGroupVersions = L.intercalate "," [netherlandsPackage ^. version, netherlandsPackageV2 ^. version]
     }
 
 amsterdamPackage :: PackageWithEvents
@@ -202,7 +203,7 @@ germanyPackage =
 germanyPackageGroup :: PackageGroup
 germanyPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = germanyPackage ^. pId
+    { _packageGroupOrganizationId = germanyPackage ^. organizationId
     , _packageGroupKmId = germanyPackage ^. kmId
-    , _packageGroupVersions = [toPackage germanyPackage]
+    , _packageGroupVersions = L.intercalate "," [germanyPackage ^. version]
     }

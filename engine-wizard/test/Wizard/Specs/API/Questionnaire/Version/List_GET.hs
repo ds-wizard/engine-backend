@@ -20,6 +20,7 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -59,21 +60,21 @@ test_200 appContext = do
     questionnaire1
     questionnaire1Ctn
     [reqAuthHeader]
-    [albertEditPermRecordDto]
+    [qtn1AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2Ctn
     [reqNonAdminAuthHeader]
-    [albertEditPermRecordDto]
+    [qtn1AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
     questionnaire7Ctn
     []
-    [albertEditPermRecordDto]
+    [qtn1AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
@@ -96,6 +97,7 @@ create_test_200 title appContext qtn qtnCtn authHeader permissions =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext
@@ -142,6 +144,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

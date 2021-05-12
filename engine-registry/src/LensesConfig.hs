@@ -19,6 +19,7 @@ import Registry.Model.Statistics.InstanceStatistics
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
@@ -258,3 +259,6 @@ makeFields ''PackageDetailDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
+
+-- Api / Resource / TemplateBundle
+makeFields ''TemplateBundleDTO

@@ -36,10 +36,10 @@ _ERROR_SERVICE_FEEDBACK__REQUEST_FAILED serviceName endpoint =
 _MESSAGE_SERVICE_MAIL__APP_TITLE = "Data Stewardship Wizard"
 
 -- Migration / Metamodel
-_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_COLLECTION collection = "Failed to migrate '" ++ collection ++ "'"
+_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_TO_MIGRATE_ENTITIES entityName = "Failed to migrate '" ++ entityName ++ "'"
 
-_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_BSON entityName =
-  "Failed to convert entity ('" ++ entityName ++ "') to BSON"
+_ERROR_SERVICE_MIGRATION_METAMODEL__FAILED_CONVERT_TO_NEW_METAMODEL entityName =
+  "Failed to convert entity ('" ++ entityName ++ "') to new metamodel"
 
 -- Questionnaire
 _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT =

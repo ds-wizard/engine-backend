@@ -10,7 +10,6 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
-import Wizard.Api.Resource.Branch.BranchWithEventsDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
 
@@ -41,20 +40,6 @@ toDetailDTO branch mForkOfPackageId state =
     , _branchDetailDTOOwnerUuid = branch ^. ownerUuid
     , _branchDetailDTOCreatedAt = branch ^. createdAt
     , _branchDetailDTOUpdatedAt = branch ^. updatedAt
-    }
-
-fromWithEventsDTO :: BranchWithEventsDTO -> BranchWithEvents
-fromWithEventsDTO dto =
-  BranchWithEvents
-    { _branchWithEventsUuid = dto ^. uuid
-    , _branchWithEventsName = dto ^. name
-    , _branchWithEventsKmId = dto ^. kmId
-    , _branchWithEventsMetamodelVersion = dto ^. metamodelVersion
-    , _branchWithEventsPreviousPackageId = dto ^. previousPackageId
-    , _branchWithEventsEvents = dto ^. events
-    , _branchWithEventsOwnerUuid = dto ^. ownerUuid
-    , _branchWithEventsCreatedAt = dto ^. createdAt
-    , _branchWithEventsUpdatedAt = dto ^. updatedAt
     }
 
 fromChangeDTO ::

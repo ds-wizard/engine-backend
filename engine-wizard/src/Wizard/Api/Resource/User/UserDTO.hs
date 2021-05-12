@@ -20,8 +20,8 @@ data UserDTO =
     , _userDTOActive :: Bool
     , _userDTOImageUrl :: Maybe String
     , _userDTOGroups :: [GroupMembership]
-    , _userDTOCreatedAt :: Maybe UTCTime
-    , _userDTOUpdatedAt :: Maybe UTCTime
+    , _userDTOCreatedAt :: UTCTime
+    , _userDTOUpdatedAt :: UTCTime
     }
   deriving (Show, Generic)
 

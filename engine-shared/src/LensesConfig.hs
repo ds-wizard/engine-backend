@@ -4,6 +4,8 @@ import Control.Lens (makeFields)
 
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.Template.TemplateDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Common.Pageable
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
@@ -218,3 +220,11 @@ makeFields ''PackageDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
+
+-- Api / Resource / Template
+makeFields ''TemplateFileDTO
+
+makeFields ''TemplateAssetDTO
+
+-- Api / Resource / TemplateBundle
+makeFields ''TemplateBundleDTO

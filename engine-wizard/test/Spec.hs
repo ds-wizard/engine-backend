@@ -10,12 +10,12 @@ import Test.Hspec
 import LensesConfig
 import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
+import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.ServantClient
-import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
@@ -90,10 +90,10 @@ prepareWebApp runCallback =
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel serverConfig shutdownFlag
-      putStrLn "MESSAGING: connected"
       httpClientManager <- createHttpClientManager (serverConfig ^. logging)
       putStrLn "HTTP_CLIENT: created"
+      s3Client <- createS3Client (serverConfig ^. s3) httpClientManager
+      putStrLn "S3_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"
       cache <- createServerCache
@@ -103,8 +103,8 @@ prepareWebApp runCallback =
               { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
-              , _appContextPool = dbPool
-              , _appContextMsgChannel = msgChannel
+              , _appContextDbPool = dbPool
+              , _appContextS3Client = s3Client
               , _appContextHttpClientManager = httpClientManager
               , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
@@ -112,6 +112,9 @@ prepareWebApp runCallback =
               , _appContextShutdownFlag = shutdownFlag
               , _appContextCache = cache
               }
+      putStrLn "DB: start creating schema"
+      buildSchema appContext
+      putStrLn "DB: schema created"
       runWebserver appContext (runCallback appContext)
 
 main :: IO ()

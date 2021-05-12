@@ -5,10 +5,10 @@ import Servant
 import Servant.Multipart
 
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
-import Shared.Model.Template.Template
-import Shared.Model.Template.TemplateJM ()
 import Wizard.Api.Handler.Common
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.TemplateBundle.TemplateBundleService
@@ -18,10 +18,10 @@ type List_Bundle_POST
      :> MultipartForm Mem (MultipartData Mem)
      :> "templates"
      :> "bundle"
-     :> PostCreated '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] Template)
+     :> PostCreated '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateBundleDTO)
 
 list_bundle_POST ::
-     Maybe String -> MultipartData Mem -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
+     Maybe String -> MultipartData Mem -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateBundleDTO)
 list_bundle_POST mTokenHeader multipartData =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
