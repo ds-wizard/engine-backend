@@ -16,6 +16,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
+import Shared.Util.Coordinate
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Context.AppContext
@@ -40,7 +41,7 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT pkg = BS.pack $ "/packages/" ++ (pkg ^. pId)
+reqUrlT pkgId = BS.pack $ "/packages/" ++ pkgId
 
 reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
@@ -50,15 +51,25 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader]
-  create_test_200 "HTTP 200 OK (without token)" appContext []
+  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] (globalPackage ^. pId)
+  create_test_200
+    "HTTP 200 OK (with token)"
+    appContext
+    [reqAuthHeader]
+    (buildCoordinate (globalPackage ^. organizationId) (globalPackage ^. kmId) "latest")
+  create_test_200 "HTTP 200 OK (without token)" appContext [] (globalPackage ^. pId)
+  create_test_200
+    "HTTP 200 OK latest (without token)"
+    appContext
+    []
+    (buildCoordinate (globalPackage ^. organizationId) (globalPackage ^. kmId) "latest")
 
-create_test_200 title appContext authHeader =
+create_test_200 title appContext authHeader pkgId =
   it title $
     -- GIVEN: Prepare request
    do
     let reqHeaders = reqHeadersT authHeader
-    let reqUrl = reqUrlT globalPackage
+    let reqUrl = reqUrlT pkgId
     -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
@@ -83,7 +94,7 @@ create_test_200 title appContext authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_403 appContext =
-  createNoPermissionTest appContext reqMethod (reqUrlT netherlandsPackage) [reqCtHeader] reqBody "PM_READ_PERM"
+  createNoPermissionTest appContext reqMethod (reqUrlT (netherlandsPackage ^. pId)) [reqCtHeader] reqBody "PM_READ_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------

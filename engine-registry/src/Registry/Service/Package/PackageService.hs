@@ -39,7 +39,8 @@ getSimplePackagesFiltered queryParams headers =
 getPackageById :: String -> AppContextM PackageDetailDTO
 getPackageById pkgId =
   runInTransaction $ do
-    pkg <- findPackageById pkgId
+    resolvedPkgId <- resolvePackageId pkgId
+    pkg <- findPackageById resolvedPkgId
     versions <- getPackageVersions pkg
     org <- findOrganizationByOrgId (pkg ^. organizationId)
     return $ toDetailDTO pkg versions org

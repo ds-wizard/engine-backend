@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelChangeDTO
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Service.Package.PackageUtil
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Cache.KnowledgeModelCache
@@ -18,12 +19,14 @@ import Wizard.Service.Package.PackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
-  checkIfPackageIsPublic (reqDto ^. packageId) _QTN_PERM
-  compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
+  mResolvedPackageId <- traverse resolvePackageId (reqDto ^. packageId)
+  checkIfPackageIsPublic mResolvedPackageId _QTN_PERM
+  compileKnowledgeModel (reqDto ^. events) mResolvedPackageId (reqDto ^. tagUuids)
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel
 compileKnowledgeModel events mPackageId tagUuids = do
-  mKm <- getFromCache events mPackageId tagUuids
+  mResolvedPackageId <- traverse resolvePackageId mPackageId
+  mKm <- getFromCache events mResolvedPackageId tagUuids
   case mKm of
     Just km -> return km
     Nothing -> do

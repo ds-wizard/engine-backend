@@ -7,7 +7,6 @@ import LensesConfig
 import Registry.Api.Resource.Template.TemplateSimpleDTO
 import Shared.Constant.Template
 import Shared.Model.Package.Package
-import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
@@ -46,6 +45,4 @@ filterTemplates mPkgId tmls =
     Nothing -> tmls
   where
     filterTemplate :: [String] -> Template -> Bool
-    filterTemplate pkgIdSplit template = foldl (foldOverKmSpec pkgIdSplit) False (template ^. allowedPackages)
-    foldOverKmSpec :: [String] -> Bool -> PackagePattern -> Bool
-    foldOverKmSpec pkgIdSplit acc allowedPackages = acc || fitsIntoKMSpec pkgIdSplit allowedPackages
+    filterTemplate pkgIdSplit template = fitsIntoKMSpecs pkgIdSplit (template ^. allowedPackages)

@@ -31,7 +31,7 @@ computePackageState pkgsFromRegistry pkg =
 
 checkIfPackageIsPublic Nothing orCheckThisPerm = checkPermission orCheckThisPerm
 checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do
-  validateCoordinateFormat True pkgId
+  validateCoordinateFormat False pkgId
   appConfig <- getAppConfig
   let pkgIdSplit = splitCoordinate pkgId
   when

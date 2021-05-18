@@ -18,7 +18,6 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Database.Migration.Development.Version.Data.Versions
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Version.VersionService

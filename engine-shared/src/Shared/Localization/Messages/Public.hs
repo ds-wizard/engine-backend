@@ -33,6 +33,13 @@ _ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
 -- --------------------------------------
 -- VALIDATION
 -- --------------------------------------
+-- General
+_ERROR_VALIDATION__COORDINATE_MISMATCH coordinate =
+  LocaleRecord
+    "error.validation.coordinate_mismatch"
+    "Coordinate '%s' doesn't correspond with 'orgId', 'kmId/templateId' or 'version'"
+    [coordinate]
+
 -- Absence
 _ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
 
@@ -40,6 +47,12 @@ _ERROR_VALIDATION__HASH_ABSENCE =
   LocaleRecord "error.validation.hash_absence" "A hash query param is absent or doesn't exist in database" []
 
 -- Format
+_ERROR_VALIDATION__INVALID_COORDINATE_FORMAT =
+  LocaleRecord "error.validation.invalid_coordinate_format" "Coordinate is not in the valid format" []
+
+_ERROR_VALIDATION__INVALID_COORDINATE_VERSION_FORMAT =
+  LocaleRecord "error.validation.invalid_coordinate_version_format" "Version is not in the valid format" []
+
 _ERROR_VALIDATION__INVALID_KM_ID_FORMAT =
   LocaleRecord "error.validation.invalid_km_id_format" "KmId is not in the valid format" []
 

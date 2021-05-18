@@ -4,6 +4,8 @@ import Control.Monad.Except (MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader)
+import Data.String (fromString)
+import Database.PostgreSQL.Simple
 import GHC.Int
 
 import Shared.Database.DAO.Common
@@ -15,6 +17,7 @@ import Shared.Model.Error.Error
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Package.PackageWithEventsRaw
+import Shared.Util.Logger
 
 entityName = "package"
 
@@ -51,6 +54,15 @@ findPackagesByForkOfPackageId ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m [Package]
 findPackagesByForkOfPackageId forkOfPackageId =
   createFindEntitiesByFn entityName [("fork_of_package_id", forkOfPackageId)]
+
+findVersionsForPackage ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> String -> m [String]
+findVersionsForPackage orgId kmId = do
+  let sql = "SELECT version FROM package WHERE organization_id = ? and km_id = ?"
+  logInfo _CMP_DATABASE sql
+  let action conn = query conn (fromString sql) [orgId, kmId]
+  versions <- runDB action
+  return . fmap fromOnly $ versions
 
 findPackageById ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Package

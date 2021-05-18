@@ -253,17 +253,18 @@ fromQuestionnaireCreateDTO ::
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
   -> U.UUID
+  -> String
   -> UTCTime
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCreatedAt qtnUpdatedAt permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
     , _questionnaireVisibility = visibility
     , _questionnaireSharing = sharing
-    , _questionnairePackageId = dto ^. packageId
+    , _questionnairePackageId = pkgId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid

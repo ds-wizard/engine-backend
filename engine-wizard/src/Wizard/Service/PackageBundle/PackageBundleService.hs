@@ -25,6 +25,7 @@ import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.PackageBundle.PackageBundle
+import Shared.Service.Coordinate.CoordinateValidation
 import Shared.Service.PackageBundle.PackageBundleMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Database.DAO.Common
@@ -33,7 +34,6 @@ import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Coordinate.CoordinateValidation
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
 import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM

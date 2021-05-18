@@ -78,19 +78,21 @@ getPackageSuggestions mQuery pageable sort =
       return (pkg, versions)
 
 getPackageById :: String -> AppContextM Package
-getPackageById = getFromCacheOrDb PKG_Cache.getFromCache PKG_Cache.addToCache findPackageById
+getPackageById pkgId =
+  resolvePackageId pkgId >>= getFromCacheOrDb PKG_Cache.getFromCache PKG_Cache.addToCache findPackageById
 
 getPackageDetailById :: String -> AppContextM PackageDetailDTO
 getPackageDetailById pkgId =
   runInTransaction $ do
-    checkIfPackageIsPublic (Just pkgId) _PM_READ_PERM
+    resolvedPkgId <- resolvePackageId pkgId
+    checkIfPackageIsPublic (Just resolvedPkgId) _PM_READ_PERM
     serverConfig <- asks _appContextServerConfig
-    pkg <- getPackageById pkgId
+    pkg <- getPackageById resolvedPkgId
     versions <- getPackageVersions pkg
     iStat <- getInstanceStatistics
     pkgRs <- retrievePackages iStat
     orgRs <- retrieveOrganizations
-    return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) pkgId)
+    return $ toDetailDTO pkg pkgRs orgRs versions (buildPackageUrl (serverConfig ^. registry . clientUrl) (pkg ^. pId))
 
 getSeriesOfPackages :: String -> AppContextM [PackageWithEvents]
 getSeriesOfPackages pkgId =

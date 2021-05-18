@@ -1,9 +1,16 @@
 module Shared.Service.Package.PackageUtil where
 
 import Control.Lens ((^.))
+import Control.Monad.Except (MonadError)
+import Control.Monad.IO.Class (MonadIO)
+import Control.Monad.Logger (MonadLogger)
+import Control.Monad.Reader (MonadReader)
 import qualified Data.List as L
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Model.Context.ContextLenses
+import Shared.Model.Error.Error
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackagePattern
 import Shared.Service.Coordinate.CoordinateValidation
@@ -50,4 +57,17 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
             GT -> False
             _ -> callback
         Nothing -> callback
->>>>>>> dd5d51bd... WIP
+
+resolvePackageId ::
+     (MonadError AppError m, MonadLogger m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m String
+resolvePackageId pId = do
+  validateCoordinateFormat True pId
+  let version = getVersionFromCoordinate pId
+  if version == "latest"
+    then do
+      let orgId = getOrgIdFromCoordinate pId
+      let kmId = getKmIdFromCoordinate pId
+      versions <- findVersionsForPackage orgId kmId
+      let latest = L.maximumBy compareVersion versions
+      return $ buildCoordinate orgId kmId latest
+    else return pId

@@ -20,6 +20,7 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Service.Coordinate.CoordinateValidation
 import Shared.Service.Template.TemplateMapper
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Coordinate
@@ -33,7 +34,6 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
-import Wizard.Service.Coordinate.CoordinateValidation
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil
 import Wizard.Service.Template.TemplateValidation
@@ -41,7 +41,7 @@ import Wizard.Service.Template.TemplateValidation
 getTemplates :: [(String, String)] -> Maybe String -> AppContextM [Template]
 getTemplates queryParams mPkgId =
   runInTransaction $ do
-    validateCoordinateFormat' mPkgId
+    validateCoordinateFormat' False mPkgId
     tmls <- findTemplatesFiltered queryParams
     return $ filterTemplates mPkgId tmls
 
@@ -60,7 +60,7 @@ getTemplateSuggestions :: Maybe String -> Maybe String -> Pageable -> [Sort] -> 
 getTemplateSuggestions mPkgId mQuery pageable sort =
   runInTransaction $ do
     checkPermission _DMP_PERM
-    validateCoordinateFormat' mPkgId
+    validateCoordinateFormat' False mPkgId
     page <- findTemplatesPage Nothing Nothing mQuery (Pageable (Just 0) (Just 999999999)) sort
     return . fmap toSuggestionDTO . updatePage page . filterTemplatesInGroup $ page
   where

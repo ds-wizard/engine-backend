@@ -16,6 +16,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
+import Shared.Service.Package.PackageUtil
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
@@ -67,7 +68,9 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     visibility <- extractVisibility reqDto
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
-    let qtn = fromQuestionnaireCreateDTO reqDto qtnUuid visibility sharing (currentUser ^. uuid) now now qtnPermUuid
+    pkgId <- resolvePackageId (reqDto ^. packageId)
+    let qtn =
+          fromQuestionnaireCreateDTO reqDto qtnUuid visibility sharing (currentUser ^. uuid) pkgId now now qtnPermUuid
     insertQuestionnaire qtn
     report <- getQuestionnaireReport qtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)

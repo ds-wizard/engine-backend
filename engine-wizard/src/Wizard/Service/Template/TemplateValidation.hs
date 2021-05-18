@@ -10,23 +10,23 @@ import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Service.Coordinate.CoordinateValidation
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.AppConfigService
-import Wizard.Service.Coordinate.CoordinateValidation
 
 validateNewTemplate :: Template -> AppContextM ()
 validateNewTemplate tml = do
-  validateCoordinateFormat (tml ^. tId)
+  validateCoordinateFormat False (tml ^. tId)
   validateTemplateIdUniqueness (tml ^. tId)
   validateCoordinateWithParams (tml ^. tId) (tml ^. organizationId) (tml ^. templateId) (tml ^. version)
   validateMetamodelVersion tml
 
 validateExistingTemplate :: Template -> AppContextM ()
 validateExistingTemplate tml = do
-  validateCoordinateFormat (tml ^. tId)
+  validateCoordinateFormat False (tml ^. tId)
   validateCoordinateWithParams (tml ^. tId) (tml ^. organizationId) (tml ^. templateId) (tml ^. version)
 
 validateTemplateIdUniqueness :: String -> AppContextM ()
