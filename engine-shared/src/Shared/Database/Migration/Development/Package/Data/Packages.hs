@@ -11,6 +11,7 @@ import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageGroup
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 
@@ -206,4 +207,31 @@ germanyPackageGroup =
     { _packageGroupOrganizationId = germanyPackage ^. organizationId
     , _packageGroupKmId = germanyPackage ^. kmId
     , _packageGroupVersions = L.intercalate "," [germanyPackage ^. version]
+    }
+
+packagePatternAll :: PackagePattern
+packagePatternAll =
+  PackagePattern
+    { _packagePatternOrgId = Nothing
+    , _packagePatternKmId = Nothing
+    , _packagePatternMinVersion = Nothing
+    , _packagePatternMaxVersion = Nothing
+    }
+
+packagePatternAllEdited :: PackagePattern
+packagePatternAllEdited =
+  PackagePattern
+    { _packagePatternOrgId = Just "global"
+    , _packagePatternKmId = Nothing
+    , _packagePatternMinVersion = Nothing
+    , _packagePatternMaxVersion = Nothing
+    }
+
+packagePatternGlobal :: PackagePattern
+packagePatternGlobal =
+  PackagePattern
+    { _packagePatternOrgId = Just "global"
+    , _packagePatternKmId = Just "core"
+    , _packagePatternMinVersion = Just "1.0.0"
+    , _packagePatternMaxVersion = Just "1.0.0"
     }

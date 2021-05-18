@@ -35,6 +35,7 @@ import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Package.PackageWithEventsRaw
 import Shared.Model.Template.Template
@@ -215,6 +216,8 @@ makeFields ''PackageWithEvents
 
 makeFields ''PackageWithEventsRaw
 
+makeFields ''PackagePattern
+
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
@@ -223,8 +226,6 @@ makeFields ''InstanceStatistics
 
 -- Model / Template
 makeFields ''Template
-
-makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 

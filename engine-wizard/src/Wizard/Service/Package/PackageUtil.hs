@@ -1,13 +1,18 @@
 module Wizard.Service.Package.PackageUtil where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
 import qualified Data.List as L
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleDTO
 import Shared.Model.Package.Package
+import Shared.Service.Coordinate.CoordinateValidation
+import Shared.Service.Package.PackageUtil
 import Shared.Util.Coordinate
 import Wizard.Model.Package.PackageState
+import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
 
 selectPackageByOrgIdAndKmId pkg =
   L.find (\p -> (p ^. organizationId) == (pkg ^. organizationId) && (p ^. kmId) == (pkg ^. kmId))
@@ -23,3 +28,14 @@ computePackageState pkgsFromRegistry pkg =
         EQ -> UpToDatePackageState
         GT -> OutdatedPackageState
     Nothing -> UnknownPackageState
+
+checkIfPackageIsPublic Nothing orCheckThisPerm = checkPermission orCheckThisPerm
+checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do
+  validateCoordinateFormat True pkgId
+  appConfig <- getAppConfig
+  let pkgIdSplit = splitCoordinate pkgId
+  when
+    (not
+       (appConfig ^. knowledgeModel . public . enabled &&
+        fitsIntoKMSpecs pkgIdSplit (appConfig ^. knowledgeModel . public . packages)))
+    (checkPermission orCheckThisPerm)

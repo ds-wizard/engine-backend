@@ -14,10 +14,11 @@ import Wizard.Service.Cache.KnowledgeModelCache
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.KnowledgeModel.KnowledgeModelFilter
 import Wizard.Service.Package.PackageService
+import Wizard.Service.Package.PackageUtil
 
 createKnowledgeModelPreview :: KnowledgeModelChangeDTO -> AppContextM KnowledgeModel
 createKnowledgeModelPreview reqDto = do
-  checkPermission _QTN_PERM
+  checkIfPackageIsPublic (reqDto ^. packageId) _QTN_PERM
   compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)
 
 compileKnowledgeModel :: [Event] -> Maybe String -> [U.UUID] -> AppContextM KnowledgeModel

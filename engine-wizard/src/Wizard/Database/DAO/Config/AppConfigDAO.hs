@@ -27,7 +27,7 @@ updateAppConfig config = do
   let action conn =
         execute
           conn
-          "UPDATE app_config SET id = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard = ?, look_and_feel = ?, registry = ?, questionnaire = ?, template = ?, submission = ?, created_at = ?, updated_at = ? WHERE id = ?"
+          "UPDATE app_config SET id = ?, organization = ?, authentication = ?, privacy_and_support = ?, dashboard = ?, look_and_feel = ?, registry = ?, knowledge_model = ?, questionnaire = ?, template = ?, submission = ?, created_at = ?, updated_at = ? WHERE id = ?"
           params
   runDB action
 

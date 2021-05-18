@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Api.Resource.Template.TemplateDTO
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 
 data TemplateBundleDTO =
@@ -17,7 +18,7 @@ data TemplateBundleDTO =
     , _templateBundleDTODescription :: String
     , _templateBundleDTOReadme :: String
     , _templateBundleDTOLicense :: String
-    , _templateBundleDTOAllowedPackages :: [TemplateAllowedPackage]
+    , _templateBundleDTOAllowedPackages :: [PackagePattern]
     , _templateBundleDTORecommendedPackageId :: Maybe String
     , _templateBundleDTOFormats :: [TemplateFormat]
     , _templateBundleDTOFiles :: [TemplateFileDTO]

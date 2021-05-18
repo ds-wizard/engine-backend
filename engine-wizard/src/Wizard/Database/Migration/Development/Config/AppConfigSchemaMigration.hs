@@ -32,6 +32,7 @@ createTables = do
         \     dashboard           json                     not null, \
         \     look_and_feel       json                     not null, \
         \     registry            json                     not null, \
+        \     knowledge_model     json                     not null, \
         \     questionnaire       json                     not null, \
         \     template            json                     not null, \
         \     submission          json                     not null, \

@@ -30,7 +30,6 @@ preview_post :: AppContext -> SpecWith ((), Application)
 preview_post appContext =
   describe "POST /knowledge-models/preview" $ do
     test_200 appContext
-    test_401 appContext
     test_403 appContext
 
 -- ----------------------------------------------------
@@ -40,27 +39,33 @@ reqMethod = methodPost
 
 reqUrl = "/knowledge-models/preview"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDto =
+reqDtoT pkg =
   KnowledgeModelChangeDTO
-    { _knowledgeModelChangeDTOPackageId = Just $ germanyPackage ^. pId
+    { _knowledgeModelChangeDTOPackageId = Just $ pkg ^. pId
     , _knowledgeModelChangeDTOEvents = []
     , _knowledgeModelChangeDTOTagUuids = []
     }
 
-reqBody = encode reqDto
+reqBodyT pkg = encode (reqDtoT pkg)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] germanyPackage km1WithQ4
+  create_test_200 "HTTP 200 OK (without token)" appContext [] globalPackage km1Global
+
+create_test_200 title appContext authHeader pkg expDto =
+  it title $
+    -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeader
+    let reqBody = reqBodyT pkg
+    -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = km1WithQ4
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
@@ -75,9 +80,5 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext =
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT germanyPackage) "QTN_PERM"

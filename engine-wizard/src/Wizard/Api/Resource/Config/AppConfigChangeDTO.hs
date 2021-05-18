@@ -12,6 +12,7 @@ data AppConfigChangeDTO =
     , _appConfigChangeDTODashboard :: AppConfigDashboard
     , _appConfigChangeDTOLookAndFeel :: AppConfigLookAndFeel
     , _appConfigChangeDTORegistry :: AppConfigRegistry
+    , _appConfigChangeDTOKnowledgeModel :: AppConfigKnowledgeModel
     , _appConfigChangeDTOQuestionnaire :: AppConfigQuestionnaire
     , _appConfigChangeDTOTemplate :: AppConfigTemplate
     , _appConfigChangeDTOSubmission :: AppConfigSubmission

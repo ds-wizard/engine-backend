@@ -8,6 +8,7 @@ import Data.Time
 
 import LensesConfig
 import Shared.Constant.Template
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (css, html)
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
@@ -25,7 +26,7 @@ commonWizardTemplate =
     , _templateDescription = "Exported questions and answers from a questionnaire"
     , _templateReadme = "# Default Template"
     , _templateLicense = "Apache-2.0"
-    , _templateAllowedPackages = [templateAllowedPackage]
+    , _templateAllowedPackages = [packagePatternAll]
     , _templateRecommendedPackageId = Nothing
     , _templateFormats =
         [ templateFormatJson
@@ -44,7 +45,7 @@ commonWizardTemplateEdited =
   commonWizardTemplate
     { _templateName = "EDITED: " ++ commonWizardTemplate ^. name
     , _templateDescription = "EDITED: " ++ commonWizardTemplate ^. description
-    , _templateAllowedPackages = [templateAllowedPackageEdited]
+    , _templateAllowedPackages = [packagePatternAllEdited]
     }
 
 commonWizardTemplateGroup :: TemplateGroup
@@ -53,24 +54,6 @@ commonWizardTemplateGroup =
     { _templateGroupOrganizationId = commonWizardTemplate ^. tId
     , _templateGroupTemplateId = commonWizardTemplate ^. templateId
     , _templateGroupVersions = [commonWizardTemplate]
-    }
-
-templateAllowedPackage :: TemplateAllowedPackage
-templateAllowedPackage =
-  TemplateAllowedPackage
-    { _templateAllowedPackageOrgId = Nothing
-    , _templateAllowedPackageKmId = Nothing
-    , _templateAllowedPackageMinVersion = Nothing
-    , _templateAllowedPackageMaxVersion = Nothing
-    }
-
-templateAllowedPackageEdited :: TemplateAllowedPackage
-templateAllowedPackageEdited =
-  TemplateAllowedPackage
-    { _templateAllowedPackageOrgId = Just "global"
-    , _templateAllowedPackageKmId = Nothing
-    , _templateAllowedPackageMinVersion = Nothing
-    , _templateAllowedPackageMaxVersion = Nothing
     }
 
 templateFormatJson :: TemplateFormat
@@ -268,7 +251,7 @@ anotherWizardTemplate =
     , _templateDescription = "This is a another template"
     , _templateReadme = "# Another Template"
     , _templateLicense = "Apache-2.0"
-    , _templateAllowedPackages = [templateAllowedPackage]
+    , _templateAllowedPackages = [packagePatternAll]
     , _templateRecommendedPackageId = Nothing
     , _templateFormats =
         [ templateFormatJson

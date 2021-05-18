@@ -18,6 +18,7 @@ instance ToRow AppConfig where
     , toJSONField _appConfigDashboard
     , toJSONField _appConfigLookAndFeel
     , toJSONField _appConfigRegistry
+    , toJSONField _appConfigKnowledgeModel
     , toJSONField _appConfigQuestionnaire
     , toJSONField _appConfigTemplate
     , toJSONField _appConfigSubmission
@@ -34,6 +35,7 @@ instance FromRow AppConfig where
     _appConfigDashboard <- fieldWith fromJSONField
     _appConfigLookAndFeel <- fieldWith fromJSONField
     _appConfigRegistry <- fieldWith fromJSONField
+    _appConfigKnowledgeModel <- fieldWith fromJSONField
     _appConfigQuestionnaire <- fieldWith fromJSONField
     _appConfigTemplate <- fieldWith fromJSONField
     _appConfigSubmission <- fieldWith fromJSONField

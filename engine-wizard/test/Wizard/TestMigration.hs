@@ -39,21 +39,21 @@ buildSchema appContext
     -- 1. Drop
  = do
   putStrLn "DB: dropping schema"
-  runInContext CFG_Schema.dropTables appContext
   runInContext ACK_Schema.dropTables appContext
   runInContext BR_Schema.dropTables appContext
   runInContext LVL_Schema.dropTables appContext
+  runInContext MTR_Schema.dropTables appContext
   runInContext F_Schema.dropTables appContext
-  runInContext DOC_Schema.dropTables appContext
   runInContext KM_MIG_Schema.dropTables appContext
   runInContext B_Schema.dropTables appContext
+  runInContext DOC_Schema.dropTables appContext
   runInContext QTN_MIG_Schema.dropTables appContext
   runInContext QTN_Schema.dropTables appContext
-  runInContext MTR_Schema.dropTables appContext
   runInContext TML_Schema.dropTables appContext
   runInContext PKG_Schema.dropTables appContext
   runInContext ACL_Schema.dropTables appContext
   runInContext U_Schema.dropTables appContext
+  runInContext CFG_Schema.dropTables appContext
   -- 2. Create
   putStrLn "DB: Creating schema"
   runInContext U_Schema.createTables appContext

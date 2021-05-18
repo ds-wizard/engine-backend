@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Template.TemplateChangeDTO where
 
 import GHC.Generics
 
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 
 data TemplateChangeDTO =
@@ -14,7 +15,7 @@ data TemplateChangeDTO =
     , _templateChangeDTODescription :: String
     , _templateChangeDTOReadme :: String
     , _templateChangeDTOLicense :: String
-    , _templateChangeDTOAllowedPackages :: [TemplateAllowedPackage]
+    , _templateChangeDTOAllowedPackages :: [PackagePattern]
     , _templateChangeDTORecommendedPackageId :: Maybe String
     , _templateChangeDTOFormats :: [TemplateFormat]
     }

@@ -31,6 +31,7 @@ import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
@@ -181,6 +182,10 @@ makeFields ''AppConfigLookAndFeel
 makeFields ''AppConfigLookAndFeelCustomMenuLink
 
 makeFields ''AppConfigRegistry
+
+makeFields ''AppConfigKnowledgeModel
+
+makeFields ''AppConfigKnowledgeModelPublic
 
 makeFields ''AppConfigQuestionnaire
 
@@ -404,6 +409,8 @@ makeFields ''PackageWithEvents
 
 makeFields ''PackageGroup
 
+makeFields ''PackagePattern
+
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
@@ -448,8 +455,6 @@ makeFields ''InstanceStatistics
 
 -- Model / Template
 makeFields ''Template
-
-makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 

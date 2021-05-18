@@ -6,6 +6,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
@@ -26,6 +27,7 @@ defaultAppConfig =
     , _appConfigDashboard = defaultDashboard
     , _appConfigLookAndFeel = defaultLookAndFeel
     , _appConfigRegistry = defaultRegistry
+    , _appConfigKnowledgeModel = defaultKnowledgeModel
     , _appConfigQuestionnaire = defaultQuestionnaire
     , _appConfigTemplate = defaultTemplate
     , _appConfigSubmission = defaultSubmission
@@ -130,6 +132,14 @@ defaultLookAndFeelCustomLink =
 
 defaultRegistry :: AppConfigRegistry
 defaultRegistry = AppConfigRegistry {_appConfigRegistryEnabled = True, _appConfigRegistryToken = "GlobalToken"}
+
+defaultKnowledgeModel :: AppConfigKnowledgeModel
+defaultKnowledgeModel = AppConfigKnowledgeModel {_appConfigKnowledgeModelPublic = defaultKnowledgeModelPublic}
+
+defaultKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
+defaultKnowledgeModelPublic =
+  AppConfigKnowledgeModelPublic
+    {_appConfigKnowledgeModelPublicEnabled = True, _appConfigKnowledgeModelPublicPackages = [packagePatternGlobal]}
 
 defaultQuestionnaire :: AppConfigQuestionnaire
 defaultQuestionnaire =

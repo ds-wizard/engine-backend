@@ -29,6 +29,7 @@ import Wizard.Service.Acl.AclService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KM_Cache
 import qualified Wizard.Service.Cache.PackageCache as PKG_Cache
 import Wizard.Service.Package.PackageMapper
+import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
 import Wizard.Service.Statistics.StatisticsService
 import Wizard.Util.Cache
@@ -82,7 +83,7 @@ getPackageById = getFromCacheOrDb PKG_Cache.getFromCache PKG_Cache.addToCache fi
 getPackageDetailById :: String -> AppContextM PackageDetailDTO
 getPackageDetailById pkgId =
   runInTransaction $ do
-    checkPermission _PM_READ_PERM
+    checkIfPackageIsPublic (Just pkgId) _PM_READ_PERM
     serverConfig <- asks _appContextServerConfig
     pkg <- getPackageById pkgId
     versions <- getPackageVersions pkg

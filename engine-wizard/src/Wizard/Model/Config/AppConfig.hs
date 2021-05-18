@@ -5,6 +5,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Package.PackagePattern
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
 
@@ -17,6 +18,7 @@ data AppConfig =
     , _appConfigDashboard :: AppConfigDashboard
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
     , _appConfigRegistry :: AppConfigRegistry
+    , _appConfigKnowledgeModel :: AppConfigKnowledgeModel
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
@@ -140,6 +142,19 @@ data AppConfigRegistry =
   AppConfigRegistry
     { _appConfigRegistryEnabled :: Bool
     , _appConfigRegistryToken :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigKnowledgeModel =
+  AppConfigKnowledgeModel
+    { _appConfigKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigKnowledgeModelPublic =
+  AppConfigKnowledgeModelPublic
+    { _appConfigKnowledgeModelPublicEnabled :: Bool
+    , _appConfigKnowledgeModelPublicPackages :: [PackagePattern]
     }
   deriving (Generic, Eq, Show)
 
