@@ -21,6 +21,7 @@ import Shared.Model.Error.Error
 import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
@@ -56,7 +57,7 @@ reqMethod = methodPut
 
 reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid
 
-reqHeadersT authHeader = [authHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
 reqDtoT qtn =
   QuestionnaireChangeDTO
@@ -74,22 +75,40 @@ reqBodyT qtn = encode $ reqDtoT qtn
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_200 appContext = do
-  create_test_200 "HTTP 200 OK (Owner, Private)" appContext questionnaire1 questionnaire1Edited questionnaire1Ctn []
-  create_test_200 "HTTP 200 OK (Owner, VisibleView)" appContext questionnaire2 questionnaire2Edited questionnaire2Ctn []
   create_test_200
-    "HTTP 200 OK (Non-Owner, VisibleEdit)"
+    "HTTP 200 OK (Owner, Private)"
     appContext
-    questionnaire3
-    questionnaire3Edited
-    questionnaire3Ctn
-    [qtn3AlbertEditPermRecordDto]
+    questionnaire1
+    questionnaire1Edited
+    questionnaire1Ctn
+    []
+    [reqAuthHeader]
+    False
+  create_test_200
+    "HTTP 200 OK (Owner, VisibleView)"
+    appContext
+    questionnaire2
+    questionnaire2Edited
+    questionnaire2Ctn
+    []
+    [reqAuthHeader]
+    False
+  create_test_200
+    "HTTP 200 OK (Non-Owner, Private, Sharing, Anonymous Enabled)"
+    appContext
+    questionnaire10
+    questionnaire10Edited
+    questionnaire10Ctn
+    [qtn10NikolaEditPermRecordDto]
+    [reqNonAdminAuthHeader]
+    True
 
-create_test_200 title appContext qtn qtnEdited qtnCtn permissions =
+create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader anonymousEnabled =
   it title $
      -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT reqAuthHeader
+    let reqHeaders = reqHeadersT authHeader
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 200
@@ -110,8 +129,12 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions =
             qVersionsDto
     let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations
+    runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
+    -- AND: Enabled anonymous sharing
+    updateAnonymousQuestionnaireSharing appContext anonymousEnabled
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -153,13 +176,19 @@ test_403 appContext = do
     questionnaire2
     questionnaire2Edited
     "Administrate Questionnaire"
+  create_test_403
+    "HTTP 403 FORBIDDEN (Non-Owner, Private, Sharing, Anonymous Disabled)"
+    appContext
+    questionnaire10
+    questionnaire10Edited
+    "Administrate Questionnaire"
 
 create_test_403 title appContext qtn qtnEdited reason =
   it title $
      -- GIVEN: Prepare request
    do
     let reqUrl = reqUrlT $ qtn ^. uuid
-    let reqHeaders = reqHeadersT reqNonAdminAuthHeader
+    let reqHeaders = reqHeadersT [reqNonAdminAuthHeader]
     let reqBody = reqBodyT qtnEdited
      -- AND: Prepare expectation
     let expStatus = 403
@@ -170,6 +199,7 @@ create_test_403 title appContext qtn qtnEdited reason =
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -184,7 +214,7 @@ test_404 appContext =
   createNotFoundTest
     reqMethod
     "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
-    (reqHeadersT reqAuthHeader)
+    (reqHeadersT [reqAuthHeader])
     (reqBodyT questionnaire1)
     "questionnaire"
     "f08ead5f-746d-411b-aee6-77ea3d24016a"

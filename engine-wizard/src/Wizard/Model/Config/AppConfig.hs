@@ -179,6 +179,7 @@ data AppConfigQuestionnaireSharing =
   AppConfigQuestionnaireSharing
     { _appConfigQuestionnaireSharingEnabled :: Bool
     , _appConfigQuestionnaireSharingDefaultValue :: QuestionnaireSharing
+    , _appConfigQuestionnaireSharingAnonymousEnabled :: Bool
     }
   deriving (Generic, Eq, Show)
 

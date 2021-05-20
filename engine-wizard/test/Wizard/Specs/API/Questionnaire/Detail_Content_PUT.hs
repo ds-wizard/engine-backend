@@ -73,6 +73,7 @@ test_200 appContext = do
     questionnaire3
     questionnaire3ContentEdited
     [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (Anonymous, Public, Sharing" appContext questionnaire10 questionnaire10ContentEdited []
 
 create_test_200 title appContext qtn qtnEdited authHeader =
   it title $
@@ -135,13 +136,6 @@ test_403 appContext = do
     appContext
     questionnaire3
     questionnaire3ContentEdited
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, Public, Sharing)"
-    appContext
-    questionnaire10
-    questionnaire10ContentEdited
     []
     _ERROR_SERVICE_USER__MISSING_USER
 

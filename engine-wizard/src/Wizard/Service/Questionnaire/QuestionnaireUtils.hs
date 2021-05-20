@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
@@ -103,3 +104,12 @@ getQuestionnaireReport qtn = do
       qtnCtn <- compileQuestionnaire qtn
       addToCache qtn qtnCtn indications
       return . toQuestionnaireReportDTO $ indications
+
+skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
+skipIfAssigningProject qtn action = do
+  appConfig <- getAppConfig
+  let questionnaireSharingEnabled = appConfig ^. questionnaire . questionnaireSharing . enabled
+  let questionnaireSharingAnonymousEnabled = appConfig ^. questionnaire . questionnaireSharing . anonymousEnabled
+  when
+    (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn ^. permissions))
+    action

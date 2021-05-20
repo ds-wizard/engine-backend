@@ -1,6 +1,6 @@
 module Wizard.Specs.API.Questionnaire.Common where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Data.Either (isLeft, isRight)
 import qualified Data.UUID as U
 import Test.Hspec
@@ -11,6 +11,8 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Service.Config.AppConfigMapper
+import Wizard.Service.Config.AppConfigService
 
 import Wizard.Specs.Common
 
@@ -68,8 +70,16 @@ compareQuestionnaireCreateDtos' resDto expDto = do
 
 compareQuestionnaireDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
-compareQuestionnaireContentDtos resDto expDto = liftIO $ (resDto ^. events) == (expDto ^. events) `shouldBe` True
+compareQuestionnaireContentDtos resDto expDto = liftIO $ (resDto ^. events) `shouldBe` (expDto ^. events)
 
 compareReportDtos resDto expDto = do
   liftIO $ resDto ^. totalReport `shouldBe` expDto ^. totalReport
   liftIO $ resDto ^. chapterReports `shouldBe` expDto ^. chapterReports
+
+-- --------------------------------
+-- HELPERS
+-- --------------------------------
+updateAnonymousQuestionnaireSharing appContext value = do
+  (Right appConfig) <- runInContextIO getAppConfig appContext
+  let updatedAppConfig = appConfig & questionnaire . questionnaireSharing . anonymousEnabled .~ value
+  runInContextIO (modifyAppConfigDto (toChangeDTO updatedAppConfig)) appContext

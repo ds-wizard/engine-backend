@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -252,13 +252,13 @@ fromQuestionnaireCreateDTO ::
   -> U.UUID
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
-  -> U.UUID
+  -> Maybe U.UUID
   -> String
   -> UTCTime
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
@@ -268,16 +268,19 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid pkgId 
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
-    , _questionnaireCreatorUuid = Just currentUserUuid
-    , _questionnairePermissions = [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
+    , _questionnaireCreatorUuid = mCurrentUserUuid
+    , _questionnairePermissions =
+        case mCurrentUserUuid of
+          Just currentUserUuid -> [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
+          Nothing -> []
     , _questionnaireEvents = []
     , _questionnaireVersions = []
     , _questionnaireCreatedAt = qtnCreatedAt
     , _questionnaireUpdatedAt = qtnUpdatedAt
     }
 
-fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> UserDTO -> UTCTime -> Questionnaire
-fromContentChangeDTO qtn dto currentUser now =
-  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (Just $ currentUser ^. uuid) now) (dto ^. events)
+fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire
+fromContentChangeDTO qtn dto mCurrentUser now =
+  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (mCurrentUser ^? _Just . uuid) now) (dto ^. events)
       updatedEvents = qtn ^. events ++ newTodoEvents
    in qtn {_questionnaireEvents = updatedEvents, _questionnaireUpdatedAt = now}

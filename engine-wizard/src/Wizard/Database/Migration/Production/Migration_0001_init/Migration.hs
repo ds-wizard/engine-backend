@@ -651,7 +651,7 @@ insertUsers dbPool = do
 insertAppConfig dbPool = do
   let sql =
         "INSERT INTO app_config (id, organization, authentication, privacy_and_support, dashboard, look_and_feel, \
-        \                        registry, questionnaire, template, submission, created_at, updated_at) \
+        \                        registry, knowledge_model, questionnaire, template, submission, created_at, updated_at) \
         \VALUES (1, \
         \        '{ \
         \          \"affiliations\": [], \
@@ -706,13 +706,20 @@ insertAppConfig dbPool = do
         \          \"token\": \"\" \
         \        }', \
         \        '{ \
+        \          \"public\": { \
+        \            \"enabled\": false, \
+        \            \"packages\": [] \
+        \          } \
+        \        }', \
+        \        '{ \
         \          \"questionnaireVisibility\": { \
         \            \"enabled\": true, \
         \            \"defaultValue\": \"PrivateQuestionnaire\" \
         \          }, \
         \          \"questionnaireSharing\": { \
         \            \"enabled\": true, \
-        \            \"defaultValue\": \"RestrictedQuestionnaire\" \
+        \            \"defaultValue\": \"RestrictedQuestionnaire\", \
+        \            \"anonymousEnabled\": false \
         \          }, \
         \          \"summaryReport\": { \
         \            \"enabled\": true \

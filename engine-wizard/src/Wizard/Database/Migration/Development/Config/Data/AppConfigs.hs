@@ -161,7 +161,10 @@ defaultQuestionnaireVisibility =
 defaultQuestionnaireSharing :: AppConfigQuestionnaireSharing
 defaultQuestionnaireSharing =
   AppConfigQuestionnaireSharing
-    {_appConfigQuestionnaireSharingEnabled = True, _appConfigQuestionnaireSharingDefaultValue = RestrictedQuestionnaire}
+    { _appConfigQuestionnaireSharingEnabled = True
+    , _appConfigQuestionnaireSharingDefaultValue = RestrictedQuestionnaire
+    , _appConfigQuestionnaireSharingAnonymousEnabled = False
+    }
 
 defaultFeedback :: AppConfigQuestionnaireFeedback
 defaultFeedback =

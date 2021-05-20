@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireAcl where
 
 import Control.Lens ((^.), (^..))
+import Control.Monad (when)
 import Control.Monad.Except (throwError)
 
 import LensesConfig
@@ -13,6 +14,14 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireAclHelpers
 import Wizard.Model.User.User
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Config.AppConfigService
+
+checkCreatePermissionToQtn :: AppContextM ()
+checkCreatePermissionToQtn = do
+  appConfig <- getAppConfig
+  let questionnaireSharingEnabled = appConfig ^. questionnaire . questionnaireSharing . enabled
+  let questionnaireSharingAnonymousEnabled = appConfig ^. questionnaire . questionnaireSharing . anonymousEnabled
+  when (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled)) (checkPermission _QTN_PERM)
 
 checkViewPermissionToQtn ::
      QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()

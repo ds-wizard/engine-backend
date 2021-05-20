@@ -1,8 +1,8 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import Control.Monad.Except (catchError, throwError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
 import Data.Time
@@ -60,17 +60,26 @@ createQuestionnaire questionnaireCreateDto =
 createQuestionnaireWithGivenUuid :: QuestionnaireCreateDTO -> U.UUID -> AppContextM QuestionnaireDTO
 createQuestionnaireWithGivenUuid reqDto qtnUuid =
   runInTransaction $ do
-    checkPermission _QTN_PERM
-    currentUser <- getCurrentUser
-    package <- findPackageWithEventsById (reqDto ^. packageId)
-    qtnState <- getQuestionnaireState (U.toString qtnUuid) (reqDto ^. packageId)
+    checkCreatePermissionToQtn
+    pkgId <- resolvePackageId (reqDto ^. packageId)
+    package <- findPackageWithEventsById pkgId
+    qtnState <- getQuestionnaireState (U.toString qtnUuid) pkgId
     now <- liftIO getCurrentTime
     visibility <- extractVisibility reqDto
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
-    pkgId <- resolvePackageId (reqDto ^. packageId)
+    mCurrentUser <- asks _appContextCurrentUser
     let qtn =
-          fromQuestionnaireCreateDTO reqDto qtnUuid visibility sharing (currentUser ^. uuid) pkgId now now qtnPermUuid
+          fromQuestionnaireCreateDTO
+            reqDto
+            qtnUuid
+            visibility
+            sharing
+            (mCurrentUser ^? _Just . uuid)
+            pkgId
+            now
+            now
+            qtnPermUuid
     insertQuestionnaire qtn
     report <- getQuestionnaireReport qtn
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
@@ -170,7 +179,7 @@ modifyQuestionnaire qtnUuid reqDto =
     checkPermission _QTN_PERM
     qtn <- findQuestionnaireById qtnUuid
     qtnDto <- getQuestionnaireDetailById qtnUuid
-    checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions)
+    skipIfAssigningProject qtn (checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions))
     currentUser <- getCurrentUser
     now <- liftIO getCurrentTime
     qVisibility <- extractVisibility reqDto
@@ -182,9 +191,11 @@ modifyQuestionnaire qtnUuid reqDto =
     state <- getQuestionnaireState qtnUuid pkgId
     updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. permissions)
     permissionDtos <- traverse enhanceQuestionnairePermRecord (updatedQtn ^. permissions)
-    catchError
-      (sendQuestionnaireInvitationMail qtn updatedQtn)
-      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT)
+    skipIfAssigningProject
+      qtn
+      (catchError
+         (sendQuestionnaireInvitationMail qtn updatedQtn)
+         (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
     eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
@@ -241,8 +252,8 @@ modifyContent qtnUuid reqDto =
   runInTransaction $ do
     qtn <- findQuestionnaireById qtnUuid
     checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
-    currentUser <- getCurrentUser
+    mCurrentUser <- asks _appContextCurrentUser
     now <- liftIO getCurrentTime
-    let updatedQtn = fromContentChangeDTO qtn reqDto currentUser now
+    let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
     updateQuestionnaireById updatedQtn
     return reqDto
