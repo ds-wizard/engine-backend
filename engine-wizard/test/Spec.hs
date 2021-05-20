@@ -65,6 +65,7 @@ import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
+import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateUtilSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
@@ -183,5 +184,6 @@ main =
              questionnaireAclSpec appContext
              questionnaireCollaborationAclSpec appContext
              questionnaireCompilerServiceSpec appContext
+             questionnaireServiceSpec appContext
              userServiceIntegrationSpec appContext
            describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

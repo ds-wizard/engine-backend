@@ -128,6 +128,22 @@ findQuestionnairesOwnedByUser userUuid = do
   entities <- runDB action
   traverse enhance entities
 
+findQuestionnaireWithZeroAcl :: AppContextM [Questionnaire]
+findQuestionnaireWithZeroAcl = do
+  let sql =
+        f'
+          "SELECT qtn.* \
+               \FROM %s qtn \
+               \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+               \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
+               \WHERE qtn_acl_user.uuid IS NULL \
+               \AND qtn_acl_group.uuid IS NULL \
+               \AND qtn.updated_at < now() - INTERVAL '30 days'"
+          [entityName]
+  logInfo _CMP_DATABASE sql
+  let action conn = query_ conn (fromString sql)
+  runDB action
+
 findQuestionnaireById :: String -> AppContextM Questionnaire
 findQuestionnaireById qtnUuid = do
   entity <- createFindEntityByFn entityName "uuid" qtnUuid

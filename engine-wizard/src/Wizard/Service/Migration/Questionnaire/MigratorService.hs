@@ -69,7 +69,7 @@ cancelQuestionnaireMigration qtnUuid =
   runInTransaction $ do
     checkPermission _QTN_PERM
     state <- getQuestionnaireMigration qtnUuid
-    deleteQuestionnaire (U.toString $ state ^. newQuestionnaire . uuid)
+    deleteQuestionnaire (U.toString $ state ^. newQuestionnaire . uuid) True
     deleteMigratorStateByNewQuestionnaireId qtnUuid
     return ()
 

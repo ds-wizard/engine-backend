@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
 import Control.Lens ((&), (.~), (^.), (^?), _Just)
+import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Foldable (traverse_)
@@ -44,6 +45,7 @@ import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.QuestionnaireUtils
 import Wizard.Service.Questionnaire.QuestionnaireValidation
+import Wizard.Util.Logger
 
 getQuestionnairesForCurrentUserPageDto :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
 getQuestionnairesForCurrentUserPageDto mQuery pageable sort =
@@ -213,13 +215,12 @@ modifyQuestionnaire qtnUuid reqDto =
         eventsDto
         versionDto
 
-deleteQuestionnaire :: String -> AppContextM ()
-deleteQuestionnaire qtnUuid =
+deleteQuestionnaire :: String -> Bool -> AppContextM ()
+deleteQuestionnaire qtnUuid shouldValidatePermission =
   runInTransaction $ do
-    checkPermission _QTN_PERM
     qtn <- findQuestionnaireById qtnUuid
     validateQuestionnaireDeletation qtnUuid
-    checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions)
+    when shouldValidatePermission (checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions))
     deleteMigratorStateByNewQuestionnaireId qtnUuid
     documents <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid)]
     traverse_
@@ -241,7 +242,7 @@ removeOwnerFromQuestionnaire userUuid =
     processQtn qtn = do
       let newPermissions = removeUserPermission userUuid (qtn ^. permissions)
       if null newPermissions
-        then deleteQuestionnaire (U.toString $ qtn ^. uuid)
+        then deleteQuestionnaire (U.toString $ qtn ^. uuid) True
         else do
           let reqDto = toChangeDTO qtn & permissions .~ newPermissions
           modifyQuestionnaire (U.toString $ qtn ^. uuid) reqDto
@@ -257,3 +258,14 @@ modifyContent qtnUuid reqDto =
     let updatedQtn = fromContentChangeDTO qtn reqDto mCurrentUser now
     updateQuestionnaireById updatedQtn
     return reqDto
+
+cleanQuestionnaires :: AppContextM ()
+cleanQuestionnaires =
+  runInTransaction $ do
+    qtns <- findQuestionnaireWithZeroAcl
+    traverse_
+      (\qtn -> do
+         let qtnUuid = U.toString $ qtn ^. uuid
+         logInfoU _CMP_SERVICE (f' "Clean questionnaire with empty ACL (qtnUuid: '%s')" [qtnUuid])
+         deleteQuestionnaire qtnUuid False)
+      qtns

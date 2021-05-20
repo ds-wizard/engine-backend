@@ -18,5 +18,5 @@ detail_DELETE mTokenHeader qtnUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      deleteQuestionnaire qtnUuid
+      deleteQuestionnaire qtnUuid True
       return NoContent
