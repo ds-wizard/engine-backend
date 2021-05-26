@@ -29,6 +29,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -124,6 +125,9 @@ qtn1AlbertEditPermRecord =
 qtn1AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
 qtn1AlbertEditPermRecordDto = toUserPermRecordDTO qtn1AlbertEditPermRecord userAlbert
 
+questionnaire1Simple :: QuestionnaireSimple
+questionnaire1Simple = toSimple questionnaire1
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 questionnaire2 :: Questionnaire
@@ -193,6 +197,9 @@ qtn2AlbertEditPermRecord =
 
 qtn2AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
 qtn2AlbertEditPermRecordDto = toUserPermRecordDTO qtn2AlbertEditPermRecord userAlbert
+
+questionnaire2Simple :: QuestionnaireSimple
+questionnaire2Simple = toSimple questionnaire2
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -336,6 +343,9 @@ qtn6AlbertEditPermRecord =
 
 qtn6AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
 qtn6AlbertEditPermRecordDto = toUserPermRecordDTO qtn6AlbertEditPermRecord userAlbert
+
+questionnaire6Simple :: QuestionnaireSimple
+questionnaire6Simple = toSimple questionnaire6
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

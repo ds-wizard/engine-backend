@@ -28,7 +28,9 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
@@ -52,9 +54,25 @@ toDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO package
+    , _questionnaireDTOPackage = SPM.toSimple package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
+    , _questionnaireDTOCreatedAt = qtn ^. createdAt
+    , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
+    }
+
+toDTO' :: QuestionnaireDetail -> QuestionnaireContent -> QuestionnaireReportDTO -> QuestionnaireDTO
+toDTO' qtn qtnCtn report =
+  QuestionnaireDTO
+    { _questionnaireDTOUuid = qtn ^. uuid
+    , _questionnaireDTOName = qtn ^. name
+    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOVisibility = qtn ^. visibility
+    , _questionnaireDTOSharing = qtn ^. sharing
+    , _questionnaireDTOState = qtn ^. state
+    , _questionnaireDTOPackage = qtn ^. package
+    , _questionnaireDTOReport = report
+    , _questionnaireDTOPermissions = qtn ^. permissions
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -75,7 +93,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
+    , _questionnaireDTOPackage = SPM.toSimple . SPM.toPackage $ package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
@@ -218,6 +236,9 @@ toGroupPermRecordDTO record group =
     , _questionnairePermRecordDTOMember = toGroupMemberDTO group
     , _questionnairePermRecordDTOPerms = record ^. perms
     }
+
+toSimple :: Questionnaire -> QuestionnaireSimple
+toSimple qtn = QuestionnaireSimple {_questionnaireSimpleUuid = qtn ^. uuid, _questionnaireSimpleName = qtn ^. name}
 
 fromChangeDTO ::
      Questionnaire

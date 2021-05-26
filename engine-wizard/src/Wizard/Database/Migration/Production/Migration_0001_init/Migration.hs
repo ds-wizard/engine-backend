@@ -277,7 +277,7 @@ createMetricTable dbPool =
 createKmMigrationTable dbPool =
   createTable
     dbPool
-    " create table km_migration \
+    " create table knowledge_model_migration \
      \ ( \
      \     branch_uuid uuid not null, \
      \     metamodel_version int not null, \
@@ -290,43 +290,43 @@ createKmMigrationTable dbPool =
      \     current_knowledge_model json \
      \ ); \
      \  \
-     \ create unique index km_migration_branch_uuid_uindex \
-     \     on km_migration (branch_uuid); \
+     \ create unique index knowledge_model_migration_branch_uuid_uindex \
+     \     on knowledge_model_migration (branch_uuid); \
      \  \
-     \ alter table km_migration \
-     \     add constraint km_migration_pk \
+     \ alter table knowledge_model_migration \
+     \     add constraint knowledge_model_migration_pk \
      \         primary key (branch_uuid); \
      \  \
-     \ alter table km_migration \
-     \   add constraint km_migration_branch_uuid_fk \
+     \ alter table knowledge_model_migration \
+     \   add constraint knowledge_model_migration_branch_uuid_fk \
      \      foreign key (branch_uuid) references branch; \
      \  \
-     \ alter table km_migration \
-     \   add constraint km_migration_branch_previous_package_id_fk \
+     \ alter table knowledge_model_migration \
+     \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
      \      foreign key (branch_previous_package_id) references package (id); \
      \  \
-     \ alter table km_migration \
-     \   add constraint km_migration_target_package_id_fk \
+     \ alter table knowledge_model_migration \
+     \   add constraint knowledge_model_migration_target_package_id_fk \
      \      foreign key (target_package_id) references package (id); "
 
 createQtnMigrationTable dbPool =
   createTable
     dbPool
-    " create table qtn_migration \
+    " create table questionnaire_migration \
     \ ( \
     \   old_questionnaire_uuid uuid not null, \
     \   new_questionnaire_uuid uuid not null, \
     \   resolved_question_uuids json not null, \
-    \   constraint qtn_migration_pk \
+    \   constraint questionnaire_migration_pk \
     \      primary key (old_questionnaire_uuid, new_questionnaire_uuid) \
     \ ); \
     \  \
-    \ alter table qtn_migration \
-    \   add constraint qtn_migration_old_questionnaire_uuid_fk \
+    \ alter table questionnaire_migration \
+    \   add constraint questionnaire_migration_old_questionnaire_uuid_fk \
     \      foreign key (old_questionnaire_uuid) references questionnaire; \
     \  \
-    \ alter table qtn_migration \
-    \   add constraint qtn_migration_new_questionnaire_uuid_fk \
+    \ alter table questionnaire_migration \
+    \   add constraint questionnaire_migration_new_questionnaire_uuid_fk \
     \      foreign key (new_questionnaire_uuid) references questionnaire; "
 
 createPackageTable dbPool =

@@ -145,4 +145,10 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest reqMethod reqUrl reqHeaders reqBody "km_migration" "6474b24b-262b-42b1-9451-008e8363f2b6"
+  createNotFoundTest
+    reqMethod
+    reqUrl
+    reqHeaders
+    reqBody
+    "knowledge_model_migration"
+    "6474b24b-262b-42b1-9451-008e8363f2b6"

@@ -60,12 +60,15 @@ test_200 appContext = do
     (Page
        "documents"
        (PageMetadata 20 3 1 0)
-       [toDTO doc1 (Just questionnaire1Dto), toDTO doc2 (Just questionnaire2Dto), toDTO doc3 (Just questionnaire2Dto)])
+       [ toDTO doc1 (Just questionnaire1Simple)
+       , toDTO doc2 (Just questionnaire2Simple)
+       , toDTO doc3 (Just questionnaire2Simple)
+       ])
   create_test_200
     "HTTP 200 OK (query)"
     appContext
     "/documents?q=My exported document 2"
-    (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Dto)])
+    (Page "documents" (PageMetadata 20 1 1 0) [toDTO doc2 (Just questionnaire2Simple)])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext

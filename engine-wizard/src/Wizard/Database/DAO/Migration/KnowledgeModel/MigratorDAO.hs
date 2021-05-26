@@ -14,7 +14,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-entityName = "km_migration"
+entityName = "knowledge_model_migration"
 
 pageLabel = "migrations"
 
@@ -36,7 +36,7 @@ updateMigratorState ms = do
   let action conn =
         execute
           conn
-          "UPDATE km_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ? WHERE branch_uuid = ?"
+          "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ? WHERE branch_uuid = ?"
           params
   runDB action
 

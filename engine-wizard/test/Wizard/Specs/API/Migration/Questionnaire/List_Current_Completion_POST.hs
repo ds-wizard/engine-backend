@@ -128,5 +128,5 @@ test_404 appContext =
     (reqUrlT $ questionnaire4 ^. uuid)
     (reqHeadersT reqAuthHeader)
     reqBody
-    "qtn_migration"
+    "questionnaire_migration"
     "57250a07-a663-4ff3-ac1f-16530f2c1bfe"

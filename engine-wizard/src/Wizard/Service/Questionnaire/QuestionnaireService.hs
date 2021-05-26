@@ -53,7 +53,7 @@ getQuestionnairesForCurrentUserPageDto mQuery pageable sort =
     checkPermission _QTN_PERM
     currentUser <- getCurrentUser
     qtnPage <- findQuestionnairesForCurrentUserPage mQuery pageable sort
-    traverse enhanceQuestionnaire qtnPage
+    traverse enhanceQuestionnaireDetail qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaire questionnaireCreateDto =

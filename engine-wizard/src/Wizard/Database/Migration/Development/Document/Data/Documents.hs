@@ -27,6 +27,7 @@ import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Service.Document.DocumentMapper
 import qualified Wizard.Service.Package.PackageMapper as WPM
+import qualified Wizard.Service.Questionnaire.QuestionnaireMapper as QTN_Mapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
@@ -96,7 +97,7 @@ doc1Create =
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTO doc1 (Just questionnaire1Dto) commonWizardTemplate
+doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) commonWizardTemplate
 
 doc2 :: Document
 doc2 =

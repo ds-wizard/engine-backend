@@ -19,6 +19,7 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -54,6 +55,12 @@ enhanceQuestionnaire qtn = do
   qtnCtn <- compileQuestionnaire qtn
   return $ toDTO qtn qtnCtn pkg state report permissionDtos
 
+enhanceQuestionnaireDetail :: QuestionnaireDetail -> AppContextM QuestionnaireDTO
+enhanceQuestionnaireDetail qtnDetail = do
+  report <- getQuestionnaireReport qtnDetail
+  qtnCtn <- compileQuestionnaire qtnDetail
+  return $ toDTO' qtnDetail qtnCtn report
+
 enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
 enhanceQuestionnairePermRecord record =
   case record ^. member of
@@ -88,7 +95,14 @@ getQuestionnaireState qtnUuid pkgId = do
         then return QSDefault
         else return QSOutdated
 
-getQuestionnaireReport :: Questionnaire -> AppContextM QuestionnaireReportDTO
+getQuestionnaireReport ::
+     ( HasEvents questionnaire [QuestionnaireEvent]
+     , HasUuid questionnaire U.UUID
+     , HasPackageId questionnaire String
+     , HasSelectedTagUuids questionnaire [U.UUID]
+     )
+  => questionnaire
+  -> AppContextM QuestionnaireReportDTO
 getQuestionnaireReport qtn = do
   qtnCtn <- compileQuestionnaire qtn
   mIndications <- getFromCache qtn qtnCtn

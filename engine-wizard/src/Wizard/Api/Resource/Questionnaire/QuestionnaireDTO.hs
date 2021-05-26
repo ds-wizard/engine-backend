@@ -4,7 +4,7 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Shared.Model.Package.PackageSimple
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Questionnaire.Questionnaire
@@ -18,7 +18,7 @@ data QuestionnaireDTO =
     , _questionnaireDTOVisibility :: QuestionnaireVisibility
     , _questionnaireDTOSharing :: QuestionnaireSharing
     , _questionnaireDTOState :: QuestionnaireState
-    , _questionnaireDTOPackage :: PackageSimpleDTO
+    , _questionnaireDTOPackage :: PackageSimple
     , _questionnaireDTOReport :: QuestionnaireReportDTO
     , _questionnaireDTOPermissions :: [QuestionnairePermRecordDTO]
     , _questionnaireDTOCreatedAt :: UTCTime

@@ -87,8 +87,17 @@ createFindEntityByFn ::
   -> String
   -> String
   -> m entity
-createFindEntityByFn entityName paramName paramValue = do
-  let sql = f' "SELECT * FROM %s WHERE %s = ?" [entityName, paramName]
+createFindEntityByFn = createFindEntityWithFieldsByFn "*"
+
+createFindEntityWithFieldsByFn ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
+  => String
+  -> String
+  -> String
+  -> String
+  -> m entity
+createFindEntityWithFieldsByFn fields entityName paramName paramValue = do
+  let sql = f' "SELECT %s FROM %s WHERE %s = ?" [fields, entityName, paramName]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [paramValue]
   entities <- runDB action
@@ -106,8 +115,17 @@ createFindEntityByFn' ::
   -> String
   -> String
   -> m (Maybe entity)
-createFindEntityByFn' entityName paramName paramValue = do
-  let sql = f' "SELECT * FROM %s WHERE %s = ?" [entityName, paramName]
+createFindEntityByFn' = createFindEntityWithFieldsByFn' "*"
+
+createFindEntityWithFieldsByFn' ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
+  => String
+  -> String
+  -> String
+  -> String
+  -> m (Maybe entity)
+createFindEntityWithFieldsByFn' fields entityName paramName paramValue = do
+  let sql = f' "SELECT %s FROM %s WHERE %s = ?" [fields, entityName, paramName]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [paramValue]
   entities <- runDB action
@@ -257,6 +275,17 @@ mapSort xs = "ORDER BY " ++ createRecord xs
       case order of
         Ascending -> f' "%s asc " [toSnake name]
         Descending -> f' "%s desc " [toSnake name]
+
+mapSortWithPrefix :: String -> [Sort] -> String
+mapSortWithPrefix _ [] = ""
+mapSortWithPrefix prefix xs = "ORDER BY " ++ createRecord xs
+  where
+    createRecord [sort] = create sort
+    createRecord (sort:xs) = create sort ++ ", " ++ mapSort xs
+    create (Sort name order) =
+      case order of
+        Ascending -> f' "%s.%s asc " [prefix, toSnake name]
+        Descending -> f' "%s.%s desc " [prefix, toSnake name]
 
 preparePaginationVariables :: Pageable -> (Int, Int, Int, Int)
 preparePaginationVariables pageable =

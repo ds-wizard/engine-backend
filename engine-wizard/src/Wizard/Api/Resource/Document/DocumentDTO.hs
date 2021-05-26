@@ -4,17 +4,17 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Api.Resource.Template.TemplateSimpleJM ()
 import Wizard.Model.Document.Document
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 
 data DocumentDTO =
   DocumentDTO
     { _documentDTOUuid :: U.UUID
     , _documentDTOName :: String
     , _documentDTOState :: DocumentState
-    , _documentDTOQuestionnaire :: Maybe QuestionnaireDTO
+    , _documentDTOQuestionnaire :: Maybe QuestionnaireSimple
     , _documentDTOQuestionnaireEventUuid :: Maybe U.UUID
     , _documentDTOTemplate :: TemplateSimpleDTO
     , _documentDTOFormatUuid :: U.UUID

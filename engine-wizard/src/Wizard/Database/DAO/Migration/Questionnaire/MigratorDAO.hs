@@ -14,7 +14,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.Questionnaire.MigratorState
 
-entityName = "qtn_migration"
+entityName = "questionnaire_migration"
 
 pageLabel = "migrations"
 
@@ -40,7 +40,7 @@ updateMigratorStateByNewQuestionnaireId ms = do
   let action conn =
         execute
           conn
-          "UPDATE qtn_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ? WHERE new_questionnaire_uuid = ?"
+          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ? WHERE new_questionnaire_uuid = ?"
           params
   runDB action
 

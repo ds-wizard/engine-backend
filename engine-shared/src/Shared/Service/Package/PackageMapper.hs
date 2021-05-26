@@ -9,6 +9,7 @@ import Shared.Api.Resource.Package.PackageSuggestionDTO
 import Shared.Model.Common.Page
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
+import Shared.Model.Package.PackageSimple
 import Shared.Model.Package.PackageWithEvents
 import Shared.Util.String (splitOn)
 
@@ -29,6 +30,11 @@ toPackage pkg =
     , _packageMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
     , _packageCreatedAt = pkg ^. createdAt
     }
+
+toSimple :: Package -> PackageSimple
+toSimple pkg =
+  PackageSimple
+    {_packageSimplePId = pkg ^. pId, _packageSimpleName = pkg ^. name, _packageSimpleVersion = pkg ^. version}
 
 toDTO :: PackageWithEvents -> PackageDTO
 toDTO pkg =

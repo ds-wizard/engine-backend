@@ -111,8 +111,10 @@ import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_Migra
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
@@ -434,6 +436,10 @@ makeFields ''SetLevelEvent
 makeFields ''SetLabelsEvent
 
 makeFields ''QuestionnaireVersion
+
+makeFields ''QuestionnaireSimple
+
+makeFields ''QuestionnaireDetail
 
 -- Model / Report
 makeFields ''Indication

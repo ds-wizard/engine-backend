@@ -38,7 +38,6 @@ import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
-import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.Template.TemplateService
 import Wizard.Service.Template.TemplateValidation
 import Wizard.Util.Logger
@@ -66,7 +65,7 @@ createDocument reqDto =
 createDocumentWithDurability :: DocumentCreateDTO -> DocumentDurability -> AppContextM DocumentDTO
 createDocumentWithDurability dto durability =
   runInTransaction $ do
-    qtnDto <- getQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
+    qtnSimple <- findQuestionnaireSimpleById (U.toString $ dto ^. questionnaireUuid)
     qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
     tml <- getTemplateByUuidAndPackageId (dto ^. templateId) (Just $ qtn ^. packageId)
     validateMetamodelVersion tml
@@ -82,7 +81,7 @@ createDocumentWithDurability dto durability =
     let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser now
     insertDocument doc
     publishToDocumentQueue doc
-    return $ toDTO doc (Just qtnDto) tml
+    return $ toDTO doc (Just qtnSimple) tml
 
 deleteDocument :: String -> AppContextM ()
 deleteDocument docUuid =

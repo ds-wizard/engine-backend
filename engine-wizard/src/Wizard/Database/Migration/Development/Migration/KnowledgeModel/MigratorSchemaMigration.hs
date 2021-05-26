@@ -16,14 +16,14 @@ runMigration = do
 
 dropTables = do
   logInfo _CMP_MIGRATION "(Table/Migration/KnowledgeModel) drop tables"
-  let sql = "drop table if exists km_migration;"
+  let sql = "drop table if exists knowledge_model_migration;"
   let action conn = execute_ conn sql
   runDB action
 
 createTables = do
   logInfo _CMP_MIGRATION "(Table/Migration/KnowledgeModel) create table"
   let sql =
-        " create table km_migration \
+        " create table knowledge_model_migration \
         \ ( \
         \     branch_uuid uuid not null, \
         \     metamodel_version int not null, \
@@ -36,23 +36,23 @@ createTables = do
         \     current_knowledge_model json \
         \ ); \
         \  \
-        \ create unique index km_migration_branch_uuid_uindex \
-        \     on km_migration (branch_uuid); \
+        \ create unique index knowledge_model_migration_branch_uuid_uindex \
+        \     on knowledge_model_migration (branch_uuid); \
         \  \
-        \ alter table km_migration \
-        \     add constraint km_migration_pk \
+        \ alter table knowledge_model_migration \
+        \     add constraint knowledge_model_migration_pk \
         \         primary key (branch_uuid); \
         \  \
-        \ alter table km_migration \
-        \   add constraint km_migration_branch_uuid_fk \
+        \ alter table knowledge_model_migration \
+        \   add constraint knowledge_model_migration_branch_uuid_fk \
         \      foreign key (branch_uuid) references branch; \
         \  \
-        \ alter table km_migration \
-        \   add constraint km_migration_branch_previous_package_id_fk \
+        \ alter table knowledge_model_migration \
+        \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
         \      foreign key (branch_previous_package_id) references package (id); \
         \  \
-        \ alter table km_migration \
-        \   add constraint km_migration_target_package_id_fk \
+        \ alter table knowledge_model_migration \
+        \   add constraint knowledge_model_migration_target_package_id_fk \
         \      foreign key (target_package_id) references package (id); "
   let action conn = execute_ conn sql
   runDB action

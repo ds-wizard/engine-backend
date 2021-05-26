@@ -10,14 +10,13 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
-import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireContentDM
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Service.Cache.QuestionnaireContentCache
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
-compileQuestionnaire :: Questionnaire -> AppContextM QuestionnaireContent
+compileQuestionnaire :: HasEvents s [QuestionnaireEvent] => s -> AppContextM QuestionnaireContent
 compileQuestionnaire qtn =
   runInTransaction $ do
     mQtnCtn <- getFromCache (qtn ^. events)

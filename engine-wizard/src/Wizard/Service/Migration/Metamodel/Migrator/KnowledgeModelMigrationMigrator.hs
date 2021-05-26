@@ -16,7 +16,7 @@ import Wizard.Service.Migration.Metamodel.Migrator.CommonDB
 migrateAllInDB :: AppContextM ()
 migrateAllInDB = do
   let (entityName, idField, eventsField, eventsFieldUpdate) =
-        ( "km_migration"
+        ( "knowledge_model_migration"
         , "branch_uuid"
         , "branch_events, target_package_events, result_events"
         , "branch_events = ?, target_package_events = ?, result_events = ?")
