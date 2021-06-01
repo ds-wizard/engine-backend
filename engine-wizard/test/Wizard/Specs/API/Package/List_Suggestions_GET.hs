@@ -16,6 +16,7 @@ import Shared.Model.Common.PageMetadata
 import Shared.Service.Package.PackageMapper
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
@@ -51,19 +52,24 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK"
     appContext
-    "/packages/suggestions?sort=versions.name,asc"
+    "/packages/suggestions?sort=organizationId,asc"
     (Page
        "packages"
        (PageMetadata 20 3 1 0)
-       [ toSuggestionDTO germanyPackageGroup
-       , toSuggestionDTO globalPackageGroup
-       , toSuggestionDTO netherlandsPackageGroup
+       [ toSuggestionDTO (toPackage globalPackage) (Page "packages" (PageMetadata 1 1 1 0) [globalPackageGroup])
+       , toSuggestionDTO (toPackage germanyPackage) (Page "packages" (PageMetadata 1 1 1 0) [germanyPackageGroup])
+       , toSuggestionDTO
+           (toPackage netherlandsPackageV2)
+           (Page "packages" (PageMetadata 1 1 1 0) [netherlandsPackageGroup])
        ])
   create_test_200
     "HTTP 200 OK (query - q)"
     appContext
     "/packages/suggestions?q=Germany Knowledge Model"
-    (Page "packages" (PageMetadata 20 1 1 0) [toSuggestionDTO germanyPackageGroup])
+    (Page
+       "packages"
+       (PageMetadata 20 1 1 0)
+       [toSuggestionDTO (toPackage germanyPackage) (Page "packages" (PageMetadata 1 1 1 0) [germanyPackageGroup])])
   create_test_200
     "HTTP 200 OK (query for non-existing)"
     appContext
@@ -80,6 +86,7 @@ create_test_200 title appContext reqUrl expDto =
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO PKG.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

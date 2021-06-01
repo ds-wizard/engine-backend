@@ -2,14 +2,12 @@ module Wizard.Specs.API.Template.Asset.Detail_DELETE
   ( detail_delete
   ) where
 
-import Control.Lens ((^.))
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Template.Data.Templates
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import Wizard.Model.Context.AppContext
@@ -66,7 +64,7 @@ create_test_204 title appContext reqAuthHeader =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertAbsenceOfTemplateAssetInDB appContext templateAssetLogo (commonWizardTemplate ^. tId)
+    assertAbsenceOfTemplateAssetInDB appContext templateAssetLogo
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -87,5 +85,5 @@ test_404 appContext =
     "/templates/global:questionnaire-report:1.0.0/assets/6c367648-9b60-4307-93b2-0851938adee0"
     (reqHeadersT reqAuthHeader)
     reqBody
-    "template"
-    "global:questionnaire-report:1.0.0"
+    "template_asset"
+    "6c367648-9b60-4307-93b2-0851938adee0"

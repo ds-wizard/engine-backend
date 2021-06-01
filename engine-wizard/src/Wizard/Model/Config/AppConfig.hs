@@ -5,17 +5,20 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Package.PackagePattern
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Questionnaire.Questionnaire
 
 data AppConfig =
   AppConfig
-    { _appConfigOrganization :: AppConfigOrganization
+    { _appConfigAId :: Int
+    , _appConfigOrganization :: AppConfigOrganization
     , _appConfigAuthentication :: AppConfigAuth
     , _appConfigPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _appConfigDashboard :: AppConfigDashboard
     , _appConfigLookAndFeel :: AppConfigLookAndFeel
     , _appConfigRegistry :: AppConfigRegistry
+    , _appConfigKnowledgeModel :: AppConfigKnowledgeModel
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
@@ -26,6 +29,7 @@ data AppConfig =
 
 instance Eq AppConfig where
   a == b =
+    _appConfigAId a == _appConfigAId b &&
     _appConfigOrganization a == _appConfigOrganization b &&
     _appConfigAuthentication a == _appConfigAuthentication b &&
     _appConfigPrivacyAndSupport a == _appConfigPrivacyAndSupport b &&
@@ -141,6 +145,19 @@ data AppConfigRegistry =
     }
   deriving (Generic, Eq, Show)
 
+data AppConfigKnowledgeModel =
+  AppConfigKnowledgeModel
+    { _appConfigKnowledgeModelPublic :: AppConfigKnowledgeModelPublic
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigKnowledgeModelPublic =
+  AppConfigKnowledgeModelPublic
+    { _appConfigKnowledgeModelPublicEnabled :: Bool
+    , _appConfigKnowledgeModelPublicPackages :: [PackagePattern]
+    }
+  deriving (Generic, Eq, Show)
+
 data AppConfigQuestionnaire =
   AppConfigQuestionnaire
     { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
@@ -162,6 +179,7 @@ data AppConfigQuestionnaireSharing =
   AppConfigQuestionnaireSharing
     { _appConfigQuestionnaireSharingEnabled :: Bool
     , _appConfigQuestionnaireSharingDefaultValue :: QuestionnaireSharing
+    , _appConfigQuestionnaireSharingAnonymousEnabled :: Bool
     }
   deriving (Generic, Eq, Show)
 

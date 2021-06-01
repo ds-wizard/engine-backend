@@ -7,10 +7,10 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
-import Wizard.Api.Resource.Document.DocumentContextDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
+import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -19,7 +19,7 @@ import Wizard.Model.User.User
 import Wizard.Service.Package.PackageMapper
 import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
-toDocumentContextDTO ::
+toDocumentContext ::
      U.UUID
   -> AppConfig
   -> ServerConfig
@@ -36,28 +36,28 @@ toDocumentContextDTO ::
   -> AppConfigOrganization
   -> Maybe User
   -> UTCTime
-  -> DocumentContextDTO
-toDocumentContextDTO dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
-  DocumentContextDTO
-    { _documentContextDTOUuid = dmpUuid
-    , _documentContextDTOConfig =
-        DocumentContextConfigDTO
-          { _documentContextConfigDTOLevelsEnabled = appConfig ^. questionnaire . levels . enabled
-          , _documentContextConfigDTOClientUrl = serverConfig ^. general . clientUrl
+  -> DocumentContext
+toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
+  DocumentContext
+    { _documentContextUuid = dmpUuid
+    , _documentContextConfig =
+        DocumentContextConfig
+          { _documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled
+          , _documentContextConfigClientUrl = serverConfig ^. general . clientUrl
           }
-    , _documentContextDTOQuestionnaireUuid = U.toString $ qtn ^. uuid
-    , _documentContextDTOQuestionnaireName = qtn ^. name
-    , _documentContextDTOQuestionnaireReplies = qtnCtn ^. replies
-    , _documentContextDTOQuestionnaireVersion = qtnVersion
-    , _documentContextDTOQuestionnaireVersions = qtnVersionDtos
-    , _documentContextDTOLevel = level
-    , _documentContextDTOKnowledgeModel = km
-    , _documentContextDTOMetrics = metrics
-    , _documentContextDTOLevels = ls
-    , _documentContextDTOReport = report
-    , _documentContextDTOPackage = toSimpleDTO pkg
-    , _documentContextDTOOrganization = org
-    , _documentContextDTOCreatedBy = USR_Mapper.toDTO <$> mCreatedBy
-    , _documentContextDTOCreatedAt = now
-    , _documentContextDTOUpdatedAt = now
+    , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
+    , _documentContextQuestionnaireName = qtn ^. name
+    , _documentContextQuestionnaireReplies = qtnCtn ^. replies
+    , _documentContextQuestionnaireVersion = qtnVersion
+    , _documentContextQuestionnaireVersions = qtnVersionDtos
+    , _documentContextLevel = level
+    , _documentContextKnowledgeModel = km
+    , _documentContextMetrics = metrics
+    , _documentContextLevels = ls
+    , _documentContextReport = report
+    , _documentContextPackage = toSimpleDTO pkg
+    , _documentContextOrganization = org
+    , _documentContextCreatedBy = USR_Mapper.toDTO <$> mCreatedBy
+    , _documentContextCreatedAt = now
+    , _documentContextUpdatedAt = now
     }

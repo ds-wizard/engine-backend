@@ -1,25 +1,23 @@
 module Wizard.Database.DAO.Acl.GroupDAO where
 
-import Data.Bson
+import GHC.Int
 
-import Shared.Database.DAO.Common
-import Wizard.Database.BSON.Acl.Acl ()
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.Acl.Acl ()
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-entityName = "group"
-
-collection = "groups"
+entityName = "acl_group"
 
 findGroups :: AppContextM [Group]
-findGroups = createFindEntitiesFn collection
+findGroups = createFindEntitiesFn entityName
 
 findGroupById :: String -> AppContextM Group
-findGroupById = createFindEntityByFn collection entityName "id"
+findGroupById = createFindEntityByFn entityName "id"
 
-insertGroup :: Group -> AppContextM Value
-insertGroup = createInsertFn collection
+insertGroup :: Group -> AppContextM Int64
+insertGroup = createInsertFn entityName
 
-deleteGroups :: AppContextM ()
-deleteGroups = createDeleteEntitiesFn collection
+deleteGroups :: AppContextM Int64
+deleteGroups = createDeleteEntitiesFn entityName

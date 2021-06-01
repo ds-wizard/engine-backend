@@ -1,27 +1,28 @@
 module Wizard.Specs.API.Template.Asset.Common where
 
 import Control.Lens ((^.))
-import Data.Either (isRight)
-import qualified Data.List as L
-import Data.Maybe (isNothing)
+import Data.Either (isLeft)
+import qualified Data.UUID as U
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
-import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Database.DAO.Template.TemplateAssetDAO
+import Shared.Localization.Messages.Public
+import Shared.Model.Error.Error
 
 import Wizard.Specs.Common
 
 -- --------------------------------
 -- ASSERTS
 -- --------------------------------
-assertAbsenceOfTemplateAssetInDB appContext file tmlId = do
-  eTemplate <- runInContextIO (findTemplateById tmlId) appContext
-  liftIO $ isRight eTemplate `shouldBe` True
-  let (Right templateFromDB) = eTemplate
-  let mFile = L.find (\f -> f ^. uuid == file ^. uuid) (templateFromDB ^. assets)
-  liftIO $ isNothing mFile `shouldBe` True
+assertAbsenceOfTemplateAssetInDB appContext asset = do
+  let assetUuid = U.toString $ asset ^. uuid
+  eAsset <- runInContextIO (findTemplateAssetById assetUuid) appContext
+  liftIO $ isLeft eAsset `shouldBe` True
+  let (Left error) = eAsset
+  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "template_asset" assetUuid)
 
 -- --------------------------------
 -- COMPARATORS

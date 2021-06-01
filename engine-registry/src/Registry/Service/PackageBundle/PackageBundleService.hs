@@ -13,11 +13,13 @@ import Registry.Service.Audit.AuditService
 import Registry.Service.Package.PackageService
 import Registry.Service.PackageBundle.PackageBundleMapper
 import Shared.Constant.KnowledgeModel
+import Shared.Service.Package.PackageUtil
 
 getPackageBundle :: String -> AppContextM PackageBundleDTO
 getPackageBundle pbId = do
   _ <- auditGetPackageBundle pbId
-  packages <- getSeriesOfPackages pbId
+  resolvedPbId <- resolvePackageId pbId
+  packages <- getSeriesOfPackages resolvedPbId
   let newestPackage = last packages
   let pb =
         PackageBundle

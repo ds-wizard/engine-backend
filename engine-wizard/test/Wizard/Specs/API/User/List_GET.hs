@@ -48,27 +48,27 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin)"
     appContext
-    "/users"
-    (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userNikola, toDTO userIsaac])
+    "/users?sort=uuid,asc"
+    (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/users?page=1&size=1"
-    (Page "users" (PageMetadata 1 3 3 1) [toDTO userNikola])
+    "/users?sort=uuid,asc&page=1&size=1"
+    (Page "users" (PageMetadata 1 3 3 1) [toDTO userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/users?q=te"
-    (Page "users" (PageMetadata 20 2 1 0) [toDTO userAlbert, toDTO userNikola])
+    "/users?sort=uuid,asc&q=te"
+    (Page "users" (PageMetadata 20 2 1 0) [toDTO userNikola, toDTO userAlbert])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/users?sort=name,asc"
+    "/users?sort=first_name,asc"
     (Page "users" (PageMetadata 20 3 1 0) [toDTO userAlbert, toDTO userIsaac, toDTO userNikola])
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/users?sort=name,desc"
+    "/users?sort=first_name,desc"
     (Page "users" (PageMetadata 20 3 1 0) [toDTO userNikola, toDTO userIsaac, toDTO userAlbert])
 
 create_test_200 title appContext reqUrl expDto =

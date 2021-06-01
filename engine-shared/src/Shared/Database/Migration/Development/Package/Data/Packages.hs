@@ -1,6 +1,7 @@
 module Shared.Database.Migration.Development.Package.Data.Packages where
 
 import Control.Lens ((^.))
+import qualified Data.List as L
 import Data.Maybe (fromJust)
 import Data.Time
 
@@ -10,6 +11,7 @@ import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Event
 import Shared.Model.Package.PackageGroup
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Service.Package.PackageMapper
 
@@ -63,9 +65,9 @@ globalPackageDto = toDTO globalPackage
 globalPackageGroup :: PackageGroup
 globalPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = globalPackage ^. pId
+    { _packageGroupOrganizationId = globalPackage ^. organizationId
     , _packageGroupKmId = globalPackage ^. kmId
-    , _packageGroupVersions = [toPackage globalPackage, toPackage globalPackageEmpty]
+    , _packageGroupVersions = L.intercalate "," [globalPackageEmpty ^. version, globalPackage ^. version]
     }
 
 netherlandsPackage :: PackageWithEvents
@@ -109,9 +111,9 @@ netherlandsPackageV2 =
 netherlandsPackageGroup :: PackageGroup
 netherlandsPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = netherlandsPackageV2 ^. pId
+    { _packageGroupOrganizationId = netherlandsPackageV2 ^. organizationId
     , _packageGroupKmId = netherlandsPackageV2 ^. kmId
-    , _packageGroupVersions = [toPackage netherlandsPackage, toPackage netherlandsPackageV2]
+    , _packageGroupVersions = L.intercalate "," [netherlandsPackage ^. version, netherlandsPackageV2 ^. version]
     }
 
 amsterdamPackage :: PackageWithEvents
@@ -202,7 +204,34 @@ germanyPackage =
 germanyPackageGroup :: PackageGroup
 germanyPackageGroup =
   PackageGroup
-    { _packageGroupOrganizationId = germanyPackage ^. pId
+    { _packageGroupOrganizationId = germanyPackage ^. organizationId
     , _packageGroupKmId = germanyPackage ^. kmId
-    , _packageGroupVersions = [toPackage germanyPackage]
+    , _packageGroupVersions = L.intercalate "," [germanyPackage ^. version]
+    }
+
+packagePatternAll :: PackagePattern
+packagePatternAll =
+  PackagePattern
+    { _packagePatternOrgId = Nothing
+    , _packagePatternKmId = Nothing
+    , _packagePatternMinVersion = Nothing
+    , _packagePatternMaxVersion = Nothing
+    }
+
+packagePatternAllEdited :: PackagePattern
+packagePatternAllEdited =
+  PackagePattern
+    { _packagePatternOrgId = Just "global"
+    , _packagePatternKmId = Nothing
+    , _packagePatternMinVersion = Nothing
+    , _packagePatternMaxVersion = Nothing
+    }
+
+packagePatternGlobal :: PackagePattern
+packagePatternGlobal =
+  PackagePattern
+    { _packagePatternOrgId = Just "global"
+    , _packagePatternKmId = Just "core"
+    , _packagePatternMinVersion = Just "1.0.0"
+    , _packagePatternMaxVersion = Just "1.0.0"
     }

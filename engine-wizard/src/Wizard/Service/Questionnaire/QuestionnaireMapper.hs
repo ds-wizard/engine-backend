@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -28,7 +28,9 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireReply
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Model.Report.Report
 import Wizard.Model.User.User
@@ -52,9 +54,25 @@ toDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO package
+    , _questionnaireDTOPackage = SPM.toSimple package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
+    , _questionnaireDTOCreatedAt = qtn ^. createdAt
+    , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
+    }
+
+toDTO' :: QuestionnaireDetail -> QuestionnaireContent -> QuestionnaireReportDTO -> QuestionnaireDTO
+toDTO' qtn qtnCtn report =
+  QuestionnaireDTO
+    { _questionnaireDTOUuid = qtn ^. uuid
+    , _questionnaireDTOName = qtn ^. name
+    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOVisibility = qtn ^. visibility
+    , _questionnaireDTOSharing = qtn ^. sharing
+    , _questionnaireDTOState = qtn ^. state
+    , _questionnaireDTOPackage = qtn ^. package
+    , _questionnaireDTOReport = report
+    , _questionnaireDTOPermissions = qtn ^. permissions
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -75,7 +93,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
-    , _questionnaireDTOPackage = PM.toSimpleDTO . SPM.toPackage $ package
+    , _questionnaireDTOPackage = SPM.toSimple . SPM.toPackage $ package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
@@ -183,25 +201,44 @@ toChangeDTO qtn =
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
     }
 
-toUserPermRecord :: U.UUID -> [String] -> QuestionnairePermRecord
-toUserPermRecord userUuid perms =
+toUserPermRecord :: U.UUID -> U.UUID -> U.UUID -> [String] -> QuestionnairePermRecord
+toUserPermRecord permUuid questionnaireUuid userUuid perms =
   QuestionnairePermRecord
-    {_questionnairePermRecordMember = UserMember {_userMemberUuid = userUuid}, _questionnairePermRecordPerms = perms}
+    { _questionnairePermRecordUuid = permUuid
+    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
+    , _questionnairePermRecordMember = UserMember {_userMemberUuid = userUuid}
+    , _questionnairePermRecordPerms = perms
+    }
 
-toGroupPermRecord :: String -> [String] -> QuestionnairePermRecord
-toGroupPermRecord groupId perms =
+toGroupPermRecord :: U.UUID -> U.UUID -> String -> [String] -> QuestionnairePermRecord
+toGroupPermRecord permUuid questionnaireUuid groupId perms =
   QuestionnairePermRecord
-    {_questionnairePermRecordMember = GroupMember {_groupMemberGId = groupId}, _questionnairePermRecordPerms = perms}
+    { _questionnairePermRecordUuid = permUuid
+    , _questionnairePermRecordQuestionnaireUuid = questionnaireUuid
+    , _questionnairePermRecordMember = GroupMember {_groupMemberGId = groupId}
+    , _questionnairePermRecordPerms = perms
+    }
 
 toUserPermRecordDTO :: QuestionnairePermRecord -> User -> QuestionnairePermRecordDTO
 toUserPermRecordDTO record user =
   QuestionnairePermRecordDTO
-    {_questionnairePermRecordDTOMember = toUserMemberDTO user, _questionnairePermRecordDTOPerms = record ^. perms}
+    { _questionnairePermRecordDTOUuid = record ^. uuid
+    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
+    , _questionnairePermRecordDTOMember = toUserMemberDTO user
+    , _questionnairePermRecordDTOPerms = record ^. perms
+    }
 
 toGroupPermRecordDTO :: QuestionnairePermRecord -> Group -> QuestionnairePermRecordDTO
 toGroupPermRecordDTO record group =
   QuestionnairePermRecordDTO
-    {_questionnairePermRecordDTOMember = toGroupMemberDTO group, _questionnairePermRecordDTOPerms = record ^. perms}
+    { _questionnairePermRecordDTOUuid = record ^. uuid
+    , _questionnairePermRecordDTOQuestionnaireUuid = record ^. questionnaireUuid
+    , _questionnairePermRecordDTOMember = toGroupMemberDTO group
+    , _questionnairePermRecordDTOPerms = record ^. perms
+    }
+
+toSimple :: Questionnaire -> QuestionnaireSimple
+toSimple qtn = QuestionnaireSimple {_questionnaireSimpleUuid = qtn ^. uuid, _questionnaireSimpleName = qtn ^. name}
 
 fromChangeDTO ::
      Questionnaire
@@ -222,42 +259,49 @@ fromChangeDTO qtn dto visibility sharing currentUserUuid now =
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
     , _questionnaireCreatorUuid = qtn ^. creatorUuid
-    , _questionnairePermissions = dto ^. permissions
+    , _questionnairePermissions = fmap sanitizePerms (dto ^. permissions)
     , _questionnaireEvents = qtn ^. events
     , _questionnaireVersions = qtn ^. versions
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
+  where
+    sanitizePerms perm = perm & questionnaireUuid .~ (qtn ^. uuid)
 
 fromQuestionnaireCreateDTO ::
      QuestionnaireCreateDTO
   -> U.UUID
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
+  -> Maybe U.UUID
+  -> String
+  -> UTCTime
+  -> UTCTime
   -> U.UUID
-  -> UTCTime
-  -> UTCTime
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing currentUserUuid qtnCreatedAt qtnUpdatedAt =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
     , _questionnaireVisibility = visibility
     , _questionnaireSharing = sharing
-    , _questionnairePackageId = dto ^. packageId
+    , _questionnairePackageId = pkgId
     , _questionnaireSelectedTagUuids = dto ^. tagUuids
     , _questionnaireTemplateId = dto ^. templateId
     , _questionnaireFormatUuid = dto ^. formatUuid
-    , _questionnaireCreatorUuid = Just currentUserUuid
-    , _questionnairePermissions = [toUserPermRecord currentUserUuid ownerPermissions]
+    , _questionnaireCreatorUuid = mCurrentUserUuid
+    , _questionnairePermissions =
+        case mCurrentUserUuid of
+          Just currentUserUuid -> [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
+          Nothing -> []
     , _questionnaireEvents = []
     , _questionnaireVersions = []
     , _questionnaireCreatedAt = qtnCreatedAt
     , _questionnaireUpdatedAt = qtnUpdatedAt
     }
 
-fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> UserDTO -> UTCTime -> Questionnaire
-fromContentChangeDTO qtn dto currentUser now =
-  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (Just $ currentUser ^. uuid) now) (dto ^. events)
+fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire
+fromContentChangeDTO qtn dto mCurrentUser now =
+  let newTodoEvents = fmap (\e -> fromEventChangeDTO e (mCurrentUser ^? _Just . uuid) now) (dto ^. events)
       updatedEvents = qtn ^. events ++ newTodoEvents
    in qtn {_questionnaireEvents = updatedEvents, _questionnaireUpdatedAt = now}

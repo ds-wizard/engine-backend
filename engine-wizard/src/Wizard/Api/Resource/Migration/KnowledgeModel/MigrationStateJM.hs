@@ -5,24 +5,23 @@ import Data.Aeson
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Api.Resource.Event.EventJM ()
-import Wizard.Api.Resource.Migration.KnowledgeModel.MigrationStateDTO
+import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
-instance ToJSON MigrationStateDTO where
-  toJSON RunningStateDTO = object ["stateType" .= "RunningState"]
-  toJSON (ConflictStateDTO (CorrectorConflictDTO event)) =
-    object ["stateType" .= "ConflictState", "targetEvent" .= event]
-  toJSON ErrorStateDTO = object ["stateType" .= "ErrorState"]
-  toJSON CompletedStateDTO = object ["stateType" .= "CompletedState"]
+instance ToJSON MigrationState where
+  toJSON RunningState = object ["stateType" .= "RunningState"]
+  toJSON (ConflictState (CorrectorConflict event)) = object ["stateType" .= "ConflictState", "targetEvent" .= event]
+  toJSON ErrorState = object ["stateType" .= "ErrorState"]
+  toJSON CompletedState = object ["stateType" .= "CompletedState"]
 
-instance FromJSON MigrationStateDTO where
+instance FromJSON MigrationState where
   parseJSON (Object o) = do
     stateType <- o .: "stateType"
     case stateType of
-      "RunningState" -> return RunningStateDTO
+      "RunningState" -> return RunningState
       "ConflictState" -> do
         event <- o .: "targetEvent"
-        return . ConflictStateDTO . CorrectorConflictDTO $ event
-      "ErrorState" -> return ErrorStateDTO
-      "CompletedState" -> return CompletedStateDTO
+        return . ConflictState . CorrectorConflict $ event
+      "ErrorState" -> return ErrorState
+      "CompletedState" -> return CompletedState
       _ -> fail "Unsupported migration state type"
   parseJSON _ = mzero

@@ -1,25 +1,23 @@
 module Wizard.Database.DAO.Level.LevelDAO where
 
-import Data.Bson
+import GHC.Int
 
-import Shared.Database.DAO.Common
-import Wizard.Database.BSON.Level.Level ()
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.Level.Level ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Level.Level
 
 entityName = "level"
 
-collection = "levels"
-
 findLevels :: AppContextM [Level]
-findLevels = createFindEntitiesFn collection
+findLevels = createFindEntitiesFn entityName
 
-insertLevel :: Level -> AppContextM Value
-insertLevel = createInsertFn collection
+insertLevel :: Level -> AppContextM Int64
+insertLevel = createInsertFn entityName
 
-deleteLevels :: AppContextM ()
-deleteLevels = createDeleteEntitiesFn collection
+deleteLevels :: AppContextM Int64
+deleteLevels = createDeleteEntitiesFn entityName
 
-deleteLevelByUuid :: String -> AppContextM ()
-deleteLevelByUuid = createDeleteEntityByFn collection "uuid"
+deleteLevelByUuid :: String -> AppContextM Int64
+deleteLevelByUuid = createDeleteEntityByFn entityName "uuid"

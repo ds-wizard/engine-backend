@@ -20,6 +20,8 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -68,8 +70,10 @@ create_test_204 title appContext qtn authHeader =
     let expBody = ""
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire10) appContext
     runInContextIO DOC_Migration.runMigration appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
     runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
      -- WHEN: Call API
@@ -128,8 +132,10 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO DOC_Migration.runMigration appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
+    runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (deleteDocumentById (U.toString $ doc1 ^. uuid)) appContext
     runInContextIO (insertDocument (doc1 & questionnaireUuid .~ (qtn ^. uuid))) appContext
      -- WHEN: Call API

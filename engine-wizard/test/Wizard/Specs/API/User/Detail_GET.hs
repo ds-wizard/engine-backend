@@ -75,5 +75,5 @@ test_404 appContext =
     "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     reqHeaders
     reqBody
-    "user"
+    "user_entity"
     "dc9fe65f-748b-47ec-b30c-d255bbac64a0"

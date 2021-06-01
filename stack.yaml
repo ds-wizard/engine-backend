@@ -7,10 +7,7 @@ packages:
 - engine-wizard-metamodel-migrator
 
 extra-deps:
-  - vendor/bson-generic
-  - vendor/mongoDB-migration
   - vendor/postgresql-migration
-  - persistent-mongoDB-2.10.0.0
   - pwstore-fast-2.4.4
   - pretty-terminal-0.1.0.0
   - cron-0.7.0

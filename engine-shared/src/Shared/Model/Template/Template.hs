@@ -5,6 +5,8 @@ import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Package.PackagePattern
+
 data Template =
   Template
     { _templateTId :: String
@@ -16,21 +18,10 @@ data Template =
     , _templateDescription :: String
     , _templateReadme :: String
     , _templateLicense :: String
-    , _templateAllowedPackages :: [TemplateAllowedPackage]
+    , _templateAllowedPackages :: [PackagePattern]
     , _templateRecommendedPackageId :: Maybe String
     , _templateFormats :: [TemplateFormat]
-    , _templateFiles :: [TemplateFile]
-    , _templateAssets :: [TemplateAsset]
     , _templateCreatedAt :: UTCTime
-    }
-  deriving (Show, Eq, Generic)
-
-data TemplateAllowedPackage =
-  TemplateAllowedPackage
-    { _templateAllowedPackageOrgId :: Maybe String
-    , _templateAllowedPackageKmId :: Maybe String
-    , _templateAllowedPackageMinVersion :: Maybe String
-    , _templateAllowedPackageMaxVersion :: Maybe String
     }
   deriving (Show, Eq, Generic)
 
@@ -54,7 +45,8 @@ data TemplateFormatStep =
 
 data TemplateFile =
   TemplateFile
-    { _templateFileUuid :: U.UUID
+    { _templateFileTemplateId :: String
+    , _templateFileUuid :: U.UUID
     , _templateFileFileName :: String
     , _templateFileContent :: String
     }
@@ -62,7 +54,8 @@ data TemplateFile =
 
 data TemplateAsset =
   TemplateAsset
-    { _templateAssetUuid :: U.UUID
+    { _templateAssetTemplateId :: String
+    , _templateAssetUuid :: U.UUID
     , _templateAssetFileName :: String
     , _templateAssetContentType :: String
     }

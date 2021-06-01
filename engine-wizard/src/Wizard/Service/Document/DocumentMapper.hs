@@ -8,12 +8,12 @@ import LensesConfig
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
-import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Document.Document
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Service.Template.TemplateMapper as Template
 
-toDTO :: Document -> Maybe QuestionnaireDTO -> Template -> DocumentDTO
+toDTO :: Document -> Maybe QuestionnaireSimple -> Template -> DocumentDTO
 toDTO doc mQtn tml =
   DocumentDTO
     { _documentDTOUuid = doc ^. uuid
@@ -41,5 +41,7 @@ fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
     , _documentFormatUuid = dto ^. formatUuid
     , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
     , _documentCreatorUuid = mCurrentUser ^? _Just . uuid
+    , _documentRetrievedAt = Nothing
+    , _documentFinishedAt = Nothing
     , _documentCreatedAt = now
     }

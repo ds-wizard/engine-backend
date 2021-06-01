@@ -37,3 +37,37 @@ toFormatDTO format =
     , _templateFormatDTOIcon = format ^. icon
     , _templateFormatDTOColor = format ^. color
     }
+
+toFileDTO :: TemplateFile -> TemplateFileDTO
+toFileDTO file =
+  TemplateFileDTO
+    { _templateFileDTOUuid = file ^. uuid
+    , _templateFileDTOFileName = file ^. fileName
+    , _templateFileDTOContent = file ^. content
+    }
+
+toAssetDTO :: TemplateAsset -> TemplateAssetDTO
+toAssetDTO asset =
+  TemplateAssetDTO
+    { _templateAssetDTOUuid = asset ^. uuid
+    , _templateAssetDTOFileName = asset ^. fileName
+    , _templateAssetDTOContentType = asset ^. contentType
+    }
+
+fromFileDTO :: String -> TemplateFileDTO -> TemplateFile
+fromFileDTO templateId file =
+  TemplateFile
+    { _templateFileTemplateId = templateId
+    , _templateFileUuid = file ^. uuid
+    , _templateFileFileName = file ^. fileName
+    , _templateFileContent = file ^. content
+    }
+
+fromAssetDTO :: String -> TemplateAssetDTO -> TemplateAsset
+fromAssetDTO templateId asset =
+  TemplateAsset
+    { _templateAssetTemplateId = templateId
+    , _templateAssetUuid = asset ^. uuid
+    , _templateAssetFileName = asset ^. fileName
+    , _templateAssetContentType = asset ^. contentType
+    }

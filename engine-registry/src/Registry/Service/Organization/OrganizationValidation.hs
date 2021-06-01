@@ -10,7 +10,7 @@ import Text.Regex (matchRegex, mkRegex)
 
 import LensesConfig
 import Registry.Api.Resource.Organization.OrganizationCreateDTO
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Localization.Messages.Public
 import Registry.Model.Context.AppContext
 import Shared.Model.Error.Error

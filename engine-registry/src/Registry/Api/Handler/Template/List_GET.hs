@@ -30,5 +30,5 @@ list_GET mTokenHeader mOrganizationId mTmlId =
   getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
     runInMaybeAuthService $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "templateId" <$> mTmlId]
+      let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]
       getTemplates queryParams

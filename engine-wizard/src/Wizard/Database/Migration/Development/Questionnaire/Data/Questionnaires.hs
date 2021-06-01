@@ -1,6 +1,6 @@
 module Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import qualified Data.Map.Strict as M
 import Data.Maybe
 import Data.Time
@@ -9,6 +9,8 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Shared.Model.Common.Lens
+import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
@@ -26,6 +28,8 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
+import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
@@ -42,7 +46,7 @@ questionnaire1 =
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
-    , _questionnairePermissions = [albertEditPermRecord]
+    , _questionnairePermissions = [qtn1AlbertEditPermRecord]
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -78,7 +82,13 @@ questionnaire1CtnRevertedDto =
 
 questionnaire1Dto :: QuestionnaireDTO
 questionnaire1Dto =
-  toSimpleDTO questionnaire1 questionnaire1Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+  toSimpleDTO
+    questionnaire1
+    questionnaire1Ctn
+    germanyPackage
+    QSDefault
+    questionnaireReport
+    [qtn1AlbertEditPermRecordDto]
 
 questionnaire1Create :: QuestionnaireCreateDTO
 questionnaire1Create =
@@ -103,6 +113,21 @@ questionnaire1EditedChange =
     , _questionnaireChangeDTOFormatUuid = Nothing
     }
 
+qtn1AlbertEditPermRecord :: QuestionnairePermRecord
+qtn1AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "d41f9211-e318-4cd6-8b44-36a04f4e30bf"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire1 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn1AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn1AlbertEditPermRecordDto = toUserPermRecordDTO qtn1AlbertEditPermRecord userAlbert
+
+questionnaire1Simple :: QuestionnaireSimple
+questionnaire1Simple = toSimple questionnaire1
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 questionnaire2 :: Questionnaire
@@ -117,7 +142,7 @@ questionnaire2 =
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
-    , _questionnairePermissions = [albertEditPermRecord]
+    , _questionnairePermissions = [qtn2AlbertEditPermRecord]
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -153,7 +178,28 @@ questionnaire2ContentEdited = questionnaire2 {_questionnaireEvents = fEventsEdit
 
 questionnaire2Dto :: QuestionnaireDTO
 questionnaire2Dto =
-  toSimpleDTO questionnaire2 questionnaire2Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+  toSimpleDTO
+    questionnaire2
+    questionnaire2Ctn
+    germanyPackage
+    QSDefault
+    questionnaireReport
+    [qtn2AlbertEditPermRecordDto]
+
+qtn2AlbertEditPermRecord :: QuestionnairePermRecord
+qtn2AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "e3989bdc-d176-408a-afb9-b9259ceb0236"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire2 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn2AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn2AlbertEditPermRecordDto = toUserPermRecordDTO qtn2AlbertEditPermRecord userAlbert
+
+questionnaire2Simple :: QuestionnaireSimple
+questionnaire2Simple = toSimple questionnaire2
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -174,25 +220,6 @@ questionnaire3 =
     , _questionnaireVersions = qVersions
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
-    }
-
-questionnaire3Edited :: Questionnaire
-questionnaire3Edited =
-  Questionnaire
-    { _questionnaireUuid = questionnaire3 ^. uuid
-    , _questionnaireName = "EDITED: " ++ (questionnaire3 ^. name)
-    , _questionnaireVisibility = PrivateQuestionnaire
-    , _questionnaireSharing = RestrictedQuestionnaire
-    , _questionnairePackageId = questionnaire3 ^. packageId
-    , _questionnaireSelectedTagUuids = questionnaire3 ^. selectedTagUuids
-    , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
-    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
-    , _questionnaireCreatorUuid = Nothing
-    , _questionnairePermissions = [albertEditPermRecord]
-    , _questionnaireEvents = questionnaire3 ^. events
-    , _questionnaireVersions = questionnaire3 ^. versions
-    , _questionnaireCreatedAt = questionnaire3 ^. createdAt
-    , _questionnaireUpdatedAt = questionnaire3 ^. updatedAt
     }
 
 questionnaire3Ctn :: QuestionnaireContent
@@ -260,10 +287,20 @@ questionnaire5 =
     , _questionnaireName = "My Private Questionnaire SharedView"
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = AnyoneWithLinkViewQuestionnaire
+    , _questionnairePermissions = [qtn5AlbertEditPermRecord]
     }
 
 questionnaire5ContentEdited :: Questionnaire
 questionnaire5ContentEdited = questionnaire5 {_questionnaireEvents = fEventsEdited}
+
+qtn5AlbertEditPermRecord :: QuestionnairePermRecord
+qtn5AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "0ceedc3e-0165-4e7d-ae7c-ac233b7284de"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire5 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -274,6 +311,7 @@ questionnaire6 =
     , _questionnaireName = "My Private Questionnaire SharedEdit"
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = AnyoneWithLinkEditQuestionnaire
+    , _questionnairePermissions = [qtn6AlbertEditPermRecord]
     }
 
 questionnaire6Ctn :: QuestionnaireContent
@@ -286,7 +324,28 @@ questionnaire6ContentEdited = questionnaire6 {_questionnaireEvents = fEventsEdit
 
 questionnaire6Dto :: QuestionnaireDTO
 questionnaire6Dto =
-  toSimpleDTO questionnaire6 questionnaire6Ctn germanyPackage QSDefault questionnaireReport [albertEditPermRecordDto]
+  toSimpleDTO
+    questionnaire6
+    questionnaire6Ctn
+    germanyPackage
+    QSDefault
+    questionnaireReport
+    [qtn6AlbertEditPermRecordDto]
+
+qtn6AlbertEditPermRecord :: QuestionnairePermRecord
+qtn6AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "305bf5d7-75a1-4dc4-85af-c092f5010e82"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire6 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn6AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn6AlbertEditPermRecordDto = toUserPermRecordDTO qtn6AlbertEditPermRecord userAlbert
+
+questionnaire6Simple :: QuestionnaireSimple
+questionnaire6Simple = toSimple questionnaire6
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -297,6 +356,7 @@ questionnaire7 =
     , _questionnaireName = "My VisibleView Questionnaire SharedView"
     , _questionnaireVisibility = VisibleViewQuestionnaire
     , _questionnaireSharing = AnyoneWithLinkViewQuestionnaire
+    , _questionnairePermissions = [qtn7AlbertEditPermRecord]
     }
 
 questionnaire7ContentEdited :: Questionnaire
@@ -307,6 +367,18 @@ questionnaire7Ctn =
   QuestionnaireContent
     {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
 
+qtn7AlbertEditPermRecord :: QuestionnairePermRecord
+qtn7AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "6698fb11-9aac-49a8-867a-a038cff3dded"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire7 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn7AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn7AlbertEditPermRecordDto = toUserPermRecordDTO qtn7AlbertEditPermRecord userAlbert
+
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
 questionnaire8 :: Questionnaire
@@ -316,10 +388,20 @@ questionnaire8 =
     , _questionnaireName = "My VisibleView Questionnaire SharedEdit"
     , _questionnaireVisibility = VisibleViewQuestionnaire
     , _questionnaireSharing = AnyoneWithLinkEditQuestionnaire
+    , _questionnairePermissions = [qtn8AlbertEditPermRecord]
     }
 
 questionnaire8ContentEdited :: Questionnaire
 questionnaire8ContentEdited = questionnaire8 {_questionnaireEvents = fEventsEdited}
+
+qtn8AlbertEditPermRecord :: QuestionnairePermRecord
+qtn8AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "ce6b59d0-c551-4d8e-af0e-40d633238f1d"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire8 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -330,10 +412,20 @@ questionnaire9 =
     , _questionnaireName = "My VisibleEdit Questionnaire SharedView"
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = AnyoneWithLinkViewQuestionnaire
+    , _questionnairePermissions = [qtn9AlbertEditPermRecord]
     }
 
 questionnaire9ContentEdited :: Questionnaire
 questionnaire9ContentEdited = questionnaire9 {_questionnaireEvents = fEventsEdited}
+
+qtn9AlbertEditPermRecord :: QuestionnairePermRecord
+qtn9AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "beb45ac6-a0f4-425b-9d88-fd62ec39baa9"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire9 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -347,12 +439,27 @@ questionnaire10 =
     }
 
 questionnaire10ContentEdited :: Questionnaire
-questionnaire10ContentEdited = questionnaire10 {_questionnaireEvents = fEventsEdited}
+questionnaire10ContentEdited = questionnaire10 {_questionnaireEvents = fEvents ++ [slble_rQ2' & createdBy' .~ Nothing]}
 
 questionnaire10Ctn :: QuestionnaireContent
 questionnaire10Ctn =
   QuestionnaireContent
     {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+
+questionnaire10Edited :: Questionnaire
+questionnaire10Edited = questionnaire10 {_questionnairePermissions = [qtn10NikolaEditPermRecord]}
+
+qtn10NikolaEditPermRecord :: QuestionnairePermRecord
+qtn10NikolaEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "93c0e6c0-5aa0-4feb-b5cd-e54f60bdadbf"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire10 ^. uuid
+    , _questionnairePermRecordMember = nikolaMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn10NikolaEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn10NikolaEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord userNikola
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
@@ -364,15 +471,11 @@ contentChangeDTO = QuestionnaireContentChangeDTO {_questionnaireContentChangeDTO
 bioGroupEditPermRecord :: QuestionnairePermRecord
 bioGroupEditPermRecord =
   QuestionnairePermRecord
-    {_questionnairePermRecordMember = bioGroupMember, _questionnairePermRecordPerms = ownerPermissions}
+    { _questionnairePermRecordUuid = u' "637d5a26-20c8-4704-8cee-c3cacff40ea4"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire1 ^. uuid
+    , _questionnairePermRecordMember = bioGroupMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
 
 bioGroupEditPermRecordDto :: QuestionnairePermRecordDTO
 bioGroupEditPermRecordDto = toGroupPermRecordDTO bioGroupEditPermRecord bioGroup
-
-albertEditPermRecord :: QuestionnairePermRecord
-albertEditPermRecord =
-  QuestionnairePermRecord
-    {_questionnairePermRecordMember = albertMember, _questionnairePermRecordPerms = ownerPermissions}
-
-albertEditPermRecordDto :: QuestionnairePermRecordDTO
-albertEditPermRecordDto = toUserPermRecordDTO albertEditPermRecord userAlbert

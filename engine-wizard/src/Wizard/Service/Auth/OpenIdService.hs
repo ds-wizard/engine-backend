@@ -17,6 +17,7 @@ import LensesConfig
 import Shared.Model.Error.Error
 import Shared.Util.Crypto (generateRandomString)
 import Wizard.Api.Resource.Token.TokenDTO
+import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
@@ -25,16 +26,18 @@ import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 
 createAuthenticationUrl :: String -> Maybe String -> AppContextM ()
-createAuthenticationUrl authId mClientUrl = do
-  state <- liftIO $ generateRandomString 40
-  (service, openIDClient) <- createOpenIDClient authId mClientUrl
-  let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
-  loc <-
-    liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
-  throwError $ FoundError (show loc)
+createAuthenticationUrl authId mClientUrl =
+  runInTransaction $ do
+    state <- liftIO $ generateRandomString 40
+    (service, openIDClient) <- createOpenIDClient authId mClientUrl
+    let params = fmap (\p -> (BS.pack (p ^. name), Just . BS.pack $ (p ^. value))) (service ^. parameteres)
+    loc <-
+      liftIO $ O.getAuthenticationRequestUrl openIDClient [O.openId, O.email, O.profile] (Just . BS.pack $ state) params
+    throwError $ FoundError (show loc)
 
 loginUser :: String -> Maybe String -> Maybe String -> Maybe String -> AppContextM TokenDTO
 loginUser authId mClientUrl mError mCode =
+  runInTransaction $
   case mCode of
     Just code -> do
       httpClientManager <- asks _appContextHttpClientManager

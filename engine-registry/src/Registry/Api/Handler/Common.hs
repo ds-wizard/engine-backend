@@ -7,7 +7,7 @@ import Servant (throwError)
 
 import LensesConfig
 import Registry.Api.Resource.Package.PackageSimpleJM ()
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization

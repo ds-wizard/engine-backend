@@ -19,6 +19,7 @@ import Registry.Model.Statistics.InstanceStatistics
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Event.Answer.AnswerEvent
@@ -34,6 +35,7 @@ import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Package.PackageWithEventsRaw
 import Shared.Model.Template.Template
@@ -214,6 +216,8 @@ makeFields ''PackageWithEvents
 
 makeFields ''PackageWithEventsRaw
 
+makeFields ''PackagePattern
+
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
@@ -222,8 +226,6 @@ makeFields ''InstanceStatistics
 
 -- Model / Template
 makeFields ''Template
-
-makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 
@@ -258,3 +260,6 @@ makeFields ''PackageDetailDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
+
+-- Api / Resource / TemplateBundle
+makeFields ''TemplateBundleDTO

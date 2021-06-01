@@ -2,6 +2,7 @@ module Shared.Model.Template.TemplateJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Package.PackagePatternJM ()
 import Shared.Model.Template.Template
 import Shared.Util.JSON
 
@@ -10,12 +11,6 @@ instance FromJSON Template where
 
 instance ToJSON Template where
   toJSON = simpleToJSON "_template"
-
-instance FromJSON TemplateAllowedPackage where
-  parseJSON = simpleParseJSON "_templateAllowedPackage"
-
-instance ToJSON TemplateAllowedPackage where
-  toJSON = simpleToJSON "_templateAllowedPackage"
 
 instance FromJSON TemplateFormat where
   parseJSON = simpleParseJSON "_templateFormat"

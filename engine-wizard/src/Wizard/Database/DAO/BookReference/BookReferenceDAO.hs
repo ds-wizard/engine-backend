@@ -1,28 +1,26 @@
 module Wizard.Database.DAO.BookReference.BookReferenceDAO where
 
-import Data.Bson
+import GHC.Int
 
-import Shared.Database.DAO.Common
-import Wizard.Database.BSON.BookReference.BookReference ()
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.BookReference.BookReference ()
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 
-entityName = "bookReference"
-
-collection = "bookReferences"
+entityName = "book_reference"
 
 findBookReferences :: AppContextM [BookReference]
-findBookReferences = createFindEntitiesFn collection
+findBookReferences = createFindEntitiesFn entityName
 
 findBookReferenceByShortUuid :: String -> AppContextM BookReference
-findBookReferenceByShortUuid = createFindEntityByFn collection entityName "shortUuid"
+findBookReferenceByShortUuid = createFindEntityByFn entityName "short_uuid"
 
-insertBookReference :: BookReference -> AppContextM Value
-insertBookReference = createInsertFn collection
+insertBookReference :: BookReference -> AppContextM Int64
+insertBookReference = createInsertFn entityName
 
-deleteBookReferences :: AppContextM ()
-deleteBookReferences = createDeleteEntitiesFn collection
+deleteBookReferences :: AppContextM Int64
+deleteBookReferences = createDeleteEntitiesFn entityName
 
-deleteBookReferenceByShortUuid :: String -> AppContextM ()
-deleteBookReferenceByShortUuid = createDeleteEntityByFn collection "shortUuid"
+deleteBookReferenceByShortUuid :: String -> AppContextM Int64
+deleteBookReferenceByShortUuid = createDeleteEntityByFn entityName "short_uuid"

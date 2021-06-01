@@ -10,13 +10,13 @@ import System.IO
 
 import LensesConfig
 import Shared.Bootstrap.Config
-import Shared.Bootstrap.Database
 import Shared.Bootstrap.HttpClient
+import Shared.Bootstrap.Postgres
+import Shared.Bootstrap.S3
 import Shared.Constant.Component
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.DatabaseMigration
 import Wizard.Bootstrap.Localization
-import Wizard.Bootstrap.Messaging
 import Wizard.Bootstrap.MetamodelMigration
 import Wizard.Bootstrap.RegistryClient
 import Wizard.Bootstrap.ServerCache
@@ -37,8 +37,9 @@ runApplication = do
   runLogging (serverConfig ^. logging . level) $ do
     logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
     shutdownFlag <- liftIO newEmptyMVar
-    dbPool <- connectDB (serverConfig ^. logging) (serverConfig ^. database)
-    msgChannel <- connectMQ serverConfig shutdownFlag
+    dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
+    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
+    s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
     httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
     registryClient <- setupRegistryClient serverConfig httpClientManager
     localization <- loadLocalization serverConfig
@@ -48,8 +49,8 @@ runApplication = do
             { _baseContextServerConfig = serverConfig
             , _baseContextLocalization = localization
             , _baseContextBuildInfoConfig = buildInfoConfig
-            , _baseContextPool = dbPool
-            , _baseContextMsgChannel = msgChannel
+            , _baseContextDbPool = dbPool
+            , _baseContextS3Client = s3Client
             , _baseContextHttpClientManager = httpClientManager
             , _baseContextRegistryClient = registryClient
             , _baseContextShutdownFlag = shutdownFlag

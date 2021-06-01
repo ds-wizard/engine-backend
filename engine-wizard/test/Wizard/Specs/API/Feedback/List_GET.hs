@@ -11,6 +11,8 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
+import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Feedback.Data.Feedbacks
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
@@ -55,6 +57,7 @@ test_200 appContext =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO loadFeedbackTokenFromEnv appContext
+    runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO F.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

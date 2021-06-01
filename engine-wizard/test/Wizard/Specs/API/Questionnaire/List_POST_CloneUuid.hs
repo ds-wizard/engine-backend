@@ -72,8 +72,8 @@ create_test_201 title appContext qtn =
     let expDto = qtn & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
-    runInContextIO QTN.runMigration appContext
     runInContextIO TML.runMigration appContext
+    runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -114,6 +114,7 @@ create_test_403 title appContext qtn qtnEdited reason =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

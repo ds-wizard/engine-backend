@@ -14,6 +14,7 @@ migrateDatabase :: Pool Connection -> [MigrationDefinition] -> (String -> Loggin
 migrateDatabase dbPool migrationDefinitions logInfo = do
   logInfo "started"
   logInfo "ensure migration table in DB: started"
+  startTransaction dbPool
   ensureMigrationTable dbPool
   logInfo "ensure migration table in DB: loaded"
   logInfo "loading migrations from DB: started"
@@ -35,6 +36,13 @@ migrateDatabase dbPool migrationDefinitions logInfo = do
           else do
             logInfo "no new migration to apply"
             return Nothing
+  case result of
+    Just error -> do
+      rollbackTransaction dbPool
+      logInfo "rollback migrations"
+    Nothing -> do
+      commitTransaction dbPool
+      logInfo "commit migrations"
   logInfo "ended"
   return result
   where

@@ -2,6 +2,7 @@ module Main where
 
 import Test.Hspec
 
+import Shared.Specs.Model.Common.PageSpec
 import Shared.Specs.Model.KnowledgeModel.KnowledgeModelAccessorsSpec
 import Shared.Specs.Util.ListSpec
 import Shared.Specs.Util.MathSpec
@@ -12,7 +13,9 @@ main :: IO ()
 main =
   hspec $
   describe "UNIT TESTING" $ do
-    describe "MODEL" knowledgeModelAccessorsSpec
+    describe "MODEL" $ do
+      knowledgeModelAccessorsSpec
+      pageSpec
     describe "UTIL" $ do
       mathSpec
       listSpec

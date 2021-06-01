@@ -10,12 +10,12 @@ import Test.Hspec
 import LensesConfig
 import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
+import Shared.S3.Common
 import Shared.Service.Config.BuildInfoConfigService
 import Wizard.Bootstrap.ServerCache
 import Wizard.Constant.Resource
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Integration.Http.Common.ServantClient
-import Wizard.Messaging.Connection
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
@@ -60,14 +60,16 @@ import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Sanitiza
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
 import qualified Wizard.Specs.Service.Migration.Questionnaire.MoveSanitizatorSpec as QTN_MoveSanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.SanitizatorSpec as QTN_SanitizatorSpec
+import Wizard.Specs.Service.Package.PackageUtilSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
+import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
+import Wizard.Specs.Service.Template.TemplateUtilSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
-import Wizard.Specs.Util.TemplateUtilSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
 import Wizard.TestMigration
@@ -90,10 +92,10 @@ prepareWebApp runCallback =
       putStrLn $ "ENVIRONMENT: set to " `mappend` show (serverConfig ^. general . environment)
       dbPool <- createDatabaseConnectionPool (serverConfig ^. database)
       putStrLn "DATABASE: connected"
-      msgChannel <- createMessagingChannel serverConfig shutdownFlag
-      putStrLn "MESSAGING: connected"
       httpClientManager <- createHttpClientManager (serverConfig ^. logging)
       putStrLn "HTTP_CLIENT: created"
+      s3Client <- createS3Client (serverConfig ^. s3) httpClientManager
+      putStrLn "S3_CLIENT: created"
       registryClient <- createRegistryClient serverConfig httpClientManager
       putStrLn "REGISTRY_CLIENT: created"
       cache <- createServerCache
@@ -103,8 +105,8 @@ prepareWebApp runCallback =
               { _appContextServerConfig = serverConfig
               , _appContextLocalization = M.empty
               , _appContextBuildInfoConfig = buildInfoConfig
-              , _appContextPool = dbPool
-              , _appContextMsgChannel = msgChannel
+              , _appContextDbPool = dbPool
+              , _appContextS3Client = s3Client
               , _appContextHttpClientManager = httpClientManager
               , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
@@ -112,6 +114,9 @@ prepareWebApp runCallback =
               , _appContextShutdownFlag = shutdownFlag
               , _appContextCache = cache
               }
+      putStrLn "DB: start creating schema"
+      buildSchema appContext
+      putStrLn "DB: schema created"
       runWebserver appContext (runCallback appContext)
 
 main :: IO ()
@@ -138,9 +143,10 @@ main =
                describe "Questionnaire" $ describe "Migrator" $ do
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
+             describe "Package" packageUtilSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
-           describe "UTIL" templateUtilSpec
+             describe "Template" templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              bookReferenceAPI appContext
@@ -178,5 +184,6 @@ main =
              questionnaireAclSpec appContext
              questionnaireCollaborationAclSpec appContext
              questionnaireCompilerServiceSpec appContext
+             questionnaireServiceSpec appContext
              userServiceIntegrationSpec appContext
            describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

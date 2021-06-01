@@ -1,6 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
@@ -18,6 +19,7 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -53,12 +55,16 @@ enhanceQuestionnaire qtn = do
   qtnCtn <- compileQuestionnaire qtn
   return $ toDTO qtn qtnCtn pkg state report permissionDtos
 
+enhanceQuestionnaireDetail :: QuestionnaireDetail -> AppContextM QuestionnaireDTO
+enhanceQuestionnaireDetail qtnDetail = do
+  report <- getQuestionnaireReport qtnDetail
+  qtnCtn <- compileQuestionnaire qtnDetail
+  return $ toDTO' qtnDetail qtnCtn report
+
 enhanceQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM QuestionnairePermRecordDTO
 enhanceQuestionnairePermRecord record =
   case record ^. member of
-    UserMember {_userMemberUuid = userUuid}
-      -- TODO return from cache
-     -> do
+    UserMember {_userMemberUuid = userUuid} -> do
       user <- findUserById (U.toString userUuid)
       return $ toUserPermRecordDTO record user
     GroupMember {_groupMemberGId = groupId} -> do
@@ -66,9 +72,7 @@ enhanceQuestionnairePermRecord record =
       return $ toGroupPermRecordDTO record group
 
 enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEventDTO
-enhanceQuestionnaireEvent event
-  -- TODO return from cache
- = do
+enhanceQuestionnaireEvent event = do
   mUser <-
     case event ^. createdBy' of
       Just userUuid -> Just <$> findUserById (U.toString userUuid)
@@ -76,9 +80,7 @@ enhanceQuestionnaireEvent event
   return $ toEventDTO event mUser
 
 enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
-enhanceQuestionnaireVersion version
-  -- TODO return from cache
- = do
+enhanceQuestionnaireVersion version = do
   user <- findUserById (U.toString $ version ^. createdBy)
   return $ toVersionDTO version user
 
@@ -93,7 +95,14 @@ getQuestionnaireState qtnUuid pkgId = do
         then return QSDefault
         else return QSOutdated
 
-getQuestionnaireReport :: Questionnaire -> AppContextM QuestionnaireReportDTO
+getQuestionnaireReport ::
+     ( HasEvents questionnaire [QuestionnaireEvent]
+     , HasUuid questionnaire U.UUID
+     , HasPackageId questionnaire String
+     , HasSelectedTagUuids questionnaire [U.UUID]
+     )
+  => questionnaire
+  -> AppContextM QuestionnaireReportDTO
 getQuestionnaireReport qtn = do
   qtnCtn <- compileQuestionnaire qtn
   mIndications <- getFromCache qtn qtnCtn
@@ -109,3 +118,12 @@ getQuestionnaireReport qtn = do
       qtnCtn <- compileQuestionnaire qtn
       addToCache qtn qtnCtn indications
       return . toQuestionnaireReportDTO $ indications
+
+skipIfAssigningProject :: Questionnaire -> AppContextM () -> AppContextM ()
+skipIfAssigningProject qtn action = do
+  appConfig <- getAppConfig
+  let questionnaireSharingEnabled = appConfig ^. questionnaire . questionnaireSharing . enabled
+  let questionnaireSharingAnonymousEnabled = appConfig ^. questionnaire . questionnaireSharing . anonymousEnabled
+  when
+    (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn ^. permissions))
+    action

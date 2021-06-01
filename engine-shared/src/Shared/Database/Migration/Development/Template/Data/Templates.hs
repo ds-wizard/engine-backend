@@ -5,13 +5,14 @@ import qualified Data.ByteString.Char8 as BS
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromJust)
 import Data.Time
-import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.Template
+import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (css, html)
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
+import Shared.Util.Uuid
 
 commonWizardTemplate :: Template
 commonWizardTemplate =
@@ -25,7 +26,7 @@ commonWizardTemplate =
     , _templateDescription = "Exported questions and answers from a questionnaire"
     , _templateReadme = "# Default Template"
     , _templateLicense = "Apache-2.0"
-    , _templateAllowedPackages = [templateAllowedPackage]
+    , _templateAllowedPackages = [packagePatternAll]
     , _templateRecommendedPackageId = Nothing
     , _templateFormats =
         [ templateFormatJson
@@ -36,8 +37,6 @@ commonWizardTemplate =
         , templateFormatOdt
         , templateFormatMarkdown
         ]
-    , _templateFiles = [templateFileDefaultHtml, templateFileDefaultCss]
-    , _templateAssets = [templateAssetLogo]
     , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -46,7 +45,7 @@ commonWizardTemplateEdited =
   commonWizardTemplate
     { _templateName = "EDITED: " ++ commonWizardTemplate ^. name
     , _templateDescription = "EDITED: " ++ commonWizardTemplate ^. description
-    , _templateAllowedPackages = [templateAllowedPackageEdited]
+    , _templateAllowedPackages = [packagePatternAllEdited]
     }
 
 commonWizardTemplateGroup :: TemplateGroup
@@ -57,28 +56,10 @@ commonWizardTemplateGroup =
     , _templateGroupVersions = [commonWizardTemplate]
     }
 
-templateAllowedPackage :: TemplateAllowedPackage
-templateAllowedPackage =
-  TemplateAllowedPackage
-    { _templateAllowedPackageOrgId = Nothing
-    , _templateAllowedPackageKmId = Nothing
-    , _templateAllowedPackageMinVersion = Nothing
-    , _templateAllowedPackageMaxVersion = Nothing
-    }
-
-templateAllowedPackageEdited :: TemplateAllowedPackage
-templateAllowedPackageEdited =
-  TemplateAllowedPackage
-    { _templateAllowedPackageOrgId = Just "global"
-    , _templateAllowedPackageKmId = Nothing
-    , _templateAllowedPackageMinVersion = Nothing
-    , _templateAllowedPackageMaxVersion = Nothing
-    }
-
 templateFormatJson :: TemplateFormat
 templateFormatJson =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2"
+    { _templateFormatUuid = u' "d3e98eb6-344d-481f-8e37-6a67b6cd1ad2"
     , _templateFormatName = "JSON Data"
     , _templateFormatShortName = "json"
     , _templateFormatIcon = "far fa-file"
@@ -92,7 +73,7 @@ templateFormatJsonStep = TemplateFormatStep {_templateFormatStepName = "json", _
 templateFormatHtml :: TemplateFormat
 templateFormatHtml =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "a9293d08-59a4-4e6b-ae62-7a6a570b031c"
+    { _templateFormatUuid = u' "a9293d08-59a4-4e6b-ae62-7a6a570b031c"
     , _templateFormatName = "HTML Document"
     , _templateFormatShortName = "html"
     , _templateFormatIcon = "far fa-file-code"
@@ -109,7 +90,7 @@ templateFormatHtml =
 templateFormatPdf :: TemplateFormat
 templateFormatPdf =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "68c26e34-5e77-4e15-9bf7-06ff92582257"
+    { _templateFormatUuid = u' "68c26e34-5e77-4e15-9bf7-06ff92582257"
     , _templateFormatName = "PDF Document"
     , _templateFormatShortName = "pdf"
     , _templateFormatIcon = "far fa-file-pdf"
@@ -127,7 +108,7 @@ templateFormatPdf =
 templateFormatLatex :: TemplateFormat
 templateFormatLatex =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "dbc94579-40d7-42c3-975c-71e30d07778b"
+    { _templateFormatUuid = u' "dbc94579-40d7-42c3-975c-71e30d07778b"
     , _templateFormatName = "LaTeX Document"
     , _templateFormatShortName = "latex"
     , _templateFormatIcon = "far fa-file-alt"
@@ -148,7 +129,7 @@ templateFormatLatex =
 templateFormatDocx :: TemplateFormat
 templateFormatDocx =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "f4bd941a-dfbe-4226-a1fc-200fb5269311"
+    { _templateFormatUuid = u' "f4bd941a-dfbe-4226-a1fc-200fb5269311"
     , _templateFormatName = "MS Word Document"
     , _templateFormatShortName = "docx"
     , _templateFormatIcon = "far fa-file-word"
@@ -169,7 +150,7 @@ templateFormatDocx =
 templateFormatOdt :: TemplateFormat
 templateFormatOdt =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
+    { _templateFormatUuid = u' "15e53172-bbae-4a0c-a4d9-8f3ddf60e7b6"
     , _templateFormatName = "OpenDocument Text"
     , _templateFormatShortName = "odt"
     , _templateFormatIcon = "far fa-file-alt"
@@ -190,7 +171,7 @@ templateFormatOdt =
 templateFormatMarkdown :: TemplateFormat
 templateFormatMarkdown =
   TemplateFormat
-    { _templateFormatUuid = fromJust $ U.fromString "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
+    { _templateFormatUuid = u' "f0533e48-f4c5-4af2-b2c1-5a47d4a247c0"
     , _templateFormatName = "Markdown Document"
     , _templateFormatShortName = "md"
     , _templateFormatIcon = "far fa-file-alt"
@@ -211,23 +192,21 @@ templateFormatMarkdown =
 templateFileDefaultHtml :: TemplateFile
 templateFileDefaultHtml =
   TemplateFile
-    { _templateFileUuid = fromJust $ U.fromString "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
+    { _templateFileTemplateId = commonWizardTemplate ^. tId
+    , _templateFileUuid = u' "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     , _templateFileFileName = "default.html.j2"
     , _templateFileContent = html
     }
 
 templateFileDefaultHtmlEdited :: TemplateFile
 templateFileDefaultHtmlEdited =
-  TemplateFile
-    { _templateFileUuid = templateFileDefaultHtml ^. uuid
-    , _templateFileFileName = "default-edited.html.j2"
-    , _templateFileContent = "some new content"
-    }
+  templateFileDefaultHtml {_templateFileFileName = "default-edited.html.j2", _templateFileContent = "some new content"}
 
 templateFileDefaultCss :: TemplateFile
 templateFileDefaultCss =
   TemplateFile
-    { _templateFileUuid = fromJust $ U.fromString "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
+    { _templateFileTemplateId = commonWizardTemplate ^. tId
+    , _templateFileUuid = u' "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
     , _templateFileFileName = "default.css"
     , _templateFileContent = css
     }
@@ -235,7 +214,8 @@ templateFileDefaultCss =
 templateFileNewFile :: TemplateFile
 templateFileNewFile =
   TemplateFile
-    { _templateFileUuid = fromJust $ U.fromString "63279989-d9ac-49da-81d3-fc8a56a8aa62"
+    { _templateFileTemplateId = commonWizardTemplate ^. tId
+    , _templateFileUuid = u' "63279989-d9ac-49da-81d3-fc8a56a8aa62"
     , _templateFileFileName = "new-file.txt"
     , _templateFileContent = "some content"
     }
@@ -243,7 +223,8 @@ templateFileNewFile =
 templateAssetLogo :: TemplateAsset
 templateAssetLogo =
   TemplateAsset
-    { _templateAssetUuid = fromJust $ U.fromString "6c367648-9b60-4307-93b2-0851938adee0"
+    { _templateAssetTemplateId = commonWizardTemplate ^. tId
+    , _templateAssetUuid = u' "6c367648-9b60-4307-93b2-0851938adee0"
     , _templateAssetFileName = "text.txt"
     , _templateAssetContentType = "text/plain"
     }
@@ -270,7 +251,7 @@ anotherWizardTemplate =
     , _templateDescription = "This is a another template"
     , _templateReadme = "# Another Template"
     , _templateLicense = "Apache-2.0"
-    , _templateAllowedPackages = [templateAllowedPackage]
+    , _templateAllowedPackages = [packagePatternAll]
     , _templateRecommendedPackageId = Nothing
     , _templateFormats =
         [ templateFormatJson
@@ -281,7 +262,23 @@ anotherWizardTemplate =
         , templateFormatOdt
         , templateFormatMarkdown
         ]
-    , _templateFiles = [templateFileDefaultHtml, templateFileDefaultCss]
-    , _templateAssets = [templateAssetLogo]
     , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+
+anotherFileHtml :: TemplateFile
+anotherFileHtml =
+  TemplateFile
+    { _templateFileTemplateId = anotherWizardTemplate ^. tId
+    , _templateFileUuid = u' "7444f722-4972-4bf8-86d8-d4f01875572d"
+    , _templateFileFileName = "default.html.j2"
+    , _templateFileContent = html
+    }
+
+anotherFileCss :: TemplateFile
+anotherFileCss =
+  TemplateFile
+    { _templateFileTemplateId = anotherWizardTemplate ^. tId
+    , _templateFileUuid = u' "ac60ddb8-4561-4d4b-8d85-c8446bc96b56"
+    , _templateFileFileName = "default.css"
+    , _templateFileContent = css
     }

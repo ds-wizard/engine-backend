@@ -1,5 +1,5 @@
 name: engine-registry
-version: '2.14.0'
+version: '3.0.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -23,8 +23,6 @@ library:
   dependencies:
   - base
   - aeson
-  - bson
-  - bson-generic
   - bytestring
   - case-insensitive
   - conduit
@@ -105,8 +103,6 @@ tests:
     dependencies:
     - base
     - aeson
-    - bson
-    - bson-generic
     - bytestring
     - case-insensitive
     - containers
@@ -119,7 +115,6 @@ tests:
     - monad-control
     - monad-logger
     - network
-    - persistent
     - pretty-simple
     - pwstore-fast
     - random

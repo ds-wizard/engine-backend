@@ -16,6 +16,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.Migration.Development.Organization.Data.Organizations
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Service.Package.PackageMapper
+import Shared.Util.Coordinate
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import Wizard.Model.Context.AppContext
@@ -32,7 +33,6 @@ detail_get :: AppContext -> SpecWith ((), Application)
 detail_get appContext =
   describe "GET /packages/{pkgId}" $ do
     test_200 appContext
-    test_401 appContext
     test_403 appContext
     test_404 appContext
 
@@ -41,19 +41,36 @@ detail_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrl = BS.pack $ "/packages/" ++ (globalPackage ^. pId)
+reqUrlT pkgId = BS.pack $ "/packages/" ++ pkgId
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
 reqBody = ""
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (with token)" appContext [reqAuthHeader] (globalPackage ^. pId)
+  create_test_200
+    "HTTP 200 OK (with token)"
+    appContext
+    [reqAuthHeader]
+    (buildCoordinate (globalPackage ^. organizationId) (globalPackage ^. kmId) "latest")
+  create_test_200 "HTTP 200 OK (without token)" appContext [] (globalPackage ^. pId)
+  create_test_200
+    "HTTP 200 OK latest (without token)"
+    appContext
+    []
+    (buildCoordinate (globalPackage ^. organizationId) (globalPackage ^. kmId) "latest")
+
+create_test_200 title appContext authHeader pkgId =
+  it title $
+    -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeader
+    let reqUrl = reqUrlT pkgId
+    -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
     let expDto =
@@ -76,12 +93,8 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "PM_READ_PERM"
+test_403 appContext =
+  createNoPermissionTest appContext reqMethod (reqUrlT (netherlandsPackage ^. pId)) [reqCtHeader] reqBody "PM_READ_PERM"
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -90,7 +103,7 @@ test_404 appContext =
   createNotFoundTest
     reqMethod
     "/packages/global:non-existing-package:1.0.0"
-    reqHeaders
+    (reqHeadersT [reqAuthHeader])
     reqBody
     "package"
     "global:non-existing-package:1.0.0"

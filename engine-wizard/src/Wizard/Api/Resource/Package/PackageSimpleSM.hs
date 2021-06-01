@@ -4,6 +4,7 @@ import Data.Swagger
 
 import Shared.Api.Resource.Organization.OrganizationSimpleSM ()
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Model.Package.PackageSimple
 import Shared.Service.Package.PackageMapper
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleDTO
@@ -13,3 +14,6 @@ import Wizard.Service.Package.PackageMapper
 
 instance ToSchema PackageSimpleDTO where
   declareNamedSchema = simpleToSchema (toSimpleDTO (toPackage globalPackage))
+
+instance ToSchema PackageSimple where
+  declareNamedSchema = simpleToSchema' "_packageSimple" (toSimple . toPackage $ globalPackage)

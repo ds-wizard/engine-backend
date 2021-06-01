@@ -68,21 +68,21 @@ test_200 appContext = do
     questionnaire1
     questionnaire1Ctn
     [reqAuthHeader]
-    [albertEditPermRecordDto]
+    [qtn1AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
     questionnaire2Ctn
     [reqNonAdminAuthHeader]
-    [albertEditPermRecordDto]
+    [qtn2AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
     questionnaire7Ctn
     []
-    [albertEditPermRecordDto]
+    [qtn7AlbertEditPermRecordDto]
   create_test_200
     "HTTP 200 OK (Non-Owner, VisibleEdit)"
     appContext
@@ -118,10 +118,10 @@ create_test_200 title appContext qtn qtnCtn authHeader permissions =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire7) appContext
     runInContextIO (insertQuestionnaire questionnaire10) appContext
-    runInContextIO TML.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -165,6 +165,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

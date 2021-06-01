@@ -4,6 +4,7 @@ module Wizard.Specs.API.Document.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -88,9 +89,10 @@ create_test_201 title appContext qtn authHeader =
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
-    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -123,8 +125,8 @@ test_400 appContext = do
     let expBody = encode expDto
       -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO (updateTemplateById (commonWizardTemplate & metamodelVersion .~ 1)) appContext
     runInContextIO deleteDocuments appContext
       -- WHEN: Call API
@@ -185,7 +187,9 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN_Migration.runMigration appContext
+    runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
     runInContextIO (insertQuestionnaire qtn) appContext
     runInContextIO deleteDocuments appContext
      -- WHEN: Call API

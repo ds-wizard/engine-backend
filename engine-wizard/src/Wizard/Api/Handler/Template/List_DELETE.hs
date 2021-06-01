@@ -21,6 +21,6 @@ list_DELETE mTokenHeader mOrganizationId mTemplateId =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "templateId" <$> mTemplateId]
+      let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTemplateId]
       deleteTemplatesByQueryParams queryParams
       return NoContent

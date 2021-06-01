@@ -4,19 +4,7 @@ general:
   secret:
 
 database:
-  host: mongo
-  databaseName: engine-wizard
-  port: 27017
-  authEnabled: false
-  username:
-  password:
-
-messaging:
-  host: localhost
-  port: 5672
-  username: guest
-  password: guest
-  vhost: /
+  connectionString: postgresql://postgres:postgres@postgres:5432/engine-wizard
 
 mail:
   enabled: false

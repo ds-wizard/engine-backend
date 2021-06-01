@@ -17,7 +17,9 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
@@ -32,7 +34,6 @@ list_post appContext =
   describe "POST /questionnaires" $ do
     test_201 appContext
     test_400 appContext
-    test_401 appContext
     test_403 appContext
 
 -- ----------------------------------------------------
@@ -42,26 +43,44 @@ reqMethod = methodPost
 
 reqUrl = "/questionnaires"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDto = questionnaire1Create
+reqDtoT qtn = qtn
 
-reqBody = encode reqDto
+reqBodyT qtn = encode (reqDtoT qtn)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext =
-  it "HTTP 201 CREATED" $
-     -- GIVEN: Prepare expectation
+test_201 appContext = do
+  create_test_201 appContext "HTTP 201 CREATED (with token)" False questionnaire1Create [reqAuthHeader]
+  create_test_201
+    appContext
+    "HTTP 201 CREATED (without token)"
+    True
+    (questionnaire1Create & sharing .~ AnyoneWithLinkEditQuestionnaire)
+    []
+
+create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
+  it title $
+     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeader
+    let reqBody = reqBodyT qtn
+    -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = questionnaire1Dto & level .~ 1
+    let expDto =
+          if anonymousSharingEnabled
+            then (level .~ 1) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
+            else questionnaire1Dto & level .~ 1
     let expBody = encode expDto
      -- AND: Run migrations
+    runInContextIO TML.runMigration appContext
     runInContextIO (insertPackage germanyPackage) appContext
     runInContextIO deleteQuestionnaires appContext
+    -- AND: Enabled anonymous sharing
+    updateAnonymousQuestionnaireSharing appContext anonymousSharingEnabled
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
@@ -70,9 +89,22 @@ test_201 appContext =
     assertResHeaders headers expHeaders
     compareQuestionnaireCreateDtos resBody expDto
     -- AND: Find a result in DB
-    assertExistenceOfQuestionnaireInDB
-      appContext
-      ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) $ questionnaire1)
+    if anonymousSharingEnabled
+      then assertExistenceOfQuestionnaireInDB
+             appContext
+             ((uuid .~ (resBody ^. uuid)) .
+              (sharing .~ AnyoneWithLinkEditQuestionnaire) .
+              (events .~ []) . (versions .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
+              questionnaire1)
+      else do
+        let aPermissions =
+              [ (uuid .~ head (resBody ^. permissions) ^. uuid) . (questionnaireUuid .~ resBody ^. uuid) $
+                head (questionnaire1 ^. permissions)
+              ]
+        assertExistenceOfQuestionnaireInDB
+          appContext
+          ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) . (permissions .~ aPermissions) $
+           questionnaire1)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -82,9 +114,5 @@ test_400 appContext = createInvalidJsonTest reqMethod reqUrl "packageId"
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] reqBody "QTN_PERM"
+test_403 appContext =
+  createNoPermissionTest appContext reqMethod reqUrl [reqCtHeader] (reqBodyT questionnaire1Create) "QTN_PERM"

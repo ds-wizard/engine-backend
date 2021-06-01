@@ -9,11 +9,13 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import Wizard.Database.DAO.Common
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Context.AppContext
 
 getActionKeyByHash :: Maybe String -> AppContextM ActionKey
 getActionKeyByHash mHash =
+  runInTransaction $
   case mHash of
     Just hash -> do
       mActionKey <- findActionKeyByHash' hash
@@ -23,17 +25,18 @@ getActionKeyByHash mHash =
     Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
 
 createActionKey :: U.UUID -> ActionKeyType -> AppContextM ActionKey
-createActionKey userId actionType = do
-  uuid <- liftIO generateUuid
-  hash <- liftIO generateUuid
-  now <- liftIO getCurrentTime
-  let actionKey =
-        ActionKey
-          { _actionKeyUuid = uuid
-          , _actionKeyUserId = userId
-          , _actionKeyAType = actionType
-          , _actionKeyHash = U.toString hash
-          , _actionKeyCreatedAt = now
-          }
-  insertActionKey actionKey
-  return actionKey
+createActionKey userId actionType =
+  runInTransaction $ do
+    uuid <- liftIO generateUuid
+    hash <- liftIO generateUuid
+    now <- liftIO getCurrentTime
+    let actionKey =
+          ActionKey
+            { _actionKeyUuid = uuid
+            , _actionKeyUserId = userId
+            , _actionKeyAType = actionType
+            , _actionKeyHash = U.toString hash
+            , _actionKeyCreatedAt = now
+            }
+    insertActionKey actionKey
+    return actionKey

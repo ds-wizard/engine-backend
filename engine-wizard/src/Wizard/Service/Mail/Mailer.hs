@@ -37,6 +37,7 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Constant.Mailer
+import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Acl.Acl
@@ -52,44 +53,48 @@ import Wizard.Util.Logger
 import Wizard.Util.Template (loadAndRender)
 
 sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM ()
-sendRegistrationConfirmationMail user hash = do
-  serverConfig <- asks _appContextServerConfig
-  appConfig <- getAppConfig
-  let clientAddress = serverConfig ^. general . clientUrl
-      activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
-      additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-      context = makeMailContext serverConfig appConfig user subject additionals
-      to = [user ^. email]
-  composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
+sendRegistrationConfirmationMail user hash =
+  runInTransaction $ do
+    serverConfig <- asks _appContextServerConfig
+    appConfig <- getAppConfig
+    let clientAddress = serverConfig ^. general . clientUrl
+        activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
+        mailName = serverConfig ^. mail . name
+        subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
+        additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
+        context = makeMailContext serverConfig appConfig user subject additionals
+        to = [user ^. email]
+    composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
 sendRegistrationCreatedAnalyticsMail :: UserDTO -> AppContextM ()
-sendRegistrationCreatedAnalyticsMail user = do
-  serverConfig <- asks _appContextServerConfig
-  appConfig <- getAppConfig
-  let analyticsAddress = serverConfig ^. analytics . email
-      mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_CREATED_ANALYTICS
-      context = makeMailContext serverConfig appConfig user subject []
-      to = [analyticsAddress]
-  composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
+sendRegistrationCreatedAnalyticsMail user =
+  runInTransaction $ do
+    serverConfig <- asks _appContextServerConfig
+    appConfig <- getAppConfig
+    let analyticsAddress = serverConfig ^. analytics . email
+        mailName = serverConfig ^. mail . name
+        subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_CREATED_ANALYTICS
+        context = makeMailContext serverConfig appConfig user subject []
+        to = [analyticsAddress]
+    composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
 sendResetPasswordMail :: UserDTO -> String -> AppContextM ()
-sendResetPasswordMail user hash = do
-  serverConfig <- asks _appContextServerConfig
-  appConfig <- getAppConfig
-  let clientAddress = serverConfig ^. general . clientUrl
-      resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
-      mailName = serverConfig ^. mail . name
-      subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_RESET_PASSWORD
-      additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
-      context = makeMailContext serverConfig appConfig user subject additionals
-      to = [user ^. email]
-  composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
+sendResetPasswordMail user hash =
+  runInTransaction $ do
+    serverConfig <- asks _appContextServerConfig
+    appConfig <- getAppConfig
+    let clientAddress = serverConfig ^. general . clientUrl
+        resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
+        mailName = serverConfig ^. mail . name
+        subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_RESET_PASSWORD
+        additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
+        context = makeMailContext serverConfig appConfig user subject additionals
+        to = [user ^. email]
+    composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
 sendQuestionnaireInvitationMail :: Questionnaire -> Questionnaire -> AppContextM ()
-sendQuestionnaireInvitationMail oldQtn newQtn = traverse_ sendEmail (filter filterPermissions (newQtn ^. permissions))
+sendQuestionnaireInvitationMail oldQtn newQtn =
+  runInTransaction $ traverse_ sendEmail (filter filterPermissions (newQtn ^. permissions))
   where
     filterPermissions :: QuestionnairePermRecord -> Bool
     filterPermissions perm = perm ^. member `notElem` (oldQtn ^.. permissions . traverse . member)

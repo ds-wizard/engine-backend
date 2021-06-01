@@ -33,6 +33,7 @@ import qualified Wizard.Database.Migration.Development.User.UserMigration as U_M
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Document.DocumentMapper
 
 import SharedTest.Specs.API.Common
@@ -54,7 +55,7 @@ detail_documents_get appContext =
 -- ----------------------------------------------------
 reqMethod = methodGet
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/documents"
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/documents?sort=name,asc"
 
 reqHeadersT authHeader = authHeader
 
@@ -76,11 +77,11 @@ create_test_200 title appContext authHeader =
     let reqHeaders = reqHeadersT authHeader
     -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
-    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
+    runInContextIO QTN_Migration.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire6) appContext
     runInContextIO deleteDocuments appContext
-    runInContextIO deleteDocumentContents appContext
+    runInContextIO removeDocumentContents appContext
     let updateQtn = questionnaireUuid .~ (questionnaire6 ^. uuid)
     let updateOwner = creatorUuid ?~ (userIsaac ^. uuid)
     runInContextIO (insertDocument (updateQtn doc1)) appContext
@@ -92,7 +93,7 @@ create_test_200 title appContext authHeader =
           Page
             "documents"
             (PageMetadata 20 2 1 0)
-            [toDTO doc1 (Just questionnaire6Dto), toDTO (updateOwner doc2) (Just questionnaire6Dto)]
+            [toDTO doc1 (Just questionnaire6Simple), toDTO (updateOwner doc2) (Just questionnaire6Simple)]
     let expBody = encode (fmap (\x -> x commonWizardTemplate) expDto)
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -137,6 +138,7 @@ create_test_403 title appContext qtn authHeader errorMessage =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN.runMigration appContext
     runInContextIO MTR.runMigration appContext
      -- WHEN: Call API

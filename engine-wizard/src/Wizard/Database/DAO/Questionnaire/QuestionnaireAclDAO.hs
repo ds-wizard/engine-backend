@@ -1,0 +1,49 @@
+module Wizard.Database.DAO.Questionnaire.QuestionnaireAclDAO where
+
+import Data.String
+import Database.PostgreSQL.Simple
+import GHC.Int
+
+import Wizard.Database.DAO.Common
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireAcl ()
+import Wizard.Model.Acl.Acl
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
+import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Util.Logger
+
+entityName_user = "questionnaire_acl_user"
+
+entityName_group = "questionnaire_acl_group"
+
+findQuestionnairePermRecordsFiltered :: [(String, String)] -> AppContextM [QuestionnairePermRecord]
+findQuestionnairePermRecordsFiltered queryParams = do
+  let sql =
+        f'
+          "SELECT uuid, 'UserMember' AS member_type, text(user_uuid) AS member_id, perms, questionnaire_uuid \
+                \ FROM %s \
+                \ WHERE %s \
+                \ UNION \
+                \ SELECT uuid, 'GroupMember' AS member_type, group_id AS member_id, perms, questionnaire_uuid \
+                \ FROM %s \
+                \ WHERE %s"
+          [entityName_user, mapToDBQuerySql queryParams, entityName_group, mapToDBQuerySql queryParams]
+  logInfoU _CMP_DATABASE sql
+  let action conn = query conn (fromString sql) (fmap snd queryParams ++ fmap snd queryParams)
+  runDB action
+
+insertQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM Int64
+insertQuestionnairePermRecord perm@QuestionnairePermRecord {..} =
+  case _questionnairePermRecordMember of
+    m@GroupMember {..} -> createInsertFn entityName_group perm
+    m@UserMember {..} -> createInsertFn entityName_user perm
+
+deleteQuestionnairePermRecords :: AppContextM Int64
+deleteQuestionnairePermRecords = do
+  createDeleteEntitiesFn entityName_user
+  createDeleteEntitiesFn entityName_group
+
+deleteQuestionnairePermRecordsFiltered :: [(String, String)] -> AppContextM Int64
+deleteQuestionnairePermRecordsFiltered queryParams = do
+  createDeleteEntitiesByFn entityName_user queryParams
+  createDeleteEntitiesByFn entityName_group queryParams

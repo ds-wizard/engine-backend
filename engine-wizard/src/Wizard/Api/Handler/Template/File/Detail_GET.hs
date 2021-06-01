@@ -20,4 +20,4 @@ type Detail_GET
 detail_GET :: Maybe String -> String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateFile)
 detail_GET mTokenHeader tmlId fileUuid =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getTemplateFile tmlId fileUuid
+    runInAuthService $ addTraceUuidHeader =<< getTemplateFile fileUuid

@@ -1,5 +1,5 @@
 name: engine-shared
-version: '2.14.0'
+version: '3.0.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -25,8 +25,6 @@ library:
   dependencies:
   - base
   - aeson
-  - bson
-  - bson-generic
   - bytestring
   - case-insensitive
   - conduit
@@ -43,14 +41,13 @@ library:
   - minio-hs
   - mtl
   - monad-logger
-  - mongoDB
   - network
-  - persistent-mongoDB
   - postgresql-simple
   - postgresql-libpq
   - pretty-terminal
   - random
   - raw-strings-qq
+  - regex-compat
   - resource-pool
   - retry
   - servant-server

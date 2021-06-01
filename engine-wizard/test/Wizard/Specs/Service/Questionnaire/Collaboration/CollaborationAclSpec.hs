@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Test.Hspec
 
 import LensesConfig
+import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Questionnaire.Questionnaire
@@ -18,12 +19,36 @@ import Wizard.Specs.Common
 questionnaireCollaborationAclSpec appContext =
   describe "Questionnaire Collaboration ACL" $ do
     let permissions =
-          [ toUserPermRecord (userNikola ^. uuid) ownerPermissions
-          , toUserPermRecord (userNicolaus ^. uuid) editorPermissions
-          , toUserPermRecord (userGalileo ^. uuid) viewerPermissions
-          , toGroupPermRecord (bioGroup ^. gId) ownerPermissions
-          , toGroupPermRecord (plantGroup ^. gId) editorPermissions
-          , toGroupPermRecord (animalGroup ^. gId) viewerPermissions
+          [ toUserPermRecord
+              (u' "4ccb62e9-cae6-48c7-81a1-0af7b46a8743")
+              (u' "808d4770-0d38-45b0-a028-0a3ffaafc617")
+              (userNikola ^. uuid)
+              ownerPermissions
+          , toUserPermRecord
+              (u' "3776a51f-c052-403e-ab7d-6b69e9ed0550")
+              (u' "52e74b8b-ca73-4d6a-a7e1-5c0f34a1819a")
+              (userNicolaus ^. uuid)
+              editorPermissions
+          , toUserPermRecord
+              (u' "8f5aeee2-3f88-44e3-8369-b84a1ce88cac")
+              (u' "3d60a813-5e54-4fd2-8fe8-5cf3c076bd50")
+              (userGalileo ^. uuid)
+              viewerPermissions
+          , toGroupPermRecord
+              (u' "91bdee5f-7a4c-43f8-986d-6ecd6d392d0d")
+              (u' "b90b17f4-06a2-40dc-b364-88d8f195c8a0")
+              (bioGroup ^. gId)
+              ownerPermissions
+          , toGroupPermRecord
+              (u' "e8010761-34d7-4fe8-a482-fdfa04685d61")
+              (u' "fcead22d-e453-47a3-84bc-5c29698ab990")
+              (plantGroup ^. gId)
+              editorPermissions
+          , toGroupPermRecord
+              (u' "e41e9550-429b-41c3-a364-f6e7f26f2d13")
+              (u' "4e0765e8-f25c-4091-8531-aed2eef161f6")
+              (animalGroup ^. gId)
+              viewerPermissions
           ]
     let (admin, adminRole, adminGroups) = (Just $ userAlbert ^. uuid, Just _USER_ROLE_ADMIN, Just [])
     let (owner, ownerRole, ownerGroups) = (Just $ userNikola ^. uuid, Just _USER_ROLE_RESEARCHER, Just [])

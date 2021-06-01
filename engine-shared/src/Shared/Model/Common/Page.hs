@@ -42,3 +42,11 @@ filterP fn (Page name metadata entities) =
   let filteredEntities = filter fn entities
       updatedMetadata = metadata {_pageMetadataTotalElements = length filteredEntities}
    in Page name updatedMetadata filteredEntities
+
+mapMaybeP :: (a -> Maybe b) -> Page a -> Page b
+mapMaybeP _ (Page name metadata []) = Page name metadata []
+mapMaybeP f (Page name metadata (x:xs)) =
+  let Page name' metadata' xs' = mapMaybeP f (Page name metadata xs)
+   in case f x of
+        Nothing -> Page name' (metadata' {_pageMetadataTotalElements = _pageMetadataTotalElements metadata' - 1}) xs'
+        Just x' -> Page name' metadata' (x' : xs')

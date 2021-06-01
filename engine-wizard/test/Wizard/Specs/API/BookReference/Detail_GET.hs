@@ -66,5 +66,5 @@ test_404 appContext =
     "/book-references/nonExistingShortUuid"
     reqHeaders
     reqBody
-    "bookReference"
+    "book_reference"
     "nonExistingShortUuid"

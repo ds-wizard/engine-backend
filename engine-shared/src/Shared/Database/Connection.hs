@@ -1,29 +1,24 @@
 module Shared.Database.Connection where
 
 import Control.Lens ((^.))
-import Data.Text
-import Database.MongoDB hiding (host)
-import Database.Persist.MongoDB
-import Network.Socket
+import Data.ByteString.Char8 as BS
+import qualified Data.Pool as Pool
+import qualified Database.PostgreSQL.Simple as Postgres
 
 import LensesConfig
 
 createDatabaseConnectionPool serverConfig = do
-  dbPool <- createMongoDBPool dbName dbHost dbPort dbCred dbConnectionPoolSize dbStripeSize dbConnectionIdleTime
+  dbPool <-
+    Pool.createPool
+      (Postgres.connectPostgreSQL (BS.pack $ serverConfig ^. connectionString))
+      Postgres.close
+      (serverConfig ^. stripeSize)
+      (realToFrac $ serverConfig ^. connectionTimeout)
+      (serverConfig ^. maxConnections)
   verifyDatabaseConnectionPool dbPool
   return dbPool
-  where
-    dbHost = serverConfig ^. host
-    dbPort = PortNumber (fromInteger (serverConfig ^. port) :: PortNumber) :: PortID
-    dbName = pack (serverConfig ^. databaseName)
-    dbConnectionPoolSize = serverConfig ^. connectionPoolSize
-    dbStripeSize = serverConfig ^. stripeSize
-    dbConnectionIdleTime = realToFrac $ serverConfig ^. connectionIdleTime
-    dbCred =
-      if serverConfig ^. authEnabled
-        then Just $ MongoAuth (pack $ serverConfig ^. username) (pack $ serverConfig ^. password)
-        else Nothing
 
 verifyDatabaseConnectionPool dbPool = do
-  _ <- runMongoDBPoolDef allCollections dbPool
+  let action conn = Postgres.query_ conn "SELECT 2 + 2"
+  Pool.withResource dbPool action :: IO [Postgres.Only Int]
   return ()

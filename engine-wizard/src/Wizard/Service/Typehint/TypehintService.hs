@@ -11,6 +11,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
 import Wizard.Api.Resource.Typehint.TypehintDTO
 import Wizard.Api.Resource.Typehint.TypehintRequestDTO
+import Wizard.Database.DAO.Common
 import Wizard.Integration.Http.Typehint.Runner
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
@@ -19,16 +20,17 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Typehint.TypehintMapper
 
 getTypehints :: TypehintRequestDTO -> AppContextM [TypehintDTO]
-getTypehints reqDto = do
-  km <- compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) []
-  question <- getQuestion km (reqDto ^. questionUuid)
-  integration <- getIntegration km (question ^. integrationUuid)
-  fileConfig <- getIntegrationConfig (integration ^. iId)
-  let kmQuestionConfig = question ^. props
-  let userRequest = M.singleton "q" (encode $ reqDto ^. q)
-  let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
-  iDtos <- retrieveTypehints integration variables
-  return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
+getTypehints reqDto =
+  runInTransaction $ do
+    km <- compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) []
+    question <- getQuestion km (reqDto ^. questionUuid)
+    integration <- getIntegration km (question ^. integrationUuid)
+    fileConfig <- getIntegrationConfig (integration ^. iId)
+    let kmQuestionConfig = question ^. props
+    let userRequest = M.singleton "q" (encode $ reqDto ^. q)
+    let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
+    iDtos <- retrieveTypehints integration variables
+    return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
   where
     getQuestion km questionUuid =
       case M.lookup questionUuid (km ^. questionsM) of

@@ -17,6 +17,7 @@ instance FromJSON ServerConfig where
   parseJSON (Object o) = do
     _serverConfigGeneral <- o .: "general"
     _serverConfigDatabase <- o .:? "database" .!= defaultDatabase
+    _serverConfigS3 <- o .:? "s3" .!= defaultS3
     _serverConfigMessaging <- o .:? "messaging" .!= defaultMessaging
     _serverConfigJwt <- o .:? "jwt" .!= defaultJwt
     _serverConfigRoles <- o .:? "roles" .!= defaultRoles

@@ -4,6 +4,8 @@ import Control.Lens (makeFields)
 
 import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
+import Shared.Api.Resource.Template.TemplateDTO
+import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Common.Pageable
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
@@ -22,6 +24,7 @@ import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageGroup
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
@@ -194,13 +197,13 @@ makeFields ''PackageWithEvents
 
 makeFields ''PackageGroup
 
+makeFields ''PackagePattern
+
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
 -- Model / Template
 makeFields ''Template
-
-makeFields ''TemplateAllowedPackage
 
 makeFields ''TemplateFormat
 
@@ -218,3 +221,11 @@ makeFields ''PackageDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
+
+-- Api / Resource / Template
+makeFields ''TemplateFileDTO
+
+makeFields ''TemplateAssetDTO
+
+-- Api / Resource / TemplateBundle
+makeFields ''TemplateBundleDTO

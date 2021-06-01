@@ -18,6 +18,7 @@ import Shared.Service.Package.PackageMapper
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Package.PackageMapper
 
@@ -90,6 +91,7 @@ create_test_200 title appContext reqUrl expDto =
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO PKG.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

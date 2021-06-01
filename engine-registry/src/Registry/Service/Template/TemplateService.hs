@@ -5,11 +5,11 @@ import Control.Lens ((^.))
 import LensesConfig
 import Registry.Api.Resource.Template.TemplateDetailDTO
 import Registry.Api.Resource.Template.TemplateSimpleDTO
-import Registry.Database.DAO.Organization.OrganizationSqlDAO
+import Registry.Database.DAO.Common
+import Registry.Database.DAO.Organization.OrganizationDAO
 import Registry.Model.Context.AppContext
 import Registry.Service.Template.TemplateMapper
-import Shared.Database.DAO.CommonSql
-import Shared.Database.DAO.Template.TemplateSqlDAO
+import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Model.Template.Template
 import Shared.Service.Template.TemplateUtil
 import Shared.Util.Coordinate

@@ -24,8 +24,6 @@ instance ToRow Template where
     , toJSONField _templateAllowedPackages
     , toField _templateRecommendedPackageId
     , toJSONField _templateFormats
-    , toJSONField _templateFiles
-    , toJSONField _templateAssets
     , toField _templateCreatedAt
     ]
 
@@ -43,7 +41,5 @@ instance FromRow Template where
     _templateAllowedPackages <- fieldWith fromJSONField
     _templateRecommendedPackageId <- field
     _templateFormats <- fieldWith fromJSONField
-    _templateFiles <- fieldWith fromJSONField
-    _templateAssets <- fieldWith fromJSONField
     _templateCreatedAt <- field
     return $ Template {..}

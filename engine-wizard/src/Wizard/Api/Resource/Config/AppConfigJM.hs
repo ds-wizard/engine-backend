@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Config.AppConfigJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Package.PackagePatternJM ()
 import Shared.Util.JSON
 import Wizard.Api.Resource.Config.SimpleFeatureJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingJM ()
@@ -91,6 +92,18 @@ instance FromJSON AppConfigRegistry where
 
 instance ToJSON AppConfigRegistry where
   toJSON = simpleToJSON "_appConfigRegistry"
+
+instance FromJSON AppConfigKnowledgeModel where
+  parseJSON = simpleParseJSON "_appConfigKnowledgeModel"
+
+instance ToJSON AppConfigKnowledgeModel where
+  toJSON = simpleToJSON "_appConfigKnowledgeModel"
+
+instance FromJSON AppConfigKnowledgeModelPublic where
+  parseJSON = simpleParseJSON "_appConfigKnowledgeModelPublic"
+
+instance ToJSON AppConfigKnowledgeModelPublic where
+  toJSON = simpleToJSON "_appConfigKnowledgeModelPublic"
 
 instance FromJSON AppConfigQuestionnaire where
   parseJSON = simpleParseJSON "_appConfigQuestionnaire"

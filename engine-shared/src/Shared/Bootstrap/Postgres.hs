@@ -3,7 +3,7 @@ module Shared.Bootstrap.Postgres where
 import Control.Monad.Reader (liftIO)
 
 import Shared.Bootstrap.Retry
-import Shared.Database.SqlConnection
+import Shared.Database.Connection
 import Shared.Util.Logger
 
 connectPostgresDB serverConfigLogging serverConfigDatabase = do

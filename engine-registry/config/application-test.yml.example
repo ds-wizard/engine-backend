@@ -5,16 +5,11 @@ general:
   templateFolder: templates
 
 database:
-  host: localhost
-  databaseName: engine-registry-test
-  port: 27017
-  authEnabled: false
-  username:
-  password:
   connectionString: postgresql://postgres:postgres@localhost:5432/postgres
 
 s3:
   url: http://localhost:9000
+  bucket: engine-registry
 
 mail:
   enabled: false

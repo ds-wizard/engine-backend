@@ -14,6 +14,7 @@ import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
+import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
@@ -79,9 +80,9 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Non-Admin)"
     appContext
-    "/questionnaires"
+    "/questionnaires?sort=uuid,asc"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - query)"
     appContext
@@ -100,6 +101,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
     let expBody = encode expDto
        -- AND: Run migrations
     runInContextIO U.runMigration appContext
+    runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
        -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

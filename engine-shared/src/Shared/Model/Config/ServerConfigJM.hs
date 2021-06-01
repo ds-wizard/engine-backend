@@ -11,16 +11,8 @@ import Shared.Model.Config.ServerConfigDM
 
 instance FromJSON ServerConfigDatabase where
   parseJSON (Object o) = do
-    _serverConfigDatabaseHost <- o .:? "host" .!= (defaultDatabase ^. host)
-    _serverConfigDatabaseDatabaseName <- o .:? "databaseName" .!= (defaultDatabase ^. databaseName)
-    _serverConfigDatabasePort <- o .:? "port" .!= (defaultDatabase ^. port)
-    _serverConfigDatabaseAuthEnabled <- o .:? "authEnabled" .!= (defaultDatabase ^. authEnabled)
-    _serverConfigDatabaseUsername <- o .:? "username" .!= (defaultDatabase ^. username)
-    _serverConfigDatabasePassword <- o .:? "password" .!= (defaultDatabase ^. password)
-    _serverConfigDatabaseConnectionPoolSize <- o .:? "connectionPoolSize" .!= (defaultDatabase ^. connectionPoolSize)
-    _serverConfigDatabaseStripeSize <- o .:? "stripeSize" .!= (defaultDatabase ^. stripeSize)
-    _serverConfigDatabaseConnectionIdleTime <- o .:? "connectionIdleTime" .!= (defaultDatabase ^. connectionIdleTime)
     _serverConfigDatabaseConnectionString <- o .:? "connectionString" .!= (defaultDatabase ^. connectionString)
+    _serverConfigDatabaseStripeSize <- o .:? "stripeSize" .!= (defaultDatabase ^. stripeSize)
     _serverConfigDatabaseConnectionTimeout <- o .:? "connectionTimeout" .!= (defaultDatabase ^. connectionTimeout)
     _serverConfigDatabaseMaxConnections <- o .:? "maxConnections" .!= (defaultDatabase ^. maxConnections)
     return ServerConfigDatabase {..}

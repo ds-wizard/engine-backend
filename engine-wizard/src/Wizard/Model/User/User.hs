@@ -31,8 +31,8 @@ data User =
     , _userImageUrl :: Maybe String
     , _userGroups :: [GroupMembership]
     , _userLastVisitedAt :: UTCTime
-    , _userCreatedAt :: Maybe UTCTime
-    , _userUpdatedAt :: Maybe UTCTime
+    , _userCreatedAt :: UTCTime
+    , _userUpdatedAt :: UTCTime
     }
   deriving (Generic, Show)
 

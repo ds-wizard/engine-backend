@@ -1,0 +1,82 @@
+module Wizard.Database.DAO.Common
+  ( module Shared.Database.DAO.Common
+  , runInTransaction
+  , createFindEntitiesGroupByCoordinatePageableQuerySortFn
+  ) where
+
+import Data.String (fromString)
+import Database.PostgreSQL.Simple
+
+import qualified Shared.Database.DAO.Common as S
+import Shared.Database.DAO.Common hiding (runInTransaction)
+import Shared.Database.Mapping.Package.Package ()
+import Shared.Model.Common.Page
+import Shared.Model.Common.PageMetadata
+import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
+import Wizard.Util.Logger
+
+runInTransaction :: AppContextM a -> AppContextM a
+runInTransaction = S.runInTransaction logInfoU
+
+createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mOrganizationId mEntityId
+  -- 1. Prepare variables
+ = do
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+  -- 2. Get total count
+  count <- createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId
+  -- 3. Get entities
+  let sql =
+        f'
+          "SELECT %s \
+           \FROM %s \
+           \WHERE id IN ( \
+           \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
+           \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
+           \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
+           \    FROM %s \
+           \    WHERE name ~* ? %s \
+           \    GROUP BY organization_id, %s \
+           \) \
+           \%s \
+           \offset %s \
+           \limit %s"
+          [ fields
+          , entityName
+          , entityId
+          , entityName
+          , mapToDBCoordinatesSql entityId mOrganizationId mEntityId
+          , entityId
+          , mapSort sort
+          , show skip
+          , show sizeI
+          ]
+  logInfo _CMP_DATABASE sql
+  let action conn = query conn (fromString sql) (regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+  entities <- runDB action
+  -- 4. Constructor response
+  let metadata =
+        PageMetadata
+          { _pageMetadataSize = sizeI
+          , _pageMetadataTotalElements = count
+          , _pageMetadataTotalPages = computeTotalPage count sizeI
+          , _pageMetadataNumber = pageI
+          }
+  return $ Page pageLabel metadata entities
+
+createCountGroupByCoordinateFn :: String -> String -> Maybe String -> Maybe String -> Maybe String -> AppContextM Int
+createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId = do
+  let sql =
+        f'
+          "SELECT COUNT(*) \
+          \ FROM (SELECT COUNT(*) \
+          \   FROM %s \
+          \   WHERE name ~* ? %s \
+          \   GROUP BY organization_id, %s) p"
+          [entityName, mapToDBCoordinatesSql entityId mOrganizationId mEntityId, entityId]
+  logInfo _CMP_DATABASE sql
+  let action conn = query conn (fromString sql) (regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0

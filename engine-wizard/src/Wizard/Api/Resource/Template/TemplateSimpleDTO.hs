@@ -4,6 +4,7 @@ import Data.Time
 import GHC.Generics
 
 import Shared.Api.Resource.Organization.OrganizationSimpleDTO
+import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Model.Template.TemplateState
@@ -20,7 +21,7 @@ data TemplateSimpleDTO =
     , _templateSimpleDTODescription :: String
     , _templateSimpleDTOReadme :: String
     , _templateSimpleDTOLicense :: String
-    , _templateSimpleDTOAllowedPackages :: [TemplateAllowedPackage]
+    , _templateSimpleDTOAllowedPackages :: [PackagePattern]
     , _templateSimpleDTORecommendedPackageId :: Maybe String
     , _templateSimpleDTOFormats :: [TemplateFormat]
     , _templateSimpleDTOUsablePackages :: [PackageSimpleDTO]

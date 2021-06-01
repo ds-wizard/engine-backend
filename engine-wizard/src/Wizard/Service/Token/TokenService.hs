@@ -19,6 +19,7 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
@@ -29,15 +30,16 @@ import Wizard.Service.Token.TokenMapper
 import Wizard.Util.Date
 
 generateTokenFromCredentials :: TokenCreateDTO -> AppContextM TokenDTO
-generateTokenFromCredentials tokenCreateDto = do
-  user <- getUser
-  checkIsUserActive user
-  authenticateUser user
-  serverConfig <- asks _appContextServerConfig
-  now <- liftIO getCurrentTime
-  let updatedUser = user & lastVisitedAt .~ now
-  updateUserById updatedUser
-  return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
+generateTokenFromCredentials tokenCreateDto =
+  runInTransaction $ do
+    user <- getUser
+    checkIsUserActive user
+    authenticateUser user
+    serverConfig <- asks _appContextServerConfig
+    now <- liftIO getCurrentTime
+    let updatedUser = user & lastVisitedAt .~ now
+    updateUserById updatedUser
+    return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
   where
     getUser = do
       mUser <- findUserByEmail' (toLower <$> tokenCreateDto ^. email)
@@ -58,10 +60,11 @@ generateTokenFromCredentials tokenCreateDto = do
         else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
 
 generateTokenFromUser :: UserDTO -> AppContextM TokenDTO
-generateTokenFromUser user = do
-  serverConfig <- asks _appContextServerConfig
-  now <- liftIO getCurrentTime
-  return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
+generateTokenFromUser user =
+  runInTransaction $ do
+    serverConfig <- asks _appContextServerConfig
+    now <- liftIO getCurrentTime
+    return . toDTO $ createToken user now (serverConfig ^. jwt) (serverConfig ^. general . secret)
 
 createToken :: (HasUuid user U.UUID) => user -> UTCTime -> ServerConfigJwt -> String -> Token
 createToken user now config secret =

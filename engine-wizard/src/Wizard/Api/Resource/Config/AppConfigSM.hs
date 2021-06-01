@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Config.AppConfigSM where
 
 import Data.Swagger
 
+import Shared.Api.Resource.Package.PackagePatternSM ()
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigJM ()
 import Wizard.Api.Resource.Config.SimpleFeatureSM ()
@@ -51,6 +52,12 @@ instance ToSchema AppConfigLookAndFeelCustomMenuLink where
 
 instance ToSchema AppConfigRegistry where
   declareNamedSchema = simpleToSchema' "_appConfigRegistry" defaultRegistry
+
+instance ToSchema AppConfigKnowledgeModel where
+  declareNamedSchema = simpleToSchema' "_appConfigKnowledgeModel" defaultKnowledgeModel
+
+instance ToSchema AppConfigKnowledgeModelPublic where
+  declareNamedSchema = simpleToSchema' "_appConfigKnowledgeModelPublic" defaultKnowledgeModelPublic
 
 instance ToSchema AppConfigQuestionnaire where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaire" defaultQuestionnaire

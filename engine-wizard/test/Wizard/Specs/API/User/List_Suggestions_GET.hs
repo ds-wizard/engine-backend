@@ -47,27 +47,27 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (Admin)"
     appContext
-    "/users/suggestions"
-    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert, userNikola, userIsaac]))
+    "/users/suggestions?sort=uuid,asc"
+    (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
-    "/users/suggestions?page=1&size=1"
-    (Page "users" (PageMetadata 1 3 3 1) [toSuggestionDTO . toSuggestion $ userNikola])
+    "/users/suggestions?sort=uuid,asc&page=1&size=1"
+    (Page "users" (PageMetadata 1 3 3 1) [toSuggestionDTO . toSuggestion $ userIsaac])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/users/suggestions?q=te"
-    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert, userNikola]))
+    "/users/suggestions?sort=uuid,asc&q=te"
+    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userAlbert]))
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
-    "/users/suggestions?sort=name,asc"
+    "/users/suggestions?sort=first_name,asc"
     (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert, userIsaac, userNikola]))
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
-    "/users/suggestions?sort=name,desc"
+    "/users/suggestions?sort=first_name,desc"
     (Page "users" (PageMetadata 20 3 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac, userAlbert]))
 
 create_test_200 title appContext reqUrl expDto =

@@ -2,7 +2,6 @@ module Wizard.Specs.API.Template.File.List_GET
   ( list_get
   ) where
 
-import Control.Lens ((^.))
 import Data.Aeson (encode)
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -10,7 +9,6 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import LensesConfig hiding (request)
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Template.TemplateJM ()
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
@@ -56,7 +54,7 @@ create_test_200 title appContext reqAuthHeader =
       -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = commonWizardTemplate ^. files
+    let expDto = [templateFileDefaultHtml, templateFileDefaultCss]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML_Migration.runMigration appContext

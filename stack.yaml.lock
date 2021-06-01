@@ -5,13 +5,6 @@
 
 packages:
 - completed:
-    hackage: persistent-mongoDB-2.10.0.0@sha256:c95f893e674ec1521e865cb1c7932b7055271fb3e248a086e3671ab5724fcbe4,2842
-    pantry-tree:
-      size: 593
-      sha256: 3bba1c6ccc991b28e98680a485a173b45f8ef59e64b9f3d22d89266fb14ed6cb
-  original:
-    hackage: persistent-mongoDB-2.10.0.0
-- completed:
     hackage: pwstore-fast-2.4.4@sha256:9b6a37510d8b9f37f409a8ab3babac9181afcaaa3fce8ba1c131a7ed3de30698,1351
     pantry-tree:
       size: 270

@@ -4,7 +4,6 @@ import Control.Lens ((&), (.~), (^.))
 import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
-import Database.Persist.MongoDB (ConnectionPool)
 import Database.PostgreSQL.Simple (Connection)
 import Network.Minio (MinioConn)
 
@@ -21,25 +20,6 @@ class HasS3' sc =>
 
 class HasS3' entity where
   s3' :: Functor f => (ServerConfigS3 -> f ServerConfigS3) -> entity -> f entity
-
-class HasPool' entity where
-  pool' :: Functor f => (ConnectionPool -> f ConnectionPool) -> entity -> f entity
-
-instance HasPool' AppContext where
-  pool' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: AppContext -> ConnectionPool
-      get entity = entity ^. pool
-      set :: AppContext -> ConnectionPool -> AppContext
-      set entity newValue = entity & pool .~ newValue
-
-instance HasPool' BaseContext where
-  pool' convert entity = fmap (set entity) (convert . get $ entity)
-    where
-      get :: BaseContext -> ConnectionPool
-      get entity = entity ^. pool
-      set :: BaseContext -> ConnectionPool -> BaseContext
-      set entity newValue = entity & pool .~ newValue
 
 class HasDbPool' entity where
   dbPool' :: Functor f => (Pool Connection -> f (Pool Connection)) -> entity -> f entity

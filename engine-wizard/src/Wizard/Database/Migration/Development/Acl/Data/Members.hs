@@ -12,3 +12,6 @@ bioGroupMember = GroupMember {_groupMemberGId = bioGroup ^. gId}
 
 albertMember :: Member
 albertMember = UserMember {_userMemberUuid = userAlbert ^. uuid}
+
+nikolaMember :: Member
+nikolaMember = UserMember {_userMemberUuid = userNikola ^. uuid}

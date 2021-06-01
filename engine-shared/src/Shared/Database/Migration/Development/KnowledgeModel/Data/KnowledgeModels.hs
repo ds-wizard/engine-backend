@@ -182,6 +182,26 @@ km1WithQ4 =
           }
     }
 
+km1Global :: KnowledgeModel
+km1Global =
+  KnowledgeModel
+    { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelChapterUuids = []
+    , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
+    , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
+    , _knowledgeModelEntities =
+        KnowledgeModelEntities
+          { _knowledgeModelEntitiesChapters = toMap []
+          , _knowledgeModelEntitiesQuestions = toMap []
+          , _knowledgeModelEntitiesAnswers = toMap []
+          , _knowledgeModelEntitiesChoices = toMap []
+          , _knowledgeModelEntitiesExperts = toMap []
+          , _knowledgeModelEntitiesReferences = toMap []
+          , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
+          , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
+          }
+    }
+
 km1Netherlands :: KnowledgeModel
 km1Netherlands =
   KnowledgeModel

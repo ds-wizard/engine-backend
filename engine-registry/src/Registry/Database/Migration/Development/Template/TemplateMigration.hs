@@ -8,7 +8,9 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.S3.Template.TemplateS3
 import Registry.Util.Logger
-import Shared.Database.DAO.Template.TemplateSqlDAO
+import Shared.Database.DAO.Template.TemplateAssetDAO
+import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
 
 runMigration :: AppContextM ()
@@ -17,5 +19,8 @@ runMigration = do
   deleteTemplates
   purgeBucket
   insertTemplate commonWizardTemplate
+  insertTemplateFile templateFileDefaultHtml
+  insertTemplateFile templateFileDefaultCss
+  insertTemplateAsset templateAssetLogo
   putAsset (commonWizardTemplate ^. tId) (U.toString $ templateAssetLogo ^. uuid) templateAssetLogoContent
   logInfo _CMP_MIGRATION "(Fixtures/Template) ended"

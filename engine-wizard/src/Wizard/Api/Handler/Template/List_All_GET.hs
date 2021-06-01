@@ -28,5 +28,5 @@ list_all_GET mTokenHeader mOrganizationId mTmlId mPkgId =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
-      let queryParams = catMaybes [(,) "organizationId" <$> mOrganizationId, (,) "templateId" <$> mTmlId]
+      let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]
       getTemplatesDto queryParams mPkgId

@@ -9,7 +9,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
-import Registry.Database.DAO.Audit.AuditEntrySqlDAO
+import Registry.Database.DAO.Audit.AuditEntryDAO
 import Registry.Database.Migration.Development.Audit.Data.AuditEntries
 import Registry.Database.Migration.Development.Organization.Data.Organizations
 import Registry.Model.Context.AppContext
