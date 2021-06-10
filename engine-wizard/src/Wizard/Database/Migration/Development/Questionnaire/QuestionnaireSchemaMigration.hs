@@ -53,7 +53,9 @@ createQtnTable = do
         \     events json not null, \
         \     versions json not null, \
         \     created_at timestamptz not null, \
-        \     updated_at timestamptz not null \
+        \     updated_at timestamptz not null, \
+        \     description varchar, \
+        \     is_template boolean not null \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \

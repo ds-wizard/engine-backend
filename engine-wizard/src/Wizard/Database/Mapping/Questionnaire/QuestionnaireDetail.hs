@@ -23,10 +23,12 @@ instance FromRow QuestionnaireDetail where
   fromRow = do
     _questionnaireDetailUuid <- field
     _questionnaireDetailName <- field
+    _questionnaireDetailDescription <- field
     _questionnaireDetailVisibility <- field
     _questionnaireDetailSharing <- field
     _questionnaireDetailSelectedTagUuids <- fieldWith fromJSONField
     _questionnaireDetailEvents <- fieldWith fromJSONField
+    _questionnaireDetailIsTemplate <- field
     _questionnaireDetailCreatedAt <- field
     _questionnaireDetailUpdatedAt <- field
     _questionnaireDetailState <- field

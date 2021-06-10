@@ -35,7 +35,7 @@ import Wizard.Specs.Common
 -- ------------------------------------------------------------------------
 list_post_cloneUuid :: AppContext -> SpecWith ((), Application)
 list_post_cloneUuid appContext =
-  describe "POST /questionnaires?cloneUuid={qtnUuid}" $ do
+  describe "POST /questionnaires/{qtnUuid}/clone" $ do
     test_201 appContext
     test_401 appContext
     test_403 appContext
@@ -46,7 +46,7 @@ list_post_cloneUuid appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrlT qtnUuid = BS.pack $ "/questionnaires?cloneUuid=" ++ U.toString qtnUuid
+reqUrlT qtnUuid = BS.pack $ "/questionnaires/" ++ U.toString qtnUuid ++ "/clone"
 
 reqHeadersT authHeader = [authHeader]
 
@@ -92,8 +92,7 @@ test_401 appContext = createAuthTest reqMethod (reqUrlT $ questionnaire3 ^. uuid
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_403 appContext = do
-  createNoPermissionTest appContext reqMethod (reqUrlT $ questionnaire3 ^. uuid) [] reqBody "QTN_PERM"
+test_403 appContext =
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
     appContext
@@ -129,7 +128,7 @@ create_test_403 title appContext qtn qtnEdited reason =
 test_404 appContext =
   createNotFoundTest
     reqMethod
-    "/questionnaires?cloneUuid=f08ead5f-746d-411b-aee6-77ea3d24016a"
+    "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/clone"
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire"

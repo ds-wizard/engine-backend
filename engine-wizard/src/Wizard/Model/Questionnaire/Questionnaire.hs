@@ -24,6 +24,7 @@ data Questionnaire =
   Questionnaire
     { _questionnaireUuid :: U.UUID
     , _questionnaireName :: String
+    , _questionnaireDescription :: Maybe String
     , _questionnaireVisibility :: QuestionnaireVisibility
     , _questionnaireSharing :: QuestionnaireSharing
     , _questionnairePackageId :: String
@@ -34,6 +35,7 @@ data Questionnaire =
     , _questionnairePermissions :: [QuestionnairePermRecord]
     , _questionnaireEvents :: [QuestionnaireEvent]
     , _questionnaireVersions :: [QuestionnaireVersion]
+    , _questionnaireIsTemplate :: Bool
     , _questionnaireCreatedAt :: UTCTime
     , _questionnaireUpdatedAt :: UTCTime
     }
@@ -43,6 +45,7 @@ instance Eq Questionnaire where
   a == b =
     _questionnaireUuid a == _questionnaireUuid b &&
     _questionnaireName a == _questionnaireName b &&
+    _questionnaireDescription a == _questionnaireDescription b &&
     _questionnaireVisibility a == _questionnaireVisibility b &&
     _questionnaireSharing a == _questionnaireSharing b &&
     _questionnairePackageId a == _questionnairePackageId b &&
@@ -51,4 +54,5 @@ instance Eq Questionnaire where
     _questionnaireFormatUuid a == _questionnaireFormatUuid b &&
     _questionnaireCreatorUuid a == _questionnaireCreatorUuid b &&
     _questionnairePermissions a == _questionnairePermissions b &&
-    _questionnaireEvents a == _questionnaireEvents b && _questionnaireVersions a == _questionnaireVersions b
+    _questionnaireEvents a == _questionnaireEvents b &&
+    _questionnaireVersions a == _questionnaireVersions b && _questionnaireIsTemplate a == _questionnaireIsTemplate b

@@ -19,11 +19,13 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Constant.Acl
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
@@ -50,6 +52,7 @@ toDTO qtn qtnCtn package state report permissions =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
+    , _questionnaireDTODescription = qtn ^. description
     , _questionnaireDTOLevel = qtnCtn ^. level
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
@@ -57,6 +60,7 @@ toDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOPackage = SPM.toSimple package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
+    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -66,6 +70,7 @@ toDTO' qtn qtnCtn report =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
+    , _questionnaireDTODescription = qtn ^. description
     , _questionnaireDTOLevel = qtnCtn ^. level
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
@@ -73,6 +78,7 @@ toDTO' qtn qtnCtn report =
     , _questionnaireDTOPackage = qtn ^. package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = qtn ^. permissions
+    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -89,6 +95,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
   QuestionnaireDTO
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
+    , _questionnaireDTODescription = qtn ^. description
     , _questionnaireDTOLevel = qtnCtn ^. level
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
@@ -96,6 +103,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
     , _questionnaireDTOPackage = SPM.toSimple . SPM.toPackage $ package
     , _questionnaireDTOReport = report
     , _questionnaireDTOPermissions = permissions
+    , _questionnaireDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -118,6 +126,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
+    , _questionnaireDetailDTODescription = qtn ^. description
     , _questionnaireDetailDTOLevel = qtnCtn ^. level
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
@@ -135,6 +144,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOEvents = events
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
+    , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -156,6 +166,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
+    , _questionnaireDetailDTODescription = qtn ^. description
     , _questionnaireDetailDTOLevel = qtnContent ^. level
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
@@ -173,6 +184,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOEvents = events
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
+    , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -194,11 +206,13 @@ toChangeDTO :: Questionnaire -> QuestionnaireChangeDTO
 toChangeDTO qtn =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = qtn ^. name
+    , _questionnaireChangeDTODescription = qtn ^. description
     , _questionnaireChangeDTOVisibility = qtn ^. visibility
     , _questionnaireChangeDTOSharing = qtn ^. sharing
     , _questionnaireChangeDTOPermissions = qtn ^. permissions
     , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
+    , _questionnaireChangeDTOIsTemplate = qtn ^. isTemplate
     }
 
 toUserPermRecord :: U.UUID -> U.UUID -> U.UUID -> [String] -> QuestionnairePermRecord
@@ -240,18 +254,26 @@ toGroupPermRecordDTO record group =
 toSimple :: Questionnaire -> QuestionnaireSimple
 toSimple qtn = QuestionnaireSimple {_questionnaireSimpleUuid = qtn ^. uuid, _questionnaireSimpleName = qtn ^. name}
 
+toCreateFromTemplateDTO :: Questionnaire -> QuestionnaireCreateFromTemplateDTO
+toCreateFromTemplateDTO qtn =
+  QuestionnaireCreateFromTemplateDTO
+    { _questionnaireCreateFromTemplateDTOName = qtn ^. name
+    , _questionnaireCreateFromTemplateDTOQuestionnaireUuid = qtn ^. uuid
+    }
+
 fromChangeDTO ::
      Questionnaire
   -> QuestionnaireChangeDTO
   -> QuestionnaireVisibility
   -> QuestionnaireSharing
-  -> U.UUID
+  -> UserDTO
   -> UTCTime
   -> Questionnaire
-fromChangeDTO qtn dto visibility sharing currentUserUuid now =
+fromChangeDTO qtn dto visibility sharing currentUser now =
   Questionnaire
     { _questionnaireUuid = qtn ^. uuid
     , _questionnaireName = dto ^. name
+    , _questionnaireDescription = dto ^. description
     , _questionnaireVisibility = visibility
     , _questionnaireSharing = sharing
     , _questionnairePackageId = qtn ^. packageId
@@ -262,6 +284,10 @@ fromChangeDTO qtn dto visibility sharing currentUserUuid now =
     , _questionnairePermissions = fmap sanitizePerms (dto ^. permissions)
     , _questionnaireEvents = qtn ^. events
     , _questionnaireVersions = qtn ^. versions
+    , _questionnaireIsTemplate =
+        if _QTN_TML_PERM `elem` (currentUser ^. permissions)
+          then dto ^. isTemplate
+          else qtn ^. isTemplate
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
@@ -283,6 +309,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
+    , _questionnaireDescription = Nothing
     , _questionnaireVisibility = visibility
     , _questionnaireSharing = sharing
     , _questionnairePackageId = pkgId
@@ -296,6 +323,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
           Nothing -> []
     , _questionnaireEvents = []
     , _questionnaireVersions = []
+    , _questionnaireIsTemplate = False
     , _questionnaireCreatedAt = qtnCreatedAt
     , _questionnaireUpdatedAt = qtnUpdatedAt
     }

@@ -123,6 +123,10 @@ instance FromJSON AppConfigQuestionnaireSharing where
 instance ToJSON AppConfigQuestionnaireSharing where
   toJSON = simpleToJSON "_appConfigQuestionnaireSharing"
 
+instance FromJSON QuestionnaireCreation
+
+instance ToJSON QuestionnaireCreation
+
 instance FromJSON AppConfigQuestionnaireFeedback where
   parseJSON = simpleParseJSON "_appConfigQuestionnaireFeedback"
 

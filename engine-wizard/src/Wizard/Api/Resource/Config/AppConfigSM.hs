@@ -68,6 +68,8 @@ instance ToSchema AppConfigQuestionnaireVisibility where
 instance ToSchema AppConfigQuestionnaireSharing where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireSharing" defaultQuestionnaireSharing
 
+instance ToSchema QuestionnaireCreation
+
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireFeedback" defaultFeedback
 

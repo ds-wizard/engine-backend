@@ -28,6 +28,8 @@ instance ToRow Questionnaire where
     , toJSONField _questionnaireVersions
     , toField _questionnaireCreatedAt
     , toField _questionnaireUpdatedAt
+    , toField _questionnaireDescription
+    , toField _questionnaireIsTemplate
     ]
 
 instance FromRow Questionnaire where
@@ -46,4 +48,6 @@ instance FromRow Questionnaire where
     _questionnaireVersions <- fieldWith fromJSONField
     _questionnaireCreatedAt <- field
     _questionnaireUpdatedAt <- field
+    _questionnaireDescription <- field
+    _questionnaireIsTemplate <- field
     return $ Questionnaire {..}

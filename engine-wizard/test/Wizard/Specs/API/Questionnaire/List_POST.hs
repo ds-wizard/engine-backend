@@ -93,6 +93,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
       then assertExistenceOfQuestionnaireInDB
              appContext
              ((uuid .~ (resBody ^. uuid)) .
+              (description .~ Nothing) .
+              (isTemplate .~ False) .
               (sharing .~ AnyoneWithLinkEditQuestionnaire) .
               (events .~ []) . (versions .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
               questionnaire1)
@@ -103,7 +105,9 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
               ]
         assertExistenceOfQuestionnaireInDB
           appContext
-          ((uuid .~ (resBody ^. uuid)) . (events .~ []) . (versions .~ []) . (permissions .~ aPermissions) $
+          ((uuid .~ (resBody ^. uuid)) .
+           (description .~ Nothing) .
+           (isTemplate .~ False) . (events .~ []) . (versions .~ []) . (permissions .~ aPermissions) $
            questionnaire1)
 
 -- ----------------------------------------------------

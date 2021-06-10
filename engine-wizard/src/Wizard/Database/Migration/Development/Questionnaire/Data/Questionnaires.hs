@@ -39,6 +39,7 @@ questionnaire1 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "af984a75-56e3-49f8-b16f-d6b99599910a")
     , _questionnaireName = "My Private Questionnaire"
+    , _questionnaireDescription = Just "Some description"
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
@@ -49,6 +50,7 @@ questionnaire1 =
     , _questionnairePermissions = [qtn1AlbertEditPermRecord]
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
+    , _questionnaireIsTemplate = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -106,11 +108,13 @@ questionnaire1EditedChange :: QuestionnaireChangeDTO
 questionnaire1EditedChange =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = questionnaire1Edited ^. name
+    , _questionnaireChangeDTODescription = questionnaire1Edited ^. description
     , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
     , _questionnaireChangeDTOSharing = questionnaire1Edited ^. sharing
     , _questionnaireChangeDTOPermissions = questionnaire1Edited ^. permissions
     , _questionnaireChangeDTOTemplateId = Nothing
     , _questionnaireChangeDTOFormatUuid = Nothing
+    , _questionnaireChangeDTOIsTemplate = questionnaire1Edited ^. isTemplate
     }
 
 qtn1AlbertEditPermRecord :: QuestionnairePermRecord
@@ -135,6 +139,7 @@ questionnaire2 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "d57520b4-5a70-4d40-8623-af2bfbbdfdfe")
     , _questionnaireName = "My VisibleView Questionnaire"
+    , _questionnaireDescription = Just "Some description"
     , _questionnaireVisibility = VisibleViewQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
@@ -145,6 +150,7 @@ questionnaire2 =
     , _questionnairePermissions = [qtn2AlbertEditPermRecord]
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
+    , _questionnaireIsTemplate = False
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -154,6 +160,7 @@ questionnaire2Edited =
   Questionnaire
     { _questionnaireUuid = questionnaire2 ^. uuid
     , _questionnaireName = "EDITED: " ++ (questionnaire2 ^. name)
+    , _questionnaireDescription = Just "EDITED: Some description"
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
@@ -164,6 +171,7 @@ questionnaire2Edited =
     , _questionnairePermissions = []
     , _questionnaireEvents = questionnaire2 ^. events
     , _questionnaireVersions = questionnaire2 ^. versions
+    , _questionnaireIsTemplate = False
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -208,6 +216,7 @@ questionnaire3 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "16530a07-e673-4ff3-ac1f-57250f2c1bfe")
     , _questionnaireName = "My VisibleEdit Questionnaire"
+    , _questionnaireDescription = Just "Some description"
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
@@ -218,6 +227,7 @@ questionnaire3 =
     , _questionnairePermissions = []
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
+    , _questionnaireIsTemplate = False
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -240,6 +250,7 @@ questionnaire4 =
   Questionnaire
     { _questionnaireUuid = fromJust (U.fromString "57250a07-a663-4ff3-ac1f-16530f2c1bfe")
     , _questionnaireName = "Outdated Questionnaire"
+    , _questionnaireDescription = Just "Some description"
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
@@ -250,6 +261,7 @@ questionnaire4 =
     , _questionnairePermissions = []
     , _questionnaireEvents = [slvle_2']
     , _questionnaireVersions = []
+    , _questionnaireIsTemplate = False
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -460,6 +472,41 @@ qtn10NikolaEditPermRecord =
 
 qtn10NikolaEditPermRecordDto :: QuestionnairePermRecordDTO
 qtn10NikolaEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord userNikola
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaire11 :: Questionnaire
+questionnaire11 =
+  questionnaire1
+    { _questionnaireUuid = fromJust (U.fromString "3c8e7ce6-cb5e-4cd1-a4d1-fb9de55f67ed")
+    , _questionnaireName = "My Questionnaire from project template"
+    , _questionnairePermissions = [qtn11AlbertEditPermRecord]
+    }
+
+questionnaire11Ctn :: QuestionnaireContent
+questionnaire11Ctn = questionnaire1Ctn
+
+questionnaire11Dto :: QuestionnaireDTO
+questionnaire11Dto =
+  toSimpleDTO
+    questionnaire11
+    questionnaire11Ctn
+    germanyPackage
+    QSDefault
+    questionnaireReport
+    [qtn11AlbertEditPermRecordDto]
+
+qtn11AlbertEditPermRecord :: QuestionnairePermRecord
+qtn11AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "74e5f2ac-8497-4744-96e2-66325f46d8d2"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire11 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn11AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn11AlbertEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord userNikola
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

@@ -15,6 +15,7 @@ type List_GET
    = Header "Authorization" String
      :> "questionnaires"
      :> QueryParam "q" String
+     :> QueryParam "isTemplate" Bool
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
@@ -23,11 +24,13 @@ type List_GET
 list_GET ::
      Maybe String
   -> Maybe String
+  -> Maybe Bool
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireDTO))
-list_GET mTokenHeader mQuery mPage mSize mSort =
+list_GET mTokenHeader mQuery mIsTemplate mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<< getQuestionnairesForCurrentUserPageDto mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<<
+    getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate (Pageable mPage mSize) (parseSortQuery mSort)

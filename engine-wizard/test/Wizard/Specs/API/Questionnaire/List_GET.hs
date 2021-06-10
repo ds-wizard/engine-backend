@@ -66,6 +66,18 @@ test_200 appContext = do
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
   create_test_200
+    "HTTP 200 OK (isTemplate - true)"
+    appContext
+    "/questionnaires?isTemplate=true"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
+  create_test_200
+    "HTTP 200 OK (isTemplate - false)"
+    appContext
+    "/questionnaires?isTemplate=false"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
+  create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
     "/questionnaires?sort=name,asc"
@@ -89,6 +101,18 @@ test_200 appContext = do
     "/questionnaires?q=pr"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (isTemplate - true)"
+    appContext
+    "/questionnaires?isTemplate=true"
+    reqNonAdminAuthHeader
+    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+  create_test_200
+    "HTTP 200 OK (isTemplate - false)"
+    appContext
+    "/questionnaires?isTemplate=false"
+    reqNonAdminAuthHeader
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

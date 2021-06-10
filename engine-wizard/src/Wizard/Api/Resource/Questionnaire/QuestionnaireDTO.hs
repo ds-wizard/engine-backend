@@ -14,6 +14,7 @@ data QuestionnaireDTO =
   QuestionnaireDTO
     { _questionnaireDTOUuid :: U.UUID
     , _questionnaireDTOName :: String
+    , _questionnaireDTODescription :: Maybe String
     , _questionnaireDTOLevel :: Int
     , _questionnaireDTOVisibility :: QuestionnaireVisibility
     , _questionnaireDTOSharing :: QuestionnaireSharing
@@ -21,6 +22,7 @@ data QuestionnaireDTO =
     , _questionnaireDTOPackage :: PackageSimple
     , _questionnaireDTOReport :: QuestionnaireReportDTO
     , _questionnaireDTOPermissions :: [QuestionnairePermRecordDTO]
+    , _questionnaireDTOIsTemplate :: Bool
     , _questionnaireDTOCreatedAt :: UTCTime
     , _questionnaireDTOUpdatedAt :: UTCTime
     }
@@ -30,10 +32,12 @@ instance Eq QuestionnaireDTO where
   a == b =
     _questionnaireDTOUuid a == _questionnaireDTOUuid b &&
     _questionnaireDTOName a == _questionnaireDTOName b &&
+    _questionnaireDTODescription a == _questionnaireDTODescription b &&
     _questionnaireDTOLevel a == _questionnaireDTOLevel b &&
     _questionnaireDTOVisibility a == _questionnaireDTOVisibility b &&
     _questionnaireDTOSharing a == _questionnaireDTOSharing b &&
     _questionnaireDTOState a == _questionnaireDTOState b &&
     _questionnaireDTOPackage a == _questionnaireDTOPackage b &&
     _questionnaireDTOReport a == _questionnaireDTOReport b &&
-    _questionnaireDTOPermissions a == _questionnaireDTOPermissions b
+    _questionnaireDTOPermissions a == _questionnaireDTOPermissions b &&
+    _questionnaireDTOIsTemplate a == _questionnaireDTOIsTemplate b
