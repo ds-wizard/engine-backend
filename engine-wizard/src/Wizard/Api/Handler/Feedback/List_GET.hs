@@ -20,5 +20,5 @@ list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-t
 list_GET mPackageId mQuestionUuid =
   runInUnauthService $
   addTraceUuidHeader =<< do
-    let queryParams = catMaybes [(,) "packageId" <$> mPackageId, (,) "questionUuid" <$> mQuestionUuid]
+    let queryParams = catMaybes [(,) "package_id" <$> mPackageId, (,) "question_uuid" <$> mQuestionUuid]
     getFeedbacksFiltered queryParams
