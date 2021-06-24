@@ -8,7 +8,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 data QuestionnaireEventChangeDTO
   = SetReplyEventChangeDTO' SetReplyEventChangeDTO
   | ClearReplyEventChangeDTO' ClearReplyEventChangeDTO
-  | SetLevelEventChangeDTO' SetLevelEventChangeDTO
+  | SetPhaseEventChangeDTO' SetPhaseEventChangeDTO
   | SetLabelsEventChangeDTO' SetLabelsEventChangeDTO
   deriving (Show, Eq, Generic)
 
@@ -27,10 +27,10 @@ data ClearReplyEventChangeDTO =
     }
   deriving (Show, Eq, Generic)
 
-data SetLevelEventChangeDTO =
-  SetLevelEventChangeDTO
-    { _setLevelEventChangeDTOUuid :: U.UUID
-    , _setLevelEventChangeDTOLevel :: Int
+data SetPhaseEventChangeDTO =
+  SetPhaseEventChangeDTO
+    { _setPhaseEventChangeDTOUuid :: U.UUID
+    , _setPhaseEventChangeDTOPhaseUuid :: Maybe U.UUID
     }
   deriving (Show, Eq, Generic)
 

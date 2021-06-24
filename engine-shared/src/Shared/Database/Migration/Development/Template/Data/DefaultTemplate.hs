@@ -153,7 +153,7 @@ html =
 {#  QUESTION MACROS                                                                     #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro questionClasses(question) -%}
-  "question {{ "required" if (question.requiredLevel and question.requiredLevel <= ctx.level) else "optional"}} {{  ("phase-" ~ question.requiredLevel) if question.requiredLevel else "phase-none" }}"
+  "question {{ "required" if (question.requiredPhaseUuid and question.requiredPhaseUuid <= ctx.level) else "optional"}} {{  ("phase-" ~ question.requiredPhaseUuid) if question.requiredPhaseUuid else "phase-none" }}"
 {%- endmacro -%}
 {%- macro renderQuestionExtras(question) -%}
   <div class="extra-data">
@@ -219,7 +219,7 @@ html =
             {% if chapterReport.chapterUuid == chapter.uuid %}
               {% for indication in chapterReport.indications %}
                 <tr>
-                  <td>Answered {% if indication.indicationType == "LevelsAnsweredIndication" %}(current phase){% endif %}</td>
+                  <td>Answered {% if indication.indicationType == "PhasesAnsweredIndication" %}(current phase){% endif %}</td>
                   <td>{{indication.answeredQuestions}} / {{indication.answeredQuestions + indication.unansweredQuestions}} </td>
                 </tr>
               {% endfor %}

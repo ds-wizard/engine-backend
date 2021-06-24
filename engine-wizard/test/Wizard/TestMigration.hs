@@ -21,7 +21,6 @@ import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMig
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Level.LevelSchemaMigration as LVL_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
@@ -39,7 +38,6 @@ buildSchema appContext
   putStrLn "DB: dropping schema"
   runInContext ACK_Schema.dropTables appContext
   runInContext BR_Schema.dropTables appContext
-  runInContext LVL_Schema.dropTables appContext
   runInContext F_Schema.dropTables appContext
   runInContext KM_MIG_Schema.dropTables appContext
   runInContext B_Schema.dropTables appContext
@@ -60,7 +58,6 @@ buildSchema appContext
   runInContext CFG_Schema.createTables appContext
   runInContext ACK_Schema.createTables appContext
   runInContext BR_Schema.createTables appContext
-  runInContext LVL_Schema.createTables appContext
   runInContext F_Schema.createTables appContext
   runInContext B_Schema.createTables appContext
   runInContext QTN_Schema.createTables appContext

@@ -15,7 +15,7 @@ data QuestionnaireEventBundle =
 data QuestionnaireEvent
   = SetReplyEvent' SetReplyEvent
   | ClearReplyEvent' ClearReplyEvent
-  | SetLevelEvent' SetLevelEvent
+  | SetPhaseEvent' SetPhaseEvent
   | SetLabelsEvent' SetLabelsEvent
   deriving (Show, Eq, Generic)
 
@@ -49,19 +49,19 @@ instance Eq ClearReplyEvent where
     _clearReplyEventUuid a == _clearReplyEventUuid b &&
     _clearReplyEventPath a == _clearReplyEventPath b && _clearReplyEventCreatedBy a == _clearReplyEventCreatedBy b
 
-data SetLevelEvent =
-  SetLevelEvent
-    { _setLevelEventUuid :: U.UUID
-    , _setLevelEventLevel :: Int
-    , _setLevelEventCreatedBy :: Maybe U.UUID
-    , _setLevelEventCreatedAt :: UTCTime
+data SetPhaseEvent =
+  SetPhaseEvent
+    { _setPhaseEventUuid :: U.UUID
+    , _setPhaseEventPhaseUuid :: Maybe U.UUID
+    , _setPhaseEventCreatedBy :: Maybe U.UUID
+    , _setPhaseEventCreatedAt :: UTCTime
     }
   deriving (Show, Generic)
 
-instance Eq SetLevelEvent where
+instance Eq SetPhaseEvent where
   a == b =
-    _setLevelEventUuid a == _setLevelEventUuid b &&
-    _setLevelEventLevel a == _setLevelEventLevel b && _setLevelEventCreatedBy a == _setLevelEventCreatedBy b
+    _setPhaseEventUuid a == _setPhaseEventUuid b &&
+    _setPhaseEventPhaseUuid a == _setPhaseEventPhaseUuid b && _setPhaseEventCreatedBy a == _setPhaseEventCreatedBy b
 
 data SetLabelsEvent =
   SetLabelsEvent

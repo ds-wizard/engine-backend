@@ -10,7 +10,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 
 data QuestionnaireContentDTO =
   QuestionnaireContentDTO
-    { _questionnaireContentDTOLevel :: Int
+    { _questionnaireContentDTOPhaseUuid :: Maybe U.UUID
     , _questionnaireContentDTOReplies :: M.Map String Reply
     , _questionnaireContentDTOLabels :: M.Map String [U.UUID]
     , _questionnaireContentDTOEvents :: [QuestionnaireEventDTO]

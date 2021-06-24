@@ -16,6 +16,7 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
       , _knowledgeModelTagUuids = []
       , _knowledgeModelIntegrationUuids = []
       , _knowledgeModelMetricUuids = []
+      , _knowledgeModelPhaseUuids = []
       , _knowledgeModelEntities =
           KnowledgeModelEntities
             { _knowledgeModelEntitiesChapters = M.empty
@@ -27,13 +28,15 @@ instance CreateEntity AddKnowledgeModelEvent KnowledgeModel where
             , _knowledgeModelEntitiesIntegrations = M.empty
             , _knowledgeModelEntitiesTags = M.empty
             , _knowledgeModelEntitiesMetrics = M.empty
+            , _knowledgeModelEntitiesPhases = M.empty
             }
       }
 
 instance EditEntity EditKnowledgeModelEvent KnowledgeModel where
-  editEntity e = applyMetricUuids . applyIntegrationUuids . applyTagUuids . applyChapterUuids
+  editEntity e = applyPhaseUuids . applyMetricUuids . applyIntegrationUuids . applyTagUuids . applyChapterUuids
     where
       applyChapterUuids km = applyValue (e ^. chapterUuids) km chapterUuids
       applyTagUuids km = applyValue (e ^. tagUuids) km tagUuids
       applyIntegrationUuids km = applyValue (e ^. integrationUuids) km integrationUuids
       applyMetricUuids km = applyValue (e ^. metricUuids) km metricUuids
+      applyPhaseUuids km = applyValue (e ^. phaseUuids) km phaseUuids

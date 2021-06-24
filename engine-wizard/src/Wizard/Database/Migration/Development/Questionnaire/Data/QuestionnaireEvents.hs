@@ -5,6 +5,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
@@ -29,7 +30,7 @@ fEvents =
   , sre_rQ9'
   , sre_rQ10'
   , sre_rQ11'
-  , slvle_1'
+  , sphse_1'
   , slble_rQ1'
   ]
 
@@ -252,40 +253,40 @@ cre_rQ1 =
     , _clearReplyEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-slvle_1' :: QuestionnaireEvent
-slvle_1' = SetLevelEvent' slvle_1
+sphse_1' :: QuestionnaireEvent
+sphse_1' = SetPhaseEvent' sphse_1
 
-slvle_1 :: SetLevelEvent
-slvle_1 =
-  SetLevelEvent
-    { _setLevelEventUuid = u' "f5288ec0-16b4-4a22-8c4f-ee411f0005d3"
-    , _setLevelEventLevel = 1
-    , _setLevelEventCreatedBy = Just $ userAlbert ^. uuid
-    , _setLevelEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+sphse_1 :: SetPhaseEvent
+sphse_1 =
+  SetPhaseEvent
+    { _setPhaseEventUuid = u' "f5288ec0-16b4-4a22-8c4f-ee411f0005d3"
+    , _setPhaseEventPhaseUuid = Just $ phase1 ^. uuid
+    , _setPhaseEventCreatedBy = Just $ userAlbert ^. uuid
+    , _setPhaseEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-slvle_2' :: QuestionnaireEvent
-slvle_2' = SetLevelEvent' slvle_2
+sphse_2' :: QuestionnaireEvent
+sphse_2' = SetPhaseEvent' sphse_2
 
-slvle_2 :: SetLevelEvent
-slvle_2 =
-  SetLevelEvent
-    { _setLevelEventUuid = u' "3bbd961e-eace-4b74-967e-43eae0986894"
-    , _setLevelEventLevel = 2
-    , _setLevelEventCreatedBy = Just $ userAlbert ^. uuid
-    , _setLevelEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+sphse_2 :: SetPhaseEvent
+sphse_2 =
+  SetPhaseEvent
+    { _setPhaseEventUuid = u' "3bbd961e-eace-4b74-967e-43eae0986894"
+    , _setPhaseEventPhaseUuid = Just $ phase2 ^. uuid
+    , _setPhaseEventCreatedBy = Just $ userAlbert ^. uuid
+    , _setPhaseEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
-slvle_3' :: QuestionnaireEvent
-slvle_3' = SetLevelEvent' slvle_3
+sphse_3' :: QuestionnaireEvent
+sphse_3' = SetPhaseEvent' sphse_3
 
-slvle_3 :: SetLevelEvent
-slvle_3 =
-  SetLevelEvent
-    { _setLevelEventUuid = u' "c6c68cce-015d-4c6f-adba-dacc8f77de05"
-    , _setLevelEventLevel = 3
-    , _setLevelEventCreatedBy = Just $ userAlbert ^. uuid
-    , _setLevelEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+sphse_3 :: SetPhaseEvent
+sphse_3 =
+  SetPhaseEvent
+    { _setPhaseEventUuid = u' "c6c68cce-015d-4c6f-adba-dacc8f77de05"
+    , _setPhaseEventPhaseUuid = Just $ phase3 ^. uuid
+    , _setPhaseEventCreatedBy = Just $ userAlbert ^. uuid
+    , _setPhaseEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
 slble_rQ1' :: QuestionnaireEvent

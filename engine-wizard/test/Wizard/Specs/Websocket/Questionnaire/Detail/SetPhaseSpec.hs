@@ -1,4 +1,4 @@
-module Wizard.Specs.Websocket.Questionnaire.Detail.SetLevelSpec where
+module Wizard.Specs.Websocket.Questionnaire.Detail.SetPhaseSpec where
 
 import Control.Lens ((^.))
 import Data.Aeson
@@ -23,7 +23,7 @@ import Wizard.Specs.Common
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.Questionnaire.Detail.Common
 
-setLevelSpec appContext = describe "setLevel" $ test200 appContext
+setPhaseSpec appContext = describe "setPhase" $ test200 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -42,11 +42,11 @@ test200 appContext =
     ((c1, s1), (c2, s2), (c3, s3)) <- connectTestWebsocketUsers appContext (questionnaire10 ^. uuid)
     ((c4, s4), (c5, s5), (c6, s6)) <- connectTestWebsocketUsers appContext (questionnaire7 ^. uuid)
     -- WHEN:
-    write_SetLevel c1 (toEventChangeDTO slvle_2')
+    write_SetPhase c1 (toEventChangeDTO sphse_2')
     -- THEN:
-    read_SetLevel c1 (toEventDTO slvle_2' (Just userAlbert))
-    read_SetLevel c2 (toEventDTO slvle_2' (Just userAlbert))
-    read_SetLevel c3 (toEventDTO slvle_2' (Just userAlbert))
+    read_SetPhase c1 (toEventDTO sphse_2' (Just userAlbert))
+    read_SetPhase c2 (toEventDTO sphse_2' (Just userAlbert))
+    read_SetPhase c3 (toEventDTO sphse_2' (Just userAlbert))
     nothingWasReceived c4
     nothingWasReceived c5
     nothingWasReceived c6
@@ -56,11 +56,11 @@ test200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-write_SetLevel connection replyDto = do
+write_SetPhase connection replyDto = do
   let reqDto = SetContent_ClientQuestionnaireActionDTO replyDto
   sendMessage connection reqDto
 
-read_SetLevel connection expReplyDto = do
+read_SetPhase connection expReplyDto = do
   resDto <- receiveData connection
   let eResult = eitherDecode resDto :: Either String (Success_ServerActionDTO ServerQuestionnaireActionDTO)
   let (Right (Success_ServerActionDTO (SetContent_ServerQuestionnaireActionDTO replyDto))) = eResult

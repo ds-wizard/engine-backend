@@ -10,6 +10,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -20,6 +21,7 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
@@ -463,5 +465,28 @@ modifierSpec =
           let expected = metricFEdited
           -- WHEN:
           let computed = editEntity event metricF
+          -- THEN:
+          computed `shouldBe` expected
+    describe "Phase level" $ do
+      describe "createPhase" $
+        it "Successfully created" $
+          -- GIVEN: Inputs
+         do
+          let event = a_km1_phs1
+          -- AND: Expectations
+          let expected = phase1
+          -- WHEN:
+          let computed = createEntity event
+          -- THEN:
+          computed `shouldBe` expected
+      describe "editPhase" $
+        it "Successfully edited" $
+          -- GIVEN: Inputs
+         do
+          let event = e_km1_phs1
+          -- AND: Expectations
+          let expected = phase1Edited
+          -- WHEN:
+          let computed = editEntity event phase1
           -- THEN:
           computed `shouldBe` expected

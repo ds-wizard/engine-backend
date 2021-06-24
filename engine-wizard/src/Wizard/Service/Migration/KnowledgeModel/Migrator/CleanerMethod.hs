@@ -52,6 +52,9 @@ doIsCleanerMethod km (DeleteIntegrationEvent' event) = isNothing $ M.lookup (eve
 doIsCleanerMethod km (AddMetricEvent' event) = False
 doIsCleanerMethod km (EditMetricEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. metricsM)
 doIsCleanerMethod km (DeleteMetricEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. metricsM)
+doIsCleanerMethod km (AddPhaseEvent' event) = False
+doIsCleanerMethod km (EditPhaseEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. phasesM)
+doIsCleanerMethod km (DeletePhaseEvent' event) = isNothing $ M.lookup (event ^. entityUuid') (km ^. phasesM)
 doIsCleanerMethod km (MoveQuestionEvent' event) =
   isNothing (M.lookup (event ^. entityUuid') (km ^. questionsM)) ||
   (isNothing (M.lookup (event ^. targetUuid) (km ^. chaptersM)) &&

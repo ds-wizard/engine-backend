@@ -48,10 +48,10 @@ applyEvent qtnCtn' (ClearReplyEvent' event) = do
   qtnCtn <- qtnCtn'
   let newReplies = M.delete (event ^. path) (qtnCtn ^. replies)
   return $ qtnCtn & replies .~ newReplies
-applyEvent qtnCtn' (SetLevelEvent' event) = do
+applyEvent qtnCtn' (SetPhaseEvent' event) = do
   qtnCtn <- qtnCtn'
-  let newLevel = event ^. level
-  return $ qtnCtn & level .~ newLevel
+  let newPhaseUuid = event ^. phaseUuid
+  return $ qtnCtn & phaseUuid .~ newPhaseUuid
 applyEvent qtnCtn' (SetLabelsEvent' event) = do
   qtnCtn <- qtnCtn'
   let newLabels =

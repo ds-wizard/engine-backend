@@ -164,7 +164,6 @@ data AppConfigQuestionnaire =
     , _appConfigQuestionnaireQuestionnaireSharing :: AppConfigQuestionnaireSharing
     , _appConfigQuestionnaireQuestionnaireCreation :: QuestionnaireCreation
     , _appConfigQuestionnaireSummaryReport :: SimpleFeature
-    , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
     }
   deriving (Generic, Eq, Show)

@@ -14,6 +14,7 @@ data KnowledgeModel =
     , _knowledgeModelTagUuids :: [U.UUID]
     , _knowledgeModelIntegrationUuids :: [U.UUID]
     , _knowledgeModelMetricUuids :: [U.UUID]
+    , _knowledgeModelPhaseUuids :: [U.UUID]
     , _knowledgeModelEntities :: KnowledgeModelEntities
     }
   deriving (Show, Eq, Generic)
@@ -29,6 +30,7 @@ data KnowledgeModelEntities =
     , _knowledgeModelEntitiesIntegrations :: Map U.UUID Integration
     , _knowledgeModelEntitiesTags :: Map U.UUID Tag
     , _knowledgeModelEntitiesMetrics :: Map U.UUID Metric
+    , _knowledgeModelEntitiesPhases :: Map U.UUID Phase
     }
   deriving (Show, Eq, Generic)
 
@@ -63,7 +65,7 @@ data OptionsQuestion =
     { _optionsQuestionUuid :: U.UUID
     , _optionsQuestionTitle :: String
     , _optionsQuestionText :: Maybe String
-    , _optionsQuestionRequiredLevel :: Maybe Int
+    , _optionsQuestionRequiredPhaseUuid :: Maybe U.UUID
     , _optionsQuestionTagUuids :: [U.UUID]
     , _optionsQuestionExpertUuids :: [U.UUID]
     , _optionsQuestionReferenceUuids :: [U.UUID]
@@ -76,7 +78,7 @@ data MultiChoiceQuestion =
     { _multiChoiceQuestionUuid :: U.UUID
     , _multiChoiceQuestionTitle :: String
     , _multiChoiceQuestionText :: Maybe String
-    , _multiChoiceQuestionRequiredLevel :: Maybe Int
+    , _multiChoiceQuestionRequiredPhaseUuid :: Maybe U.UUID
     , _multiChoiceQuestionTagUuids :: [U.UUID]
     , _multiChoiceQuestionExpertUuids :: [U.UUID]
     , _multiChoiceQuestionReferenceUuids :: [U.UUID]
@@ -89,7 +91,7 @@ data ListQuestion =
     { _listQuestionUuid :: U.UUID
     , _listQuestionTitle :: String
     , _listQuestionText :: Maybe String
-    , _listQuestionRequiredLevel :: Maybe Int
+    , _listQuestionRequiredPhaseUuid :: Maybe U.UUID
     , _listQuestionTagUuids :: [U.UUID]
     , _listQuestionExpertUuids :: [U.UUID]
     , _listQuestionReferenceUuids :: [U.UUID]
@@ -102,7 +104,7 @@ data ValueQuestion =
     { _valueQuestionUuid :: U.UUID
     , _valueQuestionTitle :: String
     , _valueQuestionText :: Maybe String
-    , _valueQuestionRequiredLevel :: Maybe Int
+    , _valueQuestionRequiredPhaseUuid :: Maybe U.UUID
     , _valueQuestionTagUuids :: [U.UUID]
     , _valueQuestionExpertUuids :: [U.UUID]
     , _valueQuestionReferenceUuids :: [U.UUID]
@@ -115,7 +117,7 @@ data IntegrationQuestion =
     { _integrationQuestionUuid :: U.UUID
     , _integrationQuestionTitle :: String
     , _integrationQuestionText :: Maybe String
-    , _integrationQuestionRequiredLevel :: Maybe Int
+    , _integrationQuestionRequiredPhaseUuid :: Maybe U.UUID
     , _integrationQuestionTagUuids :: [U.UUID]
     , _integrationQuestionExpertUuids :: [U.UUID]
     , _integrationQuestionReferenceUuids :: [U.UUID]
@@ -203,6 +205,15 @@ data MetricMeasure =
     { _metricMeasureMetricUuid :: U.UUID
     , _metricMeasureMeasure :: Double
     , _metricMeasureWeight :: Double
+    }
+  deriving (Show, Eq, Generic)
+
+-- ------------------------------------------------
+data Phase =
+  Phase
+    { _phaseUuid :: U.UUID
+    , _phaseTitle :: String
+    , _phaseDescription :: Maybe String
     }
   deriving (Show, Eq, Generic)
 

@@ -7,6 +7,7 @@ import Test.Hspec
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
@@ -15,36 +16,31 @@ import Wizard.Service.Report.ReportGenerator
 reportGeneratorSpec =
   describe "Report Generator" $ do
     describe "computeChapterReport" $ do
-      createComputeChapterReportTest False 1 chapter1 report1_ch1_full_disabled_levels
-      createComputeChapterReportTest False 2 chapter2 report1_ch2_full_disabled_levels
-      createComputeChapterReportTest False 3 chapter3 report1_ch3_full_disabled_levels
-      createComputeChapterReportTest True 1 chapter1 report1_ch1_full
-      createComputeChapterReportTest True 2 chapter2 report1_ch2_full
-      createComputeChapterReportTest True 3 chapter3 report1_ch3_full
-    describe "computeTotalReport" $ do
-      createComputeTotalReportTest True 3 report1_total_full
-      createComputeTotalReportTest False 3 report1_total_full_disabled_levels
+      createComputeChapterReportTest 1 chapter1 report1_ch1_full
+      createComputeChapterReportTest 2 chapter2 report1_ch2_full
+      createComputeChapterReportTest 3 chapter3 report1_ch3_full
+    describe "computeTotalReport" $ createComputeTotalReportTest 3 report1_total_full
 
-createComputeChapterReportTest levelsEnabled number chapter expectation =
-  it ("computeChapterReport for chapter" ++ show number ++ " should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
+createComputeChapterReportTest number chapter expectation =
+  it ("computeChapterReport for chapter" ++ show number ++ " should work") $
     -- GIVEN: Prepare
    do
-    let requiredLevel = 1
+    let requiredPhaseUuidUuid = Just $ phase1 ^. uuid
     let km = km1WithQ4
     let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
-    let result = computeChapterReport levelsEnabled requiredLevel km rs chapter
+    let result = computeChapterReport requiredPhaseUuidUuid km rs chapter
     -- THEN
     result `shouldBe` expectation
 
-createComputeTotalReportTest levelsEnabled number expectation =
-  it ("computeTotalReport should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
+createComputeTotalReportTest number expectation =
+  it "computeTotalReport should work" $
     -- GIVEN: Prepare
    do
-    let requiredLevel = 1
+    let requiredPhaseUuidUuid = Just $ phase1 ^. uuid
     let km = km1WithQ4
     let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
-    let result = computeTotalReport levelsEnabled requiredLevel km rs
+    let result = computeTotalReport requiredPhaseUuidUuid km rs
     -- THEN
     result `shouldBe` expectation

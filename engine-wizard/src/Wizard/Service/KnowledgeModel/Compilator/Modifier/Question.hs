@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Integration.IntegrationEvent
+import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModel
@@ -22,7 +23,7 @@ instance CreateEntity AddQuestionEvent Question where
       { _optionsQuestionUuid = e ^. entityUuid
       , _optionsQuestionTitle = e ^. title
       , _optionsQuestionText = e ^. text
-      , _optionsQuestionRequiredLevel = e ^. requiredLevel
+      , _optionsQuestionRequiredPhaseUuid = e ^. requiredPhaseUuid
       , _optionsQuestionTagUuids = e ^. tagUuids
       , _optionsQuestionReferenceUuids = []
       , _optionsQuestionExpertUuids = []
@@ -34,7 +35,7 @@ instance CreateEntity AddQuestionEvent Question where
       { _multiChoiceQuestionUuid = e ^. entityUuid
       , _multiChoiceQuestionTitle = e ^. title
       , _multiChoiceQuestionText = e ^. text
-      , _multiChoiceQuestionRequiredLevel = e ^. requiredLevel
+      , _multiChoiceQuestionRequiredPhaseUuid = e ^. requiredPhaseUuid
       , _multiChoiceQuestionTagUuids = e ^. tagUuids
       , _multiChoiceQuestionReferenceUuids = []
       , _multiChoiceQuestionExpertUuids = []
@@ -46,7 +47,7 @@ instance CreateEntity AddQuestionEvent Question where
       { _listQuestionUuid = e ^. entityUuid
       , _listQuestionTitle = e ^. title
       , _listQuestionText = e ^. text
-      , _listQuestionRequiredLevel = e ^. requiredLevel
+      , _listQuestionRequiredPhaseUuid = e ^. requiredPhaseUuid
       , _listQuestionTagUuids = e ^. tagUuids
       , _listQuestionReferenceUuids = []
       , _listQuestionExpertUuids = []
@@ -58,7 +59,7 @@ instance CreateEntity AddQuestionEvent Question where
       { _valueQuestionUuid = e ^. entityUuid
       , _valueQuestionTitle = e ^. title
       , _valueQuestionText = e ^. text
-      , _valueQuestionRequiredLevel = e ^. requiredLevel
+      , _valueQuestionRequiredPhaseUuid = e ^. requiredPhaseUuid
       , _valueQuestionTagUuids = e ^. tagUuids
       , _valueQuestionReferenceUuids = []
       , _valueQuestionExpertUuids = []
@@ -70,7 +71,7 @@ instance CreateEntity AddQuestionEvent Question where
       { _integrationQuestionUuid = e ^. entityUuid
       , _integrationQuestionTitle = e ^. title
       , _integrationQuestionText = e ^. text
-      , _integrationQuestionRequiredLevel = e ^. requiredLevel
+      , _integrationQuestionRequiredPhaseUuid = e ^. requiredPhaseUuid
       , _integrationQuestionTagUuids = e ^. tagUuids
       , _integrationQuestionReferenceUuids = []
       , _integrationQuestionExpertUuids = []
@@ -105,7 +106,7 @@ instance EditEntity EditQuestionEvent Question where
         applyReferenceUuids e . applyExpertUuids e . applyTagUuids e . applyRequiredLevel e . applyText e . applyTitle e
       applyTitle e q = applyValue (e ^. title) q title'
       applyText e q = applyValue (e ^. text) q text'
-      applyRequiredLevel e q = applyValue (e ^. requiredLevel) q requiredLevel'
+      applyRequiredLevel e q = applyValue (e ^. requiredPhaseUuid) q requiredPhaseUuid'
       applyTagUuids e q = applyValue (e ^. tagUuids) q tagUuids'
       applyExpertUuids e q = applyValue (e ^. expertUuids) q expertUuids'
       applyReferenceUuids e q = applyValue (e ^. referenceUuids) q referenceUuids'
@@ -131,7 +132,7 @@ convertToOptionsQuestion q' =
         { _optionsQuestionUuid = q ^. uuid
         , _optionsQuestionTitle = q ^. title
         , _optionsQuestionText = q ^. text
-        , _optionsQuestionRequiredLevel = q ^. requiredLevel
+        , _optionsQuestionRequiredPhaseUuid = q ^. requiredPhaseUuid
         , _optionsQuestionTagUuids = q ^. tagUuids
         , _optionsQuestionReferenceUuids = q ^. referenceUuids
         , _optionsQuestionExpertUuids = q ^. expertUuids
@@ -153,7 +154,7 @@ convertToMultiChoiceQuestion q' =
         { _multiChoiceQuestionUuid = q ^. uuid
         , _multiChoiceQuestionTitle = q ^. title
         , _multiChoiceQuestionText = q ^. text
-        , _multiChoiceQuestionRequiredLevel = q ^. requiredLevel
+        , _multiChoiceQuestionRequiredPhaseUuid = q ^. requiredPhaseUuid
         , _multiChoiceQuestionTagUuids = q ^. tagUuids
         , _multiChoiceQuestionReferenceUuids = q ^. referenceUuids
         , _multiChoiceQuestionExpertUuids = q ^. expertUuids
@@ -175,7 +176,7 @@ convertToListQuestion q' =
         { _listQuestionUuid = q ^. uuid
         , _listQuestionTitle = q ^. title
         , _listQuestionText = q ^. text
-        , _listQuestionRequiredLevel = q ^. requiredLevel
+        , _listQuestionRequiredPhaseUuid = q ^. requiredPhaseUuid
         , _listQuestionTagUuids = q ^. tagUuids
         , _listQuestionReferenceUuids = q ^. referenceUuids
         , _listQuestionExpertUuids = q ^. expertUuids
@@ -197,7 +198,7 @@ convertToValueQuestion q' =
         { _valueQuestionUuid = q ^. uuid
         , _valueQuestionTitle = q ^. title
         , _valueQuestionText = q ^. text
-        , _valueQuestionRequiredLevel = q ^. requiredLevel
+        , _valueQuestionRequiredPhaseUuid = q ^. requiredPhaseUuid
         , _valueQuestionTagUuids = q ^. tagUuids
         , _valueQuestionReferenceUuids = q ^. referenceUuids
         , _valueQuestionExpertUuids = q ^. expertUuids
@@ -219,7 +220,7 @@ convertToIntegrationQuestion q' =
         { _integrationQuestionUuid = q ^. uuid
         , _integrationQuestionTitle = q ^. title
         , _integrationQuestionText = q ^. text
-        , _integrationQuestionRequiredLevel = q ^. requiredLevel
+        , _integrationQuestionRequiredPhaseUuid = q ^. requiredPhaseUuid
         , _integrationQuestionTagUuids = q ^. tagUuids
         , _integrationQuestionReferenceUuids = q ^. referenceUuids
         , _integrationQuestionExpertUuids = q ^. expertUuids
@@ -244,6 +245,15 @@ deleteIntegrationReference e (IntegrationQuestion' q) =
     then convertToValueQuestion . IntegrationQuestion' $ q
     else IntegrationQuestion' q
 deleteIntegrationReference _ q' = q'
+
+deletePhaseReference :: DeletePhaseEvent -> Question -> Question
+deletePhaseReference e q' =
+  case q' ^. requiredPhaseUuid' of
+    Just requiredPhaseUuid ->
+      if requiredPhaseUuid == e ^. entityUuid
+        then q' & requiredPhaseUuid' .~ Nothing
+        else q'
+    Nothing -> q'
 
 deleteTagReference :: DeleteTagEvent -> Question -> Question
 deleteTagReference e q = q & tagUuids' .~ L.delete (e ^. entityUuid) (q ^. tagUuids')

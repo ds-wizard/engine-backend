@@ -16,4 +16,4 @@ getReportByQuestionnaireUuid qtnUuid =
   runInTransaction $ do
     qtnDto <- getQuestionnaireDetailById qtnUuid
     knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids)
-    generateReport (qtnDto ^. level) knowledgeModel (M.toList $ qtnDto ^. replies)
+    generateReport (qtnDto ^. phaseUuid) knowledgeModel (M.toList $ qtnDto ^. replies)

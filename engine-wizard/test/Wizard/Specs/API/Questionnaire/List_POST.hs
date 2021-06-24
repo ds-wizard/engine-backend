@@ -72,8 +72,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto =
           if anonymousSharingEnabled
-            then (level .~ 1) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
-            else questionnaire1Dto & level .~ 1
+            then (phaseUuid .~ Nothing) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
+            else questionnaire1Dto & phaseUuid .~ Nothing
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext

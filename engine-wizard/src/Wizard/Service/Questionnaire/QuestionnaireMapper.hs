@@ -53,7 +53,7 @@ toDTO qtn qtnCtn package state report permissions =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
@@ -71,7 +71,7 @@ toDTO' qtn qtnCtn report =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = qtn ^. state
@@ -96,7 +96,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
@@ -127,7 +127,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
     , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOLevel = qtnCtn ^. level
+    , _questionnaireDetailDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
     , _questionnaireDetailDTOState = state
@@ -167,7 +167,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
     , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOLevel = qtnContent ^. level
+    , _questionnaireDetailDTOPhaseUuid = qtnContent ^. phaseUuid
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
     , _questionnaireDetailDTOState = state
@@ -192,7 +192,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
 toContentDTO :: QuestionnaireContent -> [QuestionnaireEventDTO] -> [QuestionnaireVersionDTO] -> QuestionnaireContentDTO
 toContentDTO qtnCtn events versions =
   QuestionnaireContentDTO
-    { _questionnaireContentDTOLevel = qtnCtn ^. level
+    { _questionnaireContentDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireContentDTOReplies = qtnCtn ^. replies
     , _questionnaireContentDTOLabels = qtnCtn ^. labels
     , _questionnaireContentDTOEvents = events

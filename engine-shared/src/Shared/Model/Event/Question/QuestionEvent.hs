@@ -22,7 +22,7 @@ data AddOptionsQuestionEvent =
     , _addOptionsQuestionEventEntityUuid :: U.UUID
     , _addOptionsQuestionEventTitle :: String
     , _addOptionsQuestionEventText :: Maybe String
-    , _addOptionsQuestionEventRequiredLevel :: Maybe Int
+    , _addOptionsQuestionEventRequiredPhaseUuid :: Maybe U.UUID
     , _addOptionsQuestionEventTagUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
@@ -34,7 +34,7 @@ data AddMultiChoiceQuestionEvent =
     , _addMultiChoiceQuestionEventEntityUuid :: U.UUID
     , _addMultiChoiceQuestionEventTitle :: String
     , _addMultiChoiceQuestionEventText :: Maybe String
-    , _addMultiChoiceQuestionEventRequiredLevel :: Maybe Int
+    , _addMultiChoiceQuestionEventRequiredPhaseUuid :: Maybe U.UUID
     , _addMultiChoiceQuestionEventTagUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
@@ -46,7 +46,7 @@ data AddListQuestionEvent =
     , _addListQuestionEventEntityUuid :: U.UUID
     , _addListQuestionEventTitle :: String
     , _addListQuestionEventText :: Maybe String
-    , _addListQuestionEventRequiredLevel :: Maybe Int
+    , _addListQuestionEventRequiredPhaseUuid :: Maybe U.UUID
     , _addListQuestionEventTagUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
@@ -58,7 +58,7 @@ data AddValueQuestionEvent =
     , _addValueQuestionEventEntityUuid :: U.UUID
     , _addValueQuestionEventTitle :: String
     , _addValueQuestionEventText :: Maybe String
-    , _addValueQuestionEventRequiredLevel :: Maybe Int
+    , _addValueQuestionEventRequiredPhaseUuid :: Maybe U.UUID
     , _addValueQuestionEventTagUuids :: [U.UUID]
     , _addValueQuestionEventValueType :: QuestionValueType
     }
@@ -71,7 +71,7 @@ data AddIntegrationQuestionEvent =
     , _addIntegrationQuestionEventEntityUuid :: U.UUID
     , _addIntegrationQuestionEventTitle :: String
     , _addIntegrationQuestionEventText :: Maybe String
-    , _addIntegrationQuestionEventRequiredLevel :: Maybe Int
+    , _addIntegrationQuestionEventRequiredPhaseUuid :: Maybe U.UUID
     , _addIntegrationQuestionEventTagUuids :: [U.UUID]
     , _addIntegrationQuestionEventIntegrationUuid :: U.UUID
     , _addIntegrationQuestionEventProps :: Map String String
@@ -94,7 +94,7 @@ data EditOptionsQuestionEvent =
     , _editOptionsQuestionEventEntityUuid :: U.UUID
     , _editOptionsQuestionEventTitle :: EventField String
     , _editOptionsQuestionEventText :: EventField (Maybe String)
-    , _editOptionsQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editOptionsQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
     , _editOptionsQuestionEventTagUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventExpertUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventReferenceUuids :: EventField [U.UUID]
@@ -109,7 +109,7 @@ data EditMultiChoiceQuestionEvent =
     , _editMultiChoiceQuestionEventEntityUuid :: U.UUID
     , _editMultiChoiceQuestionEventTitle :: EventField String
     , _editMultiChoiceQuestionEventText :: EventField (Maybe String)
-    , _editMultiChoiceQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editMultiChoiceQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
     , _editMultiChoiceQuestionEventTagUuids :: EventField [U.UUID]
     , _editMultiChoiceQuestionEventExpertUuids :: EventField [U.UUID]
     , _editMultiChoiceQuestionEventReferenceUuids :: EventField [U.UUID]
@@ -124,7 +124,7 @@ data EditListQuestionEvent =
     , _editListQuestionEventEntityUuid :: U.UUID
     , _editListQuestionEventTitle :: EventField String
     , _editListQuestionEventText :: EventField (Maybe String)
-    , _editListQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editListQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
     , _editListQuestionEventTagUuids :: EventField [U.UUID]
     , _editListQuestionEventExpertUuids :: EventField [U.UUID]
     , _editListQuestionEventReferenceUuids :: EventField [U.UUID]
@@ -139,7 +139,7 @@ data EditValueQuestionEvent =
     , _editValueQuestionEventEntityUuid :: U.UUID
     , _editValueQuestionEventTitle :: EventField String
     , _editValueQuestionEventText :: EventField (Maybe String)
-    , _editValueQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editValueQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
     , _editValueQuestionEventTagUuids :: EventField [U.UUID]
     , _editValueQuestionEventExpertUuids :: EventField [U.UUID]
     , _editValueQuestionEventReferenceUuids :: EventField [U.UUID]
@@ -154,7 +154,7 @@ data EditIntegrationQuestionEvent =
     , _editIntegrationQuestionEventEntityUuid :: U.UUID
     , _editIntegrationQuestionEventTitle :: EventField String
     , _editIntegrationQuestionEventText :: EventField (Maybe String)
-    , _editIntegrationQuestionEventRequiredLevel :: EventField (Maybe Int)
+    , _editIntegrationQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
     , _editIntegrationQuestionEventTagUuids :: EventField [U.UUID]
     , _editIntegrationQuestionEventExpertUuids :: EventField [U.UUID]
     , _editIntegrationQuestionEventReferenceUuids :: EventField [U.UUID]

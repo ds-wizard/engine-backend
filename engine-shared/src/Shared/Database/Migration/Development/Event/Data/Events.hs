@@ -12,6 +12,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -24,6 +25,7 @@ import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
+import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -48,6 +50,7 @@ e_km1 =
     , _editKnowledgeModelEventTagUuids = ChangedValue $ km1Edited ^. tagUuids
     , _editKnowledgeModelEventIntegrationUuids = ChangedValue $ km1Edited ^. integrationUuids
     , _editKnowledgeModelEventMetricUuids = ChangedValue $ km1Edited ^. metricUuids
+    , _editKnowledgeModelEventPhaseUuids = ChangedValue $ km1Edited ^. phaseUuids
     }
 
 -- ----------------------------------------------------------------------------
@@ -135,7 +138,7 @@ a_km1_ch1_q1 =
     , _addValueQuestionEventEntityUuid = question1 ^. uuid
     , _addValueQuestionEventTitle = question1 ^. title
     , _addValueQuestionEventText = question1 ^. text
-    , _addValueQuestionEventRequiredLevel = question1 ^. requiredLevel
+    , _addValueQuestionEventRequiredPhaseUuid = question1 ^. requiredPhaseUuid
     , _addValueQuestionEventTagUuids = question1 ^. tagUuids
     , _addValueQuestionEventValueType = question1 ^. valueType
     }
@@ -151,7 +154,7 @@ a_km1_ch1_q2 =
     , _addOptionsQuestionEventEntityUuid = question2 ^. uuid
     , _addOptionsQuestionEventTitle = question2 ^. title
     , _addOptionsQuestionEventText = question2 ^. text
-    , _addOptionsQuestionEventRequiredLevel = question2 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = question2 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = question2 ^. tagUuids
     }
 
@@ -166,7 +169,7 @@ a_km1_ch1_q3 =
     , _addOptionsQuestionEventEntityUuid = question3 ^. uuid
     , _addOptionsQuestionEventTitle = question3 ^. title
     , _addOptionsQuestionEventText = question3 ^. text
-    , _addOptionsQuestionEventRequiredLevel = question3 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = question3 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = question3 ^. tagUuids
     }
 
@@ -181,7 +184,7 @@ a_km1_ch2_q3 =
     , _addOptionsQuestionEventEntityUuid = question3 ^. uuid
     , _addOptionsQuestionEventTitle = question3 ^. title
     , _addOptionsQuestionEventText = question3 ^. text
-    , _addOptionsQuestionEventRequiredLevel = question3 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = question3 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = question3 ^. tagUuids
     }
 
@@ -196,7 +199,7 @@ a_km1_ch2_q4 =
     , _addListQuestionEventEntityUuid = question4 ^. uuid
     , _addListQuestionEventTitle = question4 ^. title
     , _addListQuestionEventText = question4 ^. text
-    , _addListQuestionEventRequiredLevel = question4 ^. requiredLevel
+    , _addListQuestionEventRequiredPhaseUuid = question4 ^. requiredPhaseUuid
     , _addListQuestionEventTagUuids = question4 ^. tagUuids
     }
 
@@ -211,7 +214,7 @@ a_km1_ch3_q9 =
     , _addIntegrationQuestionEventEntityUuid = question9 ^. uuid
     , _addIntegrationQuestionEventTitle = question9 ^. title
     , _addIntegrationQuestionEventText = question9 ^. text
-    , _addIntegrationQuestionEventRequiredLevel = question9 ^. requiredLevel
+    , _addIntegrationQuestionEventRequiredPhaseUuid = question9 ^. requiredPhaseUuid
     , _addIntegrationQuestionEventTagUuids = question9 ^. tagUuids
     , _addIntegrationQuestionEventIntegrationUuid = question9 ^. integrationUuid
     , _addIntegrationQuestionEventProps = question9 ^. props
@@ -228,7 +231,7 @@ a_km1_ch3_q10 =
     , _addIntegrationQuestionEventEntityUuid = question10 ^. uuid
     , _addIntegrationQuestionEventTitle = question10 ^. title
     , _addIntegrationQuestionEventText = question10 ^. text
-    , _addIntegrationQuestionEventRequiredLevel = question10 ^. requiredLevel
+    , _addIntegrationQuestionEventRequiredPhaseUuid = question10 ^. requiredPhaseUuid
     , _addIntegrationQuestionEventTagUuids = question10 ^. tagUuids
     , _addIntegrationQuestionEventIntegrationUuid = question10 ^. integrationUuid
     , _addIntegrationQuestionEventProps = question10 ^. props
@@ -245,7 +248,7 @@ a_km1_ch3_q11 =
     , _addMultiChoiceQuestionEventEntityUuid = question11 ^. uuid
     , _addMultiChoiceQuestionEventTitle = question11 ^. title
     , _addMultiChoiceQuestionEventText = question11 ^. text
-    , _addMultiChoiceQuestionEventRequiredLevel = question11 ^. requiredLevel
+    , _addMultiChoiceQuestionEventRequiredPhaseUuid = question11 ^. requiredPhaseUuid
     , _addMultiChoiceQuestionEventTagUuids = question11 ^. tagUuids
     }
 
@@ -260,7 +263,7 @@ a_km1_ch3_q12 =
     , _addMultiChoiceQuestionEventEntityUuid = question12 ^. uuid
     , _addMultiChoiceQuestionEventTitle = question12 ^. title
     , _addMultiChoiceQuestionEventText = question12 ^. text
-    , _addMultiChoiceQuestionEventRequiredLevel = question12 ^. requiredLevel
+    , _addMultiChoiceQuestionEventRequiredPhaseUuid = question12 ^. requiredPhaseUuid
     , _addMultiChoiceQuestionEventTagUuids = question12 ^. tagUuids
     }
 
@@ -275,7 +278,7 @@ e_km1_ch1_q1 =
     , _editValueQuestionEventEntityUuid = question1Edited ^. uuid
     , _editValueQuestionEventTitle = ChangedValue $ question1Edited ^. title
     , _editValueQuestionEventText = NothingChanged
-    , _editValueQuestionEventRequiredLevel = NothingChanged
+    , _editValueQuestionEventRequiredPhaseUuid = NothingChanged
     , _editValueQuestionEventTagUuids = NothingChanged
     , _editValueQuestionEventExpertUuids = NothingChanged
     , _editValueQuestionEventReferenceUuids = NothingChanged
@@ -293,7 +296,7 @@ e_km1_ch1_q1_type =
     , _editOptionsQuestionEventEntityUuid = question1WithNewType ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue $ question1WithNewType ^. title
     , _editOptionsQuestionEventText = NothingChanged
-    , _editOptionsQuestionEventRequiredLevel = NothingChanged
+    , _editOptionsQuestionEventRequiredPhaseUuid = NothingChanged
     , _editOptionsQuestionEventTagUuids = NothingChanged
     , _editOptionsQuestionEventExpertUuids = NothingChanged
     , _editOptionsQuestionEventReferenceUuids = NothingChanged
@@ -311,7 +314,7 @@ e_km1_ch1_q2 =
     , _editOptionsQuestionEventEntityUuid = question2 ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue $ question2Edited ^. title
     , _editOptionsQuestionEventText = ChangedValue $ question2Edited ^. text
-    , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2Edited ^. requiredLevel
+    , _editOptionsQuestionEventRequiredPhaseUuid = ChangedValue $ question2Edited ^. requiredPhaseUuid
     , _editOptionsQuestionEventTagUuids = ChangedValue $ question2Edited ^. tagUuids
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ question2Edited' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ question2Edited' ^. referenceUuids'
@@ -329,7 +332,7 @@ e_km1_ch1_q2_second_edit =
     , _editOptionsQuestionEventEntityUuid = question2 ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue "New title"
     , _editOptionsQuestionEventText = ChangedValue $ question2Edited ^. text
-    , _editOptionsQuestionEventRequiredLevel = ChangedValue $ question2Edited ^. requiredLevel
+    , _editOptionsQuestionEventRequiredPhaseUuid = ChangedValue $ question2Edited ^. requiredPhaseUuid
     , _editOptionsQuestionEventTagUuids = ChangedValue $ question2Edited ^. tagUuids
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ question2Edited' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ question2Edited' ^. referenceUuids'
@@ -347,7 +350,7 @@ e_km1_ch1_q2_type =
     , _editListQuestionEventEntityUuid = question2WithNewType ^. uuid
     , _editListQuestionEventTitle = ChangedValue $ question2WithNewType ^. title
     , _editListQuestionEventText = NothingChanged
-    , _editListQuestionEventRequiredLevel = NothingChanged
+    , _editListQuestionEventRequiredPhaseUuid = NothingChanged
     , _editListQuestionEventTagUuids = NothingChanged
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
@@ -365,7 +368,7 @@ e_km1_ch2_q4 =
     , _editListQuestionEventEntityUuid = question4Edited ^. uuid
     , _editListQuestionEventTitle = ChangedValue $ question4Edited ^. title
     , _editListQuestionEventText = ChangedValue $ question4Edited ^. text
-    , _editListQuestionEventRequiredLevel = ChangedValue $ question4Edited ^. requiredLevel
+    , _editListQuestionEventRequiredPhaseUuid = ChangedValue $ question4Edited ^. requiredPhaseUuid
     , _editListQuestionEventTagUuids = ChangedValue $ question4Edited ^. tagUuids
     , _editListQuestionEventExpertUuids = ChangedValue $ question4Edited' ^. expertUuids'
     , _editListQuestionEventReferenceUuids = ChangedValue $ question4Edited' ^. referenceUuids'
@@ -383,7 +386,7 @@ e_km1_ch2_q4_type =
     , _editIntegrationQuestionEventEntityUuid = question4WithNewType ^. uuid
     , _editIntegrationQuestionEventTitle = ChangedValue $ question4WithNewType ^. title
     , _editIntegrationQuestionEventText = NothingChanged
-    , _editIntegrationQuestionEventRequiredLevel = NothingChanged
+    , _editIntegrationQuestionEventRequiredPhaseUuid = NothingChanged
     , _editIntegrationQuestionEventTagUuids = NothingChanged
     , _editIntegrationQuestionEventExpertUuids = NothingChanged
     , _editIntegrationQuestionEventReferenceUuids = NothingChanged
@@ -402,7 +405,7 @@ e_km1_ch3_q9 =
     , _editIntegrationQuestionEventEntityUuid = question9Edited ^. uuid
     , _editIntegrationQuestionEventTitle = ChangedValue $ question9Edited ^. title
     , _editIntegrationQuestionEventText = ChangedValue $ question9Edited ^. text
-    , _editIntegrationQuestionEventRequiredLevel = ChangedValue $ question9Edited ^. requiredLevel
+    , _editIntegrationQuestionEventRequiredPhaseUuid = ChangedValue $ question9Edited ^. requiredPhaseUuid
     , _editIntegrationQuestionEventTagUuids = ChangedValue $ question9Edited ^. tagUuids
     , _editIntegrationQuestionEventExpertUuids = ChangedValue $ question9Edited' ^. expertUuids'
     , _editIntegrationQuestionEventReferenceUuids = ChangedValue $ question9Edited' ^. referenceUuids'
@@ -421,7 +424,7 @@ e_km1_ch3_q9_type =
     , _editValueQuestionEventEntityUuid = question9WithNewType ^. uuid
     , _editValueQuestionEventTitle = ChangedValue $ question9WithNewType ^. title
     , _editValueQuestionEventText = NothingChanged
-    , _editValueQuestionEventRequiredLevel = NothingChanged
+    , _editValueQuestionEventRequiredPhaseUuid = NothingChanged
     , _editValueQuestionEventTagUuids = NothingChanged
     , _editValueQuestionEventExpertUuids = NothingChanged
     , _editValueQuestionEventReferenceUuids = NothingChanged
@@ -439,7 +442,7 @@ e_km1_ch3_q11 =
     , _editMultiChoiceQuestionEventEntityUuid = question2 ^. uuid
     , _editMultiChoiceQuestionEventTitle = ChangedValue $ question11Edited ^. title
     , _editMultiChoiceQuestionEventText = ChangedValue $ question11Edited ^. text
-    , _editMultiChoiceQuestionEventRequiredLevel = ChangedValue $ question11Edited ^. requiredLevel
+    , _editMultiChoiceQuestionEventRequiredPhaseUuid = ChangedValue $ question11Edited ^. requiredPhaseUuid
     , _editMultiChoiceQuestionEventTagUuids = ChangedValue $ question11Edited ^. tagUuids
     , _editMultiChoiceQuestionEventExpertUuids = ChangedValue $ question11Edited' ^. expertUuids'
     , _editMultiChoiceQuestionEventReferenceUuids = ChangedValue $ question11Edited' ^. referenceUuids'
@@ -649,7 +652,7 @@ a_km1_ch2_q4_it1_q5 =
     , _addListQuestionEventEntityUuid = q4_it1_question5 ^. uuid
     , _addListQuestionEventTitle = q4_it1_question5 ^. title
     , _addListQuestionEventText = q4_it1_question5 ^. text
-    , _addListQuestionEventRequiredLevel = q4_it1_question5 ^. requiredLevel
+    , _addListQuestionEventRequiredPhaseUuid = q4_it1_question5 ^. requiredPhaseUuid
     , _addListQuestionEventTagUuids = q4_it1_question5 ^. tagUuids
     }
 
@@ -664,7 +667,7 @@ a_km1_ch2_q4_it1_q6 =
     , _addOptionsQuestionEventEntityUuid = q4_it1_question6 ^. uuid
     , _addOptionsQuestionEventTitle = q4_it1_question6 ^. title
     , _addOptionsQuestionEventText = q4_it1_question6 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q4_it1_question6 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q4_it1_question6 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q4_it1_question6 ^. tagUuids
     }
 
@@ -679,7 +682,7 @@ a_km1_ch2_q4_it1_q6_fuq4_q1 =
     , _addOptionsQuestionEventEntityUuid = q4_it1_q6_aYes_fuq4_it_question1 ^. uuid
     , _addOptionsQuestionEventTitle = q4_it1_q6_aYes_fuq4_it_question1 ^. title
     , _addOptionsQuestionEventText = q4_it1_q6_aYes_fuq4_it_question1 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q4_it1_q6_aYes_fuq4_it_question1 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q4_it1_q6_aYes_fuq4_it_question1 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q4_it1_q6_aYes_fuq4_it_question1 ^. tagUuids
     }
 
@@ -694,7 +697,7 @@ a_km1_ch2_q4_it1_q6_fuq4_q2 =
     , _addOptionsQuestionEventEntityUuid = q4_it1_q6_aYes_fuq4_it_question2 ^. uuid
     , _addOptionsQuestionEventTitle = q4_it1_q6_aYes_fuq4_it_question2 ^. title
     , _addOptionsQuestionEventText = q4_it1_q6_aYes_fuq4_it_question2 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q4_it1_q6_aYes_fuq4_it_question2 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q4_it1_q6_aYes_fuq4_it_question2 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q4_it1_q6_aYes_fuq4_it_question2 ^. tagUuids
     }
 
@@ -709,7 +712,7 @@ a_km1_ch2_q4_it1_q7 =
     , _addValueQuestionEventEntityUuid = q4_it1_q5_it2_question7 ^. uuid
     , _addValueQuestionEventTitle = q4_it1_q5_it2_question7 ^. title
     , _addValueQuestionEventText = q4_it1_q5_it2_question7 ^. text
-    , _addValueQuestionEventRequiredLevel = q4_it1_q5_it2_question7 ^. requiredLevel
+    , _addValueQuestionEventRequiredPhaseUuid = q4_it1_q5_it2_question7 ^. requiredPhaseUuid
     , _addValueQuestionEventTagUuids = q4_it1_q5_it2_question7 ^. tagUuids
     , _addValueQuestionEventValueType = q4_it1_q5_it2_question7 ^. valueType
     }
@@ -725,7 +728,7 @@ a_km1_ch2_q4_it1_q8 =
     , _addValueQuestionEventEntityUuid = q4_it1_q5_it2_question8 ^. uuid
     , _addValueQuestionEventTitle = q4_it1_q5_it2_question8 ^. title
     , _addValueQuestionEventText = q4_it1_q5_it2_question8 ^. text
-    , _addValueQuestionEventRequiredLevel = q4_it1_q5_it2_question8 ^. requiredLevel
+    , _addValueQuestionEventRequiredPhaseUuid = q4_it1_q5_it2_question8 ^. requiredPhaseUuid
     , _addValueQuestionEventTagUuids = q4_it1_q5_it2_question8 ^. tagUuids
     , _addValueQuestionEventValueType = q4_it1_q5_it2_question8 ^. valueType
     }
@@ -741,7 +744,7 @@ e_km1_ch2_q4_it1_q5 =
     , _editListQuestionEventEntityUuid = q4_it1_question5Edited ^. uuid
     , _editListQuestionEventTitle = ChangedValue $ q4_it1_question5Edited ^. title
     , _editListQuestionEventText = ChangedValue $ q4_it1_question5Edited ^. text
-    , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_question5Edited ^. requiredLevel
+    , _editListQuestionEventRequiredPhaseUuid = ChangedValue $ q4_it1_question5Edited ^. requiredPhaseUuid
     , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_question5Edited ^. tagUuids
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
@@ -760,7 +763,7 @@ e_km1_ch2_q4_it1_q6 =
     , _editOptionsQuestionEventEntityUuid = q4_it1_question6Edited ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue $ q4_it1_question6Edited ^. title
     , _editOptionsQuestionEventText = ChangedValue $ q4_it1_question6Edited ^. text
-    , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q4_it1_question6Edited ^. requiredLevel
+    , _editOptionsQuestionEventRequiredPhaseUuid = ChangedValue $ q4_it1_question6Edited ^. requiredPhaseUuid
     , _editOptionsQuestionEventTagUuids = ChangedValue $ q4_it1_question6Edited ^. tagUuids
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ q4_it1_question6Edited' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ q4_it1_question6Edited' ^. referenceUuids'
@@ -791,7 +794,7 @@ a_km1_ch1_ansYes1_fuq1 =
     , _addOptionsQuestionEventEntityUuid = q2_aYes_fuQuestion1 ^. uuid
     , _addOptionsQuestionEventTitle = q2_aYes_fuQuestion1 ^. title
     , _addOptionsQuestionEventText = q2_aYes_fuQuestion1 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q2_aYes_fuQuestion1 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q2_aYes_fuQuestion1 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q2_aYes_fuQuestion1 ^. tagUuids
     }
 
@@ -806,7 +809,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2 =
     , _addOptionsQuestionEventEntityUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
     , _addOptionsQuestionEventTitle = q2_aYes_fuq1_aYes_fuQuestion2 ^. title
     , _addOptionsQuestionEventText = q2_aYes_fuq1_aYes_fuQuestion2 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q2_aYes_fuq1_aYes_fuQuestion2 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q2_aYes_fuq1_aYes_fuQuestion2 ^. tagUuids
     }
 
@@ -822,7 +825,7 @@ a_km1_ch1_q2_ansYes_fuq1_ansYes_fuq2_ansYes4_fuq3 =
     , _addOptionsQuestionEventEntityUuid = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. uuid
     , _addOptionsQuestionEventTitle = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. title
     , _addOptionsQuestionEventText = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. text
-    , _addOptionsQuestionEventRequiredLevel = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. requiredLevel
+    , _addOptionsQuestionEventRequiredPhaseUuid = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. requiredPhaseUuid
     , _addOptionsQuestionEventTagUuids = q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 ^. tagUuids
     }
 
@@ -837,7 +840,7 @@ a_km1_ch2_ansYes6_fuq4 =
     , _addListQuestionEventEntityUuid = q4_it1_q6_aYes_followUpQuestion4 ^. uuid
     , _addListQuestionEventTitle = q4_it1_q6_aYes_followUpQuestion4 ^. title
     , _addListQuestionEventText = q4_it1_q6_aYes_followUpQuestion4 ^. text
-    , _addListQuestionEventRequiredLevel = q4_it1_q6_aYes_followUpQuestion4 ^. requiredLevel
+    , _addListQuestionEventRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion4 ^. requiredPhaseUuid
     , _addListQuestionEventTagUuids = q4_it1_q6_aYes_followUpQuestion4 ^. tagUuids
     }
 
@@ -852,7 +855,7 @@ a_km1_ch2_ansYes6_fuq5 =
     , _addIntegrationQuestionEventEntityUuid = q4_it1_q6_aYes_followUpQuestion5 ^. uuid
     , _addIntegrationQuestionEventTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
     , _addIntegrationQuestionEventText = q4_it1_q6_aYes_followUpQuestion5 ^. text
-    , _addIntegrationQuestionEventRequiredLevel = q4_it1_q6_aYes_followUpQuestion5 ^. requiredLevel
+    , _addIntegrationQuestionEventRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5 ^. requiredPhaseUuid
     , _addIntegrationQuestionEventTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
     , _addIntegrationQuestionEventIntegrationUuid = q4_it1_q6_aYes_followUpQuestion5 ^. integrationUuid
     , _addIntegrationQuestionEventProps = q4_it1_q6_aYes_followUpQuestion5 ^. props
@@ -869,7 +872,8 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2 =
     , _editOptionsQuestionEventEntityUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. title
     , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. text
-    , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredLevel
+    , _editOptionsQuestionEventRequiredPhaseUuid =
+        ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredPhaseUuid
     , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. tagUuids
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited' ^. referenceUuids'
@@ -887,7 +891,8 @@ e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 =
     , _editOptionsQuestionEventEntityUuid = q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid
     , _editOptionsQuestionEventTitle = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. title
     , _editOptionsQuestionEventText = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. text
-    , _editOptionsQuestionEventRequiredLevel = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredLevel
+    , _editOptionsQuestionEventRequiredPhaseUuid =
+        ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. requiredPhaseUuid
     , _editOptionsQuestionEventTagUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2Edited ^. tagUuids
     , _editOptionsQuestionEventExpertUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2' ^. expertUuids'
     , _editOptionsQuestionEventReferenceUuids = ChangedValue $ q2_aYes_fuq1_aYes_fuQuestion2' ^. referenceUuids'
@@ -906,7 +911,8 @@ e_km1_ch2_ansMaybe6_fuq4 =
     , _editListQuestionEventEntityUuid = q4_it1_q6_aYes_followUpQuestion4Edited ^. uuid
     , _editListQuestionEventTitle = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. title
     , _editListQuestionEventText = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. text
-    , _editListQuestionEventRequiredLevel = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. requiredLevel
+    , _editListQuestionEventRequiredPhaseUuid =
+        ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. requiredPhaseUuid
     , _editListQuestionEventTagUuids = ChangedValue $ q4_it1_q6_aYes_followUpQuestion4Edited ^. tagUuids
     , _editListQuestionEventExpertUuids = NothingChanged
     , _editListQuestionEventReferenceUuids = NothingChanged
@@ -1385,6 +1391,66 @@ d_km1_mtrF =
     { _deleteMetricEventUuid = u' "e1b1a8ed-f23d-49aa-80a9-2077055aac87"
     , _deleteMetricEventParentUuid = km1 ^. uuid
     , _deleteMetricEventEntityUuid = metricF ^. uuid
+    }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_phs1 :: AddPhaseEvent
+a_km1_phs1 =
+  AddPhaseEvent
+    { _addPhaseEventUuid = u' "e3ba08a4-1775-4a74-b062-625c18afa65f"
+    , _addPhaseEventParentUuid = km1 ^. uuid
+    , _addPhaseEventEntityUuid = phase1 ^. uuid
+    , _addPhaseEventTitle = phase1 ^. title
+    , _addPhaseEventDescription = phase1 ^. description
+    }
+
+a_km1_phs2 :: AddPhaseEvent
+a_km1_phs2 =
+  AddPhaseEvent
+    { _addPhaseEventUuid = u' "4853d211-17fd-46fa-8327-d45a58a6eb12"
+    , _addPhaseEventParentUuid = km1 ^. uuid
+    , _addPhaseEventEntityUuid = phase2 ^. uuid
+    , _addPhaseEventTitle = phase2 ^. title
+    , _addPhaseEventDescription = phase2 ^. description
+    }
+
+a_km1_phs3 :: AddPhaseEvent
+a_km1_phs3 =
+  AddPhaseEvent
+    { _addPhaseEventUuid = u' "e1c813ec-1ee2-46be-bc85-4386aef91657"
+    , _addPhaseEventParentUuid = km1 ^. uuid
+    , _addPhaseEventEntityUuid = phase3 ^. uuid
+    , _addPhaseEventTitle = phase3 ^. title
+    , _addPhaseEventDescription = phase3 ^. description
+    }
+
+a_km1_phs4 :: AddPhaseEvent
+a_km1_phs4 =
+  AddPhaseEvent
+    { _addPhaseEventUuid = u' "5dbd042c-be3e-4115-97bb-bfe3f85f716e"
+    , _addPhaseEventParentUuid = km1 ^. uuid
+    , _addPhaseEventEntityUuid = metricR ^. uuid
+    , _addPhaseEventTitle = metricR ^. title
+    , _addPhaseEventDescription = metricR ^. description
+    }
+
+e_km1_phs1 :: EditPhaseEvent
+e_km1_phs1 =
+  EditPhaseEvent
+    { _editPhaseEventUuid = u' "d7e65e08-52bc-4096-a24c-1dc737e64266"
+    , _editPhaseEventParentUuid = km1 ^. uuid
+    , _editPhaseEventEntityUuid = phase1Edited ^. uuid
+    , _editPhaseEventTitle = ChangedValue $ phase1Edited ^. title
+    , _editPhaseEventDescription = ChangedValue $ phase1Edited ^. description
+    }
+
+d_km1_phs1 :: DeletePhaseEvent
+d_km1_phs1 =
+  DeletePhaseEvent
+    { _deletePhaseEventUuid = u' "18ea7949-7e5a-4fae-8f5f-67b509ae397a"
+    , _deletePhaseEventParentUuid = km1 ^. uuid
+    , _deletePhaseEventEntityUuid = phase1 ^. uuid
     }
 
 -- ----------------------------------------------------------------------------
