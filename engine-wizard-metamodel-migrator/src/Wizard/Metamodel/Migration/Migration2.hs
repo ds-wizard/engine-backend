@@ -9,7 +9,6 @@ import qualified Wizard.Metamodel.Event.Version3 as V3
 import qualified Wizard.Metamodel.Event.Version3.Common as V3
 import qualified Wizard.Metamodel.Event.Version3.Question as V3
 
-
 result2Either :: Result a -> Either String a
 result2Either (Error msg) = Left msg
 result2Either (Success x) = Right x
@@ -97,8 +96,8 @@ instance Upgradeable V2.EventDTO V3.EventDTO where
     return $ V3.EditQuestionEventDTO' newEvent
   upgrade x = result2Either . fromJSON . toJSON $ x
 
-migrateEventValue :: Value -> Either String Value
+migrateEventValue :: Value -> Either String [Value]
 migrateEventValue input = do
   oldEvent <- result2Either (fromJSON input)
   newEvent <- upgrade (oldEvent :: V2.EventDTO)
-  return $ toJSON (newEvent :: V3.EventDTO)
+  return [toJSON (newEvent :: V3.EventDTO)]

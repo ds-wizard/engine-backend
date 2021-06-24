@@ -7,7 +7,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
-import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
 import Wizard.Model.Report.Report
 

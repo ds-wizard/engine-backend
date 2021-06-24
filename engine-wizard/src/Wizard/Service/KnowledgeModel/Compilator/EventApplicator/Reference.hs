@@ -13,6 +13,7 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Delete
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()

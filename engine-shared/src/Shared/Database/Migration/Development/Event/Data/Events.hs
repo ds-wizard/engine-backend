@@ -11,6 +11,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -21,11 +22,13 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Util.Uuid
 
 a_km1 :: AddKnowledgeModelEvent
 a_km1 =
@@ -44,6 +47,7 @@ e_km1 =
     , _editKnowledgeModelEventChapterUuids = ChangedValue $ km1Edited ^. chapterUuids
     , _editKnowledgeModelEventTagUuids = ChangedValue $ km1Edited ^. tagUuids
     , _editKnowledgeModelEventIntegrationUuids = ChangedValue $ km1Edited ^. integrationUuids
+    , _editKnowledgeModelEventMetricUuids = ChangedValue $ km1Edited ^. metricUuids
     }
 
 -- ----------------------------------------------------------------------------
@@ -1294,6 +1298,93 @@ d_km1_iop =
     { _deleteIntegrationEventUuid = fromJust $ U.fromString "d211d46f-5358-497a-92a0-e0bde08ce3d3"
     , _deleteIntegrationEventParentUuid = km1 ^. uuid
     , _deleteIntegrationEventEntityUuid = ontologyPortal ^. uuid
+    }
+
+-- ----------------------------------------------------------------------------
+-- ----------------------------------------------------------------------------
+a_km1_mtrF :: AddMetricEvent
+a_km1_mtrF =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "d22017a1-89ea-4aba-b2df-92ea2cf4eac5"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricF ^. uuid
+    , _addMetricEventTitle = metricF ^. title
+    , _addMetricEventAbbreviation = metricF ^. abbreviation
+    , _addMetricEventDescription = metricF ^. description
+    }
+
+a_km1_mtrA :: AddMetricEvent
+a_km1_mtrA =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "d7d4052e-5413-48ec-8e0e-0b43e027369e"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricA ^. uuid
+    , _addMetricEventTitle = metricA ^. title
+    , _addMetricEventAbbreviation = metricA ^. abbreviation
+    , _addMetricEventDescription = metricA ^. description
+    }
+
+a_km1_mtrI :: AddMetricEvent
+a_km1_mtrI =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "6b6e0cb2-5f1d-42ed-9576-c454664a7884"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricI ^. uuid
+    , _addMetricEventTitle = metricI ^. title
+    , _addMetricEventAbbreviation = metricI ^. abbreviation
+    , _addMetricEventDescription = metricI ^. description
+    }
+
+a_km1_mtrR :: AddMetricEvent
+a_km1_mtrR =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "6d62e9fe-0a67-4f63-8ff8-4553f1154018"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricR ^. uuid
+    , _addMetricEventTitle = metricR ^. title
+    , _addMetricEventAbbreviation = metricR ^. abbreviation
+    , _addMetricEventDescription = metricR ^. description
+    }
+
+a_km1_mtrG :: AddMetricEvent
+a_km1_mtrG =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "84fa1ecf-a445-4a54-a1d5-34062ddc7735"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricG ^. uuid
+    , _addMetricEventTitle = metricG ^. title
+    , _addMetricEventAbbreviation = metricG ^. abbreviation
+    , _addMetricEventDescription = metricG ^. description
+    }
+
+a_km1_mtrO :: AddMetricEvent
+a_km1_mtrO =
+  AddMetricEvent
+    { _addMetricEventUuid = u' "c7b2f5a9-1b18-44ea-9296-259335e410f5"
+    , _addMetricEventParentUuid = km1 ^. uuid
+    , _addMetricEventEntityUuid = metricO ^. uuid
+    , _addMetricEventTitle = metricO ^. title
+    , _addMetricEventAbbreviation = metricO ^. abbreviation
+    , _addMetricEventDescription = metricO ^. description
+    }
+
+e_km1_mtrF :: EditMetricEvent
+e_km1_mtrF =
+  EditMetricEvent
+    { _editMetricEventUuid = u' "da2350c5-b881-4e46-a8b1-94d476d1fc74"
+    , _editMetricEventParentUuid = km1 ^. uuid
+    , _editMetricEventEntityUuid = metricFEdited ^. uuid
+    , _editMetricEventTitle = ChangedValue $ metricFEdited ^. title
+    , _editMetricEventAbbreviation = ChangedValue $ metricFEdited ^. abbreviation
+    , _editMetricEventDescription = ChangedValue $ metricFEdited ^. description
+    }
+
+d_km1_mtrF :: DeleteMetricEvent
+d_km1_mtrF =
+  DeleteMetricEvent
+    { _deleteMetricEventUuid = u' "e1b1a8ed-f23d-49aa-80a9-2077055aac87"
+    , _deleteMetricEventParentUuid = km1 ^. uuid
+    , _deleteMetricEventEntityUuid = metricF ^. uuid
     }
 
 -- ----------------------------------------------------------------------------

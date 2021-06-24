@@ -16,6 +16,7 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()

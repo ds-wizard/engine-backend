@@ -10,7 +10,6 @@ import qualified Data.UUID as U
 
 import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Lens
@@ -76,7 +75,6 @@ dmp1 =
     , _documentContextQuestionnaireVersions = fmap (`toVersionDTO` userAlbert) (questionnaire1 ^. versions)
     , _documentContextLevel = questionnaire1Ctn ^. level
     , _documentContextKnowledgeModel = km1WithQ4
-    , _documentContextMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
     , _documentContextLevels = [level1, level2, level3]
     , _documentContextReport = report1
     , _documentContextPackage = WPM.toSimpleDTO . SPM.toPackage $ germanyPackage

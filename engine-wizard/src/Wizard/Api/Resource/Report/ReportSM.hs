@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Swagger
 
 import LensesConfig
-import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports

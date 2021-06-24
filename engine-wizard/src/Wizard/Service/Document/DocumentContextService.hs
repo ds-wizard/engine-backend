@@ -14,7 +14,6 @@ import Shared.Model.Common.Lens
 import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Database.DAO.Level.LevelDAO
-import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
@@ -34,7 +33,6 @@ createDocumentContext :: Document -> AppContextM DocumentContext
 createDocumentContext doc = do
   qtn <- findQuestionnaireById . U.toString $ doc ^. questionnaireUuid
   pkg <- getPackageById (qtn ^. packageId)
-  metrics <- findMetrics
   ls <- findLevels
   km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. creatorUuid)) findUserById
@@ -52,7 +50,7 @@ createDocumentContext doc = do
         if appConfig ^. questionnaire . levels . enabled
           then qtnCtn ^. level
           else 9999
-  report <- generateReport _level metrics km (M.toList $ qtnCtn ^. replies)
+  report <- generateReport _level km (M.toList $ qtnCtn ^. replies)
   let qtnVersion =
         case doc ^. questionnaireEventUuid of
           (Just eventUuid) -> findQuestionnaireVersionUuid eventUuid (qtn ^. versions)
@@ -69,7 +67,6 @@ createDocumentContext doc = do
       qtnVersionDtos
       _level
       km
-      metrics
       ls
       report
       pkg

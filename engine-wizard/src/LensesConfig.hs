@@ -24,6 +24,7 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
@@ -348,6 +349,12 @@ makeFields ''MoveChoiceEvent
 makeFields ''MoveExpertEvent
 
 makeFields ''MoveReferenceEvent
+
+makeFields ''AddMetricEvent
+
+makeFields ''EditMetricEvent
+
+makeFields ''DeleteMetricEvent
 
 -- Model / Feedback
 makeFields ''Feedback

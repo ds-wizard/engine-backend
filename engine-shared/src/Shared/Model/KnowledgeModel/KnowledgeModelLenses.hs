@@ -16,6 +16,8 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , integrationsM
   , tagsL
   , tagsM
+  , metricsL
+  , metricsM
   , createEntityLFn
   , createEntityMFn
   , toMap
@@ -97,6 +99,13 @@ tagsL = createEntityLFn (entities . tags)
 
 tagsM :: Functor f => (M.Map U.UUID Tag -> f (M.Map U.UUID Tag)) -> KnowledgeModel -> f KnowledgeModel
 tagsM = createEntityMFn (entities . tags)
+
+------------------------------------------------------------------------------------------
+metricsL :: Functor f => ([Metric] -> f [Metric]) -> KnowledgeModel -> f KnowledgeModel
+metricsL = createEntityLFn (entities . metrics)
+
+metricsM :: Functor f => (M.Map U.UUID Metric -> f (M.Map U.UUID Metric)) -> KnowledgeModel -> f KnowledgeModel
+metricsM = createEntityMFn (entities . metrics)
 
 ------------------------------------------------------------------------------------------
 createEntityLFn ::
@@ -206,6 +215,14 @@ instance HasUuid' Integration where
       get :: Integration -> U.UUID
       get entity = entity ^. uuid
       set :: Integration -> U.UUID -> Integration
+      set entity newValue = entity & uuid .~ newValue
+
+instance HasUuid' Metric where
+  uuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Metric -> U.UUID
+      get entity = entity ^. uuid
+      set :: Metric -> U.UUID -> Metric
       set entity newValue = entity & uuid .~ newValue
 
 ------------------------------------------------------------------------------------------

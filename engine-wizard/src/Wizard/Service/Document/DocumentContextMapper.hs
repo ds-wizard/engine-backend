@@ -29,7 +29,6 @@ toDocumentContext ::
   -> [QuestionnaireVersionDTO]
   -> Int
   -> KnowledgeModel
-  -> [Metric]
   -> [Level]
   -> Report
   -> Package
@@ -37,7 +36,7 @@ toDocumentContext ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
+toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km ls report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
@@ -52,7 +51,6 @@ toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersio
     , _documentContextQuestionnaireVersions = qtnVersionDtos
     , _documentContextLevel = level
     , _documentContextKnowledgeModel = km
-    , _documentContextMetrics = metrics
     , _documentContextLevels = ls
     , _documentContextReport = report
     , _documentContextPackage = toSimpleDTO pkg

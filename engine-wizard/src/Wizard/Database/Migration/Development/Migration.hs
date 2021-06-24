@@ -18,8 +18,6 @@ import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigratio
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
 import qualified Wizard.Database.Migration.Development.Level.LevelSchemaMigration as LVL_Schema
-import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
-import qualified Wizard.Database.Migration.Development.Metric.MetricSchemaMigration as MTR_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
@@ -40,7 +38,6 @@ runMigration = do
   ACK_Schema.dropTables
   BR_Schema.dropTables
   LVL_Schema.dropTables
-  MTR_Schema.dropTables
   F_Schema.dropTables
   KM_MIG_Schema.dropTables
   B_Schema.dropTables
@@ -67,7 +64,6 @@ runMigration = do
   DOC_Schema.createTables
   QTN_MIG_Schema.createTables
   KM_MIG_Schema.createTables
-  MTR_Schema.createTables
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures
@@ -81,7 +77,6 @@ runMigration = do
   QTN_MIG.runMigration
   BR.runMigration
   F.runMigration
-  MTR.runMigration
   LVL.runMigration
   DOC.runMigration
   ACL.runMigration

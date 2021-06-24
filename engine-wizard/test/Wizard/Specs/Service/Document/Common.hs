@@ -14,7 +14,6 @@ compareDocumentContexts resDto expDto = do
   (resDto ^. questionnaireReplies) `shouldBe` (expDto ^. questionnaireReplies)
   (resDto ^. level) `shouldBe` (expDto ^. level)
   (resDto ^. knowledgeModel) `shouldBe` (expDto ^. knowledgeModel)
-  (resDto ^. metrics) `shouldBe` (expDto ^. metrics)
   (resDto ^. levels) `shouldBe` (expDto ^. levels)
   (resDto ^. report . chapterReports) `shouldBe` (expDto ^. report . chapterReports)
   (resDto ^. package) `shouldBe` (expDto ^. package)

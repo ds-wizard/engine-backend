@@ -25,7 +25,6 @@ data DocumentContext =
     , _documentContextQuestionnaireVersions :: [QuestionnaireVersionDTO]
     , _documentContextLevel :: Int
     , _documentContextKnowledgeModel :: KnowledgeModel
-    , _documentContextMetrics :: [Metric]
     , _documentContextLevels :: [Level]
     , _documentContextReport :: Report
     , _documentContextPackage :: PackageSimpleDTO
@@ -47,7 +46,6 @@ instance Eq DocumentContext where
     _documentContextQuestionnaireVersions a == _documentContextQuestionnaireVersions b &&
     _documentContextLevel a == _documentContextLevel b &&
     _documentContextKnowledgeModel a == _documentContextKnowledgeModel b &&
-    _documentContextMetrics a == _documentContextMetrics b &&
     _documentContextLevels a == _documentContextLevels b &&
     _documentContextReport a == _documentContextReport b &&
     _documentContextPackage a == _documentContextPackage b &&
