@@ -11,7 +11,6 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Report.Report
@@ -27,21 +26,20 @@ toDocumentContext ::
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
-  -> Int
+  -> U.UUID
   -> KnowledgeModel
-  -> [Level]
   -> Report
   -> Package
   -> AppConfigOrganization
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km ls report pkg org mCreatedBy now =
+toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos phase km report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
         DocumentContextConfig
-          { _documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled
+          { _documentContextConfigPhasesEnabled = appConfig ^. questionnaire . phases . enabled
           , _documentContextConfigClientUrl = serverConfig ^. general . clientUrl
           }
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
@@ -49,9 +47,8 @@ toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersio
     , _documentContextQuestionnaireReplies = qtnCtn ^. replies
     , _documentContextQuestionnaireVersion = qtnVersion
     , _documentContextQuestionnaireVersions = qtnVersionDtos
-    , _documentContextLevel = level
+    , _documentContextPhaseUuid = phase
     , _documentContextKnowledgeModel = km
-    , _documentContextLevels = ls
     , _documentContextReport = report
     , _documentContextPackage = toSimpleDTO pkg
     , _documentContextOrganization = org

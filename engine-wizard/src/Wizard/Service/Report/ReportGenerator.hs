@@ -3,6 +3,7 @@ module Wizard.Service.Report.ReportGenerator where
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
 import Data.Time
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
@@ -15,48 +16,50 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric
 
-computeChapterReport :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
-computeChapterReport levelsEnabled requiredLevel km replies ch =
+computeChapterReport :: Bool -> U.UUID -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
+computeChapterReport phasesEnabled requiredPhaseUuid km replies ch =
   ChapterReport
     { _chapterReportChapterUuid = ch ^. uuid
-    , _chapterReportIndications = computeIndications levelsEnabled requiredLevel km replies ch
+    , _chapterReportIndications = computeIndications phasesEnabled requiredPhaseUuid km replies ch
     , _chapterReportMetrics = computeMetrics km replies (Just ch)
     }
 
-computeTotalReport :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> TotalReport
-computeTotalReport levelsEnabled requiredLevel km replies =
+computeTotalReport :: Bool -> U.UUID -> KnowledgeModel -> [ReplyTuple] -> TotalReport
+computeTotalReport phasesEnabled requiredPhaseUuid km replies =
   TotalReport
-    { _totalReportIndications = computeTotalReportIndications levelsEnabled requiredLevel km replies
+    { _totalReportIndications = computeTotalReportIndications phasesEnabled requiredPhaseUuid km replies
     , _totalReportMetrics = computeMetrics km replies Nothing
     }
 
-computeTotalReportIndications :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> [Indication]
-computeTotalReportIndications levelsEnabled requiredLevel km replies =
-  let chapterIndications = fmap (computeIndications levelsEnabled requiredLevel km replies) (getChaptersForKmUuid km)
+computeTotalReportIndications :: Bool -> U.UUID -> KnowledgeModel -> [ReplyTuple] -> [Indication]
+computeTotalReportIndications phasesEnabled requiredPhaseUuid km replies =
+  let chapterIndications =
+        fmap (computeIndications phasesEnabled requiredPhaseUuid km replies) (getChaptersForKmUuid km)
       mergeIndications [LevelsAnsweredIndication' (LevelsAnsweredIndication a1 b1), AnsweredIndication' (AnsweredIndication c1 d1)] [LevelsAnsweredIndication' (LevelsAnsweredIndication a2 b2), AnsweredIndication' (AnsweredIndication c2 d2)] =
         [ LevelsAnsweredIndication' (LevelsAnsweredIndication (a1 + a2) (b1 + b2))
         , AnsweredIndication' (AnsweredIndication (c1 + c2) (d1 + d2))
         ]
       mergeIndications [AnsweredIndication' (AnsweredIndication c1 d1)] [AnsweredIndication' (AnsweredIndication c2 d2)] =
         [AnsweredIndication' (AnsweredIndication (c1 + c2) (d1 + d2))]
-   in if levelsEnabled
+   in if phasesEnabled
         then foldl
                mergeIndications
                [LevelsAnsweredIndication' (LevelsAnsweredIndication 0 0), AnsweredIndication' (AnsweredIndication 0 0)]
                chapterIndications
         else foldl mergeIndications [AnsweredIndication' (AnsweredIndication 0 0)] chapterIndications
 
-generateReport :: Int -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
-generateReport requiredLevel km replies = do
+generateReport :: U.UUID -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
+generateReport requiredPhaseUuid km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   appConfig <- getAppConfig
-  let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
+  let _phasesEnabled = appConfig ^. questionnaire . phases . enabled
   return
     Report
       { _reportUuid = rUuid
-      , _reportTotalReport = computeTotalReport _levelsEnabled requiredLevel km replies
-      , _reportChapterReports = computeChapterReport _levelsEnabled requiredLevel km replies <$> getChaptersForKmUuid km
+      , _reportTotalReport = computeTotalReport _phasesEnabled requiredPhaseUuid km replies
+      , _reportChapterReports =
+          computeChapterReport _phasesEnabled requiredPhaseUuid km replies <$> getChaptersForKmUuid km
       , _reportCreatedAt = now
       , _reportUpdatedAt = now
       }

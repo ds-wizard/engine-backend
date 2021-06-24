@@ -18,7 +18,7 @@ toEventDTO event' mCreatedBy =
   case event' of
     SetReplyEvent' event@SetReplyEvent {..} -> SetReplyEventDTO' $ toSetReplyEventDTO event mCreatedBy
     ClearReplyEvent' event@ClearReplyEvent {..} -> ClearReplyEventDTO' $ toClearReplyEventDTO event mCreatedBy
-    SetLevelEvent' event@SetLevelEvent {..} -> SetLevelEventDTO' $ toSetLevelEventDTO event mCreatedBy
+    SetPhaseEvent' event@SetPhaseEvent {..} -> SetPhaseEventDTO' $ toSetPhaseEventDTO event mCreatedBy
     SetLabelsEvent' event@SetLabelsEvent {..} -> SetLabelsEventDTO' $ toSetLabelsEventDTO event mCreatedBy
 
 toSetReplyEventDTO :: SetReplyEvent -> Maybe User -> SetReplyEventDTO
@@ -40,13 +40,13 @@ toClearReplyEventDTO event user =
     , _clearReplyEventDTOCreatedAt = event ^. createdAt
     }
 
-toSetLevelEventDTO :: SetLevelEvent -> Maybe User -> SetLevelEventDTO
-toSetLevelEventDTO event user =
-  SetLevelEventDTO
-    { _setLevelEventDTOUuid = event ^. uuid
-    , _setLevelEventDTOLevel = event ^. level
-    , _setLevelEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
-    , _setLevelEventDTOCreatedAt = event ^. createdAt
+toSetPhaseEventDTO :: SetPhaseEvent -> Maybe User -> SetPhaseEventDTO
+toSetPhaseEventDTO event user =
+  SetPhaseEventDTO
+    { _setPhaseEventDTOUuid = event ^. uuid
+    , _setPhaseEventDTOPhaseUuid = event ^. phaseUuid
+    , _setPhaseEventDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) user
+    , _setPhaseEventDTOCreatedAt = event ^. createdAt
     }
 
 toSetLabelsEventDTO :: SetLabelsEvent -> Maybe User -> SetLabelsEventDTO
@@ -68,8 +68,8 @@ toEventDTO' event' mCreatedBy now =
       SetReplyEventDTO' $ toSetReplyEventDTO' event mCreatedBy now
     ClearReplyEventChangeDTO' event@ClearReplyEventChangeDTO {..} ->
       ClearReplyEventDTO' $ toClearReplyEventDTO' event mCreatedBy now
-    SetLevelEventChangeDTO' event@SetLevelEventChangeDTO {..} ->
-      SetLevelEventDTO' $ toSetLevelEventDTO' event mCreatedBy now
+    SetPhaseEventChangeDTO' event@SetPhaseEventChangeDTO {..} ->
+      SetPhaseEventDTO' $ toSetPhaseEventDTO' event mCreatedBy now
     SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} ->
       SetLabelsEventDTO' $ toSetLabelsEventDTO' event mCreatedBy now
 
@@ -92,13 +92,13 @@ toClearReplyEventDTO' event mCreatedBy now =
     , _clearReplyEventDTOCreatedAt = now
     }
 
-toSetLevelEventDTO' :: SetLevelEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetLevelEventDTO
-toSetLevelEventDTO' event mCreatedBy now =
-  SetLevelEventDTO
-    { _setLevelEventDTOUuid = event ^. uuid
-    , _setLevelEventDTOLevel = event ^. level
-    , _setLevelEventDTOCreatedBy = mCreatedBy
-    , _setLevelEventDTOCreatedAt = now
+toSetPhaseEventDTO' :: SetPhaseEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetPhaseEventDTO
+toSetPhaseEventDTO' event mCreatedBy now =
+  SetPhaseEventDTO
+    { _setPhaseEventDTOUuid = event ^. uuid
+    , _setPhaseEventDTOPhaseUuid = event ^. phaseUuid
+    , _setPhaseEventDTOCreatedBy = mCreatedBy
+    , _setPhaseEventDTOCreatedAt = now
     }
 
 toSetLabelsEventDTO' :: SetLabelsEventChangeDTO -> Maybe UserSuggestionDTO -> UTCTime -> SetLabelsEventDTO
@@ -118,7 +118,7 @@ toEventChangeDTO event =
   case event of
     SetReplyEvent' event@SetReplyEvent {..} -> SetReplyEventChangeDTO' $ toSetReplyEventChangeDTO event
     ClearReplyEvent' event@ClearReplyEvent {..} -> ClearReplyEventChangeDTO' $ toClearReplyEventChangeDTO event
-    SetLevelEvent' event@SetLevelEvent {..} -> SetLevelEventChangeDTO' $ toSetLevelEventChangeDTO event
+    SetPhaseEvent' event@SetPhaseEvent {..} -> SetPhaseEventChangeDTO' $ toSetPhaseEventChangeDTO event
     SetLabelsEvent' event@SetLabelsEvent {..} -> SetLabelsEventChangeDTO' $ toSetLabelsEventChangeDTO event
 
 toSetReplyEventChangeDTO :: SetReplyEvent -> SetReplyEventChangeDTO
@@ -134,9 +134,10 @@ toClearReplyEventChangeDTO event =
   ClearReplyEventChangeDTO
     {_clearReplyEventChangeDTOUuid = event ^. uuid, _clearReplyEventChangeDTOPath = event ^. path}
 
-toSetLevelEventChangeDTO :: SetLevelEvent -> SetLevelEventChangeDTO
-toSetLevelEventChangeDTO event =
-  SetLevelEventChangeDTO {_setLevelEventChangeDTOUuid = event ^. uuid, _setLevelEventChangeDTOLevel = event ^. level}
+toSetPhaseEventChangeDTO :: SetPhaseEvent -> SetPhaseEventChangeDTO
+toSetPhaseEventChangeDTO event =
+  SetPhaseEventChangeDTO
+    {_setPhaseEventChangeDTOUuid = event ^. uuid, _setPhaseEventChangeDTOPhaseUuid = event ^. phaseUuid}
 
 toSetLabelsEventChangeDTO :: SetLabelsEvent -> SetLabelsEventChangeDTO
 toSetLabelsEventChangeDTO event =
@@ -153,7 +154,7 @@ fromEventDTO event =
   case event of
     SetReplyEventDTO' event@SetReplyEventDTO {..} -> SetReplyEvent' $ fromSetReplyEventDTO event
     ClearReplyEventDTO' event@ClearReplyEventDTO {..} -> ClearReplyEvent' $ fromClearReplyEventDTO event
-    SetLevelEventDTO' event@SetLevelEventDTO {..} -> SetLevelEvent' $ fromSetLevelEventDTO event
+    SetPhaseEventDTO' event@SetPhaseEventDTO {..} -> SetPhaseEvent' $ fromSetPhaseEventDTO event
     SetLabelsEventDTO' event@SetLabelsEventDTO {..} -> SetLabelsEvent' $ fromSetLabelsEventDTO event
 
 fromSetReplyEventDTO :: SetReplyEventDTO -> SetReplyEvent
@@ -175,13 +176,13 @@ fromClearReplyEventDTO event =
     , _clearReplyEventCreatedAt = event ^. createdAt
     }
 
-fromSetLevelEventDTO :: SetLevelEventDTO -> SetLevelEvent
-fromSetLevelEventDTO event =
-  SetLevelEvent
-    { _setLevelEventUuid = event ^. uuid
-    , _setLevelEventLevel = event ^. level
-    , _setLevelEventCreatedBy = event ^. createdBy ^? _Just . uuid
-    , _setLevelEventCreatedAt = event ^. createdAt
+fromSetPhaseEventDTO :: SetPhaseEventDTO -> SetPhaseEvent
+fromSetPhaseEventDTO event =
+  SetPhaseEvent
+    { _setPhaseEventUuid = event ^. uuid
+    , _setPhaseEventPhaseUuid = event ^. phaseUuid
+    , _setPhaseEventCreatedBy = event ^. createdBy ^? _Just . uuid
+    , _setPhaseEventCreatedAt = event ^. createdAt
     }
 
 fromSetLabelsEventDTO :: SetLabelsEventDTO -> SetLabelsEvent
@@ -203,8 +204,8 @@ fromEventChangeDTO event createdBy now =
       SetReplyEvent' $ fromSetReplyEventChangeDTO event createdBy now
     ClearReplyEventChangeDTO' event@ClearReplyEventChangeDTO {..} ->
       ClearReplyEvent' $ fromClearReplyEventChangeDTO event createdBy now
-    SetLevelEventChangeDTO' event@SetLevelEventChangeDTO {..} ->
-      SetLevelEvent' $ fromSetLevelEventChangeDTO event createdBy now
+    SetPhaseEventChangeDTO' event@SetPhaseEventChangeDTO {..} ->
+      SetPhaseEvent' $ fromSetPhaseEventChangeDTO event createdBy now
     SetLabelsEventChangeDTO' event@SetLabelsEventChangeDTO {..} ->
       SetLabelsEvent' $ fromSetLabelsEventChangeDTO event createdBy now
 
@@ -227,13 +228,13 @@ fromClearReplyEventChangeDTO event createdBy now =
     , _clearReplyEventCreatedAt = now
     }
 
-fromSetLevelEventChangeDTO :: SetLevelEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetLevelEvent
-fromSetLevelEventChangeDTO event createdBy now =
-  SetLevelEvent
-    { _setLevelEventUuid = event ^. uuid
-    , _setLevelEventLevel = event ^. level
-    , _setLevelEventCreatedBy = createdBy
-    , _setLevelEventCreatedAt = now
+fromSetPhaseEventChangeDTO :: SetPhaseEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetPhaseEvent
+fromSetPhaseEventChangeDTO event createdBy now =
+  SetPhaseEvent
+    { _setPhaseEventUuid = event ^. uuid
+    , _setPhaseEventPhaseUuid = event ^. phaseUuid
+    , _setPhaseEventCreatedBy = createdBy
+    , _setPhaseEventCreatedAt = now
     }
 
 fromSetLabelsEventChangeDTO :: SetLabelsEventChangeDTO -> Maybe U.UUID -> UTCTime -> SetLabelsEvent

@@ -11,6 +11,7 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -26,6 +27,7 @@ km1 =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap [chapter1, chapter2, chapter3]
@@ -58,6 +60,7 @@ km1 =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }
 
@@ -70,6 +73,7 @@ km1Edited =
     , _knowledgeModelIntegrationUuids = [bioPortal ^. uuid, ontologyPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities = km1 ^. entities
     }
 
@@ -81,6 +85,7 @@ km1WithoutChaptersAndTagsAndIntegrations =
     , _knowledgeModelTagUuids = []
     , _knowledgeModelIntegrationUuids = []
     , _knowledgeModelMetricUuids = []
+    , _knowledgeModelPhaseUuids = []
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap []
@@ -92,6 +97,7 @@ km1WithoutChaptersAndTagsAndIntegrations =
           , _knowledgeModelEntitiesIntegrations = toMap []
           , _knowledgeModelEntitiesTags = toMap []
           , _knowledgeModelEntitiesMetrics = toMap []
+          , _knowledgeModelEntitiesPhases = toMap []
           }
     }
 
@@ -104,6 +110,7 @@ km1WithQ4Plain =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap [chapter1, chapter2WithQ4Plain, chapter3]
@@ -137,6 +144,7 @@ km1WithQ4Plain =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }
 
@@ -149,6 +157,7 @@ km1WithQ4 =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap [chapter1, chapter2WithQ4, chapter3]
@@ -193,6 +202,7 @@ km1WithQ4 =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }
 
@@ -205,6 +215,7 @@ km1Global =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap []
@@ -216,6 +227,7 @@ km1Global =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }
 
@@ -228,6 +240,7 @@ km1Netherlands =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap [chapter1WithoutQuestions]
@@ -239,6 +252,7 @@ km1Netherlands =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }
 
@@ -251,6 +265,7 @@ km1NetherlandsV2 =
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
     , _knowledgeModelMetricUuids =
         [metricF ^. uuid, metricA ^. uuid, metricI ^. uuid, metricR ^. uuid, metricG ^. uuid, metricO ^. uuid]
+    , _knowledgeModelPhaseUuids = [phase1 ^. uuid, phase2 ^. uuid, phase3 ^. uuid]
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = toMap [chapter1WithoutQuestions, chapter4WithoutQuestions]
@@ -262,5 +277,6 @@ km1NetherlandsV2 =
           , _knowledgeModelEntitiesIntegrations = toMap [ontologyPortal, bioPortal]
           , _knowledgeModelEntitiesTags = toMap [tagDataScience, tagBioInformatic]
           , _knowledgeModelEntitiesMetrics = toMap [metricF, metricA, metricI, metricR, metricG, metricO]
+          , _knowledgeModelEntitiesPhases = toMap [phase1, phase2, phase3]
           }
     }

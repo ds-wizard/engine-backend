@@ -12,6 +12,7 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Package.PackageDAO
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
@@ -72,8 +73,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto =
           if anonymousSharingEnabled
-            then (level .~ 1) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
-            else questionnaire1Dto & level .~ 1
+            then (phaseUuid .~ (phase1 ^. uuid)) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
+            else questionnaire1Dto & phaseUuid .~ (phase1 ^. uuid)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext

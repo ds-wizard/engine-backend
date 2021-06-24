@@ -7,6 +7,7 @@ import Test.Hspec
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
@@ -29,11 +30,11 @@ createComputeChapterReportTest levelsEnabled number chapter expectation =
   it ("computeChapterReport for chapter" ++ show number ++ " should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
     -- GIVEN: Prepare
    do
-    let requiredLevel = 1
+    let requiredPhaseUuidUuid = phase1 ^. uuid
     let km = km1WithQ4
     let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
-    let result = computeChapterReport levelsEnabled requiredLevel km rs chapter
+    let result = computeChapterReport levelsEnabled requiredPhaseUuidUuid km rs chapter
     -- THEN
     result `shouldBe` expectation
 
@@ -41,10 +42,10 @@ createComputeTotalReportTest levelsEnabled number expectation =
   it ("computeTotalReport should work (levelsEnabled: " ++ show levelsEnabled ++ ")") $
     -- GIVEN: Prepare
    do
-    let requiredLevel = 1
+    let requiredPhaseUuidUuid = phase1 ^. uuid
     let km = km1WithQ4
     let rs = unused_rQ2_aYes_fuQ1_aYes_fuq2 : M.toList (questionnaire1Ctn ^. replies)
     -- WHEN:
-    let result = computeTotalReport levelsEnabled requiredLevel km rs
+    let result = computeTotalReport levelsEnabled requiredPhaseUuidUuid km rs
     -- THEN
     result `shouldBe` expectation

@@ -153,7 +153,7 @@ html =
 {#  QUESTION MACROS                                                                     #}
 {# ------------------------------------------------------------------------------------ #}
 {%- macro questionClasses(question) -%}
-  "question {{ "required" if (question.requiredLevel and question.requiredLevel <= ctx.level) else "optional"}} {{  ("phase-" ~ question.requiredLevel) if question.requiredLevel else "phase-none" }}"
+  "question {{ "required" if (question.requiredPhaseUuid and question.requiredPhaseUuid <= ctx.level) else "optional"}} {{  ("phase-" ~ question.requiredPhaseUuid) if question.requiredPhaseUuid else "phase-none" }}"
 {%- endmacro -%}
 {%- macro renderQuestionExtras(question) -%}
   <div class="extra-data">

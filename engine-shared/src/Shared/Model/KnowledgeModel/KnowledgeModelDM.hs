@@ -12,6 +12,7 @@ defaultKnowledgeModel =
     , _knowledgeModelTagUuids = []
     , _knowledgeModelIntegrationUuids = []
     , _knowledgeModelMetricUuids = []
+    , _knowledgeModelPhaseUuids = []
     , _knowledgeModelEntities =
         KnowledgeModelEntities
           { _knowledgeModelEntitiesChapters = M.empty
@@ -23,5 +24,6 @@ defaultKnowledgeModel =
           , _knowledgeModelEntitiesIntegrations = M.empty
           , _knowledgeModelEntitiesTags = M.empty
           , _knowledgeModelEntitiesMetrics = M.empty
+          , _knowledgeModelEntitiesPhases = M.empty
           }
     }

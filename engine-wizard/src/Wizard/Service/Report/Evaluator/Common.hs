@@ -9,14 +9,17 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 getReply :: [ReplyTuple] -> String -> Maybe ReplyTuple
 getReply replies p = L.find (\(path, _) -> path == p) replies
 
-isRequiredNow :: Maybe Int -> Int -> Int -> Int
-isRequiredNow mQLevel qtnLevel currentValue =
-  if qtnLevel == 9999
-    then currentValue
-    else let qLevel = fromMaybe 9999 mQLevel
-          in if qLevel <= qtnLevel
-               then currentValue
-               else 0
+isRequiredNow :: [U.UUID] -> Maybe U.UUID -> U.UUID -> Int -> Int
+isRequiredNow phaseUuids mQPhase qtnPhase currentValue
+  | qtnPhase == U.nil = currentValue
+  | qPhaseIndex <= qtnPhaseIndex = currentValue
+  | otherwise = 0
+  where
+    qtnPhaseIndex = fromMaybe 9999 (qtnPhase `L.elemIndex` phaseUuids)
+    qPhaseIndex =
+      case mQPhase of
+        Just qPhase -> fromMaybe 9999 (qPhase `L.elemIndex` phaseUuids)
+        Nothing -> 9999
 
 composePath :: String -> String -> String
 composePath path element = path ++ "." ++ element

@@ -56,6 +56,6 @@ toClientConfigQuestionnaireDTO appConfig =
     , _clientConfigQuestionnaireDTOQuestionnaireSharing = appConfig ^. questionnaireSharing
     , _clientConfigQuestionnaireDTOQuestionnaireCreation = appConfig ^. questionnaireCreation
     , _clientConfigQuestionnaireDTOSummaryReport = appConfig ^. summaryReport
-    , _clientConfigQuestionnaireDTOLevels = appConfig ^. levels
+    , _clientConfigQuestionnaireDTOPhases = appConfig ^. phases
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }

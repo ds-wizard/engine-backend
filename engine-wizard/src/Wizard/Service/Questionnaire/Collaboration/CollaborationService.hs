@@ -102,7 +102,7 @@ setContent qtnUuid connectionUuid reqDto =
   case reqDto of
     SetReplyEventChangeDTO' event -> setReply qtnUuid connectionUuid event
     ClearReplyEventChangeDTO' event -> clearReply qtnUuid connectionUuid event
-    SetLevelEventChangeDTO' event -> setLevel qtnUuid connectionUuid event
+    SetPhaseEventChangeDTO' event -> setLevel qtnUuid connectionUuid event
     SetLabelsEventChangeDTO' event -> setLabel qtnUuid connectionUuid event
 
 setReply :: String -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
@@ -127,14 +127,14 @@ clearReply qtnUuid connectionUuid reqDto = do
   records <- getAllFromCache
   broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
 
-setLevel :: String -> U.UUID -> SetLevelEventChangeDTO -> AppContextM ()
+setLevel :: String -> U.UUID -> SetPhaseEventChangeDTO -> AppContextM ()
 setLevel qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
-  let resDto = toSetLevelEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetLevelEventDTO' resDto)
+  let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
+  saveQuestionnaireEvent qtnUuid (SetPhaseEventDTO' resDto)
   records <- getAllFromCache
   broadcast qtnUuid records (toSetLevelMessage resDto) disconnectUser
 

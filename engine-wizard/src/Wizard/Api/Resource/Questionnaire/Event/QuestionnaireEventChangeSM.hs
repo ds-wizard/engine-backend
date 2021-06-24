@@ -20,8 +20,8 @@ instance ToSchema SetReplyEventChangeDTO where
 instance ToSchema ClearReplyEventChangeDTO where
   declareNamedSchema = simpleToSchema' "_clearReplyEventChangeDTO" (toClearReplyEventChangeDTO cre_rQ1)
 
-instance ToSchema SetLevelEventChangeDTO where
-  declareNamedSchema = simpleToSchema' "_setLevelEventChangeDTO" (toSetLevelEventChangeDTO slvle_1)
+instance ToSchema SetPhaseEventChangeDTO where
+  declareNamedSchema = simpleToSchema' "_setPhaseEventChangeDTO" (toSetPhaseEventChangeDTO sphse_1)
 
 instance ToSchema SetLabelsEventChangeDTO where
   declareNamedSchema = simpleToSchema' "_setLabelsEventChangeDTO" (toSetLabelsEventChangeDTO slble_rQ2)

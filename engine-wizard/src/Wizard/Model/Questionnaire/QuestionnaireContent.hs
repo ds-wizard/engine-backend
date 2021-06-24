@@ -8,7 +8,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 
 data QuestionnaireContent =
   QuestionnaireContent
-    { _questionnaireContentLevel :: Int
+    { _questionnaireContentPhaseUuid :: U.UUID
     , _questionnaireContentReplies :: M.Map String Reply
     , _questionnaireContentLabels :: M.Map String [U.UUID]
     }

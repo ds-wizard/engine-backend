@@ -12,7 +12,6 @@ import Wizard.Api.Handler.Document.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
-import Wizard.Api.Handler.Level.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
 import Wizard.Api.Handler.Questionnaire.Api
@@ -36,7 +35,6 @@ type AppAPI
      :<|> FeedbackAPI
      :<|> InfoAPI
      :<|> KnowledgeModelAPI
-     :<|> LevelAPI
      :<|> MigrationAPI
      :<|> PackageAPI
      :<|> QuestionnaireAPI
@@ -58,7 +56,6 @@ appServer =
   feedbackServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>
-  levelServer :<|>
   migrationServer :<|>
   packageServer :<|>
   questionnaireServer :<|>

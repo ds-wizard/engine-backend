@@ -32,14 +32,14 @@ questionnaireCompilerServiceSpec appContext =
       (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
       updatedQtn ^. replies `shouldBe` fRepliesWithDeleted
-    it "SetLevelEvent" $
+    it "SetPhaseEvent" $
         -- GIVEN:
      do
-      let event = SetLevelEvent' slvle_2
+      let event = SetPhaseEvent' sphse_2
         -- WHEN:
       (Right updatedQtn) <- runInContext (applyEvent (return questionnaire1Ctn) event) appContext
         -- THEN:
-      updatedQtn ^. level `shouldBe` slvle_2 ^. level
+      updatedQtn ^. phaseUuid `shouldBe` sphse_2 ^. phaseUuid
     it "SetLabelsEvent" $
         -- GIVEN:
      do

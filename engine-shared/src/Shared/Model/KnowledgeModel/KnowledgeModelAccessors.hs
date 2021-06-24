@@ -110,3 +110,14 @@ getMetricsForKmUuid km = foldl go [] (km ^. metricUuids)
       case M.lookup mtrUuid (km ^. metricsM) of
         Just mtr -> acc ++ [mtr]
         Nothing -> acc
+
+-- -------------------
+-- PHASES ------------
+-- -------------------
+getPhasesForKmUuid :: KnowledgeModel -> [Phase]
+getPhasesForKmUuid km = foldl go [] (km ^. phaseUuids)
+  where
+    go acc phsUuid =
+      case M.lookup phsUuid (km ^. phasesM) of
+        Just phs -> acc ++ [phs]
+        Nothing -> acc

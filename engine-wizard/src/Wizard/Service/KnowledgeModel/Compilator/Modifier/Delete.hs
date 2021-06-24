@@ -81,3 +81,11 @@ deleteMetric km uuid =
     Nothing -> km
   where
     deleteNode km = km & metricsM .~ M.delete uuid (km ^. metricsM)
+
+deletePhase :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deletePhase km uuid =
+  case M.lookup uuid (km ^. phasesM) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = km & phasesM .~ M.delete uuid (km ^. phasesM)

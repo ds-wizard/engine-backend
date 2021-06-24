@@ -39,10 +39,10 @@ toClearReplyMessage reqDto record =
   Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . ClearReplyEventDTO' $ reqDto
 
 toSetLevelMessage ::
-     SetLevelEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
+     SetPhaseEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
 toSetLevelMessage reqDto record =
   toWebsocketMessage record $
-  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetLevelEventDTO' $ reqDto
+  Success_ServerActionDTO . SetContent_ServerQuestionnaireActionDTO . SetPhaseEventDTO' $ reqDto
 
 toSetLabelMessage ::
      SetLabelsEventDTO -> WebsocketRecord -> WebsocketMessage (Success_ServerActionDTO ServerQuestionnaireActionDTO)
