@@ -3,7 +3,7 @@ module Shared.Database.Migration.Development.KnowledgeModel.Data.MetricMeasures 
 import Control.Lens
 
 import LensesConfig
-import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 -- -----------------------------------------------------------------

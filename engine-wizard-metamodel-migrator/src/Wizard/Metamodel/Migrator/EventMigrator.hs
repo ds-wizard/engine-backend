@@ -3,6 +3,7 @@ module Wizard.Metamodel.Migrator.EventMigrator
   ) where
 
 import Data.Aeson
+import Data.Either (partitionEithers)
 import Data.Maybe (fromJust, isJust)
 
 import qualified Wizard.Metamodel.Migration.Migration1 as M1
@@ -11,10 +12,11 @@ import qualified Wizard.Metamodel.Migration.Migration3 as M3
 import qualified Wizard.Metamodel.Migration.Migration4 as M4
 import qualified Wizard.Metamodel.Migration.Migration5 as M5
 import qualified Wizard.Metamodel.Migration.Migration6 as M6
+import qualified Wizard.Metamodel.Migration.Migration7 as M7
 
 type Version = Int
 
-type ValueMigration = Value -> Either String Value
+type ValueMigration = Value -> Either String [Value]
 
 migrations :: [(Int, ValueMigration)]
 migrations =
@@ -24,15 +26,22 @@ migrations =
   , (4, M4.migrateEventValue)
   , (5, M5.migrateEventValue)
   , (6, M6.migrateEventValue)
+  , (7, M7.migrateEventValue)
   ]
 
-migrate :: Version -> Version -> Value -> Either String Value
+migrate :: Version -> Version -> Value -> Either String [Value]
 migrate vSrc vDst input
   | vSrc > vDst = Left "Downgrade not supported"
-  | vSrc == vDst = Right input
+  | vSrc == vDst = Right [input]
   | isJust migration = do
     migrated <- fromJust migration input
-    migrate (vSrc + 1) vDst migrated
+    fmap concat . foldEither . fmap (migrate (vSrc + 1) vDst) $ migrated
   | otherwise = Left "Unsupported metamodel version"
   where
     migration = lookup vSrc migrations
+
+foldEither :: [Either l r] -> Either l [r]
+foldEither eitherList =
+  case partitionEithers eitherList of
+    (l:_, rs) -> Left l
+    (_, rs) -> Right rs

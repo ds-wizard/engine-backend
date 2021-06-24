@@ -26,7 +26,6 @@ import qualified Wizard.Metamodel.Event.Version4.Question as V4
 import qualified Wizard.Metamodel.Event.Version4.Reference as V4
 import qualified Wizard.Metamodel.Event.Version4.Tag as V4
 
-
 result2Either :: Result a -> Either String a
 result2Either (Error msg) = Left msg
 result2Either (Success x) = Right x
@@ -107,7 +106,7 @@ instance Upgradeable V3.AddChapterEventDTO V4.AddChapterEventDTO where
       (getParentUuid _addChapterEventDTOPath)
       _addChapterEventDTOChapterUuid
       _addChapterEventDTOTitle <$>
-      upgrade _addChapterEventDTOText
+    upgrade _addChapterEventDTOText
 
 instance Upgradeable V3.EditChapterEventDTO V4.EditChapterEventDTO where
   upgrade V3.EditChapterEventDTO {..} =
@@ -463,8 +462,8 @@ instance Upgradeable V3.EventDTO V4.EventDTO where
   upgrade (V3.EditIntegrationEventDTO' event) = V4.EditIntegrationEventDTO' <$> upgrade event
   upgrade (V3.DeleteIntegrationEventDTO' event) = V4.DeleteIntegrationEventDTO' <$> upgrade event
 
-migrateEventValue :: Value -> Either String Value
+migrateEventValue :: Value -> Either String [Value]
 migrateEventValue input = do
   oldEvent <- result2Either (fromJSON input)
   newEvent <- upgrade (oldEvent :: V3.EventDTO)
-  return $ toJSON (newEvent :: V4.EventDTO)
+  return [toJSON (newEvent :: V4.EventDTO)]

@@ -28,5 +28,6 @@ migrateEventsField eventsFieldName value =
     getField "metamodelVersion" object $ \oldMetamodelVersion ->
       getArrayField eventsFieldName object $ \events ->
         case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> Vector.toList events of
-          Right updatedEvents -> Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON updatedEvents) object
+          Right updatedEvents ->
+            Right . Object $ HashMap.insert (T.pack eventsFieldName) (toJSON . concat $ updatedEvents) object
           Left error -> Left . GeneralServerError $ error

@@ -18,7 +18,6 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
-import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
@@ -81,7 +80,6 @@ create_test_200 title appContext qtn authHeader =
     runInContextIO QTN.runMigration appContext
     runInContextIO (deleteQuestionnairesFiltered [("uuid", U.toString $ qtn ^. uuid)]) appContext
     runInContextIO (insertQuestionnaire qtn) appContext
-    runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
@@ -128,7 +126,6 @@ create_test_403 title appContext qtn authHeader errorMessage =
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

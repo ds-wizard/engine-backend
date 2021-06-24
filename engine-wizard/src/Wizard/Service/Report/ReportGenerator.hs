@@ -15,19 +15,19 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Report.Evaluator.Indication
 import Wizard.Service.Report.Evaluator.Metric
 
-computeChapterReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
-computeChapterReport levelsEnabled requiredLevel metrics km replies ch =
+computeChapterReport :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> Chapter -> ChapterReport
+computeChapterReport levelsEnabled requiredLevel km replies ch =
   ChapterReport
     { _chapterReportChapterUuid = ch ^. uuid
     , _chapterReportIndications = computeIndications levelsEnabled requiredLevel km replies ch
-    , _chapterReportMetrics = computeMetrics metrics km replies (Just ch)
+    , _chapterReportMetrics = computeMetrics km replies (Just ch)
     }
 
-computeTotalReport :: Bool -> Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> TotalReport
-computeTotalReport levelsEnabled requiredLevel metrics km replies =
+computeTotalReport :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> TotalReport
+computeTotalReport levelsEnabled requiredLevel km replies =
   TotalReport
     { _totalReportIndications = computeTotalReportIndications levelsEnabled requiredLevel km replies
-    , _totalReportMetrics = computeMetrics metrics km replies Nothing
+    , _totalReportMetrics = computeMetrics km replies Nothing
     }
 
 computeTotalReportIndications :: Bool -> Int -> KnowledgeModel -> [ReplyTuple] -> [Indication]
@@ -46,8 +46,8 @@ computeTotalReportIndications levelsEnabled requiredLevel km replies =
                chapterIndications
         else foldl mergeIndications [AnsweredIndication' (AnsweredIndication 0 0)] chapterIndications
 
-generateReport :: Int -> [Metric] -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
-generateReport requiredLevel metrics km replies = do
+generateReport :: Int -> KnowledgeModel -> [ReplyTuple] -> AppContextM Report
+generateReport requiredLevel km replies = do
   rUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
   appConfig <- getAppConfig
@@ -55,9 +55,8 @@ generateReport requiredLevel metrics km replies = do
   return
     Report
       { _reportUuid = rUuid
-      , _reportTotalReport = computeTotalReport _levelsEnabled requiredLevel metrics km replies
-      , _reportChapterReports =
-          computeChapterReport _levelsEnabled requiredLevel metrics km replies <$> getChaptersForKmUuid km
+      , _reportTotalReport = computeTotalReport _levelsEnabled requiredLevel km replies
+      , _reportChapterReports = computeChapterReport _levelsEnabled requiredLevel km replies <$> getChaptersForKmUuid km
       , _reportCreatedAt = now
       , _reportUpdatedAt = now
       }

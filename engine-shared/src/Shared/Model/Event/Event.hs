@@ -8,6 +8,7 @@ import Shared.Model.Event.Choice.ChoiceEvent
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
@@ -40,6 +41,9 @@ data Event
   | AddIntegrationEvent' AddIntegrationEvent
   | EditIntegrationEvent' EditIntegrationEvent
   | DeleteIntegrationEvent' DeleteIntegrationEvent
+  | AddMetricEvent' AddMetricEvent
+  | EditMetricEvent' EditMetricEvent
+  | DeleteMetricEvent' DeleteMetricEvent
   | MoveQuestionEvent' MoveQuestionEvent
   | MoveAnswerEvent' MoveAnswerEvent
   | MoveChoiceEvent' MoveChoiceEvent

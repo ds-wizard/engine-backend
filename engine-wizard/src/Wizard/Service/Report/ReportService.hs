@@ -5,7 +5,6 @@ import qualified Data.Map.Strict as M
 
 import LensesConfig
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Metric.MetricDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Report.Report
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -17,5 +16,4 @@ getReportByQuestionnaireUuid qtnUuid =
   runInTransaction $ do
     qtnDto <- getQuestionnaireDetailById qtnUuid
     knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids)
-    metrics <- findMetrics
-    generateReport (qtnDto ^. level) metrics knowledgeModel (M.toList $ qtnDto ^. replies)
+    generateReport (qtnDto ^. level) knowledgeModel (M.toList $ qtnDto ^. replies)

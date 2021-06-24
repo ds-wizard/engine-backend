@@ -21,5 +21,6 @@ data EditKnowledgeModelEvent =
     , _editKnowledgeModelEventChapterUuids :: EventField [U.UUID]
     , _editKnowledgeModelEventTagUuids :: EventField [U.UUID]
     , _editKnowledgeModelEventIntegrationUuids :: EventField [U.UUID]
+    , _editKnowledgeModelEventMetricUuids :: EventField [U.UUID]
     }
   deriving (Show, Eq, Generic)

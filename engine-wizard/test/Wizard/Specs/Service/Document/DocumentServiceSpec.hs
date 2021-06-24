@@ -6,7 +6,6 @@ import Test.Hspec hiding (shouldBe)
 import LensesConfig
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Level.LevelMigration as LVL
-import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -24,7 +23,6 @@ documentIntegrationSpec appContext =
          -- AND: Run migrations
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
-      runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
         -- WHEN:
       (Right result) <- runInContext (createDocumentContext doc1) appContext
@@ -39,7 +37,6 @@ documentIntegrationSpec appContext =
          -- AND: Run migrations
       runInContextIO TML.runMigration appContext
       runInContextIO QTN.runMigration appContext
-      runInContextIO MTR.runMigration appContext
       runInContextIO LVL.runMigration appContext
          -- AND: Prepare AppContext
       runInContext (modifyAppConfig (questionnaire . levels . enabled) False) appContext

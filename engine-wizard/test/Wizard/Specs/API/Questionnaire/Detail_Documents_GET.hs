@@ -23,7 +23,6 @@ import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Document.Data.Documents
-import qualified Wizard.Database.Migration.Development.Metric.MetricMigration as MTR
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
@@ -140,7 +139,6 @@ create_test_403 title appContext qtn authHeader errorMessage =
     runInContextIO U.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO MTR.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

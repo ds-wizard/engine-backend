@@ -2,7 +2,6 @@ module Shared.Model.KnowledgeModel.KnowledgeModel where
 
 import Data.Map
 import qualified Data.Map.Strict as M
-import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -14,6 +13,7 @@ data KnowledgeModel =
     , _knowledgeModelChapterUuids :: [U.UUID]
     , _knowledgeModelTagUuids :: [U.UUID]
     , _knowledgeModelIntegrationUuids :: [U.UUID]
+    , _knowledgeModelMetricUuids :: [U.UUID]
     , _knowledgeModelEntities :: KnowledgeModelEntities
     }
   deriving (Show, Eq, Generic)
@@ -28,6 +28,7 @@ data KnowledgeModelEntities =
     , _knowledgeModelEntitiesReferences :: Map U.UUID Reference
     , _knowledgeModelEntitiesIntegrations :: Map U.UUID Integration
     , _knowledgeModelEntitiesTags :: Map U.UUID Tag
+    , _knowledgeModelEntitiesMetrics :: Map U.UUID Metric
     }
   deriving (Show, Eq, Generic)
 
@@ -188,9 +189,6 @@ data Metric =
     , _metricTitle :: String
     , _metricAbbreviation :: Maybe String
     , _metricDescription :: Maybe String
-    , _metricReferences :: [Reference]
-    , _metricCreatedAt :: UTCTime
-    , _metricUpdatedAt :: UTCTime
     }
   deriving (Show, Generic)
 
@@ -198,8 +196,7 @@ instance Eq Metric where
   a == b =
     _metricUuid a == _metricUuid b &&
     _metricTitle a == _metricTitle b &&
-    _metricAbbreviation a == _metricAbbreviation b &&
-    _metricDescription a == _metricDescription b && _metricReferences a == _metricReferences b
+    _metricAbbreviation a == _metricAbbreviation b && _metricDescription a == _metricDescription b
 
 data MetricMeasure =
   MetricMeasure

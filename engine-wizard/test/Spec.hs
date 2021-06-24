@@ -29,7 +29,6 @@ import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
 import Wizard.Specs.API.Level.APISpec
-import Wizard.Specs.API.Metric.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
@@ -158,7 +157,6 @@ main =
              infoAPI appContext
              knowledgeModelAPI appContext
              levelAPI appContext
-             metricAPI appContext
              KM_MigrationAPI.migrationAPI appContext
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext

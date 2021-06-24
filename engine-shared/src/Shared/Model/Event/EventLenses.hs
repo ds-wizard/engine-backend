@@ -13,6 +13,7 @@ import Shared.Model.Event.Event
 import Shared.Model.Event.Expert.ExpertEventLenses ()
 import Shared.Model.Event.Integration.IntegrationEventLenses ()
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEventLenses ()
+import Shared.Model.Event.Metric.MetricEventLenses ()
 import Shared.Model.Event.Move.MoveEventLenses ()
 import Shared.Model.Event.Question.QuestionEventLenses ()
 import Shared.Model.Event.Reference.ReferenceEventLenses ()
@@ -42,6 +43,9 @@ instance HasUuid' Event where
       get (AddReferenceEvent' entity) = entity ^. uuid'
       get (EditReferenceEvent' entity) = entity ^. uuid'
       get (DeleteReferenceEvent' entity) = entity ^. uuid'
+      get (AddMetricEvent' entity) = entity ^. uuid'
+      get (EditMetricEvent' entity) = entity ^. uuid'
+      get (DeleteMetricEvent' entity) = entity ^. uuid'
       get (AddTagEvent' entity) = entity ^. uuid'
       get (EditTagEvent' entity) = entity ^. uuid'
       get (DeleteTagEvent' entity) = entity ^. uuid'
@@ -74,6 +78,9 @@ instance HasUuid' Event where
       set (AddReferenceEvent' entity) newValue = AddReferenceEvent' $ entity & uuid' .~ newValue
       set (EditReferenceEvent' entity) newValue = EditReferenceEvent' $ entity & uuid' .~ newValue
       set (DeleteReferenceEvent' entity) newValue = DeleteReferenceEvent' $ entity & uuid' .~ newValue
+      set (AddMetricEvent' entity) newValue = AddMetricEvent' $ entity & uuid' .~ newValue
+      set (EditMetricEvent' entity) newValue = EditMetricEvent' $ entity & uuid' .~ newValue
+      set (DeleteMetricEvent' entity) newValue = DeleteMetricEvent' $ entity & uuid' .~ newValue
       set (AddTagEvent' entity) newValue = AddTagEvent' $ entity & uuid' .~ newValue
       set (EditTagEvent' entity) newValue = EditTagEvent' $ entity & uuid' .~ newValue
       set (DeleteTagEvent' entity) newValue = DeleteTagEvent' $ entity & uuid' .~ newValue
@@ -110,6 +117,9 @@ instance HasParentUuid' Event where
       get (AddReferenceEvent' entity) = entity ^. parentUuid'
       get (EditReferenceEvent' entity) = entity ^. parentUuid'
       get (DeleteReferenceEvent' entity) = entity ^. parentUuid'
+      get (AddMetricEvent' entity) = entity ^. parentUuid'
+      get (EditMetricEvent' entity) = entity ^. parentUuid'
+      get (DeleteMetricEvent' entity) = entity ^. parentUuid'
       get (AddTagEvent' entity) = entity ^. parentUuid'
       get (EditTagEvent' entity) = entity ^. parentUuid'
       get (DeleteTagEvent' entity) = entity ^. parentUuid'
@@ -142,6 +152,9 @@ instance HasParentUuid' Event where
       set (AddReferenceEvent' entity) newValue = AddReferenceEvent' $ entity & parentUuid' .~ newValue
       set (EditReferenceEvent' entity) newValue = EditReferenceEvent' $ entity & parentUuid' .~ newValue
       set (DeleteReferenceEvent' entity) newValue = DeleteReferenceEvent' $ entity & parentUuid' .~ newValue
+      set (AddMetricEvent' entity) newValue = AddMetricEvent' $ entity & parentUuid' .~ newValue
+      set (EditMetricEvent' entity) newValue = EditMetricEvent' $ entity & parentUuid' .~ newValue
+      set (DeleteMetricEvent' entity) newValue = DeleteMetricEvent' $ entity & parentUuid' .~ newValue
       set (AddTagEvent' entity) newValue = AddTagEvent' $ entity & parentUuid' .~ newValue
       set (EditTagEvent' entity) newValue = EditTagEvent' $ entity & parentUuid' .~ newValue
       set (DeleteTagEvent' entity) newValue = DeleteTagEvent' $ entity & parentUuid' .~ newValue
@@ -178,6 +191,9 @@ instance HasEntityUuid' Event where
       get (AddReferenceEvent' entity) = entity ^. entityUuid'
       get (EditReferenceEvent' entity) = entity ^. entityUuid'
       get (DeleteReferenceEvent' entity) = entity ^. entityUuid'
+      get (AddMetricEvent' entity) = entity ^. entityUuid'
+      get (EditMetricEvent' entity) = entity ^. entityUuid'
+      get (DeleteMetricEvent' entity) = entity ^. entityUuid'
       get (AddTagEvent' entity) = entity ^. entityUuid'
       get (EditTagEvent' entity) = entity ^. entityUuid'
       get (DeleteTagEvent' entity) = entity ^. entityUuid'
@@ -210,6 +226,9 @@ instance HasEntityUuid' Event where
       set (AddReferenceEvent' entity) newValue = AddReferenceEvent' $ entity & entityUuid' .~ newValue
       set (EditReferenceEvent' entity) newValue = EditReferenceEvent' $ entity & entityUuid' .~ newValue
       set (DeleteReferenceEvent' entity) newValue = DeleteReferenceEvent' $ entity & entityUuid' .~ newValue
+      set (AddMetricEvent' entity) newValue = AddMetricEvent' $ entity & entityUuid' .~ newValue
+      set (EditMetricEvent' entity) newValue = EditMetricEvent' $ entity & entityUuid' .~ newValue
+      set (DeleteMetricEvent' entity) newValue = DeleteMetricEvent' $ entity & entityUuid' .~ newValue
       set (AddTagEvent' entity) newValue = AddTagEvent' $ entity & entityUuid' .~ newValue
       set (EditTagEvent' entity) newValue = EditTagEvent' $ entity & entityUuid' .~ newValue
       set (DeleteTagEvent' entity) newValue = DeleteTagEvent' $ entity & entityUuid' .~ newValue
