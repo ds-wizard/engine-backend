@@ -162,6 +162,7 @@ data AppConfigQuestionnaire =
   AppConfigQuestionnaire
     { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
     , _appConfigQuestionnaireQuestionnaireSharing :: AppConfigQuestionnaireSharing
+    , _appConfigQuestionnaireQuestionnaireCreation :: QuestionnaireCreation
     , _appConfigQuestionnaireSummaryReport :: SimpleFeature
     , _appConfigQuestionnaireLevels :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
@@ -181,6 +182,12 @@ data AppConfigQuestionnaireSharing =
     , _appConfigQuestionnaireSharingDefaultValue :: QuestionnaireSharing
     , _appConfigQuestionnaireSharingAnonymousEnabled :: Bool
     }
+  deriving (Generic, Eq, Show)
+
+data QuestionnaireCreation
+  = CustomQuestionnaireCreation
+  | TemplateQuestionnaireCreation
+  | TemplateAndCustomQuestionnaireCreation
   deriving (Generic, Eq, Show)
 
 data AppConfigQuestionnaireFeedback =

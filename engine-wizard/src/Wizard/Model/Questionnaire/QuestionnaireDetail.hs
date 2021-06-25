@@ -14,6 +14,7 @@ data QuestionnaireDetail =
   QuestionnaireDetail
     { _questionnaireDetailUuid :: U.UUID
     , _questionnaireDetailName :: String
+    , _questionnaireDetailDescription :: Maybe String
     , _questionnaireDetailVisibility :: QuestionnaireVisibility
     , _questionnaireDetailSharing :: QuestionnaireSharing
     , _questionnaireDetailSelectedTagUuids :: [U.UUID]
@@ -22,6 +23,7 @@ data QuestionnaireDetail =
     , _questionnaireDetailPackageId :: String
     , _questionnaireDetailPackage :: PackageSimple
     , _questionnaireDetailPermissions :: [QuestionnairePermRecordDTO]
+    , _questionnaireDetailIsTemplate :: Bool
     , _questionnaireDetailCreatedAt :: UTCTime
     , _questionnaireDetailUpdatedAt :: UTCTime
     }
@@ -31,6 +33,7 @@ instance Eq QuestionnaireDetail where
   a == b =
     _questionnaireDetailUuid a == _questionnaireDetailUuid b &&
     _questionnaireDetailName a == _questionnaireDetailName b &&
+    _questionnaireDetailDescription a == _questionnaireDetailDescription b &&
     _questionnaireDetailVisibility a == _questionnaireDetailVisibility b &&
     _questionnaireDetailSharing a == _questionnaireDetailSharing b &&
     _questionnaireDetailSelectedTagUuids a == _questionnaireDetailSelectedTagUuids b &&
@@ -38,4 +41,5 @@ instance Eq QuestionnaireDetail where
     _questionnaireDetailState a == _questionnaireDetailState b &&
     _questionnaireDetailPackageId a == _questionnaireDetailPackageId b &&
     _questionnaireDetailPackage a == _questionnaireDetailPackage b &&
-    _questionnaireDetailPermissions a == _questionnaireDetailPermissions b
+    _questionnaireDetailPermissions a == _questionnaireDetailPermissions b &&
+    _questionnaireDetailIsTemplate a == _questionnaireDetailIsTemplate b

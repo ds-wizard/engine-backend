@@ -7,6 +7,7 @@ import Database.PostgreSQL.Migration.Entity
 import Database.PostgreSQL.Migration.Migration
 import LensesConfig
 import qualified Wizard.Database.Migration.Production.Migration_0001_init.Migration as M_0001
+import qualified Wizard.Database.Migration.Production.Migration_0002_projectTemplate.Migration as M_0002
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -14,4 +15,4 @@ runMigration baseContext = do
   return ()
 
 migrationDefinitions :: [MigrationDefinition]
-migrationDefinitions = [M_0001.definition]
+migrationDefinitions = [M_0001.definition, M_0002.definition]

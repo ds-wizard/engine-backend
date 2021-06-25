@@ -9,10 +9,12 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 data QuestionnaireChangeDTO =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName :: String
+    , _questionnaireChangeDTODescription :: Maybe String
     , _questionnaireChangeDTOVisibility :: QuestionnaireVisibility
     , _questionnaireChangeDTOSharing :: QuestionnaireSharing
     , _questionnaireChangeDTOPermissions :: [QuestionnairePermRecord]
     , _questionnaireChangeDTOTemplateId :: Maybe String
     , _questionnaireChangeDTOFormatUuid :: Maybe U.UUID
+    , _questionnaireChangeDTOIsTemplate :: Bool
     }
   deriving (Show, Eq, Generic)

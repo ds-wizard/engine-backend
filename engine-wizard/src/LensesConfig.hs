@@ -61,6 +61,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateFromTemplateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReportDTO
@@ -551,6 +552,8 @@ makeFields ''PackageBundleDTO
 
 -- Api / Resource / Questionnaire
 makeFields ''QuestionnaireCreateDTO
+
+makeFields ''QuestionnaireCreateFromTemplateDTO
 
 makeFields ''QuestionnaireDTO
 

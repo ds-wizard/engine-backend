@@ -20,6 +20,7 @@ data QuestionnaireDetailDTO =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid :: U.UUID
     , _questionnaireDetailDTOName :: String
+    , _questionnaireDetailDTODescription :: Maybe String
     , _questionnaireDetailDTOLevel :: Int
     , _questionnaireDetailDTOVisibility :: QuestionnaireVisibility
     , _questionnaireDetailDTOSharing :: QuestionnaireSharing
@@ -37,6 +38,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
     , _questionnaireDetailDTOEvents :: [QuestionnaireEventDTO]
     , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
+    , _questionnaireDetailDTOIsTemplate :: Bool
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -46,6 +48,7 @@ instance Eq QuestionnaireDetailDTO where
   a == b =
     _questionnaireDetailDTOUuid a == _questionnaireDetailDTOUuid b &&
     _questionnaireDetailDTOName a == _questionnaireDetailDTOName b &&
+    _questionnaireDetailDTODescription a == _questionnaireDetailDTODescription b &&
     _questionnaireDetailDTOLevel a == _questionnaireDetailDTOLevel b &&
     _questionnaireDetailDTOVisibility a == _questionnaireDetailDTOVisibility b &&
     _questionnaireDetailDTOSharing a == _questionnaireDetailDTOSharing b &&
@@ -61,4 +64,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
     _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
     _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
-    _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b
+    _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b &&
+    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b

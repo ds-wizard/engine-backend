@@ -50,24 +50,30 @@ findQuestionnaires = do
       entities <- runDB action
       traverse enhance entities
 
-findQuestionnairesForCurrentUserPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery pageable sort
+findQuestionnairesForCurrentUserPage ::
+     Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
   -- 1. Prepare variables
  = do
-  let condition = "qtn.name ~* ?"
+  let nameCondition = "qtn.name ~* ?"
+  let isTemplateCondition =
+        case mIsTemplate of
+          Nothing -> ""
+          Just True -> " AND qtn.is_template = true"
+          Just False -> " AND qtn.is_template = false"
   currentUser <- getCurrentUser
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
-          then f' "SELECT COUNT(*) FROM questionnaire qtn WHERE %s" [condition]
+          then f' "SELECT COUNT(*) FROM questionnaire qtn WHERE %s %s" [nameCondition, isTemplateCondition]
           else f'
                  "SELECT COUNT(*) \
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s"
-                 [qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']", condition]
+                  \WHERE %s AND %s %s"
+                 [qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']", nameCondition, isTemplateCondition]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [regex mQuery]
   result <- runDB action
@@ -79,10 +85,12 @@ findQuestionnairesForCurrentUserPage mQuery pageable sort
   let sqlBase =
         "SELECT qtn.uuid, \
                  \qtn.name, \
+                 \qtn.description, \
                  \qtn.visibility, \
                  \qtn.sharing, \
                  \qtn.selected_tag_uuids, \
                  \qtn.events, \
+                 \qtn.is_template, \
                  \qtn.created_at, \
                  \qtn.updated_at, \
                  \CASE \
@@ -113,15 +121,16 @@ findQuestionnairesForCurrentUserPage mQuery pageable sort
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "%s WHERE %s %s OFFSET %s LIMIT %s"
-                 [sqlBase, condition, mapSortWithPrefix "qtn" sort, show skip, show sizeI]
+                 "%s WHERE %s %s %s OFFSET %s LIMIT %s"
+                 [sqlBase, nameCondition, isTemplateCondition, mapSortWithPrefix "qtn" sort, show skip, show sizeI]
           else f'
                  "%s \
                    \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                    \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
                    \WHERE %s %s OFFSET %s LIMIT %s"
                  [ sqlBase
-                 , qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']" ++ " AND " ++ condition
+                 , qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']" ++
+                   " AND " ++ nameCondition ++ isTemplateCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI
@@ -231,7 +240,7 @@ updateQuestionnaireById qtn = do
   let action conn =
         execute
           conn
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ? WHERE uuid = ?"
           params
   runDB action
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString $ qtn ^. uuid)]

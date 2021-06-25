@@ -62,11 +62,13 @@ reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 reqDtoT qtn =
   QuestionnaireChangeDTO
     { _questionnaireChangeDTOName = qtn ^. name
+    , _questionnaireChangeDTODescription = qtn ^. description
     , _questionnaireChangeDTOVisibility = qtn ^. visibility
     , _questionnaireChangeDTOSharing = qtn ^. sharing
     , _questionnaireChangeDTOPermissions = qtn ^. permissions
     , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid
+    , _questionnaireChangeDTOIsTemplate = qtn ^. isTemplate
     }
 
 reqBodyT qtn = encode $ reqDtoT qtn
