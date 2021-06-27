@@ -13,11 +13,12 @@ import Wizard.Metamodel.Event.Version8.Integration
 import Wizard.Metamodel.Event.Version8.KnowledgeModel
 import Wizard.Metamodel.Event.Version8.Metric
 import Wizard.Metamodel.Event.Version8.Move
+import Wizard.Metamodel.Event.Version8.Phase
 import Wizard.Metamodel.Event.Version8.Question
 import Wizard.Metamodel.Event.Version8.Reference
 import Wizard.Metamodel.Event.Version8.Tag
 
--- Created from engine-shared @7bdc1af98b8f3c210fa6562a9e7eba3fb7cdb507
+-- Created from engine-shared @3bc90b28f67294f44c465847d8a4debc8b654189
 -- Shared.Model.Event.Event
 data Event
   = AddKnowledgeModelEvent' AddKnowledgeModelEvent
@@ -49,6 +50,9 @@ data Event
   | AddMetricEvent' AddMetricEvent
   | EditMetricEvent' EditMetricEvent
   | DeleteMetricEvent' DeleteMetricEvent
+  | AddPhaseEvent' AddPhaseEvent
+  | EditPhaseEvent' EditPhaseEvent
+  | DeletePhaseEvent' DeletePhaseEvent
   | MoveQuestionEvent' MoveQuestionEvent
   | MoveAnswerEvent' MoveAnswerEvent
   | MoveChoiceEvent' MoveChoiceEvent
@@ -56,7 +60,7 @@ data Event
   | MoveReferenceEvent' MoveReferenceEvent
   deriving (Show, Eq, Generic)
 
--- EventJM
+-- Shared.Api.Resource.Event.EventJM
 instance ToJSON Event where
   toJSON = toSumJSON' "eventType"
 
@@ -93,6 +97,9 @@ instance FromJSON Event where
       "AddMetricEvent" -> parseJSON (Object o) >>= \event -> return (AddMetricEvent' event)
       "EditMetricEvent" -> parseJSON (Object o) >>= \event -> return (EditMetricEvent' event)
       "DeleteMetricEvent" -> parseJSON (Object o) >>= \event -> return (DeleteMetricEvent' event)
+      "AddPhaseEvent" -> parseJSON (Object o) >>= \event -> return (AddPhaseEvent' event)
+      "EditPhaseEvent" -> parseJSON (Object o) >>= \event -> return (EditPhaseEvent' event)
+      "DeletePhaseEvent" -> parseJSON (Object o) >>= \event -> return (DeletePhaseEvent' event)
       "MoveQuestionEvent" -> parseJSON (Object o) >>= \event -> return (MoveQuestionEvent' event)
       "MoveAnswerEvent" -> parseJSON (Object o) >>= \event -> return (MoveAnswerEvent' event)
       "MoveChoiceEvent" -> parseJSON (Object o) >>= \event -> return (MoveChoiceEvent' event)

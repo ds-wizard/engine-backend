@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddQuestionEventDTO
   = AddOptionsQuestionEventDTO' AddOptionsQuestionEventDTO
   | AddListQuestionEventDTO' AddListQuestionEventDTO
@@ -354,4 +353,3 @@ instance ToJSON DeleteQuestionEventDTO where
       , "path" .= _deleteQuestionEventDTOPath
       , "questionUuid" .= _deleteQuestionEventDTOQuestionUuid
       ]
-

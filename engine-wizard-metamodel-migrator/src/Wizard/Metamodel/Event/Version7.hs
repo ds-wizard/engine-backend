@@ -93,4 +93,3 @@ instance FromJSON Event where
       "MoveReferenceEvent" -> parseJSON (Object o) >>= \event -> return (MoveReferenceEvent' event)
       _ -> fail "One of the events has unsupported eventType"
   parseJSON _ = mzero
-

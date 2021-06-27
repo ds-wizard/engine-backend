@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddChapterEventDTO =
   AddChapterEventDTO
     { _addChapterEventDTOUuid :: U.UUID

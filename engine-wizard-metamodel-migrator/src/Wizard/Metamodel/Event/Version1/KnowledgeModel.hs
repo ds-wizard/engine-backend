@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddKnowledgeModelEventDTO =
   AddKnowledgeModelEventDTO
     { _addKnowledgeModelEventDTOUuid :: U.UUID
@@ -27,7 +26,6 @@ data EditKnowledgeModelEventDTO =
     , _editKnowledgeModelEventDTOTagUuids :: EventFieldDTO [U.UUID]
     }
   deriving (Show, Eq, Generic)
-
 
 instance FromJSON AddKnowledgeModelEventDTO where
   parseJSON (Object o) = do

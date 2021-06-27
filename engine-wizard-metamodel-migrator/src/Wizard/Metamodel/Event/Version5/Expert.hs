@@ -6,7 +6,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version5.Common
 
-
 -- ExpertEventDTO
 data AddExpertEventDTO =
   AddExpertEventDTO

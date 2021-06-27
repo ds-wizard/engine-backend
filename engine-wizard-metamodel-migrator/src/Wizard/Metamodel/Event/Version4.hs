@@ -12,7 +12,6 @@ import Wizard.Metamodel.Event.Version4.Question
 import Wizard.Metamodel.Event.Version4.Reference
 import Wizard.Metamodel.Event.Version4.Tag
 
-
 -- Created from engine-wizard @ba78aef208e899807fd1e46a5615df7a53904d82
 -- * Api.Resource.Event.*
 -- * Api.Resource.KnowledgeModel.KnowledgeModelDTO
