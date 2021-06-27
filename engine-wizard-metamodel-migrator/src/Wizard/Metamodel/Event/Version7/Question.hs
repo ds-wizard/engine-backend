@@ -7,6 +7,13 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Metamodel.Event.Version7.Common
+  ( EventField
+  , QuestionValueType
+  , simpleParseJSON
+  , simpleToJSON'
+  , simpleToJSON''
+  , toSumJSON
+  )
 
 -- Shared.Model.Event.Question.QuestionEvent
 data AddQuestionEvent

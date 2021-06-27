@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version2.Common
 
-
 data AddKnowledgeModelEventDTO =
   AddKnowledgeModelEventDTO
     { _addKnowledgeModelEventDTOUuid :: U.UUID
@@ -72,4 +71,3 @@ instance ToJSON EditKnowledgeModelEventDTO where
       , "tagUuids" .= _editKnowledgeModelEventDTOTagUuids
       , "integrationUuids" .= _editKnowledgeModelEventDTOIntegrationUuids
       ]
-

@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddReferenceEventDTO
   = AddResourcePageReferenceEventDTO' AddResourcePageReferenceEventDTO
   | AddURLReferenceEventDTO' AddURLReferenceEventDTO
@@ -272,4 +271,3 @@ instance ToJSON DeleteReferenceEventDTO where
       , "path" .= _deleteReferenceEventDTOPath
       , "referenceUuid" .= _deleteReferenceEventDTOReferenceUuid
       ]
-

@@ -2,8 +2,7 @@ module Wizard.Metamodel.Migrator.EventMigrator
   ( migrate
   ) where
 
-import Data.Aeson
-import Data.Either (partitionEithers)
+import Data.Aeson (Value)
 import Data.Maybe (fromJust, isJust)
 
 import qualified Wizard.Metamodel.Migration.Migration1 as M1
@@ -13,6 +12,7 @@ import qualified Wizard.Metamodel.Migration.Migration4 as M4
 import qualified Wizard.Metamodel.Migration.Migration5 as M5
 import qualified Wizard.Metamodel.Migration.Migration6 as M6
 import qualified Wizard.Metamodel.Migration.Migration7 as M7
+import Wizard.Metamodel.Util.List (foldEither)
 
 type Version = Int
 
@@ -39,9 +39,3 @@ migrate vSrc vDst input
   | otherwise = Left "Unsupported metamodel version"
   where
     migration = lookup vSrc migrations
-
-foldEither :: [Either l r] -> Either l [r]
-foldEither eitherList =
-  case partitionEithers eitherList of
-    (l:_, rs) -> Left l
-    (_, rs) -> Right rs

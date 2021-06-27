@@ -38,7 +38,7 @@ migrateEventField entityName oldMetamodelVersion events callback =
       case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> Vector.toList eventArray of
         Right updatedEvents -> do
           logMigrationMigrationApplied entityName
-          callback updatedEvents
+          callback . concat $ updatedEvents
         Left error -> logMigrationFailedToConvertToNewMetamodelVersion entityName error
     _ -> logMigrationFailedToMigrateCollection entityName (_ERROR_UTIL_JSON__BAD_FIELD_TYPE "events" "Array")
 

@@ -8,7 +8,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version5.Common
 
-
 -- QuestionEventDTO
 data AddQuestionEventDTO
   = AddOptionsQuestionEventDTO' AddOptionsQuestionEventDTO
