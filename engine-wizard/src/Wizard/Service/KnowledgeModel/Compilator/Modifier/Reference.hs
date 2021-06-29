@@ -32,7 +32,7 @@ instance EditEntity EditReferenceEvent Reference where
       (EditURLReferenceEvent' e) -> URLReference' . applyToURLReference e . convertToURLReference $ ref
       (EditCrossReferenceEvent' e) -> CrossReference' . applyToCrossReference e . convertToCrossReference $ ref
     where
-      applyToResourcePageReference e = applyShortUuid e
+      applyToResourcePageReference = applyShortUuid
       applyToURLReference e = applyAnchor e . applyUrl e
       applyToCrossReference e = applyDescription e . applyTarget e
       applyShortUuid e ref = applyValue (e ^. shortUuid) ref shortUuid

@@ -1,7 +1,7 @@
 module Wizard.Service.Package.PackageUtil where
 
 import Control.Lens ((^.))
-import Control.Monad (when)
+import Control.Monad (unless)
 import qualified Data.List as L
 
 import LensesConfig
@@ -34,8 +34,7 @@ checkIfPackageIsPublic (Just pkgId) orCheckThisPerm = do
   validateCoordinateFormat False pkgId
   appConfig <- getAppConfig
   let pkgIdSplit = splitCoordinate pkgId
-  when
-    (not
-       (appConfig ^. knowledgeModel . public . enabled &&
-        fitsIntoKMSpecs pkgIdSplit (appConfig ^. knowledgeModel . public . packages)))
+  unless
+    (appConfig ^. knowledgeModel . public . enabled &&
+     fitsIntoKMSpecs pkgIdSplit (appConfig ^. knowledgeModel . public . packages))
     (checkPermission orCheckThisPerm)

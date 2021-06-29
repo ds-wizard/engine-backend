@@ -123,7 +123,7 @@ gfnOfAlphabet :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnOfAlphabet ((_, n):_) = return . toGVal . ofAlphabet . makeInt $ n
 gfnOfAlphabet _ = return def
 
-ofAlphabet n = chr (n + ord ('a') - 1)
+ofAlphabet n = chr (n + ord 'a' - 1)
 
 makeInt = fromMaybe 0 . readMaybe . T.unpack . asText
 

@@ -48,7 +48,7 @@ instance FromRow QuestionnaireDetail where
       parsePermission qtnUuid permission =
         let parts = splitOn "::" permission
          in QuestionnairePermRecordDTO
-              { _questionnairePermRecordDTOUuid = u' (parts !! 0)
+              { _questionnairePermRecordDTOUuid = u' (head parts)
               , _questionnairePermRecordDTOQuestionnaireUuid = qtnUuid
               , _questionnairePermRecordDTOPerms = splitOn "," . replace "}" "" . replace "{" "" $ parts !! 1
               , _questionnairePermRecordDTOMember =

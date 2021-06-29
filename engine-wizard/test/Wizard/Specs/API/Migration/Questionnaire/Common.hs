@@ -19,10 +19,10 @@ import Wizard.Specs.Common
 assertExistenceOfMigrationStateInDB appContext entity = do
   eEntitiesFromDb <-
     runInContextIO (findMigratorStatesByOldQuestionnaireId (U.toString $ entity ^. oldQuestionnaireUuid)) appContext
-  liftIO $ (isRight eEntitiesFromDb) `shouldBe` True
+  liftIO $ isRight eEntitiesFromDb `shouldBe` True
   let (Right entitiesFromDb) = eEntitiesFromDb
-  liftIO $ (length entitiesFromDb) `shouldBe` 1
-  let entityFromDb = entitiesFromDb !! 0
+  liftIO $ length entitiesFromDb `shouldBe` 1
+  let entityFromDb = head entitiesFromDb
   compareQtnMigrators entityFromDb entity
 
 -- --------------------------------

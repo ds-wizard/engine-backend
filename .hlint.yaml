@@ -1,4 +1,28 @@
-- ignore: {name: Use camelCase}
-- ignore: {name: Use newtype instead of data}
-- ignore: {name: Use <$>}
-- ignore: {name: Use ||}
+- ignore: { name: Use camelCase }
+- ignore: { name: Use newtype instead of data }
+- ignore: { name: Use <$> }
+- ignore: { name: Use || }
+- ignore: { name: Reduce duplication }
+- ignore: { name: Use tuple-section }
+- ignore: { name: Use lambda-case }
+- arguments: [ -XDataKinds ]
+- arguments: [ -XDeriveGeneric ]
+- arguments: [ -XDuplicateRecordFields ]
+- arguments: [ -XExistentialQuantification ]
+- arguments: [ -XExtendedDefaultRules ]
+- arguments: [ -XFlexibleContexts ]
+- arguments: [ -XFlexibleInstances ]
+- arguments: [ -XFunctionalDependencies ]
+- arguments: [ -XGeneralizedNewtypeDeriving ]
+- arguments: [ -XMultiParamTypeClasses ]
+- arguments: [ -XOverloadedStrings ]
+- arguments: [ -XQuasiQuotes ]
+- arguments: [ -XRankNTypes ]
+- arguments: [ -XRecordWildCards ]
+- arguments: [ -XScopedTypeVariables ]
+- arguments: [ -XTemplateHaskell ]
+- arguments: [ -XTypeApplications ]
+- arguments: [ -XTypeFamilies ]
+- arguments: [ -XTypeOperators ]
+- arguments: [ -XTypeSynonymInstances ]
+- arguments: [ -XUnicodeSyntax ]

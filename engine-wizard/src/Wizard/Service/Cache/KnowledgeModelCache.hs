@@ -48,7 +48,7 @@ getFromCache [] (Just pkgId) tagUuids = do
   kmCache <- getCache
   mKmMap <- liftIO $ C.lookup kmCache (H.hash keyPkgId)
   case mKmMap of
-    Just kmMap -> do
+    Just kmMap ->
       case M.lookup (H.hash keyTagUuids) kmMap of
         Just km -> do
           logCacheGetFound cacheName key

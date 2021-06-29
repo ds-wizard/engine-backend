@@ -18,7 +18,7 @@
  - **MongoDB** (recommended 4.2.3 or higher)
  - **RabbitMQ** (recommended 3.8.2 or higher, optional)
  - **Hindent** (recommended 5.3.1 or higher, optional)
- - **HLint** (recommended 2.1.11 or higher, optional)
+ - **HLint** (recommended 2.1.26 or higher, optional)
  - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
  - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version) - *for document generation, RabbitMQ required*
 

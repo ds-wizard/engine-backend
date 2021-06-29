@@ -16,7 +16,7 @@ import Wizard.Service.Report.Evaluator.Common
 
 computeMetrics :: KnowledgeModel -> [ReplyTuple] -> Maybe Chapter -> [MetricSummary]
 computeMetrics km replies mCh =
-  mapMaybe filterEmptyMetricSummary . fmap (computeMetric km replies mCh) . getMetricsForKmUuid $ km
+  mapMaybe (filterEmptyMetricSummary . computeMetric km replies mCh) . getMetricsForKmUuid $ km
 
 computeMetric :: KnowledgeModel -> [ReplyTuple] -> Maybe Chapter -> Metric -> MetricSummary
 computeMetric km replies mCh m =

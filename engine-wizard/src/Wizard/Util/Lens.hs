@@ -11,7 +11,7 @@ ap accessor convert entity = fmap set (convert undefined)
 del :: (Functor f, Eq value) => Lens' entity [value] -> (value -> f value) -> entity -> f entity
 del accessor convert entity = fmap set (convert undefined)
   where
-    set newValue = entity & accessor .~ (L.delete newValue (entity ^. accessor))
+    set newValue = entity & accessor .~ L.delete newValue (entity ^. accessor)
 
 mAp :: Functor f => Lens' entity [value] -> (value -> f value) -> Maybe entity -> f (Maybe entity)
 mAp accessor convert mEntity = fmap set (convert undefined)

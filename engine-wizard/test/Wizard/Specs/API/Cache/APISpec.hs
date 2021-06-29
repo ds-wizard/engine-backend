@@ -6,4 +6,4 @@ import Test.Hspec.Wai hiding (shouldRespondWith)
 import Wizard.Specs.API.Cache.List_DELETE
 import Wizard.Specs.API.Common
 
-cacheAPI appContext = with (startWebApp appContext) $ describe "CACHE API Spec" $ do list_delete appContext
+cacheAPI appContext = with (startWebApp appContext) $ describe "CACHE API Spec" $ list_delete appContext
