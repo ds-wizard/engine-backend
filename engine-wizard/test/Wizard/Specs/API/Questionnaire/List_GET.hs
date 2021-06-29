@@ -48,12 +48,6 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200
-    "HTTP 200 OK (Admin)"
-    appContext
-    "/questionnaires"
-    reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire2Dto, questionnaire3Dto])
-  create_test_200
     "HTTP 200 OK (Admin - pagination)"
     appContext
     "/questionnaires?page=1&size=1"
@@ -74,9 +68,9 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (isTemplate - false)"
     appContext
-    "/questionnaires?isTemplate=false"
+    "/questionnaires?isTemplate=false&sort=name,asc"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire2Dto, questionnaire3Dto])
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
@@ -110,7 +104,7 @@ test_200 appContext = do
   create_test_200
     "HTTP 200 OK (isTemplate - false)"
     appContext
-    "/questionnaires?isTemplate=false"
+    "/questionnaires?isTemplate=false&sort=name,asc"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
 
