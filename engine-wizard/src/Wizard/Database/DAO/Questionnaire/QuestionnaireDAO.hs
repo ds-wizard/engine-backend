@@ -117,7 +117,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
                  \) as user_permissions \
                  \FROM questionnaire qtn \
                  \JOIN package pkg ON qtn.package_id = pkg.id \
-                 \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid "
+                 \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
