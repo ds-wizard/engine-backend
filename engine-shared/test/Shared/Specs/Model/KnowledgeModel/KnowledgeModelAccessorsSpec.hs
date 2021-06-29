@@ -17,27 +17,27 @@ knowledgeModelAccessorsSpec =
   describe "Knowledge Model Accessors" $
     ---------------------------------------------
    do
-    describe "Question" $ do
+    describe "Question" $
       describe "getQuestionUuidsForChapterUuid" $
-        it "Successfully listed" $
-        getQuestionUuidsForChapterUuid km1 (chapter1 ^. uuid) `shouldBe` [question1 ^. uuid, question2 ^. uuid]
-      describe "getQuestionUuidsForAnswerUuid" $
-        it "Successfully listed" $
-        getQuestionUuidsForAnswerUuid km1 (q2_answerYes ^. uuid) `shouldBe` [q2_aYes_fuQuestion1 ^. uuid]
+      it "Successfully listed" $
+      getQuestionUuidsForChapterUuid km1 (chapter1 ^. uuid) `shouldBe`
+      [question1 ^. uuid, question2 ^. uuid] describe "getQuestionUuidsForAnswerUuid" $
+      it "Successfully listed" $
+      getQuestionUuidsForAnswerUuid km1 (q2_answerYes ^. uuid) `shouldBe` [q2_aYes_fuQuestion1 ^. uuid]
     ---------------------------------------------
-    describe "Expert" $ do
+    describe "Expert" $
       describe "getExpertUuidsForQuestionUuid" $
-        it "Successfully listed" $
-        getExpertUuidsForQuestionUuid km1WithQ4 (q4_it1_question6 ^. uuid) `shouldBe`
-        [km1_ch2_q6_eAlbert ^. uuid, km1_ch2_q6_eNikola ^. uuid]
+      it "Successfully listed" $
+      getExpertUuidsForQuestionUuid km1WithQ4 (q4_it1_question6 ^. uuid) `shouldBe`
+      [km1_ch2_q6_eAlbert ^. uuid, km1_ch2_q6_eNikola ^. uuid]
     ---------------------------------------------
-    describe "Reference" $ do
+    describe "Reference" $
       describe "getReferenceUuidsForQuestionUuid" $
-        it "Successfully listed" $
-        getReferenceUuidsForQuestionUuid km1WithQ4 (q4_it1_question6 ^. uuid) `shouldBe`
-        [km1_ch2_q6_r1 ^. uuid, km1_ch2_q6_r2 ^. uuid]
+      it "Successfully listed" $
+      getReferenceUuidsForQuestionUuid km1WithQ4 (q4_it1_question6 ^. uuid) `shouldBe`
+      [km1_ch2_q6_r1 ^. uuid, km1_ch2_q6_r2 ^. uuid]
     ---------------------------------------------
-    describe "Answer" $ do
+    describe "Answer" $
       describe "getAnswerUuidsForQuestionUuid" $
-        it "Successfully listed" $
-        getAnswerUuidsForQuestionUuid km1 (question2 ^. uuid) `shouldBe` [q2_answerNo ^. uuid, q2_answerYes ^. uuid]
+      it "Successfully listed" $
+      getAnswerUuidsForQuestionUuid km1 (question2 ^. uuid) `shouldBe` [q2_answerNo ^. uuid, q2_answerYes ^. uuid]

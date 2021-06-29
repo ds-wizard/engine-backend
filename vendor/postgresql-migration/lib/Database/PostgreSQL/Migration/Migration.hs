@@ -29,7 +29,7 @@ migrateDatabase dbPool migrationDefinitions logInfo = do
         let lastAppliedMigration = last appliedMigrations
         let newMigrationDefinitions =
               filter (\(mm, _) -> mmNumber mm > mrNumber lastAppliedMigration) migrationDefinitions
-        if length newMigrationDefinitions > 0
+        if not (null newMigrationDefinitions)
           then do
             logInfo $ "list of migrations to apply: " ++ numbersOfMigrations newMigrationDefinitions
             applyMigrations newMigrationDefinitions
@@ -61,7 +61,7 @@ migrateDatabase dbPool migrationDefinitions logInfo = do
         Just error -> return . Just $ error
 
 numbersOfMigrations :: [MigrationDefinition] -> String
-numbersOfMigrations migrationDefinitions = concat (intersperse ", " (numberOfMigration <$> migrationDefinitions))
+numbersOfMigrations migrationDefinitions = intercalate ", " (numberOfMigration <$> migrationDefinitions)
   where
     numberOfMigration :: MigrationDefinition -> String
     numberOfMigration (mm, _) = show . mmNumber $ mm

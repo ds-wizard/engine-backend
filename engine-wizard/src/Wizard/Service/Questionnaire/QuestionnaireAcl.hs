@@ -1,7 +1,7 @@
 module Wizard.Service.Questionnaire.QuestionnaireAcl where
 
 import Control.Lens ((^.), (^..))
-import Control.Monad (when)
+import Control.Monad (unless)
 import Control.Monad.Except (throwError)
 
 import LensesConfig
@@ -40,7 +40,7 @@ checkCreateFromTemplatePermissionToQtn isTemplate = do
   case qtnCreation of
     CustomQuestionnaireCreation ->
       throwError . UserError . _ERROR_SERVICE_COMMON__FEATURE_IS_DISABLED $ "Questionnaire Template"
-    _ -> when (not isTemplate) (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Questionnaire Template")
+    _ -> unless isTemplate (throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Questionnaire Template")
 
 checkClonePermissionToQtn ::
      QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()

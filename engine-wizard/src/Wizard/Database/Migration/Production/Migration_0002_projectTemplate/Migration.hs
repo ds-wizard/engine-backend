@@ -40,7 +40,8 @@ addFieldsToQuestionnaire dbPool = do
   return Nothing
 
 addPermission dbPool = do
-  let sql = "UPDATE user_entity set permissions = permissions || '{QTN_TML_PERM}' WHERE role = 'admin' OR role = 'dataSteward'"
+  let sql =
+        "UPDATE user_entity set permissions = permissions || '{QTN_TML_PERM}' WHERE role = 'admin' OR role = 'dataSteward'"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing
