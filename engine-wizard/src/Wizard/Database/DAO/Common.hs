@@ -35,7 +35,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
            \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
            \    FROM %s \
-           \    WHERE name ~* ? %s \
+           \    WHERE (name ~* ? OR id ~* ?) %s \
            \    GROUP BY organization_id, %s \
            \) \
            \%s \
@@ -52,7 +52,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           , show sizeI
           ]
   logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+  let action conn =
+        query conn (fromString sql) (regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   entities <- runDB action
   -- 4. Constructor response
   let metadata =
