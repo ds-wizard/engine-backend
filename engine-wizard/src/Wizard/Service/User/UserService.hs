@@ -52,11 +52,11 @@ getUsers =
     users <- findUsers
     return . fmap toDTO $ users
 
-getUsersPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
-getUsersPage mQuery pageable sort =
+getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
+getUsersPage mQuery mRole pageable sort =
   runInTransaction $ do
     checkPermission _UM_PERM
-    userPage <- findUsersPage mQuery pageable sort
+    userPage <- findUsersPage mQuery mRole pageable sort
     return . fmap toDTO $ userPage
 
 getUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)

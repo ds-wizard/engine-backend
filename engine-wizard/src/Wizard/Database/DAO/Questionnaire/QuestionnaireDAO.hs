@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireDAO where
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Foldable (traverse_)
+import qualified Data.List as L
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -51,8 +52,8 @@ findQuestionnaires = do
       traverse enhance entities
 
 findQuestionnairesForCurrentUserPage ::
-     Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
+     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
   -- 1. Prepare variables
  = do
   let nameCondition = "qtn.name ~* ?"
@@ -61,19 +62,33 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
           Nothing -> ""
           Just True -> " AND qtn.is_template = true"
           Just False -> " AND qtn.is_template = false"
+  let userUuidsCondition =
+        case mUserUuids of
+          Nothing -> ""
+          Just userUuids ->
+            let mapFn userUuid = " qtn_acl_user.user_uuid = '" ++ userUuid ++ "' "
+             in " AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")"
   currentUser <- getCurrentUser
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
-          then f' "SELECT COUNT(*) FROM questionnaire qtn WHERE %s %s" [nameCondition, isTemplateCondition]
+          then f'
+                 "SELECT COUNT(*) FROM questionnaire qtn \
+                  \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+                  \WHERE %s %s %s"
+                 [nameCondition, isTemplateCondition, userUuidsCondition]
           else f'
                  "SELECT COUNT(*) \
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s %s"
-                 [qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']", nameCondition, isTemplateCondition]
+                  \WHERE %s AND %s %s %s"
+                 [ qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']"
+                 , nameCondition
+                 , isTemplateCondition
+                 , userUuidsCondition
+                 ]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [regex mQuery]
   result <- runDB action
@@ -121,8 +136,17 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "%s WHERE %s %s %s OFFSET %s LIMIT %s"
-                 [sqlBase, nameCondition, isTemplateCondition, mapSortWithPrefix "qtn" sort, show skip, show sizeI]
+                 "%s LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+                 \WHERE %s %s %s %s \
+                 \OFFSET %s LIMIT %s"
+                 [ sqlBase
+                 , nameCondition
+                 , isTemplateCondition
+                 , userUuidsCondition
+                 , mapSortWithPrefix "qtn" sort
+                 , show skip
+                 , show sizeI
+                 ]
           else f'
                  "%s \
                    \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
@@ -130,7 +154,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
                    \WHERE %s %s OFFSET %s LIMIT %s"
                  [ sqlBase
                  , qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']" ++
-                   " AND " ++ nameCondition ++ isTemplateCondition
+                   " AND " ++ nameCondition ++ isTemplateCondition ++ userUuidsCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI

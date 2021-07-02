@@ -34,7 +34,14 @@ findBranchesWithEvents = createFindEntitiesFn entityName
 
 findBranchesWithEventsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchWithEvents)
 findBranchesWithEventsPage mQuery pageable sort =
-  createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort "*" "name ~* ?" [regex mQuery]
+  createFindEntitiesPageableQuerySortFn
+    entityName
+    pageLabel
+    pageable
+    sort
+    "*"
+    "name ~* ? OR km_id ~* ?"
+    [regex mQuery, regex mQuery]
 
 findBranchById :: String -> AppContextM Branch
 findBranchById = createFindEntityByFn entityName "uuid"

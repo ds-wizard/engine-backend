@@ -50,12 +50,12 @@ import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Util.Logger
 
 getQuestionnairesForCurrentUserPageDto ::
-     Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate pageable sort =
+     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mUserUuids pageable sort =
   runInTransaction $ do
     checkPermission _QTN_PERM
     currentUser <- getCurrentUser
-    qtnPage <- findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
+    qtnPage <- findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
     traverse enhanceQuestionnaireDetail qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
