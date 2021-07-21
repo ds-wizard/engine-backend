@@ -3,6 +3,7 @@ module Wizard.Integration.Http.Common.HttpClient
   , runSimpleRequest
   ) where
 
+import qualified Control.Exception.Base as E
 import Control.Lens ((&), (.~), (?~), (^.))
 import Control.Monad.Except (liftEither, throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -37,25 +38,31 @@ import Wizard.Util.Logger
 runRequest :: HttpRequest -> (Response BSL.ByteString -> Either AppError a) -> AppContextM a
 runRequest req responseMapper = do
   logRequestMultipart req
-  response <- runSimpleRequest req
-  let sc = response ^. responseStatus . statusCode
-  if sc <= 399
-    then do
-      let eResDto = responseMapper response
-      logResponseBody eResDto
-      liftEither eResDto
-    else do
-      logResponseErrorBody response
-      throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR sc
+  eResponse <- runSimpleRequest req
+  case eResponse of
+    Right response -> do
+      let sc = response ^. responseStatus . statusCode
+      if sc <= 399
+        then do
+          let eResDto = responseMapper response
+          logResponseBody eResDto
+          liftEither eResDto
+        else do
+          logResponseErrorBody response
+          throwError . GeneralServerError $
+            _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR ("statusCode: " ++ show sc)
+    Left error -> do
+      logResponseErrorGeneral error
+      throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "Request failed, see logs"
 
-runSimpleRequest :: HttpRequest -> AppContextM (Response BSL.ByteString)
+runSimpleRequest :: HttpRequest -> AppContextM (Either E.SomeException (Response BSL.ByteString))
 runSimpleRequest req = do
   httpClientManager <- asks _appContextHttpClientManager
   let opts =
         defaults & manager .~ Right httpClientManager & headers .~ reqHeaders & (checkResponse ?~ (\_ _ -> return ()))
   case req ^. multipartFileName of
-    Just fileName -> liftIO . actionMultipart opts $ fileName
-    Nothing -> liftIO . action $ opts
+    Just fileName -> liftIO . E.try . actionMultipart opts $ fileName
+    Nothing -> liftIO . E.try . action $ opts
   where
     reqMethod = req ^. requestMethod
     reqUrl = req ^. requestUrl
@@ -79,6 +86,8 @@ logRequestMultipart request =
   case request ^. multipartFileName of
     Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
     Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
+
+logResponseErrorGeneral error = logInfoU _CMP_INTEGRATION ("Request failed: '" ++ show error ++ "'")
 
 logResponseErrorBody response =
   logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")

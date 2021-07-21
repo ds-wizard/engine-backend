@@ -4,8 +4,8 @@ module Wizard.Localization.Messages.Internal where
 -- INTEGRATION
 -- --------------------------------------
 -- Common
-_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR statusCode =
-  "Integration Service returned an error (statusCode: " ++ show statusCode ++ ")"
+_ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR message =
+  "Integration Service returned an error (" ++ message ++ ")"
 
 -- Response Mappers (Response deserialization problem = RDF)
 _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_DESERIALIZE_RESPONSE_BODY a =
