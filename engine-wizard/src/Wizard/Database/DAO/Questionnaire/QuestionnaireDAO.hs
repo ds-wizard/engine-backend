@@ -270,9 +270,9 @@ updateQuestionnaireById qtn = do
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString $ qtn ^. uuid)]
   traverse_ insertQuestionnairePermRecord (qtn ^. permissions)
 
-updateQuestionnaireEventsById :: String -> [QuestionnaireEvent] -> AppContextM ()
-updateQuestionnaireEventsById qtnUuid events = do
-  let sql = "UPDATE questionnaire SET events = ? WHERE uuid = ?"
+appendQuestionnaireEventByUuid :: String -> [QuestionnaireEvent] -> AppContextM ()
+appendQuestionnaireEventByUuid qtnUuid events = do
+  let sql = "UPDATE questionnaire SET events = events::jsonb || ?::jsonb WHERE uuid = ?"
   logInfo _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) [toJSONField events, toField qtnUuid]
   runDB action

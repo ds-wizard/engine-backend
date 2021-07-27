@@ -5,9 +5,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -64,9 +62,3 @@ getUser mUserUuid =
   case mUserUuid of
     Just userUuid -> Just <$> findUserById (U.toString userUuid)
     Nothing -> return Nothing
-
-saveQuestionnaireEvent :: String -> QuestionnaireEventDTO -> AppContextM ()
-saveQuestionnaireEvent qtnUuid event =
-  runInTransaction $ do
-    events <- findQuestionnaireEventsById qtnUuid
-    updateQuestionnaireEventsById qtnUuid (events ++ [fromEventDTO event])

@@ -30,7 +30,6 @@ import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationAcl
 import Wizard.Service.Questionnaire.Collaboration.CollaborationMapper
-import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Websocket
@@ -112,7 +111,7 @@ setReply qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetReplyEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
 
@@ -123,7 +122,7 @@ clearReply qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (ClearReplyEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ClearReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
 
@@ -134,7 +133,7 @@ setPhase qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetPhaseEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetPhaseEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetPhaseMessage resDto) disconnectUser
 
@@ -145,7 +144,7 @@ setLabel qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetLabelsEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetLabelsEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
 
