@@ -52,6 +52,7 @@ questionnaire1 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = True
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -155,6 +156,7 @@ questionnaire2 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -176,6 +178,7 @@ questionnaire2Edited =
     , _questionnaireEvents = questionnaire2 ^. events
     , _questionnaireVersions = questionnaire2 ^. versions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -235,6 +238,7 @@ questionnaire3 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -272,6 +276,7 @@ questionnaire4 =
     , _questionnaireEvents = [sphse_2']
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

@@ -55,7 +55,8 @@ createQtnTable = do
         \     created_at timestamptz not null, \
         \     updated_at timestamptz not null, \
         \     description varchar, \
-        \     is_template boolean not null \
+        \     is_template boolean not null, \
+        \     squashed boolean not null \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \

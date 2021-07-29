@@ -288,6 +288,7 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
         if _QTN_TML_PERM `elem` (currentUser ^. permissions)
           then dto ^. isTemplate
           else qtn ^. isTemplate
+    , _questionnaireSquashed = qtn ^. squashed
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
@@ -324,6 +325,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , _questionnaireEvents = []
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = qtnCreatedAt
     , _questionnaireUpdatedAt = qtnUpdatedAt
     }

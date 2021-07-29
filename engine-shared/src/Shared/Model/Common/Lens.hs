@@ -1,5 +1,6 @@
 module Shared.Model.Common.Lens where
 
+import Data.Time
 import qualified Data.UUID as U
 
 class HasUuid' entity where
@@ -16,6 +17,9 @@ class HasExpertUuids' entity fieldType where
 
 class HasReferenceUuids' entity fieldType where
   referenceUuids' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity
+
+class HasCreatedAt' entity where
+  createdAt' :: Functor f => (UTCTime -> f UTCTime) -> entity -> f entity
 
 class HasCreatedBy' entity where
   createdBy' :: Functor f => (Maybe U.UUID -> f (Maybe U.UUID)) -> entity -> f entity

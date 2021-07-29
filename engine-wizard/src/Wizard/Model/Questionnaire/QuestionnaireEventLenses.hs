@@ -1,6 +1,7 @@
 module Wizard.Model.Questionnaire.QuestionnaireEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -20,6 +21,20 @@ instance HasUuid' QuestionnaireEvent where
       set (ClearReplyEvent' entity) newValue = ClearReplyEvent' $ entity & uuid .~ newValue
       set (SetPhaseEvent' entity) newValue = SetPhaseEvent' $ entity & uuid .~ newValue
       set (SetLabelsEvent' entity) newValue = SetLabelsEvent' $ entity & uuid .~ newValue
+
+instance HasCreatedAt' QuestionnaireEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: QuestionnaireEvent -> UTCTime
+      get (SetReplyEvent' entity) = entity ^. createdAt
+      get (ClearReplyEvent' entity) = entity ^. createdAt
+      get (SetPhaseEvent' entity) = entity ^. createdAt
+      get (SetLabelsEvent' entity) = entity ^. createdAt
+      set :: QuestionnaireEvent -> UTCTime -> QuestionnaireEvent
+      set (SetReplyEvent' entity) newValue = SetReplyEvent' $ entity & createdAt .~ newValue
+      set (ClearReplyEvent' entity) newValue = ClearReplyEvent' $ entity & createdAt .~ newValue
+      set (SetPhaseEvent' entity) newValue = SetPhaseEvent' $ entity & createdAt .~ newValue
+      set (SetLabelsEvent' entity) newValue = SetLabelsEvent' $ entity & createdAt .~ newValue
 
 instance HasCreatedBy' QuestionnaireEvent where
   createdBy' convert entity = fmap (set entity) (convert . get $ entity)

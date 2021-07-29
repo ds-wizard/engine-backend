@@ -1,5 +1,5 @@
-module Wizard.Worker.Cron.Questionnaire.QuestionnaireWorker
-  ( questionnaireWorker
+module Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
+  ( cleanQuestionnaireWorker
   ) where
 
 import Control.Lens ((^.))
@@ -13,8 +13,8 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Util.Context
 import Wizard.Util.Logger
 
-questionnaireWorker :: MonadSchedule m => BaseContext -> m ()
-questionnaireWorker context = addJob (job context) "31 */4 * * *"
+cleanQuestionnaireWorker :: MonadSchedule m => BaseContext -> m ()
+cleanQuestionnaireWorker context = addJob (job context) "31 */4 * * *"
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------
@@ -26,4 +26,4 @@ job context =
         liftIO $ runAppContextWithBaseContext cleanQuestionnaires context
         log "ended"
 
-log msg = logInfo _CMP_WORKER ("QuestionnaireWorker: " ++ msg)
+log msg = logInfo _CMP_WORKER ("CleanQuestionnaireWorker: " ++ msg)
