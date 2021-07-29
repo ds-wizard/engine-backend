@@ -3,9 +3,11 @@ module Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
   ) where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
+import qualified Data.Text as T
 import Prelude hiding (log)
-import System.Cron
+import System.Cron hiding (cron)
 
 import LensesConfig
 import Wizard.Model.Context.BaseContext
@@ -13,8 +15,11 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Util.Context
 import Wizard.Util.Logger
 
-cleanQuestionnaireWorker :: MonadSchedule m => BaseContext -> m ()
-cleanQuestionnaireWorker context = addJob (job context) "31 */4 * * *"
+cleanQuestionnaireWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
+cleanQuestionnaireWorker context =
+  when
+    (context ^. serverConfig . questionnaire . clean . enabled)
+    (addJob (job context) (T.pack $ context ^. serverConfig . questionnaire . clean . cron))
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------

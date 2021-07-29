@@ -7,7 +7,7 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 
-import LensesConfig
+import LensesConfig hiding (squash)
 import Shared.Model.Common.Lens
 import Shared.Util.List (groupBy)
 import Wizard.Database.DAO.Common

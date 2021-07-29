@@ -6,7 +6,7 @@ import Data.Time
 import qualified Data.UUID as U
 import Test.Hspec
 
-import LensesConfig
+import LensesConfig hiding (squash)
 import Shared.Model.Common.Lens
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents

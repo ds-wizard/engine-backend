@@ -3,7 +3,9 @@ module Wizard.Worker.Cron.Document.DocumentWorker
   ) where
 
 import Control.Lens ((^.))
+import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
+import qualified Data.Text as T
 import Prelude hiding (log)
 import System.Cron
 
@@ -13,8 +15,11 @@ import Wizard.Service.Document.DocumentService
 import Wizard.Util.Context
 import Wizard.Util.Logger
 
-documentWorker :: MonadSchedule m => BaseContext -> m ()
-documentWorker context = addJob (job context) "1 */4 * * *"
+documentWorker :: (MonadSchedule m, Applicative m) => BaseContext -> m ()
+documentWorker context =
+  when
+    (context ^. serverConfig . questionnaire . clean . enabled)
+    (addJob (job context) (T.pack $ context ^. serverConfig . document . clean . cron))
 
 -- -----------------------------------------------------------------------------
 -- -----------------------------------------------------------------------------

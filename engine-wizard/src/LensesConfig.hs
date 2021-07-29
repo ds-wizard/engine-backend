@@ -233,9 +233,15 @@ makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigDocument
+
 makeFields ''ServerConfigFeedback
 
 makeFields ''ServerConfigLogging
+
+makeFields ''ServerConfigQuestionnaire
+
+makeFields ''ServerConfigCronWorker
 
 makeFields ''BuildInfoConfig
 
