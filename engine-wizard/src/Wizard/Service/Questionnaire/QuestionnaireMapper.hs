@@ -31,6 +31,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
+import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -302,11 +303,12 @@ fromQuestionnaireCreateDTO ::
   -> QuestionnaireSharing
   -> Maybe U.UUID
   -> String
-  -> UTCTime
+  -> U.UUID
+  -> Maybe U.UUID
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase now permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
@@ -322,12 +324,23 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
         case mCurrentUserUuid of
           Just currentUserUuid -> [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
           Nothing -> []
-    , _questionnaireEvents = []
+    , _questionnaireEvents =
+        case mPhase of
+          Just phase ->
+            [ SetPhaseEvent' $
+              SetPhaseEvent
+                { _setPhaseEventUuid = phaseEventUuid
+                , _setPhaseEventPhaseUuid = Just phase
+                , _setPhaseEventCreatedBy = mCurrentUserUuid
+                , _setPhaseEventCreatedAt = now
+                }
+            ]
+          Nothing -> []
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
-    , _questionnaireCreatedAt = qtnCreatedAt
-    , _questionnaireUpdatedAt = qtnUpdatedAt
+    , _questionnaireCreatedAt = now
+    , _questionnaireUpdatedAt = now
     }
 
 fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire

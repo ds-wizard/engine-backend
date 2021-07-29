@@ -4,6 +4,7 @@ module Wizard.Specs.API.Questionnaire.List_POST
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -72,8 +73,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
     let expDto =
           if anonymousSharingEnabled
-            then (phaseUuid .~ Nothing) . (sharing .~ AnyoneWithLinkEditQuestionnaire) $ questionnaire1Dto
-            else questionnaire1Dto & phaseUuid .~ Nothing
+            then questionnaire1Dto & sharing .~ AnyoneWithLinkEditQuestionnaire
+            else questionnaire1Dto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext
@@ -89,6 +90,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
     assertResHeaders headers expHeaders
     compareQuestionnaireCreateDtos resBody expDto
     -- AND: Find a result in DB
+    (Right eventsInDB) <- runInContextIO (findQuestionnaireEventsById (U.toString $ resBody ^. uuid)) appContext
     if anonymousSharingEnabled
       then assertExistenceOfQuestionnaireInDB
              appContext
@@ -96,7 +98,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
               (description .~ Nothing) .
               (isTemplate .~ False) .
               (sharing .~ AnyoneWithLinkEditQuestionnaire) .
-              (events .~ []) . (versions .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
+              (events .~ eventsInDB) . (versions .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
               questionnaire1)
       else do
         let aPermissions =
@@ -107,7 +109,7 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
           appContext
           ((uuid .~ (resBody ^. uuid)) .
            (description .~ Nothing) .
-           (isTemplate .~ False) . (events .~ []) . (versions .~ []) . (permissions .~ aPermissions) $
+           (isTemplate .~ False) . (events .~ eventsInDB) . (versions .~ []) . (permissions .~ aPermissions) $
            questionnaire1)
 
 -- ----------------------------------------------------
