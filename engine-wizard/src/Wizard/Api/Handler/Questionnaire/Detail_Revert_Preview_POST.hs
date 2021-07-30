@@ -26,5 +26,5 @@ detail_revert_preview_POST ::
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireContentDTO)
 detail_revert_preview_POST mTokenHeader reqDto qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< revertToEvent qtnUuid reqDto False
