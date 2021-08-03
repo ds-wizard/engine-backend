@@ -33,7 +33,16 @@ createSchemaOptions'''' :: String -> SchemaOptions
 createSchemaOptions'''' parentEntityName = fromAesonOptions (createSimpleOptions'''' parentEntityName)
 
 simpleToSchema''''' fieldPrefix dtoName exampleDTO proxy =
-  genericDeclareNamedSchema (createSchemaOptions' fieldPrefix) proxy & mapped . schema . example ?~ toJSON exampleDTO &
+  genericDeclareNamedSchema ((createSchemaOptions' fieldPrefix) {fieldLabelModifier = changePageFields}) proxy & mapped .
+  schema .
+  example ?~
+  toJSON exampleDTO &
   mapped .
   name ?~
   dtoName
+
+changePageFields :: String -> String
+changePageFields "_pageName" = "name"
+changePageFields "_pageMetadata" = "page"
+changePageFields "_pageEntities" = "_embedded"
+changePageFields field = field

@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddTagEventDTO =
   AddTagEventDTO
     { _addTagEventDTOUuid :: U.UUID
@@ -102,4 +101,3 @@ instance ToJSON DeleteTagEventDTO where
       , "path" .= _deleteTagEventDTOPath
       , "tagUuid" .= _deleteTagEventDTOTagUuid
       ]
-

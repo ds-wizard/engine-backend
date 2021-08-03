@@ -21,6 +21,10 @@ elems :: Eq a => [a] -> [a] -> Bool
 elems (x:xs) list = x `elem` list && xs `elems` list
 elems [] list = True
 
+headSafe :: [a] -> Maybe a
+headSafe [] = Nothing
+headSafe (x:_) = Just x
+
 lastSafe :: [a] -> Maybe a
 lastSafe [] = Nothing
 lastSafe xs = Just . last $ xs

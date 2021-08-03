@@ -29,16 +29,16 @@ pageLabel = "users"
 findUsers :: AppContextM [User]
 findUsers = createFindEntitiesFn entityName
 
-findUsersPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
-findUsersPage mQuery pageable sort =
+findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
+findUsersPage mQuery mRole pageable sort =
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "*"
-    "concat(first_name, ' ', last_name) ~* ?"
-    [regex mQuery]
+    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ?"
+    [regex mQuery, regex mQuery, regex mRole]
 
 findUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
 findUserSuggestionsPage mQuery pageable sort =
@@ -48,8 +48,8 @@ findUserSuggestionsPage mQuery pageable sort =
     pageable
     sort
     "uuid, first_name, last_name, email, image_url"
-    "concat(first_name, ' ', last_name) ~* ?"
-    [regex mQuery]
+    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true"
+    [regex mQuery, regex mQuery]
 
 findUserById :: String -> AppContextM User
 findUserById = getFromCacheOrDb getFromCache addToCache go

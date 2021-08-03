@@ -13,7 +13,8 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 import Wizard.Worker.Cron.Document.DocumentWorker
 import Wizard.Worker.Cron.Feedback.FeedbackWorker
-import Wizard.Worker.Cron.Questionnaire.QuestionnaireWorker
+import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
+import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
 
 worker :: MVar () -> BaseContext -> IO ()
 worker shutdownFlag context = do
@@ -34,7 +35,8 @@ cronJob shutdownFlag context =
           liftIO . execSchedule $ do
             feedbackWorker context
             documentWorker context
-            questionnaireWorker context
+            cleanQuestionnaireWorker context
+            squashQuestionnaireEventsWorker context
         setupHandlers loggingLevel shutdownFlag threadIds
         logInfo _CMP_WORKER "scheduling workers completed"
 

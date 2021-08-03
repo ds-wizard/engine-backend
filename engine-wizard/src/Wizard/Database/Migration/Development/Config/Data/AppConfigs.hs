@@ -148,7 +148,6 @@ defaultQuestionnaire =
     , _appConfigQuestionnaireQuestionnaireSharing = defaultQuestionnaireSharing
     , _appConfigQuestionnaireQuestionnaireCreation = TemplateAndCustomQuestionnaireCreation
     , _appConfigQuestionnaireSummaryReport = SimpleFeature True
-    , _appConfigQuestionnaireLevels = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
     }
 
@@ -229,4 +228,4 @@ editedAppConfig :: AppConfig
 editedAppConfig = defaultAppConfig {_appConfigQuestionnaire = editedQuestionnaire}
 
 editedQuestionnaire :: AppConfigQuestionnaire
-editedQuestionnaire = defaultQuestionnaire {_appConfigQuestionnaireLevels = SimpleFeature False}
+editedQuestionnaire = defaultQuestionnaire {_appConfigQuestionnaireSummaryReport = SimpleFeature False}

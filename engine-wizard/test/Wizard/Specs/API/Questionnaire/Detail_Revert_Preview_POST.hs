@@ -29,7 +29,6 @@ detail_revert_preview_POST appContext =
   describe "POST /questionnaires/{qtnUuid}/revert/preview" $ do
     test_200 appContext
     test_400 appContext
-    test_401 appContext
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -38,7 +37,7 @@ reqMethod = methodPost
 
 reqUrl = "/questionnaires/af984a75-56e3-49f8-b16f-d6b99599910a/revert/preview"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
 reqDto = questionnaireVersion1RevertDto
 
@@ -47,10 +46,16 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_200 appContext =
-  it "HTTP 200 OK" $
-     -- GIVEN: Prepare expectation
+test_200 appContext = do
+  create_test_200 "HTTP 200 OK (logged user)" appContext [reqAuthHeader]
+  create_test_200 "HTTP 200 OK (anonymous)" appContext []
+
+create_test_200 title appContext authHeader =
+  it title $
+     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeader
+     -- AND: Prepare expectation
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
     let expDto = questionnaire1CtnRevertedDto
@@ -71,8 +76,3 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = createInvalidJsonTest reqMethod reqUrl "name"
-
--- ----------------------------------------------------
--- ----------------------------------------------------
--- ----------------------------------------------------
-test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody

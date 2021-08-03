@@ -17,7 +17,7 @@ instance FromJSON QuestionnaireEventChangeDTO where
     case eventType of
       "SetReplyEvent" -> parseJSON (Object o) >>= \event -> return (SetReplyEventChangeDTO' event)
       "ClearReplyEvent" -> parseJSON (Object o) >>= \event -> return (ClearReplyEventChangeDTO' event)
-      "SetLevelEvent" -> parseJSON (Object o) >>= \event -> return (SetLevelEventChangeDTO' event)
+      "SetPhaseEvent" -> parseJSON (Object o) >>= \event -> return (SetPhaseEventChangeDTO' event)
       "SetLabelsEvent" -> parseJSON (Object o) >>= \event -> return (SetLabelsEventChangeDTO' event)
       _ -> fail "One of the events has unsupported type"
   parseJSON _ = mzero
@@ -34,11 +34,11 @@ instance FromJSON ClearReplyEventChangeDTO where
 instance ToJSON ClearReplyEventChangeDTO where
   toJSON = simpleToJSON''' "_clearReplyEventChangeDTO" "type" "ChangeDTO"
 
-instance FromJSON SetLevelEventChangeDTO where
-  parseJSON = simpleParseJSON "_setLevelEventChangeDTO"
+instance FromJSON SetPhaseEventChangeDTO where
+  parseJSON = simpleParseJSON "_setPhaseEventChangeDTO"
 
-instance ToJSON SetLevelEventChangeDTO where
-  toJSON = simpleToJSON''' "_setLevelEventChangeDTO" "type" "ChangeDTO"
+instance ToJSON SetPhaseEventChangeDTO where
+  toJSON = simpleToJSON''' "_setPhaseEventChangeDTO" "type" "ChangeDTO"
 
 instance FromJSON SetLabelsEventChangeDTO where
   parseJSON = simpleParseJSON "_setLabelsEventChangeDTO"

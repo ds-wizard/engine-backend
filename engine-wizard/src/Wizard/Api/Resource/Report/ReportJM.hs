@@ -43,7 +43,7 @@ instance FromJSON Indication where
     indicationType <- o .: "indicationType"
     case indicationType of
       "AnsweredIndication" -> parseJSON (Object o) >>= \event -> return (AnsweredIndication' event)
-      "LevelsAnsweredIndication" -> parseJSON (Object o) >>= \event -> return (LevelsAnsweredIndication' event)
+      "PhasesAnsweredIndication" -> parseJSON (Object o) >>= \event -> return (PhasesAnsweredIndication' event)
       _ -> fail "One of the references has unsupported indicationType"
   parseJSON _ = mzero
 
@@ -55,8 +55,8 @@ instance ToJSON AnsweredIndication where
   toJSON = simpleToJSON' "_answeredIndication" "indicationType"
 
 -- --------------------------------------------------------------------
-instance FromJSON LevelsAnsweredIndication where
-  parseJSON = simpleParseJSON "_levelsAnsweredIndication"
+instance FromJSON PhasesAnsweredIndication where
+  parseJSON = simpleParseJSON "_phasesAnsweredIndication"
 
-instance ToJSON LevelsAnsweredIndication where
-  toJSON = simpleToJSON' "_levelsAnsweredIndication" "indicationType"
+instance ToJSON PhasesAnsweredIndication where
+  toJSON = simpleToJSON' "_phasesAnsweredIndication" "indicationType"

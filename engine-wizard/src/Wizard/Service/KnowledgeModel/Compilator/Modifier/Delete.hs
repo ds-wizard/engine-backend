@@ -13,6 +13,7 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
@@ -72,3 +73,19 @@ deleteChoice km uuid =
     Nothing -> km
   where
     deleteNode km = km & choicesM .~ M.delete uuid (km ^. choicesM)
+
+deleteMetric :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deleteMetric km uuid =
+  case M.lookup uuid (km ^. metricsM) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = km & metricsM .~ M.delete uuid (km ^. metricsM)
+
+deletePhase :: KnowledgeModel -> U.UUID -> KnowledgeModel
+deletePhase km uuid =
+  case M.lookup uuid (km ^. phasesM) of
+    Just entity -> deleteNode km
+    Nothing -> km
+  where
+    deleteNode km = km & phasesM .~ M.delete uuid (km ^. phasesM)

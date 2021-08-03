@@ -28,8 +28,6 @@ import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
-import Wizard.Specs.API.Level.APISpec
-import Wizard.Specs.API.Metric.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
@@ -64,6 +62,7 @@ import Wizard.Specs.Service.Package.PackageUtilSpec
 import Wizard.Specs.Service.Package.PackageValidationSpec
 import Wizard.Specs.Service.Questionnaire.Collaboration.CollaborationAclSpec
 import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
+import Wizard.Specs.Service.Questionnaire.Event.QuestionnaireEventServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
@@ -157,8 +156,6 @@ main =
              feedbackAPI appContext
              infoAPI appContext
              knowledgeModelAPI appContext
-             levelAPI appContext
-             metricAPI appContext
              KM_MigrationAPI.migrationAPI appContext
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
@@ -181,9 +178,11 @@ main =
              describe "Migration" $ describe "Questionnaire" $ describe "Migrator" $
                QTN_SanitizatorSpec.sanitizatorIntegrationSpec appContext
              packageValidationSpec appContext
-             questionnaireAclSpec appContext
-             questionnaireCollaborationAclSpec appContext
-             questionnaireCompilerServiceSpec appContext
-             questionnaireServiceSpec appContext
+             describe "Questionnaire" $ do
+               questionnaireCollaborationAclSpec appContext
+               questionnaireCompilerServiceSpec appContext
+               questionnaireEventServiceSpec appContext
+               questionnaireAclSpec appContext
+               questionnaireServiceSpec appContext
              userServiceIntegrationSpec appContext
            describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)

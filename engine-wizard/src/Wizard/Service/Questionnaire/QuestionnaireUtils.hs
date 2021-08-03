@@ -110,11 +110,10 @@ getQuestionnaireReport qtn = do
     Just indications -> return . toQuestionnaireReportDTO $ indications
     Nothing -> do
       appConfig <- getAppConfig
-      let _levelsEnabled = appConfig ^. questionnaire . levels . enabled
-      let _requiredLevel = qtnCtn ^. level
+      let _requiredPhaseUuid = qtnCtn ^. phaseUuid
       let _replies = M.toList $ qtnCtn ^. replies
       km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
-      let indications = computeTotalReportIndications _levelsEnabled _requiredLevel km _replies
+      let indications = computeTotalReportIndications _requiredPhaseUuid km _replies
       qtnCtn <- compileQuestionnaire qtn
       addToCache qtn qtnCtn indications
       return . toQuestionnaireReportDTO $ indications

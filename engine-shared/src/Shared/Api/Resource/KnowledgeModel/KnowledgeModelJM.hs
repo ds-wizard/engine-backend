@@ -161,6 +161,14 @@ instance FromJSON MetricMeasure where
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
+instance ToJSON Phase where
+  toJSON = simpleToJSON "_phase"
+
+instance FromJSON Phase where
+  parseJSON = simpleParseJSON "_phase"
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
 instance ToJSON Tag where
   toJSON = simpleToJSON "_tag"
 

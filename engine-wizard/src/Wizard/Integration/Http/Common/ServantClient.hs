@@ -35,4 +35,4 @@ runClient request client = do
       throwError $ HttpClientError (responseStatusCode res) (BSL.unpack body)
     Left err -> do
       logErrorU _CMP_INTEGRATION . show $ err
-      throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR 502
+      throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "statusCode: 502"

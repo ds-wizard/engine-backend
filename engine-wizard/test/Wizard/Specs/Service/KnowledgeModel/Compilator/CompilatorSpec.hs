@@ -402,6 +402,15 @@ compilatorSpec =
     describe "Build whole KM" $ it "Apply: Create KM from scratch" $ do
       let events =
             [ AddKnowledgeModelEvent' a_km1
+            , AddMetricEvent' a_km1_mtrF
+            , AddMetricEvent' a_km1_mtrA
+            , AddMetricEvent' a_km1_mtrI
+            , AddMetricEvent' a_km1_mtrR
+            , AddMetricEvent' a_km1_mtrG
+            , AddMetricEvent' a_km1_mtrO
+            , AddPhaseEvent' a_km1_phs1
+            , AddPhaseEvent' a_km1_phs2
+            , AddPhaseEvent' a_km1_phs3
             , AddTagEvent' a_km1_tds
             , AddTagEvent' a_km1_tbi
             , AddIntegrationEvent' a_km1_iop

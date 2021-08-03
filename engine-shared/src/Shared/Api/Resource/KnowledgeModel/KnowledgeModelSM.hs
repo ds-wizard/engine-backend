@@ -11,10 +11,11 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Choices
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
-import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Swagger
 
@@ -99,6 +100,11 @@ instance ToSchema Metric where
 -- --------------------------------------------------------------------
 instance ToSchema MetricMeasure where
   declareNamedSchema = simpleToSchema' "_metricMeasure" mm1
+
+-- --------------------------------------------------------------------
+-- --------------------------------------------------------------------
+instance ToSchema Phase where
+  declareNamedSchema = simpleToSchema' "_phase" phase1
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------

@@ -5,9 +5,7 @@ import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
 import LensesConfig
-import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.QuestionnaireContent
@@ -48,10 +46,10 @@ applyEvent qtnCtn' (ClearReplyEvent' event) = do
   qtnCtn <- qtnCtn'
   let newReplies = M.delete (event ^. path) (qtnCtn ^. replies)
   return $ qtnCtn & replies .~ newReplies
-applyEvent qtnCtn' (SetLevelEvent' event) = do
+applyEvent qtnCtn' (SetPhaseEvent' event) = do
   qtnCtn <- qtnCtn'
-  let newLevel = event ^. level
-  return $ qtnCtn & level .~ newLevel
+  let newPhaseUuid = event ^. phaseUuid
+  return $ qtnCtn & phaseUuid .~ newPhaseUuid
 applyEvent qtnCtn' (SetLabelsEvent' event) = do
   qtnCtn <- qtnCtn'
   let newLabels =
@@ -64,9 +62,3 @@ getUser mUserUuid =
   case mUserUuid of
     Just userUuid -> Just <$> findUserById (U.toString userUuid)
     Nothing -> return Nothing
-
-saveQuestionnaireEvent :: String -> QuestionnaireEventDTO -> AppContextM ()
-saveQuestionnaireEvent qtnUuid event =
-  runInTransaction $ do
-    events <- findQuestionnaireEventsById qtnUuid
-    updateQuestionnaireEventsById qtnUuid (events ++ [fromEventDTO event])

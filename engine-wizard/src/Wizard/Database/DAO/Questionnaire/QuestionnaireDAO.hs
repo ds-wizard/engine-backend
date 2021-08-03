@@ -2,6 +2,7 @@ module Wizard.Database.DAO.Questionnaire.QuestionnaireDAO where
 
 import Control.Lens ((&), (.~), (^.))
 import Data.Foldable (traverse_)
+import qualified Data.List as L
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -24,6 +25,7 @@ import Wizard.Database.Mapping.Questionnaire.Questionnaire ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireDetail ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireEvent ()
 import Wizard.Database.Mapping.Questionnaire.QuestionnaireSimple ()
+import Wizard.Database.Mapping.Questionnaire.QuestionnaireSquash ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Context.ContextLenses ()
@@ -31,6 +33,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireSimple
+import Wizard.Model.Questionnaire.QuestionnaireSquash
 import Wizard.Model.User.User
 import Wizard.Util.Logger
 
@@ -45,14 +48,14 @@ findQuestionnaires = do
     then createFindEntitiesFn entityName >>= traverse enhance
     else do
       let sql = f' (qtnSelectSql (U.toString $ currentUser ^. uuid) "['VIEW']") [""]
-      logInfo _CMP_DATABASE sql
+      logInfoU _CMP_DATABASE sql
       let action conn = query_ conn (fromString sql)
       entities <- runDB action
       traverse enhance entities
 
 findQuestionnairesForCurrentUserPage ::
-     Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
+     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
   -- 1. Prepare variables
  = do
   let nameCondition = "qtn.name ~* ?"
@@ -61,20 +64,34 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
           Nothing -> ""
           Just True -> " AND qtn.is_template = true"
           Just False -> " AND qtn.is_template = false"
+  let userUuidsCondition =
+        case mUserUuids of
+          Nothing -> ""
+          Just userUuids ->
+            let mapFn userUuid = " qtn_acl_user.user_uuid = '" ++ userUuid ++ "' "
+             in " AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")"
   currentUser <- getCurrentUser
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
-          then f' "SELECT COUNT(*) FROM questionnaire qtn WHERE %s %s" [nameCondition, isTemplateCondition]
+          then f'
+                 "SELECT COUNT(*) FROM questionnaire qtn \
+                  \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+                  \WHERE %s %s %s"
+                 [nameCondition, isTemplateCondition, userUuidsCondition]
           else f'
                  "SELECT COUNT(*) \
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s %s"
-                 [qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']", nameCondition, isTemplateCondition]
-  logInfo _CMP_DATABASE sql
+                  \WHERE %s AND %s %s %s"
+                 [ qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']"
+                 , nameCondition
+                 , isTemplateCondition
+                 , userUuidsCondition
+                 ]
+  logInfoU _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [regex mQuery]
   result <- runDB action
   let count =
@@ -117,12 +134,21 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
                  \) as user_permissions \
                  \FROM questionnaire qtn \
                  \JOIN package pkg ON qtn.package_id = pkg.id \
-                 \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.old_questionnaire_uuid "
+                 \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "%s WHERE %s %s %s OFFSET %s LIMIT %s"
-                 [sqlBase, nameCondition, isTemplateCondition, mapSortWithPrefix "qtn" sort, show skip, show sizeI]
+                 "%s LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+                 \WHERE %s %s %s %s \
+                 \OFFSET %s LIMIT %s"
+                 [ sqlBase
+                 , nameCondition
+                 , isTemplateCondition
+                 , userUuidsCondition
+                 , mapSortWithPrefix "qtn" sort
+                 , show skip
+                 , show sizeI
+                 ]
           else f'
                  "%s \
                    \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
@@ -130,12 +156,12 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
                    \WHERE %s %s OFFSET %s LIMIT %s"
                  [ sqlBase
                  , qtnWhereSql (U.toString $ currentUser ^. uuid) "['VIEW']" ++
-                   " AND " ++ nameCondition ++ isTemplateCondition
+                   " AND " ++ nameCondition ++ isTemplateCondition ++ userUuidsCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI
                  ]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [regex mQuery]
   entities <- runDB action
   -- 5. Constructor response
@@ -155,7 +181,7 @@ findQuestionnairesByPackageId packageId = do
     then createFindEntitiesByFn entityName [("package_id", packageId)] >>= traverse enhance
     else do
       let sql = f' (qtnSelectSql (U.toString $ currentUser ^. uuid) "['VIEW']") ["and package_id = ?"]
-      logInfo _CMP_DATABASE sql
+      logInfoU _CMP_DATABASE sql
       let action conn = query conn (fromString sql) [packageId]
       entities <- runDB action
       traverse enhance entities
@@ -167,7 +193,7 @@ findQuestionnairesByTemplateId templateId = do
     then createFindEntitiesByFn entityName [("template_id", templateId)] >>= traverse enhance
     else do
       let sql = f' (qtnSelectSql (U.toString $ currentUser ^. uuid) "['VIEW']") ["and template_id = ?"]
-      logInfo _CMP_DATABASE sql
+      logInfoU _CMP_DATABASE sql
       let action conn = query conn (fromString sql) [templateId]
       entities <- runDB action
       traverse enhance entities
@@ -176,7 +202,7 @@ findQuestionnairesOwnedByUser :: String -> AppContextM [Questionnaire]
 findQuestionnairesOwnedByUser userUuid = do
   currentUser <- getCurrentUser
   let sql = f' (qtnSelectSql (U.toString $ currentUser ^. uuid) "[]::text[]") [""]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
   entities <- runDB action
   traverse enhance entities
@@ -193,7 +219,7 @@ findQuestionnaireWithZeroAcl = do
                \AND qtn_acl_group.uuid IS NULL \
                \AND qtn.updated_at < now() - INTERVAL '30 days'"
           [entityName]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
   runDB action
 
@@ -218,12 +244,23 @@ findQuestionnaireSimpleById' = createFindEntityWithFieldsByFn' "uuid, name" enti
 findQuestionnaireEventsById :: String -> AppContextM [QuestionnaireEvent]
 findQuestionnaireEventsById uuid = do
   let sql = "SELECT events FROM questionnaire WHERE uuid = ?"
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [toField uuid]
   entities <- runDB action
   case entities of
     [entity] -> return . _questionnaireEventBundleEvents $ entity
     _ -> return []
+
+findQuestionnaireForSquashing :: AppContextM [U.UUID]
+findQuestionnaireForSquashing = do
+  let sql = "SELECT uuid FROM questionnaire WHERE squashed = false"
+  logInfoU _CMP_DATABASE sql
+  let action conn = query_ conn (fromString sql)
+  entities <- runDB action
+  return . concat $ entities
+
+findQuestionnaireSquashById :: String -> AppContextM QuestionnaireSquash
+findQuestionnaireSquashById = createFindEntityWithFieldsByFn "uuid, events, versions" entityName "uuid"
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = createCountFn entityName
@@ -240,16 +277,24 @@ updateQuestionnaireById qtn = do
   let action conn =
         execute
           conn
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ? WHERE uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ? WHERE uuid = ?"
           params
   runDB action
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString $ qtn ^. uuid)]
   traverse_ insertQuestionnairePermRecord (qtn ^. permissions)
 
-updateQuestionnaireEventsById :: String -> [QuestionnaireEvent] -> AppContextM ()
-updateQuestionnaireEventsById qtnUuid events = do
-  let sql = "UPDATE questionnaire SET events = ? WHERE uuid = ?"
-  logInfo _CMP_DATABASE sql
+updateQuestionnaireEventsByUuid :: String -> [QuestionnaireEvent] -> AppContextM ()
+updateQuestionnaireEventsByUuid qtnUuid events = do
+  let sql = "UPDATE questionnaire SET squashed = true, events = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) [toJSONField events, toField qtnUuid]
+  runDB action
+  return ()
+
+appendQuestionnaireEventByUuid :: String -> [QuestionnaireEvent] -> AppContextM ()
+appendQuestionnaireEventByUuid qtnUuid events = do
+  let sql = "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) [toJSONField events, toField qtnUuid]
   runDB action
   return ()

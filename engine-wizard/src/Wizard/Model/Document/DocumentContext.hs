@@ -10,7 +10,6 @@ import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Report.Report
 
@@ -23,10 +22,8 @@ data DocumentContext =
     , _documentContextQuestionnaireReplies :: M.Map String Reply
     , _documentContextQuestionnaireVersion :: Maybe U.UUID
     , _documentContextQuestionnaireVersions :: [QuestionnaireVersionDTO]
-    , _documentContextLevel :: Int
+    , _documentContextPhaseUuid :: Maybe U.UUID
     , _documentContextKnowledgeModel :: KnowledgeModel
-    , _documentContextMetrics :: [Metric]
-    , _documentContextLevels :: [Level]
     , _documentContextReport :: Report
     , _documentContextPackage :: PackageSimpleDTO
     , _documentContextOrganization :: AppConfigOrganization
@@ -45,10 +42,8 @@ instance Eq DocumentContext where
     _documentContextQuestionnaireReplies a == _documentContextQuestionnaireReplies b &&
     _documentContextQuestionnaireVersion a == _documentContextQuestionnaireVersion b &&
     _documentContextQuestionnaireVersions a == _documentContextQuestionnaireVersions b &&
-    _documentContextLevel a == _documentContextLevel b &&
+    _documentContextPhaseUuid a == _documentContextPhaseUuid b &&
     _documentContextKnowledgeModel a == _documentContextKnowledgeModel b &&
-    _documentContextMetrics a == _documentContextMetrics b &&
-    _documentContextLevels a == _documentContextLevels b &&
     _documentContextReport a == _documentContextReport b &&
     _documentContextPackage a == _documentContextPackage b &&
     _documentContextOrganization a == _documentContextOrganization b &&
@@ -56,7 +51,6 @@ instance Eq DocumentContext where
 
 data DocumentContextConfig =
   DocumentContextConfig
-    { _documentContextConfigLevelsEnabled :: Bool
-    , _documentContextConfigClientUrl :: String
+    { _documentContextConfigClientUrl :: String
     }
   deriving (Show, Eq, Generic)

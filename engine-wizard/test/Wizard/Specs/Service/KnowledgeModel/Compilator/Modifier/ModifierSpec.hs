@@ -9,6 +9,8 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Experts
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
@@ -17,7 +19,9 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Chapter ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
+import Wizard.Service.KnowledgeModel.Compilator.Modifier.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Question
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Tag ()
@@ -199,7 +203,7 @@ modifierSpec =
               -- THEN:
               computed `shouldBe` expected
       describe "updateIntegrationProps" $ do
-        describe "OptionsQuestion" $ do
+        describe "OptionsQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
@@ -210,7 +214,7 @@ modifierSpec =
             let computed = updateIntegrationProps event question2'
             -- THEN:
             computed `shouldBe` expected
-        describe "ListQuestion" $ do
+        describe "ListQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
@@ -221,7 +225,7 @@ modifierSpec =
             let computed = updateIntegrationProps event question4'
             -- THEN:
             computed `shouldBe` expected
-        describe "ValueQuestion" $ do
+        describe "ValueQuestion" $
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
@@ -232,7 +236,7 @@ modifierSpec =
             let computed = updateIntegrationProps event question1'
             -- THEN:
             computed `shouldBe` expected
-        describe "IntegrationQuestion" $ do
+        describe "IntegrationQuestion" $
           it "Update the props" $
             -- GIVEN: Inputs
            do
@@ -438,5 +442,51 @@ modifierSpec =
           let expected = ontologyPortalEdited
           -- WHEN:
           let computed = editEntity event ontologyPortal
+          -- THEN:
+          computed `shouldBe` expected
+    describe "Metric level" $ do
+      describe "createMetric" $
+        it "Successfully created" $
+          -- GIVEN: Inputs
+         do
+          let event = a_km1_mtrF
+          -- AND: Expectations
+          let expected = metricF
+          -- WHEN:
+          let computed = createEntity event
+          -- THEN:
+          computed `shouldBe` expected
+      describe "editMetric" $
+        it "Successfully edited" $
+          -- GIVEN: Inputs
+         do
+          let event = e_km1_mtrF
+          -- AND: Expectations
+          let expected = metricFEdited
+          -- WHEN:
+          let computed = editEntity event metricF
+          -- THEN:
+          computed `shouldBe` expected
+    describe "Phase level" $ do
+      describe "createPhase" $
+        it "Successfully created" $
+          -- GIVEN: Inputs
+         do
+          let event = a_km1_phs1
+          -- AND: Expectations
+          let expected = phase1
+          -- WHEN:
+          let computed = createEntity event
+          -- THEN:
+          computed `shouldBe` expected
+      describe "editPhase" $
+        it "Successfully edited" $
+          -- GIVEN: Inputs
+         do
+          let event = e_km1_phs1
+          -- AND: Expectations
+          let expected = phase1Edited
+          -- WHEN:
+          let computed = editEntity event phase1
           -- THEN:
           computed `shouldBe` expected

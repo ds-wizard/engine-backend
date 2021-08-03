@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version1.Common
 
-
 data AddAnswerEventDTO =
   AddAnswerEventDTO
     { _addAnswerEventDTOUuid :: U.UUID

@@ -55,7 +55,6 @@ data ClientConfigQuestionnaireDTO =
     , _clientConfigQuestionnaireDTOQuestionnaireSharing :: AppConfigQuestionnaireSharing
     , _clientConfigQuestionnaireDTOQuestionnaireCreation :: QuestionnaireCreation
     , _clientConfigQuestionnaireDTOSummaryReport :: SimpleFeature
-    , _clientConfigQuestionnaireDTOLevels :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
     }
   deriving (Generic, Eq, Show)

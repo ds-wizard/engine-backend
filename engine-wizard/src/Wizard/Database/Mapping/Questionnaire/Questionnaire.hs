@@ -30,6 +30,7 @@ instance ToRow Questionnaire where
     , toField _questionnaireUpdatedAt
     , toField _questionnaireDescription
     , toField _questionnaireIsTemplate
+    , toField _questionnaireSquashed
     ]
 
 instance FromRow Questionnaire where
@@ -50,4 +51,5 @@ instance FromRow Questionnaire where
     _questionnaireUpdatedAt <- field
     _questionnaireDescription <- field
     _questionnaireIsTemplate <- field
+    _questionnaireSquashed <- field
     return $ Questionnaire {..}

@@ -15,7 +15,7 @@ data QuestionnaireDTO =
     { _questionnaireDTOUuid :: U.UUID
     , _questionnaireDTOName :: String
     , _questionnaireDTODescription :: Maybe String
-    , _questionnaireDTOLevel :: Int
+    , _questionnaireDTOPhaseUuid :: Maybe U.UUID
     , _questionnaireDTOVisibility :: QuestionnaireVisibility
     , _questionnaireDTOSharing :: QuestionnaireSharing
     , _questionnaireDTOState :: QuestionnaireState
@@ -33,7 +33,7 @@ instance Eq QuestionnaireDTO where
     _questionnaireDTOUuid a == _questionnaireDTOUuid b &&
     _questionnaireDTOName a == _questionnaireDTOName b &&
     _questionnaireDTODescription a == _questionnaireDTODescription b &&
-    _questionnaireDTOLevel a == _questionnaireDTOLevel b &&
+    _questionnaireDTOPhaseUuid a == _questionnaireDTOPhaseUuid b &&
     _questionnaireDTOVisibility a == _questionnaireDTOVisibility b &&
     _questionnaireDTOSharing a == _questionnaireDTOSharing b &&
     _questionnaireDTOState a == _questionnaireDTOState b &&

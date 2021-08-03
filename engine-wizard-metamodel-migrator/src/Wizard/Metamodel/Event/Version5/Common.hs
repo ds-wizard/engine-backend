@@ -9,7 +9,6 @@ import qualified Data.Text as T
 import qualified Data.UUID as U
 import GHC.Generics
 
-
 -- EventFieldDTO
 data EventFieldDTO a
   = NothingChangedDTO

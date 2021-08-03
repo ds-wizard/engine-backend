@@ -7,7 +7,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version4.Common
 
-
 -- ReferenceEventDTO
 data AddReferenceEventDTO
   = AddResourcePageReferenceEventDTO' AddResourcePageReferenceEventDTO

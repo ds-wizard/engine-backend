@@ -29,7 +29,9 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
+import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -165,6 +167,18 @@ makeFields ''MoveExpertEvent
 
 makeFields ''MoveReferenceEvent
 
+makeFields ''AddMetricEvent
+
+makeFields ''EditMetricEvent
+
+makeFields ''DeleteMetricEvent
+
+makeFields ''AddPhaseEvent
+
+makeFields ''EditPhaseEvent
+
+makeFields ''DeletePhaseEvent
+
 -- Model / KnowledgeModel
 makeFields ''KnowledgeModel
 
@@ -201,6 +215,8 @@ makeFields ''CrossReference
 makeFields ''Metric
 
 makeFields ''MetricMeasure
+
+makeFields ''Phase
 
 makeFields ''Tag
 

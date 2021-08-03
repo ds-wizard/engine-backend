@@ -24,7 +24,9 @@ import Shared.Model.Event.EventField
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
+import Shared.Model.Event.Metric.MetricEvent
 import Shared.Model.Event.Move.MoveEvent
+import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -106,7 +108,6 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
-import Wizard.Model.Level.Level
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
@@ -232,9 +233,15 @@ makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigDocument
+
 makeFields ''ServerConfigFeedback
 
 makeFields ''ServerConfigLogging
+
+makeFields ''ServerConfigQuestionnaire
+
+makeFields ''ServerConfigCronWorker
 
 makeFields ''BuildInfoConfig
 
@@ -349,6 +356,18 @@ makeFields ''MoveExpertEvent
 
 makeFields ''MoveReferenceEvent
 
+makeFields ''AddMetricEvent
+
+makeFields ''EditMetricEvent
+
+makeFields ''DeleteMetricEvent
+
+makeFields ''AddPhaseEvent
+
+makeFields ''EditPhaseEvent
+
+makeFields ''DeletePhaseEvent
+
 -- Model / Feedback
 makeFields ''Feedback
 
@@ -392,12 +411,11 @@ makeFields ''Metric
 
 makeFields ''MetricMeasure
 
+makeFields ''Phase
+
 makeFields ''Tag
 
 makeFields ''Integration
-
--- Model / Level
-makeFields ''Level
 
 -- Model / Migration / KnowledgeModel
 makeFields ''KM_MigratorState.MigratorState
@@ -432,7 +450,7 @@ makeFields ''SetReplyEvent
 
 makeFields ''ClearReplyEvent
 
-makeFields ''SetLevelEvent
+makeFields ''SetPhaseEvent
 
 makeFields ''SetLabelsEvent
 
@@ -447,7 +465,7 @@ makeFields ''Indication
 
 makeFields ''AnsweredIndication
 
-makeFields ''LevelsAnsweredIndication
+makeFields ''PhasesAnsweredIndication
 
 makeFields ''MetricSummary
 
@@ -571,7 +589,7 @@ makeFields ''SetReplyEventDTO
 
 makeFields ''ClearReplyEventDTO
 
-makeFields ''SetLevelEventDTO
+makeFields ''SetPhaseEventDTO
 
 makeFields ''SetLabelsEventDTO
 
@@ -579,7 +597,7 @@ makeFields ''SetReplyEventChangeDTO
 
 makeFields ''ClearReplyEventChangeDTO
 
-makeFields ''SetLevelEventChangeDTO
+makeFields ''SetPhaseEventChangeDTO
 
 makeFields ''SetLabelsEventChangeDTO
 

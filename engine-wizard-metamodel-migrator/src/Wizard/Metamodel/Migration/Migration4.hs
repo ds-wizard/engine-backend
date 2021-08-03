@@ -15,8 +15,8 @@ class Upgradeable f t where
 instance Upgradeable V4.EventDTO V5.EventDTO where
   upgrade = result2Either . fromJSON . toJSON
 
-migrateEventValue :: Value -> Either String Value
+migrateEventValue :: Value -> Either String [Value]
 migrateEventValue input = do
   oldEvent <- result2Either (fromJSON input)
   newEvent <- upgrade (oldEvent :: V4.EventDTO)
-  return $ toJSON (newEvent :: V5.EventDTO)
+  return [toJSON (newEvent :: V5.EventDTO)]

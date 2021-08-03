@@ -10,7 +10,7 @@ import Wizard.Model.Questionnaire.QuestionnaireReply
 data QuestionnaireEventDTO
   = SetReplyEventDTO' SetReplyEventDTO
   | ClearReplyEventDTO' ClearReplyEventDTO
-  | SetLevelEventDTO' SetLevelEventDTO
+  | SetPhaseEventDTO' SetPhaseEventDTO
   | SetLabelsEventDTO' SetLabelsEventDTO
   deriving (Show, Eq, Generic)
 
@@ -45,19 +45,20 @@ instance Eq ClearReplyEventDTO where
     _clearReplyEventDTOPath a == _clearReplyEventDTOPath b &&
     _clearReplyEventDTOCreatedBy a == _clearReplyEventDTOCreatedBy b
 
-data SetLevelEventDTO =
-  SetLevelEventDTO
-    { _setLevelEventDTOUuid :: U.UUID
-    , _setLevelEventDTOLevel :: Int
-    , _setLevelEventDTOCreatedBy :: Maybe UserSuggestionDTO
-    , _setLevelEventDTOCreatedAt :: UTCTime
+data SetPhaseEventDTO =
+  SetPhaseEventDTO
+    { _setPhaseEventDTOUuid :: U.UUID
+    , _setPhaseEventDTOPhaseUuid :: Maybe U.UUID
+    , _setPhaseEventDTOCreatedBy :: Maybe UserSuggestionDTO
+    , _setPhaseEventDTOCreatedAt :: UTCTime
     }
   deriving (Show, Generic)
 
-instance Eq SetLevelEventDTO where
+instance Eq SetPhaseEventDTO where
   a == b =
-    _setLevelEventDTOUuid a == _setLevelEventDTOUuid b &&
-    _setLevelEventDTOLevel a == _setLevelEventDTOLevel b && _setLevelEventDTOCreatedBy a == _setLevelEventDTOCreatedBy b
+    _setPhaseEventDTOUuid a == _setPhaseEventDTOUuid b &&
+    _setPhaseEventDTOPhaseUuid a == _setPhaseEventDTOPhaseUuid b &&
+    _setPhaseEventDTOCreatedBy a == _setPhaseEventDTOCreatedBy b
 
 data SetLabelsEventDTO =
   SetLabelsEventDTO

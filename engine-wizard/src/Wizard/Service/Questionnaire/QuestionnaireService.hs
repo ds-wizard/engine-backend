@@ -18,6 +18,7 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Error.Error
 import Shared.Service.Package.PackageUtil
+import Shared.Util.List
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentChangeDTO
@@ -50,12 +51,12 @@ import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Util.Logger
 
 getQuestionnairesForCurrentUserPageDto ::
-     Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate pageable sort =
+     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mUserUuids pageable sort =
   runInTransaction $ do
     checkPermission _QTN_PERM
     currentUser <- getCurrentUser
-    qtnPage <- findQuestionnairesForCurrentUserPage mQuery mIsTemplate pageable sort
+    qtnPage <- findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
     traverse enhanceQuestionnaireDetail qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
@@ -74,6 +75,8 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
     mCurrentUser <- asks _appContextCurrentUser
+    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (reqDto ^. tagUuids)
+    phaseEventUuid <- liftIO generateUuid
     let qtn =
           fromQuestionnaireCreateDTO
             reqDto
@@ -82,7 +85,8 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
             sharing
             (mCurrentUser ^? _Just . uuid)
             pkgId
-            now
+            phaseEventUuid
+            (headSafe $ knowledgeModel ^. phaseUuids)
             now
             qtnPermUuid
     insertQuestionnaire qtn

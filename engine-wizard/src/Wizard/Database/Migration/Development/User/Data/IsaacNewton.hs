@@ -29,9 +29,9 @@ userIsaac =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
-    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
-    , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
+    , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
+    , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
 
 userIsaacEdited :: User

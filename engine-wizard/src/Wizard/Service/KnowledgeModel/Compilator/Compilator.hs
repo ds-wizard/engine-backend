@@ -13,7 +13,9 @@ import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.EventApplicator
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Expert ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Integration ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.KnowledgeModel ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Metric ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Move ()
+import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Phase ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Question ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Reference ()
 import Wizard.Service.KnowledgeModel.Compilator.EventApplicator.Tag ()
@@ -52,6 +54,12 @@ foldEvent (Right km) (DeleteTagEvent' e) = apply e km
 foldEvent (Right km) (AddIntegrationEvent' e) = apply e km
 foldEvent (Right km) (EditIntegrationEvent' e) = apply e km
 foldEvent (Right km) (DeleteIntegrationEvent' e) = apply e km
+foldEvent (Right km) (AddMetricEvent' e) = apply e km
+foldEvent (Right km) (EditMetricEvent' e) = apply e km
+foldEvent (Right km) (DeleteMetricEvent' e) = apply e km
+foldEvent (Right km) (AddPhaseEvent' e) = apply e km
+foldEvent (Right km) (EditPhaseEvent' e) = apply e km
+foldEvent (Right km) (DeletePhaseEvent' e) = apply e km
 foldEvent (Right km) (MoveQuestionEvent' e) = apply e km
 foldEvent (Right km) (MoveAnswerEvent' e) = apply e km
 foldEvent (Right km) (MoveChoiceEvent' e) = apply e km

@@ -16,12 +16,16 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , integrationsM
   , tagsL
   , tagsM
+  , metricsL
+  , metricsM
+  , phasesL
+  , phasesM
   , createEntityLFn
   , createEntityMFn
   , toMap
   , title'
   , text'
-  , requiredLevel'
+  , requiredPhaseUuid'
   , tagUuids'
   , answerUuids'
   , choiceUuids'
@@ -97,6 +101,20 @@ tagsL = createEntityLFn (entities . tags)
 
 tagsM :: Functor f => (M.Map U.UUID Tag -> f (M.Map U.UUID Tag)) -> KnowledgeModel -> f KnowledgeModel
 tagsM = createEntityMFn (entities . tags)
+
+------------------------------------------------------------------------------------------
+metricsL :: Functor f => ([Metric] -> f [Metric]) -> KnowledgeModel -> f KnowledgeModel
+metricsL = createEntityLFn (entities . metrics)
+
+metricsM :: Functor f => (M.Map U.UUID Metric -> f (M.Map U.UUID Metric)) -> KnowledgeModel -> f KnowledgeModel
+metricsM = createEntityMFn (entities . metrics)
+
+------------------------------------------------------------------------------------------
+phasesL :: Functor f => ([Phase] -> f [Phase]) -> KnowledgeModel -> f KnowledgeModel
+phasesL = createEntityLFn (entities . phases)
+
+phasesM :: Functor f => (M.Map U.UUID Phase -> f (M.Map U.UUID Phase)) -> KnowledgeModel -> f KnowledgeModel
+phasesM = createEntityMFn (entities . phases)
 
 ------------------------------------------------------------------------------------------
 createEntityLFn ::
@@ -208,6 +226,22 @@ instance HasUuid' Integration where
       set :: Integration -> U.UUID -> Integration
       set entity newValue = entity & uuid .~ newValue
 
+instance HasUuid' Metric where
+  uuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Metric -> U.UUID
+      get entity = entity ^. uuid
+      set :: Metric -> U.UUID -> Metric
+      set entity newValue = entity & uuid .~ newValue
+
+instance HasUuid' Phase where
+  uuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Phase -> U.UUID
+      get entity = entity ^. uuid
+      set :: Phase -> U.UUID -> Phase
+      set entity newValue = entity & uuid .~ newValue
+
 ------------------------------------------------------------------------------------------
 title' :: Functor f => (String -> f String) -> Question -> f Question
 title' convert entity = fmap (set entity) (convert . get $ entity)
@@ -243,21 +277,21 @@ text' convert entity = fmap (set entity) (convert . get $ entity)
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & text .~ newValue
 
 ------------------------------------------------------------------------------------------
-requiredLevel' :: Functor f => (Maybe Int -> f (Maybe Int)) -> Question -> f Question
-requiredLevel' convert entity = fmap (set entity) (convert . get $ entity)
+requiredPhaseUuid' :: Functor f => (Maybe U.UUID -> f (Maybe U.UUID)) -> Question -> f Question
+requiredPhaseUuid' convert entity = fmap (set entity) (convert . get $ entity)
   where
-    get :: Question -> Maybe Int
-    get (OptionsQuestion' q) = q ^. requiredLevel
-    get (MultiChoiceQuestion' q) = q ^. requiredLevel
-    get (ListQuestion' q) = q ^. requiredLevel
-    get (ValueQuestion' q) = q ^. requiredLevel
-    get (IntegrationQuestion' q) = q ^. requiredLevel
-    set :: Question -> Maybe Int -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & requiredLevel .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & requiredLevel .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & requiredLevel .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & requiredLevel .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredLevel .~ newValue
+    get :: Question -> Maybe U.UUID
+    get (OptionsQuestion' q) = q ^. requiredPhaseUuid
+    get (MultiChoiceQuestion' q) = q ^. requiredPhaseUuid
+    get (ListQuestion' q) = q ^. requiredPhaseUuid
+    get (ValueQuestion' q) = q ^. requiredPhaseUuid
+    get (IntegrationQuestion' q) = q ^. requiredPhaseUuid
+    set :: Question -> Maybe U.UUID -> Question
+    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & requiredPhaseUuid .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & requiredPhaseUuid .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & requiredPhaseUuid .~ newValue
+    set (ValueQuestion' q) newValue = ValueQuestion' $ q & requiredPhaseUuid .~ newValue
+    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredPhaseUuid .~ newValue
 
 ------------------------------------------------------------------------------------------
 tagUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question

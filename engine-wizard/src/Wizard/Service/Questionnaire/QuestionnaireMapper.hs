@@ -31,6 +31,7 @@ import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
+import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -53,7 +54,7 @@ toDTO qtn qtnCtn package state report permissions =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
@@ -71,7 +72,7 @@ toDTO' qtn qtnCtn report =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = qtn ^. state
@@ -96,7 +97,7 @@ toSimpleDTO qtn qtnCtn package state report permissions =
     { _questionnaireDTOUuid = qtn ^. uuid
     , _questionnaireDTOName = qtn ^. name
     , _questionnaireDTODescription = qtn ^. description
-    , _questionnaireDTOLevel = qtnCtn ^. level
+    , _questionnaireDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDTOVisibility = qtn ^. visibility
     , _questionnaireDTOSharing = qtn ^. sharing
     , _questionnaireDTOState = state
@@ -127,7 +128,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
     , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOLevel = qtnCtn ^. level
+    , _questionnaireDetailDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
     , _questionnaireDetailDTOState = state
@@ -167,7 +168,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
     , _questionnaireDetailDTODescription = qtn ^. description
-    , _questionnaireDetailDTOLevel = qtnContent ^. level
+    , _questionnaireDetailDTOPhaseUuid = qtnContent ^. phaseUuid
     , _questionnaireDetailDTOVisibility = qtn ^. visibility
     , _questionnaireDetailDTOSharing = qtn ^. sharing
     , _questionnaireDetailDTOState = state
@@ -192,7 +193,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
 toContentDTO :: QuestionnaireContent -> [QuestionnaireEventDTO] -> [QuestionnaireVersionDTO] -> QuestionnaireContentDTO
 toContentDTO qtnCtn events versions =
   QuestionnaireContentDTO
-    { _questionnaireContentDTOLevel = qtnCtn ^. level
+    { _questionnaireContentDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireContentDTOReplies = qtnCtn ^. replies
     , _questionnaireContentDTOLabels = qtnCtn ^. labels
     , _questionnaireContentDTOEvents = events
@@ -288,6 +289,7 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
         if _QTN_TML_PERM `elem` (currentUser ^. permissions)
           then dto ^. isTemplate
           else qtn ^. isTemplate
+    , _questionnaireSquashed = qtn ^. squashed
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
@@ -301,11 +303,12 @@ fromQuestionnaireCreateDTO ::
   -> QuestionnaireSharing
   -> Maybe U.UUID
   -> String
-  -> UTCTime
+  -> U.UUID
+  -> Maybe U.UUID
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId qtnCreatedAt qtnUpdatedAt permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase now permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
@@ -321,11 +324,23 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
         case mCurrentUserUuid of
           Just currentUserUuid -> [toUserPermRecord permUuid qtnUuid currentUserUuid ownerPermissions]
           Nothing -> []
-    , _questionnaireEvents = []
+    , _questionnaireEvents =
+        case mPhase of
+          Just phase ->
+            [ SetPhaseEvent' $
+              SetPhaseEvent
+                { _setPhaseEventUuid = phaseEventUuid
+                , _setPhaseEventPhaseUuid = Just phase
+                , _setPhaseEventCreatedBy = mCurrentUserUuid
+                , _setPhaseEventCreatedAt = now
+                }
+            ]
+          Nothing -> []
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
-    , _questionnaireCreatedAt = qtnCreatedAt
-    , _questionnaireUpdatedAt = qtnUpdatedAt
+    , _questionnaireSquashed = True
+    , _questionnaireCreatedAt = now
+    , _questionnaireUpdatedAt = now
     }
 
 fromContentChangeDTO :: Questionnaire -> QuestionnaireContentChangeDTO -> Maybe UserDTO -> UTCTime -> Questionnaire

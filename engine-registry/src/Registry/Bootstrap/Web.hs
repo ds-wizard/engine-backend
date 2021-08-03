@@ -43,7 +43,7 @@ convert baseContext function =
    in Handler . runLogging loggingLevel $ runReaderT (runBaseContextM function) baseContext
 
 appToServer :: BaseContext -> Server ServerAPI
-appToServer baseContext = swaggerServer :<|> (hoistServer appApi (convert baseContext) appServer)
+appToServer baseContext = swaggerServer :<|> hoistServer appApi (convert baseContext) appServer
 
 runApp :: BaseContext -> Application
 runApp baseContext = serve serverApi (appToServer baseContext)

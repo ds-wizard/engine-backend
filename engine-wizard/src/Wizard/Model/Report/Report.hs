@@ -36,7 +36,7 @@ data ChapterReport =
 
 data Indication
   = AnsweredIndication' AnsweredIndication
-  | LevelsAnsweredIndication' LevelsAnsweredIndication
+  | PhasesAnsweredIndication' PhasesAnsweredIndication
   deriving (Show, Eq, Generic)
 
 data AnsweredIndication =
@@ -46,10 +46,10 @@ data AnsweredIndication =
     }
   deriving (Show, Eq, Generic)
 
-data LevelsAnsweredIndication =
-  LevelsAnsweredIndication
-    { _levelsAnsweredIndicationAnsweredQuestions :: Int
-    , _levelsAnsweredIndicationUnansweredQuestions :: Int
+data PhasesAnsweredIndication =
+  PhasesAnsweredIndication
+    { _phasesAnsweredIndicationAnsweredQuestions :: Int
+    , _phasesAnsweredIndicationUnansweredQuestions :: Int
     }
   deriving (Show, Eq, Generic)
 

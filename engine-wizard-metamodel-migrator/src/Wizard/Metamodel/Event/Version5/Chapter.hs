@@ -6,7 +6,6 @@ import GHC.Generics
 
 import Wizard.Metamodel.Event.Version5.Common
 
-
 -- ChapterEventDTO
 data AddChapterEventDTO =
   AddChapterEventDTO

@@ -7,6 +7,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Lens
@@ -51,6 +52,7 @@ questionnaire1 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = True
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -70,12 +72,15 @@ questionnaire1ContentEdited = questionnaire1 {_questionnaireEvents = fEventsEdit
 questionnaire1Ctn :: QuestionnaireContent
 questionnaire1Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 questionnaire1CtnRevertedDto :: QuestionnaireContentDTO
 questionnaire1CtnRevertedDto =
   QuestionnaireContentDTO
-    { _questionnaireContentDTOLevel = 1
+    { _questionnaireContentDTOPhaseUuid = Nothing
     , _questionnaireContentDTOReplies = M.fromList [rQ1, rQ2]
     , _questionnaireContentDTOLabels = M.empty
     , _questionnaireContentDTOEvents = [toEventDTO sre_rQ1' (Just userAlbert), toEventDTO sre_rQ2' (Just userAlbert)]
@@ -151,6 +156,7 @@ questionnaire2 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -172,6 +178,7 @@ questionnaire2Edited =
     , _questionnaireEvents = questionnaire2 ^. events
     , _questionnaireVersions = questionnaire2 ^. versions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -179,7 +186,10 @@ questionnaire2Edited =
 questionnaire2Ctn :: QuestionnaireContent
 questionnaire2Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 questionnaire2ContentEdited :: Questionnaire
 questionnaire2ContentEdited = questionnaire2 {_questionnaireEvents = fEventsEdited}
@@ -228,6 +238,7 @@ questionnaire3 =
     , _questionnaireEvents = fEvents
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -235,7 +246,10 @@ questionnaire3 =
 questionnaire3Ctn :: QuestionnaireContent
 questionnaire3Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 questionnaire3ContentEdited :: Questionnaire
 questionnaire3ContentEdited = questionnaire1 {_questionnaireEvents = fEventsEdited}
@@ -259,9 +273,10 @@ questionnaire4 =
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Nothing
     , _questionnairePermissions = []
-    , _questionnaireEvents = [slvle_2']
+    , _questionnaireEvents = [sphse_2']
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
+    , _questionnaireSquashed = True
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -269,7 +284,10 @@ questionnaire4 =
 questionnaire4Ctn :: QuestionnaireContent
 questionnaire4Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 2, _questionnaireContentReplies = M.empty, _questionnaireContentLabels = M.empty}
+    { _questionnaireContentPhaseUuid = Just $ phase2 ^. uuid
+    , _questionnaireContentReplies = M.empty
+    , _questionnaireContentLabels = M.empty
+    }
 
 questionnaire4VisibleView :: Questionnaire
 questionnaire4VisibleView = questionnaire4 {_questionnaireVisibility = VisibleViewQuestionnaire}
@@ -329,7 +347,10 @@ questionnaire6 =
 questionnaire6Ctn :: QuestionnaireContent
 questionnaire6Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 questionnaire6ContentEdited :: Questionnaire
 questionnaire6ContentEdited = questionnaire6 {_questionnaireEvents = fEventsEdited}
@@ -377,7 +398,10 @@ questionnaire7ContentEdited = questionnaire7 {_questionnaireEvents = fEventsEdit
 questionnaire7Ctn :: QuestionnaireContent
 questionnaire7Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 qtn7AlbertEditPermRecord :: QuestionnairePermRecord
 qtn7AlbertEditPermRecord =
@@ -456,7 +480,10 @@ questionnaire10ContentEdited = questionnaire10 {_questionnaireEvents = fEvents +
 questionnaire10Ctn :: QuestionnaireContent
 questionnaire10Ctn =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = fReplies, _questionnaireContentLabels = fLabels}
+    { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
+    , _questionnaireContentReplies = fReplies
+    , _questionnaireContentLabels = fLabels
+    }
 
 questionnaire10Edited :: Questionnaire
 questionnaire10Edited = questionnaire10 {_questionnairePermissions = [qtn10NikolaEditPermRecord]}
@@ -478,7 +505,7 @@ qtn10NikolaEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord use
 questionnaire11 :: Questionnaire
 questionnaire11 =
   questionnaire1
-    { _questionnaireUuid = fromJust (U.fromString "3c8e7ce6-cb5e-4cd1-a4d1-fb9de55f67ed")
+    { _questionnaireUuid = fromJust (U.fromString "ba6b6c0e-2bb7-40e7-9019-feb943756888")
     , _questionnaireName = "My Questionnaire from project template"
     , _questionnairePermissions = [qtn11AlbertEditPermRecord]
     }

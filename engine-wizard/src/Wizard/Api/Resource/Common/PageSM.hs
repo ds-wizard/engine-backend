@@ -1,5 +1,7 @@
 module Wizard.Api.Resource.Common.PageSM where
 
+import Control.Lens
+import Data.Aeson
 import Data.Swagger
 
 import Shared.Api.Resource.Common.PageJM ()

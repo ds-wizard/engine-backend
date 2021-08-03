@@ -5,7 +5,6 @@ import Data.Aeson
 import qualified Data.UUID as U
 import GHC.Generics
 
-
 serializeQuestionValueType :: QuestionValueType -> String
 serializeQuestionValueType questionType =
   case questionType of

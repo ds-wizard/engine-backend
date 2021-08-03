@@ -15,7 +15,9 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
+    , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
     }
   deriving (Generic, Show)
@@ -66,9 +68,30 @@ data ServerConfigRegistry =
     }
   deriving (Generic, Show)
 
+data ServerConfigDocument =
+  ServerConfigDocument
+    { _serverConfigDocumentClean :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
 data ServerConfigFeedback =
   ServerConfigFeedback
     { _serverConfigFeedbackApiUrl :: String
     , _serverConfigFeedbackWebUrl :: String
+    , _serverConfigFeedbackSync :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigQuestionnaire =
+  ServerConfigQuestionnaire
+    { _serverConfigQuestionnaireClean :: ServerConfigCronWorker
+    , _serverConfigQuestionnaireSquash :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigCronWorker =
+  ServerConfigCronWorker
+    { _serverConfigCronWorkerEnabled :: Bool
+    , _serverConfigCronWorkerCron :: String
     }
   deriving (Generic, Show)

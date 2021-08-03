@@ -8,6 +8,8 @@ import Database.PostgreSQL.Migration.Migration
 import LensesConfig
 import qualified Wizard.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Wizard.Database.Migration.Production.Migration_0002_projectTemplate.Migration as M_0002
+import qualified Wizard.Database.Migration.Production.Migration_0003_metricsAndPhases.Migration as M_0003
+import qualified Wizard.Database.Migration.Production.Migration_0004_questionnaireEventsSquash.Migration as M_0004
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -15,4 +17,4 @@ runMigration baseContext = do
   return ()
 
 migrationDefinitions :: [MigrationDefinition]
-migrationDefinitions = [M_0001.definition, M_0002.definition]
+migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition]

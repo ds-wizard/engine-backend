@@ -10,7 +10,6 @@ import qualified Data.UUID as U
 
 import LensesConfig hiding (hash)
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
-import Shared.Database.Migration.Development.Metric.Data.Metrics
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
 import Shared.Model.Common.Lens
@@ -18,7 +17,6 @@ import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
-import Wizard.Database.Migration.Development.Level.Data.Levels
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Report.Data.Reports
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -66,18 +64,14 @@ dmp1 :: DocumentContext
 dmp1 =
   DocumentContext
     { _documentContextUuid = fromJust (U.fromString "d87941ae-7725-4d22-b5c7-45dabc125199")
-    , _documentContextConfig =
-        DocumentContextConfig
-          {_documentContextConfigLevelsEnabled = True, _documentContextConfigClientUrl = "https://example.com"}
+    , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = "https://example.com"}
     , _documentContextQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
     , _documentContextQuestionnaireName = questionnaire1 ^. name
     , _documentContextQuestionnaireReplies = questionnaire1Ctn ^. replies
     , _documentContextQuestionnaireVersion = Nothing
     , _documentContextQuestionnaireVersions = fmap (`toVersionDTO` userAlbert) (questionnaire1 ^. versions)
-    , _documentContextLevel = questionnaire1Ctn ^. level
+    , _documentContextPhaseUuid = questionnaire1Ctn ^. phaseUuid
     , _documentContextKnowledgeModel = km1WithQ4
-    , _documentContextMetrics = [metricF, metricA, metricI, metricR, metricG, metricO]
-    , _documentContextLevels = [level1, level2, level3]
     , _documentContextReport = report1
     , _documentContextPackage = WPM.toSimpleDTO . SPM.toPackage $ germanyPackage
     , _documentContextOrganization = defaultOrganization

@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Data.Swagger
 
 import LensesConfig
-import Shared.Database.Migration.Development.Metric.Data.Metrics
+import Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Report.ReportJM ()
 import Wizard.Database.Migration.Development.Report.Data.Reports
@@ -25,16 +25,16 @@ instance ToSchema Indication where
 instance ToSchema AnsweredIndication where
   declareNamedSchema = simpleToSchema'' "_answeredIndication" "indicationType" answeredAnsweredIndication
 
-instance ToSchema LevelsAnsweredIndication where
-  declareNamedSchema = simpleToSchema'' "_levelsAnsweredIndication" "indicationType" levelsAnsweredIndication
+instance ToSchema PhasesAnsweredIndication where
+  declareNamedSchema = simpleToSchema'' "_phasesAnsweredIndication" "indicationType" phasesAnsweredIndication
 
 instance ToSchema MetricSummary where
   declareNamedSchema = simpleToSchema' "_metricSummary" metricSummaryF
 
-levelsAnsweredIndication :: LevelsAnsweredIndication
-levelsAnsweredIndication =
-  LevelsAnsweredIndication
-    {_levelsAnsweredIndicationAnsweredQuestions = 5, _levelsAnsweredIndicationUnansweredQuestions = 1}
+phasesAnsweredIndication :: PhasesAnsweredIndication
+phasesAnsweredIndication =
+  PhasesAnsweredIndication
+    {_phasesAnsweredIndicationAnsweredQuestions = 5, _phasesAnsweredIndicationUnansweredQuestions = 1}
 
 answeredAnsweredIndication :: AnsweredIndication
 answeredAnsweredIndication =

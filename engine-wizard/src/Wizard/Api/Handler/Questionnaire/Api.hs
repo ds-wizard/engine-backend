@@ -11,6 +11,7 @@ import Wizard.Api.Handler.Questionnaire.Detail_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_Report_GET
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_POST
 import Wizard.Api.Handler.Questionnaire.Detail_Revert_Preview_POST
+import Wizard.Api.Handler.Questionnaire.Detail_Squash_POST
 import Wizard.Api.Handler.Questionnaire.Detail_WS
 import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
@@ -35,6 +36,7 @@ type QuestionnaireAPI
      :<|> QuestionnaireVersionAPI
      :<|> Detail_Revert_POST
      :<|> Detail_Revert_Preview_POST
+     :<|> Detail_Squash_POST
 
 questionnaireApi :: Proxy QuestionnaireAPI
 questionnaireApi = Proxy
@@ -50,4 +52,5 @@ questionnaireServer =
   detail_WS :<|>
   questionnaireVersionServer :<|>
   detail_revert_POST :<|>
-  detail_revert_preview_POST
+  detail_revert_preview_POST :<|>
+  detail_squash_POST

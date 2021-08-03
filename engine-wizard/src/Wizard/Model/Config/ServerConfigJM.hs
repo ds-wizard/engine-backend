@@ -24,7 +24,9 @@ instance FromJSON ServerConfig where
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
+    _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     return ServerConfig {..}
   parseJSON _ = mzero
@@ -76,9 +78,30 @@ instance FromJSON ServerConfigRegistry where
     return ServerConfigRegistry {..}
   parseJSON _ = mzero
 
+instance FromJSON ServerConfigDocument where
+  parseJSON (Object o) = do
+    _serverConfigDocumentClean <- o .:? "clean" .!= (defaultDocument ^. clean)
+    return ServerConfigDocument {..}
+  parseJSON _ = mzero
+
 instance FromJSON ServerConfigFeedback where
   parseJSON (Object o) = do
     _serverConfigFeedbackApiUrl <- o .:? "apiUrl" .!= (defaultFeedback ^. apiUrl)
     _serverConfigFeedbackWebUrl <- o .:? "webUrl" .!= (defaultFeedback ^. webUrl)
+    _serverConfigFeedbackSync <- o .:? "sync" .!= (defaultFeedback ^. sync)
     return ServerConfigFeedback {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigQuestionnaire where
+  parseJSON (Object o) = do
+    _serverConfigQuestionnaireClean <- o .:? "clean" .!= (defaultQuestionnaire ^. clean)
+    _serverConfigQuestionnaireSquash <- o .:? "squash" .!= (defaultQuestionnaire ^. squash)
+    return ServerConfigQuestionnaire {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigCronWorker where
+  parseJSON (Object o) = do
+    _serverConfigCronWorkerEnabled <- o .: "enabled"
+    _serverConfigCronWorkerCron <- o .: "cron"
+    return ServerConfigCronWorker {..}
   parseJSON _ = mzero

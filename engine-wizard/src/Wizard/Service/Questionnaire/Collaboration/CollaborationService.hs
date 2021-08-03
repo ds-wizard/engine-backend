@@ -30,7 +30,6 @@ import Wizard.Model.Websocket.WebsocketRecord
 import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationAcl
 import Wizard.Service.Questionnaire.Collaboration.CollaborationMapper
-import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Websocket
@@ -102,7 +101,7 @@ setContent qtnUuid connectionUuid reqDto =
   case reqDto of
     SetReplyEventChangeDTO' event -> setReply qtnUuid connectionUuid event
     ClearReplyEventChangeDTO' event -> clearReply qtnUuid connectionUuid event
-    SetLevelEventChangeDTO' event -> setLevel qtnUuid connectionUuid event
+    SetPhaseEventChangeDTO' event -> setPhase qtnUuid connectionUuid event
     SetLabelsEventChangeDTO' event -> setLabel qtnUuid connectionUuid event
 
 setReply :: String -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
@@ -112,7 +111,7 @@ setReply qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toSetReplyEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetReplyEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetReplyMessage resDto) disconnectUser
 
@@ -123,20 +122,20 @@ clearReply qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toClearReplyEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (ClearReplyEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ClearReplyEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toClearReplyMessage resDto) disconnectUser
 
-setLevel :: String -> U.UUID -> SetLevelEventChangeDTO -> AppContextM ()
-setLevel qtnUuid connectionUuid reqDto = do
+setPhase :: String -> U.UUID -> SetPhaseEventChangeDTO -> AppContextM ()
+setPhase qtnUuid connectionUuid reqDto = do
   myself <- getFromCache' connectionUuid
   checkEditPermission myself
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
-  let resDto = toSetLevelEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetLevelEventDTO' resDto)
+  let resDto = toSetPhaseEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetPhaseEventDTO' resDto]
   records <- getAllFromCache
-  broadcast qtnUuid records (toSetLevelMessage resDto) disconnectUser
+  broadcast qtnUuid records (toSetPhaseMessage resDto) disconnectUser
 
 setLabel :: String -> U.UUID -> SetLabelsEventChangeDTO -> AppContextM ()
 setLabel qtnUuid connectionUuid reqDto = do
@@ -145,7 +144,7 @@ setLabel qtnUuid connectionUuid reqDto = do
   now <- liftIO getCurrentTime
   let mCreatedBy = getMaybeCreatedBy myself
   let resDto = toSetLabelsEventDTO' reqDto mCreatedBy now
-  saveQuestionnaireEvent qtnUuid (SetLabelsEventDTO' resDto)
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetLabelsEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
 

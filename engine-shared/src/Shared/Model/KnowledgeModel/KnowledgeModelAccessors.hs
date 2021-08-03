@@ -15,7 +15,7 @@ getChaptersForKmUuid :: KnowledgeModel -> [Chapter]
 getChaptersForKmUuid km = foldl go [] (km ^. chapterUuids)
   where
     go acc chUuid =
-      case M.lookup (chUuid) (km ^. chaptersM) of
+      case M.lookup chUuid (km ^. chaptersM) of
         Just ch -> acc ++ [ch]
         Nothing -> acc
 
@@ -35,7 +35,7 @@ getQuestionsForChapterUuid km chUuid =
     Nothing -> []
   where
     go acc qUuid =
-      case M.lookup (qUuid) (km ^. questionsM) of
+      case M.lookup qUuid (km ^. questionsM) of
         Just q -> acc ++ [q]
         Nothing -> acc
 
@@ -52,7 +52,7 @@ getQuestionsForAnswerUuid km ansUuid =
     Nothing -> []
   where
     go acc qUuid =
-      case M.lookup (qUuid) (km ^. questionsM) of
+      case M.lookup qUuid (km ^. questionsM) of
         Just q -> acc ++ [q]
         Nothing -> acc
 
@@ -69,7 +69,7 @@ getItemTemplateQuestionsForQuestionUuid km qUuid =
     Nothing -> []
   where
     go acc itqUuid =
-      case M.lookup (itqUuid) (km ^. questionsM) of
+      case M.lookup itqUuid (km ^. questionsM) of
         Just itq -> acc ++ [itq]
         Nothing -> acc
 
@@ -99,3 +99,25 @@ getAnswerUuidsForQuestionUuid km questionUuid =
   case M.lookup questionUuid (km ^. questionsM) of
     Just (OptionsQuestion' q) -> q ^. answerUuids
     _ -> []
+
+-- -------------------
+-- METRICS ----------
+-- -------------------
+getMetricsForKmUuid :: KnowledgeModel -> [Metric]
+getMetricsForKmUuid km = foldl go [] (km ^. metricUuids)
+  where
+    go acc mtrUuid =
+      case M.lookup mtrUuid (km ^. metricsM) of
+        Just mtr -> acc ++ [mtr]
+        Nothing -> acc
+
+-- -------------------
+-- PHASES ------------
+-- -------------------
+getPhasesForKmUuid :: KnowledgeModel -> [Phase]
+getPhasesForKmUuid km = foldl go [] (km ^. phaseUuids)
+  where
+    go acc phsUuid =
+      case M.lookup phsUuid (km ^. phasesM) of
+        Just phs -> acc ++ [phs]
+        Nothing -> acc

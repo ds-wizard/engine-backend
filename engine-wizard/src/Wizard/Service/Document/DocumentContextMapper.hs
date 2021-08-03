@@ -11,7 +11,6 @@ import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Document.DocumentContext
-import Wizard.Model.Level.Level
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Report.Report
@@ -21,39 +20,31 @@ import qualified Wizard.Service.User.UserMapper as USR_Mapper
 
 toDocumentContext ::
      U.UUID
-  -> AppConfig
   -> ServerConfig
   -> Questionnaire
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
-  -> Int
+  -> Maybe U.UUID
   -> KnowledgeModel
-  -> [Metric]
-  -> [Level]
   -> Report
   -> Package
   -> AppConfigOrganization
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid appConfig serverConfig qtn qtnCtn qtnVersion qtnVersionDtos level km metrics ls report pkg org mCreatedBy now =
+toDocumentContext dmpUuid serverConfig qtn qtnCtn qtnVersion qtnVersionDtos mPhase km report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig =
-        DocumentContextConfig
-          { _documentContextConfigLevelsEnabled = appConfig ^. questionnaire . levels . enabled
-          , _documentContextConfigClientUrl = serverConfig ^. general . clientUrl
-          }
+        DocumentContextConfig {_documentContextConfigClientUrl = serverConfig ^. general . clientUrl}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
     , _documentContextQuestionnaireReplies = qtnCtn ^. replies
     , _documentContextQuestionnaireVersion = qtnVersion
     , _documentContextQuestionnaireVersions = qtnVersionDtos
-    , _documentContextLevel = level
+    , _documentContextPhaseUuid = mPhase
     , _documentContextKnowledgeModel = km
-    , _documentContextMetrics = metrics
-    , _documentContextLevels = ls
     , _documentContextReport = report
     , _documentContextPackage = toSimpleDTO pkg
     , _documentContextOrganization = org

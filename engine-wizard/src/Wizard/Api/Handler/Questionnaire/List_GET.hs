@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireJM ()
@@ -16,6 +17,7 @@ type List_GET
      :> "questionnaires"
      :> QueryParam "q" String
      :> QueryParam "isTemplate" Bool
+     :> QueryParam "userUuids" String
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
@@ -25,12 +27,14 @@ list_GET ::
      Maybe String
   -> Maybe String
   -> Maybe Bool
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireDTO))
-list_GET mTokenHeader mQuery mIsTemplate mPage mSize mSort =
+list_GET mTokenHeader mQuery mIsTemplate mUserUuidsL mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<<
-    getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<< do
+      let mUserUuids = fmap (splitOn ",") mUserUuidsL
+      getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mUserUuids (Pageable mPage mSize) (parseSortQuery mSort)

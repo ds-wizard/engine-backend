@@ -9,7 +9,6 @@ import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Document.DocumentQueueDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
-import Wizard.Database.DAO.Metric.MetricDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
@@ -22,8 +21,6 @@ import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMig
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
-import qualified Wizard.Database.Migration.Development.Level.LevelSchemaMigration as LVL_Schema
-import qualified Wizard.Database.Migration.Development.Metric.MetricSchemaMigration as MTR_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
@@ -41,8 +38,6 @@ buildSchema appContext
   putStrLn "DB: dropping schema"
   runInContext ACK_Schema.dropTables appContext
   runInContext BR_Schema.dropTables appContext
-  runInContext LVL_Schema.dropTables appContext
-  runInContext MTR_Schema.dropTables appContext
   runInContext F_Schema.dropTables appContext
   runInContext KM_MIG_Schema.dropTables appContext
   runInContext B_Schema.dropTables appContext
@@ -63,14 +58,12 @@ buildSchema appContext
   runInContext CFG_Schema.createTables appContext
   runInContext ACK_Schema.createTables appContext
   runInContext BR_Schema.createTables appContext
-  runInContext LVL_Schema.createTables appContext
   runInContext F_Schema.createTables appContext
   runInContext B_Schema.createTables appContext
   runInContext QTN_Schema.createTables appContext
   runInContext DOC_Schema.createTables appContext
   runInContext QTN_MIG_Schema.createTables appContext
   runInContext KM_MIG_Schema.createTables appContext
-  runInContext MTR_Schema.createTables appContext
   -- 3. Purge and put files into S3
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
@@ -89,7 +82,6 @@ resetDB appContext = do
   runInContext deleteTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUsers appContext
-  runInContext deleteMetrics appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertPackage globalPackageEmpty) appContext
   runInContext (insertPackage globalPackage) appContext

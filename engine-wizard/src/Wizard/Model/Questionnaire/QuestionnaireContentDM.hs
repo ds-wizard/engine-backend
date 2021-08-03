@@ -7,4 +7,7 @@ import Wizard.Model.Questionnaire.QuestionnaireContent
 defaultQuestionnaireContent :: QuestionnaireContent
 defaultQuestionnaireContent =
   QuestionnaireContent
-    {_questionnaireContentLevel = 1, _questionnaireContentReplies = M.empty, _questionnaireContentLabels = M.empty}
+    { _questionnaireContentPhaseUuid = Nothing
+    , _questionnaireContentReplies = M.empty
+    , _questionnaireContentLabels = M.empty
+    }

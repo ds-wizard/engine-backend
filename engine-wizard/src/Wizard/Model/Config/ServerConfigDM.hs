@@ -16,7 +16,9 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
+    , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
     }
 
@@ -87,7 +89,36 @@ defaultRegistry =
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
     }
 
+defaultDocument :: ServerConfigDocument
+defaultDocument = ServerConfigDocument {_serverConfigDocumentClean = defaultDocumentClean}
+
+defaultDocumentClean :: ServerConfigCronWorker
+defaultDocumentClean =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 */4 * * *"}
+
 defaultFeedback :: ServerConfigFeedback
 defaultFeedback =
   ServerConfigFeedback
-    {_serverConfigFeedbackApiUrl = "https://api.github.com", _serverConfigFeedbackWebUrl = "https://github.com"}
+    { _serverConfigFeedbackApiUrl = "https://api.github.com"
+    , _serverConfigFeedbackWebUrl = "https://github.com"
+    , _serverConfigFeedbackSync = defaultFeedbackSync
+    }
+
+defaultFeedbackSync :: ServerConfigCronWorker
+defaultFeedbackSync =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 2 * * *"}
+
+defaultQuestionnaire :: ServerConfigQuestionnaire
+defaultQuestionnaire =
+  ServerConfigQuestionnaire
+    { _serverConfigQuestionnaireClean = defaultQuestionnaireClean
+    , _serverConfigQuestionnaireSquash = defaultQuestionnaireSquash
+    }
+
+defaultQuestionnaireClean :: ServerConfigCronWorker
+defaultQuestionnaireClean =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 */4 * * *"}
+
+defaultQuestionnaireSquash :: ServerConfigCronWorker
+defaultQuestionnaireSquash =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
