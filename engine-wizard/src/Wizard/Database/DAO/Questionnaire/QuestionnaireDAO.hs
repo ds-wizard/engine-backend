@@ -274,11 +274,10 @@ insertQuestionnaire qtn = do
 updateQuestionnaireById :: Questionnaire -> AppContextM ()
 updateQuestionnaireById qtn = do
   let params = toRow qtn ++ [toField . U.toText $ qtn ^. uuid]
-  let action conn =
-        execute
-          conn
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ? WHERE uuid = ?"
-          params
+  let sql =
+        "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   runDB action
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString $ qtn ^. uuid)]
   traverse_ insertQuestionnairePermRecord (qtn ^. permissions)

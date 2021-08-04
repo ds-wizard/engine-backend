@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.Branch.BranchDAO where
 
 import Control.Lens ((^.))
+import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -17,6 +18,7 @@ import Wizard.Database.Mapping.Branch.BranchWithEvents ()
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
+import Wizard.Util.Logger
 
 entityName = "branch"
 
@@ -61,24 +63,26 @@ insertBranch = createInsertFn entityName
 updateBranchById :: BranchWithEvents -> AppContextM Int64
 updateBranchById branch = do
   let params = toRow branch ++ [toField . U.toText $ branch ^. uuid]
-  let action conn =
-        execute
-          conn
-          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-          params
+  let sql =
+        "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   runDB action
 
 updateBranchWithMigrationInfo :: String -> String -> String -> AppContextM Int64
 updateBranchWithMigrationInfo branchUuid forkOfPackageId mergeCheckpointPackageId = do
   let params = [toField forkOfPackageId, toField mergeCheckpointPackageId, toField branchUuid]
-  let action conn =
-        execute conn "UPDATE branch SET forkOfPackageId = ?, mergeCheckpointPackageId = ? WHERE uuid = ?" params
+  let sql = "UPDATE branch SET forkOfPackageId = ?, mergeCheckpointPackageId = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   runDB action
 
 updateBranchWithPreviousPackageId :: String -> String -> AppContextM Int64
 updateBranchWithPreviousPackageId branchUuid previousPackageId = do
   let params = [toField previousPackageId, toField branchUuid]
-  let action conn = execute conn "UPDATE branch SET previousPackageId = ? WHERE uuid = ?" params
+  let sql = "UPDATE branch SET previousPackageId = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   runDB action
 
 deleteBranches :: AppContextM Int64

@@ -5,6 +5,7 @@ import Control.Monad.Except (MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader)
+import Data.String
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -16,6 +17,7 @@ import Shared.Database.Mapping.Template.TemplateFile ()
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
+import Shared.Util.Logger
 
 entityName = "template_file"
 
@@ -39,11 +41,9 @@ updateTemplateFileById ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => TemplateFile -> m Int64
 updateTemplateFileById file = do
   let params = toRow file ++ [toField $ file ^. uuid]
-  let action conn =
-        execute
-          conn
-          " UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ? WHERE uuid = ?"
-          params
+  let sql = "UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ? WHERE uuid = ?"
+  logInfo _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   runDB action
 
 deleteTemplateFiles :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m Int64
