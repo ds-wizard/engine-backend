@@ -1,11 +1,9 @@
 module Shared.Database.Mapping.Package.Package where
 
+import Data.Aeson
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 
-import Shared.Api.Resource.Event.EventJM ()
-import Shared.Model.Event.Event
 import Shared.Model.Package.Package
 
 instance FromRow Package where
@@ -22,6 +20,6 @@ instance FromRow Package where
     _packagePreviousPackageId <- field
     _packageForkOfPackageId <- field
     _packageMergeCheckpointPackageId <- field
-    _ <- fieldWith fromJSONField :: RowParser [Event]
+    _ <- field :: RowParser Value
     _packageCreatedAt <- field
     return $ Package {..}
