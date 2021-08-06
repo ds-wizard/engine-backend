@@ -28,6 +28,7 @@ import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Template.TemplateDAO (findTemplatesPage)
 import Wizard.Integration.Http.Registry.Runner
 import Wizard.Localization.Messages.Public
@@ -124,6 +125,7 @@ modifyTemplate tmlId reqDto =
     let templateUpdated = fromChangeDTO reqDto template
     validateExistingTemplate templateUpdated
     updateTemplateById templateUpdated
+    deleteTemporalDocumentsByTemplateId tmlId
     return templateUpdated
 
 deleteTemplatesByQueryParams :: [(String, String)] -> AppContextM ()

@@ -10,6 +10,7 @@ import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Model.Template.Template
 import Shared.Util.Uuid
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.Template.TemplateS3
@@ -43,6 +44,7 @@ createAsset tmlId fileName contentType content =
     let newAsset = fromChangeDTO tmlId aUuid fileName contentType
     insertTemplateAsset newAsset
     putAsset tmlId (U.toString aUuid) content
+    deleteTemporalDocumentsByTemplateAssetId (U.toString aUuid)
     return newAsset
 
 deleteTemplateAsset :: String -> String -> AppContextM ()
@@ -52,4 +54,5 @@ deleteTemplateAsset tmlId assetUuid =
     asset <- findTemplateAssetById assetUuid
     deleteTemplateAssetById (U.toString $ asset ^. uuid)
     removeAsset tmlId assetUuid
+    deleteTemporalDocumentsByTemplateAssetId assetUuid
     return ()

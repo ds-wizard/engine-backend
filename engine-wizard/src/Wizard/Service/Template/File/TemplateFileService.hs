@@ -10,6 +10,7 @@ import Shared.Model.Template.Template
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Template.File.TemplateFileChangeDTO
 import Wizard.Database.DAO.Common
+import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.Acl.AclService
@@ -31,9 +32,10 @@ createTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFil
 createTemplateFile tmlId reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
-    aUuid <- liftIO generateUuid
-    let newFile = fromChangeDTO reqDto tmlId aUuid
+    fUuid <- liftIO generateUuid
+    let newFile = fromChangeDTO reqDto tmlId fUuid
     insertTemplateFile newFile
+    deleteTemporalDocumentsByTemplateFileId (U.toString fUuid)
     return newFile
 
 modifyTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFile
@@ -43,6 +45,7 @@ modifyTemplateFile fileUuid reqDto =
     file <- findTemplateFileById fileUuid
     let updatedFile = fromChangeDTO reqDto (file ^. templateId) (file ^. uuid)
     updateTemplateFileById updatedFile
+    deleteTemporalDocumentsByTemplateFileId fileUuid
     return updatedFile
 
 deleteTemplateFile :: String -> AppContextM ()
@@ -51,4 +54,5 @@ deleteTemplateFile fileUuid =
     checkPermission _TML_PERM
     file <- findTemplateFileById fileUuid
     deleteTemplateFileById (U.toString $ file ^. uuid)
+    deleteTemporalDocumentsByTemplateFileId fileUuid
     return ()
