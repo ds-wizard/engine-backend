@@ -48,11 +48,13 @@ createDocumentTable = do
         \     questionnaire_replies_hash bigint not null, \
         \     template_id varchar not null, \
         \     format_uuid uuid not null, \
-        \     metadata json not null, \
         \     creator_uuid uuid, \
         \     retrieved_at timestamptz, \
         \     finished_at timestamptz, \
-        \     created_at timestamptz not null \
+        \     created_at timestamptz not null, \
+        \     file_name varchar, \
+        \     content_type varchar, \
+        \     worker_log varchar \
         \ ); \
         \  \
         \ create unique index document_uuid_uindex \

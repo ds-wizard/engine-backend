@@ -253,8 +253,6 @@ makeFields ''AppContext
 -- Model / Document
 makeFields ''Document
 
-makeFields ''DocumentMetadata
-
 makeFields ''DocumentContext
 
 makeFields ''DocumentContextConfig
