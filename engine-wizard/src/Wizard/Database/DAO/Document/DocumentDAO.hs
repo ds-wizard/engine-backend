@@ -67,6 +67,10 @@ deleteDocumentsFiltered = createDeleteEntitiesByFn entityName
 deleteDocumentById :: String -> AppContextM Int64
 deleteDocumentById = createDeleteEntityByFn entityName "uuid"
 
+deleteTemporalDocumentsByQuestionnaireUuid :: String -> AppContextM Int64
+deleteTemporalDocumentsByQuestionnaireUuid qtnUuid =
+  deleteDocumentsFiltered [("questionnaire_uuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
+
 deleteTemporalDocumentsByTemplateId :: String -> AppContextM Int64
 deleteTemporalDocumentsByTemplateId templateId =
   deleteDocumentsFiltered [("template_id", templateId), ("durability", "TemporallyDocumentDurability")]
