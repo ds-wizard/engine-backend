@@ -47,7 +47,7 @@ userAlbert =
         , "DOC_PERM"
         ]
     , _userActive = True
-    , _userPasswordHash = "sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
+    , _userPasswordHash = "pbkdf1:sha256|17|awVwfF3h27PrxINtavVgFQ==|iUFbQnZFv+rBXBu1R2OkX+vEjPtohYk5lsyIeOBdEy4="
     , _userSubmissionProps = [userAlbertApiTokenEncrypted]
     , _userImageUrl = Nothing
     , _userGroups = [ownerBioGroup, ownerPlantGroup]
