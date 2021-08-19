@@ -9,6 +9,12 @@ import Shared.Model.Localization.LocaleRecord
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 
+_ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS =
+  LocaleRecord
+    "error.service.tml.tml_file_or_asset_uniqueness"
+    "Template file or asset must have unique filename across the template"
+    []
+
 -- Absence
 _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
   LocaleRecord "error.validation.branch_previous_pkg_absence" "Branch has to be based on a package" []

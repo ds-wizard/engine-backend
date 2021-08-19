@@ -16,6 +16,7 @@ import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Template.Asset.TemplateAssetMapper
+import Wizard.Service.Template.TemplateValidation
 
 getTemplateAssets :: String -> AppContextM [TemplateAsset]
 getTemplateAssets tmlId =
@@ -40,6 +41,7 @@ createAsset :: String -> String -> String -> BS.ByteString -> AppContextM Templa
 createAsset tmlId fileName contentType content =
   runInTransaction $ do
     checkPermission _TML_PERM
+    validateTemplateFileAndAssetUniqueness Nothing tmlId fileName
     aUuid <- liftIO generateUuid
     let newAsset = fromChangeDTO tmlId aUuid fileName contentType
     insertTemplateAsset newAsset

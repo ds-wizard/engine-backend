@@ -29,6 +29,14 @@ findTemplateFilesByTemplateId ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m [TemplateFile]
 findTemplateFilesByTemplateId templateId = createFindEntitiesByFn entityName [("template_id", templateId)]
 
+findTemplateFilesByTemplateIdAndFileName ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+  => String
+  -> String
+  -> m [TemplateFile]
+findTemplateFilesByTemplateIdAndFileName templateId fileName =
+  createFindEntitiesByFn entityName [("template_id", templateId), ("file_name", fileName)]
+
 findTemplateFileById ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m TemplateFile
 findTemplateFileById = createFindEntityByFn entityName "uuid"

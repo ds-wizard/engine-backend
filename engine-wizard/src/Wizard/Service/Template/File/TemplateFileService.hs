@@ -15,6 +15,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Template.File.TemplateFileMapper
+import Wizard.Service.Template.TemplateValidation
 
 getTemplateFiles :: String -> AppContextM [TemplateFile]
 getTemplateFiles tmlId =
@@ -32,6 +33,7 @@ createTemplateFile :: String -> TemplateFileChangeDTO -> AppContextM TemplateFil
 createTemplateFile tmlId reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
+    validateTemplateFileAndAssetUniqueness Nothing tmlId (reqDto ^. fileName)
     fUuid <- liftIO generateUuid
     let newFile = fromChangeDTO reqDto tmlId fUuid
     insertTemplateFile newFile
@@ -43,6 +45,7 @@ modifyTemplateFile fileUuid reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
     file <- findTemplateFileById fileUuid
+    validateTemplateFileAndAssetUniqueness (Just $ file ^. uuid) (file ^. templateId) (reqDto ^. fileName)
     let updatedFile = fromChangeDTO reqDto (file ^. templateId) (file ^. uuid)
     updateTemplateFileById updatedFile
     deleteTemporalDocumentsByTemplateFileId fileUuid

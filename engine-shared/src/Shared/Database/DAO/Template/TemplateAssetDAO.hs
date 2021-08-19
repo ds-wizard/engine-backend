@@ -29,6 +29,14 @@ findTemplateAssetsByTemplateId ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m [TemplateAsset]
 findTemplateAssetsByTemplateId templateId = createFindEntitiesByFn entityName [("template_id", templateId)]
 
+findTemplateAssetsByTemplateIdAndFileName ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+  => String
+  -> String
+  -> m [TemplateAsset]
+findTemplateAssetsByTemplateIdAndFileName templateId fileName =
+  createFindEntitiesByFn entityName [("template_id", templateId), ("file_name", fileName)]
+
 findTemplateAssetById ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m TemplateAsset
 findTemplateAssetById = createFindEntityByFn entityName "uuid"

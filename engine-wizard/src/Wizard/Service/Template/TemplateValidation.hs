@@ -3,10 +3,13 @@ module Wizard.Service.Template.TemplateValidation where
 import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.Template
+import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
+import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
@@ -15,6 +18,7 @@ import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.ContextLenses ()
 import Wizard.Service.Config.AppConfigService
 
 validateNewTemplate :: Template -> AppContextM ()
@@ -79,3 +83,19 @@ validateMetamodelVersion tml =
     (tml ^. metamodelVersion /= templateMetamodelVersion)
     (throwError . UserError $
      _ERROR_VALIDATION__TEMPLATE_UNSUPPORTED_VERSION (tml ^. tId) (tml ^. metamodelVersion) templateMetamodelVersion)
+
+validateTemplateFileAndAssetUniqueness :: Maybe U.UUID -> String -> String -> AppContextM ()
+validateTemplateFileAndAssetUniqueness mTemplateEntityUuid templateId fileName = do
+  templateFiles <- findTemplateFilesByTemplateIdAndFileName templateId fileName
+  templateAssets <- findTemplateAssetsByTemplateIdAndFileName templateId fileName
+  checkUniqueness templateFiles
+  checkUniqueness templateAssets
+  where
+    checkUniqueness :: HasUuid entity U.UUID => [entity] -> AppContextM ()
+    checkUniqueness arrays =
+      case arrays of
+        [] -> return ()
+        [entity] ->
+          if mTemplateEntityUuid == Just (entity ^. uuid)
+            then return ()
+            else throwError . UserError $ _ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS
