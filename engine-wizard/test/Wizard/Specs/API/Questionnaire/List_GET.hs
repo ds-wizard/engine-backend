@@ -2,19 +2,25 @@ module Wizard.Specs.API.Questionnaire.List_GET
   ( list_get
   ) where
 
+import Control.Lens ((^.))
 import Data.Aeson (encode)
+import qualified Data.ByteString.Char8 as BS
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 import Test.Hspec.Wai.Matcher
 
+import LensesConfig hiding (request)
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Model.Common.Page
 import Shared.Model.Common.PageMetadata
+import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
+import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Model.Context.AppContext
 
@@ -52,23 +58,29 @@ test_200 appContext = do
     appContext
     "/questionnaires?page=1&size=1"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 1 3 3 1) [questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 1 4 4 1) [questionnaire1Dto])
   create_test_200
     "HTTP 200 OK (Admin - query)"
     appContext
-    "/questionnaires?q=pr"
+    "/questionnaires?sort=name,asc&q=pr"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire1Dto, questionnaire12Dto])
   create_test_200
-    "HTTP 200 OK (isTemplate - true)"
+    "HTTP 200 OK (Admin - query users)"
     appContext
-    "/questionnaires?isTemplate=true"
+    (BS.pack $ "/questionnaires?sort=name,asc&userUuids=" ++ U.toString (userAlbert ^. uuid))
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire1Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
   create_test_200
-    "HTTP 200 OK (isTemplate - false)"
+    "HTTP 200 OK (Admin - isTemplate - true)"
     appContext
-    "/questionnaires?isTemplate=false&sort=name,asc"
+    "/questionnaires?sort=name,asc&isTemplate=true"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire1Dto, questionnaire12Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - isTemplate - false)"
+    appContext
+    "/questionnaires?sort=name,asc&isTemplate=false"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
   create_test_200
@@ -76,33 +88,45 @@ test_200 appContext = do
     appContext
     "/questionnaires?sort=name,asc"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire3Dto, questionnaire2Dto])
+    (Page
+       "questionnaires"
+       (PageMetadata 20 4 1 0)
+       [questionnaire1Dto, questionnaire12Dto, questionnaire3Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort desc)"
     appContext
     "/questionnaires?sort=updatedAt,desc"
     reqAuthHeader
-    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire1Dto, questionnaire2Dto])
+    (Page
+       "questionnaires"
+       (PageMetadata 20 4 1 0)
+       [questionnaire3Dto, questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin)"
     appContext
     "/questionnaires?sort=uuid,asc"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire3Dto, questionnaire2Dto, questionnaire12Dto])
   create_test_200
     "HTTP 200 OK (Non-Admin - query)"
     appContext
     "/questionnaires?q=pr"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire12Dto])
   create_test_200
-    "HTTP 200 OK (isTemplate - true)"
+    "HTTP 200 OK (Non-Admin - query users)"
+    appContext
+    (BS.pack $ "/questionnaires?sort=name,asc&userUuids=" ++ U.toString (userAlbert ^. uuid))
+    reqNonAdminAuthHeader
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Non-Admin - isTemplate - true)"
     appContext
     "/questionnaires?isTemplate=true"
     reqNonAdminAuthHeader
-    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
+    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire12Dto])
   create_test_200
-    "HTTP 200 OK (isTemplate - false)"
+    "HTTP 200 OK (Non-Admin - isTemplate - false)"
     appContext
     "/questionnaires?isTemplate=false&sort=name,asc"
     reqNonAdminAuthHeader
@@ -121,6 +145,7 @@ create_test_200 title appContext reqUrl reqAuthHeader expDto =
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
+    runInContextIO (insertQuestionnaire questionnaire12) appContext
        -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
        -- THEN: Compare response with expectation

@@ -533,7 +533,56 @@ qtn11AlbertEditPermRecord =
     }
 
 qtn11AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
-qtn11AlbertEditPermRecordDto = toUserPermRecordDTO qtn10NikolaEditPermRecord userNikola
+qtn11AlbertEditPermRecordDto = toUserPermRecordDTO qtn11AlbertEditPermRecord userAlbert
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+questionnaire12 :: Questionnaire
+questionnaire12 =
+  questionnaire1
+    { _questionnaireUuid = u' "e02bc040-7446-48a2-b557-678e01d66937"
+    , _questionnaireName = "My Private Questionnaire with 2 users"
+    , _questionnaireVisibility = VisibleEditQuestionnaire
+    , _questionnaireSharing = AnyoneWithLinkEditQuestionnaire
+    , _questionnairePermissions = [qtn12AlbertEditPermRecord, qtn12NikolaEditPermRecord]
+    }
+
+questionnaire12Ctn :: QuestionnaireContent
+questionnaire12Ctn = questionnaire1Ctn
+
+questionnaire12Dto :: QuestionnaireDTO
+questionnaire12Dto =
+  toSimpleDTO
+    questionnaire12
+    questionnaire12Ctn
+    germanyPackage
+    QSDefault
+    questionnaireReport
+    [qtn12AlbertEditPermRecordDto, qtn12NikolaEditPermRecordDto]
+
+qtn12AlbertEditPermRecord :: QuestionnairePermRecord
+qtn12AlbertEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "3c268c5a-6778-447c-bf66-4576470eedaf"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire12 ^. uuid
+    , _questionnairePermRecordMember = albertMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn12AlbertEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn12AlbertEditPermRecordDto = toUserPermRecordDTO qtn12AlbertEditPermRecord userAlbert
+
+qtn12NikolaEditPermRecord :: QuestionnairePermRecord
+qtn12NikolaEditPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "6e3b9e11-f0c8-41ce-aece-5115ddfb63b8"
+    , _questionnairePermRecordQuestionnaireUuid = questionnaire12 ^. uuid
+    , _questionnairePermRecordMember = nikolaMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
+
+qtn12NikolaEditPermRecordDto :: QuestionnairePermRecordDTO
+qtn12NikolaEditPermRecordDto = toUserPermRecordDTO qtn12NikolaEditPermRecord userNikola
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------
