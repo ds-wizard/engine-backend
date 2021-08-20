@@ -64,6 +64,11 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
           Nothing -> ""
           Just True -> " AND qtn.is_template = true"
           Just False -> " AND qtn.is_template = false"
+  let userUuidsJoin =
+        case mUserUuids of
+          Nothing -> ""
+          Just [] -> ""
+          Just _ -> "LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid "
   let userUuidsCondition =
         case mUserUuids of
           Nothing -> ""
@@ -76,12 +81,10 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "SELECT COUNT(*) FROM questionnaire qtn \
-                  \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
-                  \WHERE %s %s %s"
-                 [nameCondition, isTemplateCondition, userUuidsCondition]
+                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s"
+                 [userUuidsJoin, nameCondition, isTemplateCondition, userUuidsCondition]
           else f'
-                 "SELECT COUNT(*) \
+                 "SELECT COUNT(DISTINCT qtn.uuid) \
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
@@ -100,13 +103,13 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
           _ -> 0
   -- 3. Get entities
   let sqlBase =
-        "SELECT qtn.uuid, \
+        "SELECT DISTINCT qtn.uuid, \
                  \qtn.name, \
                  \qtn.description, \
                  \qtn.visibility, \
                  \qtn.sharing, \
-                 \qtn.selected_tag_uuids, \
-                 \qtn.events, \
+                 \qtn.selected_tag_uuids::jsonb, \
+                 \qtn.events::jsonb, \
                  \qtn.is_template, \
                  \qtn.created_at, \
                  \qtn.updated_at, \
@@ -138,10 +141,11 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
   let sql =
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "%s LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
+                 "%s %s \
                  \WHERE %s %s %s %s \
                  \OFFSET %s LIMIT %s"
                  [ sqlBase
+                 , userUuidsJoin
                  , nameCondition
                  , isTemplateCondition
                  , userUuidsCondition
