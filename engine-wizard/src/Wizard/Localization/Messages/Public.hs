@@ -1,5 +1,7 @@
 module Wizard.Localization.Messages.Public where
 
+import Data.Maybe (fromMaybe)
+
 import Shared.Model.Localization.LocaleRecord
 
 -- --------------------------------------
@@ -149,8 +151,8 @@ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
     "You can't create version for non-existent event (eventUuid: '%s')"
     [eventUuid]
 
-_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW =
-  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "Unable to generate preview" []
+_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
+  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
 
 -- Template Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =

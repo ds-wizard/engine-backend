@@ -27,6 +27,8 @@ sendError (ValidationError formErrors fieldErrors) =
   return $ err400 {errBody = encode $ ValidationError formErrors fieldErrors, errHeaders = [contentTypeHeaderJSON]}
 sendError (UserError message) =
   return $ err400 {errBody = encode $ UserError message, errHeaders = [contentTypeHeaderJSON]}
+sendError (SystemLogError message) =
+  return $ err400 {errBody = encode $ SystemLogError message, errHeaders = [contentTypeHeaderJSON]}
 sendError (UnauthorizedError message) =
   return $ err401 {errBody = encode $ UnauthorizedError message, errHeaders = [contentTypeHeaderJSON]}
 sendError (ForbiddenError message) =

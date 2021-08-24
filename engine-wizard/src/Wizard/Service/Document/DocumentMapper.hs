@@ -25,7 +25,6 @@ toDTO doc mQtn tml =
     , _documentDTOFormatUuid = doc ^. formatUuid
     , _documentDTOFileName = doc ^. fileName
     , _documentDTOContentType = doc ^. contentType
-    , _documentDTOWorkerLog = doc ^. workerLog
     , _documentDTOCreatorUuid = doc ^. creatorUuid
     , _documentDTOCreatedAt = doc ^. createdAt
     }

@@ -20,7 +20,6 @@ data DocumentDTO =
     , _documentDTOFormatUuid :: U.UUID
     , _documentDTOFileName :: Maybe String
     , _documentDTOContentType :: Maybe String
-    , _documentDTOWorkerLog :: Maybe String
     , _documentDTOCreatorUuid :: Maybe U.UUID
     , _documentDTOCreatedAt :: UTCTime
     }

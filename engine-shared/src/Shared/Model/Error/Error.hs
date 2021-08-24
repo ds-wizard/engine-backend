@@ -10,6 +10,7 @@ data AppError
   | FoundError String
   | ValidationError [LocaleRecord] (M.Map String [LocaleRecord])
   | UserError LocaleRecord
+  | SystemLogError LocaleRecord
   | UnauthorizedError LocaleRecord
   | ForbiddenError LocaleRecord
   | NotExistsError LocaleRecord
