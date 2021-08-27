@@ -12,6 +12,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0003_metricsAndP
 import qualified Wizard.Database.Migration.Production.Migration_0004_questionnaireEventsSquash.Migration as M_0004
 import qualified Wizard.Database.Migration.Production.Migration_0005_documentMetadata.Migration as M_0005
 import qualified Wizard.Database.Migration.Production.Migration_0006_passwordHash.Migration as M_0006
+import qualified Wizard.Database.Migration.Production.Migration_0007_bookReference.Migration as M_0007
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -20,4 +21,11 @@ runMigration baseContext = do
 
 migrationDefinitions :: [MigrationDefinition]
 migrationDefinitions =
-  [M_0001.definition, M_0002.definition, M_0003.definition, M_0004.definition, M_0005.definition, M_0006.definition]
+  [ M_0001.definition
+  , M_0002.definition
+  , M_0003.definition
+  , M_0004.definition
+  , M_0005.definition
+  , M_0006.definition
+  , M_0007.definition
+  ]
