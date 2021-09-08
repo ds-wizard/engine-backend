@@ -37,8 +37,9 @@ detail_documents_preview_GET mTokenHeader qtnUuid mTokenQueryHeader =
       (doc, result) <- createDocumentPreview qtnUuid
       case doc ^. state of
         DoneDocumentState -> do
-          let cdHeader = fromMaybe "text/plain" (doc ^. metadata . contentType)
+          let cdHeader = fromMaybe "text/plain" (doc ^. contentType)
           traceUuid <- asks _appContextTraceUuid
           return . addHeader (U.toString traceUuid) . addHeader cdHeader . FileStream $ result
-        ErrorDocumentState -> throwError $ UserError _ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW
+        ErrorDocumentState ->
+          throwError $ SystemLogError (_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW $ doc ^. workerLog)
         _ -> throwError AcceptedError

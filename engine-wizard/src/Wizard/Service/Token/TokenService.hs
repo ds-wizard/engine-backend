@@ -3,7 +3,7 @@ module Wizard.Service.Token.TokenService where
 import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
-import Crypto.PasswordStore
+import qualified Crypto.PasswordStore as PasswordStore
 import Data.Aeson
 import Data.ByteString.Char8 as BS
 import Data.Char (toLower)
@@ -16,6 +16,7 @@ import qualified Web.JWT as JWT
 
 import LensesConfig
 import Shared.Model.Error.Error
+import Shared.Util.String (splitOn)
 import Wizard.Api.Resource.Token.TokenCreateDTO
 import Wizard.Api.Resource.Token.TokenDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -52,12 +53,18 @@ generateTokenFromCredentials tokenCreateDto =
         then return ()
         else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
     -- ------------------------------------------------------------
-    authenticateUser user = do
-      let incomingPassword = BS.pack (tokenCreateDto ^. password)
-      let passwordHashFromDB = BS.pack (user ^. passwordHash)
-      if verifyPassword incomingPassword passwordHashFromDB
+    authenticateUser user =
+      if verifyPassword (tokenCreateDto ^. password) (user ^. passwordHash)
         then return ()
         else throwError $ UserError _ERROR_SERVICE_TOKEN__INCORRECT_EMAIL_OR_PASSWORD
+
+verifyPassword :: String -> String -> Bool
+verifyPassword incomingPassword passwordHashFromDB =
+  case splitOn ":" passwordHashFromDB of
+    ["pbkdf1", hashFromDB] -> PasswordStore.verifyPassword (BS.pack incomingPassword) (BS.pack hashFromDB)
+    ["pbkdf2", hashFromDB] ->
+      PasswordStore.verifyPasswordWith PasswordStore.pbkdf2 (2 ^) (BS.pack incomingPassword) (BS.pack hashFromDB)
+    _ -> False
 
 generateTokenFromUser :: UserDTO -> AppContextM TokenDTO
 generateTokenFromUser user =

@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.User.UserDAO where
 
 import Control.Lens ((^.))
+import Data.String
 import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -21,6 +22,7 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Cache.UserCache
 import Wizard.Util.Cache
+import Wizard.Util.Logger
 
 entityName = "user_entity"
 
@@ -74,11 +76,10 @@ insertUser user = do
 updateUserById :: User -> AppContextM Int64
 updateUserById user = do
   let params = toRow user ++ [toField . U.toText $ user ^. uuid]
-  let action conn =
-        execute
-          conn
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-          params
+  let sql =
+        "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   result <- runDB action
   updateCache user
   return result
@@ -86,7 +87,9 @@ updateUserById user = do
 updateUserPasswordById :: String -> String -> UTCTime -> AppContextM Int64
 updateUserPasswordById uUuid uPassword uUpdatedAt = do
   let params = [toField uPassword, toField uUpdatedAt, toField uUuid]
-  let action conn = execute conn "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE uuid = ?" params
+  let sql = "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE uuid = ?"
+  logInfoU _CMP_DATABASE sql
+  let action conn = execute conn (fromString sql) params
   result <- runDB action
   deleteFromCache uUuid
   return result

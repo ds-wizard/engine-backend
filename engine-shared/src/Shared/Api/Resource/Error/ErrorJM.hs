@@ -11,6 +11,7 @@ instance ToJSON AppError where
   toJSON AcceptedError = object ["status" .= 202]
   toJSON (FoundError _) = object ["status" .= 302]
   toJSON (UserError error) = object ["status" .= 400, "type" .= "UserSimpleError", "error" .= error]
+  toJSON (SystemLogError error) = object ["status" .= 400, "type" .= "SystemLogError", "error" .= error]
   toJSON (ValidationError formErrors fieldErrors) =
     object ["status" .= 400, "type" .= "UserFormError", "formErrors" .= formErrors, "fieldErrors" .= fieldErrors]
   toJSON (UnauthorizedError message) = object ["status" .= 401, "message" .= message]
@@ -31,6 +32,9 @@ instance FromJSON AppError where
       (400, "UserSimpleError", _) -> do
         error <- o .: "error"
         return . UserError $ error
+      (400, "SystemLogError", _) -> do
+        error <- o .: "error"
+        return . SystemLogError $ error
       (400, "UserFormError", _) -> do
         formErrors <- o .: "formErrors"
         fieldErrors <- o .: "fieldErrors"

@@ -11,13 +11,6 @@ data DocumentState
   | ErrorDocumentState
   deriving (Show, Eq, Generic, Read)
 
-data DocumentMetadata =
-  DocumentMetadata
-    { _documentMetadataFileName :: Maybe String
-    , _documentMetadataContentType :: Maybe String
-    }
-  deriving (Show, Eq, Generic)
-
 data DocumentDurability
   = PersistentDocumentDurability
   | TemporallyDocumentDurability
@@ -34,8 +27,10 @@ data Document =
     , _documentQuestionnaireRepliesHash :: Int
     , _documentTemplateId :: String
     , _documentFormatUuid :: U.UUID
-    , _documentMetadata :: DocumentMetadata
     , _documentCreatorUuid :: Maybe U.UUID
+    , _documentFileName :: Maybe String
+    , _documentContentType :: Maybe String
+    , _documentWorkerLog :: Maybe String
     , _documentRetrievedAt :: Maybe UTCTime
     , _documentFinishedAt :: Maybe UTCTime
     , _documentCreatedAt :: UTCTime

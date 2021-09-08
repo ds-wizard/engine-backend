@@ -23,6 +23,8 @@ toDTO doc mQtn tml =
     , _documentDTOQuestionnaireEventUuid = doc ^. questionnaireEventUuid
     , _documentDTOTemplate = Template.toSimpleDTO tml
     , _documentDTOFormatUuid = doc ^. formatUuid
+    , _documentDTOFileName = doc ^. fileName
+    , _documentDTOContentType = doc ^. contentType
     , _documentDTOCreatorUuid = doc ^. creatorUuid
     , _documentDTOCreatedAt = doc ^. createdAt
     }
@@ -39,8 +41,10 @@ fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
     , _documentQuestionnaireRepliesHash = repliesHash
     , _documentTemplateId = dto ^. templateId
     , _documentFormatUuid = dto ^. formatUuid
-    , _documentMetadata = DocumentMetadata {_documentMetadataFileName = Nothing, _documentMetadataContentType = Nothing}
     , _documentCreatorUuid = mCurrentUser ^? _Just . uuid
+    , _documentFileName = Nothing
+    , _documentContentType = Nothing
+    , _documentWorkerLog = Nothing
     , _documentRetrievedAt = Nothing
     , _documentFinishedAt = Nothing
     , _documentCreatedAt = now

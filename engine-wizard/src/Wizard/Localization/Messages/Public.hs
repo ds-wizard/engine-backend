@@ -1,5 +1,7 @@
 module Wizard.Localization.Messages.Public where
 
+import Data.Maybe (fromMaybe)
+
 import Shared.Model.Localization.LocaleRecord
 
 -- --------------------------------------
@@ -8,6 +10,12 @@ import Shared.Model.Localization.LocaleRecord
 -- Uniqueness
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
+
+_ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS =
+  LocaleRecord
+    "error.service.tml.tml_file_or_asset_uniqueness"
+    "Template file or asset must have unique filename across the template"
+    []
 
 -- Absence
 _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
@@ -143,8 +151,8 @@ _ERROR_SERVICE_QTN_VERSION__NON_EXISTENT_EVENT_UUID eventUuid =
     "You can't create version for non-existent event (eventUuid: '%s')"
     [eventUuid]
 
-_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW =
-  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "Unable to generate preview" []
+_ERROR_SERVICE_QTN__UNABLE_TO_GENERATE_DOCUMENT_PREVIEW workerLog =
+  LocaleRecord "error.service.qtn.unable_to_generate_document_preview" "%s" [fromMaybe "no log provided" workerLog]
 
 -- Template Bundle
 _ERROR_SERVICE_TB__PULL_NON_EXISTING_TML tmlId =

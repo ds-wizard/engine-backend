@@ -18,6 +18,8 @@ data DocumentDTO =
     , _documentDTOQuestionnaireEventUuid :: Maybe U.UUID
     , _documentDTOTemplate :: TemplateSimpleDTO
     , _documentDTOFormatUuid :: U.UUID
+    , _documentDTOFileName :: Maybe String
+    , _documentDTOContentType :: Maybe String
     , _documentDTOCreatorUuid :: Maybe U.UUID
     , _documentDTOCreatedAt :: UTCTime
     }

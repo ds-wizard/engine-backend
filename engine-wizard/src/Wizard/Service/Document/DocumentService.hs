@@ -30,6 +30,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentQueue
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Document.DocumentAcl
@@ -77,7 +78,7 @@ createDocumentWithDurability dto durability =
             Just eventUuid -> takeWhileInclusive (\e -> e ^. uuid' /= eventUuid) (qtn ^. events)
             Nothing -> qtn ^. events
     qtnCtn <- compileQuestionnairePreview qtnEvents
-    let repliesHash = hash . M.toList $ qtnCtn ^. replies
+    let repliesHash = computeHash qtnCtn
     let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser now
     insertDocument doc
     publishToDocumentQueue doc
@@ -116,7 +117,7 @@ createDocumentPreview qtnUuid =
     checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
     docs <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid), ("durability", "TemporallyDocumentDurability")]
     qtnCtn <- compileQuestionnaire qtn
-    let repliesHash = hash . M.toList $ qtnCtn ^. replies
+    let repliesHash = computeHash qtnCtn
     logDebugU _CMP_SERVICE ("Replies hash: " ++ show repliesHash)
     let matchingDocs = filter (\d -> d ^. questionnaireRepliesHash == repliesHash) docs
     case filter (filterAlreadyDone qtn) matchingDocs of
@@ -174,3 +175,9 @@ publishToDocumentQueue doc = do
   dId <- insertDocumentQueue dq
   notifyDocumentQueue dId
   return ()
+
+-- --------------------------------
+-- PRIVATE
+-- --------------------------------
+computeHash :: QuestionnaireContent -> Int
+computeHash qtnCtn = (hash . M.toList $ qtnCtn ^. replies) + maybe 0 hash (qtnCtn ^. phaseUuid)

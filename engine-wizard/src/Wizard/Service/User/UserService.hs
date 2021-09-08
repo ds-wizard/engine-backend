@@ -4,7 +4,7 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad (forM_, when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
-import Crypto.PasswordStore
+import qualified Crypto.PasswordStore as PasswordStore
 import Data.ByteString.Char8 as BS
 import Data.Maybe (fromMaybe)
 import Data.Time
@@ -228,7 +228,9 @@ getPermissionForRole config role
   | otherwise = []
 
 generatePasswordHash :: String -> AppContextM String
-generatePasswordHash password = liftIO $ BS.unpack <$> makePassword (BS.pack password) 17
+generatePasswordHash password = do
+  hash <- liftIO $ BS.unpack <$> PasswordStore.makePasswordWith PasswordStore.pbkdf2 (BS.pack password) 17
+  return $ "pbkdf2:" ++ hash
 
 updateUserTimestamp :: User -> AppContextM User
 updateUserTimestamp user = do

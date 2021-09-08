@@ -7,7 +7,6 @@ import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 
 import Shared.Database.Mapping.Common
-import Wizard.Api.Resource.Document.DocumentJM ()
 import Wizard.Model.Document.Document
 
 instance ToField DocumentDurability where
@@ -33,11 +32,13 @@ instance ToRow Document where
     , toField _documentQuestionnaireRepliesHash
     , toField _documentTemplateId
     , toField _documentFormatUuid
-    , toJSONField _documentMetadata
     , toField _documentCreatorUuid
     , toField _documentRetrievedAt
     , toField _documentFinishedAt
     , toField _documentCreatedAt
+    , toField _documentFileName
+    , toField _documentContentType
+    , toField _documentWorkerLog
     ]
 
 instance FromRow Document where
@@ -51,9 +52,11 @@ instance FromRow Document where
     _documentQuestionnaireRepliesHash <- field
     _documentTemplateId <- field
     _documentFormatUuid <- field
-    _documentMetadata <- fieldWith fromJSONField
     _documentCreatorUuid <- field
     _documentRetrievedAt <- field
     _documentFinishedAt <- field
     _documentCreatedAt <- field
+    _documentFileName <- field
+    _documentContentType <- field
+    _documentWorkerLog <- field
     return $ Document {..}

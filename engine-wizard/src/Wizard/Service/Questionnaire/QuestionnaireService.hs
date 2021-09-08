@@ -238,6 +238,7 @@ modifyQuestionnaire qtnUuid reqDto =
     qtnCtn <- compileQuestionnaire updatedQtn
     eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+    deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     return $
       toDetailWithPackageDTO
         updatedQtn

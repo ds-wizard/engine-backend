@@ -41,10 +41,10 @@ doc1 =
     , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire1Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
-    , _documentMetadata =
-        DocumentMetadata
-          {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
     , _documentCreatorUuid = Just $ userNikola ^. uuid
+    , _documentFileName = Just "export.txt"
+    , _documentContentType = Just "text/plain"
+    , _documentWorkerLog = Just "Success"
     , _documentRetrievedAt = Nothing
     , _documentFinishedAt = Nothing
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -105,10 +105,10 @@ doc2 =
     , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
-    , _documentMetadata =
-        DocumentMetadata
-          {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
     , _documentCreatorUuid = Just $ userNikola ^. uuid
+    , _documentFileName = Just "export.txt"
+    , _documentContentType = Just "text/plain"
+    , _documentWorkerLog = Just "Success"
     , _documentRetrievedAt = Nothing
     , _documentFinishedAt = Nothing
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -126,10 +126,10 @@ doc3 =
     , _documentQuestionnaireRepliesHash = hash . M.toList $ questionnaire2Ctn ^. replies
     , _documentTemplateId = commonWizardTemplate ^. tId
     , _documentFormatUuid = head (commonWizardTemplate ^. formats) ^. uuid
-    , _documentMetadata =
-        DocumentMetadata
-          {_documentMetadataFileName = Just "export.txt", _documentMetadataContentType = Just "text/plain"}
     , _documentCreatorUuid = Just $ userAlbert ^. uuid
+    , _documentFileName = Just "export.txt"
+    , _documentContentType = Just "text/plain"
+    , _documentWorkerLog = Just "Success"
     , _documentRetrievedAt = Nothing
     , _documentFinishedAt = Nothing
     , _documentCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
