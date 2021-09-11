@@ -21,7 +21,7 @@ jobs:
       PRIVATE_IMAGE: ${{ secrets.PRIVATE_REGISTRY_URL }}/${{ matrix.component }}-server
       TAG_DEVELOP: develop
       TAG_LATEST: latest
-      STACK_VERSON: ${{ matrix.stack }}
+      STACK_VERSION: ${{ matrix.stack }}
       GHC_OPTIONS: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
 
     services:
@@ -159,7 +159,7 @@ jobs:
     - name: Setup stack
       if: steps.cache-stack-local-bin.outputs.cache-hit != 'true'
       run: |
-        curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSON/stack-$STACK_VERSON-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
+        curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSION/stack-$STACK_VERSION-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
         
     - name: Update config and build info
       run: |
