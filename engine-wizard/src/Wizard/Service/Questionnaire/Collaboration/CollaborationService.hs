@@ -103,6 +103,12 @@ setContent qtnUuid connectionUuid reqDto =
     ClearReplyEventChangeDTO' event -> clearReply qtnUuid connectionUuid event
     SetPhaseEventChangeDTO' event -> setPhase qtnUuid connectionUuid event
     SetLabelsEventChangeDTO' event -> setLabel qtnUuid connectionUuid event
+    ResolveCommentThreadEventChangeDTO' event -> resolveCommentThread qtnUuid connectionUuid event
+    ReopenCommentThreadEventChangeDTO' event -> reopenCommentThread qtnUuid connectionUuid event
+    DeleteCommentThreadEventChangeDTO' event -> deleteCommentThread qtnUuid connectionUuid event
+    AddCommentEventChangeDTO' event -> addComment qtnUuid connectionUuid event
+    EditCommentEventChangeDTO' event -> editComment qtnUuid connectionUuid event
+    DeleteCommentEventChangeDTO' event -> deleteComment qtnUuid connectionUuid event
 
 setReply :: String -> U.UUID -> SetReplyEventChangeDTO -> AppContextM ()
 setReply qtnUuid connectionUuid reqDto = do
@@ -147,6 +153,72 @@ setLabel qtnUuid connectionUuid reqDto = do
   appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ SetLabelsEventDTO' resDto]
   records <- getAllFromCache
   broadcast qtnUuid records (toSetLabelMessage resDto) disconnectUser
+
+resolveCommentThread :: String -> U.UUID -> ResolveCommentThreadEventChangeDTO -> AppContextM ()
+resolveCommentThread qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toResolveCommentThreadEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ResolveCommentThreadEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toResolveCommentThreadMessage resDto) disconnectUser
+
+reopenCommentThread :: String -> U.UUID -> ReopenCommentThreadEventChangeDTO -> AppContextM ()
+reopenCommentThread qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toReopenCommentThreadEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ ReopenCommentThreadEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toReopenCommentThreadMessage resDto) disconnectUser
+
+deleteCommentThread :: String -> U.UUID -> DeleteCommentThreadEventChangeDTO -> AppContextM ()
+deleteCommentThread qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toDeleteCommentThreadEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ DeleteCommentThreadEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toDeleteCommentThreadMessage resDto) disconnectUser
+
+addComment :: String -> U.UUID -> AddCommentEventChangeDTO -> AppContextM ()
+addComment qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toAddCommentEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ AddCommentEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toAddCommentMessage resDto) disconnectUser
+
+editComment :: String -> U.UUID -> EditCommentEventChangeDTO -> AppContextM ()
+editComment qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toEditCommentEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ EditCommentEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toEditCommentMessage resDto) disconnectUser
+
+deleteComment :: String -> U.UUID -> DeleteCommentEventChangeDTO -> AppContextM ()
+deleteComment qtnUuid connectionUuid reqDto = do
+  myself <- getFromCache' connectionUuid
+  checkEditPermission myself
+  now <- liftIO getCurrentTime
+  let mCreatedBy = getMaybeCreatedBy myself
+  let resDto = toDeleteCommentEventDTO' reqDto mCreatedBy now
+  appendQuestionnaireEventByUuid qtnUuid [fromEventDTO $ DeleteCommentEventDTO' resDto]
+  records <- getAllFromCache
+  broadcast qtnUuid records (toDeleteCommentMessage resDto) disconnectUser
 
 -- --------------------------------
 -- PRIVATE

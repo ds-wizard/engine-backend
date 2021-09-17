@@ -208,6 +208,7 @@ getQuestionnaireDetailById qtnUuid =
         mTemplate
         mFormat
         (qtnCtn ^. replies)
+        (qtnCtn ^. commentThreadsMap)
         permissionDtos
         eventsDto
         versionDto
@@ -249,6 +250,7 @@ modifyQuestionnaire qtnUuid reqDto =
         Nothing
         Nothing
         (qtnCtn ^. replies)
+        (qtnCtn ^. commentThreadsMap)
         permissionDtos
         eventsDto
         versionDto

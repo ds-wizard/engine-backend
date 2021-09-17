@@ -4,6 +4,7 @@ import Data.Aeson
 
 import Shared.Util.JSON
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireContentDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplyJM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionJM ()

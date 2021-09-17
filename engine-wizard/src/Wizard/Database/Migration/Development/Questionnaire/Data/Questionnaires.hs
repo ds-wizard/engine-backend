@@ -20,6 +20,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Acl.Data.Members
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
@@ -74,6 +75,7 @@ questionnaire1Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 
@@ -82,6 +84,7 @@ questionnaire1CtnRevertedDto =
   QuestionnaireContentDTO
     { _questionnaireContentDTOPhaseUuid = Nothing
     , _questionnaireContentDTOReplies = M.fromList [rQ1, rQ2]
+    , _questionnaireContentDTOCommentThreadsMap = M.empty
     , _questionnaireContentDTOLabels = M.empty
     , _questionnaireContentDTOEvents = [toEventDTO sre_rQ1' (Just userAlbert), toEventDTO sre_rQ2' (Just userAlbert)]
     , _questionnaireContentDTOVersions = []
@@ -188,6 +191,7 @@ questionnaire2Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 
@@ -248,6 +252,7 @@ questionnaire3Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 
@@ -286,6 +291,7 @@ questionnaire4Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase2 ^. uuid
     , _questionnaireContentReplies = M.empty
+    , _questionnaireContentCommentThreadsMap = M.empty
     , _questionnaireContentLabels = M.empty
     }
 
@@ -349,6 +355,7 @@ questionnaire6Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 
@@ -400,6 +407,7 @@ questionnaire7Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 
@@ -482,6 +490,7 @@ questionnaire10Ctn =
   QuestionnaireContent
     { _questionnaireContentPhaseUuid = Just $ phase1 ^. uuid
     , _questionnaireContentReplies = fReplies
+    , _questionnaireContentCommentThreadsMap = qtnThreads
     , _questionnaireContentLabels = fLabels
     }
 

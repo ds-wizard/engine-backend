@@ -29,6 +29,7 @@ import Wizard.Constant.Acl
 import Wizard.Model.Acl.Acl
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
@@ -119,11 +120,12 @@ toDetailWithPackageWithEventsDTO ::
   -> Maybe Template
   -> Maybe TemplateFormat
   -> M.Map String Reply
+  -> M.Map String [QuestionnaireCommentThread]
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
   -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies records events versions =
+toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records events versions =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -140,6 +142,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOFormat = mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
+    , _questionnaireDetailDTOCommentThreadsMap = threads
     , _questionnaireDetailDTOLabels = qtnCtn ^. labels
     , _questionnaireDetailDTOPermissions = records
     , _questionnaireDetailDTOEvents = events
@@ -159,11 +162,12 @@ toDetailWithPackageDTO ::
   -> Maybe Template
   -> Maybe TemplateFormat
   -> M.Map String Reply
+  -> M.Map String [QuestionnaireCommentThread]
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
   -> QuestionnaireDetailDTO
-toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies records events versions =
+toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records events versions =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -180,6 +184,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOFormat = mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
+    , _questionnaireDetailDTOCommentThreadsMap = threads
     , _questionnaireDetailDTOLabels = qtnContent ^. labels
     , _questionnaireDetailDTOPermissions = records
     , _questionnaireDetailDTOEvents = events
@@ -195,6 +200,7 @@ toContentDTO qtnCtn events versions =
   QuestionnaireContentDTO
     { _questionnaireContentDTOPhaseUuid = qtnCtn ^. phaseUuid
     , _questionnaireContentDTOReplies = qtnCtn ^. replies
+    , _questionnaireContentDTOCommentThreadsMap = qtnCtn ^. commentThreadsMap
     , _questionnaireContentDTOLabels = qtnCtn ^. labels
     , _questionnaireContentDTOEvents = events
     , _questionnaireContentDTOVersions = versions
