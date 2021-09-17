@@ -174,6 +174,15 @@ jobs:
 # (3) -> Build binary
     - name: Build and test application 
       run: |
+        stack build -j3 engine-$COMPONENT --no-terminal --skip-ghc-check --ghc-options="$GHC_OPTIONS" 2>&1 | tee log.txt
+        WARNINGS=$(grep -o ': warning: ' log.txt | wc -l)
+        if [ $WARNINGS -gt "0" ]; then
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          echo "!! GHC WARNINGS DETECTED ($WARNINGS):"
+          grep ': warning: ' -A 3 log.txt
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          exit 1
+        fi
         stack build -j3 engine-$COMPONENT --no-terminal --skip-ghc-check --test --ghc-options="$GHC_OPTIONS"
         cp $(stack path --local-install-root)/bin/engine-$COMPONENT engine-$COMPONENT/engine-$COMPONENT-bin
       env:
