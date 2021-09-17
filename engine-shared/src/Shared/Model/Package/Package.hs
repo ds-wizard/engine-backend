@@ -23,5 +23,5 @@ data Package =
 
 instance Ord Package where
   compare a b =
-    compare (_packageOrganizationId a) (_packageOrganizationId b) <> compare (_packageKmId a) (_packageKmId b) <>
-    compare (_packageVersion a) (_packageVersion b)
+    compare (_packageOrganizationId a) (_packageOrganizationId b) <>
+    compare (_packageKmId a) (_packageKmId b) <> compare (_packageVersion a) (_packageVersion b)

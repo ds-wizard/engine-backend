@@ -22,7 +22,7 @@ assertAbsenceOfTemplateAssetInDB appContext asset = do
   eAsset <- runInContextIO (findTemplateAssetById assetUuid) appContext
   liftIO $ isLeft eAsset `shouldBe` True
   let (Left error) = eAsset
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "template_asset" assetUuid)
+  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "template_asset" assetUuid)
 
 -- --------------------------------
 -- COMPARATORS

@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
-import Control.Lens ((&), (.~), (^.), (^?), _Just)
+import Control.Lens ((&), (.~), (?~), (^.), (^?), _Just)
 import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -110,8 +110,7 @@ createQuestionnaireFromTemplate reqDto =
     let newSharing = appConfig ^. questionnaire . questionnaireSharing . defaultValue
     let newPermissions = [toUserPermRecord qtnPermUuid newUuid (currentUser ^. uuid) ownerPermissions]
     let newQtn =
-          (updatedAt .~ now) . (createdAt .~ now) . (creatorUuid .~ (Just $ currentUser ^. uuid)) .
-          (isTemplate .~ False) .
+          (updatedAt .~ now) . (createdAt .~ now) . (creatorUuid ?~ (currentUser ^. uuid)) . (isTemplate .~ False) .
           (permissions .~ newPermissions) .
           (visibility .~ newVisibility) .
           (sharing .~ newSharing) .
