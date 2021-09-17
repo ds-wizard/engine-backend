@@ -19,12 +19,12 @@ and [relevant section in our guide](https://img.shields.io/github/license/ds-wiz
 
 ### Requirements
 
- - **Stack** (recommended 2.5.1 or higher)
- - **Postgres & libpq**
- - **Hindent** (recommended 5.3.1 or higher, optional)
- - **HLint** (recommended 3.2.7 or higher, optional)
- - **Docker** (recommended 19.03.0-ce or higher) - *for build of production image*
- - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version)
+ - **Stack** (recommended 2.3.1 or higher)
+ - **Postgres & libpq** (recommended 11)
+ - **Hindent** (recommended 5.3.2, optional)
+ - **HLint** (recommended 3.3.4, optional)
+ - **Docker** (recommended 19.03.0-ce) - *for build of production image*
+ - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version) - *for document generation, RabbitMQ required*
 
 ### Build & Run
 

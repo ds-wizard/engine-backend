@@ -1,0 +1,92 @@
+name: Code Style
+
+on:
+  push:
+
+jobs:
+  hlint:
+    runs-on: ubuntu-20.04
+    
+    env:
+      HLINT_VERSION: '3.3.4'
+
+    steps:
+# (1) -> Init
+    - name: Checkout git repository
+      uses: actions/checkout@v2
+    
+    - name: Prepare ~/.local/bin
+      run: |
+        mkdir -p ~/.local/bin
+        export PATH=~/.local/bin:$PATH
+
+# (2) -> Setup cache
+    - name: Cache ~/.local/bin
+      id: cache-local-bin
+      uses: actions/cache@v2
+      with:
+        path: ~/.local/bin
+        key: local-bin-${{ env.HLINT_VERSION }}
+
+# (3) -> Prepare and install dependencies     
+    - name: Setup hlint
+      if: steps.cache-local-bin.outputs.cache-hit != 'true'
+      run: |
+        curl -L $HLINT_URL | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/hlint'
+      env:
+        HLINT_URL: https://github.com/ndmitchell/hlint/releases/download/v${{ env.HLINT_VERSION }}/hlint-${{ env.HLINT_VERSION }}-x86_64-linux.tar.gz
+        
+# (4) -> Run hlint
+    - name: Run hlint
+      run: |
+        hlint --git
+
+  hindent:
+    runs-on: ubuntu-20.04
+    
+    env:
+      HINDENT_VERSION: '5.3.2'
+
+    steps:
+# (1) -> Init
+    - name: Checkout git repository
+      uses: actions/checkout@v2
+    
+    - name: Prepare ~/.local/bin
+      run: |
+        mkdir -p ~/.local/bin
+        export PATH=~/.local/bin:$PATH
+
+# (2) -> Setup cache
+    - name: Cache ~/.local/bin
+      id: cache-local-bin
+      uses: actions/cache@v2
+      with:
+        path: ~/.local/bin
+        key: local-bin-${{ env.HINDENT_VERSION }}
+
+# (3) -> Prepare and install hindent (via stack)   
+    - name: Setup hindent
+      if: steps.cache-local-bin.outputs.cache-hit != 'true'
+      run: |
+        curl -o ~/.local/bin/hindent -L https://github.com/MarekSuchanek/hindent-ga-dist/releases/download/v$HINDENT_VERSION-ga-ubuntu20/hindent
+        chmod +x ~/.local/bin/hindent
+        hindent --version
+        
+# (4) -> Run hindent
+    - name: Run hindent (engine-shared)
+      run: |
+        FILES=$(find \
+          engine-shared/src engine-shared/test \
+          engine-registry/src engine-registry/test \
+          engine-wizard/src engine-wizard/test \
+          engine-wizard-metamodel-migrator/app engine-wizard-metamodel-migrator/src \
+          -name '*.hs'
+        )
+        RET=0
+        for FILE in $FILES; do
+          if ! hindent --validate $FILE; then
+            RET=1
+          fi
+        done
+        exit $RET

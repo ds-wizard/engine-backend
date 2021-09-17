@@ -14,10 +14,7 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 isCleanerMethod :: MigratorState -> Event -> Bool
 isCleanerMethod state event = getKM $ \km -> doIsCleanerMethod km event
   where
-    getKM callback =
-      case state ^. currentKnowledgeModel of
-        Just km -> callback km
-        Nothing -> False
+    getKM callback = maybe False callback (state ^. currentKnowledgeModel)
 
 doIsCleanerMethod :: KnowledgeModel -> Event -> Bool
 doIsCleanerMethod km (AddKnowledgeModelEvent' event) = False

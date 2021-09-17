@@ -40,7 +40,7 @@ instance Sanitizator EditKnowledgeModelEvent where
     where
       applyChapterChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & chapterUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & chapterUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. chapterUuids of
@@ -58,7 +58,7 @@ instance Sanitizator EditKnowledgeModelEvent where
       -- ------------------------
       applyTagChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & tagUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & tagUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. tagUuids of
@@ -76,7 +76,7 @@ instance Sanitizator EditKnowledgeModelEvent where
       -- ------------------------
       applyIntegrationChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & integrationUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & integrationUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. integrationUuids of
@@ -95,7 +95,7 @@ instance Sanitizator EditChapterEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChildUuids $ \childUuidsFromEvent -> do
-        let event1 = event & questionUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+        let event1 = event & questionUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         if event /= event1
           then changeEventUuid uuid event1
           else return event
@@ -129,8 +129,7 @@ instance Sanitizator EditQuestionEvent where
     where
       applyItemTemplateQuestionChange km (EditListQuestionEvent' event) =
         unwrapEventItemTemplateQuestionUuids $ \itqUuids ->
-          return . EditListQuestionEvent' $
-          event & itemTemplateQuestionUuids .~ (ChangedValue $ resultUuids km itqUuids)
+          return . EditListQuestionEvent' $ event & itemTemplateQuestionUuids .~ ChangedValue (resultUuids km itqUuids)
         where
           unwrapEventItemTemplateQuestionUuids callback =
             case event ^. itemTemplateQuestionUuids of
@@ -149,8 +148,7 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyAnswerChange km (EditOptionsQuestionEvent' event) =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return . EditOptionsQuestionEvent' $
-          event & answerUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return . EditOptionsQuestionEvent' $ event & answerUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. answerUuids of
@@ -169,7 +167,7 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyReferenceChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & referenceUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & referenceUuids' .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. referenceUuids' of
@@ -187,7 +185,7 @@ instance Sanitizator EditQuestionEvent where
       -- ------------------------
       applyExpertChange km event =
         unwrapEventChildUuids $ \childUuidsFromEvent ->
-          return $ event & expertUuids' .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+          return $ event & expertUuids' .~ ChangedValue (resultUuids km childUuidsFromEvent)
         where
           unwrapEventChildUuids callback =
             case event ^. expertUuids' of
@@ -206,7 +204,7 @@ instance Sanitizator EditAnswerEvent where
   sanitize state event =
     unwrapKM state event $ \km ->
       unwrapEventChildUuids $ \childUuidsFromEvent -> do
-        let event1 = event & followUpUuids .~ (ChangedValue $ resultUuids km childUuidsFromEvent)
+        let event1 = event & followUpUuids .~ ChangedValue (resultUuids km childUuidsFromEvent)
         if event /= event1
           then changeEventUuid uuid event1
           else return event

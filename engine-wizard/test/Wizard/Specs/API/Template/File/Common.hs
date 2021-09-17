@@ -28,7 +28,7 @@ assertAbsenceOfTemplateFileInDB appContext file = do
   eFile <- runInContextIO (findTemplateFileById fileUuid) appContext
   liftIO $ isLeft eFile `shouldBe` True
   let (Left error) = eFile
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "template_file" fileUuid)
+  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "template_file" fileUuid)
 
 -- --------------------------------
 -- COMPARATORS

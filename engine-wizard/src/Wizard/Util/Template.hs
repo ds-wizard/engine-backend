@@ -97,7 +97,7 @@ endswith t1 t2
 
 gfnIndexOf :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnIndexOf ((_, lst):(_, txt):_) =
-  return . toGVal $ elemIndex (T.unpack . asText $ txt) (map (T.unpack . asText) . fromMaybe [] . asList $ lst)
+  return . toGVal $ elemIndex (T.unpack . asText $ txt) ((maybe [] (map (T.unpack . asText)) . asList) lst)
 gfnIndexOf _ = return def
 
 gfnRoman :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
@@ -132,8 +132,7 @@ gfnReverse ((_, xs):_) = return . toGVal . reverse . fromMaybe [] . asList $ xs
 gfnReverse _ = return def
 
 gfnJoin :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
-gfnJoin ((_, txts):(_, glue):_) =
-  return . toGVal $ T.intercalate (asText glue) (map asText . fromMaybe [] $ asList txts)
+gfnJoin ((_, txts):(_, glue):_) = return . toGVal $ T.intercalate (asText glue) (maybe [] (map asText) $ asList txts)
 gfnJoin _ = return def
 
 gfnToCharArray :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
