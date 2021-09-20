@@ -22,6 +22,7 @@ import qualified Shared.Service.Package.PackageMapper as SPM
 import Wizard.Api.Resource.Questionnaire.QuestionnaireChangeDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireVersions
@@ -126,8 +127,9 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader ano
             Nothing
             Nothing
             fReplies
+            qtnThreads
             permissions
-            fEventsDto
+            fEventsWithoutCommentsDto
             qVersionsDto
     let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations

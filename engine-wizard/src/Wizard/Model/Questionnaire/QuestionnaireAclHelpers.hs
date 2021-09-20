@@ -13,6 +13,9 @@ import Wizard.Model.Questionnaire.QuestionnaireAcl
 getUserUuidsForViewerPerm :: [QuestionnairePermRecord] -> [U.UUID]
 getUserUuidsForViewerPerm = getUserUuidsForPerm _VIEW_PERM
 
+getUserUuidsForCommentatorPerm :: [QuestionnairePermRecord] -> [U.UUID]
+getUserUuidsForCommentatorPerm = getUserUuidsForPerm _COMMENT_PERM
+
 getUserUuidsForEditorPerm :: [QuestionnairePermRecord] -> [U.UUID]
 getUserUuidsForEditorPerm = getUserUuidsForPerm _EDIT_PERM
 
@@ -33,6 +36,9 @@ getUserUuidsForPerm desiredPerm = foldl go []
 
 getGroupIdsForViewerPerm :: [QuestionnairePermRecord] -> [String]
 getGroupIdsForViewerPerm = getGroupIdsForPerm _VIEW_PERM
+
+getGroupIdsForCommentatorPerm :: [QuestionnairePermRecord] -> [String]
+getGroupIdsForCommentatorPerm = getGroupIdsForPerm _COMMENT_PERM
 
 getGroupIdsForEditorPerm :: [QuestionnairePermRecord] -> [String]
 getGroupIdsForEditorPerm = getGroupIdsForPerm _EDIT_PERM

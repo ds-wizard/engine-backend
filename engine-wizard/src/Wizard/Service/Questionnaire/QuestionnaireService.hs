@@ -194,8 +194,9 @@ getQuestionnaireDetailById qtnUuid =
         _ -> return Nothing
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
     qtnCtn <- compileQuestionnaire qtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (qtn ^. events)
+    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     return $
       toDetailWithPackageWithEventsDTO
         qtn
@@ -207,6 +208,7 @@ getQuestionnaireDetailById qtnUuid =
         mTemplate
         mFormat
         (qtnCtn ^. replies)
+        filteredCommentThreadsMap
         permissionDtos
         eventsDto
         versionDto
@@ -235,8 +237,9 @@ modifyQuestionnaire qtnUuid reqDto =
          (sendQuestionnaireInvitationMail qtn updatedQtn)
          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
+    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     return $
       toDetailWithPackageDTO
@@ -248,6 +251,7 @@ modifyQuestionnaire qtnUuid reqDto =
         Nothing
         Nothing
         (qtnCtn ^. replies)
+        filteredCommentThreadsMap
         permissionDtos
         eventsDto
         versionDto

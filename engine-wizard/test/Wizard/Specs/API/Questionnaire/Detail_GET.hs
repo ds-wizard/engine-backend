@@ -2,9 +2,10 @@ module Wizard.Specs.API.Questionnaire.Detail_GET
   ( detail_get
   ) where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
@@ -30,6 +31,7 @@ import qualified Wizard.Database.Migration.Development.Template.TemplateMigratio
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
@@ -73,14 +75,35 @@ test_200 appContext = do
     "HTTP 200 OK (Non-Owner, VisibleView)"
     appContext
     questionnaire2
-    questionnaire2Ctn
+    (questionnaire2Ctn & commentThreadsMap .~ M.empty)
     [reqNonAdminAuthHeader]
     [qtn2AlbertEditPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Commentator)"
+    appContext
+    (questionnaire13 & visibility .~ PrivateQuestionnaire)
+    questionnaire13Ctn
+    [reqNonAdminAuthHeader]
+    [qtn13NikolaCommentPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Non-Commentator, VisibleComment)"
+    appContext
+    questionnaire13
+    questionnaire13Ctn
+    [reqIsaacAuthTokenHeader]
+    [qtn13NikolaCommentPermRecordDto]
+  create_test_200
+    "HTTP 200 OK (Anonymous, VisibleComment, AnyoneWithLinkComment)"
+    appContext
+    (questionnaire13 & sharing .~ AnyoneWithLinkCommentQuestionnaire)
+    questionnaire13Ctn
+    []
+    [qtn13NikolaCommentPermRecordDto]
   create_test_200
     "HTTP 200 OK (Anonymous, VisibleView, Sharing)"
     appContext
     questionnaire7
-    questionnaire7Ctn
+    (questionnaire7Ctn & commentThreadsMap .~ M.empty)
     []
     [qtn7AlbertEditPermRecordDto]
   create_test_200
@@ -112,16 +135,17 @@ create_test_200 title appContext qtn qtnCtn authHeader permissions =
             (Just commonWizardTemplate)
             (Just templateFormatJson)
             fReplies
+            (qtnCtn ^. commentThreadsMap)
             permissions
-            fEventsDto
+            fEventsWithoutCommentsDto
             qVersionsDto
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO U.runMigration appContext
     runInContextIO TML.runMigration appContext
     runInContextIO QTN.runMigration appContext
-    runInContextIO (insertQuestionnaire questionnaire7) appContext
-    runInContextIO (insertQuestionnaire questionnaire10) appContext
+    runInContextIO deleteQuestionnaires appContext
+    runInContextIO (insertQuestionnaire qtn) appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

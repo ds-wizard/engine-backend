@@ -25,3 +25,24 @@ instance ToSchema SetPhaseEventDTO where
 
 instance ToSchema SetLabelsEventDTO where
   declareNamedSchema = simpleToSchema' "_setLabelsEventDTO" (toSetLabelsEventDTO slble_rQ2 (Just userAlbert))
+
+instance ToSchema ResolveCommentThreadEventDTO where
+  declareNamedSchema =
+    simpleToSchema' "_resolveCommentThreadEventDTO" (toResolveCommentThreadEventDTO rte_rQ1_t1 (Just userAlbert))
+
+instance ToSchema ReopenCommentThreadEventDTO where
+  declareNamedSchema =
+    simpleToSchema' "_reopenCommentThreadEventDTO" (toReopenCommentThreadEventDTO ote_rQ1_t1 (Just userAlbert))
+
+instance ToSchema DeleteCommentThreadEventDTO where
+  declareNamedSchema =
+    simpleToSchema' "_deleteCommentThreadEventDTO" (toDeleteCommentThreadEventDTO dte_rQ1_t1 (Just userAlbert))
+
+instance ToSchema AddCommentEventDTO where
+  declareNamedSchema = simpleToSchema' "_addCommentEventDTO" (toAddCommentEventDTO ace_rQ1_t1_1 (Just userAlbert))
+
+instance ToSchema EditCommentEventDTO where
+  declareNamedSchema = simpleToSchema' "_editCommentEventDTO" (toEditCommentEventDTO ece_rQ1_t1_1 (Just userAlbert))
+
+instance ToSchema DeleteCommentEventDTO where
+  declareNamedSchema = simpleToSchema' "_deleteCommentEventDTO" (toDeleteCommentEventDTO dce_rQ1_t1_1 (Just userAlbert))

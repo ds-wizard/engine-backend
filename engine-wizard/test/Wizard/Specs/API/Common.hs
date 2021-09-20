@@ -61,6 +61,13 @@ reqNonAdminAuthToken =
 reqNonAdminAuthHeader :: Header
 reqNonAdminAuthHeader = ("Authorization", BS.pack $ "Bearer " ++ reqNonAdminAuthToken)
 
+reqIsaacAuthToken :: String
+reqIsaacAuthToken =
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyVXVpZCI6ImUxYzU4ZTUyLTA4MjQtNDUyNi04ZWJlLWVjMzhlZWM2NzAzMCIsImV4cCI6MjQ1Njk4MjI1OSwidmVyc2lvbiI6IjIifQ.CW9Sp2qBAxaNH-eqrT-iAuWCLfddzFtDe82niPJ27m4"
+
+reqIsaacAuthTokenHeader :: Header
+reqIsaacAuthTokenHeader = ("Authorization", BS.pack $ "Bearer " ++ reqIsaacAuthToken)
+
 userWithoutPerm :: ServerConfig -> String -> User
 userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN

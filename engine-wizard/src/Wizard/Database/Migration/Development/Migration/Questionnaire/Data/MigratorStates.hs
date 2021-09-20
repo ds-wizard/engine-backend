@@ -41,6 +41,7 @@ nlQtnMigrationStateDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4 ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4 ^. versions))
@@ -55,6 +56,7 @@ nlQtnMigrationStateDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4Upgraded ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4Upgraded ^. versions))
@@ -75,6 +77,7 @@ nlQtnMigrationStateVisibleViewDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleView ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleView ^. versions))
@@ -89,6 +92,7 @@ nlQtnMigrationStateVisibleViewDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleViewUpgraded ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
@@ -109,6 +113,7 @@ nlQtnMigrationStateVisibleEditDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEdit ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleEdit ^. versions))
@@ -123,6 +128,7 @@ nlQtnMigrationStateVisibleEditDto =
           (Just commonWizardTemplate)
           (Just templateFormatJson)
           (questionnaire4Ctn ^. replies)
+          (questionnaire4Ctn ^. commentThreadsMap)
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEditUpgraded ^. events))
           (fmap (`toVersionDTO` userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))

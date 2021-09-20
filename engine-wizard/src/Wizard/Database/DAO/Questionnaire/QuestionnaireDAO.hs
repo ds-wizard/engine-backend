@@ -326,6 +326,7 @@ qtnSelectSql userUuid perm =
 qtnWhereSql userUuid perm =
   f'
     "(visibility = 'VisibleEditQuestionnaire' \
+    \OR visibility = 'VisibleCommentQuestionnaire' \
     \OR visibility = 'VisibleViewQuestionnaire' \
     \OR (visibility = 'PrivateQuestionnaire' and qtn_acl_user.user_uuid = '%s' AND qtn_acl_user.perms @> ARRAY %s))"
     [userUuid, perm]
