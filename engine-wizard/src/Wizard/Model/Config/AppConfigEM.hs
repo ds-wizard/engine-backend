@@ -1,6 +1,6 @@
 module Wizard.Model.Config.AppConfigEM where
 
-import Shared.Util.Crypto (encryptAES256)
+import Shared.Util.Crypto (encryptAES256WithB64)
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 
@@ -26,8 +26,9 @@ instance SensitiveData AppConfigAuthExternal where
 instance SensitiveData AppConfigAuthExternalService where
   process key entity =
     entity
-      { _appConfigAuthExternalServiceClientId = encryptAES256 key (_appConfigAuthExternalServiceClientId entity)
-      , _appConfigAuthExternalServiceClientSecret = encryptAES256 key (_appConfigAuthExternalServiceClientSecret entity)
+      { _appConfigAuthExternalServiceClientId = encryptAES256WithB64 key (_appConfigAuthExternalServiceClientId entity)
+      , _appConfigAuthExternalServiceClientSecret =
+          encryptAES256WithB64 key (_appConfigAuthExternalServiceClientSecret entity)
       }
 
 instance SensitiveData AppConfigAuthExternalServiceParameter
@@ -45,11 +46,12 @@ instance SensitiveData AppConfigLookAndFeel
 instance SensitiveData AppConfigLookAndFeelCustomMenuLink
 
 instance SensitiveData AppConfigRegistry where
-  process key entity = entity {_appConfigRegistryToken = encryptAES256 key (_appConfigRegistryToken entity)}
+  process key entity = entity {_appConfigRegistryToken = encryptAES256WithB64 key (_appConfigRegistryToken entity)}
 
 instance SensitiveData AppConfigQuestionnaire where
   process key entity = entity {_appConfigQuestionnaireFeedback = process key (_appConfigQuestionnaireFeedback entity)}
 
 instance SensitiveData AppConfigQuestionnaireFeedback where
   process key entity =
-    entity {_appConfigQuestionnaireFeedbackToken = encryptAES256 key (_appConfigQuestionnaireFeedbackToken entity)}
+    entity
+      {_appConfigQuestionnaireFeedbackToken = encryptAES256WithB64 key (_appConfigQuestionnaireFeedbackToken entity)}

@@ -13,7 +13,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0004_questionnai
 import qualified Wizard.Database.Migration.Production.Migration_0005_documentMetadata.Migration as M_0005
 import qualified Wizard.Database.Migration.Production.Migration_0006_passwordHash.Migration as M_0006
 import qualified Wizard.Database.Migration.Production.Migration_0007_bookReference.Migration as M_0007
-import qualified Wizard.Database.Migration.Production.Migration_0008_packageFk.Migration as M_0008
+import qualified Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Migration as M_0008
 import Wizard.Util.Logger
 
 runMigration baseContext = do

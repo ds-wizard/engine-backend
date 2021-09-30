@@ -24,6 +24,7 @@ library:
   - base
   - aeson
   - async
+  - base64
   - blaze-html
   - bytestring
   - cache
