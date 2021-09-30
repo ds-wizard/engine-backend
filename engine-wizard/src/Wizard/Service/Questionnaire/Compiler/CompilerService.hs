@@ -158,5 +158,5 @@ applyEvent qtnCtn' (DeleteCommentEvent' event) = do
 
 getUser mUserUuid =
   case mUserUuid of
-    Just userUuid -> Just <$> findUserById (U.toString userUuid)
+    Just userUuid -> findUserById' (U.toString userUuid)
     Nothing -> return Nothing

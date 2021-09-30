@@ -12,7 +12,7 @@ data QuestionnaireVersionDTO =
     , _questionnaireVersionDTOName :: String
     , _questionnaireVersionDTODescription :: Maybe String
     , _questionnaireVersionDTOEventUuid :: U.UUID
-    , _questionnaireVersionDTOCreatedBy :: UserSuggestionDTO
+    , _questionnaireVersionDTOCreatedBy :: Maybe UserSuggestionDTO
     , _questionnaireVersionDTOCreatedAt :: UTCTime
     , _questionnaireVersionDTOUpdatedAt :: UTCTime
     }

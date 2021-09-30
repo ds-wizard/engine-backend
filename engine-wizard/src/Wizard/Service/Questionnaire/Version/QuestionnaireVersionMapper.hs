@@ -12,14 +12,14 @@ import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.User.User
 import qualified Wizard.Service.User.UserMapper as UM
 
-toVersionDTO :: QuestionnaireVersion -> User -> QuestionnaireVersionDTO
-toVersionDTO version createdBy =
+toVersionDTO :: QuestionnaireVersion -> Maybe User -> QuestionnaireVersionDTO
+toVersionDTO version mCreatedBy =
   QuestionnaireVersionDTO
     { _questionnaireVersionDTOUuid = version ^. uuid
     , _questionnaireVersionDTOName = version ^. name
     , _questionnaireVersionDTODescription = version ^. description
     , _questionnaireVersionDTOEventUuid = version ^. eventUuid
-    , _questionnaireVersionDTOCreatedBy = UM.toSuggestionDTO . UM.toSuggestion $ createdBy
+    , _questionnaireVersionDTOCreatedBy = fmap (UM.toSuggestionDTO . UM.toSuggestion) mCreatedBy
     , _questionnaireVersionDTOCreatedAt = version ^. createdAt
     , _questionnaireVersionDTOUpdatedAt = version ^. updatedAt
     }

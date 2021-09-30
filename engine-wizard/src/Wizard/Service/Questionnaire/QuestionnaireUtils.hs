@@ -78,14 +78,14 @@ enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEven
 enhanceQuestionnaireEvent event = do
   mUser <-
     case event ^. createdBy' of
-      Just userUuid -> Just <$> findUserById (U.toString userUuid)
+      Just userUuid -> findUserById' (U.toString userUuid)
       Nothing -> return Nothing
   return $ toEventDTO event mUser
 
 enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
 enhanceQuestionnaireVersion version = do
-  user <- findUserById (U.toString $ version ^. createdBy)
-  return $ toVersionDTO version user
+  mUser <- findUserById' (U.toString $ version ^. createdBy)
+  return $ toVersionDTO version mUser
 
 excludeQuestionnaireCommentEvent :: QuestionnaireEvent -> Bool
 excludeQuestionnaireCommentEvent (ResolveCommentThreadEvent' _) = False

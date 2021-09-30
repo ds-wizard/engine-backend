@@ -58,6 +58,11 @@ findUserById = getFromCacheOrDb getFromCache addToCache go
   where
     go = createFindEntityByFn entityName "uuid"
 
+findUserById' :: String -> AppContextM (Maybe User)
+findUserById' = getFromCacheOrDb' getFromCache addToCache go
+  where
+    go = createFindEntityByFn' entityName "uuid"
+
 findUserByEmail :: String -> AppContextM User
 findUserByEmail = createFindEntityByFn entityName "email"
 
