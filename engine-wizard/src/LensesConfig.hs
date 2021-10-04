@@ -39,6 +39,7 @@ import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
+import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -96,6 +97,7 @@ import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.Admin.Admin
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Cache.ServerCache
@@ -140,6 +142,13 @@ makeFields ''Member
 
 -- Model / ActionKey
 makeFields ''ActionKey
+
+-- Model / Admin
+makeFields ''AdminSection
+
+makeFields ''AdminOperation
+
+makeFields ''AdminOperationParameter
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -521,6 +530,9 @@ makeFields ''WebsocketRecord
 -- -------------------------------------
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
+
+-- Api / Resource / Admin
+makeFields ''AdminExecutionDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO

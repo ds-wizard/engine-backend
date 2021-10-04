@@ -14,6 +14,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0005_documentMet
 import qualified Wizard.Database.Migration.Production.Migration_0006_passwordHash.Migration as M_0006
 import qualified Wizard.Database.Migration.Production.Migration_0007_bookReference.Migration as M_0007
 import qualified Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Migration as M_0008
+import qualified Wizard.Database.Migration.Production.Migration_0009_adminOperations.Migration as M_0009
 import Wizard.Util.Logger
 
 runMigration baseContext = do
@@ -30,4 +31,5 @@ migrationDefinitions =
   , M_0006.definition
   , M_0007.definition
   , M_0008.definition
+  , M_0009.definition
   ]

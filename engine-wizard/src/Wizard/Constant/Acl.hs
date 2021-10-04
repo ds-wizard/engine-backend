@@ -1,5 +1,7 @@
 module Wizard.Constant.Acl where
 
+_ADMIN_PERM = "ADMIN_PERM"
+
 _UM_PERM = "UM_PERM"
 
 _KM_PERM = "KM_PERM"
