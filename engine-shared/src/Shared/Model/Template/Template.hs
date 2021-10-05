@@ -64,5 +64,4 @@ data TemplateAsset =
 instance Ord Template where
   compare a b =
     compare (_templateOrganizationId a) (_templateOrganizationId b) <>
-    compare (_templateTemplateId a) (_templateTemplateId b) <>
-    compare (_templateVersion a) (_templateVersion b)
+    compare (_templateTemplateId a) (_templateTemplateId b) <> compare (_templateVersion a) (_templateVersion b)

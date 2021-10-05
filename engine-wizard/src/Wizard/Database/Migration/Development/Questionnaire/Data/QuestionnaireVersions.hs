@@ -33,7 +33,7 @@ questionnaireVersion1 =
     }
 
 questionnaireVersion1Dto :: QuestionnaireVersionDTO
-questionnaireVersion1Dto = toVersionDTO questionnaireVersion1 userAlbert
+questionnaireVersion1Dto = toVersionDTO questionnaireVersion1 (Just userAlbert)
 
 questionnaireVersion1ChangeDto :: QuestionnaireVersionChangeDTO
 questionnaireVersion1ChangeDto = toVersionChangeDTO questionnaireVersion1
@@ -47,7 +47,7 @@ questionnaireVersion1Edited =
     }
 
 questionnaireVersion1EditedDto :: QuestionnaireVersionDTO
-questionnaireVersion1EditedDto = toVersionDTO questionnaireVersion1Edited userAlbert
+questionnaireVersion1EditedDto = toVersionDTO questionnaireVersion1Edited (Just userAlbert)
 
 questionnaireVersion1EditedChangeDto :: QuestionnaireVersionChangeDTO
 questionnaireVersion1EditedChangeDto = toVersionChangeDTO questionnaireVersion1Edited

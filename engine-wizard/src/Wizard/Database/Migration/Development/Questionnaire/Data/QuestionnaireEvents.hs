@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Phases
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -15,7 +16,10 @@ import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 
 fEvents :: [QuestionnaireEvent]
-fEvents =
+fEvents = fEventsWithoutComments ++ [ace_rQ1_t1_1', ace_rQ1_t1_2']
+
+fEventsWithoutComments :: [QuestionnaireEvent]
+fEventsWithoutComments =
   [ sre_rQ1'
   , sre_rQ2'
   , sre_rQ2_aYes_fuQ1'
@@ -36,6 +40,9 @@ fEvents =
 
 fEventsDto :: [QuestionnaireEventDTO]
 fEventsDto = fmap (\event -> toEventDTO event (Just userAlbert)) fEvents
+
+fEventsWithoutCommentsDto :: [QuestionnaireEventDTO]
+fEventsWithoutCommentsDto = fmap (\event -> toEventDTO event (Just userAlbert)) fEventsWithoutComments
 
 fEventsWithUpdated :: [QuestionnaireEvent]
 fEventsWithUpdated = fEvents ++ [sre_rQ1Updated']
@@ -313,4 +320,120 @@ slble_rQ2 =
     , _setLabelsEventValue = [fLabel1]
     , _setLabelsEventCreatedBy = Just $ userAlbert ^. uuid
     , _setLabelsEventCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
+    }
+
+rte_rQ1_t1' :: QuestionnaireEvent
+rte_rQ1_t1' = ResolveCommentThreadEvent' rte_rQ1_t1
+
+rte_rQ1_t1 :: ResolveCommentThreadEvent
+rte_rQ1_t1 =
+  ResolveCommentThreadEvent
+    { _resolveCommentThreadEventUuid = u' "ad5ffe15-d895-4452-af31-3b952db0b8a8"
+    , _resolveCommentThreadEventPath = cmtQ1_path
+    , _resolveCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _resolveCommentThreadEventCreatedBy = cmtQ1_t1Resolved ^. createdBy ^? _Just . uuid
+    , _resolveCommentThreadEventCreatedAt = cmtQ1_t1Resolved ^. createdAt
+    }
+
+ote_rQ1_t1' :: QuestionnaireEvent
+ote_rQ1_t1' = ReopenCommentThreadEvent' ote_rQ1_t1
+
+ote_rQ1_t1 :: ReopenCommentThreadEvent
+ote_rQ1_t1 =
+  ReopenCommentThreadEvent
+    { _reopenCommentThreadEventUuid = u' "444c89c8-ead9-44c7-9621-0c0c43ff5f9f"
+    , _reopenCommentThreadEventPath = cmtQ1_path
+    , _reopenCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _reopenCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy ^? _Just . uuid
+    , _reopenCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
+    }
+
+dte_rQ1_t1' :: QuestionnaireEvent
+dte_rQ1_t1' = DeleteCommentThreadEvent' dte_rQ1_t1
+
+dte_rQ1_t1 :: DeleteCommentThreadEvent
+dte_rQ1_t1 =
+  DeleteCommentThreadEvent
+    { _deleteCommentThreadEventUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
+    , _deleteCommentThreadEventPath = cmtQ1_path
+    , _deleteCommentThreadEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _deleteCommentThreadEventCreatedBy = cmtQ1_t1 ^. createdBy ^? _Just . uuid
+    , _deleteCommentThreadEventCreatedAt = cmtQ1_t1 ^. createdAt
+    }
+
+ace_rQ1_t1_1' :: QuestionnaireEvent
+ace_rQ1_t1_1' = AddCommentEvent' ace_rQ1_t1_1
+
+ace_rQ1_t1_1 :: AddCommentEvent
+ace_rQ1_t1_1 =
+  AddCommentEvent
+    { _addCommentEventUuid = u' "471ef7d8-5164-44ba-9d28-8aad036458fd"
+    , _addCommentEventPath = cmtQ1_path
+    , _addCommentEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _addCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
+    , _addCommentEventText = cmtQ1_t1_1 ^. text
+    , _addCommentEventPrivate = cmtQ1_t1 ^. private
+    , _addCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
+    }
+
+ace_rQ1_t1_2' :: QuestionnaireEvent
+ace_rQ1_t1_2' = AddCommentEvent' ace_rQ1_t1_2
+
+ace_rQ1_t1_2 :: AddCommentEvent
+ace_rQ1_t1_2 =
+  AddCommentEvent
+    { _addCommentEventUuid = u' "3450c5ca-a267-4be0-b112-92f5c0d2e2a8"
+    , _addCommentEventPath = cmtQ1_path
+    , _addCommentEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _addCommentEventCommentUuid = cmtQ1_t1_2 ^. uuid
+    , _addCommentEventText = cmtQ1_t1_2 ^. text
+    , _addCommentEventPrivate = cmtQ1_t1 ^. private
+    , _addCommentEventCreatedBy = cmtQ1_t1_2 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedAt = cmtQ1_t1_2 ^. createdAt
+    }
+
+ace_rQ2_t1_1' :: QuestionnaireEvent
+ace_rQ2_t1_1' = AddCommentEvent' ace_rQ2_t1_1
+
+ace_rQ2_t1_1 :: AddCommentEvent
+ace_rQ2_t1_1 =
+  AddCommentEvent
+    { _addCommentEventUuid = u' "b46c4ff7-8af2-4164-8e94-841b4f8c312b"
+    , _addCommentEventPath = cmtQ2_path
+    , _addCommentEventThreadUuid = cmtQ2_t1 ^. uuid
+    , _addCommentEventCommentUuid = cmtQ2_t1_1 ^. uuid
+    , _addCommentEventText = cmtQ2_t1_1 ^. text
+    , _addCommentEventPrivate = cmtQ2_t1 ^. private
+    , _addCommentEventCreatedBy = cmtQ2_t1_1 ^. createdBy ^? _Just . uuid
+    , _addCommentEventCreatedAt = cmtQ2_t1_1 ^. createdAt
+    }
+
+ece_rQ1_t1_1' :: QuestionnaireEvent
+ece_rQ1_t1_1' = EditCommentEvent' ece_rQ1_t1_1
+
+ece_rQ1_t1_1 :: EditCommentEvent
+ece_rQ1_t1_1 =
+  EditCommentEvent
+    { _editCommentEventUuid = u' "6a598663-4bce-48e9-83d0-422ae753f60d"
+    , _editCommentEventPath = cmtQ1_path
+    , _editCommentEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _editCommentEventCommentUuid = cmtQ1_t1_1Edited ^. uuid
+    , _editCommentEventText = cmtQ1_t1_1Edited ^. text
+    , _editCommentEventCreatedBy = cmtQ1_t1_1Edited ^. createdBy ^? _Just . uuid
+    , _editCommentEventCreatedAt = cmtQ1_t1_1Edited ^. updatedAt
+    }
+
+dce_rQ1_t1_1' :: QuestionnaireEvent
+dce_rQ1_t1_1' = DeleteCommentEvent' dce_rQ1_t1_1
+
+dce_rQ1_t1_1 :: DeleteCommentEvent
+dce_rQ1_t1_1 =
+  DeleteCommentEvent
+    { _deleteCommentEventUuid = u' "0e8a5812-90da-43b1-bb20-dbf8a95aa00d"
+    , _deleteCommentEventPath = cmtQ1_path
+    , _deleteCommentEventThreadUuid = cmtQ1_t1 ^. uuid
+    , _deleteCommentEventCommentUuid = cmtQ1_t1_1 ^. uuid
+    , _deleteCommentEventCreatedBy = cmtQ1_t1_1 ^. createdBy ^? _Just . uuid
+    , _deleteCommentEventCreatedAt = cmtQ1_t1_1 ^. createdAt
     }

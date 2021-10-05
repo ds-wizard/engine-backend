@@ -36,7 +36,7 @@ assertAbsenceOfQuestionnaireInDB appContext qtn = do
   eQtn <- runInContextIO (findQuestionnaireById qtnUuid) appContext
   liftIO $ isLeft eQtn `shouldBe` True
   let (Left error) = eQtn
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" qtnUuid)
+  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" qtnUuid)
 
 -- --------------------------------
 -- COMPARATORS

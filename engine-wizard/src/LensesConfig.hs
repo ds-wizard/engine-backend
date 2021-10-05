@@ -112,6 +112,7 @@ import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_Migra
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireContent
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
@@ -452,11 +453,27 @@ makeFields ''SetPhaseEvent
 
 makeFields ''SetLabelsEvent
 
+makeFields ''ResolveCommentThreadEvent
+
+makeFields ''ReopenCommentThreadEvent
+
+makeFields ''DeleteCommentThreadEvent
+
+makeFields ''AddCommentEvent
+
+makeFields ''EditCommentEvent
+
+makeFields ''DeleteCommentEvent
+
 makeFields ''QuestionnaireVersion
 
 makeFields ''QuestionnaireSimple
 
 makeFields ''QuestionnaireDetail
+
+makeFields ''QuestionnaireCommentThread
+
+makeFields ''QuestionnaireComment
 
 -- Model / Report
 makeFields ''Indication
@@ -591,6 +608,18 @@ makeFields ''SetPhaseEventDTO
 
 makeFields ''SetLabelsEventDTO
 
+makeFields ''ResolveCommentThreadEventDTO
+
+makeFields ''ReopenCommentThreadEventDTO
+
+makeFields ''DeleteCommentThreadEventDTO
+
+makeFields ''AddCommentEventDTO
+
+makeFields ''EditCommentEventDTO
+
+makeFields ''DeleteCommentEventDTO
+
 makeFields ''SetReplyEventChangeDTO
 
 makeFields ''ClearReplyEventChangeDTO
@@ -598,6 +627,18 @@ makeFields ''ClearReplyEventChangeDTO
 makeFields ''SetPhaseEventChangeDTO
 
 makeFields ''SetLabelsEventChangeDTO
+
+makeFields ''ResolveCommentThreadEventChangeDTO
+
+makeFields ''ReopenCommentThreadEventChangeDTO
+
+makeFields ''DeleteCommentThreadEventChangeDTO
+
+makeFields ''AddCommentEventChangeDTO
+
+makeFields ''EditCommentEventChangeDTO
+
+makeFields ''DeleteCommentEventChangeDTO
 
 makeFields ''QuestionnaireVersionDTO
 

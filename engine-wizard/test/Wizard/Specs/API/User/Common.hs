@@ -38,7 +38,7 @@ assertAbsenceOfUserInDB appContext user = do
   eUser <- runInContextIO (findUserById uUuid) appContext
   liftIO $ isLeft eUser `shouldBe` True
   let (Left error) = eUser
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" uUuid)
+  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" uUuid)
 
 -- --------------------------------
 -- COMPARATORS
@@ -50,4 +50,4 @@ compareUserCreateDtos resDto expDto = do
   liftIO $ resDto ^. lastName `shouldBe` expDto ^. lastName
   liftIO $ resDto ^. email `shouldBe` expDto ^. email
   liftIO $ resDto ^. affiliation `shouldBe` expDto ^. affiliation
-  liftIO $ (Just $ resDto ^. role) `shouldBe` expDto ^. role
+  liftIO $ Just (resDto ^. role) `shouldBe` expDto ^. role

@@ -11,6 +11,7 @@ import Shared.Util.Swagger
 import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclSM ()
+import Wizard.Api.Resource.Questionnaire.QuestionnaireCommentSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDetailJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireReplySM ()
@@ -18,6 +19,7 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireSharingSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireStateSM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireVisibilitySM ()
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionSM ()
+import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Model.Questionnaire.QuestionnaireState
@@ -36,6 +38,7 @@ instance ToSchema QuestionnaireDetailDTO where
          Nothing
          Nothing
          fReplies
+         qtnThreads
          []
          []
          [])

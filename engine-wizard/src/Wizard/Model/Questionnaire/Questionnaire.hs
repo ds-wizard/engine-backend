@@ -11,12 +11,14 @@ import Wizard.Model.Questionnaire.QuestionnaireVersion
 data QuestionnaireVisibility
   = PrivateQuestionnaire
   | VisibleViewQuestionnaire
+  | VisibleCommentQuestionnaire
   | VisibleEditQuestionnaire
   deriving (Show, Eq, Generic, Read)
 
 data QuestionnaireSharing
   = RestrictedQuestionnaire
   | AnyoneWithLinkViewQuestionnaire
+  | AnyoneWithLinkCommentQuestionnaire
   | AnyoneWithLinkEditQuestionnaire
   deriving (Show, Eq, Generic, Read)
 

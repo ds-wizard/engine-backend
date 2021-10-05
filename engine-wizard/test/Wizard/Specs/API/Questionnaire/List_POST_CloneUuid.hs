@@ -2,7 +2,7 @@ module Wizard.Specs.API.Questionnaire.List_POST_CloneUuid
   ( list_post_cloneUuid
   ) where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (?~), (^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
@@ -70,7 +70,7 @@ create_test_201 title appContext qtn =
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
-    let expDto = qtn & phaseUuid .~ (Just $ phase1 ^. uuid)
+    let expDto = qtn & phaseUuid ?~ (phase1 ^. uuid)
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO TML.runMigration appContext

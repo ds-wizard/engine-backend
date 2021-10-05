@@ -1,5 +1,5 @@
 name: engine-shared
-version: '3.3.0'
+version: '3.4.0'
 synopsis: Engine Shared
 description: Engine Shared
 category: Web
@@ -25,6 +25,7 @@ library:
   dependencies:
   - base
   - aeson
+  - base64
   - bytestring
   - case-insensitive
   - conduit

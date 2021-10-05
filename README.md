@@ -1,8 +1,11 @@
-# Engine Backend
-> It's a backend part of the engine.
+# Data Stewardship Wizard Engine Backend
 
+[![User Guide](https://img.shields.io/badge/docs-User%20Guide-informational)](https://guide.ds-wizard.org)
 [![Engine Backend CI](https://github.com/ds-wizard/engine-backend/workflows/Engine%20Backend%20CI/badge.svg?branch=master)](https://github.com/ds-wizard/engine-backend/actions)
-[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](LICENSE.md)
+[![License](https://img.shields.io/github/license/ds-wizard/engine-backend)](LICENSE)
+[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/4975/badge)](https://bestpractices.coreinfrastructure.org/projects/4975)
+
+*Backend application for Data Stewardship Wizard*
 
 ## Applications
 
@@ -11,15 +14,16 @@
 
 ## Contribute
 
+For contributing guidelines, please read [CONTRIBUTING](CONTRIBUTING.md) 
+and [relevant section in our guide](https://img.shields.io/github/license/ds-wizard/document-worker).
+
 ### Requirements
 
  - **Stack** (recommended 2.3.1 or higher)
- - **Postgres & libpq**
- - **MongoDB** (recommended 4.2.3 or higher)
- - **RabbitMQ** (recommended 3.8.2 or higher, optional)
- - **Hindent** (recommended 5.3.1 or higher, optional)
- - **HLint** (recommended 2.1.26 or higher, optional)
- - **Docker** (recommended 17.09.0-ce or higher) - *for build of production image*
+ - **Postgres & libpq** (recommended 11)
+ - **Hindent** (recommended 5.3.2, optional)
+ - **HLint** (recommended 3.3.4, optional)
+ - **Docker** (recommended 19.03.0-ce) - *for build of production image*
  - [**document-worker**](https://github.com/ds-wizard/document-worker) (corresponding version) - *for document generation, RabbitMQ required*
 
 ### Build & Run
@@ -67,14 +71,6 @@ Run these comands from the `scripts` folder
 $ ./<application>/build-info.sh
 ```
 
-### Naming conventions
-- **Handler** - a module containing handler functions
-- **DTO** - a module containing structures which represents request/response in API
-- **Middleware** - a module containing middleware functions
-- **Service** - a module containing service functions
-- **Mapper** - a module containing mapper functions
-- **DAO** - a module containing functions for a manipulation with data in database
-- **Migration** - a module containing functions for running initial database migrations
-
 ## License
+
 This project is licensed under the Apache License v2.0 - see the [LICENSE](LICENSE.md) file for more details.

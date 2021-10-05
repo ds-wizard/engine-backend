@@ -1,6 +1,6 @@
 module Wizard.Service.Questionnaire.QuestionnaireService where
 
-import Control.Lens ((&), (.~), (^.), (^?), _Just)
+import Control.Lens ((&), (.~), (?~), (^.), (^?), _Just)
 import Control.Monad (when)
 import Control.Monad.Except (catchError, throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -110,8 +110,7 @@ createQuestionnaireFromTemplate reqDto =
     let newSharing = appConfig ^. questionnaire . questionnaireSharing . defaultValue
     let newPermissions = [toUserPermRecord qtnPermUuid newUuid (currentUser ^. uuid) ownerPermissions]
     let newQtn =
-          (updatedAt .~ now) . (createdAt .~ now) . (creatorUuid .~ (Just $ currentUser ^. uuid)) .
-          (isTemplate .~ False) .
+          (updatedAt .~ now) . (createdAt .~ now) . (creatorUuid ?~ (currentUser ^. uuid)) . (isTemplate .~ False) .
           (permissions .~ newPermissions) .
           (visibility .~ newVisibility) .
           (sharing .~ newSharing) .
@@ -195,8 +194,9 @@ getQuestionnaireDetailById qtnUuid =
         _ -> return Nothing
     permissionDtos <- traverse enhanceQuestionnairePermRecord (qtn ^. permissions)
     qtnCtn <- compileQuestionnaire qtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (qtn ^. events)
+    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     return $
       toDetailWithPackageWithEventsDTO
         qtn
@@ -208,6 +208,7 @@ getQuestionnaireDetailById qtnUuid =
         mTemplate
         mFormat
         (qtnCtn ^. replies)
+        filteredCommentThreadsMap
         permissionDtos
         eventsDto
         versionDto
@@ -236,8 +237,9 @@ modifyQuestionnaire qtnUuid reqDto =
          (sendQuestionnaireInvitationMail qtn updatedQtn)
          (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_QTN__INVITATION_EMAIL_NOT_SENT))
     qtnCtn <- compileQuestionnaire updatedQtn
-    eventsDto <- traverse enhanceQuestionnaireEvent (updatedQtn ^. events)
+    eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (updatedQtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
+    filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
     return $
       toDetailWithPackageDTO
@@ -249,6 +251,7 @@ modifyQuestionnaire qtnUuid reqDto =
         Nothing
         Nothing
         (qtnCtn ^. replies)
+        filteredCommentThreadsMap
         permissionDtos
         eventsDto
         versionDto

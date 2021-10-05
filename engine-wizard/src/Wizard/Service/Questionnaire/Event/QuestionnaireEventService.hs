@@ -57,7 +57,7 @@ squashOnePeriod versions = snd . foldr go (M.empty, [])
       case event' of
         SetReplyEvent' event ->
           if not (L.any (\v -> v ^. eventUuid == event ^. uuid) versions) &&
-             maybe False ((event ^. createdBy) ==) (M.lookup (event ^. path) questions)
+             Just (event ^. createdBy) == M.lookup (event ^. path) questions
             then (questions, events)
             else (M.insert (event ^. path) (event ^. createdBy) questions, event' : events)
         _ -> (questions, event' : events)

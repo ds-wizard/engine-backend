@@ -50,9 +50,18 @@ checkClonePermissionToQtn visibility sharing permissions = do
 
 checkViewPermissionToQtn ::
      QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
-checkViewPermissionToQtn visibility sharing perms =
-  if sharing == AnyoneWithLinkViewQuestionnaire || sharing == AnyoneWithLinkEditQuestionnaire
+checkViewPermissionToQtn visibility sharing perms = do
+  result <- hasViewPermissionToQtn visibility sharing perms
+  if result
     then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
+
+hasViewPermissionToQtn ::
+     QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM Bool
+hasViewPermissionToQtn visibility sharing perms =
+  if sharing == AnyoneWithLinkViewQuestionnaire || sharing == AnyoneWithLinkCommentQuestionnaire || sharing ==
+     AnyoneWithLinkEditQuestionnaire
+    then return True
     else do
       checkPermission _QTN_PERM
       currentUser <- getCurrentUser
@@ -62,24 +71,70 @@ checkViewPermissionToQtn visibility sharing perms =
            [ currentUser ^. role == _USER_ROLE_ADMIN
            -- Check visibility
            , visibility == VisibleViewQuestionnaire
+           , visibility == VisibleCommentQuestionnaire
            , visibility == VisibleEditQuestionnaire
            -- Check membership
            , currentUserUuid `elem` getUserUuidsForViewerPerm perms
+           , currentUserUuid `elem` getUserUuidsForCommentatorPerm perms
            , currentUserUuid `elem` getUserUuidsForEditorPerm perms
            , currentUserUuid `elem` getUserUuidsForOwnerPerm perms
            -- Check groups
            , or (fmap (`elem` getGroupIdsForViewerPerm perms) currentUserGroupIds)
+           , or (fmap (`elem` getGroupIdsForCommentatorPerm perms) currentUserGroupIds)
            , or (fmap (`elem` getGroupIdsForEditorPerm perms) currentUserGroupIds)
            , or (fmap (`elem` getGroupIdsForOwnerPerm perms) currentUserGroupIds)
            ]
-        then return ()
-        else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "View Questionnaire"
+        then return True
+        else return False
+
+checkCommentPermissionToQtn ::
+     QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
+checkCommentPermissionToQtn visibility sharing perms = do
+  result <- hasCommentPermissionToQtn visibility sharing perms
+  if result
+    then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Comment Questionnaire"
+
+hasCommentPermissionToQtn ::
+     QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM Bool
+hasCommentPermissionToQtn visibility sharing perms =
+  if sharing == AnyoneWithLinkCommentQuestionnaire || sharing == AnyoneWithLinkEditQuestionnaire
+    then return True
+    else do
+      checkPermission _QTN_PERM
+      currentUser <- getCurrentUser
+      let currentUserUuid = currentUser ^. uuid
+      let currentUserGroupIds = currentUser ^. groups ^.. traverse . groupId
+      if or
+           [ currentUser ^. role == _USER_ROLE_ADMIN
+           -- Check visibility
+           , visibility == VisibleCommentQuestionnaire
+           , visibility == VisibleEditQuestionnaire
+           -- Check membership
+           , currentUserUuid `elem` getUserUuidsForCommentatorPerm perms
+           , currentUserUuid `elem` getUserUuidsForEditorPerm perms
+           , currentUserUuid `elem` getUserUuidsForOwnerPerm perms
+           -- Check groups
+           , or (fmap (`elem` getGroupIdsForCommentatorPerm perms) currentUserGroupIds)
+           , or (fmap (`elem` getGroupIdsForEditorPerm perms) currentUserGroupIds)
+           , or (fmap (`elem` getGroupIdsForOwnerPerm perms) currentUserGroupIds)
+           ]
+        then return True
+        else return False
 
 checkEditPermissionToQtn ::
      QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM ()
-checkEditPermissionToQtn visibility sharing perms =
-  if sharing == AnyoneWithLinkEditQuestionnaire
+checkEditPermissionToQtn visibility sharing perms = do
+  result <- hasEditPermissionToQtn visibility sharing perms
+  if result
     then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
+
+hasEditPermissionToQtn ::
+     QuestionnaireVisibility -> QuestionnaireSharing -> [QuestionnairePermRecord] -> AppContextM Bool
+hasEditPermissionToQtn visibility sharing perms =
+  if sharing == AnyoneWithLinkEditQuestionnaire
+    then return True
     else do
       checkPermission _QTN_PERM
       currentUser <- getCurrentUser
@@ -96,11 +151,18 @@ checkEditPermissionToQtn visibility sharing perms =
            , or (fmap (`elem` getGroupIdsForEditorPerm perms) currentUserGroupIds)
            , or (fmap (`elem` getGroupIdsForOwnerPerm perms) currentUserGroupIds)
            ]
-        then return ()
-        else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire"
+        then return True
+        else return False
 
 checkOwnerPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePermRecord] -> AppContextM ()
 checkOwnerPermissionToQtn visibility perms = do
+  result <- hasOwnerPermissionToQtn visibility perms
+  if result
+    then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
+
+hasOwnerPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePermRecord] -> AppContextM Bool
+hasOwnerPermissionToQtn visibility perms = do
   checkPermission _QTN_PERM
   currentUser <- getCurrentUser
   let currentUserUuid = currentUser ^. uuid
@@ -112,11 +174,18 @@ checkOwnerPermissionToQtn visibility perms = do
        -- Check groups
        , or (fmap (`elem` getGroupIdsForOwnerPerm perms) currentUserGroupIds)
        ]
-    then return ()
-    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Administrate Questionnaire"
+    then return True
+    else return False
 
 checkMigrationPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePermRecord] -> AppContextM ()
 checkMigrationPermissionToQtn visibility perms = do
+  result <- hasMigrationPermissionToQtn visibility perms
+  if result
+    then return ()
+    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"
+
+hasMigrationPermissionToQtn :: QuestionnaireVisibility -> [QuestionnairePermRecord] -> AppContextM Bool
+hasMigrationPermissionToQtn visibility perms = do
   currentUser <- getCurrentUser
   let currentUserUuid = currentUser ^. uuid
   let currentUserGroupIds = currentUser ^. groups ^.. traverse . groupId
@@ -131,5 +200,5 @@ checkMigrationPermissionToQtn visibility perms = do
        , or (fmap (`elem` getGroupIdsForEditorPerm perms) currentUserGroupIds)
        , or (fmap (`elem` getGroupIdsForOwnerPerm perms) currentUserGroupIds)
        ]
-    then return ()
-    else throwError . ForbiddenError $ _ERROR_VALIDATION__FORBIDDEN "Migrate Questionnaire"
+    then return True
+    else return False

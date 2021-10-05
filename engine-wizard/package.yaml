@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '3.3.0'
+version: '3.4.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -24,6 +24,7 @@ library:
   - base
   - aeson
   - async
+  - base64
   - blaze-html
   - bytestring
   - cache

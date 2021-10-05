@@ -2,6 +2,7 @@ module Wizard.Service.Questionnaire.QuestionnaireUtils where
 
 import Control.Lens ((^.))
 import Control.Monad (when)
+import Control.Monad.Except (catchError)
 import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 
@@ -19,6 +20,7 @@ import Wizard.Model.Acl.Acl
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireDetail
 import Wizard.Model.Questionnaire.QuestionnaireEvent
 import Wizard.Model.Questionnaire.QuestionnaireEventLenses ()
@@ -30,6 +32,7 @@ import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
+import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 import Wizard.Service.Questionnaire.Version.QuestionnaireVersionMapper
 import Wizard.Service.Report.ReportGenerator
@@ -75,14 +78,23 @@ enhanceQuestionnaireEvent :: QuestionnaireEvent -> AppContextM QuestionnaireEven
 enhanceQuestionnaireEvent event = do
   mUser <-
     case event ^. createdBy' of
-      Just userUuid -> Just <$> findUserById (U.toString userUuid)
+      Just userUuid -> findUserById' (U.toString userUuid)
       Nothing -> return Nothing
   return $ toEventDTO event mUser
 
 enhanceQuestionnaireVersion :: QuestionnaireVersion -> AppContextM QuestionnaireVersionDTO
 enhanceQuestionnaireVersion version = do
-  user <- findUserById (U.toString $ version ^. createdBy)
-  return $ toVersionDTO version user
+  mUser <- findUserById' (U.toString $ version ^. createdBy)
+  return $ toVersionDTO version mUser
+
+excludeQuestionnaireCommentEvent :: QuestionnaireEvent -> Bool
+excludeQuestionnaireCommentEvent (ResolveCommentThreadEvent' _) = False
+excludeQuestionnaireCommentEvent (ReopenCommentThreadEvent' _) = False
+excludeQuestionnaireCommentEvent (DeleteCommentThreadEvent' _) = False
+excludeQuestionnaireCommentEvent (AddCommentEvent' _) = False
+excludeQuestionnaireCommentEvent (EditCommentEvent' _) = False
+excludeQuestionnaireCommentEvent (DeleteCommentEvent' _) = False
+excludeQuestionnaireCommentEvent _ = True
 
 getQuestionnaireState :: String -> String -> AppContextM QuestionnaireState
 getQuestionnaireState qtnUuid pkgId = do
@@ -126,3 +138,17 @@ skipIfAssigningProject qtn action = do
   when
     (not (questionnaireSharingEnabled && questionnaireSharingAnonymousEnabled) || (not . null $ qtn ^. permissions))
     action
+
+filterComments ::
+     Questionnaire
+  -> M.Map String [QuestionnaireCommentThread]
+  -> AppContextM (M.Map String [QuestionnaireCommentThread])
+filterComments qtn commentThreadsMap =
+  catchError
+    (do checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+        return commentThreadsMap)
+    (\_ ->
+       catchError
+         (do checkCommentPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
+             return $ M.map (filter (\t -> not (t ^. private))) commentThreadsMap)
+         (\_ -> return M.empty))

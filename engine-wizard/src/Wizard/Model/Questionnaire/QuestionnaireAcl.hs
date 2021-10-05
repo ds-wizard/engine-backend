@@ -14,8 +14,10 @@ data QuestionnairePermRecord =
     }
   deriving (Generic, Eq, Show)
 
-ownerPermissions = [_VIEW_PERM, _EDIT_PERM, _ADMIN_PERM]
+ownerPermissions = [_VIEW_PERM, _COMMENT_PERM, _EDIT_PERM, _ADMIN_PERM]
 
-editorPermissions = [_VIEW_PERM, _EDIT_PERM]
+editorPermissions = [_VIEW_PERM, _COMMENT_PERM, _EDIT_PERM]
+
+commentatorPermissions = [_VIEW_PERM, _COMMENT_PERM]
 
 viewerPermissions = [_VIEW_PERM]

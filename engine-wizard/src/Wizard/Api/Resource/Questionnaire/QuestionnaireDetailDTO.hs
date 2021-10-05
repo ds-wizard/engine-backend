@@ -13,6 +13,7 @@ import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
 import Wizard.Api.Resource.Questionnaire.Version.QuestionnaireVersionDTO
 import Wizard.Model.Questionnaire.Questionnaire
+import Wizard.Model.Questionnaire.QuestionnaireComment
 import Wizard.Model.Questionnaire.QuestionnaireReply
 import Wizard.Model.Questionnaire.QuestionnaireState
 
@@ -33,6 +34,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOFormat :: Maybe TemplateFormat
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String Reply
+    , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThread]
     , _questionnaireDetailDTOLabels :: M.Map String [U.UUID]
     , _questionnaireDetailDTOCreatorUuid :: Maybe U.UUID
     , _questionnaireDetailDTOPermissions :: [QuestionnairePermRecordDTO]
@@ -61,6 +63,7 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOFormat a == _questionnaireDetailDTOFormat b &&
     _questionnaireDetailDTOKnowledgeModel a == _questionnaireDetailDTOKnowledgeModel b &&
     _questionnaireDetailDTOReplies a == _questionnaireDetailDTOReplies b &&
+    _questionnaireDetailDTOCommentThreadsMap a == _questionnaireDetailDTOCommentThreadsMap b &&
     _questionnaireDetailDTOPermissions a == _questionnaireDetailDTOPermissions b &&
     _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
     _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&

@@ -31,7 +31,7 @@ assertAbsenceOfDocumentInDB appContext doc = do
   eDoc <- runInContextIO (findDocumentById docUuid) appContext
   liftIO $ isLeft eDoc `shouldBe` True
   let (Left error) = eDoc
-  liftIO $ error `shouldBe` (NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "document" docUuid)
+  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "document" docUuid)
 
 -- --------------------------------
 -- COMPARATORS
