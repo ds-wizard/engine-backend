@@ -80,6 +80,7 @@ createBranchWithParams bUuid now currentUser reqDto =
                   { _addKnowledgeModelEventUuid = uuid
                   , _addKnowledgeModelEventParentUuid = U.nil
                   , _addKnowledgeModelEventEntityUuid = kmUuid
+                  , _addKnowledgeModelEventAnnotations = M.empty
                   }
           updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
           return ()

@@ -1,5 +1,6 @@
 module Shared.Model.Event.Tag.TagEvent where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -13,6 +14,7 @@ data AddTagEvent =
     , _addTagEventName :: String
     , _addTagEventDescription :: Maybe String
     , _addTagEventColor :: String
+    , _addTagEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -24,6 +26,7 @@ data EditTagEvent =
     , _editTagEventName :: EventField String
     , _editTagEventDescription :: EventField (Maybe String)
     , _editTagEventColor :: EventField String
+    , _editTagEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

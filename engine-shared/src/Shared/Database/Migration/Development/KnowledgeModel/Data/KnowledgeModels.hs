@@ -1,8 +1,7 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels where
 
 import Control.Lens
-import Data.Maybe
-import qualified Data.UUID as U
+import qualified Data.Map.Strict as M
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
@@ -17,11 +16,13 @@ import Shared.Database.Migration.Development.KnowledgeModel.Data.References
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Tags
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Model.KnowledgeModel.KnowledgeModelLenses
+import Shared.Util.Uuid
 
 km1 :: KnowledgeModel
 km1 =
   KnowledgeModel
-    { _knowledgeModelUuid = fromJust $ U.fromString "ff672529-e837-4201-b7b1-7ada557d9725"
+    { _knowledgeModelUuid = u' "ff672529-e837-4201-b7b1-7ada557d9725"
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = [chapter1 ^. uuid, chapter2 ^. uuid, chapter3 ^. uuid]
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
@@ -68,6 +69,7 @@ km1Edited :: KnowledgeModel
 km1Edited =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.fromList [("newAnnotation", "someValue")]
     , _knowledgeModelChapterUuids = [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
     , _knowledgeModelTagUuids = [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
     , _knowledgeModelIntegrationUuids = [bioPortal ^. uuid, ontologyPortal ^. uuid]
@@ -81,6 +83,7 @@ km1WithoutChaptersAndTagsAndIntegrations :: KnowledgeModel
 km1WithoutChaptersAndTagsAndIntegrations =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = []
     , _knowledgeModelTagUuids = []
     , _knowledgeModelIntegrationUuids = []
@@ -105,6 +108,7 @@ km1WithQ4Plain :: KnowledgeModel
 km1WithQ4Plain =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = [chapter1 ^. uuid, chapter2WithQ4Plain ^. uuid, chapter3 ^. uuid]
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
@@ -152,6 +156,7 @@ km1WithQ4 :: KnowledgeModel
 km1WithQ4 =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = [chapter1 ^. uuid, chapter2WithQ4 ^. uuid, chapter3 ^. uuid]
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
@@ -210,6 +215,7 @@ km1Global :: KnowledgeModel
 km1Global =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = []
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
@@ -235,6 +241,7 @@ km1Netherlands :: KnowledgeModel
 km1Netherlands =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = [chapter1WithoutQuestions ^. uuid]
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]
@@ -260,6 +267,7 @@ km1NetherlandsV2 :: KnowledgeModel
 km1NetherlandsV2 =
   KnowledgeModel
     { _knowledgeModelUuid = km1 ^. uuid
+    , _knowledgeModelAnnotations = M.empty
     , _knowledgeModelChapterUuids = [chapter1WithoutQuestions ^. uuid, chapter4WithoutQuestions ^. uuid]
     , _knowledgeModelTagUuids = [tagDataScience ^. uuid, tagBioInformatic ^. uuid]
     , _knowledgeModelIntegrationUuids = [ontologyPortal ^. uuid, bioPortal ^. uuid]

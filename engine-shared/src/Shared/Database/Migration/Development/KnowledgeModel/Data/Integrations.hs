@@ -1,17 +1,15 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations where
 
-import Control.Lens ((^.))
 import Data.Map (fromList)
-import Data.Maybe
-import qualified Data.UUID as U
+import qualified Data.Map.Strict as M
 
-import LensesConfig
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.Uuid
 
 ontologyPortal :: Integration
 ontologyPortal =
   Integration
-    { _integrationUuid = fromJust $ U.fromString "e595a99e-5b10-4ac1-a6ef-379c849f9c84"
+    { _integrationUuid = u' "e595a99e-5b10-4ac1-a6ef-379c849f9c84"
     , _integrationIId = "ontologyPortal"
     , _integrationName = "Ontology Portal"
     , _integrationProps = ["domain", "country"]
@@ -24,13 +22,13 @@ ontologyPortal =
     , _integrationResponseIdField = "id"
     , _integrationResponseNameField = "name"
     , _integrationItemUrl = "https://example.com/ontologies/${id}"
+    , _integrationAnnotations = M.empty
     }
 
 ontologyPortalEdited :: Integration
 ontologyPortalEdited =
-  Integration
-    { _integrationUuid = ontologyPortal ^. uuid
-    , _integrationIId = "editedOntologyPortal"
+  ontologyPortal
+    { _integrationIId = "editedOntologyPortal"
     , _integrationName = "EDITED: Ontology Portal"
     , _integrationProps = ["domain", "language"]
     , _integrationLogo = ""
@@ -43,12 +41,13 @@ ontologyPortalEdited =
     , _integrationResponseIdField = "idEdited"
     , _integrationResponseNameField = "nameEdited"
     , _integrationItemUrl = "https://example.com/ontologies-edited/${id}"
+    , _integrationAnnotations = M.fromList [("newAnnotation", "someValue")]
     }
 
 bioPortal :: Integration
 bioPortal =
   Integration
-    { _integrationUuid = fromJust $ U.fromString "32b5f11d-960b-4ce9-889f-fc7d29964122"
+    { _integrationUuid = u' "32b5f11d-960b-4ce9-889f-fc7d29964122"
     , _integrationIId = "bioPortal"
     , _integrationName = "Bio Portal"
     , _integrationProps = ["domain", "branch"]
@@ -61,4 +60,5 @@ bioPortal =
     , _integrationResponseIdField = "id"
     , _integrationResponseNameField = "name"
     , _integrationItemUrl = "https://example.com/portals/${id}"
+    , _integrationAnnotations = M.empty
     }

@@ -10,6 +10,7 @@ type KMParentMap = M.Map U.UUID U.UUID
 data KnowledgeModel =
   KnowledgeModel
     { _knowledgeModelUuid :: U.UUID
+    , _knowledgeModelAnnotations :: M.Map String String
     , _knowledgeModelChapterUuids :: [U.UUID]
     , _knowledgeModelTagUuids :: [U.UUID]
     , _knowledgeModelIntegrationUuids :: [U.UUID]
@@ -40,6 +41,7 @@ data Chapter =
     { _chapterUuid :: U.UUID
     , _chapterTitle :: String
     , _chapterText :: Maybe String
+    , _chapterAnnotations :: M.Map String String
     , _chapterQuestionUuids :: [U.UUID]
     }
   deriving (Show, Eq, Generic)
@@ -66,6 +68,7 @@ data OptionsQuestion =
     , _optionsQuestionTitle :: String
     , _optionsQuestionText :: Maybe String
     , _optionsQuestionRequiredPhaseUuid :: Maybe U.UUID
+    , _optionsQuestionAnnotations :: M.Map String String
     , _optionsQuestionTagUuids :: [U.UUID]
     , _optionsQuestionExpertUuids :: [U.UUID]
     , _optionsQuestionReferenceUuids :: [U.UUID]
@@ -79,6 +82,7 @@ data MultiChoiceQuestion =
     , _multiChoiceQuestionTitle :: String
     , _multiChoiceQuestionText :: Maybe String
     , _multiChoiceQuestionRequiredPhaseUuid :: Maybe U.UUID
+    , _multiChoiceQuestionAnnotations :: M.Map String String
     , _multiChoiceQuestionTagUuids :: [U.UUID]
     , _multiChoiceQuestionExpertUuids :: [U.UUID]
     , _multiChoiceQuestionReferenceUuids :: [U.UUID]
@@ -92,6 +96,7 @@ data ListQuestion =
     , _listQuestionTitle :: String
     , _listQuestionText :: Maybe String
     , _listQuestionRequiredPhaseUuid :: Maybe U.UUID
+    , _listQuestionAnnotations :: M.Map String String
     , _listQuestionTagUuids :: [U.UUID]
     , _listQuestionExpertUuids :: [U.UUID]
     , _listQuestionReferenceUuids :: [U.UUID]
@@ -105,6 +110,7 @@ data ValueQuestion =
     , _valueQuestionTitle :: String
     , _valueQuestionText :: Maybe String
     , _valueQuestionRequiredPhaseUuid :: Maybe U.UUID
+    , _valueQuestionAnnotations :: M.Map String String
     , _valueQuestionTagUuids :: [U.UUID]
     , _valueQuestionExpertUuids :: [U.UUID]
     , _valueQuestionReferenceUuids :: [U.UUID]
@@ -118,6 +124,7 @@ data IntegrationQuestion =
     , _integrationQuestionTitle :: String
     , _integrationQuestionText :: Maybe String
     , _integrationQuestionRequiredPhaseUuid :: Maybe U.UUID
+    , _integrationQuestionAnnotations :: M.Map String String
     , _integrationQuestionTagUuids :: [U.UUID]
     , _integrationQuestionExpertUuids :: [U.UUID]
     , _integrationQuestionReferenceUuids :: [U.UUID]
@@ -132,6 +139,7 @@ data Answer =
     { _answerUuid :: U.UUID
     , _answerLabel :: String
     , _answerAdvice :: Maybe String
+    , _answerAnnotations :: M.Map String String
     , _answerFollowUpUuids :: [U.UUID]
     , _answerMetricMeasures :: [MetricMeasure]
     }
@@ -142,6 +150,7 @@ data Choice =
   Choice
     { _choiceUuid :: U.UUID
     , _choiceLabel :: String
+    , _choiceAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -151,6 +160,7 @@ data Expert =
     { _expertUuid :: U.UUID
     , _expertName :: String
     , _expertEmail :: String
+    , _expertAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -165,6 +175,7 @@ data ResourcePageReference =
   ResourcePageReference
     { _resourcePageReferenceUuid :: U.UUID
     , _resourcePageReferenceShortUuid :: String
+    , _resourcePageReferenceAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -173,6 +184,7 @@ data URLReference =
     { _uRLReferenceUuid :: U.UUID
     , _uRLReferenceUrl :: String
     , _uRLReferenceLabel :: String
+    , _uRLReferenceAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -181,6 +193,7 @@ data CrossReference =
     { _crossReferenceUuid :: U.UUID
     , _crossReferenceTargetUuid :: U.UUID
     , _crossReferenceDescription :: String
+    , _crossReferenceAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -191,20 +204,16 @@ data Metric =
     , _metricTitle :: String
     , _metricAbbreviation :: Maybe String
     , _metricDescription :: Maybe String
+    , _metricAnnotations :: M.Map String String
     }
-  deriving (Show, Generic)
-
-instance Eq Metric where
-  a == b =
-    _metricUuid a == _metricUuid b &&
-    _metricTitle a == _metricTitle b &&
-    _metricAbbreviation a == _metricAbbreviation b && _metricDescription a == _metricDescription b
+  deriving (Show, Eq, Generic)
 
 data MetricMeasure =
   MetricMeasure
     { _metricMeasureMetricUuid :: U.UUID
     , _metricMeasureMeasure :: Double
     , _metricMeasureWeight :: Double
+    , _metricMeasureAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -214,6 +223,7 @@ data Phase =
     { _phaseUuid :: U.UUID
     , _phaseTitle :: String
     , _phaseDescription :: Maybe String
+    , _phaseAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -224,6 +234,7 @@ data Tag =
     , _tagName :: String
     , _tagDescription :: Maybe String
     , _tagColor :: String
+    , _tagAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -243,5 +254,6 @@ data Integration =
     , _integrationResponseIdField :: String
     , _integrationResponseNameField :: String
     , _integrationItemUrl :: String
+    , _integrationAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)

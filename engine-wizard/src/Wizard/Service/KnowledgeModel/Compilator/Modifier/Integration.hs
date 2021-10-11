@@ -23,6 +23,7 @@ instance CreateEntity AddIntegrationEvent Integration where
       , _integrationResponseIdField = e ^. responseIdField
       , _integrationResponseNameField = e ^. responseNameField
       , _integrationItemUrl = e ^. itemUrl
+      , _integrationAnnotations = e ^. annotations
       }
 
 instance EditEntity EditIntegrationEvent Integration where
@@ -34,7 +35,8 @@ instance EditEntity EditIntegrationEvent Integration where
     applyRequestMethod .
     applyRequestUrl .
     applyRequestHeaders .
-    applyRequestBody . applyResponseListField . applyResponseIdField . applyResponseNameField . applyItemUrl
+    applyRequestBody .
+    applyResponseListField . applyResponseIdField . applyResponseNameField . applyItemUrl . applyAnnotations
     where
       applyIId integration = applyValue (e ^. iId) integration iId
       applyName integration = applyValue (e ^. name) integration name
@@ -48,3 +50,4 @@ instance EditEntity EditIntegrationEvent Integration where
       applyResponseIdField integration = applyValue (e ^. responseIdField) integration responseIdField
       applyResponseNameField integration = applyValue (e ^. responseNameField) integration responseNameField
       applyItemUrl integration = applyValue (e ^. itemUrl) integration itemUrl
+      applyAnnotations integration = applyValue (e ^. annotations) integration annotations
