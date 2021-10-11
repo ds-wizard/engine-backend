@@ -91,7 +91,7 @@ doc1Create =
     }
 
 doc1Dto :: DocumentDTO
-doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) commonWizardTemplate
+doc1Dto = toDTO doc1 (Just . QTN_Mapper.toSimple $ questionnaire1) [] commonWizardTemplate
 
 doc2 :: Document
 doc2 =

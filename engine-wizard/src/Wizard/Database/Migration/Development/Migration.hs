@@ -24,6 +24,7 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
+import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
 import qualified Wizard.Database.Migration.Development.Template.TemplateSchemaMigration as TML_Schema
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U
@@ -33,6 +34,7 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop schema
+  SUB_Schema.dropTables
   ACK_Schema.dropTables
   BR_Schema.dropTables
   F_Schema.dropTables
@@ -60,6 +62,7 @@ runMigration = do
   DOC_Schema.createTables
   QTN_MIG_Schema.createTables
   KM_MIG_Schema.createTables
+  SUB_Schema.createTables
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures

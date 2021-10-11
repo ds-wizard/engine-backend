@@ -25,6 +25,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Document.DocumentQueueDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Document.Document
@@ -82,13 +83,14 @@ createDocumentWithDurability dto durability =
     let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser now
     insertDocument doc
     publishToDocumentQueue doc
-    return $ toDTO doc (Just qtnSimple) tml
+    return $ toDTO doc (Just qtnSimple) [] tml
 
 deleteDocument :: String -> AppContextM ()
 deleteDocument docUuid =
   runInTransaction $ do
     doc <- findDocumentById docUuid
     checkEditPermissionToDoc (U.toString $ doc ^. questionnaireUuid)
+    deleteSubmissionsFiltered [("document_uuid", docUuid)]
     deleteDocumentById docUuid
     removeDocumentContent docUuid
 

@@ -47,6 +47,7 @@ list_POST appContext =
   describe "POST /documents" $ do
     test_201 appContext
     test_400 appContext
+    test_401 appContext
     test_403 appContext
 
 -- ----------------------------------------------------
@@ -67,7 +68,7 @@ reqDtoT qtn =
     , _documentCreateDTOFormatUuid = doc1 ^. formatUuid
     }
 
-reqBody = ""
+reqBodyT = encode . reqDtoT
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -75,7 +76,6 @@ reqBody = ""
 test_201 appContext = do
   create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
   create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_201 "HTTP 201 CREATED (Anonymous, Public, Sharing)" appContext questionnaire10 []
 
 create_test_201 title appContext qtn authHeader =
   it title $
@@ -141,6 +141,11 @@ test_400 appContext = do
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] (reqBodyT questionnaire1)
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
 test_403 appContext = do
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
@@ -154,24 +159,6 @@ test_403 appContext = do
     questionnaire2
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
-    appContext
-    questionnaire2
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
-    appContext
-    questionnaire7
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, Public)"
-    appContext
-    questionnaire3
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $

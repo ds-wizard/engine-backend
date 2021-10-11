@@ -123,6 +123,7 @@ import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Model.Submission.Submission
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
@@ -501,6 +502,9 @@ makeFields ''Report
 
 -- Model / Statistic
 makeFields ''InstanceStatistics
+
+-- Model / Submission
+makeFields ''Submission
 
 -- Model / Template
 makeFields ''Template

@@ -19,5 +19,5 @@ type List_POST
 
 list_POST :: Maybe String -> DocumentCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] DocumentDTO)
 list_POST mTokenHeader reqDto =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ addTraceUuidHeader =<< createDocument reqDto
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $ addTraceUuidHeader =<< createDocument reqDto

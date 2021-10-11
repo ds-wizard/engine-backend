@@ -10,13 +10,13 @@ import Wizard.Service.Document.DocumentService
 type Detail_DELETE
    = Header "Authorization" String
      :> "documents"
-     :> Capture "docUuuid" String
+     :> Capture "docUuid" String
      :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 detail_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
 detail_DELETE mTokenHeader docUuid =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
-    runInMaybeAuthService $
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $
     addTraceUuidHeader =<< do
       deleteDocument docUuid
       return NoContent

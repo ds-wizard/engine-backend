@@ -8,13 +8,14 @@ import LensesConfig
 import Shared.Model.Template.Template
 import Wizard.Api.Resource.Document.DocumentCreateDTO
 import Wizard.Api.Resource.Document.DocumentDTO
+import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Document.Document
 import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Service.Template.TemplateMapper as Template
 
-toDTO :: Document -> Maybe QuestionnaireSimple -> Template -> DocumentDTO
-toDTO doc mQtn tml =
+toDTO :: Document -> Maybe QuestionnaireSimple -> [SubmissionDTO] -> Template -> DocumentDTO
+toDTO doc mQtn submissions tml =
   DocumentDTO
     { _documentDTOUuid = doc ^. uuid
     , _documentDTOName = doc ^. name
@@ -25,6 +26,7 @@ toDTO doc mQtn tml =
     , _documentDTOFormatUuid = doc ^. formatUuid
     , _documentDTOFileName = doc ^. fileName
     , _documentDTOContentType = doc ^. contentType
+    , _documentDTOSubmissions = submissions
     , _documentDTOCreatorUuid = doc ^. creatorUuid
     , _documentDTOCreatedAt = doc ^. createdAt
     }
