@@ -14,15 +14,17 @@ instance CreateEntity AddAnswerEvent Answer where
       { _answerUuid = e ^. entityUuid
       , _answerLabel = e ^. label
       , _answerAdvice = e ^. advice
+      , _answerAnnotations = e ^. annotations
       , _answerFollowUpUuids = []
       , _answerMetricMeasures = e ^. metricMeasures
       }
 
 instance EditEntity EditAnswerEvent Answer where
-  editEntity e = applyMetricMeasures . applyFollowUpUuids . applyAdvice . applyLabel
+  editEntity e = applyMetricMeasures . applyFollowUpUuids . applyAnnotations . applyAdvice . applyLabel
     where
       applyLabel ans = applyValue (e ^. label) ans label
       applyAdvice ans = applyValue (e ^. advice) ans advice
+      applyAnnotations ans = applyValue (e ^. annotations) ans annotations
       applyFollowUpUuids ans = applyValue (e ^. followUpUuids) ans followUpUuids
       applyMetricMeasures ans = applyValue (e ^. metricMeasures) ans metricMeasures
 

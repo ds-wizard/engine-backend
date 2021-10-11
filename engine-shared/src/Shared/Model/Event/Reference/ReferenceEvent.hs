@@ -1,5 +1,6 @@
 module Shared.Model.Event.Reference.ReferenceEvent where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -17,6 +18,7 @@ data AddResourcePageReferenceEvent =
     , _addResourcePageReferenceEventParentUuid :: U.UUID
     , _addResourcePageReferenceEventEntityUuid :: U.UUID
     , _addResourcePageReferenceEventShortUuid :: String
+    , _addResourcePageReferenceEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -27,6 +29,7 @@ data AddURLReferenceEvent =
     , _addURLReferenceEventEntityUuid :: U.UUID
     , _addURLReferenceEventUrl :: String
     , _addURLReferenceEventLabel :: String
+    , _addURLReferenceEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -37,6 +40,7 @@ data AddCrossReferenceEvent =
     , _addCrossReferenceEventEntityUuid :: U.UUID
     , _addCrossReferenceEventTargetUuid :: U.UUID
     , _addCrossReferenceEventDescription :: String
+    , _addCrossReferenceEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -53,6 +57,7 @@ data EditResourcePageReferenceEvent =
     , _editResourcePageReferenceEventParentUuid :: U.UUID
     , _editResourcePageReferenceEventEntityUuid :: U.UUID
     , _editResourcePageReferenceEventShortUuid :: EventField String
+    , _editResourcePageReferenceEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 
@@ -63,6 +68,7 @@ data EditURLReferenceEvent =
     , _editURLReferenceEventEntityUuid :: U.UUID
     , _editURLReferenceEventUrl :: EventField String
     , _editURLReferenceEventLabel :: EventField String
+    , _editURLReferenceEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 
@@ -73,6 +79,7 @@ data EditCrossReferenceEvent =
     , _editCrossReferenceEventEntityUuid :: U.UUID
     , _editCrossReferenceEventTargetUuid :: EventField U.UUID
     , _editCrossReferenceEventDescription :: EventField String
+    , _editCrossReferenceEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

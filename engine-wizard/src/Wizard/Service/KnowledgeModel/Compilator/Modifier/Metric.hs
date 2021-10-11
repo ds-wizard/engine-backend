@@ -14,11 +14,13 @@ instance CreateEntity AddMetricEvent Metric where
       , _metricTitle = e ^. title
       , _metricAbbreviation = e ^. abbreviation
       , _metricDescription = e ^. description
+      , _metricAnnotations = e ^. annotations
       }
 
 instance EditEntity EditMetricEvent Metric where
-  editEntity e = applyDescription . applyAbbreviation . applyTitle
+  editEntity e = applyAnnotations . applyDescription . applyAbbreviation . applyTitle
     where
-      applyTitle exp = applyValue (e ^. title) exp title
-      applyAbbreviation exp = applyValue (e ^. abbreviation) exp abbreviation
-      applyDescription exp = applyValue (e ^. description) exp description
+      applyTitle m = applyValue (e ^. title) m title
+      applyAbbreviation m = applyValue (e ^. abbreviation) m abbreviation
+      applyDescription m = applyValue (e ^. description) m description
+      applyAnnotations m = applyValue (e ^. annotations) m annotations

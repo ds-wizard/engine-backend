@@ -26,6 +26,7 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , title'
   , text'
   , requiredPhaseUuid'
+  , annotations'
   , tagUuids'
   , answerUuids'
   , choiceUuids'
@@ -292,6 +293,23 @@ requiredPhaseUuid' convert entity = fmap (set entity) (convert . get $ entity)
     set (ListQuestion' q) newValue = ListQuestion' $ q & requiredPhaseUuid .~ newValue
     set (ValueQuestion' q) newValue = ValueQuestion' $ q & requiredPhaseUuid .~ newValue
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredPhaseUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+annotations' :: Functor f => (M.Map String String -> f (M.Map String String)) -> Question -> f Question
+annotations' convert entity = fmap (set entity) (convert . get $ entity)
+  where
+    get :: Question -> M.Map String String
+    get (OptionsQuestion' q) = q ^. annotations
+    get (MultiChoiceQuestion' q) = q ^. annotations
+    get (ListQuestion' q) = q ^. annotations
+    get (ValueQuestion' q) = q ^. annotations
+    get (IntegrationQuestion' q) = q ^. annotations
+    set :: Question -> M.Map String String -> Question
+    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & annotations .~ newValue
+    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & annotations .~ newValue
+    set (ListQuestion' q) newValue = ListQuestion' $ q & annotations .~ newValue
+    set (ValueQuestion' q) newValue = ValueQuestion' $ q & annotations .~ newValue
+    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & annotations .~ newValue
 
 ------------------------------------------------------------------------------------------
 tagUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question
