@@ -31,8 +31,9 @@ toDTO doc mQtn submissions tml =
     , _documentDTOCreatedAt = doc ^. createdAt
     }
 
-fromCreateDTO :: DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> Maybe UserDTO -> UTCTime -> Document
-fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
+fromCreateDTO ::
+     DocumentCreateDTO -> U.UUID -> DocumentDurability -> Int -> Maybe UserDTO -> U.UUID -> UTCTime -> Document
+fromCreateDTO dto docUuid durability repliesHash mCurrentUser appUuid now =
   Document
     { _documentUuid = docUuid
     , _documentName = dto ^. name
@@ -47,6 +48,7 @@ fromCreateDTO dto docUuid durability repliesHash mCurrentUser now =
     , _documentFileName = Nothing
     , _documentContentType = Nothing
     , _documentWorkerLog = Nothing
+    , _documentAppUuid = appUuid
     , _documentRetrievedAt = Nothing
     , _documentFinishedAt = Nothing
     , _documentCreatedAt = now

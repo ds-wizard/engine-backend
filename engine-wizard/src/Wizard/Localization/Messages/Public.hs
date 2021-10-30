@@ -18,6 +18,8 @@ _ERROR_SERVICE_TML__TML_FILE_OR_ASSET_UNIQUENESS =
     []
 
 -- Absence
+_ERROR_VALIDATION__APP_ABSENCE host = LocaleRecord "error.validation.app_absence" "App ('%s') doesn't exist" [host]
+
 _ERROR_VALIDATION__BRANCH_PREVIOUS_PKG_ABSENCE =
   LocaleRecord "error.validation.branch_previous_pkg_absence" "Branch has to be based on a package" []
 

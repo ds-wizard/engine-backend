@@ -21,6 +21,7 @@ instance ToRow MigratorState where
     , toJSONField _migratorStateTargetPackageEvents
     , toJSONField _migratorStateResultEvents
     , toJSONField _migratorStateCurrentKnowledgeModel
+    , toField _migratorStateAppUuid
     ]
 
 instance FromRow MigratorState where
@@ -34,4 +35,5 @@ instance FromRow MigratorState where
     _migratorStateTargetPackageEvents <- fieldWith fromJSONField
     _migratorStateResultEvents <- fieldWith fromJSONField
     _migratorStateCurrentKnowledgeModel <- fieldWith fromJSONField
+    _migratorStateAppUuid <- field
     return $ MigratorState {..}

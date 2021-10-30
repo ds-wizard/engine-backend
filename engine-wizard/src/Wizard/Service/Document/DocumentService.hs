@@ -74,13 +74,14 @@ createDocumentWithDurability dto durability =
     mCurrentUser <- asks _appContextCurrentUser
     dUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
+    appUuid <- asks _appContextAppUuid
     let qtnEvents =
           case dto ^. questionnaireEventUuid of
             Just eventUuid -> takeWhileInclusive (\e -> e ^. uuid' /= eventUuid) (qtn ^. events)
             Nothing -> qtn ^. events
     qtnCtn <- compileQuestionnairePreview qtnEvents
     let repliesHash = computeHash qtnCtn
-    let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser now
+    let doc = fromCreateDTO dto dUuid durability repliesHash mCurrentUser appUuid now
     insertDocument doc
     publishToDocumentQueue doc
     return $ toDTO doc (Just qtnSimple) [] tml
@@ -165,12 +166,14 @@ createDocumentPreview qtnUuid =
 publishToDocumentQueue :: Document -> AppContextM ()
 publishToDocumentQueue doc = do
   now <- liftIO getCurrentTime
+  appUuid <- asks _appContextAppUuid
   docContext <- createDocumentContext doc
   let dq =
         DocumentQueue
           { _documentQueueDId = 0
           , _documentQueueDocumentUuid = doc ^. uuid
           , _documentQueueDocumentContext = docContext
+          , _documentQueueAppUuid = appUuid
           , _documentQueueCreatedBy = doc ^. creatorUuid
           , _documentQueueCreatedAt = now
           }

@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Submission.SubmissionCreateDTO
 import Wizard.Api.Resource.Submission.SubmissionDTO
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -26,6 +27,7 @@ submission1 =
     , _submissionReturnedData = Nothing
     , _submissionServiceId = defaultSubmissionService ^. sId
     , _submissionDocumentUuid = doc1 ^. uuid
+    , _submissionAppUuid = defaultApp ^. uuid
     , _submissionCreatedBy = userAlbert ^. uuid
     , _submissionCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _submissionUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -43,6 +45,7 @@ submission2 =
     , _submissionReturnedData = Nothing
     , _submissionServiceId = defaultSubmissionService ^. sId
     , _submissionDocumentUuid = doc1 ^. uuid
+    , _submissionAppUuid = defaultApp ^. uuid
     , _submissionCreatedBy = userAlbert ^. uuid
     , _submissionCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _submissionUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
@@ -50,3 +53,18 @@ submission2 =
 
 submission2Dto :: SubmissionDTO
 submission2Dto = toDTO submission1 (Just $ defaultSubmissionService ^. name) userAlbert
+
+differentSubmission :: Submission
+differentSubmission =
+  Submission
+    { _submissionUuid = u' "de51c280-2a6f-49d0-b3de-405401ffba74"
+    , _submissionState = DoneSubmissionState
+    , _submissionLocation = Nothing
+    , _submissionReturnedData = Nothing
+    , _submissionServiceId = defaultSubmissionService ^. sId
+    , _submissionDocumentUuid = differentDoc ^. uuid
+    , _submissionAppUuid = differentApp ^. uuid
+    , _submissionCreatedBy = userCharles ^. uuid
+    , _submissionCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , _submissionUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    }

@@ -59,7 +59,9 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
         Nothing -> callback
 
 resolvePackageId ::
-     (MonadError AppError m, MonadLogger m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m String
+     (MonadError AppError m, MonadLogger m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m String
 resolvePackageId pId = do
   validateCoordinateFormat True pId
   let version = getVersionFromCoordinate pId

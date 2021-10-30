@@ -10,12 +10,15 @@ import Data.Time
 import LensesConfig
 import Shared.Api.Handler.Common
 import Shared.Api.Resource.Error.ErrorJM ()
+import Shared.Constant.App
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Token
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Api.Resource.User.UserDTO
+import Wizard.Database.DAO.App.AppDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.App.App
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
@@ -25,22 +28,27 @@ import Wizard.Service.User.UserService
 import Wizard.Util.Context
 
 runInUnauthService :: AppContextM a -> BaseContextM a
-runInUnauthService = runIn Nothing
+runInUnauthService function = do
+  app <- getCurrentApp "server.example.com"
+  runIn (app ^. uuid) Nothing function
 
 runInAuthService :: UserDTO -> AppContextM a -> BaseContextM a
-runInAuthService user = runIn (Just user)
+runInAuthService user function = do
+  app <- getCurrentApp "server.example.com"
+  runIn (app ^. uuid) (Just user) function
 
 runInServiceAuthService :: AppContextM a -> BaseContextM a
 runInServiceAuthService function = do
   serverConfig <- asks _baseContextServerConfig
   now <- liftIO getCurrentTime
+  let appUuid = defaultAppUuid
   let user = createServiceUser serverConfig now
-  runIn (Just user) function
+  runIn appUuid (Just user) function
 
-runIn :: Maybe UserDTO -> AppContextM a -> BaseContextM a
-runIn mUser function = do
+runIn :: U.UUID -> Maybe UserDTO -> AppContextM a -> BaseContextM a
+runIn appUuid mUser function = do
   baseContext <- ask
-  appContext <- liftIO $ appContextFromBaseContext mUser baseContext
+  appContext <- liftIO $ appContextFromBaseContext appUuid mUser baseContext
   let loggingLevel = baseContext ^. serverConfig . logging . level
   eResult <- liftIO $ runMonads (runAppContextM function) appContext
   case eResult of
@@ -87,6 +95,18 @@ getCurrentUser tokenHeader = do
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error
+
+getCurrentApp :: String -> BaseContextM App
+getCurrentApp host = do
+  serverConfig <- asks _baseContextServerConfig
+  if serverConfig ^. experimental . moreAppsEnabled
+    then runInServiceAuthService $ catchError (findAppByServerDomain host) (handleError host)
+    else do
+      let appUuid = U.toString defaultAppUuid
+      runInServiceAuthService $ catchError (findAppById appUuid) (handleError appUuid)
+  where
+    handleError host (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE host)
+    handleError host error = throwError error
 
 getCurrentUserUuid :: String -> BaseContextM String
 getCurrentUserUuid tokenHeader = do

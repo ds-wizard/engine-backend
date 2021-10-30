@@ -63,7 +63,7 @@ modifyVersion qtnUuid vUuid reqDto =
     version <-
       case L.find (\v -> U.toString (v ^. uuid) == vUuid) (qtn ^. versions) of
         Just version -> return version
-        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" vUuid
+        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", vUuid)]
     let updatedVersion = fromVersionChangeDTO reqDto (version ^. uuid) (version ^. createdBy) (version ^. createdAt) now
     let updatedVersions =
           foldl
@@ -85,7 +85,7 @@ deleteVersion qtnUuid vUuid =
     updatedVersions <-
       case L.find (\v -> U.toString (v ^. uuid) == vUuid) (qtn ^. versions) of
         Just version -> return $ L.delete version (qtn ^. versions)
-        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" vUuid
+        Nothing -> throwError . NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "version" [("uuid", vUuid)]
     let updatedQtn = qtn & versions .~ updatedVersions
     updateQuestionnaireById updatedQtn
 

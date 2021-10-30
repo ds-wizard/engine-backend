@@ -63,10 +63,10 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/packages/global:non-existing-package:1.0.0"
     reqHeaders
     reqBody
     "package"
-    "global:non-existing-package:1.0.0"
+    [("id", "global:non-existing-package:1.0.0")]

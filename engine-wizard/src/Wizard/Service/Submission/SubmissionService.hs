@@ -101,7 +101,8 @@ createSubmission :: U.UUID -> SubmissionCreateDTO -> AppContextM Submission
 createSubmission docUuid reqDto = do
   sUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
+  appUuid <- asks _appContextAppUuid
   currentUser <- getCurrentUser
-  let sub = fromCreate sUuid (reqDto ^. serviceId) docUuid (currentUser ^. uuid) now
+  let sub = fromCreate sUuid (reqDto ^. serviceId) docUuid appUuid (currentUser ^. uuid) now
   insertSubmission sub
   return sub

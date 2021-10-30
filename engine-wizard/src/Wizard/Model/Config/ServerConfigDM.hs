@@ -20,6 +20,7 @@ defaultConfig =
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
+    , _serverConfigExperimental = defaultExperimental
     }
 
 defaultGeneral :: ServerConfigGeneral

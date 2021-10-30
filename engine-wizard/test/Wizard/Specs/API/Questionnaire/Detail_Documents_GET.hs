@@ -150,10 +150,10 @@ create_test_403 title appContext qtn authHeader errorMessage =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a/documents"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "questionnaire"
-    "f08ead5f-746d-411b-aee6-77ea3d24016a"
+    [("uuid", "f08ead5f-746d-411b-aee6-77ea3d24016a")]

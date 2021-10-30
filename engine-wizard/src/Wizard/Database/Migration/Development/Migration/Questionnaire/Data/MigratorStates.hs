@@ -11,6 +11,7 @@ import qualified Shared.Service.Package.PackageMapper as PM
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateChangeDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Migration.Questionnaire.MigratorState
@@ -25,6 +26,7 @@ nlQtnMigrationState =
     { _migratorStateOldQuestionnaireUuid = nlQtnMigrationStateDto ^. oldQuestionnaire . uuid
     , _migratorStateNewQuestionnaireUuid = nlQtnMigrationStateDto ^. newQuestionnaire . uuid
     , _migratorStateResolvedQuestionUuids = [question2 ^. uuid]
+    , _migratorStateAppUuid = defaultApp ^. uuid
     }
 
 nlQtnMigrationStateDto :: MigratorStateDTO
@@ -61,6 +63,7 @@ nlQtnMigrationStateDto =
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4Upgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4Upgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
+    , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }
 
 nlQtnMigrationStateVisibleViewDto :: MigratorStateDTO
@@ -97,6 +100,7 @@ nlQtnMigrationStateVisibleViewDto =
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleViewUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
+    , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }
 
 nlQtnMigrationStateVisibleEditDto :: MigratorStateDTO
@@ -133,6 +137,7 @@ nlQtnMigrationStateVisibleEditDto =
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEditUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
+    , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }
 
 nlQtnMigrationStateDtoEdited :: MigratorStateDTO
@@ -141,6 +146,7 @@ nlQtnMigrationStateDtoEdited =
     { _migratorStateDTOOldQuestionnaire = nlQtnMigrationStateDto ^. oldQuestionnaire
     , _migratorStateDTONewQuestionnaire = nlQtnMigrationStateDto ^. newQuestionnaire
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid, question3 ^. uuid]
+    , _migratorStateDTOAppUuid = nlQtnMigrationStateDto ^. appUuid
     }
 
 migratorStateCreate :: MigratorStateCreateDTO
@@ -154,3 +160,12 @@ migratorStateChange :: MigratorStateChangeDTO
 migratorStateChange =
   MigratorStateChangeDTO
     {_migratorStateChangeDTOResolvedQuestionUuids = nlQtnMigrationStateDtoEdited ^. resolvedQuestionUuids}
+
+differentQtnMigrationState :: MigratorState
+differentQtnMigrationState =
+  MigratorState
+    { _migratorStateOldQuestionnaireUuid = differentQuestionnaire ^. uuid
+    , _migratorStateNewQuestionnaireUuid = differentQuestionnaire ^. uuid
+    , _migratorStateResolvedQuestionUuids = [question2 ^. uuid]
+    , _migratorStateAppUuid = differentApp ^. uuid
+    }

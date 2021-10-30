@@ -13,6 +13,7 @@ instance ToRow TemplateFile where
     , toField _templateFileUuid
     , toField _templateFileFileName
     , toField _templateFileContent
+    , toField _templateFileAppUuid
     ]
 
 instance FromRow TemplateFile where
@@ -21,4 +22,5 @@ instance FromRow TemplateFile where
     _templateFileUuid <- field
     _templateFileFileName <- field
     _templateFileContent <- field
+    _templateFileAppUuid <- field
     return $ TemplateFile {..}

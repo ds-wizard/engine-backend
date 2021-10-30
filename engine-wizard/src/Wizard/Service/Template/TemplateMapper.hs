@@ -2,6 +2,7 @@ module Wizard.Service.Template.TemplateMapper where
 
 import Control.Lens ((^.))
 import Data.Time
+import qualified Data.UUID as U
 
 import LensesConfig
 import qualified Registry.Api.Resource.Template.TemplateSimpleDTO as R_TemplateSimpleDTO
@@ -97,8 +98,8 @@ toChangeDTO template =
     , _templateChangeDTOFormats = template ^. formats
     }
 
-fromCreateDTO :: TemplateChangeDTO -> UTCTime -> Template
-fromCreateDTO dto createdAt =
+fromCreateDTO :: TemplateChangeDTO -> U.UUID -> UTCTime -> Template
+fromCreateDTO dto appUuid createdAt =
   Template
     { _templateTId = buildCoordinate (dto ^. organizationId) (dto ^. templateId) (dto ^. version)
     , _templateName = dto ^. name
@@ -112,6 +113,7 @@ fromCreateDTO dto createdAt =
     , _templateAllowedPackages = dto ^. allowedPackages
     , _templateRecommendedPackageId = dto ^. recommendedPackageId
     , _templateFormats = dto ^. formats
+    , _templateAppUuid = appUuid
     , _templateCreatedAt = createdAt
     }
 
@@ -130,6 +132,7 @@ fromChangeDTO dto template =
     , _templateAllowedPackages = dto ^. allowedPackages
     , _templateRecommendedPackageId = dto ^. recommendedPackageId
     , _templateFormats = dto ^. formats
+    , _templateAppUuid = template ^. appUuid
     , _templateCreatedAt = template ^. createdAt
     }
 

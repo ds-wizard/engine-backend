@@ -14,6 +14,7 @@ data Branch =
     , _branchMetamodelVersion :: Int
     , _branchPreviousPackageId :: Maybe String
     , _branchOwnerUuid :: Maybe U.UUID
+    , _branchAppUuid :: U.UUID
     , _branchCreatedAt :: UTCTime
     , _branchUpdatedAt :: UTCTime
     }
@@ -28,6 +29,7 @@ data BranchWithEvents =
     , _branchWithEventsPreviousPackageId :: Maybe String
     , _branchWithEventsEvents :: [Event]
     , _branchWithEventsOwnerUuid :: Maybe U.UUID
+    , _branchWithEventsAppUuid :: U.UUID
     , _branchWithEventsCreatedAt :: UTCTime
     , _branchWithEventsUpdatedAt :: UTCTime
     }

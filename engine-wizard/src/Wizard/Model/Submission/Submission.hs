@@ -18,6 +18,7 @@ data Submission =
     , _submissionReturnedData :: Maybe String
     , _submissionServiceId :: String
     , _submissionDocumentUuid :: U.UUID
+    , _submissionAppUuid :: U.UUID
     , _submissionCreatedBy :: U.UUID
     , _submissionCreatedAt :: UTCTime
     , _submissionUpdatedAt :: UTCTime

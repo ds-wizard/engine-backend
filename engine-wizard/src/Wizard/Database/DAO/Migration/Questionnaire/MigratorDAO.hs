@@ -1,8 +1,8 @@
 module Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import Data.String
-import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -21,26 +21,34 @@ entityName = "questionnaire_migration"
 pageLabel = "migrations"
 
 findMigratorStates :: AppContextM [MigratorState]
-findMigratorStates = createFindEntitiesFn entityName
+findMigratorStates = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findMigratorStatesByOldQuestionnaireId :: String -> AppContextM [MigratorState]
-findMigratorStatesByOldQuestionnaireId oldQtnUuid =
-  createFindEntitiesByFn entityName [("old_questionnaire_uuid", oldQtnUuid)]
+findMigratorStatesByOldQuestionnaireId oldQtnUuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("old_questionnaire_uuid", oldQtnUuid)]
 
 findMigratorStateByNewQuestionnaireId :: String -> AppContextM MigratorState
-findMigratorStateByNewQuestionnaireId = createFindEntityByFn entityName "new_questionnaire_uuid"
+findMigratorStateByNewQuestionnaireId newQuestionnaireUuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", newQuestionnaireUuid)]
 
 findMigratorStateByNewQuestionnaireId' :: String -> AppContextM (Maybe MigratorState)
-findMigratorStateByNewQuestionnaireId' = createFindEntityByFn' entityName "new_questionnaire_uuid"
+findMigratorStateByNewQuestionnaireId' newQuestionnaireUuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", newQuestionnaireUuid)]
 
 insertMigratorState :: MigratorState -> AppContextM Int64
 insertMigratorState = createInsertFn entityName
 
 updateMigratorStateByNewQuestionnaireId :: MigratorState -> AppContextM Int64
 updateMigratorStateByNewQuestionnaireId ms = do
-  let params = toRow ms ++ [toField . U.toText $ ms ^. newQuestionnaireUuid]
+  appUuid <- asks _appContextAppUuid
+  let params = toRow ms ++ [toField appUuid, toField $ ms ^. newQuestionnaireUuid]
   let sql =
-        "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ? WHERE new_questionnaire_uuid = ?"
+        "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, app_uuid = ? WHERE app_uuid = ? AND new_questionnaire_uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
@@ -49,4 +57,6 @@ deleteMigratorStates :: AppContextM Int64
 deleteMigratorStates = createDeleteEntitiesFn entityName
 
 deleteMigratorStateByNewQuestionnaireId :: String -> AppContextM Int64
-deleteMigratorStateByNewQuestionnaireId = createDeleteEntityByFn entityName "new_questionnaire_uuid"
+deleteMigratorStateByNewQuestionnaireId newQuestionnaireUuid = do
+  appUuid <- asks _appContextAppUuid
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("new_questionnaire_uuid", newQuestionnaireUuid)]

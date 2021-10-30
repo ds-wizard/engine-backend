@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Uuid
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Questionnaire.Questionnaire
@@ -100,7 +101,11 @@ test404 appContext = do
    do
     let nonExistingQtnUuid = "fd5ea37c-852a-4174-9d65-2bf23202541d"
     -- AND: Prepare expectation
-    let expError = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" nonExistingQtnUuid)
+    let expError =
+          NotExistsError
+            (_ERROR_DATABASE__ENTITY_NOT_FOUND
+               "questionnaire"
+               [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", nonExistingQtnUuid)])
     -- WHEN:
     (c1, s1) <- createConnection appContext (reqUrlT (u' nonExistingQtnUuid) (Just reqAuthToken))
     -- THEN:

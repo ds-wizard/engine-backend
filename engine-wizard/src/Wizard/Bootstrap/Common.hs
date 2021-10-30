@@ -5,6 +5,7 @@ import Control.Monad.Except (runExceptT)
 import Control.Monad.Reader (liftIO, runReaderT)
 
 import LensesConfig
+import Shared.Constant.App
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
@@ -25,6 +26,7 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextHttpClientManager = baseContext ^. httpClientManager
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
+          , _appContextAppUuid = defaultAppUuid
           , _appContextCurrentUser = Just . toDTO $ userAlbert
           , _appContextShutdownFlag = baseContext ^. shutdownFlag
           , _appContextCache = baseContext ^. cache

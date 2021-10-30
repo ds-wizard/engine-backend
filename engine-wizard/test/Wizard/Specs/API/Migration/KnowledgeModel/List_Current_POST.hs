@@ -4,6 +4,7 @@ module Wizard.Specs.API.Migration.KnowledgeModel.List_Current_POST
 
 import Control.Lens ((^.))
 import Data.Aeson (encode)
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -18,6 +19,7 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -150,13 +152,17 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext = do
-  createNotFoundTest reqMethod reqUrl reqHeaders reqBody "branch" "6474b24b-262b-42b1-9451-008e8363f2b6"
+  createNotFoundTest' reqMethod reqUrl reqHeaders reqBody "branch" [("uuid", "6474b24b-262b-42b1-9451-008e8363f2b6")]
   it "HTTP 404 NOT FOUND when target previous package doesn’t exist" $
     -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "package" "org.nl:core-nl:2.0.0")
+    let expDto =
+          NotExistsError
+            (_ERROR_DATABASE__ENTITY_NOT_FOUND
+               "package"
+               [("app_uuid", U.toString $ defaultApp ^. uuid), ("id", "org.nl:core-nl:2.0.0")])
     let expBody = encode expDto
     -- AND: Prepare database
     runMigrationWithEmptyDB appContext

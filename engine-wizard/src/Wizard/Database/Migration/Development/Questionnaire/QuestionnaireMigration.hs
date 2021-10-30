@@ -14,4 +14,5 @@ runMigration = do
   insertQuestionnaire questionnaire1
   insertQuestionnaire questionnaire2
   insertQuestionnaire questionnaire3
+  insertQuestionnaire differentQuestionnaire
   logInfo _CMP_MIGRATION "(Questionnaire/Questionnaire) ended"

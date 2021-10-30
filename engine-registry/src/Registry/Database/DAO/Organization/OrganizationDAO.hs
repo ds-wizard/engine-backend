@@ -22,22 +22,22 @@ findOrganizations :: AppContextM [Organization]
 findOrganizations = createFindEntitiesFn entityName
 
 findOrganizationByOrgId :: String -> AppContextM Organization
-findOrganizationByOrgId = createFindEntityByFn entityName "organization_id"
+findOrganizationByOrgId organizationId = createFindEntityByFn entityName [("organization_id", organizationId)]
 
 findOrganizationByOrgId' :: String -> AppContextM (Maybe Organization)
-findOrganizationByOrgId' = createFindEntityByFn' entityName "organization_id"
+findOrganizationByOrgId' organizationId = createFindEntityByFn' entityName [("organization_id", organizationId)]
 
 findOrganizationByToken :: String -> AppContextM Organization
-findOrganizationByToken = createFindEntityByFn entityName "token"
+findOrganizationByToken token = createFindEntityByFn entityName [("token", token)]
 
 findOrganizationByToken' :: String -> AppContextM (Maybe Organization)
-findOrganizationByToken' = createFindEntityByFn' entityName "token"
+findOrganizationByToken' token = createFindEntityByFn' entityName [("token", token)]
 
 findOrganizationByEmail :: String -> AppContextM Organization
-findOrganizationByEmail = createFindEntityByFn entityName "email"
+findOrganizationByEmail email = createFindEntityByFn entityName [("email", email)]
 
 findOrganizationByEmail' :: String -> AppContextM (Maybe Organization)
-findOrganizationByEmail' = createFindEntityByFn' entityName "email"
+findOrganizationByEmail' email = createFindEntityByFn' entityName [("email", email)]
 
 insertOrganization :: Organization -> AppContextM Int64
 insertOrganization = createInsertFn entityName
@@ -55,4 +55,4 @@ deleteOrganizations :: AppContextM Int64
 deleteOrganizations = createDeleteEntitiesFn entityName
 
 deleteOrganizationByOrgId :: String -> AppContextM Int64
-deleteOrganizationByOrgId = createDeleteEntityByFn entityName "organization_id"
+deleteOrganizationByOrgId organizationId = createDeleteEntityByFn entityName [("organization_id", organizationId)]

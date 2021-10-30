@@ -11,6 +11,7 @@ import LensesConfig
 import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
+import Shared.Constant.App
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.ContextLenses
 
@@ -37,6 +38,14 @@ instance HasS3' ServerConfig where
       get entity = entity ^. s3
       set :: ServerConfig -> ServerConfigS3 -> ServerConfig
       set entity newValue = entity & s3 .~ newValue
+
+instance HasExperimental' ServerConfig where
+  experimental' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: ServerConfig -> ServerConfigExperimental
+      get entity = entity ^. experimental
+      set :: ServerConfig -> ServerConfigExperimental -> ServerConfig
+      set entity newValue = entity & experimental .~ newValue
 
 instance HasDbPool' AppContext where
   dbPool' convert entity = fmap (set entity) (convert . get $ entity)
@@ -93,3 +102,11 @@ instance HasTraceUuid' AppContext where
       get entity = entity ^. traceUuid
       set :: AppContext -> U.UUID -> AppContext
       set entity newValue = entity & traceUuid .~ newValue
+
+instance HasAppUuid' AppContext where
+  appUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> U.UUID
+      get entity = defaultAppUuid
+      set :: AppContext -> U.UUID -> AppContext
+      set entity _ = entity

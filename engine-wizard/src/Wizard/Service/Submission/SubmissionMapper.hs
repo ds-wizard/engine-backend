@@ -35,8 +35,8 @@ toDTO sub mServiceName user =
     , _submissionDTOUpdatedAt = sub ^. updatedAt
     }
 
-fromCreate :: U.UUID -> String -> U.UUID -> U.UUID -> UTCTime -> Submission
-fromCreate uuid serviceId documentUuid createdBy now =
+fromCreate :: U.UUID -> String -> U.UUID -> U.UUID -> U.UUID -> UTCTime -> Submission
+fromCreate uuid serviceId documentUuid appUuid createdBy now =
   Submission
     { _submissionUuid = uuid
     , _submissionState = InProgressSubmissionState
@@ -44,6 +44,7 @@ fromCreate uuid serviceId documentUuid createdBy now =
     , _submissionReturnedData = Nothing
     , _submissionServiceId = serviceId
     , _submissionDocumentUuid = documentUuid
+    , _submissionAppUuid = appUuid
     , _submissionCreatedBy = createdBy
     , _submissionCreatedAt = now
     , _submissionUpdatedAt = now

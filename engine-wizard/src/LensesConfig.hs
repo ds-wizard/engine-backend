@@ -98,6 +98,7 @@ import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
 import Wizard.Model.Admin.Admin
+import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Cache.ServerCache
@@ -150,6 +151,9 @@ makeFields ''AdminSection
 makeFields ''AdminOperation
 
 makeFields ''AdminOperationParameter
+
+-- Model / App
+makeFields ''App
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -253,6 +257,8 @@ makeFields ''ServerConfigLogging
 makeFields ''ServerConfigQuestionnaire
 
 makeFields ''ServerConfigCronWorker
+
+makeFields ''ServerConfigExperimental
 
 makeFields ''BuildInfoConfig
 

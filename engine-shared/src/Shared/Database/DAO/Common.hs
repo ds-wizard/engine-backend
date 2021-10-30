@@ -8,6 +8,7 @@ import Control.Monad.Reader (MonadReader, ask, liftIO)
 import Data.Maybe
 import Data.Pool
 import Data.String
+import qualified Data.UUID as U
 import qualified Database.PostgreSQL.LibPQ as LibPQ
 import qualified Database.PostgreSQL.Simple as PostgresTransaction
 import Database.PostgreSQL.Simple
@@ -84,8 +85,7 @@ createFindEntitiesByFn entityName queryParams = do
 createFindEntityByFn ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
   => String
-  -> String
-  -> String
+  -> [(String, String)]
   -> m entity
 createFindEntityByFn = createFindEntityWithFieldsByFn "*"
 
@@ -93,27 +93,27 @@ createFindEntityWithFieldsByFn ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
   => String
   -> String
-  -> String
-  -> String
+  -> [(String, String)]
   -> m entity
-createFindEntityWithFieldsByFn fields entityName paramName paramValue = do
-  let sql = f' "SELECT %s FROM %s WHERE %s = ?" [fields, entityName, paramName]
+createFindEntityWithFieldsByFn fields entityName queryParams = do
+  let sql = f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
   logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) [paramValue]
+  let action conn = query conn (fromString sql) (fmap snd queryParams)
   entities <- runDB action
   case entities of
-    [] -> throwError $ NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName paramValue)
+    [] -> throwError $ NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName queryParams)
     [entity] -> return entity
     _ ->
       throwError $
       GeneralServerError
-        (f' "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)" [entityName, paramValue])
+        (f'
+           "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+           [entityName, show (fmap snd queryParams)])
 
 createFindEntityByFn' ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
   => String
-  -> String
-  -> String
+  -> [(String, String)]
   -> m (Maybe entity)
 createFindEntityByFn' = createFindEntityWithFieldsByFn' "*"
 
@@ -121,13 +121,12 @@ createFindEntityWithFieldsByFn' ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
   => String
   -> String
-  -> String
-  -> String
+  -> [(String, String)]
   -> m (Maybe entity)
-createFindEntityWithFieldsByFn' fields entityName paramName paramValue = do
-  let sql = f' "SELECT %s FROM %s WHERE %s = ?" [fields, entityName, paramName]
+createFindEntityWithFieldsByFn' fields entityName queryParams = do
+  let sql = f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
   logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) [paramValue]
+  let action conn = query conn (fromString sql) (fmap snd queryParams)
   entities <- runDB action
   case entities of
     [] -> return Nothing
@@ -135,7 +134,9 @@ createFindEntityWithFieldsByFn' fields entityName paramName paramValue = do
     _ ->
       throwError $
       GeneralServerError
-        (f' "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)" [entityName, paramValue])
+        (f'
+           "createFindEntityByFn: find more entities found than one (entity: %s, param: %s)"
+           [entityName, show (fmap snd queryParams)])
 
 createFindEntitiesPageableQuerySortFn ::
      (MonadReader s m, FromRow entity, ToRow q, MonadIO m, MonadError AppError m, MonadLogger m, HasDbPool' s)
@@ -202,13 +203,12 @@ createDeleteEntitiesByFn entityName queryParams = do
 createDeleteEntityByFn ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
   => String
-  -> String
-  -> String
+  -> [(String, String)]
   -> m Int64
-createDeleteEntityByFn entityName paramName paramValue = do
-  let sql = f' "DELETE FROM %s WHERE %s = ?" [entityName, paramName]
+createDeleteEntityByFn entityName queryParams = do
+  let sql = f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
   logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) [paramValue]
+  let action conn = execute conn (fromString sql) (fmap snd queryParams)
   runDB action
 
 createCountFn :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Int
@@ -299,3 +299,15 @@ computeTotalPage :: Int -> Int -> Int
 computeTotalPage 0 0 = 0
 computeTotalPage _ 0 = 1
 computeTotalPage count size = ceiling $ fromIntegral count / fromIntegral size
+
+appQueryUuid :: U.UUID -> (String, String)
+appQueryUuid appUuid = ("app_uuid", U.toString appUuid)
+
+appQueryString :: String -> (String, String)
+appQueryString appUuid = ("app_uuid", appUuid)
+
+appCondition :: String
+appCondition = "app_uuid = ?"
+
+appSelector :: U.UUID -> String
+appSelector appUuid = "app_uuid = '" ++ U.toString appUuid ++ "'"

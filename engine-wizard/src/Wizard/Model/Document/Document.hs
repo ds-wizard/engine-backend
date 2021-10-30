@@ -31,6 +31,7 @@ data Document =
     , _documentFileName :: Maybe String
     , _documentContentType :: Maybe String
     , _documentWorkerLog :: Maybe String
+    , _documentAppUuid :: U.UUID
     , _documentRetrievedAt :: Maybe UTCTime
     , _documentFinishedAt :: Maybe UTCTime
     , _documentCreatedAt :: UTCTime

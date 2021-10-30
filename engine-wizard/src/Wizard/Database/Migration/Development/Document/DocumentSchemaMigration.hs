@@ -54,7 +54,10 @@ createDocumentTable = do
         \     created_at timestamptz not null, \
         \     file_name varchar, \
         \     content_type varchar, \
-        \     worker_log varchar \
+        \     worker_log varchar, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint document_app_uuid_fk \
+        \             references app \
         \ ); \
         \  \
         \ create unique index document_uuid_uindex \
@@ -91,7 +94,10 @@ createDocumentQueueTable = do
         \         references document, \
         \   document_context json not null, \
         \   created_by uuid, \
-        \   created_at timestamptz not null \
+        \   created_at timestamptz not null, \
+        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \      constraint branch_app_uuid_fk \
+        \         references app \
         \ ); \
         \  \
         \ create unique index document_queue_id_uindex \

@@ -32,7 +32,10 @@ createTables = do
        \     title varchar not null, \
        \     content varchar not null, \
        \     created_at timestamptz not null, \
-       \     updated_at timestamptz not null \
+       \     updated_at timestamptz not null, \
+       \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+       \       constraint feedback_app_uuid_fk \
+       \         references app \
        \ ); \
        \  \
        \ create unique index feedback_uuid_uindex \

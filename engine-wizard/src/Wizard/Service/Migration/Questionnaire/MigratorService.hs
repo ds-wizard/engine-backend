@@ -1,7 +1,7 @@
 module Wizard.Service.Migration.Questionnaire.MigratorService where
 
 import Control.Lens ((.~), (^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -30,7 +30,8 @@ createQuestionnaireMigration oldQtnUuid reqDto =
     checkMigrationPermissionToQtn (oldQtn ^. visibility) (oldQtn ^. permissions)
     newQtn <- upgradeQuestionnaire reqDto oldQtn
     insertQuestionnaire newQtn
-    let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid)
+    appUuid <- asks _appContextAppUuid
+    let state = fromCreateDTO (oldQtn ^. uuid) (newQtn ^. uuid) appUuid
     insertMigratorState state
     getQuestionnaireMigration (U.toString $ newQtn ^. uuid)
 
@@ -45,7 +46,7 @@ getQuestionnaireMigration qtnUuid =
     newQtn <- findQuestionnaireById (U.toString $ state ^. newQuestionnaireUuid)
     checkMigrationPermissionToQtn (oldQtn ^. visibility) (oldQtn ^. permissions)
     checkMigrationPermissionToQtn (newQtn ^. visibility) (newQtn ^. permissions)
-    return $ toDTO oldQtnDto newQtnDto (state ^. resolvedQuestionUuids)
+    return $ toDTO oldQtnDto newQtnDto (state ^. resolvedQuestionUuids) (state ^. appUuid)
 
 modifyQuestionnaireMigration :: String -> MigratorStateChangeDTO -> AppContextM MigratorStateDTO
 modifyQuestionnaireMigration qtnUuid reqDto =
@@ -54,7 +55,12 @@ modifyQuestionnaireMigration qtnUuid reqDto =
     state <- getQuestionnaireMigration qtnUuid
     let updatedState = fromChangeDTO reqDto state
     updateMigratorStateByNewQuestionnaireId updatedState
-    return $ toDTO (state ^. oldQuestionnaire) (state ^. newQuestionnaire) (updatedState ^. resolvedQuestionUuids)
+    return $
+      toDTO
+        (state ^. oldQuestionnaire)
+        (state ^. newQuestionnaire)
+        (updatedState ^. resolvedQuestionUuids)
+        (updatedState ^. appUuid)
 
 finishQuestionnaireMigration :: String -> AppContextM ()
 finishQuestionnaireMigration qtnUuid =

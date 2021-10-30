@@ -3,7 +3,7 @@ module Wizard.Service.Migration.KnowledgeModel.MigratorService where
 import Control.Lens ((&), (?~), (^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Maybe
 
 import LensesConfig
@@ -56,7 +56,8 @@ createMigration bUuid mscDto =
     branchEvents <- getBranchEvents (previousPkg ^. pId) mergeCheckpointPkgId
     targetPkgEvents <- getTargetPackageEvents targetPkgId forkOfPkgId
     km <- compileKnowledgeModel (branch ^. events) (branch ^. previousPackageId) []
-    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km
+    appUuid <- asks _appContextAppUuid
+    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid
     insertMigratorState ms
     migratedMs <- migrateState ms
     return $ toDTO migratedMs branch

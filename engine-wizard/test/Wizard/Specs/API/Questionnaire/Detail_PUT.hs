@@ -215,10 +215,10 @@ create_test_403 title appContext qtn qtnEdited reason =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/questionnaires/f08ead5f-746d-411b-aee6-77ea3d24016a"
     (reqHeadersT [reqAuthHeader])
     (reqBodyT questionnaire1)
     "questionnaire"
-    "f08ead5f-746d-411b-aee6-77ea3d24016a"
+    [("uuid", "f08ead5f-746d-411b-aee6-77ea3d24016a")]

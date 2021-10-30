@@ -2,6 +2,7 @@ module Wizard.Service.Package.PackageMapper where
 
 import Control.Lens ((^.))
 import qualified Data.List as L
+import qualified Data.UUID as U
 
 import LensesConfig
 import qualified Registry.Api.Resource.Package.PackageSimpleDTO as R_PackageSimpleDTO
@@ -103,8 +104,8 @@ toSuggestionDTO (pkg, localVersions) =
     , _packageSuggestionDTOVersions = L.sortBy compareVersion localVersions
     }
 
-fromDTO :: PackageDTO -> PackageWithEvents
-fromDTO dto =
+fromDTO :: PackageDTO -> U.UUID -> PackageWithEvents
+fromDTO dto appUuid =
   PackageWithEvents
     { _packageWithEventsPId = dto ^. pId
     , _packageWithEventsName = dto ^. name
@@ -119,6 +120,7 @@ fromDTO dto =
     , _packageWithEventsForkOfPackageId = dto ^. forkOfPackageId
     , _packageWithEventsMergeCheckpointPackageId = dto ^. mergeCheckpointPackageId
     , _packageWithEventsEvents = dto ^. events
+    , _packageWithEventsAppUuid = appUuid
     , _packageWithEventsCreatedAt = dto ^. createdAt
     }
 

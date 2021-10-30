@@ -1,7 +1,7 @@
 module Wizard.Service.ActionKey.ActionKeyService where
 
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -30,12 +30,14 @@ createActionKey userId actionType =
     uuid <- liftIO generateUuid
     hash <- liftIO generateUuid
     now <- liftIO getCurrentTime
+    appUuid <- asks _appContextAppUuid
     let actionKey =
           ActionKey
             { _actionKeyUuid = uuid
             , _actionKeyUserId = userId
             , _actionKeyAType = actionType
             , _actionKeyHash = U.toString hash
+            , _actionKeyAppUuid = appUuid
             , _actionKeyCreatedAt = now
             }
     insertActionKey actionKey

@@ -11,6 +11,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Database.Migration.Development.App.Data.Apps
 
 import Wizard.Specs.Common
 
@@ -22,7 +23,12 @@ assertAbsenceOfTemplateAssetInDB appContext asset = do
   eAsset <- runInContextIO (findTemplateAssetById assetUuid) appContext
   liftIO $ isLeft eAsset `shouldBe` True
   let (Left error) = eAsset
-  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "template_asset" assetUuid)
+  liftIO $
+    error `shouldBe`
+    NotExistsError
+      (_ERROR_DATABASE__ENTITY_NOT_FOUND
+         "template_asset"
+         [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", assetUuid)])
 
 -- --------------------------------
 -- COMPARATORS

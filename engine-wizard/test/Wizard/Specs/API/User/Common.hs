@@ -11,6 +11,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.User.UserDAO
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Service.Token.TokenService
 
 import Wizard.Specs.Common
@@ -38,7 +39,10 @@ assertAbsenceOfUserInDB appContext user = do
   eUser <- runInContextIO (findUserById uUuid) appContext
   liftIO $ isLeft eUser `shouldBe` True
   let (Left error) = eUser
-  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" uUuid)
+  liftIO $
+    error `shouldBe`
+    NotExistsError
+      (_ERROR_DATABASE__ENTITY_NOT_FOUND "user_entity" [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", uUuid)])
 
 -- --------------------------------
 -- COMPARATORS

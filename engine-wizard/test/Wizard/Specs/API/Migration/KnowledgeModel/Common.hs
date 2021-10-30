@@ -12,6 +12,7 @@ import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Migration.KnowledgeModel.Data.Migrations
+import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 import Wizard.Specs.Common
@@ -23,6 +24,7 @@ runMigrationWithEmptyDB appContext = do
   let branchUuid = U.toString $ amsterdamBranch ^. uuid
   runInContextIO B.runMigration appContext
   runInContextIO (deleteEventsAtBranch branchUuid) appContext
+  runInContextIO KM_MIG.runMigration appContext
 
 runMigrationWithFullDB appContext = do
   runMigrationWithEmptyDB appContext

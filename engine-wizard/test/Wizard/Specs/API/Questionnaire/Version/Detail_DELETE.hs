@@ -73,10 +73,10 @@ test_401 appContext = createAuthTest reqMethod reqUrl [] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/questionnaires/00084a75-56e3-49f8-b16f-d6b99599910a/versions/bd6611c8-ea11-48ab-adaa-3ce51b66aae5"
     reqHeaders
     reqBody
     "questionnaire"
-    "00084a75-56e3-49f8-b16f-d6b99599910a"
+    [("uuid", "00084a75-56e3-49f8-b16f-d6b99599910a")]

@@ -66,7 +66,10 @@ createTemplateTable = do
           \     allowed_packages       json                     not null, \
           \     recommended_package_id varchar, \
           \     formats                json                     not null, \
-          \     created_at             timestamp with time zone not null \
+          \     created_at             timestamp with time zone not null, \
+          \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+          \       constraint template_app_uuid_fk \
+          \         references app \
           \ ); \
           \create unique index template_id_uindex \
           \     on template (id); \
@@ -83,7 +86,10 @@ createTemplateFileTable = do
         \   template_id varchar not null, \
         \   uuid uuid not null, \
         \   file_name varchar not null, \
-        \   content varchar not null \
+        \   content varchar not null, \
+        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     constraint template_file_app_uuid_fk \
+        \       references app \
         \ ); \
         \  \
         \ alter table template_file \
@@ -107,7 +113,10 @@ createTemplateAssetTable = do
         \   template_id varchar not null, \
         \   uuid uuid not null, \
         \   file_name varchar not null, \
-        \   content_type varchar not null \
+        \   content_type varchar not null, \
+        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \     constraint template_asset_app_uuid_fk \
+        \       references app \
         \ ); \
         \  \
         \ alter table template_asset \

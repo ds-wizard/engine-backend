@@ -9,6 +9,7 @@ import Shared.Database.DAO.Template.TemplateAssetDAO
 import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.Template.TemplateS3
@@ -22,6 +23,8 @@ runMigration = do
   insertTemplateFile templateFileDefaultHtml
   insertTemplateFile templateFileDefaultCss
   insertTemplateAsset templateAssetLogo
+  insertTemplate differentTemplate
+  insertTemplateFile differentFileHtml
   logInfo _CMP_MIGRATION "(Template/Template) ended"
 
 runS3Migration :: AppContextM ()

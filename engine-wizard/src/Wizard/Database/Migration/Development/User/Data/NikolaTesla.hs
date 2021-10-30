@@ -1,10 +1,13 @@
 module Wizard.Database.Migration.Development.User.Data.NikolaTesla where
 
+import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
+import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Database.Migration.Development.Acl.Data.Groups
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.User.User
 
 userNikola :: User
@@ -34,6 +37,7 @@ userNikola =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = [memberBioGroup, memberPlantGroup]
+    , _userAppUuid = defaultApp ^. uuid
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0

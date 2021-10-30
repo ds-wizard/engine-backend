@@ -28,6 +28,7 @@ instance FromJSON ServerConfig where
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
+    _serverConfigExperimental <- o .:? "experimental" .!= defaultExperimental
     return ServerConfig {..}
   parseJSON _ = mzero
 

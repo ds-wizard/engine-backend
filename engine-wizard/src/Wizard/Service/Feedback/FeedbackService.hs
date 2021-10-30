@@ -55,7 +55,8 @@ createFeedbackWithGivenUuid fUuid reqDto =
     checkIfFeedbackIsEnabled
     issue <- createIssue (reqDto ^. packageId) (reqDto ^. questionUuid) (reqDto ^. title) (reqDto ^. content)
     now <- liftIO getCurrentTime
-    let fbk = fromCreateDTO reqDto fUuid (issue ^. number) now
+    appUuid <- asks _appContextAppUuid
+    let fbk = fromCreateDTO reqDto fUuid (issue ^. number) appUuid now
     insertFeedback fbk
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig

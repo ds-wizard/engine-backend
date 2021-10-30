@@ -3,17 +3,19 @@ module Wizard.Database.Migration.Development.Branch.Data.Branches where
 import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
-import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
+import Shared.Util.Uuid
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
+import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchState
@@ -21,7 +23,7 @@ import Wizard.Model.Branch.BranchState
 amsterdamBranch :: BranchDTO
 amsterdamBranch =
   BranchDTO
-    { _branchDTOUuid = fromJust (U.fromString "6474b24b-262b-42b1-9451-008e8363f2b6")
+    { _branchDTOUuid = u' "6474b24b-262b-42b1-9451-008e8363f2b6"
     , _branchDTOName = amsterdamPackage ^. name
     , _branchDTOKmId = amsterdamPackage ^. kmId
     , _branchDTOPreviousPackageId = Just $ netherlandsPackage ^. pId
@@ -61,6 +63,7 @@ amsterdamBranchWithEvents =
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
+    , _branchWithEventsAppUuid = defaultApp ^. uuid
     , _branchWithEventsCreatedAt = amsterdamBranch ^. createdAt
     , _branchWithEventsUpdatedAt = amsterdamBranch ^. updatedAt
     }
@@ -99,13 +102,13 @@ amsterdamBranchDetail =
 leidenBranch :: BranchDTO
 leidenBranch =
   BranchDTO
-    { _branchDTOUuid = fromJust (U.fromString "47421955-ba30-48d4-8c49-9ec47eda2cad")
+    { _branchDTOUuid = u' "47421955-ba30-48d4-8c49-9ec47eda2cad"
     , _branchDTOName = "Leiden KM"
     , _branchDTOKmId = "leiden-km"
     , _branchDTOState = BSDefault
     , _branchDTOPreviousPackageId = Just $ netherlandsPackage ^. pId
     , _branchDTOForkOfPackageId = Just $ netherlandsPackage ^. pId
-    , _branchDTOOwnerUuid = Just $ fromJust (U.fromString "ec6f8e90-2a91-49ec-aa3f-9eab2267fc66")
+    , _branchDTOOwnerUuid = Just $ userAlbert ^. uuid
     , _branchDTOCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , _branchDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -116,4 +119,19 @@ leidenBranchCreate =
     { _branchCreateDTOName = leidenBranch ^. name
     , _branchCreateDTOKmId = leidenBranch ^. kmId
     , _branchCreateDTOPreviousPackageId = leidenBranch ^. previousPackageId
+    }
+
+differentBranch :: BranchWithEvents
+differentBranch =
+  BranchWithEvents
+    { _branchWithEventsUuid = u' "fc49b6a5-51ae-4442-82e8-c3bf216545ec"
+    , _branchWithEventsName = "Branch Events"
+    , _branchWithEventsKmId = "my-km"
+    , _branchWithEventsMetamodelVersion = kmMetamodelVersion
+    , _branchWithEventsPreviousPackageId = Just $ differentPackage ^. pId
+    , _branchWithEventsEvents = []
+    , _branchWithEventsOwnerUuid = Just $ userCharles ^. uuid
+    , _branchWithEventsAppUuid = differentApp ^. uuid
+    , _branchWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , _branchWithEventsUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }

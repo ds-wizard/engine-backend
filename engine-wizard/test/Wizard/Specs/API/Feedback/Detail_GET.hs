@@ -72,10 +72,10 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/feedbacks/f335e2b9-5e81-4412-8bf5-50753b2020fc"
     reqHeaders
     reqBody
     "feedback"
-    "f335e2b9-5e81-4412-8bf5-50753b2020fc"
+    [("uuid", "f335e2b9-5e81-4412-8bf5-50753b2020fc")]

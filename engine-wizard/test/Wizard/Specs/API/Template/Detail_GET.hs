@@ -69,10 +69,10 @@ create_test_200 title appContext reqAuthHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/templates/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "template"
-    "deab6c38-aeac-4b17-a501-4365a0a70176"
+    [("id", "deab6c38-aeac-4b17-a501-4365a0a70176")]

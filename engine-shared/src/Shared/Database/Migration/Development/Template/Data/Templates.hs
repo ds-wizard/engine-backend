@@ -7,6 +7,7 @@ import Data.Maybe (fromJust)
 import Data.Time
 
 import LensesConfig
+import Shared.Constant.App
 import Shared.Constant.Template
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.DefaultTemplate (css, html)
@@ -37,6 +38,7 @@ commonWizardTemplate =
         , templateFormatOdt
         , templateFormatMarkdown
         ]
+    , _templateAppUuid = defaultAppUuid
     , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -196,6 +198,7 @@ templateFileDefaultHtml =
     , _templateFileUuid = u' "7f83f7ce-4096-49a5-88d1-bd509bf72a9b"
     , _templateFileFileName = "default.html.j2"
     , _templateFileContent = html
+    , _templateFileAppUuid = defaultAppUuid
     }
 
 templateFileDefaultHtmlEdited :: TemplateFile
@@ -209,6 +212,7 @@ templateFileDefaultCss =
     , _templateFileUuid = u' "ae41aa74-9605-4dfb-b1f9-b6064adc1dbc"
     , _templateFileFileName = "default.css"
     , _templateFileContent = css
+    , _templateFileAppUuid = defaultAppUuid
     }
 
 templateFileNewFile :: TemplateFile
@@ -218,6 +222,7 @@ templateFileNewFile =
     , _templateFileUuid = u' "63279989-d9ac-49da-81d3-fc8a56a8aa62"
     , _templateFileFileName = "new-file.txt"
     , _templateFileContent = "some content"
+    , _templateFileAppUuid = defaultAppUuid
     }
 
 templateAssetLogo :: TemplateAsset
@@ -227,6 +232,7 @@ templateAssetLogo =
     , _templateAssetUuid = u' "6c367648-9b60-4307-93b2-0851938adee0"
     , _templateAssetFileName = "text.txt"
     , _templateAssetContentType = "text/plain"
+    , _templateAssetAppUuid = defaultAppUuid
     }
 
 templateAssetLogoContent :: BS.ByteString
@@ -262,6 +268,7 @@ anotherWizardTemplate =
         , templateFormatOdt
         , templateFormatMarkdown
         ]
+    , _templateAppUuid = defaultAppUuid
     , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -272,6 +279,7 @@ anotherFileHtml =
     , _templateFileUuid = u' "7444f722-4972-4bf8-86d8-d4f01875572d"
     , _templateFileFileName = "default.html.j2"
     , _templateFileContent = html
+    , _templateFileAppUuid = defaultAppUuid
     }
 
 anotherFileCss :: TemplateFile
@@ -281,4 +289,5 @@ anotherFileCss =
     , _templateFileUuid = u' "ac60ddb8-4561-4d4b-8d85-c8446bc96b56"
     , _templateFileFileName = "default.css"
     , _templateFileContent = css
+    , _templateFileAppUuid = defaultAppUuid
     }

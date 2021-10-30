@@ -13,6 +13,7 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigLogging :: ServerConfigLogging
+    , _serverConfigExperimental :: ServerConfigExperimental
     }
   deriving (Generic, Show)
 

@@ -2,6 +2,7 @@ module Wizard.Service.TemplateBundle.TemplateBundleService where
 
 import Control.Lens ((^.))
 import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Reader (asks)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import Data.Foldable (traverse_)
@@ -51,13 +52,14 @@ importAndConvertTemplateBundle :: BSL.ByteString -> AppContextM TemplateBundleDT
 importAndConvertTemplateBundle contentS =
   case fromTemplateArchive contentS of
     Right (bundle, assetContents) -> do
-      let template = fromTemplateBundle bundle
+      appUuid <- asks _appContextAppUuid
+      let template = fromTemplateBundle bundle appUuid
       validateNewTemplate template
       deleteOldTemplateIfPresent bundle
       traverse_ (\(a, content) -> putAsset (template ^. tId) (U.toString $ a ^. uuid) content) assetContents
       insertTemplate template
-      traverse_ (insertTemplateFile . fromFileDTO (template ^. tId)) (bundle ^. files)
-      traverse_ (insertTemplateAsset . fromAssetDTO (template ^. tId)) (bundle ^. assets)
+      traverse_ (insertTemplateFile . fromFileDTO (template ^. tId) appUuid) (bundle ^. files)
+      traverse_ (insertTemplateAsset . fromAssetDTO (template ^. tId) appUuid) (bundle ^. assets)
       return bundle
     Left error -> throwError error
 

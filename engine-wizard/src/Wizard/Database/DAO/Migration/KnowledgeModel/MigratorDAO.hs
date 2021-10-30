@@ -1,8 +1,8 @@
 module Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import Data.String
-import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -21,22 +21,29 @@ entityName = "knowledge_model_migration"
 pageLabel = "migrations"
 
 findMigratorStates :: AppContextM [MigratorState]
-findMigratorStates = createFindEntitiesFn entityName
+findMigratorStates = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findMigratorStateByBranchUuid :: String -> AppContextM MigratorState
-findMigratorStateByBranchUuid = createFindEntityByFn entityName "branch_uuid"
+findMigratorStateByBranchUuid branchUuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
 
 findMigratorStateByBranchUuid' :: String -> AppContextM (Maybe MigratorState)
-findMigratorStateByBranchUuid' = createFindEntityByFn' entityName "branch_uuid"
+findMigratorStateByBranchUuid' branchUuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
 
 insertMigratorState :: MigratorState -> AppContextM Int64
 insertMigratorState = createInsertFn entityName
 
 updateMigratorState :: MigratorState -> AppContextM Int64
 updateMigratorState ms = do
-  let params = toRow ms ++ [toField . U.toText $ ms ^. branchUuid]
+  appUuid <- asks _appContextAppUuid
+  let params = toRow ms ++ [toField appUuid, toField $ ms ^. branchUuid]
   let sql =
-        "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ? WHERE branch_uuid = ?"
+        "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, app_uuid = ? WHERE app_uuid = ? AND branch_uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
@@ -45,4 +52,6 @@ deleteMigratorStates :: AppContextM Int64
 deleteMigratorStates = createDeleteEntitiesFn entityName
 
 deleteMigratorStateByBranchUuid :: String -> AppContextM Int64
-deleteMigratorStateByBranchUuid = createDeleteEntityByFn entityName "branch_uuid"
+deleteMigratorStateByBranchUuid branchUuid = do
+  appUuid <- asks _appContextAppUuid
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]

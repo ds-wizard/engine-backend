@@ -34,5 +34,6 @@ data MigratorState =
     , _migratorStateTargetPackageEvents :: [Event]
     , _migratorStateResultEvents :: [Event]
     , _migratorStateCurrentKnowledgeModel :: Maybe KnowledgeModel
+    , _migratorStateAppUuid :: U.UUID
     }
   deriving (Show, Eq)

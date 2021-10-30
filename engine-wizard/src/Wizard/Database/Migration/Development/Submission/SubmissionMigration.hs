@@ -9,4 +9,5 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Submission/Submission) started"
   deleteSubmissions
   insertSubmission submission1
+  insertSubmission differentSubmission
   logInfo _CMP_MIGRATION "(Submission/Submission) ended"

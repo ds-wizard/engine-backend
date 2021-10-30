@@ -11,6 +11,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Database.DAO.Template.TemplateFileDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Database.Migration.Development.App.Data.Apps
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -28,7 +29,12 @@ assertAbsenceOfTemplateFileInDB appContext file = do
   eFile <- runInContextIO (findTemplateFileById fileUuid) appContext
   liftIO $ isLeft eFile `shouldBe` True
   let (Left error) = eFile
-  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "template_file" fileUuid)
+  liftIO $
+    error `shouldBe`
+    NotExistsError
+      (_ERROR_DATABASE__ENTITY_NOT_FOUND
+         "template_file"
+         [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", fileUuid)])
 
 -- --------------------------------
 -- COMPARATORS

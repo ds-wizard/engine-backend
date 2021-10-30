@@ -22,4 +22,5 @@ instance FromRow Package where
     _packageMergeCheckpointPackageId <- field
     _ <- field :: RowParser Value
     _packageCreatedAt <- field
+    _packageAppUuid <- field
     return $ Package {..}

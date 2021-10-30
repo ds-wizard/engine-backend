@@ -1,10 +1,9 @@
 module Wizard.Database.DAO.Submission.SubmissionDAO where
 
 import Control.Lens ((&), (.~), (^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import Data.String
 import Data.Time
-import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -23,16 +22,24 @@ entityName = "submission"
 pageLabel = "submissions"
 
 findSubmissions :: AppContextM [Submission]
-findSubmissions = createFindEntitiesFn entityName
+findSubmissions = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findSubmissionsFiltered :: [(String, String)] -> AppContextM [Submission]
-findSubmissionsFiltered = createFindEntitiesByFn entityName
+findSubmissionsFiltered params = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName (appQueryUuid appUuid : params)
 
 findSubmissionsByDocumentUuid :: String -> AppContextM [Submission]
-findSubmissionsByDocumentUuid templateId = createFindEntitiesByFn entityName [("document_uuid", templateId)]
+findSubmissionsByDocumentUuid templateId = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("document_uuid", templateId)]
 
 findSubmissionById :: String -> AppContextM Submission
-findSubmissionById = createFindEntityByFn entityName "uuid"
+findSubmissionById uuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertSubmission :: Submission -> AppContextM Int64
 insertSubmission = createInsertFn entityName
@@ -40,10 +47,11 @@ insertSubmission = createInsertFn entityName
 updateSubmissionById :: Submission -> AppContextM Submission
 updateSubmissionById sub = do
   now <- liftIO getCurrentTime
+  appUuid <- asks _appContextAppUuid
   let updatedSub = sub & updatedAt .~ now
-  let params = toRow sub ++ [toField . U.toText $ updatedSub ^. uuid]
+  let params = toRow sub ++ [toField appUuid, toField $ updatedSub ^. uuid]
   let sql =
-        "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+        "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
@@ -53,7 +61,11 @@ deleteSubmissions :: AppContextM Int64
 deleteSubmissions = createDeleteEntitiesFn entityName
 
 deleteSubmissionsFiltered :: [(String, String)] -> AppContextM Int64
-deleteSubmissionsFiltered = createDeleteEntitiesByFn entityName
+deleteSubmissionsFiltered params = do
+  appUuid <- asks _appContextAppUuid
+  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
 
 deleteSubmissionById :: String -> AppContextM Int64
-deleteSubmissionById = createDeleteEntityByFn entityName "uuid"
+deleteSubmissionById uuid = do
+  appUuid <- asks _appContextAppUuid
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]

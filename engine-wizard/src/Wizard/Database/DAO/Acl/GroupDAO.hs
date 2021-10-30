@@ -1,5 +1,6 @@
 module Wizard.Database.DAO.Acl.GroupDAO where
 
+import Control.Monad.Reader (asks)
 import GHC.Int
 
 import Wizard.Database.DAO.Common
@@ -10,11 +11,10 @@ import Wizard.Model.Context.ContextLenses ()
 
 entityName = "acl_group"
 
-findGroups :: AppContextM [Group]
-findGroups = createFindEntitiesFn entityName
-
 findGroupById :: String -> AppContextM Group
-findGroupById = createFindEntityByFn entityName "id"
+findGroupById id = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 insertGroup :: Group -> AppContextM Int64
 insertGroup = createInsertFn entityName

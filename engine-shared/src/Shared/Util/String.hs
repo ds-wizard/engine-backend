@@ -9,9 +9,11 @@ module Shared.Util.String
   , toLower
   , toSnake
   , takeLastOf
+  , printTuples
   ) where
 
 import qualified Data.Char as CH
+import qualified Data.List as L
 import Data.Maybe (fromMaybe, listToMaybe)
 import qualified Data.Text as T
 import Text.Regex (mkRegex, subRegex)
@@ -64,3 +66,8 @@ f' str terms =
     '%':'%':'s':rest -> '%' : 's' : f' rest terms
     a:rest -> a : f' rest terms
     [] -> []
+
+printTuples :: [(String, String)] -> String
+printTuples = L.intercalate ", " . fmap printTuple
+  where
+    printTuple (key, value) = key ++ ": " ++ value

@@ -10,4 +10,5 @@ runMigration = do
   deleteFeedbacks
   insertFeedback feedback1
   insertFeedback feedback2
+  insertFeedback differentFeedback
   logInfo _CMP_MIGRATION "(Feedback/Feedback) ended"

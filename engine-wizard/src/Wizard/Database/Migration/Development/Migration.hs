@@ -5,7 +5,10 @@ module Wizard.Database.Migration.Development.Migration
 import Shared.Constant.Component
 import qualified Wizard.Database.Migration.Development.Acl.AclMigration as ACL
 import qualified Wizard.Database.Migration.Development.Acl.AclSchemaMigration as ACL_Schema
+import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeySchemaMigration as ACK_Schema
+import qualified Wizard.Database.Migration.Development.App.AppMigration as A
+import qualified Wizard.Database.Migration.Development.App.AppSchemaMigration as A_Schema
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceMigration as BR
 import qualified Wizard.Database.Migration.Development.BookReference.BookReferenceSchemaMigration as BR_Schema
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
@@ -48,7 +51,9 @@ runMigration = do
   ACL_Schema.dropTables
   U_Schema.dropTables
   CFG_Schema.dropTables
+  A_Schema.dropTables
   -- 2. Create schema
+  A_Schema.createTables
   U_Schema.createTables
   ACL_Schema.createTables
   TML_Schema.createTables
@@ -66,6 +71,7 @@ runMigration = do
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures
+  A.runMigration
   CFG.runMigration
   U.runMigration
   TML.runMigration
@@ -78,4 +84,5 @@ runMigration = do
   F.runMigration
   DOC.runMigration
   ACL.runMigration
+  ACK.runMigration
   logInfo _CMP_MIGRATION "ended"

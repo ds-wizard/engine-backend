@@ -1,6 +1,7 @@
 module Shared.Model.Package.PackageWithEvents where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Model.Event.Event
@@ -20,6 +21,7 @@ data PackageWithEvents =
     , _packageWithEventsForkOfPackageId :: Maybe String
     , _packageWithEventsMergeCheckpointPackageId :: Maybe String
     , _packageWithEventsEvents :: [Event]
+    , _packageWithEventsAppUuid :: U.UUID
     , _packageWithEventsCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

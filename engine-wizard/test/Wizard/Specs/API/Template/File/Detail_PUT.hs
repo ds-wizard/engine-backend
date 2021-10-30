@@ -89,10 +89,10 @@ test_403 appContext = createNoPermissionTest appContext reqMethod reqUrl [reqCtH
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/templates/global:questionnaire-report:1.0.0/files/deab6c38-aeac-4b17-a501-4365a0a70176"
     (reqHeadersT reqAuthHeader)
     reqBody
     "template_file"
-    "deab6c38-aeac-4b17-a501-4365a0a70176"
+    [("uuid", "deab6c38-aeac-4b17-a501-4365a0a70176")]

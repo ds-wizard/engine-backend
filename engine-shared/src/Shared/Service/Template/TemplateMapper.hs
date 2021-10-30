@@ -1,6 +1,7 @@
 module Shared.Service.Template.TemplateMapper where
 
 import Control.Lens ((^.))
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Api.Resource.Template.TemplateDTO
@@ -54,20 +55,22 @@ toAssetDTO asset =
     , _templateAssetDTOContentType = asset ^. contentType
     }
 
-fromFileDTO :: String -> TemplateFileDTO -> TemplateFile
-fromFileDTO templateId file =
+fromFileDTO :: String -> U.UUID -> TemplateFileDTO -> TemplateFile
+fromFileDTO templateId appUuid file =
   TemplateFile
     { _templateFileTemplateId = templateId
     , _templateFileUuid = file ^. uuid
     , _templateFileFileName = file ^. fileName
     , _templateFileContent = file ^. content
+    , _templateFileAppUuid = appUuid
     }
 
-fromAssetDTO :: String -> TemplateAssetDTO -> TemplateAsset
-fromAssetDTO templateId asset =
+fromAssetDTO :: String -> U.UUID -> TemplateAssetDTO -> TemplateAsset
+fromAssetDTO templateId appUuid asset =
   TemplateAsset
     { _templateAssetTemplateId = templateId
     , _templateAssetUuid = asset ^. uuid
     , _templateAssetFileName = asset ^. fileName
     , _templateAssetContentType = asset ^. contentType
+    , _templateAssetAppUuid = appUuid
     }

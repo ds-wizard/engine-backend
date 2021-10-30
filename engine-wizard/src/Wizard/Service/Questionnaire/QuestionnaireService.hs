@@ -71,6 +71,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     package <- findPackageWithEventsById pkgId
     qtnState <- getQuestionnaireState (U.toString qtnUuid) pkgId
     now <- liftIO getCurrentTime
+    appUuid <- asks _appContextAppUuid
     visibility <- extractVisibility reqDto
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
@@ -87,6 +88,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
             pkgId
             phaseEventUuid
             (headSafe $ knowledgeModel ^. phaseUuids)
+            appUuid
             now
             qtnPermUuid
     insertQuestionnaire qtn
@@ -156,7 +158,7 @@ getQuestionnaireById qtnUuid =
     mQtn <- getQuestionnaireById' qtnUuid
     case mQtn of
       Just qtn -> return qtn
-      Nothing -> throwError $ NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" qtnUuid
+      Nothing -> throwError $ NotExistsError $ _ERROR_DATABASE__ENTITY_NOT_FOUND "questionnaire" [("uuid", qtnUuid)]
 
 getQuestionnaireById' :: String -> AppContextM (Maybe QuestionnaireDTO)
 getQuestionnaireById' qtnUuid =

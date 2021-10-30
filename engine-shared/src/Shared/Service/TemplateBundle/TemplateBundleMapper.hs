@@ -5,6 +5,7 @@ import Control.Lens ((^.))
 import Data.Aeson
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.ByteString.Lazy.Char8 as BSL
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Api.Resource.Template.TemplateDTO
@@ -77,8 +78,8 @@ fromAssetEntry tb archive asset =
     Just assetEntry -> Right (asset, BSL.toStrict . fromEntry $ assetEntry)
     Nothing -> Left $ UserError (_ERROR_SERVICE_TB__MISSING_ASSET (asset ^. fileName))
 
-fromTemplateBundle :: TemplateBundleDTO -> Template
-fromTemplateBundle tb =
+fromTemplateBundle :: TemplateBundleDTO -> U.UUID -> Template
+fromTemplateBundle tb appUuid =
   Template
     { _templateTId = tb ^. tId
     , _templateName = tb ^. name
@@ -92,5 +93,6 @@ fromTemplateBundle tb =
     , _templateAllowedPackages = tb ^. allowedPackages
     , _templateRecommendedPackageId = tb ^. recommendedPackageId
     , _templateFormats = tb ^. formats
+    , _templateAppUuid = appUuid
     , _templateCreatedAt = tb ^. createdAt
     }

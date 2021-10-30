@@ -1,6 +1,7 @@
 module Shared.Model.Package.Package where
 
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 data Package =
@@ -17,6 +18,7 @@ data Package =
     , _packagePreviousPackageId :: Maybe String
     , _packageForkOfPackageId :: Maybe String
     , _packageMergeCheckpointPackageId :: Maybe String
+    , _packageAppUuid :: U.UUID
     , _packageCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

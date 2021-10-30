@@ -42,3 +42,6 @@ defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False,
 defaultLogging :: ServerConfigLogging
 defaultLogging =
   ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}
+
+defaultExperimental :: ServerConfigExperimental
+defaultExperimental = ServerConfigExperimental {_serverConfigExperimentalMoreAppsEnabled = False}

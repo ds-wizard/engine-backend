@@ -107,7 +107,8 @@ createTemplate reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
     now <- liftIO getCurrentTime
-    let template = fromCreateDTO reqDto now
+    appUuid <- asks _appContextAppUuid
+    let template = fromCreateDTO reqDto appUuid now
     validateNewTemplate template
     insertTemplate template
     return template

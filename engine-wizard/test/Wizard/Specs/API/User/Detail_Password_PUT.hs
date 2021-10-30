@@ -68,10 +68,10 @@ test_400 appContext = createInvalidJsonTest reqMethod reqUrl "password"
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/users/dc9fe65f-748b-47ec-b30c-d255bbac64a0/password"
     reqHeaders
     reqBody
     "user_entity"
-    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    [("uuid", "dc9fe65f-748b-47ec-b30c-d255bbac64a0")]

@@ -66,10 +66,10 @@ test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/templates/global:non-existing-template:1.0.0/bundle"
     reqHeaders
     reqBody
     "template"
-    "global:non-existing-template:1.0.0"
+    [("id", "global:non-existing-template:1.0.0")]

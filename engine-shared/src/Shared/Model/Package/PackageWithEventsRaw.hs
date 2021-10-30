@@ -2,6 +2,7 @@ module Shared.Model.Package.PackageWithEventsRaw where
 
 import Data.Aeson
 import Data.Time
+import qualified Data.UUID as U
 import GHC.Generics
 
 data PackageWithEventsRaw =
@@ -19,6 +20,7 @@ data PackageWithEventsRaw =
     , _packageWithEventsRawForkOfPackageId :: Maybe String
     , _packageWithEventsRawMergeCheckpointPackageId :: Maybe String
     , _packageWithEventsRawEvents :: Value
+    , _packageWithEventsRawAppUuid :: U.UUID
     , _packageWithEventsRawCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

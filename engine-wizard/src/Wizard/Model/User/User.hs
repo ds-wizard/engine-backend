@@ -2,7 +2,7 @@ module Wizard.Model.User.User where
 
 import qualified Data.Map.Strict as M
 import Data.Time
-import Data.UUID
+import qualified Data.UUID as U
 import GHC.Generics
 
 import Wizard.Model.Acl.Acl
@@ -17,7 +17,7 @@ _USER_ROLE_RESEARCHER = "researcher"
 
 data User =
   User
-    { _userUuid :: UUID
+    { _userUuid :: U.UUID
     , _userFirstName :: String
     , _userLastName :: String
     , _userEmail :: String
@@ -30,6 +30,7 @@ data User =
     , _userSubmissionProps :: [UserSubmissionProps]
     , _userImageUrl :: Maybe String
     , _userGroups :: [GroupMembership]
+    , _userAppUuid :: U.UUID
     , _userLastVisitedAt :: UTCTime
     , _userCreatedAt :: UTCTime
     , _userUpdatedAt :: UTCTime
@@ -56,4 +57,4 @@ instance Eq User where
     _userPermissions a == _userPermissions b &&
     _userActive a == _userActive b &&
     _userSubmissionProps a == _userSubmissionProps b &&
-    _userImageUrl a == _userImageUrl b && _userGroups a == _userGroups b
+    _userImageUrl a == _userImageUrl b && _userGroups a == _userGroups b && _userAppUuid a == _userAppUuid b

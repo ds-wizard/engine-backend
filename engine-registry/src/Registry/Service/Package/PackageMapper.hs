@@ -30,6 +30,7 @@ toRaw pkg =
     , _packageWithEventsRawForkOfPackageId = pkg ^. forkOfPackageId
     , _packageWithEventsRawMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
     , _packageWithEventsRawEvents = toJSON $ pkg ^. events
+    , _packageWithEventsRawAppUuid = pkg ^. appUuid
     , _packageWithEventsRawCreatedAt = pkg ^. createdAt
     }
 

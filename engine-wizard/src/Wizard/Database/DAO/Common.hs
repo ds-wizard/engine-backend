@@ -4,7 +4,9 @@ module Wizard.Database.DAO.Common
   , createFindEntitiesGroupByCoordinatePageableQuerySortFn
   ) where
 
+import Control.Monad.Reader (asks)
 import Data.String (fromString)
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 
 import qualified Shared.Database.DAO.Common as S
@@ -22,6 +24,7 @@ runInTransaction = S.runInTransaction logInfoU
 createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel pageable sort fields entityId mQuery mOrganizationId mEntityId
   -- 1. Prepare variables
  = do
+  appUuid <- asks _appContextAppUuid
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
   count <- createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId
@@ -35,7 +38,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
            \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
            \    FROM %s \
-           \    WHERE (name ~* ? OR id ~* ?) %s \
+           \    WHERE app_uuid = ? AND (name ~* ? OR id ~* ?) %s \
            \    GROUP BY organization_id, %s \
            \) \
            \%s \
@@ -53,7 +56,10 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
           ]
   logInfo _CMP_DATABASE sql
   let action conn =
-        query conn (fromString sql) (regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+        query
+          conn
+          (fromString sql)
+          (U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   entities <- runDB action
   -- 4. Constructor response
   let metadata =
@@ -67,16 +73,21 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
 
 createCountGroupByCoordinateFn :: String -> String -> Maybe String -> Maybe String -> Maybe String -> AppContextM Int
 createCountGroupByCoordinateFn entityName entityId mQuery mOrganizationId mEntityId = do
+  appUuid <- asks _appContextAppUuid
   let sql =
         f'
           "SELECT COUNT(*) \
           \ FROM (SELECT COUNT(*) \
           \   FROM %s \
-          \   WHERE name ~* ? %s \
+          \   WHERE app_uuid = ? AND name ~* ? %s \
           \   GROUP BY organization_id, %s) p"
           [entityName, mapToDBCoordinatesSql entityId mOrganizationId mEntityId, entityId]
   logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+  let action conn =
+        query
+          conn
+          (fromString sql)
+          (U.toString appUuid : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count

@@ -1,9 +1,12 @@
 module Wizard.Database.Migration.Development.User.Data.GalileoGalilei where
 
+import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 
+import LensesConfig
 import Shared.Util.Uuid
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.User.User
 
 userGalileo :: User
@@ -22,6 +25,7 @@ userGalileo =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
+    , _userAppUuid = defaultApp ^. uuid
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
