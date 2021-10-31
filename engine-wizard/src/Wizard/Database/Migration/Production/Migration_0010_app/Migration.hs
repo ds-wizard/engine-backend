@@ -16,23 +16,35 @@ meta = MigrationMeta {mmNumber = 10, mmName = "Add app", mmDescription = "Allow 
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
-  addAppTable dbPool
-  addAppDefaultRecord dbPool
-  changeToAppConfigUuid dbPool
-  addForeignKey dbPool "action_key"
-  addForeignKey dbPool "branch"
-  addForeignKey dbPool "document"
-  addForeignKey dbPool "document_queue"
-  addForeignKey dbPool "feedback"
-  addForeignKey dbPool "knowledge_model_migration"
-  addForeignKey dbPool "package"
-  addForeignKey dbPool "questionnaire"
-  addForeignKey dbPool "questionnaire_migration"
-  addForeignKey dbPool "submission"
-  addForeignKey dbPool "template"
-  addForeignKey dbPool "template_asset"
-  addForeignKey dbPool "template_file"
-  addForeignKey dbPool "user_entity"
+  result <- checkIfKnowledgeModelMigrationsAreCompleted dbPool
+  case result of
+    Just error -> return . Just $ error
+    Nothing -> do
+      addAppTable dbPool
+      addAppDefaultRecord dbPool
+      changeToAppConfigUuid dbPool
+      addForeignKey dbPool "action_key"
+      addForeignKey dbPool "branch"
+      addForeignKey dbPool "document"
+      addForeignKey dbPool "document_queue"
+      addForeignKey dbPool "feedback"
+      addForeignKey dbPool "knowledge_model_migration"
+      addForeignKey dbPool "package"
+      addForeignKey dbPool "questionnaire"
+      addForeignKey dbPool "questionnaire_migration"
+      addForeignKey dbPool "submission"
+      addForeignKey dbPool "template"
+      addForeignKey dbPool "template_asset"
+      addForeignKey dbPool "template_file"
+      addForeignKey dbPool "user_entity"
+
+checkIfKnowledgeModelMigrationsAreCompleted dbPool = do
+  let sql = "SELECT target_package_id FROM knowledge_model_migration"
+  let action conn = query_ conn (fromString sql)
+  kmMigrations <- liftIO $ withResource dbPool action :: LoggingT IO [[String]]
+  if null kmMigrations
+    then return Nothing
+    else return . Just $ "You have to finish all Knowledge Model migrations first"
 
 addAppTable dbPool = do
   let sql =

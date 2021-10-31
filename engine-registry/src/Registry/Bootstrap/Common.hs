@@ -10,7 +10,7 @@ import Registry.Model.Context.BaseContext
 import Registry.Util.Logger
 import Shared.Util.Uuid
 
-runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO ()
+runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO a
 runAppContextWithBaseContext function baseContext = do
   traceUuid <- liftIO generateUuid
   let appContext =
@@ -24,5 +24,5 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextCurrentOrganization = Nothing
           }
   let loggingLevel = baseContext ^. serverConfig . logging . level
-  _ <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
-  return ()
+  (Right result) <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
+  return result

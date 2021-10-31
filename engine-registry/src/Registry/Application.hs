@@ -4,6 +4,8 @@ module Registry.Application
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import Data.Foldable (forM_)
+import System.Exit
 import System.IO
 
 import LensesConfig
@@ -27,19 +29,25 @@ runApplication = do
   putStrLn asciiLogo
   serverConfig <- loadConfig serverConfigFile getServerConfig
   buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
-  runLogging (serverConfig ^. logging . level) $ do
-    logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-    dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
-    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
-    s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
-    localization <- loadLocalization serverConfig
-    let baseContext =
-          BaseContext
-            { _baseContextServerConfig = serverConfig
-            , _baseContextLocalization = localization
-            , _baseContextBuildInfoConfig = buildInfoConfig
-            , _baseContextDbPool = dbPool
-            , _baseContextS3Client = s3Client
-            }
-    liftIO $ runDBMigrations baseContext
-    liftIO $ runWebServer baseContext
+  result <-
+    runLogging (serverConfig ^. logging . level) $ do
+      logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
+      dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
+      httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
+      s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
+      localization <- loadLocalization serverConfig
+      let baseContext =
+            BaseContext
+              { _baseContextServerConfig = serverConfig
+              , _baseContextLocalization = localization
+              , _baseContextBuildInfoConfig = buildInfoConfig
+              , _baseContextDbPool = dbPool
+              , _baseContextS3Client = s3Client
+              }
+      result <- liftIO $ runDBMigrations baseContext
+      case result of
+        Just error -> return . Just $ error
+        Nothing -> do
+          liftIO $ runWebServer baseContext
+          return Nothing
+  forM_ result die

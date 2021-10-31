@@ -13,7 +13,7 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 
-runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO ()
+runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO a
 runAppContextWithBaseContext function baseContext = do
   traceUuid <- liftIO generateUuid
   let appContext =
@@ -32,5 +32,5 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextCache = baseContext ^. cache
           }
   let loggingLevel = baseContext ^. serverConfig . logging . level
-  _ <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
-  return ()
+  (Right result) <- liftIO . runExceptT $ runLogging loggingLevel $ runReaderT (runAppContextM function) appContext
+  return result

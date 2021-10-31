@@ -86,3 +86,4 @@ runMigration = do
   ACL.runMigration
   ACK.runMigration
   logInfo _CMP_MIGRATION "ended"
+  return Nothing
