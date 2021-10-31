@@ -1,6 +1,6 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorService where
 
-import Control.Lens ((&), (?~), (^.))
+import Control.Lens ((.~), (?~), (^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
@@ -39,14 +39,18 @@ getCurrentMigration branchUuid =
   runInTransaction $ do
     ms <- findMigratorStateByBranchUuid branchUuid
     knowledgeModel <- compileKnowledgeModel (ms ^. resultEvents) (Just $ ms ^. branchPreviousPackageId) []
-    let msWithKnowledgeModel = ms & currentKnowledgeModel ?~ knowledgeModel
-    return msWithKnowledgeModel
+    let stateWithEvent =
+          case ms ^. migrationState of
+            (ConflictState (CorrectorConflict Nothing)) ->
+              ConflictState . CorrectorConflict . Just . head $ ms ^. targetPackageEvents
+            state -> state
+    return . (currentKnowledgeModel ?~ knowledgeModel) . (migrationState .~ stateWithEvent) $ ms
 
 createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorStateDTO
-createMigration bUuid mscDto =
+createMigration bUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
-    let targetPkgId = mscDto ^. targetPackageId
+    let targetPkgId = reqDto ^. targetPackageId
     branch <- findBranchWithEventsById bUuid
     previousPkg <- getPreviousPkg branch
     mergeCheckpointPkgId <- getMergeCheckpointPackageId branch
@@ -107,7 +111,7 @@ solveConflictAndMigrate branchUuid reqDto =
       case length (ms ^. targetPackageEvents) of
         0 -> throwError . UserError $ _ERROR_SERVICE_MIGRATION_KM__NO_EVENTS_IN_TARGET_PKG_EVENT_QUEUE
         _ -> return ()
-    validateReqDto (ConflictState (CorrectorConflict e)) reqDto =
+    validateReqDto (ConflictState (CorrectorConflict (Just e))) reqDto =
       if e ^. uuid' == reqDto ^. originalEventUuid
         then when
                (reqDto ^. action == MCAEdited && isNothing (reqDto ^. event))

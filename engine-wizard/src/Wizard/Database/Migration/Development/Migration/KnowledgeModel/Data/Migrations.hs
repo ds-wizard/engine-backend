@@ -22,7 +22,7 @@ migratorState =
     , _migratorStateDTOBranchName = amsterdamBranch ^. name
     , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOMigrationState =
-        ConflictState . CorrectorConflict . Prelude.head $ netherlandsPackageV2 ^. events
+        ConflictState . CorrectorConflict . Just . Prelude.head $ netherlandsPackageV2 ^. events
     , _migratorStateDTOTargetPackageId = netherlandsPackageV2 ^. pId
     , _migratorStateDTOCurrentKnowledgeModel = Just km1Netherlands
     }

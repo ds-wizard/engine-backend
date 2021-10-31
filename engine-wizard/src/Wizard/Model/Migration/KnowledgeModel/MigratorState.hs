@@ -14,7 +14,7 @@ data MigrationState
   deriving (Show, Eq, Generic)
 
 data Conflict =
-  CorrectorConflict Event
+  CorrectorConflict (Maybe Event)
   deriving (Show, Eq, Generic)
 
 data MigrationConflictAction

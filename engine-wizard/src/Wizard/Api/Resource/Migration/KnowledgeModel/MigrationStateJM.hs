@@ -18,9 +18,7 @@ instance FromJSON MigrationState where
     stateType <- o .: "stateType"
     case stateType of
       "RunningState" -> return RunningState
-      "ConflictState" -> do
-        event <- o .: "targetEvent"
-        return . ConflictState . CorrectorConflict $ event
+      "ConflictState" -> return . ConflictState . CorrectorConflict $ Nothing
       "ErrorState" -> return ErrorState
       "CompletedState" -> return CompletedState
       _ -> fail "Unsupported migration state type"

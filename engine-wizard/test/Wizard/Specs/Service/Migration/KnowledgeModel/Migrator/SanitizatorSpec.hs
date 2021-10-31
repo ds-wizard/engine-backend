@@ -38,7 +38,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` e_km1 ^. chapterUuids
         resEvent ^. tagUuids `shouldBe` e_km1 ^. tagUuids
@@ -56,7 +56,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
@@ -81,7 +81,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditKnowledgeModelEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditKnowledgeModelEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
@@ -96,7 +96,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch1 ^. uuid
         resEvent ^. questionUuids `shouldBe` e_km1_ch1 ^. questionUuids
       it "Event - some KM uuids missing, no new added in event" $
@@ -108,7 +108,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1 ^. uuid
         resEvent ^. questionUuids `shouldBe` ChangedValue [question2 ^. uuid, question1 ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
@@ -122,7 +122,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1 ^. uuid
         resEvent ^. questionUuids `shouldBe` ChangedValue [question2 ^. uuid, question1 ^. uuid]
     -- -------------------------------------------------------------
@@ -139,7 +139,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerUuids `shouldBe` e_km1_ch1_q2 ^. answerUuids
@@ -162,7 +162,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerUuids `shouldBe` ChangedValue [q2_answerYes ^. uuid, q2_answerNo ^. uuid]
@@ -191,7 +191,7 @@ sanitizatorSpec =
           -- When:
         resState <- migrate reqState
           -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         resEvent ^. answerUuids `shouldBe` ChangedValue [q2_answerYes ^. uuid, q2_answerNo ^. uuid]
@@ -209,7 +209,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -227,7 +227,7 @@ sanitizatorSpec =
            -- When:
         resState <- migrate reqState
            -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -247,7 +247,7 @@ sanitizatorSpec =
           -- When:
         resState <- migrate reqState
           -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -262,7 +262,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditAnswerEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch1_q2_aYes1_2 ^. uuid
         resEvent ^. followUpUuids `shouldBe` e_km1_ch1_q2_aYes1_2 ^. followUpUuids
       it "Event - some KM uuids missing, no new added in event" $
@@ -274,7 +274,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditAnswerEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2_aYes1_2 ^. uuid
         resEvent ^. followUpUuids `shouldBe` ChangedValue [q2_aYes_fuQuestion1 ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
@@ -288,7 +288,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditAnswerEvent' resEvent))) = resState ^. migrationState
+        let (ConflictState (CorrectorConflict (Just (EditAnswerEvent' resEvent)))) = resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_q2_aYes1_2 ^. uuid
         resEvent ^. followUpUuids `shouldBe` ChangedValue [q2_aYes_fuQuestion1 ^. uuid]
     -- -------------------------------------------------------------
@@ -305,7 +305,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
         resEvent ^. answerUuids `shouldBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. answerUuids
@@ -328,7 +328,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
         resEvent ^. answerUuids `shouldBe`
@@ -361,7 +361,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch1_ansYes1_fuq1_ansYes3_fuq2_2 ^. uuid
         resEvent ^. answerUuids `shouldBe`
@@ -380,7 +380,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
         resEvent ^. itemTemplateQuestionUuids `shouldBe` e_km1_ch2_ansMaybe6_fuq4 ^. itemTemplateQuestionUuids
@@ -398,7 +398,7 @@ sanitizatorSpec =
            -- When:
         resState <- migrate reqState
            -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -420,7 +420,7 @@ sanitizatorSpec =
           -- When:
         resState <- migrate reqState
           -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_ansMaybe6_fuq4 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -435,7 +435,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch2_q4_it1_q6 ^. uuid
         resEvent ^. answerUuids `shouldBe` e_km1_ch2_q4_it1_q6 ^. answerUuids
@@ -458,7 +458,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q6 ^. uuid
         resEvent ^. answerUuids `shouldBe` ChangedValue [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid]
@@ -488,7 +488,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditOptionsQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q6 ^. uuid
         resEvent ^. answerUuids `shouldBe` ChangedValue [q4_it1_q6_answerYes ^. uuid, q4_it1_q6_answerNo ^. uuid]
@@ -502,7 +502,7 @@ sanitizatorSpec =
         -- When:
         resState <- migrate reqState
         -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldBe` e_km1_ch2_q4_it1_q5 ^. uuid
         resEvent ^. itemTemplateQuestionUuids `shouldBe` e_km1_ch2_q4_it1_q5 ^. itemTemplateQuestionUuids
@@ -519,7 +519,7 @@ sanitizatorSpec =
            -- When:
         resState <- migrate reqState
            -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q5 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids
@@ -539,7 +539,7 @@ sanitizatorSpec =
           -- When:
         resState <- migrate reqState
           -- Then:
-        let (ConflictState (CorrectorConflict (EditQuestionEvent' (EditListQuestionEvent' resEvent)))) =
+        let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditListQuestionEvent' resEvent))))) =
               resState ^. migrationState
         resEvent ^. uuid `shouldNotBe` e_km1_ch2_q4_it1_q5 ^. uuid
         let (ChangedValue resItqus) = resEvent ^. itemTemplateQuestionUuids

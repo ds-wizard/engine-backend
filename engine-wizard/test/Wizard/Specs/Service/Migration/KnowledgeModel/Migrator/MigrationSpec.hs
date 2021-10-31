@@ -31,7 +31,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -50,15 +51,17 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
-      let (ConflictState (CorrectorConflict (EditQuestionEvent' resEvent))) = resState ^. migrationState
+      let (ConflictState (CorrectorConflict (Just (EditQuestionEvent' resEvent)))) = resState ^. migrationState
       let expEvent = e_km1_ch1_q1 & uuid .~ (resEvent ^. uuid')
       let expState =
             reqState &
-            migrationState .~ ConflictState (CorrectorConflict (EditQuestionEvent' (EditValueQuestionEvent' expEvent)))
+            migrationState .~
+            ConflictState (CorrectorConflict (Just (EditQuestionEvent' (EditValueQuestionEvent' expEvent))))
       resState `shouldBe` expState
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
@@ -74,7 +77,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -95,9 +99,9 @@ migratorSpec =
         -- When:
       resState <- migrate reqState
         -- Then:
-      let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+      let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
       let expEvent = e_km1_ch1_2 & uuid .~ (resEvent ^. uuid)
-      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
+      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (Just (EditChapterEvent' expEvent)))
       resState `shouldBe` expState
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
@@ -113,7 +117,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -132,7 +137,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -151,13 +157,14 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
-      let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+      let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
       let expEvent = e_km1_ch1 & uuid .~ (resEvent ^. uuid)
-      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
+      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (Just (EditChapterEvent' expEvent)))
       resState `shouldBe` expState
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
@@ -178,13 +185,14 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
-      let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+      let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
       let expEvent = e_km1_ch1 & uuid .~ (resEvent ^. uuid)
-      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
+      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (Just (EditChapterEvent' expEvent)))
       resState `shouldBe` expState
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
@@ -205,14 +213,18 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
-      let (ConflictState (CorrectorConflict (EditChapterEvent' resEvent))) = resState ^. migrationState
+      let (ConflictState (CorrectorConflict (Just (EditChapterEvent' resEvent)))) = resState ^. migrationState
       let expEventEntityUuids = ChangedValue [a_km1_ch1_q2 ^. entityUuid]
       let expEvent = (e_km1_ch1 & uuid .~ (resEvent ^. uuid)) & questionUuids .~ expEventEntityUuids
-      let expState = reqState & migrationState .~ ConflictState (CorrectorConflict (EditChapterEvent' expEvent))
+      let expState =
+            (migrationState .~ ConflictState (CorrectorConflict (Just (EditChapterEvent' expEvent)))) .
+            (targetPackageEvents .~ [EditChapterEvent' expEvent]) $
+            reqState
       resState `shouldBe` expState
       -- -------------------------------------------------------------
       -- -------------------------------------------------------------
@@ -228,7 +240,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -247,7 +260,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
@@ -266,7 +280,8 @@ migratorSpec =
         -- And: Prepare current state
       let reqState = createTestMigratorStateWithEvents branchEvents msTargetPackageEvents (Just km)
         -- And: Prepare expected state
-      let expState = reqState & migrationState .~ (ConflictState . CorrectorConflict . head $ msTargetPackageEvents)
+      let expState =
+            reqState & migrationState .~ (ConflictState . CorrectorConflict . Just . head $ msTargetPackageEvents)
         -- When:
       resState <- migrate reqState
         -- Then:
