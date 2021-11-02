@@ -18,12 +18,14 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.User.UserDAO
+import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.API.User.Common
+import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
 -- POST /users
@@ -58,6 +60,8 @@ test_201 appContext =
     let expHeaders = resCorsHeadersPlain
     let expDto = userJohnCreate
     let expBody = encode expDto
+     -- AND: Run migrations
+    runInContextIO ACK.runMigration appContext
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation

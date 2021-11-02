@@ -12,6 +12,16 @@ import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CleanerMethod
 import Wizard.Service.Migration.KnowledgeModel.Migrator.CorrectorMethod
 
+migrate :: MigratorState -> IO MigratorState
+migrate state =
+  case state ^. migrationState of
+    RunningState -> do
+      newState <- foldl doMigrate (return state) (state ^. targetPackageEvents)
+      if null $ newState ^. targetPackageEvents
+        then return $ newState & migrationState .~ CompletedState
+        else return newState
+    _ -> return state
+
 doMigrate :: IO MigratorState -> Event -> IO MigratorState
 doMigrate stateIO event = do
   state <- stateIO
@@ -22,18 +32,6 @@ doMigrate stateIO event = do
         else runCorrectorMethod state event
     _ -> return state
 
-migrate :: MigratorState -> IO MigratorState
-migrate state =
-  case state ^. migrationState of
-    RunningState -> do
-      newState <- foldl doMigrate (return state) (state ^. targetPackageEvents)
-      if null $ newState ^. targetPackageEvents
-        then return $ newState & migrationState .~ CompletedState
-        else return newState
-    ConflictState _ -> return state
-    ErrorState -> return state
-    CompletedState -> return state
-
 solveConflict :: MigratorState -> MigratorConflictDTO -> MigratorState
 solveConflict state mcDto =
   case mcDto ^. action of
@@ -41,7 +39,7 @@ solveConflict state mcDto =
       let events = tail $ state ^. targetPackageEvents
           targetEvent =
             case state ^. migrationState of
-              ConflictState (CorrectorConflict event) -> event
+              ConflictState (CorrectorConflict event) -> fromJust event
        in createNewKm targetEvent . toRunningState . updateEvents events . addToResultEvent targetEvent $ state
     MCAEdited ->
       let events = tail $ state ^. targetPackageEvents

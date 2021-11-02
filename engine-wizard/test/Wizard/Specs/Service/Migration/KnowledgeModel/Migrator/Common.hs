@@ -1,11 +1,14 @@
 module Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.Common where
 
+import Control.Lens ((^.))
 import Data.Maybe
 import qualified Data.UUID as U
 
+import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
 createTestMigratorStateWithEvents :: [Event] -> [Event] -> Maybe KnowledgeModel -> MigratorState
@@ -20,4 +23,5 @@ createTestMigratorStateWithEvents branchEvents targetPackageEvents mKm =
     , _migratorStateTargetPackageEvents = targetPackageEvents
     , _migratorStateResultEvents = []
     , _migratorStateCurrentKnowledgeModel = mKm
+    , _migratorStateAppUuid = defaultApp ^. uuid
     }

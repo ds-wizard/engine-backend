@@ -25,8 +25,8 @@ toDTO feedback issueUrl =
     , _feedbackDTOUpdatedAt = feedback ^. updatedAt
     }
 
-fromCreateDTO :: FeedbackCreateDTO -> U.UUID -> Int -> UTCTime -> Feedback
-fromCreateDTO dto fUuid issueId now =
+fromCreateDTO :: FeedbackCreateDTO -> U.UUID -> Int -> U.UUID -> UTCTime -> Feedback
+fromCreateDTO dto fUuid issueId appUuid now =
   Feedback
     { _feedbackUuid = fUuid
     , _feedbackIssueId = issueId
@@ -34,6 +34,7 @@ fromCreateDTO dto fUuid issueId now =
     , _feedbackPackageId = dto ^. packageId
     , _feedbackTitle = dto ^. title
     , _feedbackContent = dto ^. content
+    , _feedbackAppUuid = appUuid
     , _feedbackCreatedAt = now
     , _feedbackUpdatedAt = now
     }
@@ -47,6 +48,7 @@ fromSimpleIssue feedback simpleIssue now =
     , _feedbackPackageId = feedback ^. packageId
     , _feedbackTitle = simpleIssue ^. title
     , _feedbackContent = simpleIssue ^. body
+    , _feedbackAppUuid = feedback ^. appUuid
     , _feedbackCreatedAt = feedback ^. createdAt
     , _feedbackUpdatedAt = now
     }

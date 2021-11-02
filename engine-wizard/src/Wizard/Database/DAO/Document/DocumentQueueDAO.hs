@@ -20,7 +20,7 @@ insertDocumentQueue entity = do
   let questionMarks = generateQuestionMarks entity
   let sql =
         f'
-          "INSERT INTO %s (document_uuid, document_context, created_by, created_at) VALUES (?, ?, ?, ?) RETURNING id"
+          "INSERT INTO %s (document_uuid, document_context, created_by, created_at, app_uuid) VALUES (?, ?, ?, ?, ?) RETURNING id"
           [entityName, questionMarks]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) entity

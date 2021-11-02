@@ -5,6 +5,7 @@ import Control.Lens ((^.))
 import LensesConfig
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Model.Context.AppContext
+import Wizard.Model.Context.AppContextHelpers
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 
 checkViewPermissionToDoc :: String -> AppContextM ()
@@ -14,5 +15,6 @@ checkViewPermissionToDoc qtnUuid = do
 
 checkEditPermissionToDoc :: String -> AppContextM ()
 checkEditPermissionToDoc qtnUuid = do
+  _ <- getCurrentUser
   qtn <- findQuestionnaireById qtnUuid
   checkEditPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)

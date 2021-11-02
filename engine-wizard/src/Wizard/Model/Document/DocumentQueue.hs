@@ -11,6 +11,7 @@ data DocumentQueue =
     { _documentQueueDId :: Int
     , _documentQueueDocumentUuid :: U.UUID
     , _documentQueueDocumentContext :: DocumentContext
+    , _documentQueueAppUuid :: U.UUID
     , _documentQueueCreatedBy :: Maybe U.UUID
     , _documentQueueCreatedAt :: UTCTime
     }

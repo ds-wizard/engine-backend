@@ -61,10 +61,10 @@ test_200 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/templates/global:non-existing-template:1.0.0"
     reqHeaders
     reqBody
     "template"
-    "global:non-existing-template:1.0.0"
+    [("id", "global:non-existing-template:1.0.0")]

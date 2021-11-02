@@ -39,6 +39,7 @@ data Questionnaire =
     , _questionnaireVersions :: [QuestionnaireVersion]
     , _questionnaireIsTemplate :: Bool
     , _questionnaireSquashed :: Bool
+    , _questionnaireAppUuid :: U.UUID
     , _questionnaireCreatedAt :: UTCTime
     , _questionnaireUpdatedAt :: UTCTime
     }
@@ -59,4 +60,5 @@ instance Eq Questionnaire where
     _questionnairePermissions a == _questionnairePermissions b &&
     _questionnaireEvents a == _questionnaireEvents b &&
     _questionnaireVersions a == _questionnaireVersions b &&
-    _questionnaireIsTemplate a == _questionnaireIsTemplate b && _questionnaireSquashed a == _questionnaireSquashed b
+    _questionnaireIsTemplate a == _questionnaireIsTemplate b &&
+    _questionnaireSquashed a == _questionnaireSquashed b && _questionnaireAppUuid a == _questionnaireAppUuid b

@@ -37,4 +37,4 @@ list_knowledgeModel_POST mServiceToken reqDto =
         NotExistsError $
         _ERROR_DATABASE__ENTITY_NOT_FOUND
           "km-cache"
-          (cacheKey (fromMaybe "" $ reqDto ^. packageId) (reqDto ^. tagUuids))
+          [("key", cacheKey (fromMaybe "" $ reqDto ^. packageId) (reqDto ^. tagUuids))]

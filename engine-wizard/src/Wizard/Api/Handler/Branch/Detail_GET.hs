@@ -8,14 +8,20 @@ import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchDetailJM ()
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Branch.BranchService
+import Wizard.Util.Logger
 
 type Detail_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "branches"
      :> Capture "bUuid" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
 
-detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
-detail_GET mTokenHeader bUuid =
+detail_GET ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
+detail_GET mTokenHeader mHost bUuid =
   getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
-    runInAuthService $ addTraceUuidHeader =<< getBranchById bUuid
+    runInAuthService $
+    addTraceUuidHeader =<< do
+      logInfoU "" (show mHost)
+      getBranchById bUuid

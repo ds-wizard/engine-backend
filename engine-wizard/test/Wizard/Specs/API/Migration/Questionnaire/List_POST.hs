@@ -20,6 +20,7 @@ import Wizard.Api.Resource.Migration.Questionnaire.MigratorStateJM ()
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
+import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -100,6 +101,8 @@ create_test_201 title appContext oldQtn newQtn state stateDto authHeader =
     runInContextIO TML.runMigration appContext
     runInContextIO (insertQuestionnaire oldQtn) appContext
     runInContextIO (insertQuestionnaire newQtn) appContext
+    runInContextIO (insertQuestionnaire differentQuestionnaire) appContext
+    runInContextIO QTN_MIG.runMigration appContext
     response <- request reqMethod reqUrl reqHeaders reqBody
     -- THEN: Compare response with expectation
     let (status, headers, resBody) = destructResponse response :: (Int, ResponseHeaders, MigratorStateDTO)
@@ -157,10 +160,10 @@ create_test_403 title appContext qtn reason =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire"
-    "57250a07-a663-4ff3-ac1f-16530f2c1bfe"
+    [("uuid", "57250a07-a663-4ff3-ac1f-16530f2c1bfe")]

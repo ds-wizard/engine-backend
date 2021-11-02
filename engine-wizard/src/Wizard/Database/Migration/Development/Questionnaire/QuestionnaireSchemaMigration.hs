@@ -56,7 +56,10 @@ createQtnTable = do
         \     updated_at timestamptz not null, \
         \     description varchar, \
         \     is_template boolean not null, \
-        \     squashed boolean not null \
+        \     squashed boolean not null, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \         constraint questionnaire_app_uuid_fk \
+        \             references app \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \

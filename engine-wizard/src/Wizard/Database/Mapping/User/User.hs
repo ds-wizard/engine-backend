@@ -29,6 +29,7 @@ instance ToRow User where
     , toField _userLastVisitedAt
     , toField _userCreatedAt
     , toField _userUpdatedAt
+    , toField _userAppUuid
     ]
 
 instance FromRow User where
@@ -49,4 +50,5 @@ instance FromRow User where
     _userLastVisitedAt <- field
     _userCreatedAt <- field
     _userUpdatedAt <- field
+    _userAppUuid <- field
     return $ User {..}

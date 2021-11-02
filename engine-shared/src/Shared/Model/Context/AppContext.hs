@@ -12,4 +12,5 @@ data AppContext =
     , _appContextS3Client :: MinioConn
     , _appContextLocalization :: M.Map String String
     , _appContextTraceUuid :: U.UUID
+    , _appContextAppUuid :: U.UUID
     }

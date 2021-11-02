@@ -12,7 +12,7 @@ import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
 import Shared.Model.Context.BaseContext
 
-class HasS3' sc =>
+class (HasExperimental' sc, HasS3' sc) =>
       HasServerConfig' entity sc
   | entity -> sc
   where
@@ -20,6 +20,9 @@ class HasS3' sc =>
 
 class HasS3' entity where
   s3' :: Functor f => (ServerConfigS3 -> f ServerConfigS3) -> entity -> f entity
+
+class HasExperimental' entity where
+  experimental' :: Functor f => (ServerConfigExperimental -> f ServerConfigExperimental) -> entity -> f entity
 
 class HasDbPool' entity where
   dbPool' :: Functor f => (Pool Connection -> f (Pool Connection)) -> entity -> f entity
@@ -88,3 +91,14 @@ instance HasTraceUuid' AppContext where
       get entity = entity ^. traceUuid
       set :: AppContext -> U.UUID -> AppContext
       set entity newValue = entity & traceUuid .~ newValue
+
+class HasAppUuid' entity where
+  appUuid' :: Functor f => (U.UUID -> f U.UUID) -> entity -> f entity
+
+instance HasAppUuid' AppContext where
+  appUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> U.UUID
+      get entity = entity ^. appUuid
+      set :: AppContext -> U.UUID -> AppContext
+      set entity newValue = entity & appUuid .~ newValue

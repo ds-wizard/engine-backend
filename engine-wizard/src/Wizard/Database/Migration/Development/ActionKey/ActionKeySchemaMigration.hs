@@ -31,7 +31,10 @@ createTables = do
         \         user_id         uuid not null, \
         \         type            varchar not null, \
         \         hash            varchar not null, \
-        \         created_at      timestamp with time zone not null \
+        \         created_at      timestamp with time zone not null, \
+        \         app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \           constraint action_key_app_uuid_fk \
+        \             references app \
         \     ); \
         \ create unique index action_key_uuid_uindex \
         \     on action_key (uuid); \

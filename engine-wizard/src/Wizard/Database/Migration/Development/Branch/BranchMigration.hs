@@ -22,4 +22,5 @@ runMigration = do
     (toDTO userAlbert)
     amsterdamBranchCreate
   updateEventsInBranch (U.toString $ amsterdamBranch ^. uuid) (amsterdamBranchWithEvents ^. events)
+  insertBranch differentBranch
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

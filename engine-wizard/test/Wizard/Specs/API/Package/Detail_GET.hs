@@ -100,10 +100,10 @@ test_403 appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/packages/global:non-existing-package:1.0.0"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "package"
-    "global:non-existing-package:1.0.0"
+    [("id", "global:non-existing-package:1.0.0")]

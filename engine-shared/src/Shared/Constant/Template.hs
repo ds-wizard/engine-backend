@@ -1,4 +1,4 @@
 module Shared.Constant.Template where
 
 templateMetamodelVersion :: Int
-templateMetamodelVersion = 4
+templateMetamodelVersion = 5

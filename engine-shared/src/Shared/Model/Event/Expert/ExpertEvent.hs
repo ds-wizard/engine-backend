@@ -1,5 +1,6 @@
 module Shared.Model.Event.Expert.ExpertEvent where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -12,6 +13,7 @@ data AddExpertEvent =
     , _addExpertEventEntityUuid :: U.UUID
     , _addExpertEventName :: String
     , _addExpertEventEmail :: String
+    , _addExpertEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -22,6 +24,7 @@ data EditExpertEvent =
     , _editExpertEventEntityUuid :: U.UUID
     , _editExpertEventName :: EventField String
     , _editExpertEventEmail :: EventField String
+    , _editExpertEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

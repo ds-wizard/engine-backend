@@ -1,7 +1,7 @@
 module Wizard.Service.Template.Asset.TemplateAssetService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Char8 as BS
 import qualified Data.UUID as U
 
@@ -43,7 +43,8 @@ createAsset tmlId fileName contentType content =
     checkPermission _TML_PERM
     validateTemplateFileAndAssetUniqueness Nothing tmlId fileName
     aUuid <- liftIO generateUuid
-    let newAsset = fromChangeDTO tmlId aUuid fileName contentType
+    appUuid <- asks _appContextAppUuid
+    let newAsset = fromChangeDTO tmlId aUuid fileName contentType appUuid
     insertTemplateAsset newAsset
     putAsset tmlId (U.toString aUuid) content
     deleteTemporalDocumentsByTemplateAssetId (U.toString aUuid)

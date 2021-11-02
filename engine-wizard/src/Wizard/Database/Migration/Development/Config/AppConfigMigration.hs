@@ -9,4 +9,5 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Config/AppConfig) started"
   deleteAppConfigs
   insertAppConfig defaultAppConfigEncrypted
+  insertAppConfig differentAppConfigEncrypted
   logInfo _CMP_MIGRATION "(Config/AppConfig) ended"

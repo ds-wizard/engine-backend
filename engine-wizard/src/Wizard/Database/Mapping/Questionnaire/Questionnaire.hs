@@ -31,6 +31,7 @@ instance ToRow Questionnaire where
     , toField _questionnaireDescription
     , toField _questionnaireIsTemplate
     , toField _questionnaireSquashed
+    , toField _questionnaireAppUuid
     ]
 
 instance FromRow Questionnaire where
@@ -52,4 +53,5 @@ instance FromRow Questionnaire where
     _questionnaireDescription <- field
     _questionnaireIsTemplate <- field
     _questionnaireSquashed <- field
+    _questionnaireAppUuid <- field
     return $ Questionnaire {..}

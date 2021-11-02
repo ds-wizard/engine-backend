@@ -25,3 +25,4 @@ runMigration = do
   PKG.runMigration
   TML.runMigration
   logInfo _CMP_MIGRATION "ended"
+  return Nothing

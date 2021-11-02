@@ -13,6 +13,7 @@ import Wizard.Api.Resource.User.UserStateDTO
 import Wizard.Api.Resource.User.UserSubmissionPropsDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.User.OnlineUserInfo
@@ -32,7 +33,8 @@ userAlbert =
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = _USER_ROLE_ADMIN
     , _userPermissions =
-        [ "UM_PERM"
+        [ "ADMIN_PERM"
+        , "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"
@@ -51,6 +53,7 @@ userAlbert =
     , _userSubmissionProps = [userAlbertApiTokenEncrypted]
     , _userImageUrl = Nothing
     , _userGroups = [ownerBioGroup, ownerPlantGroup]
+    , _userAppUuid = defaultApp ^. uuid
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0

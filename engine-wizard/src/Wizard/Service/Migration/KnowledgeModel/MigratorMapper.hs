@@ -1,6 +1,7 @@
 module Wizard.Service.Migration.KnowledgeModel.MigratorMapper where
 
 import Control.Lens ((^.))
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.KnowledgeModel
@@ -22,8 +23,9 @@ toDTO ms branch =
     , _migratorStateDTOCurrentKnowledgeModel = ms ^. currentKnowledgeModel
     }
 
-fromCreateDTO :: BranchWithEvents -> Package -> [Event] -> String -> [Event] -> KnowledgeModel -> MigratorState
-fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km =
+fromCreateDTO ::
+     BranchWithEvents -> Package -> [Event] -> String -> [Event] -> KnowledgeModel -> U.UUID -> MigratorState
+fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid =
   MigratorState
     { _migratorStateBranchUuid = branch ^. uuid
     , _migratorStateMetamodelVersion = kmMetamodelVersion
@@ -34,4 +36,5 @@ fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km =
     , _migratorStateTargetPackageEvents = targetPkgEvents
     , _migratorStateResultEvents = []
     , _migratorStateCurrentKnowledgeModel = Just km
+    , _migratorStateAppUuid = appUuid
     }

@@ -38,6 +38,14 @@ instance HasS3' ServerConfig where
       set :: ServerConfig -> ServerConfigS3 -> ServerConfig
       set entity newValue = entity & s3 .~ newValue
 
+instance HasExperimental' ServerConfig where
+  experimental' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: ServerConfig -> ServerConfigExperimental
+      get entity = entity ^. experimental
+      set :: ServerConfig -> ServerConfigExperimental -> ServerConfig
+      set entity newValue = entity & experimental .~ newValue
+
 instance HasDbPool' AppContext where
   dbPool' convert entity = fmap (set entity) (convert . get $ entity)
     where
@@ -93,3 +101,11 @@ instance HasTraceUuid' AppContext where
       get entity = entity ^. traceUuid
       set :: AppContext -> U.UUID -> AppContext
       set entity newValue = entity & traceUuid .~ newValue
+
+instance HasAppUuid' AppContext where
+  appUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> U.UUID
+      get entity = entity ^. appUuid
+      set :: AppContext -> U.UUID -> AppContext
+      set entity newValue = entity & appUuid .~ newValue

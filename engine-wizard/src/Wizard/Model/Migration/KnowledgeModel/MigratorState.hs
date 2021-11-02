@@ -14,7 +14,7 @@ data MigrationState
   deriving (Show, Eq, Generic)
 
 data Conflict =
-  CorrectorConflict Event
+  CorrectorConflict (Maybe Event)
   deriving (Show, Eq, Generic)
 
 data MigrationConflictAction
@@ -34,5 +34,6 @@ data MigratorState =
     , _migratorStateTargetPackageEvents :: [Event]
     , _migratorStateResultEvents :: [Event]
     , _migratorStateCurrentKnowledgeModel :: Maybe KnowledgeModel
+    , _migratorStateAppUuid :: U.UUID
     }
   deriving (Show, Eq)

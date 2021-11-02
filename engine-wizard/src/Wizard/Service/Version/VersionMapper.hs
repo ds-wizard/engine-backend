@@ -40,5 +40,6 @@ fromPackage branch versionDto forkOfPkgId mergeCheckpointPkgId org version event
     , _packageWithEventsForkOfPackageId = forkOfPkgId
     , _packageWithEventsMergeCheckpointPackageId = mergeCheckpointPkgId
     , _packageWithEventsEvents = events
+    , _packageWithEventsAppUuid = branch ^. appUuid
     , _packageWithEventsCreatedAt = now
     }

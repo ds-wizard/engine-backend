@@ -6,6 +6,7 @@ import Data.Foldable
 import qualified Data.HashMap.Strict as HashMap
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.UUID as U
 import Network.HTTP.Types
 import Network.Wai.Test hiding (request)
 import Test.Hspec
@@ -15,6 +16,7 @@ import Test.Hspec.Wai.Matcher
 
 import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Constant.Api
+import Shared.Constant.App
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.List (elems)
@@ -66,13 +68,13 @@ createAuthTest reqMethod reqUrl reqHeaders reqBody =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
 
-createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator =
+createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName parameters =
   it "HTTP 404 NOT FOUND - entity doesn't exist" $
       -- GIVEN: Prepare expectation
    do
     let expStatus = 404
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator)
+    let expDto = NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName parameters)
     let expBody = encode expDto
       -- WHEN: Call APIA
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -80,6 +82,15 @@ createNotFoundTest reqMethod reqUrl reqHeaders reqBody entityName identificator 
     let responseMatcher =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
+
+createNotFoundTest' reqMethod reqUrl reqHeaders reqBody entityName parameters =
+  createNotFoundTest
+    reqMethod
+    reqUrl
+    reqHeaders
+    reqBody
+    entityName
+    (("app_uuid", U.toString defaultAppUuid) : parameters)
 
 -- ------------------------------------------------------------------------
 -- ASSERT

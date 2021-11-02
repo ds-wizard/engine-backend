@@ -1,5 +1,5 @@
 module Wizard.Specs.API.Submission.List_POST
-  ( list_post
+  ( list_POST
   ) where
 
 import Control.Lens ((&), (.~), (^.))
@@ -16,30 +16,35 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Api.Resource.Submission.SubmissionCreateJM ()
+import Wizard.Api.Resource.Submission.SubmissionDTO
 import Wizard.Api.Resource.Submission.SubmissionJM ()
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Submission.SubmissionDAO
+import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import qualified Wizard.Database.Migration.Development.Document.DocumentMigration as DOC_Migration
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import Wizard.Database.Migration.Development.Submission.Data.Submissions
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
+import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Submission.SubmissionMapper
 
 import SharedTest.Specs.API.Common
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
 
 -- ------------------------------------------------------------------------
--- POST /submissions
+-- POST /documents/{docUuid}/submissions
 -- ------------------------------------------------------------------------
-list_post :: AppContext -> SpecWith ((), Application)
-list_post appContext =
-  describe "POST /submissions" $ do
+list_POST :: AppContext -> SpecWith ((), Application)
+list_POST appContext =
+  describe "POST /documents/{docUuid}/submissions" $ do
     test_201 appContext
+    test_401 appContext
     test_403 appContext
 
 -- ----------------------------------------------------
@@ -47,7 +52,7 @@ list_post appContext =
 -- ----------------------------------------------------
 reqMethod = methodPost
 
-reqUrl = "/submissions"
+reqUrl = "/documents/264ca352-1a99-4ffd-860e-32aee9a98428/submissions"
 
 reqHeadersT authHeader = reqCtHeader : authHeader
 
@@ -59,20 +64,25 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
-  create_test_201 "HTTP 201 CREATED (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_201 "HTTP 201 CREATED (Anonymous, Public, Sharing)" appContext questionnaire10 []
+  create_test_201 "HTTP 201 CREATED (Owner, Private)" appContext questionnaire1 [reqAuthHeader] userAlbert
+  create_test_201
+    "HTTP 201 CREATED (Non-Owner, VisibleEdit)"
+    appContext
+    questionnaire3
+    [reqNonAdminAuthHeader]
+    userNikola
 
-create_test_201 title appContext qtn authHeader =
+create_test_201 title appContext qtn authHeader user =
   it title $
      -- GIVEN: Prepare request
    do
     let reqHeaders = reqHeadersT authHeader
      -- AND: Prepare expectation
     let expStatus = 201
-    let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = submission1
+    let expHeaders = resCtHeaderPlain : resCorsHeadersPlain
+    let expDto = toDTO submission2 (Just $ defaultSubmissionService ^. name) user
     let expBody = encode expDto
+    let expType (a :: SubmissionDTO) = a
      -- AND: Run migrations
     runInContextIO U_Migration.runMigration appContext
     runInContextIO TML_Migration.runMigration appContext
@@ -84,9 +94,14 @@ create_test_201 title appContext qtn authHeader =
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
      -- THEN: Compare response with expectation
-    let responseMatcher =
-          ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
-    response `shouldRespondWith` responseMatcher
+    assertResponse expStatus expHeaders expDto expType response ["uuid", "createdAt", "updatedAt"]
+     -- AND: Find result in DB and compare with expectation state
+    assertCountInDB findSubmissions appContext 1
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
@@ -104,24 +119,6 @@ test_403 appContext = do
     questionnaire2
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
-    appContext
-    questionnaire2
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
-    appContext
-    questionnaire7
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, Public)"
-    appContext
-    questionnaire3
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $

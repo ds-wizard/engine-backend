@@ -67,3 +67,9 @@ instance FromJSON LogLevel where
       parse "WARN" = return LevelWarn
       parse "ERROR" = return LevelError
       parse _ = fail "Log Level has unsupported log level"
+
+instance FromJSON ServerConfigExperimental where
+  parseJSON (Object o) = do
+    _serverConfigExperimentalMoreAppsEnabled <- o .: "moreAppsEnabled"
+    return ServerConfigExperimental {..}
+  parseJSON _ = mzero

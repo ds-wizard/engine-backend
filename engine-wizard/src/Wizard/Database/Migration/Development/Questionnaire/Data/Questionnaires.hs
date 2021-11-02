@@ -20,6 +20,8 @@ import Wizard.Api.Resource.Questionnaire.QuestionnaireCreateDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireDTO
 import Wizard.Database.Migration.Development.Acl.Data.Groups
 import Wizard.Database.Migration.Development.Acl.Data.Members
+import Wizard.Database.Migration.Development.App.Data.Apps
+import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireComments
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireEvents
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireLabels
@@ -54,6 +56,7 @@ questionnaire1 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = True
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -160,6 +163,7 @@ questionnaire2 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     }
@@ -182,6 +186,7 @@ questionnaire2Edited =
     , _questionnaireVersions = questionnaire2 ^. versions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = questionnaire2 ^. createdAt
     , _questionnaireUpdatedAt = questionnaire2 ^. updatedAt
     }
@@ -243,6 +248,7 @@ questionnaire3 =
     , _questionnaireVersions = qVersions
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 28) 0
     }
@@ -282,6 +288,7 @@ questionnaire4 =
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = defaultApp ^. uuid
     , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
@@ -628,6 +635,40 @@ qtn13NikolaCommentPermRecord =
 
 qtn13NikolaCommentPermRecordDto :: QuestionnairePermRecordDTO
 qtn13NikolaCommentPermRecordDto = toUserPermRecordDTO qtn13NikolaCommentPermRecord userNikola
+
+-- ------------------------------------------------------------------------
+-- ------------------------------------------------------------------------
+differentQuestionnaire :: Questionnaire
+differentQuestionnaire =
+  Questionnaire
+    { _questionnaireUuid = fromJust (U.fromString "7bf4a83e-1687-4e99-b1df-9221977d7b4f")
+    , _questionnaireName = "My Different Questionnaire"
+    , _questionnaireDescription = Just "Some description"
+    , _questionnaireVisibility = PrivateQuestionnaire
+    , _questionnaireSharing = RestrictedQuestionnaire
+    , _questionnairePackageId = differentPackage ^. pId
+    , _questionnaireSelectedTagUuids = []
+    , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
+    , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
+    , _questionnaireCreatorUuid = Just $ userCharles ^. uuid
+    , _questionnairePermissions = [differentQtnCharlesOwnerPermRecord]
+    , _questionnaireEvents = []
+    , _questionnaireVersions = []
+    , _questionnaireIsTemplate = True
+    , _questionnaireSquashed = True
+    , _questionnaireAppUuid = differentApp ^. uuid
+    , _questionnaireCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
+    , _questionnaireUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    }
+
+differentQtnCharlesOwnerPermRecord :: QuestionnairePermRecord
+differentQtnCharlesOwnerPermRecord =
+  QuestionnairePermRecord
+    { _questionnairePermRecordUuid = u' "e3476103-428e-4729-8f73-adabaad7ef8c"
+    , _questionnairePermRecordQuestionnaireUuid = differentQuestionnaire ^. uuid
+    , _questionnairePermRecordMember = charlesMember
+    , _questionnairePermRecordPerms = ownerPermissions
+    }
 
 -- ------------------------------------------------------------------------
 -- ------------------------------------------------------------------------

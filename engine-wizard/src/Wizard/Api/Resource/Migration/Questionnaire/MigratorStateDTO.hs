@@ -10,5 +10,6 @@ data MigratorStateDTO =
     { _migratorStateDTOOldQuestionnaire :: QuestionnaireDetailDTO
     , _migratorStateDTONewQuestionnaire :: QuestionnaireDetailDTO
     , _migratorStateDTOResolvedQuestionUuids :: [U.UUID]
+    , _migratorStateDTOAppUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)

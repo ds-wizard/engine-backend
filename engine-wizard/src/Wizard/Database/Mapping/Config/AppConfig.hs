@@ -11,7 +11,7 @@ import Wizard.Model.Config.AppConfig
 
 instance ToRow AppConfig where
   toRow AppConfig {..} =
-    [ toField _appConfigAId
+    [ toField _appConfigUuid
     , toJSONField _appConfigOrganization
     , toJSONField _appConfigAuthentication
     , toJSONField _appConfigPrivacyAndSupport
@@ -28,7 +28,7 @@ instance ToRow AppConfig where
 
 instance FromRow AppConfig where
   fromRow = do
-    _appConfigAId <- field
+    _appConfigUuid <- field
     _appConfigOrganization <- fieldWith fromJSONField
     _appConfigAuthentication <- fieldWith fromJSONField
     _appConfigPrivacyAndSupport <- fieldWith fromJSONField

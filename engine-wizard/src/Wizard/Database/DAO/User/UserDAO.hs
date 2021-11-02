@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.User.UserDAO where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import Data.String
 import Data.Time
 import qualified Data.UUID as U
@@ -29,48 +30,62 @@ entityName = "user_entity"
 pageLabel = "users"
 
 findUsers :: AppContextM [User]
-findUsers = createFindEntitiesFn entityName
+findUsers = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
-findUsersPage mQuery mRole pageable sort =
+findUsersPage mQuery mRole pageable sort = do
+  appUuid <- asks _appContextAppUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "*"
-    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ?"
-    [regex mQuery, regex mQuery, regex mRole]
+    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ?"
+    [regex mQuery, regex mQuery, regex mRole, U.toString appUuid]
 
 findUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
-findUserSuggestionsPage mQuery pageable sort =
+findUserSuggestionsPage mQuery pageable sort = do
+  appUuid <- asks _appContextAppUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "uuid, first_name, last_name, email, image_url"
-    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true"
-    [regex mQuery, regex mQuery]
+    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ?"
+    [regex mQuery, regex mQuery, U.toString appUuid]
 
 findUserById :: String -> AppContextM User
 findUserById = getFromCacheOrDb getFromCache addToCache go
   where
-    go = createFindEntityByFn entityName "uuid"
+    go uuid = do
+      appUuid <- asks _appContextAppUuid
+      createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 findUserById' :: String -> AppContextM (Maybe User)
 findUserById' = getFromCacheOrDb' getFromCache addToCache go
   where
-    go = createFindEntityByFn' entityName "uuid"
+    go uuid = do
+      appUuid <- asks _appContextAppUuid
+      createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 findUserByEmail :: String -> AppContextM User
-findUserByEmail = createFindEntityByFn entityName "email"
+findUserByEmail email = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("email", email)]
 
 findUserByEmail' :: String -> AppContextM (Maybe User)
-findUserByEmail' = createFindEntityByFn' entityName "email"
+findUserByEmail' email = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("email", email)]
 
 countUsers :: AppContextM Int
-countUsers = createCountFn entityName
+countUsers = do
+  appUuid <- asks _appContextAppUuid
+  createCountByFn entityName appCondition [appUuid]
 
 insertUser :: User -> AppContextM Int64
 insertUser user = do
@@ -80,9 +95,10 @@ insertUser user = do
 
 updateUserById :: User -> AppContextM Int64
 updateUserById user = do
-  let params = toRow user ++ [toField . U.toText $ user ^. uuid]
+  appUuid <- asks _appContextAppUuid
+  let params = toRow user ++ [toField appUuid, toField $ user ^. uuid]
   let sql =
-        "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
+        "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   result <- runDB action
@@ -91,8 +107,9 @@ updateUserById user = do
 
 updateUserPasswordById :: String -> String -> UTCTime -> AppContextM Int64
 updateUserPasswordById uUuid uPassword uUpdatedAt = do
-  let params = [toField uPassword, toField uUpdatedAt, toField uUuid]
-  let sql = "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE uuid = ?"
+  appUuid <- asks _appContextAppUuid
+  let params = [toField uPassword, toField uUpdatedAt, toField appUuid, toField uUuid]
+  let sql = "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   result <- runDB action
@@ -107,6 +124,7 @@ deleteUsers = do
 
 deleteUserById :: String -> AppContextM Int64
 deleteUserById uuid = do
-  result <- createDeleteEntityByFn entityName "uuid" uuid
+  appUuid <- asks _appContextAppUuid
+  result <- createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
   deleteFromCache uuid
   return result

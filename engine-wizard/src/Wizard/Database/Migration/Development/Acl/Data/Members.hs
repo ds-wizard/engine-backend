@@ -15,3 +15,6 @@ albertMember = UserMember {_userMemberUuid = userAlbert ^. uuid}
 
 nikolaMember :: Member
 nikolaMember = UserMember {_userMemberUuid = userNikola ^. uuid}
+
+charlesMember :: Member
+charlesMember = UserMember {_userMemberUuid = userCharles ^. uuid}

@@ -4,8 +4,8 @@ import Data.Maybe (catMaybes)
 import Servant
 
 import Shared.Api.Handler.Common
+import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Wizard.Api.Handler.Common
-import Wizard.Api.Resource.Template.TemplateSimpleDTO
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.Template.TemplateService
 
@@ -15,18 +15,16 @@ type List_All_GET
      :> "all"
      :> QueryParam "organizationId" String
      :> QueryParam "templateId" String
-     :> QueryParam "pkgId" String
-     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TemplateSuggestionDTO])
 
 list_all_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
-  -> Maybe String
-  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSimpleDTO])
-list_all_GET mTokenHeader mOrganizationId mTmlId mPkgId =
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSuggestionDTO])
+list_all_GET mTokenHeader mOrganizationId mTmlId =
   getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]
-      getTemplatesDto queryParams mPkgId
+      getTemplatesDto queryParams

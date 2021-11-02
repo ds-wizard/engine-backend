@@ -14,7 +14,7 @@ findBookReferences :: AppContextM [BookReference]
 findBookReferences = createFindEntitiesFn entityName
 
 findBookReferenceByShortUuid :: String -> AppContextM BookReference
-findBookReferenceByShortUuid = createFindEntityByFn entityName "short_uuid"
+findBookReferenceByShortUuid shortUuid = createFindEntityByFn entityName [("short_uuid", shortUuid)]
 
 insertBookReference :: BookReference -> AppContextM Int64
 insertBookReference = createInsertFn entityName
@@ -23,4 +23,4 @@ deleteBookReferences :: AppContextM Int64
 deleteBookReferences = createDeleteEntitiesFn entityName
 
 deleteBookReferenceByShortUuid :: String -> AppContextM Int64
-deleteBookReferenceByShortUuid = createDeleteEntityByFn entityName "short_uuid"
+deleteBookReferenceByShortUuid shortUuid = createDeleteEntityByFn entityName [("short_uuid", shortUuid)]

@@ -1,7 +1,7 @@
 module Wizard.Service.Template.File.TemplateFileService where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -35,7 +35,8 @@ createTemplateFile tmlId reqDto =
     checkPermission _TML_PERM
     validateTemplateFileAndAssetUniqueness Nothing tmlId (reqDto ^. fileName)
     fUuid <- liftIO generateUuid
-    let newFile = fromChangeDTO reqDto tmlId fUuid
+    appUuid <- asks _appContextAppUuid
+    let newFile = fromChangeDTO reqDto tmlId fUuid appUuid
     insertTemplateFile newFile
     deleteTemporalDocumentsByTemplateFileId (U.toString fUuid)
     return newFile
@@ -46,7 +47,7 @@ modifyTemplateFile fileUuid reqDto =
     checkPermission _TML_PERM
     file <- findTemplateFileById fileUuid
     validateTemplateFileAndAssetUniqueness (Just $ file ^. uuid) (file ^. templateId) (reqDto ^. fileName)
-    let updatedFile = fromChangeDTO reqDto (file ^. templateId) (file ^. uuid)
+    let updatedFile = fromChangeDTO reqDto (file ^. templateId) (file ^. uuid) (file ^. appUuid)
     updateTemplateFileById updatedFile
     deleteTemporalDocumentsByTemplateFileId fileUuid
     return updatedFile

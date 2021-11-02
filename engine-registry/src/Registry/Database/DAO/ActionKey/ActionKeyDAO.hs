@@ -14,7 +14,7 @@ findActionKeys :: AppContextM [ActionKey]
 findActionKeys = createFindEntitiesFn entityName
 
 findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
-findActionKeyByHash' = createFindEntityByFn' entityName "hash"
+findActionKeyByHash' hash = createFindEntityByFn' entityName [("hash", hash)]
 
 insertActionKey :: ActionKey -> AppContextM Int64
 insertActionKey = createInsertFn entityName
@@ -23,4 +23,4 @@ deleteActionKeys :: AppContextM Int64
 deleteActionKeys = createDeleteEntitiesFn entityName
 
 deleteActionKeyByHash :: String -> AppContextM Int64
-deleteActionKeyByHash = createDeleteEntityByFn entityName "hash"
+deleteActionKeyByHash hash = createDeleteEntityByFn entityName [("hash", hash)]

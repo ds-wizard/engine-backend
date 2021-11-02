@@ -39,6 +39,7 @@ instance ToRow Document where
     , toField _documentFileName
     , toField _documentContentType
     , toField _documentWorkerLog
+    , toField _documentAppUuid
     ]
 
 instance FromRow Document where
@@ -59,4 +60,5 @@ instance FromRow Document where
     _documentFileName <- field
     _documentContentType <- field
     _documentWorkerLog <- field
+    _documentAppUuid <- field
     return $ Document {..}

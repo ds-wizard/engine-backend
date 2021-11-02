@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import qualified Data.List as L
 import Data.Maybe (fromJust)
 import Data.Time
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Api.Resource.Package.PackageDTO
@@ -31,6 +32,7 @@ globalPackageEmpty =
     , _packageWithEventsForkOfPackageId = Nothing
     , _packageWithEventsMergeCheckpointPackageId = Nothing
     , _packageWithEventsEvents = [AddQuestionEvent' a_km1_ch1_q1']
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -65,6 +67,7 @@ globalPackage =
         , AddIntegrationEvent' a_km1_iop
         , AddIntegrationEvent' a_km1_ibp
         ]
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -95,6 +98,7 @@ netherlandsPackage =
     , _packageWithEventsForkOfPackageId = Just $ globalPackage ^. pId
     , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackage ^. pId
     , _packageWithEventsEvents = [AddChapterEvent' a_km1_ch1]
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -114,6 +118,7 @@ netherlandsPackageV2 =
     , _packageWithEventsForkOfPackageId = Just $ globalPackage ^. pId
     , _packageWithEventsMergeCheckpointPackageId = Just $ globalPackage ^. pId
     , _packageWithEventsEvents = [AddChapterEvent' a_km1_ch4]
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -141,6 +146,7 @@ amsterdamPackage =
     , _packageWithEventsForkOfPackageId = Just $ netherlandsPackage ^. pId
     , _packageWithEventsMergeCheckpointPackageId = Just $ netherlandsPackage ^. pId
     , _packageWithEventsEvents = []
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 
@@ -216,6 +222,7 @@ germanyPackage =
         , AddChoiceEvent' a_km1_ch3_q11_cho2
         , AddQuestionEvent' a_km1_ch3_q12'
         ]
+    , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
     }
 

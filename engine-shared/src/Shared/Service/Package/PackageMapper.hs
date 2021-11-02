@@ -28,6 +28,7 @@ toPackage pkg =
     , _packagePreviousPackageId = pkg ^. previousPackageId
     , _packageForkOfPackageId = pkg ^. forkOfPackageId
     , _packageMergeCheckpointPackageId = pkg ^. mergeCheckpointPackageId
+    , _packageAppUuid = pkg ^. appUuid
     , _packageCreatedAt = pkg ^. createdAt
     }
 

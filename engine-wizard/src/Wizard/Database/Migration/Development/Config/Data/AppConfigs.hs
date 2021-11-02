@@ -8,6 +8,7 @@ import Data.Time
 import LensesConfig
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Database.Migration.Development.Template.Data.Templates
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.Common.SensitiveData
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigEM ()
@@ -20,7 +21,7 @@ defaultSecret = "01234567890123456789012345678901"
 defaultAppConfig :: AppConfig
 defaultAppConfig =
   AppConfig
-    { _appConfigAId = 1
+    { _appConfigUuid = defaultApp ^. uuid
     , _appConfigOrganization = defaultOrganization
     , _appConfigAuthentication = defaultAuth
     , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
@@ -221,6 +222,12 @@ defaultSubmissionServiceRequestMultipart =
     { _appConfigSubmissionServiceRequestMultipartEnabled = False
     , _appConfigSubmissionServiceRequestMultipartFileName = "file"
     }
+
+differentAppConfig :: AppConfig
+differentAppConfig = defaultAppConfig {_appConfigUuid = differentApp ^. uuid}
+
+differentAppConfigEncrypted :: AppConfig
+differentAppConfigEncrypted = process defaultSecret differentAppConfig
 
 -- ------------------------------------------------------------
 -- ------------------------------------------------------------

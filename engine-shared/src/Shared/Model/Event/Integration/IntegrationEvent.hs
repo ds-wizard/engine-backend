@@ -1,6 +1,6 @@
 module Shared.Model.Event.Integration.IntegrationEvent where
 
-import Data.Map (Map)
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -17,12 +17,13 @@ data AddIntegrationEvent =
     , _addIntegrationEventLogo :: String
     , _addIntegrationEventRequestMethod :: String
     , _addIntegrationEventRequestUrl :: String
-    , _addIntegrationEventRequestHeaders :: Map String String
+    , _addIntegrationEventRequestHeaders :: M.Map String String
     , _addIntegrationEventRequestBody :: String
     , _addIntegrationEventResponseListField :: String
     , _addIntegrationEventResponseIdField :: String
     , _addIntegrationEventResponseNameField :: String
     , _addIntegrationEventItemUrl :: String
+    , _addIntegrationEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -37,12 +38,13 @@ data EditIntegrationEvent =
     , _editIntegrationEventLogo :: EventField String
     , _editIntegrationEventRequestMethod :: EventField String
     , _editIntegrationEventRequestUrl :: EventField String
-    , _editIntegrationEventRequestHeaders :: EventField (Map String String)
+    , _editIntegrationEventRequestHeaders :: EventField (M.Map String String)
     , _editIntegrationEventRequestBody :: EventField String
     , _editIntegrationEventResponseListField :: EventField String
     , _editIntegrationEventResponseIdField :: EventField String
     , _editIntegrationEventResponseNameField :: EventField String
     , _editIntegrationEventItemUrl :: EventField String
+    , _editIntegrationEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

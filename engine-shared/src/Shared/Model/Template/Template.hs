@@ -21,6 +21,7 @@ data Template =
     , _templateAllowedPackages :: [PackagePattern]
     , _templateRecommendedPackageId :: Maybe String
     , _templateFormats :: [TemplateFormat]
+    , _templateAppUuid :: U.UUID
     , _templateCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
@@ -49,6 +50,7 @@ data TemplateFile =
     , _templateFileUuid :: U.UUID
     , _templateFileFileName :: String
     , _templateFileContent :: String
+    , _templateFileAppUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)
 
@@ -58,6 +60,7 @@ data TemplateAsset =
     , _templateAssetUuid :: U.UUID
     , _templateAssetFileName :: String
     , _templateAssetContentType :: String
+    , _templateAssetAppUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)
 

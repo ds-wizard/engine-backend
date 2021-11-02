@@ -1,12 +1,15 @@
 module Wizard.Specs.Service.Template.TemplateUtilSpec where
 
+import Control.Lens ((^.))
 import Data.Maybe (fromJust)
 import Data.Time
 import Test.Hspec
 
+import LensesConfig
 import Shared.Constant.Template
 import Shared.Model.Package.PackagePattern
 import Shared.Model.Template.Template
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Service.Template.TemplateUtil
 
 templateUtilSpec =
@@ -30,6 +33,7 @@ templateUtilSpec =
                   , _templateAllowedPackages = []
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateAppUuid = defaultApp ^. uuid
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
@@ -63,6 +67,7 @@ templateUtilSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateAppUuid = defaultApp ^. uuid
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]
@@ -102,6 +107,7 @@ templateUtilSpec =
                       ]
                   , _templateRecommendedPackageId = Nothing
                   , _templateFormats = []
+                  , _templateAppUuid = defaultApp ^. uuid
                   , _templateCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
                   }
               ]

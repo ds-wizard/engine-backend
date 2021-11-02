@@ -39,7 +39,10 @@ createTables = do
         \         constraint branch_user_entity_uuid_fk \
         \             references user_entity, \
         \     created_at timestamptz not null, \
-        \     updated_at timestamptz not null \
+        \     updated_at timestamptz not null, \
+        \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint branch_app_uuid_fk \
+        \         references app \
         \ ); \
         \  \
         \ create unique index branch_uuid_uindex \

@@ -3,7 +3,7 @@ module Wizard.Service.Branch.BranchService where
 import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (liftIO)
+import Control.Monad.Reader (asks, liftIO)
 import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
@@ -34,13 +34,6 @@ import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 
-getBranches :: AppContextM [BranchDTO]
-getBranches =
-  runInTransaction $ do
-    checkPermission _KM_PERM
-    bs <- findBranchesWithEvents
-    traverse enhanceBranch bs
-
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
 getBranchesPage mQuery pageable sort =
   runInTransaction $ do
@@ -62,7 +55,8 @@ createBranchWithParams bUuid now currentUser reqDto =
     checkPermission _KM_PERM
     validateNewKmId (reqDto ^. kmId)
     validatePackageExistence (reqDto ^. previousPackageId)
-    let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) now now
+    appUuid <- asks _appContextAppUuid
+    let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) appUuid now now
     insertBranch branch
     createDefaultEventIfPreviousPackageIsNotPresent branch
     return $ toDTO branch Nothing BSDefault
@@ -80,6 +74,7 @@ createBranchWithParams bUuid now currentUser reqDto =
                   { _addKnowledgeModelEventUuid = uuid
                   , _addKnowledgeModelEventParentUuid = U.nil
                   , _addKnowledgeModelEventEntityUuid = kmUuid
+                  , _addKnowledgeModelEventAnnotations = M.empty
                   }
           updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
           return ()
@@ -107,6 +102,7 @@ modifyBranch branchUuid reqDto =
             (branchFromDB ^. metamodelVersion)
             (branchFromDB ^. previousPackageId)
             (branchFromDB ^. ownerUuid)
+            (branchFromDB ^. appUuid)
             (branchFromDB ^. createdAt)
             now
     updateBranchById branch

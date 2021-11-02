@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad.Except (MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader)
+import Control.Monad.Reader (MonadReader, asks)
 import Data.Foldable (traverse_)
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -22,63 +22,91 @@ import Shared.Model.Template.Template
 
 entityName = "template"
 
-findTemplates :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m [Template]
-findTemplates = createFindEntitiesFn entityName
+findTemplates ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m [Template]
+findTemplates = do
+  appUuid <- asks (^. appUuid')
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findTemplatesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
   => [(String, String)]
   -> m [Template]
-findTemplatesFiltered = createFindEntitiesByFn entityName
+findTemplatesFiltered queryParams = do
+  appUuid <- asks (^. appUuid')
+  createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
 findTemplatesByOrganizationIdAndKmId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
   => String
   -> String
   -> m [Template]
-findTemplatesByOrganizationIdAndKmId organizationId templateId =
-  createFindEntitiesByFn entityName [("organization_id", organizationId), ("template_id", templateId)]
+findTemplatesByOrganizationIdAndKmId organizationId templateId = do
+  appUuid <- asks (^. appUuid')
+  createFindEntitiesByFn
+    entityName
+    [appQueryUuid appUuid, ("organization_id", organizationId), ("template_id", templateId)]
 
 findTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Template
-findTemplateById = createFindEntityByFn entityName "id"
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m Template
+findTemplateById id = do
+  appUuid <- asks (^. appUuid')
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 findTemplateById' ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m (Maybe Template)
-findTemplateById' = createFindEntityByFn' entityName "id"
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m (Maybe Template)
+findTemplateById' id = do
+  appUuid <- asks (^. appUuid')
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
 
 insertTemplate ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => Template -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => Template
+  -> m Int64
 insertTemplate = createInsertFn entityName
 
 updateTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => Template -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => Template
+  -> m Int64
 updateTemplateById template = do
-  let params = toRow template ++ [toField $ template ^. tId]
+  appUuid <- asks (^. appUuid')
+  let params = toRow template ++ [toField appUuid, toField $ template ^. tId]
   let action conn =
         execute
           conn
-          " UPDATE template SET id = ?, name = ?, organization_id = ?, template_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, recommended_package_id = ?, formats = ?, created_at = ? WHERE id = ?"
+          "UPDATE template SET id = ?, name = ?, organization_id = ?, template_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, recommended_package_id = ?, formats = ?, created_at = ?, app_uuid = ? WHERE app_uuid = ? AND id = ?"
           params
   runDB action
 
-deleteTemplates :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m Int64
+deleteTemplates ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
 deleteTemplates = do
   deleteTemplateFiles
   deleteTemplateAssets
   createDeleteEntitiesFn entityName
 
 deleteTemplatesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => [(String, String)] -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => [(String, String)]
+  -> m Int64
 deleteTemplatesFiltered params = do
+  appUuid <- asks (^. appUuid')
   templates <- findTemplatesFiltered params
   traverse_ (\t -> deleteTemplateFilesByTemplateId (t ^. tId)) templates
   traverse_ (\t -> deleteTemplateAssetsByTemplateId (t ^. tId)) templates
-  createDeleteEntitiesByFn entityName params
+  createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
 
 deleteTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m Int64
 deleteTemplateById templateId = do
+  appUuid <- asks (^. appUuid')
   deleteTemplateFilesByTemplateId templateId
   deleteTemplateAssetsByTemplateId templateId
-  createDeleteEntityByFn entityName "id" templateId
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("id", templateId)]

@@ -1,5 +1,6 @@
 module Wizard.Database.DAO.ActionKey.ActionKeyDAO where
 
+import Control.Monad.Reader (asks)
 import GHC.Int
 
 import Wizard.Database.DAO.Common
@@ -11,10 +12,14 @@ import Wizard.Model.Context.ContextLenses ()
 entityName = "action_key"
 
 findActionKeys :: AppContextM [ActionKey]
-findActionKeys = createFindEntitiesFn entityName
+findActionKeys = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findActionKeyByHash' :: String -> AppContextM (Maybe ActionKey)
-findActionKeyByHash' = createFindEntityByFn' entityName "hash"
+findActionKeyByHash' hash = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("hash", hash)]
 
 insertActionKey :: ActionKey -> AppContextM Int64
 insertActionKey = createInsertFn entityName
@@ -23,4 +28,6 @@ deleteActionKeys :: AppContextM Int64
 deleteActionKeys = createDeleteEntitiesFn entityName
 
 deleteActionKeyByHash :: String -> AppContextM Int64
-deleteActionKeyByHash = createDeleteEntityByFn entityName "hash"
+deleteActionKeyByHash hash = do
+  appUuid <- asks _appContextAppUuid
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("hash", hash)]

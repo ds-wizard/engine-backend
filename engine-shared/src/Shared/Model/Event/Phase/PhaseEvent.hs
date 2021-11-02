@@ -1,5 +1,6 @@
 module Shared.Model.Event.Phase.PhaseEvent where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -12,6 +13,7 @@ data AddPhaseEvent =
     , _addPhaseEventEntityUuid :: U.UUID
     , _addPhaseEventTitle :: String
     , _addPhaseEventDescription :: Maybe String
+    , _addPhaseEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -22,6 +24,7 @@ data EditPhaseEvent =
     , _editPhaseEventEntityUuid :: U.UUID
     , _editPhaseEventTitle :: EventField String
     , _editPhaseEventDescription :: EventField (Maybe String)
+    , _editPhaseEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

@@ -12,6 +12,7 @@ data Feedback =
     , _feedbackPackageId :: String
     , _feedbackTitle :: String
     , _feedbackContent :: String
+    , _feedbackAppUuid :: U.UUID
     , _feedbackCreatedAt :: UTCTime
     , _feedbackUpdatedAt :: UTCTime
     }
@@ -23,4 +24,5 @@ instance Eq Feedback where
     _feedbackIssueId a == _feedbackIssueId b &&
     _feedbackQuestionUuid a == _feedbackQuestionUuid b &&
     _feedbackPackageId a == _feedbackPackageId b &&
-    _feedbackTitle a == _feedbackTitle b && _feedbackContent a == _feedbackContent b
+    _feedbackTitle a == _feedbackTitle b &&
+    _feedbackContent a == _feedbackContent b && _feedbackAppUuid a == _feedbackAppUuid b

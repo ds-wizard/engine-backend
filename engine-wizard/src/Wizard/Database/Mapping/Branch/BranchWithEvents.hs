@@ -20,6 +20,7 @@ instance ToRow BranchWithEvents where
     , toField _branchWithEventsOwnerUuid
     , toField _branchWithEventsCreatedAt
     , toField _branchWithEventsUpdatedAt
+    , toField _branchWithEventsAppUuid
     ]
 
 instance FromRow BranchWithEvents where
@@ -33,4 +34,5 @@ instance FromRow BranchWithEvents where
     _branchWithEventsOwnerUuid <- field
     _branchWithEventsCreatedAt <- field
     _branchWithEventsUpdatedAt <- field
+    _branchWithEventsAppUuid <- field
     return $ BranchWithEvents {..}

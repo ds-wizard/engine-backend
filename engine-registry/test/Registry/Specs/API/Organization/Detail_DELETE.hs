@@ -72,4 +72,4 @@ test_404 appContext =
     reqHeaders
     reqBody
     "organization"
-    "nonexisting.organization"
+    [("organization_id", "nonexisting.organization")]

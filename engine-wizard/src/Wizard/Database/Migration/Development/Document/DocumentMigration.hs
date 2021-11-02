@@ -19,5 +19,6 @@ runMigration = do
   insertDocument doc1
   insertDocument doc2
   insertDocument doc3
+  insertDocument differentDoc
   putDocumentContent (U.toString $ doc1 ^. uuid) doc1Content
   logInfo _CMP_MIGRATION "(Document/Document) ended"

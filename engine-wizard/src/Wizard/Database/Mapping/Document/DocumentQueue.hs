@@ -13,4 +13,5 @@ instance ToRow DocumentQueue where
     , toJSONField _documentQueueDocumentContext
     , toField _documentQueueCreatedBy
     , toField _documentQueueCreatedAt
+    , toField _documentQueueAppUuid
     ]

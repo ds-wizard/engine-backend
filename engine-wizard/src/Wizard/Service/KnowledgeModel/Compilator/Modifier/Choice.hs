@@ -8,9 +8,11 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Service.KnowledgeModel.Compilator.Modifier.Modifier
 
 instance CreateEntity AddChoiceEvent Choice where
-  createEntity e = Choice {_choiceUuid = e ^. entityUuid, _choiceLabel = e ^. label}
+  createEntity e =
+    Choice {_choiceUuid = e ^. entityUuid, _choiceLabel = e ^. label, _choiceAnnotations = e ^. annotations}
 
 instance EditEntity EditChoiceEvent Choice where
-  editEntity e = applyLabel
+  editEntity e = applyAnnotations . applyLabel
     where
-      applyLabel ans = applyValue (e ^. label) ans label
+      applyLabel ch = applyValue (e ^. label) ch label
+      applyAnnotations ch = applyValue (e ^. annotations) ch annotations

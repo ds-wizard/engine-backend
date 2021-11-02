@@ -4,8 +4,10 @@ import Control.Lens ((^.))
 import Control.Monad.Except (runExceptT)
 import Control.Monad.Reader (liftIO, runReaderT)
 import Data.Time
+import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Constant.App
 import Shared.Util.Uuid
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Model.Context.AppContext
@@ -14,7 +16,7 @@ import Wizard.Util.Logger
 
 runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either String a)
 runAppContextWithBaseContext function baseContext =
-  appContextFromBaseContext Nothing baseContext >>= runAppContextWithAppContext function
+  appContextFromBaseContext defaultAppUuid Nothing baseContext >>= runAppContextWithAppContext function
 
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
 runAppContextWithAppContext function appContext = do
@@ -32,8 +34,8 @@ runLogging' context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel
 
-appContextFromBaseContext :: Maybe UserDTO -> BaseContext -> IO AppContext
-appContextFromBaseContext mUser baseContext = do
+appContextFromBaseContext :: U.UUID -> Maybe UserDTO -> BaseContext -> IO AppContext
+appContextFromBaseContext appUuid mUser baseContext = do
   cTraceUuid <- generateUuid
   now <- liftIO getCurrentTime
   return $
@@ -46,6 +48,7 @@ appContextFromBaseContext mUser baseContext = do
       , _appContextHttpClientManager = baseContext ^. httpClientManager
       , _appContextRegistryClient = baseContext ^. registryClient
       , _appContextTraceUuid = cTraceUuid
+      , _appContextAppUuid = appUuid
       , _appContextCurrentUser = mUser
       , _appContextShutdownFlag = baseContext ^. shutdownFlag
       , _appContextCache = baseContext ^. cache

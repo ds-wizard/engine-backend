@@ -39,6 +39,7 @@ import Shared.Model.PackageBundle.PackageBundle
 import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
+import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -96,6 +97,8 @@ import Wizard.Integration.Resource.GitHub.IssueIDTO
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Model.Acl.Acl
 import Wizard.Model.ActionKey.ActionKey
+import Wizard.Model.Admin.Admin
+import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Cache.ServerCache
@@ -121,6 +124,7 @@ import Wizard.Model.Questionnaire.QuestionnaireSimple
 import Wizard.Model.Questionnaire.QuestionnaireVersion
 import Wizard.Model.Report.Report
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Model.Submission.Submission
 import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Model.Websocket.WebsocketMessage
@@ -140,6 +144,16 @@ makeFields ''Member
 
 -- Model / ActionKey
 makeFields ''ActionKey
+
+-- Model / Admin
+makeFields ''AdminSection
+
+makeFields ''AdminOperation
+
+makeFields ''AdminOperationParameter
+
+-- Model / App
+makeFields ''App
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -243,6 +257,8 @@ makeFields ''ServerConfigLogging
 makeFields ''ServerConfigQuestionnaire
 
 makeFields ''ServerConfigCronWorker
+
+makeFields ''ServerConfigExperimental
 
 makeFields ''BuildInfoConfig
 
@@ -493,6 +509,9 @@ makeFields ''Report
 -- Model / Statistic
 makeFields ''InstanceStatistics
 
+-- Model / Submission
+makeFields ''Submission
+
 -- Model / Template
 makeFields ''Template
 
@@ -521,6 +540,9 @@ makeFields ''WebsocketRecord
 -- -------------------------------------
 -- Api / Resource / ActionKey
 makeFields ''ActionKeyDTO
+
+-- Api / Resource / Admin
+makeFields ''AdminExecutionDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO

@@ -1,5 +1,6 @@
 module Wizard.Database.DAO.Event.EventDAO where
 
+import Control.Monad.Reader (asks)
 import Data.String
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -13,8 +14,9 @@ import Wizard.Util.Logger
 
 updateEventsInBranch :: String -> [Event] -> AppContextM ()
 updateEventsInBranch branchUuid events = do
-  let params = [toJSONField events, toField branchUuid]
-  let sql = "UPDATE branch SET events = ? WHERE uuid = ?"
+  appUuid <- asks _appContextAppUuid
+  let params = [toJSONField events, toField appUuid, toField branchUuid]
+  let sql = "UPDATE branch SET events = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
@@ -22,9 +24,10 @@ updateEventsInBranch branchUuid events = do
 
 deleteEventsAtBranch :: String -> AppContextM ()
 deleteEventsAtBranch branchUuid = do
+  appUuid <- asks _appContextAppUuid
   let events = [] :: [Event]
-  let params = [toJSONField events, toField branchUuid]
-  let sql = "UPDATE branch SET events = ? WHERE uuid = ?"
+  let params = [toJSONField events, toField appUuid, toField branchUuid]
+  let sql = "UPDATE branch SET events = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action

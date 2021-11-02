@@ -19,4 +19,5 @@ instance FromRow Branch where
     _branchOwnerUuid <- field
     _branchCreatedAt <- field
     _branchUpdatedAt <- field
+    _branchAppUuid <- field
     return $ Branch {..}

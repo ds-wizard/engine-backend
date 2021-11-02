@@ -43,8 +43,16 @@ toDetailDTO branch mForkOfPackageId state =
     }
 
 fromChangeDTO ::
-     BranchChangeDTO -> U.UUID -> Int -> Maybe String -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
-fromChangeDTO dto bUuid bMetamodelVersion bPackageId mOwnerUuid bCreatedAt bUpdatedAt =
+     BranchChangeDTO
+  -> U.UUID
+  -> Int
+  -> Maybe String
+  -> Maybe U.UUID
+  -> U.UUID
+  -> UTCTime
+  -> UTCTime
+  -> BranchWithEvents
+fromChangeDTO dto bUuid bMetamodelVersion bPackageId mOwnerUuid appUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
     { _branchWithEventsUuid = bUuid
     , _branchWithEventsName = dto ^. name
@@ -53,12 +61,13 @@ fromChangeDTO dto bUuid bMetamodelVersion bPackageId mOwnerUuid bCreatedAt bUpda
     , _branchWithEventsPreviousPackageId = bPackageId
     , _branchWithEventsOwnerUuid = mOwnerUuid
     , _branchWithEventsEvents = dto ^. events
+    , _branchWithEventsAppUuid = appUuid
     , _branchWithEventsCreatedAt = bCreatedAt
     , _branchWithEventsUpdatedAt = bUpdatedAt
     }
 
-fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
-fromCreateDTO dto bUuid mOwnerUuid bCreatedAt bUpdatedAt =
+fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromCreateDTO dto bUuid mOwnerUuid appUuid bCreatedAt bUpdatedAt =
   BranchWithEvents
     { _branchWithEventsUuid = bUuid
     , _branchWithEventsName = dto ^. name
@@ -67,6 +76,7 @@ fromCreateDTO dto bUuid mOwnerUuid bCreatedAt bUpdatedAt =
     , _branchWithEventsPreviousPackageId = dto ^. previousPackageId
     , _branchWithEventsOwnerUuid = mOwnerUuid
     , _branchWithEventsEvents = []
+    , _branchWithEventsAppUuid = appUuid
     , _branchWithEventsCreatedAt = bCreatedAt
     , _branchWithEventsUpdatedAt = bUpdatedAt
     }

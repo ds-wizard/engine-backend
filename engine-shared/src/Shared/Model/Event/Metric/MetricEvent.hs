@@ -1,5 +1,6 @@
 module Shared.Model.Event.Metric.MetricEvent where
 
+import qualified Data.Map.Strict as M
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -13,6 +14,7 @@ data AddMetricEvent =
     , _addMetricEventTitle :: String
     , _addMetricEventAbbreviation :: Maybe String
     , _addMetricEventDescription :: Maybe String
+    , _addMetricEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
 
@@ -24,6 +26,7 @@ data EditMetricEvent =
     , _editMetricEventTitle :: EventField String
     , _editMetricEventAbbreviation :: EventField (Maybe String)
     , _editMetricEventDescription :: EventField (Maybe String)
+    , _editMetricEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
 

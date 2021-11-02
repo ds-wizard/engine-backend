@@ -6,6 +6,8 @@ import Control.Concurrent
 import Control.Concurrent.Async
 import Control.Lens ((^.))
 import Control.Monad.Reader (liftIO)
+import Data.Foldable (forM_)
+import System.Exit
 import System.IO
 
 import LensesConfig
@@ -34,29 +36,35 @@ runApplication = do
   putStrLn asciiLogo
   serverConfig <- loadConfig serverConfigFile getServerConfig
   buildInfoConfig <- loadConfig buildInfoFile getBuildInfoConfig
-  runLogging (serverConfig ^. logging . level) $ do
-    logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
-    shutdownFlag <- liftIO newEmptyMVar
-    dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
-    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
-    s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
-    httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
-    registryClient <- setupRegistryClient serverConfig httpClientManager
-    localization <- loadLocalization serverConfig
-    cache <- setupServerCache serverConfig
-    let baseContext =
-          BaseContext
-            { _baseContextServerConfig = serverConfig
-            , _baseContextLocalization = localization
-            , _baseContextBuildInfoConfig = buildInfoConfig
-            , _baseContextDbPool = dbPool
-            , _baseContextS3Client = s3Client
-            , _baseContextHttpClientManager = httpClientManager
-            , _baseContextRegistryClient = registryClient
-            , _baseContextShutdownFlag = shutdownFlag
-            , _baseContextCache = cache
-            }
-    liftIO $ runDBMigrations baseContext
-    liftIO $ runMetamodelMigrations baseContext
-    liftIO $ race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
-    return ()
+  result <-
+    runLogging (serverConfig ^. logging . level) $ do
+      logInfo _CMP_ENVIRONMENT $ "set to " ++ show (serverConfig ^. general . environment)
+      shutdownFlag <- liftIO newEmptyMVar
+      dbPool <- connectPostgresDB (serverConfig ^. logging) (serverConfig ^. database)
+      httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
+      s3Client <- setupS3Client (serverConfig ^. s3) httpClientManager
+      httpClientManager <- setupHttpClientManager (serverConfig ^. logging)
+      registryClient <- setupRegistryClient serverConfig httpClientManager
+      localization <- loadLocalization serverConfig
+      cache <- setupServerCache serverConfig
+      let baseContext =
+            BaseContext
+              { _baseContextServerConfig = serverConfig
+              , _baseContextLocalization = localization
+              , _baseContextBuildInfoConfig = buildInfoConfig
+              , _baseContextDbPool = dbPool
+              , _baseContextS3Client = s3Client
+              , _baseContextHttpClientManager = httpClientManager
+              , _baseContextRegistryClient = registryClient
+              , _baseContextShutdownFlag = shutdownFlag
+              , _baseContextCache = cache
+              }
+      result <- liftIO $ runDBMigrations baseContext
+      case result of
+        Just error -> return . Just $ error
+        Nothing -> do
+          liftIO $ runMetamodelMigrations baseContext
+          liftIO $
+            race_ (takeMVar shutdownFlag) (concurrently (runWebServer baseContext) (worker shutdownFlag baseContext))
+          return Nothing
+  forM_ result die

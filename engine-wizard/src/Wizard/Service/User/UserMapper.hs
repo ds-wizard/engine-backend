@@ -78,8 +78,8 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
   AnonymousOnlineUserInfo
     {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> UTCTime -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions now =
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> User
+fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now =
   User
     { _userUuid = userUuid
     , _userFirstName = dto ^. firstName
@@ -94,14 +94,26 @@ fromUserCreateDTO dto userUuid passwordHash role permissions now =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
+    , _userAppUuid = appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = now
     , _userUpdatedAt = now
     }
 
 fromUserExternalDTO ::
-     U.UUID -> String -> String -> String -> String -> [String] -> String -> [String] -> Maybe String -> UTCTime -> User
-fromUserExternalDTO userUuid firstName lastName email passwordHash sources role permissions mImageUrl now =
+     U.UUID
+  -> String
+  -> String
+  -> String
+  -> String
+  -> [String]
+  -> String
+  -> [String]
+  -> Maybe String
+  -> U.UUID
+  -> UTCTime
+  -> User
+fromUserExternalDTO userUuid firstName lastName email passwordHash sources role permissions mImageUrl appUuid now =
   User
     { _userUuid = userUuid
     , _userFirstName = firstName
@@ -116,6 +128,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userSubmissionProps = []
     , _userImageUrl = mImageUrl
     , _userGroups = []
+    , _userAppUuid = appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = now
     , _userUpdatedAt = now
@@ -140,6 +153,7 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = mImageUrl
     , _userGroups = oldUser ^. groups
+    , _userAppUuid = oldUser ^. appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
@@ -161,6 +175,7 @@ fromUserChangeDTO dto oldUser permission =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
     , _userGroups = oldUser ^. groups
+    , _userAppUuid = oldUser ^. appUuid
     , _userLastVisitedAt = oldUser ^. lastVisitedAt
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt

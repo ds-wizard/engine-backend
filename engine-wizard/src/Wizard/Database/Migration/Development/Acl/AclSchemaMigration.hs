@@ -27,7 +27,10 @@ createTables = do
         \ ( \
         \   id varchar not null, \
         \   name varchar not null, \
-        \   description varchar not null \
+        \   description varchar not null, \
+        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \       constraint acl_group_app_uuid_fk \
+        \           references app \
         \ ); \
         \  \
         \ create unique index acl_group_id_uindex \

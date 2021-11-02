@@ -25,7 +25,7 @@ createTables = do
   let sql =
         " create table app_config \
         \ ( \
-        \     id                  bigserial                not null, \
+        \     uuid                uuid                     not null, \
         \     organization        json                     not null, \
         \     authentication      json                     not null, \
         \     privacy_and_support json                     not null, \
@@ -39,10 +39,10 @@ createTables = do
         \     created_at          timestamp with time zone not null, \
         \     updated_at          timestamp with time zone not null \
         \ ); \
-        \ create unique index app_config_id_uindex \
-        \   on app_config (id); \
+        \ create unique index app_config_uuid_uindex \
+        \   on app_config (uuid); \
         \ alter table app_config \
         \   add constraint app_config_pk \
-        \      primary key (id);"
+        \      primary key (uuid);"
   let action conn = execute_ conn sql
   runDB action

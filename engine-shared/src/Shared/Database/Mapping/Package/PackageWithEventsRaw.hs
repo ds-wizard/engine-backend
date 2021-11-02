@@ -24,6 +24,7 @@ instance ToRow PackageWithEventsRaw where
     , toField _packageWithEventsRawMergeCheckpointPackageId
     , toJSONField _packageWithEventsRawEvents
     , toField _packageWithEventsRawCreatedAt
+    , toField _packageWithEventsRawAppUuid
     ]
 
 instance FromRow PackageWithEventsRaw where
@@ -42,4 +43,5 @@ instance FromRow PackageWithEventsRaw where
     _packageWithEventsRawMergeCheckpointPackageId <- field
     _packageWithEventsRawEvents <- fieldWith fromJSONField
     _packageWithEventsRawCreatedAt <- field
+    _packageWithEventsRawAppUuid <- field
     return $ PackageWithEventsRaw {..}

@@ -22,8 +22,6 @@ import Shared.Model.Error.Error
 import Shared.Model.Template.Template
 import Shared.Service.Coordinate.CoordinateValidation
 import Shared.Service.Template.TemplateMapper
-import Shared.Service.Template.TemplateUtil
-import Shared.Util.Coordinate
 import Wizard.Api.Resource.Template.TemplateChangeDTO
 import Wizard.Api.Resource.Template.TemplateDetailDTO
 import Wizard.Api.Resource.Template.TemplateSimpleDTO
@@ -76,15 +74,12 @@ getTemplateSuggestions mPkgId mQuery pageable sort =
     filterTemplatesInGroup :: Page Template -> [Template]
     filterTemplatesInGroup page = filter isTemplateSupported . filterTemplates mPkgId $ (page ^. entities)
 
-getTemplatesDto :: [(String, String)] -> Maybe String -> AppContextM [TemplateSimpleDTO]
-getTemplatesDto queryParams mPkgId =
+getTemplatesDto :: [(String, String)] -> AppContextM [TemplateSuggestionDTO]
+getTemplatesDto queryParams =
   runInTransaction $ do
     checkPermission _DMP_PERM
-    tmls <- getTemplates queryParams mPkgId
-    tmlRs <- retrieveTemplates
-    orgRs <- retrieveOrganizations
-    pkgs <- findPackages
-    return . fmap (toSimpleDTO' tmlRs orgRs pkgs) . chooseTheNewest . groupTemplates $ tmls
+    tmls <- findTemplatesFiltered queryParams
+    return . fmap toSuggestionDTO $ tmls
 
 getTemplateByUuidAndPackageId :: String -> Maybe String -> AppContextM Template
 getTemplateByUuidAndPackageId templateId mPkgId =
@@ -112,7 +107,8 @@ createTemplate reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
     now <- liftIO getCurrentTime
-    let template = fromCreateDTO reqDto now
+    appUuid <- asks _appContextAppUuid
+    let template = fromCreateDTO reqDto appUuid now
     validateNewTemplate template
     insertTemplate template
     return template

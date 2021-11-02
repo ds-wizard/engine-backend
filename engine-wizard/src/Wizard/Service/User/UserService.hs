@@ -45,13 +45,6 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserMapper
 import Wizard.Service.User.UserValidation
 
-getUsers :: AppContextM [UserDTO]
-getUsers =
-  runInTransaction $ do
-    checkPermission _UM_PERM
-    users <- findUsers
-    return . fmap toDTO $ users
-
 getUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserDTO)
 getUsersPage mQuery mRole pageable sort =
   runInTransaction $ do
@@ -99,7 +92,8 @@ createUser reqDto uUuid uPasswordHash uRole uPermissions =
   runInTransaction $ do
     validateUserEmailUniqueness (reqDto ^. email)
     now <- liftIO getCurrentTime
-    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions now
+    appUuid <- asks _appContextAppUuid
+    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions appUuid now
     insertUser user
     actionKey <- createActionKey uUuid RegistrationActionKey
     catchError
@@ -113,6 +107,7 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
   runInTransaction $ do
     mUserFromDb <- findUserByEmail' email
     now <- liftIO getCurrentTime
+    appUuid <- asks _appContextAppUuid
     case mUserFromDb of
       Just user ->
         if user ^. active
@@ -130,7 +125,18 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
         let uRole = appConfig ^. authentication . defaultRole
         let uPerms = getPermissionForRole serverConfig uRole
         let user =
-              fromUserExternalDTO uUuid firstName lastName email uPasswordHash [serviceId] uRole uPerms mImageUrl now
+              fromUserExternalDTO
+                uUuid
+                firstName
+                lastName
+                email
+                uPasswordHash
+                [serviceId]
+                uRole
+                uPerms
+                mImageUrl
+                appUuid
+                now
         insertUser user
         sendAnalyticsEmailIfEnabled user
         return $ toDTO user

@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.Branch.BranchDAO where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import Data.String
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -25,62 +26,56 @@ entityName = "branch"
 pageLabel = "branches"
 
 findBranches :: AppContextM [Branch]
-findBranches = createFindEntitiesFn entityName
+findBranches = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findBranchesByPreviousPackageId :: String -> AppContextM [Branch]
-findBranchesByPreviousPackageId previousPackageId =
-  createFindEntitiesByFn entityName [("previous_package_id", previousPackageId)]
-
-findBranchesWithEvents :: AppContextM [BranchWithEvents]
-findBranchesWithEvents = createFindEntitiesFn entityName
+findBranchesByPreviousPackageId previousPackageId = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("previous_package_id", previousPackageId)]
 
 findBranchesWithEventsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchWithEvents)
-findBranchesWithEventsPage mQuery pageable sort =
+findBranchesWithEventsPage mQuery pageable sort = do
+  appUuid <- asks _appContextAppUuid
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "*"
-    "name ~* ? OR km_id ~* ?"
-    [regex mQuery, regex mQuery]
+    "(name ~* ? OR km_id ~* ?) AND app_uuid = ?"
+    [regex mQuery, regex mQuery, U.toString appUuid]
 
 findBranchById :: String -> AppContextM Branch
-findBranchById = createFindEntityByFn entityName "uuid"
+findBranchById uuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 findBranchByKmId :: String -> AppContextM Branch
-findBranchByKmId = createFindEntityByFn entityName "km_id"
+findBranchByKmId kmId = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("km_id", kmId)]
 
 findBranchByKmId' :: String -> AppContextM (Maybe Branch)
-findBranchByKmId' = createFindEntityByFn' entityName "km_id"
+findBranchByKmId' kmId = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn' entityName [appQueryUuid appUuid, ("km_id", kmId)]
 
 findBranchWithEventsById :: String -> AppContextM BranchWithEvents
-findBranchWithEventsById = createFindEntityByFn entityName "uuid"
+findBranchWithEventsById uuid = do
+  appUuid <- asks _appContextAppUuid
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertBranch :: BranchWithEvents -> AppContextM Int64
 insertBranch = createInsertFn entityName
 
 updateBranchById :: BranchWithEvents -> AppContextM Int64
 updateBranchById branch = do
-  let params = toRow branch ++ [toField . U.toText $ branch ^. uuid]
+  appUuid <- asks _appContextAppUuid
+  let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
   let sql =
-        "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ? WHERE uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
-  runDB action
-
-updateBranchWithMigrationInfo :: String -> String -> String -> AppContextM Int64
-updateBranchWithMigrationInfo branchUuid forkOfPackageId mergeCheckpointPackageId = do
-  let params = [toField forkOfPackageId, toField mergeCheckpointPackageId, toField branchUuid]
-  let sql = "UPDATE branch SET forkOfPackageId = ?, mergeCheckpointPackageId = ? WHERE uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
-  runDB action
-
-updateBranchWithPreviousPackageId :: String -> String -> AppContextM Int64
-updateBranchWithPreviousPackageId branchUuid previousPackageId = do
-  let params = [toField previousPackageId, toField branchUuid]
-  let sql = "UPDATE branch SET previousPackageId = ? WHERE uuid = ?"
+        "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   logInfoU _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
@@ -89,4 +84,4 @@ deleteBranches :: AppContextM Int64
 deleteBranches = createDeleteEntitiesFn entityName
 
 deleteBranchById :: String -> AppContextM Int64
-deleteBranchById = createDeleteEntityByFn entityName "uuid"
+deleteBranchById uuid = createDeleteEntityByFn entityName [("uuid", uuid)]

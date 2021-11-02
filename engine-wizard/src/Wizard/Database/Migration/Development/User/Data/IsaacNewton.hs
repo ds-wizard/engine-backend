@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Util.Uuid
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserProfileChangeDTO
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Database.Migration.Development.User.Data.AlbertEinstein
 import Wizard.Model.User.User
@@ -29,6 +30,7 @@ userIsaac =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
+    , _userAppUuid = defaultApp ^. uuid
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0
     , _userUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 22) 0

@@ -12,6 +12,7 @@ import Shared.Api.Resource.Error.ErrorJM ()
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.Migration.Development.App.Data.Apps
 
 import Wizard.Specs.API.Common
 import Wizard.Specs.Common
@@ -31,7 +32,9 @@ assertAbsenceOfDocumentInDB appContext doc = do
   eDoc <- runInContextIO (findDocumentById docUuid) appContext
   liftIO $ isLeft eDoc `shouldBe` True
   let (Left error) = eDoc
-  liftIO $ error `shouldBe` NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND "document" docUuid)
+  liftIO $ error `shouldBe`
+    NotExistsError
+      (_ERROR_DATABASE__ENTITY_NOT_FOUND "document" [("app_uuid", U.toString $ defaultApp ^. uuid), ("uuid", docUuid)])
 
 -- --------------------------------
 -- COMPARATORS

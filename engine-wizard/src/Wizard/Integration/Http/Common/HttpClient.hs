@@ -1,5 +1,6 @@
 module Wizard.Integration.Http.Common.HttpClient
   ( runRequest
+  , runRequest'
   , runSimpleRequest
   ) where
 
@@ -55,6 +56,26 @@ runRequest req responseMapper = do
       logResponseErrorGeneral error
       throwError . GeneralServerError $ _ERROR_INTEGRATION_COMMON__INT_SERVICE_RETURNED_ERROR "Request failed, see logs"
 
+runRequest' :: HttpRequest -> (Response BSL.ByteString -> Either String a) -> AppContextM (Either String a)
+runRequest' req responseMapper = do
+  logRequestMultipart req
+  eResponse <- runSimpleRequest req
+  case eResponse of
+    Right response -> do
+      let sc = response ^. responseStatus . statusCode
+      if sc <= 399
+        then do
+          let eResDto = responseMapper response
+          logResponseBody eResDto
+          return eResDto
+        else do
+          logResponseErrorBody response
+          return . Left $
+            f' "Request Failed\nStatus Code: %s\nResponse Body: %s" [show sc, show (response ^. responseBody)]
+    Left error -> do
+      logResponseErrorGeneral error
+      return . Left $ f' "Request failed\nError: %s" [show error]
+
 runSimpleRequest :: HttpRequest -> AppContextM (Either E.SomeException (Response BSL.ByteString))
 runSimpleRequest req = do
   httpClientManager <- asks _appContextHttpClientManager
@@ -87,7 +108,7 @@ logRequestMultipart request =
     Just fileName -> logInfoU _CMP_INTEGRATION ("Request Multipart FileName: '" ++ fileName ++ "'")
     Nothing -> logInfoU _CMP_INTEGRATION "Request Multipart: Not used"
 
-logResponseErrorGeneral error = logInfoU _CMP_INTEGRATION ("Request failed: '" ++ show error ++ "'")
+logResponseErrorGeneral error = logInfoU _CMP_INTEGRATION (f' "Request failed: '%s'" [show error])
 
 logResponseErrorBody response =
   logInfoU _CMP_INTEGRATION ("Response Message: '" ++ show (response ^. responseBody) ++ "'")

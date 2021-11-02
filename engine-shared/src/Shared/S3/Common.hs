@@ -12,6 +12,7 @@ import Data.Foldable (traverse_)
 import Data.Maybe (mapMaybe)
 import qualified Data.String as S
 import qualified Data.Text as T
+import qualified Data.UUID as U
 import Network.Minio
 
 import LensesConfig
@@ -27,51 +28,78 @@ createS3Client serverConfig manager = do
   liftIO $ mkMinioConn connectionInfo manager
 
 createGetObjectFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m)
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
   => String
   -> m BS.ByteString
 createGetObjectFn object = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
-  logInfo _CMP_S3 (f' "Get object: '%s'" [object])
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfo _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
   let action = do
-        src <- getObject (T.pack bucketName) (T.pack object) defaultGetObjectOptions
+        src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
         let srcStream = gorObjectStream src :: C.ConduitM () BS.ByteString Minio ()
         let foldFn = CL.fold BS.append "" :: C.ConduitT BS.ByteString C.Void Minio BS.ByteString
         C.connect (gorObjectStream src) foldFn
   runMinioClient action
 
 createPutObjectFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m)
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
   => String
   -> BS.ByteString
   -> m ()
 createPutObjectFn object content = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
-  logInfo _CMP_S3 (f' "Put object: '%s'" [object])
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfo _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
-  let action = putObject (T.pack bucketName) (T.pack object) req (Just kb15) defaultPutObjectOptions
+  let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) defaultPutObjectOptions
   runMinioClient action
 
 createRemoveObjectFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m)
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
   => String
   -> m ()
 createRemoveObjectFn object = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
-  logInfo _CMP_S3 (f' "Delete object: '%s'" [object])
-  let action = removeObject (T.pack bucketName) (T.pack object)
+  bucketName <- getBucketName
+  sanitizedObject <- sanitizeObject object
+  logInfo _CMP_S3 (f' "Delete object: '%s'" [sanitizedObject])
+  let action = removeObject (T.pack bucketName) (T.pack sanitizedObject)
   runMinioClient action
 
 createListObjectsFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m)
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
   => m [String]
 createListObjectsFn = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
+  bucketName <- getBucketName
   logInfo _CMP_S3 "List objects"
   let action = do
         let itemStream = listObjects (T.pack bucketName) Nothing True :: C.ConduitM () ListItem Minio ()
@@ -84,43 +112,78 @@ createListObjectsFn = do
     getName _ = Nothing
 
 createBucketExistsFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m) => m Bool
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => m Bool
 createBucketExistsFn = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
+  bucketName <- getBucketName
   logInfo _CMP_S3 (f' "Check existence of bucket: '%s'" [bucketName])
   let action = bucketExists (T.pack bucketName)
   runMinioClient action
 
 createMakeBucketFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m) => m ()
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => m ()
 createMakeBucketFn = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
+  bucketName <- getBucketName
   logInfo _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
   let action = makeBucket (T.pack bucketName) Nothing
   runMinioClient action
 
 createPurgeBucketFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m) => m ()
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => m ()
 createPurgeBucketFn = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
+  bucketName <- getBucketName
   logInfo _CMP_S3 (f' "Purge bucket: '%s'" [bucketName])
   objects <- createListObjectsFn
   traverse_ createRemoveObjectFn objects
 
 createRemoveBucketFn ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m) => m ()
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => m ()
 createRemoveBucketFn = do
-  context <- ask
-  let bucketName = context ^. serverConfig' . s3' . bucket :: String
+  bucketName <- getBucketName
   logInfo _CMP_S3 (f' "Remove bucket: '%s'" [bucketName])
   let action = removeBucket (T.pack bucketName)
   runMinioClient action
 
 runMinioClient ::
-     (MonadReader s m, HasS3Client' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m, MonadLogger m)
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
   => Minio a
   -> m a
 runMinioClient action = do
@@ -132,3 +195,16 @@ runMinioClient action = do
       logInfo _CMP_S3 (show e)
       throwError $ GeneralServerError ("Error in s3 connection: " ++ show e)
     Right e -> return e
+
+getBucketName :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
+getBucketName = do
+  context <- ask
+  return $ context ^. serverConfig' . s3' . bucket
+
+sanitizeObject ::
+     (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => String -> m String
+sanitizeObject object = do
+  context <- ask
+  if context ^. serverConfig' . experimental' . moreAppsEnabled
+    then return $ U.toString (context ^. appUuid') ++ "/" ++ object
+    else return object

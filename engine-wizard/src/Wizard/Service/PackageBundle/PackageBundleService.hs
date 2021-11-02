@@ -9,6 +9,7 @@ module Wizard.Service.PackageBundle.PackageBundleService
 import Control.Lens ((^.))
 import Control.Monad (forM)
 import Control.Monad.Except (catchError, throwError)
+import Control.Monad.Reader (asks)
 import Data.Aeson
 import qualified Data.ByteString.Lazy.Char8 as BS
 import Data.List (find)
@@ -109,7 +110,8 @@ importPackageBundle pb =
 importPackage :: PackageDTO -> AppContextM (Maybe PackageSimpleDTO)
 importPackage dto =
   runInTransaction $ do
-    let pkg = PM.fromDTO dto
+    appUuid <- asks _appContextAppUuid
+    let pkg = PM.fromDTO dto appUuid
     skipIfPackageIsAlreadyImported pkg $ do
       validateCoordinateWithParams (pkg ^. pId) (pkg ^. organizationId) (pkg ^. kmId) (pkg ^. version)
       validateMaybePreviousPackageIdExistence (pkg ^. pId) (pkg ^. previousPackageId)

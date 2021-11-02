@@ -301,6 +301,7 @@ fromChangeDTO qtn dto visibility sharing currentUser now =
           then dto ^. isTemplate
           else qtn ^. isTemplate
     , _questionnaireSquashed = qtn ^. squashed
+    , _questionnaireAppUuid = qtn ^. appUuid
     , _questionnaireCreatedAt = qtn ^. createdAt
     , _questionnaireUpdatedAt = now
     }
@@ -316,10 +317,11 @@ fromQuestionnaireCreateDTO ::
   -> String
   -> U.UUID
   -> Maybe U.UUID
+  -> U.UUID
   -> UTCTime
   -> U.UUID
   -> Questionnaire
-fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase now permUuid =
+fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId phaseEventUuid mPhase appUuid now permUuid =
   Questionnaire
     { _questionnaireUuid = qtnUuid
     , _questionnaireName = dto ^. name
@@ -350,6 +352,7 @@ fromQuestionnaireCreateDTO dto qtnUuid visibility sharing mCurrentUserUuid pkgId
     , _questionnaireVersions = []
     , _questionnaireIsTemplate = False
     , _questionnaireSquashed = True
+    , _questionnaireAppUuid = appUuid
     , _questionnaireCreatedAt = now
     , _questionnaireUpdatedAt = now
     }

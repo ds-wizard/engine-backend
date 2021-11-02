@@ -20,6 +20,7 @@ defaultConfig =
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
+    , _serverConfigExperimental = defaultExperimental
     }
 
 defaultGeneral :: ServerConfigGeneral
@@ -53,7 +54,8 @@ defaultRoles :: ServerConfigRoles
 defaultRoles =
   ServerConfigRoles
     { _serverConfigRolesAdmin =
-        [ "UM_PERM"
+        [ "ADMIN_PERM"
+        , "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"
         , "KM_PUBLISH_PERM"

@@ -23,7 +23,6 @@ import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN_Migration
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML_Migration
 import qualified Wizard.Database.Migration.Development.User.UserMigration as U_Migration
-import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 
 import SharedTest.Specs.API.Common
@@ -37,6 +36,7 @@ detail_DELETE :: AppContext -> SpecWith ((), Application)
 detail_DELETE appContext =
   describe "DELETE /documents/{documentId}" $ do
     test_204 appContext
+    test_401 appContext
     test_403 appContext
     test_404 appContext
 
@@ -57,7 +57,6 @@ reqBody = ""
 test_204 appContext = do
   create_test_204 "HTTP 204 NO CONTENT (Owner, Private)" appContext questionnaire1 [reqAuthHeader]
   create_test_204 "HTTP 204 NO CONTENT (Non-Owner, VisibleEdit)" appContext questionnaire3 [reqNonAdminAuthHeader]
-  create_test_204 "HTTP 204 NO CONTENT (Anonymous, Public, Sharing)" appContext questionnaire10 []
 
 create_test_204 title appContext qtn authHeader =
   it title $
@@ -88,6 +87,11 @@ create_test_204 title appContext qtn authHeader =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
+test_401 appContext = createAuthTest reqMethod reqUrl [reqCtHeader] reqBody
+
+-- ----------------------------------------------------
+-- ----------------------------------------------------
+-- ----------------------------------------------------
 test_403 appContext = do
   create_test_403
     "HTTP 403 FORBIDDEN (Non-Owner, Private)"
@@ -101,24 +105,6 @@ test_403 appContext = do
     questionnaire2
     [reqNonAdminAuthHeader]
     (_ERROR_VALIDATION__FORBIDDEN "Edit Questionnaire")
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView)"
-    appContext
-    questionnaire2
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, VisibleView, Sharing)"
-    appContext
-    questionnaire7
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
-  create_test_403
-    "HTTP 403 FORBIDDEN (Anonymous, Public)"
-    appContext
-    questionnaire3
-    []
-    _ERROR_SERVICE_USER__MISSING_USER
 
 create_test_403 title appContext qtn authHeader errorMessage =
   it title $
@@ -151,10 +137,10 @@ create_test_403 title appContext qtn authHeader errorMessage =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     "/documents/dc9fe65f-748b-47ec-b30c-d255bbac64a0"
     (reqHeadersT [reqAuthHeader])
     reqBody
     "document"
-    "dc9fe65f-748b-47ec-b30c-d255bbac64a0"
+    [("uuid", "dc9fe65f-748b-47ec-b30c-d255bbac64a0")]

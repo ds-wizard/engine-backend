@@ -19,6 +19,7 @@ data ServerConfig =
     , _serverConfigFeedback :: ServerConfigFeedback
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
+    , _serverConfigExperimental :: ServerConfigExperimental
     }
   deriving (Generic, Show)
 

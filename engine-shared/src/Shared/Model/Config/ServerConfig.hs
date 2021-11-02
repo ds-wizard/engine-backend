@@ -48,3 +48,9 @@ data ServerConfigLogging =
     , _serverConfigLoggingHttpClientDebug :: Bool
     }
   deriving (Generic, Show)
+
+data ServerConfigExperimental =
+  ServerConfigExperimental
+    { _serverConfigExperimentalMoreAppsEnabled :: Bool
+    }
+  deriving (Generic, Show)

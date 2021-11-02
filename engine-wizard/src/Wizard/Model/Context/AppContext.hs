@@ -29,6 +29,7 @@ data AppContext =
     , _appContextHttpClientManager :: Manager
     , _appContextRegistryClient :: ClientEnv
     , _appContextTraceUuid :: U.UUID
+    , _appContextAppUuid :: U.UUID
     , _appContextCurrentUser :: Maybe UserDTO
     , _appContextShutdownFlag :: MVar ()
     , _appContextCache :: ServerCache

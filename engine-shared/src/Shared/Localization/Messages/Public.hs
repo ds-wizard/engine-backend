@@ -1,6 +1,7 @@
 module Shared.Localization.Messages.Public where
 
 import Shared.Model.Localization.LocaleRecord
+import Shared.Util.String (printTuples)
 
 -- --------------------------------------
 -- API
@@ -27,8 +28,11 @@ _ERROR_API__WEBSOCKET_RECORD_NOT_FOUND connectionUUid =
 -- --------------------------------------
 -- DATABASE
 -- --------------------------------------
-_ERROR_DATABASE__ENTITY_NOT_FOUND entityName identificator =
-  LocaleRecord "error.database.entity_not_found" "Object '%s' of type '%s' does not exist" [identificator, entityName]
+_ERROR_DATABASE__ENTITY_NOT_FOUND entityName params =
+  LocaleRecord
+    "error.database.entity_not_found"
+    "Object of type '%s' does not exist (%s)"
+    [entityName, printTuples params]
 
 -- --------------------------------------
 -- VALIDATION

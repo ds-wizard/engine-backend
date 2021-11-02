@@ -11,4 +11,5 @@ runMigration = do
   insertUser userAlbert
   insertUser userNikola
   insertUser userIsaac
+  insertUser userCharles
   logInfo _CMP_MIGRATION "(User/User) ended"

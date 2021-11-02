@@ -8,5 +8,6 @@ data MigratorState =
     { _migratorStateOldQuestionnaireUuid :: U.UUID
     , _migratorStateNewQuestionnaireUuid :: U.UUID
     , _migratorStateResolvedQuestionUuids :: [U.UUID]
+    , _migratorStateAppUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)

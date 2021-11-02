@@ -4,7 +4,7 @@ import Control.Lens ((^.))
 import Control.Monad.Except (MonadError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
-import Control.Monad.Reader (MonadReader)
+import Control.Monad.Reader (MonadReader, asks)
 import Data.String
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
@@ -21,46 +21,66 @@ import Shared.Util.Logger
 
 entityName = "template_file"
 
-findTemplateFiles ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m [TemplateFile]
-findTemplateFiles = createFindEntitiesFn entityName
-
 findTemplateFilesByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m [TemplateFile]
-findTemplateFilesByTemplateId templateId = createFindEntitiesByFn entityName [("template_id", templateId)]
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m [TemplateFile]
+findTemplateFilesByTemplateId templateId = do
+  appUuid <- asks (^. appUuid')
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId)]
 
 findTemplateFilesByTemplateIdAndFileName ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m)
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
   => String
   -> String
   -> m [TemplateFile]
-findTemplateFilesByTemplateIdAndFileName templateId fileName =
-  createFindEntitiesByFn entityName [("template_id", templateId), ("file_name", fileName)]
+findTemplateFilesByTemplateIdAndFileName templateId fileName = do
+  appUuid <- asks (^. appUuid')
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId), ("file_name", fileName)]
 
 findTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m TemplateFile
-findTemplateFileById = createFindEntityByFn entityName "uuid"
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m TemplateFile
+findTemplateFileById uuid = do
+  appUuid <- asks (^. appUuid')
+  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertTemplateFile ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => TemplateFile -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => TemplateFile
+  -> m Int64
 insertTemplateFile = createInsertFn entityName
 
 updateTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => TemplateFile -> m Int64
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => TemplateFile
+  -> m Int64
 updateTemplateFileById file = do
-  let params = toRow file ++ [toField $ file ^. uuid]
-  let sql = "UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ? WHERE uuid = ?"
+  appUuid <- asks (^. appUuid')
+  let params = toRow file ++ [toField appUuid, toField $ file ^. uuid]
+  let sql =
+        "UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   logInfo _CMP_DATABASE sql
   let action conn = execute conn (fromString sql) params
   runDB action
 
-deleteTemplateFiles :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => m Int64
+deleteTemplateFiles ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
 deleteTemplateFiles = createDeleteEntitiesFn entityName
 
 deleteTemplateFilesByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Int64
-deleteTemplateFilesByTemplateId tmlId = createDeleteEntitiesByFn entityName [("template_id", tmlId)]
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m Int64
+deleteTemplateFilesByTemplateId tmlId = do
+  appUuid <- asks (^. appUuid')
+  createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", tmlId)]
 
 deleteTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Int64
-deleteTemplateFileById = createDeleteEntityByFn entityName "uuid"
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+  => String
+  -> m Int64
+deleteTemplateFileById uuid = do
+  appUuid <- asks (^. appUuid')
+  createDeleteEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]

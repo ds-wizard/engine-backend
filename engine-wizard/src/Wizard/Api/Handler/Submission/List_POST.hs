@@ -14,11 +14,16 @@ import Wizard.Service.Submission.SubmissionService
 type List_POST
    = Header "Authorization" String
      :> ReqBody '[ SafeJSON] SubmissionCreateDTO
+     :> "documents"
+     :> Capture "docUuid" String
      :> "submissions"
      :> PostCreated '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
 
 list_POST ::
-     Maybe String -> SubmissionCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
-list_POST mTokenHeader reqDto =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
-    runInMaybeAuthService $ addTraceUuidHeader =<< submitDocument reqDto
+     Maybe String
+  -> SubmissionCreateDTO
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
+list_POST mTokenHeader reqDto docUuid =
+  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+    runInAuthService $ addTraceUuidHeader =<< submitDocument docUuid reqDto

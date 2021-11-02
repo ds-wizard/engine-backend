@@ -18,6 +18,7 @@ import Shared.Model.Error.Error
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.Migration.Development.Migration.Questionnaire.Data.MigratorStates
+import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -71,6 +72,8 @@ test_204 appContext =
     runInContextIO TML.runMigration appContext
     runInContextIO (insertQuestionnaire questionnaire4) appContext
     runInContextIO (insertQuestionnaire questionnaire4Upgraded) appContext
+    runInContextIO (insertQuestionnaire differentQuestionnaire) appContext
+    runInContextIO QTN_MIG.runMigration appContext
     runInContextIO (insertMigratorState nlQtnMigrationState) appContext
     -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody
@@ -125,10 +128,10 @@ create_test_403 title appContext qtn reason =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_404 appContext =
-  createNotFoundTest
+  createNotFoundTest'
     reqMethod
     (reqUrlT $ questionnaire4 ^. uuid)
     (reqHeadersT reqAuthHeader)
     reqBody
     "questionnaire_migration"
-    "57250a07-a663-4ff3-ac1f-16530f2c1bfe"
+    [("new_questionnaire_uuid", "57250a07-a663-4ff3-ac1f-16530f2c1bfe")]

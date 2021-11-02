@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 import Test.Hspec
 
 import LensesConfig
+import Shared.Constant.App
 import Shared.Database.Connection
 import Shared.Integration.Http.Common.HttpClientFactory
 import Shared.S3.Common
@@ -109,6 +110,7 @@ prepareWebApp runCallback =
               , _appContextHttpClientManager = httpClientManager
               , _appContextRegistryClient = registryClient
               , _appContextTraceUuid = fromJust (U.fromString "2ed6eb01-e75e-4c63-9d81-7f36d84192c0")
+              , _appContextAppUuid = defaultAppUuid
               , _appContextCurrentUser = Just . toDTO $ userAlbert
               , _appContextShutdownFlag = shutdownFlag
               , _appContextCache = cache

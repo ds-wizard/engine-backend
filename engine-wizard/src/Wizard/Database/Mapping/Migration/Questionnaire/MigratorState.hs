@@ -13,6 +13,7 @@ instance ToRow MigratorState where
     [ toField _migratorStateOldQuestionnaireUuid
     , toField _migratorStateNewQuestionnaireUuid
     , toJSONField _migratorStateResolvedQuestionUuids
+    , toField _migratorStateAppUuid
     ]
 
 instance FromRow MigratorState where
@@ -20,4 +21,5 @@ instance FromRow MigratorState where
     _migratorStateOldQuestionnaireUuid <- field
     _migratorStateNewQuestionnaireUuid <- field
     _migratorStateResolvedQuestionUuids <- fieldWith fromJSONField
+    _migratorStateAppUuid <- field
     return $ MigratorState {..}
