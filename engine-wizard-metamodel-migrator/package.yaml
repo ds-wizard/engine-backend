@@ -28,7 +28,7 @@ library:
   when:
   - condition: os(darwin)
     then:
-      ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+      ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
       ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
   default-extensions:
@@ -53,7 +53,7 @@ executables:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -j +RTS -A256m -n4m -RTS -j8 -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
         ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
