@@ -250,9 +250,10 @@ data Integration =
     , _integrationRequestHeaders :: Map String String
     , _integrationRequestBody :: String
     , _integrationResponseListField :: String
-    , _integrationResponseIdField :: String
-    , _integrationResponseNameField :: String
-    , _integrationItemUrl :: String
+    , _integrationResponseItemUrl :: String
+    , _integrationResponseItemId :: String
+    , _integrationResponseItemTemplate :: String
+    , _integrationResponseExampleJson :: Maybe String
     , _integrationAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)

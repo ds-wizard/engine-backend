@@ -4,10 +4,8 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
-import Shared.Model.Error.Error
 import Wizard.Integration.Http.Typehint.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
-import Wizard.Localization.Messages.Internal
 
 import Wizard.Specs.Integration.Http.Common
 
@@ -68,7 +66,8 @@ typehintResponseMapperSpec =
               ]
       let response = createResponse targetContent
         -- AND: Expectations
-      let expectation = Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_EXTRACT_STRING_FIELD "id"
+      let expectation =
+            Right [TypehintIDTO {_typehintIDTOIntId = "op-p000001", _typehintIDTOName = "Life Science Ontology"}]
         -- WHEN:
       let result = toRetrieveTypehintsResponse bioPortal response
         -- THEN:

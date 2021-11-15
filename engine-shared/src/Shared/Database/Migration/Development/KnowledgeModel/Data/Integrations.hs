@@ -19,9 +19,10 @@ ontologyPortal =
     , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
     , _integrationRequestBody = ""
     , _integrationResponseListField = "nested.results"
-    , _integrationResponseIdField = "id"
-    , _integrationResponseNameField = "name"
-    , _integrationItemUrl = "https://example.com/ontologies/${id}"
+    , _integrationResponseItemUrl = "https://example.com/ontologies/${id}"
+    , _integrationResponseItemId = "{{response.id}}"
+    , _integrationResponseItemTemplate = "{{response.name}}"
+    , _integrationResponseExampleJson = Just "{}"
     , _integrationAnnotations = M.empty
     }
 
@@ -38,9 +39,10 @@ ontologyPortalEdited =
     , _integrationRequestHeaders = fromList [("Api-Key-Edited", "${apikey}-EDITED")]
     , _integrationRequestBody = "{}"
     , _integrationResponseListField = "nested.results"
-    , _integrationResponseIdField = "idEdited"
-    , _integrationResponseNameField = "nameEdited"
-    , _integrationItemUrl = "https://example.com/ontologies-edited/${id}"
+    , _integrationResponseItemUrl = "https://example.com/ontologies-edited/{{response.id}}"
+    , _integrationResponseItemId = "EDITED: {{response.id}}"
+    , _integrationResponseItemTemplate = "EDITED: {{response.name}}"
+    , _integrationResponseExampleJson = Just "{\"a\": \"edited\"}"
     , _integrationAnnotations = M.fromList [("newAnnotation", "someValue")]
     }
 
@@ -57,8 +59,9 @@ bioPortal =
     , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
     , _integrationRequestBody = ""
     , _integrationResponseListField = ""
-    , _integrationResponseIdField = "id"
-    , _integrationResponseNameField = "name"
-    , _integrationItemUrl = "https://example.com/portals/${id}"
+    , _integrationResponseItemUrl = "https://example.com/portals/{{response.id}}"
+    , _integrationResponseItemId = "{{response.id}}"
+    , _integrationResponseItemTemplate = "{{response.name}}"
+    , _integrationResponseExampleJson = Just "{}"
     , _integrationAnnotations = M.empty
     }

@@ -20,9 +20,10 @@ instance CreateEntity AddIntegrationEvent Integration where
       , _integrationRequestHeaders = e ^. requestHeaders
       , _integrationRequestBody = e ^. requestBody
       , _integrationResponseListField = e ^. responseListField
-      , _integrationResponseIdField = e ^. responseIdField
-      , _integrationResponseNameField = e ^. responseNameField
-      , _integrationItemUrl = e ^. itemUrl
+      , _integrationResponseItemUrl = e ^. responseItemUrl
+      , _integrationResponseItemId = e ^. responseItemId
+      , _integrationResponseItemTemplate = e ^. responseItemTemplate
+      , _integrationResponseExampleJson = e ^. responseExampleJson
       , _integrationAnnotations = e ^. annotations
       }
 
@@ -36,7 +37,8 @@ instance EditEntity EditIntegrationEvent Integration where
     applyRequestUrl .
     applyRequestHeaders .
     applyRequestBody .
-    applyResponseListField . applyResponseIdField . applyResponseNameField . applyItemUrl . applyAnnotations
+    applyResponseListField .
+    applyResponseItemUrl . applyResponseItemId . applyResponseItemTemplate . applyResponseExampleJson . applyAnnotations
     where
       applyIId integration = applyValue (e ^. iId) integration iId
       applyName integration = applyValue (e ^. name) integration name
@@ -47,7 +49,8 @@ instance EditEntity EditIntegrationEvent Integration where
       applyRequestHeaders integration = applyValue (e ^. requestHeaders) integration requestHeaders
       applyRequestBody integration = applyValue (e ^. requestBody) integration requestBody
       applyResponseListField integration = applyValue (e ^. responseListField) integration responseListField
-      applyResponseIdField integration = applyValue (e ^. responseIdField) integration responseIdField
-      applyResponseNameField integration = applyValue (e ^. responseNameField) integration responseNameField
-      applyItemUrl integration = applyValue (e ^. itemUrl) integration itemUrl
+      applyResponseItemUrl integration = applyValue (e ^. responseItemUrl) integration responseItemUrl
+      applyResponseItemId integration = applyValue (e ^. responseItemId) integration responseItemId
+      applyResponseItemTemplate integration = applyValue (e ^. responseItemTemplate) integration responseItemTemplate
+      applyResponseExampleJson integration = applyValue (e ^. responseExampleJson) integration responseExampleJson
       applyAnnotations integration = applyValue (e ^. annotations) integration annotations

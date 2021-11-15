@@ -20,9 +20,10 @@ data AddIntegrationEvent =
     , _addIntegrationEventRequestHeaders :: M.Map String String
     , _addIntegrationEventRequestBody :: String
     , _addIntegrationEventResponseListField :: String
-    , _addIntegrationEventResponseIdField :: String
-    , _addIntegrationEventResponseNameField :: String
-    , _addIntegrationEventItemUrl :: String
+    , _addIntegrationEventResponseItemUrl :: String
+    , _addIntegrationEventResponseItemId :: String
+    , _addIntegrationEventResponseItemTemplate :: String
+    , _addIntegrationEventResponseExampleJson :: Maybe String
     , _addIntegrationEventAnnotations :: M.Map String String
     }
   deriving (Show, Eq, Generic)
@@ -41,9 +42,10 @@ data EditIntegrationEvent =
     , _editIntegrationEventRequestHeaders :: EventField (M.Map String String)
     , _editIntegrationEventRequestBody :: EventField String
     , _editIntegrationEventResponseListField :: EventField String
-    , _editIntegrationEventResponseIdField :: EventField String
-    , _editIntegrationEventResponseNameField :: EventField String
-    , _editIntegrationEventItemUrl :: EventField String
+    , _editIntegrationEventResponseItemUrl :: EventField String
+    , _editIntegrationEventResponseItemId :: EventField String
+    , _editIntegrationEventResponseItemTemplate :: EventField String
+    , _editIntegrationEventResponseExampleJson :: EventField (Maybe String)
     , _editIntegrationEventAnnotations :: EventField (M.Map String String)
     }
   deriving (Show, Eq, Generic)
