@@ -1332,9 +1332,9 @@ a_km1_iop =
     , _addIntegrationEventRequestHeaders = ontologyPortal ^. requestHeaders
     , _addIntegrationEventRequestBody = ontologyPortal ^. requestBody
     , _addIntegrationEventResponseListField = ontologyPortal ^. responseListField
-    , _addIntegrationEventResponseIdField = ontologyPortal ^. responseIdField
-    , _addIntegrationEventResponseNameField = ontologyPortal ^. responseNameField
-    , _addIntegrationEventItemUrl = ontologyPortal ^. itemUrl
+    , _addIntegrationEventResponseItemUrl = ontologyPortal ^. responseItemUrl
+    , _addIntegrationEventResponseItemId = ontologyPortal ^. responseItemId
+    , _addIntegrationEventResponseItemTemplate = ontologyPortal ^. responseItemTemplate
     , _addIntegrationEventAnnotations = ontologyPortal ^. annotations
     }
 
@@ -1353,9 +1353,9 @@ a_km1_ibp =
     , _addIntegrationEventRequestHeaders = bioPortal ^. requestHeaders
     , _addIntegrationEventRequestBody = bioPortal ^. requestBody
     , _addIntegrationEventResponseListField = bioPortal ^. responseListField
-    , _addIntegrationEventResponseIdField = bioPortal ^. responseIdField
-    , _addIntegrationEventResponseNameField = bioPortal ^. responseNameField
-    , _addIntegrationEventItemUrl = bioPortal ^. itemUrl
+    , _addIntegrationEventResponseItemUrl = bioPortal ^. responseItemUrl
+    , _addIntegrationEventResponseItemId = bioPortal ^. responseItemId
+    , _addIntegrationEventResponseItemTemplate = bioPortal ^. responseItemTemplate
     , _addIntegrationEventAnnotations = bioPortal ^. annotations
     }
 
@@ -1374,9 +1374,9 @@ e_km1_iop =
     , _editIntegrationEventRequestHeaders = ChangedValue $ ontologyPortalEdited ^. requestHeaders
     , _editIntegrationEventRequestBody = ChangedValue $ ontologyPortalEdited ^. requestBody
     , _editIntegrationEventResponseListField = ChangedValue $ ontologyPortalEdited ^. responseListField
-    , _editIntegrationEventResponseIdField = ChangedValue $ ontologyPortalEdited ^. responseIdField
-    , _editIntegrationEventResponseNameField = ChangedValue $ ontologyPortalEdited ^. responseNameField
-    , _editIntegrationEventItemUrl = ChangedValue $ ontologyPortalEdited ^. itemUrl
+    , _editIntegrationEventResponseItemUrl = ChangedValue $ ontologyPortalEdited ^. responseItemUrl
+    , _editIntegrationEventResponseItemId = ChangedValue $ ontologyPortalEdited ^. responseItemId
+    , _editIntegrationEventResponseItemTemplate = ChangedValue $ ontologyPortalEdited ^. responseItemTemplate
     , _editIntegrationEventAnnotations = ChangedValue $ ontologyPortalEdited ^. annotations
     }
 
