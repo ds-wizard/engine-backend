@@ -3,6 +3,7 @@ module Wizard.Database.Migration.Development.Template.TemplateSchemaMigration wh
 import Control.Monad.Except (catchError)
 import Database.PostgreSQL.Simple
 
+import Shared.S3.Common
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -46,6 +47,7 @@ createTables = do
   createTemplateFileTable
   createTemplateAssetTable
   makeBucket
+  makeBucketPublicReadOnly
 
 createTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/Template) create table"

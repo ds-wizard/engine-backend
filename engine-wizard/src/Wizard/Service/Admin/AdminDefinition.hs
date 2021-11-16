@@ -8,6 +8,7 @@ import Wizard.Model.Admin.Admin
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Cache.CacheService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
+import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -47,6 +48,45 @@ cache_KnowledgeModelCache_deleteFromCache' =
 cache_KnowledgeModelCache_deleteFromCacheFn' :: AdminExecutionDTO -> AppContextM String
 cache_KnowledgeModelCache_deleteFromCacheFn' reqDto = do
   KnowledgeModelCache.deleteFromCache' (head (reqDto ^. parameters))
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- CONFIG
+-- ---------------------------------------------------------------------------------------------------------------------
+config :: AdminSection
+config =
+  AdminSection
+    { _adminSectionName = "Config"
+    , _adminSectionDescription = Nothing
+    , _adminSectionOperations = [config_switchClientCustomizationOn, config_switchClientCustomizationOff]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+config_switchClientCustomizationOn :: AdminOperation
+config_switchClientCustomizationOn =
+  AdminOperation
+    { _adminOperationName = "switchClientCustomizationOn"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters = []
+    }
+
+config_switchClientCustomizationOnFn :: AdminExecutionDTO -> AppContextM String
+config_switchClientCustomizationOnFn reqDto = do
+  modifyClientCustomization True
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+config_switchClientCustomizationOff :: AdminOperation
+config_switchClientCustomizationOff =
+  AdminOperation
+    { _adminOperationName = "switchClientCustomizationOff"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters = []
+    }
+
+config_switchClientCustomizationOffFn :: AdminExecutionDTO -> AppContextM String
+config_switchClientCustomizationOffFn reqDto = do
+  modifyClientCustomization False
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

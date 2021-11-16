@@ -8,6 +8,7 @@ import Wizard.Model.Config.SimpleFeature
 data ClientConfigDTO =
   ClientConfigDTO
     { _clientConfigDTOOrganization :: AppConfigOrganization
+    , _clientConfigDTOFeature :: AppConfigFeature
     , _clientConfigDTOAuthentication :: ClientConfigAuthDTO
     , _clientConfigDTOPrivacyAndSupport :: AppConfigPrivacyAndSupport
     , _clientConfigDTODashboard :: AppConfigDashboard
@@ -16,6 +17,7 @@ data ClientConfigDTO =
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
+    , _clientConfigDTOExperimental :: ClientConfigExperimentalDTO
     }
   deriving (Show, Eq, Generic)
 
@@ -56,5 +58,11 @@ data ClientConfigQuestionnaireDTO =
     , _clientConfigQuestionnaireDTOQuestionnaireCreation :: QuestionnaireCreation
     , _clientConfigQuestionnaireDTOSummaryReport :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
+    }
+  deriving (Generic, Eq, Show)
+
+data ClientConfigExperimentalDTO =
+  ClientConfigExperimentalDTO
+    { _clientConfigExperimentalDTOMoreAppsEnabled :: Bool
     }
   deriving (Generic, Eq, Show)

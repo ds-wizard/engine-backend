@@ -60,6 +60,7 @@ library:
   - text-replace
   - unordered-containers
   - uuid
+  - vector
   - wai
   - wai-extra
   - yaml
