@@ -43,6 +43,8 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
+    _serverConfigGeneralClientStyleBuilderUrl <-
+      o .:? "clientStyleBuilderUrl" .!= (defaultGeneral ^. clientStyleBuilderUrl)
     return ServerConfigGeneral {..}
   parseJSON _ = mzero
 

@@ -5,10 +5,9 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Model.Error.Error
+import Shared.Util.JSON
 import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Localization.Messages.Internal
-
-import Wizard.Specs.Integration.Http.Common
 
 commonResponseMapperSpec =
   describe "ResponseMapper" $ do

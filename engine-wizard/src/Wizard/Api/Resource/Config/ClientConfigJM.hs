@@ -42,3 +42,9 @@ instance FromJSON ClientConfigQuestionnaireDTO where
 
 instance ToJSON ClientConfigQuestionnaireDTO where
   toJSON = genericToJSON simpleOptions
+
+instance FromJSON ClientConfigExperimentalDTO where
+  parseJSON = genericParseJSON simpleOptions
+
+instance ToJSON ClientConfigExperimentalDTO where
+  toJSON = genericToJSON simpleOptions

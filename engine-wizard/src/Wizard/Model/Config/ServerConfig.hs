@@ -33,6 +33,7 @@ data ServerConfigGeneral =
     , _serverConfigGeneralIntegrationConfig :: String
     , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
+    , _serverConfigGeneralClientStyleBuilderUrl :: String
     }
   deriving (Generic, Show)
 

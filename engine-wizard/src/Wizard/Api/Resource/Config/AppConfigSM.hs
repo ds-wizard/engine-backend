@@ -17,6 +17,9 @@ instance ToSchema AppConfig where
 instance ToSchema AppConfigOrganization where
   declareNamedSchema = simpleToSchema' "_appConfigOrganization" defaultOrganization
 
+instance ToSchema AppConfigFeature where
+  declareNamedSchema = simpleToSchema' "_appConfigFeature" defaultFeature
+
 instance ToSchema AppConfigAuth where
   declareNamedSchema = simpleToSchema' "_appConfigAuth" defaultAuth
 

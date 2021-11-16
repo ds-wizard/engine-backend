@@ -20,14 +20,15 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Template/Template) started"
   deleteTemplates
   insertTemplate commonWizardTemplate
-  insertTemplateFile templateFileDefaultHtml
-  insertTemplateFile templateFileDefaultCss
-  insertTemplateAsset templateAssetLogo
+  _ <- insertTemplateFile templateFileDefaultHtml
+  _ <- insertTemplateFile templateFileDefaultCss
+  _ <- insertTemplateAsset templateAssetLogo
   insertTemplate differentTemplate
-  insertTemplateFile differentFileHtml
+  _ <- insertTemplateFile differentFileHtml
   logInfo _CMP_MIGRATION "(Template/Template) ended"
 
 runS3Migration :: AppContextM ()
 runS3Migration = do
   purgeBucket
-  putAsset (commonWizardTemplate ^. tId) (U.toString $ templateAssetLogo ^. uuid) templateAssetLogoContent
+  _ <- putAsset (commonWizardTemplate ^. tId) (U.toString $ templateAssetLogo ^. uuid) templateAssetLogoContent
+  return ()

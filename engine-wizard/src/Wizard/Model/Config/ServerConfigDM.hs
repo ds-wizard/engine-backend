@@ -34,6 +34,7 @@ defaultGeneral =
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
     , _serverConfigGeneralTemplateFolder = "engine-wizard/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
+    , _serverConfigGeneralClientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
 
 defaultMessaging :: ServerConfigMessaging

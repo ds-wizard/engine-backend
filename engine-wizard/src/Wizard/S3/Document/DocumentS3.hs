@@ -12,8 +12,8 @@ folderName = "documents"
 getDocumentContent :: String -> AppContextM BS.ByteString
 getDocumentContent documentUuid = createGetObjectFn (f' "%s/%s" [folderName, documentUuid])
 
-putDocumentContent :: String -> BS.ByteString -> AppContextM ()
-putDocumentContent documentUuid = createPutObjectFn (f' "%s/%s" [folderName, documentUuid])
+putDocumentContent :: String -> BS.ByteString -> AppContextM String
+putDocumentContent documentUuid = createPutObjectFn (f' "%s/%s" [folderName, documentUuid]) Nothing
 
 removeDocumentContents :: AppContextM ()
 removeDocumentContents = createRemoveObjectFn (f' "%s" [folderName])

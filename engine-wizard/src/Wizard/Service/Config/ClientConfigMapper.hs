@@ -3,6 +3,7 @@ module Wizard.Service.Config.ClientConfigMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Shared.Model.Config.ServerConfig
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
@@ -12,6 +13,7 @@ toClientConfigDTO :: ServerConfig -> AppConfig -> ClientConfigDTO
 toClientConfigDTO serverConfig appConfig =
   ClientConfigDTO
     { _clientConfigDTOOrganization = appConfig ^. organization
+    , _clientConfigDTOFeature = appConfig ^. feature
     , _clientConfigDTOAuthentication = toClientAuthDTO $ appConfig ^. authentication
     , _clientConfigDTOPrivacyAndSupport = appConfig ^. privacyAndSupport
     , _clientConfigDTODashboard = appConfig ^. dashboard
@@ -20,6 +22,7 @@ toClientConfigDTO serverConfig appConfig =
     , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
+    , _clientConfigDTOExperimental = toClientConfigExperimentalDTO $ serverConfig ^. experimental
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -58,3 +61,7 @@ toClientConfigQuestionnaireDTO appConfig =
     , _clientConfigQuestionnaireDTOSummaryReport = appConfig ^. summaryReport
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }
+
+toClientConfigExperimentalDTO :: ServerConfigExperimental -> ClientConfigExperimentalDTO
+toClientConfigExperimentalDTO serverConfig =
+  ClientConfigExperimentalDTO {_clientConfigExperimentalDTOMoreAppsEnabled = serverConfig ^. moreAppsEnabled}

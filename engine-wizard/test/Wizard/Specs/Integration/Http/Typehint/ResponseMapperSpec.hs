@@ -4,6 +4,7 @@ import Test.Hspec hiding (shouldBe)
 import Test.Hspec.Expectations.Pretty
 
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations
+import Shared.Util.JSON
 import Wizard.Integration.Http.Typehint.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 

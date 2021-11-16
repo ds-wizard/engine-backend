@@ -178,6 +178,8 @@ makeFields ''AppConfig
 
 makeFields ''AppConfigOrganization
 
+makeFields ''AppConfigFeature
+
 makeFields ''AppConfigAuth
 
 makeFields ''AppConfigAuthInternal

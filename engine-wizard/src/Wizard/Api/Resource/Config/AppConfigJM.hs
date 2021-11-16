@@ -21,6 +21,12 @@ instance FromJSON AppConfigOrganization where
 instance ToJSON AppConfigOrganization where
   toJSON = simpleToJSON "_appConfigOrganization"
 
+instance FromJSON AppConfigFeature where
+  parseJSON = simpleParseJSON "_appConfigFeature"
+
+instance ToJSON AppConfigFeature where
+  toJSON = simpleToJSON "_appConfigFeature"
+
 instance FromJSON AppConfigAuth where
   parseJSON = simpleParseJSON "_appConfigAuth"
 

@@ -2,6 +2,7 @@ module Wizard.Api.Resource.Config.ClientConfigSM where
 
 import Data.Swagger
 
+import qualified Shared.Model.Config.ServerConfigDM as S_S
 import Shared.Util.Swagger
 import Wizard.Api.Resource.Config.AppConfigSM ()
 import Wizard.Api.Resource.Config.ClientConfigDTO
@@ -27,3 +28,6 @@ instance ToSchema ClientConfigRegistryDTO where
 
 instance ToSchema ClientConfigQuestionnaireDTO where
   declareNamedSchema = simpleToSchema (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
+
+instance ToSchema ClientConfigExperimentalDTO where
+  declareNamedSchema = simpleToSchema (toClientConfigExperimentalDTO S_S.defaultExperimental)
