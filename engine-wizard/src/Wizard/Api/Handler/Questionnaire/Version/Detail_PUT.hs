@@ -13,6 +13,7 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type Detail_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireVersionChangeDTO
      :> "questionnaires"
      :> Capture "qtnUuid" String
@@ -22,10 +23,11 @@ type Detail_PUT
 
 detail_PUT ::
      Maybe String
+  -> Maybe String
   -> QuestionnaireVersionChangeDTO
   -> String
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
-detail_PUT mTokenHeader reqDto qtnUuid vUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_PUT mTokenHeader mServerUrl reqDto qtnUuid vUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< modifyVersion qtnUuid vUuid reqDto

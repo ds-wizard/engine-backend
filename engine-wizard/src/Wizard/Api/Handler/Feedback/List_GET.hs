@@ -11,14 +11,19 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Feedback.FeedbackService
 
 type List_GET
-   = "feedbacks"
+   = Header "Host" String
+     :> "feedbacks"
      :> QueryParam "packageId" String
      :> QueryParam "questionUuid" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [FeedbackDTO])
 
-list_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [FeedbackDTO])
-list_GET mPackageId mQuestionUuid =
-  runInUnauthService $
+list_GET ::
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [FeedbackDTO])
+list_GET mServerUrl mPackageId mQuestionUuid =
+  runInUnauthService mServerUrl $
   addTraceUuidHeader =<< do
     let queryParams = catMaybes [(,) "package_id" <$> mPackageId, (,) "question_uuid" <$> mQuestionUuid]
     getFeedbacksFiltered queryParams

@@ -12,11 +12,13 @@ import Wizard.Api.Handler.Common
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.BaseContext
 
-type List_GET = Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
+type List_GET
+   = Header "Host" String
+     :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] InfoDTO)
 
-list_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] InfoDTO)
-list_GET =
-  runInUnauthService $
+list_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] InfoDTO)
+list_GET mServerUrl =
+  runInUnauthService mServerUrl $
   addTraceUuidHeader =<< do
     buildInfoConfig <- asks _appContextBuildInfoConfig
     return

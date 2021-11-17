@@ -13,12 +13,18 @@ import Wizard.Service.User.UserService
 
 type Detail_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] UserChangeDTO
      :> "users"
      :> Capture "uUuid" String
      :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserDTO)
 
-detail_PUT :: Maybe String -> UserChangeDTO -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserDTO)
-detail_PUT mTokenHeader reqDto uUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_PUT ::
+     Maybe String
+  -> Maybe String
+  -> UserChangeDTO
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserDTO)
+detail_PUT mTokenHeader mServerUrl reqDto uUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< modifyUser uUuid reqDto

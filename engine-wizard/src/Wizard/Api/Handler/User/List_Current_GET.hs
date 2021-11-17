@@ -15,13 +15,15 @@ import Wizard.Service.User.UserProfileService
 
 type List_Current_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "users"
      :> "current"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
 
-list_current_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
-list_current_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_current_GET ::
+     Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
+list_current_GET mTokenHeader mServerUrl =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       user <- getCurrentUser

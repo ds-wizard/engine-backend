@@ -27,14 +27,14 @@ import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
 import Wizard.Util.Context
 
-runInUnauthService :: AppContextM a -> BaseContextM a
-runInUnauthService function = do
-  app <- getCurrentApp "server.example.com"
+runInUnauthService :: Maybe String -> AppContextM a -> BaseContextM a
+runInUnauthService mServerUrl function = do
+  app <- getCurrentApp mServerUrl
   runIn (app ^. uuid) Nothing function
 
-runInAuthService :: UserDTO -> AppContextM a -> BaseContextM a
-runInAuthService user function = do
-  app <- getCurrentApp "server.example.com"
+runInAuthService :: Maybe String -> UserDTO -> AppContextM a -> BaseContextM a
+runInAuthService mServerUrl user function = do
+  app <- getCurrentApp mServerUrl
   runIn (app ^. uuid) (Just user) function
 
 runInServiceAuthService :: AppContextM a -> BaseContextM a
@@ -55,52 +55,58 @@ runIn appUuid mUser function = do
     Right result -> return result
     Left error -> throwError =<< sendError error
 
-getMaybeAuthServiceExecutor :: Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
-getMaybeAuthServiceExecutor (Just tokenHeader) callback = do
-  user <- getCurrentUser tokenHeader
-  callback (runInAuthService user)
-getMaybeAuthServiceExecutor Nothing callback = callback runInUnauthService
+getMaybeAuthServiceExecutor ::
+     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getMaybeAuthServiceExecutor (Just tokenHeader) mServerUrl callback = do
+  user <- getCurrentUser tokenHeader mServerUrl
+  callback (runInAuthService mServerUrl user)
+getMaybeAuthServiceExecutor Nothing mServerUrl callback = callback (runInUnauthService mServerUrl)
 
-getAuthServiceExecutor :: Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
-getAuthServiceExecutor (Just token) callback = do
-  user <- getCurrentUser token
-  callback (runInAuthService user)
-getAuthServiceExecutor Nothing _ =
+getAuthServiceExecutor ::
+     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getAuthServiceExecutor (Just token) mServerUrl callback = do
+  user <- getCurrentUser token mServerUrl
+  callback (runInAuthService mServerUrl user)
+getAuthServiceExecutor Nothing _ _ =
   throwError =<< (sendError . UnauthorizedError $ _ERROR_API_COMMON__UNABLE_TO_GET_TOKEN)
 
 getServiceTokenOrAuthServiceExecutor ::
-     Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
-getServiceTokenOrAuthServiceExecutor mTokenHeader callback =
+     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl callback =
   (do checkServiceToken' mTokenHeader
       callback runInServiceAuthService) `catchError`
   handleError
   where
-    handleError ServerError {errHTTPCode = 401} = getAuthServiceExecutor mTokenHeader callback
+    handleError ServerError {errHTTPCode = 401} = getAuthServiceExecutor mTokenHeader mServerUrl callback
     handleError rest = throwError rest
 
 getServiceTokenOrMaybeAuthServiceExecutor ::
-     Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
-getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader callback =
+     Maybe String -> Maybe String -> ((AppContextM a -> BaseContextM a) -> BaseContextM b) -> BaseContextM b
+getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader mServerUrl callback =
   (do checkServiceToken' mTokenHeader
       callback runInServiceAuthService) `catchError`
   handleError
   where
-    handleError ServerError {errHTTPCode = 401} = getMaybeAuthServiceExecutor mTokenHeader callback
+    handleError ServerError {errHTTPCode = 401} = getMaybeAuthServiceExecutor mTokenHeader mServerUrl callback
     handleError rest = throwError rest
 
-getCurrentUser :: String -> BaseContextM UserDTO
-getCurrentUser tokenHeader = do
+getCurrentUser :: String -> Maybe String -> BaseContextM UserDTO
+getCurrentUser tokenHeader mServerUrl = do
   userUuid <- getCurrentUserUuid tokenHeader
-  runInUnauthService $ catchError (getUserById userUuid) (handleError userUuid)
+  runInUnauthService mServerUrl $ catchError (getUserById userUuid) (handleError userUuid)
   where
     handleError userUuid (NotExistsError _) = throwError $ UnauthorizedError (_ERROR_VALIDATION__USER_ABSENCE userUuid)
     handleError userUuid error = throwError error
 
-getCurrentApp :: String -> BaseContextM App
-getCurrentApp host = do
+getCurrentApp :: Maybe String -> BaseContextM App
+getCurrentApp mServerUrl = do
   serverConfig <- asks _baseContextServerConfig
   if serverConfig ^. experimental . moreAppsEnabled
-    then runInServiceAuthService $ catchError (findAppByServerDomain host) (handleError host)
+    then case mServerUrl of
+           Nothing ->
+             runInServiceAuthService . throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE "not-provided")
+           Just serverUrl -> do
+             runInServiceAuthService $ catchError (findAppByServerDomain serverUrl) (handleError serverUrl)
     else do
       let appUuid = U.toString defaultAppUuid
       runInServiceAuthService $ catchError (findAppById appUuid) (handleError appUuid)

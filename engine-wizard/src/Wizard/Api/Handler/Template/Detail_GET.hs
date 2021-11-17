@@ -11,11 +11,13 @@ import Wizard.Service.Template.TemplateService
 
 type Detail_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> Capture "templateId" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
 
-detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
-detail_GET mTokenHeader tmlId =
-  getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
+detail_GET ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
+detail_GET mTokenHeader mServerUrl tmlId =
+  getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService $ addTraceUuidHeader =<< getTemplateByUuidDto tmlId

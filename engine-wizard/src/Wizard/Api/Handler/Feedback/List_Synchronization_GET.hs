@@ -9,13 +9,15 @@ import Wizard.Service.Feedback.FeedbackService
 
 type List_Synchronization_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "feedbacks"
      :> "synchronization"
      :> Verb 'GET 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
-list_synchronization_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_synchronization_GET mServiceToken =
-  runInUnauthService $
+list_synchronization_GET ::
+     Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_synchronization_GET mServiceToken mServerUrl =
+  runInUnauthService mServerUrl $
   addTraceUuidHeader =<< do
     checkServiceToken mServiceToken
     synchronizeFeedbacks

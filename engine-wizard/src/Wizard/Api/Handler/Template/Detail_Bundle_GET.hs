@@ -11,16 +11,18 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.TemplateBundle.TemplateBundleService
 
 type Detail_Bundle_GET
-   = "templates"
+   = Header "Host" String
+     :> "templates"
      :> Capture "templateId" String
      :> "bundle"
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
 
 detail_bundle_GET ::
-     String
+     Maybe String
+  -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStreamLazy)
-detail_bundle_GET tmlId =
-  runInUnauthService $ do
+detail_bundle_GET mServerUrl tmlId =
+  runInUnauthService mServerUrl $ do
     zipFile <- exportTemplateBundle tmlId
     let cdHeader = "attachment;filename=\"template.zip\""
     traceUuid <- asks _appContextTraceUuid

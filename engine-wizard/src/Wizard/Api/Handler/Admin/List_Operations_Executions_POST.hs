@@ -13,6 +13,7 @@ import Wizard.Service.Admin.AdminService
 
 type List_Operations_Executions_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] AdminExecutionDTO
      :> "admin"
      :> "operations"
@@ -21,8 +22,9 @@ type List_Operations_Executions_POST
 
 list_operations_executions_POST ::
      Maybe String
+  -> Maybe String
   -> AdminExecutionDTO
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AdminExecutionResultDTO)
-list_operations_executions_POST mTokenHeader reqDto =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_operations_executions_POST mTokenHeader mServerUrl reqDto =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< executeOperation reqDto

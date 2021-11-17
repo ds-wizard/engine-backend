@@ -10,9 +10,10 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Config.ClientConfigService
 
 type List_Bootstrap_GET
-   = "configs"
+   = Header "Host" String
+     :> "configs"
      :> "bootstrap"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] ClientConfigDTO)
 
-list_bootstrap_GET :: BaseContextM (Headers '[ Header "x-trace-uuid" String] ClientConfigDTO)
-list_bootstrap_GET = runInUnauthService $ addTraceUuidHeader =<< getClientConfig
+list_bootstrap_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] ClientConfigDTO)
+list_bootstrap_GET mServerUrl = runInUnauthService mServerUrl $ addTraceUuidHeader =<< getClientConfig

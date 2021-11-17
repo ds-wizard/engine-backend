@@ -13,6 +13,7 @@ import Wizard.Service.Template.File.TemplateFileService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] TemplateFileChangeDTO
      :> "templates"
      :> Capture "templateId" String
@@ -21,9 +22,10 @@ type List_POST
 
 list_POST ::
      Maybe String
+  -> Maybe String
   -> TemplateFileChangeDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateFile)
-list_POST mTokenHeader reqDto tmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST mTokenHeader mServerUrl reqDto tmlId =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createTemplateFile tmlId reqDto

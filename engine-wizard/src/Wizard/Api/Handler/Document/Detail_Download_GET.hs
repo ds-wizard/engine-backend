@@ -14,15 +14,18 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Document.DocumentService
 
 type Detail_Download_GET
-   = "documents"
+   = Header "Host" String
+     :> "documents"
      :> Capture "docUuid" String
      :> "download"
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_download_GET ::
-     String -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
-detail_download_GET docUuid =
-  runInUnauthService $ do
+     Maybe String
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
+detail_download_GET mServerUrl docUuid =
+  runInUnauthService mServerUrl $ do
     (doc, result) <- downloadDocument docUuid
     let cdHeader = "attachment;filename=\"" ++ fromMaybe "export" (doc ^. fileName) ++ "\""
     traceUuid <- asks _appContextTraceUuid

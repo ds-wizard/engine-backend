@@ -11,12 +11,17 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type List_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "versions"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [QuestionnaireVersionDTO])
 
-list_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [QuestionnaireVersionDTO])
-list_GET mTokenHeader qtnUuid =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_GET ::
+     Maybe String
+  -> Maybe String
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [QuestionnaireVersionDTO])
+list_GET mTokenHeader mServerUrl qtnUuid =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getVersions qtnUuid

@@ -13,6 +13,7 @@ import Wizard.Service.Branch.BranchService
 
 type List_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "branches"
      :> QueryParam "q" String
      :> QueryParam "page" Int
@@ -23,10 +24,11 @@ type List_GET
 list_GET ::
      Maybe String
   -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page BranchDTO))
-list_GET mTokenHeader mQuery mPage mSize mSort =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_GET mTokenHeader mServerUrl mQuery mPage mSize mSort =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getBranchesPage mQuery (Pageable mPage mSize) (parseSortQuery mSort)

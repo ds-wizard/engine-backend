@@ -12,9 +12,10 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Token.TokenService
 
 type List_POST
-   = ReqBody '[ SafeJSON] TokenCreateDTO
+   = Header "Host" String
+     :> ReqBody '[ SafeJSON] TokenCreateDTO
      :> "tokens"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TokenDTO)
 
-list_POST :: TokenCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
-list_POST reqDto = runInUnauthService $ addTraceUuidHeader =<< generateTokenFromCredentials reqDto
+list_POST :: Maybe String -> TokenCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
+list_POST mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< generateTokenFromCredentials reqDto

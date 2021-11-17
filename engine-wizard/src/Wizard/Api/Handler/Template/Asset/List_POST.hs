@@ -17,6 +17,7 @@ import Wizard.Service.Template.Asset.TemplateAssetService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> MultipartForm Mem (MultipartData Mem)
      :> "templates"
      :> Capture "templateId" String
@@ -25,11 +26,12 @@ type List_POST
 
 list_POST ::
      Maybe String
+  -> Maybe String
   -> MultipartData Mem
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateAsset)
-list_POST mTokenHeader multipartData tmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST mTokenHeader mServerUrl multipartData tmlId =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let fs = files multipartData

@@ -9,6 +9,7 @@ import Wizard.Service.Migration.Questionnaire.MigratorService
 
 type List_Current_Completion_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "migrations"
@@ -17,9 +18,9 @@ type List_Current_Completion_POST
      :> Verb POST 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_current_completion_POST ::
-     Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_current_completion_POST mTokenHeader qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_current_completion_POST mTokenHeader mServerUrl qtnUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       finishQuestionnaireMigration qtnUuid

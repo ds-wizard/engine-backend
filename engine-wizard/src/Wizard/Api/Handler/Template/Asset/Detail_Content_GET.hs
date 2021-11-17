@@ -14,6 +14,7 @@ import Wizard.Service.Template.Asset.TemplateAssetService
 
 type Detail_Content_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> Capture "templateId" String
      :> "assets"
@@ -23,11 +24,12 @@ type Detail_Content_GET
 
 detail_content_GET ::
      Maybe String
+  -> Maybe String
   -> String
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
-detail_content_GET mTokenHeader tmlId assetUuid =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_content_GET mTokenHeader mServerUrl tmlId assetUuid =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ do
       (asset, result) <- getTemplateAssetContent tmlId assetUuid
       let cdHeader = asset ^. contentType

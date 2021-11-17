@@ -13,13 +13,18 @@ import Wizard.Service.Template.TemplateService
 
 type Detail_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] TemplateChangeDTO
      :> "templates"
      :> Capture "templateId" String
      :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] Template)
 
 detail_PUT ::
-     Maybe String -> TemplateChangeDTO -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
-detail_PUT mTokenHeader reqDto tmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> TemplateChangeDTO
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
+detail_PUT mTokenHeader mServerUrl reqDto tmlId =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< modifyTemplate tmlId reqDto

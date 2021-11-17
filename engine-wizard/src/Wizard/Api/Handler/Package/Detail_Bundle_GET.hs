@@ -14,15 +14,18 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.PackageBundle.PackageBundleService
 
 type Detail_Bundle_GET
-   = "packages"
+   = Header "Host" String
+     :> "packages"
      :> Capture "pkgId" String
      :> "bundle"
      :> Get '[ OctetStream] (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
 
 detail_bundle_GET ::
-     String -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
-detail_bundle_GET pkgId =
-  runInUnauthService $ do
+     Maybe String
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Disposition" String] FileStream)
+detail_bundle_GET mServerUrl pkgId =
+  runInUnauthService mServerUrl $ do
     dto <- exportPackageBundle pkgId
     let result = encode dto
     let cdHeader = "attachment;filename=" ++ pkgId ++ ".km"

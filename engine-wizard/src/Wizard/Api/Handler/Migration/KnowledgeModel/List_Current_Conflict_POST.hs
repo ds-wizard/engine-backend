@@ -11,6 +11,7 @@ import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 type List_Current_Conflict_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] MigratorConflictDTO
      :> "branches"
      :> Capture "bUuid" String
@@ -20,9 +21,13 @@ type List_Current_Conflict_POST
      :> Verb 'POST 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_current_conflict_POST ::
-     Maybe String -> MigratorConflictDTO -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_current_conflict_POST mTokenHeader reqDto bUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> MigratorConflictDTO
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_current_conflict_POST mTokenHeader mServerUrl reqDto bUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       solveConflictAndMigrate bUuid reqDto

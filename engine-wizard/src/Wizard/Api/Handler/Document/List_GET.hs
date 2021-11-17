@@ -13,6 +13,7 @@ import Wizard.Service.Document.DocumentService
 
 type List_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "documents"
      :> QueryParam "questionnaireUuid" String
      :> QueryParam "q" String
@@ -25,11 +26,12 @@ list_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page DocumentDTO))
-list_GET mTokenHeader mQuestionnaireUuid mQuery mPage mSize mSort =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_GET mTokenHeader mServerUrl mQuestionnaireUuid mQuery mPage mSize mSort =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< getDocumentsPageDto mQuestionnaireUuid mQuery (Pageable mPage mSize) (parseSortQuery mSort)

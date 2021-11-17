@@ -11,6 +11,7 @@ import Wizard.Service.User.UserService
 
 type Detail_Password_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] UserPasswordDTO
      :> "users"
      :> Capture "uUuid" String
@@ -20,12 +21,13 @@ type Detail_Password_PUT
 
 detail_password_PUT ::
      Maybe String
+  -> Maybe String
   -> UserPasswordDTO
   -> String
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-detail_password_PUT mTokenHeader reqDto uUuid mHash =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_password_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       ia <- isAdmin

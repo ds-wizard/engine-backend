@@ -12,9 +12,10 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Feedback.FeedbackService
 
 type List_POST
-   = ReqBody '[ SafeJSON] FeedbackCreateDTO
+   = Header "Host" String
+     :> ReqBody '[ SafeJSON] FeedbackCreateDTO
      :> "feedbacks"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] FeedbackDTO)
 
-list_POST :: FeedbackCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] FeedbackDTO)
-list_POST reqDto = runInUnauthService $ addTraceUuidHeader =<< createFeedback reqDto
+list_POST :: Maybe String -> FeedbackCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] FeedbackDTO)
+list_POST mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< createFeedback reqDto

@@ -17,15 +17,19 @@ import Wizard.Service.User.UserProfileService
 
 type List_Current_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] UserProfileChangeDTO
      :> "users"
      :> "current"
      :> Put '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
 
 list_current_PUT ::
-     Maybe String -> UserProfileChangeDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
-list_current_PUT mTokenHeader reqDto =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> UserProfileChangeDTO
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserProfileDTO)
+list_current_PUT mTokenHeader mServerUrl reqDto =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       user <- getCurrentUser
