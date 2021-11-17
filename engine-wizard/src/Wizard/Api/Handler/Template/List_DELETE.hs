@@ -10,15 +10,20 @@ import Wizard.Service.Template.TemplateService
 
 type List_DELETE
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> QueryParam "organizationId" String
      :> QueryParam "templateId" String
      :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_DELETE ::
-     Maybe String -> Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_DELETE mTokenHeader mOrganizationId mTemplateId =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_DELETE mTokenHeader mServerUrl mOrganizationId mTemplateId =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTemplateId]

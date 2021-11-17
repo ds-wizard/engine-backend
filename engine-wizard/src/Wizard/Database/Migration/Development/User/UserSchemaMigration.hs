@@ -48,10 +48,10 @@ createTables = do
         \             references app \
         \ ); \
         \  \
-        \ create unique index user_email_uindex \
-        \     on user_entity (email); \
-        \  \
         \ create unique index user_uuid_uindex \
-        \     on user_entity (uuid); "
+        \     on user_entity (uuid, app_uuid); \
+        \  \
+        \ create unique index user_email_uindex \
+        \     on user_entity (email, app_uuid); "
   let action conn = execute_ conn sql
   runDB action

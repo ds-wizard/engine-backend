@@ -17,7 +17,7 @@ data ClientConfigDTO =
     , _clientConfigDTOQuestionnaire :: ClientConfigQuestionnaireDTO
     , _clientConfigDTOTemplate :: AppConfigTemplate
     , _clientConfigDTOSubmission :: SimpleFeature
-    , _clientConfigDTOExperimental :: ClientConfigExperimentalDTO
+    , _clientConfigDTOCloud :: ClientConfigCloudDTO
     }
   deriving (Show, Eq, Generic)
 
@@ -61,8 +61,9 @@ data ClientConfigQuestionnaireDTO =
     }
   deriving (Generic, Eq, Show)
 
-data ClientConfigExperimentalDTO =
-  ClientConfigExperimentalDTO
-    { _clientConfigExperimentalDTOMoreAppsEnabled :: Bool
+data ClientConfigCloudDTO =
+  ClientConfigCloudDTO
+    { _clientConfigCloudDTOEnabled :: Bool
+    , _clientConfigCloudDTOServerUrl :: String
     }
   deriving (Generic, Eq, Show)

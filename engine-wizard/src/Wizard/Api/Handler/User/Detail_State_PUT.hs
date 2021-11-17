@@ -11,6 +11,7 @@ import Wizard.Service.User.UserService
 
 type Detail_State_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] UserStateDTO
      :> "users"
      :> Capture "uUuid" String
@@ -20,10 +21,11 @@ type Detail_State_PUT
 
 detail_state_PUT ::
      Maybe String
+  -> Maybe String
   -> UserStateDTO
   -> String
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] UserStateDTO)
-detail_state_PUT mTokenHeader reqDto uUuid mHash =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_state_PUT mTokenHeader mServerUrl reqDto uUuid mHash =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< changeUserState uUuid mHash reqDto

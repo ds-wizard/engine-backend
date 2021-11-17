@@ -12,6 +12,7 @@ import Test.Hspec.Wai.Matcher
 
 import LensesConfig hiding (request)
 import Wizard.Api.Resource.Config.ClientConfigJM ()
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ClientConfigMapper
@@ -44,7 +45,7 @@ test_200 appContext =
    do
     let expStatus = 200
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto = toClientConfigDTO (appContext ^. serverConfig) defaultAppConfig
+    let expDto = toClientConfigDTO (appContext ^. serverConfig) defaultAppConfig defaultApp
     let expBody = encode expDto
      -- WHEN: Call API
     response <- request reqMethod reqUrl reqHeaders reqBody

@@ -72,8 +72,7 @@ createDocumentTable = do
         \  \
         \ alter table document \
         \   add constraint document_template_id_fk \
-        \      foreign key (template_id) references template (id); \
-        \  \
+        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
         \ alter table document \
         \   add constraint document_user_entity_uuid_fk \
         \      foreign key (creator_uuid) references user_entity; \

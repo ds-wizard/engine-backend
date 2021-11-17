@@ -10,9 +10,10 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.BookReference.BookReferenceService
 
 type Detail_GET
-   = "book-references"
+   = Header "Host" String
+     :> "book-references"
      :> Capture "brShortUuid" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] BookReference)
 
-detail_GET :: String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BookReference)
-detail_GET brShortUuid = runInUnauthService $ addTraceUuidHeader =<< getBookReference brShortUuid
+detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BookReference)
+detail_GET mServerUrl brShortUuid = runInUnauthService mServerUrl $ addTraceUuidHeader =<< getBookReference brShortUuid

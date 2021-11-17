@@ -9,14 +9,16 @@ import Wizard.Service.PackageBundle.PackageBundleService
 
 type Detail_Pull_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> "packages"
      :> Capture "pkgId" String
      :> "pull"
      :> Verb POST 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
-detail_pull_POST :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-detail_pull_POST mTokenHeader pkgId =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_pull_POST ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+detail_pull_POST mTokenHeader mServerUrl pkgId =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       pullPackageBundleFromRegistry pkgId

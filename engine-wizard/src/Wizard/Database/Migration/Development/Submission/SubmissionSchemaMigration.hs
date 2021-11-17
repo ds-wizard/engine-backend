@@ -41,19 +41,18 @@ createTables = do
         \  \
         \ create unique index submission_uuid_uindex \
         \     on submission (uuid); \
-        \  \
         \ alter table submission \
         \     add constraint submission_pk \
         \         primary key (uuid); \
+        \ \
         \ alter table submission \
         \   add constraint submission_document_uuid_fk \
         \      foreign key (document_uuid) references document (uuid); \
-        \  \
         \ alter table submission \
         \   add constraint submission_created_by_fk \
         \      foreign key (created_by) references user_entity (uuid); \
         \  \
         \ create index submission_document_uuid_index \
-        \   on submission (document_uuid);"
+        \   on submission (document_uuid, app_uuid);"
   let action conn = execute_ conn sql
   runDB action

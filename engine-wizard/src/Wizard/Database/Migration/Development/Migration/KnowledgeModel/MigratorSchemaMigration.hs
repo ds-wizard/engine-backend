@@ -50,10 +50,10 @@ createTables = do
         \  \
         \ alter table knowledge_model_migration \
         \   add constraint knowledge_model_migration_branch_previous_package_id_fk \
-        \      foreign key (branch_previous_package_id) references package (id); \
+        \      foreign key (branch_previous_package_id, app_uuid) references package (id, app_uuid); \
         \  \
         \ alter table knowledge_model_migration \
         \   add constraint knowledge_model_migration_target_package_id_fk \
-        \      foreign key (target_package_id) references package (id); "
+        \      foreign key (target_package_id, app_uuid) references package (id, app_uuid); "
   let action conn = execute_ conn sql
   runDB action

@@ -20,7 +20,13 @@ entityName = "app_config"
 findAppConfig :: AppContextM AppConfig
 findAppConfig = do
   appUuid <- asks _appContextAppUuid
-  createFindEntityByFn entityName [("uuid", U.toString appUuid)]
+  findAppConfigByUuid appUuid
+
+findAppConfigByUuid :: U.UUID -> AppContextM AppConfig
+findAppConfigByUuid uuid = createFindEntityByFn entityName [("uuid", U.toString uuid)]
+
+findAppConfigByClientUrl :: String -> AppContextM AppConfig
+findAppConfigByClientUrl clientUrl = createFindEntityByFn entityName [("client_url", clientUrl)]
 
 insertAppConfig :: AppConfig -> AppContextM Int64
 insertAppConfig = createInsertFn entityName

@@ -54,9 +54,7 @@ createTemplateTable = do
   let sql =
         "create table template \
           \ ( \
-          \     id                     varchar                  not null \
-          \         constraint template_pk \
-          \             primary key, \
+          \     id                     varchar                  not null, \
           \     name                   varchar                  not null, \
           \     organization_id        varchar                  not null, \
           \     template_id            varchar                  not null, \
@@ -73,10 +71,14 @@ createTemplateTable = do
           \       constraint template_app_uuid_fk \
           \         references app \
           \ ); \
+          \ \
+          \alter table template \
+          \    add constraint template_pk primary key (id, app_uuid); \
           \create unique index template_id_uindex \
-          \     on template (id); \
+          \     on template (id, app_uuid); \
+          \ \
           \create index template_organization_id_template_id_index \
-          \     on template (organization_id, template_id); "
+          \     on template (organization_id, template_id, app_uuid); "
   let action conn = execute_ conn sql
   runDB action
 
@@ -96,7 +98,7 @@ createTemplateFileTable = do
         \  \
         \ alter table template_file \
         \   add constraint template_file_template_id_fk \
-        \      foreign key (template_id) references template (id); \
+        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
         \  \
         \ create unique index template_file_uuid_uindex \
         \   on template_file (uuid); \
@@ -123,7 +125,7 @@ createTemplateAssetTable = do
         \  \
         \ alter table template_asset \
         \   add constraint template_asset_template_id_fk \
-        \      foreign key (template_id) references template (id); \
+        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
         \  \
         \ create unique index template_asset_uuid_uindex \
         \   on template_asset (uuid); \

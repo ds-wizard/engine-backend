@@ -13,6 +13,7 @@ import Wizard.Service.Branch.BranchService
 
 type Detail_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] BranchChangeDTO
      :> "branches"
      :> Capture "bUuid" String
@@ -20,9 +21,10 @@ type Detail_PUT
 
 detail_PUT ::
      Maybe String
+  -> Maybe String
   -> BranchChangeDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] BranchDetailDTO)
-detail_PUT mTokenHeader reqDto bUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_PUT mTokenHeader mServerUrl reqDto bUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< modifyBranch bUuid reqDto

@@ -17,7 +17,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0007_bookReferen
 import qualified Wizard.Database.Migration.Production.Migration_0008_packageFkAndBase64.Migration as M_0008
 import qualified Wizard.Database.Migration.Production.Migration_0009_adminOperationsAndSubmission.Migration as M_0009
 import qualified Wizard.Database.Migration.Production.Migration_0010_app.Migration as M_0010
-import qualified Wizard.Database.Migration.Production.Migration_0011_app_feature.Migration as M_0011
+import qualified Wizard.Database.Migration.Production.Migration_0011_app_2.Migration as M_0011
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 

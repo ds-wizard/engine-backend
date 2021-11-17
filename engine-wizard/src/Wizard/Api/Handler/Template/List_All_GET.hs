@@ -11,6 +11,7 @@ import Wizard.Service.Template.TemplateService
 
 type List_All_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> "all"
      :> QueryParam "organizationId" String
@@ -21,9 +22,10 @@ list_all_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSuggestionDTO])
-list_all_GET mTokenHeader mOrganizationId mTmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_all_GET mTokenHeader mServerUrl mOrganizationId mTmlId =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]

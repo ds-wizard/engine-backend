@@ -5,6 +5,7 @@ import Control.Monad.Reader (asks, liftIO)
 import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Hashable as H
 import Data.Time
+import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Util.String (splitOn)
@@ -18,6 +19,7 @@ import Wizard.Model.Config.AppConfigEM ()
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigMapper
 import Wizard.Util.Logger
 
@@ -26,6 +28,13 @@ getAppConfig =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     encryptedAppConfig <- findAppConfig
+    return $ process (serverConfig ^. general . secret) encryptedAppConfig
+
+getAppConfigByUuid :: U.UUID -> AppContextM AppConfig
+getAppConfigByUuid appUuid =
+  runInTransaction $ do
+    serverConfig <- asks _appContextServerConfig
+    encryptedAppConfig <- findAppConfigByUuid appUuid
     return $ process (serverConfig ^. general . secret) encryptedAppConfig
 
 getAppConfigDto :: AppContextM AppConfig
@@ -86,7 +95,8 @@ invokeClientCssCompilation oldAppConfig newAppConfig
   -- 1. Recompile CSS
  = do
   logInfoU _CMP_SERVICE "Invoking compile of clients' CSS files..."
-  cssContent <- compileClientCss (newAppConfig ^. lookAndFeel)
+  app <- getCurrentApp
+  cssContent <- compileClientCss app (newAppConfig ^. lookAndFeel)
   logInfoU _CMP_SERVICE "Compilation succeed"
   let cssFileName = f' "customization.%s.css" [show . abs . H.hash $ cssContent]
   logInfoU _CMP_SERVICE (f' "CSS filename: %s" [cssFileName])

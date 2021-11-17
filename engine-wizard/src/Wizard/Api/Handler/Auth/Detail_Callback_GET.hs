@@ -9,7 +9,8 @@ import Wizard.Model.Context.BaseContext
 import Wizard.Service.Auth.OpenIdService
 
 type Detail_Callback_GET
-   = "auth"
+   = Header "Host" String
+     :> "auth"
      :> Capture "id" String
      :> "callback"
      :> QueryParam "clientUrl" String
@@ -18,10 +19,11 @@ type Detail_Callback_GET
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TokenDTO)
 
 detail_callback_GET ::
-     String
+     Maybe String
+  -> String
   -> Maybe String
   -> Maybe String
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
-detail_callback_GET authId mClientUrl mError mCode =
-  runInUnauthService $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode
+detail_callback_GET mServerUrl authId mClientUrl mError mCode =
+  runInUnauthService mServerUrl $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode

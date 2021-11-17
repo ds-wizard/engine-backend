@@ -11,11 +11,16 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 
 type Detail_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
 
-detail_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
-detail_GET mTokenHeader qtnUuid =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_GET ::
+     Maybe String
+  -> Maybe String
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDetailDTO)
+detail_GET mTokenHeader mServerUrl qtnUuid =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getQuestionnaireDetailById qtnUuid

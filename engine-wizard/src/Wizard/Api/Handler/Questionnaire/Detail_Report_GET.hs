@@ -11,12 +11,14 @@ import Wizard.Service.Report.ReportService
 
 type Detail_Report_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "report"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] Report)
 
-detail_report_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Report)
-detail_report_GET mTokenHeader qtnUuid =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_report_GET ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Report)
+detail_report_GET mTokenHeader mServerUrl qtnUuid =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getReportByQuestionnaireUuid qtnUuid

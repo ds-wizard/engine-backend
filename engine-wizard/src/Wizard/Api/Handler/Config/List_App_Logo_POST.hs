@@ -14,6 +14,7 @@ import Wizard.Service.Config.AppConfigLogoService
 
 type List_App_Logo_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> MultipartForm Mem (MultipartData Mem)
      :> "configs"
      :> "app"
@@ -21,9 +22,12 @@ type List_App_Logo_POST
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 list_app_logo_POST ::
-     Maybe String -> MultipartData Mem -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_app_logo_POST mTokenHeader multipartData =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> MultipartData Mem
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_app_logo_POST mTokenHeader mServerUrl multipartData =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let fs = files multipartData

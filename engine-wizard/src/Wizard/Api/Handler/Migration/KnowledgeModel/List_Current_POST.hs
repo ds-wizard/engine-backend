@@ -13,6 +13,7 @@ import Wizard.Service.Migration.KnowledgeModel.MigratorService
 
 type List_Current_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] MigratorStateCreateDTO
      :> "branches"
      :> Capture "bUuid" String
@@ -22,9 +23,10 @@ type List_Current_POST
 
 list_current_POST ::
      Maybe String
+  -> Maybe String
   -> MigratorStateCreateDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
-list_current_POST mTokenHeader reqDto bUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_current_POST mTokenHeader mServerUrl reqDto bUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createMigration bUuid reqDto

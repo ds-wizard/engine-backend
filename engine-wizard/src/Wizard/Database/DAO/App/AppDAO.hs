@@ -19,6 +19,9 @@ findAppById uuid = createFindEntityByFn entityName [("uuid", uuid)]
 findAppByServerDomain :: String -> AppContextM App
 findAppByServerDomain serverDomain = createFindEntityByFn entityName [("server_domain", serverDomain)]
 
+findAppByClientUrl :: String -> AppContextM App
+findAppByClientUrl clientUrl = createFindEntityByFn entityName [("client_url", clientUrl)]
+
 insertApp :: App -> AppContextM Int64
 insertApp = createInsertFn entityName
 

@@ -13,6 +13,7 @@ import Wizard.Service.Submission.SubmissionService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] SubmissionCreateDTO
      :> "documents"
      :> Capture "docUuid" String
@@ -21,9 +22,10 @@ type List_POST
 
 list_POST ::
      Maybe String
+  -> Maybe String
   -> SubmissionCreateDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] SubmissionDTO)
-list_POST mTokenHeader reqDto docUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST mTokenHeader mServerUrl reqDto docUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< submitDocument docUuid reqDto

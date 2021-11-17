@@ -31,9 +31,7 @@ createTables = do
         \     name varchar not null, \
         \     km_id varchar not null, \
         \     metamodel_version int not null, \
-        \     previous_package_id varchar \
-        \         constraint branch_package_id_fk \
-        \             references package, \
+        \     previous_package_id varchar, \
         \     events json not null, \
         \     owner_uuid uuid not null \
         \         constraint branch_user_entity_uuid_fk \
@@ -46,6 +44,9 @@ createTables = do
         \ ); \
         \  \
         \ create unique index branch_uuid_uindex \
-        \     on branch (uuid); "
+        \     on branch (uuid); \
+        \ alter table branch \
+        \    add constraint branch_package_id_fk \
+        \        foreign key (previous_package_id, app_uuid) references package (id, app_uuid); "
   let action conn = execute_ conn sql
   runDB action

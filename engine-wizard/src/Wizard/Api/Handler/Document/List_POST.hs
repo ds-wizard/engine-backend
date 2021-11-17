@@ -13,11 +13,16 @@ import Wizard.Service.Document.DocumentService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] DocumentCreateDTO
      :> "documents"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] DocumentDTO)
 
-list_POST :: Maybe String -> DocumentCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] DocumentDTO)
-list_POST mTokenHeader reqDto =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST ::
+     Maybe String
+  -> Maybe String
+  -> DocumentCreateDTO
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] DocumentDTO)
+list_POST mTokenHeader mServerUrl reqDto =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createDocument reqDto

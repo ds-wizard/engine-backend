@@ -13,6 +13,7 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireVersionChangeDTO
      :> "questionnaires"
      :> Capture "qtnUuid" String
@@ -21,9 +22,10 @@ type List_POST
 
 list_POST ::
      Maybe String
+  -> Maybe String
   -> QuestionnaireVersionChangeDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireVersionDTO)
-list_POST mTokenHeader reqDto qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST mTokenHeader mServerUrl reqDto qtnUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createVersion qtnUuid reqDto
