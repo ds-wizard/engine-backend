@@ -13,6 +13,7 @@ import qualified Wizard.Metamodel.Migration.Migration5 as M5
 import qualified Wizard.Metamodel.Migration.Migration6 as M6
 import qualified Wizard.Metamodel.Migration.Migration7 as M7
 import qualified Wizard.Metamodel.Migration.Migration8 as M8
+import qualified Wizard.Metamodel.Migration.Migration9 as M9
 import Wizard.Metamodel.Util.List (foldEither)
 
 type Version = Int
@@ -29,6 +30,7 @@ migrations =
   , (6, M6.migrateEventValue)
   , (7, M7.migrateEventValue)
   , (8, M8.migrateEventValue)
+  , (9, M9.migrateEventValue)
   ]
 
 migrate :: Version -> Version -> Value -> Either String [Value]
