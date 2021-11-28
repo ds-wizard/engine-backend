@@ -20,9 +20,19 @@ meta =
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
+  addCommentPermForEditorsIfNotExists dbPool
   addServerAndClientUrlToApp dbPool
   addFeatureColumnToAppConfig dbPool
   adjustForeignKeys dbPool
+
+addCommentPermForEditorsIfNotExists dbPool = do
+  let sql =
+        "UPDATE questionnaire_acl_user \
+            \SET perms = array_append(perms, 'COMMENT') \
+            \WHERE 'EDIT' = ANY (perms) AND not ('COMMENT' = ANY (perms));"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
 
 addServerAndClientUrlToApp dbPool = do
   let sql =
