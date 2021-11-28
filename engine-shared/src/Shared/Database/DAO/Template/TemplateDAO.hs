@@ -6,6 +6,7 @@ import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, asks)
 import Data.Foldable (traverse_)
+import Data.String
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -75,12 +76,12 @@ updateTemplateById ::
   -> m Int64
 updateTemplateById template = do
   appUuid <- asks (^. appUuid')
-  let params = toRow template ++ [toField appUuid, toField $ template ^. tId]
-  let action conn =
-        execute
-          conn
+  let sql =
+        fromString
           "UPDATE template SET id = ?, name = ?, organization_id = ?, template_id = ?, version = ?, metamodel_version = ?, description = ?, readme = ?, license = ?, allowed_packages = ?, recommended_package_id = ?, formats = ?, created_at = ?, app_uuid = ? WHERE app_uuid = ? AND id = ?"
-          params
+  let params = toRow template ++ [toField appUuid, toField $ template ^. tId]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteTemplates ::

@@ -15,7 +15,6 @@ import Wizard.Database.Mapping.Submission.Submission ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Submission.Submission
-import Wizard.Util.Logger
 
 entityName = "submission"
 
@@ -49,11 +48,12 @@ updateSubmissionById sub = do
   now <- liftIO getCurrentTime
   appUuid <- asks _appContextAppUuid
   let updatedSub = sub & updatedAt .~ now
-  let params = toRow sub ++ [toField appUuid, toField $ updatedSub ^. uuid]
   let sql =
-        "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE submission SET uuid = ?, state = ?, location = ?, returned_data = ?, service_id = ?, document_uuid = ?, created_by = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = toRow sub ++ [toField appUuid, toField $ updatedSub ^. uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
   return updatedSub
 

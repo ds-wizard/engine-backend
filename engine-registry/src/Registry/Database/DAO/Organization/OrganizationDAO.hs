@@ -14,7 +14,6 @@ import Registry.Database.Mapping.Organization.Organization ()
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.ContextLenses ()
 import Registry.Model.Organization.Organization
-import Registry.Util.Logger
 
 entityName = "organization"
 
@@ -44,11 +43,12 @@ insertOrganization = createInsertFn entityName
 
 updateOrganization :: Organization -> AppContextM Int64
 updateOrganization org = do
-  let params = toRow org ++ [toField . T.pack $ org ^. organizationId]
   let sql =
-        "UPDATE organization SET organization_id = ?, name = ?, description = ?, email = ?, role = ?, token = ?, active = ?, logo = ?, created_at = ?, updated_at = ? WHERE organization_id = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE organization SET organization_id = ?, name = ?, description = ?, email = ?, role = ?, token = ?, active = ?, logo = ?, created_at = ?, updated_at = ? WHERE organization_id = ?"
+  let params = toRow org ++ [toField . T.pack $ org ^. organizationId]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteOrganizations :: AppContextM Int64

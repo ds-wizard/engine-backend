@@ -19,11 +19,13 @@ insertDocumentQueue :: DocumentQueue -> AppContextM Int
 insertDocumentQueue entity = do
   let questionMarks = generateQuestionMarks entity
   let sql =
+        fromString $
         f'
           "INSERT INTO %s (document_uuid, document_context, created_by, created_at, app_uuid) VALUES (?, ?, ?, ?, ?) RETURNING id"
           [entityName, questionMarks]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) entity
+  let params = entity
+  logQuery sql params
+  let action conn = query conn sql entity
   result <- runDB action
   case result of
     [dId] -> return . fromOnly $ dId

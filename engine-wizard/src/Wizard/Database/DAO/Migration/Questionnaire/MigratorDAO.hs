@@ -14,7 +14,6 @@ import Wizard.Database.Mapping.Migration.Questionnaire.MigratorState ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.Questionnaire.MigratorState
-import Wizard.Util.Logger
 
 entityName = "questionnaire_migration"
 
@@ -46,11 +45,12 @@ insertMigratorState = createInsertFn entityName
 updateMigratorStateByNewQuestionnaireId :: MigratorState -> AppContextM Int64
 updateMigratorStateByNewQuestionnaireId ms = do
   appUuid <- asks _appContextAppUuid
-  let params = toRow ms ++ [toField appUuid, toField $ ms ^. newQuestionnaireUuid]
   let sql =
-        "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, app_uuid = ? WHERE app_uuid = ? AND new_questionnaire_uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE questionnaire_migration SET old_questionnaire_uuid = ?, new_questionnaire_uuid = ?, resolved_question_uuids = ?, app_uuid = ? WHERE app_uuid = ? AND new_questionnaire_uuid = ?"
+  let params = toRow ms ++ [toField appUuid, toField $ ms ^. newQuestionnaireUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteMigratorStates :: AppContextM Int64

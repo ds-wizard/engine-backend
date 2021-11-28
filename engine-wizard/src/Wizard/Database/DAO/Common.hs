@@ -33,7 +33,7 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
         f'
           "SELECT %s \
            \FROM %s \
-           \WHERE id IN ( \
+           \WHERE app_uuid = ? AND id IN ( \
            \    SELECT CONCAT(organization_id, ':', %s, ':', (max(string_to_array(version, '.')::int[]))[1] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[2] || '.' || \
            \                                                    (max(string_to_array(version, '.')::int[]))[3]) \
@@ -59,7 +59,8 @@ createFindEntitiesGroupByCoordinatePageableQuerySortFn entityName pageLabel page
         query
           conn
           (fromString sql)
-          (U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
+          (U.toString appUuid :
+           U.toString appUuid : regex mQuery : regex mQuery : mapToDBCoordinatesParams mOrganizationId mEntityId)
   entities <- runDB action
   -- 4. Constructor response
   let metadata =

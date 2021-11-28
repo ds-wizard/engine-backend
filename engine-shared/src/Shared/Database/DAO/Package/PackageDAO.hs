@@ -19,7 +19,6 @@ import Shared.Model.Error.Error
 import Shared.Model.Package.Package
 import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Package.PackageWithEventsRaw
-import Shared.Util.Logger
 
 entityName = "package"
 
@@ -84,9 +83,10 @@ findVersionsForPackage ::
   -> m [String]
 findVersionsForPackage orgId kmId = do
   appUuid <- asks (^. appUuid')
-  let sql = "SELECT version FROM package WHERE app_uuid = ? and organization_id = ? and km_id = ?"
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) [U.toString appUuid, orgId, kmId]
+  let sql = fromString "SELECT version FROM package WHERE app_uuid = ? and organization_id = ? and km_id = ?"
+  let params = [U.toString appUuid, orgId, kmId]
+  logQuery sql params
+  let action conn = query conn sql params
   versions <- runDB action
   return . fmap fromOnly $ versions
 

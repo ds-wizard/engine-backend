@@ -5,6 +5,7 @@ import Control.Monad.Except (MonadError, catchError, throwError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, ask, liftIO)
+import qualified Data.ByteString.Char8 as BS
 import Data.Maybe
 import Data.Pool
 import Data.String
@@ -13,6 +14,7 @@ import qualified Database.PostgreSQL.LibPQ as LibPQ
 import qualified Database.PostgreSQL.Simple as PostgresTransaction
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.Internal
+import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
 import GHC.Int
 
@@ -24,6 +26,7 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
+import Shared.Util.ByteString (toByteString)
 import Shared.Util.Logger
 import Shared.Util.String (toSnake)
 
@@ -38,6 +41,24 @@ runRawDB action = do
   context <- ask
   let dbPool = context ^. dbPool'
   liftIO $ withResource dbPool (`withConnection` action)
+
+logQuery :: (MonadReader s m, HasDbPool' s, MonadIO m, ToRow q, MonadLogger m) => Query -> q -> m ()
+logQuery sql params = do
+  context <- ask
+  let dbPool = context ^. dbPool'
+  exploded <- liftIO $ withResource dbPool (\c -> formatQuery c sql params)
+  logInfo _CMP_DATABASE (BS.unpack exploded)
+
+logInsertAndUpdate :: (MonadReader s m, HasDbPool' s, MonadIO m, ToRow q, MonadLogger m) => Query -> q -> m ()
+logInsertAndUpdate sql params = do
+  context <- ask
+  let dbPool = context ^. dbPool'
+  let cut p =
+        if length p > 50
+          then take 50 p ++ "..."
+          else p
+  let paramsS = show . fmap (cut . showAction) . toRow $ params
+  logInfo _CMP_DATABASE (show sql ++ " with params" ++ paramsS)
 
 runInTransaction ::
      (MonadReader s m, MonadIO m, MonadError e m, HasDbPool' s) => (String -> String -> m ()) -> m a -> m a
@@ -77,9 +98,10 @@ createFindEntitiesByFn ::
   -> m [entity]
 createFindEntitiesByFn entityName [] = createFindEntitiesFn entityName
 createFindEntitiesByFn entityName queryParams = do
-  let sql = f' "SELECT * FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (fmap snd queryParams)
+  let sql = fromString $ f' "SELECT * FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
   runDB action
 
 createFindEntityByFn ::
@@ -96,9 +118,10 @@ createFindEntityWithFieldsByFn ::
   -> [(String, String)]
   -> m entity
 createFindEntityWithFieldsByFn fields entityName queryParams = do
-  let sql = f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (fmap snd queryParams)
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
   entities <- runDB action
   case entities of
     [] -> throwError $ NotExistsError (_ERROR_DATABASE__ENTITY_NOT_FOUND entityName queryParams)
@@ -124,9 +147,10 @@ createFindEntityWithFieldsByFn' ::
   -> [(String, String)]
   -> m (Maybe entity)
 createFindEntityWithFieldsByFn' fields entityName queryParams = do
-  let sql = f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (fmap snd queryParams)
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
   entities <- runDB action
   case entities of
     [] -> return Nothing
@@ -156,11 +180,12 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
   count <- createCountByFn entityName condition conditionParams
   -- 3. Get entities
   let sql =
+        fromString $
         f'
           "SELECT %s FROM %s WHERE %s %s OFFSET %s LIMIT %s"
           [fields, entityName, condition, mapSort sort, show skip, show sizeI]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) conditionParams
+  logQuery sql conditionParams
+  let action conn = query conn sql conditionParams
   entities <- runDB action
   -- 4. Constructor response
   let metadata =
@@ -175,9 +200,10 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
 createInsertFn :: (ToRow q, MonadLogger m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> q -> m Int64
 createInsertFn entityName entity = do
   let questionMarks = generateQuestionMarks entity
-  let sql = f' "INSERT INTO %s VALUES %s" [entityName, questionMarks]
-  logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) entity
+  let sql = fromString $ f' "INSERT INTO %s VALUES %s" [entityName, questionMarks]
+  let params = entity
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
   runDB action
 
 createDeleteEntitiesFn ::
@@ -195,9 +221,10 @@ createDeleteEntitiesByFn ::
   -> m Int64
 createDeleteEntitiesByFn entityName [] = createDeleteEntitiesFn entityName
 createDeleteEntitiesByFn entityName queryParams = do
-  let sql = f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
-  logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) (fmap snd queryParams)
+  let sql = fromString $ f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 createDeleteEntityByFn ::
@@ -206,9 +233,10 @@ createDeleteEntityByFn ::
   -> [(String, String)]
   -> m Int64
 createDeleteEntityByFn entityName queryParams = do
-  let sql = f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
-  logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) (fmap snd queryParams)
+  let sql = fromString $ f' "DELETE FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 createCountFn :: (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> m Int
@@ -228,9 +256,10 @@ createCountByFn ::
   -> q
   -> m Int
 createCountByFn entityName condition queryParams = do
-  let sql = f' "SELECT COUNT(*) FROM %s WHERE %s" [entityName, condition]
-  logInfo _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) queryParams
+  let sql = fromString $ f' "SELECT COUNT(*) FROM %s WHERE %s" [entityName, condition]
+  let params = queryParams
+  logQuery sql params
+  let action conn = query conn sql params
   result <- runDB action
   case result of
     [count] -> return . fromOnly $ count
@@ -311,3 +340,10 @@ appCondition = "app_uuid = ?"
 
 appSelector :: U.UUID -> String
 appSelector appUuid = "app_uuid = '" ++ U.toString appUuid ++ "'"
+
+showAction :: Action -> String
+showAction (Plain a) = BS.unpack . toByteString $ a
+showAction (Escape a) = BS.unpack a
+showAction (EscapeByteA a) = BS.unpack a
+showAction (EscapeIdentifier a) = BS.unpack a
+showAction (Many xs) = show . fmap showAction $ xs
