@@ -52,7 +52,7 @@ applyCreateEventWithParent ::
   -> Either AppError KnowledgeModel
 applyCreateEventWithParent entityCol parentCol parentUuidCol entityName parentName event km =
   case M.lookup (event ^. parentUuid') (km ^. parentCol) of
-    Nothing -> Left . GeneralServerError . _NODE_NOT_FOUND parentName $ event
+    Nothing -> Right km
     Just parentEntity -> Right . addEntityReference parentEntity . addEntity $ km
   where
     addEntityReference ch km =
@@ -70,7 +70,7 @@ applyEditEvent ::
   -> Either AppError KnowledgeModel
 applyEditEvent entityCol entityName event km =
   case M.lookup (event ^. entityUuid') (km ^. entityCol) of
-    Nothing -> Left . GeneralServerError . _NODE_NOT_FOUND entityName $ event
+    Nothing -> Right km
     Just entity -> Right . updateEntity km $ entity
   where
     updateEntity km entity =
@@ -86,7 +86,7 @@ applyDeleteEvent ::
   -> Either AppError KnowledgeModel
 applyDeleteEvent entityCol parentUuidCol entityName event km =
   case M.lookup (event ^. entityUuid') (km ^. entityCol) of
-    Nothing -> Left . GeneralServerError . _NODE_NOT_FOUND entityName $ event
+    Nothing -> Right km
     Just ch -> Right . removeEntityReference . removeEntity $ km
   where
     removeEntityReference km = km & parentUuidCol .~ L.delete (event ^. entityUuid') (km ^. parentUuidCol)
