@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Questionnaire.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Questionnaire.Detail_Content_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_DELETE
@@ -21,22 +22,23 @@ import Wizard.Api.Handler.Questionnaire.Version.Api
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireAPI
-   = List_GET
-     :<|> List_POST
-     :<|> List_POST_FromTemplate
-     :<|> List_POST_CloneUuid
-     :<|> Detail_GET
-     :<|> Detail_PUT
-     :<|> Detail_DELETE
-     :<|> Detail_Content_PUT
-     :<|> Detail_Report_GET
-     :<|> Detail_Documents_GET
-     :<|> Detail_Documents_Preview_GET
-     :<|> Detail_WS
-     :<|> QuestionnaireVersionAPI
-     :<|> Detail_Revert_POST
-     :<|> Detail_Revert_Preview_POST
-     :<|> Detail_Squash_POST
+   = Tags "Questionnaire"
+     :> (List_GET
+         :<|> List_POST
+         :<|> List_POST_FromTemplate
+         :<|> List_POST_CloneUuid
+         :<|> Detail_GET
+         :<|> Detail_PUT
+         :<|> Detail_DELETE
+         :<|> Detail_Content_PUT
+         :<|> Detail_Report_GET
+         :<|> Detail_Documents_GET
+         :<|> Detail_Documents_Preview_GET
+         :<|> Detail_WS
+         :<|> QuestionnaireVersionAPI
+         :<|> Detail_Revert_POST
+         :<|> Detail_Revert_Preview_POST
+         :<|> Detail_Squash_POST)
 
 questionnaireApi :: Proxy QuestionnaireAPI
 questionnaireApi = Proxy

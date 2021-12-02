@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Feedback.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Feedback.Detail_GET
 import Wizard.Api.Handler.Feedback.List_GET
@@ -9,10 +10,11 @@ import Wizard.Api.Handler.Feedback.List_Synchronization_GET
 import Wizard.Model.Context.BaseContext
 
 type FeedbackAPI
-   = List_GET
-     :<|> List_POST
-     :<|> List_Synchronization_GET
-     :<|> Detail_GET
+   = Tags "Feedback"
+     :> (List_GET
+         :<|> List_POST
+         :<|> List_Synchronization_GET
+         :<|> Detail_GET)
 
 feedbackApi :: Proxy FeedbackAPI
 feedbackApi = Proxy

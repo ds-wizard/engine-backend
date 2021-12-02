@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Template.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Template.Asset.Api
 import Wizard.Api.Handler.Template.Detail_Bundle_GET
@@ -18,19 +19,20 @@ import Wizard.Api.Handler.Template.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type TemplateAPI
-   = TemplateAssetAPI
-     :<|> TemplateFileAPI
-     :<|> List_GET
-     :<|> List_All_GET
-     :<|> List_Suggestions_GET
-     :<|> List_POST
-     :<|> List_DELETE
-     :<|> Detail_GET
-     :<|> Detail_PUT
-     :<|> Detail_DELETE
-     :<|> List_Bundle_POST
-     :<|> Detail_Bundle_GET
-     :<|> Detail_Pull_POST
+   = Tags "Template"
+     :> (TemplateAssetAPI
+         :<|> TemplateFileAPI
+         :<|> List_GET
+         :<|> List_All_GET
+         :<|> List_Suggestions_GET
+         :<|> List_POST
+         :<|> List_DELETE
+         :<|> Detail_GET
+         :<|> Detail_PUT
+         :<|> Detail_DELETE
+         :<|> List_Bundle_POST
+         :<|> Detail_Bundle_GET
+         :<|> Detail_Pull_POST)
 
 templateApi :: Proxy TemplateAPI
 templateApi = Proxy

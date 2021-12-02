@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.User.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.User.Detail_DELETE
 import Wizard.Api.Handler.User.Detail_GET
@@ -16,17 +17,18 @@ import Wizard.Api.Handler.User.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type UserAPI
-   = List_GET
-     :<|> List_Suggestions_GET
-     :<|> List_POST
-     :<|> List_Current_GET
-     :<|> List_Current_PUT
-     :<|> List_Current_Password_PUT
-     :<|> Detail_GET
-     :<|> Detail_PUT
-     :<|> Detail_Password_PUT
-     :<|> Detail_State_PUT
-     :<|> Detail_DELETE
+   = Tags "User"
+     :> (List_GET
+         :<|> List_Suggestions_GET
+         :<|> List_POST
+         :<|> List_Current_GET
+         :<|> List_Current_PUT
+         :<|> List_Current_Password_PUT
+         :<|> Detail_GET
+         :<|> Detail_PUT
+         :<|> Detail_Password_PUT
+         :<|> Detail_State_PUT
+         :<|> Detail_DELETE)
 
 userApi :: Proxy UserAPI
 userApi = Proxy

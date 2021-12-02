@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Branch.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Branch.Detail_DELETE
 import Wizard.Api.Handler.Branch.Detail_GET
@@ -10,11 +11,12 @@ import Wizard.Api.Handler.Branch.List_POST
 import Wizard.Model.Context.BaseContext
 
 type BranchAPI
-   = List_GET
-     :<|> List_POST
-     :<|> Detail_GET
-     :<|> Detail_PUT
-     :<|> Detail_DELETE
+   = Tags "Branch"
+     :> (List_GET
+         :<|> List_POST
+         :<|> Detail_GET
+         :<|> Detail_PUT
+         :<|> Detail_DELETE)
 
 branchApi :: Proxy BranchAPI
 branchApi = Proxy
