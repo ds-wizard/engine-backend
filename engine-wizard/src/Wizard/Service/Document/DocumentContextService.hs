@@ -20,6 +20,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -36,6 +37,7 @@ createDocumentContext doc = do
   mCreatedBy <- forM (fmap U.toString (qtn ^. creatorUuid)) findUserById
   appConfig <- getAppConfig
   serverConfig <- asks _appContextServerConfig
+  clientUrl <- getAppClientUrl
   let org = appConfig ^. organization
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
@@ -54,6 +56,7 @@ createDocumentContext doc = do
     toDocumentContext
       dmpUuid
       serverConfig
+      clientUrl
       qtn
       qtnCtn
       qtnVersion

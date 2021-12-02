@@ -47,6 +47,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
@@ -57,12 +58,12 @@ sendRegistrationConfirmationMail user hash =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
-    let clientAddress = serverConfig ^. general . clientUrl
-        activationLink = clientAddress ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
+    clientUrl <- getAppClientUrl
+    let activationLink = clientUrl ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
         mailName = serverConfig ^. mail . name
         subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
         additionals = [("activationLink", Aeson.String $ T.pack activationLink)]
-        context = makeMailContext serverConfig appConfig user subject additionals
+        context = makeMailContext serverConfig appConfig clientUrl user subject additionals
         to = [user ^. email]
     composeAndSendEmail to subject _MAIL_REGISTRATION_REGISTRATION_CONFIRMATION context
 
@@ -71,10 +72,11 @@ sendRegistrationCreatedAnalyticsMail user =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
+    clientUrl <- getAppClientUrl
     let analyticsAddress = serverConfig ^. analytics . email
         mailName = serverConfig ^. mail . name
         subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_CREATED_ANALYTICS
-        context = makeMailContext serverConfig appConfig user subject []
+        context = makeMailContext serverConfig appConfig clientUrl user subject []
         to = [analyticsAddress]
     composeAndSendEmail to subject _MAIL_REGISTRATION_CREATED_ANALYTICS context
 
@@ -83,12 +85,12 @@ sendResetPasswordMail user hash =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
-    let clientAddress = serverConfig ^. general . clientUrl
-        resetLink = clientAddress ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
+    clientUrl <- getAppClientUrl
+    let resetLink = clientUrl ++ "/forgotten-password/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
         mailName = serverConfig ^. mail . name
         subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_RESET_PASSWORD
         additionals = [("resetLink", Aeson.String $ T.pack resetLink)]
-        context = makeMailContext serverConfig appConfig user subject additionals
+        context = makeMailContext serverConfig appConfig clientUrl user subject additionals
         to = [user ^. email]
     composeAndSendEmail to subject _MAIL_RESET_PASSWORD context
 
@@ -107,8 +109,8 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
           user <- findUserById (U.toString userUuid)
           serverConfig <- asks _appContextServerConfig
           appConfig <- getAppConfig
-          let clientAddress = serverConfig ^. general . clientUrl
-              projectLink = clientAddress ++ "/projects/" ++ U.toString (newQtn ^. uuid)
+          clientUrl <- getAppClientUrl
+          let projectLink = clientUrl ++ "/projects/" ++ U.toString (newQtn ^. uuid)
               mailName = serverConfig ^. mail . name
               subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_QUESTIONNAIRE_INVITATION
               additionals =
@@ -117,7 +119,7 @@ sendQuestionnaireInvitationMail oldQtn newQtn =
                 , ("ownerFirstName", Aeson.String . T.pack $ currentUser ^. firstName)
                 , ("ownerLastName", Aeson.String . T.pack $ currentUser ^. lastName)
                 ]
-              context = makeMailContext serverConfig appConfig (toDTO user) subject additionals
+              context = makeMailContext serverConfig appConfig clientUrl (toDTO user) subject additionals
               to = [user ^. email]
           composeAndSendEmail to subject _MAIL_QUESTIONNAIRE_INVITATION context
 
@@ -223,15 +225,15 @@ makePlainTextPart fn context =
     template <- loadAndRender fn context
     return $ MIME.plainPart . TL.fromStrict <$> template
 
-makeMailContext :: ServerConfig -> AppConfig -> UserDTO -> TL.Text -> [(T.Text, Aeson.Value)] -> MailContext
-makeMailContext serverConfig appConfig user subject others =
+makeMailContext :: ServerConfig -> AppConfig -> String -> UserDTO -> TL.Text -> [(T.Text, Aeson.Value)] -> MailContext
+makeMailContext serverConfig appConfig clientUrl user subject others =
   fromList $
   [ ( "appTitle"
     , Aeson.String . T.pack $ fromMaybe _MESSAGE_SERVICE_MAIL__APP_TITLE $ appConfig ^. lookAndFeel . appTitle)
   , ("supportMail", Aeson.String . T.pack $ fromMaybe "" $ appConfig ^. privacyAndSupport . supportEmail)
   , ("mailName", Aeson.String . T.pack $ serverConfig ^. mail . name)
   , ("subject", Aeson.String . TL.toStrict $ subject)
-  , ("clientAddress", Aeson.String . T.pack $ serverConfig ^. general . clientUrl)
+  , ("clientAddress", Aeson.String . T.pack $ clientUrl)
   , ("user", fromMaybe emptyObject . Aeson.decode . Aeson.encode $ user)
   ] ++
   others
