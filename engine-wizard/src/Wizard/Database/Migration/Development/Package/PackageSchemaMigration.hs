@@ -25,9 +25,7 @@ createTables = do
   let sql =
         "create table package \
            \ ( \
-           \     id                          varchar                  not null \
-           \         constraint package_pk \
-           \             primary key, \
+           \     id                          varchar                  not null, \
            \     name                        varchar                  not null, \
            \     organization_id             varchar                  not null, \
            \     km_id                       varchar                  not null, \
@@ -45,23 +43,24 @@ createTables = do
            \       constraint branch_app_uuid_fk \
            \         references app \
            \ ); \
+           \alter table package\
+           \     add constraint package_pk primary key (id, app_uuid);\
            \create unique index package_id_uindex \
-           \     on package (id); \
+           \     on package (id, app_uuid); \
+           \ \
            \create index package_organization_id_km_id_index \
-           \     on package (organization_id, km_id); \
+           \     on package (organization_id, km_id, app_uuid); \
            \create index package_previous_package_id_index \
-           \     on package (previous_package_id); \
-           \  \
+           \     on package (previous_package_id, app_uuid); \
+           \ \
            \alter table package \
            \   add constraint package_previous_package_id_fk \
-           \      foreign key (previous_package_id) references package; \
-           \  \
+           \      foreign key (previous_package_id, app_uuid) references package (id, app_uuid); \
            \alter table package \
            \   add constraint package_fork_of_package_id_fk \
-           \      foreign key (fork_of_package_id) references package; \
-           \  \
+           \      foreign key (fork_of_package_id, app_uuid) references package (id, app_uuid); \
            \alter table package \
            \   add constraint package_merge_checkpoint_package_id_fk \
-           \      foreign key (merge_checkpoint_package_id) references package; "
+           \      foreign key (merge_checkpoint_package_id, app_uuid) references package (id, app_uuid); "
   let action conn = execute_ conn sql
   runDB action

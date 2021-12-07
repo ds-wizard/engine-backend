@@ -15,6 +15,7 @@ data ServerConfigDatabase =
 data ServerConfigS3 =
   ServerConfigS3
     { _serverConfigS3Url :: String
+    , _serverConfigS3PublicUrl :: String
     , _serverConfigS3Username :: String
     , _serverConfigS3Password :: String
     , _serverConfigS3Bucket :: String

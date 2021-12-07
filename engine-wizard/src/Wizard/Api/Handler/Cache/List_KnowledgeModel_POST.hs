@@ -18,15 +18,19 @@ import Wizard.Service.Cache.KnowledgeModelCache
 
 type List_KnowledgeModel_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] KnowledgeModelChangeDTO
      :> "caches"
      :> "knowledge-model"
      :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] KnowledgeModel)
 
 list_knowledgeModel_POST ::
-     Maybe String -> KnowledgeModelChangeDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] KnowledgeModel)
-list_knowledgeModel_POST mServiceToken reqDto =
-  runInUnauthService $
+     Maybe String
+  -> Maybe String
+  -> KnowledgeModelChangeDTO
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] KnowledgeModel)
+list_knowledgeModel_POST mServiceToken mServerUrl reqDto =
+  runInUnauthService mServerUrl $
   addTraceUuidHeader =<< do
     checkServiceToken mServiceToken
     mKm <- getFromCache (reqDto ^. events) (reqDto ^. packageId) (reqDto ^. tagUuids)

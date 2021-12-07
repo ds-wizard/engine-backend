@@ -13,6 +13,7 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type Detail_Revert_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireVersionRevertDTO
      :> "questionnaires"
      :> Capture "qtnUuid" String
@@ -21,9 +22,10 @@ type Detail_Revert_POST
 
 detail_revert_POST ::
      Maybe String
+  -> Maybe String
   -> QuestionnaireVersionRevertDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireContentDTO)
-detail_revert_POST mTokenHeader reqDto qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_revert_POST mTokenHeader mServerUrl reqDto qtnUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< revertToEvent qtnUuid reqDto True

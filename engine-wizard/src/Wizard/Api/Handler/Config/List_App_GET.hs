@@ -11,10 +11,12 @@ import Wizard.Service.Config.AppConfigService
 
 type List_App_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "configs"
      :> "app"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] AppConfig)
 
-list_app_GET :: Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
-list_app_GET mTokenHeader =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService -> runInAuthService $ addTraceUuidHeader =<< getAppConfigDto
+list_app_GET :: Maybe String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] AppConfig)
+list_app_GET mTokenHeader mServerUrl =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+    runInAuthService $ addTraceUuidHeader =<< getAppConfigDto

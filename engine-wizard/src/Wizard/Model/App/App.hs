@@ -10,7 +10,8 @@ data App =
     , _appAppId :: String
     , _appName :: String
     , _appServerDomain :: String
-    , _appClientDomain :: String
+    , _appServerUrl :: String
+    , _appClientUrl :: String
     , _appEnabled :: Bool
     , _appCreatedAt :: UTCTime
     , _appUpdatedAt :: UTCTime

@@ -1,10 +1,13 @@
 module Wizard.Util.Template where
 
+import Control.Monad.Identity (Identity, runIdentity)
+import Control.Monad.Trans.Writer.Lazy (Writer)
 import Data.Char (chr, ord)
 import Data.Default
 import qualified Data.HashMap.Strict as HashMap
 import Data.Hashable
 import Data.List (elemIndex)
+import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import qualified Data.Text as T
@@ -12,9 +15,20 @@ import qualified Data.Text.Lazy as TL
 import System.IO (IOMode(ReadMode), hGetContents, hSetEncoding, openFile, utf8)
 import System.IO.Error (tryIOError)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
-import Text.Ginger (formatParserError, makeContextHtml, parseGingerFile, runGinger, toGVal)
+import Text.Ginger
+  ( IncludeResolver
+  , SourcePos
+  , formatParserError
+  , makeContextHtml
+  , parseGinger
+  , parseGingerFile
+  , runGinger
+  , toGVal
+  )
+import Text.Ginger.AST (Template, VarName)
 import Text.Ginger.GVal (GVal, ToGVal, asList, asText, fromFunction)
-import Text.Ginger.Html (htmlSource, unsafeRawHtml)
+import Text.Ginger.Html (Html, htmlSource, unsafeRawHtml)
+import Text.Ginger.Run.Type (Run)
 import Text.Markdown
 import Text.Read (readMaybe)
 
@@ -28,7 +42,27 @@ loadAndRender fn contextMap = do
       Left err -> Left . formatParserError Nothing $ err
 
 -- Given a Template and a HashMap of context, render the template to Text
+render ::
+     (ToGVal (Run p (Writer Html) Html) p, ToGVal (Run p (Writer Html) Html) b)
+  => Template p
+  -> HashMap.HashMap VarName b
+  -> T.Text
 render template contextMap = htmlSource $ runGinger (makeContextHtml $ contextLookup contextMap) template
+
+renderEither ::
+     (ToGVal (Run p (Writer Html) Html) p, ToGVal (Run p (Writer Html) Html) b)
+  => Template p
+  -> HashMap.HashMap VarName b
+  -> Either String T.Text
+renderEither template contextMap =
+  let result = render template contextMap
+   in if T.null result || _ERROR_TEMPLATE_PLACEHOLDER `L.isSubsequenceOf` T.unpack result
+        then Left "There is a missing parameter(s) in the context"
+        else Right result
+
+renderEither' templateString contextMap = do
+  template <- createTemplate templateString
+  renderEither template contextMap
 
 contextLookup contextMap key =
   case lookup key customFilters of
@@ -38,8 +72,11 @@ contextLookup contextMap key =
 -- Wrapper around HashMap.lookup that applies toGVal to the value found.
 -- Any value referenced in a template, returned from within a template, or used
 -- in a template context, will be a GVal
-scopeLookup :: (Hashable k, Eq k, Data.String.IsString k, ToGVal m b) => k -> HashMap.HashMap k b -> GVal m
-scopeLookup key context = toGVal $ HashMap.lookup key context
+scopeLookup :: (Hashable k, Show k, Eq k, Data.String.IsString k, ToGVal m b) => k -> HashMap.HashMap k b -> GVal m
+scopeLookup key context =
+  case HashMap.lookup key context of
+    Just key -> toGVal key
+    Nothing -> toGVal _ERROR_TEMPLATE_PLACEHOLDER
 
 mLoadFile :: FilePath -> IO (Maybe String)
 mLoadFile fn =
@@ -138,3 +175,23 @@ gfnJoin _ = return def
 gfnToCharArray :: Monad m => [(Maybe T.Text, GVal m)] -> m (GVal m)
 gfnToCharArray ((_, txt):_) = return . toGVal . T.unpack . asText $ txt
 gfnToCharArray _ = return def
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- ---------------------------------------------------------------------------------------------------------------------
+_ERROR_TEMPLATE_PLACEHOLDER = "_____ERROR_____"
+
+-- | We don't need to support includes, so we'll create an include resolver
+-- that always fails. If you need to use includes, you'll want to use an actual
+-- resolver here (see the next section for an example implementation), and
+-- use a suitable monad for the parsing step (e.g. 'IO').
+nullResolver :: IncludeResolver Identity
+nullResolver = const $ return Nothing
+
+-- | This is our template. Because 'parseGinger' wants a monad (as loading
+-- includes would normally go through some sort of monadic API like 'IO'), we
+-- use 'Identity' here.
+createTemplate :: String -> Either String (Template SourcePos)
+createTemplate template =
+  case runIdentity $ parseGinger nullResolver Nothing template of
+    Right result -> return result
+    Left error -> Left . show $ error

@@ -13,6 +13,7 @@ import Wizard.Service.Migration.Questionnaire.MigratorService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] MigratorStateCreateDTO
      :> "questionnaires"
      :> Capture "qtnUuid" String
@@ -21,9 +22,10 @@ type List_POST
 
 list_POST ::
      Maybe String
+  -> Maybe String
   -> MigratorStateCreateDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] MigratorStateDTO)
-list_POST mTokenHeader reqDto qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST mTokenHeader mServerUrl reqDto qtnUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createQuestionnaireMigration qtnUuid reqDto

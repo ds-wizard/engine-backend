@@ -14,7 +14,6 @@ import Wizard.Database.Mapping.Feedback.Feedback ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Feedback.Feedback
-import Wizard.Util.Logger
 
 entityName = "feedback"
 
@@ -37,11 +36,12 @@ insertFeedback = createInsertFn entityName
 updateFeedbackById :: Feedback -> AppContextM Int64
 updateFeedbackById feedback = do
   appUuid <- asks _appContextAppUuid
-  let params = toRow feedback ++ [toField appUuid, toField $ feedback ^. uuid]
   let sql =
-        "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE feedback SET uuid = ?, issue_id = ?, question_uuid = ?, package_id = ?, title = ?, content = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = toRow feedback ++ [toField appUuid, toField $ feedback ^. uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteFeedbacks :: AppContextM Int64

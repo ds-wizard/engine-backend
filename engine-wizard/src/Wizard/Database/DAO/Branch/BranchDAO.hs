@@ -19,7 +19,6 @@ import Wizard.Database.Mapping.Branch.BranchWithEvents ()
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
-import Wizard.Util.Logger
 
 entityName = "branch"
 
@@ -73,11 +72,12 @@ insertBranch = createInsertFn entityName
 updateBranchById :: BranchWithEvents -> AppContextM Int64
 updateBranchById branch = do
   appUuid <- asks _appContextAppUuid
-  let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
   let sql =
-        "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteBranches :: AppContextM Int64

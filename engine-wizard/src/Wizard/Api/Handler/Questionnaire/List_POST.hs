@@ -13,12 +13,16 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireCreateDTO
      :> "questionnaires"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 
 list_POST ::
-     Maybe String -> QuestionnaireCreateDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
-list_POST mTokenHeader reqDto =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
+     Maybe String
+  -> Maybe String
+  -> QuestionnaireCreateDTO
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
+list_POST mTokenHeader mServerUrl reqDto =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService $ addTraceUuidHeader =<< createQuestionnaire reqDto

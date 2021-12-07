@@ -12,8 +12,8 @@ folderName = "templates"
 getAsset :: String -> String -> AppContextM BS.ByteString
 getAsset templateId assetId = createGetObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId])
 
-putAsset :: String -> String -> BS.ByteString -> AppContextM ()
-putAsset templateId assetId = createPutObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId])
+putAsset :: String -> String -> BS.ByteString -> AppContextM String
+putAsset templateId assetId = createPutObjectFn (f' "%s/%s/%s" [folderName, templateId, assetId]) Nothing
 
 removeAssets :: String -> AppContextM ()
 removeAssets templateId = createRemoveObjectFn (f' "%s/%s" [folderName, templateId])

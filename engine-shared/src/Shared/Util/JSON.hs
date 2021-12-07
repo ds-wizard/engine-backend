@@ -5,6 +5,7 @@ import qualified Data.HashMap.Strict as HashMap
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.Vector as V
 import GHC.Generics
 
 import Shared.Localization.Messages.Public
@@ -134,3 +135,9 @@ fieldLabelModifierFnWithoutDTO fieldPrefix = jsonSpecialFields . lowerFirst . dr
 fieldLabelModifierFnWithParentEntityNameDTO :: String -> String -> String
 fieldLabelModifierFnWithParentEntityNameDTO parentEntityName value =
   jsonSpecialFields . lowerFirst $ splitOn parentEntityName value !! 1
+
+obj = Object . HM.fromList
+
+arr = Array . V.fromList
+
+str = String . T.pack

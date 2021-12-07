@@ -44,13 +44,15 @@ createTables = do
        \ alter table feedback \
        \     add constraint feedback_pk \
        \         primary key (uuid); \
+       \  \
        \ alter table feedback \
        \    add constraint feedback_package_id_fk \
-       \       foreign key (package_id) references package (id); \
+       \       foreign key (package_id, app_uuid) references package (id, app_uuid); \
+       \  \
        \ create index feedback_package_id_index \
-       \    on feedback (package_id); \
+       \    on feedback (package_id, app_uuid); \
        \  \
        \ create index feedback_question_uuid_index \
-       \   on feedback (question_uuid); "
+       \   on feedback (question_uuid, app_uuid); "
   let action conn = execute_ conn sql
   runDB action

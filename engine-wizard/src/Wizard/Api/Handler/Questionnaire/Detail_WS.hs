@@ -17,15 +17,16 @@ import Wizard.Service.Questionnaire.Collaboration.CollaborationService
 import Wizard.Util.Websocket
 
 type Detail_WS
-   = "questionnaires"
+   = Header "Host" String
+     :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "websocket"
      :> QueryParam "Authorization" String
      :> WebSocket
 
-detail_WS :: String -> Maybe String -> Connection -> BaseContextM ()
-detail_WS qtnUuid mTokenHeader connection =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInMaybeAuthService ->
+detail_WS :: Maybe String -> String -> Maybe String -> Connection -> BaseContextM ()
+detail_WS mServerUrl qtnUuid mTokenHeader connection =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService $ do
       connectionUuid <- initConnection
       catchError

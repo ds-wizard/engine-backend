@@ -30,7 +30,7 @@ getTypehints reqDto =
     let userRequest = M.singleton "q" (encode $ reqDto ^. q)
     let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
     iDtos <- retrieveTypehints integration variables
-    return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
+    return . fmap (toDTO (integration ^. responseItemUrl)) $ iDtos
   where
     getQuestion km questionUuid =
       case M.lookup questionUuid (km ^. questionsM) of

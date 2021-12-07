@@ -37,7 +37,8 @@ createTables = do
         \     template            json                     not null, \
         \     submission          json                     not null, \
         \     created_at          timestamp with time zone not null, \
-        \     updated_at          timestamp with time zone not null \
+        \     updated_at          timestamp with time zone not null, \
+        \     feature             json                     not null \
         \ ); \
         \ create unique index app_config_uuid_uindex \
         \   on app_config (uuid); \

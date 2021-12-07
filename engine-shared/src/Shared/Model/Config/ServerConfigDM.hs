@@ -17,6 +17,7 @@ defaultS3 :: ServerConfigS3
 defaultS3 =
   ServerConfigS3
     { _serverConfigS3Url = "http://minio:9000"
+    , _serverConfigS3PublicUrl = "https://s3.ds-wizard.org"
     , _serverConfigS3Username = "minioadmin"
     , _serverConfigS3Password = "minioadmin"
     , _serverConfigS3Bucket = "engine-wizard"

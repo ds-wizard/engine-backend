@@ -23,6 +23,7 @@ defaultAppConfig =
   AppConfig
     { _appConfigUuid = defaultApp ^. uuid
     , _appConfigOrganization = defaultOrganization
+    , _appConfigFeature = defaultFeature
     , _appConfigAuthentication = defaultAuth
     , _appConfigPrivacyAndSupport = defaultPrivacyAndSupport
     , _appConfigDashboard = defaultDashboard
@@ -47,6 +48,9 @@ defaultOrganization =
     , _appConfigOrganizationOrganizationId = "org.nl.amsterdam"
     , _appConfigOrganizationAffiliations = []
     }
+
+defaultFeature :: AppConfigFeature
+defaultFeature = AppConfigFeature {_appConfigFeatureClientCustomizationEnabled = True}
 
 defaultAuth :: AppConfigAuth
 defaultAuth =
@@ -120,6 +124,10 @@ defaultLookAndFeel =
     , _appConfigLookAndFeelAppTitleShort = Nothing
     , _appConfigLookAndFeelCustomMenuLinks = [defaultLookAndFeelCustomLink]
     , _appConfigLookAndFeelLoginInfo = Nothing
+    , _appConfigLookAndFeelLogoUrl = Nothing
+    , _appConfigLookAndFeelStyleUrl = Nothing
+    , _appConfigLookAndFeelPrimaryColor = Nothing
+    , _appConfigLookAndFeelIllustrationsColor = Nothing
     }
 
 defaultLookAndFeelCustomLink :: AppConfigLookAndFeelCustomMenuLink

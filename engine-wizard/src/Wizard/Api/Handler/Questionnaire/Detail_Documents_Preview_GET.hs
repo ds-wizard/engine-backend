@@ -19,6 +19,7 @@ import Wizard.Service.Document.DocumentService
 
 type Detail_Documents_Preview_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "documents"
@@ -28,11 +29,12 @@ type Detail_Documents_Preview_GET
 
 detail_documents_preview_GET ::
      Maybe String
+  -> Maybe String
   -> String
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
-detail_documents_preview_GET mTokenHeader qtnUuid mTokenQueryHeader =
-  getMaybeAuthServiceExecutor (msum [mTokenHeader, mTokenQueryHeader]) $ \runInMaybeAuthService ->
+detail_documents_preview_GET mTokenHeader mServerUrl qtnUuid mTokenQueryHeader =
+  getMaybeAuthServiceExecutor (msum [mTokenHeader, mTokenQueryHeader]) mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService $ do
       (doc, result) <- createDocumentPreview qtnUuid
       case doc ^. state of

@@ -19,17 +19,19 @@ entityName_group = "questionnaire_acl_group"
 findQuestionnairePermRecordsFiltered :: [(String, String)] -> AppContextM [QuestionnairePermRecord]
 findQuestionnairePermRecordsFiltered queryParams = do
   let sql =
+        fromString $
         f'
           "SELECT uuid, 'UserMember' AS member_type, text(user_uuid) AS member_id, perms, questionnaire_uuid \
-                \ FROM %s \
-                \ WHERE %s \
-                \ UNION \
-                \ SELECT uuid, 'GroupMember' AS member_type, group_id AS member_id, perms, questionnaire_uuid \
-                \ FROM %s \
-                \ WHERE %s"
+          \ FROM %s \
+          \ WHERE %s \
+          \ UNION \
+          \ SELECT uuid, 'GroupMember' AS member_type, group_id AS member_id, perms, questionnaire_uuid \
+          \ FROM %s \
+          \ WHERE %s"
           [entityName_user, mapToDBQuerySql queryParams, entityName_group, mapToDBQuerySql queryParams]
-  logInfoU _CMP_DATABASE sql
-  let action conn = query conn (fromString sql) (fmap snd queryParams ++ fmap snd queryParams)
+  let params = fmap snd queryParams ++ fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
   runDB action
 
 insertQuestionnairePermRecord :: QuestionnairePermRecord -> AppContextM Int64

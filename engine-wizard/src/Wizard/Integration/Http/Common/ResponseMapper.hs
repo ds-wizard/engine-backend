@@ -3,6 +3,7 @@ module Wizard.Integration.Http.Common.ResponseMapper
   , deserializeResponseBody
   , extractResponseHeader
   , extractResponseBody
+  , extractResponseBodyRaw
   , extractNestedField
   , extractNestedStringField
   , extractStringField
@@ -43,6 +44,12 @@ extractResponseHeader headerName response =
 extractResponseBody :: Response BSL.ByteString -> Either AppError Value
 extractResponseBody response =
   case response ^? responseBody . _Value of
+    Just body -> Right body
+    Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY
+
+extractResponseBodyRaw :: Response BSL.ByteString -> Either AppError BSL.ByteString
+extractResponseBodyRaw response =
+  case response ^? responseBody of
     Just body -> Right body
     Nothing -> Left . GeneralServerError $ _ERROR_INTEGRATION_COMMON__RDF_UNABLE_TO_GET_RESPONSE_BODY
 

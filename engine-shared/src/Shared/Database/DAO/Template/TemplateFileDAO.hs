@@ -17,7 +17,6 @@ import Shared.Database.Mapping.Template.TemplateFile ()
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
 import Shared.Model.Template.Template
-import Shared.Util.Logger
 
 entityName = "template_file"
 
@@ -58,11 +57,12 @@ updateTemplateFileById ::
   -> m Int64
 updateTemplateFileById file = do
   appUuid <- asks (^. appUuid')
-  let params = toRow file ++ [toField appUuid, toField $ file ^. uuid]
   let sql =
-        "UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfo _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE template_file SET template_id = ?, uuid = ?, file_name = ?, content = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = toRow file ++ [toField appUuid, toField $ file ^. uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteTemplateFiles ::

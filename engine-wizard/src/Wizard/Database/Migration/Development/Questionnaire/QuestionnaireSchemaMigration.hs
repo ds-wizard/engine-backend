@@ -68,14 +68,13 @@ createQtnTable = do
         \ alter table questionnaire \
         \     add constraint questionnaire_pk \
         \         primary key (uuid); \
+        \  \
         \ alter table questionnaire \
         \   add constraint questionnaire_package_id_fk \
-        \      foreign key (package_id) references package (id); \
-        \  \
+        \      foreign key (package_id, app_uuid) references package (id, app_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_template_id_fk \
-        \      foreign key (template_id) references template (id); \
-        \  \
+        \      foreign key (template_id, app_uuid) references template (id, app_uuid); \
         \ alter table questionnaire \
         \   add constraint questionnaire_user_entity_uuid_fk \
         \      foreign key (creator_uuid) references user_entity;"

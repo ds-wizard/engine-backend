@@ -109,6 +109,7 @@ deleteTemporalDocumentsByTableAndId :: String -> String -> AppContextM Int64
 deleteTemporalDocumentsByTableAndId joinTableName entityUuid = do
   appUuid <- asks _appContextAppUuid
   let sql =
+        fromString $
         f'
           "DELETE \
           \FROM document \
@@ -120,6 +121,7 @@ deleteTemporalDocumentsByTableAndId joinTableName entityUuid = do
           \      AND d.durability = 'TemporallyDocumentDurability' \
           \)"
           [joinTableName, entityUuid]
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) [toField appUuid]
+  let params = [toField appUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action

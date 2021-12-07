@@ -9,15 +9,21 @@ import Wizard.Service.Questionnaire.Version.QuestionnaireVersionService
 
 type Detail_DELETE
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "versions"
      :> Capture "vUuid" String
      :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
-detail_DELETE :: Maybe String -> String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-detail_DELETE mTokenHeader qtnUuid vUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_DELETE ::
+     Maybe String
+  -> Maybe String
+  -> String
+  -> String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+detail_DELETE mTokenHeader mServerUrl qtnUuid vUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       deleteVersion qtnUuid vUuid

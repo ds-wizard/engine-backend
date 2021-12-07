@@ -1,6 +1,6 @@
 module Wizard.Service.Config.AppConfigMapper where
 
-import Control.Lens ((^.))
+import Control.Lens ((&), (.~), (?~), (^.))
 import Data.Time
 
 import LensesConfig
@@ -27,6 +27,7 @@ fromChangeDTO dto oldConfig now =
   AppConfig
     { _appConfigUuid = oldConfig ^. uuid
     , _appConfigOrganization = dto ^. organization
+    , _appConfigFeature = oldConfig ^. feature
     , _appConfigAuthentication = dto ^. authentication
     , _appConfigPrivacyAndSupport = dto ^. privacyAndSupport
     , _appConfigDashboard = dto ^. dashboard
@@ -37,5 +38,20 @@ fromChangeDTO dto oldConfig now =
     , _appConfigTemplate = dto ^. template
     , _appConfigSubmission = dto ^. submission
     , _appConfigCreatedAt = oldConfig ^. createdAt
+    , _appConfigUpdatedAt = now
+    }
+
+fromLogoDTO :: AppConfig -> String -> UTCTime -> AppConfig
+fromLogoDTO oldConfig logo now =
+  oldConfig {_appConfigLookAndFeel = (oldConfig ^. lookAndFeel) & logoUrl ?~ logo, _appConfigUpdatedAt = now}
+
+fromLogoDeleteDTO :: AppConfig -> UTCTime -> AppConfig
+fromLogoDeleteDTO oldConfig now =
+  oldConfig {_appConfigLookAndFeel = (oldConfig ^. lookAndFeel) & logoUrl .~ Nothing, _appConfigUpdatedAt = now}
+
+fromClientCustomizationDTO :: AppConfig -> Bool -> UTCTime -> AppConfig
+fromClientCustomizationDTO oldConfig newClientCustomizationEnabled now =
+  oldConfig
+    { _appConfigFeature = (oldConfig ^. feature) & clientCustomizationEnabled .~ newClientCustomizationEnabled
     , _appConfigUpdatedAt = now
     }

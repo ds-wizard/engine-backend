@@ -14,7 +14,6 @@ import Wizard.Database.Mapping.Migration.KnowledgeModel.MigratorState ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
-import Wizard.Util.Logger
 
 entityName = "knowledge_model_migration"
 
@@ -41,11 +40,12 @@ insertMigratorState = createInsertFn entityName
 updateMigratorState :: MigratorState -> AppContextM Int64
 updateMigratorState ms = do
   appUuid <- asks _appContextAppUuid
-  let params = toRow ms ++ [toField appUuid, toField $ ms ^. branchUuid]
   let sql =
-        "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, app_uuid = ? WHERE app_uuid = ? AND branch_uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, app_uuid = ? WHERE app_uuid = ? AND branch_uuid = ?"
+  let params = toRow ms ++ [toField appUuid, toField $ ms ^. branchUuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   runDB action
 
 deleteMigratorStates :: AppContextM Int64

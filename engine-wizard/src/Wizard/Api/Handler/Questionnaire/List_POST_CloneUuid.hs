@@ -11,13 +11,14 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 
 type List_POST_CloneUuid
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "clone"
      :> Verb 'POST 201 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
 
 list_POST_CloneUuid ::
-     Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
-list_POST_CloneUuid mTokenHeader cloneUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
+list_POST_CloneUuid mTokenHeader mServerUrl cloneUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< cloneQuestionnaire cloneUuid

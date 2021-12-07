@@ -3,15 +3,18 @@ module Wizard.Service.Config.ClientConfigMapper where
 import Control.Lens ((^.))
 
 import LensesConfig
+import Shared.Model.Config.ServerConfig
 import Wizard.Api.Resource.Config.ClientConfigDTO
+import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 
-toClientConfigDTO :: ServerConfig -> AppConfig -> ClientConfigDTO
-toClientConfigDTO serverConfig appConfig =
+toClientConfigDTO :: ServerConfig -> AppConfig -> App -> ClientConfigDTO
+toClientConfigDTO serverConfig appConfig app =
   ClientConfigDTO
     { _clientConfigDTOOrganization = appConfig ^. organization
+    , _clientConfigDTOFeature = appConfig ^. feature
     , _clientConfigDTOAuthentication = toClientAuthDTO $ appConfig ^. authentication
     , _clientConfigDTOPrivacyAndSupport = appConfig ^. privacyAndSupport
     , _clientConfigDTODashboard = appConfig ^. dashboard
@@ -20,6 +23,7 @@ toClientConfigDTO serverConfig appConfig =
     , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
+    , _clientConfigDTOCloud = toClientConfigCloudDTO (serverConfig ^. experimental) app
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -58,3 +62,8 @@ toClientConfigQuestionnaireDTO appConfig =
     , _clientConfigQuestionnaireDTOSummaryReport = appConfig ^. summaryReport
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }
+
+toClientConfigCloudDTO :: ServerConfigExperimental -> App -> ClientConfigCloudDTO
+toClientConfigCloudDTO serverConfig app =
+  ClientConfigCloudDTO
+    {_clientConfigCloudDTOEnabled = serverConfig ^. moreAppsEnabled, _clientConfigCloudDTOServerUrl = app ^. serverUrl}

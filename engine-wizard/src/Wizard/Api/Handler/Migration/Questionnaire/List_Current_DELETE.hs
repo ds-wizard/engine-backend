@@ -9,15 +9,17 @@ import Wizard.Service.Migration.Questionnaire.MigratorService
 
 type List_Current_DELETE
    = Header "Authorization" String
+     :> Header "Host" String
      :> "questionnaires"
      :> Capture "qtnUuid" String
      :> "migrations"
      :> "current"
      :> Verb DELETE 204 '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
-list_current_DELETE :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-list_current_DELETE mTokenHeader qtnUuid =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_current_DELETE ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+list_current_DELETE mTokenHeader mServerUrl qtnUuid =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       cancelQuestionnaireMigration qtnUuid

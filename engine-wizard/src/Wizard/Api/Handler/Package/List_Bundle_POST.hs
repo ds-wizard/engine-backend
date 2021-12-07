@@ -15,15 +15,19 @@ import Wizard.Service.PackageBundle.PackageBundleService
 
 type List_Bundle_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> MultipartForm Mem (MultipartData Mem)
      :> "packages"
      :> "bundle"
      :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
 
 list_bundle_POST ::
-     Maybe String -> MultipartData Mem -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
-list_bundle_POST mTokenHeader multipartData =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+     Maybe String
+  -> Maybe String
+  -> MultipartData Mem
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [PackageSimpleDTO])
+list_bundle_POST mTokenHeader mServerUrl multipartData =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let fs = files multipartData

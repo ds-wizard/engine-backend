@@ -12,6 +12,7 @@ import Wizard.Service.Template.TemplateService
 
 type List_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> QueryParam "organizationId" String
      :> QueryParam "templateId" String
@@ -26,11 +27,12 @@ list_GET ::
   -> Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
-list_GET mTokenHeader mOrganizationId mTmlId mQuery mPage mSize mSort =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_GET mTokenHeader mServerUrl mOrganizationId mTmlId mQuery mPage mSize mSort =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< getTemplatesPage mOrganizationId mTmlId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

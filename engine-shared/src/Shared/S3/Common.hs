@@ -5,19 +5,25 @@ import Control.Monad.Except (MonadError, throwError)
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, ask, liftIO)
+import Data.Aeson (encode)
 import qualified Data.ByteString.Char8 as BS
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.Conduit as C
 import qualified Data.Conduit.List as CL
 import Data.Foldable (traverse_)
+import qualified Data.List as L
 import Data.Maybe (mapMaybe)
 import qualified Data.String as S
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import qualified Data.UUID as U
 import Network.Minio
+import Network.Minio.S3API
 
 import LensesConfig
 import Shared.Model.Context.ContextLenses
 import Shared.Model.Error.Error
+import Shared.Util.JSON
 import Shared.Util.Logger
 
 createS3Client serverConfig manager = do
@@ -59,16 +65,19 @@ createPutObjectFn ::
      , MonadLogger m
      )
   => String
+  -> Maybe String
   -> BS.ByteString
-  -> m ()
-createPutObjectFn object content = do
+  -> m String
+createPutObjectFn object mContentType content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
   logInfo _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
-  let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) defaultPutObjectOptions
+  let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
+  let action = putObject (T.pack bucketName) (T.pack sanitizedObject) req (Just kb15) objectOptions
   runMinioClient action
+  buildObjectUrl sanitizedObject
 
 createRemoveObjectFn ::
      ( MonadReader s m
@@ -175,6 +184,87 @@ createRemoveBucketFn = do
   let action = removeBucket (T.pack bucketName)
   runMinioClient action
 
+createSetBucketPolicyFn ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> String
+  -> m ()
+createSetBucketPolicyFn prefix policy = do
+  bucketName <- getBucketName
+  logInfo _CMP_S3 (f' "Set policy: '%s' with '%s'" [prefix, policy])
+  let action =
+        setBucketPolicy
+          (T.pack bucketName)
+          "{\"bucketName\": \"engine-wizard\", \"prefix\": \"configs/logo.png\", \"policy\": \"readonly\"}"
+  runMinioClient action
+
+makeBucketPublicReadOnly ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => m ()
+makeBucketPublicReadOnly = do
+  bucketName <- getBucketName
+  context <- ask
+  let resource =
+        if context ^. serverConfig' . experimental' . moreAppsEnabled
+          then f' "arn:aws:s3:::%s/%s/public/*" [bucketName, U.toString (context ^. appUuid')]
+          else f' "arn:aws:s3:::%s/public/*" [bucketName]
+  logInfo _CMP_S3 (f' "Make bucket public for read-only access: '%s'" [resource])
+  let policy =
+        TE.decodeUtf8 . BSL.toStrict . encode $
+        obj
+          [ ("Version", "2012-10-17")
+          , ( "Statement"
+            , arr
+                [ obj
+                    [ ("Sid", "")
+                    , ("Effect", "Allow")
+                    , ("Principal", obj [("AWS", arr ["*"])])
+                    , ("Action", arr ["s3:GetObject"])
+                    , ("Resource", arr [str resource])
+                    ]
+                ])
+          ]
+  let action = setBucketPolicy (T.pack bucketName) policy
+  runMinioClient action
+  logInfo _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
+
+createMakePublicLink ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> String
+  -> m String
+createMakePublicLink folderName object = do
+  bucketName <- getBucketName
+  context <- ask
+  publicUrl <- getS3PublicUrl
+  let url =
+        if context ^. serverConfig' . experimental' . moreAppsEnabled
+          then f' "%s/%s/%s/%s/%s" [publicUrl, bucketName, U.toString (context ^. appUuid'), folderName, object]
+          else f' "%s/%s/%s/%s" [publicUrl, bucketName, folderName, object]
+  logInfo _CMP_S3 (f' "Public URL to share: '%s'" [url])
+  return url
+
 runMinioClient ::
      ( MonadReader s m
      , HasS3Client' s
@@ -196,6 +286,16 @@ runMinioClient action = do
       throwError $ GeneralServerError ("Error in s3 connection: " ++ show e)
     Right e -> return e
 
+getS3Url :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
+getS3Url = do
+  context <- ask
+  return $ context ^. serverConfig' . s3' . url
+
+getS3PublicUrl :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
+getS3PublicUrl = do
+  context <- ask
+  return $ context ^. serverConfig' . s3' . publicUrl
+
 getBucketName :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
 getBucketName = do
   context <- ask
@@ -205,6 +305,23 @@ sanitizeObject ::
      (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => String -> m String
 sanitizeObject object = do
   context <- ask
-  if context ^. serverConfig' . experimental' . moreAppsEnabled
+  if context ^. serverConfig' . experimental' . moreAppsEnabled &&
+     not (U.toString (context ^. appUuid') `L.isPrefixOf` object)
     then return $ U.toString (context ^. appUuid') ++ "/" ++ object
     else return object
+
+buildObjectUrl ::
+     ( MonadReader s m
+     , HasS3Client' s
+     , HasAppUuid' s
+     , HasServerConfig' s sc
+     , MonadIO m
+     , MonadError AppError m
+     , MonadLogger m
+     )
+  => String
+  -> m String
+buildObjectUrl object = do
+  s3Url <- getS3Url
+  bucketName <- getBucketName
+  return $ f' "%s/%s/%s" [s3Url, bucketName, object]

@@ -11,6 +11,7 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 
 type Detail_Content_PUT
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireContentChangeDTO
      :> "questionnaires"
      :> Capture "qtnUuid" String
@@ -19,9 +20,10 @@ type Detail_Content_PUT
 
 detail_content_PUT ::
      Maybe String
+  -> Maybe String
   -> QuestionnaireContentChangeDTO
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireContentChangeDTO)
-detail_content_PUT mTokenHeader reqDto qtnUuid =
-  getMaybeAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+detail_content_PUT mTokenHeader mServerUrl reqDto qtnUuid =
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< modifyContent qtnUuid reqDto

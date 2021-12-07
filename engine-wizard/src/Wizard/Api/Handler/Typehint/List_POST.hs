@@ -13,9 +13,14 @@ import Wizard.Service.Typehint.TypehintService
 
 type List_POST
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] TypehintRequestDTO
      :> "typehints"
      :> Post '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
 
-list_POST :: Maybe String -> TypehintRequestDTO -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
-list_POST mTokenHeader reqDto = runInUnauthService $ addTraceUuidHeader =<< getTypehints reqDto
+list_POST ::
+     Maybe String
+  -> Maybe String
+  -> TypehintRequestDTO
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TypehintDTO])
+list_POST mTokenHeader mServerUrl reqDto = runInUnauthService mServerUrl $ addTraceUuidHeader =<< getTypehints reqDto

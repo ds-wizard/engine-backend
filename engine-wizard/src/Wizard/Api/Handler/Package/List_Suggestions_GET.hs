@@ -13,6 +13,7 @@ import Wizard.Service.Package.PackageService
 
 type List_Suggestions_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "packages"
      :> "suggestions"
      :> QueryParam "q" String
@@ -24,10 +25,11 @@ type List_Suggestions_GET
 list_suggestions_GET ::
      Maybe String
   -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page PackageSuggestionDTO))
-list_suggestions_GET mTokenHeader mQuery mPage mSize mSort =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_suggestions_GET mTokenHeader mServerUrl mQuery mPage mSize mSort =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getPackageSuggestions mQuery (Pageable mPage mSize) (parseSortQuery mSort)

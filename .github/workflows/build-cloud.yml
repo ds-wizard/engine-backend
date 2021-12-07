@@ -1,4 +1,4 @@
-name: Engine Backend CI
+name: Build (cloud)
 
 on:
   push:
@@ -9,7 +9,9 @@ jobs:
   btp:
     name: Build-Tag-Push
     runs-on: ubuntu-20.04
-    
+
+    if: github.repository == 'ds-wizard/engine-backend'
+
     strategy:
       matrix:
         component: [registry, wizard]

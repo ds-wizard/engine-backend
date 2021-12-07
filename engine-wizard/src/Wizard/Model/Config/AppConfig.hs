@@ -22,6 +22,7 @@ data AppConfig =
     , _appConfigQuestionnaire :: AppConfigQuestionnaire
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
+    , _appConfigFeature :: AppConfigFeature
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
     }
@@ -126,6 +127,10 @@ data AppConfigLookAndFeel =
     , _appConfigLookAndFeelAppTitleShort :: Maybe String
     , _appConfigLookAndFeelCustomMenuLinks :: [AppConfigLookAndFeelCustomMenuLink]
     , _appConfigLookAndFeelLoginInfo :: Maybe String
+    , _appConfigLookAndFeelLogoUrl :: Maybe String
+    , _appConfigLookAndFeelStyleUrl :: Maybe String
+    , _appConfigLookAndFeelPrimaryColor :: Maybe String
+    , _appConfigLookAndFeelIllustrationsColor :: Maybe String
     }
   deriving (Generic, Eq, Show)
 
@@ -242,5 +247,11 @@ data AppConfigSubmissionServiceRequestMultipart =
   AppConfigSubmissionServiceRequestMultipart
     { _appConfigSubmissionServiceRequestMultipartEnabled :: Bool
     , _appConfigSubmissionServiceRequestMultipartFileName :: String
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigFeature =
+  AppConfigFeature
+    { _appConfigFeatureClientCustomizationEnabled :: Bool
     }
   deriving (Generic, Eq, Show)

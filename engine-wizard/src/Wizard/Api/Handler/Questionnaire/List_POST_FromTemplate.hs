@@ -13,6 +13,7 @@ import Wizard.Service.Questionnaire.QuestionnaireService
 
 type List_POST_FromTemplate
    = Header "Authorization" String
+     :> Header "Host" String
      :> ReqBody '[ SafeJSON] QuestionnaireCreateFromTemplateDTO
      :> "questionnaires"
      :> "from-template"
@@ -20,8 +21,9 @@ type List_POST_FromTemplate
 
 list_POST_FromTemplate ::
      Maybe String
+  -> Maybe String
   -> QuestionnaireCreateFromTemplateDTO
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] QuestionnaireDTO)
-list_POST_FromTemplate mTokenHeader reqDto =
-  getAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_POST_FromTemplate mTokenHeader mServerUrl reqDto =
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createQuestionnaireFromTemplate reqDto

@@ -19,9 +19,9 @@ ontologyPortal =
     , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
     , _integrationRequestBody = ""
     , _integrationResponseListField = "nested.results"
-    , _integrationResponseIdField = "id"
-    , _integrationResponseNameField = "name"
-    , _integrationItemUrl = "https://example.com/ontologies/${id}"
+    , _integrationResponseItemUrl = "https://example.com/ontologies/${id}"
+    , _integrationResponseItemId = "{{item.id}}"
+    , _integrationResponseItemTemplate = "{{item.name}}"
     , _integrationAnnotations = M.empty
     }
 
@@ -38,9 +38,9 @@ ontologyPortalEdited =
     , _integrationRequestHeaders = fromList [("Api-Key-Edited", "${apikey}-EDITED")]
     , _integrationRequestBody = "{}"
     , _integrationResponseListField = "nested.results"
-    , _integrationResponseIdField = "idEdited"
-    , _integrationResponseNameField = "nameEdited"
-    , _integrationItemUrl = "https://example.com/ontologies-edited/${id}"
+    , _integrationResponseItemUrl = "https://example.com/ontologies-edited/{{item.id}}"
+    , _integrationResponseItemId = "EDITED: {{item.id}}"
+    , _integrationResponseItemTemplate = "EDITED: {{item.name}}"
     , _integrationAnnotations = M.fromList [("newAnnotation", "someValue")]
     }
 
@@ -57,8 +57,8 @@ bioPortal =
     , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
     , _integrationRequestBody = ""
     , _integrationResponseListField = ""
-    , _integrationResponseIdField = "id"
-    , _integrationResponseNameField = "name"
-    , _integrationItemUrl = "https://example.com/portals/${id}"
+    , _integrationResponseItemUrl = "https://example.com/portals/{{item.id}}"
+    , _integrationResponseItemId = "{{item.id}}"
+    , _integrationResponseItemTemplate = "{{item.name}}"
     , _integrationAnnotations = M.empty
     }

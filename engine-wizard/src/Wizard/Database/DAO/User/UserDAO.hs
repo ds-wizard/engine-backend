@@ -23,7 +23,6 @@ import Wizard.Model.User.User
 import Wizard.Model.User.UserSuggestion
 import Wizard.Service.Cache.UserCache
 import Wizard.Util.Cache
-import Wizard.Util.Logger
 
 entityName = "user_entity"
 
@@ -96,11 +95,12 @@ insertUser user = do
 updateUserById :: User -> AppContextM Int64
 updateUserById user = do
   appUuid <- asks _appContextAppUuid
-  let params = toRow user ++ [toField appUuid, toField $ user ^. uuid]
   let sql =
-        "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+        fromString
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = toRow user ++ [toField appUuid, toField $ user ^. uuid]
+  logQuery sql params
+  let action conn = execute conn sql params
   result <- runDB action
   updateCache user
   return result
@@ -108,10 +108,10 @@ updateUserById user = do
 updateUserPasswordById :: String -> String -> UTCTime -> AppContextM Int64
 updateUserPasswordById uUuid uPassword uUpdatedAt = do
   appUuid <- asks _appContextAppUuid
+  let sql = fromString "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
   let params = [toField uPassword, toField uUpdatedAt, toField appUuid, toField uUuid]
-  let sql = "UPDATE user_entity SET password_hash = ?, updated_at = ? WHERE app_uuid = ? AND uuid = ?"
-  logInfoU _CMP_DATABASE sql
-  let action conn = execute conn (fromString sql) params
+  logQuery sql params
+  let action conn = execute conn sql params
   result <- runDB action
   deleteFromCache uUuid
   return result

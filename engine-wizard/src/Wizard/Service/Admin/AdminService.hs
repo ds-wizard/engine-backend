@@ -5,7 +5,7 @@ module Wizard.Service.Admin.AdminService
 
 import Control.Lens ((^.))
 
-import LensesConfig hiding (action, cache, feedback)
+import LensesConfig hiding (action, cache, config, feedback)
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.Admin.AdminExecutionResultDTO
 import Wizard.Model.Admin.Admin
@@ -14,7 +14,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Admin.AdminDefinition
 
 getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [cache, feedback]
+getAdminOperations = return [cache, feedback, config]
 
 executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -26,6 +26,8 @@ execute :: AdminExecutionDTO -> AppContextM String
 execute reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto
   | action reqDto cache cache_KnowledgeModelCache_deleteFromCache' = cache_KnowledgeModelCache_deleteFromCacheFn' reqDto
+  | action reqDto config config_switchClientCustomizationOn = config_switchClientCustomizationOnFn reqDto
+  | action reqDto config config_switchClientCustomizationOff = config_switchClientCustomizationOffFn reqDto
   | action reqDto feedback feedback_synchronizeFeedbacks = feedback_synchronizeFeedbacksFn reqDto
 
 action :: AdminExecutionDTO -> AdminSection -> AdminOperation -> Bool

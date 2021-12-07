@@ -11,12 +11,14 @@ import Wizard.Service.Template.Asset.TemplateAssetService
 
 type List_GET
    = Header "Authorization" String
+     :> Header "Host" String
      :> "templates"
      :> Capture "templateId" String
      :> "assets"
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] [TemplateAsset])
 
-list_GET :: Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateAsset])
-list_GET mTokenHeader tmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader $ \runInAuthService ->
+list_GET ::
+     Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateAsset])
+list_GET mTokenHeader mServerUrl tmlId =
+  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getTemplateAssets tmlId
