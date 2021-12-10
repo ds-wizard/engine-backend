@@ -25,6 +25,7 @@ instance FromJSON ServerConfigS3 where
     _serverConfigS3Username <- o .:? "username" .!= (defaultS3 ^. username)
     _serverConfigS3Password <- o .:? "password" .!= (defaultS3 ^. password)
     _serverConfigS3Bucket <- o .:? "bucket" .!= (defaultS3 ^. bucket)
+    _serverConfigS3Region <- o .:? "region" .!= (defaultS3 ^. region)
     return ServerConfigS3 {..}
   parseJSON _ = mzero
 

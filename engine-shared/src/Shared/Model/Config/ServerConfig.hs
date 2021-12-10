@@ -19,6 +19,7 @@ data ServerConfigS3 =
     , _serverConfigS3Username :: String
     , _serverConfigS3Password :: String
     , _serverConfigS3Bucket :: String
+    , _serverConfigS3Region :: Maybe String
     }
   deriving (Generic, Show)
 
