@@ -40,6 +40,7 @@ import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
+import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -545,6 +546,9 @@ makeFields ''ActionKeyDTO
 
 -- Api / Resource / Admin
 makeFields ''AdminExecutionDTO
+
+-- Api / Resource / App
+makeFields ''AppCreateDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
