@@ -33,7 +33,7 @@ createDocumentContext :: Document -> AppContextM DocumentContext
 createDocumentContext doc = do
   qtn <- findQuestionnaireById . U.toString $ doc ^. questionnaireUuid
   pkg <- getPackageById (qtn ^. packageId)
-  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. creatorUuid)) findUserById
   appConfig <- getAppConfig
   serverConfig <- asks _appContextServerConfig
@@ -61,6 +61,7 @@ createDocumentContext doc = do
       qtnCtn
       qtnVersion
       qtnVersionDtos
+      (qtn ^. projectTags)
       (qtnCtn ^. phaseUuid)
       km
       report

@@ -66,11 +66,27 @@ test_200 appContext = do
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire1Dto, questionnaire12Dto])
   create_test_200
-    "HTTP 200 OK (Admin - query users)"
+    "HTTP 200 OK (Admin - userUuids)"
     appContext
     (BS.pack $ "/questionnaires?sort=name,asc&userUuids=" ++ U.toString (userAlbert ^. uuid))
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - userUuids, or)"
+    appContext
+    (BS.pack $
+     "/questionnaires?sort=name,asc&userUuidsOp=or&userUuids=" ++
+     U.toString (userAlbert ^. uuid) ++ "," ++ U.toString (userIsaac ^. uuid))
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - userUuids, and)"
+    appContext
+    (BS.pack $
+     "/questionnaires?sort=name,asc&userUuidsOp=and&userUuids=" ++
+     U.toString (userAlbert ^. uuid) ++ "," ++ U.toString (userIsaac ^. uuid))
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 0 0 0) [])
   create_test_200
     "HTTP 200 OK (Admin - isTemplate - true)"
     appContext
@@ -83,6 +99,24 @@ test_200 appContext = do
     "/questionnaires?sort=name,asc&isTemplate=false"
     reqAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire3Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - projectTags)"
+    appContext
+    "/questionnaires?sort=name,asc&projectTags=projectTag1"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - projectTags, or)"
+    appContext
+    "/questionnaires?sort=name,asc&projectTagsOp=or&projectTags=projectTag1,projectTag2"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 3 1 0) [questionnaire1Dto, questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Admin - projectTags, and)"
+    appContext
+    "/questionnaires?sort=name,asc&projectTagsOp=and&projectTags=projectTag1,projectTag2"
+    reqAuthHeader
+    (Page "questionnaires" (PageMetadata 20 1 1 0) [questionnaire2Dto])
   create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
@@ -117,6 +151,12 @@ test_200 appContext = do
     "HTTP 200 OK (Non-Admin - query users)"
     appContext
     (BS.pack $ "/questionnaires?sort=name,asc&userUuids=" ++ U.toString (userAlbert ^. uuid))
+    reqNonAdminAuthHeader
+    (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire12Dto, questionnaire2Dto])
+  create_test_200
+    "HTTP 200 OK (Non-Admin - projectTags)"
+    appContext
+    "/questionnaires?sort=name,asc&projectTags=projectTag1"
     reqNonAdminAuthHeader
     (Page "questionnaires" (PageMetadata 20 2 1 0) [questionnaire12Dto, questionnaire2Dto])
   create_test_200

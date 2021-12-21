@@ -19,9 +19,11 @@ data DocumentContext =
     , _documentContextConfig :: DocumentContextConfig
     , _documentContextQuestionnaireUuid :: String
     , _documentContextQuestionnaireName :: String
+    , _documentContextQuestionnaireDescription :: Maybe String
     , _documentContextQuestionnaireReplies :: M.Map String Reply
     , _documentContextQuestionnaireVersion :: Maybe U.UUID
     , _documentContextQuestionnaireVersions :: [QuestionnaireVersionDTO]
+    , _documentContextQuestionnaireProjectTags :: [String]
     , _documentContextPhaseUuid :: Maybe U.UUID
     , _documentContextKnowledgeModel :: KnowledgeModel
     , _documentContextReport :: Report
@@ -39,9 +41,11 @@ instance Eq DocumentContext where
     _documentContextConfig a == _documentContextConfig b &&
     _documentContextQuestionnaireUuid a == _documentContextQuestionnaireUuid b &&
     _documentContextQuestionnaireName a == _documentContextQuestionnaireName b &&
+    _documentContextQuestionnaireDescription a == _documentContextQuestionnaireDescription b &&
     _documentContextQuestionnaireReplies a == _documentContextQuestionnaireReplies b &&
     _documentContextQuestionnaireVersion a == _documentContextQuestionnaireVersion b &&
     _documentContextQuestionnaireVersions a == _documentContextQuestionnaireVersions b &&
+    _documentContextQuestionnaireProjectTags a == _documentContextQuestionnaireProjectTags b &&
     _documentContextPhaseUuid a == _documentContextPhaseUuid b &&
     _documentContextKnowledgeModel a == _documentContextKnowledgeModel b &&
     _documentContextReport a == _documentContextReport b &&

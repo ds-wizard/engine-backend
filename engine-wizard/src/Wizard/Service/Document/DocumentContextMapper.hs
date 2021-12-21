@@ -26,6 +26,7 @@ toDocumentContext ::
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
+  -> [String]
   -> Maybe U.UUID
   -> KnowledgeModel
   -> Report
@@ -34,15 +35,17 @@ toDocumentContext ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos mPhase km report pkg org mCreatedBy now =
+toDocumentContext dmpUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
     , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = appClientUrl}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
+    , _documentContextQuestionnaireDescription = qtn ^. description
     , _documentContextQuestionnaireReplies = qtnCtn ^. replies
     , _documentContextQuestionnaireVersion = qtnVersion
     , _documentContextQuestionnaireVersions = qtnVersionDtos
+    , _documentContextQuestionnaireProjectTags = qtnProjectTags
     , _documentContextPhaseUuid = mPhase
     , _documentContextKnowledgeModel = km
     , _documentContextReport = report

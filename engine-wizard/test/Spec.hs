@@ -33,6 +33,7 @@ import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_Migrati
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
+import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
 import Wizard.Specs.API.Submission.APISpec
 import Wizard.Specs.API.Swagger.APISpec
@@ -66,6 +67,7 @@ import Wizard.Specs.Service.Questionnaire.Compiler.CompilerServiceSpec
 import Wizard.Specs.Service.Questionnaire.Event.QuestionnaireEventServiceSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireAclSpec
 import Wizard.Specs.Service.Questionnaire.QuestionnaireServiceSpec
+import Wizard.Specs.Service.Questionnaire.QuestionnaireValidationSpec
 import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateUtilSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
@@ -145,6 +147,7 @@ main =
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Package" packageUtilSpec
+             describe "Questionnaire" questionnaireValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
              describe "Template" templateUtilSpec
@@ -162,6 +165,7 @@ main =
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
              questionnaireAPI appContext
+             questionnaireProjectTagAPI appContext
              questionnaireVersionAPI appContext
              submissionAPI appContext
              swaggerAPI appContext

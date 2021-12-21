@@ -44,6 +44,9 @@ _ERROR_VALIDATION__COORDINATE_MISMATCH coordinate =
     "Coordinate '%s' doesn't correspond with 'orgId', 'kmId/templateId' or 'version'"
     [coordinate]
 
+_ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
+  LocaleRecord "error.validation.forbidden_characters" "There were forbidden characters in the '%s'" [word]
+
 -- Absence
 _ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
 

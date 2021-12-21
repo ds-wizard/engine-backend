@@ -73,6 +73,9 @@ instance ToSchema AppConfigQuestionnaireSharing where
 
 instance ToSchema QuestionnaireCreation
 
+instance ToSchema AppConfigQuestionnaireProjectTagging where
+  declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireProjectTagging" defaultQuestionnaireProjectTagging
+
 instance ToSchema AppConfigQuestionnaireFeedback where
   declareNamedSchema = simpleToSchema' "_appConfigQuestionnaireFeedback" defaultFeedback
 

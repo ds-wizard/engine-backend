@@ -4,6 +4,7 @@ import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (asks)
 import Data.Foldable (traverse_)
 import qualified Data.List as L
+import Data.Maybe (fromMaybe)
 import Data.String (fromString)
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
@@ -56,8 +57,16 @@ findQuestionnaires = do
       traverse enhance entities
 
 findQuestionnairesForCurrentUserPage ::
-     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDetail)
-findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
+     Maybe String
+  -> Maybe Bool
+  -> Maybe [String]
+  -> Maybe String
+  -> Maybe [String]
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page QuestionnaireDetail)
+findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort
   -- 1. Prepare variables
  = do
   appUuid <- asks _appContextAppUuid
@@ -67,6 +76,15 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
           Nothing -> ""
           Just True -> " AND qtn.is_template = true"
           Just False -> " AND qtn.is_template = false"
+  let projectTagsCondition =
+        case mProjectTags of
+          Nothing -> ""
+          Just [] -> ""
+          Just projectTags ->
+            let mapFn _ = " qtn.project_tags @> ARRAY [?]"
+             in if isAndOperator mProjectTagsOp
+                  then " AND (" ++ L.intercalate " AND " (fmap mapFn projectTags) ++ ")"
+                  else " AND (" ++ L.intercalate " OR " (fmap mapFn projectTags) ++ ")"
   let userUuidsJoin =
         case mUserUuids of
           Nothing -> ""
@@ -75,9 +93,17 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
   let userUuidsCondition =
         case mUserUuids of
           Nothing -> ""
+          Just [] -> ""
           Just userUuids ->
-            let mapFn userUuid = " qtn_acl_user.user_uuid = '" ++ userUuid ++ "' "
-             in " AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")"
+            if isAndOperator mUserUuidsOp
+              then f'
+                     " AND %s = ( \
+                          \SELECT COUNT(DISTINCT user_uuid) \
+                          \FROM questionnaire_acl_user \
+                          \WHERE questionnaire_uuid = qtn.uuid AND user_uuid in (%s)) "
+                     [show . length $ userUuids, generateQuestionMarks userUuids]
+              else let mapFn _ = " qtn_acl_user.user_uuid = ? "
+                    in " AND (" ++ L.intercalate " OR " (fmap mapFn userUuids) ++ ")"
   currentUser <- getCurrentUser
   let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
   -- 2. Get total count
@@ -85,11 +111,12 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
         fromString $
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
-                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s %s"
+                 "SELECT COUNT(DISTINCT qtn.uuid) FROM questionnaire qtn %s WHERE %s %s %s %s %s"
                  [ userUuidsJoin
                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
                  , nameCondition
                  , isTemplateCondition
+                 , projectTagsCondition
                  , userUuidsCondition
                  ]
           else f'
@@ -97,13 +124,14 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
                   \FROM questionnaire qtn \
                   \LEFT JOIN questionnaire_acl_user qtn_acl_user ON qtn.uuid = qtn_acl_user.questionnaire_uuid \
                   \LEFT JOIN questionnaire_acl_group qtn_acl_group ON qtn.uuid = qtn_acl_group.questionnaire_uuid \
-                  \WHERE %s AND %s %s %s"
+                  \WHERE %s AND %s %s %s %s"
                  [ qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']"
                  , nameCondition
                  , isTemplateCondition
+                 , projectTagsCondition
                  , userUuidsCondition
                  ]
-  let params = [regex mQuery]
+  let params = [regex mQuery] ++ fromMaybe [] mProjectTags ++ fromMaybe [] mUserUuids
   logQuery sql params
   let action conn = query conn sql params
   result <- runDB action
@@ -118,7 +146,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
                  \qtn.description, \
                  \qtn.visibility, \
                  \qtn.sharing, \
-                 \qtn.selected_tag_uuids::jsonb, \
+                 \qtn.selected_question_tag_uuids::jsonb, \
                  \qtn.events::jsonb, \
                  \qtn.is_template, \
                  \qtn.created_at, \
@@ -153,13 +181,14 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
         if currentUser ^. role == _USER_ROLE_ADMIN
           then f'
                  "%s %s \
-                 \WHERE %s %s %s %s %s \
+                 \WHERE %s %s %s %s %s %s \
                  \OFFSET %s LIMIT %s"
                  [ sqlBase
                  , userUuidsJoin
                  , f' "qtn.app_uuid = '%s' AND" [U.toString appUuid]
                  , nameCondition
                  , isTemplateCondition
+                 , projectTagsCondition
                  , userUuidsCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
@@ -172,12 +201,11 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
                  \WHERE %s %s OFFSET %s LIMIT %s"
                  [ sqlBase
                  , qtnWhereSql (U.toString appUuid) (U.toString $ currentUser ^. uuid) "['VIEW']" ++
-                   " AND " ++ nameCondition ++ isTemplateCondition ++ userUuidsCondition
+                   " AND " ++ nameCondition ++ isTemplateCondition ++ projectTagsCondition ++ userUuidsCondition
                  , mapSortWithPrefix "qtn" sort
                  , show skip
                  , show sizeI
                  ]
-  let params = [regex mQuery]
   logQuery sql params
   let action conn = query conn sql params
   entities <- runDB action
@@ -310,7 +338,7 @@ updateQuestionnaireById qtn = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ? WHERE  app_uuid = ? AND uuid = ?"
+          "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ? WHERE  app_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField appUuid, toField . U.toText $ qtn ^. uuid]
   logQuery sql params
   let action conn = execute conn sql params

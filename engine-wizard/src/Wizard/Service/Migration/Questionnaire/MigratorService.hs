@@ -91,7 +91,8 @@ upgradeQuestionnaire reqDto oldQtn = do
   newUuid <- liftIO generateUuid
   newEvents <- sanitizeQuestionnaireEvents oldKm newKm (oldQtn ^. events)
   newPermissions <- traverse (upgradeQuestionnairePerm newUuid) (oldQtn ^. permissions)
-  return $ (uuid .~ newUuid) . (packageId .~ newPkgId) . (events .~ newEvents) . (selectedTagUuids .~ newTagUuids) .
+  return $ (uuid .~ newUuid) . (packageId .~ newPkgId) . (events .~ newEvents) .
+    (selectedQuestionTagUuids .~ newTagUuids) .
     (templateId .~ Nothing) .
     (formatUuid .~ Nothing) .
     (permissions .~ newPermissions) $

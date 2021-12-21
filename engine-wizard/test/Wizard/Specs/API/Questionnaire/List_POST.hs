@@ -98,7 +98,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
               (description .~ Nothing) .
               (isTemplate .~ False) .
               (sharing .~ AnyoneWithLinkEditQuestionnaire) .
-              (events .~ eventsInDB) . (versions .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
+              (events .~ eventsInDB) .
+              (versions .~ []) . (projectTags .~ []) . (permissions .~ []) . (creatorUuid .~ Nothing) $
               questionnaire1)
       else do
         let aPermissions =
@@ -109,7 +110,8 @@ create_test_201 appContext title anonymousSharingEnabled qtn authHeader =
           appContext
           ((uuid .~ (resBody ^. uuid)) .
            (description .~ Nothing) .
-           (isTemplate .~ False) . (events .~ eventsInDB) . (versions .~ []) . (permissions .~ aPermissions) $
+           (isTemplate .~ False) .
+           (events .~ eventsInDB) . (versions .~ []) . (projectTags .~ []) . (permissions .~ aPermissions) $
            questionnaire1)
 
 -- ----------------------------------------------------

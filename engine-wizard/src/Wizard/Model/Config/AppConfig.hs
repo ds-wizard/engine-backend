@@ -168,6 +168,7 @@ data AppConfigQuestionnaire =
     { _appConfigQuestionnaireQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
     , _appConfigQuestionnaireQuestionnaireSharing :: AppConfigQuestionnaireSharing
     , _appConfigQuestionnaireQuestionnaireCreation :: QuestionnaireCreation
+    , _appConfigQuestionnaireProjectTagging :: AppConfigQuestionnaireProjectTagging
     , _appConfigQuestionnaireSummaryReport :: SimpleFeature
     , _appConfigQuestionnaireFeedback :: AppConfigQuestionnaireFeedback
     }
@@ -192,6 +193,13 @@ data QuestionnaireCreation
   = CustomQuestionnaireCreation
   | TemplateQuestionnaireCreation
   | TemplateAndCustomQuestionnaireCreation
+  deriving (Generic, Eq, Show)
+
+data AppConfigQuestionnaireProjectTagging =
+  AppConfigQuestionnaireProjectTagging
+    { _appConfigQuestionnaireProjectTaggingEnabled :: Bool
+    , _appConfigQuestionnaireProjectTaggingTags :: [String]
+    }
   deriving (Generic, Eq, Show)
 
 data AppConfigQuestionnaireFeedback =

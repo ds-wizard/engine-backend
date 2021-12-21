@@ -17,7 +17,7 @@ data QuestionnaireDetail =
     , _questionnaireDetailDescription :: Maybe String
     , _questionnaireDetailVisibility :: QuestionnaireVisibility
     , _questionnaireDetailSharing :: QuestionnaireSharing
-    , _questionnaireDetailSelectedTagUuids :: [U.UUID]
+    , _questionnaireDetailSelectedQuestionTagUuids :: [U.UUID]
     , _questionnaireDetailEvents :: [QuestionnaireEvent]
     , _questionnaireDetailState :: QuestionnaireState
     , _questionnaireDetailPackageId :: String
@@ -36,7 +36,7 @@ instance Eq QuestionnaireDetail where
     _questionnaireDetailDescription a == _questionnaireDetailDescription b &&
     _questionnaireDetailVisibility a == _questionnaireDetailVisibility b &&
     _questionnaireDetailSharing a == _questionnaireDetailSharing b &&
-    _questionnaireDetailSelectedTagUuids a == _questionnaireDetailSelectedTagUuids b &&
+    _questionnaireDetailSelectedQuestionTagUuids a == _questionnaireDetailSelectedQuestionTagUuids b &&
     _questionnaireDetailEvents a == _questionnaireDetailEvents b &&
     _questionnaireDetailState a == _questionnaireDetailState b &&
     _questionnaireDetailPackageId a == _questionnaireDetailPackageId b &&

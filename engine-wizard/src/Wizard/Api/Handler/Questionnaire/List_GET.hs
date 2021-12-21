@@ -18,7 +18,10 @@ type List_GET
      :> "questionnaires"
      :> QueryParam "q" String
      :> QueryParam "isTemplate" Bool
+     :> QueryParam "projectTags" String
+     :> QueryParam "projectTagsOp" String
      :> QueryParam "userUuids" String
+     :> QueryParam "userUuidsOp" String
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
@@ -30,13 +33,25 @@ list_GET ::
   -> Maybe String
   -> Maybe Bool
   -> Maybe String
+  -> Maybe String
+  -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page QuestionnaireDTO))
-list_GET mTokenHeader mServerUrl mQuery mIsTemplate mUserUuidsL mPage mSize mSort =
+list_GET mTokenHeader mServerUrl mQuery mIsTemplate mProjectTagsL mProjectTagsOp mUserUuidsL mUserUuidsOp mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let mUserUuids = fmap (splitOn ",") mUserUuidsL
-      getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mUserUuids (Pageable mPage mSize) (parseSortQuery mSort)
+      let mProjectTags = fmap (splitOn ",") mProjectTagsL
+      getQuestionnairesForCurrentUserPageDto
+        mQuery
+        mIsTemplate
+        mProjectTags
+        mProjectTagsOp
+        mUserUuids
+        mUserUuidsOp
+        (Pageable mPage mSize)
+        (parseSortQuery mSort)

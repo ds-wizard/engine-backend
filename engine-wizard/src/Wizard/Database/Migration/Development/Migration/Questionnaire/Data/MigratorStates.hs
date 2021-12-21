@@ -153,7 +153,7 @@ migratorStateCreate :: MigratorStateCreateDTO
 migratorStateCreate =
   MigratorStateCreateDTO
     { _migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId
-    , _migratorStateCreateDTOTargetTagUuids = questionnaire4Upgraded ^. selectedTagUuids
+    , _migratorStateCreateDTOTargetTagUuids = questionnaire4Upgraded ^. selectedQuestionTagUuids
     }
 
 migratorStateChange :: MigratorStateChangeDTO

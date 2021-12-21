@@ -51,12 +51,29 @@ import Wizard.Service.Questionnaire.QuestionnaireValidation
 import Wizard.Util.Logger
 
 getQuestionnairesForCurrentUserPageDto ::
-     Maybe String -> Maybe Bool -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page QuestionnaireDTO)
-getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mUserUuids pageable sort =
+     Maybe String
+  -> Maybe Bool
+  -> Maybe [String]
+  -> Maybe String
+  -> Maybe [String]
+  -> Maybe String
+  -> Pageable
+  -> [Sort]
+  -> AppContextM (Page QuestionnaireDTO)
+getQuestionnairesForCurrentUserPageDto mQuery mIsTemplate mProjectTags mProjectTagsOp mUserUuids mUserUuidsOp pageable sort =
   runInTransaction $ do
     checkPermission _QTN_PERM
     currentUser <- getCurrentUser
-    qtnPage <- findQuestionnairesForCurrentUserPage mQuery mIsTemplate mUserUuids pageable sort
+    qtnPage <-
+      findQuestionnairesForCurrentUserPage
+        mQuery
+        mIsTemplate
+        mProjectTags
+        mProjectTagsOp
+        mUserUuids
+        mUserUuidsOp
+        pageable
+        sort
     traverse enhanceQuestionnaireDetail qtnPage
 
 createQuestionnaire :: QuestionnaireCreateDTO -> AppContextM QuestionnaireDTO
@@ -76,7 +93,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
     sharing <- extractSharing reqDto
     qtnPermUuid <- liftIO generateUuid
     mCurrentUser <- asks _appContextCurrentUser
-    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (reqDto ^. tagUuids)
+    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (reqDto ^. questionTagUuids)
     phaseEventUuid <- liftIO generateUuid
     let qtn =
           fromQuestionnaireCreateDTO
@@ -182,7 +199,7 @@ getQuestionnaireDetailById qtnUuid =
     checkViewPermissionToQtn (qtn ^. visibility) (qtn ^. sharing) (qtn ^. permissions)
     pkg <- getPackageById (qtn ^. packageId)
     pkgVersions <- getPackageVersions pkg
-    knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+    knowledgeModel <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
     state <- getQuestionnaireState qtnUuid (qtn ^. packageId)
     mTemplate <-
       case qtn ^. templateId of
@@ -219,6 +236,7 @@ modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM Questionn
 modifyQuestionnaire qtnUuid reqDto =
   runInTransaction $ do
     checkPermission _QTN_PERM
+    validateQuestionnaireChangeDTO reqDto
     qtn <- findQuestionnaireById qtnUuid
     qtnDto <- getQuestionnaireDetailById qtnUuid
     skipIfAssigningProject qtn (checkOwnerPermissionToQtn (qtn ^. visibility) (qtn ^. permissions))
@@ -229,7 +247,7 @@ modifyQuestionnaire qtnUuid reqDto =
     let updatedQtn = fromChangeDTO qtn reqDto qVisibility qSharing currentUser now
     let pkgId = qtnDto ^. package . pId
     updateQuestionnaireById updatedQtn
-    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedTagUuids)
+    knowledgeModel <- compileKnowledgeModel [] (Just pkgId) (updatedQtn ^. selectedQuestionTagUuids)
     state <- getQuestionnaireState qtnUuid pkgId
     updatePermsForOnlineUsers qtnUuid (updatedQtn ^. visibility) (updatedQtn ^. sharing) (updatedQtn ^. permissions)
     permissionDtos <- traverse enhanceQuestionnairePermRecord (updatedQtn ^. permissions)

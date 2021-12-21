@@ -110,6 +110,7 @@ defaultQuestionnaire =
     { _appConfigQuestionnaireQuestionnaireVisibility = defaultQuestionnaireVisibility
     , _appConfigQuestionnaireQuestionnaireSharing = defaultQuestionnaireSharing
     , _appConfigQuestionnaireQuestionnaireCreation = TemplateAndCustomQuestionnaireCreation
+    , _appConfigQuestionnaireProjectTagging = defaultQuestionnaireProjectTagging
     , _appConfigQuestionnaireSummaryReport = SimpleFeature True
     , _appConfigQuestionnaireFeedback = defaultFeedback
     }
@@ -128,6 +129,11 @@ defaultQuestionnaireSharing =
     , _appConfigQuestionnaireSharingDefaultValue = RestrictedQuestionnaire
     , _appConfigQuestionnaireSharingAnonymousEnabled = True
     }
+
+defaultQuestionnaireProjectTagging :: AppConfigQuestionnaireProjectTagging
+defaultQuestionnaireProjectTagging =
+  AppConfigQuestionnaireProjectTagging
+    {_appConfigQuestionnaireProjectTaggingEnabled = True, _appConfigQuestionnaireProjectTaggingTags = []}
 
 defaultFeedback :: AppConfigQuestionnaireFeedback
 defaultFeedback =

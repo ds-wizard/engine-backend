@@ -46,7 +46,7 @@ createQtnTable = do
         \     visibility varchar not null, \
         \     sharing varchar not null, \
         \     package_id varchar not null, \
-        \     selected_tag_uuids json not null, \
+        \     selected_question_tag_uuids json not null, \
         \     template_id varchar, \
         \     format_uuid uuid, \
         \     creator_uuid uuid, \
@@ -59,7 +59,8 @@ createQtnTable = do
         \     squashed boolean not null, \
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \         constraint questionnaire_app_uuid_fk \
-        \             references app \
+        \             references app, \
+        \     project_tags text[] not null default '{}' \
         \ ); \
         \  \
         \ create unique index questionnaire_uuid_uindex \

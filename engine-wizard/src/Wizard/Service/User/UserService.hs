@@ -52,10 +52,11 @@ getUsersPage mQuery mRole pageable sort =
     userPage <- findUsersPage mQuery mRole pageable sort
     return . fmap toDTO $ userPage
 
-getUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
-getUserSuggestionsPage mQuery pageable sort =
+getUserSuggestionsPage ::
+     Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestionDTO)
+getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort =
   runInTransaction $ do
-    suggestionPage <- findUserSuggestionsPage mQuery pageable sort
+    suggestionPage <- findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort
     return . fmap toSuggestionDTO $ suggestionPage
 
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO

@@ -38,6 +38,10 @@ import Wizard.Model.Questionnaire.QuestionnaireState
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
 import Wizard.Service.Questionnaire.QuestionnaireMapper
 
+_QUESTIONNAIRE_PROJECT_TAG_1 = "projectTag1"
+
+_QUESTIONNAIRE_PROJECT_TAG_2 = "projectTag2"
+
 questionnaire1 :: Questionnaire
 questionnaire1 =
   Questionnaire
@@ -47,7 +51,8 @@ questionnaire1 =
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
-    , _questionnaireSelectedTagUuids = []
+    , _questionnaireSelectedQuestionTagUuids = []
+    , _questionnaireProjectTags = [_QUESTIONNAIRE_PROJECT_TAG_1]
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
@@ -67,6 +72,7 @@ questionnaire1Edited =
     { _questionnaireName = "EDITED: " ++ (questionnaire1 ^. name)
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
+    , _questionnaireProjectTags = [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2]
     , _questionnairePermissions = []
     }
 
@@ -110,7 +116,7 @@ questionnaire1Create =
     , _questionnaireCreateDTOPackageId = questionnaire1 ^. packageId
     , _questionnaireCreateDTOVisibility = questionnaire1 ^. visibility
     , _questionnaireCreateDTOSharing = questionnaire1 ^. sharing
-    , _questionnaireCreateDTOTagUuids = []
+    , _questionnaireCreateDTOQuestionTagUuids = []
     , _questionnaireCreateDTOTemplateId = questionnaire1 ^. templateId
     , _questionnaireCreateDTOFormatUuid = questionnaire1 ^. formatUuid
     }
@@ -122,6 +128,7 @@ questionnaire1EditedChange =
     , _questionnaireChangeDTODescription = questionnaire1Edited ^. description
     , _questionnaireChangeDTOVisibility = questionnaire1Edited ^. visibility
     , _questionnaireChangeDTOSharing = questionnaire1Edited ^. sharing
+    , _questionnaireChangeDTOProjectTags = questionnaire1Edited ^. projectTags
     , _questionnaireChangeDTOPermissions = questionnaire1Edited ^. permissions
     , _questionnaireChangeDTOTemplateId = Nothing
     , _questionnaireChangeDTOFormatUuid = Nothing
@@ -154,7 +161,8 @@ questionnaire2 =
     , _questionnaireVisibility = VisibleViewQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
-    , _questionnaireSelectedTagUuids = []
+    , _questionnaireSelectedQuestionTagUuids = []
+    , _questionnaireProjectTags = [_QUESTIONNAIRE_PROJECT_TAG_1, _QUESTIONNAIRE_PROJECT_TAG_2]
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
@@ -177,7 +185,8 @@ questionnaire2Edited =
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = questionnaire2 ^. packageId
-    , _questionnaireSelectedTagUuids = questionnaire2 ^. selectedTagUuids
+    , _questionnaireSelectedQuestionTagUuids = questionnaire2 ^. selectedQuestionTagUuids
+    , _questionnaireProjectTags = questionnaire2 ^. projectTags
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userAlbert ^. uuid
@@ -239,7 +248,8 @@ questionnaire3 =
     , _questionnaireVisibility = VisibleEditQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = germanyPackage ^. pId
-    , _questionnaireSelectedTagUuids = []
+    , _questionnaireSelectedQuestionTagUuids = []
+    , _questionnaireProjectTags = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Nothing
@@ -279,7 +289,8 @@ questionnaire4 =
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = netherlandsPackage ^. pId
-    , _questionnaireSelectedTagUuids = []
+    , _questionnaireSelectedQuestionTagUuids = []
+    , _questionnaireProjectTags = []
     , _questionnaireTemplateId = Just $ commonWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Nothing
@@ -647,7 +658,8 @@ differentQuestionnaire =
     , _questionnaireVisibility = PrivateQuestionnaire
     , _questionnaireSharing = RestrictedQuestionnaire
     , _questionnairePackageId = differentPackage ^. pId
-    , _questionnaireSelectedTagUuids = []
+    , _questionnaireSelectedQuestionTagUuids = []
+    , _questionnaireProjectTags = []
     , _questionnaireTemplateId = Just $ anotherWizardTemplate ^. tId
     , _questionnaireFormatUuid = Just $ templateFormatJson ^. uuid
     , _questionnaireCreatorUuid = Just $ userCharles ^. uuid

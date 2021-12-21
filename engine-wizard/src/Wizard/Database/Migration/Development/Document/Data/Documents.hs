@@ -70,9 +70,11 @@ dmp1 =
     , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = "https://example.com"}
     , _documentContextQuestionnaireUuid = U.toString $ questionnaire1 ^. uuid
     , _documentContextQuestionnaireName = questionnaire1 ^. name
+    , _documentContextQuestionnaireDescription = questionnaire1 ^. description
     , _documentContextQuestionnaireReplies = questionnaire1Ctn ^. replies
     , _documentContextQuestionnaireVersion = Nothing
     , _documentContextQuestionnaireVersions = fmap (`toVersionDTO` Just userAlbert) (questionnaire1 ^. versions)
+    , _documentContextQuestionnaireProjectTags = questionnaire1 ^. projectTags
     , _documentContextPhaseUuid = questionnaire1Ctn ^. phaseUuid
     , _documentContextKnowledgeModel = km1WithQ4
     , _documentContextReport = report1

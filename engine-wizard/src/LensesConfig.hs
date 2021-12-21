@@ -215,6 +215,8 @@ makeFields ''AppConfigQuestionnaireVisibility
 
 makeFields ''AppConfigQuestionnaireSharing
 
+makeFields ''AppConfigQuestionnaireProjectTagging
+
 makeFields ''AppConfigQuestionnaireFeedback
 
 makeFields ''AppConfigTemplate

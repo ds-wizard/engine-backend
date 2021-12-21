@@ -17,12 +17,11 @@ entityName = "document_queue"
 
 insertDocumentQueue :: DocumentQueue -> AppContextM Int
 insertDocumentQueue entity = do
-  let questionMarks = generateQuestionMarks entity
   let sql =
         fromString $
         f'
           "INSERT INTO %s (document_uuid, document_context, created_by, created_at, app_uuid) VALUES (?, ?, ?, ?, ?) RETURNING id"
-          [entityName, questionMarks]
+          [entityName]
   let params = entity
   logQuery sql params
   let action conn = query conn sql entity
