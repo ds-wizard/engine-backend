@@ -33,4 +33,5 @@ analytics:
   email:
 
 logging:
-  httpClientDebug: true
+  level: ERROR
+  httpClientDebug: false
