@@ -13,13 +13,11 @@ import Wizard.Integration.Http.Config.ResponseMapper
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Service.App.AppService
 
 compileClientCss :: App -> AppConfigLookAndFeel -> AppContextM BSL.ByteString
 compileClientCss app lookAndFeel = do
   serverConfig <- asks _appContextServerConfig
   let styleBuilderUrl = serverConfig ^. general . clientStyleBuilderUrl
-  let propClientUrl =
-        if serverConfig ^. experimental . moreAppsEnabled
-          then app ^. clientUrl
-          else serverConfig ^. general . clientUrl
-  runRequest (toCompileClientCssRequest styleBuilderUrl propClientUrl lookAndFeel) toCompileClientCssResponse
+  clientUrl <- getAppClientUrl
+  runRequest (toCompileClientCssRequest styleBuilderUrl clientUrl lookAndFeel) toCompileClientCssResponse

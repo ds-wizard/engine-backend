@@ -56,6 +56,7 @@ data ClientConfigQuestionnaireDTO =
     { _clientConfigQuestionnaireDTOQuestionnaireVisibility :: AppConfigQuestionnaireVisibility
     , _clientConfigQuestionnaireDTOQuestionnaireSharing :: AppConfigQuestionnaireSharing
     , _clientConfigQuestionnaireDTOQuestionnaireCreation :: QuestionnaireCreation
+    , _clientConfigQuestionnaireDTOProjectTagging :: SimpleFeature
     , _clientConfigQuestionnaireDTOSummaryReport :: SimpleFeature
     , _clientConfigQuestionnaireDTOFeedback :: SimpleFeature
     }

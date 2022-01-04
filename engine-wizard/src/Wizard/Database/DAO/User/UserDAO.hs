@@ -2,6 +2,7 @@ module Wizard.Database.DAO.User.UserDAO where
 
 import Control.Lens ((^.))
 import Control.Monad.Reader (asks)
+import Data.Maybe (fromMaybe)
 import Data.String
 import Data.Time
 import qualified Data.UUID as U
@@ -14,6 +15,7 @@ import LensesConfig
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
+import Shared.Util.String
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.User.User ()
 import Wizard.Database.Mapping.User.UserSuggestion ()
@@ -45,17 +47,32 @@ findUsersPage mQuery mRole pageable sort = do
     "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ?"
     [regex mQuery, regex mQuery, regex mRole, U.toString appUuid]
 
-findUserSuggestionsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
-findUserSuggestionsPage mQuery pageable sort = do
+findUserSuggestionsPage ::
+     Maybe String -> Maybe [String] -> Maybe [String] -> Pageable -> [Sort] -> AppContextM (Page UserSuggestion)
+findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
   appUuid <- asks _appContextAppUuid
+  let selectCondition =
+        case mSelectUuids of
+          Nothing -> ""
+          Just [] -> ""
+          Just selectUuids -> f' "AND uuid IN (%s)" [generateQuestionMarks selectUuids]
+  let excludeCondition =
+        case mExcludeUuids of
+          Nothing -> ""
+          Just [] -> ""
+          Just excludeUuids -> f' "AND uuid NOT IN (%s)" [generateQuestionMarks excludeUuids]
+  let condition =
+        f'
+          "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? %s %s"
+          [selectCondition, excludeCondition]
   createFindEntitiesPageableQuerySortFn
     entityName
     pageLabel
     pageable
     sort
     "uuid, first_name, last_name, email, image_url"
-    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ?"
-    [regex mQuery, regex mQuery, U.toString appUuid]
+    condition
+    ([regex mQuery, regex mQuery, U.toString appUuid] ++ fromMaybe [] mSelectUuids ++ fromMaybe [] mExcludeUuids)
 
 findUserById :: String -> AppContextM User
 findUserById = getFromCacheOrDb getFromCache addToCache go

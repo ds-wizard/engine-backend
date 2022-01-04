@@ -133,6 +133,12 @@ instance FromJSON QuestionnaireCreation
 
 instance ToJSON QuestionnaireCreation
 
+instance FromJSON AppConfigQuestionnaireProjectTagging where
+  parseJSON = simpleParseJSON "_appConfigQuestionnaireProjectTagging"
+
+instance ToJSON AppConfigQuestionnaireProjectTagging where
+  toJSON = simpleToJSON "_appConfigQuestionnaireProjectTagging"
+
 instance FromJSON AppConfigQuestionnaireFeedback where
   parseJSON = simpleParseJSON "_appConfigQuestionnaireFeedback"
 

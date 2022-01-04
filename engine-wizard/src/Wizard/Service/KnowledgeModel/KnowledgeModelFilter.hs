@@ -13,20 +13,20 @@ import Wizard.Service.KnowledgeModel.Compilator.Modifier.Delete
 
 filterKnowledgeModel :: [U.UUID] -> KnowledgeModel -> KnowledgeModel
 filterKnowledgeModel [] km = km
-filterKnowledgeModel selectedTagUuids km = removeOrphanUuids . filterTagUuids . filterTags . filterChapters $ km
+filterKnowledgeModel selectedQuestionTagUuids km = removeOrphanUuids . filterTagUuids . filterTags . filterChapters $ km
   where
-    filterChapters km = foldl (filterChapter selectedTagUuids) km (km ^. chaptersL)
-    filterTags km = km & tagsM .~ M.filterWithKey (\tUuid _ -> tUuid `elem` selectedTagUuids) (km ^. tagsM)
-    filterTagUuids km = km & tagUuids .~ filter (`elem` selectedTagUuids) (km ^. tagUuids)
+    filterChapters km = foldl (filterChapter selectedQuestionTagUuids) km (km ^. chaptersL)
+    filterTags km = km & tagsM .~ M.filterWithKey (\tUuid _ -> tUuid `elem` selectedQuestionTagUuids) (km ^. tagsM)
+    filterTagUuids km = km & tagUuids .~ filter (`elem` selectedQuestionTagUuids) (km ^. tagUuids)
 
 filterChapter :: [U.UUID] -> KnowledgeModel -> Chapter -> KnowledgeModel
-filterChapter selectedTagUuids km chapter =
+filterChapter selectedQuestionTagUuids km chapter =
   let qs = getQuestionsForChapterUuid km (chapter ^. uuid)
-   in foldl (filterQuestion selectedTagUuids) km qs
+   in foldl (filterQuestion selectedQuestionTagUuids) km qs
 
 filterQuestion :: [U.UUID] -> KnowledgeModel -> Question -> KnowledgeModel
-filterQuestion selectedTagUuids km q =
-  case filter (`elem` selectedTagUuids) (q ^. tagUuids') of
+filterQuestion selectedQuestionTagUuids km q =
+  case filter (`elem` selectedQuestionTagUuids) (q ^. tagUuids') of
     [] -> deleteQuestion km (q ^. uuid')
     filteredQuestionTagUuids -> applyToQuestion filteredQuestionTagUuids q . applyToChildren q $ km
   where
@@ -37,10 +37,10 @@ filterQuestion selectedTagUuids km q =
       where
         go km ansUuid =
           let qs = getQuestionsForAnswerUuid km ansUuid
-           in foldl (filterQuestion selectedTagUuids) km qs
+           in foldl (filterQuestion selectedQuestionTagUuids) km qs
     applyToChildren (ListQuestion' q) km =
       let qs = getItemTemplateQuestionsForQuestionUuid km (q ^. uuid)
-       in foldl (filterQuestion selectedTagUuids) km qs
+       in foldl (filterQuestion selectedQuestionTagUuids) km qs
     applyToChildren q km = km
 
 removeOrphanUuids :: KnowledgeModel -> KnowledgeModel

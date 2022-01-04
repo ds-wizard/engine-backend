@@ -78,7 +78,7 @@ compareQuestionnaireCreateDtos' resDto expDto = do
   liftIO $ resDto ^. sharing `shouldBe` expDto ^. sharing
   liftIO $ resDto ^. state `shouldBe` expDto ^. state
   liftIO $ resDto ^. package `shouldBe` expDto ^. package
-  liftIO $ resDto ^. selectedTagUuids `shouldBe` expDto ^. selectedTagUuids
+  liftIO $ resDto ^. selectedQuestionTagUuids `shouldBe` expDto ^. selectedQuestionTagUuids
   liftIO $ resDto ^. knowledgeModel `shouldBe` expDto ^. knowledgeModel
   liftIO $ resDto ^. replies `shouldBe` expDto ^. replies
 

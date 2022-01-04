@@ -38,6 +38,9 @@ import Wizard.Database.Migration.Development.User.Data.Users
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
+instance ToSchema (Page String) where
+  declareNamedSchema = simpleToSchema''''' "_page" "Page String" (Page "projectTags" pageMetadata ["value1"])
+
 instance ToSchema (Page UserDTO) where
   declareNamedSchema =
     simpleToSchema''''' "_page" "Page UserDTO" (Page "users" pageMetadata [U_Mapper.toDTO userAlbert])

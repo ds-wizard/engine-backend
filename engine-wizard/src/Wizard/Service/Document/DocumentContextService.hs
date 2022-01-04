@@ -20,6 +20,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
@@ -32,10 +33,11 @@ createDocumentContext :: Document -> AppContextM DocumentContext
 createDocumentContext doc = do
   qtn <- findQuestionnaireById . U.toString $ doc ^. questionnaireUuid
   pkg <- getPackageById (qtn ^. packageId)
-  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+  km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
   mCreatedBy <- forM (fmap U.toString (qtn ^. creatorUuid)) findUserById
   appConfig <- getAppConfig
   serverConfig <- asks _appContextServerConfig
+  clientUrl <- getAppClientUrl
   let org = appConfig ^. organization
   dmpUuid <- liftIO generateUuid
   now <- liftIO getCurrentTime
@@ -54,10 +56,12 @@ createDocumentContext doc = do
     toDocumentContext
       dmpUuid
       serverConfig
+      clientUrl
       qtn
       qtnCtn
       qtnVersion
       qtnVersionDtos
+      (qtn ^. projectTags)
       (qtnCtn ^. phaseUuid)
       km
       report

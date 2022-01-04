@@ -10,11 +10,15 @@ import Text.Regex (matchRegex, mkRegex)
 import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Service.Questionnaire.QuestionnaireValidation
 
-validateAppConfig :: AppConfig -> AppContextM ()
-validateAppConfig appConfig = validateOrganization (appConfig ^. organization)
+validateAppConfig :: AppConfigChangeDTO -> AppContextM ()
+validateAppConfig appConfig = do
+  validateOrganization (appConfig ^. organization)
+  validateQuestionnaire (appConfig ^. questionnaire)
 
 validateOrganization :: AppConfigOrganization -> AppContextM ()
 validateOrganization config = forM_ (isValidOrganizationId $ config ^. organizationId) throwError
@@ -26,3 +30,6 @@ isValidOrganizationId kmId =
     else Just $ ValidationError [] (M.singleton "organizationId" [_ERROR_VALIDATION__INVALID_ORG_ID_FORMAT])
   where
     validationRegex = mkRegex "^[a-zA-Z0-9][a-zA-Z0-9.]*[a-zA-Z0-9]$"
+
+validateQuestionnaire :: AppConfigQuestionnaire -> AppContextM ()
+validateQuestionnaire config = validateQuestionnaireTags (config ^. projectTagging . tags)

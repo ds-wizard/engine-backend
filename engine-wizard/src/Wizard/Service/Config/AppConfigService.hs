@@ -21,6 +21,7 @@ import Wizard.S3.Public.PublicS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigMapper
+import Wizard.Service.Config.AppConfigValidation
 import Wizard.Util.Logger
 
 getAppConfig :: AppContextM AppConfig
@@ -60,17 +61,19 @@ modifyAppConfigDto reqDto
     -- 2. Get current config
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
-    -- 3. Prepare to update & validate
+    -- 3. Validate
+    validateAppConfig reqDto
+    -- 4. Prepare to update & validate
     now <- liftIO getCurrentTime
     let updatedAppConfig = fromChangeDTO reqDto appConfig now
-    -- 4. Compile client CSS
+    -- 5. Compile client CSS
     updatedAppConfigWithCss <-
       if colorsChanged appConfig updatedAppConfig && appConfig ^. feature . clientCustomizationEnabled
         then invokeClientCssCompilation appConfig updatedAppConfig
         else return updatedAppConfig
-    -- 5. Update
+    -- 6. Update
     modifyAppConfig updatedAppConfigWithCss
-    -- 6. Create response
+    -- 7. Create response
     return updatedAppConfigWithCss
 
 modifyClientCustomization :: Bool -> AppContextM ()

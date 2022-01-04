@@ -21,6 +21,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService
@@ -64,12 +65,13 @@ createOpenIDClient authId mClientUrl = do
   httpClientManager <- asks _appContextHttpClientManager
   serverConfig <- asks _appContextServerConfig
   appConfig <- getAppConfig
+  clientUrl <- getAppClientUrl
   case L.find (\s -> s ^. aId == authId) (appConfig ^. authentication . external . services) of
     Just service -> do
       prov <- liftIO $ O.discover (T.pack $ service ^. url) httpClientManager
       let cId = BS.pack $ service ^. clientId
       let cSecret = BS.pack $ service ^. clientSecret
-      let clientCallbackUrl = fromMaybe (serverConfig ^. general . clientUrl) mClientUrl
+      let clientCallbackUrl = fromMaybe clientUrl mClientUrl
       let redirectUrl = BS.pack $ clientCallbackUrl ++ "/auth/" ++ authId ++ "/callback"
       let openIDClient = O.setCredentials cId cSecret redirectUrl (O.newOIDC prov)
       return (service, openIDClient)

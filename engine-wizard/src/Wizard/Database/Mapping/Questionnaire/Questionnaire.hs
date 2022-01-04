@@ -5,6 +5,7 @@ import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
+import Database.PostgreSQL.Simple.Types
 
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventJM ()
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclJM ()
@@ -20,7 +21,7 @@ instance ToRow Questionnaire where
     , toField _questionnaireVisibility
     , toField _questionnaireSharing
     , toField _questionnairePackageId
-    , toJSONField _questionnaireSelectedTagUuids
+    , toJSONField _questionnaireSelectedQuestionTagUuids
     , toField _questionnaireTemplateId
     , toField _questionnaireFormatUuid
     , toField _questionnaireCreatorUuid
@@ -32,6 +33,7 @@ instance ToRow Questionnaire where
     , toField _questionnaireIsTemplate
     , toField _questionnaireSquashed
     , toField _questionnaireAppUuid
+    , toField . PGArray $ _questionnaireProjectTags
     ]
 
 instance FromRow Questionnaire where
@@ -41,7 +43,7 @@ instance FromRow Questionnaire where
     _questionnaireVisibility <- field
     _questionnaireSharing <- field
     _questionnairePackageId <- field
-    _questionnaireSelectedTagUuids <- fieldWith fromJSONField
+    _questionnaireSelectedQuestionTagUuids <- fieldWith fromJSONField
     _questionnaireTemplateId <- field
     _questionnaireFormatUuid <- field
     _questionnaireCreatorUuid <- field
@@ -54,4 +56,5 @@ instance FromRow Questionnaire where
     _questionnaireIsTemplate <- field
     _questionnaireSquashed <- field
     _questionnaireAppUuid <- field
+    _questionnaireProjectTags <- fromPGArray <$> field
     return $ Questionnaire {..}

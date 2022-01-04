@@ -13,6 +13,7 @@ import qualified Data.UUID as U
 import qualified Database.PostgreSQL.LibPQ as LibPQ
 import qualified Database.PostgreSQL.Simple as PostgresTransaction
 import Database.PostgreSQL.Simple
+import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.Internal
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -197,10 +198,35 @@ createFindEntitiesPageableQuerySortFn entityName pageLabel pageable sort fields 
           }
   return $ Page pageLabel metadata entities
 
+createFindColumnBySqlPageFn ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromField entity)
+  => String
+  -> Pageable
+  -> Query
+  -> [String]
+  -> Int
+  -> m (Page entity)
+createFindColumnBySqlPageFn pageLabel pageable sql params count
+    -- 1. Prepare variables
+ = do
+  let (sizeI, pageI, skip, limit) = preparePaginationVariables pageable
+    -- 2. Perform query
+  logQuery sql params
+  let action conn = query conn sql params
+  entities <- runDB action
+    -- 3. Constructor response
+  let metadata =
+        PageMetadata
+          { _pageMetadataSize = sizeI
+          , _pageMetadataTotalElements = count
+          , _pageMetadataTotalPages = computeTotalPage count sizeI
+          , _pageMetadataNumber = pageI
+          }
+  return $ Page pageLabel metadata (concat entities)
+
 createInsertFn :: (ToRow q, MonadLogger m, MonadReader s m, HasDbPool' s, MonadIO m) => String -> q -> m Int64
 createInsertFn entityName entity = do
-  let questionMarks = generateQuestionMarks entity
-  let sql = fromString $ f' "INSERT INTO %s VALUES %s" [entityName, questionMarks]
+  let sql = fromString $ f' "INSERT INTO %s VALUES (%s)" [entityName, generateQuestionMarks' entity]
   let params = entity
   logInsertAndUpdate sql params
   let action conn = execute conn sql params
@@ -265,15 +291,28 @@ createCountByFn entityName condition queryParams = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
-generateQuestionMarks :: ToRow entity => entity -> String
-generateQuestionMarks entity =
-  let size = length $ toRow entity
+createCountWithSqlFn ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m) => Query -> [String] -> m Int
+createCountWithSqlFn sql params = do
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
+generateQuestionMarks :: [String] -> String
+generateQuestionMarks fields =
+  let size = length fields
       generate :: Int -> String
       generate 0 = ""
       generate 1 = "?"
       generate 2 = "?,?"
       generate x = "?," ++ generate (x - 1)
-   in f' "(%s)" [generate size]
+   in f' "%s" [generate size]
+
+generateQuestionMarks' :: ToRow entity => entity -> String
+generateQuestionMarks' = generateQuestionMarks . fmap show . toRow
 
 regex :: Maybe String -> String
 regex mQuery = ".*" ++ fromMaybe "" mQuery ++ ".*"
@@ -347,3 +386,7 @@ showAction (Escape a) = BS.unpack a
 showAction (EscapeByteA a) = BS.unpack a
 showAction (EscapeIdentifier a) = BS.unpack a
 showAction (Many xs) = show . fmap showAction $ xs
+
+isAndOperator :: Maybe String -> Bool
+isAndOperator operator =
+  operator == Just "" || operator == Just "and" || operator == Just "AND" || operator == Just "And"

@@ -60,6 +60,16 @@ test_200 appContext = do
     "/users/suggestions?sort=uuid,asc&q=te"
     (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userAlbert]))
   create_test_200
+    "HTTP 200 OK (Admin - select)"
+    appContext
+    "/users/suggestions?sort=uuid,asc&select=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
+    (Page "users" (PageMetadata 20 2 1 0) (fmap (toSuggestionDTO . toSuggestion) [userNikola, userIsaac]))
+  create_test_200
+    "HTTP 200 OK (Admin - exclude)"
+    appContext
+    "/users/suggestions?sort=uuid,asc&exclude=30d48cf4-8c8a-496f-bafe-585bd238f798,e1c58e52-0824-4526-8ebe-ec38eec67030"
+    (Page "users" (PageMetadata 20 1 1 0) (fmap (toSuggestionDTO . toSuggestion) [userAlbert]))
+  create_test_200
     "HTTP 200 OK (Admin - sort asc)"
     appContext
     "/users/suggestions?sort=first_name,asc"

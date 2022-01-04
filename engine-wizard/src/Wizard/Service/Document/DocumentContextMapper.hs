@@ -21,10 +21,12 @@ import qualified Wizard.Service.User.UserMapper as USR_Mapper
 toDocumentContext ::
      U.UUID
   -> ServerConfig
+  -> String
   -> Questionnaire
   -> QuestionnaireContent
   -> Maybe U.UUID
   -> [QuestionnaireVersionDTO]
+  -> [String]
   -> Maybe U.UUID
   -> KnowledgeModel
   -> Report
@@ -33,16 +35,17 @@ toDocumentContext ::
   -> Maybe User
   -> UTCTime
   -> DocumentContext
-toDocumentContext dmpUuid serverConfig qtn qtnCtn qtnVersion qtnVersionDtos mPhase km report pkg org mCreatedBy now =
+toDocumentContext dmpUuid serverConfig appClientUrl qtn qtnCtn qtnVersion qtnVersionDtos qtnProjectTags mPhase km report pkg org mCreatedBy now =
   DocumentContext
     { _documentContextUuid = dmpUuid
-    , _documentContextConfig =
-        DocumentContextConfig {_documentContextConfigClientUrl = serverConfig ^. general . clientUrl}
+    , _documentContextConfig = DocumentContextConfig {_documentContextConfigClientUrl = appClientUrl}
     , _documentContextQuestionnaireUuid = U.toString $ qtn ^. uuid
     , _documentContextQuestionnaireName = qtn ^. name
+    , _documentContextQuestionnaireDescription = qtn ^. description
     , _documentContextQuestionnaireReplies = qtnCtn ^. replies
     , _documentContextQuestionnaireVersion = qtnVersion
     , _documentContextQuestionnaireVersions = qtnVersionDtos
+    , _documentContextQuestionnaireProjectTags = qtnProjectTags
     , _documentContextPhaseUuid = mPhase
     , _documentContextKnowledgeModel = km
     , _documentContextReport = report

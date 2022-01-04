@@ -66,6 +66,7 @@ reqDtoT qtn =
     , _questionnaireChangeDTODescription = qtn ^. description
     , _questionnaireChangeDTOVisibility = qtn ^. visibility
     , _questionnaireChangeDTOSharing = qtn ^. sharing
+    , _questionnaireChangeDTOProjectTags = qtn ^. projectTags
     , _questionnaireChangeDTOPermissions = qtn ^. permissions
     , _questionnaireChangeDTOTemplateId = qtn ^. templateId
     , _questionnaireChangeDTOFormatUuid = qtn ^. formatUuid

@@ -59,6 +59,7 @@ toClientConfigQuestionnaireDTO appConfig =
     { _clientConfigQuestionnaireDTOQuestionnaireVisibility = appConfig ^. questionnaireVisibility
     , _clientConfigQuestionnaireDTOQuestionnaireSharing = appConfig ^. questionnaireSharing
     , _clientConfigQuestionnaireDTOQuestionnaireCreation = appConfig ^. questionnaireCreation
+    , _clientConfigQuestionnaireDTOProjectTagging = SimpleFeature $ appConfig ^. projectTagging . enabled
     , _clientConfigQuestionnaireDTOSummaryReport = appConfig ^. summaryReport
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }

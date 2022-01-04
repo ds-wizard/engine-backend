@@ -11,7 +11,7 @@ data QuestionnaireCreateDTO =
     , _questionnaireCreateDTOPackageId :: String
     , _questionnaireCreateDTOVisibility :: QuestionnaireVisibility
     , _questionnaireCreateDTOSharing :: QuestionnaireSharing
-    , _questionnaireCreateDTOTagUuids :: [U.UUID]
+    , _questionnaireCreateDTOQuestionTagUuids :: [U.UUID]
     , _questionnaireCreateDTOTemplateId :: Maybe String
     , _questionnaireCreateDTOFormatUuid :: Maybe U.UUID
     }

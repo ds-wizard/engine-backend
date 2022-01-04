@@ -21,6 +21,7 @@ defaultS3 =
     , _serverConfigS3Username = "minioadmin"
     , _serverConfigS3Password = "minioadmin"
     , _serverConfigS3Bucket = "engine-wizard"
+    , _serverConfigS3Region = Nothing
     }
 
 defaultMail :: ServerConfigMail

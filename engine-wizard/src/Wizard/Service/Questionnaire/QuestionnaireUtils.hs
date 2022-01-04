@@ -111,7 +111,7 @@ getQuestionnaireReport ::
      ( HasEvents questionnaire [QuestionnaireEvent]
      , HasUuid questionnaire U.UUID
      , HasPackageId questionnaire String
-     , HasSelectedTagUuids questionnaire [U.UUID]
+     , HasSelectedQuestionTagUuids questionnaire [U.UUID]
      )
   => questionnaire
   -> AppContextM QuestionnaireReportDTO
@@ -124,7 +124,7 @@ getQuestionnaireReport qtn = do
       appConfig <- getAppConfig
       let _requiredPhaseUuid = qtnCtn ^. phaseUuid
       let _replies = M.toList $ qtnCtn ^. replies
-      km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedTagUuids)
+      km <- compileKnowledgeModel [] (Just $ qtn ^. packageId) (qtn ^. selectedQuestionTagUuids)
       let indications = computeTotalReportIndications _requiredPhaseUuid km _replies
       qtnCtn <- compileQuestionnaire qtn
       addToCache qtn qtnCtn indications

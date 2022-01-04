@@ -1,14 +1,16 @@
 module Wizard.Api.Handler.Registry.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Registry.List_Confirmation_POST
 import Wizard.Api.Handler.Registry.List_Signup_POST
 import Wizard.Model.Context.BaseContext
 
 type RegistryAPI
-   = List_Signup_POST
-     :<|> List_Confirmation_POST
+   = Tags "Registry"
+     :> (List_Signup_POST
+         :<|> List_Confirmation_POST)
 
 registryApi :: Proxy RegistryAPI
 registryApi = Proxy

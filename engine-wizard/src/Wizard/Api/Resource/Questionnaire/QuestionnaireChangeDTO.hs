@@ -12,6 +12,7 @@ data QuestionnaireChangeDTO =
     , _questionnaireChangeDTODescription :: Maybe String
     , _questionnaireChangeDTOVisibility :: QuestionnaireVisibility
     , _questionnaireChangeDTOSharing :: QuestionnaireSharing
+    , _questionnaireChangeDTOProjectTags :: [String]
     , _questionnaireChangeDTOPermissions :: [QuestionnairePermRecord]
     , _questionnaireChangeDTOTemplateId :: Maybe String
     , _questionnaireChangeDTOFormatUuid :: Maybe U.UUID

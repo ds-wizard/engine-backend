@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Questionnaire.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Questionnaire.Detail_Content_PUT
 import Wizard.Api.Handler.Questionnaire.Detail_DELETE
@@ -17,26 +18,29 @@ import Wizard.Api.Handler.Questionnaire.List_GET
 import Wizard.Api.Handler.Questionnaire.List_POST
 import Wizard.Api.Handler.Questionnaire.List_POST_CloneUuid
 import Wizard.Api.Handler.Questionnaire.List_POST_FromTemplate
+import Wizard.Api.Handler.Questionnaire.ProjectTag.List_Suggestions_GET
 import Wizard.Api.Handler.Questionnaire.Version.Api
 import Wizard.Model.Context.BaseContext
 
 type QuestionnaireAPI
-   = List_GET
-     :<|> List_POST
-     :<|> List_POST_FromTemplate
-     :<|> List_POST_CloneUuid
-     :<|> Detail_GET
-     :<|> Detail_PUT
-     :<|> Detail_DELETE
-     :<|> Detail_Content_PUT
-     :<|> Detail_Report_GET
-     :<|> Detail_Documents_GET
-     :<|> Detail_Documents_Preview_GET
-     :<|> Detail_WS
-     :<|> QuestionnaireVersionAPI
-     :<|> Detail_Revert_POST
-     :<|> Detail_Revert_Preview_POST
-     :<|> Detail_Squash_POST
+   = Tags "Questionnaire"
+     :> (List_GET
+         :<|> List_POST
+         :<|> List_POST_FromTemplate
+         :<|> List_POST_CloneUuid
+         :<|> Detail_GET
+         :<|> Detail_PUT
+         :<|> Detail_DELETE
+         :<|> Detail_Content_PUT
+         :<|> Detail_Report_GET
+         :<|> Detail_Documents_GET
+         :<|> Detail_Documents_Preview_GET
+         :<|> Detail_WS
+         :<|> QuestionnaireVersionAPI
+         :<|> Detail_Revert_POST
+         :<|> Detail_Revert_Preview_POST
+         :<|> Detail_Squash_POST
+         :<|> List_Suggestions_GET)
 
 questionnaireApi :: Proxy QuestionnaireAPI
 questionnaireApi = Proxy
@@ -53,4 +57,5 @@ questionnaireServer =
   questionnaireVersionServer :<|>
   detail_revert_POST :<|>
   detail_revert_preview_POST :<|>
-  detail_squash_POST
+  detail_squash_POST :<|>
+  list_suggestions_GET

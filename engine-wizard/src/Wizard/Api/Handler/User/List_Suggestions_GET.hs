@@ -5,6 +5,7 @@ import Servant
 import Shared.Api.Handler.Common
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
+import Shared.Util.String (splitOn)
 import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.User.UserSuggestionJM ()
@@ -17,6 +18,8 @@ type List_Suggestions_GET
      :> "users"
      :> "suggestions"
      :> QueryParam "q" String
+     :> QueryParam "select" String
+     :> QueryParam "exclude" String
      :> QueryParam "page" Int
      :> QueryParam "size" Int
      :> QueryParam "sort" String
@@ -26,11 +29,16 @@ list_suggestions_GET ::
      Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
+  -> Maybe String
   -> Maybe Int
   -> Maybe Int
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page UserSuggestionDTO))
-list_suggestions_GET mTokenHeader mServerUrl mQuery mPage mSize mSort =
+list_suggestions_GET mTokenHeader mServerUrl mQuery mSelect mExclude mPage mSize mSort =
   getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
-    addTraceUuidHeader =<< getUserSuggestionsPage mQuery (Pageable mPage mSize) (parseSortQuery mSort)
+    addTraceUuidHeader =<< do
+      let mSelectUuids = fmap (splitOn ",") mSelect
+      let mExcludeUuids = fmap (splitOn ",") mExclude
+      getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids (Pageable mPage mSize) (parseSortQuery mSort)

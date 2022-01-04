@@ -31,7 +31,11 @@ createS3Client serverConfig manager = do
         setCreds
           (Credentials (T.pack $ serverConfig ^. username) (T.pack $ serverConfig ^. password))
           (S.fromString $ serverConfig ^. url)
-  liftIO $ mkMinioConn connectionInfo manager
+  let connectionInfoWithRegion =
+        case serverConfig ^. region of
+          Just reg -> setRegion (T.pack reg) connectionInfo
+          Nothing -> connectionInfo
+  liftIO $ mkMinioConn connectionInfoWithRegion manager
 
 createGetObjectFn ::
      ( MonadReader s m
@@ -260,8 +264,8 @@ createMakePublicLink folderName object = do
   publicUrl <- getS3PublicUrl
   let url =
         if context ^. serverConfig' . experimental' . moreAppsEnabled
-          then f' "%s/%s/%s/%s/%s" [publicUrl, bucketName, U.toString (context ^. appUuid'), folderName, object]
-          else f' "%s/%s/%s/%s" [publicUrl, bucketName, folderName, object]
+          then f' "%s/%s/%s/%s" [publicUrl, U.toString (context ^. appUuid'), folderName, object]
+          else f' "%s/%s/%s" [publicUrl, folderName, object]
   logInfo _CMP_S3 (f' "Public URL to share: '%s'" [url])
   return url
 
@@ -294,7 +298,10 @@ getS3Url = do
 getS3PublicUrl :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
 getS3PublicUrl = do
   context <- ask
-  return $ context ^. serverConfig' . s3' . publicUrl
+  return $
+    case context ^. serverConfig' . s3' . region of
+      Just _ -> context ^. serverConfig' . s3' . publicUrl
+      Nothing -> f' "%s/%s" [context ^. serverConfig' . s3' . publicUrl, context ^. serverConfig' . s3' . bucket]
 
 getBucketName :: (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => m String
 getBucketName = do

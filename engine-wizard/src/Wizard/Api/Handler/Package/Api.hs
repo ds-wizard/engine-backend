@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Package.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Package.Detail_Bundle_GET
 import Wizard.Api.Handler.Package.Detail_DELETE
@@ -14,15 +15,16 @@ import Wizard.Api.Handler.Package.List_Suggestions_GET
 import Wizard.Model.Context.BaseContext
 
 type PackageAPI
-   = List_GET
-     :<|> List_Suggestions_GET
-     :<|> List_POST
-     :<|> List_DELETE
-     :<|> Detail_GET
-     :<|> Detail_DELETE
-     :<|> List_Bundle_POST
-     :<|> Detail_Bundle_GET
-     :<|> Detail_Pull_POST
+   = Tags "Package"
+     :> (List_GET
+         :<|> List_Suggestions_GET
+         :<|> List_POST
+         :<|> List_DELETE
+         :<|> Detail_GET
+         :<|> Detail_DELETE
+         :<|> List_Bundle_POST
+         :<|> Detail_Bundle_GET
+         :<|> Detail_Pull_POST)
 
 packageApi :: Proxy PackageAPI
 packageApi = Proxy

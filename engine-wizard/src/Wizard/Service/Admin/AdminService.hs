@@ -14,7 +14,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Admin.AdminDefinition
 
 getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [cache, feedback, config]
+getAdminOperations = return [app, cache, config, feedback]
 
 executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -24,6 +24,7 @@ executeOperation reqDto = do
 
 execute :: AdminExecutionDTO -> AppContextM String
 execute reqDto
+  | action reqDto app app_createApp = app_createAppFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto
   | action reqDto cache cache_KnowledgeModelCache_deleteFromCache' = cache_KnowledgeModelCache_deleteFromCacheFn' reqDto
   | action reqDto config config_switchClientCustomizationOn = config_switchClientCustomizationOnFn reqDto

@@ -1,14 +1,16 @@
 module Wizard.Api.Handler.Auth.Api where
 
 import Servant
+import Servant.Swagger.Tags
 
 import Wizard.Api.Handler.Auth.Detail_Callback_GET
 import Wizard.Api.Handler.Auth.Detail_GET
 import Wizard.Model.Context.BaseContext
 
 type AuthAPI
-   = Detail_GET
-     :<|> Detail_Callback_GET
+   = Tags "Auth"
+     :> (Detail_GET
+         :<|> Detail_Callback_GET)
 
 authApi :: Proxy AuthAPI
 authApi = Proxy

@@ -15,5 +15,5 @@ getReportByQuestionnaireUuid :: String -> AppContextM Report
 getReportByQuestionnaireUuid qtnUuid =
   runInTransaction $ do
     qtnDto <- getQuestionnaireDetailById qtnUuid
-    knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedTagUuids)
+    knowledgeModel <- compileKnowledgeModel [] (Just $ qtnDto ^. package . pId) (qtnDto ^. selectedQuestionTagUuids)
     generateReport (qtnDto ^. phaseUuid) knowledgeModel (M.toList $ qtnDto ^. replies)

@@ -26,7 +26,7 @@ instance FromRow QuestionnaireDetail where
     _questionnaireDetailDescription <- field
     _questionnaireDetailVisibility <- field
     _questionnaireDetailSharing <- field
-    _questionnaireDetailSelectedTagUuids <- fieldWith fromJSONField
+    _questionnaireDetailSelectedQuestionTagUuids <- fieldWith fromJSONField
     _questionnaireDetailEvents <- fieldWith fromJSONField
     _questionnaireDetailIsTemplate <- field
     _questionnaireDetailCreatedAt <- field
