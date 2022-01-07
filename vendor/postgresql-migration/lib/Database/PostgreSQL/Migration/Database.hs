@@ -24,7 +24,7 @@ toMigrationRecord migrationMeta state createdAt =
 
 getMigrationsFromDb :: Pool Connection -> LoggingT IO [MigrationRecord]
 getMigrationsFromDb dbPool = do
-  let action conn = query_ conn "SELECT * FROM migration"
+  let action conn = query_ conn "SELECT * FROM migration ORDER BY number ASC;"
   runDB dbPool action
 
 ensureMigrationTable :: Pool Connection -> LoggingT IO ()
@@ -50,13 +50,13 @@ startMigration :: Pool Connection -> MigrationMeta -> LoggingT IO ()
 startMigration dbPool meta = do
   now <- liftIO getCurrentTime
   let entity = toMigrationRecord meta _STARTED now
-  let action conn = execute conn "INSERT INTO migration VALUES (?,?,?,?,?)" entity
+  let action conn = execute conn "INSERT INTO migration VALUES (?,?,?,?,?);" entity
   runDB dbPool action
   return ()
 
 endMigration :: Pool Connection -> MigrationMeta -> LoggingT IO ()
 endMigration dbPool meta = do
-  let action conn = execute conn "UPDATE migration SET state = 'DONE' WHERE number = ?" [mmNumber meta]
+  let action conn = execute conn "UPDATE migration SET state = 'DONE' WHERE number = ?;" [mmNumber meta]
   runDB dbPool action
   return ()
 
