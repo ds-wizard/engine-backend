@@ -11,6 +11,7 @@ import Shared.Localization.Messages.Public
 import Shared.Util.List (foldEither)
 import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Internal
+import qualified Wizard.Metamodel.Migration.MigrationContext as EventMigrator
 import qualified Wizard.Metamodel.Migrator.EventMigrator as EventMigrator
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Util.Logger
@@ -20,7 +21,9 @@ import Wizard.Util.Logger
 -- --------------------------------
 findOutdatedModels entityName eventsField idField = do
   let sql =
-        f' "SELECT %s, metamodel_version, %s FROM %s WHERE metamodel_version != ?" [idField, eventsField, entityName]
+        f'
+          "SELECT %s, created_at, metamodel_version, %s FROM %s WHERE metamodel_version != ?"
+          [idField, eventsField, entityName]
   logInfo _CMP_DATABASE sql
   let action conn = query conn (fromString sql) [kmMetamodelVersion]
   runDB action
@@ -32,10 +35,12 @@ updateOutdatedModels entityName eventsField idField params = do
   runDB action
   return ()
 
-migrateEventField entityName oldMetamodelVersion events callback =
+migrateEventField entityName createdAt oldMetamodelVersion events callback =
   case events of
     Array eventArray ->
-      case foldEither $ EventMigrator.migrate oldMetamodelVersion kmMetamodelVersion <$> Vector.toList eventArray of
+      case foldEither $
+           EventMigrator.migrate (EventMigrator.MigrationContext createdAt) oldMetamodelVersion kmMetamodelVersion <$>
+           Vector.toList eventArray of
         Right updatedEvents -> do
           logMigrationMigrationApplied entityName
           callback . concat $ updatedEvents

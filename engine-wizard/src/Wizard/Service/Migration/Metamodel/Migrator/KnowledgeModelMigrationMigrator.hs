@@ -4,6 +4,7 @@ module Wizard.Service.Migration.Metamodel.Migrator.KnowledgeModelMigrationMigrat
 
 import Data.Aeson
 import Data.Foldable (traverse_)
+import Data.Time
 import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.FromRow
@@ -30,9 +31,9 @@ migrateAllInDB = do
 -- --------------------------------
 migrateOneInDB :: String -> String -> String -> MetamodelMigration -> AppContextM ()
 migrateOneInDB entityName eventsField idField MetamodelMigration {..} =
-  migrateEventField entityName oldMetamodelVersion branchEvents $ \updatedBranchEvents ->
-    migrateEventField entityName oldMetamodelVersion targetPackageEvents $ \updatedTargetPackageEvents ->
-      migrateEventField entityName oldMetamodelVersion resultEvents $ \updatedResultEvents ->
+  migrateEventField entityName createdAt oldMetamodelVersion branchEvents $ \updatedBranchEvents ->
+    migrateEventField entityName createdAt oldMetamodelVersion targetPackageEvents $ \updatedTargetPackageEvents ->
+      migrateEventField entityName createdAt oldMetamodelVersion resultEvents $ \updatedResultEvents ->
         updateOutdatedModels
           entityName
           eventsField
@@ -47,6 +48,7 @@ migrateOneInDB entityName eventsField idField MetamodelMigration {..} =
 data MetamodelMigration =
   MetamodelMigration
     { entityId :: U.UUID
+    , createdAt :: UTCTime
     , oldMetamodelVersion :: Int
     , branchEvents :: Value
     , targetPackageEvents :: Value
@@ -56,6 +58,7 @@ data MetamodelMigration =
 instance FromRow MetamodelMigration where
   fromRow = do
     entityId <- field
+    createdAt <- field
     oldMetamodelVersion <- field
     branchEvents <- field
     targetPackageEvents <- field
