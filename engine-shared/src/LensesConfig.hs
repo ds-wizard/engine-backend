@@ -6,6 +6,7 @@ import Shared.Api.Resource.Package.PackageDTO
 import Shared.Api.Resource.PackageBundle.PackageBundleDTO
 import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
+import Shared.Model.Common.MapEntry
 import Shared.Model.Common.Pageable
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
@@ -36,6 +37,8 @@ import Shared.Model.Template.TemplateGroup
 -- Model
 -- -------------------------------------
 -- Model / Common
+makeFields ''MapEntry
+
 makeFields ''Pageable
 
 -- Model / Config

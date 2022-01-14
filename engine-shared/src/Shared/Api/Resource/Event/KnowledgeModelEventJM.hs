@@ -2,6 +2,7 @@ module Shared.Api.Resource.Event.KnowledgeModelEventJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.KnowledgeModel.KnowledgeModelEvent
 import Shared.Util.JSON

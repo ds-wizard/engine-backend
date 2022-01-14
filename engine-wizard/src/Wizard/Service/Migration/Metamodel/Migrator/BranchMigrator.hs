@@ -15,7 +15,7 @@ import Wizard.Service.Migration.Metamodel.Migrator.CommonDB
 
 migrateAllInDB :: AppContextM ()
 migrateAllInDB = do
-  let (entityName, idField, eventsField, eventsFieldUpdate) = ("branch", "uuid", "events", "events = ?")
+  let (entityName, idField, eventsField, eventsFieldUpdate) = ("branch_data", "branch_uuid", "events", "events = ?")
   logMigrationStarted entityName
   entities <- findOutdatedModels entityName eventsField idField
   traverse_ (migrateOneInDB entityName eventsFieldUpdate idField) entities

@@ -3,6 +3,7 @@ module Shared.Model.Event.EventLenses
   ) where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import Shared.Model.Common.Lens
@@ -259,3 +260,83 @@ instance HasEntityUuid' Event where
       set (MoveChoiceEvent' entity) newValue = MoveChoiceEvent' $ entity & entityUuid' .~ newValue
       set (MoveExpertEvent' entity) newValue = MoveExpertEvent' $ entity & entityUuid' .~ newValue
       set (MoveReferenceEvent' entity) newValue = MoveReferenceEvent' $ entity & entityUuid' .~ newValue
+
+instance HasCreatedAt' Event where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Event -> UTCTime
+      get (AddKnowledgeModelEvent' entity) = entity ^. createdAt'
+      get (EditKnowledgeModelEvent' entity) = entity ^. createdAt'
+      get (AddChapterEvent' entity) = entity ^. createdAt'
+      get (EditChapterEvent' entity) = entity ^. createdAt'
+      get (DeleteChapterEvent' entity) = entity ^. createdAt'
+      get (AddQuestionEvent' entity) = entity ^. createdAt'
+      get (EditQuestionEvent' entity) = entity ^. createdAt'
+      get (DeleteQuestionEvent' entity) = entity ^. createdAt'
+      get (AddAnswerEvent' entity) = entity ^. createdAt'
+      get (EditAnswerEvent' entity) = entity ^. createdAt'
+      get (DeleteAnswerEvent' entity) = entity ^. createdAt'
+      get (AddChoiceEvent' entity) = entity ^. createdAt'
+      get (EditChoiceEvent' entity) = entity ^. createdAt'
+      get (DeleteChoiceEvent' entity) = entity ^. createdAt'
+      get (AddExpertEvent' entity) = entity ^. createdAt'
+      get (EditExpertEvent' entity) = entity ^. createdAt'
+      get (DeleteExpertEvent' entity) = entity ^. createdAt'
+      get (AddReferenceEvent' entity) = entity ^. createdAt'
+      get (EditReferenceEvent' entity) = entity ^. createdAt'
+      get (DeleteReferenceEvent' entity) = entity ^. createdAt'
+      get (AddMetricEvent' entity) = entity ^. createdAt'
+      get (EditMetricEvent' entity) = entity ^. createdAt'
+      get (DeleteMetricEvent' entity) = entity ^. createdAt'
+      get (AddPhaseEvent' entity) = entity ^. createdAt'
+      get (EditPhaseEvent' entity) = entity ^. createdAt'
+      get (DeletePhaseEvent' entity) = entity ^. createdAt'
+      get (AddTagEvent' entity) = entity ^. createdAt'
+      get (EditTagEvent' entity) = entity ^. createdAt'
+      get (DeleteTagEvent' entity) = entity ^. createdAt'
+      get (AddIntegrationEvent' entity) = entity ^. createdAt'
+      get (EditIntegrationEvent' entity) = entity ^. createdAt'
+      get (DeleteIntegrationEvent' entity) = entity ^. createdAt'
+      get (MoveQuestionEvent' entity) = entity ^. createdAt'
+      get (MoveAnswerEvent' entity) = entity ^. createdAt'
+      get (MoveChoiceEvent' entity) = entity ^. createdAt'
+      get (MoveExpertEvent' entity) = entity ^. createdAt'
+      get (MoveReferenceEvent' entity) = entity ^. createdAt'
+      set :: Event -> UTCTime -> Event
+      set (AddKnowledgeModelEvent' entity) newValue = AddKnowledgeModelEvent' $ entity & createdAt' .~ newValue
+      set (EditKnowledgeModelEvent' entity) newValue = EditKnowledgeModelEvent' $ entity & createdAt' .~ newValue
+      set (AddChapterEvent' entity) newValue = AddChapterEvent' $ entity & createdAt' .~ newValue
+      set (EditChapterEvent' entity) newValue = EditChapterEvent' $ entity & createdAt' .~ newValue
+      set (DeleteChapterEvent' entity) newValue = DeleteChapterEvent' $ entity & createdAt' .~ newValue
+      set (AddQuestionEvent' entity) newValue = AddQuestionEvent' $ entity & createdAt' .~ newValue
+      set (EditQuestionEvent' entity) newValue = EditQuestionEvent' $ entity & createdAt' .~ newValue
+      set (DeleteQuestionEvent' entity) newValue = DeleteQuestionEvent' $ entity & createdAt' .~ newValue
+      set (AddAnswerEvent' entity) newValue = AddAnswerEvent' $ entity & createdAt' .~ newValue
+      set (EditAnswerEvent' entity) newValue = EditAnswerEvent' $ entity & createdAt' .~ newValue
+      set (DeleteAnswerEvent' entity) newValue = DeleteAnswerEvent' $ entity & createdAt' .~ newValue
+      set (AddChoiceEvent' entity) newValue = AddChoiceEvent' $ entity & createdAt' .~ newValue
+      set (EditChoiceEvent' entity) newValue = EditChoiceEvent' $ entity & createdAt' .~ newValue
+      set (DeleteChoiceEvent' entity) newValue = DeleteChoiceEvent' $ entity & createdAt' .~ newValue
+      set (AddExpertEvent' entity) newValue = AddExpertEvent' $ entity & createdAt' .~ newValue
+      set (EditExpertEvent' entity) newValue = EditExpertEvent' $ entity & createdAt' .~ newValue
+      set (DeleteExpertEvent' entity) newValue = DeleteExpertEvent' $ entity & createdAt' .~ newValue
+      set (AddReferenceEvent' entity) newValue = AddReferenceEvent' $ entity & createdAt' .~ newValue
+      set (EditReferenceEvent' entity) newValue = EditReferenceEvent' $ entity & createdAt' .~ newValue
+      set (DeleteReferenceEvent' entity) newValue = DeleteReferenceEvent' $ entity & createdAt' .~ newValue
+      set (AddMetricEvent' entity) newValue = AddMetricEvent' $ entity & createdAt' .~ newValue
+      set (EditMetricEvent' entity) newValue = EditMetricEvent' $ entity & createdAt' .~ newValue
+      set (DeleteMetricEvent' entity) newValue = DeleteMetricEvent' $ entity & createdAt' .~ newValue
+      set (AddPhaseEvent' entity) newValue = AddPhaseEvent' $ entity & createdAt' .~ newValue
+      set (EditPhaseEvent' entity) newValue = EditPhaseEvent' $ entity & createdAt' .~ newValue
+      set (DeletePhaseEvent' entity) newValue = DeletePhaseEvent' $ entity & createdAt' .~ newValue
+      set (AddTagEvent' entity) newValue = AddTagEvent' $ entity & createdAt' .~ newValue
+      set (EditTagEvent' entity) newValue = EditTagEvent' $ entity & createdAt' .~ newValue
+      set (DeleteTagEvent' entity) newValue = DeleteTagEvent' $ entity & createdAt' .~ newValue
+      set (AddIntegrationEvent' entity) newValue = AddIntegrationEvent' $ entity & createdAt' .~ newValue
+      set (EditIntegrationEvent' entity) newValue = EditIntegrationEvent' $ entity & createdAt' .~ newValue
+      set (DeleteIntegrationEvent' entity) newValue = DeleteIntegrationEvent' $ entity & createdAt' .~ newValue
+      set (MoveQuestionEvent' entity) newValue = MoveQuestionEvent' $ entity & createdAt' .~ newValue
+      set (MoveAnswerEvent' entity) newValue = MoveAnswerEvent' $ entity & createdAt' .~ newValue
+      set (MoveChoiceEvent' entity) newValue = MoveChoiceEvent' $ entity & createdAt' .~ newValue
+      set (MoveExpertEvent' entity) newValue = MoveExpertEvent' $ entity & createdAt' .~ newValue
+      set (MoveReferenceEvent' entity) newValue = MoveReferenceEvent' $ entity & createdAt' .~ newValue

@@ -15,6 +15,7 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigBranch :: ServerConfigBranch
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
@@ -67,6 +68,12 @@ data ServerConfigRegistry =
   ServerConfigRegistry
     { _serverConfigRegistryUrl :: String
     , _serverConfigRegistryClientUrl :: String
+    }
+  deriving (Generic, Show)
+
+data ServerConfigBranch =
+  ServerConfigBranch
+    { _serverConfigBranchSquash :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

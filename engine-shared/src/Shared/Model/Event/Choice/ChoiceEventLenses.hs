@@ -1,6 +1,7 @@
 module Shared.Model.Event.Choice.ChoiceEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteChoiceEvent where
       get entity = entity ^. entityUuid
       set :: DeleteChoiceEvent -> U.UUID -> DeleteChoiceEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddChoiceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddChoiceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddChoiceEvent -> UTCTime -> AddChoiceEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditChoiceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditChoiceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditChoiceEvent -> UTCTime -> EditChoiceEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteChoiceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteChoiceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteChoiceEvent -> UTCTime -> DeleteChoiceEvent
+      set entity newValue = entity & createdAt .~ newValue

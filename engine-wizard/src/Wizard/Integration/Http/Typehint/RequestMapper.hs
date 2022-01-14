@@ -8,6 +8,7 @@ import qualified Data.Map.Strict as M
 import Prelude hiding (lookup)
 
 import LensesConfig
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
@@ -17,7 +18,7 @@ toRetrieveTypehintsRequest intConfig variables =
   HttpRequest
     { _httpRequestRequestMethod = intConfig ^. requestMethod
     , _httpRequestRequestUrl = interpolateString variables (intConfig ^. requestUrl)
-    , _httpRequestRequestHeaders = interpolateMapValues variables (intConfig ^. requestHeaders)
+    , _httpRequestRequestHeaders = interpolateMapValues variables (mapEntryToMap $ intConfig ^. requestHeaders)
     , _httpRequestRequestBody = BS.pack $ interpolateString variables (intConfig ^. requestBody)
     , _httpRequestMultipartFileName = Nothing
     }

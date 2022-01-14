@@ -1,9 +1,11 @@
 module Shared.Model.Event.Question.QuestionEvent where
 
 import qualified Data.Map.Strict as M
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
@@ -23,8 +25,9 @@ data AddOptionsQuestionEvent =
     , _addOptionsQuestionEventTitle :: String
     , _addOptionsQuestionEventText :: Maybe String
     , _addOptionsQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addOptionsQuestionEventAnnotations :: M.Map String String
+    , _addOptionsQuestionEventAnnotations :: [MapEntry String String]
     , _addOptionsQuestionEventTagUuids :: [U.UUID]
+    , _addOptionsQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -36,8 +39,9 @@ data AddMultiChoiceQuestionEvent =
     , _addMultiChoiceQuestionEventTitle :: String
     , _addMultiChoiceQuestionEventText :: Maybe String
     , _addMultiChoiceQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addMultiChoiceQuestionEventAnnotations :: M.Map String String
+    , _addMultiChoiceQuestionEventAnnotations :: [MapEntry String String]
     , _addMultiChoiceQuestionEventTagUuids :: [U.UUID]
+    , _addMultiChoiceQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -49,8 +53,9 @@ data AddListQuestionEvent =
     , _addListQuestionEventTitle :: String
     , _addListQuestionEventText :: Maybe String
     , _addListQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addListQuestionEventAnnotations :: M.Map String String
+    , _addListQuestionEventAnnotations :: [MapEntry String String]
     , _addListQuestionEventTagUuids :: [U.UUID]
+    , _addListQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -62,9 +67,10 @@ data AddValueQuestionEvent =
     , _addValueQuestionEventTitle :: String
     , _addValueQuestionEventText :: Maybe String
     , _addValueQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addValueQuestionEventAnnotations :: M.Map String String
+    , _addValueQuestionEventAnnotations :: [MapEntry String String]
     , _addValueQuestionEventTagUuids :: [U.UUID]
     , _addValueQuestionEventValueType :: QuestionValueType
+    , _addValueQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -76,10 +82,11 @@ data AddIntegrationQuestionEvent =
     , _addIntegrationQuestionEventTitle :: String
     , _addIntegrationQuestionEventText :: Maybe String
     , _addIntegrationQuestionEventRequiredPhaseUuid :: Maybe U.UUID
-    , _addIntegrationQuestionEventAnnotations :: M.Map String String
+    , _addIntegrationQuestionEventAnnotations :: [MapEntry String String]
     , _addIntegrationQuestionEventTagUuids :: [U.UUID]
     , _addIntegrationQuestionEventIntegrationUuid :: U.UUID
     , _addIntegrationQuestionEventProps :: M.Map String String
+    , _addIntegrationQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -100,11 +107,12 @@ data EditOptionsQuestionEvent =
     , _editOptionsQuestionEventTitle :: EventField String
     , _editOptionsQuestionEventText :: EventField (Maybe String)
     , _editOptionsQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editOptionsQuestionEventAnnotations :: EventField (M.Map String String)
+    , _editOptionsQuestionEventAnnotations :: EventField [MapEntry String String]
     , _editOptionsQuestionEventTagUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventExpertUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editOptionsQuestionEventAnswerUuids :: EventField [U.UUID]
+    , _editOptionsQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -116,11 +124,12 @@ data EditMultiChoiceQuestionEvent =
     , _editMultiChoiceQuestionEventTitle :: EventField String
     , _editMultiChoiceQuestionEventText :: EventField (Maybe String)
     , _editMultiChoiceQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editMultiChoiceQuestionEventAnnotations :: EventField (M.Map String String)
+    , _editMultiChoiceQuestionEventAnnotations :: EventField [MapEntry String String]
     , _editMultiChoiceQuestionEventTagUuids :: EventField [U.UUID]
     , _editMultiChoiceQuestionEventExpertUuids :: EventField [U.UUID]
     , _editMultiChoiceQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editMultiChoiceQuestionEventChoiceUuids :: EventField [U.UUID]
+    , _editMultiChoiceQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -132,11 +141,12 @@ data EditListQuestionEvent =
     , _editListQuestionEventTitle :: EventField String
     , _editListQuestionEventText :: EventField (Maybe String)
     , _editListQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editListQuestionEventAnnotations :: EventField (M.Map String String)
+    , _editListQuestionEventAnnotations :: EventField [MapEntry String String]
     , _editListQuestionEventTagUuids :: EventField [U.UUID]
     , _editListQuestionEventExpertUuids :: EventField [U.UUID]
     , _editListQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editListQuestionEventItemTemplateQuestionUuids :: EventField [U.UUID]
+    , _editListQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -148,11 +158,12 @@ data EditValueQuestionEvent =
     , _editValueQuestionEventTitle :: EventField String
     , _editValueQuestionEventText :: EventField (Maybe String)
     , _editValueQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editValueQuestionEventAnnotations :: EventField (M.Map String String)
+    , _editValueQuestionEventAnnotations :: EventField [MapEntry String String]
     , _editValueQuestionEventTagUuids :: EventField [U.UUID]
     , _editValueQuestionEventExpertUuids :: EventField [U.UUID]
     , _editValueQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editValueQuestionEventValueType :: EventField QuestionValueType
+    , _editValueQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -164,12 +175,13 @@ data EditIntegrationQuestionEvent =
     , _editIntegrationQuestionEventTitle :: EventField String
     , _editIntegrationQuestionEventText :: EventField (Maybe String)
     , _editIntegrationQuestionEventRequiredPhaseUuid :: EventField (Maybe U.UUID)
-    , _editIntegrationQuestionEventAnnotations :: EventField (M.Map String String)
+    , _editIntegrationQuestionEventAnnotations :: EventField [MapEntry String String]
     , _editIntegrationQuestionEventTagUuids :: EventField [U.UUID]
     , _editIntegrationQuestionEventExpertUuids :: EventField [U.UUID]
     , _editIntegrationQuestionEventReferenceUuids :: EventField [U.UUID]
     , _editIntegrationQuestionEventIntegrationUuid :: EventField U.UUID
     , _editIntegrationQuestionEventProps :: EventField (M.Map String String)
+    , _editIntegrationQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -179,5 +191,6 @@ data DeleteQuestionEvent =
     { _deleteQuestionEventUuid :: U.UUID
     , _deleteQuestionEventParentUuid :: U.UUID
     , _deleteQuestionEventEntityUuid :: U.UUID
+    , _deleteQuestionEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

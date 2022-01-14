@@ -42,6 +42,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Model.Common.Lens
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 
 -- -------------------------
@@ -295,16 +296,16 @@ requiredPhaseUuid' convert entity = fmap (set entity) (convert . get $ entity)
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredPhaseUuid .~ newValue
 
 ------------------------------------------------------------------------------------------
-annotations' :: Functor f => (M.Map String String -> f (M.Map String String)) -> Question -> f Question
+annotations' :: Functor f => ([MapEntry String String] -> f [MapEntry String String]) -> Question -> f Question
 annotations' convert entity = fmap (set entity) (convert . get $ entity)
   where
-    get :: Question -> M.Map String String
+    get :: Question -> [MapEntry String String]
     get (OptionsQuestion' q) = q ^. annotations
     get (MultiChoiceQuestion' q) = q ^. annotations
     get (ListQuestion' q) = q ^. annotations
     get (ValueQuestion' q) = q ^. annotations
     get (IntegrationQuestion' q) = q ^. annotations
-    set :: Question -> M.Map String String -> Question
+    set :: Question -> [MapEntry String String] -> Question
     set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & annotations .~ newValue
     set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & annotations .~ newValue
     set (ListQuestion' q) newValue = ListQuestion' $ q & annotations .~ newValue

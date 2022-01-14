@@ -5,6 +5,7 @@ import Control.Monad (guard)
 import qualified Data.List as L
 import qualified Data.Map.Strict as M
 import Data.Maybe (fromMaybe)
+import Data.Time
 import qualified Data.UUID as U
 import Prelude hiding (id)
 import qualified Prelude
@@ -20,8 +21,8 @@ import Shared.Util.List (tailSafe)
 import Shared.Util.String (replace)
 import Wizard.Model.Questionnaire.QuestionnaireReply
 
-sanitizeReplies :: KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
-sanitizeReplies oldKm newKm replies = sanitizeRepliesWithEvents newKm replies (generateEvents oldKm newKm)
+sanitizeReplies :: UTCTime -> KnowledgeModel -> KnowledgeModel -> [ReplyTuple] -> [ReplyTuple]
+sanitizeReplies now oldKm newKm replies = sanitizeRepliesWithEvents newKm replies (generateEvents now oldKm newKm)
 
 -- --------------------------------
 -- PRIVATE
@@ -29,16 +30,16 @@ sanitizeReplies oldKm newKm replies = sanitizeRepliesWithEvents newKm replies (g
 sanitizeRepliesWithEvents :: KnowledgeModel -> [ReplyTuple] -> [Event] -> [ReplyTuple]
 sanitizeRepliesWithEvents km = foldl (processReplies km)
 
-generateEvents :: KnowledgeModel -> KnowledgeModel -> [Event]
-generateEvents oldKm newKm = moveQuestionEvents ++ moveAnswerEvents
+generateEvents :: UTCTime -> KnowledgeModel -> KnowledgeModel -> [Event]
+generateEvents now oldKm newKm = moveQuestionEvents ++ moveAnswerEvents
   where
-    moveQuestionEvents = foldl (generateQuestionMoveEvent oldParentMap newParentMap) [] (newKm ^. questionsL)
-    moveAnswerEvents = foldl (generateAnswerMoveEvents oldParentMap newParentMap) [] (newKm ^. answersL)
+    moveQuestionEvents = foldl (generateQuestionMoveEvent now oldParentMap newParentMap) [] (newKm ^. questionsL)
+    moveAnswerEvents = foldl (generateAnswerMoveEvents now oldParentMap newParentMap) [] (newKm ^. answersL)
     oldParentMap = makeParentMap oldKm
     newParentMap = makeParentMap newKm
 
-generateQuestionMoveEvent :: KMParentMap -> KMParentMap -> [Event] -> Question -> [Event]
-generateQuestionMoveEvent oldParentMap newParentMap events entity =
+generateQuestionMoveEvent :: UTCTime -> KMParentMap -> KMParentMap -> [Event] -> Question -> [Event]
+generateQuestionMoveEvent now oldParentMap newParentMap events entity =
   fromMaybe events $ do
     oldParentUuid <- M.lookup (entity ^. uuid') oldParentMap
     newParentUuid <- M.lookup (entity ^. uuid') newParentMap
@@ -50,11 +51,12 @@ generateQuestionMoveEvent oldParentMap newParentMap events entity =
               , _moveQuestionEventParentUuid = oldParentUuid
               , _moveQuestionEventEntityUuid = entity ^. uuid'
               , _moveQuestionEventTargetUuid = newParentUuid
+              , _moveQuestionEventCreatedAt = now
               }
     return $ events ++ [event]
 
-generateAnswerMoveEvents :: KMParentMap -> KMParentMap -> [Event] -> Answer -> [Event]
-generateAnswerMoveEvents oldParentMap newParentMap events entity =
+generateAnswerMoveEvents :: UTCTime -> KMParentMap -> KMParentMap -> [Event] -> Answer -> [Event]
+generateAnswerMoveEvents now oldParentMap newParentMap events entity =
   fromMaybe events $ do
     oldParentUuid <- M.lookup (entity ^. uuid') oldParentMap
     newParentUuid <- M.lookup (entity ^. uuid') newParentMap
@@ -66,6 +68,7 @@ generateAnswerMoveEvents oldParentMap newParentMap events entity =
               , _moveAnswerEventParentUuid = oldParentUuid
               , _moveAnswerEventEntityUuid = entity ^. uuid'
               , _moveAnswerEventTargetUuid = newParentUuid
+              , _moveAnswerEventCreatedAt = now
               }
     return $ events ++ [event]
 

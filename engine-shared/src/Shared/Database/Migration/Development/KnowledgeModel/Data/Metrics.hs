@@ -1,9 +1,9 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.Metrics where
 
 import Control.Lens ((^.))
-import qualified Data.Map.Strict as M
 
 import LensesConfig
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Uuid
 
@@ -16,7 +16,7 @@ metricF =
     , _metricDescription =
         Just
           "The Findability metric describes how easily data can be located. The score associated with an answer will be higher if it makes it easier for humans or for computers to locate your data set, e.g. if it ends up in an index or has a unique resolvable identifier."
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 metricFEdited :: Metric
@@ -27,7 +27,7 @@ metricFEdited =
     , _metricDescription =
         Just
           "EDITED: The Findability metric describes how easily data can be located. The score associated with an answer will be higher if it makes it easier for humans or for computers to locate your data set, e.g. if it ends up in an index or has a unique resolvable identifier."
-    , _metricAnnotations = M.fromList [("newAnnotation", "someValue")]
+    , _metricAnnotations = [MapEntry "newAnnotation" "someValue"]
     }
 
 metricA :: Metric
@@ -39,7 +39,7 @@ metricA =
     , _metricDescription =
         Just
           "The Accessibility metric describes how well the access to the database is described and how easy it is to implement. The score associated with an answer will be higher if it makes it easier for humans and computers to get to the data. This is determined by e.g. the protocol for accessing the data or for authenticating users, and also by the guaranteed longevity of the repository. Note that this is different from the Openness metric!"
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 metricI :: Metric
@@ -51,7 +51,7 @@ metricI =
     , _metricDescription =
         Just
           "The Interoperability metric describes how well the data interoperates with other data. The score associated with an answer will be higher if it makes it easier for humans and computers to couple the data with other data and 'understand' relationships. This is influenced by the use of standard ontologies for different fields and proper descriptions of the relations. It is also influenced by proper standard metadata that is agreed by the community."
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 metricR :: Metric
@@ -63,7 +63,7 @@ metricR =
     , _metricDescription =
         Just
           "The Reusability metric describes how well the data is suitable for reuse in other context. The score associated with an answer will be higher if it makes it easier for humans and computers to reuse the data. This is influenced largely by proper description of how the data was obtained, and also by the conditions that are put on the reuse (license and, for personally identifying information, consent)."
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 metricG :: Metric
@@ -75,7 +75,7 @@ metricG =
     , _metricDescription =
         Just
           "The Good DMP Practice metric describes how appreciated a process is among Data Stewards. A score associated with an answer will be high if a practice would be considered preferable over alternatives, generally a good idea."
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 metricO :: Metric
@@ -87,7 +87,7 @@ metricO =
     , _metricDescription =
         Just
           "The Openness metric describes how Open the data are available. Note that this is different from the Accessibility metric. A score associated with an answer will be high if the data will be as open as possible, and low if voluntary restrictions apply to access and re-use."
-    , _metricAnnotations = M.empty
+    , _metricAnnotations = []
     }
 
 mm1 :: MetricMeasure

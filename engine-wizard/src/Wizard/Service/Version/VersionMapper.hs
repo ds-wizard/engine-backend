@@ -1,6 +1,6 @@
 module Wizard.Service.Version.VersionMapper where
 
-import Control.Lens ((&), (.~), (?~), (^.))
+import Control.Lens ((^.))
 import Data.Time
 
 import LensesConfig
@@ -12,11 +12,8 @@ import Wizard.Api.Resource.Version.VersionDTO
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Config.AppConfig
 
-fromBranch :: BranchWithEvents -> PackageWithEvents -> BranchWithEvents
-fromBranch branch pkg = (branch & events .~ []) & previousPackageId ?~ (pkg ^. pId)
-
 fromPackage ::
-     BranchWithEvents
+     Branch
   -> VersionDTO
   -> Maybe String
   -> Maybe String

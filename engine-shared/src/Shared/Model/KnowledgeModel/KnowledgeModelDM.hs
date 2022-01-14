@@ -8,7 +8,7 @@ defaultKnowledgeModel :: KnowledgeModel
 defaultKnowledgeModel =
   KnowledgeModel
     { _knowledgeModelUuid = U.nil
-    , _knowledgeModelAnnotations = M.empty
+    , _knowledgeModelAnnotations = []
     , _knowledgeModelChapterUuids = []
     , _knowledgeModelTagUuids = []
     , _knowledgeModelIntegrationUuids = []

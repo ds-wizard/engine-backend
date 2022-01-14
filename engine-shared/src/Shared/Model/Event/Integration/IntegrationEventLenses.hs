@@ -1,6 +1,7 @@
 module Shared.Model.Event.Integration.IntegrationEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteIntegrationEvent where
       get entity = entity ^. entityUuid
       set :: DeleteIntegrationEvent -> U.UUID -> DeleteIntegrationEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddIntegrationEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddIntegrationEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddIntegrationEvent -> UTCTime -> AddIntegrationEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditIntegrationEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditIntegrationEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditIntegrationEvent -> UTCTime -> EditIntegrationEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteIntegrationEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteIntegrationEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteIntegrationEvent -> UTCTime -> DeleteIntegrationEvent
+      set entity newValue = entity & createdAt .~ newValue

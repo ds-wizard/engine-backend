@@ -67,8 +67,8 @@ test_200 appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranch ^. uuid)
-         (amsterdamBranch ^. createdAt)
+         (amsterdamBranchDto ^. uuid)
+         (amsterdamBranchDto ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
@@ -114,8 +114,8 @@ test_400_not_valid_kmId appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranch ^. uuid)
-         (amsterdamBranch ^. createdAt)
+         (amsterdamBranchDto ^. uuid)
+         (amsterdamBranchDto ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
@@ -128,9 +128,9 @@ test_400_not_valid_kmId appContext =
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfBranchInDB
       appContext
-      amsterdamBranch
-      (amsterdamBranch ^. previousPackageId)
-      (amsterdamBranch ^. previousPackageId)
+      amsterdamBranchDto
+      (amsterdamBranchDto ^. previousPackageId)
+      (amsterdamBranchDto ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------
@@ -150,8 +150,8 @@ test_400_already_taken_kmId appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranch ^. uuid)
-         (amsterdamBranch ^. createdAt)
+         (amsterdamBranchDto ^. uuid)
+         (amsterdamBranchDto ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext
@@ -171,9 +171,9 @@ test_400_already_taken_kmId appContext =
      -- AND: Find result in DB and compare with expectation state
     assertExistenceOfBranchInDB
       appContext
-      amsterdamBranch
-      (amsterdamBranch ^. previousPackageId)
-      (amsterdamBranch ^. previousPackageId)
+      amsterdamBranchDto
+      (amsterdamBranchDto ^. previousPackageId)
+      (amsterdamBranchDto ^. previousPackageId)
       (Just $ userAlbert ^. uuid)
 
 -- ----------------------------------------------------

@@ -297,7 +297,7 @@ findQuestionnaireById' qtnUuid = do
 findQuestionnaireSimpleById :: String -> AppContextM QuestionnaireSimple
 findQuestionnaireSimpleById uuid = do
   appUuid <- asks _appContextAppUuid
-  createFindEntityWithFieldsByFn "uuid, name" entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityWithFieldsByFn "uuid, name" False entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 findQuestionnaireSimpleById' :: String -> AppContextM (Maybe QuestionnaireSimple)
 findQuestionnaireSimpleById' uuid = do
@@ -325,7 +325,8 @@ findQuestionnaireForSquashing = do
   return . concat $ entities
 
 findQuestionnaireSquashById :: String -> AppContextM QuestionnaireSquash
-findQuestionnaireSquashById uuid = createFindEntityWithFieldsByFn "uuid, events, versions" entityName [("uuid", uuid)]
+findQuestionnaireSquashById uuid =
+  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", uuid)]
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = createCountFn entityName

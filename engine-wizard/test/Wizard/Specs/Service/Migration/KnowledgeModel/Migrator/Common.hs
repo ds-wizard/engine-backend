@@ -8,6 +8,7 @@ import LensesConfig
 import Shared.Constant.KnowledgeModel
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Util.Date
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 
@@ -24,4 +25,5 @@ createTestMigratorStateWithEvents branchEvents targetPackageEvents mKm =
     , _migratorStateResultEvents = []
     , _migratorStateCurrentKnowledgeModel = mKm
     , _migratorStateAppUuid = defaultApp ^. uuid
+    , _migratorStateCreatedAt = dt'' 2018 1 1 1
     }

@@ -1,6 +1,7 @@
 module Wizard.Database.Migration.Development.Branch.Data.Branches where
 
 import Control.Lens ((^.))
+import Data.Either (rights)
 import Data.Maybe (fromJust)
 import Data.Time
 
@@ -9,6 +10,8 @@ import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
+import Shared.Model.KnowledgeModel.KnowledgeModel
+import qualified Shared.Service.Package.PackageMapper as SPM
 import Shared.Util.Uuid
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
@@ -18,10 +21,13 @@ import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchState
+import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import qualified Wizard.Service.Package.PackageMapper as PM
 
-amsterdamBranch :: BranchDTO
-amsterdamBranch =
+amsterdamBranchDto :: BranchDTO
+amsterdamBranchDto =
   BranchDTO
     { _branchDTOUuid = u' "6474b24b-262b-42b1-9451-008e8363f2b6"
     , _branchDTOName = amsterdamPackage ^. name
@@ -34,16 +40,25 @@ amsterdamBranch =
     , _branchDTOUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
-amsterdamBranchWithEvents :: BranchWithEvents
-amsterdamBranchWithEvents =
-  BranchWithEvents
-    { _branchWithEventsUuid = amsterdamBranch ^. uuid
-    , _branchWithEventsName = amsterdamBranch ^. name
-    , _branchWithEventsKmId = amsterdamBranch ^. kmId
-    , _branchWithEventsMetamodelVersion = kmMetamodelVersion
-    , _branchWithEventsPreviousPackageId = amsterdamBranch ^. previousPackageId
-    , _branchWithEventsOwnerUuid = amsterdamBranch ^. ownerUuid
-    , _branchWithEventsEvents =
+amsterdamBranch :: Branch
+amsterdamBranch =
+  Branch
+    { _branchUuid = amsterdamBranchDto ^. uuid
+    , _branchName = amsterdamBranchDto ^. name
+    , _branchKmId = amsterdamBranchDto ^. kmId
+    , _branchPreviousPackageId = amsterdamBranchDto ^. previousPackageId
+    , _branchOwnerUuid = amsterdamBranchDto ^. ownerUuid
+    , _branchAppUuid = defaultApp ^. uuid
+    , _branchCreatedAt = amsterdamBranchDto ^. createdAt
+    , _branchUpdatedAt = amsterdamBranchDto ^. updatedAt
+    }
+
+amsterdamBranchData :: BranchData
+amsterdamBranchData =
+  BranchData
+    { _branchDataBranchUuid = amsterdamBranchDto ^. uuid
+    , _branchDataMetamodelVersion = kmMetamodelVersion
+    , _branchDataEvents =
         [ AddQuestionEvent' a_km1_ch1_q1'
         , AddQuestionEvent' a_km1_ch1_q2'
         , AddAnswerEvent' a_km1_ch1_q2_aNo1
@@ -63,40 +78,43 @@ amsterdamBranchWithEvents =
         , AddAnswerEvent' a_km1_ch2_q3_aNo2
         , AddAnswerEvent' a_km1_ch2_q3_aYes2
         ]
-    , _branchWithEventsAppUuid = defaultApp ^. uuid
-    , _branchWithEventsCreatedAt = amsterdamBranch ^. createdAt
-    , _branchWithEventsUpdatedAt = amsterdamBranch ^. updatedAt
+    , _branchDataAppUuid = defaultApp ^. uuid
+    , _branchDataCreatedAt = amsterdamBranchDto ^. createdAt
+    , _branchDataUpdatedAt = amsterdamBranchDto ^. updatedAt
     }
 
 amsterdamBranchCreate :: BranchCreateDTO
 amsterdamBranchCreate =
   BranchCreateDTO
-    { _branchCreateDTOName = amsterdamBranch ^. name
-    , _branchCreateDTOKmId = amsterdamBranch ^. kmId
-    , _branchCreateDTOPreviousPackageId = amsterdamBranch ^. previousPackageId
+    { _branchCreateDTOName = amsterdamBranchDto ^. name
+    , _branchCreateDTOKmId = amsterdamBranchDto ^. kmId
+    , _branchCreateDTOPreviousPackageId = amsterdamBranchDto ^. previousPackageId
     }
 
 amsterdamBranchChange :: BranchChangeDTO
 amsterdamBranchChange =
   BranchChangeDTO
-    { _branchChangeDTOName = "EDITED: " ++ amsterdamBranch ^. name
-    , _branchChangeDTOKmId = amsterdamBranch ^. kmId
-    , _branchChangeDTOEvents = []
-    }
+    {_branchChangeDTOName = "EDITED: " ++ amsterdamBranchDto ^. name, _branchChangeDTOKmId = amsterdamBranchDto ^. kmId}
+
+amsterdamBranchKnowledgeModel :: KnowledgeModel
+amsterdamBranchKnowledgeModel =
+  head . rights $ [compile Nothing ((globalPackage ^. events) ++ (netherlandsPackage ^. events))]
 
 amsterdamBranchDetail :: BranchDetailDTO
 amsterdamBranchDetail =
   BranchDetailDTO
-    { _branchDetailDTOUuid = amsterdamBranch ^. uuid
-    , _branchDetailDTOName = amsterdamBranch ^. name
-    , _branchDetailDTOKmId = amsterdamBranch ^. kmId
+    { _branchDetailDTOUuid = amsterdamBranchDto ^. uuid
+    , _branchDetailDTOName = amsterdamBranchDto ^. name
+    , _branchDetailDTOKmId = amsterdamBranchDto ^. kmId
     , _branchDetailDTOState = BSEdited
-    , _branchDetailDTOPreviousPackageId = amsterdamBranch ^. previousPackageId
-    , _branchDetailDTOForkOfPackageId = amsterdamBranch ^. forkOfPackageId
-    , _branchDetailDTOOwnerUuid = amsterdamBranch ^. ownerUuid
-    , _branchDetailDTOEvents = amsterdamBranchWithEvents ^. events
-    , _branchDetailDTOCreatedAt = amsterdamBranch ^. createdAt
-    , _branchDetailDTOUpdatedAt = amsterdamBranch ^. updatedAt
+    , _branchDetailDTOPreviousPackageId = amsterdamBranchDto ^. previousPackageId
+    , _branchDetailDTOForkOfPackageId = amsterdamBranchDto ^. forkOfPackageId
+    , _branchDetailDTOForkOfPackage = Just . PM.toSimpleDTO . SPM.toPackage $ netherlandsPackage
+    , _branchDetailDTOOwnerUuid = amsterdamBranchDto ^. ownerUuid
+    , _branchDetailDTOEvents = amsterdamBranchData ^. events
+    , _branchDetailDTOKnowledgeModel = amsterdamBranchKnowledgeModel
+    , _branchDetailDTOCreatedAt = amsterdamBranchDto ^. createdAt
+    , _branchDetailDTOUpdatedAt = amsterdamBranchDto ^. updatedAt
     }
 
 leidenBranch :: BranchDTO
@@ -121,17 +139,26 @@ leidenBranchCreate =
     , _branchCreateDTOPreviousPackageId = leidenBranch ^. previousPackageId
     }
 
-differentBranch :: BranchWithEvents
+differentBranch :: Branch
 differentBranch =
-  BranchWithEvents
-    { _branchWithEventsUuid = u' "fc49b6a5-51ae-4442-82e8-c3bf216545ec"
-    , _branchWithEventsName = "Branch Events"
-    , _branchWithEventsKmId = "my-km"
-    , _branchWithEventsMetamodelVersion = kmMetamodelVersion
-    , _branchWithEventsPreviousPackageId = Just $ differentPackage ^. pId
-    , _branchWithEventsEvents = []
-    , _branchWithEventsOwnerUuid = Just $ userCharles ^. uuid
-    , _branchWithEventsAppUuid = differentApp ^. uuid
-    , _branchWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
-    , _branchWithEventsUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+  Branch
+    { _branchUuid = u' "fc49b6a5-51ae-4442-82e8-c3bf216545ec"
+    , _branchName = "Branch Events"
+    , _branchKmId = "my-km"
+    , _branchPreviousPackageId = Just $ differentPackage ^. pId
+    , _branchOwnerUuid = Just $ userCharles ^. uuid
+    , _branchAppUuid = differentApp ^. uuid
+    , _branchCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    , _branchUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    }
+
+differentBranchData :: BranchData
+differentBranchData =
+  BranchData
+    { _branchDataBranchUuid = differentBranch ^. uuid
+    , _branchDataMetamodelVersion = kmMetamodelVersion
+    , _branchDataEvents = []
+    , _branchDataAppUuid = differentApp ^. uuid
+    , _branchDataCreatedAt = differentBranch ^. createdAt
+    , _branchDataUpdatedAt = differentBranch ^. updatedAt
     }

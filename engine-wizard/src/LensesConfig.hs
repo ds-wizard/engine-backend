@@ -45,6 +45,7 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
+import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -102,6 +103,7 @@ import Wizard.Model.Admin.Admin
 import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.ServerConfig
@@ -162,7 +164,7 @@ makeFields ''BookReference
 -- Model / Branch
 makeFields ''Branch
 
-makeFields ''BranchWithEvents
+makeFields ''BranchData
 
 -- Model / Cache
 makeFields ''ServerCache
@@ -252,6 +254,8 @@ makeFields ''ServerConfigMail
 makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
+
+makeFields ''ServerConfigBranch
 
 makeFields ''ServerConfigDocument
 
@@ -560,6 +564,10 @@ makeFields ''BranchCreateDTO
 makeFields ''BranchDTO
 
 makeFields ''BranchDetailDTO
+
+makeFields ''BranchEventDTO
+
+makeFields ''AddBranchEventDTO
 
 -- Api / Resource / Config
 makeFields ''AppConfigChangeDTO

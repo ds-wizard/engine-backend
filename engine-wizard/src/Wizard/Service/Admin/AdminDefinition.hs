@@ -8,6 +8,7 @@ import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Model.Admin.Admin
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppService
+import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
 import Wizard.Service.Config.AppConfigService
@@ -25,7 +26,7 @@ app =
 app_createApp :: AdminOperation
 app_createApp =
   AdminOperation
-    { _adminOperationName = "createApp"
+    { _adminOperationName = "Create an application"
     , _adminOperationDescription = Nothing
     , _adminOperationParameters =
         [ AdminOperationParameter
@@ -61,6 +62,47 @@ app_createAppFn reqDto = do
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
+-- BRANCH
+-- ---------------------------------------------------------------------------------------------------------------------
+branch :: AdminSection
+branch =
+  AdminSection
+    { _adminSectionName = "Branch"
+    , _adminSectionDescription = Nothing
+    , _adminSectionOperations = [branch_squashAllEvents, branch_squashEventsForBranch]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+branch_squashAllEvents :: AdminOperation
+branch_squashAllEvents =
+  AdminOperation
+    {_adminOperationName = "Squash All Events", _adminOperationDescription = Nothing, _adminOperationParameters = []}
+
+branch_squashAllEventsFn :: AdminExecutionDTO -> AppContextM String
+branch_squashAllEventsFn reqDto = do
+  squashEvents
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+branch_squashEventsForBranch :: AdminOperation
+branch_squashEventsForBranch =
+  AdminOperation
+    { _adminOperationName = "Squash Events for Branch"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters =
+        [ AdminOperationParameter
+            { _adminOperationParameterName = "branchUuid"
+            , _adminOperationParameterAType = StringAdminOperationParameterType
+            }
+        ]
+    }
+
+branch_squashEventsForBranchFn :: AdminExecutionDTO -> AppContextM String
+branch_squashEventsForBranchFn reqDto = do
+  squashEventsForBranch (head (reqDto ^. parameters))
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
 -- CACHE
 -- ---------------------------------------------------------------------------------------------------------------------
 cache :: AdminSection
@@ -75,7 +117,7 @@ cache =
 cache_purgeCache :: AdminOperation
 cache_purgeCache =
   AdminOperation
-    {_adminOperationName = "purgeCache", _adminOperationDescription = Nothing, _adminOperationParameters = []}
+    {_adminOperationName = "Purge All Caches", _adminOperationDescription = Nothing, _adminOperationParameters = []}
 
 cache_purgeCacheFn :: AdminExecutionDTO -> AppContextM String
 cache_purgeCacheFn reqDto = do
@@ -86,7 +128,7 @@ cache_purgeCacheFn reqDto = do
 cache_KnowledgeModelCache_deleteFromCache' :: AdminOperation
 cache_KnowledgeModelCache_deleteFromCache' =
   AdminOperation
-    { _adminOperationName = "KnowledgeModelCache.deleteFromCache'"
+    { _adminOperationName = "Purge Knowledge Model Cache"
     , _adminOperationDescription = Nothing
     , _adminOperationParameters =
         [ AdminOperationParameter
@@ -114,7 +156,7 @@ config =
 config_switchClientCustomizationOn :: AdminOperation
 config_switchClientCustomizationOn =
   AdminOperation
-    { _adminOperationName = "switchClientCustomizationOn"
+    { _adminOperationName = "Enable Client Customization in Settings"
     , _adminOperationDescription = Nothing
     , _adminOperationParameters = []
     }
@@ -128,7 +170,7 @@ config_switchClientCustomizationOnFn reqDto = do
 config_switchClientCustomizationOff :: AdminOperation
 config_switchClientCustomizationOff =
   AdminOperation
-    { _adminOperationName = "switchClientCustomizationOff"
+    { _adminOperationName = "Disable Client Customization in Settings"
     , _adminOperationDescription = Nothing
     , _adminOperationParameters = []
     }
@@ -153,7 +195,10 @@ feedback =
 feedback_synchronizeFeedbacks :: AdminOperation
 feedback_synchronizeFeedbacks =
   AdminOperation
-    {_adminOperationName = "synchronizeFeedbacks", _adminOperationDescription = Nothing, _adminOperationParameters = []}
+    { _adminOperationName = "Synchronize Feedbacks"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters = []
+    }
 
 feedback_synchronizeFeedbacksFn :: AdminExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do

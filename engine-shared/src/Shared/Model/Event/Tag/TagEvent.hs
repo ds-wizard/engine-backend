@@ -1,9 +1,10 @@
 module Shared.Model.Event.Tag.TagEvent where
 
-import qualified Data.Map.Strict as M
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
 data AddTagEvent =
@@ -14,7 +15,8 @@ data AddTagEvent =
     , _addTagEventName :: String
     , _addTagEventDescription :: Maybe String
     , _addTagEventColor :: String
-    , _addTagEventAnnotations :: M.Map String String
+    , _addTagEventAnnotations :: [MapEntry String String]
+    , _addTagEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -26,7 +28,8 @@ data EditTagEvent =
     , _editTagEventName :: EventField String
     , _editTagEventDescription :: EventField (Maybe String)
     , _editTagEventColor :: EventField String
-    , _editTagEventAnnotations :: EventField (M.Map String String)
+    , _editTagEventAnnotations :: EventField [MapEntry String String]
+    , _editTagEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -35,5 +38,6 @@ data DeleteTagEvent =
     { _deleteTagEventUuid :: U.UUID
     , _deleteTagEventParentUuid :: U.UUID
     , _deleteTagEventEntityUuid :: U.UUID
+    , _deleteTagEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

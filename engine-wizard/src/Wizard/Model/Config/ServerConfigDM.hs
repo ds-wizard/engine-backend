@@ -16,6 +16,7 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigBranch = defaultBranch
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigQuestionnaire = defaultQuestionnaire
@@ -91,6 +92,13 @@ defaultRegistry =
     { _serverConfigRegistryUrl = "https://api.registry.ds-wizard.org"
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
     }
+
+defaultBranch :: ServerConfigBranch
+defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSquash}
+
+defaultBranchSquash :: ServerConfigCronWorker
+defaultBranchSquash =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
 
 defaultDocument :: ServerConfigDocument
 defaultDocument = ServerConfigDocument {_serverConfigDocumentClean = defaultDocumentClean}

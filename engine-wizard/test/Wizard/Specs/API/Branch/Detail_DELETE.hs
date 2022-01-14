@@ -56,8 +56,8 @@ test_204 appContext =
      -- AND: Run migrations
     runInContextIO
       (createBranchWithParams
-         (amsterdamBranch ^. uuid)
-         (amsterdamBranch ^. createdAt)
+         (amsterdamBranchDto ^. uuid)
+         (amsterdamBranchDto ^. createdAt)
          (fromJust $ appContext ^. currentUser)
          amsterdamBranchCreate)
       appContext

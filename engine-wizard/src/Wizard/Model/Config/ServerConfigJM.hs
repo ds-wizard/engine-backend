@@ -24,6 +24,7 @@ instance FromJSON ServerConfig where
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigBranch <- o .:? "branch" .!= defaultBranch
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
@@ -79,6 +80,12 @@ instance FromJSON ServerConfigRegistry where
     _serverConfigRegistryUrl <- o .:? "url" .!= (defaultRegistry ^. url)
     _serverConfigRegistryClientUrl <- o .:? "clientUrl" .!= (defaultRegistry ^. clientUrl)
     return ServerConfigRegistry {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigBranch where
+  parseJSON (Object o) = do
+    _serverConfigBranchSquash <- o .:? "squash" .!= (defaultBranch ^. squash)
+    return ServerConfigBranch {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigDocument where

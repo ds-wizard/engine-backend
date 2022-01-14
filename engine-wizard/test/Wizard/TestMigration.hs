@@ -6,6 +6,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Document.DocumentQueueDAO
@@ -86,6 +87,7 @@ resetDB appContext = do
   runInContext QTN_MigratorDAO.deleteMigratorStates appContext
   runInContext deleteFeedbacks appContext
   runInContext deleteActionKeys appContext
+  runInContext deleteBranchDatas appContext
   runInContext deleteBranches appContext
   runInContext deleteDocumentQueues appContext
   runInContext deleteDocuments appContext

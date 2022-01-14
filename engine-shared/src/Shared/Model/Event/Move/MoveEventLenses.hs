@@ -1,6 +1,7 @@
 module Shared.Model.Event.Move.MoveEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -130,3 +131,45 @@ instance HasEntityUuid' MoveReferenceEvent where
       get entity = entity ^. entityUuid
       set :: MoveReferenceEvent -> U.UUID -> MoveReferenceEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' MoveQuestionEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveQuestionEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: MoveQuestionEvent -> UTCTime -> MoveQuestionEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' MoveAnswerEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveAnswerEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: MoveAnswerEvent -> UTCTime -> MoveAnswerEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' MoveChoiceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveChoiceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: MoveChoiceEvent -> UTCTime -> MoveChoiceEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' MoveExpertEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveExpertEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: MoveExpertEvent -> UTCTime -> MoveExpertEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' MoveReferenceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: MoveReferenceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: MoveReferenceEvent -> UTCTime -> MoveReferenceEvent
+      set entity newValue = entity & createdAt .~ newValue

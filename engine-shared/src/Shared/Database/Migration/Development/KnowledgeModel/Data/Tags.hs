@@ -1,9 +1,9 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.Tags where
 
 import Control.Lens ((^.))
-import qualified Data.Map.Strict as M
 
 import LensesConfig
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Uuid
 
@@ -14,7 +14,7 @@ tagDataScience =
     , _tagName = "Data Science"
     , _tagDescription = Just "Questions related to data science"
     , _tagColor = "#4A90E2"
-    , _tagAnnotations = M.empty
+    , _tagAnnotations = []
     }
 
 tagDataScienceEdited :: Tag
@@ -24,7 +24,7 @@ tagDataScienceEdited =
     , _tagName = "EDITED: " ++ (tagDataScience ^. name)
     , _tagDescription = fmap ("EDITED: " ++) (tagDataScience ^. description)
     , _tagColor = "EDITED: " ++ (tagDataScience ^. color)
-    , _tagAnnotations = M.fromList [("newAnnotation", "someValue")]
+    , _tagAnnotations = [MapEntry "newAnnotation" "someValue"]
     }
 
 tagBioInformatic :: Tag
@@ -34,5 +34,5 @@ tagBioInformatic =
     , _tagName = "BioInformatic"
     , _tagDescription = Just "Questions related to bio informatic engineering"
     , _tagColor = "#F5A623"
-    , _tagAnnotations = M.empty
+    , _tagAnnotations = []
     }
