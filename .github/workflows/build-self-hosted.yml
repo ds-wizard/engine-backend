@@ -134,7 +134,7 @@ jobs:
         run: |
           cd engine-$COMPONENT
           docker pull $PUBLIC_IMAGE:$TAG_DEVELOP
-          docker build --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
+          docker build --network=host --cache-from $PUBLIC_IMAGE:$TAG_DEVELOP -t $PRIVATE_IMAGE:$GITHUB_SHA .
 
       # (5) -> Docker image tagging
       - name: Docker login
