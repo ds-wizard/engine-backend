@@ -5,7 +5,7 @@ module Wizard.Service.Admin.AdminService
 
 import Control.Lens ((^.))
 
-import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand)
+import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand, questionnaire)
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.Admin.AdminExecutionResultDTO
 import Wizard.Model.Admin.Admin
@@ -14,7 +14,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Admin.AdminDefinition
 
 getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [app, branch, cache, config, feedback, persistentCommand]
+getAdminOperations = return [app, branch, cache, config, feedback, persistentCommand, questionnaire]
 
 executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -35,6 +35,9 @@ execute reqDto
   | action reqDto feedback feedback_synchronizeFeedbacks = feedback_synchronizeFeedbacksFn reqDto
   | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
   | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
+  | action reqDto questionnaire questionnaire_squashAllEvents = questionnaire_squashAllEventsFn reqDto
+  | action reqDto questionnaire questionnaire_squashEventsForQuestionnaire =
+    questionnaire_squashEventsForQuestionnaireFn reqDto
 
 action :: AdminExecutionDTO -> AdminSection -> AdminOperation -> Bool
 action reqDto section operation =

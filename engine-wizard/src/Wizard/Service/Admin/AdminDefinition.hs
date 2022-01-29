@@ -14,6 +14,7 @@ import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
+import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- APP
@@ -261,4 +262,45 @@ persistentCommand_run =
 persistentCommand_runFn :: AdminExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
   runPersistentCommandByUuid (head (reqDto ^. parameters))
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- QUESTIONNAIRE
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire :: AdminSection
+questionnaire =
+  AdminSection
+    { _adminSectionName = "Questionnaire"
+    , _adminSectionDescription = Nothing
+    , _adminSectionOperations = [questionnaire_squashAllEvents, questionnaire_squashEventsForQuestionnaire]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire_squashAllEvents :: AdminOperation
+questionnaire_squashAllEvents =
+  AdminOperation
+    {_adminOperationName = "Squash All Events", _adminOperationDescription = Nothing, _adminOperationParameters = []}
+
+questionnaire_squashAllEventsFn :: AdminExecutionDTO -> AppContextM String
+questionnaire_squashAllEventsFn reqDto = do
+  squashQuestionnaireEvents
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+questionnaire_squashEventsForQuestionnaire :: AdminOperation
+questionnaire_squashEventsForQuestionnaire =
+  AdminOperation
+    { _adminOperationName = "Squash Events for Questionnaire"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters =
+        [ AdminOperationParameter
+            { _adminOperationParameterName = "questionnaireUuid"
+            , _adminOperationParameterAType = StringAdminOperationParameterType
+            }
+        ]
+    }
+
+questionnaire_squashEventsForQuestionnaireFn :: AdminExecutionDTO -> AppContextM String
+questionnaire_squashEventsForQuestionnaireFn reqDto = do
+  squashQuestionnaireEventsForQuestionnaire (head (reqDto ^. parameters))
   return "Done"

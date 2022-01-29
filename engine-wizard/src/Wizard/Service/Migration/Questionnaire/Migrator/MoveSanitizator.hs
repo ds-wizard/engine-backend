@@ -133,8 +133,10 @@ computeDesiredPath eUuid pPathDiff tPathDiff = fmap (replaceReply pPathDiffS tPa
       if path `replyKeyContains` eUuid
         then replaceReply' pPathDiffS tPathDiffS reply
         else reply
-    replaceReply' "" _ (path, value) = (path ++ "." ++ tPathDiffS, value)
-    replaceReply' pPathDiffS tPathDiffS (path, value) = (replace pPathDiffS tPathDiffS path, value)
+    replaceReply' "" _ (path, value) =
+      let pathWithoutEUuid = replace ("." ++ U.toString eUuid) "" path
+       in (pathWithoutEUuid ++ "." ++ tPathDiffS ++ "." ++ U.toString eUuid, value)
+    replaceReply' pPathDiffS tPathDiffS (path, value) = (replace ".." "." . replace pPathDiffS tPathDiffS $ path, value)
     pPathDiffS = createReplyKey pPathDiff
     tPathDiffS = createReplyKey tPathDiff
 
