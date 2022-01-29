@@ -19,6 +19,7 @@ migrate dbPool = do
   moveRowsFromBranchToBranchData dbPool
   removeEventsFromBranch dbPool
   addCreatedAtToKmMigration dbPool
+  createPersistentCommand dbPool
 
 createBranchDataTable dbPool = do
   let sql =
@@ -57,6 +58,37 @@ removeEventsFromBranch dbPool = do
 
 addCreatedAtToKmMigration dbPool = do
   let sql = "ALTER TABLE knowledge_model_migration ADD created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createPersistentCommand dbPool = do
+  let sql =
+        "CREATE TABLE persistent_command \
+          \ ( \
+          \     uuid uuid not null, \
+          \     state varchar not null, \
+          \     component varchar not null, \
+          \     function varchar not null, \
+          \     body varchar not null, \
+          \     last_error_message varchar, \
+          \     attempts int not null, \
+          \     max_attempts int not null, \
+          \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+          \       constraint persistent_command_app_uuid_fk \
+          \         references app, \
+          \     created_by uuid not null \
+          \       constraint persistent_command_created_by_fk \
+          \         references user_entity, \
+          \     created_at timestamptz not null, \
+          \     updated_at timestamptz not null \
+          \ ); \
+          \  \
+          \ CREATE unique index persistent_command_uuid_uindex \
+          \     on persistent_command (uuid); \
+          \ ALTER TABLE persistent_command \
+          \     ADD constraint persistent_command_pk \
+          \         primary key (uuid); "
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

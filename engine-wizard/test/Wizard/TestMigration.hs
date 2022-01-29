@@ -13,6 +13,7 @@ import Wizard.Database.DAO.Document.DocumentQueueDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Database.DAO.User.UserDAO
@@ -30,6 +31,7 @@ import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
+import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
 import qualified Wizard.Database.Migration.Development.Template.TemplateMigration as TML
@@ -43,6 +45,7 @@ buildSchema appContext
     -- 1. Drop
  = do
   putStrLn "DB: dropping schema"
+  runInContext PC_Schema.dropTables appContext
   runInContext SUB_Schema.dropTables appContext
   runInContext ACK_Schema.dropTables appContext
   runInContext BR_Schema.dropTables appContext
@@ -75,11 +78,13 @@ buildSchema appContext
   runInContext QTN_MIG_Schema.createTables appContext
   runInContext KM_MIG_Schema.createTables appContext
   runInContext SUB_Schema.createTables appContext
+  runInContext PC_Schema.createTables appContext
   -- 3. Purge and put files into S3
   putStrLn "DB-S3: Purging and creating schema"
   runInContext TML.runS3Migration appContext
 
 resetDB appContext = do
+  runInContext deletePersistentCommands appContext
   runInContext deleteSubmissions appContext
   runInContext deleteAppConfigs appContext
   runInContext (insertAppConfig defaultAppConfigEncrypted) appContext

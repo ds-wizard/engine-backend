@@ -19,6 +19,7 @@ defaultConfig =
     , _serverConfigBranch = defaultBranch
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
+    , _serverConfigPersistentCommand = defaultPersistentCommand
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
     , _serverConfigExperimental = defaultExperimental
@@ -118,6 +119,14 @@ defaultFeedback =
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 2 * * *"}
+
+defaultPersistentCommand :: ServerConfigPersistentCommand
+defaultPersistentCommand =
+  ServerConfigPersistentCommand {_serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob}
+
+defaultPersistentCommandRetryJob :: ServerConfigCronWorker
+defaultPersistentCommandRetryJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

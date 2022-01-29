@@ -5,7 +5,7 @@ module Wizard.Service.Admin.AdminService
 
 import Control.Lens ((^.))
 
-import LensesConfig hiding (action, branch, cache, config, feedback)
+import LensesConfig hiding (action, branch, cache, config, feedback, persistentCommand)
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.Admin.AdminExecutionResultDTO
 import Wizard.Model.Admin.Admin
@@ -14,7 +14,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Admin.AdminDefinition
 
 getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [app, branch, cache, config, feedback]
+getAdminOperations = return [app, branch, cache, config, feedback, persistentCommand]
 
 executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -29,9 +29,12 @@ execute reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto
   | action reqDto cache cache_KnowledgeModelCache_deleteFromCache' = cache_KnowledgeModelCache_deleteFromCacheFn' reqDto
+  | action reqDto config config_recompileCssInAllApplications = config_recompileCssInAllApplicationsFn reqDto
   | action reqDto config config_switchClientCustomizationOn = config_switchClientCustomizationOnFn reqDto
   | action reqDto config config_switchClientCustomizationOff = config_switchClientCustomizationOffFn reqDto
   | action reqDto feedback feedback_synchronizeFeedbacks = feedback_synchronizeFeedbacksFn reqDto
+  | action reqDto persistentCommand persistentCommand_runAll = persistentCommand_runAllFn reqDto
+  | action reqDto persistentCommand persistentCommand_run = persistentCommand_runFn reqDto
 
 action :: AdminExecutionDTO -> AdminSection -> AdminOperation -> Bool
 action reqDto section operation =

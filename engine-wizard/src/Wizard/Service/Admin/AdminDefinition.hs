@@ -13,6 +13,7 @@ import Wizard.Service.Cache.CacheService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
+import Wizard.Service.PersistentCommand.PersistentCommandService
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- APP
@@ -149,8 +150,23 @@ config =
   AdminSection
     { _adminSectionName = "Config"
     , _adminSectionDescription = Nothing
-    , _adminSectionOperations = [config_switchClientCustomizationOn, config_switchClientCustomizationOff]
+    , _adminSectionOperations =
+        [config_recompileCssInAllApplications, config_switchClientCustomizationOn, config_switchClientCustomizationOff]
     }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+config_recompileCssInAllApplications :: AdminOperation
+config_recompileCssInAllApplications =
+  AdminOperation
+    { _adminOperationName = "Recompile CSS in All Applications"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters = []
+    }
+
+config_recompileCssInAllApplicationsFn :: AdminExecutionDTO -> AppContextM String
+config_recompileCssInAllApplicationsFn reqDto = do
+  recompileCssInAllApplications
+  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 config_switchClientCustomizationOn :: AdminOperation
@@ -203,4 +219,46 @@ feedback_synchronizeFeedbacks =
 feedback_synchronizeFeedbacksFn :: AdminExecutionDTO -> AppContextM String
 feedback_synchronizeFeedbacksFn reqDto = do
   synchronizeFeedbacks
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+-- PERSISTENT COMMAND
+-- ---------------------------------------------------------------------------------------------------------------------
+persistentCommand :: AdminSection
+persistentCommand =
+  AdminSection
+    { _adminSectionName = "Persistent Command"
+    , _adminSectionDescription = Nothing
+    , _adminSectionOperations = [persistentCommand_runAll, persistentCommand_run]
+    }
+
+-- ---------------------------------------------------------------------------------------------------------------------
+persistentCommand_runAll :: AdminOperation
+persistentCommand_runAll =
+  AdminOperation
+    { _adminOperationName = "Run All Persistent Commands"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters = []
+    }
+
+persistentCommand_runAllFn :: AdminExecutionDTO -> AppContextM String
+persistentCommand_runAllFn reqDto = do
+  runPersistentCommands
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+persistentCommand_run :: AdminOperation
+persistentCommand_run =
+  AdminOperation
+    { _adminOperationName = "Run Persistent Command"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters =
+        [ AdminOperationParameter
+            {_adminOperationParameterName = "uuid", _adminOperationParameterAType = StringAdminOperationParameterType}
+        ]
+    }
+
+persistentCommand_runFn :: AdminExecutionDTO -> AppContextM String
+persistentCommand_runFn reqDto = do
+  runPersistentCommandByUuid (head (reqDto ^. parameters))
   return "Done"

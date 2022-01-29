@@ -106,6 +106,7 @@ import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
@@ -116,6 +117,7 @@ import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
+import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireComment
@@ -263,6 +265,8 @@ makeFields ''ServerConfigFeedback
 
 makeFields ''ServerConfigLogging
 
+makeFields ''ServerConfigPersistentCommand
+
 makeFields ''ServerConfigQuestionnaire
 
 makeFields ''ServerConfigCronWorker
@@ -270,6 +274,8 @@ makeFields ''ServerConfigCronWorker
 makeFields ''ServerConfigExperimental
 
 makeFields ''BuildInfoConfig
+
+makeFields ''InvokeClientCssCompilationCommand
 
 -- Model / Context
 makeFields ''BaseContext
@@ -458,6 +464,9 @@ makeFields ''PackagePattern
 
 -- Model / PackageBundle
 makeFields ''PackageBundle
+
+-- Model / PersistentCommand
+makeFields ''PersistentCommand
 
 -- Model / Questionnaire
 makeFields ''Questionnaire
