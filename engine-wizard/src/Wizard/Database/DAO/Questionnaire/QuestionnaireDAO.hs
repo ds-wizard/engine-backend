@@ -174,7 +174,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  \  GROUP BY questionnaire_uuid \
                  \) as user_permissions \
                  \FROM questionnaire qtn \
-                 \JOIN package pkg ON qtn.package_id = pkg.id \
+                 \JOIN package pkg ON qtn.package_id = pkg.id AND qtn.app_uuid = pkg.app_uuid \
                  \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
   let sql =
         fromString $
