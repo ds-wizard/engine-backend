@@ -1,6 +1,7 @@
 module Shared.Model.Event.Tag.TagEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteTagEvent where
       get entity = entity ^. entityUuid
       set :: DeleteTagEvent -> U.UUID -> DeleteTagEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddTagEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddTagEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddTagEvent -> UTCTime -> AddTagEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditTagEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditTagEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditTagEvent -> UTCTime -> EditTagEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteTagEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteTagEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteTagEvent -> UTCTime -> DeleteTagEvent
+      set entity newValue = entity & createdAt .~ newValue

@@ -42,7 +42,7 @@ updateMigratorState ms = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, app_uuid = ? WHERE app_uuid = ? AND branch_uuid = ?"
+          "UPDATE knowledge_model_migration SET branch_uuid = ?, metamodel_version = ?, migration_state = ?, branch_previous_package_id = ?, target_package_id = ?, branch_events = ?, target_package_events = ?, result_events = ?, current_knowledge_model = ?, app_uuid = ?, created_at = ? WHERE app_uuid = ? AND branch_uuid = ?"
   let params = toRow ms ++ [toField appUuid, toField $ ms ^. branchUuid]
   logQuery sql params
   let action conn = execute conn sql params

@@ -5,6 +5,7 @@ import Control.Monad (when)
 import Control.Monad.Except (throwError)
 import Control.Monad.Reader (asks, liftIO)
 import Data.Maybe
+import Data.Time
 
 import LensesConfig
 import Shared.Model.Error.Error
@@ -13,6 +14,7 @@ import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Localization.Messages.Public
@@ -20,6 +22,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchUtil
+import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
 import Wizard.Service.Migration.KnowledgeModel.Migrator.Migrator
 import Wizard.Service.Migration.KnowledgeModel.MigratorMapper
@@ -31,7 +34,7 @@ getCurrentMigrationDto branchUuid =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
     ms <- getCurrentMigration branchUuid
-    branch <- findBranchWithEventsById branchUuid
+    branch <- findBranchById branchUuid
     return $ toDTO ms branch
 
 getCurrentMigration :: String -> AppContextM MigratorState
@@ -50,8 +53,10 @@ createMigration :: String -> MigratorStateCreateDTO -> AppContextM MigratorState
 createMigration bUuid reqDto =
   runInTransaction $ do
     checkPermission _KM_UPGRADE_PERM
+    logOutOnlineUsersWhenBranchDramaticallyChanged bUuid
     let targetPkgId = reqDto ^. targetPackageId
-    branch <- findBranchWithEventsById bUuid
+    branch <- findBranchById bUuid
+    branchData <- findBranchDataById bUuid
     previousPkg <- getPreviousPkg branch
     mergeCheckpointPkgId <- getMergeCheckpointPackageId branch
     forkOfPkgId <- getForkOfPackageId branch
@@ -59,9 +64,10 @@ createMigration bUuid reqDto =
     validateIfTargetPackageVersionIsHigher forkOfPkgId targetPkgId
     branchEvents <- getBranchEvents (previousPkg ^. pId) mergeCheckpointPkgId
     targetPkgEvents <- getTargetPackageEvents targetPkgId forkOfPkgId
-    km <- compileKnowledgeModel (branch ^. events) (branch ^. previousPackageId) []
+    km <- compileKnowledgeModel (branchData ^. events) (branch ^. previousPackageId) []
     appUuid <- asks _appContextAppUuid
-    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid
+    now <- liftIO getCurrentTime
+    let ms = fromCreateDTO branch previousPkg branchEvents targetPkgId targetPkgEvents km appUuid now
     insertMigratorState ms
     migratedMs <- migrateState ms
     return $ toDTO migratedMs branch

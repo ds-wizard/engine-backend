@@ -2,6 +2,7 @@ module Shared.Api.Resource.Event.TagEventJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Tag.TagEvent
 import Shared.Util.JSON

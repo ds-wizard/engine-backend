@@ -7,7 +7,7 @@ import Test.Hspec
 import Test.Hspec.Wai hiding (shouldRespondWith)
 
 import LensesConfig
-import Wizard.Database.DAO.Event.EventDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
@@ -21,14 +21,14 @@ import Wizard.Specs.Common
 -- MIGRATION
 -- --------------------------------
 runMigrationWithEmptyDB appContext = do
-  let branchUuid = U.toString $ amsterdamBranch ^. uuid
+  let branchUuid = U.toString $ amsterdamBranchDto ^. uuid
   runInContextIO B.runMigration appContext
-  runInContextIO (deleteEventsAtBranch branchUuid) appContext
+  runInContextIO (updateBranchEventsByUuid branchUuid []) appContext
   runInContextIO KM_MIG.runMigration appContext
 
 runMigrationWithFullDB appContext = do
   runMigrationWithEmptyDB appContext
-  let branchUuid = U.toString $ amsterdamBranch ^. uuid
+  let branchUuid = U.toString $ amsterdamBranchDto ^. uuid
   runInContextIO (createMigration branchUuid migratorStateCreate) appContext
 
 -- --------------------------------

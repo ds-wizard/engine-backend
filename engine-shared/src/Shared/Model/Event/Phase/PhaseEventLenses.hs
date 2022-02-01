@@ -1,6 +1,7 @@
 module Shared.Model.Event.Phase.PhaseEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeletePhaseEvent where
       get entity = entity ^. entityUuid
       set :: DeletePhaseEvent -> U.UUID -> DeletePhaseEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddPhaseEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddPhaseEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddPhaseEvent -> UTCTime -> AddPhaseEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditPhaseEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditPhaseEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditPhaseEvent -> UTCTime -> EditPhaseEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeletePhaseEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeletePhaseEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeletePhaseEvent -> UTCTime -> DeletePhaseEvent
+      set entity newValue = entity & createdAt .~ newValue

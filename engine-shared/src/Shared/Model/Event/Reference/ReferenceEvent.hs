@@ -1,9 +1,10 @@
 module Shared.Model.Event.Reference.ReferenceEvent where
 
-import qualified Data.Map.Strict as M
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
 data AddReferenceEvent
@@ -18,7 +19,8 @@ data AddResourcePageReferenceEvent =
     , _addResourcePageReferenceEventParentUuid :: U.UUID
     , _addResourcePageReferenceEventEntityUuid :: U.UUID
     , _addResourcePageReferenceEventShortUuid :: String
-    , _addResourcePageReferenceEventAnnotations :: M.Map String String
+    , _addResourcePageReferenceEventAnnotations :: [MapEntry String String]
+    , _addResourcePageReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -29,7 +31,8 @@ data AddURLReferenceEvent =
     , _addURLReferenceEventEntityUuid :: U.UUID
     , _addURLReferenceEventUrl :: String
     , _addURLReferenceEventLabel :: String
-    , _addURLReferenceEventAnnotations :: M.Map String String
+    , _addURLReferenceEventAnnotations :: [MapEntry String String]
+    , _addURLReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -40,7 +43,8 @@ data AddCrossReferenceEvent =
     , _addCrossReferenceEventEntityUuid :: U.UUID
     , _addCrossReferenceEventTargetUuid :: U.UUID
     , _addCrossReferenceEventDescription :: String
-    , _addCrossReferenceEventAnnotations :: M.Map String String
+    , _addCrossReferenceEventAnnotations :: [MapEntry String String]
+    , _addCrossReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -57,7 +61,8 @@ data EditResourcePageReferenceEvent =
     , _editResourcePageReferenceEventParentUuid :: U.UUID
     , _editResourcePageReferenceEventEntityUuid :: U.UUID
     , _editResourcePageReferenceEventShortUuid :: EventField String
-    , _editResourcePageReferenceEventAnnotations :: EventField (M.Map String String)
+    , _editResourcePageReferenceEventAnnotations :: EventField [MapEntry String String]
+    , _editResourcePageReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -68,7 +73,8 @@ data EditURLReferenceEvent =
     , _editURLReferenceEventEntityUuid :: U.UUID
     , _editURLReferenceEventUrl :: EventField String
     , _editURLReferenceEventLabel :: EventField String
-    , _editURLReferenceEventAnnotations :: EventField (M.Map String String)
+    , _editURLReferenceEventAnnotations :: EventField [MapEntry String String]
+    , _editURLReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -79,7 +85,8 @@ data EditCrossReferenceEvent =
     , _editCrossReferenceEventEntityUuid :: U.UUID
     , _editCrossReferenceEventTargetUuid :: EventField U.UUID
     , _editCrossReferenceEventDescription :: EventField String
-    , _editCrossReferenceEventAnnotations :: EventField (M.Map String String)
+    , _editCrossReferenceEventAnnotations :: EventField [MapEntry String String]
+    , _editCrossReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -89,5 +96,6 @@ data DeleteReferenceEvent =
     { _deleteReferenceEventUuid :: U.UUID
     , _deleteReferenceEventParentUuid :: U.UUID
     , _deleteReferenceEventEntityUuid :: U.UUID
+    , _deleteReferenceEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

@@ -2,7 +2,6 @@ module Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollo
 
 import Control.Lens
 import qualified Data.Map as Map
-import qualified Data.Map.Strict as M
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations as FI
@@ -21,7 +20,7 @@ q2_answerNo =
     { _answerUuid = u' "33da0831-11dd-4faa-b754-41ed98dedcb5"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
     }
@@ -32,7 +31,7 @@ q3_answerNo =
     { _answerUuid = u' "12711c8c-193a-4baf-a071-53f2d3990083"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = [metricMeasureF1, metricMeasureA1]
     }
@@ -43,7 +42,7 @@ q4_it1_q6_answerNo =
     { _answerUuid = u' "a093c2c3-123c-42ee-9667-13af14b6249e"
     , _answerLabel = "No"
     , _answerAdvice = Just "Great advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = []
     }
@@ -54,7 +53,7 @@ q2_aYes_fuq1_answerNo =
     { _answerUuid = u' "8ebf2494-80c7-4dbb-a4a1-a14d3387abc0"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = []
     }
@@ -65,7 +64,7 @@ q2_aYes_fuq1_aYes_fuq2_answerNo =
     { _answerUuid = u' "891ebfe2-27df-433c-af83-03bb26fa2764"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = [metricMeasureI0_5]
     }
@@ -78,7 +77,7 @@ q2_answerYes =
     , _answerAdvice =
         Just
           "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = [q2_aYes_fuQuestion1 ^. uuid]
     , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
     }
@@ -89,7 +88,7 @@ q2_answerYesEdited =
     { _answerUuid = q2_answerYes ^. uuid
     , _answerLabel = "EDITED: Yes"
     , _answerAdvice = Just "EDITED: Short advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1, metricMeasureG1]
     }
@@ -102,7 +101,7 @@ q2_answerYesPlain =
     , _answerAdvice =
         Just
           "You know that this is very unlikely? This question is not only about data sets that are similar to what you want to determine yourself, but also reference data or data that should be mined from the existing literature. Further, it is very likely that you will refer to related data, e.g. other databases where you usually \"quickly look something up\", but that could maybe be properly integrated, especially if you need to do such lookups multiple times."
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = [metricMeasureI1, metricMeasureR1]
     }
@@ -113,7 +112,7 @@ q3_answerYes =
     { _answerUuid = u' "28d49dbe-4180-49c9-80b2-397e9ea27c77"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = []
     }
@@ -124,7 +123,7 @@ q2_aYes_fuq1_answerYes =
     { _answerUuid = u' "4d164317-d900-460c-8582-8c80e6d66dcd"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = [q2_aYes_fuq1_aYes_fuQuestion2 ^. uuid]
     , _answerMetricMeasures = []
     }
@@ -135,7 +134,7 @@ q2_aYes_fuq1_aYes_fuq2_answerYes =
     { _answerUuid = u' "b6b40918-a9b7-4d2d-bacb-9f9aa5683efe"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = []
     }
@@ -146,7 +145,7 @@ q4_it1_q6_answerYes =
     { _answerUuid = u' "16f20d73-b335-47d8-8d35-157e8c3cd009"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = [q4_it1_q6_aYes_followUpQuestion4 ^. uuid, q4_it1_q6_aYes_followUpQuestion5 ^. uuid]
     , _answerMetricMeasures = []
     }
@@ -157,7 +156,7 @@ q2_answerMaybe =
     { _answerUuid = u' "1f172f5e-3d66-4a1c-a785-85ba02fcf72a"
     , _answerLabel = "Maybe"
     , _answerAdvice = Just "Great advice"
-    , _answerAnnotations = M.empty
+    , _answerAnnotations = []
     , _answerFollowUpUuids = []
     , _answerMetricMeasures = []
     }
@@ -175,7 +174,7 @@ q2_aYes_fuQuestion1 =
     , _optionsQuestionTitle = "First Follow-Up Question"
     , _optionsQuestionText = Just "Maybe there will be some description"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = [FT.tagDataScience ^. uuid]
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -192,7 +191,7 @@ q2_aYes_fuQuestion1Plain =
     , _optionsQuestionTitle = "Fourth Question"
     , _optionsQuestionText = Just "Just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -210,7 +209,7 @@ q2_aYes_fuq1_aYes_fuQuestion2 =
     , _optionsQuestionTitle = "Second Follow-Up Question"
     , _optionsQuestionText = Just "Again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -227,7 +226,7 @@ q2_aYes_fuq1_aYes_fuQuestion2Edited =
     , _optionsQuestionTitle = "EDITED: Second Follow-Up Question"
     , _optionsQuestionText = Just "EDITED: Again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase1 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -245,7 +244,7 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
     , _optionsQuestionTitle = "Third Follow-Up Question"
     , _optionsQuestionText = Just "Again and again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -263,7 +262,7 @@ q4_it1_q6_aYes_followUpQuestion4 =
     , _listQuestionTitle = "Fourth Follow-Up Question"
     , _listQuestionText = Just "Again and again just follow"
     , _listQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _listQuestionAnnotations = M.empty
+    , _listQuestionAnnotations = []
     , _listQuestionTagUuids = []
     , _listQuestionReferenceUuids = []
     , _listQuestionExpertUuids = []
@@ -281,7 +280,7 @@ q4_it1_q6_aYes_followUpQuestion4Edited =
     , _listQuestionTitle = "EDITED: Third Follow-Up Question"
     , _listQuestionText = Just "EDITED: Again and again just follow"
     , _listQuestionRequiredPhaseUuid = Just $ PHS.phase1 ^. uuid
-    , _listQuestionAnnotations = M.empty
+    , _listQuestionAnnotations = []
     , _listQuestionTagUuids = []
     , _listQuestionReferenceUuids = []
     , _listQuestionExpertUuids = []
@@ -299,7 +298,7 @@ q4_it1_q6_aYes_fuq4_it_question1 =
     , _optionsQuestionTitle = "Sub question 1 of Follow-Up Question 4"
     , _optionsQuestionText = Just "Again and again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -316,7 +315,7 @@ q4_it1_q6_aYes_fuq4_it_question2 =
     , _optionsQuestionTitle = "Sub question 2 of Follow-Up Question 4"
     , _optionsQuestionText = Just "Again and again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _optionsQuestionAnnotations = M.empty
+    , _optionsQuestionAnnotations = []
     , _optionsQuestionTagUuids = []
     , _optionsQuestionReferenceUuids = []
     , _optionsQuestionExpertUuids = []
@@ -333,7 +332,7 @@ q4_it1_q6_aYes_followUpQuestion5 =
     , _integrationQuestionTitle = "Fifth Follow-Up Question"
     , _integrationQuestionText = Just "Some non-funny description"
     , _integrationQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
-    , _integrationQuestionAnnotations = M.empty
+    , _integrationQuestionAnnotations = []
     , _integrationQuestionTagUuids = []
     , _integrationQuestionReferenceUuids = []
     , _integrationQuestionExpertUuids = []
@@ -351,7 +350,7 @@ q4_it1_q6_aYes_fuq5PropsEdited =
     , _integrationQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
     , _integrationQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
     , _integrationQuestionRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5 ^. requiredPhaseUuid
-    , _integrationQuestionAnnotations = M.empty
+    , _integrationQuestionAnnotations = []
     , _integrationQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
     , _integrationQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
     , _integrationQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids
@@ -369,7 +368,7 @@ q4_it1_q6_aYes_fuq5ConvertedToValue =
     , _valueQuestionTitle = q4_it1_q6_aYes_followUpQuestion5 ^. title
     , _valueQuestionText = q4_it1_q6_aYes_followUpQuestion5 ^. text
     , _valueQuestionRequiredPhaseUuid = q4_it1_q6_aYes_followUpQuestion5 ^. requiredPhaseUuid
-    , _valueQuestionAnnotations = M.empty
+    , _valueQuestionAnnotations = []
     , _valueQuestionTagUuids = q4_it1_q6_aYes_followUpQuestion5 ^. tagUuids
     , _valueQuestionReferenceUuids = q4_it1_q6_aYes_followUpQuestion5 ^. referenceUuids
     , _valueQuestionExpertUuids = q4_it1_q6_aYes_followUpQuestion5 ^. expertUuids

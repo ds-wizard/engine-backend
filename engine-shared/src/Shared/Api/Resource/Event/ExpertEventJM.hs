@@ -2,6 +2,7 @@ module Shared.Api.Resource.Event.ExpertEventJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Expert.ExpertEvent
 import Shared.Util.JSON

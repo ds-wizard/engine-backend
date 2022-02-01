@@ -55,6 +55,7 @@ import Wizard.Specs.Service.Feedback.FeedbackServiceSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.CompilatorSpec
 import Wizard.Specs.Service.KnowledgeModel.Compilator.Modifier.ModifierSpec
 import Wizard.Specs.Service.KnowledgeModel.KnowledgeModelFilterSpec
+import Wizard.Specs.Service.KnowledgeModel.Squash.SquasherSpec
 import Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.MigrationSpec
 import qualified Wizard.Specs.Service.Migration.KnowledgeModel.Migrator.SanitizatorSpec as KM_SanitizatorSpec
 import qualified Wizard.Specs.Service.Migration.Questionnaire.ChangeQTypeSanitizatorSpec as QTN_ChangeQTypeSanitizator
@@ -72,6 +73,7 @@ import Wizard.Specs.Service.Report.ReportGeneratorSpec
 import Wizard.Specs.Service.Template.TemplateUtilSpec
 import Wizard.Specs.Service.Token.TokenServiceSpec
 import Wizard.Specs.Service.User.UserServiceSpec
+import Wizard.Specs.Websocket.Branch.Detail.WebsocketSpec
 import Wizard.Specs.Websocket.Common
 import Wizard.Specs.Websocket.Questionnaire.Detail.WebsocketSpec
 import Wizard.TestMigration
@@ -138,6 +140,7 @@ main =
                describe "Compilator" $ do
                  describe "Modifier" modifierSpec
                  compilatorSpec
+               describe "Squash" $ do squasherSpec
                knowledgeModelFilterSpec
              describe "Migration" $ do
                describe "KnowledgeModel" $ describe "Migrator" $ do
@@ -147,7 +150,9 @@ main =
                  QTN_ChangeQTypeSanitizator.sanitizatorSpec
                  QTN_MoveSanitizatorSpec.sanitizatorSpec
              describe "Package" packageUtilSpec
-             describe "Questionnaire" questionnaireValidationSpec
+             describe "Questionnaire" $ do
+               describe "Event" questionnaireEventServiceSpec
+               questionnaireValidationSpec
              describe "Report" reportGeneratorSpec
              describe "Token" tokenServiceSpec
              describe "Template" templateUtilSpec
@@ -187,8 +192,9 @@ main =
              describe "Questionnaire" $ do
                questionnaireCollaborationAclSpec appContext
                questionnaireCompilerServiceSpec appContext
-               questionnaireEventServiceSpec appContext
                questionnaireAclSpec appContext
                questionnaireServiceSpec appContext
              userServiceIntegrationSpec appContext
-           describe "WEBSOCKET" $ questionnaireWebsocketAPI appContext)
+           describe "WEBSOCKET" $ do
+             branchesWebsocketAPI appContext
+             questionnaireWebsocketAPI appContext)

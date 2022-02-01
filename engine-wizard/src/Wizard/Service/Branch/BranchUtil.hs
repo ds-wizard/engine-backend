@@ -6,8 +6,10 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.Package.Package
 import Wizard.Api.Resource.Branch.BranchDTO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Migration.KnowledgeModel.MigratorState
@@ -15,7 +17,7 @@ import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Package.PackageService
 
-getBranchPreviousPackage :: BranchWithEvents -> AppContextM (Maybe Package)
+getBranchPreviousPackage :: Branch -> AppContextM (Maybe Package)
 getBranchPreviousPackage branch =
   case branch ^. previousPackageId of
     Just pkgId -> do
@@ -23,7 +25,7 @@ getBranchPreviousPackage branch =
       return . Just $ pkg
     Nothing -> return Nothing
 
-getBranchForkOfPackageId :: BranchWithEvents -> AppContextM (Maybe String)
+getBranchForkOfPackageId :: Branch -> AppContextM (Maybe String)
 getBranchForkOfPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
@@ -35,7 +37,7 @@ getBranchForkOfPackageId branch = do
         else return . Just $ previousPkg ^. pId
     Nothing -> return Nothing
 
-getBranchMergeCheckpointPackageId :: BranchWithEvents -> AppContextM (Maybe String)
+getBranchMergeCheckpointPackageId :: Branch -> AppContextM (Maybe String)
 getBranchMergeCheckpointPackageId branch = do
   mPreviousPkg <- getBranchPreviousPackage branch
   case mPreviousPkg of
@@ -47,14 +49,15 @@ getBranchMergeCheckpointPackageId branch = do
         else return . Just $ previousPkg ^. pId
     Nothing -> return Nothing
 
-enhanceBranch :: BranchWithEvents -> AppContextM BranchDTO
+enhanceBranch :: Branch -> AppContextM BranchDTO
 enhanceBranch branch = do
   mForkOfPackageId <- getBranchForkOfPackageId branch
-  state <- getBranchState branch
+  branchData <- findBranchDataById (U.toString $ branch ^. uuid)
+  state <- getBranchState branch branchData
   return $ toDTO branch mForkOfPackageId state
 
-getBranchState :: BranchWithEvents -> AppContextM BranchState
-getBranchState branch = isMigrating $ isEditing $ isMigrated $ isOutdated isDefault
+getBranchState :: Branch -> BranchData -> AppContextM BranchState
+getBranchState branch branchData = isMigrating $ isEditing $ isMigrated $ isOutdated isDefault
   where
     isMigrating continue = do
       mMs <- findMigratorStateByBranchUuid' (U.toString $ branch ^. uuid)
@@ -65,7 +68,7 @@ getBranchState branch = isMigrating $ isEditing $ isMigrated $ isOutdated isDefa
             else return BSMigrating
         Nothing -> continue
     isEditing continue =
-      if not (null $ branch ^. events)
+      if not (null $ branchData ^. events)
         then return BSEdited
         else continue
     isMigrated continue = do

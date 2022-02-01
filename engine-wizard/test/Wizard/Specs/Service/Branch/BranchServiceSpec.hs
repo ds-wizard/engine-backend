@@ -13,7 +13,7 @@ import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
-import Wizard.Database.DAO.Event.EventDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import qualified Wizard.Database.Migration.Development.Branch.BranchMigration as B
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import qualified Wizard.Database.Migration.Development.Package.PackageMigration as PKG
@@ -26,7 +26,7 @@ import Wizard.Specs.Common
 
 branchServiceIntegrationSpec appContext =
   describe "Branch Service Integration" $ do
-    let branchUuid = U.toString $ amsterdamBranchWithEvents ^. uuid
+    let branchUuid = U.toString $ amsterdamBranch ^. uuid
     describe "getBranchState" $ do
       it "BSDefault - no edit events, no new parent package version" $
         -- GIVEN: Prepare database
@@ -35,11 +35,12 @@ branchServiceIntegrationSpec appContext =
         runInContext B.runMigration appContext
         runInContext (deletePackageById (netherlandsPackageV2 ^. pId)) appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents & events .~ []
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData & events .~ []
         -- AND: Prepare expectations
         let expState = BSDefault
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -50,11 +51,12 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -65,11 +67,12 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData
         -- AND: Prepare expectations
         let expState = BSEdited
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -80,11 +83,12 @@ branchServiceIntegrationSpec appContext =
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents & events .~ []
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData & events .~ []
         -- AND: Prepare expectations
         let expState = BSOutdated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -94,16 +98,17 @@ branchServiceIntegrationSpec appContext =
        do
         runInContext PKG.runMigration appContext
         runInContext B.runMigration appContext
-        runInContext (deleteEventsAtBranch branchUuid) appContext
+        runInContext (updateBranchEventsByUuid branchUuid []) appContext
         let migratorCreateDto =
               MigratorStateCreateDTO {_migratorStateCreateDTOTargetPackageId = netherlandsPackageV2 ^. pId}
         runInContext (createMigration branchUuid migratorCreateDto) appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData
         -- AND: Prepare expectations
         let expState = BSMigrating
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState
@@ -124,11 +129,12 @@ branchServiceIntegrationSpec appContext =
                 }
         runInContext (solveConflictAndMigrate branchUuid reqDto) appContext
         -- AND: Prepare branch
-        let branch = amsterdamBranchWithEvents & events .~ []
+        let branch = amsterdamBranch
+        let branchData = amsterdamBranchData & events .~ []
         -- AND: Prepare expectations
         let expState = BSMigrated
         -- WHEN:
-        eitherResState <- runInContext (getBranchState branch) appContext
+        eitherResState <- runInContext (getBranchState branch branchData) appContext
         -- THEN:
         liftIO $ isRight eitherResState `shouldBe` True
         let (Right resState) = eitherResState

@@ -110,16 +110,21 @@ createFindEntityByFn ::
   => String
   -> [(String, String)]
   -> m entity
-createFindEntityByFn = createFindEntityWithFieldsByFn "*"
+createFindEntityByFn = createFindEntityWithFieldsByFn "*" False
 
 createFindEntityWithFieldsByFn ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, FromRow entity)
   => String
+  -> Bool
   -> String
   -> [(String, String)]
   -> m entity
-createFindEntityWithFieldsByFn fields entityName queryParams = do
-  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s" [fields, entityName, mapToDBQuerySql queryParams]
+createFindEntityWithFieldsByFn fields isForUpdate entityName queryParams = do
+  let forUpdate =
+        if isForUpdate
+          then "FOR UPDATE"
+          else ""
+  let sql = fromString $ f' "SELECT %s FROM %s WHERE %s %s" [fields, entityName, mapToDBQuerySql queryParams, forUpdate]
   let params = fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params

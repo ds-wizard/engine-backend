@@ -3,6 +3,7 @@ module Shared.Api.Resource.Event.ReferenceEventJM where
 import Control.Monad
 import Data.Aeson
 
+import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Reference.ReferenceEvent
 import Shared.Util.JSON

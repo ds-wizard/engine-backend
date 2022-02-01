@@ -12,7 +12,6 @@ import Network.WebSockets (Connection)
 
 import LensesConfig
 import Shared.Model.Error.Error
-import Shared.Util.Number
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.User.UserSuggestionDTO
@@ -31,13 +30,13 @@ import Wizard.Service.Cache.QuestionnaireWebsocketCache
 import Wizard.Service.Questionnaire.Collaboration.CollaborationAcl
 import Wizard.Service.Questionnaire.Collaboration.CollaborationMapper
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventMapper
-import Wizard.Service.User.UserMapper
+import Wizard.Service.Websocket.WebsocketService
 import Wizard.Util.Websocket
 
 putUserOnline :: String -> U.UUID -> Connection -> AppContextM ()
 putUserOnline qtnUuid connectionUuid connection =
   runInTransaction $ do
-    myself <- createRecord connectionUuid connection qtnUuid
+    myself <- createQuestionnaireRecord connectionUuid connection qtnUuid
     checkViewPermission myself
     addToCache myself
     logWS connectionUuid "New user added to the list"
@@ -255,15 +254,11 @@ disconnectUserIfLostPermission record = catchError (checkViewPermission record) 
   where
     handleError = sendError (record ^. connectionUuid) (record ^. connection) (record ^. entityId) disconnectUser
 
-createRecord :: U.UUID -> Connection -> String -> AppContextM WebsocketRecord
-createRecord connectionUuid connection qtnUuid =
+createQuestionnaireRecord :: U.UUID -> Connection -> String -> AppContextM WebsocketRecord
+createQuestionnaireRecord connectionUuid connection qtnUuid =
   runInTransaction $ do
     mCurrentUser <- asks _appContextCurrentUser
-    avatarNumber <- liftIO $ generateInt 20
-    colorNumber <- liftIO $ generateInt 12
-    let user = toOnlineUserInfo mCurrentUser avatarNumber colorNumber
     qtn <- findQuestionnaireById qtnUuid
-    mCurrentUser <- asks _appContextCurrentUser
     let permission =
           getPermission
             (qtn ^. visibility)
@@ -272,7 +267,7 @@ createRecord connectionUuid connection qtnUuid =
             (mCurrentUser ^? _Just . uuid)
             (mCurrentUser ^? _Just . role)
             (mCurrentUser ^? _Just . groups)
-    return $ WebsocketRecord connectionUuid connection qtnUuid permission user
+    createRecord connectionUuid connection qtnUuid permission
 
 getMaybeCreatedBy :: WebsocketRecord -> Maybe UserSuggestionDTO
 getMaybeCreatedBy myself =
@@ -292,8 +287,3 @@ getMaybeCreatedBy myself =
         , _userSuggestionDTOImageUrl = imageUrl
         }
     u@AnonymousOnlineUserInfo {..} -> Nothing
-
-filterEditors :: [WebsocketRecord] -> [WebsocketRecord]
-filterEditors records =
-  let isEditor record = record ^. entityPerm == EditorWebsocketPerm
-   in filter isEditor records

@@ -1,6 +1,7 @@
 module Shared.Model.Event.Expert.ExpertEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteExpertEvent where
       get entity = entity ^. entityUuid
       set :: DeleteExpertEvent -> U.UUID -> DeleteExpertEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddExpertEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddExpertEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddExpertEvent -> UTCTime -> AddExpertEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditExpertEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditExpertEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditExpertEvent -> UTCTime -> EditExpertEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteExpertEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteExpertEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteExpertEvent -> UTCTime -> DeleteExpertEvent
+      set entity newValue = entity & createdAt .~ newValue

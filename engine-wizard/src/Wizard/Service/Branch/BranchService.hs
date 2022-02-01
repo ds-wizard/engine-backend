@@ -9,6 +9,7 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Database.DAO.Package.PackageDAO
 import Shared.Localization.Messages.Public
 import Shared.Model.Common.Page
 import Shared.Model.Common.Pageable
@@ -23,8 +24,8 @@ import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Database.DAO.Branch.BranchDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Common
-import Wizard.Database.DAO.Event.EventDAO
 import Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO
 import Wizard.Model.Branch.BranchState
 import Wizard.Model.Context.AppContext
@@ -33,12 +34,14 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Branch.BranchMapper
 import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
+import Wizard.Service.Branch.Collaboration.CollaborationService
+import Wizard.Service.KnowledgeModel.KnowledgeModelService
 
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
 getBranchesPage mQuery pageable sort =
   runInTransaction $ do
     checkPermission _KM_PERM
-    bs <- findBranchesWithEventsPage mQuery pageable sort
+    bs <- findBranchesPage mQuery pageable sort
     traverse enhanceBranch bs
 
 createBranch :: BranchCreateDTO -> AppContextM BranchDTO
@@ -58,6 +61,7 @@ createBranchWithParams bUuid now currentUser reqDto =
     appUuid <- asks _appContextAppUuid
     let branch = fromCreateDTO reqDto bUuid (Just $ currentUser ^. uuid) appUuid now now
     insertBranch branch
+    insertBranchData (toBranchData branch)
     createDefaultEventIfPreviousPackageIsNotPresent branch
     return $ toDTO branch Nothing BSDefault
   where
@@ -74,19 +78,28 @@ createBranchWithParams bUuid now currentUser reqDto =
                   { _addKnowledgeModelEventUuid = uuid
                   , _addKnowledgeModelEventParentUuid = U.nil
                   , _addKnowledgeModelEventEntityUuid = kmUuid
-                  , _addKnowledgeModelEventAnnotations = M.empty
+                  , _addKnowledgeModelEventAnnotations = []
+                  , _addKnowledgeModelEventCreatedAt = now
                   }
-          updateEventsInBranch branchUuid [AddKnowledgeModelEvent' addKMEvent]
+          appendBranchEventByUuid branchUuid [AddKnowledgeModelEvent' addKMEvent]
           return ()
 
 getBranchById :: String -> AppContextM BranchDetailDTO
 getBranchById branchUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
-    branch <- findBranchWithEventsById branchUuid
+    branch <- findBranchById branchUuid
+    branchData <- findBranchDataById branchUuid
     mForkOfPackageId <- getBranchForkOfPackageId branch
-    branchState <- getBranchState branch
-    return $ toDetailDTO branch mForkOfPackageId branchState
+    branchState <- getBranchState branch branchData
+    knowledgeModel <- compileKnowledgeModel [] (branch ^. previousPackageId) []
+    mForkOfPackage <-
+      case mForkOfPackageId of
+        Just pkgId -> do
+          pkg <- findPackageById pkgId
+          return . Just $ pkg
+        Nothing -> return Nothing
+    return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
 
 modifyBranch :: String -> BranchChangeDTO -> AppContextM BranchDetailDTO
 modifyBranch branchUuid reqDto =
@@ -99,7 +112,6 @@ modifyBranch branchUuid reqDto =
           fromChangeDTO
             reqDto
             (branchFromDB ^. uuid)
-            (branchFromDB ^. metamodelVersion)
             (branchFromDB ^. previousPackageId)
             (branchFromDB ^. ownerUuid)
             (branchFromDB ^. appUuid)
@@ -107,8 +119,16 @@ modifyBranch branchUuid reqDto =
             now
     updateBranchById branch
     mForkOfPackageId <- getBranchForkOfPackageId branch
-    branchState <- getBranchState branch
-    return $ toDetailDTO branch mForkOfPackageId branchState
+    branchData <- findBranchDataById (U.toString $ branch ^. uuid)
+    branchState <- getBranchState branch branchData
+    knowledgeModel <- compileKnowledgeModel (branchData ^. events) (branch ^. previousPackageId) []
+    mForkOfPackage <-
+      case mForkOfPackageId of
+        Just pkgId -> do
+          pkg <- findPackageById pkgId
+          return . Just $ pkg
+        Nothing -> return Nothing
+    return $ toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage branchState
   where
     validateKmId = do
       let bKmId = reqDto ^. kmId
@@ -128,6 +148,8 @@ deleteBranch branchUuid =
   runInTransaction $ do
     checkPermission _KM_PERM
     branch <- findBranchById branchUuid
+    deleteBranchDataById branchUuid
     deleteBranchById branchUuid
     deleteMigratorStateByBranchUuid branchUuid
+    logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
     return ()

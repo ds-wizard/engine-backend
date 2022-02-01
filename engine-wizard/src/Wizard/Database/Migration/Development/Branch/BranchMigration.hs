@@ -6,7 +6,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Constant.Component
 import Wizard.Database.DAO.Branch.BranchDAO
-import Wizard.Database.DAO.Event.EventDAO
+import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.User.Data.Users
 import Wizard.Service.Branch.BranchService
@@ -17,10 +17,10 @@ runMigration = do
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) started"
   deleteBranches
   createBranchWithParams
-    (amsterdamBranch ^. uuid)
-    (amsterdamBranch ^. createdAt)
+    (amsterdamBranchDto ^. uuid)
+    (amsterdamBranchDto ^. createdAt)
     (toDTO userAlbert)
     amsterdamBranchCreate
-  updateEventsInBranch (U.toString $ amsterdamBranch ^. uuid) (amsterdamBranchWithEvents ^. events)
+  appendBranchEventByUuid (U.toString $ amsterdamBranchDto ^. uuid) (amsterdamBranchData ^. events)
   insertBranch differentBranch
   logInfo _CMP_MIGRATION "(KnowledgeModel/Branch) ended"

@@ -15,8 +15,10 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigBranch :: ServerConfigBranch
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
+    , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
     , _serverConfigExperimental :: ServerConfigExperimental
@@ -70,6 +72,12 @@ data ServerConfigRegistry =
     }
   deriving (Generic, Show)
 
+data ServerConfigBranch =
+  ServerConfigBranch
+    { _serverConfigBranchSquash :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
 data ServerConfigDocument =
   ServerConfigDocument
     { _serverConfigDocumentClean :: ServerConfigCronWorker
@@ -81,6 +89,12 @@ data ServerConfigFeedback =
     { _serverConfigFeedbackApiUrl :: String
     , _serverConfigFeedbackWebUrl :: String
     , _serverConfigFeedbackSync :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommand =
+  ServerConfigPersistentCommand
+    { _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

@@ -19,13 +19,15 @@ migrateDatabase dbPool migrationDefinitions logInfo = do
   logInfo "ensure migration table in DB: loaded"
   logInfo "loading migrations from DB: started"
   appliedMigrations <- getMigrationsFromDb dbPool
+  logInfo "loading migrations from DB: verifying"
+  let missingMigrations = verifyAppliedMigrations appliedMigrations
   logInfo "loading migrations from DB: loaded"
   result <-
-    case length appliedMigrations of
-      0 -> do
+    case (missingMigrations, appliedMigrations) of
+      ([], []) -> do
         logInfo $ "list of migrations to apply: " ++ numbersOfMigrations migrationDefinitions
         applyMigrations migrationDefinitions
-      _ -> do
+      ([], _) -> do
         let lastAppliedMigration = last appliedMigrations
         let newMigrationDefinitions =
               filter (\(mm, _) -> mmNumber mm > mrNumber lastAppliedMigration) migrationDefinitions
@@ -36,6 +38,9 @@ migrateDatabase dbPool migrationDefinitions logInfo = do
           else do
             logInfo "no new migration to apply"
             return Nothing
+      (missing, _) -> do
+        logInfo $ "inconsistent migrations, missing: " ++ (intercalate ", " . map show $ missing)
+        return $ Just "DB Migration failed due to inconsistency"
   case result of
     Just error -> do
       rollbackTransaction dbPool
@@ -65,3 +70,18 @@ numbersOfMigrations migrationDefinitions = intercalate ", " (numberOfMigration <
   where
     numberOfMigration :: MigrationDefinition -> String
     numberOfMigration (mm, _) = show . mmNumber $ mm
+
+verifyAppliedMigrations :: [MigrationRecord] -> [Int]
+verifyAppliedMigrations = reverse . findMissingNumbers . map mrNumber
+
+findMissingNumbers :: [Int] -> [Int]
+findMissingNumbers [] = []
+findMissingNumbers nums@(x:xs)        -- expects ordered numbers (ascending)
+  | x < 1     = findMissingNumbers xs -- skip invalid numbers (< 1)
+  | otherwise = findMissingNumbers' 1 nums []
+
+findMissingNumbers' :: Int -> [Int] -> [Int] -> [Int]
+findMissingNumbers' _ [] acc = acc
+findMissingNumbers' n nums@(x:xs) acc
+  | n == x    = findMissingNumbers' (n + 1) xs acc
+  | otherwise = findMissingNumbers' (n + 1) nums (n:acc)

@@ -4,6 +4,7 @@ import Control.Lens ((^.))
 import Data.Swagger hiding (Reference, Tag)
 
 import LensesConfig
+import Shared.Api.Resource.Common.MapEntrySM ()
 import Shared.Api.Resource.KnowledgeModel.KnowledgeModelJM ()
 import Shared.Database.Migration.Development.KnowledgeModel.Data.AnswersAndFollowUpQuestions
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters

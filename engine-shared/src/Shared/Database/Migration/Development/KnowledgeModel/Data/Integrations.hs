@@ -1,8 +1,6 @@
 module Shared.Database.Migration.Development.KnowledgeModel.Data.Integrations where
 
-import Data.Map (fromList)
-import qualified Data.Map.Strict as M
-
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Uuid
 
@@ -16,13 +14,13 @@ ontologyPortal =
     , _integrationLogo = ""
     , _integrationRequestMethod = "GET"
     , _integrationRequestUrl = "${baseurl}/ontology-portal.json?domain=${domain}&country=${country}&q=${q}"
-    , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
+    , _integrationRequestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , _integrationRequestBody = ""
     , _integrationResponseListField = "nested.results"
     , _integrationResponseItemUrl = "https://example.com/ontologies/${id}"
     , _integrationResponseItemId = "{{item.id}}"
     , _integrationResponseItemTemplate = "{{item.name}}"
-    , _integrationAnnotations = M.empty
+    , _integrationAnnotations = []
     }
 
 ontologyPortalEdited :: Integration
@@ -35,13 +33,13 @@ ontologyPortalEdited =
     , _integrationRequestMethod = "PUT"
     , _integrationRequestUrl =
         "${baseurl}/ontology-portal-edited.json?domain=${domain}&language=${language}&q=${q}&edited"
-    , _integrationRequestHeaders = fromList [("Api-Key-Edited", "${apikey}-EDITED")]
+    , _integrationRequestHeaders = [MapEntry "Api-Key-Edited" "${apikey}-EDITED"]
     , _integrationRequestBody = "{}"
     , _integrationResponseListField = "nested.results"
     , _integrationResponseItemUrl = "https://example.com/ontologies-edited/{{item.id}}"
     , _integrationResponseItemId = "EDITED: {{item.id}}"
     , _integrationResponseItemTemplate = "EDITED: {{item.name}}"
-    , _integrationAnnotations = M.fromList [("newAnnotation", "someValue")]
+    , _integrationAnnotations = [MapEntry "newAnnotation" "someValue"]
     }
 
 bioPortal :: Integration
@@ -54,11 +52,11 @@ bioPortal =
     , _integrationLogo = ""
     , _integrationRequestMethod = "GET"
     , _integrationRequestUrl = "${baseurl}/bio-portal.json?domain=${domain}&branch=${branch}&q=${q}"
-    , _integrationRequestHeaders = fromList [("Api-Key", "${apikey}")]
+    , _integrationRequestHeaders = [MapEntry "Api-Key" "${apikey}"]
     , _integrationRequestBody = ""
     , _integrationResponseListField = ""
     , _integrationResponseItemUrl = "https://example.com/portals/{{item.id}}"
     , _integrationResponseItemId = "{{item.id}}"
     , _integrationResponseItemTemplate = "{{item.name}}"
-    , _integrationAnnotations = M.empty
+    , _integrationAnnotations = []
     }

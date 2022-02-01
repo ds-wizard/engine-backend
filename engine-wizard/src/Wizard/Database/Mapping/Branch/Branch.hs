@@ -1,11 +1,10 @@
 module Wizard.Database.Mapping.Branch.Branch where
 
 import Database.PostgreSQL.Simple
-import Database.PostgreSQL.Simple.FromField
 import Database.PostgreSQL.Simple.FromRow
+import Database.PostgreSQL.Simple.ToField
+import Database.PostgreSQL.Simple.ToRow
 
-import Shared.Api.Resource.Event.EventJM ()
-import Shared.Model.Event.Event
 import Wizard.Model.Branch.Branch
 
 instance FromRow Branch where
@@ -13,11 +12,21 @@ instance FromRow Branch where
     _branchUuid <- field
     _branchName <- field
     _branchKmId <- field
-    _branchMetamodelVersion <- field
     _branchPreviousPackageId <- field
-    _ <- fieldWith fromJSONField :: RowParser [Event]
     _branchOwnerUuid <- field
     _branchCreatedAt <- field
     _branchUpdatedAt <- field
     _branchAppUuid <- field
     return $ Branch {..}
+
+instance ToRow Branch where
+  toRow Branch {..} =
+    [ toField _branchUuid
+    , toField _branchName
+    , toField _branchKmId
+    , toField _branchPreviousPackageId
+    , toField _branchOwnerUuid
+    , toField _branchCreatedAt
+    , toField _branchUpdatedAt
+    , toField _branchAppUuid
+    ]

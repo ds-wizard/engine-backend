@@ -13,6 +13,7 @@ setupServerCache serverConfig = do
   return cache
 
 createServerCache = do
+  branchCache <- C.newCache Nothing
   kmCache <- C.newCache Nothing
   qcCache <- C.newCache Nothing
   qriCache <- C.newCache Nothing
@@ -21,7 +22,8 @@ createServerCache = do
   pCache <- C.newCache Nothing
   return $
     ServerCache
-      { _serverCacheKnowledgeModel = kmCache
+      { _serverCacheBranchWebsocket = branchCache
+      , _serverCacheKnowledgeModel = kmCache
       , _serverCacheQuestionnaireContent = qcCache
       , _serverCacheQuestionnaireReportIndications = qriCache
       , _serverCacheQuestionnaireWebsocket = qwCache

@@ -16,6 +16,7 @@ import Shared.Database.Migration.Development.Package.Data.Packages
 import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 import Shared.Model.Questionnaire.QuestionnaireUtil
+import Shared.Util.Date
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
 import Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator
@@ -41,7 +42,7 @@ sanitizatorSpec =
               , MoveAnswerEvent' (m_km1_ch1_q2_aYes__to_ch2_q3 & uuid .~ U.nil)
               ]
         -- WHEN:
-        let result = generateEvents oldKm newKm
+        let result = generateEvents (dt' 2018 1 21) oldKm newKm
         -- THEN:
         result `shouldBe` expected
     describe "computeParentPath" $ do

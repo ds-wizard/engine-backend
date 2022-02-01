@@ -1,9 +1,10 @@
 module Shared.Model.Event.Chapter.ChapterEvent where
 
-import qualified Data.Map.Strict as M
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
+import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
 data AddChapterEvent =
@@ -13,7 +14,8 @@ data AddChapterEvent =
     , _addChapterEventEntityUuid :: U.UUID
     , _addChapterEventTitle :: String
     , _addChapterEventText :: Maybe String
-    , _addChapterEventAnnotations :: M.Map String String
+    , _addChapterEventAnnotations :: [MapEntry String String]
+    , _addChapterEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -24,8 +26,9 @@ data EditChapterEvent =
     , _editChapterEventEntityUuid :: U.UUID
     , _editChapterEventTitle :: EventField String
     , _editChapterEventText :: EventField (Maybe String)
-    , _editChapterEventAnnotations :: EventField (M.Map String String)
+    , _editChapterEventAnnotations :: EventField [MapEntry String String]
     , _editChapterEventQuestionUuids :: EventField [U.UUID]
+    , _editChapterEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
@@ -34,5 +37,6 @@ data DeleteChapterEvent =
     { _deleteChapterEventUuid :: U.UUID
     , _deleteChapterEventParentUuid :: U.UUID
     , _deleteChapterEventEntityUuid :: U.UUID
+    , _deleteChapterEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)

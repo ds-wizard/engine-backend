@@ -19,7 +19,7 @@ import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 -- ---------------------------
 -- TESTS
 -- ---------------------------
-questionnaireEventServiceSpec appContext =
+questionnaireEventServiceSpec =
   describe "QuestionnaireEventService" $
   it "squash" $
       -- GIVEN: prepare data

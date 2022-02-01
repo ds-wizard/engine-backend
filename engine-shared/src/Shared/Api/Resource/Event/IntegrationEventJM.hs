@@ -2,6 +2,7 @@ module Shared.Api.Resource.Event.IntegrationEventJM where
 
 import Data.Aeson
 
+import Shared.Api.Resource.Common.MapEntryJM ()
 import Shared.Api.Resource.Event.EventFieldJM ()
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Util.JSON

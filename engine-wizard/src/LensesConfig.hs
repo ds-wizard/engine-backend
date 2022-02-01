@@ -45,6 +45,7 @@ import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
+import Wizard.Api.Resource.Branch.Event.BranchEventDTO
 import Wizard.Api.Resource.Config.AppConfigChangeDTO
 import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Api.Resource.Document.DocumentCreateDTO
@@ -102,8 +103,10 @@ import Wizard.Model.Admin.Admin
 import Wizard.Model.App.App
 import Wizard.Model.BookReference.BookReference
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
+import Wizard.Model.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
@@ -114,6 +117,7 @@ import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
+import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireComment
@@ -162,7 +166,7 @@ makeFields ''BookReference
 -- Model / Branch
 makeFields ''Branch
 
-makeFields ''BranchWithEvents
+makeFields ''BranchData
 
 -- Model / Cache
 makeFields ''ServerCache
@@ -253,11 +257,15 @@ makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigBranch
+
 makeFields ''ServerConfigDocument
 
 makeFields ''ServerConfigFeedback
 
 makeFields ''ServerConfigLogging
+
+makeFields ''ServerConfigPersistentCommand
 
 makeFields ''ServerConfigQuestionnaire
 
@@ -266,6 +274,8 @@ makeFields ''ServerConfigCronWorker
 makeFields ''ServerConfigExperimental
 
 makeFields ''BuildInfoConfig
+
+makeFields ''InvokeClientCssCompilationCommand
 
 -- Model / Context
 makeFields ''BaseContext
@@ -455,6 +465,9 @@ makeFields ''PackagePattern
 -- Model / PackageBundle
 makeFields ''PackageBundle
 
+-- Model / PersistentCommand
+makeFields ''PersistentCommand
+
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
@@ -560,6 +573,10 @@ makeFields ''BranchCreateDTO
 makeFields ''BranchDTO
 
 makeFields ''BranchDetailDTO
+
+makeFields ''BranchEventDTO
+
+makeFields ''AddBranchEventDTO
 
 -- Api / Resource / Config
 makeFields ''AppConfigChangeDTO

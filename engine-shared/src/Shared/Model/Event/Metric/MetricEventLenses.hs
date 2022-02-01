@@ -1,6 +1,7 @@
 module Shared.Model.Event.Metric.MetricEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteMetricEvent where
       get entity = entity ^. entityUuid
       set :: DeleteMetricEvent -> U.UUID -> DeleteMetricEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddMetricEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddMetricEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddMetricEvent -> UTCTime -> AddMetricEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditMetricEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditMetricEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditMetricEvent -> UTCTime -> EditMetricEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteMetricEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteMetricEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteMetricEvent -> UTCTime -> DeleteMetricEvent
+      set entity newValue = entity & createdAt .~ newValue

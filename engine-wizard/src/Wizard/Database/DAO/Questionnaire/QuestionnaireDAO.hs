@@ -141,7 +141,8 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
           _ -> 0
   -- 3. Get entities
   let sqlBase =
-        "SELECT DISTINCT qtn.uuid, \
+        f'
+          "SELECT DISTINCT qtn.uuid, \
                  \qtn.name, \
                  \qtn.description, \
                  \qtn.visibility, \
@@ -160,6 +161,7 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  \      FROM package \
                  \      WHERE organization_id = pkg.organization_id \
                  \        AND km_id = pkg.km_id \
+                 \        AND app_uuid = '%s' \
                  \      GROUP BY organization_id, km_id) THEN 'Outdated' \
                  \  WHEN qtn_mig.new_questionnaire_uuid IS NULL THEN 'Default' \
                  \  END, \
@@ -174,8 +176,9 @@ findQuestionnairesForCurrentUserPage mQuery mIsTemplate mProjectTags mProjectTag
                  \  GROUP BY questionnaire_uuid \
                  \) as user_permissions \
                  \FROM questionnaire qtn \
-                 \JOIN package pkg ON qtn.package_id = pkg.id \
+                 \JOIN package pkg ON qtn.package_id = pkg.id AND qtn.app_uuid = pkg.app_uuid \
                  \LEFT JOIN questionnaire_migration qtn_mig ON qtn.uuid = qtn_mig.new_questionnaire_uuid "
+          [U.toString appUuid]
   let sql =
         fromString $
         if currentUser ^. role == _USER_ROLE_ADMIN
@@ -294,7 +297,7 @@ findQuestionnaireById' qtnUuid = do
 findQuestionnaireSimpleById :: String -> AppContextM QuestionnaireSimple
 findQuestionnaireSimpleById uuid = do
   appUuid <- asks _appContextAppUuid
-  createFindEntityWithFieldsByFn "uuid, name" entityName [appQueryUuid appUuid, ("uuid", uuid)]
+  createFindEntityWithFieldsByFn "uuid, name" False entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 findQuestionnaireSimpleById' :: String -> AppContextM (Maybe QuestionnaireSimple)
 findQuestionnaireSimpleById' uuid = do
@@ -322,7 +325,8 @@ findQuestionnaireForSquashing = do
   return . concat $ entities
 
 findQuestionnaireSquashById :: String -> AppContextM QuestionnaireSquash
-findQuestionnaireSquashById uuid = createFindEntityWithFieldsByFn "uuid, events, versions" entityName [("uuid", uuid)]
+findQuestionnaireSquashById uuid =
+  createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", uuid)]
 
 countQuestionnaires :: AppContextM Int
 countQuestionnaires = createCountFn entityName

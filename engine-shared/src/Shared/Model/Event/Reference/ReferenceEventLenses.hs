@@ -1,6 +1,7 @@
 module Shared.Model.Event.Reference.ReferenceEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -111,3 +112,39 @@ instance HasEntityUuid' DeleteReferenceEvent where
       get entity = entity ^. entityUuid
       set :: DeleteReferenceEvent -> U.UUID -> DeleteReferenceEvent
       set entity newCross = entity & entityUuid .~ newCross
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddReferenceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddReferenceEvent -> UTCTime
+      get (AddResourcePageReferenceEvent' entity) = entity ^. createdAt
+      get (AddURLReferenceEvent' entity) = entity ^. createdAt
+      get (AddCrossReferenceEvent' entity) = entity ^. createdAt
+      set :: AddReferenceEvent -> UTCTime -> AddReferenceEvent
+      set (AddResourcePageReferenceEvent' entity) newCross =
+        AddResourcePageReferenceEvent' $ entity & createdAt .~ newCross
+      set (AddURLReferenceEvent' entity) newCross = AddURLReferenceEvent' $ entity & createdAt .~ newCross
+      set (AddCrossReferenceEvent' entity) newCross = AddCrossReferenceEvent' $ entity & createdAt .~ newCross
+
+instance HasCreatedAt' EditReferenceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditReferenceEvent -> UTCTime
+      get (EditResourcePageReferenceEvent' entity) = entity ^. createdAt
+      get (EditURLReferenceEvent' entity) = entity ^. createdAt
+      get (EditCrossReferenceEvent' entity) = entity ^. createdAt
+      set :: EditReferenceEvent -> UTCTime -> EditReferenceEvent
+      set (EditResourcePageReferenceEvent' entity) newCross =
+        EditResourcePageReferenceEvent' $ entity & createdAt .~ newCross
+      set (EditURLReferenceEvent' entity) newCross = EditURLReferenceEvent' $ entity & createdAt .~ newCross
+      set (EditCrossReferenceEvent' entity) newCross = EditCrossReferenceEvent' $ entity & createdAt .~ newCross
+
+instance HasCreatedAt' DeleteReferenceEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteReferenceEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteReferenceEvent -> UTCTime -> DeleteReferenceEvent
+      set entity newCross = entity & createdAt .~ newCross

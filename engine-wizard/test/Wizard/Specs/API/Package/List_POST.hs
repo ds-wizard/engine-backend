@@ -5,8 +5,6 @@ module Wizard.Specs.API.Package.List_POST
 import Control.Lens ((&), (.~), (^.))
 import Data.Aeson (encode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
-import Data.Maybe (fromJust)
-import Data.Time
 import Network.HTTP.Types
 import Network.Wai (Application)
 import Test.Hspec
@@ -43,7 +41,7 @@ list_post appContext =
     test_201_req_all_db_no appContext
     test_201_req_no_db_all appContext
     test_201_req_one_db_rest appContext
-    test_201_without_readme_and_createdAt appContext
+    test_201_without_readme appContext
     test_400 appContext
     test_400_main_package_duplication appContext
     test_400_missing_previous_package appContext
@@ -178,20 +176,16 @@ test_201_req_one_db_rest appContext =
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201_without_readme_and_createdAt appContext =
-  it "HTTP 201 CREATED - Without 'readme' and 'createdAt' props" $
+test_201_without_readme appContext =
+  it "HTTP 201 CREATED - Without 'readme' props" $
      -- GIVEN: Prepare request
    do
     let reqDto = PBM.toDTO (netherlandsPackageBudle & packages .~ [netherlandsPackage])
-    let reqBody =
-          BSL.pack . replace "createdAt" "differentCreatedAt" . replace "readme" "differentReadme" . BSL.unpack $
-          encode reqDto
+    let reqBody = BSL.pack . replace "readme" "differentReadme" . BSL.unpack $ encode reqDto
      -- AND: Prepare expectation
     let expStatus = 201
     let expHeaders = resCtHeader : resCorsHeaders
-    let expDto =
-          toSimpleDTO . toPackage <$>
-          [(netherlandsPackage & createdAt .~ UTCTime (fromJust $ fromGregorianValid 1970 1 1) 0) & readme .~ ""]
+    let expDto = toSimpleDTO . toPackage <$> [netherlandsPackage & readme .~ ""]
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO deletePackages appContext

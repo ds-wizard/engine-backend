@@ -1,6 +1,7 @@
 module Shared.Model.Event.Question.QuestionEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -139,6 +140,50 @@ instance HasEntityUuid' DeleteQuestionEvent where
       get entity = entity ^. entityUuid
       set :: DeleteQuestionEvent -> U.UUID -> DeleteQuestionEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddQuestionEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddQuestionEvent -> UTCTime
+      get (AddOptionsQuestionEvent' entity) = entity ^. createdAt
+      get (AddMultiChoiceQuestionEvent' entity) = entity ^. createdAt
+      get (AddListQuestionEvent' entity) = entity ^. createdAt
+      get (AddValueQuestionEvent' entity) = entity ^. createdAt
+      get (AddIntegrationQuestionEvent' entity) = entity ^. createdAt
+      set :: AddQuestionEvent -> UTCTime -> AddQuestionEvent
+      set (AddOptionsQuestionEvent' entity) newValue = AddOptionsQuestionEvent' $ entity & createdAt .~ newValue
+      set (AddMultiChoiceQuestionEvent' entity) newValue = AddMultiChoiceQuestionEvent' $ entity & createdAt .~ newValue
+      set (AddListQuestionEvent' entity) newValue = AddListQuestionEvent' $ entity & createdAt .~ newValue
+      set (AddValueQuestionEvent' entity) newValue = AddValueQuestionEvent' $ entity & createdAt .~ newValue
+      set (AddIntegrationQuestionEvent' entity) newValue = AddIntegrationQuestionEvent' $ entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditQuestionEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditQuestionEvent -> UTCTime
+      get (EditOptionsQuestionEvent' entity) = entity ^. createdAt
+      get (EditMultiChoiceQuestionEvent' entity) = entity ^. createdAt
+      get (EditListQuestionEvent' entity) = entity ^. createdAt
+      get (EditValueQuestionEvent' entity) = entity ^. createdAt
+      get (EditIntegrationQuestionEvent' entity) = entity ^. createdAt
+      set :: EditQuestionEvent -> UTCTime -> EditQuestionEvent
+      set (EditOptionsQuestionEvent' entity) newValue = EditOptionsQuestionEvent' $ entity & createdAt .~ newValue
+      set (EditMultiChoiceQuestionEvent' entity) newValue =
+        EditMultiChoiceQuestionEvent' $ entity & createdAt .~ newValue
+      set (EditListQuestionEvent' entity) newValue = EditListQuestionEvent' $ entity & createdAt .~ newValue
+      set (EditValueQuestionEvent' entity) newValue = EditValueQuestionEvent' $ entity & createdAt .~ newValue
+      set (EditIntegrationQuestionEvent' entity) newValue =
+        EditIntegrationQuestionEvent' $ entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteQuestionEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteQuestionEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteQuestionEvent -> UTCTime -> DeleteQuestionEvent
+      set entity newValue = entity & createdAt .~ newValue
 
 ------------------------------------------------------------------------------------------
 ------------------------------------------------------------------------------------------

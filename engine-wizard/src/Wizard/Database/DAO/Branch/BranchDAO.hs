@@ -15,7 +15,6 @@ import Shared.Model.Common.Pageable
 import Shared.Model.Common.Sort
 import Wizard.Database.DAO.Common
 import Wizard.Database.Mapping.Branch.Branch ()
-import Wizard.Database.Mapping.Branch.BranchWithEvents ()
 import Wizard.Model.Branch.Branch
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
@@ -34,8 +33,8 @@ findBranchesByPreviousPackageId previousPackageId = do
   appUuid <- asks _appContextAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("previous_package_id", previousPackageId)]
 
-findBranchesWithEventsPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchWithEvents)
-findBranchesWithEventsPage mQuery pageable sort = do
+findBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page Branch)
+findBranchesPage mQuery pageable sort = do
   appUuid <- asks _appContextAppUuid
   createFindEntitiesPageableQuerySortFn
     entityName
@@ -61,20 +60,15 @@ findBranchByKmId' kmId = do
   appUuid <- asks _appContextAppUuid
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("km_id", kmId)]
 
-findBranchWithEventsById :: String -> AppContextM BranchWithEvents
-findBranchWithEventsById uuid = do
-  appUuid <- asks _appContextAppUuid
-  createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
-
-insertBranch :: BranchWithEvents -> AppContextM Int64
+insertBranch :: Branch -> AppContextM Int64
 insertBranch = createInsertFn entityName
 
-updateBranchById :: BranchWithEvents -> AppContextM Int64
+updateBranchById :: Branch -> AppContextM Int64
 updateBranchById branch = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, metamodel_version = ?, previous_package_id = ?, events = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
   logQuery sql params
   let action conn = execute conn sql params

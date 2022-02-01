@@ -13,10 +13,10 @@ module Shared.Database.Migration.Development.KnowledgeModel.Data.Chapters
   ) where
 
 import Control.Lens
-import qualified Data.Map.Strict as M
 
 import LensesConfig
 import Shared.Database.Migration.Development.KnowledgeModel.Data.Questions
+import Shared.Model.Common.MapEntry
 import Shared.Model.KnowledgeModel.KnowledgeModel
 import Shared.Util.Uuid
 
@@ -28,7 +28,7 @@ chapter1 =
     , _chapterText =
         Just
           "Before you decide to embark on any new study, it is nowadays good practice to consider all options to keep the data generation part of your study as limited as possible. It is not because we can generate massive amounts of data that we always need to do so. Creating data with public money is bringing with it the responsibility to treat those data well and (if potentially useful) make them available for re-use by others."
-    , _chapterAnnotations = M.empty
+    , _chapterAnnotations = []
     , _chapterQuestionUuids = [question1 ^. uuid, question2 ^. uuid]
     }
 
@@ -37,7 +37,7 @@ chapter1Edited =
   chapter1
     { _chapterTitle = "EDITED: " ++ (chapter1 ^. title)
     , _chapterText = ("EDITED: " ++) <$> (chapter1 ^. text)
-    , _chapterAnnotations = M.fromList [("newAnnotation", "someValue")]
+    , _chapterAnnotations = [MapEntry "newAnnotation" "someValue"]
     , _chapterQuestionUuids = [question2 ^. uuid, question1 ^. uuid]
     }
 
@@ -58,7 +58,7 @@ chapter2 =
     , _chapterText =
         Just
           "In the data design and planning phase, we will make sure that we know what data comes when, that we have enough storage space and compute power to deal with it, and that all the responsibilities have been taken care of."
-    , _chapterAnnotations = M.empty
+    , _chapterAnnotations = []
     , _chapterQuestionUuids = [question3 ^. uuid]
     }
 
@@ -77,7 +77,7 @@ chapter3 =
     { _chapterUuid = u' "ca46cd40-3999-4f0d-a8ba-15d57682dfeb"
     , _chapterTitle = "Data Capture/Measurement"
     , _chapterText = Just ""
-    , _chapterAnnotations = M.empty
+    , _chapterAnnotations = []
     , _chapterQuestionUuids = [question9 ^. uuid, question10 ^. uuid, question11 ^. uuid, question12 ^. uuid]
     }
 
@@ -87,6 +87,6 @@ chapter4WithoutQuestions =
     { _chapterUuid = u' "c0958799-16bb-41c2-a0ef-182d6709f0bb"
     , _chapterTitle = "Data processing and curation"
     , _chapterText = Just ""
-    , _chapterAnnotations = M.empty
+    , _chapterAnnotations = []
     , _chapterQuestionUuids = []
     }

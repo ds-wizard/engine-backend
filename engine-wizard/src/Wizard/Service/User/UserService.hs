@@ -27,6 +27,7 @@ import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Localization.Messages.Public
@@ -215,6 +216,7 @@ deleteUser userUuid =
     checkPermission _UM_PERM
     user <- findUserById userUuid
     removeOwnerFromQuestionnaire (user ^. uuid)
+    deletePersistentCommandByCreatedBy userUuid
     documents <- findDocumentsFiltered [("creator_uuid", userUuid)]
     forM_
       documents

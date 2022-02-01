@@ -12,7 +12,8 @@ import Wizard.Model.Websocket.WebsocketRecord
 
 data ServerCache =
   ServerCache
-    { _serverCacheKnowledgeModel :: C.Cache Int (M.Map Int KnowledgeModel)
+    { _serverCacheBranchWebsocket :: C.Cache Int WebsocketRecord
+    , _serverCacheKnowledgeModel :: C.Cache Int (M.Map Int KnowledgeModel)
     , _serverCacheQuestionnaireContent :: C.Cache Int QuestionnaireContent
     , _serverCacheQuestionnaireReportIndications :: C.Cache Int [Indication]
     , _serverCacheQuestionnaireWebsocket :: C.Cache Int WebsocketRecord

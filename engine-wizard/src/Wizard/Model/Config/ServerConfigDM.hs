@@ -16,8 +16,10 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigBranch = defaultBranch
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
+    , _serverConfigPersistentCommand = defaultPersistentCommand
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
     , _serverConfigExperimental = defaultExperimental
@@ -92,6 +94,13 @@ defaultRegistry =
     , _serverConfigRegistryClientUrl = "https://registry.ds-wizard.org"
     }
 
+defaultBranch :: ServerConfigBranch
+defaultBranch = ServerConfigBranch {_serverConfigBranchSquash = defaultBranchSquash}
+
+defaultBranchSquash :: ServerConfigCronWorker
+defaultBranchSquash =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "15 2 * * *"}
+
 defaultDocument :: ServerConfigDocument
 defaultDocument = ServerConfigDocument {_serverConfigDocumentClean = defaultDocumentClean}
 
@@ -110,6 +119,14 @@ defaultFeedback =
 defaultFeedbackSync :: ServerConfigCronWorker
 defaultFeedbackSync =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 2 * * *"}
+
+defaultPersistentCommand :: ServerConfigPersistentCommand
+defaultPersistentCommand =
+  ServerConfigPersistentCommand {_serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob}
+
+defaultPersistentCommandRetryJob :: ServerConfigCronWorker
+defaultPersistentCommandRetryJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

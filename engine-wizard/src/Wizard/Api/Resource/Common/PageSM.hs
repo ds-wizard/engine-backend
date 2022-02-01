@@ -70,7 +70,7 @@ instance ToSchema (Page PackageSuggestionDTO) where
       (Page "packages" pageMetadata [P_Mapper.toSimpleDTO (SP_Mapper.toPackage globalPackage)])
 
 instance ToSchema (Page BranchDTO) where
-  declareNamedSchema = simpleToSchema''''' "_page" "Page BranchDTO" (Page "branches" pageMetadata [amsterdamBranch])
+  declareNamedSchema = simpleToSchema''''' "_page" "Page BranchDTO" (Page "branches" pageMetadata [amsterdamBranchDto])
 
 instance ToSchema (Page QuestionnaireDTO) where
   declareNamedSchema =

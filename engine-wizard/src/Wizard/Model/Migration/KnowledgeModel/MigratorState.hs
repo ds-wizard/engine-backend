@@ -1,5 +1,6 @@
 module Wizard.Model.Migration.KnowledgeModel.MigratorState where
 
+import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
 
@@ -35,5 +36,6 @@ data MigratorState =
     , _migratorStateResultEvents :: [Event]
     , _migratorStateCurrentKnowledgeModel :: Maybe KnowledgeModel
     , _migratorStateAppUuid :: U.UUID
+    , _migratorStateCreatedAt :: UTCTime
     }
   deriving (Show, Eq)

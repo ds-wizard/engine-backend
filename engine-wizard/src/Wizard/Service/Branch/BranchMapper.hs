@@ -6,14 +6,18 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Constant.KnowledgeModel
+import Shared.Model.KnowledgeModel.KnowledgeModel
+import Shared.Model.Package.Package
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Model.Branch.Branch
+import Wizard.Model.Branch.BranchData
 import Wizard.Model.Branch.BranchState
+import Wizard.Service.Package.PackageMapper
 
-toDTO :: BranchWithEvents -> Maybe String -> BranchState -> BranchDTO
+toDTO :: Branch -> Maybe String -> BranchState -> BranchDTO
 toDTO branch mForkOfPackageId state =
   BranchDTO
     { _branchDTOUuid = branch ^. uuid
@@ -27,8 +31,8 @@ toDTO branch mForkOfPackageId state =
     , _branchDTOUpdatedAt = branch ^. updatedAt
     }
 
-toDetailDTO :: BranchWithEvents -> Maybe String -> BranchState -> BranchDetailDTO
-toDetailDTO branch mForkOfPackageId state =
+toDetailDTO :: Branch -> BranchData -> KnowledgeModel -> Maybe String -> Maybe Package -> BranchState -> BranchDetailDTO
+toDetailDTO branch branchData knowledgeModel mForkOfPackageId mForkOfPackage state =
   BranchDetailDTO
     { _branchDetailDTOUuid = branch ^. uuid
     , _branchDetailDTOName = branch ^. name
@@ -36,47 +40,47 @@ toDetailDTO branch mForkOfPackageId state =
     , _branchDetailDTOState = state
     , _branchDetailDTOPreviousPackageId = branch ^. previousPackageId
     , _branchDetailDTOForkOfPackageId = mForkOfPackageId
-    , _branchDetailDTOEvents = branch ^. events
+    , _branchDetailDTOForkOfPackage = fmap toSimpleDTO mForkOfPackage
+    , _branchDetailDTOEvents = branchData ^. events
+    , _branchDetailDTOKnowledgeModel = knowledgeModel
     , _branchDetailDTOOwnerUuid = branch ^. ownerUuid
     , _branchDetailDTOCreatedAt = branch ^. createdAt
     , _branchDetailDTOUpdatedAt = branch ^. updatedAt
     }
 
-fromChangeDTO ::
-     BranchChangeDTO
-  -> U.UUID
-  -> Int
-  -> Maybe String
-  -> Maybe U.UUID
-  -> U.UUID
-  -> UTCTime
-  -> UTCTime
-  -> BranchWithEvents
-fromChangeDTO dto bUuid bMetamodelVersion bPackageId mOwnerUuid appUuid bCreatedAt bUpdatedAt =
-  BranchWithEvents
-    { _branchWithEventsUuid = bUuid
-    , _branchWithEventsName = dto ^. name
-    , _branchWithEventsKmId = dto ^. kmId
-    , _branchWithEventsMetamodelVersion = bMetamodelVersion
-    , _branchWithEventsPreviousPackageId = bPackageId
-    , _branchWithEventsOwnerUuid = mOwnerUuid
-    , _branchWithEventsEvents = dto ^. events
-    , _branchWithEventsAppUuid = appUuid
-    , _branchWithEventsCreatedAt = bCreatedAt
-    , _branchWithEventsUpdatedAt = bUpdatedAt
+fromChangeDTO :: BranchChangeDTO -> U.UUID -> Maybe String -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
+fromChangeDTO dto bUuid bPackageId mOwnerUuid appUuid bCreatedAt bUpdatedAt =
+  Branch
+    { _branchUuid = bUuid
+    , _branchName = dto ^. name
+    , _branchKmId = dto ^. kmId
+    , _branchPreviousPackageId = bPackageId
+    , _branchOwnerUuid = mOwnerUuid
+    , _branchAppUuid = appUuid
+    , _branchCreatedAt = bCreatedAt
+    , _branchUpdatedAt = bUpdatedAt
     }
 
-fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> BranchWithEvents
+fromCreateDTO :: BranchCreateDTO -> U.UUID -> Maybe U.UUID -> U.UUID -> UTCTime -> UTCTime -> Branch
 fromCreateDTO dto bUuid mOwnerUuid appUuid bCreatedAt bUpdatedAt =
-  BranchWithEvents
-    { _branchWithEventsUuid = bUuid
-    , _branchWithEventsName = dto ^. name
-    , _branchWithEventsKmId = dto ^. kmId
-    , _branchWithEventsMetamodelVersion = kmMetamodelVersion
-    , _branchWithEventsPreviousPackageId = dto ^. previousPackageId
-    , _branchWithEventsOwnerUuid = mOwnerUuid
-    , _branchWithEventsEvents = []
-    , _branchWithEventsAppUuid = appUuid
-    , _branchWithEventsCreatedAt = bCreatedAt
-    , _branchWithEventsUpdatedAt = bUpdatedAt
+  Branch
+    { _branchUuid = bUuid
+    , _branchName = dto ^. name
+    , _branchKmId = dto ^. kmId
+    , _branchPreviousPackageId = dto ^. previousPackageId
+    , _branchOwnerUuid = mOwnerUuid
+    , _branchAppUuid = appUuid
+    , _branchCreatedAt = bCreatedAt
+    , _branchUpdatedAt = bUpdatedAt
+    }
+
+toBranchData :: Branch -> BranchData
+toBranchData branch =
+  BranchData
+    { _branchDataBranchUuid = branch ^. uuid
+    , _branchDataMetamodelVersion = kmMetamodelVersion
+    , _branchDataEvents = []
+    , _branchDataAppUuid = branch ^. appUuid
+    , _branchDataCreatedAt = branch ^. createdAt
+    , _branchDataUpdatedAt = branch ^. updatedAt
     }

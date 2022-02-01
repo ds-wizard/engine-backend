@@ -7,6 +7,7 @@ import Shared.Util.Swagger
 import Wizard.Api.Resource.Branch.BranchDetailDTO
 import Wizard.Api.Resource.Branch.BranchDetailJM ()
 import Wizard.Api.Resource.Branch.BranchStateSM ()
+import Wizard.Api.Resource.Package.PackageSimpleSM ()
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 
 instance ToSchema BranchDetailDTO where

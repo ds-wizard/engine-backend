@@ -24,8 +24,10 @@ instance FromJSON ServerConfig where
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigBranch <- o .:? "branch" .!= defaultBranch
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
+    _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigExperimental <- o .:? "experimental" .!= defaultExperimental
@@ -81,6 +83,12 @@ instance FromJSON ServerConfigRegistry where
     return ServerConfigRegistry {..}
   parseJSON _ = mzero
 
+instance FromJSON ServerConfigBranch where
+  parseJSON (Object o) = do
+    _serverConfigBranchSquash <- o .:? "squash" .!= (defaultBranch ^. squash)
+    return ServerConfigBranch {..}
+  parseJSON _ = mzero
+
 instance FromJSON ServerConfigDocument where
   parseJSON (Object o) = do
     _serverConfigDocumentClean <- o .:? "clean" .!= (defaultDocument ^. clean)
@@ -93,6 +101,12 @@ instance FromJSON ServerConfigFeedback where
     _serverConfigFeedbackWebUrl <- o .:? "webUrl" .!= (defaultFeedback ^. webUrl)
     _serverConfigFeedbackSync <- o .:? "sync" .!= (defaultFeedback ^. sync)
     return ServerConfigFeedback {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommand where
+  parseJSON (Object o) = do
+    _serverConfigPersistentCommandRetryJob <- o .:? "retryJob" .!= (defaultPersistentCommand ^. retryJob)
+    return ServerConfigPersistentCommand {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where

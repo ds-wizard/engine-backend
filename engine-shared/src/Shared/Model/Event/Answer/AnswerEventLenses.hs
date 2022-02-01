@@ -1,6 +1,7 @@
 module Shared.Model.Event.Answer.AnswerEventLenses where
 
 import Control.Lens ((&), (.~), (^.))
+import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
@@ -82,3 +83,29 @@ instance HasEntityUuid' DeleteAnswerEvent where
       get entity = entity ^. entityUuid
       set :: DeleteAnswerEvent -> U.UUID -> DeleteAnswerEvent
       set entity newValue = entity & entityUuid .~ newValue
+
+------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
+instance HasCreatedAt' AddAnswerEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AddAnswerEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: AddAnswerEvent -> UTCTime -> AddAnswerEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' EditAnswerEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: EditAnswerEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: EditAnswerEvent -> UTCTime -> EditAnswerEvent
+      set entity newValue = entity & createdAt .~ newValue
+
+instance HasCreatedAt' DeleteAnswerEvent where
+  createdAt' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: DeleteAnswerEvent -> UTCTime
+      get entity = entity ^. createdAt
+      set :: DeleteAnswerEvent -> UTCTime -> DeleteAnswerEvent
+      set entity newValue = entity & createdAt .~ newValue

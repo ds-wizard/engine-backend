@@ -1,5 +1,5 @@
 name:                engine-wizard-metamodel-migrator
-version:             "3.7.0"
+version:             "3.8.0"
 license:             Apache-2.0
 author:              "Marek Suchánek"
 maintainer:          "suchama4@fit.cvut.cz"
@@ -18,8 +18,10 @@ dependencies:
 - base >= 4.7 && < 5
 - aeson
 - containers
+- lens
 - text
 - time
+- vector
 - unordered-containers
 - uuid
 
@@ -45,6 +47,7 @@ library:
     - ScopedTypeVariables
     - MultiParamTypeClasses
     - FlexibleContexts
+    - FunctionalDependencies
 
 executables:
   event-migrator:

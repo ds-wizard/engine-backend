@@ -7,6 +7,7 @@ import Shared.Constant.KnowledgeModel
 import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Database.Migration.Development.KnowledgeModel.Data.KnowledgeModels
 import Shared.Database.Migration.Development.Package.Data.Packages
+import Shared.Util.Date
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorConflictDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateCreateDTO
 import Wizard.Api.Resource.Migration.KnowledgeModel.MigratorStateDTO
@@ -18,8 +19,8 @@ import Wizard.Model.Migration.KnowledgeModel.MigratorState
 migratorState :: MigratorStateDTO
 migratorState =
   MigratorStateDTO
-    { _migratorStateDTOBranchUuid = amsterdamBranch ^. uuid
-    , _migratorStateDTOBranchName = amsterdamBranch ^. name
+    { _migratorStateDTOBranchUuid = amsterdamBranchDto ^. uuid
+    , _migratorStateDTOBranchName = amsterdamBranchDto ^. name
     , _migratorStateDTOBranchPreviousPackageId = netherlandsPackage ^. pId
     , _migratorStateDTOMigrationState =
         ConflictState . CorrectorConflict . Just . Prelude.head $ netherlandsPackageV2 ^. events
@@ -51,4 +52,5 @@ differentMigratorState =
     , _migratorStateResultEvents = []
     , _migratorStateCurrentKnowledgeModel = Nothing
     , _migratorStateAppUuid = differentApp ^. uuid
+    , _migratorStateCreatedAt = dt'' 2018 1 1 1
     }
