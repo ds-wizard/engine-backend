@@ -5,11 +5,13 @@ module Wizard.Worker.Cron.PersistentCommand.PersistentCommandWorker
 import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Reader (liftIO)
+import Data.Foldable (traverse_)
 import qualified Data.Text as T
 import Prelude hiding (log)
 import System.Cron hiding (cron)
 
 import LensesConfig
+import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.Context.BaseContext
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Util.Context
@@ -28,7 +30,9 @@ job context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel $ do
         log "starting"
-        liftIO $ runAppContextWithBaseContext runPersistentCommands context
+        (Right apps) <- liftIO $ runAppContextWithBaseContext findApps context
+        let appUuids = fmap (^. uuid) apps
+        liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands context) appUuids
         log "ended"
 
 log msg = logInfo _CMP_WORKER ("PersistentCommandWorker: " ++ msg)

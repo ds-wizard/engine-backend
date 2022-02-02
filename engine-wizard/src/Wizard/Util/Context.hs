@@ -18,6 +18,10 @@ runAppContextWithBaseContext :: AppContextM a -> BaseContext -> IO (Either Strin
 runAppContextWithBaseContext function baseContext =
   appContextFromBaseContext defaultAppUuid Nothing baseContext >>= runAppContextWithAppContext function
 
+runAppContextWithBaseContext' :: AppContextM a -> BaseContext -> U.UUID -> IO (Either String a)
+runAppContextWithBaseContext' function baseContext appUuid =
+  appContextFromBaseContext appUuid Nothing baseContext >>= runAppContextWithAppContext function
+
 runAppContextWithAppContext :: AppContextM a -> AppContext -> IO (Either String a)
 runAppContextWithAppContext function appContext = do
   eResult <- liftIO $ runMonads (runAppContextM function) appContext
