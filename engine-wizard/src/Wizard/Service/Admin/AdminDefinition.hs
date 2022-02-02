@@ -1,10 +1,13 @@
 module Wizard.Service.Admin.AdminDefinition where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (ask, liftIO)
+import Data.Foldable (traverse_)
 
 import LensesConfig hiding (action, cache, feedback)
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.App.AppCreateDTO
+import Wizard.Database.DAO.App.AppDAO
 import Wizard.Model.Admin.Admin
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppService
@@ -15,6 +18,7 @@ import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
+import Wizard.Util.Context
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- APP
@@ -244,7 +248,10 @@ persistentCommand_runAll =
 
 persistentCommand_runAllFn :: AdminExecutionDTO -> AppContextM String
 persistentCommand_runAllFn reqDto = do
-  runPersistentCommands
+  context <- ask
+  apps <- findApps
+  let appUuids = fmap (^. uuid) apps
+  liftIO $ traverse_ (runAppContextWithBaseContext' runPersistentCommands (baseContextFromAppContext context)) appUuids
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

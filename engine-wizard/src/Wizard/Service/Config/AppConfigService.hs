@@ -159,7 +159,8 @@ cInvokeClientCssCompilation persistentCommand = do
   case eCommand of
     Right command -> do
       appConfig <- getAppConfigByUuid (command ^. appUuid)
-      invokeClientCssCompilation appConfig appConfig
+      updatedAppConfig <- invokeClientCssCompilation appConfig appConfig
+      modifyAppConfig updatedAppConfig
       return (DonePersistentCommandState, Nothing)
     Left error -> return (ErrorPersistentCommandState, Just $ f' "Problem in deserialization of JSON: %s" [error])
 
