@@ -1,6 +1,7 @@
 module Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO where
 
 import Control.Lens ((^.))
+import Control.Monad.Reader (asks)
 import qualified Data.List as L
 import Data.String
 import qualified Data.UUID as U
@@ -24,14 +25,16 @@ findPersistentCommands = createFindEntitiesFn entityName
 
 findPersistentCommandsByStatesAndComponents :: [String] -> AppContextM [U.UUID]
 findPersistentCommandsByStatesAndComponents components = do
+  appUuid <- asks _appContextAppUuid
   let sql =
         f'
           "SELECT uuid \
           \FROM persistent_command \
           \WHERE (state = 'NewPersistentCommandState' \
           \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts)) \
-          \  AND component IN (%s)"
-          [L.intercalate "," . fmap (\c -> f' "'%s'" [c]) $ components]
+          \  AND component IN (%s) \
+          \  AND app_uuid = '%s'"
+          [L.intercalate "," . fmap (\c -> f' "'%s'" [c]) $ components, U.toString appUuid]
   logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
   entities <- runDB action

@@ -55,4 +55,4 @@ buildCoordinate :: String -> String -> String -> String
 buildCoordinate orgId entityId version = orgId ++ ":" ++ entityId ++ ":" ++ version
 
 chooseTheNewest :: (HasVersion a String, Ord a) => [[a]] -> [a]
-chooseTheNewest = fmap (L.maximumBy (\t1 t2 -> compare (t1 ^. version) (t2 ^. version)))
+chooseTheNewest = fmap (L.maximumBy (\t1 t2 -> compareVersion (t1 ^. version) (t2 ^. version)))
