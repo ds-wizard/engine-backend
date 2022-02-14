@@ -17,8 +17,10 @@ import Shared.Model.Event.Event
 import Shared.Model.KnowledgeModel.KnowledgeModelUtil
 import Shared.Model.Questionnaire.QuestionnaireUtil
 import Shared.Util.Date
+import Shared.Util.String
 import Wizard.Database.Migration.Development.Questionnaire.Data.QuestionnaireReplies
 import Wizard.Service.KnowledgeModel.Compilator.Compilator
+import Wizard.Service.Migration.Questionnaire.Migrator.MoveEventGenerator
 import Wizard.Service.Migration.Questionnaire.Migrator.MoveSanitizator
 
 sanitizatorSpec =
@@ -69,27 +71,6 @@ sanitizatorSpec =
         let result = computeSharedNode aPath bPath
         -- THEN:
         result `shouldBe` expected
-    describe "takeSharedPrefix" $ do
-      it "Nothing in common" $
-        -- GIVEN:
-       do
-        let path = q4_it1_q6_aYes_followUpQuestion4_path
-        let sharedNode = Nothing
-        let expected = path
-        -- WHEN:
-        let result = takeSharedPrefix sharedNode path
-        -- THEN:
-        result `shouldBe` expected
-      it "One node in common" $
-        -- GIVEN:
-       do
-        let path = q4_it1_q6_aYes_followUpQuestion4_path
-        let sharedNode = Just (question4 ^. uuid)
-        let expected = [chapter2 ^. uuid]
-        -- WHEN:
-        let result = takeSharedPrefix sharedNode path
-        -- THEN:
-        result `shouldBe` expected
     describe "takeDiffSuffix" $ do
       it "Nothing in common" $
         -- GIVEN:
@@ -137,11 +118,11 @@ sanitizatorSpec =
         -- GIVEN:
        do
         let eUuid = question1 ^. uuid
-        let pPathSuffix = [chapter1 ^. uuid, question1 ^. uuid]
-        let tPathSuffix = [chapter2 ^. uuid, question3 ^. uuid, q3_answerNo ^. uuid, question1 ^. uuid]
+        let pPathSuffix = [chapter1 ^. uuid]
+        let tPathSuffix = [chapter2 ^. uuid, question3 ^. uuid, q3_answerNo ^. uuid]
         let replies = [rQ1, rQ2]
         -- AND: Make expectation
-        let expRQ1 = (createReplyKey tPathSuffix, snd rQ1)
+        let expRQ1 = (f' "%s.%s" [createReplyKey tPathSuffix, U.toString eUuid], snd rQ1)
         let expected = [expRQ1, rQ2]
         -- WHEN:
         let result = computeDesiredPath eUuid pPathSuffix tPathSuffix replies
@@ -151,8 +132,8 @@ sanitizatorSpec =
         -- GIVEN:
        do
         let eUuid = q4_it1_question5 ^. uuid
-        let pPathSuffix = [q4_it1_question5 ^. uuid]
-        let tPathSuffix = [q4_it1_question6 ^. uuid, q4_it1_q6_answerNo ^. uuid, q4_it1_question5 ^. uuid]
+        let pPathSuffix = []
+        let tPathSuffix = [q4_it1_question6 ^. uuid, q4_it1_q6_answerNo ^. uuid]
         let replies =
               [ rQ3
               , rQ4
@@ -164,8 +145,8 @@ sanitizatorSpec =
               , rQ4_it2_q6
               ]
         -- AND: Make expectation
-        let ch2___q4_0 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it1] ++ tPathSuffix
-        let ch2___q4_1 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it2] ++ tPathSuffix
+        let ch2___q4_0 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it1] ++ tPathSuffix ++ [eUuid]
+        let ch2___q4_1 = [chapter2 ^. uuid, question4 ^. uuid, rQ4_it2] ++ tPathSuffix ++ [eUuid]
         let expRQ4_it1_q5 = (createReplyKey ch2___q4_0, snd rQ4_it1_q5)
         let expRQ4_it1_q5_it1_question7 =
               ( createReplyKey (ch2___q4_0 ++ [rQ4_it1_q5_it1] ++ [q4_it1_q5_it2_question7 ^. uuid])
@@ -253,7 +234,7 @@ createSanitizeRepliesWithEventsTest name event shouldNotEqual =
     -- AND:
     let expected = fReplies
     -- WHEN:
-    let result = sanitizeRepliesWithEvents km1WithQ4 (M.toList fReplies) events
+    let result = sanitizeRepliesWithEvents km1WithQ4 km1WithQ4 (M.toList fReplies) events
     -- THEN:
     if not shouldNotEqual
       then M.fromList result `shouldBe` expected

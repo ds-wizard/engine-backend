@@ -23,7 +23,7 @@ import Shared.Util.Uuid
 chapter1 :: Chapter
 chapter1 =
   Chapter
-    { _chapterUuid = u' "e3c4b314-919b-418d-bb85-a07c97433427"
+    { _chapterUuid = u' "00000000-0000-0000-0000-0000000000c1"
     , _chapterTitle = "Design of experiment"
     , _chapterText =
         Just
@@ -53,7 +53,7 @@ chapter1WithAddedQuestion3 = chapter1 {_chapterQuestionUuids = chapter1 ^. quest
 chapter2 :: Chapter
 chapter2 =
   Chapter
-    { _chapterUuid = u' "a2a25254-58e3-4fc7-9850-160803d792fe"
+    { _chapterUuid = u' "00000000-0000-0000-0000-0000000000c2"
     , _chapterTitle = "Data design and planning"
     , _chapterText =
         Just
@@ -74,7 +74,7 @@ chapter2WithQ4 = chapter2 {_chapterQuestionUuids = [question3 ^. uuid, question4
 chapter3 :: Chapter
 chapter3 =
   Chapter
-    { _chapterUuid = u' "ca46cd40-3999-4f0d-a8ba-15d57682dfeb"
+    { _chapterUuid = u' "00000000-0000-0000-0000-0000000000c3"
     , _chapterTitle = "Data Capture/Measurement"
     , _chapterText = Just ""
     , _chapterAnnotations = []
@@ -84,7 +84,7 @@ chapter3 =
 chapter4WithoutQuestions :: Chapter
 chapter4WithoutQuestions =
   Chapter
-    { _chapterUuid = u' "c0958799-16bb-41c2-a0ef-182d6709f0bb"
+    { _chapterUuid = u' "00000000-0000-0000-0000-0000000000c4"
     , _chapterTitle = "Data processing and curation"
     , _chapterText = Just ""
     , _chapterAnnotations = []
