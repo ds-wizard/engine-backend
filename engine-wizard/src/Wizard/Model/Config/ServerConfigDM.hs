@@ -22,7 +22,7 @@ defaultConfig =
     , _serverConfigPersistentCommand = defaultPersistentCommand
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
-    , _serverConfigExperimental = defaultExperimental
+    , _serverConfigCloud = defaultCloud
     }
 
 defaultGeneral :: ServerConfigGeneral

@@ -21,7 +21,7 @@ data ServerConfig =
     , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
-    , _serverConfigExperimental :: ServerConfigExperimental
+    , _serverConfigCloud :: ServerConfigCloud
     }
   deriving (Generic, Show)
 

@@ -70,7 +70,7 @@ updateBranchById branch = do
         fromString
           "UPDATE branch SET uuid = ?, name = ?, km_id = ?, previous_package_id = ?, owner_uuid = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow branch ++ [toField appUuid, toField . U.toText $ branch ^. uuid]
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 

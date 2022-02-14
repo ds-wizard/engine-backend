@@ -1,10 +1,12 @@
 module Wizard.Service.Admin.AdminDefinition where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (ask, liftIO)
+import Control.Monad.Reader (ask, asks, liftIO)
 import Data.Foldable (traverse_)
+import Data.Maybe (fromMaybe)
 
 import LensesConfig hiding (action, cache, feedback)
+import Shared.Util.String
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Database.DAO.App.AppDAO
@@ -26,13 +28,46 @@ import Wizard.Util.Context
 app :: AdminSection
 app =
   AdminSection
-    {_adminSectionName = "App", _adminSectionDescription = Nothing, _adminSectionOperations = [app_createApp]}
+    { _adminSectionName = "App"
+    , _adminSectionDescription = Nothing
+    , _adminSectionOperations = [app_createApp, app_createCustomApp]
+    }
 
 -- ---------------------------------------------------------------------------------------------------------------------
 app_createApp :: AdminOperation
 app_createApp =
   AdminOperation
     { _adminOperationName = "Create an application"
+    , _adminOperationDescription = Nothing
+    , _adminOperationParameters =
+        [ AdminOperationParameter
+            {_adminOperationParameterName = "appId", _adminOperationParameterAType = StringAdminOperationParameterType}
+        , AdminOperationParameter
+            {_adminOperationParameterName = "name", _adminOperationParameterAType = StringAdminOperationParameterType}
+        ]
+    }
+
+app_createAppFn :: AdminExecutionDTO -> AppContextM String
+app_createAppFn reqDto = do
+  serverConfig <- asks _appContextServerConfig
+  let cloudDomain = fromMaybe "" (serverConfig ^. cloud . domain)
+  let appId = head (reqDto ^. parameters)
+  let reqDto' =
+        AppCreateDTO
+          { _appCreateDTOAppId = appId
+          , _appCreateDTOName = (reqDto ^. parameters) !! 1
+          , _appCreateDTOServerDomain = f' "api-%s.%s" [appId, cloudDomain]
+          , _appCreateDTOServerUrl = f' "https://api-%s.%s" [appId, cloudDomain]
+          , _appCreateDTOClientUrl = f' "https://%s.%s" [appId, cloudDomain]
+          }
+  createApp reqDto'
+  return "Done"
+
+-- ---------------------------------------------------------------------------------------------------------------------
+app_createCustomApp :: AdminOperation
+app_createCustomApp =
+  AdminOperation
+    { _adminOperationName = "Create a custom application"
     , _adminOperationDescription = Nothing
     , _adminOperationParameters =
         [ AdminOperationParameter
@@ -54,8 +89,8 @@ app_createApp =
         ]
     }
 
-app_createAppFn :: AdminExecutionDTO -> AppContextM String
-app_createAppFn reqDto = do
+app_createCustomAppFn :: AdminExecutionDTO -> AppContextM String
+app_createCustomAppFn reqDto = do
   let reqDto' =
         AppCreateDTO
           { _appCreateDTOAppId = head (reqDto ^. parameters)

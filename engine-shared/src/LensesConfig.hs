@@ -52,7 +52,7 @@ makeFields ''ServerConfigAnalytics
 
 makeFields ''ServerConfigLogging
 
-makeFields ''ServerConfigExperimental
+makeFields ''ServerConfigCloud
 
 -- Model / Context
 makeFields ''AppContext

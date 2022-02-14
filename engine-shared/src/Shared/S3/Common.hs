@@ -223,7 +223,7 @@ makeBucketPublicReadOnly = do
   bucketName <- getBucketName
   context <- ask
   let resource =
-        if context ^. serverConfig' . experimental' . moreAppsEnabled
+        if context ^. serverConfig' . cloud' . enabled
           then f' "arn:aws:s3:::%s/%s/public/*" [bucketName, U.toString (context ^. appUuid')]
           else f' "arn:aws:s3:::%s/public/*" [bucketName]
   logInfo _CMP_S3 (f' "Make bucket public for read-only access: '%s'" [resource])
@@ -263,7 +263,7 @@ createMakePublicLink folderName object = do
   context <- ask
   publicUrl <- getS3PublicUrl
   let url =
-        if context ^. serverConfig' . experimental' . moreAppsEnabled
+        if context ^. serverConfig' . cloud' . enabled
           then f' "%s/%s/%s/%s" [publicUrl, U.toString (context ^. appUuid'), folderName, object]
           else f' "%s/%s/%s" [publicUrl, folderName, object]
   logInfo _CMP_S3 (f' "Public URL to share: '%s'" [url])
@@ -312,8 +312,7 @@ sanitizeObject ::
      (MonadReader s m, HasAppUuid' s, HasServerConfig' s sc, MonadIO m, MonadError AppError m) => String -> m String
 sanitizeObject object = do
   context <- ask
-  if context ^. serverConfig' . experimental' . moreAppsEnabled &&
-     not (U.toString (context ^. appUuid') `L.isPrefixOf` object)
+  if context ^. serverConfig' . cloud' . enabled && not (U.toString (context ^. appUuid') `L.isPrefixOf` object)
     then return $ U.toString (context ^. appUuid') ++ "/" ++ object
     else return object
 

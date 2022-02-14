@@ -23,7 +23,7 @@ toClientConfigDTO serverConfig appConfig app =
     , _clientConfigDTOQuestionnaire = toClientConfigQuestionnaireDTO $ appConfig ^. questionnaire
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
-    , _clientConfigDTOCloud = toClientConfigCloudDTO (serverConfig ^. experimental) app
+    , _clientConfigDTOCloud = toClientConfigCloudDTO (serverConfig ^. cloud) app
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO
@@ -64,7 +64,7 @@ toClientConfigQuestionnaireDTO appConfig =
     , _clientConfigQuestionnaireDTOFeedback = SimpleFeature $ appConfig ^. feedback . enabled
     }
 
-toClientConfigCloudDTO :: ServerConfigExperimental -> App -> ClientConfigCloudDTO
+toClientConfigCloudDTO :: ServerConfigCloud -> App -> ClientConfigCloudDTO
 toClientConfigCloudDTO serverConfig app =
   ClientConfigCloudDTO
-    {_clientConfigCloudDTOEnabled = serverConfig ^. moreAppsEnabled, _clientConfigCloudDTOServerUrl = app ^. serverUrl}
+    {_clientConfigCloudDTOEnabled = serverConfig ^. enabled, _clientConfigCloudDTOServerUrl = app ^. serverUrl}

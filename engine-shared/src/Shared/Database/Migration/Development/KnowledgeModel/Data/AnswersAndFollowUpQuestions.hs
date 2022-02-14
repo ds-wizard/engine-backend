@@ -17,7 +17,7 @@ import Shared.Util.Uuid
 q2_answerNo :: Answer
 q2_answerNo =
   Answer
-    { _answerUuid = u' "33da0831-11dd-4faa-b754-41ed98dedcb5"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a1"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
     , _answerAnnotations = []
@@ -28,7 +28,7 @@ q2_answerNo =
 q3_answerNo :: Answer
 q3_answerNo =
   Answer
-    { _answerUuid = u' "12711c8c-193a-4baf-a071-53f2d3990083"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f3a1"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
     , _answerAnnotations = []
@@ -39,7 +39,7 @@ q3_answerNo =
 q4_it1_q6_answerNo :: Answer
 q4_it1_q6_answerNo =
   Answer
-    { _answerUuid = u' "a093c2c3-123c-42ee-9667-13af14b6249e"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f6a1"
     , _answerLabel = "No"
     , _answerAdvice = Just "Great advice"
     , _answerAnnotations = []
@@ -50,7 +50,7 @@ q4_it1_q6_answerNo =
 q2_aYes_fuq1_answerNo :: Answer
 q2_aYes_fuq1_answerNo =
   Answer
-    { _answerUuid = u' "8ebf2494-80c7-4dbb-a4a1-a14d3387abc0"
+    { _answerUuid = u' "00000000-0000-0000-0000-a14d3387abc0"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
     , _answerAnnotations = []
@@ -61,7 +61,7 @@ q2_aYes_fuq1_answerNo =
 q2_aYes_fuq1_aYes_fuq2_answerNo :: Answer
 q2_aYes_fuq1_aYes_fuq2_answerNo =
   Answer
-    { _answerUuid = u' "891ebfe2-27df-433c-af83-03bb26fa2764"
+    { _answerUuid = u' "00000000-0000-0000-0000-03bb26fa2764"
     , _answerLabel = "No"
     , _answerAdvice = Just "Super long advice"
     , _answerAnnotations = []
@@ -72,7 +72,7 @@ q2_aYes_fuq1_aYes_fuq2_answerNo =
 q2_answerYes :: Answer
 q2_answerYes =
   Answer
-    { _answerUuid = u' "d6fb1eb3-3bef-4aac-8491-def68f40ac78"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a2"
     , _answerLabel = "Yes"
     , _answerAdvice =
         Just
@@ -96,7 +96,7 @@ q2_answerYesEdited =
 q2_answerYesPlain :: Answer
 q2_answerYesPlain =
   Answer
-    { _answerUuid = u' "d6fb1eb3-3bef-4aac-8491-def68f40ac78"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a2"
     , _answerLabel = "Yes"
     , _answerAdvice =
         Just
@@ -109,7 +109,7 @@ q2_answerYesPlain =
 q3_answerYes :: Answer
 q3_answerYes =
   Answer
-    { _answerUuid = u' "28d49dbe-4180-49c9-80b2-397e9ea27c77"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f3a2"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
     , _answerAnnotations = []
@@ -120,7 +120,7 @@ q3_answerYes =
 q2_aYes_fuq1_answerYes :: Answer
 q2_aYes_fuq1_answerYes =
   Answer
-    { _answerUuid = u' "4d164317-d900-460c-8582-8c80e6d66dcd"
+    { _answerUuid = u' "00000000-0000-0000-0000-8c80e6d66dcd"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
     , _answerAnnotations = []
@@ -131,7 +131,7 @@ q2_aYes_fuq1_answerYes =
 q2_aYes_fuq1_aYes_fuq2_answerYes :: Answer
 q2_aYes_fuq1_aYes_fuq2_answerYes =
   Answer
-    { _answerUuid = u' "b6b40918-a9b7-4d2d-bacb-9f9aa5683efe"
+    { _answerUuid = u' "00000000-0000-0000-0000-9f9aa5683efe"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
     , _answerAnnotations = []
@@ -142,7 +142,7 @@ q2_aYes_fuq1_aYes_fuq2_answerYes =
 q4_it1_q6_answerYes :: Answer
 q4_it1_q6_answerYes =
   Answer
-    { _answerUuid = u' "16f20d73-b335-47d8-8d35-157e8c3cd009"
+    { _answerUuid = u' "00000000-0000-0000-0000-157e8c3cd009"
     , _answerLabel = "Yes"
     , _answerAdvice = Just "Short advice"
     , _answerAnnotations = []
@@ -153,7 +153,7 @@ q4_it1_q6_answerYes =
 q2_answerMaybe :: Answer
 q2_answerMaybe =
   Answer
-    { _answerUuid = u' "1f172f5e-3d66-4a1c-a785-85ba02fcf72a"
+    { _answerUuid = u' "00000000-0000-0000-0000-00000000f2a3"
     , _answerLabel = "Maybe"
     , _answerAdvice = Just "Great advice"
     , _answerAnnotations = []
@@ -205,7 +205,7 @@ q2_aYes_fuq1_aYes_fuQuestion2' = OptionsQuestion' q2_aYes_fuq1_aYes_fuQuestion2
 q2_aYes_fuq1_aYes_fuQuestion2 :: OptionsQuestion
 q2_aYes_fuq1_aYes_fuQuestion2 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "393eb40a-27bd-4156-9b2d-c4e8c582cca8"
+    { _optionsQuestionUuid = u' "00000000-27bd-4156-9b2d-c4e8c582cca8"
     , _optionsQuestionTitle = "Second Follow-Up Question"
     , _optionsQuestionText = Just "Again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid
@@ -240,7 +240,7 @@ q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3' = OptionsQuestion' q2_aYes1_fuq1_aYe
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 :: OptionsQuestion
 q2_aYes1_fuq1_aYes3_fuq2_aYes4_fuQuestion3 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "70b6a446-bd35-4d5e-8995-78a94a69da83"
+    { _optionsQuestionUuid = u' "00000000-bd35-4d5e-8995-78a94a69da83"
     , _optionsQuestionTitle = "Third Follow-Up Question"
     , _optionsQuestionText = Just "Again and again just follow"
     , _optionsQuestionRequiredPhaseUuid = Just $ PHS.phase2 ^. uuid

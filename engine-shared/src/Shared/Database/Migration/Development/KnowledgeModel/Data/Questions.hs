@@ -21,7 +21,7 @@ question1' = ValueQuestion' question1
 question1 :: ValueQuestion
 question1 =
   ValueQuestion
-    { _valueQuestionUuid = u' "2be1d749-9c72-4807-9309-d6c7bdbf13ba"
+    { _valueQuestionUuid = u' "00000000-0000-0000-0000-0000000000f1"
     , _valueQuestionTitle = "First Question"
     , _valueQuestionText = Just "Here is a description of question"
     , _valueQuestionRequiredPhaseUuid = Just $ phase1 ^. uuid
@@ -73,7 +73,7 @@ question2' = OptionsQuestion' question2
 question2 :: OptionsQuestion
 question2 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "549d4140-d3e7-4cda-a373-7af8abc6325c"
+    { _optionsQuestionUuid = u' "00000000-0000-0000-0000-0000000000f2"
     , _optionsQuestionTitle = "Is there any pre-existing data?"
     , _optionsQuestionText =
         Just "Are there any data sets available in the world that are relevant to your planned research?"
@@ -142,7 +142,7 @@ question3' = OptionsQuestion' question3
 question3 :: OptionsQuestion
 question3 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "b12d5939-2bd5-42b3-af09-a189480014d9"
+    { _optionsQuestionUuid = u' "00000000-0000-0000-0000-0000000000f3"
     , _optionsQuestionTitle = "Third Question"
     , _optionsQuestionText = Just "Some long description"
     , _optionsQuestionRequiredPhaseUuid = Just $ phase2 ^. uuid
@@ -176,7 +176,7 @@ question4' = ListQuestion' question4
 question4 :: ListQuestion
 question4 =
   ListQuestion
-    { _listQuestionUuid = u' "5c995368-b8dc-49e2-9b38-b79d4eb2779b"
+    { _listQuestionUuid = u' "00000000-0000-0000-0000-0000000000f4"
     , _listQuestionTitle = "Fourth Question"
     , _listQuestionText = Just "Some nice description"
     , _listQuestionRequiredPhaseUuid = Nothing
@@ -245,7 +245,7 @@ q4_it1_question5' = ListQuestion' q4_it1_question5
 q4_it1_question5 :: ListQuestion
 q4_it1_question5 =
   ListQuestion
-    { _listQuestionUuid = u' "9f8b1681-f6dc-4fdb-8e38-018df91fd2bd"
+    { _listQuestionUuid = u' "00000000-0000-0000-0000-0000000000f5"
     , _listQuestionTitle = "Fifth Question"
     , _listQuestionText = Just "Some funny description"
     , _listQuestionRequiredPhaseUuid = Just $ phase1 ^. uuid
@@ -296,7 +296,7 @@ q4_it1_question6' = OptionsQuestion' q4_it1_question6
 q4_it1_question6 :: OptionsQuestion
 q4_it1_question6 =
   OptionsQuestion
-    { _optionsQuestionUuid = u' "efcf425f-f5c6-4c36-9aaf-fd4ced17adf5"
+    { _optionsQuestionUuid = u' "00000000-0000-0000-0000-0000000000f6"
     , _optionsQuestionTitle = "Sixth Question"
     , _optionsQuestionText = Just "Some non-funny description"
     , _optionsQuestionRequiredPhaseUuid = Just $ phase2 ^. uuid
@@ -330,7 +330,7 @@ q4_it1_q5_it2_question7' = ValueQuestion' q4_it1_q5_it2_question7
 q4_it1_q5_it2_question7 :: ValueQuestion
 q4_it1_q5_it2_question7 =
   ValueQuestion
-    { _valueQuestionUuid = u' "385026a5-c35b-4461-9588-bcbc10c99ac5"
+    { _valueQuestionUuid = u' "00000000-0000-0000-0000-0000000000f7"
     , _valueQuestionTitle = "Seventh Question"
     , _valueQuestionText = Just "Some non-funny description"
     , _valueQuestionRequiredPhaseUuid = Just $ phase2 ^. uuid
@@ -347,7 +347,7 @@ q4_it1_q5_it2_question8' = ValueQuestion' q4_it1_q5_it2_question8
 q4_it1_q5_it2_question8 :: ValueQuestion
 q4_it1_q5_it2_question8 =
   ValueQuestion
-    { _valueQuestionUuid = u' "f272a0b6-14fd-477f-8a95-d7ea483a4395"
+    { _valueQuestionUuid = u' "00000000-0000-0000-0000-0000000000f8"
     , _valueQuestionTitle = "Eighth Question"
     , _valueQuestionText = Just "Some non-funny description"
     , _valueQuestionRequiredPhaseUuid = Just $ phase2 ^. uuid
@@ -364,7 +364,7 @@ question9' = IntegrationQuestion' question9
 question9 :: IntegrationQuestion
 question9 =
   IntegrationQuestion
-    { _integrationQuestionUuid = u' "ebadd964-4605-4550-998c-30b1f4e51239"
+    { _integrationQuestionUuid = u' "00000000-0000-0000-0000-0000000000f9"
     , _integrationQuestionTitle = "Ninth Question"
     , _integrationQuestionText = Just "Some nice description"
     , _integrationQuestionRequiredPhaseUuid = Just $ phase1 ^. uuid
@@ -452,7 +452,7 @@ question10' = IntegrationQuestion' question10
 question10 :: IntegrationQuestion
 question10 =
   IntegrationQuestion
-    { _integrationQuestionUuid = u' "5f65baf2-4103-4417-a47a-73d622ec4e44"
+    { _integrationQuestionUuid = u' "00000000-0000-0000-0000-000000000f10"
     , _integrationQuestionTitle = "Tenth Question"
     , _integrationQuestionText = Just "Some nice description"
     , _integrationQuestionRequiredPhaseUuid = Nothing
@@ -487,7 +487,7 @@ question11' = MultiChoiceQuestion' question11
 question11 :: MultiChoiceQuestion
 question11 =
   MultiChoiceQuestion
-    { _multiChoiceQuestionUuid = u' "c1bfa9fd-2d06-47ec-a180-6239a039d86f"
+    { _multiChoiceQuestionUuid = u' "00000000-0000-0000-0000-000000000f11"
     , _multiChoiceQuestionTitle = "Eleventh Question"
     , _multiChoiceQuestionText = Just "Some non-funny description"
     , _multiChoiceQuestionRequiredPhaseUuid = Nothing
@@ -519,7 +519,7 @@ question12' = MultiChoiceQuestion' question12
 question12 :: MultiChoiceQuestion
 question12 =
   MultiChoiceQuestion
-    { _multiChoiceQuestionUuid = u' "c545ace7-b9c2-4ccf-88bd-b54989efcd4c"
+    { _multiChoiceQuestionUuid = u' "00000000-0000-0000-0000-000000000f12"
     , _multiChoiceQuestionTitle = "Twelfth Question"
     , _multiChoiceQuestionText = Just "Some non-funny description"
     , _multiChoiceQuestionRequiredPhaseUuid = Nothing

@@ -32,9 +32,11 @@ toRetrieveOrganizationsRequest :: ClientM (Headers '[ Header "x-trace-uuid" Stri
 toRetrieveOrganizationsRequest = client list_simple_GET_Api
 
 toCreateOrganizationRequest ::
-     ServerConfig -> OrganizationCreateDTO -> ClientM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
-toCreateOrganizationRequest serverConfig reqDto =
-  client list_POST_Api reqDto (Just $ serverConfig ^. general . clientUrl)
+     ServerConfig
+  -> OrganizationCreateDTO
+  -> String
+  -> ClientM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)
+toCreateOrganizationRequest serverConfig reqDto clientUrl = client list_POST_Api reqDto (Just clientUrl)
 
 toConfirmOrganizationRegistrationRequest ::
      RegistryConfirmationDTO -> ClientM (Headers '[ Header "x-trace-uuid" String] OrganizationDTO)

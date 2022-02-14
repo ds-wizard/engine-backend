@@ -22,7 +22,7 @@ squashEventsForBranch branchUuid =
   runInTransaction $ do
     logInfoU _CMP_SERVICE (f' "Squashing events for branch (branchUuid: '%s')" [branchUuid])
     logOutOnlineUsersWhenBranchDramaticallyChanged branchUuid
-    branchData <- findBranchDataByIdLocked branchUuid
+    branchData <- findBranchDataByIdForSquashingLocked branchUuid
     let squashedEvents = squash (branchData ^. events)
     updateBranchEventsByUuid branchUuid squashedEvents
     logInfoU

@@ -13,7 +13,7 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigLogging = defaultLogging
-    , _serverConfigExperimental = defaultExperimental
+    , _serverConfigCloud = defaultCloud
     }
 
 defaultGeneral :: ServerConfigGeneral

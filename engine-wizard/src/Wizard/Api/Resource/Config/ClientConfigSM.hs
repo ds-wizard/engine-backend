@@ -31,4 +31,4 @@ instance ToSchema ClientConfigQuestionnaireDTO where
   declareNamedSchema = simpleToSchema (toClientConfigQuestionnaireDTO A.defaultQuestionnaire)
 
 instance ToSchema ClientConfigCloudDTO where
-  declareNamedSchema = simpleToSchema (toClientConfigCloudDTO S_S.defaultExperimental defaultApp)
+  declareNamedSchema = simpleToSchema (toClientConfigCloudDTO S_S.defaultCloud defaultApp)
