@@ -22,6 +22,7 @@ import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
+import Wizard.Service.App.AppService
 import Wizard.Service.Config.AppConfigService
 
 retrieveOrganizations :: AppContextM [OrganizationSimpleDTO]
@@ -37,7 +38,8 @@ retrieveOrganizations = do
 createOrganization :: OrganizationCreateDTO -> AppContextM OrganizationDTO
 createOrganization reqDto = do
   serverConfig <- asks _appContextServerConfig
-  let request = toCreateOrganizationRequest serverConfig reqDto
+  clientUrl <- getAppClientUrl
+  let request = toCreateOrganizationRequest serverConfig reqDto clientUrl
   res <- runRegistryClient request
   return . getResponse $ res
 
