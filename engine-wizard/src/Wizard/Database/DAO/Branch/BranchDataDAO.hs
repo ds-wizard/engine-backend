@@ -33,10 +33,9 @@ findBranchDataById branchUuid = do
   appUuid <- asks _appContextAppUuid
   createFindEntityWithFieldsByFn "*" False entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
 
-findBranchDataByIdLocked :: String -> AppContextM BranchData
-findBranchDataByIdLocked branchUuid = do
-  appUuid <- asks _appContextAppUuid
-  createFindEntityWithFieldsByFn "*" True entityName [appQueryUuid appUuid, ("branch_uuid", branchUuid)]
+findBranchDataByIdForSquashingLocked :: String -> AppContextM BranchData
+findBranchDataByIdForSquashingLocked branchUuid =
+  createFindEntityWithFieldsByFn "*" True entityName [("branch_uuid", branchUuid)]
 
 insertBranchData :: BranchData -> AppContextM Int64
 insertBranchData = createInsertFn entityName
@@ -48,7 +47,7 @@ updateBranchDataById branchData = do
         fromString
           "UPDATE branch_data SET branch_uuid = ?, metamodel_version = ?, events = ?, app_uuid = ?, created_at = ?, updated_at = ? WHERE app_uuid = ? AND branch_uuid = ?"
   let params = toRow branchData ++ [toField appUuid, toField . U.toText $ branchData ^. branchUuid]
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
 
@@ -58,17 +57,16 @@ appendBranchEventByUuid qtnUuid events = do
   let sql =
         fromString "UPDATE branch_data SET events = events::jsonb || ?::jsonb WHERE app_uuid = ? AND branch_uuid = ?"
   let params = [toJSONField events, toField appUuid, toField qtnUuid]
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   return ()
 
 updateBranchEventsByUuid :: String -> [Event] -> AppContextM ()
 updateBranchEventsByUuid branchUuid events = do
-  appUuid <- asks _appContextAppUuid
-  let sql = fromString "UPDATE branch_data SET events = ? WHERE app_uuid = ? AND branch_uuid = ?"
-  let params = [toJSONField events, toField appUuid, toField branchUuid]
-  logQuery sql params
+  let sql = fromString "UPDATE branch_data SET events = ? WHERE branch_uuid = ?"
+  let params = [toJSONField events, toField branchUuid]
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   return ()

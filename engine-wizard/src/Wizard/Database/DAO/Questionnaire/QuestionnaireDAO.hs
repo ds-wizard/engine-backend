@@ -344,7 +344,7 @@ updateQuestionnaireById qtn = do
         fromString
           "UPDATE questionnaire SET uuid = ?, name = ?, visibility = ?, sharing = ?, package_id = ?, selected_question_tag_uuids = ?, template_id = ?, format_uuid = ?, creator_uuid = ?, events = ?, versions = ?, created_at = ?, updated_at = ?, description = ?, is_template = ?, squashed = ?, app_uuid = ?, project_tags = ? WHERE  app_uuid = ? AND uuid = ?"
   let params = toRow qtn ++ [toField appUuid, toField . U.toText $ qtn ^. uuid]
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   deleteQuestionnairePermRecordsFiltered [("questionnaire_uuid", U.toString $ qtn ^. uuid)]
@@ -352,10 +352,9 @@ updateQuestionnaireById qtn = do
 
 updateQuestionnaireEventsByUuid :: String -> [QuestionnaireEvent] -> AppContextM ()
 updateQuestionnaireEventsByUuid qtnUuid events = do
-  appUuid <- asks _appContextAppUuid
-  let sql = fromString "UPDATE questionnaire SET squashed = true, events = ? WHERE app_uuid = ? AND uuid = ?"
-  let params = [toJSONField events, toField appUuid, toField qtnUuid]
-  logQuery sql params
+  let sql = fromString "UPDATE questionnaire SET squashed = true, events = ? WHERE uuid = ?"
+  let params = [toJSONField events, toField qtnUuid]
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   return ()
@@ -367,7 +366,7 @@ appendQuestionnaireEventByUuid qtnUuid events = do
         fromString
           "UPDATE questionnaire SET squashed = false, events = events::jsonb || ?::jsonb WHERE app_uuid = ? AND uuid = ?"
   let params = [toJSONField events, toField appUuid, toField qtnUuid]
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = execute conn sql params
   runDB action
   return ()
