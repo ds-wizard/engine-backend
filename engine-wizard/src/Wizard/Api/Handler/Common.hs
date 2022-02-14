@@ -101,7 +101,7 @@ getCurrentUser tokenHeader mServerUrl = do
 getCurrentApp :: Maybe String -> BaseContextM App
 getCurrentApp mServerUrl = do
   serverConfig <- asks _baseContextServerConfig
-  if serverConfig ^. experimental . moreAppsEnabled
+  if serverConfig ^. cloud . enabled
     then case mServerUrl of
            Nothing ->
              runInServiceAuthService . throwError $ UnauthorizedError (_ERROR_VALIDATION__APP_ABSENCE "not-provided")

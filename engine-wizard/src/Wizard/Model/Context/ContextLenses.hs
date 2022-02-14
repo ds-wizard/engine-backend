@@ -38,13 +38,13 @@ instance HasS3' ServerConfig where
       set :: ServerConfig -> ServerConfigS3 -> ServerConfig
       set entity newValue = entity & s3 .~ newValue
 
-instance HasExperimental' ServerConfig where
-  experimental' convert entity = fmap (set entity) (convert . get $ entity)
+instance HasCloud' ServerConfig where
+  cloud' convert entity = fmap (set entity) (convert . get $ entity)
     where
-      get :: ServerConfig -> ServerConfigExperimental
-      get entity = entity ^. experimental
-      set :: ServerConfig -> ServerConfigExperimental -> ServerConfig
-      set entity newValue = entity & experimental .~ newValue
+      get :: ServerConfig -> ServerConfigCloud
+      get entity = entity ^. cloud
+      set :: ServerConfig -> ServerConfigCloud -> ServerConfig
+      set entity newValue = entity & cloud .~ newValue
 
 instance HasDbPool' AppContext where
   dbPool' convert entity = fmap (set entity) (convert . get $ entity)

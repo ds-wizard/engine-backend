@@ -45,5 +45,5 @@ defaultLogging :: ServerConfigLogging
 defaultLogging =
   ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}
 
-defaultExperimental :: ServerConfigExperimental
-defaultExperimental = ServerConfigExperimental {_serverConfigExperimentalMoreAppsEnabled = False}
+defaultCloud :: ServerConfigCloud
+defaultCloud = ServerConfigCloud {_serverConfigCloudEnabled = False, _serverConfigCloudDomain = Nothing}

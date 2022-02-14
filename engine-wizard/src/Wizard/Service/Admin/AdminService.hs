@@ -25,6 +25,7 @@ executeOperation reqDto = do
 execute :: AdminExecutionDTO -> AppContextM String
 execute reqDto
   | action reqDto app app_createApp = app_createAppFn reqDto
+  | action reqDto app app_createCustomApp = app_createCustomAppFn reqDto
   | action reqDto branch branch_squashAllEvents = branch_squashAllEventsFn reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto

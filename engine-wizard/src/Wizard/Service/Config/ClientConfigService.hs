@@ -17,11 +17,11 @@ getClientConfig mClientUrl =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     app <-
-      if serverConfig ^. experimental . moreAppsEnabled
+      if serverConfig ^. cloud . enabled
         then maybe getCurrentApp findAppByClientUrl mClientUrl
         else getCurrentApp
     appConfig <-
-      if serverConfig ^. experimental . moreAppsEnabled
+      if serverConfig ^. cloud . enabled
         then case mClientUrl of
                Just clientUrl -> getAppConfigByUuid (app ^. uuid)
                Nothing -> getAppConfig

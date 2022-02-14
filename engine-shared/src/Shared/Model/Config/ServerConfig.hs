@@ -51,8 +51,9 @@ data ServerConfigLogging =
     }
   deriving (Generic, Show)
 
-data ServerConfigExperimental =
-  ServerConfigExperimental
-    { _serverConfigExperimentalMoreAppsEnabled :: Bool
+data ServerConfigCloud =
+  ServerConfigCloud
+    { _serverConfigCloudEnabled :: Bool
+    , _serverConfigCloudDomain :: Maybe String
     }
   deriving (Generic, Show)

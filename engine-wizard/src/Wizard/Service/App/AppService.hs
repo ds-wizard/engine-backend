@@ -29,7 +29,7 @@ getCurrentApp =
 getAppClientUrl :: AppContextM String
 getAppClientUrl = do
   serverConfig <- asks _appContextServerConfig
-  if serverConfig ^. experimental . moreAppsEnabled
+  if serverConfig ^. cloud . enabled
     then do
       app <- getCurrentApp
       return $ app ^. clientUrl

@@ -12,7 +12,7 @@ import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
 import Shared.Model.Context.BaseContext
 
-class (HasExperimental' sc, HasS3' sc) =>
+class (HasCloud' sc, HasS3' sc) =>
       HasServerConfig' entity sc
   | entity -> sc
   where
@@ -21,8 +21,8 @@ class (HasExperimental' sc, HasS3' sc) =>
 class HasS3' entity where
   s3' :: Functor f => (ServerConfigS3 -> f ServerConfigS3) -> entity -> f entity
 
-class HasExperimental' entity where
-  experimental' :: Functor f => (ServerConfigExperimental -> f ServerConfigExperimental) -> entity -> f entity
+class HasCloud' entity where
+  cloud' :: Functor f => (ServerConfigCloud -> f ServerConfigCloud) -> entity -> f entity
 
 class HasDbPool' entity where
   dbPool' :: Functor f => (Pool Connection -> f (Pool Connection)) -> entity -> f entity

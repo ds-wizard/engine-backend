@@ -271,7 +271,7 @@ makeFields ''ServerConfigQuestionnaire
 
 makeFields ''ServerConfigCronWorker
 
-makeFields ''ServerConfigExperimental
+makeFields ''ServerConfigCloud
 
 makeFields ''BuildInfoConfig
 

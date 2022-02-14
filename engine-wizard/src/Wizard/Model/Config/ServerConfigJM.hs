@@ -30,7 +30,7 @@ instance FromJSON ServerConfig where
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
-    _serverConfigExperimental <- o .:? "experimental" .!= defaultExperimental
+    _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}
   parseJSON _ = mzero
 
