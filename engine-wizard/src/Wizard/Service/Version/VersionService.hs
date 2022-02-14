@@ -69,7 +69,7 @@ doPublishPackage pkgVersion reqDto branch branchData branchEvents mForkOfPkgId m
   let org = appConfig ^. organization
   validateNewPackageVersion pkgVersion branch org
   now <- liftIO getCurrentTime
-  let pkg = fromPackage branch reqDto mForkOfPkgId mMergeCheckpointPkgId org pkgVersion branchEvents now
+  let pkg = fromPackage branch reqDto mForkOfPkgId mMergeCheckpointPkgId org pkgVersion squashedBranchEvents now
   createdPkg <- createPackage pkg
   let updatedBranch = (previousPackageId ?~ (pkg ^. pId)) . (updatedAt .~ now) $ branch
   updateBranchById updatedBranch
