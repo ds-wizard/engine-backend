@@ -30,6 +30,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -286,6 +287,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
     documents <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid)]
     traverse_
       (\d -> do
+         deleteSubmissionsFiltered [("document_uuid", U.toString $ d ^. uuid)]
          deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
          removeDocumentContent (U.toString $ d ^. uuid))
       documents
