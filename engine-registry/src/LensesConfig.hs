@@ -245,6 +245,8 @@ makeFields ''Template
 
 makeFields ''TemplateFormat
 
+makeFields ''TemplateFormatStep
+
 makeFields ''TemplateFile
 
 makeFields ''TemplateAsset

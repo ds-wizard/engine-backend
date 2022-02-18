@@ -38,6 +38,7 @@ import Wizard.Service.Document.DocumentAcl
 import Wizard.Service.Document.DocumentContextService
 import Wizard.Service.Document.DocumentMapper
 import Wizard.Service.Document.DocumentUtils
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Questionnaire.Compiler.CompilerService
 import Wizard.Service.Questionnaire.QuestionnaireAcl
 import Wizard.Service.Template.TemplateService
@@ -67,6 +68,7 @@ createDocument reqDto =
 createDocumentWithDurability :: DocumentCreateDTO -> DocumentDurability -> AppContextM DocumentDTO
 createDocumentWithDurability dto durability =
   runInTransaction $ do
+    checkDocumentLimit
     qtnSimple <- findQuestionnaireSimpleById (U.toString $ dto ^. questionnaireUuid)
     qtn <- findQuestionnaireById (U.toString $ dto ^. questionnaireUuid)
     tml <- getTemplateByUuidAndPackageId (dto ^. templateId) (Just $ qtn ^. packageId)

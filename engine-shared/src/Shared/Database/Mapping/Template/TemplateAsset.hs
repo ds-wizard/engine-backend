@@ -14,6 +14,7 @@ instance ToRow TemplateAsset where
     , toField _templateAssetFileName
     , toField _templateAssetContentType
     , toField _templateAssetAppUuid
+    , toField _templateAssetFileSize
     ]
 
 instance FromRow TemplateAsset where
@@ -23,4 +24,5 @@ instance FromRow TemplateAsset where
     _templateAssetFileName <- field
     _templateAssetContentType <- field
     _templateAssetAppUuid <- field
+    _templateAssetFileSize <- field
     return $ TemplateAsset {..}

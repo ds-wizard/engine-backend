@@ -36,6 +36,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
 import Wizard.Service.KnowledgeModel.KnowledgeModelValidation
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Migration.Metamodel.MigratorService
 import qualified Wizard.Service.Package.PackageMapper as PM
 import Wizard.Service.Package.PackageService
@@ -63,6 +64,7 @@ pullPackageBundleFromRegistry :: String -> AppContextM ()
 pullPackageBundleFromRegistry pkgId =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
+    checkPackageLimit
     pb <- catchError (retrievePackageBundleById pkgId) handleError
     _ <- importAndConvertPackageBundle pb
     return ()
@@ -79,6 +81,7 @@ importAndConvertPackageBundle :: BS.ByteString -> AppContextM [PackageSimpleDTO]
 importAndConvertPackageBundle contentS =
   runInTransaction $ do
     checkPermission _PM_WRITE_PERM
+    checkPackageLimit
     case eitherDecode contentS of
       Right content -> do
         encodedPb <- migratePackageBundle content

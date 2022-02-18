@@ -28,6 +28,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Acl.AclService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KM_Cache
 import qualified Wizard.Service.Cache.PackageCache as PKG_Cache
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Package.PackageMapper
 import Wizard.Service.Package.PackageUtil
 import Wizard.Service.Package.PackageValidation
@@ -149,6 +150,7 @@ getNewerPackages currentPkgId =
 createPackage :: PackageWithEvents -> AppContextM PackageSimpleDTO
 createPackage pkg =
   runInTransaction $ do
+    checkPackageLimit
     insertPackage pkg
     return . toSimpleDTO . toPackage $ pkg
 

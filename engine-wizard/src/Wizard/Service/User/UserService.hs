@@ -41,6 +41,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.ActionKey.ActionKeyService
 import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserMapper
@@ -77,8 +78,8 @@ createUserByAdminWithUuid reqDto uUuid =
     let uPermissions = getPermissionForRole serverConfig uRole
     createUser reqDto uUuid uPasswordHash uRole uPermissions
 
-registrateUser :: UserCreateDTO -> AppContextM UserDTO
-registrateUser reqDto =
+registerUser :: UserCreateDTO -> AppContextM UserDTO
+registerUser reqDto =
   runInTransaction $ do
     checkIfRegistrationIsEnabled
     uUuid <- liftIO generateUuid
@@ -92,6 +93,8 @@ registrateUser reqDto =
 createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> AppContextM UserDTO
 createUser reqDto uUuid uPasswordHash uRole uPermissions =
   runInTransaction $ do
+    checkUserLimit
+    checkActiveUserLimit
     validateUserEmailUniqueness (reqDto ^. email)
     now <- liftIO getCurrentTime
     appUuid <- asks _appContextAppUuid
@@ -119,6 +122,8 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
             return $ toDTO updatedUser
           else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
       Nothing -> do
+        checkUserLimit
+        checkActiveUserLimit
         serverConfig <- asks _appContextServerConfig
         uUuid <- liftIO generateUuid
         password <- liftIO $ generateRandomString 40
@@ -160,6 +165,7 @@ modifyUser userUuid reqDto =
   runInTransaction $ do
     checkPermission _UM_PERM
     user <- findUserById userUuid
+    when (reqDto ^. active && not (user ^. active)) checkActiveUserLimit
     validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
     serverConfig <- asks _appContextServerConfig
     updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
@@ -203,6 +209,7 @@ resetUserPassword reqDto =
 changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM UserStateDTO
 changeUserState userUuid maybeHash userStateDto =
   runInTransaction $ do
+    checkActiveUserLimit
     actionKey <- getActionKeyByHash maybeHash
     user <- findUserById (U.toString $ actionKey ^. userId)
     updatedUser <- updateUserTimestamp $ user & active .~ (userStateDto ^. active)

@@ -110,7 +110,8 @@ createTemplateAssetTable = do
         \   uuid uuid not null, \
         \   file_name varchar not null, \
         \   content_type varchar not null, \
-        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
+        \   app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null, \
+        \   file_size bigint not null default 0 \
         \ ); \
         \  \
         \ alter table template_asset \

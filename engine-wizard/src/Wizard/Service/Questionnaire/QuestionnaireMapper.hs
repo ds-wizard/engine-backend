@@ -12,6 +12,7 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
 import qualified Shared.Service.Template.TemplateMapper as STM
+import Shared.Service.Template.TemplateMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -140,7 +141,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOTemplateId = qtn ^. templateId
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = mFormat
+    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
@@ -183,7 +184,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOTemplateId = qtn ^. templateId
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = mFormat
+    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads

@@ -3,6 +3,7 @@ module Wizard.Model.Document.Document where
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
+import GHC.Int
 
 data DocumentState
   = QueuedDocumentState
@@ -30,6 +31,7 @@ data Document =
     , _documentCreatorUuid :: Maybe U.UUID
     , _documentFileName :: Maybe String
     , _documentContentType :: Maybe String
+    , _documentFileSize :: Maybe Int64
     , _documentWorkerLog :: Maybe String
     , _documentAppUuid :: U.UUID
     , _documentRetrievedAt :: Maybe UTCTime

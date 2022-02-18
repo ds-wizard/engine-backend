@@ -115,6 +115,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
+import Wizard.Model.Limit.AppLimit
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.PersistentCommand.PersistentCommand
@@ -159,6 +160,8 @@ makeFields ''AdminOperationParameter
 
 -- Model / App
 makeFields ''App
+
+makeFields ''AppLimit
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -534,6 +537,8 @@ makeFields ''Submission
 makeFields ''Template
 
 makeFields ''TemplateFormat
+
+makeFields ''TemplateFormatStep
 
 makeFields ''TemplateFile
 

@@ -45,6 +45,12 @@ findTemplateAssetById uuid = do
   appUuid <- asks (^. appUuid')
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
+sumTemplateAssetFileSize ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+sumTemplateAssetFileSize = do
+  appUuid <- asks (^. appUuid')
+  createSumByFn entityName "file_size" appCondition [appUuid]
+
 insertTemplateAsset ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
   => TemplateAsset
@@ -59,7 +65,7 @@ updateTemplateAssetById asset = do
   appUuid <- asks (^. appUuid')
   let sql =
         fromString
-          "UPDATE template_asset SET uuid = ?, asset_name = ?, content = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE template_asset SET uuid = ?, asset_name = ?, content = ?, app_uuid = ?, file_size = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow asset ++ [toField appUuid, toField $ asset ^. uuid]
   logQuery sql params
   let action conn = execute conn sql params

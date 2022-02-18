@@ -232,6 +232,7 @@ templateAssetLogo =
     , _templateAssetUuid = u' "6c367648-9b60-4307-93b2-0851938adee0"
     , _templateAssetFileName = "text.txt"
     , _templateAssetContentType = "text/plain"
+    , _templateAssetFileSize = 5 * 1024
     , _templateAssetAppUuid = defaultAppUuid
     }
 

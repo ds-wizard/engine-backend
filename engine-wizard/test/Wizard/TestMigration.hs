@@ -5,6 +5,7 @@ import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.App.AppLimitDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
@@ -27,6 +28,8 @@ import qualified Wizard.Database.Migration.Development.Config.AppConfigSchemaMig
 import Wizard.Database.Migration.Development.Config.Data.AppConfigs
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
+import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
+import Wizard.Database.Migration.Development.Limit.Data.AppLimits
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorSchemaMigration as QTN_MIG_Schema
 import Wizard.Database.Migration.Development.Package.Data.Packages
@@ -60,10 +63,12 @@ buildSchema appContext
   runInContext ACL_Schema.dropTables appContext
   runInContext U_Schema.dropTables appContext
   runInContext CFG_Schema.dropTables appContext
+  runInContext AL_Schema.dropTables appContext
   runInContext A_Schema.dropTables appContext
   -- 2. Create
   putStrLn "DB: Creating schema"
   runInContext A_Schema.createTables appContext
+  runInContext AL_Schema.createTables appContext
   runInContext U_Schema.createTables appContext
   runInContext ACL_Schema.createTables appContext
   runInContext TML_Schema.createTables appContext
@@ -100,9 +105,12 @@ resetDB appContext = do
   runInContext deleteTemplates appContext
   runInContext deletePackages appContext
   runInContext deleteUsers appContext
+  runInContext deleteAppLimits appContext
   runInContext deleteApps appContext
   runInContext (insertApp defaultApp) appContext
+  runInContext (insertAppLimit defaultAppLimit) appContext
   runInContext (insertApp differentApp) appContext
+  runInContext (insertAppLimit differentAppLimit) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUser userCharles) appContext
   runInContext (insertPackage globalPackageEmpty) appContext

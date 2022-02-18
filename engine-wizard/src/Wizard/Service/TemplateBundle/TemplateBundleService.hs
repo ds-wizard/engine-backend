@@ -24,6 +24,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateValidation
 
 exportTemplateBundle :: String -> AppContextM BSL.ByteString
@@ -39,6 +40,7 @@ pullTemplateBundleFromRegistry :: String -> AppContextM ()
 pullTemplateBundleFromRegistry tmlId =
   runInTransaction $ do
     checkPermission _TML_PERM
+    checkTemplateLimit
     tb <- catchError (retrieveTemplateBundleById tmlId) handleError
     _ <- importAndConvertTemplateBundle tb
     return ()
@@ -52,6 +54,9 @@ importAndConvertTemplateBundle :: BSL.ByteString -> AppContextM TemplateBundleDT
 importAndConvertTemplateBundle contentS =
   case fromTemplateArchive contentS of
     Right (bundle, assetContents) -> do
+      checkTemplateLimit
+      let assetSize = foldl (\acc (_, content) -> acc + (fromIntegral . BS.length $ content)) 0 assetContents
+      checkStorageSize assetSize
       appUuid <- asks _appContextAppUuid
       let template = fromTemplateBundle bundle appUuid
       validateNewTemplate template
@@ -59,7 +64,10 @@ importAndConvertTemplateBundle contentS =
       traverse_ (\(a, content) -> putAsset (template ^. tId) (U.toString $ a ^. uuid) content) assetContents
       insertTemplate template
       traverse_ (insertTemplateFile . fromFileDTO (template ^. tId) appUuid) (bundle ^. files)
-      traverse_ (insertTemplateAsset . fromAssetDTO (template ^. tId) appUuid) (bundle ^. assets)
+      traverse_
+        (\(assetDto, content) ->
+           insertTemplateAsset $ fromAssetDTO (template ^. tId) (fromIntegral . BS.length $ content) appUuid assetDto)
+        assetContents
       return bundle
     Left error -> throwError error
 

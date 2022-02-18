@@ -103,6 +103,11 @@ countUsers = do
   appUuid <- asks _appContextAppUuid
   createCountByFn entityName appCondition [appUuid]
 
+countActiveUsers :: AppContextM Int
+countActiveUsers = do
+  appUuid <- asks _appContextAppUuid
+  createCountByFn entityName (f' "%s AND active = true" [appCondition]) [appUuid]
+
 insertUser :: User -> AppContextM Int64
 insertUser user = do
   result <- createInsertFn entityName user

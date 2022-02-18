@@ -7,6 +7,7 @@ import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, asks)
 import Data.Foldable (traverse_)
 import Data.String
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -63,6 +64,24 @@ findTemplateById' ::
 findTemplateById' id = do
   appUuid <- asks (^. appUuid')
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
+
+countTemplatesGroupedByOrganizationIdAndKmId ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int
+countTemplatesGroupedByOrganizationIdAndKmId = do
+  appUuid <- asks (^. appUuid')
+  let sql =
+        "SELECT COUNT(*) \
+            \FROM (SELECT 1 \
+            \      FROM template \
+            \      WHERE app_uuid = ? \
+            \      GROUP BY organization_id, template_id) nested;"
+  let params = [U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
 
 insertTemplate ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)

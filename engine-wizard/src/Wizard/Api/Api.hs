@@ -21,6 +21,7 @@ import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Template.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
+import Wizard.Api.Handler.Usage.Api
 import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.Version.Api
 import Wizard.Model.Context.BaseContext
@@ -45,6 +46,7 @@ type AppAPI
      :<|> TemplateAPI
      :<|> TokenAPI
      :<|> TypehintAPI
+     :<|> UsageAPI
      :<|> UserAPI
      :<|> VersionAPI
 
@@ -67,5 +69,6 @@ appServer =
   templateServer :<|>
   tokenServer :<|>
   typehintServer :<|>
+  usageServer :<|>
   userServer :<|>
   versionServer

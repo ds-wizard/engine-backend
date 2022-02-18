@@ -41,6 +41,7 @@ import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
@@ -84,6 +85,7 @@ createQuestionnaire questionnaireCreateDto =
 createQuestionnaireWithGivenUuid :: QuestionnaireCreateDTO -> U.UUID -> AppContextM QuestionnaireDTO
 createQuestionnaireWithGivenUuid reqDto qtnUuid =
   runInTransaction $ do
+    checkQuestionnaireLimit
     checkCreatePermissionToQtn
     pkgId <- resolvePackageId (reqDto ^. packageId)
     package <- findPackageWithEventsById pkgId
@@ -118,6 +120,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaireFromTemplate reqDto =
   runInTransaction $ do
+    checkQuestionnaireLimit
     originQtn <- findQuestionnaireById (U.toString $ reqDto ^. questionnaireUuid)
     checkCreateFromTemplatePermissionToQtn (originQtn ^. isTemplate)
     pkg <- findPackageWithEventsById (originQtn ^. packageId)
@@ -148,6 +151,7 @@ createQuestionnaireFromTemplate reqDto =
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid =
   runInTransaction $ do
+    checkQuestionnaireLimit
     originQtn <- findQuestionnaireById cloneUuid
     checkClonePermissionToQtn (originQtn ^. visibility) (originQtn ^. sharing) (originQtn ^. permissions)
     pkg <- findPackageWithEventsById (originQtn ^. packageId)

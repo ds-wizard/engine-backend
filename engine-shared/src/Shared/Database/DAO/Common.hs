@@ -306,6 +306,23 @@ createCountWithSqlFn sql params = do
     [count] -> return . fromOnly $ count
     _ -> return 0
 
+createSumByFn ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, MonadIO m, ToRow q)
+  => String
+  -> String
+  -> String
+  -> q
+  -> m Int64
+createSumByFn entityName field condition queryParams = do
+  let sql = fromString $ f' "SELECT COALESCE(SUM(%s)::bigint, 0) FROM %s WHERE %s" [field, entityName, condition]
+  let params = queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
 generateQuestionMarks :: [String] -> String
 generateQuestionMarks fields =
   let size = length fields

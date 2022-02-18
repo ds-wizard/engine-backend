@@ -120,6 +120,24 @@ countPackages = do
   appUuid <- asks (^. appUuid')
   createCountByFn entityName appCondition [appUuid]
 
+countPackagesGroupedByOrganizationIdAndKmId ::
+     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int
+countPackagesGroupedByOrganizationIdAndKmId = do
+  appUuid <- asks (^. appUuid')
+  let sql =
+        "SELECT COUNT(*) \
+            \FROM (SELECT 1 \
+            \      FROM package \
+            \      WHERE app_uuid = ? \
+            \      GROUP BY organization_id, km_id) nested;"
+  let params = [U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
 insertPackage ::
      (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
   => PackageWithEvents

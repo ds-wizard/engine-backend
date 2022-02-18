@@ -50,7 +50,12 @@ defaultOrganization =
     }
 
 defaultFeature :: AppConfigFeature
-defaultFeature = AppConfigFeature {_appConfigFeatureClientCustomizationEnabled = True}
+defaultFeature =
+  AppConfigFeature
+    { _appConfigFeatureClientCustomizationEnabled = True
+    , _appConfigFeaturePdfOnlyEnabled = False
+    , _appConfigFeaturePdfWatermarkEnabled = False
+    }
 
 defaultAuth :: AppConfigAuth
 defaultAuth =

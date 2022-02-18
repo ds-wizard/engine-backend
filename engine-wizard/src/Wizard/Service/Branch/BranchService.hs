@@ -36,6 +36,7 @@ import Wizard.Service.Branch.BranchUtil
 import Wizard.Service.Branch.BranchValidation
 import Wizard.Service.Branch.Collaboration.CollaborationService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Limit.AppLimitService
 
 getBranchesPage :: Maybe String -> Pageable -> [Sort] -> AppContextM (Page BranchDTO)
 getBranchesPage mQuery pageable sort =
@@ -55,6 +56,7 @@ createBranch reqDto =
 createBranchWithParams :: U.UUID -> UTCTime -> UserDTO -> BranchCreateDTO -> AppContextM BranchDTO
 createBranchWithParams bUuid now currentUser reqDto =
   runInTransaction $ do
+    checkBranchLimit
     checkPermission _KM_PERM
     validateNewKmId (reqDto ^. kmId)
     validatePackageExistence (reqDto ^. previousPackageId)

@@ -10,5 +10,6 @@ data TemplateFormatDTO =
     , _templateFormatDTOShortName :: String
     , _templateFormatDTOIcon :: String
     , _templateFormatDTOColor :: String
+    , _templateFormatDTOIsPdf :: Bool
     }
   deriving (Show, Eq, Generic)

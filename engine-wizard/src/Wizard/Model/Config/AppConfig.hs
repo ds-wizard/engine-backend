@@ -261,5 +261,7 @@ data AppConfigSubmissionServiceRequestMultipart =
 data AppConfigFeature =
   AppConfigFeature
     { _appConfigFeatureClientCustomizationEnabled :: Bool
+    , _appConfigFeaturePdfOnlyEnabled :: Bool
+    , _appConfigFeaturePdfWatermarkEnabled :: Bool
     }
   deriving (Generic, Eq, Show)
