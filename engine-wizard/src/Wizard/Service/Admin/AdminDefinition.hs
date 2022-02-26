@@ -8,14 +8,16 @@ import Data.Maybe (fromMaybe)
 import LensesConfig hiding (action, cache, feedback)
 import Shared.Util.String
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
-import Wizard.Api.Resource.App.AppCreateDTO
+import Wizard.Api.Resource.App.AppAdminCreateDTO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Model.Admin.Admin
 import Wizard.Model.Context.AppContext
 import Wizard.Service.App.AppService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
+import Wizard.Service.Config.AppConfigCommandExecutor
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
@@ -53,14 +55,14 @@ app_createAppFn reqDto = do
   let cloudDomain = fromMaybe "" (serverConfig ^. cloud . domain)
   let appId = head (reqDto ^. parameters)
   let reqDto' =
-        AppCreateDTO
-          { _appCreateDTOAppId = appId
-          , _appCreateDTOName = (reqDto ^. parameters) !! 1
-          , _appCreateDTOServerDomain = f' "api-%s.%s" [appId, cloudDomain]
-          , _appCreateDTOServerUrl = f' "https://api-%s.%s" [appId, cloudDomain]
-          , _appCreateDTOClientUrl = f' "https://%s.%s" [appId, cloudDomain]
+        AppAdminCreateDTO
+          { _appAdminCreateDTOAppId = appId
+          , _appAdminCreateDTOName = (reqDto ^. parameters) !! 1
+          , _appAdminCreateDTOServerDomain = f' "api-%s.%s" [appId, cloudDomain]
+          , _appAdminCreateDTOServerUrl = f' "https://api-%s.%s" [appId, cloudDomain]
+          , _appAdminCreateDTOClientUrl = f' "https://%s.%s" [appId, cloudDomain]
           }
-  createApp reqDto'
+  createAdminApp reqDto'
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -92,14 +94,14 @@ app_createCustomApp =
 app_createCustomAppFn :: AdminExecutionDTO -> AppContextM String
 app_createCustomAppFn reqDto = do
   let reqDto' =
-        AppCreateDTO
-          { _appCreateDTOAppId = head (reqDto ^. parameters)
-          , _appCreateDTOName = (reqDto ^. parameters) !! 1
-          , _appCreateDTOServerDomain = (reqDto ^. parameters) !! 2
-          , _appCreateDTOServerUrl = (reqDto ^. parameters) !! 3
-          , _appCreateDTOClientUrl = (reqDto ^. parameters) !! 4
+        AppAdminCreateDTO
+          { _appAdminCreateDTOAppId = head (reqDto ^. parameters)
+          , _appAdminCreateDTOName = (reqDto ^. parameters) !! 1
+          , _appAdminCreateDTOServerDomain = (reqDto ^. parameters) !! 2
+          , _appAdminCreateDTOServerUrl = (reqDto ^. parameters) !! 3
+          , _appAdminCreateDTOClientUrl = (reqDto ^. parameters) !! 4
           }
-  createApp reqDto'
+  createAdminApp reqDto'
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
@@ -303,7 +305,8 @@ persistentCommand_run =
 
 persistentCommand_runFn :: AdminExecutionDTO -> AppContextM String
 persistentCommand_runFn reqDto = do
-  runPersistentCommandByUuid (head (reqDto ^. parameters))
+  command <- findPersistentCommandSimpleByUuid (head (reqDto ^. parameters))
+  runPersistentCommand command
   return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------

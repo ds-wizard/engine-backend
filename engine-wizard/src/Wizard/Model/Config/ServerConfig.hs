@@ -94,7 +94,14 @@ data ServerConfigFeedback =
 
 data ServerConfigPersistentCommand =
   ServerConfigPersistentCommand
-    { _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
+    { _serverConfigPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
+    , _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommandListenerJob =
+  ServerConfigPersistentCommandListenerJob
+    { _serverConfigPersistentCommandListenerJobEnabled :: Bool
     }
   deriving (Generic, Show)
 

@@ -8,7 +8,7 @@ import Wizard.Api.Resource.Config.ClientConfigDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Model.Context.AppContext
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Config.ClientConfigMapper
 

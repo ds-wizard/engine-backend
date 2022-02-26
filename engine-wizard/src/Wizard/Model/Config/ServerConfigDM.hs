@@ -122,11 +122,18 @@ defaultFeedbackSync =
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
-  ServerConfigPersistentCommand {_serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob}
+  ServerConfigPersistentCommand
+    { _serverConfigPersistentCommandListenerJob = defaultPersistentCommandListenerJob
+    , _serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob
+    }
+
+defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
+defaultPersistentCommandListenerJob =
+  ServerConfigPersistentCommandListenerJob {_serverConfigPersistentCommandListenerJobEnabled = True}
 
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "* * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

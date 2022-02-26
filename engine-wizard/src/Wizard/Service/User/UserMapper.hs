@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Util.Gravatar (createGravatarHash)
+import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -179,4 +180,15 @@ fromUserChangeDTO dto oldUser permission =
     , _userLastVisitedAt = oldUser ^. lastVisitedAt
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
+    }
+
+fromAppCreateToUserCreateDTO :: AppCreateDTO -> UserCreateDTO
+fromAppCreateToUserCreateDTO dto =
+  UserCreateDTO
+    { _userCreateDTOFirstName = dto ^. firstName
+    , _userCreateDTOLastName = dto ^. lastName
+    , _userCreateDTOEmail = dto ^. email
+    , _userCreateDTOAffiliation = Nothing
+    , _userCreateDTORole = Just _USER_ROLE_ADMIN
+    , _userCreateDTOPassword = dto ^. password
     }

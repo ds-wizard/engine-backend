@@ -88,6 +88,9 @@ findUserById' = getFromCacheOrDb' getFromCache addToCache go
       appUuid <- asks _appContextAppUuid
       createFindEntityByFn' entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
+findUserByIdSystem :: String -> AppContextM User
+findUserByIdSystem uuid = createFindEntityByFn entityName [("uuid", uuid)]
+
 findUserByEmail :: String -> AppContextM User
 findUserByEmail email = do
   appUuid <- asks _appContextAppUuid
@@ -97,6 +100,9 @@ findUserByEmail' :: String -> AppContextM (Maybe User)
 findUserByEmail' email = do
   appUuid <- asks _appContextAppUuid
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("email", email)]
+
+findUserByEmailAndAppUuid' :: String -> U.UUID -> AppContextM (Maybe User)
+findUserByEmailAndAppUuid' email appUuid = createFindEntityByFn' entityName [appQueryUuid appUuid, ("email", email)]
 
 countUsers :: AppContextM Int
 countUsers = do

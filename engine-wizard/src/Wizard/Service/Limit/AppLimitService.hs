@@ -3,6 +3,8 @@ module Wizard.Service.Limit.AppLimitService where
 import Control.Lens ((^.))
 import Control.Monad (when)
 import Control.Monad.Except (throwError)
+import Data.Time
+import qualified Data.UUID as U
 import GHC.Int
 
 import LensesConfig
@@ -18,9 +20,16 @@ import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Limit.AppLimit
+import Wizard.Service.Limit.AppLimitMapper
 
 getCurrentAppLimits :: AppContextM AppLimit
 getCurrentAppLimits = findCurrentAppLimit
+
+createAppLimit :: U.UUID -> UTCTime -> AppContextM AppLimit
+createAppLimit aUuid now = do
+  let appLimit = fromCreate aUuid now
+  insertAppLimit appLimit
+  return appLimit
 
 checkUserLimit :: AppContextM ()
 checkUserLimit = do

@@ -21,7 +21,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Token.TokenService
 import Wizard.Service.User.UserService

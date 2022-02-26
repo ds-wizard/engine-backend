@@ -1,7 +1,7 @@
 module Wizard.Service.ActionKey.ActionKeyService where
 
 import Control.Monad.Except (throwError)
-import Control.Monad.Reader (asks, liftIO)
+import Control.Monad.Reader (liftIO)
 import Data.Time
 import qualified Data.UUID as U
 
@@ -24,13 +24,12 @@ getActionKeyByHash mHash =
         Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
     Nothing -> throwError $ UserError _ERROR_VALIDATION__HASH_ABSENCE
 
-createActionKey :: U.UUID -> ActionKeyType -> AppContextM ActionKey
-createActionKey userId actionType =
+createActionKey :: U.UUID -> ActionKeyType -> U.UUID -> AppContextM ActionKey
+createActionKey userId actionType appUuid =
   runInTransaction $ do
     uuid <- liftIO generateUuid
     hash <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    appUuid <- asks _appContextAppUuid
     let actionKey =
           ActionKey
             { _actionKeyUuid = uuid

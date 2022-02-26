@@ -5,8 +5,9 @@ import qualified Data.UUID as U
 
 import Wizard.Model.PersistentCommand.PersistentCommand
 
-toPersistentCommand :: U.UUID -> String -> String -> String -> Int -> U.UUID -> U.UUID -> UTCTime -> PersistentCommand
-toPersistentCommand uuid component function body maxAttempts appUuid createdBy now =
+toPersistentCommand ::
+     U.UUID -> String -> String -> String -> Int -> Bool -> U.UUID -> U.UUID -> UTCTime -> PersistentCommand
+toPersistentCommand uuid component function body maxAttempts internal appUuid createdBy now =
   PersistentCommand
     { _persistentCommandUuid = uuid
     , _persistentCommandState = NewPersistentCommandState
@@ -16,6 +17,7 @@ toPersistentCommand uuid component function body maxAttempts appUuid createdBy n
     , _persistentCommandLastErrorMessage = Nothing
     , _persistentCommandAttempts = 0
     , _persistentCommandMaxAttempts = maxAttempts
+    , _persistentCommandInternal = internal
     , _persistentCommandAppUuid = appUuid
     , _persistentCommandCreatedBy = createdBy
     , _persistentCommandCreatedAt = now

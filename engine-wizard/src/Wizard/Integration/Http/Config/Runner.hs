@@ -13,7 +13,7 @@ import Wizard.Integration.Http.Config.ResponseMapper
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Context.AppContext
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 
 compileClientCss :: App -> AppConfigLookAndFeel -> AppContextM BSL.ByteString
 compileClientCss app lookAndFeel = do

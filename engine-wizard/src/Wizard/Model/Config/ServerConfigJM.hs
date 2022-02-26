@@ -105,8 +105,16 @@ instance FromJSON ServerConfigFeedback where
 
 instance FromJSON ServerConfigPersistentCommand where
   parseJSON (Object o) = do
+    _serverConfigPersistentCommandListenerJob <- o .:? "listenerJob" .!= (defaultPersistentCommand ^. listenerJob)
     _serverConfigPersistentCommandRetryJob <- o .:? "retryJob" .!= (defaultPersistentCommand ^. retryJob)
     return ServerConfigPersistentCommand {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommandListenerJob where
+  parseJSON (Object o) = do
+    _serverConfigPersistentCommandListenerJobEnabled <-
+      o .:? "enabled" .!= (defaultPersistentCommandListenerJob ^. enabled)
+    return ServerConfigPersistentCommandListenerJob {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where

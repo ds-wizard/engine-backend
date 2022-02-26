@@ -5,9 +5,9 @@ import GHC.Generics
 data AppCreateDTO =
   AppCreateDTO
     { _appCreateDTOAppId :: String
-    , _appCreateDTOName :: String
-    , _appCreateDTOServerDomain :: String
-    , _appCreateDTOServerUrl :: String
-    , _appCreateDTOClientUrl :: String
+    , _appCreateDTOFirstName :: String
+    , _appCreateDTOLastName :: String
+    , _appCreateDTOEmail :: String
+    , _appCreateDTOPassword :: String
     }
   deriving (Generic)

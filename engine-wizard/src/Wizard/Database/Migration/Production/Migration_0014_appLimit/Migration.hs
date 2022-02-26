@@ -20,6 +20,7 @@ migrate dbPool = do
   addFileSizeToTemplateAsset dbPool
   addQuestionnaireAclUpdateCascade dbPool
   addFlagsForDocWorkerToAppConfig dbPool
+  addInternalFlagToPersistentCommand dbPool
 
 createAppLimit dbPool = do
   let sql =
@@ -83,6 +84,14 @@ addFlagsForDocWorkerToAppConfig dbPool = do
         "UPDATE app_config \
         \SET feature = feature::jsonb || '{\"pdfOnlyEnabled\": false, \"pdfWatermarkEnabled\": false}'::jsonb \
         \WHERE uuid IS NOT NULL"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addInternalFlagToPersistentCommand dbPool = do
+  let sql =
+        "ALTER TABLE persistent_command \
+          \ADD column internal bool not null default true"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

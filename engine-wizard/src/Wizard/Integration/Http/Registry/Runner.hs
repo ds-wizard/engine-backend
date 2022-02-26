@@ -22,7 +22,7 @@ import Wizard.Integration.Http.Registry.ResponseMapper
 import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Statistics.InstanceStatistics
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 
 retrieveOrganizations :: AppContextM [OrganizationSimpleDTO]

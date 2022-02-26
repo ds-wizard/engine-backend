@@ -21,6 +21,7 @@ data PersistentCommand =
     , _persistentCommandLastErrorMessage :: Maybe String
     , _persistentCommandAttempts :: Int
     , _persistentCommandMaxAttempts :: Int
+    , _persistentCommandInternal :: Bool
     , _persistentCommandAppUuid :: U.UUID
     , _persistentCommandCreatedBy :: U.UUID
     , _persistentCommandCreatedAt :: UTCTime

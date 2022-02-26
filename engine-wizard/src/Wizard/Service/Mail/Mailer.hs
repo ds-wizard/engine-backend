@@ -47,18 +47,17 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.User.UserMapper
 import Wizard.Util.Logger
 import Wizard.Util.Template (loadAndRender)
 
-sendRegistrationConfirmationMail :: UserDTO -> String -> AppContextM ()
-sendRegistrationConfirmationMail user hash =
+sendRegistrationConfirmationMail :: UserDTO -> String -> String -> AppContextM ()
+sendRegistrationConfirmationMail user hash clientUrl =
   runInTransaction $ do
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
-    clientUrl <- getAppClientUrl
     let activationLink = clientUrl ++ "/signup/" ++ U.toString (user ^. uuid) ++ "/" ++ hash
         mailName = serverConfig ^. mail . name
         subject = TL.pack $ mailName ++ ": " ++ _MAIL_SUBJECT_REGISTRATION_CONFIRMATION
