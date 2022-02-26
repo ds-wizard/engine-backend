@@ -8,6 +8,7 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo _CMP_MIGRATION "(User/User) started"
   deleteUsers
+  insertUser userSystem
   insertUser userAlbert
   insertUser userNikola
   insertUser userIsaac

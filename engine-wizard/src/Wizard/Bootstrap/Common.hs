@@ -27,7 +27,7 @@ runAppContextWithBaseContext function baseContext = do
           , _appContextRegistryClient = baseContext ^. registryClient
           , _appContextTraceUuid = traceUuid
           , _appContextAppUuid = defaultAppUuid
-          , _appContextCurrentUser = Just . toDTO $ userAlbert
+          , _appContextCurrentUser = Just . toDTO $ userSystem
           , _appContextShutdownFlag = baseContext ^. shutdownFlag
           , _appContextCache = baseContext ^. cache
           }

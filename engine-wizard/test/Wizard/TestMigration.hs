@@ -111,6 +111,7 @@ resetDB appContext = do
   runInContext (insertAppLimit defaultAppLimit) appContext
   runInContext (insertApp differentApp) appContext
   runInContext (insertAppLimit differentAppLimit) appContext
+  runInContext (insertUser userSystem) appContext
   runInContext (insertUser userAlbert) appContext
   runInContext (insertUser userCharles) appContext
   runInContext (insertPackage globalPackageEmpty) appContext

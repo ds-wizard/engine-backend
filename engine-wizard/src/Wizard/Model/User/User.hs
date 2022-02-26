@@ -30,6 +30,7 @@ data User =
     , _userSubmissionProps :: [UserSubmissionProps]
     , _userImageUrl :: Maybe String
     , _userGroups :: [GroupMembership]
+    , _userMachine :: Bool
     , _userAppUuid :: U.UUID
     , _userLastVisitedAt :: UTCTime
     , _userCreatedAt :: UTCTime
@@ -57,4 +58,5 @@ instance Eq User where
     _userPermissions a == _userPermissions b &&
     _userActive a == _userActive b &&
     _userSubmissionProps a == _userSubmissionProps b &&
-    _userImageUrl a == _userImageUrl b && _userGroups a == _userGroups b && _userAppUuid a == _userAppUuid b
+    _userImageUrl a == _userImageUrl b &&
+    _userGroups a == _userGroups b && _userMachine a == _userMachine b && _userAppUuid a == _userAppUuid b

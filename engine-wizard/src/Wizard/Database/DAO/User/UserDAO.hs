@@ -33,7 +33,7 @@ pageLabel = "users"
 findUsers :: AppContextM [User]
 findUsers = do
   appUuid <- asks _appContextAppUuid
-  createFindEntitiesByFn entityName [appQueryUuid appUuid]
+  createFindEntitiesByFn entityName [appQueryUuid appUuid, ("machine", "false")]
 
 findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
 findUsersPage mQuery mRole pageable sort = do
@@ -44,7 +44,7 @@ findUsersPage mQuery mRole pageable sort = do
     pageable
     sort
     "*"
-    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ?"
+    "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND role ~* ? AND app_uuid = ? AND machine = false"
     [regex mQuery, regex mQuery, regex mRole, U.toString appUuid]
 
 findUserSuggestionsPage ::
@@ -63,7 +63,7 @@ findUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort = do
           Just excludeUuids -> f' "AND uuid NOT IN (%s)" [generateQuestionMarks excludeUuids]
   let condition =
         f'
-          "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? %s %s"
+          "(concat(first_name, ' ', last_name) ~* ? OR email ~* ?) AND active = true AND app_uuid = ? AND machine = false %s %s"
           [selectCondition, excludeCondition]
   createFindEntitiesPageableQuerySortFn
     entityName
@@ -125,7 +125,7 @@ updateUserById user = do
   appUuid <- asks _appContextAppUuid
   let sql =
         fromString
-          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ? WHERE app_uuid = ? AND uuid = ?"
+          "UPDATE user_entity SET uuid = ?, first_name = ?, last_name = ?, email = ?, password_hash = ?, affiliation = ?, sources = ?, role = ?, permissions = ?, active = ?, submissions_props = ?, image_url = ?, groups = ?, last_visited_at = ?, created_at = ?, updated_at = ?, app_uuid = ?, machine = ? WHERE app_uuid = ? AND uuid = ?"
   let params = toRow user ++ [toField appUuid, toField $ user ^. uuid]
   logQuery sql params
   let action conn = execute conn sql params
