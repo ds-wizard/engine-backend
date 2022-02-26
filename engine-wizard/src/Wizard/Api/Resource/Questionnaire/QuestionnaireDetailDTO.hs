@@ -42,6 +42,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOEvents :: [QuestionnaireEventDTO]
     , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
     , _questionnaireDetailDTOIsTemplate :: Bool
+    , _questionnaireDetailDTOMigrationUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -70,4 +71,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
     _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b &&
-    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b
+    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b &&
+    _questionnaireDetailDTOMigrationUuid a == _questionnaireDetailDTOMigrationUuid b

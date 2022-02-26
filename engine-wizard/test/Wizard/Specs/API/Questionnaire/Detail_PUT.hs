@@ -132,6 +132,7 @@ create_test_200 title appContext qtn qtnEdited qtnCtn permissions authHeader ano
             permissions
             fEventsWithoutCommentsDto
             qVersionsDto
+            Nothing
     let expType (a :: QuestionnaireDetailDTO) = a
      -- AND: Run migrations
     runInContextIO U.runMigration appContext

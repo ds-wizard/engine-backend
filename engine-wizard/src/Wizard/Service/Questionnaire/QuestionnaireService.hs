@@ -221,6 +221,7 @@ getQuestionnaireDetailById qtnUuid =
     eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
     filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+    migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
       toDetailWithPackageWithEventsDTO
         qtn
@@ -236,6 +237,7 @@ getQuestionnaireDetailById qtnUuid =
         permissionDtos
         eventsDto
         versionDto
+        (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto =
@@ -266,6 +268,7 @@ modifyQuestionnaire qtnUuid reqDto =
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
     filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
+    migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
       toDetailWithPackageDTO
         updatedQtn
@@ -280,6 +283,7 @@ modifyQuestionnaire qtnUuid reqDto =
         permissionDtos
         eventsDto
         versionDto
+        Nothing
 
 deleteQuestionnaire :: String -> Bool -> AppContextM ()
 deleteQuestionnaire qtnUuid shouldValidatePermission =

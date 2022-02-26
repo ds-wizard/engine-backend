@@ -67,7 +67,14 @@ finishQuestionnaireMigration qtnUuid =
   runInTransaction $ do
     checkPermission _QTN_PERM
     _ <- getQuestionnaireMigration qtnUuid
+    tmpUuid <- liftIO generateUuid
+    state <- findMigratorStateByNewQuestionnaireId qtnUuid
     deleteMigratorStateByNewQuestionnaireId qtnUuid
+    oldQtn <- findQuestionnaireById (U.toString $ state ^. oldQuestionnaireUuid)
+    newQtn <- findQuestionnaireById (U.toString $ state ^. newQuestionnaireUuid)
+    changeQuestionnaireUuid (U.toString $ oldQtn ^. uuid) (U.toString tmpUuid)
+    changeQuestionnaireUuid (U.toString $ newQtn ^. uuid) (U.toString $ oldQtn ^. uuid)
+    deleteQuestionnaire (U.toString tmpUuid) True
     return ()
 
 cancelQuestionnaireMigration :: String -> AppContextM ()

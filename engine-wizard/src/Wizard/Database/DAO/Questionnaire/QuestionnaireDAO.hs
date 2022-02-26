@@ -371,6 +371,16 @@ appendQuestionnaireEventByUuid qtnUuid events = do
   runDB action
   return ()
 
+changeQuestionnaireUuid :: String -> String -> AppContextM ()
+changeQuestionnaireUuid oldQtnUuid newQtnUuid = do
+  appUuid <- asks _appContextAppUuid
+  let sql = fromString "UPDATE questionnaire SET uuid = ? WHERE app_uuid = ? AND uuid = ?"
+  let params = [toField newQtnUuid, toField appUuid, toField oldQtnUuid]
+  logInsertAndUpdate sql params
+  let action conn = execute conn sql params
+  runDB action
+  return ()
+
 deleteQuestionnaires :: AppContextM Int64
 deleteQuestionnaires = createDeleteEntitiesFn entityName
 

@@ -125,8 +125,9 @@ toDetailWithPackageWithEventsDTO ::
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
+  -> Maybe U.UUID
   -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records events versions =
+toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records events versions mMigrationUuid =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -151,6 +152,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
     , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
+    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -168,8 +170,9 @@ toDetailWithPackageDTO ::
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
+  -> Maybe U.UUID
   -> QuestionnaireDetailDTO
-toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records events versions =
+toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records events versions mMigrationUuid =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -194,6 +197,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
     , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
+    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }

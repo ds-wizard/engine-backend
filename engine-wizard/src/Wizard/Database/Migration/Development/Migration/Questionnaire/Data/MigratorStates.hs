@@ -47,6 +47,7 @@ nlQtnMigrationStateDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4 ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4 ^. versions))
+          (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4Upgraded
@@ -62,6 +63,7 @@ nlQtnMigrationStateDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4Upgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4Upgraded ^. versions))
+          Nothing
     , _migratorStateDTOResolvedQuestionUuids = [question2 ^. uuid]
     , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }
@@ -84,6 +86,7 @@ nlQtnMigrationStateVisibleViewDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleView ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleView ^. versions))
+          (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleViewUpgraded
@@ -99,6 +102,7 @@ nlQtnMigrationStateVisibleViewDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleViewUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleViewUpgraded ^. versions))
+          Nothing
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }
@@ -121,6 +125,7 @@ nlQtnMigrationStateVisibleEditDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEdit ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEdit ^. versions))
+          (Just $ questionnaire4Upgraded ^. uuid)
     , _migratorStateDTONewQuestionnaire =
         toDetailWithPackageWithEventsDTO
           questionnaire4VisibleEditUpgraded
@@ -136,6 +141,7 @@ nlQtnMigrationStateVisibleEditDto =
           []
           (fmap (\event -> toEventDTO event (Just userAlbert)) (questionnaire4VisibleEditUpgraded ^. events))
           (fmap (`toVersionDTO` Just userAlbert) (questionnaire4VisibleEditUpgraded ^. versions))
+          Nothing
     , _migratorStateDTOResolvedQuestionUuids = nlQtnMigrationStateDto ^. resolvedQuestionUuids
     , _migratorStateDTOAppUuid = defaultApp ^. uuid
     }

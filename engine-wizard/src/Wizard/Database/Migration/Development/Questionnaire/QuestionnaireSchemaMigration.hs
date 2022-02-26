@@ -96,7 +96,7 @@ createQtnPermTable = do
          \     perms              text[] not null, \
          \     questionnaire_uuid uuid   not null \
          \         constraint questionnaire_acl_user_questionnaire_uuid_fk \
-         \             references questionnaire on delete cascade \
+         \             references questionnaire on delete cascade on update cascade \
          \ ); \
          \  \
          \ create unique index questionnaire_acl_user_uuid_uindex \
