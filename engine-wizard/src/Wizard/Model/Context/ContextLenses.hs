@@ -1,6 +1,6 @@
 module Wizard.Model.Context.ContextLenses where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
@@ -93,6 +93,14 @@ instance HasLocalization' BaseContext where
       get entity = entity ^. localization
       set :: BaseContext -> M.Map String String -> BaseContext
       set entity newValue = entity & localization .~ newValue
+
+instance HasIdentityUuid' AppContext where
+  identityUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> Maybe String
+      get entity = fmap U.toString $ entity ^. currentUser ^? _Just . uuid
+      set :: AppContext -> Maybe String -> AppContext
+      set entity newValue = entity
 
 instance HasTraceUuid' AppContext where
   traceUuid' convert entity = fmap (set entity) (convert . get $ entity)

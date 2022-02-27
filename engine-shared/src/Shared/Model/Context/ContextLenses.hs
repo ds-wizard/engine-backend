@@ -81,6 +81,17 @@ instance HasLocalization' BaseContext where
       set :: BaseContext -> M.Map String String -> BaseContext
       set entity newValue = entity & localization .~ newValue
 
+class HasIdentityUuid' entity where
+  identityUuid' :: Functor f => (Maybe String -> f (Maybe String)) -> entity -> f entity
+
+instance HasIdentityUuid' AppContext where
+  identityUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> Maybe String
+      get entity = entity ^. identityUuid
+      set :: AppContext -> Maybe String -> AppContext
+      set entity newValue = entity & identityUuid .~ newValue
+
 class HasTraceUuid' entity where
   traceUuid' :: Functor f => (U.UUID -> f U.UUID) -> entity -> f entity
 

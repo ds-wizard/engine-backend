@@ -59,7 +59,15 @@ fitsIntoKMSpec pkgIdSplit kmSpec = heCompareOrgId $ heCompareKmId $ heCompareVer
         Nothing -> callback
 
 resolvePackageId ::
-     (MonadError AppError m, MonadLogger m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadError AppError m
+     , MonadLogger m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m String
 resolvePackageId pId = do

@@ -21,7 +21,15 @@ import Shared.Model.Template.Template
 entityName = "template_asset"
 
 findTemplateAssetsByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m [TemplateAsset]
 findTemplateAssetsByTemplateId templateId = do
@@ -29,7 +37,15 @@ findTemplateAssetsByTemplateId templateId = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId)]
 
 findTemplateAssetsByTemplateIdAndFileName ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> String
   -> m [TemplateAsset]
@@ -38,7 +54,15 @@ findTemplateAssetsByTemplateIdAndFileName templateId fileName = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId), ("file_name", fileName)]
 
 findTemplateAssetById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m TemplateAsset
 findTemplateAssetById uuid = do
@@ -46,19 +70,44 @@ findTemplateAssetById uuid = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 sumTemplateAssetFileSize ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int64
 sumTemplateAssetFileSize = do
   appUuid <- asks (^. appUuid')
   createSumByFn entityName "file_size" appCondition [appUuid]
 
 insertTemplateAsset ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => TemplateAsset
   -> m Int64
 insertTemplateAsset = createInsertFn entityName
 
 updateTemplateAssetById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => TemplateAsset
   -> m Int64
 updateTemplateAssetById asset = do
@@ -72,11 +121,28 @@ updateTemplateAssetById asset = do
   runDB action
 
 deleteTemplateAssets ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int64
 deleteTemplateAssets = createDeleteEntitiesFn entityName
 
 deleteTemplateAssetsByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deleteTemplateAssetsByTemplateId tmlId = do
@@ -84,7 +150,15 @@ deleteTemplateAssetsByTemplateId tmlId = do
   createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", tmlId)]
 
 deleteTemplateAssetById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deleteTemplateAssetById uuid = do

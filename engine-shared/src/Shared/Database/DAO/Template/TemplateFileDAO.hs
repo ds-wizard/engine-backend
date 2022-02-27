@@ -21,7 +21,15 @@ import Shared.Model.Template.Template
 entityName = "template_file"
 
 findTemplateFilesByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m [TemplateFile]
 findTemplateFilesByTemplateId templateId = do
@@ -29,7 +37,15 @@ findTemplateFilesByTemplateId templateId = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId)]
 
 findTemplateFilesByTemplateIdAndFileName ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> String
   -> m [TemplateFile]
@@ -38,7 +54,15 @@ findTemplateFilesByTemplateIdAndFileName templateId fileName = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", templateId), ("file_name", fileName)]
 
 findTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m TemplateFile
 findTemplateFileById uuid = do
@@ -46,13 +70,29 @@ findTemplateFileById uuid = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 insertTemplateFile ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => TemplateFile
   -> m Int64
 insertTemplateFile = createInsertFn entityName
 
 updateTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => TemplateFile
   -> m Int64
 updateTemplateFileById file = do
@@ -66,11 +106,28 @@ updateTemplateFileById file = do
   runDB action
 
 deleteTemplateFiles ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int64
 deleteTemplateFiles = createDeleteEntitiesFn entityName
 
 deleteTemplateFilesByTemplateId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deleteTemplateFilesByTemplateId tmlId = do
@@ -78,7 +135,15 @@ deleteTemplateFilesByTemplateId tmlId = do
   createDeleteEntitiesByFn entityName [appQueryUuid appUuid, ("template_id", tmlId)]
 
 deleteTemplateFileById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deleteTemplateFileById uuid = do

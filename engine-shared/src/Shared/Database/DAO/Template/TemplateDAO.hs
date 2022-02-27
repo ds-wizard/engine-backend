@@ -25,13 +25,30 @@ import Shared.Model.Template.Template
 entityName = "template"
 
 findTemplates ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m [Template]
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m [Template]
 findTemplates = do
   appUuid <- asks (^. appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findTemplatesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => [(String, String)]
   -> m [Template]
 findTemplatesFiltered queryParams = do
@@ -39,7 +56,15 @@ findTemplatesFiltered queryParams = do
   createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
 findTemplatesByOrganizationIdAndKmId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> String
   -> m [Template]
@@ -50,7 +75,15 @@ findTemplatesByOrganizationIdAndKmId organizationId templateId = do
     [appQueryUuid appUuid, ("organization_id", organizationId), ("template_id", templateId)]
 
 findTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Template
 findTemplateById id = do
@@ -58,7 +91,15 @@ findTemplateById id = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 findTemplateById' ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m (Maybe Template)
 findTemplateById' id = do
@@ -66,7 +107,16 @@ findTemplateById' id = do
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
 
 countTemplatesGroupedByOrganizationIdAndKmId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int
 countTemplatesGroupedByOrganizationIdAndKmId = do
   appUuid <- asks (^. appUuid')
   let sql =
@@ -84,13 +134,29 @@ countTemplatesGroupedByOrganizationIdAndKmId = do
     _ -> return 0
 
 insertTemplate ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => Template
   -> m Int64
 insertTemplate = createInsertFn entityName
 
 updateTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => Template
   -> m Int64
 updateTemplateById template = do
@@ -104,14 +170,31 @@ updateTemplateById template = do
   runDB action
 
 deleteTemplates ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int64
 deleteTemplates = do
   deleteTemplateFiles
   deleteTemplateAssets
   createDeleteEntitiesFn entityName
 
 deleteTemplatesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => [(String, String)]
   -> m Int64
 deleteTemplatesFiltered params = do
@@ -122,7 +205,15 @@ deleteTemplatesFiltered params = do
   createDeleteEntitiesByFn entityName (appQueryUuid appUuid : params)
 
 deleteTemplateById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deleteTemplateById templateId = do
