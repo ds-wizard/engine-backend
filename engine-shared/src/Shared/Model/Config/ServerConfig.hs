@@ -44,6 +44,13 @@ data ServerConfigAnalytics =
     }
   deriving (Generic, Show)
 
+data ServerConfigSentry =
+  ServerConfigSentry
+    { _serverConfigSentryEnabled :: Bool
+    , _serverConfigSentryDsn :: String
+    }
+  deriving (Generic, Show)
+
 data ServerConfigLogging =
   ServerConfigLogging
     { _serverConfigLoggingLevel :: LogLevel

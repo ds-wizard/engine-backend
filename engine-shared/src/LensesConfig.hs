@@ -8,6 +8,7 @@ import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.TemplateBundle.TemplateBundleDTO
 import Shared.Model.Common.MapEntry
 import Shared.Model.Common.Pageable
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
 import Shared.Model.Context.BaseContext
@@ -50,9 +51,13 @@ makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigSentry
+
 makeFields ''ServerConfigLogging
 
 makeFields ''ServerConfigCloud
+
+makeFields ''BuildInfoConfig
 
 -- Model / Context
 makeFields ''AppContext

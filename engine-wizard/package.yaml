@@ -65,6 +65,7 @@ library:
   - pretty-terminal
   - pwstore-fast
   - random # OK
+  - raven-haskell
   - raw-strings-qq
   - regex-compat
   - resource-pool

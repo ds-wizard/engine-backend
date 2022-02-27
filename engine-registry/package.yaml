@@ -54,6 +54,7 @@ library:
   - pretty-terminal
   - pwstore-fast
   - random
+  - raven-haskell
   - regex-compat
   - resource-pool
   - servant

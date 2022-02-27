@@ -120,6 +120,13 @@ packages:
       sha256: 94ffc046a96682cc681a76f879452dea4780495d40d477ad7e28ca06ec9a1e88
   original:
     hackage: network-bsd-2.8.0.0
+- completed:
+    hackage: raven-haskell-0.1.4.0@sha256:64eca8650d140fc853a951af0cf4e2ce255b90491b9e3014d82be2e79593c43a,1251
+    pantry-tree:
+      size: 632
+      sha256: 19c2aaf9c09d341108777e3a4de975841f81518ed271b156983d25ec622dd266
+  original:
+    hackage: raven-haskell-0.1.4.0
 snapshots:
 - completed:
     size: 585817

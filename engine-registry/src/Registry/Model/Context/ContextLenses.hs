@@ -12,6 +12,7 @@ import Registry.Model.Config.ServerConfig
 import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Shared.Constant.App
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.ContextLenses
 
@@ -38,6 +39,14 @@ instance HasS3' ServerConfig where
       get entity = entity ^. s3
       set :: ServerConfig -> ServerConfigS3 -> ServerConfig
       set entity newValue = entity & s3 .~ newValue
+
+instance HasSentry' ServerConfig where
+  sentry' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: ServerConfig -> ServerConfigSentry
+      get entity = entity ^. sentry
+      set :: ServerConfig -> ServerConfigSentry -> ServerConfig
+      set entity newValue = entity & sentry .~ newValue
 
 instance HasCloud' ServerConfig where
   cloud' convert entity = fmap (set entity) (convert . get $ entity)
@@ -94,6 +103,22 @@ instance HasLocalization' BaseContext where
       get entity = entity ^. localization
       set :: BaseContext -> M.Map String String -> BaseContext
       set entity newValue = entity & localization .~ newValue
+
+instance HasBuildInfoConfig' AppContext where
+  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> BuildInfoConfig
+      get entity = entity ^. buildInfoConfig
+      set :: AppContext -> BuildInfoConfig -> AppContext
+      set entity newValue = entity & buildInfoConfig .~ newValue
+
+instance HasBuildInfoConfig' BaseContext where
+  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: BaseContext -> BuildInfoConfig
+      get entity = entity ^. buildInfoConfig
+      set :: BaseContext -> BuildInfoConfig -> BaseContext
+      set entity newValue = entity & buildInfoConfig .~ newValue
 
 instance HasIdentityUuid' AppContext where
   identityUuid' convert entity = fmap (set entity) (convert . get $ entity)

@@ -47,6 +47,7 @@ library:
   - postgresql-libpq
   - pretty-terminal
   - random
+  - raven-haskell
   - raw-strings-qq
   - regex-compat
   - resource-pool

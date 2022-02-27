@@ -24,6 +24,7 @@ instance FromJSON ServerConfig where
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
     _serverConfigBranch <- o .:? "branch" .!= defaultBranch
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback

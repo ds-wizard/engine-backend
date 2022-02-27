@@ -263,6 +263,8 @@ makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigSentry
+
 makeFields ''ServerConfigBranch
 
 makeFields ''ServerConfigDocument

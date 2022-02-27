@@ -16,6 +16,7 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigSentry = defaultSentry
     , _serverConfigBranch = defaultBranch
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback

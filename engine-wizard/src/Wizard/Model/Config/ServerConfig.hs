@@ -15,6 +15,7 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigSentry :: ServerConfigSentry
     , _serverConfigBranch :: ServerConfigBranch
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
