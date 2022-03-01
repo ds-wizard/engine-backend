@@ -79,7 +79,7 @@ test_204 appContext =
           ResponseMatcher {matchHeaders = expHeaders, matchStatus = expStatus, matchBody = bodyEquals expBody}
     response `shouldRespondWith` responseMatcher
      -- AND: Find result in DB and compare with expectation state
-    assertCountInDB findQuestionnaires appContext 2
+    assertCountInDB findQuestionnaires appContext 1
     assertCountInDB findMigratorStates appContext 0
 
 -- ----------------------------------------------------

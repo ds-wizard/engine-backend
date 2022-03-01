@@ -4,9 +4,11 @@ module Wizard.Bootstrap.Web
   , runMiddleware
   ) where
 
+import Control.Exception (SomeException)
 import Control.Lens ((^.))
 import Control.Monad.Reader (runReaderT)
-import Network.Wai.Handler.Warp (run)
+import qualified Network.Wai as WAI
+import Network.Wai.Handler.Warp (defaultSettings, runSettings, setOnException, setPort)
 import Network.Wai.Middleware.Servant.Errors (errorMw)
 import Servant
 
@@ -20,20 +22,23 @@ import Wizard.Api.Middleware.ContentTypeMiddleware
 import Wizard.Api.Middleware.LoggingMiddleware
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
+import Wizard.Util.Sentry
 
 runWebServer :: BaseContext -> IO ()
 runWebServer context = do
   let config = context ^. serverConfig
   let webPort = config ^. general . serverPort
   let env = config ^. general . environment
-  run webPort (runMiddleware env $ runApp context)
+  sentryHandler <- createSentryHandler context
+  let settings = setPort webPort . setOnException sentryHandler $ defaultSettings
+  runSettings settings (runMiddleware env $ runApp context)
 
 -- --------------------------------
 -- PRIVATE
 -- --------------------------------
 type ServerAPI
    = SwaggerAPI
-     :<|> AppAPI
+     :<|> ApplicationAPI
 
 serverApi :: Proxy ServerAPI
 serverApi = Proxy
@@ -44,7 +49,7 @@ convert baseContext function =
    in Handler . runLogging loggingLevel $ runReaderT (runBaseContextM function) baseContext
 
 appToServer :: BaseContext -> Server ServerAPI
-appToServer baseContext = swaggerServer :<|> hoistServer appApi (convert baseContext) appServer
+appToServer baseContext = swaggerServer :<|> hoistServer applicationApi (convert baseContext) applicationServer
 
 runApp :: BaseContext -> Application
 runApp baseContext = serve serverApi (appToServer baseContext)
@@ -53,3 +58,14 @@ runMiddleware :: Environment -> Application -> Application
 runMiddleware env =
   contentTypeMiddleware . corsMiddleware . errorMw @JSON @'[ "message", "status"] . loggingMiddleware env .
   optionsMiddleware
+
+createSentryHandler :: BaseContext -> IO (Maybe WAI.Request -> SomeException -> IO ())
+createSentryHandler context = do
+  if context ^. serverConfig . sentry . enabled
+    then do
+      let sentryUrl = context ^. serverConfig . sentry . dsn
+      sentryService <- createSentryService sentryUrl
+      let buildVersion = context ^. buildInfoConfig . version
+      return $ sentryOnException buildVersion sentryService
+    else do
+      return (\_ _ -> return ())

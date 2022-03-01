@@ -37,6 +37,7 @@ userNikola =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = [memberBioGroup, memberPlantGroup]
+    , _userMachine = False
     , _userAppUuid = defaultApp ^. uuid
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 26) 0

@@ -19,6 +19,8 @@ import Wizard.Api.Resource.ActionKey.ActionKeySM ()
 import Wizard.Api.Resource.Admin.AdminExecutionResultSM ()
 import Wizard.Api.Resource.Admin.AdminExecutionSM ()
 import Wizard.Api.Resource.Admin.AdminSM ()
+import Wizard.Api.Resource.App.AppCreateSM ()
+import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.BookReference.BookReferenceSM ()
 import Wizard.Api.Resource.Branch.BranchChangeSM ()
 import Wizard.Api.Resource.Branch.BranchCreateSM ()
@@ -66,6 +68,7 @@ import Wizard.Api.Resource.Token.TokenCreateSM ()
 import Wizard.Api.Resource.Token.TokenSM ()
 import Wizard.Api.Resource.Typehint.TypehintRequestSM ()
 import Wizard.Api.Resource.Typehint.TypehintSM ()
+import Wizard.Api.Resource.Usage.UsageSM ()
 import Wizard.Api.Resource.User.UserChangeSM ()
 import Wizard.Api.Resource.User.UserCreateSM ()
 import Wizard.Api.Resource.User.UserPasswordSM ()
@@ -80,7 +83,7 @@ import Wizard.Api.Resource.Websocket.WebsocketSM ()
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
-swagger = toSwagger appApi & info . title .~ "Wizard API" & info . description ?~ "API specification for Wizard"
+swagger = toSwagger applicationApi & info . title .~ "Wizard API" & info . description ?~ "API specification for Wizard"
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

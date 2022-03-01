@@ -4,6 +4,7 @@ import qualified Data.Map.Strict as M
 import Data.Time
 import qualified Data.UUID as U
 import GHC.Generics
+import GHC.Int
 
 import Shared.Model.Package.PackagePattern
 
@@ -60,6 +61,7 @@ data TemplateAsset =
     , _templateAssetUuid :: U.UUID
     , _templateAssetFileName :: String
     , _templateAssetContentType :: String
+    , _templateAssetFileSize :: Int64
     , _templateAssetAppUuid :: U.UUID
     }
   deriving (Show, Eq, Generic)

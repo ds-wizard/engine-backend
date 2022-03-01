@@ -1,5 +1,5 @@
 name: engine-wizard
-version: '3.8.2'
+version: '3.9.0'
 synopsis: Engine Wizard
 description: Engine Wizard
 category: Web
@@ -65,6 +65,7 @@ library:
   - pretty-terminal
   - pwstore-fast
   - random # OK
+  - raven-haskell
   - raw-strings-qq
   - regex-compat
   - resource-pool
@@ -106,9 +107,9 @@ executables:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - engine-wizard
@@ -119,9 +120,9 @@ tests:
     when:
     - condition: os(darwin)
       then:
-        ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
       else:
-        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+        ghc-options: -threaded -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
     dependencies:
     - base
     - aeson

@@ -2,12 +2,14 @@ module Shared.Service.Template.TemplateMapper where
 
 import Control.Lens ((^.))
 import qualified Data.UUID as U
+import GHC.Int
 
 import LensesConfig
 import Shared.Api.Resource.Template.TemplateDTO
 import Shared.Api.Resource.Template.TemplateFormatDTO
 import Shared.Api.Resource.Template.TemplateSuggestionDTO
 import Shared.Model.Template.Template
+import Shared.Util.List
 
 toDTO :: Template -> TemplateDTO
 toDTO tml =
@@ -37,6 +39,10 @@ toFormatDTO format =
     , _templateFormatDTOShortName = format ^. shortName
     , _templateFormatDTOIcon = format ^. icon
     , _templateFormatDTOColor = format ^. color
+    , _templateFormatDTOIsPdf =
+        case lastSafe $ format ^. steps of
+          Nothing -> False
+          Just step -> step ^. name == "wkhtmltopdf"
     }
 
 toFileDTO :: TemplateFile -> TemplateFileDTO
@@ -65,12 +71,13 @@ fromFileDTO templateId appUuid file =
     , _templateFileAppUuid = appUuid
     }
 
-fromAssetDTO :: String -> U.UUID -> TemplateAssetDTO -> TemplateAsset
-fromAssetDTO templateId appUuid asset =
+fromAssetDTO :: String -> Int64 -> U.UUID -> TemplateAssetDTO -> TemplateAsset
+fromAssetDTO templateId fileSize appUuid asset =
   TemplateAsset
     { _templateAssetTemplateId = templateId
     , _templateAssetUuid = asset ^. uuid
     , _templateAssetFileName = asset ^. fileName
     , _templateAssetContentType = asset ^. contentType
+    , _templateAssetFileSize = fileSize
     , _templateAssetAppUuid = appUuid
     }

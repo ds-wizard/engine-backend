@@ -26,5 +26,6 @@ extra-deps:
     commit: "5aa1f3b"
   - network-2.8.0.1
   - network-bsd-2.8.0.0
+  - raven-haskell-0.1.4.0
 
 allow-newer: true

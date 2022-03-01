@@ -40,6 +40,8 @@ createS3Client serverConfig manager = do
 createGetObjectFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -51,7 +53,7 @@ createGetObjectFn ::
 createGetObjectFn object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
-  logInfo _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
+  logInfoI _CMP_S3 (f' "Get object: '%s'" [sanitizedObject])
   let action = do
         src <- getObject (T.pack bucketName) (T.pack sanitizedObject) defaultGetObjectOptions
         let srcStream = gorObjectStream src :: C.ConduitM () BS.ByteString Minio ()
@@ -62,6 +64,8 @@ createGetObjectFn object = do
 createPutObjectFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -75,7 +79,7 @@ createPutObjectFn ::
 createPutObjectFn object mContentType content = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
-  logInfo _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
+  logInfoI _CMP_S3 (f' "Put object: '%s'" [sanitizedObject])
   let req = C.yield content
   let kb15 = 15 * 1024
   let objectOptions = defaultPutObjectOptions {pooContentType = fmap T.pack mContentType}
@@ -86,6 +90,8 @@ createPutObjectFn object mContentType content = do
 createRemoveObjectFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -97,13 +103,15 @@ createRemoveObjectFn ::
 createRemoveObjectFn object = do
   bucketName <- getBucketName
   sanitizedObject <- sanitizeObject object
-  logInfo _CMP_S3 (f' "Delete object: '%s'" [sanitizedObject])
+  logInfoI _CMP_S3 (f' "Delete object: '%s'" [sanitizedObject])
   let action = removeObject (T.pack bucketName) (T.pack sanitizedObject)
   runMinioClient action
 
 createListObjectsFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -113,7 +121,7 @@ createListObjectsFn ::
   => m [String]
 createListObjectsFn = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 "List objects"
+  logInfoI _CMP_S3 "List objects"
   let action = do
         let itemStream = listObjects (T.pack bucketName) Nothing True :: C.ConduitM () ListItem Minio ()
         let foldFn = CL.fold (\acc i -> acc ++ [i]) [] :: C.ConduitT ListItem C.Void Minio [ListItem]
@@ -127,6 +135,8 @@ createListObjectsFn = do
 createBucketExistsFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -136,13 +146,15 @@ createBucketExistsFn ::
   => m Bool
 createBucketExistsFn = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 (f' "Check existence of bucket: '%s'" [bucketName])
+  logInfoI _CMP_S3 (f' "Check existence of bucket: '%s'" [bucketName])
   let action = bucketExists (T.pack bucketName)
   runMinioClient action
 
 createMakeBucketFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -152,13 +164,15 @@ createMakeBucketFn ::
   => m ()
 createMakeBucketFn = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
+  logInfoI _CMP_S3 (f' "Make bucket: '%s'" [bucketName])
   let action = makeBucket (T.pack bucketName) Nothing
   runMinioClient action
 
 createPurgeBucketFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -168,13 +182,15 @@ createPurgeBucketFn ::
   => m ()
 createPurgeBucketFn = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 (f' "Purge bucket: '%s'" [bucketName])
+  logInfoI _CMP_S3 (f' "Purge bucket: '%s'" [bucketName])
   objects <- createListObjectsFn
   traverse_ createRemoveObjectFn objects
 
 createRemoveBucketFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -184,13 +200,15 @@ createRemoveBucketFn ::
   => m ()
 createRemoveBucketFn = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 (f' "Remove bucket: '%s'" [bucketName])
+  logInfoI _CMP_S3 (f' "Remove bucket: '%s'" [bucketName])
   let action = removeBucket (T.pack bucketName)
   runMinioClient action
 
 createSetBucketPolicyFn ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -202,7 +220,7 @@ createSetBucketPolicyFn ::
   -> m ()
 createSetBucketPolicyFn prefix policy = do
   bucketName <- getBucketName
-  logInfo _CMP_S3 (f' "Set policy: '%s' with '%s'" [prefix, policy])
+  logInfoI _CMP_S3 (f' "Set policy: '%s' with '%s'" [prefix, policy])
   let action =
         setBucketPolicy
           (T.pack bucketName)
@@ -212,6 +230,8 @@ createSetBucketPolicyFn prefix policy = do
 makeBucketPublicReadOnly ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -226,7 +246,7 @@ makeBucketPublicReadOnly = do
         if context ^. serverConfig' . cloud' . enabled
           then f' "arn:aws:s3:::%s/%s/public/*" [bucketName, U.toString (context ^. appUuid')]
           else f' "arn:aws:s3:::%s/public/*" [bucketName]
-  logInfo _CMP_S3 (f' "Make bucket public for read-only access: '%s'" [resource])
+  logInfoI _CMP_S3 (f' "Make bucket public for read-only access: '%s'" [resource])
   let policy =
         TE.decodeUtf8 . BSL.toStrict . encode $
         obj
@@ -244,11 +264,13 @@ makeBucketPublicReadOnly = do
           ]
   let action = setBucketPolicy (T.pack bucketName) policy
   runMinioClient action
-  logInfo _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
+  logInfoI _CMP_S3 (f' "Bucket was exposed as public: '%s'" [resource])
 
 createMakePublicLink ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -266,12 +288,14 @@ createMakePublicLink folderName object = do
         if context ^. serverConfig' . cloud' . enabled
           then f' "%s/%s/%s/%s" [publicUrl, U.toString (context ^. appUuid'), folderName, object]
           else f' "%s/%s/%s" [publicUrl, folderName, object]
-  logInfo _CMP_S3 (f' "Public URL to share: '%s'" [url])
+  logInfoI _CMP_S3 (f' "Public URL to share: '%s'" [url])
   return url
 
 runMinioClient ::
      ( MonadReader s m
      , HasS3Client' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
      , HasAppUuid' s
      , HasServerConfig' s sc
      , MonadIO m
@@ -286,7 +310,7 @@ runMinioClient action = do
   res <- liftIO $ runMinioWith s3Client action
   case res of
     Left e -> do
-      logInfo _CMP_S3 (show e)
+      logInfoI _CMP_S3 (show e)
       throwError $ GeneralServerError ("Error in s3 connection: " ++ show e)
     Right e -> return e
 

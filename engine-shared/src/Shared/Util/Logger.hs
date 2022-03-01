@@ -1,5 +1,9 @@
 module Shared.Util.Logger
-  ( logDebug
+  ( logDebugI
+  , logInfoI
+  , logWarnI
+  , logErrorI
+  , logDebug
   , logInfo
   , logWarn
   , logError
@@ -11,6 +15,7 @@ module Shared.Util.Logger
   , module Shared.Constant.Component
   ) where
 
+import Control.Lens ((^.))
 import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger
   ( LogLevel(..)
@@ -21,14 +26,38 @@ import Control.Monad.Logger
   , logWithoutLoc
   , runStdoutLoggingT
   )
+import Control.Monad.Reader (MonadReader, ask)
 import qualified Data.List as L
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.UUID as U
 import Prelude hiding (log)
 import System.Console.Pretty (Color(..), color)
 
 import Shared.Constant.Component
+import Shared.Model.Context.ContextLenses
 import Shared.Util.String (f')
+
+-- ---------------------------------------------------------------------------
+logDebugI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logDebugI = logI LevelDebug
+
+logInfoI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logInfoI = logI LevelInfo
+
+logWarnI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logWarnI = logI LevelWarn
+
+logErrorI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => String -> String -> m ()
+logErrorI = logI LevelError
+
+logI :: (MonadReader s m, HasIdentityUuid' s, HasTraceUuid' s, MonadLogger m) => LogLevel -> String -> String -> m ()
+logI logLevel component message = do
+  context <- ask
+  let mIdentityUuid = context ^. identityUuid'
+  let mTraceUuid = Just . U.toString $ context ^. traceUuid'
+  let record = createLogRecord logLevel mIdentityUuid mTraceUuid component message
+  logWithoutLoc "" (LevelOther . T.pack . showLogLevel $ logLevel) record
 
 -- ---------------------------------------------------------------------------
 logDebug :: MonadLogger m => String -> String -> m ()

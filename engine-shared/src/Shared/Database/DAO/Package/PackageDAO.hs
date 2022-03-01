@@ -23,20 +23,45 @@ import Shared.Model.Package.PackageWithEventsRaw
 entityName = "package"
 
 findPackages ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m [Package]
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m [Package]
 findPackages = do
   appUuid <- asks (^. appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findPackageWithEvents ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => m [PackageWithEvents]
 findPackageWithEvents = do
   appUuid <- asks (^. appUuid')
   createFindEntitiesByFn entityName [appQueryUuid appUuid]
 
 findPackageWithEventsRawById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m PackageWithEventsRaw
 findPackageWithEventsRawById id = do
@@ -44,7 +69,15 @@ findPackageWithEventsRawById id = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 findPackagesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => [(String, String)]
   -> m [Package]
 findPackagesFiltered queryParams = do
@@ -52,7 +85,15 @@ findPackagesFiltered queryParams = do
   createFindEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
 findPackagesByOrganizationIdAndKmId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> String
   -> m [Package]
@@ -61,7 +102,15 @@ findPackagesByOrganizationIdAndKmId organizationId kmId = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("organization_id", organizationId), ("km_id", kmId)]
 
 findPackagesByPreviousPackageId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m [Package]
 findPackagesByPreviousPackageId previousPackageId = do
@@ -69,7 +118,15 @@ findPackagesByPreviousPackageId previousPackageId = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("previous_package_id", previousPackageId)]
 
 findPackagesByForkOfPackageId ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m [Package]
 findPackagesByForkOfPackageId forkOfPackageId = do
@@ -77,7 +134,15 @@ findPackagesByForkOfPackageId forkOfPackageId = do
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("fork_of_package_id", forkOfPackageId)]
 
 findVersionsForPackage ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> String
   -> m [String]
@@ -91,7 +156,15 @@ findVersionsForPackage orgId kmId = do
   return . fmap fromOnly $ versions
 
 findPackageById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Package
 findPackageById id = do
@@ -99,7 +172,15 @@ findPackageById id = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 findPackageById' ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m (Maybe Package)
 findPackageById' id = do
@@ -107,7 +188,15 @@ findPackageById' id = do
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("id", id)]
 
 findPackageWithEventsById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m PackageWithEvents
 findPackageWithEventsById id = do
@@ -115,23 +204,84 @@ findPackageWithEventsById id = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("id", id)]
 
 countPackages ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int
 countPackages = do
   appUuid <- asks (^. appUuid')
   createCountByFn entityName appCondition [appUuid]
 
+countPackagesGroupedByOrganizationIdAndKmId ::
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int
+countPackagesGroupedByOrganizationIdAndKmId = do
+  appUuid <- asks (^. appUuid')
+  let sql =
+        "SELECT COUNT(*) \
+            \FROM (SELECT 1 \
+            \      FROM package \
+            \      WHERE app_uuid = ? \
+            \      GROUP BY organization_id, km_id) nested;"
+  let params = [U.toString appUuid]
+  logQuery sql params
+  let action conn = query conn sql params
+  result <- runDB action
+  case result of
+    [count] -> return . fromOnly $ count
+    _ -> return 0
+
 insertPackage ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => PackageWithEvents
   -> m Int64
 insertPackage = createInsertFn entityName
 
 deletePackages ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m) => m Int64
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => m Int64
 deletePackages = createDeleteEntitiesFn entityName
 
 deletePackagesFiltered ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => [(String, String)]
   -> m Int64
 deletePackagesFiltered queryParams = do
@@ -139,7 +289,15 @@ deletePackagesFiltered queryParams = do
   createDeleteEntitiesByFn entityName (appQueryUuid appUuid : queryParams)
 
 deletePackageById ::
-     (MonadLogger m, MonadError AppError m, MonadReader s m, HasDbPool' s, HasAppUuid' s, MonadIO m)
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
   => String
   -> m Int64
 deletePackageById id = do

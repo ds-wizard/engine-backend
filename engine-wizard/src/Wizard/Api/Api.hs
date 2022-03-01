@@ -4,6 +4,7 @@ import Servant
 
 import Wizard.Api.Handler.ActionKey.Api
 import Wizard.Api.Handler.Admin.Api
+import Wizard.Api.Handler.App.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
@@ -21,13 +22,15 @@ import Wizard.Api.Handler.Submission.Api
 import Wizard.Api.Handler.Template.Api
 import Wizard.Api.Handler.Token.Api
 import Wizard.Api.Handler.Typehint.Api
+import Wizard.Api.Handler.Usage.Api
 import Wizard.Api.Handler.User.Api
 import Wizard.Api.Handler.Version.Api
 import Wizard.Model.Context.BaseContext
 
-type AppAPI
+type ApplicationAPI
    = ActionKeyAPI
      :<|> AdminAPI
+     :<|> AppAPI
      :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
@@ -45,15 +48,17 @@ type AppAPI
      :<|> TemplateAPI
      :<|> TokenAPI
      :<|> TypehintAPI
+     :<|> UsageAPI
      :<|> UserAPI
      :<|> VersionAPI
 
-appApi :: Proxy AppAPI
-appApi = Proxy
+applicationApi :: Proxy ApplicationAPI
+applicationApi = Proxy
 
-appServer :: ServerT AppAPI BaseContextM
-appServer =
-  actionKeyServer :<|> adminServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|> cacheServer :<|>
+applicationServer :: ServerT ApplicationAPI BaseContextM
+applicationServer =
+  actionKeyServer :<|> adminServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|>
+  cacheServer :<|>
   configServer :<|>
   documentServer :<|>
   feedbackServer :<|>
@@ -67,5 +72,6 @@ appServer =
   templateServer :<|>
   tokenServer :<|>
   typehintServer :<|>
+  usageServer :<|>
   userServer :<|>
   versionServer

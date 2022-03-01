@@ -19,6 +19,8 @@ import qualified Wizard.Database.Migration.Development.Document.DocumentMigratio
 import qualified Wizard.Database.Migration.Development.Document.DocumentSchemaMigration as DOC_Schema
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackMigration as F
 import qualified Wizard.Database.Migration.Development.Feedback.FeedbackSchemaMigration as F_Schema
+import qualified Wizard.Database.Migration.Development.Limit.AppLimitMigration as AL
+import qualified Wizard.Database.Migration.Development.Limit.AppLimitSchemaMigration as AL_Schema
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorMigration as KM_MIG
 import qualified Wizard.Database.Migration.Development.Migration.KnowledgeModel.MigratorSchemaMigration as KM_MIG_Schema
 import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.MigratorMigration as QTN_MIG
@@ -54,9 +56,11 @@ runMigration = do
   ACL_Schema.dropTables
   U_Schema.dropTables
   CFG_Schema.dropTables
+  AL_Schema.dropTables
   A_Schema.dropTables
   -- 2. Create schema
   A_Schema.createTables
+  AL_Schema.createTables
   U_Schema.createTables
   ACL_Schema.createTables
   TML_Schema.createTables
@@ -76,6 +80,7 @@ runMigration = do
   TML.runS3Migration
   -- 4. Load fixtures
   A.runMigration
+  AL.runMigration
   CFG.runMigration
   U.runMigration
   TML.runMigration

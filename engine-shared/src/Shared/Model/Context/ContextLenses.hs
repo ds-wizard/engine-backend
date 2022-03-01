@@ -8,11 +8,12 @@ import Database.PostgreSQL.Simple (Connection)
 import Network.Minio (MinioConn)
 
 import LensesConfig
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.AppContext
 import Shared.Model.Context.BaseContext
 
-class (HasCloud' sc, HasS3' sc) =>
+class (HasS3' sc, HasSentry' sc, HasCloud' sc) =>
       HasServerConfig' entity sc
   | entity -> sc
   where
@@ -20,6 +21,9 @@ class (HasCloud' sc, HasS3' sc) =>
 
 class HasS3' entity where
   s3' :: Functor f => (ServerConfigS3 -> f ServerConfigS3) -> entity -> f entity
+
+class HasSentry' entity where
+  sentry' :: Functor f => (ServerConfigSentry -> f ServerConfigSentry) -> entity -> f entity
 
 class HasCloud' entity where
   cloud' :: Functor f => (ServerConfigCloud -> f ServerConfigCloud) -> entity -> f entity
@@ -80,6 +84,20 @@ instance HasLocalization' BaseContext where
       get entity = entity ^. localization
       set :: BaseContext -> M.Map String String -> BaseContext
       set entity newValue = entity & localization .~ newValue
+
+class HasBuildInfoConfig' entity where
+  buildInfoConfig' :: Functor f => (BuildInfoConfig -> f BuildInfoConfig) -> entity -> f entity
+
+class HasIdentityUuid' entity where
+  identityUuid' :: Functor f => (Maybe String -> f (Maybe String)) -> entity -> f entity
+
+instance HasIdentityUuid' AppContext where
+  identityUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> Maybe String
+      get entity = entity ^. identityUuid
+      set :: AppContext -> Maybe String -> AppContext
+      set entity newValue = entity & identityUuid .~ newValue
 
 class HasTraceUuid' entity where
   traceUuid' :: Functor f => (U.UUID -> f U.UUID) -> entity -> f entity

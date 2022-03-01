@@ -15,6 +15,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.Asset.TemplateAssetMapper
 import Wizard.Service.Template.TemplateValidation
 
@@ -41,10 +42,12 @@ createAsset :: String -> String -> String -> BS.ByteString -> AppContextM Templa
 createAsset tmlId fileName contentType content =
   runInTransaction $ do
     checkPermission _TML_PERM
+    checkStorageSize (fromIntegral . BS.length $ content)
     validateTemplateFileAndAssetUniqueness Nothing tmlId fileName
     aUuid <- liftIO generateUuid
     appUuid <- asks _appContextAppUuid
-    let newAsset = fromChangeDTO tmlId aUuid fileName contentType appUuid
+    let fileSize = fromIntegral . BS.length $ content
+    let newAsset = fromChangeDTO tmlId aUuid fileName contentType fileSize appUuid
     insertTemplateAsset newAsset
     putAsset tmlId (U.toString aUuid) content
     deleteTemporalDocumentsByTemplateAssetId (U.toString aUuid)

@@ -36,6 +36,7 @@ defaultUser =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
+    , _userMachine = False
     , _userAppUuid = U.nil
     , _userLastVisitedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _userCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0

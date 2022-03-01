@@ -54,6 +54,13 @@ instance FromJSON ServerConfigAnalytics where
     return ServerConfigAnalytics {..}
   parseJSON _ = mzero
 
+instance FromJSON ServerConfigSentry where
+  parseJSON (Object o) = do
+    _serverConfigSentryEnabled <- o .:? "enabled" .!= (defaultSentry ^. enabled)
+    _serverConfigSentryDsn <- o .:? "dsn" .!= (defaultSentry ^. dsn)
+    return ServerConfigSentry {..}
+  parseJSON _ = mzero
+
 instance FromJSON ServerConfigLogging where
   parseJSON (Object o) = do
     _serverConfigLoggingLevel <- o .:? "level" .!= (defaultLogging ^. level)

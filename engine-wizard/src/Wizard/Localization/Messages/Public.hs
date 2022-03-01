@@ -8,6 +8,9 @@ import Shared.Model.Localization.LocaleRecord
 -- VALIDATION
 -- --------------------------------------
 -- Uniqueness
+_ERROR_VALIDATION__APP_ID_UNIQUENESS =
+  LocaleRecord "error.validation.app_id_uniqueness" "Provided appId is already used" []
+
 _ERROR_VALIDATION__KM_MIGRATION_UNIQUENESS =
   LocaleRecord "error.validation.km_migration_uniqueness" "Migration of Knowledge Model already exists" []
 

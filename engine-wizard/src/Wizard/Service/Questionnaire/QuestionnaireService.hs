@@ -30,6 +30,7 @@ import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
+import Wizard.Database.DAO.Submission.SubmissionDAO
 import Wizard.Localization.Messages.Internal
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
@@ -40,6 +41,7 @@ import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.KnowledgeModel.KnowledgeModelService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Package.PackageService
 import Wizard.Service.Questionnaire.Collaboration.CollaborationService
@@ -83,6 +85,7 @@ createQuestionnaire questionnaireCreateDto =
 createQuestionnaireWithGivenUuid :: QuestionnaireCreateDTO -> U.UUID -> AppContextM QuestionnaireDTO
 createQuestionnaireWithGivenUuid reqDto qtnUuid =
   runInTransaction $ do
+    checkQuestionnaireLimit
     checkCreatePermissionToQtn
     pkgId <- resolvePackageId (reqDto ^. packageId)
     package <- findPackageWithEventsById pkgId
@@ -117,6 +120,7 @@ createQuestionnaireWithGivenUuid reqDto qtnUuid =
 createQuestionnaireFromTemplate :: QuestionnaireCreateFromTemplateDTO -> AppContextM QuestionnaireDTO
 createQuestionnaireFromTemplate reqDto =
   runInTransaction $ do
+    checkQuestionnaireLimit
     originQtn <- findQuestionnaireById (U.toString $ reqDto ^. questionnaireUuid)
     checkCreateFromTemplatePermissionToQtn (originQtn ^. isTemplate)
     pkg <- findPackageWithEventsById (originQtn ^. packageId)
@@ -147,6 +151,7 @@ createQuestionnaireFromTemplate reqDto =
 cloneQuestionnaire :: String -> AppContextM QuestionnaireDTO
 cloneQuestionnaire cloneUuid =
   runInTransaction $ do
+    checkQuestionnaireLimit
     originQtn <- findQuestionnaireById cloneUuid
     checkClonePermissionToQtn (originQtn ^. visibility) (originQtn ^. sharing) (originQtn ^. permissions)
     pkg <- findPackageWithEventsById (originQtn ^. packageId)
@@ -216,6 +221,7 @@ getQuestionnaireDetailById qtnUuid =
     eventsDto <- traverse enhanceQuestionnaireEvent (filter excludeQuestionnaireCommentEvent (qtn ^. events))
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
     filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
+    migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
       toDetailWithPackageWithEventsDTO
         qtn
@@ -231,6 +237,7 @@ getQuestionnaireDetailById qtnUuid =
         permissionDtos
         eventsDto
         versionDto
+        (fmap (^. newQuestionnaireUuid) . headSafe $ migrations)
 
 modifyQuestionnaire :: String -> QuestionnaireChangeDTO -> AppContextM QuestionnaireDetailDTO
 modifyQuestionnaire qtnUuid reqDto =
@@ -261,6 +268,7 @@ modifyQuestionnaire qtnUuid reqDto =
     versionDto <- traverse enhanceQuestionnaireVersion (qtn ^. versions)
     filteredCommentThreadsMap <- filterComments qtn (qtnCtn ^. commentThreadsMap)
     deleteTemporalDocumentsByQuestionnaireUuid qtnUuid
+    migrations <- findMigratorStatesByOldQuestionnaireId qtnUuid
     return $
       toDetailWithPackageDTO
         updatedQtn
@@ -275,6 +283,7 @@ modifyQuestionnaire qtnUuid reqDto =
         permissionDtos
         eventsDto
         versionDto
+        Nothing
 
 deleteQuestionnaire :: String -> Bool -> AppContextM ()
 deleteQuestionnaire qtnUuid shouldValidatePermission =
@@ -286,6 +295,7 @@ deleteQuestionnaire qtnUuid shouldValidatePermission =
     documents <- findDocumentsFiltered [("questionnaire_uuid", qtnUuid)]
     traverse_
       (\d -> do
+         deleteSubmissionsFiltered [("document_uuid", U.toString $ d ^. uuid)]
          deleteDocumentsFiltered [("uuid", U.toString $ d ^. uuid)]
          removeDocumentContent (U.toString $ d ^. uuid))
       documents

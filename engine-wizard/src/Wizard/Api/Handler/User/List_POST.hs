@@ -27,4 +27,4 @@ list_POST mTokenHeader mServerUrl reqDto =
       ia <- isAdmin
       if ia
         then createUserByAdmin reqDto
-        else registrateUser reqDto
+        else registerUser reqDto

@@ -12,6 +12,7 @@ data ServerConfig =
     , _serverConfigS3 :: ServerConfigS3
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigSentry :: ServerConfigSentry
     , _serverConfigLogging :: ServerConfigLogging
     , _serverConfigCloud :: ServerConfigCloud
     }

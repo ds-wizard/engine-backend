@@ -61,6 +61,8 @@ makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigSentry
+
 makeFields ''ServerConfigLogging
 
 makeFields ''BuildInfoConfig
@@ -244,6 +246,8 @@ makeFields ''InstanceStatistics
 makeFields ''Template
 
 makeFields ''TemplateFormat
+
+makeFields ''TemplateFormatStep
 
 makeFields ''TemplateFile
 

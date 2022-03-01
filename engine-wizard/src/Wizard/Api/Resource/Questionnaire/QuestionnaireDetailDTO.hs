@@ -6,8 +6,8 @@ import qualified Data.UUID as U
 import GHC.Generics
 
 import Shared.Api.Resource.Template.TemplateDTO
+import Shared.Api.Resource.Template.TemplateFormatDTO
 import Shared.Model.KnowledgeModel.KnowledgeModel
-import Shared.Model.Template.Template
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -32,7 +32,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOTemplateId :: Maybe String
     , _questionnaireDetailDTOTemplate :: Maybe TemplateDTO
     , _questionnaireDetailDTOFormatUuid :: Maybe U.UUID
-    , _questionnaireDetailDTOFormat :: Maybe TemplateFormat
+    , _questionnaireDetailDTOFormat :: Maybe TemplateFormatDTO
     , _questionnaireDetailDTOKnowledgeModel :: KnowledgeModel
     , _questionnaireDetailDTOReplies :: M.Map String Reply
     , _questionnaireDetailDTOCommentThreadsMap :: M.Map String [QuestionnaireCommentThread]
@@ -42,6 +42,7 @@ data QuestionnaireDetailDTO =
     , _questionnaireDetailDTOEvents :: [QuestionnaireEventDTO]
     , _questionnaireDetailDTOVersions :: [QuestionnaireVersionDTO]
     , _questionnaireDetailDTOIsTemplate :: Bool
+    , _questionnaireDetailDTOMigrationUuid :: Maybe U.UUID
     , _questionnaireDetailDTOCreatedAt :: UTCTime
     , _questionnaireDetailDTOUpdatedAt :: UTCTime
     }
@@ -70,4 +71,5 @@ instance Eq QuestionnaireDetailDTO where
     _questionnaireDetailDTOEvents a == _questionnaireDetailDTOEvents b &&
     _questionnaireDetailDTOVersions a == _questionnaireDetailDTOVersions b &&
     _questionnaireDetailDTOCreatorUuid a == _questionnaireDetailDTOCreatorUuid b &&
-    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b
+    _questionnaireDetailDTOIsTemplate a == _questionnaireDetailDTOIsTemplate b &&
+    _questionnaireDetailDTOMigrationUuid a == _questionnaireDetailDTOMigrationUuid b

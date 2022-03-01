@@ -41,6 +41,9 @@ defaultMail =
 defaultAnalytics :: ServerConfigAnalytics
 defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False, _serverConfigAnalyticsEmail = ""}
 
+defaultSentry :: ServerConfigSentry
+defaultSentry = ServerConfigSentry {_serverConfigSentryEnabled = False, _serverConfigSentryDsn = ""}
+
 defaultLogging :: ServerConfigLogging
 defaultLogging =
   ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}

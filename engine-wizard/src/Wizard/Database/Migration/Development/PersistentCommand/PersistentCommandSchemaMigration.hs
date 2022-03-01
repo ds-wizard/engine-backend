@@ -40,7 +40,8 @@ createTables = do
         \       constraint persistent_command_created_by_fk \
         \         references user_entity, \
         \     created_at timestamptz not null, \
-        \     updated_at timestamptz not null \
+        \     updated_at timestamptz not null, \
+        \     internal bool not null default true \
         \ ); \
         \  \
         \ create unique index persistent_command_uuid_uindex \

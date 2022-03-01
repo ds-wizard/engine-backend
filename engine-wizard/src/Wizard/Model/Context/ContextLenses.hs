@@ -1,6 +1,6 @@
 module Wizard.Model.Context.ContextLenses where
 
-import Control.Lens ((&), (.~), (^.))
+import Control.Lens ((&), (.~), (^.), (^?), _Just)
 import qualified Data.Map.Strict as M
 import Data.Pool (Pool)
 import qualified Data.UUID as U
@@ -8,6 +8,7 @@ import Database.PostgreSQL.Simple (Connection)
 import Network.Minio (MinioConn)
 
 import LensesConfig
+import Shared.Model.Config.BuildInfoConfig
 import Shared.Model.Config.ServerConfig
 import Shared.Model.Context.ContextLenses
 import Wizard.Model.Config.ServerConfig
@@ -37,6 +38,14 @@ instance HasS3' ServerConfig where
       get entity = entity ^. s3
       set :: ServerConfig -> ServerConfigS3 -> ServerConfig
       set entity newValue = entity & s3 .~ newValue
+
+instance HasSentry' ServerConfig where
+  sentry' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: ServerConfig -> ServerConfigSentry
+      get entity = entity ^. sentry
+      set :: ServerConfig -> ServerConfigSentry -> ServerConfig
+      set entity newValue = entity & sentry .~ newValue
 
 instance HasCloud' ServerConfig where
   cloud' convert entity = fmap (set entity) (convert . get $ entity)
@@ -93,6 +102,30 @@ instance HasLocalization' BaseContext where
       get entity = entity ^. localization
       set :: BaseContext -> M.Map String String -> BaseContext
       set entity newValue = entity & localization .~ newValue
+
+instance HasBuildInfoConfig' AppContext where
+  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> BuildInfoConfig
+      get entity = entity ^. buildInfoConfig
+      set :: AppContext -> BuildInfoConfig -> AppContext
+      set entity newValue = entity & buildInfoConfig .~ newValue
+
+instance HasBuildInfoConfig' BaseContext where
+  buildInfoConfig' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: BaseContext -> BuildInfoConfig
+      get entity = entity ^. buildInfoConfig
+      set :: BaseContext -> BuildInfoConfig -> BaseContext
+      set entity newValue = entity & buildInfoConfig .~ newValue
+
+instance HasIdentityUuid' AppContext where
+  identityUuid' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: AppContext -> Maybe String
+      get entity = fmap U.toString $ entity ^. currentUser ^? _Just . uuid
+      set :: AppContext -> Maybe String -> AppContext
+      set entity newValue = entity
 
 instance HasTraceUuid' AppContext where
   traceUuid' convert entity = fmap (set entity) (convert . get $ entity)

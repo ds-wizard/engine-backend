@@ -41,4 +41,5 @@ instance ToSchema QuestionnaireDetailDTO where
          qtnThreads
          []
          []
-         [])
+         []
+         Nothing)

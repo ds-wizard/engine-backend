@@ -16,6 +16,7 @@ defaultConfig =
     , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigSentry = defaultSentry
     , _serverConfigBranch = defaultBranch
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
@@ -122,11 +123,18 @@ defaultFeedbackSync =
 
 defaultPersistentCommand :: ServerConfigPersistentCommand
 defaultPersistentCommand =
-  ServerConfigPersistentCommand {_serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob}
+  ServerConfigPersistentCommand
+    { _serverConfigPersistentCommandListenerJob = defaultPersistentCommandListenerJob
+    , _serverConfigPersistentCommandRetryJob = defaultPersistentCommandRetryJob
+    }
+
+defaultPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
+defaultPersistentCommandListenerJob =
+  ServerConfigPersistentCommandListenerJob {_serverConfigPersistentCommandListenerJobEnabled = True}
 
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
-  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "*/15 * * * *"}
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "* * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

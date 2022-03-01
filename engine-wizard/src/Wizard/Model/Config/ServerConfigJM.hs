@@ -24,6 +24,7 @@ instance FromJSON ServerConfig where
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
     _serverConfigBranch <- o .:? "branch" .!= defaultBranch
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
@@ -105,8 +106,16 @@ instance FromJSON ServerConfigFeedback where
 
 instance FromJSON ServerConfigPersistentCommand where
   parseJSON (Object o) = do
+    _serverConfigPersistentCommandListenerJob <- o .:? "listenerJob" .!= (defaultPersistentCommand ^. listenerJob)
     _serverConfigPersistentCommandRetryJob <- o .:? "retryJob" .!= (defaultPersistentCommand ^. retryJob)
     return ServerConfigPersistentCommand {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPersistentCommandListenerJob where
+  parseJSON (Object o) = do
+    _serverConfigPersistentCommandListenerJobEnabled <-
+      o .:? "enabled" .!= (defaultPersistentCommandListenerJob ^. enabled)
+    return ServerConfigPersistentCommandListenerJob {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where

@@ -5,6 +5,7 @@ import Data.Time
 
 import Shared.Constant.App
 import Shared.Util.Uuid
+import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Model.App.App
 
 defaultApp :: App
@@ -33,4 +34,14 @@ differentApp =
     , _appEnabled = True
     , _appCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     , _appUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
+    }
+
+appCreateDto :: AppCreateDTO
+appCreateDto =
+  AppCreateDTO
+    { _appCreateDTOAppId = "new-app-id"
+    , _appCreateDTOFirstName = "Max"
+    , _appCreateDTOLastName = "Planck"
+    , _appCreateDTOEmail = "max.planck@example.com"
+    , _appCreateDTOPassword = "password"
     }

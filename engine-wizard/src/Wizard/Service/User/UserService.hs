@@ -39,8 +39,10 @@ import Wizard.Model.User.UserEM ()
 import Wizard.S3.Document.DocumentS3
 import Wizard.Service.Acl.AclService
 import Wizard.Service.ActionKey.ActionKeyService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Common
 import Wizard.Service.Config.AppConfigService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Mail.Mailer
 import Wizard.Service.Questionnaire.QuestionnaireService
 import Wizard.Service.User.UserMapper
@@ -63,22 +65,24 @@ getUserSuggestionsPage mQuery mSelectUuids mExcludeUuids pageable sort =
 createUserByAdmin :: UserCreateDTO -> AppContextM UserDTO
 createUserByAdmin reqDto =
   runInTransaction $ do
-    uUuid <- liftIO generateUuid
-    createUserByAdminWithUuid reqDto uUuid
-
-createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> AppContextM UserDTO
-createUserByAdminWithUuid reqDto uUuid =
-  runInTransaction $ do
     checkPermission _UM_PERM
+    uUuid <- liftIO generateUuid
+    appUuid <- asks _appContextAppUuid
+    clientUrl <- getAppClientUrl
+    createUserByAdminWithUuid reqDto uUuid appUuid clientUrl
+
+createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> U.UUID -> String -> AppContextM UserDTO
+createUserByAdminWithUuid reqDto uUuid appUuid clientUrl =
+  runInTransaction $ do
     uPasswordHash <- generatePasswordHash (reqDto ^. password)
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
     let uRole = fromMaybe (appConfig ^. authentication . defaultRole) (reqDto ^. role)
     let uPermissions = getPermissionForRole serverConfig uRole
-    createUser reqDto uUuid uPasswordHash uRole uPermissions
+    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl
 
-registrateUser :: UserCreateDTO -> AppContextM UserDTO
-registrateUser reqDto =
+registerUser :: UserCreateDTO -> AppContextM UserDTO
+registerUser reqDto =
   runInTransaction $ do
     checkIfRegistrationIsEnabled
     uUuid <- liftIO generateUuid
@@ -87,19 +91,22 @@ registrateUser reqDto =
     appConfig <- getAppConfig
     let uRole = appConfig ^. authentication . defaultRole
     let uPermissions = getPermissionForRole serverConfig uRole
-    createUser reqDto uUuid uPasswordHash uRole uPermissions
-
-createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> AppContextM UserDTO
-createUser reqDto uUuid uPasswordHash uRole uPermissions =
-  runInTransaction $ do
-    validateUserEmailUniqueness (reqDto ^. email)
-    now <- liftIO getCurrentTime
+    clientUrl <- getAppClientUrl
     appUuid <- asks _appContextAppUuid
+    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl
+
+createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> AppContextM UserDTO
+createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl =
+  runInTransaction $ do
+    checkUserLimit
+    checkActiveUserLimit
+    validateUserEmailUniqueness (reqDto ^. email) appUuid
+    now <- liftIO getCurrentTime
     let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions appUuid now
     insertUser user
-    actionKey <- createActionKey uUuid RegistrationActionKey
+    actionKey <- createActionKey uUuid RegistrationActionKey appUuid
     catchError
-      (sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash))
+      (sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash) clientUrl)
       (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
@@ -119,6 +126,8 @@ createUserFromExternalService serviceId firstName lastName email mImageUrl =
             return $ toDTO updatedUser
           else throwError $ UserError _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED
       Nothing -> do
+        checkUserLimit
+        checkActiveUserLimit
         serverConfig <- asks _appContextServerConfig
         uUuid <- liftIO generateUuid
         password <- liftIO $ generateRandomString 40
@@ -160,6 +169,7 @@ modifyUser userUuid reqDto =
   runInTransaction $ do
     checkPermission _UM_PERM
     user <- findUserById userUuid
+    when (reqDto ^. active && not (user ^. active)) checkActiveUserLimit
     validateUserChangedEmailUniqueness (reqDto ^. email) (user ^. email)
     serverConfig <- asks _appContextServerConfig
     updatedUser <- updateUserTimestamp $ fromUserChangeDTO reqDto user (getPermissions serverConfig reqDto user)
@@ -195,7 +205,8 @@ resetUserPassword :: ActionKeyDTO -> AppContextM ()
 resetUserPassword reqDto =
   runInTransaction $ do
     user <- findUserByEmail (reqDto ^. email)
-    actionKey <- createActionKey (user ^. uuid) ForgottenPasswordActionKey
+    appUuid <- asks _appContextAppUuid
+    actionKey <- createActionKey (user ^. uuid) ForgottenPasswordActionKey appUuid
     catchError
       (sendResetPasswordMail (toDTO user) (actionKey ^. hash))
       (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__RECOVERY_EMAIL_NOT_SENT)
@@ -203,6 +214,7 @@ resetUserPassword reqDto =
 changeUserState :: String -> Maybe String -> UserStateDTO -> AppContextM UserStateDTO
 changeUserState userUuid maybeHash userStateDto =
   runInTransaction $ do
+    checkActiveUserLimit
     actionKey <- getActionKeyByHash maybeHash
     user <- findUserById (U.toString $ actionKey ^. userId)
     updatedUser <- updateUserTimestamp $ user & active .~ (userStateDto ^. active)

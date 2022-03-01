@@ -25,7 +25,8 @@ import Shared.Api.Resource.TemplateBundle.TemplateBundleSM ()
 type SwaggerAPI = SwaggerSchemaUI "swagger-ui" "swagger.json"
 
 swagger :: Swagger
-swagger = toSwagger appApi & info . title .~ "Registry API" & info . description ?~ "API specification for Registry"
+swagger =
+  toSwagger applicationApi & info . title .~ "Registry API" & info . description ?~ "API specification for Registry"
 
 swaggerServer :: Server SwaggerAPI
 swaggerServer = swaggerSchemaUIServer swagger

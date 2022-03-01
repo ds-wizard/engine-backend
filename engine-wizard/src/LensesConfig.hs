@@ -40,7 +40,9 @@ import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
+import Wizard.Api.Resource.App.AppAdminCreateDTO
 import Wizard.Api.Resource.App.AppCreateDTO
+import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
 import Wizard.Api.Resource.Branch.BranchCreateDTO
 import Wizard.Api.Resource.Branch.BranchDTO
@@ -115,9 +117,11 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Feedback.Feedback
 import Wizard.Model.Http.HttpRequest
+import Wizard.Model.Limit.AppLimit
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.PersistentCommand.PersistentCommand
+import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireComment
@@ -159,6 +163,8 @@ makeFields ''AdminOperationParameter
 
 -- Model / App
 makeFields ''App
+
+makeFields ''AppLimit
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -257,6 +263,8 @@ makeFields ''ServerConfigRegistry
 
 makeFields ''ServerConfigAnalytics
 
+makeFields ''ServerConfigSentry
+
 makeFields ''ServerConfigBranch
 
 makeFields ''ServerConfigDocument
@@ -266,6 +274,8 @@ makeFields ''ServerConfigFeedback
 makeFields ''ServerConfigLogging
 
 makeFields ''ServerConfigPersistentCommand
+
+makeFields ''ServerConfigPersistentCommandListenerJob
 
 makeFields ''ServerConfigQuestionnaire
 
@@ -468,6 +478,8 @@ makeFields ''PackageBundle
 -- Model / PersistentCommand
 makeFields ''PersistentCommand
 
+makeFields ''PersistentCommandSimple
+
 -- Model / Questionnaire
 makeFields ''Questionnaire
 
@@ -535,6 +547,8 @@ makeFields ''Template
 
 makeFields ''TemplateFormat
 
+makeFields ''TemplateFormatStep
+
 makeFields ''TemplateFile
 
 makeFields ''TemplateAsset
@@ -564,6 +578,10 @@ makeFields ''AdminExecutionDTO
 
 -- Api / Resource / App
 makeFields ''AppCreateDTO
+
+makeFields ''AppAdminCreateDTO
+
+makeFields ''AppDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO

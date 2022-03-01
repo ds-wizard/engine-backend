@@ -1,5 +1,6 @@
 module Wizard.Database.Migration.Development.User.Data.Users
   ( module Wizard.Database.Migration.Development.User.Data.AlbertEinstein
+  , module Wizard.Database.Migration.Development.User.Data.SystemUser
   , module Wizard.Database.Migration.Development.User.Data.GalileoGalilei
   , module Wizard.Database.Migration.Development.User.Data.IsaacNewton
   , module Wizard.Database.Migration.Development.User.Data.NikolaTesla
@@ -15,3 +16,4 @@ import Wizard.Database.Migration.Development.User.Data.IsaacNewton
 import Wizard.Database.Migration.Development.User.Data.JohnDoe
 import Wizard.Database.Migration.Development.User.Data.NicolausCopernicus
 import Wizard.Database.Migration.Development.User.Data.NikolaTesla
+import Wizard.Database.Migration.Development.User.Data.SystemUser

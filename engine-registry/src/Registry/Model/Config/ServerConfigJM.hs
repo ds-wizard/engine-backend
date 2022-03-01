@@ -18,6 +18,7 @@ instance FromJSON ServerConfig where
     _serverConfigS3 <- o .:? "s3" .!= defaultS3
     _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
+    _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
     return ServerConfig {..}

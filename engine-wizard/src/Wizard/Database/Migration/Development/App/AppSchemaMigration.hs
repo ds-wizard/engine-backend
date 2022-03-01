@@ -15,7 +15,7 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Table/App) ended"
 
 dropTables = do
-  logInfo _CMP_MIGRATION "(Table/App) drop tables"
+  logInfo _CMP_MIGRATION "(Table/App) drop table"
   let sql = "drop table if exists app cascade;"
   let action conn = execute_ conn sql
   runDB action

@@ -45,7 +45,8 @@ createTables = do
         \     updated_at        timestamp with time zone not null, \
         \     app_uuid uuid default '00000000-0000-0000-0000-000000000000' not null \
         \         constraint user_entity_app_uuid_fk \
-        \             references app \
+        \             references app, \
+        \     machine           boolean not null default false \
         \ ); \
         \  \
         \ create unique index user_uuid_uindex \

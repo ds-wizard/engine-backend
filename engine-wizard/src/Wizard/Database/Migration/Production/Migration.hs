@@ -20,6 +20,7 @@ import qualified Wizard.Database.Migration.Production.Migration_0010_app.Migrati
 import qualified Wizard.Database.Migration.Production.Migration_0011_app_2.Migration as M_0011
 import qualified Wizard.Database.Migration.Production.Migration_0012_projectTagging.Migration as M_0012
 import qualified Wizard.Database.Migration.Production.Migration_0013_branchWebsocket.Migration as M_0013
+import qualified Wizard.Database.Migration.Production.Migration_0014_appLimit.Migration as M_0014
 import Wizard.Model.Context.BaseContext
 import Wizard.Util.Logger
 
@@ -43,4 +44,5 @@ migrationDefinitions =
   , M_0011.definition
   , M_0012.definition
   , M_0013.definition
+  , M_0014.definition
   ]

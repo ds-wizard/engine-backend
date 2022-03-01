@@ -12,6 +12,7 @@ defaultConfig =
     , _serverConfigS3 = defaultS3
     , _serverConfigMail = defaultMail
     , _serverConfigAnalytics = defaultAnalytics
+    , _serverConfigSentry = defaultSentry
     , _serverConfigLogging = defaultLogging
     , _serverConfigCloud = defaultCloud
     }

@@ -85,6 +85,13 @@ _ERROR_VALIDATION__FORBIDDEN action = LocaleRecord "error.validation.forbidden" 
 -- --------------------------------------
 -- SERVICE
 -- --------------------------------------
+-- App
+_ERROR_SERVICE_APP__LIMIT_EXCEEDED name maxLimit actualLimit =
+  LocaleRecord
+    "error.service.app.limit_exceeded"
+    "Limit of %s exceeded (actual: %s, max: %s)"
+    [name, show maxLimit, show actualLimit]
+
 -- Package
 _ERROR_SERVICE_PKG__HIGHER_NUMBER_IN_NEW_VERSION =
   LocaleRecord

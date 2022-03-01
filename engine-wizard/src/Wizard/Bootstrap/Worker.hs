@@ -4,6 +4,7 @@ module Wizard.Bootstrap.Worker
 
 import Control.Concurrent
 import Control.Lens ((^.))
+import Control.Monad.Logger (LoggingT)
 import Control.Monad.Reader (liftIO)
 import System.Cron
 import System.Posix.Signals (Handler(CatchOnce), installHandler, sigINT, sigTERM)
@@ -14,35 +15,39 @@ import Wizard.Util.Logger
 import Wizard.Worker.Cron.Branch.SquashBranchEventsWorker
 import Wizard.Worker.Cron.Document.DocumentWorker
 import Wizard.Worker.Cron.Feedback.FeedbackWorker
-import Wizard.Worker.Cron.PersistentCommand.PersistentCommandWorker
+import Wizard.Worker.Cron.PersistentCommand.PersistentCommandRetryWorker
 import Wizard.Worker.Cron.Questionnaire.CleanQuestionnaireWorker
 import Wizard.Worker.Cron.Questionnaire.SquashQuestionnaireEventsWorker
+import Wizard.Worker.Permanent.PersistentCommand.PersistentCommandListenerWorker
 
 worker :: MVar () -> BaseContext -> IO ()
-worker shutdownFlag context = do
-  permanentWorker shutdownFlag context
-  cronJob shutdownFlag context
-
--- ------------------------------------------------------------------
-permanentWorker :: MVar () -> BaseContext -> IO ()
-permanentWorker _ _ = return ()
-
--- ------------------------------------------------------------------
-cronJob :: MVar () -> BaseContext -> IO ()
-cronJob shutdownFlag context =
+worker shutdownFlag context =
   let loggingLevel = context ^. serverConfig . logging . level
    in runLogging loggingLevel $ do
-        logInfo _CMP_WORKER "scheduling workers started"
-        threadIds <-
-          liftIO . execSchedule $ do
-            squashBranchEventsWorker context
-            feedbackWorker context
-            documentWorker context
-            persistentCommandWorker context
-            cleanQuestionnaireWorker context
-            squashQuestionnaireEventsWorker context
-        setupHandlers loggingLevel shutdownFlag threadIds
-        logInfo _CMP_WORKER "scheduling workers completed"
+        cronWorkerThreadIds <- cronJob context
+        permanentWorkerThreadIds <- permanentWorker context
+        setupHandlers loggingLevel shutdownFlag (cronWorkerThreadIds ++ permanentWorkerThreadIds)
+
+-- ------------------------------------------------------------------
+permanentWorker :: BaseContext -> LoggingT IO [ThreadId]
+permanentWorker context = do
+  threadId <- liftIO $ forkIO (persistentCommandListenerJob context)
+  return [threadId]
+
+-- ------------------------------------------------------------------
+cronJob :: BaseContext -> LoggingT IO [ThreadId]
+cronJob context = do
+  logInfo _CMP_WORKER "scheduling workers started"
+  threadIds <-
+    liftIO . execSchedule $ do
+      squashBranchEventsWorker context
+      feedbackWorker context
+      documentWorker context
+      persistentCommandRetryWorker context
+      cleanQuestionnaireWorker context
+      squashQuestionnaireEventsWorker context
+  logInfo _CMP_WORKER "scheduling workers completed"
+  return threadIds
 
 setupHandlers loggingLevel shutdownFlag threadIds = do
   logInfo _CMP_WORKER "installing handlers"

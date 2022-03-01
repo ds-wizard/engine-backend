@@ -21,6 +21,7 @@ import Wizard.Model.Context.AppContext
 import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
+import Wizard.Specs.API.App.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.Cache.APISpec
@@ -46,6 +47,7 @@ import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
 import Wizard.Specs.Integration.Http.Typehint.ResponseMapperSpec
+import Wizard.Specs.Service.App.AppValidationSpec
 import Wizard.Specs.Service.Branch.BranchServiceSpec
 import Wizard.Specs.Service.Branch.BranchValidationSpec
 import Wizard.Specs.Service.Config.AppConfigValidationSpec
@@ -134,6 +136,7 @@ main =
              describe "Common" commonResponseMapperSpec
              describe "Typehint" typehintResponseMapperSpec
            describe "SERVICE" $ do
+             describe "App" appValidationSpec
              describe "Branch" branchValidationSpec
              describe "Config" appConfigValidationSpec
              describe "KnowledgeModel" $ do
@@ -158,6 +161,7 @@ main =
              describe "Template" templateUtilSpec
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
+             appAPI appContext
              bookReferenceAPI appContext
              branchAPI appContext
              cacheAPI appContext

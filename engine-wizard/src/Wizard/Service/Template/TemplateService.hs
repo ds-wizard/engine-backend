@@ -33,6 +33,7 @@ import Wizard.Localization.Messages.Public
 import Wizard.Model.Context.AppContext
 import Wizard.S3.Template.TemplateS3
 import Wizard.Service.Acl.AclService
+import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.Template.TemplateMapper
 import Wizard.Service.Template.TemplateUtil
 import Wizard.Service.Template.TemplateValidation
@@ -106,6 +107,7 @@ createTemplate :: TemplateChangeDTO -> AppContextM Template
 createTemplate reqDto =
   runInTransaction $ do
     checkPermission _TML_PERM
+    checkTemplateLimit
     now <- liftIO getCurrentTime
     appUuid <- asks _appContextAppUuid
     let template = fromCreateDTO reqDto appUuid now

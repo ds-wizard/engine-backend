@@ -12,6 +12,7 @@ import Shared.Model.Package.PackageWithEvents
 import Shared.Model.Template.Template
 import qualified Shared.Service.Package.PackageMapper as SPM
 import qualified Shared.Service.Template.TemplateMapper as STM
+import Shared.Service.Template.TemplateMapper
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -124,8 +125,9 @@ toDetailWithPackageWithEventsDTO ::
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
+  -> Maybe U.UUID
   -> QuestionnaireDetailDTO
-toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records events versions =
+toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state mTemplate mFormat replies threads records events versions mMigrationUuid =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -140,7 +142,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOTemplateId = qtn ^. templateId
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = mFormat
+    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
@@ -150,6 +152,7 @@ toDetailWithPackageWithEventsDTO qtn qtnCtn pkg pkgVersions knowledgeModel state
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
     , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
+    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }
@@ -167,8 +170,9 @@ toDetailWithPackageDTO ::
   -> [QuestionnairePermRecordDTO]
   -> [QuestionnaireEventDTO]
   -> [QuestionnaireVersionDTO]
+  -> Maybe U.UUID
   -> QuestionnaireDetailDTO
-toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records events versions =
+toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFormat replies threads records events versions mMigrationUuid =
   QuestionnaireDetailDTO
     { _questionnaireDetailDTOUuid = qtn ^. uuid
     , _questionnaireDetailDTOName = qtn ^. name
@@ -183,7 +187,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOTemplateId = qtn ^. templateId
     , _questionnaireDetailDTOTemplate = fmap STM.toDTO mTemplate
     , _questionnaireDetailDTOFormatUuid = qtn ^. formatUuid
-    , _questionnaireDetailDTOFormat = mFormat
+    , _questionnaireDetailDTOFormat = fmap toFormatDTO mFormat
     , _questionnaireDetailDTOKnowledgeModel = knowledgeModel
     , _questionnaireDetailDTOReplies = replies
     , _questionnaireDetailDTOCommentThreadsMap = threads
@@ -193,6 +197,7 @@ toDetailWithPackageDTO qtn qtnContent package knowledgeModel state mTemplate mFo
     , _questionnaireDetailDTOVersions = versions
     , _questionnaireDetailDTOCreatorUuid = qtn ^. creatorUuid
     , _questionnaireDetailDTOIsTemplate = qtn ^. isTemplate
+    , _questionnaireDetailDTOMigrationUuid = mMigrationUuid
     , _questionnaireDetailDTOCreatedAt = qtn ^. createdAt
     , _questionnaireDetailDTOUpdatedAt = qtn ^. updatedAt
     }

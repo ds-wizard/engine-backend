@@ -9,15 +9,15 @@ import Registry.Api.Handler.Package.Api
 import Registry.Api.Handler.Template.Api
 import Registry.Model.Context.BaseContext
 
-type AppAPI
+type ApplicationAPI
    = InfoAPI
      :<|> ActionKeyAPI
      :<|> OrganizationAPI
      :<|> PackageAPI
      :<|> TemplateAPI
 
-appApi :: Proxy AppAPI
-appApi = Proxy
+applicationApi :: Proxy ApplicationAPI
+applicationApi = Proxy
 
-appServer :: ServerT AppAPI BaseContextM
-appServer = infoServer :<|> actionKeyServer :<|> organizationServer :<|> packageServer :<|> templateServer
+applicationServer :: ServerT ApplicationAPI BaseContextM
+applicationServer = infoServer :<|> actionKeyServer :<|> organizationServer :<|> packageServer :<|> templateServer

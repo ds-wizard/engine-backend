@@ -60,6 +60,11 @@ findBranchByKmId' kmId = do
   appUuid <- asks _appContextAppUuid
   createFindEntityByFn' entityName [appQueryUuid appUuid, ("km_id", kmId)]
 
+countBranches :: AppContextM Int
+countBranches = do
+  appUuid <- asks _appContextAppUuid
+  createCountByFn entityName appCondition [appUuid]
+
 insertBranch :: Branch -> AppContextM Int64
 insertBranch = createInsertFn entityName
 

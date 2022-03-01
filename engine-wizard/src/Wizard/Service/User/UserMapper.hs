@@ -8,6 +8,7 @@ import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Util.Gravatar (createGravatarHash)
+import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.User.UserChangeDTO
 import Wizard.Api.Resource.User.UserCreateDTO
 import Wizard.Api.Resource.User.UserDTO
@@ -94,6 +95,7 @@ fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now =
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []
+    , _userMachine = False
     , _userAppUuid = appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = now
@@ -128,6 +130,7 @@ fromUserExternalDTO userUuid firstName lastName email passwordHash sources role 
     , _userSubmissionProps = []
     , _userImageUrl = mImageUrl
     , _userGroups = []
+    , _userMachine = False
     , _userAppUuid = appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = now
@@ -153,6 +156,7 @@ fromUpdateUserExternalDTO oldUser firstName lastName mImageUrl serviceId now =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = mImageUrl
     , _userGroups = oldUser ^. groups
+    , _userMachine = oldUser ^. machine
     , _userAppUuid = oldUser ^. appUuid
     , _userLastVisitedAt = now
     , _userCreatedAt = oldUser ^. createdAt
@@ -175,8 +179,20 @@ fromUserChangeDTO dto oldUser permission =
     , _userSubmissionProps = oldUser ^. submissionProps
     , _userImageUrl = oldUser ^. imageUrl
     , _userGroups = oldUser ^. groups
+    , _userMachine = oldUser ^. machine
     , _userAppUuid = oldUser ^. appUuid
     , _userLastVisitedAt = oldUser ^. lastVisitedAt
     , _userCreatedAt = oldUser ^. createdAt
     , _userUpdatedAt = oldUser ^. updatedAt
+    }
+
+fromAppCreateToUserCreateDTO :: AppCreateDTO -> UserCreateDTO
+fromAppCreateToUserCreateDTO dto =
+  UserCreateDTO
+    { _userCreateDTOFirstName = dto ^. firstName
+    , _userCreateDTOLastName = dto ^. lastName
+    , _userCreateDTOEmail = dto ^. email
+    , _userCreateDTOAffiliation = Nothing
+    , _userCreateDTORole = Just _USER_ROLE_ADMIN
+    , _userCreateDTOPassword = dto ^. password
     }

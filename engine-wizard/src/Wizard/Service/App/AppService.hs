@@ -2,48 +2,74 @@ module Wizard.Service.App.AppService where
 
 import Control.Lens ((.~), (^.))
 import Control.Monad.Reader (asks, liftIO)
+import Data.Aeson (encode)
+import qualified Data.ByteString.Lazy.Char8 as BSL
+import Data.Maybe (fromMaybe)
 import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
 import Shared.Util.Uuid
+import Wizard.Api.Resource.App.AppAdminCreateDTO
 import Wizard.Api.Resource.App.AppCreateDTO
+import Wizard.Api.Resource.App.AppDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
+import Wizard.Model.App.ImportDefaultDataCommand
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigDM
 import Wizard.Model.Context.AppContext
+import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
 import Wizard.Model.User.UserDM
 import Wizard.Service.App.AppMapper
+import Wizard.Service.App.AppValidation
+import Wizard.Service.Limit.AppLimitService
+import Wizard.Service.PersistentCommand.PersistentCommandMapper
+import qualified Wizard.Service.User.UserMapper as U_Mapper
+import Wizard.Service.User.UserService
 
-getCurrentApp :: AppContextM App
-getCurrentApp =
-  runInTransaction $ do
-    aUuid <- asks _appContextAppUuid
-    findAppById (U.toString aUuid)
+getApps :: Maybe String -> AppContextM [AppDTO]
+getApps mAppId = do
+  case mAppId of
+    Nothing -> return []
+    Just appId -> do
+      apps <- findAppsByAppId appId
+      return . fmap toDTO $ apps
 
-getAppClientUrl :: AppContextM String
-getAppClientUrl = do
-  serverConfig <- asks _appContextServerConfig
-  if serverConfig ^. cloud . enabled
-    then do
-      app <- getCurrentApp
-      return $ app ^. clientUrl
-    else return $ serverConfig ^. general . clientUrl
-
-createApp :: AppCreateDTO -> AppContextM App
+createApp :: AppCreateDTO -> AppContextM AppDTO
 createApp reqDto = do
+  runInTransaction $ do
+    validateAppCreateDTO reqDto
+    aUuid <- liftIO generateUuid
+    now <- liftIO getCurrentTime
+    serverConfig <- asks _appContextServerConfig
+    let cloudDomain = fromMaybe "" (serverConfig ^. cloud . domain)
+    let app = fromCreateDTO reqDto aUuid cloudDomain now
+    insertApp app
+    userUuid <- liftIO generateUuid
+    user <-
+      createUserByAdminWithUuid (U_Mapper.fromAppCreateToUserCreateDTO reqDto) userUuid (app ^. uuid) (app ^. clientUrl)
+    createAppConfig aUuid now
+    createAppLimit aUuid now
+    createSeederPersistentCommand aUuid (user ^. uuid) now
+    return . toDTO $ app
+
+createAdminApp :: AppAdminCreateDTO -> AppContextM App
+createAdminApp reqDto = do
   runInTransaction $ do
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    let app = fromCreate reqDto aUuid now
+    let app = fromAdminCreate reqDto aUuid now
     insertApp app
-    createUser aUuid now
+    user <- createUser' aUuid now
     createAppConfig aUuid now
+    createAppLimit aUuid now
+    createSeederPersistentCommand aUuid (user ^. uuid) now
     return app
 
 -- --------------------------------
@@ -56,8 +82,8 @@ createAppConfig aUuid now = do
     insertAppConfig appConfig
     return appConfig
 
-createUser :: U.UUID -> UTCTime -> AppContextM User
-createUser aUuid now =
+createUser' :: U.UUID -> UTCTime -> AppContextM User
+createUser' aUuid now =
   runInTransaction $ do
     uUuid <- liftIO generateUuid
     let user =
@@ -65,3 +91,21 @@ createUser aUuid now =
           defaultUser
     insertUser user
     return user
+
+createSeederPersistentCommand :: U.UUID -> U.UUID -> UTCTime -> AppContextM PersistentCommand
+createSeederPersistentCommand aUuid createdBy now =
+  runInTransaction $ do
+    pUuid <- liftIO generateUuid
+    let command =
+          toPersistentCommand
+            pUuid
+            "DataSeeder"
+            "importDefaultData"
+            (BSL.unpack . encode $ ImportDefaultDataCommand aUuid)
+            1
+            False
+            aUuid
+            createdBy
+            now
+    insertPersistentCommand command
+    return command

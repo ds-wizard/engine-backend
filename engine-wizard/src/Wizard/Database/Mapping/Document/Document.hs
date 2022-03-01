@@ -40,6 +40,7 @@ instance ToRow Document where
     , toField _documentContentType
     , toField _documentWorkerLog
     , toField _documentAppUuid
+    , toField _documentFileSize
     ]
 
 instance FromRow Document where
@@ -61,4 +62,5 @@ instance FromRow Document where
     _documentContentType <- field
     _documentWorkerLog <- field
     _documentAppUuid <- field
+    _documentFileSize <- field
     return $ Document {..}

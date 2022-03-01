@@ -20,7 +20,7 @@ import Wizard.Model.Document.Document
 import Wizard.Model.Document.DocumentContext
 import Wizard.Model.Document.DocumentContextJM ()
 import Wizard.Model.Questionnaire.QuestionnaireVersion
-import Wizard.Service.App.AppService
+import Wizard.Service.App.AppHelper
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.Document.DocumentContextMapper
 import Wizard.Service.KnowledgeModel.KnowledgeModelService

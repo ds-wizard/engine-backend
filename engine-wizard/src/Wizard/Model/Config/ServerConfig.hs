@@ -15,6 +15,7 @@ data ServerConfig =
     , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
+    , _serverConfigSentry :: ServerConfigSentry
     , _serverConfigBranch :: ServerConfigBranch
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
@@ -94,7 +95,14 @@ data ServerConfigFeedback =
 
 data ServerConfigPersistentCommand =
   ServerConfigPersistentCommand
-    { _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
+    { _serverConfigPersistentCommandListenerJob :: ServerConfigPersistentCommandListenerJob
+    , _serverConfigPersistentCommandRetryJob :: ServerConfigCronWorker
+    }
+  deriving (Generic, Show)
+
+data ServerConfigPersistentCommandListenerJob =
+  ServerConfigPersistentCommandListenerJob
+    { _serverConfigPersistentCommandListenerJobEnabled :: Bool
     }
   deriving (Generic, Show)
 

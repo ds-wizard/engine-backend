@@ -13,7 +13,7 @@ import Wizard.Specs.Common
 
 userServiceIntegrationSpec appContext =
   describe "User Service Integration" $
-  describe "registrateUser" $
+  describe "registerUser" $
   it "Registation is disabled" $
      -- GIVEN: Prepare expectations
    do
@@ -21,6 +21,6 @@ userServiceIntegrationSpec appContext =
      -- AND: Update config in DB
     runInContext (modifyAppConfig (authentication . internal . registration . enabled) False) appContext
      -- WHEN:
-    result <- runInContext (registrateUser userJohnCreate) appContext
+    result <- runInContext (registerUser userJohnCreate) appContext
      -- THEN:
     result `shouldBe` expectation
