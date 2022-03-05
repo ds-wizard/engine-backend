@@ -43,6 +43,7 @@ import Wizard.Specs.API.Template.Asset.APISpec
 import Wizard.Specs.API.Template.File.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
+import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
@@ -183,6 +184,7 @@ main =
              templateFileAPI appContext
              typehintAPI appContext
              tokenAPI appContext
+             usageAPI appContext
              userAPI appContext
              versionAPI appContext
            describe "SERVICE" $ do
