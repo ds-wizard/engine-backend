@@ -153,9 +153,13 @@ makeFields ''EditTagEvent
 
 makeFields ''DeleteTagEvent
 
-makeFields ''AddIntegrationEvent
+makeFields ''AddApiIntegrationEvent
 
-makeFields ''EditIntegrationEvent
+makeFields ''AddWidgetIntegrationEvent
+
+makeFields ''EditApiIntegrationEvent
+
+makeFields ''EditWidgetIntegrationEvent
 
 makeFields ''DeleteIntegrationEvent
 
@@ -222,7 +226,9 @@ makeFields ''Phase
 
 makeFields ''Tag
 
-makeFields ''Integration
+makeFields ''ApiIntegration
+
+makeFields ''WidgetIntegration
 
 -- Model / Organization
 makeFields ''Organization

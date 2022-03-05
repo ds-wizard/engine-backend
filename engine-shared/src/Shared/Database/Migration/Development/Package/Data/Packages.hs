@@ -64,8 +64,9 @@ globalPackage =
         , AddPhaseEvent' a_km1_phs3
         , AddTagEvent' a_km1_tds
         , AddTagEvent' a_km1_tbi
-        , AddIntegrationEvent' a_km1_iop
-        , AddIntegrationEvent' a_km1_ibp
+        , AddIntegrationEvent' a_km1_iop'
+        , AddIntegrationEvent' a_km1_ibp'
+        , AddIntegrationEvent' a_km1_iwp'
         ]
     , _packageWithEventsAppUuid = U.nil
     , _packageWithEventsCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 21) 0
@@ -178,8 +179,9 @@ germanyPackage =
         , AddPhaseEvent' a_km1_phs3
         , AddTagEvent' a_km1_tds
         , AddTagEvent' a_km1_tbi
-        , AddIntegrationEvent' a_km1_iop
-        , AddIntegrationEvent' a_km1_ibp
+        , AddIntegrationEvent' a_km1_iop'
+        , AddIntegrationEvent' a_km1_ibp'
+        , AddIntegrationEvent' a_km1_iwp'
         , AddChapterEvent' a_km1_ch1
         , AddQuestionEvent' a_km1_ch1_q1'
         , AddQuestionEvent' a_km1_ch1_q2'

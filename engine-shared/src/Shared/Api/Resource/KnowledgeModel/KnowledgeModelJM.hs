@@ -179,7 +179,27 @@ instance FromJSON Tag where
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
 instance ToJSON Integration where
-  toJSON = simpleToJSON "_integration"
+  toJSON = toSumJSON
 
 instance FromJSON Integration where
-  parseJSON = simpleParseJSON "_integration"
+  parseJSON (Object o) = do
+    referenceType <- o .: "integrationType"
+    case referenceType of
+      "ApiIntegration" -> parseJSON (Object o) >>= \event -> return (ApiIntegration' event)
+      "WidgetIntegration" -> parseJSON (Object o) >>= \event -> return (WidgetIntegration' event)
+      _ -> fail "One of the integrations has unsupported integrationType"
+  parseJSON _ = mzero
+
+-- --------------------------------------------------------------------
+instance ToJSON ApiIntegration where
+  toJSON = simpleToJSON' "_apiIntegration" "integrationType"
+
+instance FromJSON ApiIntegration where
+  parseJSON = simpleParseJSON "_apiIntegration"
+
+-- --------------------------------------------------------------------
+instance ToJSON WidgetIntegration where
+  toJSON = simpleToJSON' "_widgetIntegration" "integrationType"
+
+instance FromJSON WidgetIntegration where
+  parseJSON = simpleParseJSON "_widgetIntegration"

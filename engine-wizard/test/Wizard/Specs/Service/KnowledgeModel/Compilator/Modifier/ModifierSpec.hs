@@ -207,7 +207,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
-            let event = e_km1_iop
+            let event = e_km1_iop'
             -- AND: Expectations
             let expected = question2'
             -- WHEN:
@@ -218,7 +218,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
-            let event = e_km1_iop
+            let event = e_km1_iop'
             -- AND: Expectations
             let expected = question4'
             -- WHEN:
@@ -229,7 +229,7 @@ modifierSpec =
           it "Do nothing with the question" $
             -- GIVEN: Inputs
            do
-            let event = e_km1_iop
+            let event = e_km1_iop'
             -- AND: Expectations
             let expected = question1'
             -- WHEN:
@@ -240,7 +240,7 @@ modifierSpec =
           it "Update the props" $
             -- GIVEN: Inputs
            do
-            let event = e_km1_iop
+            let event = e_km1_iop'
             -- AND: Expectations
             let expected = question9PropsEdited'
             -- WHEN:
@@ -422,28 +422,52 @@ modifierSpec =
           -- THEN:
           computed `shouldBe` expected
     describe "Integration level" $ do
-      describe "createIntegration" $
-        it "Successfully created" $
-          -- GIVEN: Inputs
-         do
-          let event = a_km1_iop
-          -- AND: Expectations
-          let expected = ontologyPortal
-          -- WHEN:
-          let computed = createEntity event
-          -- THEN:
-          computed `shouldBe` expected
-      describe "editIntegration" $
-        it "Successfully edited" $
-          -- GIVEN: Inputs
-         do
-          let event = e_km1_iop
-          -- AND: Expectations
-          let expected = ontologyPortalEdited
-          -- WHEN:
-          let computed = editEntity event ontologyPortal
-          -- THEN:
-          computed `shouldBe` expected
+      describe "createIntegration" $ do
+        describe "ApiIntegration" $
+          it "Successfully created" $
+            -- GIVEN: Inputs
+           do
+            let event = a_km1_iop'
+            -- AND: Expectations
+            let expected = ontologyPortal'
+            -- WHEN:
+            let computed = createEntity event
+            -- THEN:
+            computed `shouldBe` expected
+        describe "WidgetIntegration" $
+          it "Successfully created" $
+            -- GIVEN: Inputs
+           do
+            let event = a_km1_iwp'
+            -- AND: Expectations
+            let expected = widgetPortal'
+            -- WHEN:
+            let computed = createEntity event
+            -- THEN:
+            computed `shouldBe` expected
+      describe "editIntegration" $ do
+        describe "ApiIntegration" $
+          it "Successfully edited" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iop'
+            -- AND: Expectations
+            let expected = ontologyPortalEdited'
+            -- WHEN:
+            let computed = editEntity event ontologyPortal'
+            -- THEN:
+            computed `shouldBe` expected
+        describe "WidgetIntegration" $
+          it "Successfully edited" $
+            -- GIVEN: Inputs
+           do
+            let event = e_km1_iwp'
+            -- AND: Expectations
+            let expected = widgetPortalEdited'
+            -- WHEN:
+            let computed = editEntity event widgetPortal'
+            -- THEN:
+            computed `shouldBe` expected
     describe "Metric level" $ do
       describe "createMetric" $
         it "Successfully created" $

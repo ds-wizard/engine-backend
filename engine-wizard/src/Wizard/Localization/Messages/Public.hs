@@ -173,9 +173,12 @@ _ERROR_SERVICE_TOKEN__ACCOUNT_IS_NOT_ACTIVATED =
 _ERROR_SERVICE_TOKEN__UNABLE_TO_GET_OR_VERIFY_SERVICE_TOKEN =
   LocaleRecord "error.service.token.bad_service_token" "Unable to get or verify service token" []
 
--- Template
+-- Typehint
 _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_QUESTION =
   LocaleRecord "error.service.typehint.bad_type_of_question" "Desired question has to be integration question" []
+
+_ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION =
+  LocaleRecord "error.service.typehint.bad_type_of_integration" "Desired integration has to be API integration" []
 
 -- User
 _ERROR_SERVICE_USER__MISSING_USER =

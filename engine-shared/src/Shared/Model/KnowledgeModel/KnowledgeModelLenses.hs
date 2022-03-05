@@ -33,7 +33,6 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , itemTemplateQuestionUuids'
   , valueType'
   , integrationUuid'
-  , props'
   ) where
 
 import Control.Lens hiding (Choice)
@@ -224,9 +223,11 @@ instance HasUuid' Integration where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
     where
       get :: Integration -> U.UUID
-      get entity = entity ^. uuid
+      get (ApiIntegration' entity) = entity ^. uuid
+      get (WidgetIntegration' entity) = entity ^. uuid
       set :: Integration -> U.UUID -> Integration
-      set entity newValue = entity & uuid .~ newValue
+      set (ApiIntegration' entity) newValue = ApiIntegration' $ entity & uuid .~ newValue
+      set (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity & uuid .~ newValue
 
 instance HasUuid' Metric where
   uuid' convert entity = fmap (set entity) (convert . get $ entity)
@@ -419,12 +420,22 @@ integrationUuid' convert entity = fmap (set entity) (convert . get $ entity)
     set q newValue = q
 
 -- ------------------------------------------------------------------------------------------
-props' :: Functor f => (M.Map String String -> f (M.Map String String)) -> Question -> f Question
-props' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> M.Map String String
-    get (IntegrationQuestion' q) = q ^. props
-    get q = M.empty
-    set :: Question -> M.Map String String -> Question
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & props .~ newValue
-    set q newValue = q
+instance HasProps' Question (M.Map String String) where
+  props' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Question -> M.Map String String
+      get (IntegrationQuestion' q) = q ^. props
+      get q = M.empty
+      set :: Question -> M.Map String String -> Question
+      set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & props .~ newValue
+      set q newValue = q
+
+instance HasProps' Integration [String] where
+  props' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Integration -> [String]
+      get (ApiIntegration' integration) = integration ^. props
+      get (WidgetIntegration' integration) = integration ^. props
+      set :: Integration -> [String] -> Integration
+      set (ApiIntegration' integration) newValue = ApiIntegration' $ integration & props .~ newValue
+      set (WidgetIntegration' integration) newValue = WidgetIntegration' $ integration & props .~ newValue

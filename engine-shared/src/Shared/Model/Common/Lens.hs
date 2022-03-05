@@ -18,6 +18,9 @@ class HasExpertUuids' entity fieldType where
 class HasReferenceUuids' entity fieldType where
   referenceUuids' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity
 
+class HasProps' entity fieldType where
+  props' :: Functor f => (fieldType -> f fieldType) -> entity -> f entity
+
 class HasCreatedAt' entity where
   createdAt' :: Functor f => (UTCTime -> f UTCTime) -> entity -> f entity
 

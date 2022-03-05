@@ -9,6 +9,7 @@ import qualified Data.UUID as U
 import LensesConfig
 import Shared.Model.Event.EventField
 import Shared.Model.Event.Integration.IntegrationEvent
+import Shared.Model.Event.Integration.IntegrationEventLenses ()
 import Shared.Model.Event.Phase.PhaseEvent
 import Shared.Model.Event.Question.QuestionEvent
 import Shared.Model.Event.Tag.TagEvent
@@ -248,8 +249,8 @@ updateIntegrationProps :: EditIntegrationEvent -> Question -> Question
 updateIntegrationProps e (IntegrationQuestion' q) = IntegrationQuestion' $ q & props .~ updatedProps
   where
     updatedProps =
-      if q ^. integrationUuid == e ^. entityUuid
-        then case e ^. props of
+      if q ^. integrationUuid == e ^. entityUuid'
+        then case e ^. props' of
                ChangedValue ps -> M.fromList . fmap (\p -> (p, fromMaybe "" (M.lookup p (q ^. props)))) $ ps
                NothingChanged -> q ^. props
         else q ^. props

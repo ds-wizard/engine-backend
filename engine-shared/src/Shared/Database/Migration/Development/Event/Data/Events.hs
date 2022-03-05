@@ -1410,70 +1410,120 @@ d_km1_tds =
 
 -- ----------------------------------------------------------------------------
 -- ----------------------------------------------------------------------------
-a_km1_iop :: AddIntegrationEvent
+a_km1_iop' :: AddIntegrationEvent
+a_km1_iop' = AddApiIntegrationEvent' a_km1_iop
+
+a_km1_iop :: AddApiIntegrationEvent
 a_km1_iop =
-  AddIntegrationEvent
-    { _addIntegrationEventUuid = u' "3f94cb01-6f92-4eb6-975b-385c02b831bc"
-    , _addIntegrationEventParentUuid = km1 ^. uuid
-    , _addIntegrationEventEntityUuid = ontologyPortal ^. uuid
-    , _addIntegrationEventIId = ontologyPortal ^. iId
-    , _addIntegrationEventName = ontologyPortal ^. name
-    , _addIntegrationEventProps = ontologyPortal ^. props
-    , _addIntegrationEventLogo = ontologyPortal ^. logo
-    , _addIntegrationEventRequestMethod = ontologyPortal ^. requestMethod
-    , _addIntegrationEventRequestUrl = ontologyPortal ^. requestUrl
-    , _addIntegrationEventRequestHeaders = ontologyPortal ^. requestHeaders
-    , _addIntegrationEventRequestBody = ontologyPortal ^. requestBody
-    , _addIntegrationEventResponseListField = ontologyPortal ^. responseListField
-    , _addIntegrationEventResponseItemUrl = ontologyPortal ^. responseItemUrl
-    , _addIntegrationEventResponseItemId = ontologyPortal ^. responseItemId
-    , _addIntegrationEventResponseItemTemplate = ontologyPortal ^. responseItemTemplate
-    , _addIntegrationEventAnnotations = ontologyPortal ^. annotations
-    , _addIntegrationEventCreatedAt = dt' 2018 1 21
+  AddApiIntegrationEvent
+    { _addApiIntegrationEventUuid = u' "3f94cb01-6f92-4eb6-975b-385c02b831bc"
+    , _addApiIntegrationEventParentUuid = km1 ^. uuid
+    , _addApiIntegrationEventEntityUuid = ontologyPortal ^. uuid
+    , _addApiIntegrationEventIId = ontologyPortal ^. iId
+    , _addApiIntegrationEventName = ontologyPortal ^. name
+    , _addApiIntegrationEventProps = ontologyPortal ^. props
+    , _addApiIntegrationEventLogo = ontologyPortal ^. logo
+    , _addApiIntegrationEventRequestMethod = ontologyPortal ^. requestMethod
+    , _addApiIntegrationEventRequestUrl = ontologyPortal ^. requestUrl
+    , _addApiIntegrationEventRequestHeaders = ontologyPortal ^. requestHeaders
+    , _addApiIntegrationEventRequestBody = ontologyPortal ^. requestBody
+    , _addApiIntegrationEventRequestEmptySearch = ontologyPortal ^. requestEmptySearch
+    , _addApiIntegrationEventResponseListField = ontologyPortal ^. responseListField
+    , _addApiIntegrationEventResponseItemId = ontologyPortal ^. responseItemId
+    , _addApiIntegrationEventResponseItemTemplate = ontologyPortal ^. responseItemTemplate
+    , _addApiIntegrationEventItemUrl = ontologyPortal ^. itemUrl
+    , _addApiIntegrationEventAnnotations = ontologyPortal ^. annotations
+    , _addApiIntegrationEventCreatedAt = dt' 2018 1 21
     }
 
-a_km1_ibp :: AddIntegrationEvent
+a_km1_ibp' :: AddIntegrationEvent
+a_km1_ibp' = AddApiIntegrationEvent' a_km1_ibp
+
+a_km1_ibp :: AddApiIntegrationEvent
 a_km1_ibp =
-  AddIntegrationEvent
-    { _addIntegrationEventUuid = u' "5c47b31c-84d0-4792-99ce-09154642105d"
-    , _addIntegrationEventParentUuid = km1 ^. uuid
-    , _addIntegrationEventEntityUuid = bioPortal ^. uuid
-    , _addIntegrationEventIId = bioPortal ^. iId
-    , _addIntegrationEventName = bioPortal ^. name
-    , _addIntegrationEventProps = bioPortal ^. props
-    , _addIntegrationEventLogo = bioPortal ^. logo
-    , _addIntegrationEventRequestMethod = bioPortal ^. requestMethod
-    , _addIntegrationEventRequestUrl = bioPortal ^. requestUrl
-    , _addIntegrationEventRequestHeaders = bioPortal ^. requestHeaders
-    , _addIntegrationEventRequestBody = bioPortal ^. requestBody
-    , _addIntegrationEventResponseListField = bioPortal ^. responseListField
-    , _addIntegrationEventResponseItemUrl = bioPortal ^. responseItemUrl
-    , _addIntegrationEventResponseItemId = bioPortal ^. responseItemId
-    , _addIntegrationEventResponseItemTemplate = bioPortal ^. responseItemTemplate
-    , _addIntegrationEventAnnotations = bioPortal ^. annotations
-    , _addIntegrationEventCreatedAt = dt' 2018 1 21
+  AddApiIntegrationEvent
+    { _addApiIntegrationEventUuid = u' "5c47b31c-84d0-4792-99ce-09154642105d"
+    , _addApiIntegrationEventParentUuid = km1 ^. uuid
+    , _addApiIntegrationEventEntityUuid = bioPortal ^. uuid
+    , _addApiIntegrationEventIId = bioPortal ^. iId
+    , _addApiIntegrationEventName = bioPortal ^. name
+    , _addApiIntegrationEventProps = bioPortal ^. props
+    , _addApiIntegrationEventLogo = bioPortal ^. logo
+    , _addApiIntegrationEventRequestMethod = bioPortal ^. requestMethod
+    , _addApiIntegrationEventRequestUrl = bioPortal ^. requestUrl
+    , _addApiIntegrationEventRequestHeaders = bioPortal ^. requestHeaders
+    , _addApiIntegrationEventRequestBody = bioPortal ^. requestBody
+    , _addApiIntegrationEventRequestEmptySearch = bioPortal ^. requestEmptySearch
+    , _addApiIntegrationEventResponseListField = bioPortal ^. responseListField
+    , _addApiIntegrationEventResponseItemId = bioPortal ^. responseItemId
+    , _addApiIntegrationEventResponseItemTemplate = bioPortal ^. responseItemTemplate
+    , _addApiIntegrationEventItemUrl = bioPortal ^. itemUrl
+    , _addApiIntegrationEventAnnotations = bioPortal ^. annotations
+    , _addApiIntegrationEventCreatedAt = dt' 2018 1 21
     }
 
-e_km1_iop :: EditIntegrationEvent
+a_km1_iwp' :: AddIntegrationEvent
+a_km1_iwp' = AddWidgetIntegrationEvent' a_km1_iwp
+
+a_km1_iwp :: AddWidgetIntegrationEvent
+a_km1_iwp =
+  AddWidgetIntegrationEvent
+    { _addWidgetIntegrationEventUuid = u' "cd3275d5-1c51-4609-bf6e-3bf1b2070dd5"
+    , _addWidgetIntegrationEventParentUuid = km1 ^. uuid
+    , _addWidgetIntegrationEventEntityUuid = widgetPortal ^. uuid
+    , _addWidgetIntegrationEventIId = widgetPortal ^. iId
+    , _addWidgetIntegrationEventName = widgetPortal ^. name
+    , _addWidgetIntegrationEventProps = widgetPortal ^. props
+    , _addWidgetIntegrationEventLogo = widgetPortal ^. logo
+    , _addWidgetIntegrationEventWidgetUrl = widgetPortal ^. widgetUrl
+    , _addWidgetIntegrationEventItemUrl = widgetPortal ^. itemUrl
+    , _addWidgetIntegrationEventAnnotations = widgetPortal ^. annotations
+    , _addWidgetIntegrationEventCreatedAt = dt' 2018 1 21
+    }
+
+e_km1_iop' :: EditIntegrationEvent
+e_km1_iop' = EditApiIntegrationEvent' e_km1_iop
+
+e_km1_iop :: EditApiIntegrationEvent
 e_km1_iop =
-  EditIntegrationEvent
-    { _editIntegrationEventUuid = u' "3456a254-c5bc-4c0e-8ff9-f5e080765a71"
-    , _editIntegrationEventParentUuid = km1 ^. uuid
-    , _editIntegrationEventEntityUuid = ontologyPortalEdited ^. uuid
-    , _editIntegrationEventIId = ChangedValue $ ontologyPortalEdited ^. iId
-    , _editIntegrationEventName = ChangedValue $ ontologyPortalEdited ^. name
-    , _editIntegrationEventProps = ChangedValue $ ontologyPortalEdited ^. props
-    , _editIntegrationEventLogo = ChangedValue $ ontologyPortalEdited ^. logo
-    , _editIntegrationEventRequestMethod = ChangedValue $ ontologyPortalEdited ^. requestMethod
-    , _editIntegrationEventRequestUrl = ChangedValue $ ontologyPortalEdited ^. requestUrl
-    , _editIntegrationEventRequestHeaders = ChangedValue $ ontologyPortalEdited ^. requestHeaders
-    , _editIntegrationEventRequestBody = ChangedValue $ ontologyPortalEdited ^. requestBody
-    , _editIntegrationEventResponseListField = ChangedValue $ ontologyPortalEdited ^. responseListField
-    , _editIntegrationEventResponseItemUrl = ChangedValue $ ontologyPortalEdited ^. responseItemUrl
-    , _editIntegrationEventResponseItemId = ChangedValue $ ontologyPortalEdited ^. responseItemId
-    , _editIntegrationEventResponseItemTemplate = ChangedValue $ ontologyPortalEdited ^. responseItemTemplate
-    , _editIntegrationEventAnnotations = ChangedValue $ ontologyPortalEdited ^. annotations
-    , _editIntegrationEventCreatedAt = dt' 2018 1 21
+  EditApiIntegrationEvent
+    { _editApiIntegrationEventUuid = u' "3456a254-c5bc-4c0e-8ff9-f5e080765a71"
+    , _editApiIntegrationEventParentUuid = km1 ^. uuid
+    , _editApiIntegrationEventEntityUuid = ontologyPortalEdited ^. uuid
+    , _editApiIntegrationEventIId = ChangedValue $ ontologyPortalEdited ^. iId
+    , _editApiIntegrationEventName = ChangedValue $ ontologyPortalEdited ^. name
+    , _editApiIntegrationEventProps = ChangedValue $ ontologyPortalEdited ^. props
+    , _editApiIntegrationEventLogo = ChangedValue $ ontologyPortalEdited ^. logo
+    , _editApiIntegrationEventRequestMethod = ChangedValue $ ontologyPortalEdited ^. requestMethod
+    , _editApiIntegrationEventRequestUrl = ChangedValue $ ontologyPortalEdited ^. requestUrl
+    , _editApiIntegrationEventRequestHeaders = ChangedValue $ ontologyPortalEdited ^. requestHeaders
+    , _editApiIntegrationEventRequestBody = ChangedValue $ ontologyPortalEdited ^. requestBody
+    , _editApiIntegrationEventRequestEmptySearch = ChangedValue $ ontologyPortalEdited ^. requestEmptySearch
+    , _editApiIntegrationEventResponseListField = ChangedValue $ ontologyPortalEdited ^. responseListField
+    , _editApiIntegrationEventResponseItemId = ChangedValue $ ontologyPortalEdited ^. responseItemId
+    , _editApiIntegrationEventResponseItemTemplate = ChangedValue $ ontologyPortalEdited ^. responseItemTemplate
+    , _editApiIntegrationEventItemUrl = ChangedValue $ ontologyPortalEdited ^. itemUrl
+    , _editApiIntegrationEventAnnotations = ChangedValue $ ontologyPortalEdited ^. annotations
+    , _editApiIntegrationEventCreatedAt = dt' 2018 1 21
+    }
+
+e_km1_iwp' :: EditIntegrationEvent
+e_km1_iwp' = EditWidgetIntegrationEvent' e_km1_iwp
+
+e_km1_iwp :: EditWidgetIntegrationEvent
+e_km1_iwp =
+  EditWidgetIntegrationEvent
+    { _editWidgetIntegrationEventUuid = u' "2c62e0d2-7e5f-4acb-9b8e-826202fc4fa9"
+    , _editWidgetIntegrationEventParentUuid = km1 ^. uuid
+    , _editWidgetIntegrationEventEntityUuid = widgetPortalEdited ^. uuid
+    , _editWidgetIntegrationEventIId = ChangedValue $ widgetPortalEdited ^. iId
+    , _editWidgetIntegrationEventName = ChangedValue $ widgetPortalEdited ^. name
+    , _editWidgetIntegrationEventProps = ChangedValue $ widgetPortalEdited ^. props
+    , _editWidgetIntegrationEventLogo = ChangedValue $ widgetPortalEdited ^. logo
+    , _editWidgetIntegrationEventWidgetUrl = ChangedValue $ widgetPortalEdited ^. widgetUrl
+    , _editWidgetIntegrationEventItemUrl = ChangedValue $ widgetPortalEdited ^. itemUrl
+    , _editWidgetIntegrationEventAnnotations = ChangedValue $ widgetPortalEdited ^. annotations
+    , _editWidgetIntegrationEventCreatedAt = dt' 2018 1 21
     }
 
 d_km1_iop :: DeleteIntegrationEvent

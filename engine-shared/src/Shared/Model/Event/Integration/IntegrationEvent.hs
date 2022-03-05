@@ -7,47 +7,91 @@ import GHC.Generics
 import Shared.Model.Common.MapEntry
 import Shared.Model.Event.EventField
 
-data AddIntegrationEvent =
-  AddIntegrationEvent
-    { _addIntegrationEventUuid :: U.UUID
-    , _addIntegrationEventParentUuid :: U.UUID
-    , _addIntegrationEventEntityUuid :: U.UUID
-    , _addIntegrationEventIId :: String
-    , _addIntegrationEventName :: String
-    , _addIntegrationEventProps :: [String]
-    , _addIntegrationEventLogo :: String
-    , _addIntegrationEventRequestMethod :: String
-    , _addIntegrationEventRequestUrl :: String
-    , _addIntegrationEventRequestHeaders :: [MapEntry String String]
-    , _addIntegrationEventRequestBody :: String
-    , _addIntegrationEventResponseListField :: String
-    , _addIntegrationEventResponseItemUrl :: String
-    , _addIntegrationEventResponseItemId :: String
-    , _addIntegrationEventResponseItemTemplate :: String
-    , _addIntegrationEventAnnotations :: [MapEntry String String]
-    , _addIntegrationEventCreatedAt :: UTCTime
+data AddIntegrationEvent
+  = AddApiIntegrationEvent' AddApiIntegrationEvent
+  | AddWidgetIntegrationEvent' AddWidgetIntegrationEvent
+  deriving (Show, Eq, Generic)
+
+data AddApiIntegrationEvent =
+  AddApiIntegrationEvent
+    { _addApiIntegrationEventUuid :: U.UUID
+    , _addApiIntegrationEventParentUuid :: U.UUID
+    , _addApiIntegrationEventEntityUuid :: U.UUID
+    , _addApiIntegrationEventIId :: String
+    , _addApiIntegrationEventName :: String
+    , _addApiIntegrationEventProps :: [String]
+    , _addApiIntegrationEventLogo :: String
+    , _addApiIntegrationEventRequestMethod :: String
+    , _addApiIntegrationEventRequestUrl :: String
+    , _addApiIntegrationEventRequestHeaders :: [MapEntry String String]
+    , _addApiIntegrationEventRequestBody :: String
+    , _addApiIntegrationEventRequestEmptySearch :: Bool
+    , _addApiIntegrationEventResponseListField :: String
+    , _addApiIntegrationEventResponseItemId :: String
+    , _addApiIntegrationEventResponseItemTemplate :: String
+    , _addApiIntegrationEventItemUrl :: String
+    , _addApiIntegrationEventAnnotations :: [MapEntry String String]
+    , _addApiIntegrationEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 
-data EditIntegrationEvent =
-  EditIntegrationEvent
-    { _editIntegrationEventUuid :: U.UUID
-    , _editIntegrationEventParentUuid :: U.UUID
-    , _editIntegrationEventEntityUuid :: U.UUID
-    , _editIntegrationEventIId :: EventField String
-    , _editIntegrationEventName :: EventField String
-    , _editIntegrationEventProps :: EventField [String]
-    , _editIntegrationEventLogo :: EventField String
-    , _editIntegrationEventRequestMethod :: EventField String
-    , _editIntegrationEventRequestUrl :: EventField String
-    , _editIntegrationEventRequestHeaders :: EventField [MapEntry String String]
-    , _editIntegrationEventRequestBody :: EventField String
-    , _editIntegrationEventResponseListField :: EventField String
-    , _editIntegrationEventResponseItemUrl :: EventField String
-    , _editIntegrationEventResponseItemId :: EventField String
-    , _editIntegrationEventResponseItemTemplate :: EventField String
-    , _editIntegrationEventAnnotations :: EventField [MapEntry String String]
-    , _editIntegrationEventCreatedAt :: UTCTime
+data AddWidgetIntegrationEvent =
+  AddWidgetIntegrationEvent
+    { _addWidgetIntegrationEventUuid :: U.UUID
+    , _addWidgetIntegrationEventParentUuid :: U.UUID
+    , _addWidgetIntegrationEventEntityUuid :: U.UUID
+    , _addWidgetIntegrationEventIId :: String
+    , _addWidgetIntegrationEventName :: String
+    , _addWidgetIntegrationEventProps :: [String]
+    , _addWidgetIntegrationEventLogo :: String
+    , _addWidgetIntegrationEventWidgetUrl :: String
+    , _addWidgetIntegrationEventItemUrl :: String
+    , _addWidgetIntegrationEventAnnotations :: [MapEntry String String]
+    , _addWidgetIntegrationEventCreatedAt :: UTCTime
+    }
+  deriving (Show, Eq, Generic)
+
+data EditIntegrationEvent
+  = EditApiIntegrationEvent' EditApiIntegrationEvent
+  | EditWidgetIntegrationEvent' EditWidgetIntegrationEvent
+  deriving (Show, Eq, Generic)
+
+data EditApiIntegrationEvent =
+  EditApiIntegrationEvent
+    { _editApiIntegrationEventUuid :: U.UUID
+    , _editApiIntegrationEventParentUuid :: U.UUID
+    , _editApiIntegrationEventEntityUuid :: U.UUID
+    , _editApiIntegrationEventIId :: EventField String
+    , _editApiIntegrationEventName :: EventField String
+    , _editApiIntegrationEventProps :: EventField [String]
+    , _editApiIntegrationEventLogo :: EventField String
+    , _editApiIntegrationEventRequestMethod :: EventField String
+    , _editApiIntegrationEventRequestUrl :: EventField String
+    , _editApiIntegrationEventRequestHeaders :: EventField [MapEntry String String]
+    , _editApiIntegrationEventRequestBody :: EventField String
+    , _editApiIntegrationEventRequestEmptySearch :: EventField Bool
+    , _editApiIntegrationEventResponseListField :: EventField String
+    , _editApiIntegrationEventResponseItemId :: EventField String
+    , _editApiIntegrationEventResponseItemTemplate :: EventField String
+    , _editApiIntegrationEventItemUrl :: EventField String
+    , _editApiIntegrationEventAnnotations :: EventField [MapEntry String String]
+    , _editApiIntegrationEventCreatedAt :: UTCTime
+    }
+  deriving (Show, Eq, Generic)
+
+data EditWidgetIntegrationEvent =
+  EditWidgetIntegrationEvent
+    { _editWidgetIntegrationEventUuid :: U.UUID
+    , _editWidgetIntegrationEventParentUuid :: U.UUID
+    , _editWidgetIntegrationEventEntityUuid :: U.UUID
+    , _editWidgetIntegrationEventIId :: EventField String
+    , _editWidgetIntegrationEventName :: EventField String
+    , _editWidgetIntegrationEventProps :: EventField [String]
+    , _editWidgetIntegrationEventLogo :: EventField String
+    , _editWidgetIntegrationEventWidgetUrl :: EventField String
+    , _editWidgetIntegrationEventItemUrl :: EventField String
+    , _editWidgetIntegrationEventAnnotations :: EventField [MapEntry String String]
+    , _editWidgetIntegrationEventCreatedAt :: UTCTime
     }
   deriving (Show, Eq, Generic)
 

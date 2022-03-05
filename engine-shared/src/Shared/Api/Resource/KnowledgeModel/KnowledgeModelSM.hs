@@ -114,5 +114,12 @@ instance ToSchema Tag where
 
 -- --------------------------------------------------------------------
 -- --------------------------------------------------------------------
-instance ToSchema Integration where
-  declareNamedSchema = simpleToSchema' "_integration" bioPortal
+instance ToSchema Integration
+
+-- --------------------------------------------------------------------
+instance ToSchema ApiIntegration where
+  declareNamedSchema = simpleToSchema'' "_apiIntegration" "integrationType" bioPortal
+
+-- --------------------------------------------------------------------
+instance ToSchema WidgetIntegration where
+  declareNamedSchema = simpleToSchema'' "_widgetIntegration" "integrationType" widgetPortal
