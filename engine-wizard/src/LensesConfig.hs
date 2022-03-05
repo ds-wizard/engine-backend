@@ -122,6 +122,7 @@ import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_Migra
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
+import Wizard.Model.Prefab.Prefab
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
 import Wizard.Model.Questionnaire.QuestionnaireComment
@@ -485,6 +486,9 @@ makeFields ''PackageBundle
 makeFields ''PersistentCommand
 
 makeFields ''PersistentCommandSimple
+
+-- Model / Prefab
+makeFields ''Prefab
 
 -- Model / Questionnaire
 makeFields ''Questionnaire

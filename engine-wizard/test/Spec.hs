@@ -33,6 +33,7 @@ import Wizard.Specs.API.KnowledgeModel.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
+import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
@@ -174,6 +175,7 @@ main =
              KM_MigrationAPI.migrationAPI appContext
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
+             prefabAPI appContext
              questionnaireAPI appContext
              questionnaireProjectTagAPI appContext
              questionnaireVersionAPI appContext

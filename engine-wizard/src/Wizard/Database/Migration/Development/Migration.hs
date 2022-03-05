@@ -29,6 +29,8 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
+import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
@@ -41,6 +43,7 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop schema
+  PF_Schema.dropTables
   PC_Schema.dropTables
   SUB_Schema.dropTables
   ACK_Schema.dropTables
@@ -76,6 +79,7 @@ runMigration = do
   KM_MIG_Schema.createTables
   SUB_Schema.createTables
   PC_Schema.createTables
+  PF_Schema.createTables
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures
@@ -95,5 +99,6 @@ runMigration = do
   ACL.runMigration
   ACK.runMigration
   PC.runMigration
+  PF.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing
