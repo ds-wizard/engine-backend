@@ -33,21 +33,6 @@ library:
       ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
     else:
       ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
-  default-extensions:
-    - KindSignatures
-    - TemplateHaskell
-    - OverloadedStrings
-    - DeriveGeneric
-    - ExtendedDefaultRules
-    - RecordWildCards
-    - ExistentialQuantification
-    - TypeOperators
-    - TypeSynonymInstances
-    - FlexibleInstances
-    - ScopedTypeVariables
-    - MultiParamTypeClasses
-    - FlexibleContexts
-    - FunctionalDependencies
 
 executables:
   event-migrator:
@@ -62,3 +47,37 @@ executables:
     dependencies:
     - engine-wizard-metamodel-migrator
     - bytestring
+
+tests:
+  json-playground-test:
+    main:                Spec.hs
+    source-dirs:         test
+    when:
+    - condition: os(darwin)
+      then:
+        ghc-options: -O0 -dynamic -fwarn-unused-imports -fno-warn-warnings-deprecations
+      else:
+        ghc-options: -O2 -fwarn-unused-imports -fno-warn-warnings-deprecations
+    dependencies:
+    - engine-wizard-metamodel-migrator
+    - aeson-qq
+    - hspec
+    - hspec-expectations-json
+
+
+default-extensions:
+- QuasiQuotes
+- KindSignatures
+- TemplateHaskell
+- OverloadedStrings
+- DeriveGeneric
+- ExtendedDefaultRules
+- RecordWildCards
+- ExistentialQuantification
+- TypeOperators
+- TypeSynonymInstances
+- FlexibleInstances
+- ScopedTypeVariables
+- MultiParamTypeClasses
+- FlexibleContexts
+- FunctionalDependencies
