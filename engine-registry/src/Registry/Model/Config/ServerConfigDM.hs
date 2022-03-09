@@ -10,7 +10,6 @@ defaultConfig =
     { _serverConfigGeneral = defaultGeneral
     , _serverConfigDatabase = defaultDatabase
     , _serverConfigS3 = defaultS3
-    , _serverConfigMail = defaultMail
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigSentry = defaultSentry
     , _serverConfigLogging = defaultLogging
@@ -23,6 +22,5 @@ defaultGeneral =
     { _serverConfigGeneralEnvironment = Production
     , _serverConfigGeneralClientUrl = ""
     , _serverConfigGeneralServerPort = 3000
-    , _serverConfigGeneralTemplateFolder = "engine-registry/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
     }

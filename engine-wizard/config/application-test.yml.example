@@ -5,7 +5,6 @@ general:
   serviceToken: my-service-token
   secret: "01234567890123456789012345678901"
   integrationConfig: config/integration-test.yml
-  templateFolder: ""
 
 database:
   connectionString: postgresql://postgres:postgres@localhost:5432/postgres
@@ -15,14 +14,6 @@ s3:
 
 jwt:
   expiration: 9999
-
-mail:
-  enabled: false
-  name:
-  email:
-  host:
-  username:
-  password:
 
 registry:
   url: https://api.registry-test.ds-wizard.org

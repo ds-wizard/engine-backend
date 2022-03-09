@@ -14,31 +14,30 @@ runMigration = do
   logInfo _CMP_MIGRATION "(Table/Template) started"
   dropTables
   createTables
-  catchError purgeBucket (\e -> return ())
-  catchError removeBucket (\e -> return ())
-  makeBucket
   logInfo _CMP_MIGRATION "(Table/Template) ended"
 
 dropTables = do
   dropTemplateAssetTable
   dropTemplateFileTable
   dropTemplateTable
+  catchError purgeBucket (\e -> return ())
+  catchError removeBucket (\e -> return ())
 
 dropTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/Template) drop tables"
-  let sql = "drop table if exists template;"
+  let sql = "drop table if exists template cascade;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTemplateFileTable = do
   logInfo _CMP_MIGRATION "(Table/TemplateFile) drop tables"
-  let sql = "drop table if exists template_file;"
+  let sql = "drop table if exists template_file cascade;"
   let action conn = execute_ conn sql
   runDB action
 
 dropTemplateAssetTable = do
   logInfo _CMP_MIGRATION "(Table/TemplateAsset) drop tables"
-  let sql = "drop table if exists template_asset;"
+  let sql = "drop table if exists template_asset cascade;"
   let action conn = execute_ conn sql
   runDB action
 
@@ -46,6 +45,7 @@ createTables = do
   createTemplateTable
   createTemplateFileTable
   createTemplateAssetTable
+  makeBucket
 
 createTemplateTable = do
   logInfo _CMP_MIGRATION "(Table/Template) create table"

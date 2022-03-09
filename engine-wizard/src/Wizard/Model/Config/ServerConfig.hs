@@ -12,7 +12,6 @@ data ServerConfig =
     , _serverConfigMessaging :: ServerConfigMessaging
     , _serverConfigJwt :: ServerConfigJwt
     , _serverConfigRoles :: ServerConfigRoles
-    , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigSentry :: ServerConfigSentry
@@ -34,7 +33,6 @@ data ServerConfigGeneral =
     , _serverConfigGeneralServiceToken :: String
     , _serverConfigGeneralSecret :: String
     , _serverConfigGeneralIntegrationConfig :: String
-    , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
     , _serverConfigGeneralClientStyleBuilderUrl :: String
     }

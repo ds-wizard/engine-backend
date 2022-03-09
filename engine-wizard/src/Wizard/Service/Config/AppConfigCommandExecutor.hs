@@ -13,9 +13,9 @@ import Shared.Util.Uuid
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
-import Wizard.Model.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.AppContextHelpers
+import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Service.Config.AppConfigService
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
