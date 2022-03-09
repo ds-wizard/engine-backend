@@ -10,7 +10,6 @@ data ServerConfig =
     { _serverConfigGeneral :: ServerConfigGeneral
     , _serverConfigDatabase :: ServerConfigDatabase
     , _serverConfigS3 :: ServerConfigS3
-    , _serverConfigMail :: ServerConfigMail
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigSentry :: ServerConfigSentry
     , _serverConfigLogging :: ServerConfigLogging
@@ -23,7 +22,6 @@ data ServerConfigGeneral =
     { _serverConfigGeneralEnvironment :: Environment
     , _serverConfigGeneralClientUrl :: String
     , _serverConfigGeneralServerPort :: Int
-    , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
     }
   deriving (Generic, Show)

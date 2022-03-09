@@ -47,8 +47,6 @@ makeFields ''ServerConfigDatabase
 
 makeFields ''ServerConfigS3
 
-makeFields ''ServerConfigMail
-
 makeFields ''ServerConfigAnalytics
 
 makeFields ''ServerConfigSentry

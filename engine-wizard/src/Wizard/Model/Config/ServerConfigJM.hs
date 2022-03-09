@@ -21,7 +21,6 @@ instance FromJSON ServerConfig where
     _serverConfigMessaging <- o .:? "messaging" .!= defaultMessaging
     _serverConfigJwt <- o .:? "jwt" .!= defaultJwt
     _serverConfigRoles <- o .:? "roles" .!= defaultRoles
-    _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
     _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
@@ -43,7 +42,6 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralServiceToken <- o .: "serviceToken"
     _serverConfigGeneralSecret <- o .: "secret"
     _serverConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
-    _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
     _serverConfigGeneralClientStyleBuilderUrl <-

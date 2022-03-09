@@ -12,34 +12,14 @@ import Data.Maybe (fromMaybe)
 import Data.String (IsString)
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
-import System.IO (IOMode(ReadMode), hGetContents, hSetEncoding, openFile, utf8)
-import System.IO.Error (tryIOError)
 import Text.Blaze.Html.Renderer.Text (renderHtml)
-import Text.Ginger
-  ( IncludeResolver
-  , SourcePos
-  , formatParserError
-  , makeContextHtml
-  , parseGinger
-  , parseGingerFile
-  , runGinger
-  , toGVal
-  )
+import Text.Ginger (IncludeResolver, SourcePos, makeContextHtml, parseGinger, runGinger, toGVal)
 import Text.Ginger.AST (Template, VarName)
 import Text.Ginger.GVal (GVal, ToGVal, asList, asText, fromFunction)
 import Text.Ginger.Html (Html, htmlSource, unsafeRawHtml)
 import Text.Ginger.Run.Type (Run)
 import Text.Markdown
 import Text.Read (readMaybe)
-
--- Load a template from file and render it using HashMap context
--- It will return Right Text if OK or Left String in case of error
-loadAndRender fn contextMap = do
-  eTemplate <- parseGingerFile mLoadFile fn
-  return $
-    case eTemplate of
-      Right template -> Right $ render template contextMap
-      Left err -> Left . formatParserError Nothing $ err
 
 -- Given a Template and a HashMap of context, render the template to Text
 render ::
@@ -77,19 +57,6 @@ scopeLookup key context =
   case HashMap.lookup key context of
     Just key -> toGVal key
     Nothing -> toGVal _ERROR_TEMPLATE_PLACEHOLDER
-
-mLoadFile :: FilePath -> IO (Maybe String)
-mLoadFile fn =
-  tryIOError (loadFile fn) >>= \e ->
-    case e of
-      Right contents -> return (Just contents)
-      Left _ -> return Nothing
-  where
-    loadFile :: FilePath -> IO String
-    loadFile fn' = do
-      h <- openFile fn' ReadMode
-      hSetEncoding h utf8
-      hGetContents h
 
 customFilters :: (Eq a, Data.String.IsString a, ToGVal m a, Monad m) => [(a, GVal m)]
 customFilters =
