@@ -9,6 +9,7 @@ import Database.PostgreSQL.Migration.Migration
 import LensesConfig
 import qualified Registry.Database.Migration.Production.Migration_0001_init.Migration as M_0001
 import qualified Registry.Database.Migration.Production.Migration_0002_app.Migration as M_0002
+import qualified Registry.Database.Migration.Production.Migration_0003_persistentCommand.Migration as M_0003
 import Registry.Util.Logger
 
 runMigration baseContext = do
@@ -16,4 +17,4 @@ runMigration baseContext = do
   runLogging loggingLevel $ migrateDatabase (baseContext ^. dbPool) migrationDefinitions (logInfo _CMP_MIGRATION)
 
 migrationDefinitions :: [MigrationDefinition]
-migrationDefinitions = [M_0001.definition, M_0002.definition]
+migrationDefinitions = [M_0001.definition, M_0002.definition, M_0003.definition]

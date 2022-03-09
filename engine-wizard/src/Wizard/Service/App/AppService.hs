@@ -19,10 +19,10 @@ import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
-import Wizard.Model.App.ImportDefaultDataCommand
 import Wizard.Model.Config.AppConfig
 import Wizard.Model.Config.AppConfigDM
 import Wizard.Model.Context.AppContext
+import Wizard.Model.PersistentCommand.App.ImportDefaultDataCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
 import Wizard.Model.User.UserDM
@@ -99,7 +99,7 @@ createSeederPersistentCommand aUuid createdBy now =
     let command =
           toPersistentCommand
             pUuid
-            "DataSeeder"
+            "data_seeder"
             "importDefaultData"
             (BSL.unpack . encode $ ImportDefaultDataCommand aUuid)
             1

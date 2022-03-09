@@ -33,7 +33,7 @@ insertDocumentQueue entity = do
 notifyDocumentQueue :: Int -> AppContextM Int64
 notifyDocumentQueue dqId = do
   let sql = f' "NOTIFY document_queue_channel, '%s'" [show dqId]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = execute_ conn (fromString sql)
   runDB action
 

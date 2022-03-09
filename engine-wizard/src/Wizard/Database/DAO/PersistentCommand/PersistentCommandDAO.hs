@@ -78,7 +78,7 @@ listenPersistentCommandChannel = createChannelListener channelName
 createChannelListener :: String -> AppContextM ()
 createChannelListener name = do
   let sql = f' "listen %s" [name]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = execute_ conn (fromString sql)
   runDB action
   logInfoU _CMP_DATABASE (f' "Listening for '%s' channel" [name])
@@ -93,16 +93,13 @@ getChannelNotification = do
 notifyPersistentCommandQueue :: AppContextM Int64
 notifyPersistentCommandQueue = do
   let sql = f' "NOTIFY %s" [channelName]
-  logInfo _CMP_DATABASE sql
+  logInfoU _CMP_DATABASE sql
   let action conn = execute_ conn (fromString sql)
   runDB action
 
 notifySpecificPersistentCommandQueue :: PersistentCommand -> AppContextM Int64
 notifySpecificPersistentCommandQueue command = do
-  let sql =
-        f'
-          "NOTIFY %s__%s__%s, '%s'"
-          [channelName, command ^. component, command ^. function, U.toString $ command ^. uuid]
-  logInfo _CMP_DATABASE sql
+  let sql = f' "NOTIFY %s__%s, '%s'" [channelName, command ^. component, U.toString $ command ^. uuid]
+  logInfoU _CMP_DATABASE sql
   let action conn = execute_ conn (fromString sql)
   runDB action

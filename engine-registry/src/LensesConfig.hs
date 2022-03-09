@@ -15,6 +15,7 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
 import Registry.Model.PackageBundle.PackageBundle
+import Registry.Model.PersistentCommand.PersistentCommand
 import Registry.Model.Statistics.InstanceStatistics
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Package.PackageDTO
@@ -56,8 +57,6 @@ makeFields ''ServerConfigGeneral
 makeFields ''ServerConfigDatabase
 
 makeFields ''ServerConfigS3
-
-makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
@@ -244,6 +243,9 @@ makeFields ''PackagePattern
 
 -- Model / PackageBundle
 makeFields ''PackageBundle
+
+-- Model / PersistentCommand
+makeFields ''PersistentCommand
 
 -- Model / Statistics
 makeFields ''InstanceStatistics

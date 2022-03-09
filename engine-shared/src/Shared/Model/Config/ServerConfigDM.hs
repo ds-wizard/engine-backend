@@ -24,20 +24,6 @@ defaultS3 =
     , _serverConfigS3Region = Nothing
     }
 
-defaultMail :: ServerConfigMail
-defaultMail =
-  ServerConfigMail
-    { _serverConfigMailEnabled = True
-    , _serverConfigMailName = "DS Wizard"
-    , _serverConfigMailEmail = ""
-    , _serverConfigMailHost = ""
-    , _serverConfigMailPort = 465
-    , _serverConfigMailSsl = False
-    , _serverConfigMailAuthEnabled = False
-    , _serverConfigMailUsername = ""
-    , _serverConfigMailPassword = ""
-    }
-
 defaultAnalytics :: ServerConfigAnalytics
 defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False, _serverConfigAnalyticsEmail = ""}
 

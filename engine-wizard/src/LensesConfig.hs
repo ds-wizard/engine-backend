@@ -108,7 +108,6 @@ import Wizard.Model.Branch.Branch
 import Wizard.Model.Branch.BranchData
 import Wizard.Model.Cache.ServerCache
 import Wizard.Model.Config.AppConfig
-import Wizard.Model.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.Config.ServerConfig
 import Wizard.Model.Config.SimpleFeature
 import Wizard.Model.Context.AppContext
@@ -120,6 +119,7 @@ import Wizard.Model.Http.HttpRequest
 import Wizard.Model.Limit.AppLimit
 import qualified Wizard.Model.Migration.KnowledgeModel.MigratorState as KM_MigratorState
 import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_MigratorState
+import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
 import Wizard.Model.Prefab.Prefab
@@ -257,8 +257,6 @@ makeFields ''ServerConfigMessaging
 makeFields ''ServerConfigJwt
 
 makeFields ''ServerConfigRoles
-
-makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigRegistry
 

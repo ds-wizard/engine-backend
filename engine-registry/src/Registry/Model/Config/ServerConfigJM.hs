@@ -16,7 +16,6 @@ instance FromJSON ServerConfig where
     _serverConfigGeneral <- o .: "general"
     _serverConfigDatabase <- o .:? "database" .!= defaultDatabase
     _serverConfigS3 <- o .:? "s3" .!= defaultS3
-    _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
     _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
@@ -29,7 +28,6 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralEnvironment <- o .:? "environment" .!= (defaultGeneral ^. environment)
     _serverConfigGeneralClientUrl <- o .: "clientUrl"
     _serverConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
-    _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
     return ServerConfigGeneral {..}

@@ -1,10 +1,12 @@
 module Shared.Util.JSON where
 
 import Data.Aeson
+import qualified Data.ByteString.Lazy.Char8 as BSL
 import qualified Data.HashMap.Strict as HashMap
 import qualified Data.HashMap.Strict as HM
 import Data.Maybe (fromMaybe)
 import qualified Data.Text as T
+import qualified Data.Text.Encoding as TE
 import qualified Data.Vector as V
 import GHC.Generics
 
@@ -12,6 +14,9 @@ import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
 import Shared.Util.Reflection (HasConstructor, constructorName)
 import Shared.Util.String (lowerFirst, splitOn, stripSuffix)
+
+encodeJsonToString :: ToJSON dto => dto -> String
+encodeJsonToString = T.unpack . TE.decodeUtf8 . BSL.toStrict . encode
 
 convertValueToOject value callback =
   case value of

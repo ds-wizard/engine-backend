@@ -13,7 +13,6 @@ defaultConfig =
     , _serverConfigMessaging = defaultMessaging
     , _serverConfigJwt = defaultJwt
     , _serverConfigRoles = defaultRoles
-    , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigSentry = defaultSentry
@@ -35,7 +34,6 @@ defaultGeneral =
     , _serverConfigGeneralServiceToken = ""
     , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
-    , _serverConfigGeneralTemplateFolder = "engine-wizard/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
     , _serverConfigGeneralClientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
