@@ -20,5 +20,5 @@ type List_GET
 list_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateFile])
 list_GET mTokenHeader mServerUrl tmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< getTemplateFiles tmlId

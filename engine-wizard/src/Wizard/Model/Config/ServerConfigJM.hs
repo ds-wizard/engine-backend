@@ -39,7 +39,6 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralEnvironment <- o .:? "environment" .!= (defaultGeneral ^. environment)
     _serverConfigGeneralClientUrl <- o .: "clientUrl"
     _serverConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
-    _serverConfigGeneralServiceToken <- o .: "serviceToken"
     _serverConfigGeneralSecret <- o .: "secret"
     _serverConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
     _serverConfigGeneralRemoteLocalizationUrl <-

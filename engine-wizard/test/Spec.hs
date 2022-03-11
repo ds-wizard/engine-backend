@@ -24,7 +24,6 @@ import Wizard.Service.User.UserMapper
 import Wizard.Specs.API.App.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
-import Wizard.Specs.API.Cache.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
 import Wizard.Specs.API.Feedback.APISpec
@@ -166,7 +165,6 @@ main =
              appAPI appContext
              bookReferenceAPI appContext
              branchAPI appContext
-             cacheAPI appContext
              configAPI appContext
              documentAPI appContext
              feedbackAPI appContext

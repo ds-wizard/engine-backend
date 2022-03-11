@@ -8,7 +8,6 @@ import Wizard.Api.Handler.App.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
-import Wizard.Api.Handler.Cache.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Document.Api
 import Wizard.Api.Handler.Feedback.Api
@@ -35,7 +34,6 @@ type ApplicationAPI
      :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
-     :<|> CacheAPI
      :<|> ConfigAPI
      :<|> DocumentAPI
      :<|> FeedbackAPI
@@ -60,7 +58,6 @@ applicationApi = Proxy
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
   actionKeyServer :<|> adminServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|>
-  cacheServer :<|>
   configServer :<|>
   documentServer :<|>
   feedbackServer :<|>

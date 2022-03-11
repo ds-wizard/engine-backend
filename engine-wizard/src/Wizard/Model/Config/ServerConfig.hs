@@ -30,7 +30,6 @@ data ServerConfigGeneral =
     { _serverConfigGeneralEnvironment :: Environment
     , _serverConfigGeneralClientUrl :: String
     , _serverConfigGeneralServerPort :: Int
-    , _serverConfigGeneralServiceToken :: String
     , _serverConfigGeneralSecret :: String
     , _serverConfigGeneralIntegrationConfig :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String

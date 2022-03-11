@@ -24,5 +24,5 @@ list_POST ::
   -> TemplateChangeDTO
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] Template)
 list_POST mTokenHeader mServerUrl reqDto =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ addTraceUuidHeader =<< createTemplate reqDto

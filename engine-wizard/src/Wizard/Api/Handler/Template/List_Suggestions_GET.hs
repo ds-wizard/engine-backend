@@ -32,6 +32,6 @@ list_suggestions_GET ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSuggestionDTO))
 list_suggestions_GET mTokenHeader mServerUrl mPkgId mQuery mPage mSize mSort =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< getTemplateSuggestions mPkgId mQuery (Pageable mPage mSize) (parseSortQuery mSort)

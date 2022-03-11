@@ -1,6 +1,5 @@
 general:
   clientUrl: http://localhost:3001
-  serviceToken:
   secret:
 
 database:
