@@ -19,5 +19,5 @@ type Detail_GET
 detail_GET ::
      Maybe String -> Maybe String -> String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateDetailDTO)
 detail_GET mTokenHeader mServerUrl tmlId =
-  getServiceTokenOrMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
+  getMaybeAuthServiceExecutor mTokenHeader mServerUrl $ \runInMaybeAuthService ->
     runInMaybeAuthService $ addTraceUuidHeader =<< getTemplateByUuidDto tmlId

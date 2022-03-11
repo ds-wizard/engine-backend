@@ -31,7 +31,6 @@ defaultGeneral =
     { _serverConfigGeneralEnvironment = Production
     , _serverConfigGeneralClientUrl = ""
     , _serverConfigGeneralServerPort = 3000
-    , _serverConfigGeneralServiceToken = ""
     , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing

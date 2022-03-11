@@ -49,9 +49,7 @@ reqBody = ""
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_204 appContext = do
-  create_test_204 "HTTP 204 NO CONTENT (user token)" appContext reqAuthHeader
-  create_test_204 "HTTP 204 NO CONTENT (service token)" appContext reqServiceHeader
+test_204 appContext = create_test_204 "HTTP 204 NO CONTENT" appContext reqAuthHeader
 
 create_test_204 title appContext reqAuthHeader =
   it title $

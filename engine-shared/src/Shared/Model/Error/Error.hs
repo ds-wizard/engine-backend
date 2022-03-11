@@ -14,6 +14,7 @@ data AppError
   | UnauthorizedError LocaleRecord
   | ForbiddenError LocaleRecord
   | NotExistsError LocaleRecord
+  | LockedError
   | GeneralServerError String
   | HttpClientError Status String
   deriving (Show, Eq)

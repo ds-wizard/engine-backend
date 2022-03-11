@@ -33,6 +33,6 @@ list_GET ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] (Page TemplateSimpleDTO))
 list_GET mTokenHeader mServerUrl mOrganizationId mTmlId mQuery mPage mSize mSort =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< getTemplatesPage mOrganizationId mTmlId mQuery (Pageable mPage mSize) (parseSortQuery mSort)
