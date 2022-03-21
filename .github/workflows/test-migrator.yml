@@ -34,7 +34,7 @@ jobs:
 # (1) -> Setup cache
     - name: Cache ~/.stack
       id: cache-stack
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.stack
         key: stack-home-ubuntu20-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
@@ -43,7 +43,7 @@ jobs:
   
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
         key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
@@ -59,7 +59,7 @@ jobs:
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.local/bin
         key: stack-local-bin-ubuntu20-${{ matrix.stack }}
