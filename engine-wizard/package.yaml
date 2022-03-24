@@ -61,6 +61,7 @@ library:
   - random # OK
   - raven-haskell
   - raw-strings-qq
+  - rdf4h
   - regex-compat
   - resource-pool
   - scientific

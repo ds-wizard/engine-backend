@@ -37,6 +37,7 @@ fromChangeDTO dto oldConfig now =
     , _appConfigQuestionnaire = dto ^. questionnaire
     , _appConfigTemplate = dto ^. template
     , _appConfigSubmission = dto ^. submission
+    , _appConfigOwl = oldConfig ^. owl
     , _appConfigCreatedAt = oldConfig ^. createdAt
     , _appConfigUpdatedAt = now
     }

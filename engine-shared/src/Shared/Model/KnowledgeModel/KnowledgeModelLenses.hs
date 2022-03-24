@@ -26,7 +26,6 @@ module Shared.Model.KnowledgeModel.KnowledgeModelLenses
   , title'
   , text'
   , requiredPhaseUuid'
-  , annotations'
   , tagUuids'
   , answerUuids'
   , choiceUuids'
@@ -297,21 +296,107 @@ requiredPhaseUuid' convert entity = fmap (set entity) (convert . get $ entity)
     set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & requiredPhaseUuid .~ newValue
 
 ------------------------------------------------------------------------------------------
-annotations' :: Functor f => ([MapEntry String String] -> f [MapEntry String String]) -> Question -> f Question
-annotations' convert entity = fmap (set entity) (convert . get $ entity)
-  where
-    get :: Question -> [MapEntry String String]
-    get (OptionsQuestion' q) = q ^. annotations
-    get (MultiChoiceQuestion' q) = q ^. annotations
-    get (ListQuestion' q) = q ^. annotations
-    get (ValueQuestion' q) = q ^. annotations
-    get (IntegrationQuestion' q) = q ^. annotations
-    set :: Question -> [MapEntry String String] -> Question
-    set (OptionsQuestion' q) newValue = OptionsQuestion' $ q & annotations .~ newValue
-    set (MultiChoiceQuestion' q) newValue = MultiChoiceQuestion' $ q & annotations .~ newValue
-    set (ListQuestion' q) newValue = ListQuestion' $ q & annotations .~ newValue
-    set (ValueQuestion' q) newValue = ValueQuestion' $ q & annotations .~ newValue
-    set (IntegrationQuestion' q) newValue = IntegrationQuestion' $ q & annotations .~ newValue
+instance HasAnnotations' KnowledgeModel where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: KnowledgeModel -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: KnowledgeModel -> [MapEntry String String] -> KnowledgeModel
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Chapter where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Chapter -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Chapter -> [MapEntry String String] -> Chapter
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Question where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Question -> [MapEntry String String]
+      get (OptionsQuestion' entity) = entity ^. annotations
+      get (MultiChoiceQuestion' entity) = entity ^. annotations
+      get (ListQuestion' entity) = entity ^. annotations
+      get (ValueQuestion' entity) = entity ^. annotations
+      get (IntegrationQuestion' entity) = entity ^. annotations
+      set :: Question -> [MapEntry String String] -> Question
+      set (OptionsQuestion' entity) newValue = OptionsQuestion' $ entity & annotations .~ newValue
+      set (MultiChoiceQuestion' entity) newValue = MultiChoiceQuestion' $ entity & annotations .~ newValue
+      set (ListQuestion' entity) newValue = ListQuestion' $ entity & annotations .~ newValue
+      set (ValueQuestion' entity) newValue = ValueQuestion' $ entity & annotations .~ newValue
+      set (IntegrationQuestion' entity) newValue = IntegrationQuestion' $ entity & annotations .~ newValue
+
+instance HasAnnotations' Expert where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Expert -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Expert -> [MapEntry String String] -> Expert
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Reference where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Reference -> [MapEntry String String]
+      get (ResourcePageReference' entity) = entity ^. annotations
+      get (URLReference' entity) = entity ^. annotations
+      get (CrossReference' entity) = entity ^. annotations
+      set :: Reference -> [MapEntry String String] -> Reference
+      set (ResourcePageReference' entity) newValue = ResourcePageReference' $ entity & annotations .~ newValue
+      set (URLReference' entity) newValue = URLReference' $ entity & annotations .~ newValue
+      set (CrossReference' entity) newValue = CrossReference' $ entity & annotations .~ newValue
+
+instance HasAnnotations' Answer where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Answer -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Answer -> [MapEntry String String] -> Answer
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Choice where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Choice -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Choice -> [MapEntry String String] -> Choice
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Tag where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Tag -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Tag -> [MapEntry String String] -> Tag
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Integration where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Integration -> [MapEntry String String]
+      get (ApiIntegration' entity) = entity ^. annotations
+      get (WidgetIntegration' entity) = entity ^. annotations
+      set :: Integration -> [MapEntry String String] -> Integration
+      set (ApiIntegration' entity) newValue = ApiIntegration' $ entity & annotations .~ newValue
+      set (WidgetIntegration' entity) newValue = WidgetIntegration' $ entity & annotations .~ newValue
+
+instance HasAnnotations' Metric where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Metric -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Metric -> [MapEntry String String] -> Metric
+      set entity newValue = entity & annotations .~ newValue
+
+instance HasAnnotations' Phase where
+  annotations' convert entity = fmap (set entity) (convert . get $ entity)
+    where
+      get :: Phase -> [MapEntry String String]
+      get entity = entity ^. annotations
+      set :: Phase -> [MapEntry String String] -> Phase
+      set entity newValue = entity & annotations .~ newValue
 
 ------------------------------------------------------------------------------------------
 tagUuids' :: Functor f => ([U.UUID] -> f [U.UUID]) -> Question -> f Question

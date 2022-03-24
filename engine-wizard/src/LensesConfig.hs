@@ -242,6 +242,8 @@ makeFields ''AppConfigSubmissionServiceRequest
 
 makeFields ''AppConfigSubmissionServiceRequestMultipart
 
+makeFields ''AppConfigOwl
+
 makeFields ''SimpleFeature
 
 makeFields ''ServerConfig

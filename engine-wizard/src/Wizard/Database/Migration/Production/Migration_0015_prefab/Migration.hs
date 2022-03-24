@@ -11,10 +11,14 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 15, mmName = "Prefab", mmDescription = "Add prefabs"}
+meta = MigrationMeta {mmNumber = 15, mmName = "Prefab", mmDescription = "Add prefabs and app plan"}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
+  createPrefabTable dbPool
+  addOwlToAppConfig dbPool
+
+createPrefabTable dbPool = do
   let sql =
         "CREATE TABLE prefab \
         \ ( \
@@ -33,6 +37,14 @@ migrate dbPool = do
         \  \
         \CREATE UNIQUE INDEX prefab_uuid_uindex \
         \     on prefab (uuid, app_uuid);"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+addOwlToAppConfig dbPool = do
+  let sql =
+        "ALTER TABLE app_config \
+        \   ADD owl json not null default '{\"enabled\":false,\"kmId\":\"\",\"name\":\"\",\"version\":\"\",\"rootElement\":\"\",\"organizationId\":\"\",\"previousPackageId\":null}';"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

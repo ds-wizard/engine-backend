@@ -10,6 +10,7 @@ module Shared.Util.String
   , toSnake
   , takeLastOf
   , printTuples
+  , fromHumps
   ) where
 
 import qualified Data.Char as CH
@@ -71,3 +72,29 @@ printTuples :: [(String, String)] -> String
 printTuples = L.intercalate ", " . fmap printTuple
   where
     printTuple (key, value) = key ++ ": " ++ value
+
+fromHumps :: String -> [String]
+fromHumps = go
+  where
+    go "" = [""]
+    go [x] = [[x]]
+    go xxs@(x:xs)
+      | CH.isUpper x =
+        let lhs = takeWhile CH.isUpper xxs
+            rhs = dropWhile CH.isUpper xxs
+         in if null rhs
+              then [lhs]
+              else let curLen = length lhs - 1
+                       cur = take curLen lhs
+                       rec = go rhs
+                       nxt = drop curLen lhs ++ concat (take 1 rec)
+                       rem = drop 1 rec
+                       curL = ([cur | not (null cur)])
+                       nxtL = ([nxt | not (null nxt)])
+                    in curL ++ nxtL ++ rem
+      | otherwise =
+        let cur = takeWhile (not . CH.isUpper) xxs
+            rem = dropWhile (not . CH.isUpper) xxs
+         in if null rem
+              then [cur]
+              else cur : go rem

@@ -33,6 +33,7 @@ defaultAppConfig =
     , _appConfigQuestionnaire = defaultQuestionnaire
     , _appConfigTemplate = defaultTemplate
     , _appConfigSubmission = defaultSubmission
+    , _appConfigOwl = defaultOwl
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -246,6 +247,18 @@ defaultSubmissionServiceRequestMultipart =
   AppConfigSubmissionServiceRequestMultipart
     { _appConfigSubmissionServiceRequestMultipartEnabled = False
     , _appConfigSubmissionServiceRequestMultipartFileName = "file"
+    }
+
+defaultOwl :: AppConfigOwl
+defaultOwl =
+  AppConfigOwl
+    { _appConfigOwlEnabled = False
+    , _appConfigOwlName = ""
+    , _appConfigOwlOrganizationId = ""
+    , _appConfigOwlKmId = ""
+    , _appConfigOwlVersion = ""
+    , _appConfigOwlPreviousPackageId = Nothing
+    , _appConfigOwlRootElement = ""
     }
 
 differentAppConfig :: AppConfig

@@ -24,6 +24,7 @@ defaultAppConfig =
     , _appConfigQuestionnaire = defaultQuestionnaire
     , _appConfigTemplate = defaultTemplate
     , _appConfigSubmission = defaultSubmission
+    , _appConfigOwl = defaultOwl
     , _appConfigCreatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     , _appConfigUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 20) 0
     }
@@ -154,3 +155,15 @@ defaultTemplate = AppConfigTemplate {_appConfigTemplateRecommendedTemplateId = N
 
 defaultSubmission :: AppConfigSubmission
 defaultSubmission = AppConfigSubmission {_appConfigSubmissionEnabled = False, _appConfigSubmissionServices = []}
+
+defaultOwl :: AppConfigOwl
+defaultOwl =
+  AppConfigOwl
+    { _appConfigOwlEnabled = False
+    , _appConfigOwlName = ""
+    , _appConfigOwlOrganizationId = ""
+    , _appConfigOwlKmId = ""
+    , _appConfigOwlVersion = ""
+    , _appConfigOwlPreviousPackageId = Nothing
+    , _appConfigOwlRootElement = ""
+    }
