@@ -23,7 +23,7 @@ insertDocumentQueue entity = do
           "INSERT INTO %s (document_uuid, document_context, created_by, created_at, app_uuid) VALUES (?, ?, ?, ?, ?) RETURNING id"
           [entityName]
   let params = entity
-  logQuery sql params
+  logInsertAndUpdate sql params
   let action conn = query conn sql entity
   result <- runDB action
   case result of
