@@ -47,6 +47,7 @@ instance FromJSON ServerConfigLogging where
   parseJSON (Object o) = do
     _serverConfigLoggingLevel <- o .:? "level" .!= (defaultLogging ^. level)
     _serverConfigLoggingHttpClientDebug <- o .:? "httpClientDebug" .!= (defaultLogging ^. httpClientDebug)
+    _serverConfigLoggingWebsocketDebug <- o .:? "websocketDebug" .!= (defaultLogging ^. websocketDebug)
     return ServerConfigLogging {..}
   parseJSON _ = mzero
 

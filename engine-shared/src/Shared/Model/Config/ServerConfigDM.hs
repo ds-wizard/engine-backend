@@ -32,7 +32,11 @@ defaultSentry = ServerConfigSentry {_serverConfigSentryEnabled = False, _serverC
 
 defaultLogging :: ServerConfigLogging
 defaultLogging =
-  ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}
+  ServerConfigLogging
+    { _serverConfigLoggingLevel = LevelInfo
+    , _serverConfigLoggingHttpClientDebug = False
+    , _serverConfigLoggingWebsocketDebug = False
+    }
 
 defaultCloud :: ServerConfigCloud
 defaultCloud = ServerConfigCloud {_serverConfigCloudEnabled = False, _serverConfigCloudDomain = Nothing}
