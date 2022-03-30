@@ -28,6 +28,7 @@ instance FromJSON ServerConfig where
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
+    _serverConfigPlan <- o .:? "plan" .!= defaultPlan
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
@@ -113,6 +114,12 @@ instance FromJSON ServerConfigPersistentCommandListenerJob where
     _serverConfigPersistentCommandListenerJobEnabled <-
       o .:? "enabled" .!= (defaultPersistentCommandListenerJob ^. enabled)
     return ServerConfigPersistentCommandListenerJob {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPlan where
+  parseJSON (Object o) = do
+    _serverConfigPlanRecomputeJob <- o .:? "recomputeJob" .!= (defaultPlan ^. recomputeJob)
+    return ServerConfigPlan {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where

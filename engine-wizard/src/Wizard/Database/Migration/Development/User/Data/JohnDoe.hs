@@ -13,3 +13,6 @@ userJohnCreate =
     , _userCreateDTORole = Just _USER_ROLE_ADMIN
     , _userCreateDTOPassword = "password"
     }
+
+userJohnCreateDS :: UserCreateDTO
+userJohnCreateDS = userJohnCreate {_userCreateDTORole = Just _USER_ROLE_DATA_STEWARD}

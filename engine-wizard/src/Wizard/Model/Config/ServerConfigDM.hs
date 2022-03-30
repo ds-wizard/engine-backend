@@ -20,6 +20,7 @@ defaultConfig =
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigPersistentCommand = defaultPersistentCommand
+    , _serverConfigPlan = defaultPlan
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
     , _serverConfigCloud = defaultCloud
@@ -132,6 +133,13 @@ defaultPersistentCommandListenerJob =
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "* * * * *"}
+
+defaultPlan :: ServerConfigPlan
+defaultPlan = ServerConfigPlan {_serverConfigPlanRecomputeJob = defaultPlanRecomputeJob}
+
+defaultPlanRecomputeJob :: ServerConfigCronWorker
+defaultPlanRecomputeJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

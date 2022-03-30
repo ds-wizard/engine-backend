@@ -16,6 +16,7 @@ import Shared.Model.Common.PageMetadata
 import qualified Shared.Service.Package.PackageMapper as SP_Mapper
 import Shared.Service.Template.TemplateMapper
 import Shared.Util.Swagger
+import Wizard.Api.Resource.App.AppSM ()
 import Wizard.Api.Resource.Branch.BranchDTO
 import Wizard.Api.Resource.Branch.BranchSM ()
 import Wizard.Api.Resource.Document.DocumentDTO
@@ -30,11 +31,13 @@ import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserSM ()
 import Wizard.Api.Resource.User.UserSuggestionDTO
 import Wizard.Api.Resource.User.UserSuggestionSM ()
+import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Database.Migration.Development.Branch.Data.Branches
 import Wizard.Database.Migration.Development.Document.Data.Documents
 import Wizard.Database.Migration.Development.Questionnaire.Data.Questionnaires
 import Wizard.Database.Migration.Development.Template.Data.Templates
 import Wizard.Database.Migration.Development.User.Data.Users
+import Wizard.Model.App.App
 import qualified Wizard.Service.Package.PackageMapper as P_Mapper
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 
@@ -89,3 +92,6 @@ instance ToSchema (Page TemplateSuggestionDTO) where
 
 instance ToSchema (Page DocumentDTO) where
   declareNamedSchema = simpleToSchema''''' "_page" "Page DocumentDTO" (Page "documents" pageMetadata [doc1Dto])
+
+instance ToSchema (Page App) where
+  declareNamedSchema = simpleToSchema''''' "_page" "Page App" (Page "apps" pageMetadata [defaultApp])

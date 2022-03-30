@@ -14,7 +14,7 @@ import Wizard.Service.Acl.AclService
 import Wizard.Service.Admin.AdminDefinition
 
 getAdminOperations :: AppContextM [AdminSection]
-getAdminOperations = return [app, branch, cache, config, feedback, persistentCommand, questionnaire]
+getAdminOperations = return [branch, cache, config, feedback, persistentCommand, questionnaire]
 
 executeOperation :: AdminExecutionDTO -> AppContextM AdminExecutionResultDTO
 executeOperation reqDto = do
@@ -24,8 +24,6 @@ executeOperation reqDto = do
 
 execute :: AdminExecutionDTO -> AppContextM String
 execute reqDto
-  | action reqDto app app_createApp = app_createAppFn reqDto
-  | action reqDto app app_createCustomApp = app_createCustomAppFn reqDto
   | action reqDto branch branch_squashAllEvents = branch_squashAllEventsFn reqDto
   | action reqDto branch branch_squashEventsForBranch = branch_squashEventsForBranchFn reqDto
   | action reqDto cache cache_purgeCache = cache_purgeCacheFn reqDto

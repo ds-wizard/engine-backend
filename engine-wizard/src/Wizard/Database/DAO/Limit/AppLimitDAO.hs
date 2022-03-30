@@ -1,11 +1,11 @@
-module Wizard.Database.DAO.App.AppLimitDAO where
+module Wizard.Database.DAO.Limit.AppLimitDAO where
 
 import Control.Monad.Reader (asks)
 import qualified Data.UUID as U
 import GHC.Int
 
 import Wizard.Database.DAO.Common
-import Wizard.Database.Mapping.App.AppLimit ()
+import Wizard.Database.Mapping.Limit.AppLimit ()
 import Wizard.Model.Context.AppContext
 import Wizard.Model.Context.ContextLenses ()
 import Wizard.Model.Limit.AppLimit

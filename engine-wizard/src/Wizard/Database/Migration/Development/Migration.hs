@@ -29,6 +29,8 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
+import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
 import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
 import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
@@ -59,11 +61,13 @@ runMigration = do
   ACL_Schema.dropTables
   U_Schema.dropTables
   CFG_Schema.dropTables
+  AP_Schema.dropTables
   AL_Schema.dropTables
   A_Schema.dropTables
   -- 2. Create schema
   A_Schema.createTables
   AL_Schema.createTables
+  AP_Schema.createTables
   U_Schema.createTables
   ACL_Schema.createTables
   TML_Schema.createTables
@@ -85,6 +89,7 @@ runMigration = do
   -- 4. Load fixtures
   A.runMigration
   AL.runMigration
+  AP.runMigration
   CFG.runMigration
   U.runMigration
   TML.runMigration

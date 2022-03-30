@@ -10,6 +10,7 @@ import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Document.Api
+import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
@@ -36,6 +37,7 @@ type ApplicationAPI
      :<|> BranchAPI
      :<|> ConfigAPI
      :<|> DocumentAPI
+     :<|> DomainAPI
      :<|> FeedbackAPI
      :<|> InfoAPI
      :<|> KnowledgeModelAPI
@@ -60,6 +62,7 @@ applicationServer =
   actionKeyServer :<|> adminServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|>
   configServer :<|>
   documentServer :<|>
+  domainServer :<|>
   feedbackServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>

@@ -33,7 +33,8 @@ userAlbert =
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = _USER_ROLE_ADMIN
     , _userPermissions =
-        [ "ADMIN_PERM"
+        [ "APP_PERM"
+        , "ADMIN_PERM"
         , "UM_PERM"
         , "KM_PERM"
         , "KM_UPGRADE_PERM"

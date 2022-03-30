@@ -79,8 +79,8 @@ toAnonymousOnlineUserInfo avatarNumber colorNumber =
   AnonymousOnlineUserInfo
     {_anonymousOnlineUserInfoAvatarNumber = avatarNumber, _anonymousOnlineUserInfoColorNumber = colorNumber}
 
-fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> User
-fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now =
+fromUserCreateDTO :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> UTCTime -> Bool -> User
+fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now shouldSendRegistrationEmail =
   User
     { _userUuid = userUuid
     , _userFirstName = dto ^. firstName
@@ -91,7 +91,7 @@ fromUserCreateDTO dto userUuid passwordHash role permissions appUuid now =
     , _userSources = [_USER_SOURCE_INTERNAL]
     , _userRole = role
     , _userPermissions = permissions
-    , _userActive = False
+    , _userActive = not shouldSendRegistrationEmail
     , _userSubmissionProps = []
     , _userImageUrl = Nothing
     , _userGroups = []

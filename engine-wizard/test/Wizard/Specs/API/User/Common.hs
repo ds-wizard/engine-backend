@@ -49,9 +49,10 @@ assertAbsenceOfUserInDB appContext user = do
 -- --------------------------------
 compareUserDtos resDto expDto = liftIO $ resDto `shouldBe` expDto
 
-compareUserCreateDtos resDto expDto = do
+compareUserCreateDtos resDto expDto userActive = do
   liftIO $ resDto ^. firstName `shouldBe` expDto ^. firstName
   liftIO $ resDto ^. lastName `shouldBe` expDto ^. lastName
   liftIO $ resDto ^. email `shouldBe` expDto ^. email
   liftIO $ resDto ^. affiliation `shouldBe` expDto ^. affiliation
   liftIO $ Just (resDto ^. role) `shouldBe` expDto ^. role
+  liftIO $ resDto ^. active `shouldBe` userActive

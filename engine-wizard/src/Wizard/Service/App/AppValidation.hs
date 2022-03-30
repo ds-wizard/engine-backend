@@ -12,15 +12,22 @@ import Text.Regex (matchRegex, mkRegex)
 import LensesConfig
 import Shared.Localization.Messages.Public
 import Shared.Model.Error.Error
+import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Localization.Messages.Public
+import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 
 validateAppCreateDTO :: AppCreateDTO -> AppContextM ()
 validateAppCreateDTO reqDto = do
   validateAppIdFormat (reqDto ^. appId)
   validateAppIdUniqueness (reqDto ^. appId)
+
+validateAppChangeDTO :: App -> AppChangeDTO -> AppContextM ()
+validateAppChangeDTO app reqDto = do
+  validateAppIdFormat (reqDto ^. appId)
+  when (app ^. appId /= reqDto ^. appId) (validateAppIdUniqueness (reqDto ^. appId))
 
 validateAppIdFormat :: String -> AppContextM ()
 validateAppIdFormat appId = forM_ (isValidAppIdFormat appId) throwError

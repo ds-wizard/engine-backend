@@ -1,6 +1,6 @@
 module Wizard.Service.App.AppService where
 
-import Control.Lens ((.~), (^.))
+import Control.Lens ((&), (.~), (^.))
 import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (encode)
 import qualified Data.ByteString.Lazy.Char8 as BSL
@@ -9,14 +9,20 @@ import Data.Time
 import qualified Data.UUID as U
 
 import LensesConfig
+import Shared.Model.Common.Page
+import Shared.Model.Common.Pageable
+import Shared.Model.Common.Sort
+import Shared.Util.Crypto
 import Shared.Util.Uuid
-import Wizard.Api.Resource.App.AppAdminCreateDTO
+import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
+import Wizard.Api.Resource.App.AppDetailDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.Common
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Model.App.App
 import Wizard.Model.Config.AppConfig
@@ -25,52 +31,80 @@ import Wizard.Model.Context.AppContext
 import Wizard.Model.PersistentCommand.App.ImportDefaultDataCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.User.User
-import Wizard.Model.User.UserDM
+import Wizard.Service.Acl.AclService
 import Wizard.Service.App.AppMapper
 import Wizard.Service.App.AppValidation
 import Wizard.Service.Limit.AppLimitService
 import Wizard.Service.PersistentCommand.PersistentCommandMapper
+import Wizard.Service.Usage.UsageService
 import qualified Wizard.Service.User.UserMapper as U_Mapper
 import Wizard.Service.User.UserService
 
-getApps :: Maybe String -> AppContextM [AppDTO]
-getApps mAppId = do
-  case mAppId of
-    Nothing -> return []
-    Just appId -> do
-      apps <- findAppsByAppId appId
-      return . fmap toDTO $ apps
+getAppsPage :: Maybe String -> Maybe Bool -> Pageable -> [Sort] -> AppContextM (Page App)
+getAppsPage mQuery mEnabled pageable sort = do
+  checkPermission _APP_PERM
+  findAppsPage mQuery mEnabled pageable sort
 
-createApp :: AppCreateDTO -> AppContextM AppDTO
-createApp reqDto = do
+registerApp :: AppCreateDTO -> AppContextM AppDTO
+registerApp reqDto = do
   runInTransaction $ do
     validateAppCreateDTO reqDto
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    serverConfig <- asks _appContextServerConfig
-    let cloudDomain = fromMaybe "" (serverConfig ^. cloud . domain)
-    let app = fromCreateDTO reqDto aUuid cloudDomain now
+    cloudDomain <- getCloudDomain
+    let app = fromRegisterCreateDTO reqDto aUuid cloudDomain now
     insertApp app
     userUuid <- liftIO generateUuid
-    user <-
-      createUserByAdminWithUuid (U_Mapper.fromAppCreateToUserCreateDTO reqDto) userUuid (app ^. uuid) (app ^. clientUrl)
+    let userCreate = U_Mapper.fromAppCreateToUserCreateDTO reqDto
+    user <- createUserByAdminWithUuid userCreate userUuid (app ^. uuid) (app ^. clientUrl) True
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
     return . toDTO $ app
 
-createAdminApp :: AppAdminCreateDTO -> AppContextM App
-createAdminApp reqDto = do
+createAppByAdmin :: AppCreateDTO -> AppContextM AppDTO
+createAppByAdmin reqDto = do
   runInTransaction $ do
+    checkPermission _APP_PERM
+    validateAppCreateDTO reqDto
     aUuid <- liftIO generateUuid
     now <- liftIO getCurrentTime
-    let app = fromAdminCreate reqDto aUuid now
+    cloudDomain <- getCloudDomain
+    let app = fromAdminCreateDTO reqDto aUuid cloudDomain now
     insertApp app
-    user <- createUser' aUuid now
+    userUuid <- liftIO generateUuid
+    userPassword <- liftIO $ generateRandomString 25
+    let userCreate = U_Mapper.fromAppCreateToUserCreateDTO reqDto & password .~ userPassword
+    user <- createUserByAdminWithUuid userCreate userUuid (app ^. uuid) (app ^. clientUrl) False
     createAppConfig aUuid now
     createAppLimit aUuid now
     createSeederPersistentCommand aUuid (user ^. uuid) now
-    return app
+    return . toDTO $ app
+
+getAppById :: String -> AppContextM AppDetailDTO
+getAppById aUuid = do
+  checkPermission _APP_PERM
+  app <- findAppById aUuid
+  plans <- findAppPlansForAppUuid aUuid
+  usage <- getUsage aUuid
+  users <- findUsersWithAppFiltered aUuid [("role", _USER_ROLE_ADMIN)]
+  return $ toDetailDTO app plans usage users
+
+modifyApp :: String -> AppChangeDTO -> AppContextM App
+modifyApp aUuid reqDto = do
+  checkPermission _APP_PERM
+  app <- findAppById aUuid
+  validateAppChangeDTO app reqDto
+  cloudDomain <- getCloudDomain
+  let updatedApp = fromChangeDTO app reqDto cloudDomain
+  updateAppById updatedApp
+
+deleteApp :: String -> AppContextM ()
+deleteApp aUuid = do
+  checkPermission _APP_PERM
+  _ <- findAppById aUuid
+  deleteAppById aUuid
+  return ()
 
 -- --------------------------------
 -- PRIVATE
@@ -81,16 +115,6 @@ createAppConfig aUuid now = do
     let appConfig = (uuid .~ aUuid) . (createdAt .~ now) . (updatedAt .~ now) $ defaultAppConfig
     insertAppConfig appConfig
     return appConfig
-
-createUser' :: U.UUID -> UTCTime -> AppContextM User
-createUser' aUuid now =
-  runInTransaction $ do
-    uUuid <- liftIO generateUuid
-    let user =
-          (uuid .~ uUuid) . (appUuid .~ aUuid) . (lastVisitedAt .~ now) . (createdAt .~ now) . (updatedAt .~ now) $
-          defaultUser
-    insertUser user
-    return user
 
 createSeederPersistentCommand :: U.UUID -> U.UUID -> UTCTime -> AppContextM PersistentCommand
 createSeederPersistentCommand aUuid createdBy now =
@@ -109,3 +133,8 @@ createSeederPersistentCommand aUuid createdBy now =
             now
     insertPersistentCommand command
     return command
+
+getCloudDomain :: AppContextM String
+getCloudDomain = do
+  serverConfig <- asks _appContextServerConfig
+  return $ fromMaybe "" (serverConfig ^. cloud . domain)

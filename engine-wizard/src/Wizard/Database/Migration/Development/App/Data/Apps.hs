@@ -36,10 +36,21 @@ differentApp =
     , _appUpdatedAt = UTCTime (fromJust $ fromGregorianValid 2018 1 25) 0
     }
 
+differentAppEdited :: App
+differentAppEdited =
+  differentApp
+    { _appAppId = "different-edited"
+    , _appName = "EDtIED:Different App"
+    , _appServerDomain = "api-different-edited."
+    , _appServerUrl = "https://api-different-edited."
+    , _appClientUrl = "https://different-edited."
+    }
+
 appCreateDto :: AppCreateDTO
 appCreateDto =
   AppCreateDTO
     { _appCreateDTOAppId = "new-app-id"
+    , _appCreateDTOAppName = "New App"
     , _appCreateDTOFirstName = "Max"
     , _appCreateDTOLastName = "Planck"
     , _appCreateDTOEmail = "max.planck@example.com"

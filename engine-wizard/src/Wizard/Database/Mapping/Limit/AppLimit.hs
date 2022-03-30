@@ -1,4 +1,4 @@
-module Wizard.Database.Mapping.App.AppLimit where
+module Wizard.Database.Mapping.Limit.AppLimit where
 
 import Database.PostgreSQL.Simple
 

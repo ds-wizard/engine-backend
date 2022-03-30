@@ -11,12 +11,13 @@ import Database.PostgreSQL.Simple
 
 definition = (meta, migrate)
 
-meta = MigrationMeta {mmNumber = 15, mmName = "Prefab", mmDescription = "Add prefabs and app plan"}
+meta = MigrationMeta {mmNumber = 15, mmName = "Prefab", mmDescription = "Add prefabs, app plan, and owl"}
 
 migrate :: Pool Connection -> LoggingT IO (Maybe Error)
 migrate dbPool = do
   createPrefabTable dbPool
   addOwlToAppConfig dbPool
+  createAppPlanTable dbPool
 
 createPrefabTable dbPool = do
   let sql =
@@ -45,6 +46,29 @@ addOwlToAppConfig dbPool = do
   let sql =
         "ALTER TABLE app_config \
         \   ADD owl json not null default '{\"enabled\":false,\"kmId\":\"\",\"name\":\"\",\"version\":\"\",\"rootElement\":\"\",\"organizationId\":\"\",\"previousPackageId\":null}';"
+  let action conn = execute_ conn (fromString sql)
+  liftIO $ withResource dbPool action
+  return Nothing
+
+createAppPlanTable dbPool = do
+  let sql =
+        "CREATE TABLE app_plan \
+         \ ( \
+         \     uuid              uuid              not null \
+         \         constraint app_plan_pk \
+         \             primary key, \
+         \     name              varchar not null, \
+         \     users             integer, \
+         \     since             timestamp with time zone not null, \
+         \     until             timestamp with time zone not null, \
+         \     test              bool not null, \
+         \     app_uuid          uuid not null, \
+         \     created_at        timestamp with time zone not null, \
+         \     updated_at        timestamp with time zone not null \
+         \ ); \
+         \  \
+         \ create unique index app_plan_uuid_uindex \
+         \     on app_plan (uuid);"
   let action conn = execute_ conn (fromString sql)
   liftIO $ withResource dbPool action
   return Nothing

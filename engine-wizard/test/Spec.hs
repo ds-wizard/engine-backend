@@ -22,10 +22,12 @@ import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.App.APISpec
+import Wizard.Specs.API.App.Plan.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
+import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
@@ -163,10 +165,12 @@ main =
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              appAPI appContext
+             appPlanAPI appContext
              bookReferenceAPI appContext
              branchAPI appContext
              configAPI appContext
              documentAPI appContext
+             domainAPI appContext
              feedbackAPI appContext
              infoAPI appContext
              knowledgeModelAPI appContext

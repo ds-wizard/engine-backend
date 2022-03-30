@@ -19,6 +19,7 @@ data ServerConfig =
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
     , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
+    , _serverConfigPlan :: ServerConfigPlan
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
     , _serverConfigCloud :: ServerConfigCloud
@@ -100,6 +101,12 @@ data ServerConfigPersistentCommand =
 data ServerConfigPersistentCommandListenerJob =
   ServerConfigPersistentCommandListenerJob
     { _serverConfigPersistentCommandListenerJobEnabled :: Bool
+    }
+  deriving (Generic, Show)
+
+data ServerConfigPlan =
+  ServerConfigPlan
+    { _serverConfigPlanRecomputeJob :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

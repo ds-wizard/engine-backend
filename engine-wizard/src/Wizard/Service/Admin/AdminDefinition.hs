@@ -1,19 +1,15 @@
 module Wizard.Service.Admin.AdminDefinition where
 
 import Control.Lens ((^.))
-import Control.Monad.Reader (ask, asks, liftIO)
+import Control.Monad.Reader (ask, liftIO)
 import Data.Foldable (traverse_)
-import Data.Maybe (fromMaybe)
 
 import LensesConfig hiding (action, cache, feedback)
-import Shared.Util.String
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
-import Wizard.Api.Resource.App.AppAdminCreateDTO
 import Wizard.Database.DAO.App.AppDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Model.Admin.Admin
 import Wizard.Model.Context.AppContext
-import Wizard.Service.App.AppService
 import Wizard.Service.Branch.Event.BranchEventService
 import Wizard.Service.Cache.CacheService
 import qualified Wizard.Service.Cache.KnowledgeModelCache as KnowledgeModelCache
@@ -23,86 +19,6 @@ import Wizard.Service.Feedback.FeedbackService
 import Wizard.Service.PersistentCommand.PersistentCommandService
 import Wizard.Service.Questionnaire.Event.QuestionnaireEventService
 import Wizard.Util.Context
-
--- ---------------------------------------------------------------------------------------------------------------------
--- APP
--- ---------------------------------------------------------------------------------------------------------------------
-app :: AdminSection
-app =
-  AdminSection
-    { _adminSectionName = "App"
-    , _adminSectionDescription = Nothing
-    , _adminSectionOperations = [app_createApp, app_createCustomApp]
-    }
-
--- ---------------------------------------------------------------------------------------------------------------------
-app_createApp :: AdminOperation
-app_createApp =
-  AdminOperation
-    { _adminOperationName = "Create an application"
-    , _adminOperationDescription = Nothing
-    , _adminOperationParameters =
-        [ AdminOperationParameter
-            {_adminOperationParameterName = "appId", _adminOperationParameterAType = StringAdminOperationParameterType}
-        , AdminOperationParameter
-            {_adminOperationParameterName = "name", _adminOperationParameterAType = StringAdminOperationParameterType}
-        ]
-    }
-
-app_createAppFn :: AdminExecutionDTO -> AppContextM String
-app_createAppFn reqDto = do
-  serverConfig <- asks _appContextServerConfig
-  let cloudDomain = fromMaybe "" (serverConfig ^. cloud . domain)
-  let appId = head (reqDto ^. parameters)
-  let reqDto' =
-        AppAdminCreateDTO
-          { _appAdminCreateDTOAppId = appId
-          , _appAdminCreateDTOName = (reqDto ^. parameters) !! 1
-          , _appAdminCreateDTOServerDomain = f' "api-%s.%s" [appId, cloudDomain]
-          , _appAdminCreateDTOServerUrl = f' "https://api-%s.%s" [appId, cloudDomain]
-          , _appAdminCreateDTOClientUrl = f' "https://%s.%s" [appId, cloudDomain]
-          }
-  createAdminApp reqDto'
-  return "Done"
-
--- ---------------------------------------------------------------------------------------------------------------------
-app_createCustomApp :: AdminOperation
-app_createCustomApp =
-  AdminOperation
-    { _adminOperationName = "Create a custom application"
-    , _adminOperationDescription = Nothing
-    , _adminOperationParameters =
-        [ AdminOperationParameter
-            {_adminOperationParameterName = "appId", _adminOperationParameterAType = StringAdminOperationParameterType}
-        , AdminOperationParameter
-            {_adminOperationParameterName = "name", _adminOperationParameterAType = StringAdminOperationParameterType}
-        , AdminOperationParameter
-            { _adminOperationParameterName = "serverDomain"
-            , _adminOperationParameterAType = StringAdminOperationParameterType
-            }
-        , AdminOperationParameter
-            { _adminOperationParameterName = "serverUrl"
-            , _adminOperationParameterAType = StringAdminOperationParameterType
-            }
-        , AdminOperationParameter
-            { _adminOperationParameterName = "clientUrl"
-            , _adminOperationParameterAType = StringAdminOperationParameterType
-            }
-        ]
-    }
-
-app_createCustomAppFn :: AdminExecutionDTO -> AppContextM String
-app_createCustomAppFn reqDto = do
-  let reqDto' =
-        AppAdminCreateDTO
-          { _appAdminCreateDTOAppId = head (reqDto ^. parameters)
-          , _appAdminCreateDTOName = (reqDto ^. parameters) !! 1
-          , _appAdminCreateDTOServerDomain = (reqDto ^. parameters) !! 2
-          , _appAdminCreateDTOServerUrl = (reqDto ^. parameters) !! 3
-          , _appAdminCreateDTOClientUrl = (reqDto ^. parameters) !! 4
-          }
-  createAdminApp reqDto'
-  return "Done"
 
 -- ---------------------------------------------------------------------------------------------------------------------
 -- BRANCH

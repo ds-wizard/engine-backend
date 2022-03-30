@@ -40,7 +40,7 @@ import Shared.Model.Template.Template
 import Shared.Model.Template.TemplateGroup
 import Wizard.Api.Resource.ActionKey.ActionKeyDTO
 import Wizard.Api.Resource.Admin.AdminExecutionDTO
-import Wizard.Api.Resource.App.AppAdminCreateDTO
+import Wizard.Api.Resource.App.AppChangeDTO
 import Wizard.Api.Resource.App.AppCreateDTO
 import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.Branch.BranchChangeDTO
@@ -62,6 +62,7 @@ import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateCreate
 import qualified Wizard.Api.Resource.Migration.Questionnaire.MigratorStateDTO as QTN_MigratorStateDTO
 import Wizard.Api.Resource.Package.PackageDetailDTO
 import Wizard.Api.Resource.Package.PackageSimpleDTO
+import Wizard.Api.Resource.Plan.AppPlanChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventChangeDTO
 import Wizard.Api.Resource.Questionnaire.Event.QuestionnaireEventDTO
 import Wizard.Api.Resource.Questionnaire.QuestionnaireAclDTO
@@ -122,6 +123,7 @@ import qualified Wizard.Model.Migration.Questionnaire.MigratorState as QTN_Migra
 import Wizard.Model.PersistentCommand.Config.InvokeClientCssCompilationCommand
 import Wizard.Model.PersistentCommand.PersistentCommand
 import Wizard.Model.PersistentCommand.PersistentCommandSimple
+import Wizard.Model.Plan.AppPlan
 import Wizard.Model.Prefab.Prefab
 import Wizard.Model.Questionnaire.Questionnaire
 import Wizard.Model.Questionnaire.QuestionnaireAcl
@@ -164,8 +166,6 @@ makeFields ''AdminOperationParameter
 
 -- Model / App
 makeFields ''App
-
-makeFields ''AppLimit
 
 -- Model / BookReference
 makeFields ''BookReference
@@ -277,6 +277,8 @@ makeFields ''ServerConfigLogging
 makeFields ''ServerConfigPersistentCommand
 
 makeFields ''ServerConfigPersistentCommandListenerJob
+
+makeFields ''ServerConfigPlan
 
 makeFields ''ServerConfigQuestionnaire
 
@@ -464,6 +466,9 @@ makeFields ''ApiIntegration
 
 makeFields ''WidgetIntegration
 
+-- Model / Limit
+makeFields ''AppLimit
+
 -- Model / Migration / KnowledgeModel
 makeFields ''KM_MigratorState.MigratorState
 
@@ -486,6 +491,9 @@ makeFields ''PackageBundle
 makeFields ''PersistentCommand
 
 makeFields ''PersistentCommandSimple
+
+-- Model / Plan
+makeFields ''AppPlan
 
 -- Model / Prefab
 makeFields ''Prefab
@@ -587,11 +595,11 @@ makeFields ''ActionKeyDTO
 makeFields ''AdminExecutionDTO
 
 -- Api / Resource / App
+makeFields ''AppDTO
+
 makeFields ''AppCreateDTO
 
-makeFields ''AppAdminCreateDTO
-
-makeFields ''AppDTO
+makeFields ''AppChangeDTO
 
 -- Api / Resource / Branch
 makeFields ''BranchChangeDTO
@@ -657,6 +665,9 @@ makeFields ''PackageDetailDTO
 
 -- Api / Resource / PackageBundle
 makeFields ''PackageBundleDTO
+
+-- Api / Resource / Plan
+makeFields ''AppPlanChangeDTO
 
 -- Api / Resource / Questionnaire
 makeFields ''QuestionnaireCreateDTO

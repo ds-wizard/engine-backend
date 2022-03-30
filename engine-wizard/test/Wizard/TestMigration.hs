@@ -5,16 +5,17 @@ import Shared.Database.DAO.Template.TemplateDAO
 import Shared.Database.Migration.Development.Package.Data.Packages
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
-import Wizard.Database.DAO.App.AppLimitDAO
 import Wizard.Database.DAO.Branch.BranchDAO
 import Wizard.Database.DAO.Branch.BranchDataDAO
 import Wizard.Database.DAO.Config.AppConfigDAO
 import Wizard.Database.DAO.Document.DocumentDAO
 import Wizard.Database.DAO.Document.DocumentQueueDAO
 import Wizard.Database.DAO.Feedback.FeedbackDAO
+import Wizard.Database.DAO.Limit.AppLimitDAO
 import qualified Wizard.Database.DAO.Migration.KnowledgeModel.MigratorDAO as KM_MigratorDAO
 import qualified Wizard.Database.DAO.Migration.Questionnaire.MigratorDAO as QTN_MigratorDAO
 import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
+import Wizard.Database.DAO.Plan.AppPlanDAO
 import Wizard.Database.DAO.Prefab.PrefabDAO
 import Wizard.Database.DAO.Questionnaire.QuestionnaireDAO
 import Wizard.Database.DAO.Submission.SubmissionDAO
@@ -36,6 +37,7 @@ import qualified Wizard.Database.Migration.Development.Migration.Questionnaire.M
 import Wizard.Database.Migration.Development.Package.Data.Packages
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
 import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
@@ -66,12 +68,14 @@ buildSchema appContext
   runInContext ACL_Schema.dropTables appContext
   runInContext U_Schema.dropTables appContext
   runInContext CFG_Schema.dropTables appContext
+  runInContext AP_Schema.dropTables appContext
   runInContext AL_Schema.dropTables appContext
   runInContext A_Schema.dropTables appContext
   -- 2. Create
   putStrLn "DB: Creating schema"
   runInContext A_Schema.createTables appContext
   runInContext AL_Schema.createTables appContext
+  runInContext AP_Schema.createTables appContext
   runInContext U_Schema.createTables appContext
   runInContext ACL_Schema.createTables appContext
   runInContext TML_Schema.createTables appContext
@@ -111,6 +115,7 @@ resetDB appContext = do
   runInContext deletePackages appContext
   runInContext deleteUsers appContext
   runInContext deleteAppLimits appContext
+  runInContext deleteAppPlans appContext
   runInContext deleteApps appContext
   runInContext (insertApp defaultApp) appContext
   runInContext (insertAppLimit defaultAppLimit) appContext
