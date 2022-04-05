@@ -1,6 +1,6 @@
 module Shared.Model.KnowledgeModel.KnowledgeModelAccessors where
 
-import Control.Lens
+import Control.Lens hiding (Choice)
 import qualified Data.Map as M
 import qualified Data.UUID as U
 
@@ -99,6 +99,37 @@ getAnswerUuidsForQuestionUuid km questionUuid =
   case M.lookup questionUuid (km ^. questionsM) of
     Just (OptionsQuestion' q) -> q ^. answerUuids
     _ -> []
+
+getAnswersForQuestionUuid :: KnowledgeModel -> U.UUID -> [Answer]
+getAnswersForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just (OptionsQuestion' q) -> foldl go [] (q ^. answerUuids)
+    _ -> []
+  where
+    go acc ansUuid =
+      case M.lookup ansUuid (km ^. answersM) of
+        Just ans -> acc ++ [ans]
+        Nothing -> acc
+
+-- -------------------
+-- CHOICE ------------
+-- -------------------
+getChoiceUuidsForQuestionUuid :: KnowledgeModel -> U.UUID -> [U.UUID]
+getChoiceUuidsForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just (MultiChoiceQuestion' q) -> q ^. choiceUuids
+    _ -> []
+
+getChoicesForQuestionUuid :: KnowledgeModel -> U.UUID -> [Choice]
+getChoicesForQuestionUuid km questionUuid =
+  case M.lookup questionUuid (km ^. questionsM) of
+    Just (MultiChoiceQuestion' q) -> foldl go [] (q ^. choiceUuids)
+    _ -> []
+  where
+    go acc choiceUuid =
+      case M.lookup choiceUuid (km ^. choicesM) of
+        Just choice -> acc ++ [choice]
+        Nothing -> acc
 
 -- -------------------
 -- METRICS ----------

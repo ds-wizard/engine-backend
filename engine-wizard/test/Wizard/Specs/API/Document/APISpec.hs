@@ -7,7 +7,6 @@ import Wizard.Specs.API.Common
 import Wizard.Specs.API.Document.Detail_Available_Submission_Services_GET
 import Wizard.Specs.API.Document.Detail_DELETE
 import Wizard.Specs.API.Document.List_GET
-import Wizard.Specs.API.Document.List_Housekeeping_GET
 import Wizard.Specs.API.Document.List_POST
 
 documentAPI appContext =
@@ -16,5 +15,4 @@ documentAPI appContext =
     list_GET appContext
     list_POST appContext
     detail_DELETE appContext
-    list_housekeeping_GET appContext
     detail_available_submission_Services_GET appContext

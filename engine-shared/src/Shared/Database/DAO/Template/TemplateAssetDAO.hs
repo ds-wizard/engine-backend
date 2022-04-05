@@ -6,6 +6,7 @@ import Control.Monad.IO.Class (MonadIO)
 import Control.Monad.Logger (MonadLogger)
 import Control.Monad.Reader (MonadReader, asks)
 import Data.String
+import qualified Data.UUID as U
 import Database.PostgreSQL.Simple
 import Database.PostgreSQL.Simple.ToField
 import Database.PostgreSQL.Simple.ToRow
@@ -82,7 +83,21 @@ sumTemplateAssetFileSize ::
   => m Int64
 sumTemplateAssetFileSize = do
   appUuid <- asks (^. appUuid')
-  createSumByFn entityName "file_size" appCondition [appUuid]
+  sumTemplateAssetFileSizeWithApp (U.toString appUuid)
+
+sumTemplateAssetFileSizeWithApp ::
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , HasAppUuid' s
+     , MonadIO m
+     )
+  => String
+  -> m Int64
+sumTemplateAssetFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [appUuid]
 
 insertTemplateAsset ::
      ( MonadLogger m

@@ -15,6 +15,7 @@ import Registry.Model.Context.AppContext
 import Registry.Model.Context.BaseContext
 import Registry.Model.Organization.Organization
 import Registry.Model.PackageBundle.PackageBundle
+import Registry.Model.PersistentCommand.PersistentCommand
 import Registry.Model.Statistics.InstanceStatistics
 import Shared.Api.Resource.Info.InfoDTO
 import Shared.Api.Resource.Package.PackageDTO
@@ -56,8 +57,6 @@ makeFields ''ServerConfigGeneral
 makeFields ''ServerConfigDatabase
 
 makeFields ''ServerConfigS3
-
-makeFields ''ServerConfigMail
 
 makeFields ''ServerConfigAnalytics
 
@@ -153,9 +152,13 @@ makeFields ''EditTagEvent
 
 makeFields ''DeleteTagEvent
 
-makeFields ''AddIntegrationEvent
+makeFields ''AddApiIntegrationEvent
 
-makeFields ''EditIntegrationEvent
+makeFields ''AddWidgetIntegrationEvent
+
+makeFields ''EditApiIntegrationEvent
+
+makeFields ''EditWidgetIntegrationEvent
 
 makeFields ''DeleteIntegrationEvent
 
@@ -222,7 +225,9 @@ makeFields ''Phase
 
 makeFields ''Tag
 
-makeFields ''Integration
+makeFields ''ApiIntegration
+
+makeFields ''WidgetIntegration
 
 -- Model / Organization
 makeFields ''Organization
@@ -238,6 +243,9 @@ makeFields ''PackagePattern
 
 -- Model / PackageBundle
 makeFields ''PackageBundle
+
+-- Model / PersistentCommand
+makeFields ''PersistentCommand
 
 -- Model / Statistics
 makeFields ''InstanceStatistics

@@ -1,5 +1,5 @@
 name: engine-registry
-version: '3.9.1'
+version: '3.10.0'
 synopsis: Engine Registry
 description: Engine Registry
 category: Web
@@ -28,20 +28,14 @@ library:
   - conduit
   - containers
   - data-default
-  - directory
   - exceptions
-  - filepath
   - engine-shared
   - ginger
   - hashable
-  - HaskellNet
-  - HaskellNet-SSL
   - http-types
   - lens
   - lens-aeson
   - memory
-  - mime-mail
-  - mime-types
   - minio-hs
   - mtl
   - monad-control

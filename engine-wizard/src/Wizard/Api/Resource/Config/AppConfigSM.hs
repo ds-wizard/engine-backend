@@ -98,3 +98,6 @@ instance ToSchema AppConfigSubmissionServiceRequest where
 instance ToSchema AppConfigSubmissionServiceRequestMultipart where
   declareNamedSchema =
     simpleToSchema' "_appConfigSubmissionServiceRequestMultipart" defaultSubmissionServiceRequestMultipart
+
+instance ToSchema AppConfigOwl where
+  declareNamedSchema = simpleToSchema' "_appConfigOwl" defaultOwl

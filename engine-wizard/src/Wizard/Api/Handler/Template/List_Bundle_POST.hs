@@ -27,7 +27,7 @@ list_bundle_POST ::
   -> MultipartData Mem
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TemplateBundleDTO)
 list_bundle_POST mTokenHeader mServerUrl multipartData =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let fs = files multipartData

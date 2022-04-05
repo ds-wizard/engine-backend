@@ -24,13 +24,16 @@ getTypehints reqDto =
   runInTransaction $ do
     km <- compileKnowledgeModel (reqDto ^. events) (reqDto ^. packageId) []
     question <- getQuestion km (reqDto ^. questionUuid)
-    integration <- getIntegration km (question ^. integrationUuid)
-    fileConfig <- getIntegrationConfig (integration ^. iId)
-    let kmQuestionConfig = question ^. props
-    let userRequest = M.singleton "q" (encode $ reqDto ^. q)
-    let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
-    iDtos <- retrieveTypehints integration variables
-    return . fmap (toDTO (integration ^. responseItemUrl)) $ iDtos
+    integration' <- getIntegration km (question ^. integrationUuid)
+    case integration' of
+      ApiIntegration' integration -> do
+        fileConfig <- getIntegrationConfig (integration ^. iId)
+        let kmQuestionConfig = question ^. props
+        let userRequest = M.singleton "q" (encode $ reqDto ^. q)
+        let variables = M.union userRequest . M.union kmQuestionConfig $ fileConfig
+        iDtos <- retrieveTypehints integration variables
+        return . fmap (toDTO (integration ^. itemUrl)) $ iDtos
+      WidgetIntegration' _ -> throwError . UserError $ _ERROR_SERVICE_TYPEHINT__BAD_TYPE_OF_INTEGRATION
   where
     getQuestion km questionUuid =
       case M.lookup questionUuid (km ^. questionsM) of

@@ -69,17 +69,17 @@ createUserByAdmin reqDto =
     uUuid <- liftIO generateUuid
     appUuid <- asks _appContextAppUuid
     clientUrl <- getAppClientUrl
-    createUserByAdminWithUuid reqDto uUuid appUuid clientUrl
+    createUserByAdminWithUuid reqDto uUuid appUuid clientUrl False
 
-createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> U.UUID -> String -> AppContextM UserDTO
-createUserByAdminWithUuid reqDto uUuid appUuid clientUrl =
+createUserByAdminWithUuid :: UserCreateDTO -> U.UUID -> U.UUID -> String -> Bool -> AppContextM UserDTO
+createUserByAdminWithUuid reqDto uUuid appUuid clientUrl shouldSendRegistrationEmail =
   runInTransaction $ do
     uPasswordHash <- generatePasswordHash (reqDto ^. password)
     serverConfig <- asks _appContextServerConfig
     appConfig <- getAppConfig
     let uRole = fromMaybe (appConfig ^. authentication . defaultRole) (reqDto ^. role)
     let uPermissions = getPermissionForRole serverConfig uRole
-    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl
+    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail
 
 registerUser :: UserCreateDTO -> AppContextM UserDTO
 registerUser reqDto =
@@ -93,21 +93,23 @@ registerUser reqDto =
     let uPermissions = getPermissionForRole serverConfig uRole
     clientUrl <- getAppClientUrl
     appUuid <- asks _appContextAppUuid
-    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl
+    createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl True
 
-createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> AppContextM UserDTO
-createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl =
+createUser :: UserCreateDTO -> U.UUID -> String -> String -> [String] -> U.UUID -> String -> Bool -> AppContextM UserDTO
+createUser reqDto uUuid uPasswordHash uRole uPermissions appUuid clientUrl shouldSendRegistrationEmail =
   runInTransaction $ do
     checkUserLimit
     checkActiveUserLimit
     validateUserEmailUniqueness (reqDto ^. email) appUuid
     now <- liftIO getCurrentTime
-    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions appUuid now
+    let user = fromUserCreateDTO reqDto uUuid uPasswordHash uRole uPermissions appUuid now shouldSendRegistrationEmail
     insertUser user
     actionKey <- createActionKey uUuid RegistrationActionKey appUuid
-    catchError
-      (sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash) clientUrl)
-      (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT)
+    when
+      shouldSendRegistrationEmail
+      (catchError
+         (sendRegistrationConfirmationMail (toDTO user) (actionKey ^. hash) clientUrl)
+         (\errMessage -> throwError $ GeneralServerError _ERROR_SERVICE_USER__ACTIVATION_EMAIL_NOT_SENT))
     sendAnalyticsEmailIfEnabled user
     return $ toDTO user
 

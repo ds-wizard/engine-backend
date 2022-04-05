@@ -10,11 +10,25 @@ import Shared.Database.Migration.Development.Event.Data.Events
 import Shared.Model.Event.Integration.IntegrationEvent
 import Shared.Util.Swagger
 
-instance ToSchema AddIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_addIntegrationEvent" "eventType" a_km1_iop
+instance ToSchema AddIntegrationEvent
 
-instance ToSchema EditIntegrationEvent where
-  declareNamedSchema = simpleToSchema'' "_editIntegrationEvent" "eventType" e_km1_iop
+instance ToSchema AddApiIntegrationEvent where
+  declareNamedSchema = simpleToSchema'' "_addApiIntegrationEvent" "eventType" a_km1_iop'
 
+instance ToSchema AddWidgetIntegrationEvent where
+  declareNamedSchema = simpleToSchema'' "_addWidgetIntegrationEvent" "eventType" a_km1_iwp'
+
+-- --------------------------------------------
+-- --------------------------------------------
+instance ToSchema EditIntegrationEvent
+
+instance ToSchema EditApiIntegrationEvent where
+  declareNamedSchema = simpleToSchema'' "_editApiIntegrationEvent" "eventType" e_km1_iop'
+
+instance ToSchema EditWidgetIntegrationEvent where
+  declareNamedSchema = simpleToSchema'' "_editWidgetIntegrationEvent" "eventType" e_km1_iwp'
+
+-- --------------------------------------------
+-- --------------------------------------------
 instance ToSchema DeleteIntegrationEvent where
   declareNamedSchema = simpleToSchema'' "_deleteIntegrationEvent" "eventType" d_km1_iop

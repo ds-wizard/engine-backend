@@ -16,6 +16,7 @@ type Detail_Callback_GET
      :> QueryParam "clientUrl" String
      :> QueryParam "error" String
      :> QueryParam "code" String
+     :> QueryParam "id_token" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] TokenDTO)
 
 detail_callback_GET ::
@@ -24,6 +25,7 @@ detail_callback_GET ::
   -> Maybe String
   -> Maybe String
   -> Maybe String
+  -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] TokenDTO)
-detail_callback_GET mServerUrl authId mClientUrl mError mCode =
-  runInUnauthService mServerUrl $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode
+detail_callback_GET mServerUrl authId mClientUrl mError mCode mIdToken =
+  runInUnauthService mServerUrl $ addTraceUuidHeader =<< loginUser authId mClientUrl mError mCode mIdToken

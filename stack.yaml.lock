@@ -127,6 +127,13 @@ packages:
       sha256: 19c2aaf9c09d341108777e3a4de975841f81518ed271b156983d25ec622dd266
   original:
     hackage: raven-haskell-0.1.4.0
+- completed:
+    hackage: rdf4h-5.0.1@sha256:76ecd4aa6b536add8d7c6c13aedd3e028d492d0044f28dba9eb130cfed063fdc,6470
+    pantry-tree:
+      size: 4230
+      sha256: 4c81222dbdb1a97adfb7f47421c404e6144c704e6806501d8e7d259f106b0fdd
+  original:
+    hackage: rdf4h-5.0.1
 snapshots:
 - completed:
     size: 585817

@@ -47,8 +47,6 @@ makeFields ''ServerConfigDatabase
 
 makeFields ''ServerConfigS3
 
-makeFields ''ServerConfigMail
-
 makeFields ''ServerConfigAnalytics
 
 makeFields ''ServerConfigSentry
@@ -145,9 +143,13 @@ makeFields ''EditTagEvent
 
 makeFields ''DeleteTagEvent
 
-makeFields ''AddIntegrationEvent
+makeFields ''AddApiIntegrationEvent
 
-makeFields ''EditIntegrationEvent
+makeFields ''AddWidgetIntegrationEvent
+
+makeFields ''EditApiIntegrationEvent
+
+makeFields ''EditWidgetIntegrationEvent
 
 makeFields ''DeleteIntegrationEvent
 
@@ -214,7 +216,9 @@ makeFields ''Phase
 
 makeFields ''Tag
 
-makeFields ''Integration
+makeFields ''ApiIntegration
+
+makeFields ''WidgetIntegration
 
 -- Model / Package
 makeFields ''Package

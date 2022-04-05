@@ -22,17 +22,19 @@ import Wizard.Service.Config.ServerConfigService
 import Wizard.Service.User.UserMapper
 
 import Wizard.Specs.API.App.APISpec
+import Wizard.Specs.API.App.Plan.APISpec
 import Wizard.Specs.API.BookReference.APISpec
 import Wizard.Specs.API.Branch.APISpec
-import Wizard.Specs.API.Cache.APISpec
 import Wizard.Specs.API.Config.APISpec
 import Wizard.Specs.API.Document.APISpec
+import Wizard.Specs.API.Domain.APISpec
 import Wizard.Specs.API.Feedback.APISpec
 import Wizard.Specs.API.Info.APISpec
 import Wizard.Specs.API.KnowledgeModel.APISpec
 import qualified Wizard.Specs.API.Migration.KnowledgeModel.APISpec as KM_MigrationAPI
 import qualified Wizard.Specs.API.Migration.Questionnaire.APISpec as QTN_MigrationAPI
 import Wizard.Specs.API.Package.APISpec
+import Wizard.Specs.API.Prefab.APISpec
 import Wizard.Specs.API.Questionnaire.APISpec
 import Wizard.Specs.API.Questionnaire.ProjectTag.APISpec
 import Wizard.Specs.API.Questionnaire.Version.APISpec
@@ -43,6 +45,7 @@ import Wizard.Specs.API.Template.Asset.APISpec
 import Wizard.Specs.API.Template.File.APISpec
 import Wizard.Specs.API.Token.APISpec
 import Wizard.Specs.API.Typehint.APISpec
+import Wizard.Specs.API.Usage.APISpec
 import Wizard.Specs.API.User.APISpec
 import Wizard.Specs.API.Version.APISpec
 import Wizard.Specs.Integration.Http.Common.ResponseMapperSpec
@@ -162,17 +165,19 @@ main =
          before (resetDB appContext) $ describe "INTEGRATION TESTING" $ do
            describe "API" $ do
              appAPI appContext
+             appPlanAPI appContext
              bookReferenceAPI appContext
              branchAPI appContext
-             cacheAPI appContext
              configAPI appContext
              documentAPI appContext
+             domainAPI appContext
              feedbackAPI appContext
              infoAPI appContext
              knowledgeModelAPI appContext
              KM_MigrationAPI.migrationAPI appContext
              QTN_MigrationAPI.migrationAPI appContext
              packageAPI appContext
+             prefabAPI appContext
              questionnaireAPI appContext
              questionnaireProjectTagAPI appContext
              questionnaireVersionAPI appContext
@@ -183,6 +188,7 @@ main =
              templateFileAPI appContext
              typehintAPI appContext
              tokenAPI appContext
+             usageAPI appContext
              userAPI appContext
              versionAPI appContext
            describe "SERVICE" $ do

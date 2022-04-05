@@ -17,6 +17,7 @@ import Wizard.Api.Resource.App.AppDTO
 import Wizard.Api.Resource.App.AppJM ()
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
 import Wizard.Database.DAO.App.AppDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import Wizard.Database.Migration.Development.App.Data.Apps
 import Wizard.Localization.Messages.Public
@@ -42,19 +43,26 @@ reqMethod = methodPost
 
 reqUrl = "/apps"
 
-reqHeaders = [reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDto = appCreateDto
+reqDtoT dto = dto
 
-reqBody = encode reqDto
+reqBodyT dto = encode (reqDtoT dto)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext =
-  it "HTTP 201 CREATED" $
-     -- GIVEN: Prepare expectation
+test_201 appContext = do
+  create_test_201 "HTTP 201 CREATED (anonymous)" appContext appCreateDto [] 2 False
+  create_test_201 "HTTP 201 CREATED (admin)" appContext appCreateDto [reqAuthHeader] 1 True
+
+create_test_201 title appContext reqDto authHeaders persistentCommandCount userActive =
+  it title $
+     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeaders
+    let reqBody = reqBodyT reqDto
+    -- GIVEN: Prepare expectation
     let expStatus = 201
     let expHeaders = resCorsHeadersPlain
      -- WHEN: Call API
@@ -66,17 +74,27 @@ test_201 appContext =
     -- AND: Find result in DB and compare with expectation state
     (Right app) <- runInContextIO (findAppByClientUrl $ resDto ^. clientUrl) appContext
     let updatedAppContext = appContext & appUuid .~ (app ^. uuid)
-    assertCountInDB findUsers updatedAppContext 1
+    (Right [user]) <- runInContextIO findUsers updatedAppContext
+    liftIO $ user ^. active `shouldBe` userActive
     assertCountInDB findActionKeys updatedAppContext 1
+    assertCountInDB findPersistentCommands updatedAppContext persistentCommandCount
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "lastName"
-  it "HTTP 400 BAD REQUEST if appId is already used" $
+  create_test_400_app_id_uniqueness
+    "HTTP 400 BAD REQUEST if appId is already used (anonymous)"
+    appContext
+    [reqAuthHeader]
+  create_test_400_app_id_uniqueness "HTTP 400 BAD REQUEST if appId is already used (admin)" appContext [reqAuthHeader]
+
+create_test_400_app_id_uniqueness title appContext authHeaders =
+  it title $
     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeaders
     let reqDto = appCreateDto & appId .~ "default"
     let reqBody = encode reqDto
     -- AND: Prepare expectation

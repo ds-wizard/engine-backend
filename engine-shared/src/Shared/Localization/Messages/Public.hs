@@ -50,6 +50,9 @@ _ERROR_VALIDATION__FORBIDDEN_CHARACTERS word =
 -- Absence
 _ERROR_VALIDATION__FILE_ABSENCE = LocaleRecord "error.validation.file_absence" "Missing file" []
 
+_ERROR_VALIDATION__FIELD_ABSENCE fieldName =
+  LocaleRecord "error.validation.field_absence" "Missing field: '%s'" [fieldName]
+
 _ERROR_VALIDATION__HASH_ABSENCE =
   LocaleRecord "error.validation.hash_absence" "A hash query param is absent or doesn't exist in database" []
 

@@ -115,6 +115,26 @@ createFindEntitiesFn entityName = do
   let action conn = query_ conn (fromString sql)
   runDB action
 
+createFindEntitiesSortedFn ::
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , MonadIO m
+     , FromRow entity
+     , FromRow entity
+     )
+  => String
+  -> [Sort]
+  -> m [entity]
+createFindEntitiesSortedFn entityName sort = do
+  let sql = f' "SELECT * FROM %s %s" [entityName, mapSort sort]
+  logInfoI _CMP_DATABASE sql
+  let action conn = query_ conn (fromString sql)
+  runDB action
+
 createFindEntitiesByFn ::
      ( MonadLogger m
      , MonadError AppError m
@@ -132,6 +152,29 @@ createFindEntitiesByFn ::
 createFindEntitiesByFn entityName [] = createFindEntitiesFn entityName
 createFindEntitiesByFn entityName queryParams = do
   let sql = fromString $ f' "SELECT * FROM %s WHERE %s" [entityName, mapToDBQuerySql queryParams]
+  let params = fmap snd queryParams
+  logQuery sql params
+  let action conn = query conn sql params
+  runDB action
+
+createFindEntitiesBySortedFn ::
+     ( MonadLogger m
+     , MonadError AppError m
+     , MonadReader s m
+     , HasDbPool' s
+     , HasIdentityUuid' s
+     , HasTraceUuid' s
+     , MonadIO m
+     , FromRow entity
+     , FromRow entity
+     )
+  => String
+  -> [(String, String)]
+  -> [Sort]
+  -> m [entity]
+createFindEntitiesBySortedFn entityName [] sort = createFindEntitiesSortedFn entityName sort
+createFindEntitiesBySortedFn entityName queryParams sort = do
+  let sql = fromString $ f' "SELECT * FROM %s WHERE %s %s" [entityName, mapToDBQuerySql queryParams, mapSort sort]
   let params = fmap snd queryParams
   logQuery sql params
   let action conn = query conn sql params

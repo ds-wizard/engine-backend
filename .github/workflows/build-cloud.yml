@@ -47,7 +47,7 @@ jobs:
       run: echo "Force push detected. Cache may be invalidated..."
 
     - name: Checkout git repository
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Fetch all git history
       run: |
@@ -61,7 +61,7 @@ jobs:
 # (1) -> Setup cache
     - name: Cache ~/.stack
       id: cache-stack
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.stack
         key: stack-home-ubuntu18-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
@@ -70,7 +70,7 @@ jobs:
     
     - name: Cache postgresql-migration
       id: cache-postgresql-migration
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: vendor/postgresql-migration/.stack-work
         key: postgresql-migration-ubuntu18-${{ hashFiles('vendor/postgresql-migration/package.yaml')}}-${{ hashFiles('vendor/postgresql-migration/**/*.hs') }}
@@ -86,7 +86,7 @@ jobs:
 
     - name: Cache engine-shared
       id: cache-engine-shared
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: engine-shared/.stack-work
         key: engine-shared-ubuntu18-${{ hashFiles('engine-shared/package.yaml')}}-${{ hashFiles('engine-shared/**/*.hs') }}
@@ -102,7 +102,7 @@ jobs:
 
     - name: Cache engine-registry
       id: cache-engine-registry
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: engine-registry/.stack-work
         key: engine-registry-${{ matrix.component }}-ubuntu18-${{ hashFiles('engine-registry/package.yaml')}}-${{ hashFiles('engine-registry/**/*.hs') }}
@@ -118,7 +118,7 @@ jobs:
     
     - name: Cache engine-wizard
       id: cache-engine-wizard
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard/.stack-work
@@ -135,7 +135,7 @@ jobs:
     
     - name: Cache engine-wizard-metamodel-migrator
       id: cache-engine-wizard-metamodel-migrator
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       if: matrix.component == 'wizard'
       with:
         path: engine-wizard-metamodel-migrator/.stack-work
@@ -152,7 +152,7 @@ jobs:
     
     - name: Cache Stack in ~/.local/bin
       id: cache-stack-local-bin
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: ~/.local/bin
         key: stack-local-bin-ubuntu18-${{ matrix.stack }}

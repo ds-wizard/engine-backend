@@ -240,21 +240,40 @@ data Tag =
   deriving (Show, Eq, Generic)
 
 -- ------------------------------------------------
-data Integration =
-  Integration
-    { _integrationUuid :: U.UUID
-    , _integrationIId :: String
-    , _integrationName :: String
-    , _integrationProps :: [String]
-    , _integrationLogo :: String
-    , _integrationRequestMethod :: String
-    , _integrationRequestUrl :: String
-    , _integrationRequestHeaders :: [MapEntry String String]
-    , _integrationRequestBody :: String
-    , _integrationResponseListField :: String
-    , _integrationResponseItemUrl :: String
-    , _integrationResponseItemId :: String
-    , _integrationResponseItemTemplate :: String
-    , _integrationAnnotations :: [MapEntry String String]
+data Integration
+  = ApiIntegration' ApiIntegration
+  | WidgetIntegration' WidgetIntegration
+  deriving (Show, Eq, Generic)
+
+data ApiIntegration =
+  ApiIntegration
+    { _apiIntegrationUuid :: U.UUID
+    , _apiIntegrationIId :: String
+    , _apiIntegrationName :: String
+    , _apiIntegrationProps :: [String]
+    , _apiIntegrationLogo :: String
+    , _apiIntegrationRequestMethod :: String
+    , _apiIntegrationRequestUrl :: String
+    , _apiIntegrationRequestHeaders :: [MapEntry String String]
+    , _apiIntegrationRequestBody :: String
+    , _apiIntegrationRequestEmptySearch :: Bool
+    , _apiIntegrationResponseListField :: String
+    , _apiIntegrationResponseItemId :: String
+    , _apiIntegrationResponseItemTemplate :: String
+    , _apiIntegrationItemUrl :: String
+    , _apiIntegrationAnnotations :: [MapEntry String String]
+    }
+  deriving (Show, Eq, Generic)
+
+data WidgetIntegration =
+  WidgetIntegration
+    { _widgetIntegrationUuid :: U.UUID
+    , _widgetIntegrationIId :: String
+    , _widgetIntegrationName :: String
+    , _widgetIntegrationProps :: [String]
+    , _widgetIntegrationLogo :: String
+    , _widgetIntegrationWidgetUrl :: String
+    , _widgetIntegrationItemUrl :: String
+    , _widgetIntegrationAnnotations :: [MapEntry String String]
     }
   deriving (Show, Eq, Generic)

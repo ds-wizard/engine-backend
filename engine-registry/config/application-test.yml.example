@@ -2,7 +2,6 @@ general:
   environment: Test
   serverPort: 3000
   clientUrl: http://localhost:3001
-  templateFolder: templates
 
 database:
   connectionString: postgresql://postgres:postgres@localhost:5432/postgres
@@ -10,14 +9,6 @@ database:
 s3:
   url: http://localhost:9000
   bucket: engine-registry
-
-mail:
-  enabled: false
-  name:
-  email:
-  host:
-  username:
-  password:
 
 analytics:
   enabled: false

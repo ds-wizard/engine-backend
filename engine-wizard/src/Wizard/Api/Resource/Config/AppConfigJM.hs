@@ -180,3 +180,9 @@ instance FromJSON AppConfigSubmissionServiceRequestMultipart where
 
 instance ToJSON AppConfigSubmissionServiceRequestMultipart where
   toJSON = simpleToJSON "_appConfigSubmissionServiceRequestMultipart"
+
+instance FromJSON AppConfigOwl where
+  parseJSON = simpleParseJSON "_appConfigOwl"
+
+instance ToJSON AppConfigOwl where
+  toJSON = simpleToJSON "_appConfigOwl"

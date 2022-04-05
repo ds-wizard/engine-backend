@@ -25,7 +25,7 @@ list_all_GET ::
   -> Maybe String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String] [TemplateSuggestionDTO])
 list_all_GET mTokenHeader mServerUrl mOrganizationId mTmlId =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $
     addTraceUuidHeader =<< do
       let queryParams = catMaybes [(,) "organization_id" <$> mOrganizationId, (,) "template_id" <$> mTmlId]

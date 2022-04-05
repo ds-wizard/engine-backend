@@ -68,4 +68,7 @@ createSentryHandler context = do
       let buildVersion = context ^. buildInfoConfig . version
       return $ sentryOnException buildVersion sentryService
     else do
-      return (\_ _ -> return ())
+      return
+        (\_ error -> do
+           print error
+           return ())

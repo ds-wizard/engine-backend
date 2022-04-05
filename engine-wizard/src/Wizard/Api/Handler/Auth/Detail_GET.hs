@@ -11,13 +11,18 @@ type Detail_GET
    = Header "Host" String
      :> "auth"
      :> Capture "id" String
+     :> QueryParam "flow" String
      :> QueryParam "clientUrl" String
      :> Get '[ SafeJSON] (Headers '[ Header "x-trace-uuid" String] NoContent)
 
 detail_GET ::
-     Maybe String -> String -> Maybe String -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
-detail_GET mServerUrl authId mClientUrl =
+     Maybe String
+  -> String
+  -> Maybe String
+  -> Maybe String
+  -> BaseContextM (Headers '[ Header "x-trace-uuid" String] NoContent)
+detail_GET mServerUrl authId mFlow mClientUrl =
   runInUnauthService mServerUrl $
   addTraceUuidHeader =<< do
-    createAuthenticationUrl authId mClientUrl
+    createAuthenticationUrl authId mFlow mClientUrl
     return NoContent

@@ -46,41 +46,35 @@ reqBody = ""
 -- ----------------------------------------------------
 test_200 appContext = do
   create_test_200
-    "HTTP 200 OK (user token)"
+    "HTTP 200 OK"
     appContext
     "/templates"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (user token - query 'q')"
+    "HTTP 200 OK (query 'q')"
     appContext
     "/templates?q=Questionnaire Report"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (user token - query 'q' for non-existing)"
+    "HTTP 200 OK (query 'q' for non-existing)"
     appContext
     "/templates?q=Non-existing Questionnaire Report"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 0 0 0) [])
   create_test_200
-    "HTTP 200 OK (user token - query 'templateId')"
+    "HTTP 200 OK (query 'templateId')"
     appContext
     "/templates?templateId=questionnaire-report"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
   create_test_200
-    "HTTP 200 OK (user token - query 'templateId' for non-existing)"
+    "HTTP 200 OK (query 'templateId' for non-existing)"
     appContext
     "/templates?templateId=non-existing-template"
     reqAuthHeader
     (Page "templates" (PageMetadata 20 0 0 0) [])
-  create_test_200
-    "HTTP 200 OK (service token)"
-    appContext
-    "/templates"
-    reqServiceHeader
-    (Page "templates" (PageMetadata 20 1 1 0) [commonWizardTemplateSimpleDTO])
 
 create_test_200 title appContext reqUrl reqAuthHeader expDto =
   it title $

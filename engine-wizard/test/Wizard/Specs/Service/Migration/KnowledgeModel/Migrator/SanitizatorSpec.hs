@@ -48,7 +48,7 @@ sanitizatorSpec =
        do
         let kmChapterUuids = _chapterUuid <$> [chapter3, chapter2]
         let kmTagUuids = _tagUuid <$> [tagBioInformatic]
-        let kmIntegrationUuids = _integrationUuid <$> [bioPortal]
+        let kmIntegrationUuids = [widgetPortal ^. uuid, bioPortal ^. uuid]
         let edited_e_km1 =
               ((e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids) &
               integrationUuids .~ ChangedValue kmIntegrationUuids
@@ -60,7 +60,8 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
-        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
+        resEvent ^. integrationUuids `shouldBe`
+          ChangedValue [widgetPortal ^. uuid, bioPortal ^. uuid, ontologyPortal ^. uuid]
       it "Event - all KM uuids exists, new added in event but without existing in KM" $
         -- Given:
        do
@@ -73,7 +74,8 @@ sanitizatorSpec =
               [fromJust . U.fromString $ "b28d289b-e373-49a2-9c91-b153cb62d894"] ++ [tagDataScience ^. uuid]
         let kmIntegrationUuids =
               [bioPortal ^. uuid] ++
-              [fromJust . U.fromString $ "eb75a1a7-2760-446a-9a44-17b8f38679bf"] ++ [ontologyPortal ^. uuid]
+              [fromJust . U.fromString $ "eb75a1a7-2760-446a-9a44-17b8f38679bf"] ++
+              [widgetPortal ^. uuid, ontologyPortal ^. uuid]
         let edited_e_km1 =
               ((e_km1 & chapterUuids .~ ChangedValue kmChapterUuids) & tagUuids .~ ChangedValue kmTagUuids) &
               integrationUuids .~ ChangedValue kmIntegrationUuids
@@ -85,7 +87,8 @@ sanitizatorSpec =
         resEvent ^. uuid `shouldNotBe` e_km1 ^. uuid
         resEvent ^. chapterUuids `shouldBe` ChangedValue [chapter3 ^. uuid, chapter2 ^. uuid, chapter1 ^. uuid]
         resEvent ^. tagUuids `shouldBe` ChangedValue [tagBioInformatic ^. uuid, tagDataScience ^. uuid]
-        resEvent ^. integrationUuids `shouldBe` ChangedValue [bioPortal ^. uuid, ontologyPortal ^. uuid]
+        resEvent ^. integrationUuids `shouldBe`
+          ChangedValue [bioPortal ^. uuid, widgetPortal ^. uuid, ontologyPortal ^. uuid]
     -- -------------------------------------------------------------
     -- -------------------------------------------------------------
     describe "Sanatize: EditChapterEvent" $ do

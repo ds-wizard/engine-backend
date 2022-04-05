@@ -41,7 +41,7 @@ handleWebsocketMessage entityId connectionUuid connection handleClose disconnect
   eRawData <- liftIO $ E.try (receiveData connection)
   case eRawData of
     Right rawData -> do
-      log connectionUuid "New message recieved"
+      log connectionUuid "New message received"
       case eitherDecode rawData of
         Right action ->
           catchError (handleAction action) (handleError continue connectionUuid connection entityId disconnectUser)

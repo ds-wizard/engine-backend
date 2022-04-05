@@ -14,9 +14,6 @@ ADD engine-registry-bin ./scripts/docker-run.sh /application/
 # Create folder for configs & customization
 RUN mkdir /application/engine-registry
 
-# Add templates
-ADD templates /application/engine-registry/templates
-
 # Add configs
 ADD config/application.yml /application/engine-registry/config/application.yml
 ADD config/build-info.yml /application/engine-registry/config/build-info.yml

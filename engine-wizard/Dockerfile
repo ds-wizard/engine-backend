@@ -11,9 +11,6 @@ RUN apt-get update && apt-get -qq -y install libmemcached-dev ca-certificates ne
 # Add built exectutable binary and run script
 ADD engine-wizard-bin ./scripts/docker-run.sh /application/
 
-# Add templates
-ADD templates /application/engine-wizard/templates
-
 # Add configs
 ADD config/application.yml config/integration.yml config/build-info.yml config/localization.json /application/engine-wizard/config/
 

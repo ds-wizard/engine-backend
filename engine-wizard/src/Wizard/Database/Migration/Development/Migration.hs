@@ -29,6 +29,10 @@ import qualified Wizard.Database.Migration.Development.Package.PackageMigration 
 import qualified Wizard.Database.Migration.Development.Package.PackageSchemaMigration as PKG_Schema
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandMigration as PC
 import qualified Wizard.Database.Migration.Development.PersistentCommand.PersistentCommandSchemaMigration as PC_Schema
+import qualified Wizard.Database.Migration.Development.Plan.AppPlanMigration as AP
+import qualified Wizard.Database.Migration.Development.Plan.AppPlanSchemaMigration as AP_Schema
+import qualified Wizard.Database.Migration.Development.Prefab.PrefabMigration as PF
+import qualified Wizard.Database.Migration.Development.Prefab.PrefabSchemaMigration as PF_Schema
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireMigration as QTN
 import qualified Wizard.Database.Migration.Development.Questionnaire.QuestionnaireSchemaMigration as QTN_Schema
 import qualified Wizard.Database.Migration.Development.Submission.SubmissionSchemaMigration as SUB_Schema
@@ -41,6 +45,7 @@ import Wizard.Util.Logger
 runMigration = do
   logInfo _CMP_MIGRATION "started"
   -- 1. Drop schema
+  PF_Schema.dropTables
   PC_Schema.dropTables
   SUB_Schema.dropTables
   ACK_Schema.dropTables
@@ -56,11 +61,13 @@ runMigration = do
   ACL_Schema.dropTables
   U_Schema.dropTables
   CFG_Schema.dropTables
+  AP_Schema.dropTables
   AL_Schema.dropTables
   A_Schema.dropTables
   -- 2. Create schema
   A_Schema.createTables
   AL_Schema.createTables
+  AP_Schema.createTables
   U_Schema.createTables
   ACL_Schema.createTables
   TML_Schema.createTables
@@ -76,11 +83,13 @@ runMigration = do
   KM_MIG_Schema.createTables
   SUB_Schema.createTables
   PC_Schema.createTables
+  PF_Schema.createTables
   -- 3. Load S3 fixtures
   TML.runS3Migration
   -- 4. Load fixtures
   A.runMigration
   AL.runMigration
+  AP.runMigration
   CFG.runMigration
   U.runMigration
   TML.runMigration
@@ -95,5 +104,6 @@ runMigration = do
   ACL.runMigration
   ACK.runMigration
   PC.runMigration
+  PF.runMigration
   logInfo _CMP_MIGRATION "ended"
   return Nothing

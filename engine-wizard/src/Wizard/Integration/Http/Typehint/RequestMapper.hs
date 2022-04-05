@@ -13,7 +13,7 @@ import Shared.Model.KnowledgeModel.KnowledgeModel
 import Wizard.Model.Http.HttpRequest
 import Wizard.Util.Interpolation (interpolateMapValues, interpolateString)
 
-toRetrieveTypehintsRequest :: Integration -> M.Map String String -> HttpRequest
+toRetrieveTypehintsRequest :: ApiIntegration -> M.Map String String -> HttpRequest
 toRetrieveTypehintsRequest intConfig variables =
   HttpRequest
     { _httpRequestRequestMethod = intConfig ^. requestMethod

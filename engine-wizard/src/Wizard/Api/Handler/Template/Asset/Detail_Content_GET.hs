@@ -29,7 +29,7 @@ detail_content_GET ::
   -> String
   -> BaseContextM (Headers '[ Header "x-trace-uuid" String, Header "Content-Type" String] FileStream)
 detail_content_GET mTokenHeader mServerUrl tmlId assetUuid =
-  getServiceTokenOrAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
+  getAuthServiceExecutor mTokenHeader mServerUrl $ \runInAuthService ->
     runInAuthService $ do
       (asset, result) <- getTemplateAssetContent tmlId assetUuid
       let cdHeader = asset ^. contentType

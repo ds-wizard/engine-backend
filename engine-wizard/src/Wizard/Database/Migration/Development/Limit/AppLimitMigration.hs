@@ -1,7 +1,7 @@
 module Wizard.Database.Migration.Development.Limit.AppLimitMigration where
 
 import Shared.Constant.Component
-import Wizard.Database.DAO.App.AppLimitDAO
+import Wizard.Database.DAO.Limit.AppLimitDAO
 import Wizard.Database.Migration.Development.Limit.Data.AppLimits
 import Wizard.Util.Logger
 

@@ -1,0 +1,88 @@
+name: Metamodel Migrator CI
+
+on:
+  push:
+    paths:
+      - 'engine-wizard-metamodel-migrator/**/*.hs'
+      - 'engine-wizard-metamodel-migrator/package.yaml'
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-20.04
+    
+    env:
+      STACK_VERSION: '2.5.1'
+
+    steps:
+    - name: Detect force push
+      if: github.event_name == 'push' && github.event.forced
+      run: echo "Force push detected. Cache may be invalidated..."
+
+    - name: Checkout git repository
+      uses: actions/checkout@v3
+
+    - name: Fetch all git history
+      run: |
+        git fetch --prune --unshallow
+    
+    - name: Prepare ~/.local/bin
+      run: |
+        mkdir -p ~/.local/bin
+        export PATH=~/.local/bin:$PATH
+
+# (1) -> Setup cache
+    - name: Cache ~/.stack
+      id: cache-stack
+      uses: actions/cache@v3
+      with:
+        path: ~/.stack
+        key: stack-home-ubuntu20-${{ hashFiles('**/package.yaml')}}-${{ hashFiles('**/stack.yaml*') }}
+        restore-keys: |
+          stack-home-ubuntu20-
+  
+    - name: Cache engine-wizard-metamodel-migrator
+      id: cache-engine-wizard-metamodel-migrator
+      uses: actions/cache@v3
+      with:
+        path: engine-wizard-metamodel-migrator/.stack-work
+        key: engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-${{ hashFiles('engine-wizard-metamodel-migrator/**/*.hs') }}
+        restore-keys: |
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-${{ hashFiles('engine-wizard-metamodel-migrator/package.yaml')}}-
+          engine-wizard-metamodel-migrator-${{ matrix.component }}-ubuntu20-
+    
+    - name: Invalidate engine-wizard-metamodel-migrator cache (force push)
+      id: invalidate-cache-engine-wizard-metamodel-migrator
+      if: github.event_name == 'push' && github.event.forced && steps.cache-engine-wizard-metamodel-migrator.outputs.cache-hit != 'true'
+      run: |
+        rm -rf engine-wizard-metamodel-migrator/.stack-work
+    
+    - name: Cache Stack in ~/.local/bin
+      id: cache-stack-local-bin
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/bin
+        key: stack-local-bin-ubuntu20-${{ matrix.stack }}
+
+# (2) -> Prepare and install dependencies     
+    - name: Setup stack
+      if: steps.cache-stack-local-bin.outputs.cache-hit != 'true'
+      run: |
+        curl -L https://github.com/commercialhaskell/stack/releases/download/v$STACK_VERSION/stack-$STACK_VERSION-linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack';
+        
+    - name: Install GHC and dependencies
+      run: |
+        stack build engine-wizard-metamodel-migrator --test --no-terminal --install-ghc --only-dependencies
+        
+# (3) -> Build and test
+    - name: Build and test migrator 
+      run: |
+        stack build engine-wizard-metamodel-migrator --test --no-terminal --skip-ghc-check 2>&1 | tee log.txt
+        WARNINGS=$(grep -o ': warning: ' log.txt | wc -l)
+        if [ $WARNINGS -gt "0" ]; then
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          echo "!! GHC WARNINGS DETECTED ($WARNINGS):"
+          grep ': warning: ' -A 3 log.txt
+          echo "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          exit 1
+        fi

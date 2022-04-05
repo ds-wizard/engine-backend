@@ -73,9 +73,6 @@ userWithoutPerm serverConfig perm =
   let allPerms = getPermissionForRole serverConfig _USER_ROLE_ADMIN
    in userAlbert & permissions .~ L.delete perm allPerms
 
-reqServiceHeader :: Header
-reqServiceHeader = ("Authorization", "Bearer my-service-token")
-
 createInvalidJsonTest reqMethod reqUrl missingField =
   it "HTTP 400 BAD REQUEST when json is not valid" $ do
     let reqHeaders = [reqAuthHeader, reqCtHeader]

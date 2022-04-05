@@ -49,9 +49,7 @@ reqBody = encode reqDto
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext = do
-  create_test_201 "HTTP 201 CREATED (user token)" appContext reqAuthHeader
-  create_test_201 "HTTP 201 CREATED (service token)" appContext reqServiceHeader
+test_201 appContext = create_test_201 "HTTP 201 CREATED (user token)" appContext reqAuthHeader
 
 create_test_201 title appContext reqAuthHeader =
   it title $

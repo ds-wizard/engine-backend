@@ -17,6 +17,7 @@ import Shared.Model.Error.Error
 import Wizard.Api.Resource.User.UserDTO
 import Wizard.Api.Resource.User.UserJM ()
 import Wizard.Database.DAO.ActionKey.ActionKeyDAO
+import Wizard.Database.DAO.PersistentCommand.PersistentCommandDAO
 import Wizard.Database.DAO.User.UserDAO
 import qualified Wizard.Database.Migration.Development.ActionKey.ActionKeyMigration as ACK
 import Wizard.Database.Migration.Development.User.Data.Users
@@ -43,22 +44,28 @@ reqMethod = methodPost
 
 reqUrl = "/users"
 
-reqHeaders = [reqAuthHeader, reqCtHeader]
+reqHeadersT authHeader = authHeader ++ [reqCtHeader]
 
-reqDto = userJohnCreate
+reqDtoT dto = dto
 
-reqBody = encode reqDto
+reqBodyT dto = encode (reqDtoT dto)
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
-test_201 appContext =
-  it "HTTP 201 CREATED" $
-     -- GIVEN: Prepare expectation
+test_201 appContext = do
+  create_test_201 "HTTP 201 CREATED (anonymous)" appContext userJohnCreate userJohnCreateDS [] 1 False
+  create_test_201 "HTTP 201 CREATED (admin)" appContext userJohnCreate userJohnCreate [reqAuthHeader] 0 True
+
+create_test_201 title appContext reqDto expDto authHeaders persistentCommandCount userActive =
+  it title $
+     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeaders
+    let reqBody = reqBodyT reqDto
+     -- GIVEN: Prepare expectation
     let expStatus = 201
     let expHeaders = resCorsHeadersPlain
-    let expDto = userJohnCreate
     let expBody = encode expDto
      -- AND: Run migrations
     runInContextIO ACK.runMigration appContext
@@ -68,19 +75,28 @@ test_201 appContext =
     let (status, headers, resDto) = destructResponse response :: (Int, ResponseHeaders, UserDTO)
     assertResStatus status expStatus
     assertResHeaders headers expHeaders
-    compareUserCreateDtos resDto expDto
+    compareUserCreateDtos resDto expDto userActive
     -- AND: Find result in DB and compare with expectation state
     assertCountInDB findActionKeys appContext 1
     assertCountInDB findUsers appContext 2
+    assertCountInDB findPersistentCommands appContext persistentCommandCount
 
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 -- ----------------------------------------------------
 test_400 appContext = do
   createInvalidJsonTest reqMethod reqUrl "lastName"
-  it "HTTP 400 BAD REQUEST if email is already registered" $
+  create_test_400_email_uniqueness "HTTP 400 BAD REQUEST if email is already registered (anonymous)" appContext []
+  create_test_400_email_uniqueness
+    "HTTP 400 BAD REQUEST if email is already registered (admin)"
+    appContext
+    [reqAuthHeader]
+
+create_test_400_email_uniqueness title appContext authHeaders =
+  it title $
     -- GIVEN: Prepare request
    do
+    let reqHeaders = reqHeadersT authHeaders
     let reqDto = userJohnCreate & email .~ (userAlbert ^. email)
     let reqBody = encode reqDto
     -- AND: Prepare expectation

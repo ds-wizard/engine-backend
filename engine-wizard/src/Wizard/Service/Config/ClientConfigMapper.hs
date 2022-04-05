@@ -24,6 +24,7 @@ toClientConfigDTO serverConfig appConfig app =
     , _clientConfigDTOTemplate = appConfig ^. template
     , _clientConfigDTOSubmission = SimpleFeature $ appConfig ^. submission . enabled
     , _clientConfigDTOCloud = toClientConfigCloudDTO (serverConfig ^. cloud) app
+    , _clientConfigDTOOwl = appConfig ^. owl
     }
 
 toClientAuthDTO :: AppConfigAuth -> ClientConfigAuthDTO

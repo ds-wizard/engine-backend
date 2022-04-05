@@ -12,7 +12,6 @@ data ServerConfig =
     , _serverConfigMessaging :: ServerConfigMessaging
     , _serverConfigJwt :: ServerConfigJwt
     , _serverConfigRoles :: ServerConfigRoles
-    , _serverConfigMail :: ServerConfigMail
     , _serverConfigRegistry :: ServerConfigRegistry
     , _serverConfigAnalytics :: ServerConfigAnalytics
     , _serverConfigSentry :: ServerConfigSentry
@@ -20,6 +19,7 @@ data ServerConfig =
     , _serverConfigDocument :: ServerConfigDocument
     , _serverConfigFeedback :: ServerConfigFeedback
     , _serverConfigPersistentCommand :: ServerConfigPersistentCommand
+    , _serverConfigPlan :: ServerConfigPlan
     , _serverConfigQuestionnaire :: ServerConfigQuestionnaire
     , _serverConfigLogging :: ServerConfigLogging
     , _serverConfigCloud :: ServerConfigCloud
@@ -31,10 +31,8 @@ data ServerConfigGeneral =
     { _serverConfigGeneralEnvironment :: Environment
     , _serverConfigGeneralClientUrl :: String
     , _serverConfigGeneralServerPort :: Int
-    , _serverConfigGeneralServiceToken :: String
     , _serverConfigGeneralSecret :: String
     , _serverConfigGeneralIntegrationConfig :: String
-    , _serverConfigGeneralTemplateFolder :: String
     , _serverConfigGeneralRemoteLocalizationUrl :: Maybe String
     , _serverConfigGeneralClientStyleBuilderUrl :: String
     }
@@ -103,6 +101,12 @@ data ServerConfigPersistentCommand =
 data ServerConfigPersistentCommandListenerJob =
   ServerConfigPersistentCommandListenerJob
     { _serverConfigPersistentCommandListenerJobEnabled :: Bool
+    }
+  deriving (Generic, Show)
+
+data ServerConfigPlan =
+  ServerConfigPlan
+    { _serverConfigPlanRecomputeJob :: ServerConfigCronWorker
     }
   deriving (Generic, Show)
 

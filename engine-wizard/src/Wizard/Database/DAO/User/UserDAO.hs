@@ -35,6 +35,10 @@ findUsers = do
   appUuid <- asks _appContextAppUuid
   createFindEntitiesByFn entityName [appQueryUuid appUuid, ("machine", "false")]
 
+findUsersWithAppFiltered :: String -> [(String, String)] -> AppContextM [User]
+findUsersWithAppFiltered appUuid queryParams =
+  createFindEntitiesByFn entityName ([appQueryString appUuid, ("machine", "false")] ++ queryParams)
+
 findUsersPage :: Maybe String -> Maybe String -> Pageable -> [Sort] -> AppContextM (Page User)
 findUsersPage mQuery mRole pageable sort = do
   appUuid <- asks _appContextAppUuid
@@ -107,12 +111,18 @@ findUserByEmailAndAppUuid' email appUuid = createFindEntityByFn' entityName [app
 countUsers :: AppContextM Int
 countUsers = do
   appUuid <- asks _appContextAppUuid
-  createCountByFn entityName appCondition [appUuid]
+  countUsersWithApp (U.toString appUuid)
+
+countUsersWithApp :: String -> AppContextM Int
+countUsersWithApp appUuid = createCountByFn entityName appCondition [appUuid]
 
 countActiveUsers :: AppContextM Int
 countActiveUsers = do
   appUuid <- asks _appContextAppUuid
-  createCountByFn entityName (f' "%s AND active = true" [appCondition]) [appUuid]
+  countActiveUsersWithApp (U.toString appUuid)
+
+countActiveUsersWithApp :: String -> AppContextM Int
+countActiveUsersWithApp appUuid = createCountByFn entityName (f' "%s AND active = true" [appCondition]) [appUuid]
 
 insertUser :: User -> AppContextM Int64
 insertUser user = do

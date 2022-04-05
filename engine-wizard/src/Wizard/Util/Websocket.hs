@@ -2,7 +2,8 @@ module Wizard.Util.Websocket where
 
 import qualified Control.Exception.Base as E
 import Control.Lens ((^.))
-import Control.Monad.Reader (liftIO)
+import Control.Monad (when)
+import Control.Monad.Reader (asks, liftIO)
 import Data.Aeson (ToJSON, encode)
 import Data.Foldable (traverse_)
 import qualified Data.UUID as U
@@ -84,4 +85,8 @@ createErrorWebsocketMessage connectionUuid connection entityId error =
     }
 
 -- Logs
-logWS connectionUuid message = logInfoU _CMP_SERVICE (f' "[C:%s] %s" [U.toString connectionUuid, message])
+logWS connectionUuid message = do
+  serverConfig <- asks _appContextServerConfig
+  when
+    (serverConfig ^. logging . websocketDebug)
+    (logInfoU _CMP_SERVICE (f' "[C:%s] %s" [U.toString connectionUuid, message]))

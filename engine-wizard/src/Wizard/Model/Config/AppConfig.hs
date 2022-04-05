@@ -23,6 +23,7 @@ data AppConfig =
     , _appConfigTemplate :: AppConfigTemplate
     , _appConfigSubmission :: AppConfigSubmission
     , _appConfigFeature :: AppConfigFeature
+    , _appConfigOwl :: AppConfigOwl
     , _appConfigCreatedAt :: UTCTime
     , _appConfigUpdatedAt :: UTCTime
     }
@@ -37,7 +38,9 @@ instance Eq AppConfig where
     _appConfigDashboard a == _appConfigDashboard b &&
     _appConfigLookAndFeel a == _appConfigLookAndFeel b &&
     _appConfigRegistry a == _appConfigRegistry b &&
-    _appConfigQuestionnaire a == _appConfigQuestionnaire b && _appConfigSubmission a == _appConfigSubmission b
+    _appConfigQuestionnaire a == _appConfigQuestionnaire b &&
+    _appConfigSubmission a == _appConfigSubmission b &&
+    _appConfigFeature a == _appConfigFeature b && _appConfigOwl a == _appConfigOwl b
 
 data AppConfigOrganization =
   AppConfigOrganization
@@ -263,5 +266,17 @@ data AppConfigFeature =
     { _appConfigFeatureClientCustomizationEnabled :: Bool
     , _appConfigFeaturePdfOnlyEnabled :: Bool
     , _appConfigFeaturePdfWatermarkEnabled :: Bool
+    }
+  deriving (Generic, Eq, Show)
+
+data AppConfigOwl =
+  AppConfigOwl
+    { _appConfigOwlEnabled :: Bool
+    , _appConfigOwlName :: String
+    , _appConfigOwlOrganizationId :: String
+    , _appConfigOwlKmId :: String
+    , _appConfigOwlVersion :: String
+    , _appConfigOwlPreviousPackageId :: Maybe String
+    , _appConfigOwlRootElement :: String
     }
   deriving (Generic, Eq, Show)

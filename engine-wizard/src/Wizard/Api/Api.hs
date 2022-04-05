@@ -8,14 +8,15 @@ import Wizard.Api.Handler.App.Api
 import Wizard.Api.Handler.Auth.Api
 import Wizard.Api.Handler.BookReference.Api
 import Wizard.Api.Handler.Branch.Api
-import Wizard.Api.Handler.Cache.Api
 import Wizard.Api.Handler.Config.Api
 import Wizard.Api.Handler.Document.Api
+import Wizard.Api.Handler.Domain.Api
 import Wizard.Api.Handler.Feedback.Api
 import Wizard.Api.Handler.Info.Api
 import Wizard.Api.Handler.KnowledgeModel.Api
 import Wizard.Api.Handler.Migration.Api
 import Wizard.Api.Handler.Package.Api
+import Wizard.Api.Handler.Prefab.Api
 import Wizard.Api.Handler.Questionnaire.Api
 import Wizard.Api.Handler.Registry.Api
 import Wizard.Api.Handler.Submission.Api
@@ -34,14 +35,15 @@ type ApplicationAPI
      :<|> AuthAPI
      :<|> BookReferenceAPI
      :<|> BranchAPI
-     :<|> CacheAPI
      :<|> ConfigAPI
      :<|> DocumentAPI
+     :<|> DomainAPI
      :<|> FeedbackAPI
      :<|> InfoAPI
      :<|> KnowledgeModelAPI
      :<|> MigrationAPI
      :<|> PackageAPI
+     :<|> PrefabAPI
      :<|> QuestionnaireAPI
      :<|> RegistryAPI
      :<|> SubmissionAPI
@@ -58,14 +60,15 @@ applicationApi = Proxy
 applicationServer :: ServerT ApplicationAPI BaseContextM
 applicationServer =
   actionKeyServer :<|> adminServer :<|> appServer :<|> authServer :<|> bookReferenceServer :<|> branchServer :<|>
-  cacheServer :<|>
   configServer :<|>
   documentServer :<|>
+  domainServer :<|>
   feedbackServer :<|>
   infoServer :<|>
   knowledgeModelServer :<|>
   migrationServer :<|>
   packageServer :<|>
+  prefabServer :<|>
   questionnaireServer :<|>
   registryServer :<|>
   submissionServer :<|>

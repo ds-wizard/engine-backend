@@ -25,6 +25,7 @@ instance ToRow AppConfig where
     , toField _appConfigCreatedAt
     , toField _appConfigUpdatedAt
     , toJSONField _appConfigFeature
+    , toJSONField _appConfigOwl
     ]
 
 instance FromRow AppConfig where
@@ -43,4 +44,5 @@ instance FromRow AppConfig where
     _appConfigCreatedAt <- field
     _appConfigUpdatedAt <- field
     _appConfigFeature <- fieldWith fromJSONField
+    _appConfigOwl <- fieldWith fromJSONField
     return $ AppConfig {..}

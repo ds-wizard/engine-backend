@@ -2,24 +2,12 @@ general:
   environment: Production
   serverPort: 3000
   clientUrl: http://localhost:3001
-  templateFolder: engine-registry/templates
 
 database:
   connectionString: postgresql://postgres:postgres@postgres:5432/engine-registry
 
 s3:
   bucket: engine-registry
-
-mail:
-  enabled: false
-  name:
-  email:
-  host:
-  port:
-  ssl:
-  authEnabled:
-  username:
-  password:
 
 analytics:
   enabled: false

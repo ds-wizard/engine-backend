@@ -23,20 +23,6 @@ data ServerConfigS3 =
     }
   deriving (Generic, Show)
 
-data ServerConfigMail =
-  ServerConfigMail
-    { _serverConfigMailEnabled :: Bool
-    , _serverConfigMailName :: String
-    , _serverConfigMailEmail :: String
-    , _serverConfigMailHost :: String
-    , _serverConfigMailPort :: Int
-    , _serverConfigMailSsl :: Bool
-    , _serverConfigMailAuthEnabled :: Bool
-    , _serverConfigMailUsername :: String
-    , _serverConfigMailPassword :: String
-    }
-  deriving (Generic, Show)
-
 data ServerConfigAnalytics =
   ServerConfigAnalytics
     { _serverConfigAnalyticsEnabled :: Bool
@@ -55,6 +41,7 @@ data ServerConfigLogging =
   ServerConfigLogging
     { _serverConfigLoggingLevel :: LogLevel
     , _serverConfigLoggingHttpClientDebug :: Bool
+    , _serverConfigLoggingWebsocketDebug :: Bool
     }
   deriving (Generic, Show)
 

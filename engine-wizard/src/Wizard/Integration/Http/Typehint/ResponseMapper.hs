@@ -19,7 +19,7 @@ import Wizard.Integration.Http.Common.ResponseMapper
 import Wizard.Integration.Resource.Typehint.TypehintIDTO
 import Wizard.Util.Template
 
-toRetrieveTypehintsResponse :: Integration -> Response BSL.ByteString -> Either AppError [TypehintIDTO]
+toRetrieveTypehintsResponse :: ApiIntegration -> Response BSL.ByteString -> Either AppError [TypehintIDTO]
 toRetrieveTypehintsResponse intConfig response =
   extractResponseBody response >>= extractNestedField listField >>= convertToArray >>= mapRecords
   where

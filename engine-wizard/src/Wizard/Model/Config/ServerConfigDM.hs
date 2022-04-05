@@ -13,7 +13,6 @@ defaultConfig =
     , _serverConfigMessaging = defaultMessaging
     , _serverConfigJwt = defaultJwt
     , _serverConfigRoles = defaultRoles
-    , _serverConfigMail = defaultMail
     , _serverConfigRegistry = defaultRegistry
     , _serverConfigAnalytics = defaultAnalytics
     , _serverConfigSentry = defaultSentry
@@ -21,6 +20,7 @@ defaultConfig =
     , _serverConfigDocument = defaultDocument
     , _serverConfigFeedback = defaultFeedback
     , _serverConfigPersistentCommand = defaultPersistentCommand
+    , _serverConfigPlan = defaultPlan
     , _serverConfigQuestionnaire = defaultQuestionnaire
     , _serverConfigLogging = defaultLogging
     , _serverConfigCloud = defaultCloud
@@ -32,10 +32,8 @@ defaultGeneral =
     { _serverConfigGeneralEnvironment = Production
     , _serverConfigGeneralClientUrl = ""
     , _serverConfigGeneralServerPort = 3000
-    , _serverConfigGeneralServiceToken = ""
     , _serverConfigGeneralSecret = ""
     , _serverConfigGeneralIntegrationConfig = "engine-wizard/config/integration.yml"
-    , _serverConfigGeneralTemplateFolder = "engine-wizard/"
     , _serverConfigGeneralRemoteLocalizationUrl = Nothing
     , _serverConfigGeneralClientStyleBuilderUrl = "http://wizard-style-builder:3002"
     }
@@ -135,6 +133,13 @@ defaultPersistentCommandListenerJob =
 defaultPersistentCommandRetryJob :: ServerConfigCronWorker
 defaultPersistentCommandRetryJob =
   ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "* * * * *"}
+
+defaultPlan :: ServerConfigPlan
+defaultPlan = ServerConfigPlan {_serverConfigPlanRecomputeJob = defaultPlanRecomputeJob}
+
+defaultPlanRecomputeJob :: ServerConfigCronWorker
+defaultPlanRecomputeJob =
+  ServerConfigCronWorker {_serverConfigCronWorkerEnabled = True, _serverConfigCronWorkerCron = "0 * * * *"}
 
 defaultQuestionnaire :: ServerConfigQuestionnaire
 defaultQuestionnaire =

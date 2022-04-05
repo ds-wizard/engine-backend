@@ -49,6 +49,10 @@ sendError (ForbiddenError message) =
   return $ err403 {errBody = encode $ ForbiddenError message, errHeaders = [contentTypeHeaderJSON]}
 sendError (NotExistsError message) =
   return $ err404 {errBody = encode $ NotExistsError message, errHeaders = [contentTypeHeaderJSON]}
+sendError LockedError =
+  return $
+  ServerError
+    {errHTTPCode = 423, errReasonPhrase = "Locked", errBody = encode LockedError, errHeaders = [contentTypeHeaderJSON]}
 sendError (GeneralServerError message) = do
   logError _CMP_API message
   sendToSentry message

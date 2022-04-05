@@ -17,6 +17,7 @@ instance ToJSON AppError where
   toJSON (UnauthorizedError message) = object ["status" .= 401, "message" .= message]
   toJSON (ForbiddenError message) = object ["status" .= 403, "message" .= message]
   toJSON (NotExistsError message) = object ["status" .= 404, "message" .= message]
+  toJSON LockedError = object ["status" .= 423]
   toJSON (GeneralServerError _) = object ["status" .= 500]
   toJSON (HttpClientError status _) = object ["statusCode" .= statusCode status, "source" .= "external"]
 
@@ -48,5 +49,6 @@ instance FromJSON AppError where
       (404, _, _) -> do
         message <- o .: "message"
         return . NotExistsError $ message
+      (423, _, _) -> return LockedError
       (500, _, _) -> return $ GeneralServerError ""
   parseJSON _ = mzero

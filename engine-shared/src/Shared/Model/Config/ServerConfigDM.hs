@@ -24,20 +24,6 @@ defaultS3 =
     , _serverConfigS3Region = Nothing
     }
 
-defaultMail :: ServerConfigMail
-defaultMail =
-  ServerConfigMail
-    { _serverConfigMailEnabled = True
-    , _serverConfigMailName = "DS Wizard"
-    , _serverConfigMailEmail = ""
-    , _serverConfigMailHost = ""
-    , _serverConfigMailPort = 465
-    , _serverConfigMailSsl = False
-    , _serverConfigMailAuthEnabled = False
-    , _serverConfigMailUsername = ""
-    , _serverConfigMailPassword = ""
-    }
-
 defaultAnalytics :: ServerConfigAnalytics
 defaultAnalytics = ServerConfigAnalytics {_serverConfigAnalyticsEnabled = False, _serverConfigAnalyticsEmail = ""}
 
@@ -46,7 +32,11 @@ defaultSentry = ServerConfigSentry {_serverConfigSentryEnabled = False, _serverC
 
 defaultLogging :: ServerConfigLogging
 defaultLogging =
-  ServerConfigLogging {_serverConfigLoggingLevel = LevelInfo, _serverConfigLoggingHttpClientDebug = False}
+  ServerConfigLogging
+    { _serverConfigLoggingLevel = LevelInfo
+    , _serverConfigLoggingHttpClientDebug = False
+    , _serverConfigLoggingWebsocketDebug = False
+    }
 
 defaultCloud :: ServerConfigCloud
 defaultCloud = ServerConfigCloud {_serverConfigCloudEnabled = False, _serverConfigCloudDomain = Nothing}

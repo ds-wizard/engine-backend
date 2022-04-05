@@ -69,12 +69,20 @@ findDocumentById uuid = do
   createFindEntityByFn entityName [appQueryUuid appUuid, ("uuid", uuid)]
 
 countDocuments :: AppContextM Int
-countDocuments = createCountFn entityName
+countDocuments = do
+  appUuid <- asks _appContextAppUuid
+  countDocumentsWithApp (U.toString appUuid)
+
+countDocumentsWithApp :: String -> AppContextM Int
+countDocumentsWithApp appUuid = createCountByFn entityName appCondition [appUuid]
 
 sumDocumentFileSize :: AppContextM Int64
 sumDocumentFileSize = do
   appUuid <- asks _appContextAppUuid
-  createSumByFn entityName "file_size" appCondition [appUuid]
+  sumDocumentFileSizeWithApp (U.toString appUuid)
+
+sumDocumentFileSizeWithApp :: String -> AppContextM Int64
+sumDocumentFileSizeWithApp appUuid = createSumByFn entityName "file_size" appCondition [appUuid]
 
 insertDocument :: Document -> AppContextM Int64
 insertDocument = createInsertFn entityName

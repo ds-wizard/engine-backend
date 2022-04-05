@@ -21,7 +21,6 @@ instance FromJSON ServerConfig where
     _serverConfigMessaging <- o .:? "messaging" .!= defaultMessaging
     _serverConfigJwt <- o .:? "jwt" .!= defaultJwt
     _serverConfigRoles <- o .:? "roles" .!= defaultRoles
-    _serverConfigMail <- o .:? "mail" .!= defaultMail
     _serverConfigRegistry <- o .:? "registry" .!= defaultRegistry
     _serverConfigAnalytics <- o .:? "analytics" .!= defaultAnalytics
     _serverConfigSentry <- o .:? "sentry" .!= defaultSentry
@@ -29,6 +28,7 @@ instance FromJSON ServerConfig where
     _serverConfigDocument <- o .:? "document" .!= defaultDocument
     _serverConfigFeedback <- o .:? "feedback" .!= defaultFeedback
     _serverConfigPersistentCommand <- o .:? "persistentCommand" .!= defaultPersistentCommand
+    _serverConfigPlan <- o .:? "plan" .!= defaultPlan
     _serverConfigQuestionnaire <- o .:? "questionnaire" .!= defaultQuestionnaire
     _serverConfigLogging <- o .:? "logging" .!= defaultLogging
     _serverConfigCloud <- o .:? "cloud" .!= defaultCloud
@@ -40,10 +40,8 @@ instance FromJSON ServerConfigGeneral where
     _serverConfigGeneralEnvironment <- o .:? "environment" .!= (defaultGeneral ^. environment)
     _serverConfigGeneralClientUrl <- o .: "clientUrl"
     _serverConfigGeneralServerPort <- o .:? "serverPort" .!= (defaultGeneral ^. serverPort)
-    _serverConfigGeneralServiceToken <- o .: "serviceToken"
     _serverConfigGeneralSecret <- o .: "secret"
     _serverConfigGeneralIntegrationConfig <- o .:? "integrationConfig" .!= (defaultGeneral ^. integrationConfig)
-    _serverConfigGeneralTemplateFolder <- o .:? "templateFolder" .!= (defaultGeneral ^. templateFolder)
     _serverConfigGeneralRemoteLocalizationUrl <-
       o .:? "remoteLocalizationUrl" .!= (defaultGeneral ^. remoteLocalizationUrl)
     _serverConfigGeneralClientStyleBuilderUrl <-
@@ -116,6 +114,12 @@ instance FromJSON ServerConfigPersistentCommandListenerJob where
     _serverConfigPersistentCommandListenerJobEnabled <-
       o .:? "enabled" .!= (defaultPersistentCommandListenerJob ^. enabled)
     return ServerConfigPersistentCommandListenerJob {..}
+  parseJSON _ = mzero
+
+instance FromJSON ServerConfigPlan where
+  parseJSON (Object o) = do
+    _serverConfigPlanRecomputeJob <- o .:? "recomputeJob" .!= (defaultPlan ^. recomputeJob)
+    return ServerConfigPlan {..}
   parseJSON _ = mzero
 
 instance FromJSON ServerConfigQuestionnaire where

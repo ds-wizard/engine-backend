@@ -27,5 +27,6 @@ extra-deps:
   - network-2.8.0.1
   - network-bsd-2.8.0.0
   - raven-haskell-0.1.4.0
+  - rdf4h-5.0.1
 
 allow-newer: true

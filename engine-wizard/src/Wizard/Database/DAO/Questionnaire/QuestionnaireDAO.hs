@@ -329,7 +329,12 @@ findQuestionnaireSquashById uuid =
   createFindEntityWithFieldsByFn "uuid, events, versions" False entityName [("uuid", uuid)]
 
 countQuestionnaires :: AppContextM Int
-countQuestionnaires = createCountFn entityName
+countQuestionnaires = do
+  appUuid <- asks _appContextAppUuid
+  countQuestionnairesWithApp (U.toString appUuid)
+
+countQuestionnairesWithApp :: String -> AppContextM Int
+countQuestionnairesWithApp appUuid = createCountByFn entityName appCondition [appUuid]
 
 insertQuestionnaire :: Questionnaire -> AppContextM Int64
 insertQuestionnaire qtn = do

@@ -1,6 +1,7 @@
 module Wizard.Api.Handler.Package.List_Bundle_POST where
 
 import qualified Data.List as L
+import qualified Data.Text as T
 import Servant
 import Servant.Multipart
 
@@ -11,6 +12,7 @@ import Wizard.Api.Handler.Common
 import Wizard.Api.Resource.Package.PackageSimpleDTO
 import Wizard.Api.Resource.Package.PackageSimpleJM ()
 import Wizard.Model.Context.BaseContext
+import Wizard.Service.Owl.OwlService
 import Wizard.Service.PackageBundle.PackageBundleService
 
 type List_Bundle_POST
@@ -31,8 +33,12 @@ list_bundle_POST mTokenHeader mServerUrl multipartData =
     runInAuthService $
     addTraceUuidHeader =<< do
       let fs = files multipartData
+      let is = inputs multipartData
       case L.find (\file -> fdInputName file == "file") fs of
         Just file -> do
           let content = fdPayload file
-          importAndConvertPackageBundle content
+          let fileName = T.unpack . fdFileName $ file
+          if L.isSubsequenceOf ".owl" fileName
+            then importOwl is content
+            else importAndConvertPackageBundle content
         Nothing -> throwError $ UserError _ERROR_VALIDATION__FILE_ABSENCE

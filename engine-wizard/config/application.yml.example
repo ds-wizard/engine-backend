@@ -1,21 +1,9 @@
 general:
   clientUrl: http://localhost:3001
-  serviceToken:
   secret:
 
 database:
   connectionString: postgresql://postgres:postgres@postgres:5432/engine-wizard
-
-mail:
-  enabled: false
-  name:
-  email:
-  host:
-  port:
-  ssl:
-  authEnabled:
-  username:
-  password:
 
 registry:
   token:
