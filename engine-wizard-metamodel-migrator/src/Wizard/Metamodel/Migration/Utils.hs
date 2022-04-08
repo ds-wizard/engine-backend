@@ -10,6 +10,7 @@ data BasicOp
   = Rename Key Key
   | Insert Key Value
   | Delete Key
+  | Change Key (Value -> Value)
 
 runBasicOps :: [BasicOp] -> Object -> Object
 runBasicOps ops obj = foldl (flip runBasicOp) obj ops
@@ -18,6 +19,12 @@ runBasicOp :: BasicOp -> Object -> Object
 runBasicOp (Rename oldKey newKey) = renameKey oldKey newKey
 runBasicOp (Insert key value) = HM.insert key value
 runBasicOp (Delete key) = HM.delete key
+runBasicOp (Change key fn) = change
+  where
+    change obj =
+      case HM.lookup key obj of
+        (Just value) -> HM.insert key (fn value) obj
+        _ -> obj
 
 renameKey :: Key -> Key -> Object -> Object
 renameKey oldKey newKey obj =
@@ -34,3 +41,30 @@ migrateByEventType _ v = v
 
 unchangedValue :: Value
 unchangedValue = Object (HM.singleton "changed" (Bool False))
+
+nullUuid :: Value
+nullUuid = String "00000000-0000-0000-0000-000000000000"
+
+applyOnEventField :: (Value -> Value) -> Value -> Value
+applyOnEventField fn v@(Object obj) =
+  case HM.lookup "value" obj of
+    (Just value) -> Object $ HM.insert "value" (fn value) obj
+    _ -> v
+applyOnEventField _ v = v
+
+startsWith :: T.Text -> T.Text -> Bool
+startsWith text prefix
+  | T.length text < prefixSize = False
+  | otherwise = T.take prefixSize text == prefix
+  where
+    prefixSize = T.length prefix
+
+endsWith :: T.Text -> T.Text -> Bool
+endsWith text suffix
+  | T.length text < suffixSize = False
+  | otherwise = T.takeEnd suffixSize text == suffix
+  where
+    suffixSize = T.length suffix
+
+chainMigrations :: [Value -> Value] -> (Value -> Value)
+chainMigrations = foldl (.) id

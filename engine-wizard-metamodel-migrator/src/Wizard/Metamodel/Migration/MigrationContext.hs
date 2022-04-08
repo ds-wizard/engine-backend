@@ -1,12 +1,9 @@
 module Wizard.Metamodel.Migration.MigrationContext where
 
-import Control.Lens (makeFields)
 import Data.Time (UTCTime)
 
 data MigrationContext =
   MigrationContext
-    { _migrationContextCreatedAt :: UTCTime
+    { ctxCreatedAt :: UTCTime
     }
   deriving (Show, Eq)
-
-makeFields ''MigrationContext
