@@ -30,8 +30,8 @@ createTables = do
          \             primary key, \
          \     name              varchar not null, \
          \     users             integer, \
-         \     since             timestamp with time zone not null, \
-         \     until             timestamp with time zone not null, \
+         \     since             timestamp with time zone, \
+         \     until             timestamp with time zone, \
          \     test              bool not null, \
          \     app_uuid          uuid not null, \
          \     created_at        timestamp with time zone not null, \

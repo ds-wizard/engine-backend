@@ -70,4 +70,9 @@ recomputePlansForApp app = do
 -- PRIVATE
 -- --------------------------------
 isPlanActive :: UTCTime -> AppPlan -> Bool
-isPlanActive now plan = plan ^. since <= now && now <= plan ^. until
+isPlanActive now plan =
+  case (plan ^. since, plan ^. until) of
+    (Just since, Just until) -> since <= now && now <= until
+    (Just since, Nothing) -> since <= now
+    (Nothing, Just until) -> now <= until
+    (Nothing, Nothing) -> True

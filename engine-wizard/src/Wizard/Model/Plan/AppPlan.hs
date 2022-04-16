@@ -9,8 +9,8 @@ data AppPlan =
     { _appPlanUuid :: U.UUID
     , _appPlanName :: String
     , _appPlanUsers :: Maybe Int
-    , _appPlanSince :: UTCTime
-    , _appPlanUntil :: UTCTime
+    , _appPlanSince :: Maybe UTCTime
+    , _appPlanUntil :: Maybe UTCTime
     , _appPlanTest :: Bool
     , _appPlanAppUuid :: U.UUID
     , _appPlanCreatedAt :: UTCTime

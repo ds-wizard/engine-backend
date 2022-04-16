@@ -20,9 +20,12 @@ import Wizard.Model.App.App
 import Wizard.Model.Context.AppContext
 
 validateAppCreateDTO :: AppCreateDTO -> AppContextM ()
-validateAppCreateDTO reqDto = do
-  validateAppIdFormat (reqDto ^. appId)
-  validateAppIdUniqueness (reqDto ^. appId)
+validateAppCreateDTO reqDto = validateAppId (reqDto ^. appId)
+
+validateAppId :: String -> AppContextM ()
+validateAppId appId = do
+  validateAppIdFormat appId
+  validateAppIdUniqueness appId
 
 validateAppChangeDTO :: App -> AppChangeDTO -> AppContextM ()
 validateAppChangeDTO app reqDto = do
@@ -38,7 +41,7 @@ isValidAppIdFormat appId =
     then Nothing
     else Just $ ValidationError [] (M.singleton "appId" [_ERROR_VALIDATION__FORBIDDEN_CHARACTERS appId])
   where
-    validationRegex = mkRegex "^[a-z0-9-]*$"
+    validationRegex = mkRegex "^[a-z0-9-]+$"
 
 validateAppIdUniqueness :: String -> AppContextM ()
 validateAppIdUniqueness aId = do
@@ -83,4 +86,5 @@ forbiddenAppIds =
   , "storage-costs-evaluator"
   , "submit"
   , "swarmpit"
+  , "www"
   ]
