@@ -33,7 +33,7 @@ findPersistentCommandsByStates = do
         "SELECT uuid, app_uuid, created_by \
           \FROM persistent_command \
           \WHERE (state = 'NewPersistentCommandState' \
-          \  OR (state = 'ErrorPersistentCommandState' AND attempts < max_attempts)) \
+          \  OR (state = 'ErrorPersistentCommandState' AND attempts <= max_attempts)) \
           \  AND internal = true"
   logInfoU _CMP_DATABASE sql
   let action conn = query_ conn (fromString sql)
